@@ -45,9 +45,9 @@ class doc_generic_product_odt extends ModelePDFProduct
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
-	public $phpmin = array(5, 6);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -87,7 +87,6 @@ class doc_generic_product_odt extends ModelePDFProduct
 		$this->option_tva = 0; // Manage the vat option PRODUCT_TVAOPTION
 		$this->option_modereg = 0; // Display payment mode
 		$this->option_condreg = 0; // Display payment terms
-		$this->option_codeproduitservice = 0; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
@@ -118,15 +117,11 @@ class doc_generic_product_odt extends ModelePDFProduct
 		$form = new Form($this->db);
 
 		$texte = $this->description.".<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="PRODUCT_ADDON_PDF_ODT_PATH">';
-		if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0) {
-			$texte .= '<input type="hidden" name="param2" value="PRODUCT_ADDON_PDF_ODT_DEFAULT">';
-			$texte .= '<input type="hidden" name="param3" value="PRODUCT_ADDON_PDF_ODT_TOBILL">';
-			$texte .= '<input type="hidden" name="param4" value="PRODUCT_ADDON_PDF_ODT_CLOSED">';
-		}
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		// List of directories area
@@ -161,43 +156,44 @@ class doc_generic_product_odt extends ModelePDFProduct
 		$texte .= $conf->global->PRODUCT_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
+		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
-		if (count($listofdir)) {
+		$nbofiles = count($listoffiles);
+		if (!empty($conf->global->PRODUCT_ADDON_PDF_ODT_PATH)) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
-
-			/*if ($conf->global->MAIN_PRODUCT_CHOOSE_ODT_DOCUMENT > 0)
-			{
-				// Model for creation
-				$liste=ModelePDFProduct::liste_modeles($this->db);
-				$texte.= '<table width="50%;">';
-				$texte.= '<tr>';
-				$texte.= '<td width="60%;">'.$langs->trans("DefaultModelPropalCreate").'</td>';
-				$texte.= '<td colspan="">';
-				$texte.= $form->selectarray('value2',$liste,$conf->global->PRODUCT_ADDON_PDF_ODT_DEFAULT);
-				$texte.= "</td></tr>";
-
-				$texte.= '<tr>';
-				$texte.= '<td width="60%;">'.$langs->trans("DefaultModelPropalToBill").'</td>';
-				$texte.= '<td colspan="">';
-				$texte.= $form->selectarray('value3',$liste,$conf->global->PRODUCT_ADDON_PDF_ODT_TOBILL);
-				$texte.= "</td></tr>";
-				$texte.= '<tr>';
-
-				$texte.= '<td width="60%;">'.$langs->trans("DefaultModelPropalClosed").'</td>';
-				$texte.= '<td colspan="">';
-				$texte.= $form->selectarray('value4',$liste,$conf->global->PRODUCT_ADDON_PDF_ODT_CLOSED);
-				$texte.= "</td></tr>";
-				$texte.= '</table>';
-			}*/
 		}
+
+		if ($nbofiles) {
+			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
+			// Show list of found files
+			foreach ($listoffiles as $file) {
+				$texte .= '- '.$file['name'];
+				$texte .= ' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=products/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
+				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=PRODUCT_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
+				$texte .= '<br>';
+			}
+			$texte .= '</div>';
+		}
+		// Add input to upload a new template file.
+		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxmin = $maxfilesizearray['maxmin'];
+		if ($maxmin > 0) {
+			$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
+		$texte .= ' <input type="file" name="uploadfile">';
+		$texte .= '<input type="hidden" value="PRODUCT_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+		$texte .= '<input type="submit" class="button small reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '</div>';
 
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
+		$texte .= '<span class="opacitymedium">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
+		$texte .= '</span>';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 
@@ -282,7 +278,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 
-				$newfiletmp = $objectref.'_'.$newfiletmp;
+				$newfiletmp = $objectref . '_' . $newfiletmp;
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
@@ -291,11 +287,11 @@ class doc_generic_product_odt extends ModelePDFProduct
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
-					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
+					$filename = $newfiletmp . '-' . dol_print_date(dol_now(), $format) . '.' . $newfileformat;
 				} else {
-					$filename = $newfiletmp.'.'.$newfileformat;
+					$filename = $newfiletmp . '.' . $newfileformat;
 				}
-				$file = $dir.'/'.$filename;
+				$file = $dir . '/' . $filename;
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;
@@ -303,8 +299,8 @@ class doc_generic_product_odt extends ModelePDFProduct
 
 				dol_mkdir($conf->product->dir_temp);
 				if (!is_writable($conf->product->dir_temp)) {
-					$this->error = "Failed to write in temp directory ".$conf->product->dir_temp;
-					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->product->dir_temp);
+					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
 				}
 
@@ -347,7 +343,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 
 				// Line of free text
 				$newfreetext = '';
-				$paramfreetext = 'product_FREE_TEXT';
+				$paramfreetext = 'PRODUCT_FREE_TEXT';
 				if (!empty($conf->global->$paramfreetext)) {
 					$newfreetext = make_substitutions($conf->global->$paramfreetext, $substitutionarray);
 				}
@@ -375,7 +371,6 @@ class doc_generic_product_odt extends ModelePDFProduct
 				//print html_entity_decode($odfHandler->__toString());
 				//print exit;
 
-				$object->fetch_optionals();
 
 				// Make substitutions into odt of freetext
 				try {
@@ -402,7 +397,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
 				// Call the ODTSubstitution hook
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
+				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				foreach ($tmparray as $key => $value) {
@@ -483,6 +478,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 					}
 				}
 
+				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
 				$reshook = $hookmanager->executeHooks('afterODTCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				if (!empty($conf->global->MAIN_UMASK)) {

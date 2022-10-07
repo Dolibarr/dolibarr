@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/SqlTest.php
+ *      \file       test/phpunit/CodingSqlTest.php
  *      \ingroup    test
  *      \brief      PHPUnit test
  *      \remarks    To run this script as CLI:  phpunit filename.php
@@ -110,7 +110,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
@@ -123,7 +123,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -136,7 +136,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -152,7 +152,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return  void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -217,6 +217,10 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 				$result=strpos($filecontent, 'integer(');
 				//print __METHOD__." Result for checking we don't have 'integer(' = ".$result."\n";
 				$this->assertTrue($result===false, 'Found value in parenthesis after the integer. It must be integer not integer(x) into '.$file.'. Bad.');
+
+				$result=strpos($filecontent, 'timestamp,');
+				//print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
+				$this->assertTrue($result===false, 'Found type timestamp with option DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP after into '.$file.'. Bad.');
 
 				if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration') {
 					// Test for migration files only

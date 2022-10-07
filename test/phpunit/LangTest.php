@@ -110,7 +110,7 @@ class LangTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -123,7 +123,7 @@ class LangTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -136,7 +136,7 @@ class LangTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -152,7 +152,7 @@ class LangTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -184,17 +184,21 @@ class LangTest extends PHPUnit\Framework\TestCase
 			$tmplangs->setDefaultLang($langcode);
 			$tmplangs->load("main");
 
+			$result=$tmplangs->transnoentitiesnoconv("FONTFORPDF");
+			print __METHOD__." FONTFORPDF=".$result."\n";
+			$this->assertTrue(in_array($result, array('msungstdlight', 'stsongstdlight', 'helvetica', 'DejaVuSans', 'cid0jp', 'cid0kr', 'freemono', 'freeserif')), 'Error bad value '.$result.' for FONTFORPDF in main.lang file '.$code);
+
 			$result=$tmplangs->transnoentitiesnoconv("DIRECTION");
 			print __METHOD__." DIRECTION=".$result."\n";
-			$this->assertTrue(in_array($result, array('rtl', 'ltr')), 'Error for vale of DIRECTION in main.lang file '.$code);
+			$this->assertTrue(in_array($result, array('rtl', 'ltr')), 'Error bad value for DIRECTION in main.lang file '.$code);
 
 			$result=$tmplangs->transnoentitiesnoconv("SeparatorDecimal");
 			print __METHOD__." SeparatorDecimal=".$result."\n";
-			$this->assertContains($result, array('.',',','/',' ','','None'), 'Error for decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$this->assertContains($result, array('.',',','/',' ','','None'), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
 			$result=$tmplangs->transnoentitiesnoconv("SeparatorThousand");
 			print __METHOD__." SeparatorThousand=".$result."\n";
-			$this->assertContains($result, array('.',',','/',' ','','\'','None','Space'), 'Error for thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$this->assertContains($result, array('.',',','/',' ','','\'','None','Space'), 'Error on thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
 
 			// Test java string contains only d,M,y,/,-,. and not m,...
 			$result=$tmplangs->transnoentitiesnoconv("FormatDateShortJava");
@@ -222,6 +226,14 @@ class LangTest extends PHPUnit\Framework\TestCase
 				$result=strpos($filecontent, '％');	// A special % char we don't want. We want the common one.
 				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
 				$this->assertTrue($result === false, 'Found a bad percent char ％ instead of % into file '.$code.'/'.$file);
+
+				$result=preg_match('/%n/m', $filecontent);	// A sequence of char we don't want
+				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
+				$this->assertTrue($result == 0, 'Found a sequence %n into the translation file '.$code.'/'.$file.'. We probably want %s');
+
+				$result=preg_match('/<<<<</m', $filecontent);	// A sequence of char we don't want
+				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
+				$this->assertTrue($result == 0, 'Found a sequence <<<<< into the translation file '.$code.'/'.$file.'. Probably a bad merge of code were done.');
 			}
 		}
 

@@ -71,7 +71,7 @@ class modReceiptPrinter extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 9, -2); // Minimum version of Dolibarr required by module
 		$this->conflictwith = array();
 		$this->langfiles = array("receiptprinter");
@@ -133,6 +133,7 @@ class modReceiptPrinter extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf, $langs;
+
 		// Clean before activation
 		$this->remove($options);
 
@@ -140,8 +141,8 @@ class modReceiptPrinter extends DolibarrModules
 		$sql = array(
 			"CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX."printer_receipt (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), fk_type integer, fk_profile integer, parameter varchar(128), entity integer) ENGINE=innodb;",
 			"CREATE TABLE IF NOT EXISTS ".MAIN_DB_PREFIX."printer_receipt_template (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), template text, entity integer) ENGINE=innodb;",
-			"DELETE FROM ".MAIN_DB_PREFIX."printer_receipt_template WHERE name = '".$langs->trans('Example')."';",
-			"INSERT INTO ".MAIN_DB_PREFIX."printer_receipt_template (name,template,entity) VALUES ('".$langs->trans('Example')."', '".$templateexample."', 1);",
+			"DELETE FROM ".MAIN_DB_PREFIX."printer_receipt_template WHERE name = '".$this->db->escape($langs->trans('Example'))."';",
+			"INSERT INTO ".MAIN_DB_PREFIX."printer_receipt_template (name,template,entity) VALUES ('".$this->db->escape($langs->trans('Example'))."', '".$this->db->escape($templateexample)."', 1);",
 		);
 		return $this->_init($sql, $options);
 	}

@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=புக்மார்க்குகளில் தற்போதைய பக்கத்தைச் சேர்க்கவும்
+Bookmark=புத்தககுறி
+Bookmarks=புக்மார்க்குகள்
+ListOfBookmarks=புக்மார்க்குகளின் பட்டியல்
+EditBookmarks=புக்மார்க்குகளை பட்டியல்/திருத்து
+NewBookmark=புதிய புக்மார்க்
+ShowBookmark=புக்மார்க்கைக் காட்டு
+OpenANewWindow=புதிய தாவலைத் திறக்கவும்
+ReplaceWindow=தற்போதைய தாவலை மாற்றவும்
+BookmarkTargetNewWindowShort=புதிய தாவலில்
+BookmarkTargetReplaceWindowShort=தற்போதைய தாவல்
+BookmarkTitle=புக்மார்க் பெயர்
+UrlOrLink=URL
+BehaviourOnClick=புக்மார்க் URL தேர்ந்தெடுக்கப்படும் போது நடத்தை
+CreateBookmark=புக்மார்க்கை உருவாக்கவும்
+SetHereATitleForLink=புக்மார்க்கிற்கு ஒரு பெயரை அமைக்கவும்
+UseAnExternalHttpLinkOrRelativeDolibarrLink=வெளிப்புற/முழு இணைப்பு (https://externalurl.com) அல்லது உள்/உறவினர் இணைப்பை (/mypage.php) பயன்படுத்தவும். நீங்கள் தொலைபேசி: 0123456 போன்ற தொலைபேசியையும் பயன்படுத்தலாம்.
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=இணைக்கப்பட்ட பக்கம் தற்போதைய தாவலில் திறக்க வேண்டுமா அல்லது புதிய தாவலில் திறக்க வேண்டுமா என்பதைத் தேர்வுசெய்யவும்
+BookmarksManagement=புக்மார்க்ஸ் மேலாண்மை
+BookmarksMenuShortCut=Ctrl + shift + m
+NoBookmarks=புக்மார்க்குகள் எதுவும் வரையறுக்கப்படவில்லை

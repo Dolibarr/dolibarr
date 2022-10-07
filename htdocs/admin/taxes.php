@@ -25,9 +25,10 @@
  *     \brief      Page de configuration du module tax
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
 
@@ -137,7 +138,7 @@ if ($action == 'update') {
 llxHeader('', $langs->trans("TaxSetup"));
 
 $form = new Form($db);
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
@@ -259,7 +260,7 @@ print "<br>\n";
 
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button">';
+print '<input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'">';
 print '<br><br>';
 print '</div>';
 
@@ -270,7 +271,7 @@ print '</form>';
 echo '<div>';
 echo '<table class="noborder centpercent">';
 echo '<thead>';
-echo '<tr class="liste_titre"><th>' . $langs->trans('Parameter') . '</th><th>' . $langs->trans('Value') . '</th></tr>';
+echo '<tr class="liste_titre"><th>'.$langs->trans('Parameter').'</th><th>'.$langs->trans('Value').'</th></tr>';
 echo '</thead>';
 echo '<tbody>';
 
@@ -282,7 +283,7 @@ echo '</table>';
 echo '</div>';
 
 
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$langs->load("accountancy");
 	print '<br><br><span class="opacitymedium">'.$langs->trans("AccountingAccountForSalesTaxAreDefinedInto", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup")).'</span>';
 }

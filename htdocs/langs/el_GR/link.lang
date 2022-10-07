@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - languages
-LinkANewFile=Συνδέσετε ένα νέο αρχείο / έγγραφο
+LinkANewFile=Συνδέστε ένα νέο αρχείο / έγγραφο
 LinkedFiles=Συνδεδεμένα αρχεία και έγγραφα
 NoLinkFound=Δεν υπάρχουν εγγεγραμμένοι σύνδεσμοι
 LinkComplete=Το αρχείο έχει συνδεθεί με επιτυχία
@@ -8,4 +8,4 @@ LinkRemoved=Ο σύνδεσμος %s έχει αφαιρεθεί
 ErrorFailedToDeleteLink= Απέτυχε η αφαίρεση του συνδέσμου '<b>%s</b>'
 ErrorFailedToUpdateLink= Απέτυχε η ενημέρωση του σύνδεσμο '<b>%s</b>'
 URLToLink=Διεύθυνση URL για σύνδεση
-OverwriteIfExists=Overwrite file if exists
+OverwriteIfExists=Επανεγγραφή αρχείου εάν υπάρχει

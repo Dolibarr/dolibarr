@@ -21,12 +21,13 @@
  *		\brief      Tab payment of an expense report
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expensereport.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -120,7 +121,7 @@ print '<tr><td class="tdtop">'.$langs->trans('Note').'</td><td colspan="3">'.nl2
 
 $disable_delete = 0;
 // Bank account
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	if ($object->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);
@@ -240,7 +241,7 @@ print '<div class="tabsAction">';
 if ($action == '') {
 	if ($user->rights->expensereport->supprimer) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($title_button).'">'.$langs->trans('Delete').'</a>';
 		}

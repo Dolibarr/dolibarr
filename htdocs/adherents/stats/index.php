@@ -23,6 +23,7 @@
  *		\brief      Page of subscription members statistics
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
@@ -208,7 +209,7 @@ print '</table>';
 print '</div>';
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 // Show graphs
@@ -223,7 +224,7 @@ if ($mesg) {
 print '</td></tr></table>';
 
 
-print '</div></div></div>';
+print '</div></div>';
 print '<div style="clear:both"></div>';
 
 

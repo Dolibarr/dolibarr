@@ -20,21 +20,24 @@
  */
 
 /**
- *       \file       htdocs/fourn/commande/note.php
- *       \ingroup    commande
- *       \brief      Fiche note commande
+ *    \file       htdocs/fourn/commande/note.php
+ *    \ingroup    commande
+ *    \brief      page for notes on supplier orders
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
+// Get Parameters
 $id = GETPOST('facid', 'int') ?GETPOST('facid', 'int') : GETPOST('id', 'int');
 $ref = GETPOST('ref');
 $action = GETPOST('action', 'aZ09');
@@ -43,13 +46,15 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Init Objects
+$hookmanager->initHooks(array('ordersuppliercardnote'));
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $object = new CommandeFournisseur($db);
 $object->fetch($id, $ref);
 
-$hookmanager->initHooks(array('ordersuppliercardnote'));
-
+// Permissions
 $permissionnote = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer); // Used by the include of actions_setnotes.inc.php
 
 
@@ -57,13 +62,20 @@ $permissionnote = ($user->rights->fournisseur->commande->creer || $user->rights-
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 
 /*
  * View
  */
-$title = $langs->trans('SupplierOrder')." - ".$langs->trans('Notes');
+
+$title = $object->ref." - ".$langs->trans('Notes');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 llxHeader('', $title, $help_url);
 
@@ -100,12 +112,12 @@ if ($id > 0 || !empty($ref)) {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 				if ($action != 'classify') {
-					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					$morehtmlref .= ' : ';
 				}
 				if ($action == 'classify') {
@@ -123,9 +135,10 @@ if ($id > 0 || !empty($ref)) {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-					$morehtmlref .= $proj->ref;
-					$morehtmlref .= '</a>';
+					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= ' - '.$proj->title;
+					}
 				} else {
 					$morehtmlref .= '';
 				}

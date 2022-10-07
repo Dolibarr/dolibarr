@@ -21,6 +21,7 @@
  *	\brief      Page for invoice margins of a thirdparty
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -35,8 +36,8 @@ if (!empty($user->socid)) {
 }
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -124,18 +125,18 @@ if ($socid > 0) {
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_client));
 		$tmpcheck = $object->check_codeclient();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 		}
 		print '</td></tr>';
 	}
 
-	if (((!empty($conf->fournisseur->enabled) && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_order->enabled) && !empty($user->rights->supplier_order->lire)) || (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire))) && $object->fournisseur) {
+	if (((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && !empty($user->rights->supplier_order->lire)) || (isModEnabled("supplier_invoice") && !empty($user->rights->supplier_invoice->lire))) && $object->fournisseur) {
 		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
 		$tmpcheck = $object->check_codefournisseur();
 		if ($tmpcheck != 0 && $tmpcheck != -5) {
-			print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+			print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 		}
 		print '</td></tr>';
 	}

@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -24,6 +24,7 @@
  *      \brief      Monthly report of leave requests.
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -36,6 +37,8 @@ $langs->loadLangs(array('holiday', 'hrm'));
 
 // Security check
 $socid = 0;
+$id = GETPOST('id', 'int');
+
 if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
@@ -54,13 +57,18 @@ $search_description = GETPOST('search_description', 'alphanohtml');
 
 $limit       = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield   = GETPOST('sortfield', 'aZ09comma');
-$sortorder   = GETPOST('sortorder', 'alpha');
+$sortorder   = GETPOST('sortorder', 'aZ09comma');
 
 if (!$sortfield) {
 	$sortfield = "cp.rowid";
 }
 if (!$sortorder) {
 	$sortorder = "ASC";
+}
+
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1) {
+	$page = 0;
 }
 
 $hookmanager->initHooks(array('leavemovementlist'));
@@ -95,7 +103,7 @@ if (empty($reshook)) {
 		$search_employee = '';
 		$search_type = '';
 		$search_description = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 
@@ -110,16 +118,16 @@ if (empty($reshook)) {
 }
 
 $arrayfields = array(
-	'cp.ref'=>array('label'=>$langs->trans('Ref'), 'checked'=>1),
-	'cp.fk_user'=>array('label'=>$langs->trans('Employee'), 'checked'=>1),
-	'cp.fk_type'=>array('label'=>$langs->trans('Type'), 'checked'=>1),
-	'cp.date_debut'=>array('label'=>$langs->trans('DateDebCP'), 'checked'=>1),
-	'cp.date_fin'=>array('label'=>$langs->trans('DateFinCP'), 'checked'=>1),
-	'used_days'=>array('label'=>$langs->trans('NbUseDaysCPShort'), 'checked'=>1),
-	'date_start_month'=>array('label'=>$langs->trans('DateStartInMonth'), 'checked'=>1),
-	'date_end_month'=>array('label'=>$langs->trans('DateEndInMonth'), 'checked'=>1),
-	'used_days_month'=>array('label'=>$langs->trans('NbUseDaysCPShortInMonth'), 'checked'=>1),
-	'cp.description'=>array('label'=>$langs->trans('DescCP'), 'checked'=>1),
+	'cp.ref'=>array('label' => 'Ref', 'checked'=>1),
+	'cp.fk_user'=>array('label' => 'Employee', 'checked'=>1),
+	'cp.fk_type'=>array('label' => 'Type', 'checked'=>1),
+	'cp.date_debut'=>array('label' => 'DateDebCP', 'checked'=>1),
+	'cp.date_fin'=>array('label' => 'DateFinCP', 'checked'=>1),
+	'used_days'=>array('label' => 'NbUseDaysCPShort', 'checked'=>1),
+	'date_start_month'=>array('label' => 'DateStartInMonth', 'checked'=>1),
+	'date_end_month'=>array('label' => 'DateEndInMonth', 'checked'=>1),
+	'used_days_month'=>array('label' => 'NbUseDaysCPShortInMonth', 'checked'=>1),
+	'cp.description'=>array('label' => 'DescCP', 'checked'=>1),
 );
 
 
@@ -238,7 +246,7 @@ if (!empty($arrayfields['cp.ref']['checked'])) {
 // Filter: Employee
 if (!empty($arrayfields['cp.fk_user']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_employee, "search_employee", 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+	print $form->select_dolusers($search_employee, "search_employee", 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth100');
 	print '</td>';
 }
 
@@ -303,22 +311,22 @@ if (!empty($arrayfields['ct.label']['checked'])) {
 	print_liste_field_titre($arrayfields['ct.label']['label'], $_SERVER["PHP_SELF"], 'ct.label', '', '', '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cp.date_debut']['checked'])) {
-	print_liste_field_titre($arrayfields['cp.date_debut']['label'], $_SERVER["PHP_SELF"], 'cp.date_debut', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cp.date_debut']['label'], $_SERVER["PHP_SELF"], 'cp.date_debut', '', '', '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['cp.date_fin']['checked'])) {
-	print_liste_field_titre($arrayfields['cp.date_fin']['label'], $_SERVER["PHP_SELF"], 'cp.date_fin', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cp.date_fin']['label'], $_SERVER["PHP_SELF"], 'cp.date_fin', '', '', '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['used_days']['checked'])) {
-	print_liste_field_titre($arrayfields['used_days']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['used_days']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidth125 right ');
 }
 if (!empty($arrayfields['date_start_month']['checked'])) {
-	print_liste_field_titre($arrayfields['date_start_month']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['date_start_month']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['date_end_month']['checked'])) {
-	print_liste_field_titre($arrayfields['date_end_month']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['date_end_month']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['used_days_month']['checked'])) {
-	print_liste_field_titre($arrayfields['used_days_month']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['used_days_month']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidth125 right ');
 }
 if (!empty($arrayfields['cp.description']['checked'])) {
 	print_liste_field_titre($arrayfields['cp.description']['label'], $_SERVER["PHP_SELF"], 'cp.description', '', '', '', $sortfield, $sortorder);
@@ -327,7 +335,7 @@ print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', 
 print '</tr>';
 
 if ($num == 0) {
-	print '<tr><td colspan="10" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
+	print '<tr><td colspan="11" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
 } else {
 	while ($obj = $db->fetch_object($resql)) {
 		$user = new User($db);
@@ -379,7 +387,7 @@ if ($num == 0) {
 		print '<tr class="oddeven">';
 
 		if (!empty($arrayfields['cp.ref']['checked'])) {
-			print '<td>'.$holidaystatic->getNomUrl(1, 1).'</td>';
+			print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1, 1).'</td>';
 		}
 		if (!empty($arrayfields['cp.fk_user']['checked'])) {
 			print '<td>'.$user->getFullName($langs).'</td>';

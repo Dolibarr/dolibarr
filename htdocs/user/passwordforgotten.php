@@ -25,6 +25,7 @@
 
 define("NOLOGIN", 1); // This means this output page does not require to be logged.
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
@@ -113,7 +114,7 @@ if (empty($reshook)) {
 	// Action modif mot de passe
 	if ($action == 'buildnewpassword' && $username) {
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 
 		// Verify code
 		if (!$ok) {

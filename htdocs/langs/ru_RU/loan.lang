@@ -24,7 +24,7 @@ FinancialCommitment=Финансовые обязательства
 InterestAmount=Доля капитала
 CapitalRemain=Остается капитал
 TermPaidAllreadyPaid = Этот срок уже оплачен
-CantUseScheduleWithLoanStartedToPaid = Невозможно использовать планировщик для займа с начатым платежом
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = Вы не можете изменить интерес, если используете расписание
 # Admin
 ConfigLoan=Настройка модуля займов

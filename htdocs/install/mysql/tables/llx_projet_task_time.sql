@@ -24,10 +24,13 @@ create table llx_projet_task_time
   task_datehour    datetime,				-- day + hour
   task_date_withhour integer DEFAULT 0,	-- 0 by default, 1 if date was entered with start hour
   task_duration    double,
+  fk_product       integer NULL,
   fk_user          integer,
   thm			   double(24,8),
   invoice_id       integer DEFAULT NULL,				-- If we need to invoice each line of timespent, we can save invoice id here
   invoice_line_id  integer DEFAULT NULL,                -- If we need to invoice each line of timespent, we can save invoice line id here
+  intervention_id       integer DEFAULT NULL,				-- If we need to have an intervention line for each line of timespent, we can save intervention id here
+  intervention_line_id  integer DEFAULT NULL,               -- If we need to have an intervention line of timespent line, we can save intervention line id here
   import_key	   varchar(14),					-- Import key
   datec            datetime,					-- date creation time
   tms              timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,					-- last modification date

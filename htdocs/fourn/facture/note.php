@@ -26,11 +26,12 @@
  *      \brief      Fiche de notes sur une facture fournisseur
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -44,6 +45,9 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('invoicesuppliernote'));
+
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 $object = new FactureFournisseur($db);
@@ -56,11 +60,17 @@ $permissionnote = ($user->rights->fournisseur->facture->creer || $user->rights->
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+if (empty($reshook)) {
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+}
 
 // Set label
 if ($action == 'setlabel' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
-	$object->label = $_POST['label'];
+	$object->label = GETPOST('label');
 	$result = $object->update($user);
 	if ($result < 0) {
 		dol_print_error($db);
@@ -74,7 +84,7 @@ if ($action == 'setlabel' && ($user->rights->fournisseur->facture->creer || $use
 
 $form = new Form($db);
 
-$title = $langs->trans('SupplierInvoice')." - ".$langs->trans('Notes');
+$title = $object->ref." - ".$langs->trans('Notes');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
 llxHeader('', $title, $helpurl);
 
@@ -101,12 +111,12 @@ if ($object->id > 0) {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
 	}
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 			if ($action != 'classify') {
-				// $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				// $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				$morehtmlref .= ' : ';
 			}
 			if ($action == 'classify') {
@@ -124,9 +134,10 @@ if ($object->id > 0) {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}
@@ -134,7 +145,7 @@ if ($object->id > 0) {
 	}
 	$morehtmlref .= '</div>';
 
-	$object->totalpaye = $alreadypaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+	$object->totalpaid = $alreadypaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -169,11 +180,13 @@ if ($object->id > 0) {
 		}
 		print ' ('.$langs->transnoentities("InvoiceHasAvoir") . implode(',', $invoicecredits) . ')';
 	}
+	/*
 	if ($facidnext > 0) {
 		$facthatreplace = new FactureFournisseur($db);
 		$facthatreplace->fetch($facidnext);
 		print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
 	}
+	*/
 	print '</td></tr>';
 
 	// Label
@@ -187,13 +200,13 @@ if ($object->id > 0) {
 
 	// Amount Local Taxes
 	//TODO: Place into a function to control showing by country or study better option
-	if ($societe->localtax1_assuj == "1") { //Localtax1
-		print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
+	if ($mysoc->localtax1_assuj == "1") { //Localtax1
+		print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
 		print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 	}
-	if ($societe->localtax2_assuj == "1") { //Localtax2
-		print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
+	if ($mysoc->localtax2_assuj == "1") { //Localtax2
+		print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
 		print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 	}

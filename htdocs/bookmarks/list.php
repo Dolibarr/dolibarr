@@ -16,28 +16,26 @@
  */
 
 /**
- *       \file       htdocs/bookmarks/list.php
- *       \brief      Page to display list of bookmarks
- *       \ingroup    bookmark
+ *    \file       htdocs/bookmarks/list.php
+ *    \ingroup    bookmark
+ *    \brief      Page to display list of bookmarks
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bookmarks', 'admin'));
 
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
-
-// Security check
-if (!$user->rights->bookmark->lire) {
-	restrictedArea($user, 'bookmarks');
-}
+$id = GETPOST("id", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
@@ -52,19 +50,22 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = 'position';
+	$sortfield = 'b.position';
 }
 if (!$sortorder) {
 	$sortorder = 'ASC';
 }
 
-$id = GETPOST("id", 'int');
-
+// Initialize Objects
 $object = new Bookmark($db);
 
-$permissiontoread = $user->rights->bookmark->lire;
-$permissiontoadd = $user->rights->bookmark->write;
-$permissiontodelete = $user->rights->bookmark->delete;
+// Security check
+restrictedArea($user, 'bookmark');
+
+// Permissions
+$permissiontoread = !empty($user->rights->bookmark->lire);
+$permissiontoadd = !empty($user->rights->bookmark->creer);
+$permissiontodelete = !empty($user->rights->bookmark->supprimer);
 
 
 /*
@@ -82,11 +83,12 @@ if ($action == 'delete') {
 }
 
 
+
 /*
  * View
  */
 
-$userstatic = new User($db);
+$form = new Form($db);
 
 $title = $langs->trans("ListOfBookmarks");
 
@@ -175,7 +177,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
-print "<tr class=\"liste_titre\">";
+print '<tr class="liste_titre">';
 //print "<td>&nbsp;</td>";
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "b.rowid", "", $param, 'align="left"', $sortfield, $sortorder);
 print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "b.title", "", $param, 'align="left"', $sortfield, $sortorder);
@@ -199,7 +201,7 @@ while ($i < min($num, $limit)) {
 	print '<tr class="oddeven">';
 
 	// Id
-	print '<td class="left">';
+	print '<td class="nowraponall">';
 	print $object->getNomUrl(1);
 	print '</td>';
 
@@ -268,14 +270,12 @@ while ($i < min($num, $limit)) {
 	print '<td class="right">'.$obj->position."</td>";
 
 	// Actions
-	print '<td class="nowrap right">';
+	print '<td class="nowraponall right">';
 	if ($canedit) {
-		print '<a class="editfielda" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
+		print '<a class="editfielda marginleftonly" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
 	}
 	if ($candelete) {
 		print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$obj->rowid.'">'.img_delete().'</a>';
-	} else {
-		print "&nbsp;";
 	}
 	print "</td>";
 	print "</tr>\n";

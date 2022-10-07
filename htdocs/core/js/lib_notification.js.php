@@ -64,25 +64,30 @@ print "jQuery(document).ready(function () {\n";
 //print "	console.log('referrer=".dol_escape_js($_SERVER['HTTP_REFERER'])."');\n";
 
 print '	var nowtime = Date.now();';
-print '	var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY.';'."\n"; // Always defined
+print '	var time_auto_update = '.max(1, getDolGlobalInt('MAIN_BROWSER_NOTIFICATION_FREQUENCY')).';'."\n"; // Always defined
 print '	var time_js_next_test;'."\n";
 ?>
 
-/* Check if permission ok */
-if (Notification.permission !== "granted") {
-	console.log("Ask Notification.permission");
-	Notification.requestPermission()
+/* Check if Notification is supported */
+if ("Notification" in window) {
+	/* Check if permission ok */
+	if (Notification.permission !== "granted") {
+		console.log("Ask Notification.permission");
+		Notification.requestPermission()
+	}
+
+	/* Launch timer */
+
+	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
+	//var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
+	var time_first_execution = <?php echo max(3, empty($conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION) ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
+
+	setTimeout(first_execution, time_first_execution * 1000);
+	time_js_next_test = nowtime + time_first_execution;
+	console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" time_js_next_check = "+time_js_next_test);
+} else {
+	console.log("This browser in this context does not support Notification.");
 }
-
-/* Launch timer */
-
-// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
-//var time_first_execution = (time_auto_update + (time_js_next_test - nowtime)) * 1000;	//need milliseconds
-var time_first_execution = <?php echo max(3, empty($conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION) ? 0 : $conf->global->MAIN_BROWSER_NOTIFICATION_CHECK_FIRST_EXECUTION); ?>;
-
-setTimeout(first_execution, time_first_execution * 1000);
-time_js_next_test = nowtime + time_first_execution;
-console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" time_js_next_check = "+time_js_next_test);
 
 
 function first_execution() {
@@ -94,13 +99,21 @@ function first_execution() {
 function check_events() {
 	if (Notification.permission === "granted")
 	{
+		var newToken = 'notrequired';
+		const allMeta = document.getElementsByTagName("meta");
+		for (let i = 0; i < allMeta.length; i++) {
+			if (allMeta[i].getAttribute("name") == 'anti-csrf-token') {
+				newToken = allMeta[i].getAttribute('content');
+				console.log("newToken in page = "+newToken);
+			}
+		}
 		time_js_next_test += time_auto_update;
-		console.log("Call ajax to check_events with time_js_next_test = "+time_js_next_test);
+		console.log("Call ajax to check events with time_js_next_test = "+time_js_next_test);
 
 		$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php'; ?>", {
 			type: "post",   // Usually post or get
 			async: true,
-			data: { time_js_next_test: time_js_next_test, forcechecknow: 1, token: 'notrequired' },
+			data: { time_js_next_test: time_js_next_test, forcechecknow: 1, token: newToken },
 			dataType: "json",
 			success: function (result) {
 				//console.log(result);
@@ -168,7 +181,7 @@ function check_events() {
 					$.ajax("<?php print DOL_URL_ROOT.'/core/ajax/check_notifications.php?action=stopreminder&listofreminderids='; ?>"+listofreminderids, {
 						type: "POST",   // Usually post or get
 						async: true,
-						data: { time_js_next_test: time_js_next_test, token: 'notrequired' }
+						data: { time_js_next_test: time_js_next_test, token: newToken }
 					});
 				} else {
 					console.log("No reminder to do found, next search at "+time_js_next_test);

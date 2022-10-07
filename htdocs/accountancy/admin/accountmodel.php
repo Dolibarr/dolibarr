@@ -32,6 +32,7 @@
  *		\brief      Page to administer model of chart of accounts
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -39,12 +40,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("errors", "admin", "companies", "resource", "holiday", "compta", "accountancy", "hrm"));
+$langs->loadLangs(array('accountancy', 'admin', 'companies', 'compta', 'errors', 'holiday', 'hrm', 'resource'));
 
 $action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
@@ -78,7 +79,7 @@ $search_country_id = GETPOST('search_country_id', 'int');
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->accounting->chartofaccount) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -126,7 +127,7 @@ $tabrowid[31] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[31] = !empty($conf->accounting->enabled);
+$tabcond[31] = isModEnabled('accounting');
 
 // List of help for fields
 $tabhelp = array();
@@ -185,11 +186,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			$ok = 0;
 			setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
 		}
-		/*if (!is_numeric($_POST['code']))	// disabled, code may not be in numeric base
-		{
-			$ok = 0;
-			$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
-		}*/
 	}
 	if (GETPOSTISSET("country") && (GETPOST("country") == '0') && ($id != 2)) {
 		$ok = 0;
@@ -228,17 +224,17 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$i = 0;
 		foreach ($listfieldinsert as $f => $value) {
 			if ($value == 'price' || preg_match('/^amount/i', $value) || $value == 'taux') {
-				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]], 'MU');
+				$_POST[$listfieldvalue[$i]] = price2num(GETPOST($listfieldvalue[$i]), 'MU');
 			} elseif ($value == 'entity') {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($i) {
 				$sql .= ",";
 			}
-			if ($_POST[$listfieldvalue[$i]] == '') {
+			if (GETPOST($listfieldvalue[$i]) == '') {
 				$sql .= "null";
 			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
 			$i++;
 		}
@@ -276,7 +272,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		$i = 0;
 		foreach ($listfieldmodify as $field) {
 			if ($field == 'price' || preg_match('/^amount/i', $field) || $field == 'taux') {
-				$_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]], 'MU');
+				$_POST[$listfieldvalue[$i]] = price2num(GETPOST($listfieldvalue[$i]), 'MU');
 			} elseif ($field == 'entity') {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
@@ -284,10 +280,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 				$sql .= ",";
 			}
 			$sql .= $field."=";
-			if ($_POST[$listfieldvalue[$i]] == '') {
+			if (GETPOST($listfieldvalue[$i]) == '') {
 				$sql .= "null";
 			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
 			$i++;
 		}
@@ -495,7 +491,7 @@ if ($id) {
 			if ($valuetoshow != '') {
 				print '<td class="'.$class.'">';
 				if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-					print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+					print '<a href="'.$tabhelp[$id][$value].'">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 				} elseif (!empty($tabhelp[$id][$value])) {
 					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
 				} else {
@@ -535,7 +531,7 @@ if ($id) {
 		}
 
 		print '<td colspan="3" class="right">';
-		print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+		print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
 		print '</td>';
 		print "</tr>";
 
@@ -553,16 +549,16 @@ if ($id) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		$param = '&id='.$id;
+		$param = '&id='.urlencode($id);
 		if ($search_country_id > 0) {
-			$param .= '&search_country_id='.$search_country_id;
+			$param .= '&search_country_id='.urlencode($search_country_id);
 		}
 		$paramwithsearch = $param;
 		if ($sortorder) {
-			$paramwithsearch .= '&sortorder='.$sortorder;
+			$paramwithsearch .= '&sortorder='.urlencode($sortorder);
 		}
 		if ($sortfield) {
-			$paramwithsearch .= '&sortfield='.$sortfield;
+			$paramwithsearch .= '&sortfield='.urlencode($sortfield);
 		}
 
 		// There is several pages
@@ -631,7 +627,7 @@ if ($id) {
 						fieldListAccountModel($fieldlist, $obj, $tabname[$id], 'edit');
 					}
 
-					print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+					print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
 					print '&nbsp;<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
 				} else {
 					$tmpaction = 'view';

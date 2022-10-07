@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,6 +22,7 @@
  *  \brief      Page to list intracomm report
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -30,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('intracommreport'));
 
+// Get Parameters
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
@@ -45,8 +47,8 @@ $type = GETPOST("type", "int");
 $diroutputmassaction = $conf->product->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -82,7 +84,7 @@ $form = new Form($db);
 
 /*
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('intracommreport');
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 */
 
@@ -121,19 +123,21 @@ $isInEEC = isInEEC($mysoc);
 $arrayfields = array(
 	'i.ref' => array('label'=>$langs->trans("Ref"), 'checked'=>1),
 	'i.label' => array('label'=>$langs->trans("Label"), 'checked'=>1),
-	'i.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(!empty($conf->produit->enabled) && !empty($conf->service->enabled))),
+	'i.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(isModEnabled("product") && isModEnabled("service"))),
 );
+
 /*
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
 {
 	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
 			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs((int) $extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
 */
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -206,10 +210,11 @@ $title = $langs->trans('IntracommReportList'.$type);
 $sql = 'SELECT DISTINCT i.rowid, i.type_declaration, i.type_export, i.periods, i.mode, i.entity';
 /*
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 }
 */
+
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -217,7 +222,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'intracommreport as i';
 
-// if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."intracommreport_extrafields as ef on (i.rowid = ef.fk_object)";
+// if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."intracommreport_extrafields as ef on (i.rowid = ef.fk_object)";
 
 $sql .= ' WHERE i.entity IN ('.getEntity('intracommreport').')';
 
@@ -251,11 +256,11 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= " GROUP BY i.rowid";
+$sql .= " GROUP BY i.rowid, i.type_declaration, i.type_export, i.periods, i.mode, i.entity";
 
 /*
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
 }
 */
@@ -348,7 +353,7 @@ if ($resql) {
 		print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 	}
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_products.png', 0, $newcardbutton, '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'intracommreport', 0, $newcardbutton, '', $limit);
 
 	$topicmail = "Information";
 	$modelmail = "product";

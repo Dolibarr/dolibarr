@@ -21,11 +21,12 @@
  *    	\brief		Page with events on ticket
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
-require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -64,6 +65,7 @@ if (GETPOST('actioncode', 'array')) {
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
+
 $search_agenda_label = GETPOST('search_agenda_label');
 
 $object = new Ticket($db);
@@ -80,16 +82,15 @@ if (!$action) {
 
 // Security check
 $id = GETPOST("id", 'int');
-$socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
-$result = restrictedArea($user, 'ticket', $id, '');
+$result = restrictedArea($user, 'ticket', $object->id, '');
 
 // restrict access for externals users
 if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();
 }
 // or for unauthorized internals users
-if (!$user->socid && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
 	accessforbidden();
 }
 
@@ -145,7 +146,7 @@ if ($socid > 0) {
 	print dol_get_fiche_end();
 }
 
-if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
+if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
 	$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
 } elseif ($user->socid > 0) {
 	$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
@@ -163,18 +164,22 @@ if ($object->fk_user_create > 0) {
 	$langs->load("users");
 	$fuser = new User($db);
 	$fuser->fetch($object->fk_user_create);
-	$morehtmlref .= $fuser->getNomUrl(0);
-}
-if (!empty($object->origin_email)) {
+	$morehtmlref .= $fuser->getNomUrl(-1);
+} elseif (!empty($object->email_msgid)) {
 	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
-	$morehtmlref .= $object->origin_email.' <small>('.$langs->trans("TicketEmailOriginIssuer").')</small>';
+	$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+	$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
+} elseif (!empty($object->origin_email)) {
+	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+	$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+	$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
 }
 
 // Thirdparty
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled("societe")) {
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
 	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
-		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
+		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&token='.newToken().'&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
 	}*/
 	$morehtmlref .= ' : ';
 	if ($action == 'editcustomer') {
@@ -185,12 +190,12 @@ if (!empty($conf->societe->enabled)) {
 }
 
 // Project
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project');
 	if ($user->rights->ticket->write) {
 		if ($action != 'classify') {
-			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
 			$morehtmlref .= ' : ';
 		}
 		if ($action == 'classify') {
@@ -217,7 +222,7 @@ if (!empty($conf->projet->enabled)) {
 
 $morehtmlref .= '</div>';
 
-$linkback = '<a href="'.dol_buildpath('/ticket/list.php', 1).'"><strong>'.$langs->trans("BackToList").'</strong></a> ';
+$linkback = '<a href="'.DOL_URL_ROOT.'/ticket/list.php"><strong>'.$langs->trans("BackToList").'</strong></a> ';
 
 dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
@@ -240,16 +245,21 @@ if (!empty($object->id)) {
 	$messagingUrl = DOL_URL_ROOT.'/ticket/messaging.php?track_id='.$object->track_id;
 	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
 	$messagingUrl = DOL_URL_ROOT.'/ticket/agenda.php?track_id='.$object->track_id;
-	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-list-alt imgforviewmode', $messagingUrl, '', 1, array('morecss'=>'btnTitleSelected'));
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1, array('morecss'=>'btnTitleSelected'));
+
+	// Show link to send an email (if read and not closed)
+	$btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+	$url = 'card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init&private_message=0&send_email=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id).'#formmailbeforetitle';
+	$morehtmlright .= dolGetButtonTitle($langs->trans('SendMail'), '', 'fa fa-paper-plane', $url, 'email-title-button', $btnstatus);
 
 	// Show link to add a message (if read and not closed)
-	$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
-	$url = 'card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init';
+	$btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+	$url = 'card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id).'#formmailbeforetitle';
 	$morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fa fa-comment-dots', $url, 'add-new-ticket-title-button', $btnstatus);
 
 	// Show link to add event (if read and not closed)
-	$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
-	$url = dol_buildpath('/comm/action/card.php', 1).'?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"]);
+	$btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+	$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, 'add-new-ticket-even-button', $btnstatus);
 
 	print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);

@@ -24,6 +24,7 @@
  *  \brief      Page to list bank transfer requests (debit order or payments of vendors)
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/modPrelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -37,10 +38,6 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 // Security check
 $socid = GETPOST('socid', 'int');
 $status = GETPOST('status', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
@@ -53,8 +50,8 @@ $search_societe = GETPOST('search_societe', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
@@ -72,6 +69,15 @@ if (!$sortfield) {
 $massactionbutton = '';
 
 $hookmanager->initHooks(array('withdrawalstodolist'));
+
+if ($user->socid) {
+	$socid = $user->socid;
+}
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
+}
 
 
 /*
@@ -132,12 +138,12 @@ if ($type != 'bank-transfer') {
 }
 $sql .= " ".MAIN_DB_PREFIX."societe as s,";
 $sql .= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {

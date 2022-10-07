@@ -90,10 +90,10 @@ TicketPublicAccess=واجهة عامة لا تتطلب توثيق متاحة ع�
 TicketSetupDictionaries=انواع التذاكر ، الأولويات و الوسوم التحليلية متاحة عن طريق القواميس
 TicketParamModule=إعداد متغيرات الوحدة
 TicketParamMail=إعدادات البريد الإلكتروني
-TicketEmailNotificationFrom=إشعار البريد الإلكتروني من
-TicketEmailNotificationFromHelp=يستخدم في رسائل التذاكر ، الإجابات مثلاَ
-TicketEmailNotificationTo=إشعار البريد الإلكتروني الى
-TicketEmailNotificationToHelp=إرسال اشعار البريد الإلكتروني الى هذا العنوان
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=النص المرسل بعد إنشاء التذكرة
 TicketNewEmailBodyHelp=النص المدخل هنا سيتم إدراجه في إشعار البريد الإلكتروني الذى يؤكد إنشاء التذكرة من الواجهة العامة. معلومات تداول التذكرة ستضاف تلقائيا.
 TicketParamPublicInterface=إعدادات الواجهة العامة
@@ -136,6 +136,18 @@ TicketsPublicNotificationNewMessage=إرسال إشعار بريد إلكترو�
 TicketsPublicNotificationNewMessageHelp=إرسال إشعار بريد إلكتروني عند إضافة رسالة جديدة من الواجهة العامة (للمستخدم المسندة إليه التذكرة او بريد إشعارات التعديلات او بريد المرسل إليه في التذكرة)
 TicketPublicNotificationNewMessageDefaultEmail=عنوان بريد إشعارات (التعديلات)
 TicketPublicNotificationNewMessageDefaultEmailHelp=إرسال رسائل بريد إلكتروني الى هذا العنوان عند كل رسالة تعديل للتذاكر غير المسندة لمستخدم معين او إذا كان المستخدم المسندة إليه ليس لديه بريد معلوم.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -151,6 +163,8 @@ OrderByDateAsc=ترتيب تصاعديا حسب التاريخ
 OrderByDateDesc=ترتيب تنازليا حسب التاريخ
 ShowAsConversation=عرض كقائمة محادثات
 MessageListViewType=عرض كقائمة جداول
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -205,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=المستقبل خالي. لم ي
 TicketGoIntoContactTab=يرجى الذهاب الى تبويب "جهات الإتصال" لاختيارهم
 TicketMessageMailIntro=مقدمة
 TicketMessageMailIntroHelp=يضاف هذا النص فقط في بداية البريد الإلكتروني و لن يتم حفظه
-TicketMessageMailIntroLabelAdmin=مقدمة الرسالة عند إرسال البريد الإلكتروني
-TicketMessageMailIntroText=مرحبا <br> ، تم إضافة إستجابة جديدة على تذكرة انت على إتصال بها ، وهذا نص الرسالة : <br>
-TicketMessageMailIntroHelpAdmin=هذا النص سيتم إدراجه قبل نص الإستجابة للتذكرة.
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=التوقيع
 TicketMessageMailSignatureHelp=هذا النص سيتم إدراجه فقط في نهاية البريد الإلكتروني ولن يتم حفظه
-TicketMessageMailSignatureText=<p>بإخلاص </p><p>--</p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=توقيع بريد الإستجابة
 TicketMessageMailSignatureHelpAdmin=هذا النص سيتم إدراجه بعد رسالة الإستجابة
 TicketMessageHelp=فقط هذا النص سيتم حفظه في قائمة الرسائل في بطاقة التذكرة
@@ -238,9 +252,16 @@ TicketChangeStatus=تغيير الحالة
 TicketConfirmChangeStatus=تأكيد تغيير الحالة: %s ؟
 TicketLogStatusChanged=تم تغيير الحالى : %s الى %s
 TicketNotNotifyTiersAtCreate=لا تخطر الشركات عند الإنشاء
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=غير مقروءة
 TicketNotCreatedFromPublicInterface=غير متاحة. التذكرة لم يتم إنشاءها من الواجهة العامة
 ErrorTicketRefRequired=الرقم المرجعي للتذكرة مطلوب
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -268,8 +289,9 @@ TicketNewEmailBody=هذا بريد إلكتروني تلقائي لتأكيد ق
 TicketNewEmailBodyCustomer=هذا بريد إلكتروني تلقائي لتأكيد إنشاء تذكرة جديدة على حسابك
 TicketNewEmailBodyInfosTicket=معلومات مراقبة التذكرة
 TicketNewEmailBodyInfosTrackId=رقم تتبع التذكرة: %s
-TicketNewEmailBodyInfosTrackUrl=يمكنك متابعة التذكرة بالضغط على الرابط اعلاه.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=يمكنك متابعة التذكرة على الواجهة المعينة بالضغط على الرابط التالي
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=يرجى عدم الرد على هذا البريد الإلكتروني ! إستخدم الرابط للرد على الواجهة.
 TicketPublicInfoCreateTicket=تتيح لك هذه الإستمارة تسجيل تذكرة دعم فني لدى نظامنا الإداري.
 TicketPublicPleaseBeAccuratelyDescribe=يرجى وصف المشكلة بدقة. وذكر اكبر قدر من المعلومات بما يتيح لنا معرفة طلبك بشكل جيد.
@@ -291,6 +313,10 @@ NewUser=المستخدم جديد
 NumberOfTicketsByMonth=عدد التذاكر شهريا
 NbOfTickets=عدد التذاكر
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=تم تعديل التذكرة %s.
 TicketNotificationEmailBody=هذه رسالة تلقائية لإعلامك بأن التذكرة %s تم تعديلها
 TicketNotificationRecipient=مستلم الإشعار

@@ -22,6 +22,7 @@
  *		\brief      Page with events on project
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -61,6 +62,8 @@ if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
+
+$hookmanager->initHooks(array('projectcardinfo'));
 
 // Security check
 $id = GETPOST("id", 'int');
@@ -107,8 +110,8 @@ if ($id > 0 || !empty($ref)) {
 	}
 	$object->info($object->id);
 }
-
-$title = $langs->trans("Project").' - '.$object->ref.' '.$object->name;
+$agenda = (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) ? '/'.$langs->trans("Agenda") : '';
+$title = $langs->trans('Events').$agenda.' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }
@@ -128,13 +131,13 @@ $morehtmlref = '<div class="refidno">';
 // Title
 $morehtmlref .= $object->title;
 // Thirdparty
-if ($object->thirdparty->id > 0) {
+if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
 }
 $morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
-if (!$user->rights->projet->all->lire) {
+if (empty($user->rights->projet->all->lire)) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 	$object->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 }
@@ -165,7 +168,7 @@ if ($permok) {
 
 //print '<div class="tabsAction">';
 $morehtmlcenter = '';
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	$addActionBtnRight = !empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create);
 	$morehtmlcenter .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&socid='.$object->socid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
 }

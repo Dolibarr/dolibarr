@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 class box_graph_nb_tickets_type extends ModeleBoxes
 {
 
-	public $boxcode = "box_nb_tickets_type";
+	public $boxcode = "box_graph_nb_tickets_type";
 	public $boximg = "ticket";
 	public $boxlabel;
 	public $depends = array("ticket");
@@ -171,7 +171,7 @@ class box_graph_nb_tickets_type extends ModeleBoxes
 				}
 				$stringtoprint .= '</div>';
 				$this->info_box_contents[][]=array(
-					'td' => 'center',
+					'td' => 'class="center"',
 					'text' => $stringtoprint
 				);
 			} else {

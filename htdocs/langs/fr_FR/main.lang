@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -67,6 +73,7 @@ ErrorNoVATRateDefinedForSellerCountry=Erreur, aucun taux tva défini pour le pay
 ErrorNoSocialContributionForSellerCountry=Erreur, pas de types de charges sociales/fiscales définies pour le pays '%s'.
 ErrorFailedToSaveFile=Erreur, l'enregistrement du fichier a échoué.
 ErrorCannotAddThisParentWarehouse=Vous essayez d'ajouter un entrepôt parent qui est déjà un enfant de l'entrepôt courant
+FieldCannotBeNegative=Le champ "%s" ne peut pas être négatif
 MaxNbOfRecordPerPage=Nombre max d'enregistrement par page
 NotAuthorized=Vous n'êtes pas autorisé pour cette action.
 SetDate=Définir date
@@ -87,7 +94,7 @@ FileWasNotUploaded=Un fichier a été sélectionné pour attachement mais n'a pa
 NbOfEntries=Nb d'entrées
 GoToWikiHelpPage=Consulter l'aide (nécessite un accès internet)
 GoToHelpPage=Consulter l'aide
-DedicatedPageAvailable=Une page d'aide dédiée à cette page existe
+DedicatedPageAvailable=Page d'aide dédiée liée à votre écran actuel
 HomePage=Page d'accueil
 RecordSaved=Enregistrement sauvegardé
 RecordDeleted=Enregistrement supprimé
@@ -114,7 +121,7 @@ ReturnCodeLastAccessInError=Code retour dernier accès en base en erreur
 InformationLastAccessInError=Information sur le dernier accès en base en erreur
 DolibarrHasDetectedError=Dolibarr a détecté une erreur technique
 YouCanSetOptionDolibarrMainProdToZero=Vous pouvez lire le fichier log ou définir l'option $dolibarr_main_prod sur '0' dans votre fichier de configuration pour obtenir plus d'informations.
-InformationToHelpDiagnose=Voici les informations qui pourront aider au diagnostic (Vous pouvez fixer l'option $dolibarr_main_prod sur '1' pour supprimer quelques notifications)
+InformationToHelpDiagnose=Ces informations peuvent être utiles à des fins de diagnostic (vous pouvez définir l'option $dolibarr_main_prod sur '1' pour masquer les informations sensibles)
 MoreInformation=Plus d'information
 TechnicalInformation=Informations techniques
 TechnicalID=ID technique
@@ -211,6 +218,8 @@ User=Utilisateur
 Users=Utilisateurs
 Group=Groupe
 Groups=Groupes
+UserGroup=Groupe d'utilisateurs
+UserGroups=Groupes d'utilisateurs
 NoUserGroupDefined=Pas de groupe utilisateur défini
 Password=Mot de passe
 PasswordRetype=Retaper le mot de passe
@@ -241,6 +250,7 @@ Designation=Désignation
 DescriptionOfLine=Description de ligne
 DateOfLine=Date de la ligne
 DurationOfLine=Durée de la ligne
+ParentLine=ID de la ligne parent
 Model=Modèle de document
 DefaultModel=Modèle de document par défaut
 Action=Action
@@ -514,6 +524,7 @@ or=ou
 Other=Autre
 Others=Autres
 OtherInformations=Autre information
+Workflow=Workflow
 Quantity=Quantité
 Qty=Qté
 ChangedBy=Modifié par
@@ -554,7 +565,7 @@ None=Aucun
 NoneF=Aucune
 NoneOrSeveral=Aucun ou plusieurs
 Late=Retard
-LateDesc=Le délai qui définit si un enregistrement est en retard ou non dépend de votre configuration. Demandez à votre administrateur pour changer ce délai depuis Accueil - Configuration - Alertes 
+LateDesc=Le délai qui définit si un enregistrement est en retard ou non dépend de votre configuration. Demandez à votre administrateur pour changer ce délai depuis Accueil - Configuration - Alertes
 NoItemLate=Aucun élément en retard
 Photo=Photo
 Photos=Photos
@@ -616,6 +627,7 @@ MonthVeryShort11=N
 MonthVeryShort12=D
 AttachedFiles=Fichiers et documents joints
 JoinMainDoc=Joindre le document principal
+JoinMainDocOrLastGenerated=Envoyer le document principal ou le dernier généré s'il n'est pas trouvé
 DateFormatYYYYMM=YYYY-MM
 DateFormatYYYYMMDD=YYYY-MM-DD
 DateFormatYYYYMMDDHHMM=YYYY-MM-DD HH:SS
@@ -706,6 +718,7 @@ FeatureDisabled=Fonction désactivée
 MoveBox=Déplacer le widget
 Offered=Offert
 NotEnoughPermissions=Vous n'avez pas les permissions pour cette action
+UserNotInHierachy=Cette action est réservée aux superviseurs de cet utilisateur
 SessionName=Nom session
 Method=Méthode
 Receive=Réceptionner
@@ -795,6 +808,7 @@ URLPhoto=URL de la photo/logo
 SetLinkToAnotherThirdParty=Lier vers un autre tiers
 LinkTo=Lier à
 LinkToProposal=Lier à une proposition commerciale
+LinkToExpedition=Lier à une expédition
 LinkToOrder=Lier à une commande
 LinkToInvoice=Lier à une facture
 LinkToTemplateInvoice=Lien vers le modèle de facture
@@ -906,13 +920,14 @@ ViewFlatList=Voir vue liste
 ViewAccountList=Voir le grand livre
 ViewSubAccountList=Voir le grand livre auxiliaire
 RemoveString=Supprimer la chaine '%s'
-SomeTranslationAreUncomplete=Certaines des langues proposées peuvent n'être traduites que partiellement ou contenir des erreurs. Aidez-nous à corriger votre langue en vous inscrivant à l'adresse <a href="https://transifex.com/projects/p/dolibarr/" target="_blank"> https://transifex.com/projects/p/dolibarr/</a> pour ajouter vos améliorations.
+SomeTranslationAreUncomplete=Certaines des langues proposées peuvent n'être que partiellement traduites ou contenir des erreurs. Merci de nous aider à corriger votre langue en vous inscrivant sur <a href="https://transifex.com/projects/p/dolibarr/" target="_blank" rel="noopener noreferrer external">https://transifex.com/projects/p/dolibarr/</a> pour ajouter vos améliorations.
 DirectDownloadLink=Lien de téléchargement public
 PublicDownloadLinkDesc=Seul le lien est nécessaire pour télécharger le fichier
 DirectDownloadInternalLink=Lien de téléchargement privé
 PrivateDownloadLinkDesc=Vous devez être connecté et vous avez besoin d’autorisations pour afficher ou télécharger le fichier
 Download=Téléchargement
 DownloadDocument=Télécharger le document
+DownloadSignedDocument=Télécharger le document signé
 ActualizeCurrency=Mettre à jour le taux de devise
 Fiscalyear=Exercice fiscal
 ModuleBuilder=Générateur de Module et Application
@@ -1025,7 +1040,7 @@ SearchIntoUsers=Utilisateurs
 SearchIntoProductsOrServices=Produits ou services
 SearchIntoBatch=Lots / Séries
 SearchIntoProjects=Projets
-SearchIntoMO=Ordres de fabrication
+SearchIntoMO=Ordres Fabrication
 SearchIntoTasks=Tâches
 SearchIntoCustomerInvoices=Factures clients
 SearchIntoSupplierInvoices=Factures fournisseur
@@ -1158,4 +1173,19 @@ Properties=Attributs
 hasBeenValidated=%s a été validé
 ClientTZ=Fuseau horaire client (utilisateur)
 NotClosedYet=Pas encore fermé
-ClearSignature=Signature supprimée
+ClearSignature=Réinitialiser la signature
+CanceledHidden=Annulé masqué
+CanceledShown=Annulé affiché
+Terminate=Résilier
+Terminated=Résilié
+AddLineOnPosition=Ajouter une ligne à la position (si vide: à la fin)
+ConfirmAllocateCommercial=Confirmation d'assignation d'un commercial
+ConfirmAllocateCommercialQuestion=Etes-vous sûr de vouloir assigner l'enregistrement %s sélectionné ?
+CommercialsAffected=Commercial affecté au tiers
+CommercialAffected=Commercial affecté au tiers
+YourMessage=Votre message
+YourMessageHasBeenReceived=Votre message a été reçu. Nous vous répondrons ou vous contacterons dans les plus brefs délais.
+UrlToCheck=URL à vérifier
+Automation=Automatisation
+CreatedByEmailCollector=Créé par Collecteur d'e-mails
+CreatedByPublicPortal=Créé à partir du portail public

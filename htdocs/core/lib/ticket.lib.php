@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2019-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /**
- *    \file       core/lib/ticket.lib.php
- *    \ingroup    ticket
- *    \brief        This file is a library for Ticket module
+ * \file       core/lib/ticket.lib.php
+ * \ingroup    ticket
+ * \brief      This file is a library for Ticket module
  */
 
 /**
@@ -30,7 +30,10 @@
  */
 function ticketAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('ticket');
 
 	$langs->load("ticket");
 
@@ -44,6 +47,10 @@ function ticketAdminPrepareHead()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/ticket_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsTicket");
+	$nbExtrafields = $extrafields->attributes['ticket']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
@@ -79,12 +86,12 @@ function ticket_prepare_head($object)
 
 	$h = 0;
 	$head = array();
-	$head[$h][0] = DOL_URL_ROOT.'/ticket/card.php?action=view&track_id='.$object->track_id;
+	$head[$h][0] = DOL_URL_ROOT.'/ticket/card.php?track_id='.$object->track_id;
 	$head[$h][1] = $langs->trans("Ticket");
 	$head[$h][2] = 'tabTicket';
 	$h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && empty($user->socid) && $conf->societe->enabled) {
+	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && empty($user->socid) && isModEnabled("societe")) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = DOL_URL_ROOT.'/ticket/contact.php?track_id='.$object->track_id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
@@ -95,13 +102,13 @@ function ticket_prepare_head($object)
 		$h++;
 	}
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'add', 'core');
 
 	// Attached files
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->ticket->dir_output."/".$object->ref;
 	$nbFiles = count(dol_dir_list($upload_dir, 'files'));
-	$head[$h][0] = dol_buildpath('/ticket/document.php', 1).'?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/ticket/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	if ($nbFiles > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbFiles.'</span>';
@@ -126,12 +133,15 @@ function ticket_prepare_head($object)
 		$head[$h][0] = DOL_URL_ROOT.'/ticket/agenda.php?track_id='.$object->track_id;
 	}
 	$head[$h][1] = $langs->trans('Events');
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
 	$head[$h][2] = 'tabTicketLogs';
 	$h++;
+
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ticket', 'remove');
 
@@ -164,7 +174,7 @@ function showDirectPublicLink($object)
 		if ($url) {
 			$out .= '<div class="urllink">';
 			$out .= '<input type="text" id="directpubliclink" class="quatrevingtpercentminusx" value="'.$url.'">';
-			$out .= '<a href="'.$url.'" target="_blank" rel="noopener">'.img_picto('', 'object_globe.png', 'class="paddingleft"').'</a>';
+			$out .= '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'object_globe.png', 'class="paddingleft"').'</a>';
 			$out .= '</div>';
 			$out .= ajax_autoselect("directpubliclink", 0);
 		} else {
@@ -178,16 +188,16 @@ function showDirectPublicLink($object)
 /**
  *  Generate a random id
  *
- *  @param  int $car Length of string to generate key
+ *  @param  int 	$car 	Length of string to generate key
  *  @return string
  */
 function generate_random_id($car = 16)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	srand((double) microtime() * 1000000);
+	mt_srand((double) microtime() * 1000000);
 	for ($i = 0; $i < $car; $i++) {
-		$string .= $chaine[rand() % strlen($chaine)];
+		$string .= $chaine[mt_rand() % strlen($chaine)];
 	}
 	return $string;
 }
@@ -206,7 +216,7 @@ function generate_random_id($car = 16)
 function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
 {
 	global $user, $conf, $langs, $mysoc;
-
+	$urllogo = "";
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, 1); // Show html headers
 
 	print '<body id="mainbody" class="publicnewticketform">';
@@ -233,7 +243,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '<div class="backgreypublicpayment">';
 		print '<div class="logopublicpayment">';
 		if ($urllogo) {
-			print '<a href="'.($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)).'">';
+			print '<a href="'.($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php?entity='.$conf->entity, 1)).'">';
 			print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
 			print '>';
 			print '</a>';
@@ -250,7 +260,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	if (!empty($conf->global->TICKET_IMAGE_PUBLIC_INTERFACE)) {
 		print '<div class="backimagepublicticket">';
-		print '<img id="idRECRUITMENT_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->MEMBER_IMAGE_PUBLIC_REGISTRATION.'">';
+		print '<img id="idTICKET_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->TICKET_IMAGE_PUBLIC_INTERFACE.'">';
 		print '</div>';
 	}
 
@@ -304,7 +314,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	}
 	$sortfield_new = implode(',', $sortfield_new_list);
 
-	if (!empty($conf->agenda->enabled)) {
+	if (isModEnabled('agenda')) {
 		// Search histo on actioncomm
 		if (is_object($objcon) && $objcon->id > 0) {
 			$sql = "SELECT DISTINCT a.id, a.label as label,";
@@ -440,7 +450,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	}
 
 	// Add also event from emailings. TODO This should be replaced by an automatic event ? May be it's too much for very large emailing.
-	if (!empty($conf->mailing->enabled) && !empty($objcon->email)
+	if (isModEnabled('mailing') && !empty($objcon->email)
 		&& (empty($actioncode) || $actioncode == 'AC_OTH_AUTO' || $actioncode == 'AC_EMAILING')) {
 		$langs->load("mails");
 
@@ -476,7 +486,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	if ($sql) {	// May not be defined if module Agenda is not enabled and mailing module disabled too
 		$sql .= $db->order($sortfield_new, $sortorder);
 
-		dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
+		dol_syslog("ticket.lib::show_ticket_messaging", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$i = 0;
@@ -491,7 +501,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 					$result = $contactaction->fetchResources();
 					if ($result < 0) {
 						dol_print_error($db);
-						setEventMessage("company.lib::show_actions_done Error fetch ressource", 'errors');
+						setEventMessage("ticket.lib::show_ticket_messaging Error fetch ressource", 'errors');
 					}
 
 					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
@@ -560,12 +570,12 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 	// Set $out to sow events
 	$out = '';
 
-	if (empty($conf->agenda->enabled)) {
+	if (!isModEnabled('agenda')) {
 		$langs->loadLangs(array("admin", "errors"));
 		$out = info_admin($langs->trans("WarningModuleXDisabledSoYouMayMissEventHere", $langs->transnoentitiesnoconv("Module2400Name")), 0, 0, 'warning');
 	}
 
-	if (!empty($conf->agenda->enabled) || (!empty($conf->mailing->enabled) && !empty($objcon->email))) {
+	if (isModEnabled('agenda') || (isModEnabled('mailing') && !empty($objcon->email))) {
 		$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -635,7 +645,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		if ($donetodo) {
 			$tmp = '';
 			if (get_class($filterobj) == 'Societe') {
-				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&socid='.$filterobj->id.'&status=done">';
+				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&socid='.$filterobj->id.'&status=done">';
 			}
 			$tmp .= ($donetodo != 'done' ? $langs->trans("ActionsToDoShort") : '');
 			$tmp .= ($donetodo != 'done' && $donetodo != 'todo' ? ' / ' : '');
@@ -654,6 +664,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 		$actualCycleDate = false;
 
+		// Loop on each event to show it
 		foreach ($histo as $key => $value) {
 			$actionstatic->fetch($histo[$key]['id']); // TODO Do we need this, we already have a lot of data of line into $histo
 
@@ -692,14 +703,9 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 				$out .= $actionstatic->getNomUrl(1, -1, 'valignmiddle').' ';
 			}
 
-			//if ($user->rights->agenda->allactions->read || $actionstatic->authorid == $user->id)
-			//{
-			//	$out.='<a href="'.$url.'" class="timeline-btn" title="'.$langs->trans('Show').'" ><i class="fa fa-calendar" ></i>'.$langs->trans('Show').'</a>';
-			//}
-
-			if ($user->rights->agenda->allactions->create ||
-				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
-				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&id='.$actionstatic->id.'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
+			if (!empty($user->rights->agenda->allactions->create) ||
+				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && !empty($user->rights->agenda->myactions->create))) {
+				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&token='.newToken().'&id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
 			}
 
 			$out .= '</span>';
@@ -850,7 +856,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 						$class .= ' documentpreview';
 					}
 
-					$footer .= '<a href="'.$doclink.'" class="btn-link '.$class.'" target="_blank"  '.$mimeAttr.' >';
+					$footer .= '<a href="'.$doclink.'" class="btn-link '.$class.'" target="_blank" rel="noopener noreferrer" '.$mimeAttr.' >';
 					$footer .= img_mime($filePath).' '.$doc->filename;
 					$footer .= '</a>';
 
@@ -870,7 +876,12 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 
 			$i++;
 		}
+
 		$out .= "</ul>\n";
+
+		if (empty($histo)) {
+			$out .= '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
+		}
 	}
 
 	if ($noprint) {
@@ -958,8 +969,8 @@ function getTicketActionCommEcmList($object)
 
 	$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id, ecm.filepath, ecm.filename';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'ecm_files ecm';
-	$sql .= ' WHERE ecm.filepath = \'agenda/'.$object->id.'\'';
-	//$sql.= ' ecm.src_object_type = \''.$object->element.'\' AND ecm.src_object_id = '.$object->id; // Actually upload file doesn't add type
+	$sql .= " WHERE ecm.filepath = 'agenda/".((int) $object->id)."'";
+	//$sql.= " ecm.src_object_type = '".$db->escape($object->element)."' AND ecm.src_object_id = ".((int) $object->id); // Old version didn't add object_type during upload
 	$sql .= ' ORDER BY ecm.position ASC';
 
 	$resql = $db->query($sql);

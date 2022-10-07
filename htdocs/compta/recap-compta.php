@@ -23,6 +23,7 @@
  *  \brief      Page de fiche recap customer
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 // Load translation files required by the page
 $langs->load("companies");
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
 
@@ -116,7 +117,7 @@ if ($id > 0) {
 	dol_banner_tab($object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 1);
 	print dol_get_fiche_end();
 
-	if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && $user->rights->facture->lire) {
 		// Invoice list
 		print load_fiche_titre($langs->trans("CustomerPreview"));
 
@@ -158,7 +159,7 @@ if ($id > 0) {
 					print $fac->error."<br>";
 					continue;
 				}
-				$totalpaye = $fac->getSommePaiement();
+				$totalpaid = $fac->getSommePaiement();
 
 				$userstatic->id = $objf->userid;
 				$userstatic->login = $objf->login;
@@ -168,7 +169,7 @@ if ($id > 0) {
 					'date' => $fac->date,
 					'datefieldforsort' => $fac->date.'-'.$fac->ref,
 					'link' => $fac->getNomUrl(1),
-					'status' => $fac->getLibStatut(2, $totalpaye),
+					'status' => $fac->getLibStatut(2, $totalpaid),
 					'amount' => $fac->total_ttc,
 					'author' => $userstatic->getLoginUrl(1)
 				);
@@ -266,12 +267,12 @@ if ($id > 0) {
 
 				print '<tr class="oddeven '.$html_class.'">';
 
-				print "<td class=\"center\">";
+				$datedetail = dol_print_date($data['date'], 'dayhour');
 				if (!empty($data['fk_facture'])) {
-					print dol_print_date($data['date'], 'day');
-				} elseif (!empty($data['fk_paiement'])) {
-					print dol_print_date($data['date'], 'dayhour');
+					$datedetail = dol_print_date($data['date'], 'day');
 				}
+				print '<td class="center" title="'.dol_escape_htmltag($datedetail).'">';
+				print dol_print_date($data['date'], 'day');
 				print "</td>\n";
 
 				print '<td>'.$data['link']."</td>\n";

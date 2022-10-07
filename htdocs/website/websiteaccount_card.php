@@ -32,9 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php';
 $langs->loadLangs(array("website", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id         = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action     = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -43,7 +43,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $object = new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->website->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('websiteaccountcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('websiteaccountcard'));   //  Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -68,9 +68,10 @@ if (empty($action) && empty($id) && empty($ref)) {
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'website', $id);
 
-$permissionnote = $user->rights->websiteaccount->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->websiteaccount->write; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->websiteaccount->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+// Permissions
+$permissionnote    = $user->rights->websiteaccount->write;   //  Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->websiteaccount->write;   //  Used by the include of actions_dellink.inc.php
+$permissiontoadd   = $user->rights->websiteaccount->write;   //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
@@ -140,11 +141,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
-	print '&nbsp; ';
-	print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
-	print '</div>';
+	print $form->buttonsSaveCancel("Create");
 
 	print '</form>';
 }
@@ -172,9 +169,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print '</form>';
 }
@@ -228,7 +223,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	// Project
-	if (! empty($conf->projet->enabled))
+	if (!empty($conf->project->enabled))
 	{
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -236,7 +231,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		{
 			if ($action != 'classify')
 			{
-				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				if ($action == 'classify') {
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -250,7 +245,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 		} else {
-			if (! empty($object->fk_project)) {
+			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
 				$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
@@ -308,7 +303,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			if ($user->rights->website->write) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a></div>'."\n";
 			}
 
 			/*
@@ -342,7 +337,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print '</div><div class="fichehalfright">';
 
 		/*
 		$MAXEVENT = 10;
@@ -350,10 +345,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'websiteaccount', $socid, 1, '', $MAXEVENT);
+		$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, '', $MAXEVENT);
 		*/
 
-		print '</div></div></div>';
+		print '</div></div>';
 	}
 
 	// Presend form

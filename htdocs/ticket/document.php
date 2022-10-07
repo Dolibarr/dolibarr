@@ -25,6 +25,7 @@
  *  \brief      files linked to a ticket
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
@@ -45,8 +46,8 @@ $confirm  = GETPOST('confirm', 'alpha');
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -70,7 +71,7 @@ if ($result < 0) {
 	$upload_dir = $conf->ticket->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
-$permissiontoadd = $user->rights->ticket->write;
+$permissiontoadd = $user->rights->ticket->write;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
 // Security check - Protection if external user
 $result = restrictedArea($user, 'ticket', $object->id);
@@ -80,7 +81,7 @@ if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();
 }
 // or for unauthorized internals users
-if (!$user->socid && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id && empty($user->rights->ticket->manage)) {
 	accessforbidden();
 }
 
@@ -129,23 +130,26 @@ if ($object->id) {
 	$morehtmlref .= $object->subject;
 	// Author
 	if ($object->fk_user_create > 0) {
-		$morehtmlref .= '<br>'.$langs->trans("CreatedBy").'  : ';
+		$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
 
-		$langs->load("users");
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_create);
-		$morehtmlref .= $fuser->getNomUrl(0);
-	}
-	if (!empty($object->origin_email)) {
+		$morehtmlref .= $fuser->getNomUrl(-1);
+	} elseif (!empty($object->email_msgid)) {
 		$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
-		$morehtmlref .= $object->origin_email.' <small>('.$langs->trans("TicketEmailOriginIssuer").')</small>';
+		$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+		$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
+	} elseif (!empty($object->origin_email)) {
+		$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+		$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
+		$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
 	}
 
 	// Thirdparty
-	if (!empty($conf->societe->enabled)) {
+	if (isModEnabled("societe")) {
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
 		/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
-			$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
+			$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&token='.newToken().'&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
 		}*/
 		$morehtmlref .= ' : ';
 		if ($action == 'editcustomer') {
@@ -156,12 +160,12 @@ if ($object->id) {
 	}
 
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->ticket->write) {
 			if ($action != 'classify') {
-				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
 				$morehtmlref .= ' : ';
 			}
 			if ($action == 'classify') {

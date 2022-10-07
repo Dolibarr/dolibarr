@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -41,6 +41,8 @@ class PartnershipUtils
 	public $error; //!< To return error code (or message)
 	public $errors = array(); //!< To return several error codes (or messages)
 
+	public $output;	// To store output of some cron methods
+
 
 	/**
 	 *  Constructor
@@ -64,7 +66,7 @@ class PartnershipUtils
 	{
 		global $conf, $langs, $user;
 
-		$managedfor = $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
+		$managedfor	= getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
 		if ($managedfor != 'member') {
 			return 0; // If option 'PARTNERSHIP_IS_MANAGED_FOR' = 'thirdparty', this cron job does nothing.
@@ -101,7 +103,7 @@ class PartnershipUtils
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent_type as dty on (dty.rowid = d.fk_adherent_type)";
 		$sql .= " WHERE fk_member > 0";
 		$sql .= " AND (d.datefin < '".$this->db->idate($datetotest)."' AND dty.subscription = 1)";
-		$sql .= " AND p.status = ".((int) $partnership::STATUS_ACCEPTED); // Only accepted not yet canceled
+		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted not yet canceled
 		$sql .= $this->db->order('d.rowid', 'ASC');
 		// Limit is managed into loop later
 
@@ -157,7 +159,7 @@ class PartnershipUtils
 							// Define output language
 							$outputlangs = $langs;
 							$newlang = '';
-							if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 							if (!empty($newlang)) {
 								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
@@ -219,7 +221,7 @@ class PartnershipUtils
 	{
 		global $conf, $langs, $user;
 
-		$managedfor = $conf->global->PARTNERSHIP_IS_MANAGED_FOR;
+		$managedfor = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR');
 
 		$partnership = new Partnership($this->db);
 		$MAXPERCALL = (empty($conf->global->PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL) ? 10 : $conf->global->PARTNERSHIP_MAX_WARNING_BACKLINK_PER_CALL); // Limit to 10 per call
@@ -262,7 +264,7 @@ class PartnershipUtils
 
 		$sql .= " WHERE 1 = 1";
 		$sql .= " AND p.".$fk_partner." > 0";
-		$sql .= " AND p.status = ".((int) $partnership::STATUS_ACCEPTED); // Only accepted not yet canceled
+		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted not yet canceled
 		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 7 * 24 * 3600)."')"; // Every week, check that website contains a link to dolibarr.
 		$sql .= $this->db->order('p.rowid', 'ASC');
 		// Limit is managed into loop later
@@ -323,7 +325,7 @@ class PartnershipUtils
 								// Define output language
 								$outputlangs = $langs;
 								$newlang = '';
-								if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 								if (!empty($newlang)) {
 									$outputlangs = new Translate("", $conf);
 									$outputlangs->setDefaultLang($newlang);

@@ -25,6 +25,7 @@
  *   \brief      Page list of cheque deposits
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -45,8 +46,8 @@ $search_account = GETPOST('search_account', 'int');
 $search_amount = GETPOST('search_amount', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -63,6 +64,8 @@ if (!$sortfield) {
 
 $year = GETPOST("year");
 $month = GETPOST("month");
+$optioncss = GETPOST('optioncss', 'alpha');
+$view = GETPOST("view", 'alpha');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -172,7 +175,7 @@ if ($resql) {
 		print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
 	}
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-	$formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
+	print $formother->selectyear($year ? $year : -1, 'year', 1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre">';
 	$form->select_comptes($search_account, 'search_account', 0, '', 1);

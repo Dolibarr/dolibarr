@@ -20,8 +20,8 @@
  */
 
 /**
- *	    \file       htdocs/core/lib/member.lib.php
- *		\brief      Functions for module members
+ * \file       htdocs/core/lib/member.lib.php
+ * \brief      Functions for module members
  */
 
 /**
@@ -80,7 +80,7 @@ function member_prepare_head(Adherent $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'member');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'member', 'add', 'core');
 
 	$nbNote = 0;
 	if (!empty($object->note_private)) {
@@ -112,16 +112,18 @@ function member_prepare_head(Adherent $object)
 	$h++;
 
 	// Show agenda tab
-	if (!empty($conf->agenda->enabled)) {
+	if (isModEnabled('agenda')) {
 		$head[$h][0] = DOL_URL_ROOT."/adherents/agenda.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("Events");
-		if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+		if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 			$head[$h][1] .= '/';
 			$head[$h][1] .= $langs->trans("Agenda");
 		}
 		$head[$h][2] = 'agenda';
 		$h++;
 	}
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'member', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'member', 'remove');
 
@@ -147,7 +149,7 @@ function member_type_prepare_head(AdherentType $object)
 	$h++;
 
 	// Multilangs
-	if (!empty($conf->global->MAIN_MULTILANGS)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$head[$h][0] = DOL_URL_ROOT."/adherents/type_translation.php?rowid=".$object->id;
 		$head[$h][1] = $langs->trans("Translation");
 		$head[$h][2] = 'translation';
@@ -182,7 +184,11 @@ function member_type_prepare_head(AdherentType $object)
  */
 function member_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('adherent');
+	$extrafields->fetch_name_optionals_label('adherent_type');
 
 	$h = 0;
 	$head = array();
@@ -205,11 +211,19 @@ function member_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/member_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsMember");
+	$nbExtrafields = $extrafields->attributes['adherent']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/admin/member_type_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsMemberType");
+	$nbExtrafields = $extrafields->attributes['adherent_type']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_type';
 	$h++;
 

@@ -212,7 +212,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " ".(!isset($this->position) ? 'NULL' : ((int) $this->position)).",";
 		$sql .= " ".(!isset($this->fk_country) ? 'NULL' : ((int) $this->fk_country)).",";
 		$sql .= " ".(!isset($this->active) ? 'NULL' : ((int) $this->active));
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -433,7 +433,7 @@ class AccountancyCategory // extends CommonObject
 
 		$this->lines_display = array();
 
-		dol_syslog(__METHOD__." sql=".$sql, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -632,7 +632,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " WHERE aa.rowid = ".((int) $cpt_id);
 		$this->db->begin();
 
-		dol_syslog(__METHOD__." sql=".$sql, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -785,12 +785,13 @@ class AccountancyCategory // extends CommonObject
 	}
 
 	/**
-	 * Return list of custom groups that are active
+	 * Return list of custom groups.
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
+	 * @param	int			$active				1= active, 0=not active
 	 * @return	array|int						Array of groups or -1 if error
 	 */
-	public function getCats($categorytype = -1)
+	public function getCats($categorytype = -1, $active = 1)
 	{
 		global $conf, $mysoc;
 
@@ -801,7 +802,7 @@ class AccountancyCategory // extends CommonObject
 
 		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type, c.sens";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
-		$sql .= " WHERE c.active = 1";
+		$sql .= " WHERE c.active = " . (int) $active;
 		$sql .= " AND c.entity = ".$conf->entity;
 		if ($categorytype >= 0) {
 			$sql .= " AND c.category_type = 1";

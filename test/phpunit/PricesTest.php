@@ -38,7 +38,7 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
-if (! empty($conf->global->MAIN_ROUNDING_RULE_TOT)) {
+if (!empty($conf->global->MAIN_ROUNDING_RULE_TOT)) {
 	print "Parameter MAIN_ROUNDING_RULE_TOT must be set to 0 or not set.\n";
 	exit(1);
 }
@@ -84,7 +84,7 @@ class PricesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -97,7 +97,7 @@ class PricesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		//$db->rollback();
@@ -110,7 +110,7 @@ class PricesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -126,7 +126,7 @@ class PricesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}

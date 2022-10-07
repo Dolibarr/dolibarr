@@ -25,6 +25,7 @@
 
 if (! defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
@@ -66,8 +67,8 @@ if ($module == 'ecm') {
 }
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -85,7 +86,7 @@ if (!$sortfield) {
 $ecmdir = new EcmDirectory($db);
 if (!empty($section)) {
 	$result = $ecmdir->fetch($section);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
@@ -230,7 +231,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	// Label
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth100" maxlength="32" value="'.$ecmdir->label.'" autofocus></td></tr>'."\n";
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth100" maxlength="32" value="'.(GETPOST("label", 'alpha') ? GETPOST("label", 'alpha') : $ecmdir->label).'" autofocus></td></tr>'."\n";
 
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 	print $formecm->selectAllSections((GETPOST("catParent", 'alpha') ? GETPOST("catParent", 'alpha') : $ecmdir->fk_parent), 'catParent', $module);

@@ -23,6 +23,7 @@
  *  \brief      Page with stock values
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
@@ -36,8 +37,8 @@ $sref = GETPOST("sref", 'alpha');
 $snom = GETPOST("snom", 'alpha');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortfield) {
 	$sortfield = "e.ref";
 }

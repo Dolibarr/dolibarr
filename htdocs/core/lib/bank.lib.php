@@ -4,6 +4,7 @@
  * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
  * Copyright (C) 2019	   Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@
  * \ingroup    bank
  * \brief      Ensemble de fonctions de base pour le module banque
  */
+
 
 /**
  * Prepare array with list of tabs
@@ -66,7 +68,7 @@ function bank_prepare_head(Account $object)
 	$head[$h][2] = 'graph';
 	$h++;
 
-	if ($object->courant != Account::TYPE_CASH) {
+	if ($object->courant != Account::TYPE_CASH || !empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) {
 		$nbReceipts = 0;
 
 		// List of all standing receipts
@@ -153,6 +155,11 @@ function bank_admin_prepare_head($object)
 	$head[$h][0] = DOL_URL_ROOT.'/admin/bank_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/bankline_extrafields.php';
+	$head[$h][1] = $langs->trans("BanklineExtraFields");
+	$head[$h][2] = 'bankline_extrafields';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
@@ -272,11 +279,13 @@ function checkSwiftForAccount($account)
  *      @param  Account     $account    A bank account
  *      @return boolean                 True if informations are valid, false otherwise
  */
-function checkIbanForAccount($account)
+function checkIbanForAccount(Account $account)
 {
 	require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
 
-	$iban = new IBAN($account->iban);
+	$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
+
+	$iban = new PHP_IBAN\IBAN($ibantocheck);
 	$check = $iban->Verify();
 
 	if ($check) {
@@ -284,6 +293,24 @@ function checkIbanForAccount($account)
 	} else {
 		return false;
 	}
+}
+
+/**
+ * Returns the iban human readable
+ *
+ * @param Account $account Account object
+ * @return string
+ */
+function getIbanHumanReadable(Account $account)
+{
+	if ($account->getCountryCode() == 'FR') {
+		require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
+		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', $account->iban);
+		$iban = new PHP_IBAN\IBAN($ibantoprint);
+		return $iban->HumanFormat();
+	}
+
+	return $account->iban;
 }
 
 /**

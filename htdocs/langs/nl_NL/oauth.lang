@@ -9,12 +9,13 @@ HasAccessToken=Token is gegenereerd en opgeslagen in locale database
 NewTokenStored=Token ontvangen en opgeslagen
 ToCheckDeleteTokenOnProvider=Klik hier om de autorisatie te controleren/verwijderen die is opgeslagen door%sOAuth-provider
 TokenDeleted=Token verwijderd
-RequestAccess=Klik hier voor her-opvragen/vernieuwen van toegang en ontvang een nieuw token te bewaren.
+RequestAccess=Click here to request/renew access and receive a new token
 DeleteAccess=Klik hier om token te verwijderen
 UseTheFollowingUrlAsRedirectURI=Gebruik de volgende URL als de omleidings-URI bij het maken van uw inloggegevens bij uw OAuth-provider:
-ListOfSupportedOauthProviders=Voer de inloggegevens in die door uw OAuth2-provider zijn verstrekt. Alleen ondersteunde OAuth2-providers worden hier vermeld. Deze services kunnen worden gebruikt door andere modules die OAuth2-authenticatie nodig hebben.
-OAuthSetupForLogin=Pagina om Oauth token te genereren
+ListOfSupportedOauthProviders=Add your OAuth2 token providers. Then, go on your OAuth provider admin page to create/get an OAuth ID and Secret and save them here. Once done, switch on the other tab to generate your token.
+OAuthSetupForLogin=Page to manage (generate/delete) OAuth tokens
 SeePreviousTab=Zie vorige tab
+OAuthProvider=OAuth provider
 OAuthIDSecret=OAuth ID en Secret
 TOKEN_REFRESH=Token Vernieuw aanwezig
 TOKEN_EXPIRED=Token verlopen
@@ -23,10 +24,13 @@ TOKEN_DELETE=Verwijder opgeslagen token
 OAUTH_GOOGLE_NAME=OAuth Google-service
 OAUTH_GOOGLE_ID=OAuth Google Id
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=Ga naar <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">deze pagina en</a> vervolgens "Referenties" om OAuth-referenties te maken
 OAUTH_GITHUB_NAME=OAuth GitHub-service
 OAUTH_GITHUB_ID=OAuth GitHub Id
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=Ga naar <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">deze pagina</a> en "Registreer een nieuwe toepassing" om OAuth-referenties te maken
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+OAUTH_ID=OAuth ID
+OAUTH_SECRET=OAuth secret
+OAuthProviderAdded=OAuth provider added
+AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=An OAuth entry for this provider and label already exists

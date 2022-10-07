@@ -2,26 +2,28 @@
 /* Copyright (C) 2006-2014  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021		Regis Houssin		<regis.houssin@inodbox.com>
  *
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <https://www.gnu.org/licenses/>.
-*/
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 /**
  *		\file 		htdocs/admin/tools/export.php
  *		\brief      Page to export a database into a dump file
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -55,21 +57,23 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-if ($file && !$what) {
-	//print DOL_URL_ROOT.'/dolibarr_export.php';
-	header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired", $langs->transnoentities("ExportMethod"))).(GETPOST('page_y', 'int') ? '&page_y='.GETPOST('page_y', 'int') : ''));
-	exit;
-}
-
 $errormsg = '';
+
+$utils = new Utils($db);
 
 
 /*
  * Actions
  */
 
+if ($file && !$what) {
+	//print DOL_URL_ROOT.'/dolibarr_export.php';
+	header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired", $langs->transnoentities("ExportMethod"))).(GETPOST('page_y', 'int') ? '&page_y='.GETPOST('page_y', 'int') : ''));
+	exit;
+}
+
 if ($action == 'delete') {
-	$file = $conf->admin->dir_output.'/'.GETPOST('urlfile');
+	$file = $conf->admin->dir_output.'/'.dol_sanitizeFileName(GETPOST('urlfile'));
 	$ret = dol_delete_file($file, 1);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -79,17 +83,12 @@ if ($action == 'delete') {
 	$action = '';
 }
 
-
-/*
- * View
- */
-
 $_SESSION["commandbackuplastdone"] = '';
 $_SESSION["commandbackuptorun"] = '';
 $_SESSION["commandbackupresult"] = '';
 
 // Increase limit of time. Works only if we are not in safe mode
-$ExecTimeLimit = 600;	// Set it to 0 to not use a forced time limit
+$ExecTimeLimit = 600; // Set it to 0 to not use a forced time limit
 if (!empty($ExecTimeLimit)) {
 	$err = error_reporting();
 	error_reporting(0); // Disable all errors
@@ -102,13 +101,6 @@ if (!empty($MemoryLimit)) {
 	@ini_set('memory_limit', $MemoryLimit);
 }
 
-
-//$help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
-//llxHeader('','',$help_url);
-
-//print load_fiche_titre($langs->trans("Backup"),'','title_setup');
-
-
 // Start with empty buffer
 $dump_buffer = '';
 $dump_buffer_len = 0;
@@ -119,9 +111,6 @@ $time_start = time();
 
 $outputdir  = $conf->admin->dir_output.'/backup';
 $result = dol_mkdir($outputdir);
-
-
-$utils = new Utils($db);
 
 
 // MYSQL
@@ -165,7 +154,7 @@ if ($what == 'postgresql') {
 	$cmddump = dol_sanitizePathName($cmddump);
 
 	/* Not required, the command is output on screen but not ran for pgsql
-	if (! empty($dolibarr_main_restrict_os_commands))
+	if (!empty($dolibarr_main_restrict_os_commands))
 	{
 		$arrayofallowedcommand=explode(',', $dolibarr_main_restrict_os_commands);
 		dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that one of this command is inside ".$cmddump);
@@ -216,7 +205,15 @@ if ($errormsg) {
 }
 
 
-// Redirect to backup page
-header("Location: dolibarr_export.php".(GETPOST('page_y', 'int') ? '?page_y='.GETPOST('page_y', 'int') : ''));
+
+/*
+ * View
+ */
+
+top_httphead();
 
 $db->close();
+
+// Redirect to backup page
+header("Location: dolibarr_export.php".(GETPOST('page_y', 'int') ? '?page_y='.GETPOST('page_y', 'int') : ''));
+exit();

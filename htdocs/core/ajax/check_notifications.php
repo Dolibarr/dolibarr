@@ -17,9 +17,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
 }
@@ -39,25 +36,7 @@ if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
 
-//if (! defined('NOREQUIREUSER'))            define('NOREQUIREUSER', '1');					// Do not load object $user
-//if (! defined('NOREQUIRESOC'))             define('NOREQUIRESOC', '1');					// Do not load object $mysoc
-//if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN', '1');					// Do not load object $langs
-//if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION', '1');			// Do not check injection attack on GET parameters
-//if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION', '1');			// Do not check injection attack on POST parameters
-//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK', '1');					// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
-//if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');					// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
-//if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK', '1');					// Do not check style html tag into posted data
-//if (! defined('NOIPCHECK'))                define('NOIPCHECK', '1');						// Do not check IP defined into conf $dolibarr_main_restrict_ip
-//if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU', '1');					// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))            define('NOREQUIREHTML', '1');					// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))            define('NOREQUIREAJAX', '1');       		  	// Do not load ajax.lib.php library
-//if (! defined("NOLOGIN"))                  define("NOLOGIN", '1');						// If this page is public (can be called outside logged session)
-//if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT', 'auto');			// Force lang to a particular value
-//if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE', 'aloginmodule');		// Force authentication handler
-//if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', '1');		// The main.inc.php does not make a redirect if not logged, instead show simple error message
-//if (! defined("XFRAMEOPTIONS_ALLOWALL"))   define('XFRAMEOPTIONS_ALLOWALL', '1');			// Do not add the HTTP header 'X-Frame-Options: SAMEORIGIN' but 'X-Frame-Options: ALLOWALL'
-
-
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 //$time = (int) GETPOST('time', 'int'); // Use the time parameter that is always increased by time_update, even if call is late
@@ -75,12 +54,9 @@ if ($action == 'stopreminder') {
 	$listofreminderid = GETPOST('listofreminderids', 'intcomma');
 
 	// Set the reminder as done
-	//foreach ($listofreminderidsarray as $listofreminderid) {
-	//	if (empty($listofreminderid)) continue;
-	//$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'action_reminder WHERE rowid = '.$listofreminderid.' AND fk_user = '.$user->id;
 	$sql = 'UPDATE '.MAIN_DB_PREFIX.'actioncomm_reminder SET status = 1';
 	$sql .= ' WHERE status = 0 AND rowid IN ('.$db->sanitize($db->escape($listofreminderid)).')';
-	$sql .= ' AND fk_user = '.$user->id.' AND entity = '.$conf->entity;
+	$sql .= ' AND fk_user = '.((int) $user->id).' AND entity = '.((int) $conf->entity);
 	$resql = $db->query($sql);
 	if (!$resql) {
 		dol_print_error($db);
@@ -149,13 +125,13 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
 	$sql = 'SELECT a.id as id_agenda, a.code, a.datep, a.label, a.location, ar.rowid as id_reminder, ar.dateremind, ar.fk_user as id_user_reminder';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
 	if (!empty($user->conf->MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS)) {
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.$user->id;
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.((int) $user->id);
 		$sql .= ' WHERE a.code <> "AC_OTH_AUTO"';
 		$sql .= ' AND (';
 		$sql .= " (ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."' AND ar.status = 0 AND ar.entity = ".$conf->entity;
 		$sql .= ' )';
 	} else {
-		$sql .= ' JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.$user->id;
+		$sql .= ' JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.((int) $user->id);
 		$sql .= " AND ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."' AND ar.status = 0 AND ar.entity = ".$conf->entity;
 	}
 	$sql .= $db->order('datep', 'ASC');
@@ -173,8 +149,10 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
 			$event['code'] = $obj->code;
 			$event['label'] = $obj->label;
 			$event['location'] = $obj->location;
-			$event['reminder_date_formated'] = dol_print_date($db->jdate($obj->dateremind), 'standard');
-			$event['event_date_start_formated'] = dol_print_date($db->jdate($obj->datep), 'standard');
+			$event['reminder_date_formated_tzserver'] = dol_print_date($db->jdate($obj->dateremind), 'standard', 'tzserver');
+			$event['event_date_start_formated_tzserver'] = dol_print_date($db->jdate($obj->datep), 'standard', 'tzserver');
+			$event['reminder_date_formated'] = dol_print_date($db->jdate($obj->dateremind), 'standard', 'tzuser');
+			$event['event_date_start_formated'] = dol_print_date($db->jdate($obj->datep), 'standard', 'tzuser');
 
 			$eventfound[$obj->id_agenda] = $event;
 		}

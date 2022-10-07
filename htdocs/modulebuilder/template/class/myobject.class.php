@@ -59,9 +59,9 @@ class MyObject extends CommonObject
 	public $isextrafieldmanaged = 1;
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon for myobject. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'myobject@mymodule' if picto is file 'img/object_myobject.png'.
 	 */
-	public $picto = 'myobject@mymodule';
+	public $picto = 'fa-file';
 
 
 	const STATUS_DRAFT = 0;
@@ -70,20 +70,31 @@ class MyObject extends CommonObject
 
 
 	/**
-	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *  'type' field format:
+	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
+	 *  	'select' (list of values are in 'options'),
+	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]',
+	 *  	'chkbxlst:...',
+	 *  	'varchar(x)',
+	 *  	'text', 'text:none', 'html',
+	 *   	'double(24,8)', 'real', 'price',
+	 *  	'date', 'datetime', 'timestamp', 'duration',
+	 *  	'boolean', 'checkbox', 'radio', 'array',
+	 *  	'mail', 'phone', 'url', 'password', 'ip'
+	 *		Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM' or 'isModEnabled("multicurrency")' ...)
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
-	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
 	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
 	 *  'help' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
@@ -91,6 +102,8 @@ class MyObject extends CommonObject
 	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *	'validate' is 1 if need to validate with $this->validateField()
+	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
@@ -102,25 +115,25 @@ class MyObject extends CommonObject
 	public $fields = array(
 		'rowid'         => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
 		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>10),
-		'ref'           => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'noteditable'=>0, 'default'=>'', 'notnull'=> 1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object'),
-		'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>'Help text', 'showoncombobox'=>2),
-		'amount'        => array('type'=>'price', 'label'=>'Amount', 'enabled'=>1, 'visible'=>1, 'default'=>'null', 'position'=>40, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for amount'),
-		'qty'           => array('type'=>'real', 'label'=>'Qty', 'enabled'=>1, 'visible'=>1, 'default'=>'0', 'position'=>45, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for quantity', 'css'=>'maxwidth75imp'),
-		'fk_soc' 		=> array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'picto'=>'company', 'label'=>'ThirdParty', 'visible'=> 1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'LinkToThirparty'),
-		'fk_project'    => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'picto'=>'project', 'enabled'=>1, 'visible'=>-1, 'position'=>52, 'notnull'=>-1, 'index'=>1),
-		'description'   => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>3, 'position'=>60),
-		'note_public'   => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61),
-		'note_private'  => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62),
+		'ref'           => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'noteditable'=>0, 'default'=>'', 'notnull'=> 1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object', 'validate'=>1),
+		'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>'Help text', 'showoncombobox'=>2, 'validate'=>1, 'alwayseditable'=>1),
+		'amount'        => array('type'=>'price', 'label'=>'Amount', 'enabled'=>1, 'visible'=>1, 'default'=>'null', 'position'=>40, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for amount', 'validate'=>1),
+		'qty'           => array('type'=>'real', 'label'=>'Qty', 'enabled'=>1, 'visible'=>1, 'default'=>'0', 'position'=>45, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for quantity', 'css'=>'maxwidth75imp', 'validate'=>1),
+		'fk_soc' 		=> array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'picto'=>'company', 'label'=>'ThirdParty', 'visible'=> 1, 'enabled'=>'$conf->societe->enabled', 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'OrganizationEventLinkToThirdParty', 'validate'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
+		'fk_project'    => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>52, 'notnull'=>-1, 'index'=>1, 'validate'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
+		'description'   => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>3, 'position'=>60, 'validate'=>1),
+		'note_public'   => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61, 'validate'=>1, 'cssview'=>'wordbreak'),
+		'note_private'  => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62, 'validate'=>1, 'cssview'=>'wordbreak'),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'position'=>500),
 		'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 0, 'position'=>501),
 		//'date_validation '    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'position'=>510, 'foreignkey'=>'user.rowid'),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'notnull'=> 1, 'position'=>510, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax150'),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'picto'=>'user', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511, 'csslist'=>'tdoverflowmax150'),
 		//'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>0, 'notnull'=>0, 'position'=>600),
 		'import_key'    => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
 		'model_pdf' 	=> array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'notnull'=>-1, 'position'=>1010),
-		'status'        => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=> 1, 'default'=>0, 'index'=>1, 'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 9=>'Canceled')),
+		'status'        => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=> 1, 'default'=>0, 'index'=>1, 'position'=>2000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 9=>'Canceled'), 'validate'=>1),
 	);
 
 	/**
@@ -147,6 +160,12 @@ class MyObject extends CommonObject
 	 * @var string amount
 	 */
 	public $amount;
+
+	/**
+	 * @var int Thirdparty ID
+	 */
+	public $socid;		// both socid and fk_soc are used
+	public $fk_soc;		// both socid and fk_soc are used
 
 	/**
 	 * @var int Status
@@ -232,10 +251,10 @@ class MyObject extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -336,7 +355,8 @@ class MyObject extends CommonObject
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
-					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+					//var_dump($key);
+					//var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -360,7 +380,7 @@ class MyObject extends CommonObject
 
 		if (!$error) {
 			// copy external contacts if same company
-			if (property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
+			if (!empty($object->socid) && property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
 				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
 				}
@@ -428,40 +448,40 @@ class MyObject extends CommonObject
 
 		$records = array();
 
-		$sql = 'SELECT ';
+		$sql = "SELECT ";
 		$sql .= $this->getFieldList('t');
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} else {
-			$sql .= ' WHERE 1 = 1';
+			$sql .= " WHERE 1 = 1";
 		}
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
+					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -505,7 +525,7 @@ class MyObject extends CommonObject
 	 * Delete object in database
 	 *
 	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
+	 * @param bool $notrigger  false=launch triggers, true=disable triggers
 	 * @return int             <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
@@ -554,8 +574,8 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->myobject->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->myobject->myobject_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->myobject->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->myobject->myobject_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -672,8 +692,8 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->mymodule_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->mymodule_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -696,8 +716,8 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->mymodule_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->mymodule_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -720,8 +740,8 @@ class MyObject extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->mymodule->mymodule_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->mymodule->mymodule_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -765,7 +785,7 @@ class MyObject extends CommonObject
 			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
-			if ($add_save_lastsearch_values) {
+			if ($url && $add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
@@ -782,13 +802,13 @@ class MyObject extends CommonObject
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		if ($option == 'nolink') {
+		if ($option == 'nolink' || empty($url)) {
 			$linkstart = '<span';
 		} else {
 			$linkstart = '<a href="'.$url.'"';
 		}
 		$linkstart .= $linkclose.'>';
-		if ($option == 'nolink') {
+		if ($option == 'nolink' || empty($url)) {
 			$linkend = '</span>';
 		} else {
 			$linkend = '</a>';
@@ -834,7 +854,7 @@ class MyObject extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('myobjectdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -881,12 +901,12 @@ class MyObject extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule@mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status'.$status;
@@ -906,36 +926,29 @@ class MyObject extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql .= ' fk_user_creat, fk_user_modif';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.rowid = '.((int) $id);
+		$sql = "SELECT rowid,";
+		$sql .= " date_creation as datec, tms as datem,";
+		$sql .= " fk_user_creat, fk_user_modif";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+		$sql .= " WHERE t.rowid = ".((int) $id);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
+				if (!empty($obj->fk_user_valid)) {
+					$this->user_validation_id = $obj->fk_user_valid;
 				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
+				if (!empty($obj->datev)) {
+					$this->date_validation   = empty($obj->datev) ? '' : $this->db->jdate($obj->datev);
+				}
 			}
 
 			$this->db->free($result);

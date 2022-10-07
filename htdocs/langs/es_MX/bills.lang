@@ -59,6 +59,7 @@ DisabledBecauseNotEnouthCreditNote=Para eliminar una factura de situación del c
 PaymentConditionShortPT_ORDER=Pedido
 PaymentTypeCB=Tarjeta de crédito
 PaymentTypeShortCB=Tarjeta de crédito
+BICNumber=Cuentas bancarias | Pasarelas
 PayedByThisPayment=Liquidado en este pago
 ClosePaidCreditNotesAutomatically=Clasifica automáticamente todas las notas de crédito como "Pagadas" cuando el reembolso se realiza en su totalidad.
 NoteListOfYourUnpaidInvoices=Nota: Esta lista contiene solo facturas de terceros con los que está vinculado como representante de ventas.

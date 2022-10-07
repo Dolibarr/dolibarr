@@ -115,12 +115,15 @@ function getServerTimeZoneInt($refgmtdate = 'now')
  *  @param      int			$time               Date timestamp (or string with format YYYY-MM-DD)
  *  @param      int			$duration_value     Value of delay to add
  *  @param      int			$duration_unit      Unit of added delay (d, m, y, w, h, i)
+ *  @param      int         $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
  *  @return     int      			        	New timestamp
  */
-function dol_time_plus_duree($time, $duration_value, $duration_unit)
+function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
 	global $conf;
-
+	if ($duration_unit == 's') {
+		return $time + ($duration_value);
+	}
 	if ($duration_value == 0) {
 		return $time;
 	}
@@ -166,7 +169,31 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
 	} else {
 		$date->add($interval);
 	}
+	//Change the behavior of PHP over data-interval when the result of this function is Feb 29 (non-leap years), 30 or Feb 31 (php returns March 1, 2 or 3 respectively)
+	if ($ruleforendofmonth == 1 && $duration_unit == 'm') {
+		$timeyear = dol_print_date($time, '%Y');
+		$timemonth = dol_print_date($time, '%m');
+		$timetotalmonths = (($timeyear * 12) + $timemonth);
 
+		$monthsexpected = ($timetotalmonths + $duration_value);
+
+		$newtime = $date->getTimestamp();
+
+		$newtimeyear = dol_print_date($newtime, '%Y');
+		$newtimemonth = dol_print_date($newtime, '%m');
+		$newtimetotalmonths = (($newtimeyear * 12) + $newtimemonth);
+
+		if ($monthsexpected < $newtimetotalmonths) {
+			$newtimehours = dol_print_date($newtime, '%H');
+			$newtimemins = dol_print_date($newtime, '%M');
+			$newtimesecs = dol_print_date($newtime, '%S');
+
+			$datelim = dol_mktime($newtimehours, $newtimemins, $newtimesecs, $newtimemonth, 1, $newtimeyear);
+			$datelim -= (3600 * 24);
+
+			$date->setTimestamp($datelim);
+		}
+	}
 	return $date->getTimestamp();
 }
 
@@ -182,7 +209,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit)
  */
 function convertTime2Seconds($iHours = 0, $iMinutes = 0, $iSeconds = 0)
 {
-	$iResult = ($iHours * 3600) + ($iMinutes * 60) + $iSeconds;
+	$iResult = ((int) $iHours * 3600) + ((int) $iMinutes * 60) + (int) $iSeconds;
 	return $iResult;
 }
 
@@ -218,6 +245,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 	if (empty($lengthOfWeek)) {
 		$lengthOfWeek = 7; // 1 week = 7 days
 	}
+	$nbHbyDay = $lengthOfDay / 3600;
 
 	if ($format == 'all' || $format == 'allwithouthour' || $format == 'allhour' || $format == 'allhourmin' || $format == 'allhourminsec') {
 		if ((int) $iSecond === 0) {
@@ -265,11 +293,11 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 				$sTime .= dol_print_date($iSecond, 'hourduration', true);
 			}
 		} elseif ($format == 'allhourminsec') {
-			return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60))).':'.sprintf("%02d", ((int) ($iSecond % 60)));
+			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond/3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60))).':'.sprintf("%02d", ((int) ($iSecond % 60)));
 		} elseif ($format == 'allhourmin') {
-			return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60)));
+			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond/3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600)/60)));
 		} elseif ($format == 'allhour') {
-			return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600)));
+			return sprintf("%02d", ($sWeek * $lengthOfWeek * $nbHbyDay + $sDay * $nbHbyDay + (int) floor($iSecond/3600)));
 		}
 	} elseif ($format == 'hour') {	// only hour part
 		$sTime = dol_print_date($iSecond, '%H', true);
@@ -293,24 +321,53 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 }
 
 
+/**	  	Convert duration to hour
+ *
+ *    	@param      int		$duration_value		Duration value
+ *    	@param      int		$duration_unit		Duration unit
+ *      @return     int $result
+ */
+function convertDurationtoHour($duration_value, $duration_unit)
+{
+	$result = 0;
+
+	if ($duration_unit == 's') $result = $duration_value / 3600;
+	if ($duration_unit == 'i') $result = $duration_value / 60;
+	if ($duration_unit == 'h') $result = $duration_value;
+	if ($duration_unit == 'd') $result = $duration_value * 24;
+	if ($duration_unit == 'w') $result = $duration_value * 24 * 7;
+	if ($duration_unit == 'm') $result = $duration_value * 730.484;
+	if ($duration_unit == 'y') $result = $duration_value * 365 * 24;
+
+	return $result;
+}
+
 /**
  * Generate a SQL string to make a filter into a range (for second of date until last second of date).
  * This method allows to maje SQL request that will deal correctly the timezone of server.
  *
- * @param      string	$datefield			Name of SQL field where apply sql date filter
- * @param      int		$day_date			Day date
- * @param      int		$month_date			Month date
- * @param      int		$year_date			Year date
- * @param	   int      $excludefirstand	Exclude first and
- * @param	   mixed	$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
- * 											Note: In database, dates are always fot the server TZ.
- * @return     string	$sqldate			String with SQL filter
+ * @param      string		$datefield			Name of SQL field where apply sql date filter
+ * @param      int|string	$day_date			Day date (Can be 0 or '' for filter on a month)
+ * @param      int|string	$month_date			Month date (Can be 0 or '' for filter on a year)
+ * @param      int|string	$year_date			Year date
+ * @param	   int      	$excludefirstand	Exclude first and
+ * @param	   mixed		$gm					False or 0 or 'tzserver' = Input date fields are date info in the server TZ. True or 1 or 'gmt' = Input are date info in GMT TZ.
+ * 												Note: In database, dates are always fot the server TZ.
+ * @return     string		$sqldate			String with SQL filter
  */
 function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $excludefirstand = 0, $gm = false)
 {
 	global $db;
-	$sqldate = "";
+	$sqldate = '';
+
+	$day_date = intval($day_date);
+	$month_date = intval($month_date);
+	$year_date = intval($year_date);
+
 	if ($month_date > 0) {
+		if ($month_date > 12) {	// protection for bad value of month
+			return " AND 1 = 2";
+		}
 		if ($year_date > 0 && empty($day_date)) {
 			$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, $month_date, $gm));
 			$sqldate .= "' AND '".$db->idate(dol_get_last_day($year_date, $month_date, $gm))."'";
@@ -332,18 +389,18 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
  *	Convert a string date into a GM Timestamps date
  *	Warning: YYYY-MM-DDTHH:MM:SS+02:00 (RFC3339) is not supported. If parameter gm is 1, we will use no TZ, if not we will use TZ of server, not the one inside string.
  *
- *	@param	string	$string		Date in a string
- *				     	        YYYYMMDD
- *	                 			YYYYMMDDHHMMSS
- *								YYYYMMDDTHHMMSSZ
- *								YYYY-MM-DDTHH:MM:SSZ (RFC3339)
- *		                		DD/MM/YY or DD/MM/YYYY (deprecated)
- *		                		DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (deprecated)
- *  @param	int		$gm         1 =Input date is GM date,
- *                              0 =Input date is local date using PHP server timezone
- *  @return	int					Date as a timestamp
- *		                		19700101020000 -> 7200 with gm=1
- *								19700101000000 -> 0 with gm=1
+ *	@param	string		$string		Date in a string
+ *				     		        YYYYMMDD
+ *	                 				YYYYMMDDHHMMSS
+ *									YYYYMMDDTHHMMSSZ
+ *									YYYY-MM-DDTHH:MM:SSZ (RFC3339)
+ *		                			DD/MM/YY or DD/MM/YYYY (deprecated)
+ *		                			DD/MM/YY HH:MM:SS or DD/MM/YYYY HH:MM:SS (deprecated)
+ *  @param	int|string	$gm         'gmt' or 1 =Input date is GM date,
+ *                          	    'tzserver' or 0 =Input date is date using PHP server timezone
+ *  @return	int						Date as a timestamp
+ *		                			19700101020000 -> 7200 with gm=1
+ *									19700101000000 -> 0 with gm=1
  *
  *  @see    dol_print_date(), dol_mktime(), dol_getdate()
  */
@@ -383,7 +440,14 @@ function dol_stringtotime($string, $gm = 1)
 
 	$string = preg_replace('/([^0-9])/i', '', $string);
 	$tmp = $string.'000000';
-	$date = dol_mktime(substr($tmp, 8, 2), substr($tmp, 10, 2), substr($tmp, 12, 2), substr($tmp, 4, 2), substr($tmp, 6, 2), substr($tmp, 0, 4), ($gm ? 1 : 0));
+	// Clean $gm
+	if ($gm === 1) {
+		$gm = 'gmt';
+	} elseif (empty($gm) || $gm === 'tzserver') {
+		$gm = 'tzserver';
+	}
+
+	$date = dol_mktime(substr($tmp, 8, 2), substr($tmp, 10, 2), substr($tmp, 12, 2), substr($tmp, 4, 2), substr($tmp, 6, 2), substr($tmp, 0, 4), $gm);
 	return $date;
 }
 
@@ -656,7 +720,7 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 function getGMTEasterDatetime($year)
 {
 	$base = new DateTime("$year-03-21", new DateTimeZone("UTC"));
-	$days = easter_days($year);	// Return number of days between 21 march and easter day.
+	$days = easter_days($year); // Return number of days between 21 march and easter day.
 	$tmp = $base->add(new DateInterval("P{$days}D"));
 	return $tmp->getTimestamp();
 }
@@ -668,15 +732,16 @@ function getGMTEasterDatetime($year)
  *
  *  @param	int			$timestampStart		Timestamp start (UTC with hour, min, sec = 0)
  *  @param	int			$timestampEnd		Timestamp end (UTC with hour, min, sec = 0)
- *  @param	string			$country_code		Country code
- *  @param	int			$lastday		Last day is included, 0: no, 1:yes
+ *  @param	string		$country_code		Country code
+ *  @param	int			$lastday			Last day is included, 0: no, 1:yes
  *  @param	int			$includesaturday	Include saturday as non working day (-1=use setup, 0=no, 1=yes)
  *  @param	int			$includesunday		Include sunday as non working day (-1=use setup, 0=no, 1=yes)
  *  @param	int			$includefriday		Include friday as non working day (-1=use setup, 0=no, 1=yes)
- *  @return	int|string					Number of non working days or error message string if error
+ *  @param	int			$includemonday		Include monday as non working day (-1=use setup, 0=no, 1=yes)
+ *  @return	int|string						Number of non working days or error message string if error
  *  @see num_between_day(), num_open_day()
  */
-function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $includesaturday = -1, $includesunday = -1, $includefriday = -1)
+function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $includesaturday = -1, $includesunday = -1, $includefriday = -1, $includemonday = -1)
 {
 	global $db, $conf, $mysoc;
 
@@ -689,6 +754,9 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 
 	if (empty($country_code)) {
 		$country_code = $mysoc->country_code;
+	}
+	if ($includemonday < 0) {
+		$includemonday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY : 0);
 	}
 	if ($includefriday < 0) {
 		$includefriday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY : 0);
@@ -854,6 +922,15 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 					$ferie = true;
 				}
 				// Fronleichnam
+			}
+
+			if (in_array('genevafast', $specialdayrule)) {
+				// Geneva fast in Switzerland (Thursday after the first sunday in September)
+				$date_1sunsept = strtotime('next thursday', strtotime('next sunday', mktime(0, 0, 0, 9, 1, $annee)));
+				$jour_1sunsept = date("d", $date_1sunsept);
+				$mois_1sunsept = date("m", $date_1sunsept);
+				if ($jour_1sunsept == $jour && $mois_1sunsept == $mois) $ferie=true;
+				// Geneva fast in Switzerland
 			}
 		}
 		//print "ferie=".$ferie."\n";

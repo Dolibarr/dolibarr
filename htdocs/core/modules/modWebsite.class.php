@@ -68,7 +68,7 @@ class modWebsite extends DolibarrModules
 		$this->depends = array('modFckeditor'); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("website");
 
 		// Constants
@@ -164,6 +164,13 @@ class modWebsite extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		$error = 0;
+
+		$result = $this->_load_tables('/install/mysql/', 'website');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
+
 		// Remove permissions and default values
 		$this->remove($options);
 
@@ -180,9 +187,14 @@ class modWebsite extends DolibarrModules
 				if ($result < 0) {
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorFailToCopyDir', $src, $dest);
-					return 0;
+					$this->errors[] = $langs->trans('ErrorFailToCopyDir', $src, $dest);
+					$error++;
 				}
 			}
+		}
+
+		if ($error) {
+			return 0;
 		}
 
 		// Website templates
@@ -200,7 +212,13 @@ class modWebsite extends DolibarrModules
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
+				$this->errors[] = $langs->trans('ErrorFailToCopyFile', $src, $dest);
+				$error++;
 			}
+		}
+
+		if ($error) {
+			return 0;
 		}
 
 		$sql = array();

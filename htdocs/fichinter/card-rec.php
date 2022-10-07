@@ -30,6 +30,7 @@
  *  \brief       Page to show predefined fichinter
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinterrec.class.php';
@@ -37,11 +38,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 }
@@ -68,7 +69,7 @@ if ($page == -1) {
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 if ($sortorder == "") {
 	$sortorder = "DESC";
@@ -178,7 +179,6 @@ if ($action == 'add') {
 
 	$newinter->entity = $object->entity;
 	$newinter->duree = $object->duree;
-	$newinter->datei = $object->date;
 
 	$newinter->description = $object->description;
 	$newinter->note_private = $object->note_private;
@@ -242,10 +242,10 @@ llxHeader('', $langs->trans("RepeatableIntervention"), $help_url);
 
 $form = new Form($db);
 $companystatic = new Societe($db);
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$contratstatic = new Contrat($db);
 }
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	$projectstatic = new Project($db);
 }
 
@@ -273,10 +273,10 @@ if ($action == 'create') {
 		print dol_get_fiche_head();
 
 		$rowspan = 4;
-		if (!empty($conf->projet->enabled) && $object->fk_project > 0) {
+		if (isModEnabled('project') && $object->fk_project > 0) {
 			$rowspan++;
 		}
-		if (!empty($conf->contrat->enabled) && $object->fk_contrat > 0) {
+		if (isModEnabled('contrat') && $object->fk_contrat > 0) {
 			$rowspan++;
 		}
 
@@ -315,7 +315,7 @@ if ($action == 'create') {
 		}
 
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (isModEnabled('project')) {
 			$formproject = new FormProjets($db);
 			print "<tr><td>".$langs->trans("Project")."</td><td>";
 			$projectid = GETPOST('projectid') ?GETPOST('projectid') : $object->fk_project;
@@ -329,7 +329,7 @@ if ($action == 'create') {
 		}
 
 		// Contrat
-		if (!empty($conf->contrat->enabled)) {
+		if (isModEnabled('contrat')) {
 			$formcontract = new FormContract($db);
 			print "<tr><td>".$langs->trans("Contract")."</td><td>";
 			$contractid = GETPOST('contractid') ?GETPOST('contractid') : $object->fk_contract;
@@ -437,10 +437,8 @@ if ($action == 'create') {
 
 		print dol_get_fiche_end();
 
-		print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="button" class="button button-cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
-		print '</div>';
+		print $form->buttonsSaveCancel("Create");
+
 		print "</form>\n";
 	} else {
 		dol_print_error('', "Error, no fichinter ".$object->id);
@@ -458,11 +456,9 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
 	print '<input type="hidden" name="action" value="createfrommodel">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel("CreateDraftIntervention", '');
 
 	print '</form>';
 } else {
@@ -489,13 +485,13 @@ if ($action == 'create') {
 
 			$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->projet->enabled)) {
+			if (isModEnabled('project')) {
 				$formproject = new FormProjets($db);
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if ($user->rights->ficheinter->creer) {
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">';
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">';
 						$morehtmlref .= img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 					}
 					if ($action == 'classify') {
@@ -512,10 +508,10 @@ if ($action == 'create') {
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($object->fk_project);
-						$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'"';
-						$morehtmlref .= 'title="'.$langs->trans('ShowProject').'">';
-						$morehtmlref .= $proj->ref;
-						$morehtmlref .= '</a>';
+						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						if ($proj->title) {
+							$morehtmlref .= ' - '.$proj->title;
+						}
 					} else {
 						$morehtmlref .= '';
 					}
@@ -544,7 +540,7 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($object->description)."</td></tr>";
 
 			// Contract
-			if (!empty($conf->contrat->enabled)) {
+			if (isModEnabled('contrat')) {
 				$langs->load('contracts');
 				print '<tr>';
 				print '<td>';
@@ -578,7 +574,6 @@ if ($action == 'create') {
 			print '</div>';
 
 			print '<div class="fichehalfright">';
-			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
 			$title = $langs->trans("Recurrence");
@@ -592,7 +587,7 @@ if ($action == 'create') {
 			print $langs->trans('Frequency');
 			print '</td>';
 			if ($action != 'editfrequency' && $user->rights->ficheinter->creer) {
-				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editfrequency&amp;id='.$id.'">';
+				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editfrequency&token='.newToken().'&id='.$id.'">';
 				print img_edit($langs->trans('Edit'), 1).'</a></td>';
 			}
 			print '</tr></table>';
@@ -606,7 +601,7 @@ if ($action == 'create') {
 				print '<input type="text" name="frequency" value="'.$object->frequency.'" size="5">&nbsp;';
 				print $form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency ? $object->unit_frequency : 'm'));
 				print '</td>';
-				print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+				print '<td class="left"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 				print '</tr></table></form>';
 			} else {
 				if ($object->frequency > 0) {
@@ -679,7 +674,6 @@ if ($action == 'create') {
 				print '<br>';
 			}
 
-			print '</div>';
 			print '</div>';
 			print '</div>';
 
@@ -766,7 +760,7 @@ if ($action == 'create') {
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter_rec as f";
 		$sql .= " , ".MAIN_DB_PREFIX."societe as s ";
-		if (!$user->rights->societe->client->voir && !$socid) {
+		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -774,7 +768,7 @@ if ($action == 'create') {
 		if ($socid) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
-		if (!$user->rights->societe->client->voir && !$socid) {
+		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($search_ref) {
@@ -807,10 +801,10 @@ if ($action == 'create') {
 			print '<tr class="liste_titre">';
 			print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.titre", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
 			print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "s.nom", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
-			if (!empty($conf->contrat->enabled)) {
+			if (isModEnabled('contrat')) {
 				print_liste_field_titre("Contract", $_SERVER['PHP_SELF'], "f.fk_contrat", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
 			}
-			if (!empty($conf->projet->enabled)) {
+			if (isModEnabled('project')) {
 				print_liste_field_titre("Project", $_SERVER['PHP_SELF'], "f.fk_project", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
 			}
 			print_liste_field_titre("Duration", $_SERVER['PHP_SELF'], 'f.duree', '', '', 'width="50px"', $sortfield, $sortorder, 'right ');
@@ -841,7 +835,7 @@ if ($action == 'create') {
 						print '<td>'.$langs->trans("None").'</td>';
 					}
 
-					if (!empty($conf->contrat->enabled)) {
+					if (isModEnabled('contrat')) {
 						print '<td>';
 						if ($objp->fk_contrat > 0) {
 							$contratstatic->fetch($objp->fk_contrat);
@@ -849,7 +843,7 @@ if ($action == 'create') {
 						}
 						print '</td>';
 					}
-					if (!empty($conf->projet->enabled)) {
+					if (isModEnabled('project')) {
 						print '<td>';
 						if ($objp->fk_project > 0) {
 							$projectstatic->fetch($objp->fk_project);

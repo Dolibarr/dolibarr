@@ -19,26 +19,34 @@
  */
 
 /**
- *	\file       htdocs/fourn/paiement/card.php
- *	\ingroup    facture, fournisseur
- *	\brief      Tab to show a payment of a supplier invoice
- *	\remarks	Fichier presque identique a compta/paiement/card.php
+ *    \file       htdocs/fourn/paiement/card.php
+ *    \ingroup    facture, fournisseur
+ *    \brief      Tab to show a payment of a supplier invoice
+ *    \remarks    Fichier presque identique a compta/paiement/card.php
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
-$langs->loadLangs(array('bills', 'banks', 'companies', 'suppliers'));
 
-$id = GETPOST('id', 'int');
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'bills', 'companies', 'suppliers'));
+
+
+// Get Parameters
+$id 		= GETPOST('id', 'int');
 $action		= GETPOST('action', 'alpha');
-$confirm	= GETPOST('confirm', 'alpha');
+$confirm 	= GETPOST('confirm', 'alpha');
 
+// Initialize objects
 $object = new PaiementFourn($db);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('supplierpaymentcard', 'globalcard'));
 
@@ -108,9 +116,9 @@ if ($action == 'confirm_validate' && $confirm == 'yes' &&
 	}
 }
 
-if ($action == 'setnum_paiement' && !empty($_POST['num_paiement'])) {
+if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
 	$object->fetch($id);
-	$res = $object->update_num($_POST['num_paiement']);
+	$res = $object->update_num(GETPOST('num_paiement'));
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
 	} else {
@@ -118,7 +126,7 @@ if ($action == 'setnum_paiement' && !empty($_POST['num_paiement'])) {
 	}
 }
 
-if ($action == 'setdatep' && !empty($_POST['datepday'])) {
+if ($action == 'setdatep' && GETPOST('datepday')) {
 	$object->fetch($id);
 	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
 	$res = $object->update_date($datepaye);
@@ -134,6 +142,13 @@ $upload_dir = $conf->fournisseur->payment->dir_output;
 // TODO: get the appropriate permission
 $permissiontoadd = true;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+// Actions to send emails
+$triggersendname = 'PAYMENTRECEIPT_SENTBYMAIL';
+$paramname = 'id';
+$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';
+$trackid = 'pre'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
 /*
@@ -213,7 +228,7 @@ if ($result > 0) {
 
 	$allow_delete = 1;
 	// Bank account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		if ($object->fk_account) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->bank_line);
@@ -259,7 +274,7 @@ if ($result > 0) {
 	$sql .= ' pf.amount, s.nom as name, s.rowid as socid';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 	$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
-	$sql .= ' AND pf.fk_paiementfourn = '.$object->id;
+	$sql .= ' AND pf.fk_paiementfourn = '.((int) $object->id);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -334,6 +349,18 @@ if ($result > 0) {
 	 */
 
 	print '<div class="tabsAction">';
+
+	// Send by mail
+	if ($user->socid == 0 && $action == '') {
+		$usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->send)));
+		if ($usercansend) {
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+		} else {
+			print '<span class="butActionRefused classfortooltip">'.$langs->trans('SendMail').'</span>';
+		}
+	}
+
+	// Payment validation
 	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 		if ($user->socid == 0 && $object->statut == 0 && $action == '') {
 			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && (!empty($user->rights->fournisseur->facture->creer) || !empty($user->rights->supplier_invoice->creer)))
@@ -342,10 +369,12 @@ if ($result > 0) {
 			}
 		}
 	}
+
+	// Delete payment
 	if ($user->socid == 0 && $action == '') {
 		if ($user->rights->fournisseur->facture->supprimer) {
 			if ($allow_delete) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
 			}
@@ -371,7 +400,7 @@ if ($result > 0) {
 		$somethingshown = $formfile->numoffiles;
 	}
 
-	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	print '</div><div class="fichehalfright">';
 	//print '<br>';
 
 	// List of actions on element
@@ -380,7 +409,16 @@ if ($result > 0) {
 	$somethingshown = $formactions->showactions($object,'supplier_payment',$socid,1,'listaction'.($genallowed?'largetitle':''));
 	*/
 
-	print '</div></div></div>';
+	print '</div></div>';
+
+	// Presend form
+	$modelmail = ''; //TODO: Add new 'payment receipt' model in email models
+	$defaulttopic = 'SendPaymentReceipt';
+	$diroutput = $conf->fournisseur->payment->dir_output;
+	$autocopy = 'MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO';
+	$trackid = 'pre'.$object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 } else {
 	$langs->load("errors");
 	print $langs->trans("ErrorRecordNotFound");

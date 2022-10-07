@@ -25,6 +25,7 @@
  *      \brief      Page list of direct debit orders or credit transfers orders
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
@@ -302,7 +303,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr><td class="opacitymedium" colspan="8">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print "</table>";
 	print '</div>';

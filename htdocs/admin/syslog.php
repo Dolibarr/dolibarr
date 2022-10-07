@@ -24,6 +24,7 @@
  *	\brief      Setup page for logs module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -187,8 +188,6 @@ if (!empty($conf->global->MAIN_MODULE_MULTICOMPANY) && $user->entity) {
 }
 
 
-//print "conf->global->MAIN_FEATURES_LEVEL = ".$conf->global->MAIN_FEATURES_LEVEL."<br><br>\n";
-
 // Output mode
 print load_fiche_titre($langs->trans("SyslogOutput"), '', '');
 
@@ -207,7 +206,7 @@ foreach ($syslogModules as $moduleName) {
 
 	$moduleactive = (int) $module->isActive();
 	//print $moduleName." = ".$moduleactive." - ".$module->getName()." ".($moduleactive == -1)."<br>\n";
-	if (($moduleactive == -1) && empty($conf->global->MAIN_FEATURES_LEVEL)) {
+	if (($moduleactive == -1) && getDolGlobalInt('MAIN_FEATURES_LEVEL') == 0) {
 		continue; // Some modules are hidden if not activable and not into debug mode (end user must not see them)
 	}
 
@@ -295,9 +294,9 @@ print '<option value="'.LOG_DEBUG.'" '.($conf->global->SYSLOG_LEVEL >= LOG_DEBUG
 print '</select>';
 print '</td></tr>';
 
-if (!empty($conf->loghandlers['mod_syslog_file']) && !empty($conf->cron->enabled)) {
+if (!empty($conf->loghandlers['mod_syslog_file']) && isModEnabled('cron')) {
 	print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogFileNumberOfSaves").'</td>';
-	print '<td colspan="2"><input type="number" name="file_saves" placeholder="14" min="0" step="1" value="'.$conf->global->SYSLOG_FILE_SAVES.'" />';
+	print '<td colspan="2"><input type="number" name="file_saves" placeholder="14" min="0" step="1" value="'.getDolGlobalString('SYSLOG_FILE_SAVES').'" />';
 	print ' (<a href="'.dol_buildpath('/cron/list.php', 1).'?search_label=CompressSyslogs&status=-1">'.$langs->trans('ConfigureCleaningCronjobToSetFrequencyOfSaves').'</a>)</td></tr>';
 }
 

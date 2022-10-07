@@ -23,6 +23,7 @@
  *     \brief      Onglet de gestion des contacts de reception
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (!empty($conf->projet->enabled)) {
+if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -54,7 +55,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled))) {
+	if ($origin == 'order_supplier' && $object->$typeobject->id && (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order"))) {
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->$typeobject->id);
 	}
@@ -147,12 +148,12 @@ if ($id > 0 || !empty($ref)) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (!empty($conf->project->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if (0) {    // Do not change on reception
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -160,7 +161,7 @@ if ($id > 0 || !empty($ref)) {
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-				$morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
@@ -172,9 +173,10 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($objectsrc->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objectsrc->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}
@@ -191,7 +193,7 @@ if ($id > 0 || !empty($ref)) {
 
 	print '<table class="border centpercent">';
 	// Linked documents
-	if ($origin == 'order_supplier' && $object->$typeobject->id && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled))) {
+	if ($origin == 'order_supplier' && $object->$typeobject->id && (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order"))) {
 		print '<tr><td class="titlefield">';
 		$objectsrc = new CommandeFournisseur($db);
 		$objectsrc->fetch($object->$typeobject->id);
@@ -201,7 +203,7 @@ if ($id > 0 || !empty($ref)) {
 		print "</td>\n";
 		print '</tr>';
 	}
-	if ($typeobject == 'propal' && $object->$typeobject->id && !empty($conf->propal->enabled)) {
+	if ($typeobject == 'propal' && $object->$typeobject->id && isModEnabled("propal")) {
 		print '<tr><td class="titlefield">';
 		$objectsrc = new Propal($db);
 		$objectsrc->fetch($object->$typeobject->id);
@@ -217,11 +219,9 @@ if ($id > 0 || !empty($ref)) {
 
 	//print '</div>';
 	//print '<div class="fichehalfright">';
-	//print '<div class="ficheaddleft">';
 	//print '<div class="underbanner clearboth"></div>';
 
 
-	//print '</div>';
 	//print '</div>';
 	print '</div>';
 

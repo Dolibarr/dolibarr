@@ -180,7 +180,7 @@ function delivery_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->commande->dir_output."/".dol_sanitizeFileName($tmpobject->ref);
+	$upload_dir = $conf->expedition->dir_output."/sending/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $tmpobject->element, $tmpobject->id);
 	$head[$h][0] = DOL_URL_ROOT.'/expedition/document.php?id='.$tmpobject->id;
@@ -276,11 +276,11 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			print '<td class="center">'.$langs->trans("DateCreation").'</td>';
 			print '<td class="center">'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td class="center">'.$langs->trans("QtyPreparedOrShipped").'</td>';
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				print '<td>'.$langs->trans("Warehouse").'</td>';
 			}
 			/*TODO Add link to expeditiondet_batch
-			if (! empty($conf->productbatch->enabled))
+			if (!empty($conf->productbatch->enabled))
 			{
 				print '<td>';
 				print '</td>';
@@ -305,7 +305,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				// Description
 				if ($objp->fk_product > 0) {
 					// Define output language
-					if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 						$object = new $origin($db);
 						$object->fetch($origin_id);
 						$object->fetch_thirdparty();
@@ -385,7 +385,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				print '<td class="center">'.$objp->qty_shipped.'</td>';
 
 				// Warehouse
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					print '<td>';
 					if ($objp->warehouse_id > 0) {
 						$warehousestatic->fetch($objp->warehouse_id);
@@ -396,9 +396,9 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 				// Batch number managment
 				/*TODO Add link to expeditiondet_batch
-				if (! empty($conf->productbatch->enabled))
+				if (!empty($conf->productbatch->enabled))
 				{
-					var_dump($objp->edrowid);
+					//var_dump($objp->edrowid);
 					$lines[$i]->detail_batch
 					if (isset($lines[$i]->detail_batch))
 					{

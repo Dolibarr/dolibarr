@@ -23,6 +23,7 @@
  * 	\brief      Page to show a leave information
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -78,7 +79,7 @@ $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 
 $form = new Form($db);
 
-$title = $langs->trans("Holiday")." - ".$langs->trans("Info");
+$title = $langs->trans("Leave")." - ".$langs->trans("Info");
 $helpurl = "";
 llxHeader("", $title, $helpurl);
 

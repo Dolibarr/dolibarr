@@ -84,16 +84,18 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	protected function getMailInfo()
 	{
 		global $conf, $langs;
-		global $dolibarr_mailing_limit_sendbyweb;
+		global $dolibarr_mailing_limit_sendbyweb, $dolibarr_mailing_limit_sendbycli, $dolibarr_mailing_limit_sendbyday;
 
-		$info  = $langs->trans('Method').': <strong>'.$conf->global->MAIN_MAIL_SENDMODE.'</strong><br>';
-		$info .= $langs->trans('Server').': <strong>'.$conf->global->MAIN_MAIL_SMTP_SERVER.'</strong><br>';
-		$info .= $langs->trans('Port').': <strong>'.$conf->global->MAIN_MAIL_SMTP_PORT.'</strong><br>';
-		$info .= $langs->trans('ID').': <strong>'.$conf->global->MAIN_MAIL_SMTPS_ID.'</strong><br>';
-		$info .= $langs->trans('Pwd').': <strong>'.preg_replace('/./', '*', $conf->global->MAIN_MAIL_SMTPS_PW).'</strong><br>';
-		$info .= $langs->trans('TLS/STARTTLS').': <strong>'.(empty($conf->global->MAIN_MAIL_EMAIL_TLS) ? '' : $conf->global->MAIN_MAIL_EMAIL_TLS).'</strong> / <strong>'.(empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS) ? '' : $conf->global->MAIN_MAIL_EMAIL_STARTTLS).'</strong><br>';
+		$info  = $langs->trans('Method').': <strong>'.getDolGlobalString("MAIN_MAIL_SENDMODE").'</strong><br>';
+		$info .= $langs->trans('Server').': <strong>'.getDolGlobalString("MAIN_MAIL_SMTP_SERVER").'</strong><br>';
+		$info .= $langs->trans('Port').': <strong>'.getDolGlobalString("MAIN_MAIL_SMTP_PORT").'</strong><br>';
+		$info .= $langs->trans('ID').': <strong>'.getDolGlobalString("MAIN_MAIL_SMTPS_IDT").'</strong><br>';
+		$info .= $langs->trans('Pwd').': <strong>'.preg_replace('/./', '*', getDolGlobalString("MAIN_MAIL_SMTPS_PW")).'</strong><br>';
+		$info .= $langs->trans('TLS/STARTTLS').': <strong>'.getDolGlobalString("MAIN_MAIL_EMAIL_TLS").'</strong> / <strong>'.getDolGlobalString("MAIN_MAIL_EMAIL_STARTTLS").'</strong><br>';
 		$info .= $langs->trans('MAIN_DISABLE_ALL_MAILS').': <strong>'.(empty($conf->global->MAIN_DISABLE_ALL_MAILS) ? $langs->trans('No') : $langs->trans('Yes')).'</strong><br>';
 		$info .= 'dolibarr_mailing_limit_sendbyweb = <strong>'.$dolibarr_mailing_limit_sendbyweb.'</strong><br>';
+		$info .= 'dolibarr_mailing_limit_sendbycli = <strong>'.$dolibarr_mailing_limit_sendbycli.'</strong><br>';
+		$info .= 'dolibarr_mailing_limit_sendbyday = <strong>'.$dolibarr_mailing_limit_sendbyday.'</strong><br>';
 
 		return $info;
 	}

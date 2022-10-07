@@ -25,6 +25,7 @@
  *	\brief      card of withdraw line
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
@@ -34,11 +35,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadlangs(array('banks', 'categories', 'bills', 'withdrawals'));
-
-// Security check
-if ($user->socid > 0) {
-	accessforbidden();
-}
 
 // Get supervariables
 $action = GETPOST('action', 'aZ09');
@@ -64,6 +60,13 @@ if ($sortorder == "") {
 }
 if ($sortfield == "") {
 	$sortfield = "pl.fk_soc";
+}
+
+$type = $object->type;
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
+} else {
+	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 }
 
 
@@ -226,7 +229,7 @@ if ($id) {
 		print '</table><br>';
 
 		//Confirm Button
-		print '<div class="center"><input type="submit" class="button" value='.$langs->trans("Confirm").'></div>';
+		print '<div class="center"><input type="submit" class="button button-save" value='.$langs->trans("Confirm").'></div>';
 		print '</form>';
 	}
 

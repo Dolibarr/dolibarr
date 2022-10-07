@@ -21,6 +21,7 @@
  *		\brief      Page with geographical statistics on members
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -161,40 +162,40 @@ if ($mode) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 			if ($mode == 'memberbycountry') {
-				$data[] = array('label'=>(($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? $langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
-							'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
-							'code'=>$obj->code,
-							'nb'=>$obj->nb,
-							'lastdate'=>$db->jdate($obj->lastdate),
-							'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
+				$data[] = array('label'=>(($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? img_picto('', DOL_URL_ROOT.'/theme/common/flags/'.strtolower($obj->code).'.png', '', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'code'=>$obj->code,
+					'nb'=>$obj->nb,
+					'lastdate'=>$db->jdate($obj->lastdate),
+					'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
 				);
 			}
 			if ($mode == 'memberbyregion') { //+
 				$data[] = array(
-					'label'=>(($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? $langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
-					'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
-					'label2'=>($obj->label2 ? $obj->label2 : $langs->trans("Unknown")),
+					'label'=>(($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? img_picto('', DOL_URL_ROOT.'/theme/common/flags/'.strtolower($obj->code).'.png', '', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label :'<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label2'=>($obj->label2 ? $obj->label2 : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>'),
 					'nb'=>$obj->nb,
 					'lastdate'=>$db->jdate($obj->lastdate),
 					'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
 				);
 			}
 			if ($mode == 'memberbystate') {
-				$data[] = array('label'=>(($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? $langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
-							'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
-							'label2'=>($obj->label2 ? $obj->label2 : $langs->trans("Unknown")),
-							'nb'=>$obj->nb,
-							'lastdate'=>$db->jdate($obj->lastdate),
-							'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
+				$data[] = array('label'=>(($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? img_picto('', DOL_URL_ROOT.'/theme/common/flags/'.strtolower($obj->code).'.png', '', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label2'=>($obj->label2 ? $obj->label2 : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>'),
+					'nb'=>$obj->nb,
+					'lastdate'=>$db->jdate($obj->lastdate),
+					'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
 				);
 			}
 			if ($mode == 'memberbytown') {
-				$data[] = array('label'=>(($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? $langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
-							'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : $langs->trans("Unknown"))),
-							'label2'=>($obj->label2 ? $obj->label2 : $langs->trans("Unknown")),
-							'nb'=>$obj->nb,
-							'lastdate'=>$db->jdate($obj->lastdate),
-							'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
+				$data[] = array('label'=>(($obj->code && $langs->trans("Country".$obj->code) != "Country".$obj->code) ? img_picto('', DOL_URL_ROOT.'/theme/common/flags/'.strtolower($obj->code).'.png', '', 1).' '.$langs->trans("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label_en'=>(($obj->code && $langsen->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code) ? $langsen->transnoentitiesnoconv("Country".$obj->code) : ($obj->label ? $obj->label : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>')),
+					'label2'=>($obj->label2 ? $obj->label2 : '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>'),
+					'nb'=>$obj->nb,
+					'lastdate'=>$db->jdate($obj->lastdate),
+					'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate)
 				);
 			}
 
@@ -308,7 +309,7 @@ if ($mode) {
 	print '</tr>';
 
 	foreach ($data as $val) {
-		$year = isset($val['year']) ? $val['year'] : '';;
+		$year = isset($val['year']) ? $val['year'] : '';
 		print '<tr class="oddeven">';
 		print '<td>'.$val['label'].'</td>';
 		if (isset($label2)) {

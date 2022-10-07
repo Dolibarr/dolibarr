@@ -22,6 +22,7 @@
  * \brief       Page to show a fiscal year
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fiscalyear.lib.php';
@@ -34,7 +35,7 @@ $langs->loadLangs(array("admin", "compta"));
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->fiscalyear->write)) {
+if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {
 	accessforbidden();
 }
 
@@ -242,11 +243,7 @@ if ($action == 'create') {
 
 			print '</table>';
 
-			print '<br><div class="center">';
-			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
+			print $form->buttonsSaveCancel();
 
 			print '</form>';
 
@@ -303,7 +300,7 @@ if ($action == 'create') {
 			/*
 			 * Action bar
 			 */
-			if (!empty($user->rights->accounting->fiscalyear->write)) {
+			if ($user->hasRight('accounting', 'fiscalyear', 'write')) {
 				print '<div class="tabsAction">';
 
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';

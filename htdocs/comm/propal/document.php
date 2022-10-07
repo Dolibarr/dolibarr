@@ -26,13 +26,14 @@
  *       \brief      Management page of documents attached to a business proposal
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -53,8 +54,8 @@ $result = restrictedArea($user, 'propal', $id);
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -104,7 +105,7 @@ if ($object->id > 0) {
 /*
  * View
  */
-$title = $langs->trans('Proposal')." - ".$langs->trans('Documents');
+$title = $object->ref." - ".$langs->trans('Documents');
 $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
 llxHeader('', $title, $help_url);
 
@@ -136,12 +137,12 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->propal->creer) {
 			if ($action != 'classify') {
-				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+				//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
 				$morehtmlref .= ' : ';
 			}
 			if ($action == 'classify') {
@@ -159,9 +160,10 @@ if ($object->id > 0) {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
-				$morehtmlref .= $proj->ref;
-				$morehtmlref .= '</a>';
+				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= ' - '.$proj->title;
+				}
 			} else {
 				$morehtmlref .= '';
 			}

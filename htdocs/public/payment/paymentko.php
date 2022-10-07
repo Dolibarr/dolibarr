@@ -46,18 +46,19 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
 
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
 
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	$PAYPALTOKEN = GETPOST('TOKEN');
 	if (empty($PAYPALTOKEN)) {
 		$PAYPALTOKEN = GETPOST('token');
@@ -67,9 +68,9 @@ if (!empty($conf->paypal->enabled)) {
 		$PAYPALPAYERID = GETPOST('PayerID');
 	}
 }
-if (!empty($conf->paybox->enabled)) {
+if (isModEnabled('paybox')) {
 }
-if (!empty($conf->stripe->enabled)) {
+if (isModEnabled('stripe')) {
 }
 
 $FULLTAG = GETPOST('FULLTAG');
@@ -95,20 +96,20 @@ if (empty($paymentmethod)) {
 
 
 $validpaymentmethod = array();
-if (!empty($conf->paypal->enabled)) {
+if (isModEnabled('paypal')) {
 	$validpaymentmethod['paypal'] = 'paypal';
 }
-if (!empty($conf->paybox->enabled)) {
+if (isModEnabled('paybox')) {
 	$validpaymentmethod['paybox'] = 'paybox';
 }
-if (!empty($conf->stripe->enabled)) {
+if (isModEnabled('stripe')) {
 	$validpaymentmethod['stripe'] = 'stripe';
 }
 
 
 // Security check
 if (empty($validpaymentmethod)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('No valid payment mode');
 }
 
 
@@ -190,7 +191,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 		$urlback = $_SERVER["REQUEST_URI"];
 		$topic = '['.$appli.'] '.$companylangs->transnoentitiesnoconv("NewOnlinePaymentFailed");
 		$content = "";
-		$content .= '<font color="orange">'.$companylangs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."</font>\n";
+		$content .= '<span style="color: orange">'.$companylangs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."</span>\n";
 
 		$content .= "<br><br>\n";
 		$content .= '<u>'.$companylangs->transnoentitiesnoconv("TechnicalInformation").":</u><br>\n";
