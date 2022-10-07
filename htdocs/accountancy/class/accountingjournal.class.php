@@ -456,7 +456,7 @@ class AccountingJournal extends CommonObject
 			$sql .= " SELECT DISTINCT fk_docdet";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 			$sql .= " WHERE doc_type = 'asset'";
-			$sql .= ")";
+			$sql .= ") ";
 		}*/
 
 		$sql .= "SELECT ad.fk_asset AS rowid, a.ref AS asset_ref, a.label AS asset_label, a.acquisition_value_ht AS asset_acquisition_value_ht";
