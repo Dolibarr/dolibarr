@@ -77,6 +77,11 @@ $prodattrval = new ProductAttributeValue($db);
 
 $res = $prodattrval->fetchAllByProductAttribute($id);
 
+// Remove db for avoid error with postgresql
+foreach ($res as $key => $val) {
+	unset($res[$key]->db);
+}
+
 if ($res == -1) {
 	print json_encode(array(
 		'error' => 'Internal error'

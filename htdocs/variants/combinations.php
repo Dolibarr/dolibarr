@@ -477,8 +477,9 @@ if (!empty($id) || !empty($ref)) {
 
 			foreach ($prodattr_all as $each) {
 				$prodattr_alljson[$each->id] = $each;
+				// Remove db for avoid error with postgresql
+				unset($prodattr_alljson[$each->id]->db);
 			}
-
 			?>
 
 		<script type="text/javascript">
