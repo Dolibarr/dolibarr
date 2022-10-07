@@ -1554,7 +1554,7 @@ if ($action == 'create') {
 					}
 					print '</td>';
 				} else {
-					print '<td width="30">&nbsp;sss</td>';
+					print '<td width="30">&nbsp;</td>';
 				}
 
 				print "</tr>\n";
