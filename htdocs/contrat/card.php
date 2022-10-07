@@ -1494,7 +1494,7 @@ if ($action == 'create') {
 
 		print '<div id="contrat-lines-container"  id="contractlines" data-contractid="'.$object->id.'"  data-element="'.$object->element.'" >';
 		while ($cursorline <= $nbofservices) {
-			print '<div id="contrat-line-container'.$object->lines[$cursorline - 1]->id.'" class="" draggable="true" data-contratlineid = "'.$object->lines[$cursorline - 1]->id.'" data-element="'.$object->lines[$cursorline - 1]->element.'" >';
+			print '<div id="contrat-line-container'.$object->lines[$cursorline - 1]->id.'" data-contratlineid = "'.$object->lines[$cursorline - 1]->id.'" data-element="'.$object->lines[$cursorline - 1]->element.'" >';
 			print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="updateline">';
@@ -1503,7 +1503,7 @@ if ($action == 'create') {
 
 			// Area with common detail of line
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="notopnoleftnoright allwidth tableforservicepart1 " width="100%">';
+			print '<table class="notopnoleftnoright allwidth tableforservicepart1" width="100%">';
 
 			$sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.product_type, cd.description, cd.price_ht, cd.qty,";
 			$sql .= " cd.tva_tx, cd.vat_src_code, cd.remise_percent, cd.info_bits, cd.subprice, cd.multicurrency_subprice,";
