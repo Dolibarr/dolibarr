@@ -319,7 +319,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 
 	// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 	global $modulepart;
-	if ($modulepart == 'produit' && !empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+	if ($modulepart == 'produit' && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		global $object;
 		if (!empty($object->id)) {
 			if (isModEnabled("product")) {
