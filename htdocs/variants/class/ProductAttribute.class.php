@@ -119,7 +119,6 @@ class ProductAttribute extends CommonObject
 		$query = $this->db->query($sql);
 		if ($query) {
 			while ($result = $this->db->fetch_object($query)) {
-
 				if (empty($returnonlydata)) {
 					$tmp = new ProductAttribute($this->db);
 				} else {
