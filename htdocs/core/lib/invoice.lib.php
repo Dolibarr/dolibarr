@@ -71,6 +71,8 @@ function facture_prepare_head($object)
 		} else {
 			dol_print_error($db);
 		}
+		$langs->load("banks");
+
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.urlencode($object->id);
 		$head[$h][1] = $langs->trans('StandingOrders');
 		if ($nbStandingOrders > 0) {
