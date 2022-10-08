@@ -8,14 +8,6 @@ header('Cache-Control: max-age=3600, public, must-revalidate');
 header('Content-type: application/javascript');
 // END PHP ?>
 /* JS content (all pages) */
-(function ($) {
-	"use strict";
-
-	// NAVBAR
-	$(".navbar-nav .nav-link").click(function () {
-		$(".navbar-collapse").collapse("hide");
-	});
-})(window.jQuery);
 <?php // BEGIN PHP
 $tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "js");
 // END PHP ?>
