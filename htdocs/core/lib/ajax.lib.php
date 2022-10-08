@@ -662,13 +662,14 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 
             // Set constant
             $("#set_'.$code.'_'.$object->id.'").click(function() {
+				console.log("Click managed by ajax_object_onoff");
                 $.get( "'.DOL_URL_ROOT.'/core/ajax/objectonoff.php", {
                     action: \'set\',
                     field: \''.$field.'\',
                     value: \'1\',
                     element: \''.$object->element.'\',
                     id: \''.$object->id.'\',
-					token: \''.newToken().'\'
+					token: \''.currentToken().'\'
                 },
                 function() {
                     $("#set_'.$code.'_'.$object->id.'").hide();
@@ -693,13 +694,14 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 
             // Del constant
             $("#del_'.$code.'_'.$object->id.'").click(function() {
+				console.log("Click managed by ajax_object_onoff");
                 $.get( "'.DOL_URL_ROOT.'/core/ajax/objectonoff.php", {
                     action: \'set\',
                     field: \''.$field.'\',
                     value: \'0\',
                     element: \''.$object->element.'\',
                     id: \''.$object->id.'\',
-					token: \''.newToken().'\'
+					token: \''.currentToken().'\'
                 },
                 function() {
                     $("#del_'.$code.'_'.$object->id.'").hide();
