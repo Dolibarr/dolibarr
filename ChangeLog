@@ -3,6 +3,84 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 16.0.1 compared to 16.0.0 *****
+
+FIX: #16476 on massaction the pdf generation is not using the t…
+FIX: #21416 Filter tag no-categorie in members
+FIX: #21543
+FIX: #21799 inactive companies shall not be selectable for new proposals, orders and invoices
+FIX: #21859 Don't show html balise on list for private/public note
+FIX: #22164
+FIX: #22241
+FIX: #22263 Accountancy - Account number expected in place of a rowid on parent account on export
+FIX: #22264 Accountancy - Translation on chart of accounts export
+FIX: #22265 Accountancy - Account number expected in place of a rowid on export
+FIX: #22334
+FIX: #22360
+FIX: #22379 creating events on supplier order
+FIX: #22382 Error on length of supplier reference
+FIX: #22386 IBAN not mandatory for International Export Countries
+FIX: #22440 Lang Key "UserAccountNotDefined" is missing
+FIX: #22482
+FIX: #22507
+FIX: Accountancy - Some manuals operations are displayed in subledger
+FIX: API reception return error 500
+FIX: avoid override initial message ($this instead $object)
+FIX: avoid some warnings (php8+)
+FIX: Bad backtopage and CSRF on link for ticket message
+FIX: bad closing select
+FIX: broken feature, wrong fk_parent_line after cloning object
+FIX: Column label
+FIX: compatibility if javascript not actived
+FIX: compatibility with Mysql <= 5.7
+FIX: contact deletion: execute trigger before really deleting
+FIX: CronJob sendBackup
+FIX: CSRF + lost value of constant after use save button
+FIX: CSS
+FIX: data integrity for llx_delivery table
+FIX: default value for partnership status
+FIX: deletion of the MO_CHILD link
+FIX: Dictionary - Display error on cache_vatrates
+FIX: Dolibarr#16476 version 2a
+FIX: Duplicate creation of invoice when closing shipment linked to order
+FIX: Duplicate in list when filtering on categories
+FIX: extrafields with value '0' was ''
+FIX: filters lost when sorting on productMargin and customerMargins
+FIX: fk_expedition in $line can be usefull for triggers
+FIX: Import in upgrade when using a socialnetwork field.
+FIX: input hidden with fk_product of line on mo production can be usefull
+FIX: inventory code must be different at each transation
+FIX: inventory total columns
+FIX: Issue #16476 on massaction the pdf generation is not using the thirdparty language settings
+FIX: Linked object agenda card
+FIX: missing check if category module is enabled
+FIX: missing check if incoice as a payment (wrong status)
+FIX: missing class "societe" when create another object with workflow
+FIX: missing error message if image size too large
+FIX: Missing reposition
+FIX: missing the management of a constant in the Ticket config
+FIX: Missing token in different URLs links
+FIX: @ must be allowed into dol_eval to allow rules including external module string 'abc@def'
+FIX: - php V8 get number doc saphir
+FIX: - php V8 propal index last draft
+FIX: Preview button position on documents list (case when the file is too long)
+FIX: Project - on global view, missing display of ref customer
+FIX: Protection against bad value into accurancy setup
+FIX: reading of trackid in emailcollector (when on recipient suffix)
+FIX: recruitment linked files
+FIX: Remove use of code we should not have
+FIX: Restore the option MAIN_OPTIMIZEFORTEXTBROWSER
+FIX: Rich text is not diplayed
+FIX: same thing in deleteline
+FIX: Supplier Reference is lost when page breaks
+FIX: support of array parameters in "add to bookmark" feature.
+FIX: Test that web dir is correct in install
+FIX: the shipment PDF was using the full size logo instead of small
+FIX: Token Error : delete stock transfer
+FIX: ToOfferALinkForOnlinePayment not translated
+FIX: tooltip of technical tables added of a module
+FIX: wrong result check when update expensereport line
+
 
 ***** ChangeLog for 16.0.0 compared to 15.0.0 *****
 
