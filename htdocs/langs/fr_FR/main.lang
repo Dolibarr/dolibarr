@@ -34,6 +34,7 @@ NoTemplateDefined=Pas de modèle défini pour ce type d'email
 AvailableVariables=Variables de substitution disponibles
 NoTranslation=Pas de traduction
 Translation=Traduction
+Translations=Traductions
 CurrentTimeZone=Fuseau horaire PHP (serveur)
 EmptySearchString=Entrez des critères de recherche non vides
 EnterADateCriteria=Saisissez une date
