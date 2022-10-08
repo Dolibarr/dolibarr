@@ -2,7 +2,7 @@
 $websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;
 if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {
 	$pathdepth = count(explode('/', $_SERVER['SCRIPT_NAME'])) - 2;
-	require_once $pathdepth ? str_repeat('../', $pathdepth) : './'.'master.inc.php';
+	require_once ($pathdepth ? str_repeat('../', $pathdepth) : './').'master.inc.php';
 } // Not already loaded
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';
@@ -19,7 +19,7 @@ ob_start();
 <meta name="title" content="FAQ" />
 <meta name="description" content="Frequently Asked Questions" />
 <meta name="generator" content="Dolibarr 17.0.0-alpha (https://www.dolibarr.org)" />
-<meta name="dolibarr:pageid" content="8" />
+<meta name="dolibarr:pageid" content="186" />
 <?php if ($website->use_manifest) { print '<link rel="manifest" href="/manifest.json.php" />'."\n"; } ?>
 <!-- Include link to CSS file -->
 <link rel="stylesheet" href="/styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />
@@ -34,29 +34,29 @@ ob_start();
 <body id="bodywebsite" class="bodywebsite bodywebpage-faq">
 <div class="page">
 
-	<?php includeContainer('header'); ?>
+    <?php includeContainer('header'); ?>
 
-	  <section id="sectionimage" contenteditable="true">
-		<div class="">
-		  <div class="swiper-wrapper text-center" style="transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;">
-			<div class="swiper-slide swiper-slide-active" style="height: 200px; background-image: url('medias/image/template-corporate/background_sunset.webp'); background-size: cover;">
-			  <div class="swiper-slide-caption">
-				<div class="container">
-				  <div class="row justify-content-sm-center">
-					<div class="col-md-11 col-lg-10">
-					  <div class="text-white text-uppercase jumbotron-custom border-modern fadeInUp animated" data-caption-animate="fadeInUp" data-caption-delay="0s">FAQs</span>
-					  </div>
-					</div>
-				  </div>
-				</div>
-			  </div>
-			</div>
-		</div>
-	  </section>
+      <section id="sectionimage" contenteditable="true">
+        <div class="">
+          <div class="swiper-wrapper text-center" style="transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;">
+            <div class="swiper-slide swiper-slide-active" style="height: 200px; background-image: url('medias/image/template-corporate/background_sunset.webp'); background-size: cover;">
+              <div class="swiper-slide-caption">
+                <div class="container">
+                  <div class="row justify-content-sm-center">
+                    <div class="col-md-11 col-lg-10">
+                      <div class="text-white text-uppercase jumbotron-custom border-modern fadeInUp animated" data-caption-animate="fadeInUp" data-caption-delay="0s">FAQs</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </section>
 
 
-		<section id="sectionfooterdolibarr" contenteditable="true" class="footerdolibarr">
-			<div class="container">
+        <section id="sectionfooterdolibarr" contenteditable="true" class="footerdolibarr">
+            <div class="container">
 <div class="text-align: center"><br><br><h2>Frequently Asked Questions</h2></div>
 <br>
 <br>
@@ -72,20 +72,20 @@ You may find information about our privacy policy on <a href="privacy-policies.p
 
 <br><br><br><br>
 
-			</div>
-		</section>
+            </div>
+        </section>
 
 
-	<br><br>
+    <br><br>
 
-	<?php includeContainer('footer'); ?>
+    <?php includeContainer('footer'); ?>
 
 </div>
-	
+    
 
 
 </body>
 </html>
 <?php // BEGIN PHP
-$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", 8);
+$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", 186);
 // END PHP ?>

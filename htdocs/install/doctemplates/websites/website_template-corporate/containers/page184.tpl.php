@@ -2,7 +2,7 @@
 $websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;
 if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {
 	$pathdepth = count(explode('/', $_SERVER['SCRIPT_NAME'])) - 2;
-	require_once $pathdepth ? str_repeat('../', $pathdepth) : './'.'master.inc.php';
+	require_once ($pathdepth ? str_repeat('../', $pathdepth) : './').'master.inc.php';
 } // Not already loaded
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';
@@ -19,7 +19,7 @@ ob_start();
 <meta name="title" content="Clients Testimonials" />
 <meta name="description" content="Client Testimonials" />
 <meta name="generator" content="Dolibarr 17.0.0-alpha (https://www.dolibarr.org)" />
-<meta name="dolibarr:pageid" content="6" />
+<meta name="dolibarr:pageid" content="184" />
 <?php if ($website->use_manifest) { print '<link rel="manifest" href="/manifest.json.php" />'."\n"; } ?>
 <!-- Include link to CSS file -->
 <link rel="stylesheet" href="/styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />
@@ -34,45 +34,45 @@ ob_start();
 <body id="bodywebsite" class="bodywebsite bodywebpage-clients-testimonials">
 <div class="page">
 
-	<?php includeContainer('header'); ?>
+    <?php includeContainer('header'); ?>
 
-	  <section id="sectionimage" contenteditable="true">
-		<div class="">
-		  <div class="swiper-wrapper text-center" style="transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;">
-			<div class="swiper-slide swiper-slide-active" style="height: 200px; background-image: url('medias/image/template-corporate/background_sunset.webp'); background-size: cover;">
-			  <div class="swiper-slide-caption">
-				<div class="container">
-				  <div class="row justify-content-sm-center">
-					<div class="col-md-11 col-lg-10">
-					  <div class="text-white text-uppercase jumbotron-custom border-modern fadeInUp animated" data-caption-animate="fadeInUp" data-caption-delay="0s">Testimonials</span>
-					  </div>
-					</div>
-				  </div>
-				</div>
-			  </div>
-			</div>
-		</div>
-	  </section>
+      <section id="sectionimage" contenteditable="true">
+        <div class="">
+          <div class="swiper-wrapper text-center" style="transform: translate3d(0px, 0px, 0px); transition-duration: 0ms;">
+            <div class="swiper-slide swiper-slide-active" style="height: 200px; background-image: url('medias/image/template-corporate/background_sunset.webp'); background-size: cover;">
+              <div class="swiper-slide-caption">
+                <div class="container">
+                  <div class="row justify-content-sm-center">
+                    <div class="col-md-11 col-lg-10">
+                      <div class="text-white text-uppercase jumbotron-custom border-modern fadeInUp animated" data-caption-animate="fadeInUp" data-caption-delay="0s">Testimonials</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </section>
 
 
-	  <div class="center">
-	  <br><br>
-	  <h1 class="text-center">What they say <span class="text-thin">about us</span></h1>
-	  <br><br><br><br>
-	  Send us your testimonial (by email to <a href="mailto:<?php echo $mysoc->email; ?>"><?php echo $mysoc->email; ?></a>)
-	  <br><br><br><br>
-	  <br><br>
-	  </div>
+      <div class="center">
+      <br><br>
+      <h1 class="text-center">What they say <span class="text-thin">about us</span></h1>
+      <br><br><br><br>
+      Send us your testimonial (by email to <a href="mailto:<?php echo $mysoc->email; ?>"><?php echo $mysoc->email; ?></a>)
+      <br><br><br><br>
+      <br><br>
+      </div>
 
-	<br><br>
+    <br><br>
 
-	<?php includeContainer('footer'); ?>
+    <?php includeContainer('footer'); ?>
 
 </div>
-	
+    
 
 </body>
 </html>
 <?php // BEGIN PHP
-$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", 6);
+$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", 184);
 // END PHP ?>
