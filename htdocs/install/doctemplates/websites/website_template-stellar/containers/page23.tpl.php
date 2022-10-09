@@ -39,7 +39,7 @@ ob_start();
 		<header id="header">
 			<section id="sectionheader" contenteditable="true">
 			<h1>David Doe</h1>
-			<p>Welcome on my website<br />
+			<p>Welcome on my website<br>
 			</p>
 			</section>
 		</header>
@@ -101,7 +101,7 @@ ob_start();
 				<section id="sectionsecond" class="main special" contenteditable="true">
 					<header class="major">
 						<h2>Ipsum consequat</h2>
-						<p>Donec imperdiet consequat consequat. Suspendisse feugiat congue<br />
+						<p>Donec imperdiet consequat consequat. Suspendisse feugiat congue<br>
 						posuere. Nulla massa urna, fermentum eget quam aliquet.</p>
 					</header>
 					<ul class="statistics">
@@ -138,7 +138,7 @@ ob_start();
 				<section id="sectioncta" class="main special" contenteditable="true">
 					<header class="major">
 						<h2>Congue imperdiet</h2>
-						<p>Donec imperdiet consequat consequat. Suspendisse feugiat congue<br />
+						<p>Donec imperdiet consequat consequat. Suspendisse feugiat congue<br>
 						posuere. Nulla massa urna, fermentum eget quam aliquet.</p>
 					</header>
 					<footer class="major">
