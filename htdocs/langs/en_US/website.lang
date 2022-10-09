@@ -152,3 +152,4 @@ NextContainer=Next page/container
 PreviousContainer=Previous page/container
 WebsiteMustBeDisabled=The website must have the status "%s"
 WebpageMustBeDisabled=The web page must have the status "%s"
+SetWebsiteOnlineBefore=When website is offline, all pages are offline. Change status of website first.
