@@ -80,6 +80,7 @@ $type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
 $section_dir = GETPOST('section_dir', 'alpha');
 $file_manager = GETPOST('file_manager', 'alpha');
 $replacesite = GETPOST('replacesite', 'alpha');
+$mode = GETPOST('mode', 'alpha');
 
 if (GETPOST('deletesite', 'alpha')) {
 	$action = 'deletesite';
@@ -130,7 +131,7 @@ if (empty($action) && $file_manager) {
 	$action = 'file_manager';
 }
 if (empty($action) && $replacesite) {
-	$action = 'replacesite';
+	$mode = 'replacesite';
 }
 if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x')) {
 	$pageid = 0;
@@ -263,9 +264,6 @@ $htmlheadercontentdefault .= '<link rel="stylesheet" id="google-fonts-css"  href
 $htmlheadercontentdefault .= '<link rel="stylesheet" id="font-wasesome-css" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />'."\n";
 $htmlheadercontentdefault .= '<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>'."\n";
 $htmlheadercontentdefault .= '<script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>'."\n";
-$htmlheadercontentdefault .= '<script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>'."\n";
-$htmlheadercontentdefault .= '<script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>'."\n";
-$htmlheadercontentdefault .= '<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>'."\n";
 $htmlheadercontentdefault .= '<!--'."\n";
 $htmlheadercontentdefault .= '<script src="/document.php?modulepart=medias&file=css/myfile.css"></script>'."\n";
 $htmlheadercontentdefault .= '<script src="/document.php?modulepart=medias&file=js/myfile.js"></script>'."\n";
@@ -334,7 +332,7 @@ if (empty($sortfield)) {
 
 $searchkey = GETPOST('searchstring', 'restricthtml');
 
-if ($action == 'replacesiteconfirm') {
+if ($mode == 'replacesite') {
 	$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
 	$langcode = GETPOST('optionlanguage', 'aZ09');
 	$otherfilters = array();
@@ -397,6 +395,7 @@ if ($cancel && $action == 'renamefile') {
 // Cancel
 if ($cancel) {
 	$action = 'preview';
+	$mode = '';
 	if ($backtopage) {
 		header("Location: ".$backtopage);
 		exit;
@@ -446,7 +445,7 @@ if ($action == 'unsetshowsubcontainers') {
 }
 
 if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && !$searchkey) {
-	$action = 'replacesite';
+	$mode = 'replacesite';
 	$massaction = '';
 }
 
@@ -457,7 +456,7 @@ if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 
 	$db->begin();
 
-	$categoryid = GETPOST('setcategory', 'restricthtml');
+	$categoryid = GETPOST('setcategory', 'int');
 	if ($categoryid > 0) {
 		$tmpwebsitepage = new WebsitePage($db);
 		$category = new Categorie($db);
@@ -466,6 +465,44 @@ if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 		foreach ($toselect as $tmpid) {
 			$tmpwebsitepage->id = $tmpid;
 			$result = $category->add_type($tmpwebsitepage, 'website_page');
+			if ($result < 0 && $result != -3) {
+				$error++;
+				setEventMessages($category->error, $category->errors, 'errors');
+				break;
+			} else {
+				$nbupdate++;
+			}
+		}
+	}
+
+	if ($error) {
+		$db->rollback();
+	} else {
+		if ($nbupdate) {
+			setEventMessages($langs->trans("RecordsModified", $nbupdate), null, 'mesgs');
+		}
+
+		$db->commit();
+	}
+	// Now we reload list
+	$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters, -1);
+}
+// Set category
+if ($massaction == 'delcategory' && GETPOST('confirmmassaction', 'alpha') && $usercanedit) {
+	$error = 0;
+	$nbupdate = 0;
+
+	$db->begin();
+
+	$categoryid = GETPOST('setcategory', 'int');
+	if ($categoryid > 0) {
+		$tmpwebsitepage = new WebsitePage($db);
+		$category = new Categorie($db);
+		$category->fetch($categoryid);
+
+		foreach ($toselect as $tmpid) {
+			$tmpwebsitepage->id = $tmpid;
+			$result = $category->del_type($tmpwebsitepage, 'website_page');
 			if ($result < 0 && $result != -3) {
 				$error++;
 				setEventMessages($category->error, $category->errors, 'errors');
@@ -1316,7 +1353,7 @@ if (!GETPOSTISSET('pageid')) {
 	}
 
 	if ($action == 'delete') {
-		$action = 'replacesiteconfirm';
+		$mode = 'replacesite';
 
 		$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
 		$langcode = GETPOST('optionlanguage', 'aZ09');
@@ -2642,11 +2679,8 @@ if ($action == 'importsite') {
 if ($action == 'file_manager') {
 	print '<input type="hidden" name="action" value="file_manager">';
 }
-if ($action == 'replacesite') {
-	print '<input type="hidden" name="action" value="replacesiteconfirm">';
-}
-if ($action == 'replacesiteconfirm') {
-	print '<input type="hidden" name="action" value="replacesiteconfirm">';
+if ($mode) {
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
 }
 
 print '<div>';
@@ -2799,7 +2833,7 @@ if (!GETPOST('hide_websitemenu')) {
 			// Generate site map
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=confirmgeneratesitemaps&token='.newToken().'&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateSitemaps")).'"><span class="fa fa-sitemap"></span></a>';
 
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=replacesite&token='.newToken().'&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"></span></a>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?mode=replacesite&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"></span></a>';
 		}
 
 		print '</span>';
@@ -2879,7 +2913,7 @@ if (!GETPOST('hide_websitemenu')) {
 		print '</span>';
 	}
 
-	if (in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesite', 'replacesiteconfirm'))) {
+	if (in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesiteconfirm')) || in_array($mode, array('replacesite'))) {
 		if ($action == 'editcss') {
 			print '<input type="submit" id="savefileandstay" class="button buttonforacesave hideonsmartphone small" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 		}
@@ -2900,7 +2934,7 @@ if (!GETPOST('hide_websitemenu')) {
 	// Toolbar for pages
 	//
 
-	if ($websitekey && $websitekey != '-1' && !in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm')) && !$file_manager) {
+	if ($websitekey && $websitekey != '-1' && (!in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesiteconfirm'))) && (!in_array($mode, array('replacesite'))) && !$file_manager) {
 		print '</div>'; // Close current websitebar to open a new one
 
 		print '<!-- Bar for websitepage -->';
@@ -3220,7 +3254,7 @@ if (!GETPOST('hide_websitemenu')) {
 
 			// TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
 		}
-		if (!in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesite', 'replacesiteconfirm', 'createsite', 'createcontainer', 'createfromclone', 'createpagefromclone', 'deletesite'))) {
+		if (!in_array($mode, array('replacesite')) && !in_array($action, array('editcss', 'editmenu', 'file_manager', 'replacesiteconfirm', 'createsite', 'createcontainer', 'createfromclone', 'createpagefromclone', 'deletesite'))) {
 			if ($action == 'editsource' || $action == 'editmeta') {
 				print '<input type="submit" id="savefileandstay" class="button buttonforacesave hideonsmartphone small" value="'.dol_escape_htmltag($langs->trans("SaveAndStay")).'" name="updateandstay">';
 			}
@@ -4283,10 +4317,11 @@ print "</div>\n";
 print "</form>\n";
 
 
-if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction == 'replace') {
+if ($mode == 'replacesite' || $massaction == 'replace') {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="replacesiteconfirm">';
+	print '<input type="hidden" name="mode" value="replacesite">';
 	print '<input type="hidden" name="website" value="'.$website->ref.'">';
 
 
@@ -4364,7 +4399,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 
 	print '</div></div>';
 
-	if ($action == 'replacesiteconfirm') {
+	if ($mode == 'replacesite') {
 		print '<!-- List of search result -->'."\n";
 		print '<div class="rowsearchresult clearboth">';
 
@@ -4376,18 +4411,21 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			$param = '';
 			$nbtotalofrecords = count($listofpages['list']);
 			$num = $limit;
-			$permissiontodelete = $user->rights->website->delete;
+			$permissiontodelete = $user->hasRight('website', 'delete');
 
 			// List of mass actions available
 			$arrayofmassactions = array();
-			if ($user->rights->website->writephp && $searchkey) {
-				$arrayofmassactions['replace'] = $langs->trans("Replace");
+			if ($user->hasRight('website', 'writephp') && $searchkey) {
+				$arrayofmassactions['replace'] = img_picto('', 'replacement', 'class="pictofixedwidth"').$langs->trans("Replace");
 			}
-			if ($user->rights->website->write) {
-				$arrayofmassactions['setcategory'] = $langs->trans("ClassifyInCategory");
+			if ($user->hasRight('website', 'write')) {
+				$arrayofmassactions['setcategory'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("ClassifyInCategory");
+			}
+			if ($user->hasRight('website', 'write')) {
+				$arrayofmassactions['delcategory'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("RemoveCategory");
 			}
 			if ($permissiontodelete) {
-				$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+				$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 			}
 			if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
 				$arrayofmassactions = array();
@@ -4398,8 +4436,8 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			$massactionbutton .= $langs->trans("ReplaceString");
 			$massactionbutton .= ' <input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
 			$massactionbutton .= '</div>';
-			$massactionbutton .= '<div class="massactionother massactionsetcategory hidden">';
-			$massactionbutton .= $langs->trans("Category");
+			$massactionbutton .= '<div class="massactionother massactionsetcategory massactiondelcategory hidden">';
+			$massactionbutton .= img_picto('', 'category').' '.$langs->trans("Category");
 			$massactionbutton .= ' '.$form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, GETPOSTISSET('setcategory') ? GETPOST('setcategory') : '', 'setcategory', 64, 0, 0, 0, 'minwidth300 alignstart');
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$massactionbutton .= ajax_combobox('setcategory');
@@ -4419,7 +4457,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			$trackid = 'wsp'.$object->id;
 			include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-			$param = 'action=replacesiteconfirm&website='.urlencode($website->ref);
+			$param = 'mode=replacesite&website='.urlencode($website->ref);
 			$param .= '&searchstring='.urlencode($searchkey);
 			if (GETPOST('optioncontent')) {
 				$param .= '&optioncontent=content';
@@ -4493,7 +4531,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '</td>';
 
 
-					$param = '?action=replacesiteconfirm';
+					$param = '?mode=replacesite';
 					$param .= '&websiteid='.$website->id;
 					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
 					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
@@ -4542,7 +4580,8 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					}
 					print '<a class="editfielda  marginleftonly marginrightonly '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditHTMLSource").'">'.img_picto($langs->trans("EditHTMLSource"), 'edit').'</a>';
 
-					print '<span class="marginleftonly marginrightonly"></span>'.ajax_object_onoff($answerrecord, 'status', 'status', 'Enabled', 'Disabled', array(), 'valignmiddle');
+					print '<span class="marginleftonly marginrightonly"></span>';
+					print ajax_object_onoff($answerrecord, 'status', 'status', 'Enabled', 'Disabled', array(), 'valignmiddle');
 
 					print '</td>';
 
@@ -4581,7 +4620,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					}
 					print '</td>';
 
-					$param = '?action=replacesiteconfirm';
+					$param = '?mode=replacesite';
 					$param .= '&websiteid='.$website->id;
 					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
 					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
@@ -4680,7 +4719,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 	print '</form>';
 }
 
-if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone') {
+if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone') && !in_array($mode, array('replacesite'))) {
 	if ($pageid > 0 && $atleastonepage) {
 		// $filejs
 		// $filecss
