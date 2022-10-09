@@ -4,50 +4,12 @@ if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_
 require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';
 ob_start();
-if (! headers_sent()) {	/* because file is included inline when in edit mode and we don't want warning */
-	header('Cache-Control: max-age=3600, public, must-revalidate');
-	header('Content-type: text/css');
+if (! headers_sent()) {	/* because file is included inline when in edit mode and we don't want warning */ 
+header('Cache-Control: max-age=3600, public, must-revalidate');
+header('Content-type: text/css');
 }
 // END PHP ?>
 @charset "UTF-8";
-
-.bodywebsite {
-  /*!
- * Bootstrap  v5.2.1 (https://getbootstrap.com/)
- * Copyright 2011-2022 The Bootstrap Authors
- * Copyright 2011-2022 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
- */
-  /* rtl:raw:
-[type="tel"],
-[type="url"],
-[type="email"],
-[type="number"] {
-  direction: ltr;
-}
-*/
-  /* rtl:begin:ignore */
-  /* rtl:end:ignore */
-  /* rtl:begin:ignore */
-  /* rtl:end:ignore */
-  /* rtl:begin:ignore */
-  /* rtl:end:ignore */
-  /* rtl:begin:ignore */
-  /* rtl:end:ignore */
-  /* rtl:begin:ignore */
-  /* rtl:end:ignore */
-  /* rtl:options: {
-  "autoRename": true,
-  "stringMap":[ {
-	"name"    : "prev-next",
-	"search"  : "prev",
-	"replace" : "next"
-  } ]
-} */
-  /* rtl:begin:remove */
-  /* rtl:end:remove */
-  /*# sourceMappingURL=bootstrap.css.map */;
-}
 
 .bodywebsite :root {
 	--bs-blue: #0d6efd;
@@ -12468,7 +12430,6 @@ if (! headers_sent()) {	/* because file is included inline when in edit mode and
 /*# sourceMappingURL=bootstrap.css.map */
 
 .bodywebsite #mysection1 {
-	font-family: Gulzar;
 	font-size: 1.2rem;
 	font-weight: bold;
 }
@@ -12483,10 +12444,6 @@ if (! headers_sent()) {	/* because file is included inline when in edit mode and
 .bodywebsite h1 h2 h3 h4 {
 	font-family: Anton;
 	font-weight: 900;
-}
-
-.bodywebsite section{
-	min-height: 100vh;
 }
 
 .bodywebsite .btn-perso {
@@ -12543,8 +12500,8 @@ if (! headers_sent()) {	/* because file is included inline when in edit mode and
 }
 
 .bodywebsite .container {
-	padding-top: 10%;
-	padding-bottom: 10%;
+	padding-top: 5%;
+	padding-bottom: 5%;
 }
 <?php // BEGIN PHP
 $tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "css");
