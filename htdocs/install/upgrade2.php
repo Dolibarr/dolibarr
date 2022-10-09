@@ -5161,8 +5161,8 @@ function migrate_contractdet_rank()
 	$db->begin();
 	print '<tr class="trforrunsql"><td colspan="4">';
 
-	 $sql = 'SELECT c.rowid as cid ,cd.rowid as cdid,cd.rang FROM '.$db->prefix().'contratdet as cd INNER JOIN '.$db->prefix().'contrat as c ON c.rowid=cd.fk_contrat AND cd.rang=0';
-	 $sql .=' ORDER BY c.rowid,cd.rowid';
+	 $sql = "SELECT c.rowid as cid ,cd.rowid as cdid,cd.rang FROM ".$db->prefix()."contratdet as cd INNER JOIN ".$db->prefix()."contrat as c ON c.rowid=cd.fk_contrat AND cd.rang=0";
+	 $sql .=" ORDER BY c.rowid,cd.rowid";
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -5175,7 +5175,7 @@ function migrate_contractdet_rank()
 				$currentRank=1;
 			}
 
-			$sqlUpd = 'UPDATE '.$db->prefix().'contratdet SET rang='.(int) $currentRank.' WHERE rowid='.(int) $obj->cdid;
+			$sqlUpd = "UPDATE ".$db->prefix()."contratdet SET rang=".(int) $currentRank." WHERE rowid=".(int) $obj->cdid;
 			$resultstring .= '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$sqlUpd."</td></tr>\n";
 			$resqlUpd = $db->query($sqlUpd);
 			if (!$resqlUpd) {
