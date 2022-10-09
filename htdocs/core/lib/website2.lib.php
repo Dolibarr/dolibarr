@@ -592,7 +592,7 @@ function showWebsiteTemplates(Website $website)
 
 	print '<tr><td colspan="'.$colspan.'">';
 
-	print '<table class="nobordernopadding" width="100%"><tr><td><div class="center">';
+	print '<table class="nobordernopadding centpercent"><tr><td><div class="center">';
 
 	if (count($dirthemes)) {
 		$i = 0;
@@ -603,11 +603,10 @@ function showWebsiteTemplates(Website $website)
 				$handle = opendir($dirtheme);
 				if (is_resource($handle)) {
 					while (($subdir = readdir($handle)) !== false) {
-						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
-							&& substr($subdir, 0, 3) <> 'CVS' && preg_match('/\.zip$/i', $subdir)) {
-								$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
+						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.' && substr($subdir, 0, 3) <> 'CVS' && preg_match('/\.zip$/i', $subdir)) {
+							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 
-								// Disable not stable themes (dir ends with _exp or _dev)
+							// Disable not stable themes (dir ends with _exp or _dev)
 							if ($conf->global->MAIN_FEATURES_LEVEL < 2 && preg_match('/_dev$/i', $subdir)) {
 								continue;
 							}
@@ -615,38 +614,41 @@ function showWebsiteTemplates(Website $website)
 								continue;
 							}
 
-								print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
+							print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 
-								$file = $dirtheme."/".$subdirwithoutzip.".jpg";
-								$url = DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzip.".jpg";
+							$templatedir = $dirtheme."/".$subdir;
+							$file = $dirtheme."/".$subdirwithoutzip.".jpg";
+							$url = DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzip.".jpg";
 
 							if (!file_exists($file)) {
 								$url = DOL_URL_ROOT.'/public/theme/common/nophoto.png';
 							}
 
-								$originalfile = basename($file);
-								$entity = $conf->entity;
-								$modulepart = 'doctemplateswebsite';
-								$cache = '';
-								$title = $file;
+							$originalfile = basename($file);
+							$entity = $conf->entity;
+							$modulepart = 'doctemplateswebsite';
+							$cache = '';
+							$title = $file;
 
-								$ret = '';
-								$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 1, '&entity='.$entity);
+							$ret = '';
+							$urladvanced = getAdvancedPreviewUrl($modulepart, $originalfile, 1, '&entity='.$entity);
 							if (!empty($urladvanced)) {
 								$ret .= '<a class="'.$urladvanced['css'].'" target="'.$urladvanced['target'].'" mime="'.$urladvanced['mime'].'" href="'.$urladvanced['url'].'">';
 							} else {
-								$ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+								$ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.((int) $entity).'&file='.urlencode($originalfile).'&cache='.((int) $cache).'">';
 							}
-								print $ret;
-								print '<img class="img-skinthumb shadow" src="'.$url.'" border="0" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
-								print '</a>';
+							print $ret;
+							print '<img class="img-skinthumb shadow" src="'.$url.'" border="0" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
+							print '</a>';
 
-								print '<br>';
-								print $subdir.' ('.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).')';
-								print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'" class="button">'.$langs->trans("Load").'</a>';
-								print '</div>';
+							print '<br>';
+							print $subdir;
+							print '<br>';
+							print '<span class="opacitymedium">'.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).' - '.dol_print_date(dol_filemtime($templatedir), 'dayhour', 'tzuserrel').'</span>';
+							print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'" class="button">'.$langs->trans("Load").'</a>';
+							print '</div>';
 
-								$i++;
+							$i++;
 						}
 					}
 				}
