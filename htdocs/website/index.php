@@ -449,6 +449,36 @@ if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && !$searc
 	$massaction = '';
 }
 
+if ($action == 'deletetemplate') {
+	$dirthemes = array('/doctemplates/websites');
+	if (!empty($conf->modules_parts['websitetemplates'])) {		// Using this feature slow down application
+		foreach ($conf->modules_parts['websitetemplates'] as $reldir) {
+			$dirthemes = array_merge($dirthemes, (array) ($reldir.'doctemplates/websites'));
+		}
+	}
+	$dirthemes = array_unique($dirthemes);
+
+
+	// Delete template files and dir
+	$mode = 'importsite';
+	$action = 'importsite';
+
+	if (count($dirthemes)) {
+		$i = 0;
+		foreach ($dirthemes as $dir) {
+			//print $dirroot.$dir;exit;
+			$dirtheme = DOL_DATA_ROOT.$dir; // This include loop on $conf->file->dol_document_root
+			if (is_dir($dirtheme)) {
+				$templateuserfile = GETPOST('templateuserfile');
+				$imguserfile = preg_replace('/\.zip$/', '', $templateuserfile).'.jpg';
+				dol_delete_file($dirtheme.'/'.$templateuserfile);
+				dol_delete_file($dirtheme.'/'.$imguserfile);
+			}
+		}
+	}
+}
+
+
 // Set category
 if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $usercanedit) {
 	$error = 0;
