@@ -281,6 +281,7 @@ Following changes may create regressions for some external modules, but were nec
 * Method fetch_all of DolResource has been renamed into fetchAll() to match naming conventions.
 * The hook 'upgrade' and 'doUpgrade2" has been renamed 'doUpgradeBefore' and 'doUpgradeAfterDB'. A new trigger 'doUpgradeAfterFiles' has been introduced.
 * The context hook 'suppliercard' when on the supplier tab of a thirdparty has been renamed into 'thirdpartysupplier'
+* Because the module Resources highly linked to the Agenda module, the menu for Resources module has been moved into top menu Agenda.
 
 
 ***** ChangeLog for 15.0.3 compared to 15.0.2 *****
