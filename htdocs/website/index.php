@@ -2760,28 +2760,32 @@ if (!GETPOST('hide_websitemenu')) {
 
 	print '<!-- Bar for website -->';
 	if ($action != 'file_manager') {
-		print '<span class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
+		print '<div class="websiteselection hideonsmartphoneimp minwidth75 tdoverflowmax100 inline-block">';
 		print $langs->trans("Website").': ';
-		print '</span>';
+		print '</div>';
 
 		$urltocreatenewwebsite = $_SERVER["PHP_SELF"].'?action=createsite';
-		if (empty($conf->use_javascript_ajax)) {
-			print '<span class="websiteselection hideonsmartphoneimp">';
-			print '<a href="'.$urltocreatenewwebsite.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddWebsite")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"><span></a>';
+		//if (empty($conf->use_javascript_ajax)) {
+			print '<span class="websiteselection paddingrightonly">';
+			print '<a href="'.$urltocreatenewwebsite.'" class=""'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddWebsite")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"><span></a>';
 			print '</span>';
-		}
+		//}
 
 		// List of website
 		print '<span class="websiteselection">';
+
 		$out = '';
 		$out .= '<select name="website" class="minwidth100 width200 maxwidth150onsmartphone" id="website">';
 		if (empty($object->records)) {
 			$out .= '<option value="-1">&nbsp;</option>';
 		}
+
+		/*
 		if (!empty($conf->use_javascript_ajax)) {
 			$valueoption = '<span class="classlink">'.img_picto('', 'add', 'class="paddingrightonly"').$langs->trans("AddWebsite").'</span>';
 			$out .= '<option value="-2" data-html="'.dol_escape_htmltag($valueoption).'">'.$valueoption.'</option>';
-		}
+		}*/
+
 		// Loop on each sites
 		$i = 0;
 		foreach ($object->records as $key => $valwebsite) {
@@ -2826,6 +2830,10 @@ if (!GETPOST('hide_websitemenu')) {
 			print '<input type="image" class="valignmiddle" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshsite" value="'.$langs->trans("Load").'">';
 		}
 
+		print '</span>';
+
+		print '<span class="websiteselection">';
+
 		if ($websitekey && $websitekey != '-1' && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone' || $action == 'deletesite')) {
 			print ' &nbsp; ';
 
@@ -2852,10 +2860,15 @@ if (!GETPOST('hide_websitemenu')) {
 
 			// Delete website
 			if ($website->status == $website::STATUS_VALIDATED) {
-				print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("WebsiteMustBeDisabled")).'">';
+				$disabled = ' disabled="disabled"';
+				$title = $langs->trans("WebsiteMustBeDisabled", $langs->transnoentitiesnoconv($website->LibStatut(0, 0)));
+				$url = '#';
 			} else {
-				print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'">';
+				$disabled = '';
+				$title = $langs->trans("Delete");
+				$url = $_SERVER["PHP_SELF"].'?action=deletesite&token='.newToken().'&website='.urlencode($website->ref);
 			}
+			print '<a href="'.$url.'" class="buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
 
 			// Regenerate all pages
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=regeneratesite&token='.newToken().'&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="far fa-hdd"></span></a>';
@@ -2863,6 +2876,7 @@ if (!GETPOST('hide_websitemenu')) {
 			// Generate site map
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=confirmgeneratesitemaps&token='.newToken().'&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("GenerateSitemaps")).'"><span class="fa fa-sitemap"></span></a>';
 
+			// Find / replace tool
 			print '<a href="'.$_SERVER["PHP_SELF"].'?mode=replacesite&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"></span></a>';
 		}
 
@@ -2970,53 +2984,53 @@ if (!GETPOST('hide_websitemenu')) {
 		print '<!-- Bar for websitepage -->';
 		print '<div class="centpercent websitebar"'.($style ? ' style="'.$style.'"' : '').'">';
 
-		print '<span class="websiteselection hideonsmartphoneimp minwidth100 tdoverflowmax100">';
+		print '<div class="websiteselection hideonsmartphoneimp minwidth75 tdoverflowmax100 inline-block">';
 		print $langs->trans("PageContainer").': ';
-		print '</span>';
+		print '</div>';
 
-		print '<span class="websiteselection">';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=createcontainer&token='.newToken().'&website='.urlencode($website->ref).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddPage")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span></a>';
+		print '<span class="websiteselection paddingrightonly">';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=createcontainer&token='.newToken().'&website='.urlencode($website->ref).'" class=""'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddPage")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span></a>';
 		print '</span>';
 
 		//print '<span class="websiteselection">';
 
-		if ($action != 'addcontainer') {
+		//if ($action != 'addcontainer') {
 			$out = '';
 
-			$s = $formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action, 'maxwidth200onsmartphone');
+			$s = $formwebsite->selectContainer($website, 'pageid', $pageid, 0, $action, 'minwidth100 maxwidth200onsmartphone');
 
-			if ($formwebsite->num > 0) {
-				$out .= '<span class="websiteselection">';
-				$out .= $s;
-				$out .= '</span>';
+		if ($formwebsite->num >= 0) {
+			$out .= '<span class="websiteselection">';
+			$out .= $s;
+			$out .= '</span>';
 
-				$urltocreatenewpage = $_SERVER["PHP_SELF"].'?action=createcontainer&token='.newToken().'&website='.urlencode($website->ref);
+			$urltocreatenewpage = $_SERVER["PHP_SELF"].'?action=createcontainer&token='.newToken().'&website='.urlencode($website->ref);
 
-				if (!empty($conf->use_javascript_ajax)) {
-					$out .= '<script type="text/javascript">';
-					$out .= 'jQuery(document).ready(function () {';
-					$out .= '	jQuery("#pageid").change(function () {';
-					$out .= '   	console.log("We select "+jQuery("#pageid option:selected").val());';
-					$out .= '   	if (jQuery("#pgeid option:selected").val() == \'-2\') {';
-					$out .= '  			window.location.href = "'.$urltocreatenewpage.'";';
-					$out .= '		} else {';
-					$out .= '  			window.location.href = "'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&pageid="+jQuery("#pageid option:selected").val();';
-					$out .= '       }';
-					$out .= '   });';
-					$out .= '});';
-					$out .= '</script>';
-				}
+			if (!empty($conf->use_javascript_ajax)) {
+				$out .= '<script type="text/javascript">';
+				$out .= 'jQuery(document).ready(function () {';
+				$out .= '	jQuery("#pageid").change(function () {';
+				$out .= '   	console.log("We select "+jQuery("#pageid option:selected").val());';
+				$out .= '   	if (jQuery("#pageid option:selected").val() == \'-2\') {';
+				$out .= '  			window.location.href = "'.$urltocreatenewpage.'";';
+				$out .= '		} else {';
+				$out .= '  			window.location.href = "'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&pageid="+jQuery("#pageid option:selected").val();';
+				$out .= '       }';
+				$out .= '   });';
+				$out .= '});';
+				$out .= '</script>';
 			}
+		}
 
 			print $out;
-		} else {
+		/*} else {
 			print $langs->trans("New");
-		}
+		}*/
 
 
 		print '<span class="websiteselection">';
 
-		print '<input type="image" class="valignmiddle" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'"'.(($atleastonepage && $action != 'editsource') ? '' : ' disabled="disabled"').'>';
+		print '<input type="image" class="valignmiddle buttonwebsite" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'"'.(($action != 'editsource') ? '' : ' disabled="disabled"').'>';
 
 		// Print nav arrows
 		$pagepreviousid = 0;
@@ -3240,7 +3254,19 @@ if (!GETPOST('hide_websitemenu')) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setashome&token='.newToken().'&website='.urlencode($website->ref).'&pageid='.((int) $pageid).'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'"><span class="fa fa-home valignmiddle btnTitle-icon"></span></a>';
 				}
 				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
-				print '<input type="submit" class="buttonDelete bordertransp" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage ? '' : ' disabled="disabled"').'>';
+
+				// Delete
+				//print '<input type="submit" class="buttonDelete bordertransp" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage ? '' : ' disabled="disabled"').'>';
+				if ($websitepage->status == $websitepage::STATUS_DRAFT || !$atleastonepage) {
+					$disabled = ' disabled="disabled"';
+					$title = $langs->trans("WebpageMustBeDisabled", $langs->transnoentitiesnoconv($websitepage->LibStatut(0, 0)));
+					$url = '#';
+				} else {
+					$disabled = '';
+					$title = '';
+					$url = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&website='.urlencode($website->ref);
+				}
+				print '<a href="'.$url.'" class="buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
 			}
 		}
 
@@ -3881,7 +3907,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$pageusermodifid = $objectpage->fk_user_modif;
 		$pageauthoralias = $objectpage->author_alias;
 		$pagestatus = $objectpage->status;
-	} else {
+	} else {	// $action = 'createcontainer'
 		$type_container = 'page';
 		$pageurl = '';
 		$pagealiasalt = '';
@@ -4179,6 +4205,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '</td></tr>';
 
 	print '</table>';
+
 	if ($action == 'createcontainer') {
 		print '<div class="center tablecheckboxcreatemanually'.$hiddenmanuallyafterload.'">';
 
@@ -4207,7 +4234,10 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$arraygrabimagesinto = array('root'=>$langs->trans("WebsiteRootOfImages"), 'subpage'=>$langs->trans("SubdirOfPage"));
 		print $form->selectarray('grabimagesinto', $arraygrabimagesinto, GETPOSTISSET('grabimagesinto') ? GETPOST('grabimagesinto') : 'root', 0, 0, 0, '', 0, 0, 0, '', '', 1);
 		print '<br>';
-		print '<input class="button" style="margin-top: 5px" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
+
+		print '<input class="button small" style="margin-top: 5px" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
+		print '<input class="button button-cancel small" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
+
 		print '</td></tr>';
 		print '</table>';
 	}
