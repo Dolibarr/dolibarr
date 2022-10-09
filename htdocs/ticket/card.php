@@ -1564,7 +1564,7 @@ if ($action == 'create' || $action == 'presend') {
 			// List of all actions
 			$filters = array();
 			$filters['search_agenda_label'] = $search_agenda_label;
-			show_ticket_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+			show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 		}
 
 		if ($action != 'presend' && $action != 'presend_addmessage' && $action != 'add_message') {

@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/projet/info.php
+ *      \file       htdocs/projet/messaging.php
  *      \ingroup    project
  *		\brief      Page with events on project
  */
@@ -177,11 +177,11 @@ if (!empty($object->id)) {
 
 	// Show link to change view in message
 	$messagingUrl = DOL_URL_ROOT.'/projet/messaging.php?id='.$object->id;
-	$morehtmlcenter .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+	$morehtmlcenter .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 2);
 
 	// Show link to change view in agenda
 	$messagingUrl = DOL_URL_ROOT.'/projet/info.php?id='.$object->id;
-	$morehtmlcenter .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+	$morehtmlcenter .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1);
 
 
 	// // Show link to send an email (if read and not closed)
@@ -213,7 +213,7 @@ if (!empty($object->id)) {
 	// List of all actions
 	$filters = array();
 	$filters['search_agenda_label'] = $search_agenda_label;
-	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+	show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 
 // End of page
