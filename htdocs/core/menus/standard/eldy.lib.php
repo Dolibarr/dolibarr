@@ -205,10 +205,23 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'perms'=> ($user->hasRight('projet',  'lire') ? 1 : 0),
 		'module'=>'projet'
 	);
+
+	if ($mode == 'jmobile') {
+		$titleboth = $langs->trans("LeadsOrProjects");
+	} else {
+		$titleboth = $langs->trans("Projects");
+	}
+	if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		$titleboth = $langs->trans("Projects");
+	}
+	if (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+		$titleboth = $langs->trans("Leads");
+	}
+
 	$menu_arr[] = array(
-		'name' => 'Projet',
+		'name' => 'Project',
 		'link' => '/projet/index.php?mainmenu=project&amp;leftmenu=',
-		'title' => (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 2 ? "Leads" : "Projects"),
+		'title' => $titleboth,
 		'level' => 0,
 		'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
@@ -397,7 +410,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	}
 	$menu_arr[] = array(
 		'name' => 'Ticket',
-		'link' => '/ticket/index.php?mainmenu=ticket&amp;leftmenu=',
+		'link' => $link,
 		'title' =>  "Tickets",
 		'level' => 0,
 		'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),

@@ -663,7 +663,7 @@ class Contrat extends CommonObject
 		$sql .= " fk_user_author,";
 		$sql .= " fk_projet as fk_project,";
 		$sql .= " fk_commercial_signature, fk_commercial_suivi,";
-		$sql .= " note_private, note_public, model_pdf, extraparams";
+		$sql .= " note_private, note_public, model_pdf, last_main_doc, extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat";
 		if (!$id) {
 			$sql .= " WHERE entity IN (".getEntity('contract').")";
@@ -717,7 +717,7 @@ class Contrat extends CommonObject
 
 					$this->socid = $obj->fk_soc;
 					$this->fk_soc = $obj->fk_soc;
-
+					$this->last_main_doc = $obj->last_main_doc;
 					$this->extraparams = (array) json_decode($obj->extraparams, true);
 
 					$this->db->free($resql);

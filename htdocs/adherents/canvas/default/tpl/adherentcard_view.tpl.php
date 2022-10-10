@@ -133,7 +133,7 @@ if (empty($user->socid)) {
 	}
 
 	if ($user->rights->adherent->supprimer) {
-		echo '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
+		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.$canvas, 'delete', $user->rights->adherent->supprimer);
 	}
 
 	echo '</div><br>';

@@ -71,6 +71,8 @@ function facture_prepare_head($object)
 		} else {
 			dol_print_error($db);
 		}
+		$langs->load("banks");
+
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.urlencode($object->id);
 		$head[$h][1] = $langs->trans('StandingOrders');
 		if ($nbStandingOrders > 0) {
@@ -753,7 +755,10 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$result .= '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 		$result .= '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
 		$result .= '<td class="right amount">'.price($obj->total_ttc).'</td>';
-		$result .= '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
+
+		// Load amount of existing payment of invoice (needed for complete status)
+		$payment = $objectstatic->getSommePaiement();
+		$result .= '<td class="right">'.$objectstatic->getLibStatut(5, $payment).'</td>';
 
 		$result .= '</tr>';
 

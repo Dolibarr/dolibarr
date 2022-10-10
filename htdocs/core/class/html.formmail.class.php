@@ -1395,8 +1395,6 @@ class FormMail extends Form
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
 					} elseif ($type_template == 'actioncomm_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm");
-					} elseif ($type_template == 'thirdparty') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentThirdparty");
 					} elseif (!empty($type_template)) {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");
 					}
@@ -1620,13 +1618,13 @@ class FormMail extends Form
 			//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet in mass emailing
 
 			$onlinepaymentenabled = 0;
-			if (!empty($conf->paypal->enabled)) {
+			if (isModEnabled('paypal')) {
 				$onlinepaymentenabled++;
 			}
-			if (!empty($conf->paybox->enabled)) {
+			if (isModEnabled('paybox')) {
 				$onlinepaymentenabled++;
 			}
-			if (!empty($conf->stripe->enabled)) {
+			if (isModEnabled('stripe')) {
 				$onlinepaymentenabled++;
 			}
 			if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {

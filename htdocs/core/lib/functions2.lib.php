@@ -2236,7 +2236,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$module='facture';
 	}
 
-	if (!empty($conf->$module->enabled)) {
+	if (isModEnabled($module)) {
 		$res = dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 		if ($res) {
 			if (class_exists($classname)) {

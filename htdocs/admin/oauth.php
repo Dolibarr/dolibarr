@@ -85,7 +85,11 @@ if ($action == 'update') {
 				}
 			}
 			if (GETPOSTISSET($constvalue.'_SCOPE')) {
-				$scopestring = implode(',', GETPOST($constvalue.'_SCOPE'));
+				if (is_array(GETPOST($constvalue.'_SCOPE'))) {
+					$scopestring = implode(',', GETPOST($constvalue.'_SCOPE'));
+				} else {
+					$scopestring = GETPOST($constvalue.'_SCOPE');
+				}
 				if (!dolibarr_set_const($db, $constvalue.'_SCOPE', $scopestring, 'chaine', 0, '', $conf->entity)) {
 					$error++;
 				}
@@ -97,6 +101,7 @@ if ($action == 'update') {
 		}
 	}
 
+
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null);
 	} else {
@@ -104,6 +109,48 @@ if ($action == 'update') {
 	}
 }
 
+if ($action == 'confirm_delete') {
+	$provider = GETPOST('provider', 'aZ09');
+	$label = GETPOST('label');
+
+	$globalkey = empty($provider) ? $label : $label.'-'.$provider;
+
+	if (getDolGlobalString($globalkey.'_ID') && getDolGlobalString($globalkey.'_SECRET')) { // If ID and secret exist, we delete first the token
+		$backtourl = DOL_URL_ROOT.'/admin/oauth.php?action=delete_entry&provider='.$provider.'&label='.$label.'&token='.newToken();
+		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
+		$callbacktodel = $urlwithroot;
+		if ($label == 'OAUTH_GOOGLE') {
+			$callbacktodel .= '/core/modules/oauth/google_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
+		} elseif ($label == 'OAUTH_GITHUB') {
+			$callbacktodel .= '/core/modules/oauth/github_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
+		} elseif ($label == 'OAUTH_STRIPE_LIVE') {
+			$callbacktodel .= '/core/modules/oauth/stripelive_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
+		} elseif ($label == 'OAUTH_STRIPE_TEST') {
+			$callbacktodel .= '/core/modules/oauth/stripetest_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
+		} elseif ($label == 'OAUTH_OTHER') {
+			$callbacktodel .= '/core/modules/oauth/generic_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
+		}
+		header("Location: ".$callbacktodel);
+		exit;
+	} else {
+		$action = 'delete_entry';
+	}
+}
+
+if ($action == 'delete_entry') {
+	$provider = GETPOST('provider', 'aZ09');
+	$label = GETPOST('label');
+
+	$globalkey = empty($provider) ? $label : $label.'-'.$provider;
+
+	if (!dolibarr_del_const($db, $globalkey.'_NAME', $conf->entity) || !dolibarr_del_const($db, $globalkey.'_ID', $conf->entity) || !dolibarr_del_const($db, $globalkey.'_SECRET', $conf->entity) ||  !dolibarr_del_const($db, $globalkey.'_URLAUTHORIZE', $conf->entity) || !dolibarr_del_const($db, $globalkey.'_SCOPE', $conf->entity)) {
+		setEventMessages($langs->trans("ErrorInEntryDeletion"), null, 'errors');
+		$error++;
+	} else {
+		setEventMessages($langs->trans("EntryDeleted"), null);
+	}
+}
 
 /*
  * View
@@ -112,6 +159,13 @@ if ($action == 'update') {
 llxHeader();
 
 $form = new Form($db);
+// Confirmation of action process
+if ($action == 'delete') {
+	$formquestion = array();
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?provider='.GETPOST('provider').'&label='.GETPOST('label'), $langs->trans('OAuthServiceConfirmDeleteTitle'), $langs->trans('OAuthServiceConfirmDeleteMessage'), 'confirm_delete', $formquestion, 0, 1, 220);
+	print $formconfirm;
+}
+
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
@@ -227,6 +281,18 @@ if (count($listinsetup) > 0) {
 			print $langs->trans("OAUTH_URL_FOR_CREDENTIAL", $supportedoauth2array[$keyforsupportedoauth2array]['urlforcredentials']);
 		}
 		print '</td>';
+
+		print '<td>';
+
+		$label = preg_replace('/_NAME$/', '', $keyforsupportedoauth2array);
+
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&provider='.$keyforprovider.'&label='.$label.'">';
+		print img_picto('', 'delete');
+		print '</a>';
+
+		print '</form>';
+		print '</td>';
+
 		print '</tr>';
 
 		if ($supported) {

@@ -973,10 +973,11 @@ if (!empty($arrayfields['p.datee']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Visibility
 if (!empty($arrayfields['p.public']['checked'])) {
 	print '<td class="liste_titre center">';
 	$array = array(''=>'', 0 => $langs->trans("PrivateProject"), 1 => $langs->trans("SharedProject"));
-	print $form->selectarray('search_public', $array, $search_public);
+	print $form->selectarray('search_public', $array, $search_public, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth75');
 	print '</td>';
 }
 if (!empty($arrayfields['c.assigned']['checked'])) {
@@ -1372,10 +1373,10 @@ while ($i < $imaxinloop) {
 		}
 		// Contacts of project
 		if (!empty($arrayfields['c.assigned']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall tdoverflowmax200">';
 			$ifisrt = 1;
 			foreach (array('internal', 'external') as $source) {
-				$tab = $object->liste_contact(-1, $source);
+				$tab = $object->liste_contact(-1, $source, 0, '', 1);
 				$numcontact = count($tab);
 				if (!empty($numcontact)) {
 					foreach ($tab as $contactproject) {
