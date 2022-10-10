@@ -5534,7 +5534,7 @@ class Facture extends CommonInvoice
 							if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
 								foreach ($tmparraycontact as $data_email) {
 									if (!empty($data_email['email'])) {
-										$to[] = $data_email['firstname'] . ' '. $data_email['lastname']. '<'.$data_email['email'].'>';
+										$to[] = $tmpinvoice->thirdparty->contact_get_property($data_email['id'], 'email');
 									}
 								}
 							}
