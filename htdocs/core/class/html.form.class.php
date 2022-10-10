@@ -3553,9 +3553,9 @@ class Form
 						'value'=>$outref,
 						'label'=>$outval,
 						'qty'=>$outqty,
-						'price_qty_ht'=>price2num($objp->fprice, 'MU'),	// Keep higher resolution for price for the min qty
-						'price_unit_ht'=>price2num($objp->unitprice, 'MU'),	// This is used to fill the Unit Price
-						'price_ht'=>price2num($objp->unitprice, 'MU'),		// This is used to fill the Unit Price (for compatibility)
+						'price_qty_ht'=>price($objp->fprice),		// Keep higher resolution for price for the min qty -> local format settings need to be considered
+						'price_unit_ht'=>price($objp->unitprice),	// This is used to fill the Unit Price -> therefore local format settings need to be considered
+						'price_ht'=>price($objp->unitprice),		// This is used to fill the Unit Price (for compatibility) -> local format settings need to be considered
 						'tva_tx'=>$objp->tva_tx,
 						'default_vat_code'=>$objp->default_vat_code,
 						'discount'=>$outdiscount,
