@@ -60,7 +60,7 @@ function printDropdownBookmarksList()
 	if ($sortorder) {
 		$tmpurl .= ($tmpurl ? '&' : '').'sortorder='.urlencode($sortorder);
 	}
-	if (is_array($_POST)) {
+	if (!empty($_POST) && is_array($_POST)) {
 		foreach ($_POST as $key => $val) {
 			if ((preg_match('/^search_/', $key) || in_array($key, $authorized_var))
 				&& $val != ''
