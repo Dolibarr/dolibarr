@@ -41,6 +41,8 @@ class PartnershipUtils
 	public $error; //!< To return error code (or message)
 	public $errors = array(); //!< To return several error codes (or messages)
 
+	public $output;	// To store output of some cron methods
+
 
 	/**
 	 *  Constructor
@@ -157,7 +159,7 @@ class PartnershipUtils
 							// Define output language
 							$outputlangs = $langs;
 							$newlang = '';
-							if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 							if (!empty($newlang)) {
 								$outputlangs = new Translate("", $conf);
 								$outputlangs->setDefaultLang($newlang);
@@ -323,7 +325,7 @@ class PartnershipUtils
 								// Define output language
 								$outputlangs = $langs;
 								$newlang = '';
-								if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
 								if (!empty($newlang)) {
 									$outputlangs = new Translate("", $conf);
 									$outputlangs->setDefaultLang($newlang);

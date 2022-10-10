@@ -316,7 +316,7 @@ class mailing_thirdparties extends MailingTargets
 		$s .= '</select>';
 		$s .= ajax_combobox("filter_status_thirdparties");
 
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			// Choose language
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($this->db);

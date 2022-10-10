@@ -59,6 +59,7 @@ MainAccountForSuppliersNotDefined=Main accounting account for vendors not define
 MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
 MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
 MainAccountForSubscriptionPaymentNotDefined=Main accounting account for subscription payment not defined in setup
+UserAccountNotDefined=Accounting account for user not defined in setup
 
 AccountancyArea=Accounting area
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
@@ -286,7 +287,7 @@ DescClosure=Consult here the number of movements by month not yet validated & lo
 OverviewOfMovementsNotValidated=Overview of movements not validated and locked
 AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
 NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
-ValidateMovements=Validate and lock record...
+ValidateMovements=Validate and lock movements...
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
 
 ValidateHistory=Bind Automatically
@@ -401,7 +402,11 @@ Calculated=Calculated
 Formula=Formula
 
 ## Reconcile
+LetteringAuto=Reconcile auto
+LetteringManual=Reconcile manual
 Unlettering=Unreconcile
+UnletteringAuto=Unreconcile auto
+UnletteringManual=Unreconcile manual
 AccountancyNoLetteringModified=No reconcile modified
 AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
 AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
@@ -410,8 +415,9 @@ AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modif
 AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
 
 ## Confirm box
-ConfirmMassUnlettering=Bulk Unreconcile confirmation
-ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
+ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
 

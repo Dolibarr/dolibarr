@@ -89,10 +89,13 @@ if ($state) {
 	$requestedpermissionsarray = explode(',', $statewithscopeonly); // Example: 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print'.
 	$statewithanticsrfonly = preg_replace('/^.*\-/', '', $state);
 }
-if ($action != 'delete' && empty($requestedpermissionsarray)) {
-	print 'Error, parameter state is not defined';
-	exit;
+
+if ($action != 'delete' && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+	setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
+	header('Location: '.$backtourl);
+	exit();
 }
+
 //var_dump($requestedpermissionsarray);exit;
 
 

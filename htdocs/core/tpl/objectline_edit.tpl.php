@@ -41,7 +41,7 @@ if (empty($object) || !is_object($object)) {
 
 
 $usemargins = 0;
-if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
+if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 	$usemargins = 1;
 }
 
@@ -492,7 +492,7 @@ jQuery(document).ready(function()
 		<?php
 	}
 
-	if (!empty($conf->margin->enabled)) {
+	if (isModEnabled('margin')) {
 		?>
 		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
 		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */

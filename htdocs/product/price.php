@@ -2222,10 +2222,10 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		// Count total nb of records
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-			$nbtotalofrecords = $prodcustprice->fetch_all($sortorder, $sortfield, 0, 0, $filter);
+			$nbtotalofrecords = $prodcustprice->fetchAll($sortorder, $sortfield, 0, 0, $filter);
 		}
 
-		$result = $prodcustprice->fetch_all($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
+		$result = $prodcustprice->fetchAll($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}

@@ -211,7 +211,21 @@ class Form
 
 		// Check parameters
 		if (empty($typeofdata)) {
-			return 'ErrorBadParameter';
+			return 'ErrorBadParameter typeofdata is empty';
+		}
+		// Clean paramater $typeofdata
+		if ($typeofdata == 'datetime') {
+			$typeofdata = 'dayhour';
+		}
+		$reg = array();
+		if (preg_match('/^(\w+)\((\d+)\)$/', $typeofdata, $reg)) {
+			if ($reg[1] == 'varchar') {
+				$typeofdata = 'string';
+			} elseif ($reg[1] == 'int') {
+				$typeofdata = 'numeric';
+			} else {
+				return 'ErrorBadParameter '.$typeofdata;
+			}
 		}
 
 		// When option to edit inline is activated
@@ -1105,7 +1119,7 @@ class Form
 
 		// If product & services are enabled or both disabled.
 		if ($forceall == 1 || (empty($forceall) && isModEnabled("product") && isModEnabled("service"))
-			|| (empty($forceall) && empty($conf->product->enabled) && empty($conf->service->enabled))) {
+			|| (empty($forceall) && !isModEnabled('product') && !isModEnabled('service'))) {
 			if (empty($hidetext)) {
 				print $langs->trans("Type").': ';
 			}
@@ -1134,11 +1148,11 @@ class Form
 			print ajax_combobox('select_'.$htmlname);
 			//if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		}
-		if ((empty($forceall) && empty($conf->product->enabled) && isModEnabled("service")) || $forceall == 3) {
+		if ((empty($forceall) && !isModEnabled('product') && isModEnabled("service")) || $forceall == 3) {
 			print $langs->trans("Service");
 			print '<input type="hidden" name="'.$htmlname.'" value="1">';
 		}
-		if ((empty($forceall) && isModEnabled("product") && empty($conf->service->enabled)) || $forceall == 2) {
+		if ((empty($forceall) && isModEnabled("product") && !isModEnabled('service')) || $forceall == 2) {
 			print $langs->trans("Product");
 			print '<input type="hidden" name="'.$htmlname.'" value="0">';
 		}
@@ -1915,14 +1929,14 @@ class Form
 	 *  @param	integer			$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
 	 *  @param	string			$enableonlytext	If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
 	 *  @param	string			$morecss		More css
-	 *  @param  int     		$noactive       Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
+	 *  @param  int     		$notdisabled    Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
 	 *  @param  int				$outputmode     0=HTML select string, 1=Array
 	 *  @param  bool			$multiple       add [] in the name of element and add 'multiple' attribut
 	 *  @param  int				$forcecombo     Force the component to be a simple combo box without ajax
 	 * 	@return	string							HTML select string
 	 *  @see select_dolgroups()
 	 */
-	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $noactive = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
+	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $hookmanager;
@@ -1991,7 +2005,7 @@ class Form
 		if ($includeUsers) {
 			$sql .= " AND u.rowid IN (".$this->db->sanitize($includeUsers).")";
 		}
-		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) {
+		if (!empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $notdisabled) {
 			$sql .= " AND u.statut <> 0";
 		}
 		if (!empty($morefilter)) {
@@ -2051,7 +2065,7 @@ class Form
 						$disableline = ($enableonlytext ? $enableonlytext : '1');
 					}
 
-					$labeltoshow = '';
+					$labeltoshow = ''; $labeltoshowhtml = '';
 
 					// $fullNameMode is 0=Lastname+Firstname (MAIN_FIRSTNAME_NAME_POSITION=1), 1=Firstname+Lastname (MAIN_FIRSTNAME_NAME_POSITION=0)
 					$fullNameMode = 0;
@@ -2059,37 +2073,50 @@ class Form
 						$fullNameMode = 1; //Firstname+lastname
 					}
 					$labeltoshow .= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
+					$labeltoshowhtml .= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
 					if (empty($obj->firstname) && empty($obj->lastname)) {
 						$labeltoshow .= $obj->login;
+						$labeltoshowhtml .= $obj->login;
 					}
 
-					// Complete name with more info
-					$moreinfo = '';
+					// Complete name with a more info string like: ' (info1 - info2 - ...)'
+					$moreinfo = ''; $moreinfohtml = '';
 					if (!empty($conf->global->MAIN_SHOW_LOGIN)) {
-						$moreinfo .= ($moreinfo ? ' - ' : ' (').$obj->login;
+						$moreinfo .= ($moreinfo ? ' - ' : ' (');
+						$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(');
+						$moreinfo .= $obj->login;
+						$moreinfohtml .= $obj->login;
 					}
 					if ($showstatus >= 0) {
 						if ($obj->status == 1 && $showstatus == 1) {
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Enabled');
+							$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(').$langs->trans('Enabled');
 						}
 						if ($obj->status == 0 && $showstatus == 1) {
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
+							$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(').$langs->trans('Disabled');
 						}
 					}
 					if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
 						if (!$obj->entity) {
 							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans("AllEntities");
+							$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(').$langs->trans("AllEntities");
 						} else {
 							if ($obj->entity != $conf->entity) {
 								$moreinfo .= ($moreinfo ? ' - ' : ' (').($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
+								$moreinfohtml .= ($moreinfohtml ? ' - ' : ' <span class="opacitymedium">(').($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
 							}
 						}
 					}
 					$moreinfo .= ($moreinfo ? ')' : '');
+					$moreinfohtml .= ($moreinfohtml ? ')' : '');
 					if ($disableline && $disableline != '1') {
-						$moreinfo .= ' - '.$disableline; // This is text from $enableonlytext parameter
+						// Add text from $enableonlytext parameter
+						$moreinfo .= ' - '.$disableline;
+						$moreinfohtml .= ' - '.$disableline;
 					}
 					$labeltoshow .= $moreinfo;
+					$labeltoshowhtml .= $moreinfohtml;
 
 					$out .= '<option value="'.$obj->rowid.'"';
 					if ($disableline) {
@@ -2106,7 +2133,7 @@ class Form
 					if ($showstatus >= 0 && $obj->status == 0) {
 						$outhtml .= '<strike class="opacitymediumxxx">';
 					}
-					$outhtml .= $labeltoshow;
+					$outhtml .= $labeltoshowhtml;
 					if ($showstatus >= 0 && $obj->status == 0) {
 						$outhtml .= '</strike>';
 					}
@@ -2280,9 +2307,9 @@ class Form
 		}
 
 		if (strval($filtertype) === '' && (isModEnabled("product") || isModEnabled("service"))) {
-			if (isModEnabled("product") && empty($conf->service->enabled)) {
+			if (isModEnabled("product") && !isModEnabled('service')) {
 				$filtertype = '0';
-			} elseif (empty($conf->product->enabled) && isModEnabled("service")) {
+			} elseif (!isModEnabled('product') && isModEnabled("service")) {
 				$filtertype = '1';
 			}
 		}
@@ -2299,9 +2326,9 @@ class Form
 			}
 			// handle case where product or service module is disabled + no filter specified
 			if ($filtertype == '') {
-				if (empty($conf->product->enabled)) { // when product module is disabled, show services only
+				if (!isModEnabled('product')) { // when product module is disabled, show services only
 					$filtertype = 1;
-				} elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
+				} elseif (!isModEnabled('service')) { // when service module is disabled, show products only
 					$filtertype = 0;
 				}
 			}
@@ -2313,7 +2340,7 @@ class Form
 			}
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
 
-			if (!empty($conf->variants->enabled) && is_array($selected_combinations)) {
+			if (isModEnabled('variants') && is_array($selected_combinations)) {
 				// Code to automatically insert with javascript the select of attributes under the select of product
 				// when a parent of variant has been selected.
 				$out .= '
@@ -2562,7 +2589,7 @@ class Form
 		}
 
 		// Multilang : we add translation
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$sql .= ", pl.label as label_translated";
 			$sql .= ", pl.description as description_translated";
 			$selectFields .= ", label_translated";
@@ -2605,7 +2632,7 @@ class Form
 			$sql .= " LEFT JOIN ".$this->db->prefix()."c_units u ON u.rowid = p.fk_unit";
 		}
 		// Multilang : we add translation
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."product_lang as pl ON pl.fk_product = p.rowid ";
 			if (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && !empty($socid)) {
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -2647,9 +2674,9 @@ class Form
 		// Filter by product type
 		if (strval($filtertype) != '') {
 			$sql .= " AND p.fk_product_type = ".((int) $filtertype);
-		} elseif (empty($conf->product->enabled)) { // when product module is disabled, show services only
+		} elseif (!isModEnabled('product')) { // when product module is disabled, show services only
 			$sql .= " AND p.fk_product_type = 1";
-		} elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
+		} elseif (!isModEnabled('service')) { // when service module is disabled, show products only
 			$sql .= " AND p.fk_product_type = 0";
 		}
 		// Add where from hooks
@@ -2671,7 +2698,7 @@ class Form
 					$sql .= " AND ";
 				}
 				$sql .= "(p.ref LIKE '".$this->db->escape($prefix.$crit)."%' OR p.label LIKE '".$this->db->escape($prefix.$crit)."%'";
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$sql .= " OR pl.label LIKE '".$this->db->escape($prefix.$crit)."%'";
 				}
 				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
@@ -2679,7 +2706,7 @@ class Form
 				}
 				if (!empty($conf->global->PRODUCT_AJAX_SEARCH_ON_DESCRIPTION)) {
 					$sql .= " OR p.description LIKE '".$this->db->escape($prefix.$crit)."%'";
-					if (!empty($conf->global->MAIN_MULTILANGS)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS')) {
 						$sql .= " OR pl.description LIKE '".$this->db->escape($prefix.$crit)."%'";
 					}
 				}
@@ -2795,7 +2822,7 @@ class Form
 						}
 					}
 				} else {
-					if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression)) {
+					if (isModEnabled('dynamicprices') && !empty($objp->fk_price_expression)) {
 						$price_product = new Product($this->db);
 						$price_product->fetch($objp->rowid, '', '', 1);
 						$priceparser = new PriceParser($this->db);
@@ -2885,7 +2912,7 @@ class Form
 		$outrefcust = empty($objp->custref) ? '' : $objp->custref;
 		$outlabel = $objp->label;
 		$outdesc = $objp->description;
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$outlabel_translated = $objp->label_translated;
 			$outdesc_translated = $objp->description_translated;
 		}
@@ -2944,7 +2971,7 @@ class Form
 		if (!empty($objp->price_by_qty_rowid) && $objp->price_by_qty_rowid > 0) {
 			$opt .= ' pbq="'.$objp->price_by_qty_rowid.'" data-pbq="'.$objp->price_by_qty_rowid.'" data-pbqup="'.$objp->price_by_qty_unitprice.'" data-pbqbase="'.$objp->price_by_qty_price_base_type.'" data-pbqqty="'.$objp->price_by_qty_quantity.'" data-pbqpercent="'.$objp->price_by_qty_remise_percent.'"';
 		}
-		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
+		if (isModEnabled('stock') && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
 			if (!empty($user->rights->stock->lire)) {
 				if ($objp->stock > 0) {
 					$opt .= ' class="product_line_stock_ok"';
@@ -3101,7 +3128,7 @@ class Form
 			$outdefault_vat_code = $objp->default_vat_code;
 		}
 
-		if (!empty($conf->stock->enabled) && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
+		if (isModEnabled('stock') && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
 			if (!empty($user->rights->stock->lire)) {
 				$opt .= ' - '.$langs->trans("Stock").': '.price(price2num($objp->stock, 'MS'));
 
@@ -3424,7 +3451,7 @@ class Form
 				if (!empty($objp->idprodfournprice)) {
 					$outqty = $objp->quantity;
 					$outdiscount = $objp->remise_percent;
-					if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_supplier_price_expression)) {
+					if (isModEnabled('dynamicprices') && !empty($objp->fk_supplier_price_expression)) {
 						$prod_supplier = new ProductFournisseur($this->db);
 						$prod_supplier->product_fourn_price_id = $objp->idprodfournprice;
 						$prod_supplier->id = $objp->fk_product;
@@ -3486,7 +3513,7 @@ class Form
 					}
 				}
 
-				if (!empty($conf->stock->enabled) && $showstockinlist && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
+				if (isModEnabled('stock') && $showstockinlist && isset($objp->stock) && ($objp->fk_product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
 					$novirtualstock = ($showstockinlist == 2);
 
 					if (!empty($user->rights->stock->lire)) {
@@ -3649,7 +3676,7 @@ class Form
 					}
 					$opt .= '>'.$objp->name.' - '.$objp->ref_fourn.' - ';
 
-					if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_supplier_price_expression)) {
+					if (isModEnabled('dynamicprices') && !empty($objp->fk_supplier_price_expression)) {
 						$prod_supplier = new ProductFournisseur($this->db);
 						$prod_supplier->product_fourn_price_id = $objp->idprodfournprice;
 						$prod_supplier->id = $productid;
@@ -4886,7 +4913,7 @@ class Form
 	 *     @param 	string		$action      	   	Action
 	 *	   @param	array		$formquestion	   	An array with forms complementary inputs
 	 * 	   @param	string		$selectedchoice		"" or "no" or "yes"
-	 * 	   @param	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
+	 * 	   @param  	int|string	$useajax		   	0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 *     @param	int			$height          	Force height of box
 	 *     @param	int			$width				Force width of box
 	 *     @return 	void
@@ -4919,7 +4946,7 @@ class Form
 	 *													'type' can be 'text', 'password', 'checkbox', 'radio', 'date', 'select', 'multiselect', 'morecss',
 	 *                                                  'other', 'onecolumn' or 'hidden'...
 	 * 	   @param  	int|string		$selectedchoice  	'' or 'no', or 'yes' or '1', 1, '0' or 0
-	 * 	   @param  	int|string		$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
+	 * 	   @param  	int|string		$useajax		   	0=No, 1=Yes use Ajax to show the popup, 2=Yes and also submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 *     @param  	int|string		$height          	Force height of box (0 = auto)
 	 *     @param	int				$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
 	 *     @param	int				$disableformtag		1=Disable form tag. Can be used if we are already inside a <form> section.
@@ -5150,6 +5177,14 @@ class Form
 						},';
 			}
 
+			$jsforcursor = '';
+			if ($useajax == 1) {
+				$jsforcursor = '// The call to urljump can be slow, so we set the wait cursor'."\n";
+				$jsforcursor .= 'jQuery("html,body,#id-container").addClass("cursorwait");'."\n";
+			}
+
+			$postconfirmas = 'GET';
+
 			$formconfirm .= '
                     resizable: false,
                     height: "'.$height.'",
@@ -5162,7 +5197,8 @@ class Form
                         	var inputok = '.json_encode($inputok).';	/* List of fields into form */
 							var page = "'.dol_escape_js(!empty($page) ? $page : '').'";
                          	var pageyes = "'.dol_escape_js(!empty($pageyes) ? $pageyes : '').'";
-                         	if (inputok.length>0) {
+
+                         	if (inputok.length > 0) {
                          		$.each(inputok, function(i, inputname) {
                          			var more = "";
 									var inputvalue;
@@ -5177,21 +5213,29 @@ class Form
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
-							if (pageyes.length > 0) {
-								var post = $.post(
+                         	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "&") + options;
+            				if (pageyes.length > 0) {';
+			if ($postconfirmas == 'GET') {
+				$formconfirm .= 'location.href = urljump;';
+			} else {
+				$formconfirm .= $jsforcursor;
+				$formconfirm .= 'var post = $.post(
 									pageyes,
 									options,
-									(data) => {$("body").html(data)}
-								);
+									function(data) { $("body").html(data); jQuery("html,body,#id-container").removeClass("cursorwait"); }
+								);';
+			}
+			$formconfirm .= '
+								console.log("after post ok");
 							}
-                            $(this).dialog("close");
+	                        $(this).dialog("close");
                         },
                         "'.dol_escape_js($langs->transnoentities($labelbuttonno)).'": function() {
                         	var options = "token='.urlencode(newToken()).'";
                          	var inputko = '.json_encode($inputko).';	/* List of fields into form */
 							var page = "'.dol_escape_js(!empty($page) ? $page : '').'";
                          	var pageno="'.dol_escape_js(!empty($pageno) ? $pageno : '').'";
-                         	if (inputko.length>0) {
+                         	if (inputko.length > 0) {
                          		$.each(inputko, function(i, inputname) {
                          			var more = "";
                          			if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
@@ -5200,12 +5244,21 @@ class Form
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
-							if (pageno.length > 0) {
-								var post = $.post(
+                         	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "&") + options;
+                         	//alert(urljump);
+            				if (pageno.length > 0) {';
+			if ($postconfirmas == 'GET') {
+				$formconfirm .= 'location.href = urljump;';
+			} else {
+				$formconfirm .= $jsforcursor;
+				$formconfirm .= 'var post = $.post(
 									pageno,
 									options,
-									(data) => {$("body").html(data)}
-								);
+									function(data) { $("body").html(data); jQuery("html,body,#id-container").removeClass("cursorwait"); }
+								);';
+			}
+			$formconfirm .= '
+								console.log("after post ko");
 							}
                             $(this).dialog("close");
                         }
@@ -6634,7 +6687,7 @@ class Form
 		}
 
 		// Add a "Now" link
-		if ($conf->use_javascript_ajax && $addnowlink) {
+		if (!empty($conf->use_javascript_ajax) && $addnowlink) {
 			// Script which will be inserted in the onClick of the "Now" link
 			$reset_scripts = "";
 			if ($addnowlink == 2) { // local computer time
@@ -6713,7 +6766,7 @@ class Form
 				}
 			}
 			// If reset_scripts is not empty, print the link with the reset_scripts in the onClick
-			if ($reset_scripts && empty($conf->dol_optimize_smallscreen)) {
+			if ($reset_scripts && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$retstring .= ' <button class="dpInvisibleButtons datenowlink" id="'.$prefix.'ButtonNow" type="button" name="_useless" value="now" onClick="'.$reset_scripts.'">';
 				$retstring .= $langs->trans("Now");
 				$retstring .= '</button> ';
@@ -8564,31 +8617,31 @@ class Form
 					}
 				} elseif ($objecttype == 'propal') {
 					$tplpath = 'comm/'.$element;
-					if (empty($conf->propal->enabled)) {
+					if (!isModEnabled('propal')) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'supplier_proposal') {
-					if (empty($conf->supplier_proposal->enabled)) {
+					if (!isModEnabled('supplier_proposal')) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'shipping' || $objecttype == 'shipment' || $objecttype == 'expedition') {
 					$tplpath = 'expedition';
-					if (empty($conf->expedition->enabled)) {
+					if (!isModEnabled('expedition')) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'reception') {
 					$tplpath = 'reception';
-					if (empty($conf->reception->enabled)) {
+					if (!isModEnabled('reception')) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'delivery') {
 					$tplpath = 'delivery';
-					if (empty($conf->expedition->enabled)) {
+					if (!isModEnabled('expedition')) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'ficheinter') {
 					$tplpath = 'fichinter';
-					if (empty($conf->ficheinter->enabled)) {
+					if (!isModEnabled('ficheinter')) {
 						continue; // Do not show if module disabled
 					}
 				} elseif ($objecttype == 'invoice_supplier') {
@@ -8605,7 +8658,7 @@ class Form
 					$tplpath = 'eventorganization';
 				} elseif ($objecttype == 'mo') {
 					$tplpath = 'mrp';
-					if (empty($conf->mrp->enabled)) {
+					if (!isModEnabled('mrp')) {
 						continue; // Do not show if module disabled
 					}
 				}
@@ -9399,7 +9452,7 @@ class Form
 					}
 				}
 
-				if (!empty($conf->gravatar->enabled) && $email && empty($noexternsourceoverwrite)) {
+				if (isModEnabled('gravatar') && $email && empty($noexternsourceoverwrite)) {
 					// see https://gravatar.com/site/implement/images/php/
 					$ret .= '<!-- Put link to gravatar -->';
 					$ret .= '<img class="photo'.$modulepart.($cssclass ? ' '.$cssclass : '').'" alt="" title="'.$email.' Gravatar avatar" '.($width ? ' width="'.$width.'"' : '').($height ? ' height="'.$height.'"' : '').' src="https://www.gravatar.com/avatar/'.md5(strtolower(trim($email))).'?s='.$width.'&d='.$defaultimg.'">'; // gravatar need md5 hash

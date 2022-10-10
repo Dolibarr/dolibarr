@@ -663,7 +663,7 @@ class Contrat extends CommonObject
 		$sql .= " fk_user_author,";
 		$sql .= " fk_projet as fk_project,";
 		$sql .= " fk_commercial_signature, fk_commercial_suivi,";
-		$sql .= " note_private, note_public, model_pdf, extraparams";
+		$sql .= " note_private, note_public, model_pdf, last_main_doc, extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat";
 		if (!$id) {
 			$sql .= " WHERE entity IN (".getEntity('contract').")";
@@ -717,7 +717,7 @@ class Contrat extends CommonObject
 
 					$this->socid = $obj->fk_soc;
 					$this->fk_soc = $obj->fk_soc;
-
+					$this->last_main_doc = $obj->last_main_doc;
 					$this->extraparams = (array) json_decode($obj->extraparams, true);
 
 					$this->db->free($resql);
@@ -874,7 +874,7 @@ class Contrat extends CommonObject
 				$line->fetch_optionals();
 
 				// multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
 					$tmpproduct = new Product($this->db);
 					$tmpproduct->fetch($objp->fk_product);
 					$tmpproduct->getMultiLangs();
@@ -3363,6 +3363,8 @@ class ContratLigne extends CommonObjectLine
 
 		// If we change a planned date (start or end), sync dates for all services
 		if (!$error && !empty($conf->global->CONTRACT_SYNC_PLANNED_DATE_OF_SERVICES)) {
+			dol_syslog(get_class($this)."::update CONTRACT_SYNC_PLANNED_DATE_OF_SERVICES is on so we update date for all lines", LOG_DEBUG);
+
 			if ($this->date_ouverture_prevue != $this->oldcopy->date_ouverture_prevue) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.'contratdet SET';
 				$sql .= " date_ouverture_prevue = ".($this->date_ouverture_prevue != '' ? "'".$this->db->idate($this->date_ouverture_prevue)."'" : "null");

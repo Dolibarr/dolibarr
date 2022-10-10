@@ -131,7 +131,7 @@ if ($this->control->tpl['action_delete']) {
 	<td colspan="3"><?php echo $this->control->tpl['typent']; ?></td>
 </tr>
 
-<?php if (!empty($conf->global->MAIN_MULTILANGS)) { ?>
+<?php if (getDolGlobalInt('MAIN_MULTILANGS')) { ?>
 <tr>
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['default_lang']; ?></td>

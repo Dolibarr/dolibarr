@@ -872,6 +872,9 @@ th .button {
 .quatrevingtpercent, .inputsearch {
 	width: 80%;
 }
+.maxquatrevingtpercent {
+	max-width: 80%;
+}
 .soixantepercent {
 	width: 60%;
 }
@@ -1045,6 +1048,9 @@ textarea.centpercent {
 }
 .cursormove {
 	cursor: move;
+}
+.cursorwait {
+	cursor: wait;
 }
 .cursornotallowed {
 	cursor: not-allowed;
@@ -2557,6 +2563,11 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 	white-space: nowrap;
 	color: #<?php echo $colortextbackhmenu; ?>;
 	text-decoration: none;
+	cursor: not-allowed;
+}
+span.mainmenuaspan.tmenudisabled {
+	color: var(--colortextbackhmenu);
+	opacity: 0.5;
 	cursor: not-allowed;
 }
 
@@ -4985,7 +4996,7 @@ tr.visible {
 .websiteformtoolbar {
 	position: sticky;
 	top: <?php echo empty($dol_hide_topmenu) ? ($disableimages ? '36px' : '50px') : '0'; ?>;
-	z-index: 1000;
+	z-index: 1002;	/* Dolibarr menu is 1001, Website menu is 1002 */
 }
 
 .exampleapachesetup {

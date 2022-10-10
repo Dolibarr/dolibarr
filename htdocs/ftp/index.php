@@ -317,7 +317,7 @@ if ($action == 'download') {
 
 		$newsection = $section;
 
-		$result = dol_ftp_get($connect_id, $file, $newsection);
+		$result = dol_ftp_get($connect_id, $localfile, $file, $newsection);
 
 
 		if ($result) {

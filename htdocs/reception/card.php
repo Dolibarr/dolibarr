@@ -65,7 +65,7 @@ if (!empty($conf->project->enabled)) {
 
 $langs->loadLangs(array("receptions", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal', 'sendings'));
 
-if (!empty($conf->incoterm->enabled)) {
+if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
 if (isModEnabled('productbatch')) {
@@ -199,10 +199,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -219,7 +219,7 @@ if (empty($reshook)) {
 	}
 
 	// Set incoterm
-	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled) && $permissiontoadd) {
+	if ($action == 'set_incoterms' && isModEnabled('incoterm') && $permissiontoadd) {
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	}
 
@@ -437,10 +437,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -532,10 +532,10 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 			$newlang = $reception->thirdparty->default_lang;
 		}
 		if (!empty($newlang)) {
@@ -667,10 +667,10 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -752,7 +752,7 @@ if ($action == 'create') {
 			$author = new User($db);
 			$author->fetch($objectsrc->user_author_id);
 
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$entrepot = new Entrepot($db);
 			}
 
@@ -893,7 +893,7 @@ if ($action == 'create') {
 			}
 
 			// Incoterms
-			if (!empty($conf->incoterm->enabled)) {
+			if (isModEnabled('incoterm')) {
 				print '<tr>';
 				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->label_incoterms, 1).'</label></td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
@@ -1039,7 +1039,7 @@ if ($action == 'create') {
 					print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
 				}
 				print '</td>';
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					print '<td class="left">'.$langs->trans("Warehouse").' ('.$langs->trans("Stock").')</td>';
 				}
 				if (isModEnabled('productbatch')) {
@@ -1173,7 +1173,7 @@ if ($action == 'create') {
 
 
 				$warehouseObject = null;
-				if (!empty($conf->stock->enabled)) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
+				if (isModEnabled('stock')) {     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 					print '<!-- Case warehouse already known or product not a predefined product -->';
 
 					$stock = + $product->stock_warehouse[$dispatchLines[$indiceAsked]['ent']]->real; // Convert to number
@@ -1200,7 +1200,7 @@ if ($action == 'create') {
 					}
 
 					// Stock
-					if (!empty($conf->stock->enabled)) {
+					if (isModEnabled('stock')) {
 						print '<td class="left">';
 						if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {   // Type of product need stock change ?
 							// Show warehouse combo list
@@ -1323,7 +1323,7 @@ if ($action == 'create') {
 
 			$text = $langs->trans("ConfirmValidateReception", $numref);
 
-			if (!empty($conf->notification->enabled)) {
+			if (isModEnabled('notification')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 				$notify = new Notify($db);
 				$text .= '<br>';
@@ -1628,7 +1628,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Incoterms
-		if (!empty($conf->incoterm->enabled)) {
+		if (isModEnabled('incoterm')) {
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
 			print $langs->trans('IncotermLabel');
@@ -1686,7 +1686,7 @@ if ($action == 'create') {
 		}
 		if ($action == 'editline') {
 			$editColspan = 3;
-			if (empty($conf->stock->enabled)) {
+			if (!isModEnabled('stock')) {
 				$editColspan--;
 			}
 			if (empty($conf->productbatch->enabled)) {
@@ -1698,7 +1698,7 @@ if ($action == 'create') {
 			} else {
 				print $langs->trans("QtyReceived").' - ';
 			}
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				print $langs->trans("WarehouseSource").' - ';
 			}
 			if (isModEnabled('productbatch')) {
@@ -1718,7 +1718,7 @@ if ($action == 'create') {
 			} else {
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 			}
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				print '<td class="left">'.$langs->trans("WarehouseSource").'</td>';
 			}
 
@@ -1738,7 +1738,7 @@ if ($action == 'create') {
 
 		$var = false;
 
-		if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 			$object->fetch_thirdparty();
 			$outputlangs = $langs;
 			$newlang = '';
@@ -1813,7 +1813,7 @@ if ($action == 'create') {
 			// Predefined product or service
 			if ($lines[$i]->fk_product > 0) {
 				// Define output language
-				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 					$prod = new Product($db);
 					$prod->fetch($lines[$i]->fk_product);
 					$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product->label;
@@ -1889,7 +1889,7 @@ if ($action == 'create') {
 								print ' - '.$receptionline_var['qty'];
 
 								$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
-								if (!empty($conf->stock->enabled) && $receptionline_var['warehouse'] > 0) {
+								if (isModEnabled('stock') && $receptionline_var['warehouse'] > 0) {
 									$warehousestatic->fetch($receptionline_var['warehouse']);
 									$htmltext .= '<br>'.$langs->trans("From").' : '.$warehousestatic->getNomUrl(1, '', 0, 1);
 								}
@@ -1904,7 +1904,7 @@ if ($action == 'create') {
 			if ($action == 'editline' && $lines[$i]->id == $line_id) {
 				// edit mode
 				print '<td colspan="'.$editColspan.'" class="center"><table class="nobordernopadding">';
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					if ($lines[$i]->fk_product > 0) {
 						print '<!-- case edit 1 -->';
 						print '<tr>';
@@ -1944,7 +1944,7 @@ if ($action == 'create') {
 				print '<td class="center linecolqtytoreceive">'.$lines[$i]->qty.'</td>';
 
 				// Warehouse source
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					if ($lines[$i]->fk_entrepot > 0) {
 						$entrepot = new Entrepot($db);
 						$entrepot->fetch($lines[$i]->fk_entrepot);

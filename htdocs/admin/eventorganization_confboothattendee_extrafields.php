@@ -82,14 +82,6 @@ require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 print dol_get_fiche_end();
 
 
-// Buttons
-if ($action != 'create' && $action != 'edit') {
-	print '<div class="tabsAction">';
-	print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
-	print "</div>";
-}
-
-
 /*
  * Creation of an optional field
  */

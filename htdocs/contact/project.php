@@ -68,7 +68,7 @@ if ($id) {
 	}
 	llxHeader('', $title);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = contact_prepare_head($object);

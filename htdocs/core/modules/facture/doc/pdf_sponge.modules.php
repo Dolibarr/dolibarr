@@ -70,9 +70,9 @@ class pdf_sponge extends ModelePDFFactures
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
-	public $phpmin = array(5, 6);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -182,10 +182,10 @@ class pdf_sponge extends ModelePDFFactures
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
-		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
-		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
-		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
+		$this->marge_gauche = getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10);
+		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
+		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
+		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->option_logo = 1; // Display logo
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
@@ -285,7 +285,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				$objphoto->fetch($object->lines[$i]->fk_product);
 				//var_dump($objphoto->ref);exit;
-				if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+				if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 					$pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
 					$pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
 				} else {
@@ -400,7 +400,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($mysoc->name.($user->id > 0 ? ' - '.$outputlangs->convToOutputCharset($user->getFullName($outputlangs)) : ''));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfInvoiceTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -457,7 +457,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				// $this->tab_top is y where we must continue content (90 = 42 + 48: 42 is height of logo and ref, 48 is address blocks)
 				$this->tab_top = 90 + $top_shift;		// top_shift is an addition for linked objects or addons (0 in most cases)
-				$this->tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
+				$this->tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				// You can add more thing under header here, if you increase $extra_under_address_shift too.
 				$extra_under_address_shift = 0;
@@ -506,7 +506,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				// Incoterm
 				$height_incoterms = 0;
-				if (!empty($conf->incoterm->enabled)) {
+				if (isModEnabled('incoterm')) {
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms) {
 						$this->tab_top -= 2;
@@ -575,7 +575,7 @@ class pdf_sponge extends ModelePDFFactures
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 							}
 							// $this->_pagefoot($pdf,$object,$outputlangs,1);
@@ -633,7 +633,7 @@ class pdf_sponge extends ModelePDFFactures
 						if (!empty($tplidx)) {
 							$pdf->useTemplate($tplidx);
 						}
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						}
 						$height_note = $posyafter - $this->tab_top_newpage;
@@ -655,7 +655,7 @@ class pdf_sponge extends ModelePDFFactures
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 							}
 
@@ -957,7 +957,7 @@ class pdf_sponge extends ModelePDFFactures
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						}
 						if (!empty($tplidx)) {
@@ -978,7 +978,7 @@ class pdf_sponge extends ModelePDFFactures
 							$pdf->useTemplate($tplidx);
 						}
 						$pagenb++;
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						}
 					}
@@ -1290,13 +1290,13 @@ class pdf_sponge extends ModelePDFFactures
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CB' || $object->mode_reglement_code == 'VAD') {
 				$useonlinepayment = 0;
 				if (!empty($conf->global->PDF_SHOW_LINK_TO_ONLINE_PAYMENT)) {
-					if (!empty($conf->paypal->enabled)) {
+					if (isModEnabled('paypal')) {
 						$useonlinepayment++;
 					}
-					if (!empty($conf->stripe->enabled)) {
+					if (isModEnabled('stripe')) {
 						$useonlinepayment++;
 					}
-					if (!empty($conf->paybox->enabled)) {
+					if (isModEnabled('paybox')) {
 						$useonlinepayment++;
 					}
 				}
@@ -1306,7 +1306,7 @@ class pdf_sponge extends ModelePDFFactures
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					global $langs;
 
-					$langs->loadLangs(array('payment', 'paybox'));
+					$langs->loadLangs(array('payment', 'paybox', 'stripe'));
 					$servicename = $langs->transnoentities('Online');
 					$paiement_url = getOnlinePaymentUrl('', 'invoice', $object->ref, '', '', '');
 					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
@@ -1472,7 +1472,7 @@ class pdf_sponge extends ModelePDFFactures
 				if ($posy > $this->page_hauteur - 4 - $this->heightforfooter) {
 					$this->_pagefoot($pdf, $object, $outputlangs, 1);
 					$pdf->addPage();
-					if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+					if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 						$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						$pdf->setY($this->tab_top_newpage);
 					} else {
@@ -1539,7 +1539,7 @@ class pdf_sponge extends ModelePDFFactures
 
 			if ($posy > $this->page_hauteur - 4 - $this->heightforfooter) {
 				$pdf->addPage();
-				if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+				if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 					$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 					$pdf->setY($this->tab_top_newpage);
 				} else {
@@ -1562,7 +1562,7 @@ class pdf_sponge extends ModelePDFFactures
 		// Total remise
 		$total_line_remise = 0;
 		foreach ($object->lines as $i => $line) {
-			$total_line_remise += pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, 2); // TODO: add this method to core/lib/pdf.lib
+			$total_line_remise += (float) pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, 2); // TODO: add this method to core/lib/pdf.lib
 			// Gestion remise sous forme de ligne négative
 			if ($line->total_ht < 0) {
 				$total_line_remise += -$line->total_ht;
@@ -2328,8 +2328,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
-		global $conf;
-		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
 	}
 

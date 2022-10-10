@@ -41,7 +41,7 @@ if (empty($object) || !is_object($object)) {
 	exit;
 }
 $usemargins = 0;
-if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
+if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 	$usemargins = 1;
 }
 if (!isset($dateSelector)) {
@@ -184,7 +184,7 @@ if ($nolinesbefore) {
 			$freelines = true;
 			$forceall = 1; // We always force all type for free lines (module product or service means we use predefined product or service)
 			if ($object->element == 'contrat') {
-				if (empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) {
+				if (!isModEnabled('product') && !isModEnabled('service') && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) {
 					$forceall = -1; // With contract, by default, no choice at all, except if CONTRACT_SUPPORT_PRODUCTS is set
 				} elseif (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) {
 					$forceall = 3;
@@ -196,7 +196,7 @@ if ($nolinesbefore) {
 			if ($forceall >= 0 && (isModEnabled("product") || isModEnabled("service"))) {
 				echo '<label for="prod_entry_mode_free">';
 				echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
-				//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
+				//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (!isModEnabled('product') || !isModEnabled('service')))?' checked':'') );
 				echo ((GETPOST('prod_entry_mode', 'alpha') == 'free' || !empty($conf->global->MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT)) ? ' checked' : '');
 				echo '> ';
 				// Show type selector
@@ -207,7 +207,7 @@ if ($nolinesbefore) {
 				echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
 				// Show type selector
 				if ($forceall >= 0) {
-					if (empty($conf->product->enabled) || empty($conf->service->enabled)) {
+					if (!isModEnabled('product') || !isModEnabled('service')) {
 						echo $langs->trans("Type");
 					} else {
 						echo $langs->trans("FreeLineOfType");
@@ -230,17 +230,17 @@ if ($nolinesbefore) {
 			$labelforradio = '';
 			if (empty($conf->dol_optimize_smallscreen)) {
 				if (empty($senderissupplier)) {
-					if (isModEnabled("product") && empty($conf->service->enabled)) {
+					if (isModEnabled("product") && !isModEnabled('service')) {
 						$labelforradio = $langs->trans('PredefinedProductsToSell');
-					} elseif ((empty($conf->product->enabled) && isModEnabled("service")) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) {
+					} elseif ((!isModEnabled('product') && isModEnabled('service')) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) {
 						$labelforradio = $langs->trans('PredefinedServicesToSell');
 					} else {
 						$labelforradio = $langs->trans('PredefinedProductsAndServicesToSell');
 					}
 				} else {
-					if (isModEnabled("product") && empty($conf->service->enabled)) {
+					if (isModEnabled("product") && !isModEnabled('service')) {
 						$labelforradio = $langs->trans('PredefinedProductsToPurchase');
-					} elseif (empty($conf->product->enabled) && isModEnabled("service")) {
+					} elseif (!isModEnabled('product') && isModEnabled('service')) {
 						$labelforradio = $langs->trans('PredefinedServicesToPurchase');
 					} else {
 						$labelforradio = $langs->trans('PredefinedProductsAndServicesToPurchase');
@@ -338,7 +338,7 @@ if ($nolinesbefore) {
 		}
 		if (isModEnabled("product") || isModEnabled("service")) {
 			echo '<br>';
-			if (!empty($conf->variants->enabled)) {
+			if (isModEnabled('variants')) {
 				echo '<div id="attributes_box"></div>';
 			}
 		}
@@ -763,7 +763,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 						}
 						<?php
 						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
-							if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>
+							if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>
 						var proddesc = data.desc_trans;
 								<?php
 							} else { ?>
@@ -957,12 +957,15 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			var discount = parseFloat($('option:selected', this).attr('data-discount'));
 			if (isNaN(discount)) { discount = parseFloat(jQuery('#idprodfournprice').attr('data-discount'));}
 
-			/* var tva_tx = $('option:selected', this).data('tvatx'); */
+			var tva_tx = parseFloat($('option:selected', this).attr('data-tvatx')); 					// When select is done from HTML select
+			if (isNaN(tva_tx)) { tva_tx = parseFloat(jQuery('#idprodfournprice').attr('data-tvatx'));}	// When select is done from HTML input with autocomplete
 
 			console.log("We find supplier price :"+up+" qty: "+qty+" tva_tx="+tva_tx+" discount: "+discount+" for product "+jQuery('#idprodfournprice').val());
 
 			jQuery("#price_ht").val(up);
+
 			/* $('#tva_tx option').removeAttr('selected').filter('[value='+tva_tx+']').prop('selected', true); */
+			$('#tva_tx option').val(tva_tx);
 
 			if (jQuery("#qty").val() < qty)	{
 				jQuery("#qty").val(qty);

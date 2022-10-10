@@ -457,7 +457,6 @@ function cleanObjectDatas($toclean)
 
 	unset($toclean->ref_previous);
 	unset($toclean->ref_next);
-	unset($toclean->ref_int);
 
 	unset($toclean->projet); // Should be fk_project
 	unset($toclean->project); // Should be fk_project

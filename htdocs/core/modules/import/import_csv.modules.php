@@ -726,7 +726,7 @@ class ImportCsv extends ModeleImports
 						}
 
 						// Define $listfields and $listvalues to build SQL request
-						if ($conf->socialnetworks->enabled && strpos($fieldname, "socialnetworks") !== false) {
+						if (isModEnabled("socialnetworks") && strpos($fieldname, "socialnetworks") !== false) {
 							if (!in_array("socialnetworks", $listfields)) {
 								$listfields[] = "socialnetworks";
 							}
@@ -835,19 +835,23 @@ class ImportCsv extends ModeleImports
 								$sqlSelect = "SELECT ".$fname." FROM ".$tablename;
 
 								$data = array_combine($listfields, $listvalues);
-								$where = array();
-								$filters = array();
+								$where = array();	// filters to forge SQL request
+								$filters = array();	// filters to forge output error message
 								foreach ($updatekeys as $key) {
 									$col = $objimport->array_import_updatekeys[0][$key];
 									$key = preg_replace('/^.*\./i', '', $key);
-									if ($conf->socialnetworks->enabled && strpos($key, "socialnetworks") !== false) {
+									if (isModEnabled("socialnetworks") && strpos($key, "socialnetworks") !== false) {
 										$tmp = explode("_", $key);
 										$key = $tmp[0];
 										$socialnetwork = $tmp[1];
 										$jsondata = $data[$key];
 										$json = json_decode($jsondata);
-										$where[] = $key." LIKE '%\"".$socialnetwork."\":\"".$this->db->escape($json->$socialnetwork)."\"%'";
-										$filters[] = $col." LIKE '%\"".$socialnetwork."\":\"".$this->db->escape($json->$socialnetwork)."\"%'";
+										$stringtosearch = json_encode($socialnetwork).':'.json_encode($json->$socialnetwork);
+										//var_dump($stringtosearch);
+										//var_dump($this->db->escape($stringtosearch));	// This provide a value for sql string (but not for a like)
+										$where[] = $key." LIKE '%".$this->db->escapeforlike($this->db->escape($stringtosearch))."%'";
+										$filters[] = $col." LIKE '%".$this->db->escapeforlike($this->db->escape($stringtosearch))."%'";
+										//var_dump($where[1]); // This provide a value for sql string inside a like
 									} else {
 										$where[] = $key.' = '.$data[$key];
 										$filters[] = $col.' = '.$data[$key];

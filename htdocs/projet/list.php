@@ -71,8 +71,8 @@ if (!$user->rights->projet->lire) {
 $diroutputmassaction = $conf->project->dir_output.'/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", "aZ09comma");
-$sortorder = GETPOST("sortorder", 'aZ09comma');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
@@ -229,7 +229,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -356,13 +357,22 @@ if (empty($reshook)) {
  * View
  */
 
-$companystatic = new Societe($db);
 $form = new Form($db);
+
+$companystatic = new Societe($db);
 $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
-$title = $langs->trans("Projects");
+$title = $langs->trans("LeadsOrProjects");
+if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+	$title = $langs->trans("Projects");
+}
+if (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+	$title = $langs->trans("Leads");
+}
+$morejs = array();
+$morecss = array();
 
 
 // Get list of project id allowed to user (in a string list separated by comma)
@@ -775,7 +785,7 @@ if ($user->rights->projet->creer) {
 if ($user->rights->projet->supprimer) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if ($user->rights->projet->creer) {
+if (isModEnabled('category') && $user->rights->projet->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
@@ -963,10 +973,11 @@ if (!empty($arrayfields['p.datee']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Visibility
 if (!empty($arrayfields['p.public']['checked'])) {
 	print '<td class="liste_titre center">';
 	$array = array(''=>'', 0 => $langs->trans("PrivateProject"), 1 => $langs->trans("SharedProject"));
-	print $form->selectarray('search_public', $array, $search_public);
+	print $form->selectarray('search_public', $array, $search_public, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth75');
 	print '</td>';
 }
 if (!empty($arrayfields['c.assigned']['checked'])) {
@@ -1190,8 +1201,12 @@ $totalarray = array(
 	'nbfield' => 0,
 	'val' => array(),
 );
-while ($i < min($num, $limit)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
+		break; // Should not happen
+	}
 
 	$object->id = $obj->id;
 	$object->user_author_id = $obj->fk_user_creat;
@@ -1358,10 +1373,10 @@ while ($i < min($num, $limit)) {
 		}
 		// Contacts of project
 		if (!empty($arrayfields['c.assigned']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall tdoverflowmax200">';
 			$ifisrt = 1;
 			foreach (array('internal', 'external') as $source) {
-				$tab = $object->liste_contact(-1, $source);
+				$tab = $object->liste_contact(-1, $source, 0, '', 1);
 				$numcontact = count($tab);
 				if (!empty($numcontact)) {
 					foreach ($tab as $contactproject) {
@@ -1648,14 +1663,26 @@ while ($i < min($num, $limit)) {
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
+// If no record found
+if ($num == 0) {
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
+
 $db->free($resql);
 
-$parameters = array('sql' => $sql);
-$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+$parameters = array('arrayfields'=>$arrayfields, 'sql' => $sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 print "</table>\n";
 print '</div>';
+
 print "</form>\n";
 
 // End of page

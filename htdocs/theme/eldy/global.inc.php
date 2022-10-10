@@ -285,7 +285,7 @@ section.setupsection {
 div.tabBar textarea:focus {
 	border: 1px solid #aaa !important;
 }
-input:focus:not(.button):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
+input:focus:not(.button):not(.buttonwebsite):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-search-takepos),
  select:focus, .select2-container--open [aria-expanded="false"].select2-selection--single {
 /* div.tabBar input:focus, div.tabBar select:focus { */
 	border-bottom: 1px solid #666 !important;
@@ -620,11 +620,12 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	-webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:disabled, .buttonDelete:disabled, .button.disabled {
+.button:disabled, .buttonDelete:disabled, .button.disabled, .buttonDelete.disabled {
 	opacity: 0.4;
 	box-shadow: none;
 	-webkit-box-shadow: none;
 	cursor: auto;
+	text-decoration: none;
 }
 .buttonRefused {
 	pointer-events: none;
@@ -713,6 +714,9 @@ th .button {
 }
 .quatrevingtpercent, .inputsearch {
 	width: 80%;
+}
+.maxquatrevingtpercent {
+	max-width: 80%;
 }
 .soixantepercent {
 	width: 60%;
@@ -896,6 +900,9 @@ textarea.centpercent {
 }
 .cursornotallowed {
 	cursor: not-allowed;
+}
+.cursorwait {
+	cursor: wait;
 }
 .backgroundblank {
 	background-color: #fff;
@@ -2509,6 +2516,11 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 	white-space: nowrap;
 	color: var(--colortextbackhmenu);
 	text-decoration: none;
+	cursor: not-allowed;
+}
+span.mainmenuaspan.tmenudisabled {
+	color: var(--colortextbackhmenu);
+	opacity: 0.5;
 	cursor: not-allowed;
 }
 
@@ -5130,7 +5142,7 @@ tr.visible {
 .websiteformtoolbar {
 	position: sticky;
 	top: <?php echo empty($dol_hide_topmenu) ? ($disableimages ? '32px' : '52px') : '0'; ?>;
-	z-index: 1000;
+	z-index: 1002;	/* Dolibarr menu is 1001, Website menu is 1002 */
 }
 
 .exampleapachesetup {

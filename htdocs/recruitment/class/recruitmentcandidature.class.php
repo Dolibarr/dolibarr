@@ -111,14 +111,14 @@ class RecruitmentCandidature extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of candidature", 'csslist'=>'nowraponall'),
-		'fk_recruitmentjobposition' => array('type'=>'integer:RecruitmentJobPosition:recruitment/class/recruitmentjobposition.class.php', 'label'=>'Job', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'picto'=>'recruitmentjobposition', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'minwidth125 tdoverflowmax200'),
+		'fk_recruitmentjobposition' => array('type'=>'integer:RecruitmentJobPosition:recruitment/class/recruitmentjobposition.class.php', 'label'=>'Job', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'picto'=>'recruitmentjobposition', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'minwidth100 nowraponall'),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid', 'csslist'=>'tdoverflowmax100'),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2, 'csslist'=>'tdoverflowmax100'),
 		'lastname' => array('type'=>'varchar(128)', 'label'=>'Lastname', 'enabled'=>'1', 'position'=>20, 'notnull'=>0, 'visible'=>1, 'csslist'=>'tdoverflowmax150'),
 		'firstname' => array('type'=>'varchar(128)', 'label'=>'Firstname', 'enabled'=>'1', 'position'=>21, 'notnull'=>0, 'visible'=>1, 'csslist'=>'tdoverflowmax150'),
-		'email' => array('type'=>'email', 'label'=>'EMail', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'picto'=>'email', 'csslist'=>'tdoverflowmax200'),
+		'email' => array('type'=>'email', 'label'=>'EMail', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'picto'=>'email', 'csslist'=>'tdoverflowmax150'),
 		'phone' => array('type'=>'phone', 'label'=>'Phone', 'enabled'=>'1', 'position'=>31, 'notnull'=>0, 'visible'=>1, 'picto'=>'phone', 'csslist'=>'tdoverflowmax150'),
 		'date_birth' => array('type'=>'date', 'label'=>'DateOfBirth', 'enabled'=>'1', 'position'=>70, 'visible'=>-1,),
 		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc'),
@@ -825,6 +825,12 @@ class RecruitmentCandidature extends CommonObject
 		$statusType = 'status'.$status;
 		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
 		if ($status == self::STATUS_CANCELED) {
+			$statusType = 'status9';
+		}
+		if ($status == self::STATUS_CONTRACT_PROPOSED) {
+			$statusType = 'status4';
+		}
+		if ($status == self::STATUS_CONTRACT_SIGNED) {
 			$statusType = 'status6';
 		}
 		if ($status == self::STATUS_REFUSED) {

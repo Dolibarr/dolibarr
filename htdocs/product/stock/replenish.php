@@ -111,7 +111,7 @@ if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
-	|| !empty($conf->mrp->enabled)) {
+	|| isModEnabled('mrp')) {
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
@@ -180,7 +180,7 @@ if ($action == 'order' && GETPOST('valid')) {
 
 						//$product = new Product($db);
 						//$product->fetch($obj->fk_product);
-						if (!empty($conf->global->MAIN_MULTILANGS)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS')) {
 							$productsupplier->getMultiLangs();
 						}
 
@@ -191,7 +191,7 @@ if ($action == 'order' && GETPOST('valid')) {
 							$desc = $productsupplier->description;
 						}
 						$line->desc = $desc;
-						if (!empty($conf->global->MAIN_MULTILANGS)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS')) {
 							// TODO Get desc in language of thirdparty
 						}
 
@@ -459,7 +459,7 @@ if ($usevirtualstock) {
 		$sqlReceptionFourn = '0';
 	}
 
-	if (!empty($conf->mrp->enabled)) {
+	if (isModEnabled('mrp')) {
 		$sqlProductionToConsume = "(SELECT GREATEST(0, ".$db->ifsql("SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').") IS NULL", "0", "SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').")").") as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlProductionToConsume .= " FROM ".MAIN_DB_PREFIX."mrp_mo as mm5,";
 		$sqlProductionToConsume .= " ".MAIN_DB_PREFIX."mrp_production as mp5";
@@ -803,7 +803,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$prod->load_stock('warehouseopen, warehouseinternal'.(!$usevirtualstock?', novirtual':''), $draftchecked);
 
 		// Multilangs
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_lang';
 			$sql .= ' WHERE fk_product = '.((int) $objp->rowid);

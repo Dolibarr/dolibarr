@@ -259,9 +259,9 @@ class ProductAttributeValue extends CommonObjectLine
 	/**
 	 * Returns all product attribute values of a product attribute
 	 *
-	 * @param int $prodattr_id Product attribute id
-	 * @param bool $only_used Fetch only used attribute values
-	 * @return ProductAttributeValue[]
+	 * @param 	int 	$prodattr_id	 	Product attribute id
+	 * @param 	bool 	$only_used 			Fetch only used attribute values
+	 * @return 	ProductAttributeValue[]		Array of object
 	 */
 	public function fetchAllByProductAttribute($prodattr_id, $only_used = false)
 	{

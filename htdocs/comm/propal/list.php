@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (!empty($conf->margin->enabled)) {
+if (isModEnabled('margin')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -204,7 +204,7 @@ if (empty($user->socid)) {
 $checkedtypetiers = 0;
 $arrayfields = array(
 	'p.ref'=>array('label'=>"Ref", 'checked'=>1),
-	'p.ref_client'=>array('label'=>"RefCustomer", 'checked'=>1),
+	'p.ref_client'=>array('label'=>"RefCustomer", 'checked'=>-1),
 	'pr.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(!isModEnabled('project') ? 0 : 1)),
 	'pr.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(!isModEnabled('project') ? 0 : 1)),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
@@ -237,10 +237,10 @@ $arrayfields = array(
 	'p.multicurrency_total_invoiced'=>array('label'=>'MulticurrencyAmountInvoicedTTC', 'checked'=>0, 'enabled'=>isModEnabled("multicurrency") && !empty($conf->global->PROPOSAL_SHOW_INVOICED_AMOUNT)),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>10),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>-1),
-	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
-	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
+	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
 	'p.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	'p.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>500),
@@ -249,6 +249,28 @@ $arrayfields = array(
 	'p.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 
+// List of fields to search into when doing a "search in all"
+/*$fieldstosearchall = array();
+foreach ($object->fields as $key => $val) {
+	if (!empty($val['searchall'])) {
+		$fieldstosearchall['t.'.$key] = $val['label'];
+	}
+}*/
+// Definition of array of fields for columns
+/*$arrayfields = array();
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval($val['visible'], 1);
+		$arrayfields['t.'.$key] = array(
+			'label'=>$val['label'],
+			'checked'=>(($visible < 0) ? 0 : 1),
+			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
+			'position'=>$val['position'],
+			'help'=> isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}*/
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -514,7 +536,7 @@ $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $formpropal = new FormPropal($db);
 $formmargin = null;
-if (!empty($conf->margin->enabled)) {
+if (isModEnabled('margin')) {
 	$formmargin = new FormMargin($db);
 }
 $companystatic = new Societe($db);
@@ -529,7 +551,7 @@ $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, ';
 $sql .= " typent.code as typent_code,";
 $sql .= " ava.rowid as availability,";
 $sql .= " country.code as country_code,";
@@ -1073,7 +1095,7 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle, (empty($conf->dol_optimize_smallscreen) ? 'maxwidth300 widthcentpercentminusx' : 'maxwidth250 widthcentpercentminusx'));
 		$moreforfilter .= '</div>';
 	}
-	if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL)) {
+	if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL)) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -1520,6 +1542,7 @@ if ($resql) {
 		'sortorder' => $sortorder,
 		'totalarray' => &$totalarray,
 	);
+
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['p.datec']['checked'])) {
@@ -1550,7 +1573,7 @@ if ($resql) {
 	$typenArray = null;
 
 	$with_margin_info = false;
-	if (!empty($conf->margin->enabled) && (
+	if (isModEnabled('margin') && (
 		!empty($arrayfields['total_pa']['checked'])
 		|| !empty($arrayfields['total_margin']['checked'])
 		|| !empty($arrayfields['total_margin_rate']['checked'])
@@ -1562,8 +1585,11 @@ if ($resql) {
 	$total_ht = 0;
 	$total_margin = 0;
 
-	$last_num = min($num, $limit);
-	while ($i < $last_num) {
+	$savnbfield = $totalarray['nbfield'];
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+	$imaxinloop = ($limit ? min($num, $limit) : $num);
+	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
 
 		$objectstatic->id = $obj->rowid;
@@ -1578,6 +1604,7 @@ if ($resql) {
 		$companystatic->name = $obj->name;
 		$companystatic->name_alias = $obj->alias;
 		$companystatic->client = $obj->client;
+		$companystatic->fournisseur = $obj->fournisseur;
 		$companystatic->code_client = $obj->code_client;
 		$companystatic->email = $obj->email;
 		$companystatic->phone = $obj->phone;
@@ -1671,7 +1698,7 @@ if ($resql) {
 		if (!empty($arrayfields['p.ref_client']['checked'])) {
 			// Customer ref
 			print '<td class="nowrap tdoverflowmax200">';
-			print $obj->ref_client;
+			print dol_escape_htmltag($obj->ref_client);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1694,7 +1721,7 @@ if ($resql) {
 			// Project label
 			print '<td class="nowrap">';
 			if ($obj->project_id > 0) {
-				print $projectstatic->title;
+				print dol_escape_htmltag($projectstatic->title);
 			}
 			print '</td>';
 			if (!$i) {
@@ -1704,7 +1731,7 @@ if ($resql) {
 
 		// Thirdparty
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			print $companystatic->getNomUrl(1, 'customer');
 			print '</td>';
 			if (!$i) {
@@ -1873,7 +1900,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.total_ht';
 			}
-			$totalarray['val']['p.total_ht'] += $obj->total_ht;
+			if (empty($totalarray['val']['p.total_ht'])) {
+				$totalarray['val']['p.total_ht'] = $obj->total_ht;
+			} else {
+				$totalarray['val']['p.total_ht'] += $obj->total_ht;
+			}
 		}
 		// Amount VAT
 		if (!empty($arrayfields['p.total_tva']['checked'])) {
@@ -1884,7 +1915,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.total_tva';
 			}
-			$totalarray['val']['p.total_tva'] += $obj->total_tva;
+			if (empty($totalarray['val']['p.total_tva'])) {
+				$totalarray['val']['p.total_tva'] = $obj->total_tva;
+			} else {
+				$totalarray['val']['p.total_tva'] += $obj->total_tva;
+			}
 		}
 		// Amount TTC
 		if (!empty($arrayfields['p.total_ttc']['checked'])) {
@@ -1895,7 +1930,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.total_ttc';
 			}
-			$totalarray['val']['p.total_ttc'] += $obj->total_ttc;
+			if (empty($totalarray['val']['p.total_ttc'])) {
+				$totalarray['val']['p.total_ttc'] = $obj->total_ttc;
+			} else {
+				$totalarray['val']['p.total_ttc'] += $obj->total_ttc;
+			}
 		}
 		// Amount invoiced HT
 		if (!empty($arrayfields['p.total_ht_invoiced']['checked'])) {
@@ -1906,7 +1945,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.total_ht_invoiced';
 			}
-			$totalarray['val']['p.total_ht_invoiced'] += $totalInvoicedHT;
+			if (empty($totalarray['val']['p.total_ht_invoiced'])) {
+				$totalarray['val']['p.total_ht_invoiced'] = $totalInvoicedHT;
+			} else {
+				$totalarray['val']['p.total_ht_invoiced'] += $totalInvoicedHT;
+			}
 		}
 		// Amount invoiced TTC
 		if (!empty($arrayfields['p.total_invoiced']['checked'])) {
@@ -1917,7 +1960,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'p.total_invoiced';
 			}
-			$totalarray['val']['p.total_invoiced'] += $totalInvoicedTTC;
+			if (empty($totalarray['val']['p.total_invoiced'])) {
+				$totalarray['val']['p.total_invoiced'] = $totalInvoicedTTC;
+			} else {
+				$totalarray['val']['p.total_invoiced'] += $totalInvoicedTTC;
+			}
 		}
 		// Currency
 		if (!empty($arrayfields['p.multicurrency_code']['checked'])) {
@@ -1988,7 +2035,7 @@ if ($resql) {
 
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1);
 			}
@@ -2080,7 +2127,7 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
 			}
-			if ($i >= $last_num - 1) {
+			if ($i >= $imaxinloop - 1) {
 				if (!empty($total_ht)) {
 					$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
 				} else {

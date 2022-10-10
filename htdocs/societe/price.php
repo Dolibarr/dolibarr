@@ -199,7 +199,7 @@ $object = new Societe($db);
 $result = $object->fetch($socid);
 llxHeader("", $langs->trans("ThirdParty").'-'.$langs->trans('PriceByCustomer'));
 
-if (!empty($conf->notification->enabled)) {
+if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
 $head = societe_prepare_head($object);
@@ -532,10 +532,10 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		// Count total nb of records
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-			$nbtotalofrecords = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			$nbtotalofrecords = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 		}
 
-		$result = $prodcustprice->fetch_all($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
+		$result = $prodcustprice->fetchAll($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}

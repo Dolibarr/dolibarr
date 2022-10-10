@@ -196,7 +196,7 @@ class Societe extends CommonObject
 		'fk_stcomm' =>array('type'=>'integer', 'label'=>'CommercialStatus', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>225),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>230),
-		'prefix_comm' =>array('type'=>'varchar(5)', 'label'=>'Prefix comm', 'enabled'=>'$conf->global->SOCIETE_USEPREFIX', 'visible'=>-1, 'position'=>235),
+		'prefix_comm' =>array('type'=>'varchar(5)', 'label'=>'Prefix comm', 'enabled'=>"getDolGlobalInt('SOCIETE_USEPREFIX')", 'visible'=>-1, 'position'=>235),
 		'client' =>array('type'=>'tinyint(4)', 'label'=>'Client', 'enabled'=>1, 'visible'=>-1, 'position'=>240),
 		'fournisseur' =>array('type'=>'tinyint(4)', 'label'=>'Fournisseur', 'enabled'=>1, 'visible'=>-1, 'position'=>245),
 		'supplier_account' =>array('type'=>'varchar(32)', 'label'=>'Supplier account', 'enabled'=>1, 'visible'=>-1, 'position'=>250),
@@ -699,12 +699,6 @@ class Societe extends CommonObject
 	 * @var string Ref
 	 */
 	public $ref;
-
-	/**
-	 * @var string Internal ref
-	 * @deprecated
-	 */
-	public $ref_int;
 
 	/**
 	 * External user reference.
@@ -1844,7 +1838,7 @@ class Societe extends CommonObject
 				$this->stcomm_picto = $obj->stcomm_picto; // picto statut commercial
 
 				$this->email = $obj->email;
-				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
+				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 
 				$this->url = $obj->url;
 				$this->phone = $obj->phone;
@@ -2658,11 +2652,16 @@ class Societe extends CommonObject
 		if (isset($this->status)) {
 			$label .= ' '.$this->getLibStatut(5);
 		}
+		if (isset($this->client) && isset($this->fournisseur)) {
+			$label .= ' &nbsp; ';
+			$label .= $this->getTypeUrl(1);
+		}
 
 		$label .= '<br><b>'.$langs->trans('Name').':</b> '.dol_escape_htmltag($this->name);
 		if (!empty($this->name_alias)) {
 			$label .= ' ('.dol_escape_htmltag($this->name_alias).')';
 		}
+
 		if ($this->email) {
 			$label .= '<br>'.img_picto('', 'email', 'class="pictofixedwidth"').$this->email;
 		}
@@ -4933,15 +4932,16 @@ class Societe extends CommonObject
 	 */
 	public function setThirdpartyType($typent_id)
 	{
+		global $user;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
 		if ($this->id) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET fk_typent = ".($typent_id > 0 ? $typent_id : "null");
-			$sql .= " WHERE rowid = ".((int) $this->id);
-			dol_syslog(get_class($this).'::setThirdpartyType', LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
+			$result = $this->setValueFrom('fk_typent', $typent_id, '', null, '', '', $user, 'COMPANY_MODIFY');
+
+			if ($result > 0) {
 				$this->typent_id = $typent_id;
-				$this->typent_code = dol_getIdFromCode($this->db, $this->$typent_id, 'c_typent', 'id', 'code');
+				$this->typent_code = dol_getIdFromCode($this->db, $this->typent_id, 'c_typent', 'id', 'code');
 				return 1;
 			} else {
 				return -1;

@@ -48,7 +48,7 @@ if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-if (!empty($conf->variants->enabled)) {
+if (isModEnabled('variants')) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
@@ -821,7 +821,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of product in production
-			if (!empty($conf->mrp->enabled)) {
+			if (isModEnabled('mrp')) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {

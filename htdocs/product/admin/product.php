@@ -545,7 +545,7 @@ print '<td>'.$langs->trans("VariantsAbility").'</td>';
 print '<td class="right">';
 //print ajax_constantonoff("PRODUIT_SOUSPRODUITS", array(), $conf->entity, 0, 0, 1, 0);
 //print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
-if (empty($conf->variants->enabled)) {
+if (!isModEnabled('variants')) {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabled", $langs->transnoentitiesnoconv("Module610Name")).'</span>';
 } else {
 	print yn(1).' <span class="opacitymedium">('.$langs->trans("ModuleIsEnabled", $langs->transnoentitiesnoconv("Module610Name")).')</span>';
@@ -716,7 +716,7 @@ print '</tr>';
 */
 
 // View product description in thirdparty language
-if (!empty($conf->global->MAIN_MULTILANGS)) {
+if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td class="right">';

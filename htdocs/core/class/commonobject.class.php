@@ -1348,13 +1348,14 @@ abstract class CommonObject
 	/**
 	 *    Get array of all contacts for an object
 	 *
-	 *    @param	int			$status		Status of links to get (-1=all)
-	 *    @param	string		$source		Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
-	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
-	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
-	 *    @return	array|int		        Array of contacts, -1 if error
+	 *    @param	int			$statusoflink	Status of links to get (-1=all). Not used.
+	 *    @param	string		$source			Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
+	 *    @param	int         $list       	0:Return array contains all properties, 1:Return array contains just id
+	 *    @param    string      $code       	Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
+	 *    @param	int			$status			Status of user or company
+	 *    @return	array|int		        	Array of contacts, -1 if error
 	 */
-	public function liste_contact($status = -1, $source = 'external', $list = 0, $code = '')
+	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1)
 	{
 		// phpcs:enable
 		global $langs;
@@ -1372,10 +1373,10 @@ abstract class CommonObject
 		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
 		$sql .= " FROM ".$this->db->prefix()."c_type_contact tc";
 		$sql .= ", ".$this->db->prefix()."element_contact ec";
-		if ($source == 'internal') {
+		if ($source == 'internal') {	// internal contact (user)
 			$sql .= " LEFT JOIN ".$this->db->prefix()."user t on ec.fk_socpeople = t.rowid";
 		}
-		if ($source == 'external' || $source == 'thirdparty') {
+		if ($source == 'external' || $source == 'thirdparty') {	// external contact (socpeople)
 			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople t on ec.fk_socpeople = t.rowid";
 		}
 		$sql .= " WHERE ec.element_id = ".((int) $this->id);
@@ -1386,13 +1387,19 @@ abstract class CommonObject
 		}
 		if ($source == 'internal') {
 			$sql .= " AND tc.source = 'internal'";
+			if ($status >= 0) {
+				$sql .= " AND t.statut = ".((int) $status);
+			}
 		}
 		if ($source == 'external' || $source == 'thirdparty') {
 			$sql .= " AND tc.source = 'external'";
+			if ($status >= 0) {
+				$sql .= " AND t.statut = ".((int) $status);	// t is llx_socpeople
+			}
 		}
 		$sql .= " AND tc.active=1";
-		if ($status >= 0) {
-			$sql .= " AND ec.statut = ".((int) $status);
+		if ($statusoflink >= 0) {
+			$sql .= " AND ec.statut = ".((int) $statusoflink);
 		}
 		$sql .= " ORDER BY t.lastname ASC";
 
@@ -1534,7 +1541,6 @@ abstract class CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Return array with list of possible values for type of contacts
 	 *
@@ -1548,7 +1554,6 @@ abstract class CommonObject
 	 */
 	public function listeTypeContacts($source = 'internal', $option = 0, $activeonly = 0, $code = '', $element = '', $excludeelement = '')
 	{
-		// phpcs:enable
 		global $langs, $conf;
 
 		$langs->loadLangs(array('bills', 'contracts', 'interventions', 'orders', 'projects', 'propal', 'ticket', 'agenda'));
@@ -2072,7 +2077,7 @@ abstract class CommonObject
 		if ($resql) {
 			if ($trigkey) {
 				// call trigger with updated object values
-				if (empty($this->fields) && method_exists($this, 'fetch')) {
+				if (method_exists($this, 'fetch')) {
 					$result = $this->fetch($id);
 				} else {
 					$result = $this->fetchCommon($id);
@@ -3550,7 +3555,7 @@ abstract class CommonObject
 			if (!empty($conf->global->$MODULE)) {
 				$modsactivated = explode(',', $conf->global->$MODULE);
 				foreach ($modsactivated as $mod) {
-					if ($conf->$mod->enabled) {
+					if (isModEnabled($mod)) {
 						return 1; // update was disabled by specific setup
 					}
 				}
@@ -3561,7 +3566,7 @@ abstract class CommonObject
 
 		$forcedroundingmode = $roundingadjust;
 		if ($forcedroundingmode == 'auto' && isset($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND)) {
-			$forcedroundingmode = $conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND;
+			$forcedroundingmode = getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND');
 		} elseif ($forcedroundingmode == 'auto') {
 			$forcedroundingmode = '0';
 		}
@@ -3699,14 +3704,17 @@ abstract class CommonObject
 						}
 						$sqlfix = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - $diff).", total_ttc = ".price2num($obj->total_ttc - $diff)." WHERE rowid = ".((int) $obj->rowid);
 						dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
-								$resqlfix = $this->db->query($sqlfix);
+
+						$resqlfix = $this->db->query($sqlfix);
+
 						if (!$resqlfix) {
 							dol_print_error($this->db, 'Failed to update line');
 						}
-								$this->total_tva -= $diff;
-								$this->total_ttc -= $diff;
-								$total_tva_by_vats[$obj->vatrate] -= $diff;
-								$total_ttc_by_vats[$obj->vatrate] -= $diff;
+
+						$this->total_tva = (float) price2num($this->total_tva - $diff, '', 1);
+						$this->total_ttc = (float) price2num($this->total_ttc - $diff, '', 1);
+						$total_tva_by_vats[$obj->vatrate] = (float) price2num($total_tva_by_vats[$obj->vatrate] - $diff, '', 1);
+						$total_ttc_by_vats[$obj->vatrate] = (float) price2num($total_ttc_by_vats[$obj->vatrate] - $diff, '', 1);
 					}
 				}
 
@@ -3732,6 +3740,13 @@ abstract class CommonObject
 					$this->multicurrency_total_ttc -= $sit->multicurrency_total_ttc;
 				}
 			}
+
+			// Clean total
+			$this->total_ht = (float) price2num($this->total_ht);
+			$this->total_tva = (float) price2num($this->total_tva);
+			$this->total_localtax1 = (float) price2num($this->total_localtax1);
+			$this->total_localtax2 = (float) price2num($this->total_localtax2);
+			$this->total_ttc = (float) price2num($this->total_ttc);
 
 			$this->db->free($resql);
 
@@ -3766,11 +3781,11 @@ abstract class CommonObject
 
 			if (empty($nodatabaseupdate)) {
 				$sql = "UPDATE ".$this->db->prefix().$this->table_element.' SET';
-				$sql .= " ".$fieldht." = ".((float) price2num($this->total_ht)).",";
-				$sql .= " ".$fieldtva." = ".((float) price2num($this->total_tva)).",";
-				$sql .= " ".$fieldlocaltax1." = ".((float) price2num($this->total_localtax1)).",";
-				$sql .= " ".$fieldlocaltax2." = ".((float) price2num($this->total_localtax2)).",";
-				$sql .= " ".$fieldttc." = ".((float) price2num($this->total_ttc));
+				$sql .= " ".$fieldht." = ".((float) price2num($this->total_ht, 'MT', 1)).",";
+				$sql .= " ".$fieldtva." = ".((float) price2num($this->total_tva, 'MT', 1)).",";
+				$sql .= " ".$fieldlocaltax1." = ".((float) price2num($this->total_localtax1, 'MT', 1)).",";
+				$sql .= " ".$fieldlocaltax2." = ".((float) price2num($this->total_localtax2, 'MT', 1)).",";
+				$sql .= " ".$fieldttc." = ".((float) price2num($this->total_ttc, 'MT', 1));
 				$sql .= ", multicurrency_total_ht = ".((float) price2num($this->multicurrency_total_ht, 'MT', 1));
 				$sql .= ", multicurrency_total_tva = ".((float) price2num($this->multicurrency_total_tva, 'MT', 1));
 				$sql .= ", multicurrency_total_ttc = ".((float) price2num($this->multicurrency_total_ttc, 'MT', 1));
@@ -4095,7 +4110,7 @@ abstract class CommonObject
 					}
 
 					// Here $module, $classfile and $classname are set, we can use them.
-					if ($conf->$module->enabled && (($element != $this->element) || $alsosametype)) {
+					if (isModEnabled($module) && (($element != $this->element) || $alsosametype)) {
 						if ($loadalsoobjects && (is_numeric($loadalsoobjects) || ($loadalsoobjects === $objecttype))) {
 							dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 							//print '/'.$classpath.'/'.$classfile.'.class.php '.class_exists($classname);
@@ -4330,12 +4345,12 @@ abstract class CommonObject
 	}
 
 	/**
-	 *      Set status of an object
+	 *      Set status of an object.
 	 *
 	 *      @param	int		$status			Status to set
 	 *      @param	int		$elementId		Id of element to force (use this->id by default if null)
 	 *      @param	string	$elementType	Type of element to force (use this->table_element by default)
-	 *      @param	string	$trigkey		Trigger key to use for trigger. Use '' means automatic but it not recommended and is deprecated.
+	 *      @param	string	$trigkey		Trigger key to use for trigger. Use '' means automatic but it is not recommended and is deprecated.
 	 *      @param	string	$fieldstatus	Name of status field in this->table_element
 	 *      @return int						<0 if KO, >0 if OK
 	 */
@@ -4385,41 +4400,49 @@ abstract class CommonObject
 		if ($status == 1 && in_array($elementTable, array('inventory'))) {
 			$sql .= ", date_validation = '".$this->db->idate(dol_now())."'";
 		}
-		$sql .= " WHERE rowid=".((int) $elementId);
+		$sql .= " WHERE rowid = ".((int) $elementId);
+		$sql .= " AND ".$fieldstatus." <> ".((int) $status);	// We avoid update if status already correct
 
 		dol_syslog(get_class($this)."::setStatut", LOG_DEBUG);
-		if ($this->db->query($sql)) {
+		$resql = $this->db->query($sql);
+		if ($resql) {
 			$error = 0;
 
-			// Try autoset of trigkey
-			if (empty($trigkey)) {
-				if ($this->element == 'supplier_proposal' && $status == 2) {
-					$trigkey = 'SUPPLIER_PROPOSAL_SIGN'; // 2 = SupplierProposal::STATUS_SIGNED. Can't use constant into this generic class
-				}
-				if ($this->element == 'supplier_proposal' && $status == 3) {
-					$trigkey = 'SUPPLIER_PROPOSAL_REFUSE'; // 3 = SupplierProposal::STATUS_REFUSED. Can't use constant into this generic class
-				}
-				if ($this->element == 'supplier_proposal' && $status == 4) {
-					$trigkey = 'SUPPLIER_PROPOSAL_CLOSE'; // 4 = SupplierProposal::STATUS_CLOSED. Can't use constant into this generic class
-				}
-				if ($this->element == 'fichinter' && $status == 3) {
-					$trigkey = 'FICHINTER_CLASSIFY_DONE';
-				}
-				if ($this->element == 'fichinter' && $status == 2) {
-					$trigkey = 'FICHINTER_CLASSIFY_BILLED';
-				}
-				if ($this->element == 'fichinter' && $status == 1) {
-					$trigkey = 'FICHINTER_CLASSIFY_UNBILLED';
-				}
-			}
+			$nb_rows_affected = $this->db->affected_rows($resql);	// should be 1 or 0 if status was already correct
 
-			if ($trigkey) {
-				// Call trigger
-				$result = $this->call_trigger($trigkey, $user);
-				if ($result < 0) {
-					$error++;
+			if ($nb_rows_affected >= 0) {
+				if (empty($trigkey)) {
+					// Try to guess trigkey (for backward compatibility, now we should have trigkey defined into the call of setStatus)
+					if ($this->element == 'supplier_proposal' && $status == 2) {
+						$trigkey = 'SUPPLIER_PROPOSAL_SIGN'; // 2 = SupplierProposal::STATUS_SIGNED. Can't use constant into this generic class
+					}
+					if ($this->element == 'supplier_proposal' && $status == 3) {
+						$trigkey = 'SUPPLIER_PROPOSAL_REFUSE'; // 3 = SupplierProposal::STATUS_REFUSED. Can't use constant into this generic class
+					}
+					if ($this->element == 'supplier_proposal' && $status == 4) {
+						$trigkey = 'SUPPLIER_PROPOSAL_CLOSE'; // 4 = SupplierProposal::STATUS_CLOSED. Can't use constant into this generic class
+					}
+					if ($this->element == 'fichinter' && $status == 3) {
+						$trigkey = 'FICHINTER_CLASSIFY_DONE';
+					}
+					if ($this->element == 'fichinter' && $status == 2) {
+						$trigkey = 'FICHINTER_CLASSIFY_BILLED';
+					}
+					if ($this->element == 'fichinter' && $status == 1) {
+						$trigkey = 'FICHINTER_CLASSIFY_UNBILLED';
+					}
 				}
-				// End call triggers
+
+				if ($trigkey) {
+					// Call trigger
+					$result = $this->call_trigger($trigkey, $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
+			} else {
+				// The status was probably already good. We do nothing more, no triggers.
 			}
 
 			if (!$error) {
@@ -4873,7 +4896,7 @@ abstract class CommonObject
 
 		// Define usemargins
 		$usemargins = 0;
-		if (!empty($conf->margin->enabled) && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
+		if (isModEnabled('margin') && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 			$usemargins = 1;
 		}
 
@@ -4979,7 +5002,7 @@ abstract class CommonObject
 				$text = $product_static->getNomUrl(1);
 
 				// Define output language and label
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					if (property_exists($this, 'socid') && !is_object($this->thirdparty)) {
 						dol_print_error('', 'Error: Method printObjectLine was called on an object and object->fetch_thirdparty was not done before');
 						return;
@@ -8109,7 +8132,7 @@ abstract class CommonObject
 
 					switch ($mode) {
 						case "view":
-							$value = $this->array_options["options_".$key.$keysuffix]; // Value may be clean or formated later
+							$value = ((!empty($this->array_options) && array_key_exists("options_".$key.$keysuffix, $this->array_options)) ? $this->array_options["options_".$key.$keysuffix] : null); // Value may be cleaned or formated later
 							break;
 						case "create":
 						case "edit":
@@ -8560,7 +8583,7 @@ abstract class CommonObject
 
 		// For backward compatibility
 		if ($modulepart == 'product') {
-			if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+			if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 				$dir = $sdir.'/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
 				$pdir = '/'.get_exdir($this->id, 2, 0, 0, $this, $modulepart).$this->id."/photos/";
 			}
@@ -8582,7 +8605,7 @@ abstract class CommonObject
 
 		$filearray = dol_dir_list($dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 
-		/*if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
+		/*if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO'))    // For backward compatiblity, we scan also old dirs
 		 {
 		 $filearrayold=dol_dir_list($dirold,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		 $filearray=array_merge($filearray, $filearrayold);
@@ -9129,7 +9152,7 @@ abstract class CommonObject
 
 		// Clean and check mandatory
 		foreach ($keys as $key) {
-			// If field is an implicit foreign key field
+			// If field is an implicit foreign key field (so type = 'integer:...')
 			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') {
 				$values[$key] = '';
 			}
@@ -9149,7 +9172,7 @@ abstract class CommonObject
 				$values[$key] = $this->quote($this->fields[$key]['default'], $this->fields[$key]);
 			}
 
-			// If field is an implicit foreign key field
+			// If field is an implicit foreign key field (so type = 'integer:...')
 			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) {
 				if (isset($this->fields[$key]['default'])) {
 					$values[$key] = ((int) $this->fields[$key]['default']);

@@ -285,7 +285,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
 		);
 
-		/*if (!empty($conf->notification->enabled))
+		/*if (isModEnabled('notification'))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
@@ -426,7 +426,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Close as recruited/canceled
 			if ($object->status == $object::STATUS_VALIDATED) {
 				if ($usercanclose) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=closeas'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=closeas&token='.newToken().(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
 					print '>'.$langs->trans('Close').'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Close').'</a>';

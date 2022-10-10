@@ -470,6 +470,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
+ *                               'aZ09comma'=check it's a string for a sortfield or sortorder
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
  *                               'nohtml'=check there is no html content and no " and no ../
  *                               'restricthtml'=check html content is restricted to some tags only
@@ -1164,7 +1165,17 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 function dol_clone($object, $native = 0)
 {
 	if (empty($native)) {
+		$tmpsavdb = null;
+		if (isset($object->db) && isset($object->db->db) && is_object($object->db->db) && get_class($object->db->db) == 'PgSql\Connection') {
+			$tmpsavdb = $object->db;
+			unset($object->db);		// Such property can not be serialized when PgSql/Connection
+		}
+
 		$myclone = unserialize(serialize($object));	// serialize then unserialize is hack to be sure to have a new object for all fields
+
+		if ($tmpsavdb) {
+			$object->db = $tmpsavdb;
+		}
 	} else {
 		$myclone = clone $object; // PHP clone is a shallow copy only, not a real clone, so properties of references will keep the reference (refering to the same target/variable)
 	}
@@ -3374,11 +3385,11 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 	}
 	if (!empty($addlink)) {	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
-		if ($conf->browser->layout == 'phone' || (!empty($conf->clicktodial->enabled) && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS))) {	// If phone or option for, we use link of phone
+		if ($conf->browser->layout == 'phone' || (isModEnabled('clicktodial') && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS))) {	// If phone or option for, we use link of phone
 			$newphoneform = $newphone;
 			$newphone = '<a href="tel:'.$phone.'"';
 			$newphone .= '>'.$newphoneform.'</a>';
-		} elseif (!empty($conf->clicktodial->enabled) && $addlink == 'AC_TEL') {		// If click to dial, we use click to dial url
+		} elseif (isModEnabled('clicktodial') && $addlink == 'AC_TEL') {		// If click to dial, we use click to dial url
 			if (empty($user->clicktodial_loaded)) {
 				$user->fetch_clicktodial();
 			}
@@ -3723,6 +3734,8 @@ function isValidMXRecord($domain)
 			return 0;
 		}
 	}
+
+	// function idn_to_ascii or checkdnsrr does not exists
 	return -1;
 }
 
@@ -3964,7 +3977,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
-				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'puce',
+				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
 				'stock', 'resize', 'service', 'stats', 'trip',
 				'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
 				'github', 'google', 'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
@@ -3974,7 +3987,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 				'technic', 'ticket',
 				'error', 'warning',
-				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring','rss',
+				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
 				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
@@ -4016,11 +4029,11 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'intervention'=>'ambulance', 'invoice'=>'file-invoice-dollar', 'currency'=>'dollar-sign', 'multicurrency'=>'dollar-sign', 'order'=>'file-invoice',
 				'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 				'other'=>'square',
-				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'project-diagram', 'projectpub'=>'project-diagram', 'projecttask'=>'tasks', 'propal'=>'file-signature',
+				'playdisabled'=>'play', 'pdf'=>'file-pdf',  'poll'=>'check-double', 'pos'=>'cash-register', 'preview'=>'binoculars', 'project'=>'project-diagram', 'projectpub'=>'project-diagram', 'projecttask'=>'tasks', 'propal'=>'file-signature', 'proposal'=>'file-signature',
 				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'payment_vat'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'puce'=>'angle-right',
 				'recent' => 'question', 'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
-				'refresh'=>'redo', 'region'=>'map-marked', 'resource'=>'laptop-house', 'recurring'=>'history',
+				'refresh'=>'redo', 'region'=>'map-marked', 'replacement'=>'exchange-alt', 'resource'=>'laptop-house', 'recurring'=>'history',
 				'service'=>'concierge-bell',
 				'state'=>'map-marked-alt', 'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
 				'supplier'=>'building', 'technic'=>'cogs',
@@ -4098,7 +4111,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'holiday'=>'infobox-holiday', 'info'=>'opacityhigh', 'invoice'=>'infobox-commande',
 				'knowledgemanagement'=>'infobox-contrat rotate90', 'loan'=>'infobox-bank_account',
 				'payment'=>'infobox-bank_account', 'payment_vat'=>'infobox-bank_account', 'poll'=>'infobox-adherent', 'pos'=>'infobox-bank_account', 'project'=>'infobox-project', 'projecttask'=>'infobox-project',
-				'propal'=>'infobox-propal', 'private'=>'infobox-project',
+				'propal'=>'infobox-propal', 'proposal'=>'infobox-propal','private'=>'infobox-project',
 				'reception'=>'flip', 'recruitmentjobposition'=>'infobox-adherent', 'recruitmentcandidature'=>'infobox-adherent',
 				'resource'=>'infobox-action',
 				'salary'=>'infobox-bank_account', 'shipment'=>'infobox-commande', 'supplier_invoice'=>'infobox-order_supplier', 'supplier_invoicea'=>'infobox-order_supplier', 'supplier_invoiced'=>'infobox-order_supplier',
@@ -4957,7 +4970,9 @@ function dol_print_error($db = '', $error = '', $errors = null)
 
 	// Return a http header with error code if possible
 	if (!headers_sent()) {
-		top_httphead();
+		if (function_exists('top_httphead')) {	// In CLI context, the method does not exists
+			top_httphead();
+		}
 		http_response_code(500);
 	}
 
@@ -6356,7 +6371,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	// Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
 	if (($seller_country_code == $buyer_country_code)
-	|| (in_array($seller_country_code, array('FR,MC')) && in_array($buyer_country_code, array('FR', 'MC')))) { // Warning ->country_code not always defined
+	|| (in_array($seller_country_code, array('FR', 'MC')) && in_array($buyer_country_code, array('FR', 'MC')))) { // Warning ->country_code not always defined
 		//print 'VATRULE 2';
 		return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
 	}
@@ -6566,7 +6581,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 	$path = '';
 
 	$arrayforoldpath = array('cheque', 'category', 'holiday', 'supplier_invoice', 'invoice_supplier', 'mailing', 'supplier_payment');
-	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		$arrayforoldpath[] = 'product';
 	}
 	if (!empty($level) && in_array($modulepart, $arrayforoldpath)) {
@@ -7389,7 +7404,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__MEMBER_NOTE_PRIVATE__'] = '__MEMBER_NOTE_PRIVATE__';*/
 			}
 			// add variables subtitutions ticket
-			if (!empty($conf->ticket->enabled) && (!is_object($object) || $object->element == 'ticket')) {
+			if (isModEnabled('ticket') && (!is_object($object) || $object->element == 'ticket')) {
 				$substitutionarray['__TICKET_TRACKID__'] = '__TICKET_TRACKID__';
 				$substitutionarray['__TICKET_SUBJECT__'] = '__TICKET_SUBJECT__';
 				$substitutionarray['__TICKET_TYPE__'] = '__TICKET_TYPE__';
@@ -8543,7 +8558,7 @@ function dol_osencode($str)
  * 		@param	string	$fieldkey		Field to search the key into
  * 		@param	string	$fieldid		Field to get
  *      @param  int		$entityfilter	Filter by entity
- * 	    @param	string	$filters	Filter on other fields
+ *      @param	string	$filters		Filters to add. WARNING: string must be escaped for SQL and not coming from user input.
  *      @return int						<0 if KO, Id of code if OK
  *      @see $langs->getLabelFromKey
  */
@@ -8603,8 +8618,6 @@ function verifCond($strToEvaluate)
 	//print $strToEvaluate."<br>\n";
 	$rights = true;
 	if (isset($strToEvaluate) && $strToEvaluate !== '') {
-		//$str = 'if(!('.$strToEvaluate.')) $rights = false;';
-		//dol_eval($str, 0, 1, '2'); // The dol_eval must contains all the global $xxx used into a condition
 		//var_dump($strToEvaluate);
 		$rep = dol_eval($strToEvaluate, 1, 1, '1'); // The dol_eval must contains all the global $xxx for all variables $xxx found into the string condition
 		$rights = $rep && (!is_string($rep) || strpos($rep, 'Bad string syntax to evaluate') === false);
@@ -8620,7 +8633,7 @@ function verifCond($strToEvaluate)
  * @param 	string	$s					String to evaluate
  * @param	int		$returnvalue		0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @param   int     $hideerrors     	1=Hide errors
- * @param	string	$onlysimplestring	0=Accept all chars, 1=Accept only simple string with char 'a-z0-9\s^$_+-.*\/>&|=!?():"\',/';', 2=Accept also ';[]'
+ * @param	string	$onlysimplestring	'0' (used for computed property of extrafields)=Accept all chars, '1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',  '2' (not used)=Accept also ';[]'
  * @return	mixed						Nothing or return result of eval
  */
 function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1')
@@ -8638,8 +8651,8 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 	// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
 	if ($onlysimplestring == '1') {
 		// We must accept: '1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL'
-		// We must accept: '$conf->barcode->enabled && preg_match(\'/^(AAA|BBB)/\',$leftmenu)'
-		// We must accept: '$user->rights->cabinetmed->read && $object->canvas=="patient@cabinetmed"'
+		// We must accept: '$conf->barcode->enabled || preg_match(\'/^AAA/\',$leftmenu)'
+		// We must accept: '$user->rights->cabinetmed->read && !$object->canvas=="patient@cabinetmed"'
 		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
@@ -8647,7 +8660,8 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 				dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
 				return '';
 			}
-			// TODO We can exclude all () that is not '($db)' and 'getDolGlobalInt(' and 'getDolGlobalString(' and 'preg_match('
+			// TODO
+			// We can exclude all parenthesis ( that are not '($db' and 'getDolGlobalInt(' and 'getDolGlobalString(' and 'preg_match(' and 'isModEnabled('
 			// ...
 		}
 	} elseif ($onlysimplestring == '2') {
@@ -9042,9 +9056,10 @@ function getLanguageCodeFromCountryCode($countrycode)
  *      									'ecm'			   to add a tab for another ecm view
  *                                          'stock'            to add a tab for warehouse view
  *  @param  string		$mode  	        	'add' to complete head, 'remove' to remove entries
+ *  @param	string		$filterorigmodule	Filter on module origin: 'external' will show only external modules. 'core' only core modules. No filter (default) will add both.
  *	@return	void
  */
-function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, $mode = 'add')
+function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, $mode = 'add', $filterorigmodule = '')
 {
 	global $hookmanager, $db;
 
@@ -9064,15 +9079,29 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 
 					if (verifCond($values[4])) {
 						if ($values[3]) {
+							if ($filterorigmodule) {	// If a filter of module origin has been requested
+								if (strpos($values[3], '@')) {	// This is an external module
+									if ($filterorigmodule != 'external') {
+										continue;
+									}
+								} else {	// This looks a core module
+									if ($filterorigmodule != 'core') {
+										continue;
+									}
+								}
+							}
 							$langs->load($values[3]);
 						}
 						if (preg_match('/SUBSTITUTION_([^_]+)/i', $values[2], $reg)) {
+							// If label is "SUBSTITUION_..."
 							$substitutionarray = array();
 							complete_substitutions_array($substitutionarray, $langs, $object, array('needforkey'=>$values[2]));
 							$label = make_substitutions($reg[1], $substitutionarray);
 						} else {
+							// If label is "Label,Class,File,Method", we call the method to show content inside the badge
 							$labeltemp = explode(',', $values[2]);
 							$label = $langs->trans($labeltemp[0]);
+
 							if (!empty($labeltemp[1]) && is_object($object) && !empty($object->id)) {
 								dol_include_once($labeltemp[2]);
 								$classtoload = $labeltemp[1];
@@ -9092,7 +9121,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						$head[$h][2] = str_replace('+', '', $values[1]);
 						$h++;
 					}
-				} elseif (count($values) == 5) {       // deprecated
+				} elseif (count($values) == 5) {       // case deprecated
 					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
 
 					if ($values[0] != $type) {
@@ -10431,14 +10460,14 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 /**
  * Function dolGetButtonAction
  *
- * @param string    $label      label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
- * @param string    $text       optional : short label on button. Can be escaped HTML content or full simple text.
- * @param string    $actionType default, delete, danger
- * @param string    $url        the url for link
- * @param string    $id         attribute id of button
- * @param int       $userRight  user action right
+ * @param string    	$label      Label or tooltip of button. Also used as tooltip in title attribute. Can be escaped HTML content or full simple text.
+ * @param string    	$text       Optional : short label on button. Can be escaped HTML content or full simple text.
+ * @param string    	$actionType 'default', 'delete', 'danger'
+ * @param string    	$url        Url for link
+ * @param string    	$id         Attribute id of button
+ * @param int|boolean	$userRight  User action right
  * // phpcs:disable
- * @param array 	$params = [ // Various params for future : recommended rather than adding more function arguments
+ * @param array 		$params = [ // Various params for future : recommended rather than adding more function arguments
  *                          'attr' => [ // to add or override button attributes
  *                          'xxxxx' => '', // your xxxxx attribute you want
  *                          'class' => '', // to add more css class to the button class attribute
@@ -10455,7 +10484,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                          ],
  *                          ]
  * // phpcs:enable
- * @return string               html button
+ * @return string               	html button
  */
 function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
 {
@@ -10481,18 +10510,19 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		$text = $label;
 		$attr['title'] = ''; // if html not set, leave label on title is redundant
 	} else {
+		$attr['title'] = $label;
 		$attr['aria-label'] = $label;
 	}
 
 	if (empty($userRight)) {
 		$attr['class'] = 'butActionRefused';
 		$attr['href'] = '';
+		$attr['title'] = $langs->trans('NotEnoughPermissions');
 	}
 
 	if (!empty($id)) {
 		$attr['id'] = $id;
 	}
-
 
 	// Override attr
 	if (!empty($params['attr']) && is_array($params['attr'])) {
@@ -10616,7 +10646,7 @@ function getFieldErrorIcon($fieldValidationErrorMsg)
  * @param string    $iconClass  class for icon element (Example: 'fa fa-file')
  * @param string    $url        the url for link
  * @param string    $id         attribute id of button
- * @param int       $status     0 no user rights, 1 active, 2 current action or selected, -1 Feature Disabled, -2 disable Other reason use helpText as tooltip
+ * @param int       $status     0 no user rights, 1 active, 2 current action or selected, -1 Feature Disabled, -2 disable Other reason use param $helpText as tooltip help
  * @param array     $params     various params for future : recommended rather than adding more function arguments
  * @return string               html button
  */
@@ -10630,7 +10660,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 	}
 
 	$class = 'btnTitle';
-	if (in_array($iconClass, array('fa fa-plus-circle', 'fa fa-plus-circle size15x', 'fa fa-comment-dots'))) {
+	if (in_array($iconClass, array('fa fa-plus-circle', 'fa fa-plus-circle size15x', 'fa fa-comment-dots', 'fa fa-paper-plane'))) {
 		$class .= ' btnTitlePlus';
 	}
 	$useclassfortooltip = 1;

@@ -755,7 +755,7 @@ $sql = 'SELECT';
 if ($sall || $search_product_category > 0) {
 	$sql = 'SELECT DISTINCT';
 }
-$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.town, s.zip, s.fk_pays, s.client, s.code_client, s.email,';
+$sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.email,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_livraison,cf.date_valid, cf.date_approve,";
@@ -1627,7 +1627,7 @@ if ($resql) {
 		}
 		// Ref Supplier
 		if (!empty($arrayfields['cf.ref_supplier']['checked'])) {
-			print '<td>'.$obj->ref_supplier.'</td>'."\n";
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->ref_supplier).'">'.dol_escape_htmltag($obj->ref_supplier).'</td>'."\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1671,6 +1671,8 @@ if ($resql) {
 			$thirdpartytmp->name = $obj->name;
 			$thirdpartytmp->email = $obj->email;
 			$thirdpartytmp->name_alias = $obj->alias;
+			$thirdpartytmp->client = $obj->client;
+			$thirdpartytmp->fournisseur = $obj->fournisseur;
 			print $thirdpartytmp->getNomUrl(1, 'supplier', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 			print '</td>'."\n";
 			if (!$i) {

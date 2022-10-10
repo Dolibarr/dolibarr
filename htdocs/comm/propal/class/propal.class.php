@@ -1262,7 +1262,7 @@ class Propal extends CommonObject
 							break;
 						}
 						// Defined the new fk_parent_line
-						if ($result > 0) {
+						if ($result > 0 && $line->product_type == 9) {
 							$fk_parent_line = $result;
 						}
 					}
@@ -1412,7 +1412,7 @@ class Propal extends CommonObject
 							} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 								$prodcustprice = new Productcustomerprice($this->db);
 								$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $objsoc->id);
-								$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+								$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 								if ($result) {
 									// If there is some prices specific to the customer
 									if (count($prodcustprice->lines) > 0) {
@@ -1901,7 +1901,7 @@ class Propal extends CommonObject
 				$line->fetch_optionals();
 
 				// multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
 					$tmpproduct = new Product($this->db);
 					$tmpproduct->fetch($objp->fk_product);
 					$tmpproduct->getMultiLangs();
@@ -2660,7 +2660,7 @@ class Propal extends CommonObject
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				// Define output language
 				$outputlangs = $langs;
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$outputlangs = new Translate("", $conf);
 					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);
@@ -2753,7 +2753,7 @@ class Propal extends CommonObject
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				// Define output language
 				$outputlangs = $langs;
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$outputlangs = new Translate("", $conf);
 					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);

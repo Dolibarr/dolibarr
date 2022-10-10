@@ -220,6 +220,7 @@ print dol_get_fiche_head($head, 'order', $langs->trans("Suppliers"), -1, 'compan
 
 print load_fiche_titre($langs->trans("OrdersNumberingModules"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width="100">'.$langs->trans("Name").'</td>';
@@ -312,7 +313,7 @@ foreach ($dirmodels as $reldir) {
 	}
 }
 
-print '</table><br>';
+print '</table></div><br>';
 
 
 /*
@@ -342,6 +343,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
@@ -388,7 +390,7 @@ foreach ($dirmodels as $reldir) {
 					if (in_array($name, $def)) {
 						print '<td class="center">'."\n";
 						if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF != "$name") {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=order_supplier">';
+							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=order_supplier">';
 							print img_picto($langs->trans("Enabled"), 'switch_on');
 							print '</a>';
 						} else {
@@ -397,17 +399,16 @@ foreach ($dirmodels as $reldir) {
 						print "</td>";
 					} else {
 						print '<td class="center">'."\n";
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&amp;scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=order_supplier">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=order_supplier">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 						print "</td>";
 					}
 
 					// Default
 					print '<td class="center">';
 					if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$name") {
-						//                      print img_picto($langs->trans("Default"), 'on');
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=order_supplier"" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=order_supplier" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 					} else {
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=order_supplier" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type=order_supplier" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 					}
 					print '</td>';
 
@@ -425,7 +426,7 @@ foreach ($dirmodels as $reldir) {
 					print $form->textwithpicto('', $htmltooltip, 1, 0);
 					print '</td>';
 					print '<td class="center">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($name).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 					print '</td>';
 
 					print "</tr>\n";
@@ -437,17 +438,19 @@ foreach ($dirmodels as $reldir) {
 	}
 }
 
-print '</table><br>';
+print '</table></div><br>';
 
 /*
-* Other options
-*/
+ * Other options
+ */
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_OTHER">';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -536,7 +539,7 @@ if (isModEnabled('reception')) {
 print "</td>\n";
 print "</tr>\n";
 
-print '</table><br>';
+print '</table></div><br>';
 
 print '</form>';
 
@@ -546,6 +549,8 @@ print '</form>';
 */
 
 print load_fiche_titre($langs->trans("Notifications"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
@@ -559,6 +564,7 @@ print '</td><td class="right">';
 print "</td></tr>\n";
 
 print '</table>';
+print '</div>';
 
 // End of page
 llxFooter();

@@ -60,7 +60,7 @@ if (isModEnabled('contrat')) {
 if (isModEnabled('adherent')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 
@@ -82,10 +82,10 @@ if (isModEnabled('facture')) {
 if (isModEnabled('project')) {
 	$langs->load("projects");
 }
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	$langs->load("interventions");
 }
-if (!empty($conf->notification->enabled)) {
+if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
 
@@ -545,7 +545,7 @@ if ($object->id > 0) {
 	}
 
 	// Warehouse
-	if (!empty($conf->stock->enabled) && !empty($conf->global->SOCIETE_ASK_FOR_WAREHOUSE)) {
+	if (isModEnabled('stock') && !empty($conf->global->SOCIETE_ASK_FOR_WAREHOUSE)) {
 		$langs->load('stocks');
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
@@ -1231,7 +1231,7 @@ if ($object->id > 0) {
 	/*
 	 * Latest interventions
 	 */
-	if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire) {
+	if (isModEnabled('ficheinter') && $user->rights->ficheinter->lire) {
 		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate, f.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -1564,7 +1564,7 @@ if ($object->id > 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a></div>';
 		}
 
-		if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer && $object->status == 1) {
+		if (isModEnabled('ficheinter') && $user->rights->ficheinter->creer && $object->status == 1) {
 			$langs->load("fichinter");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a></div>';
 		}

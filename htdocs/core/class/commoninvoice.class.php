@@ -131,8 +131,8 @@ abstract class CommonInvoice extends CommonObject
 	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
 	 *  Payments dones using discounts, credit notes, etc are not included.
 	 *
-	 *  @param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *	@return		float						Amount of payment already done, <0 and set ->error if KO
+	 *  @param 		int 		$multicurrency 		Return multicurrency_amount instead of amount
+	 *	@return		float|int						Amount of payment already done, <0 and set ->error if KO
 	 */
 	public function getSommePaiement($multicurrency = 0)
 	{
@@ -148,17 +148,23 @@ abstract class CommonInvoice extends CommonObject
 		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 
 			$this->db->free($resql);
-			if ($multicurrency) {
-				$this->sumpayed_multicurrency = $obj->multicurrency_amount;
-				return $obj->multicurrency_amount;
+
+			if ($obj) {
+				if ($multicurrency) {
+					$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					return (float) $obj->multicurrency_amount;
+				} else {
+					$this->sumpayed = $obj->amount;
+					return (float) $obj->amount;
+				}
 			} else {
-				$this->sumpayed = $obj->amount;
-				return $obj->amount;
+				return 0;
 			}
 		} else {
 			$this->error = $this->db->lasterror();
@@ -513,25 +519,43 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *	Return label of type of invoice
 	 *
-	 *	@return     string        Label of type of invoice
+	 *	@param		int			$withbadge		1=Add span for badge css, 2=Add span and show short label
+	 *	@return     string        				Label of type of invoice
 	 */
-	public function getLibType()
+	public function getLibType($withbadge = 0)
 	{
 		global $langs;
+
+		$labellong = "Unknown";
 		if ($this->type == CommonInvoice::TYPE_STANDARD) {
-			return $langs->trans("InvoiceStandard");
+			$labellong = "InvoiceStandard";
+			$labelshort = "InvoiceStandardShort";
 		} elseif ($this->type == CommonInvoice::TYPE_REPLACEMENT) {
-			return $langs->trans("InvoiceReplacement");
+			$labellong = "InvoiceReplacement";
+			$labelshort = "InvoiceReplacementShort";
 		} elseif ($this->type == CommonInvoice::TYPE_CREDIT_NOTE) {
-			return $langs->trans("InvoiceAvoir");
+			$labellong = "InvoiceAvoir";
+			$labelshort = "CreditNote";
 		} elseif ($this->type == CommonInvoice::TYPE_DEPOSIT) {
-			return $langs->trans("InvoiceDeposit");
+			$labellong = "InvoiceDeposit";
+			$labelshort = "Deposit";
 		} elseif ($this->type == CommonInvoice::TYPE_PROFORMA) {
-			return $langs->trans("InvoiceProForma"); // Not used.
+			$labellong = "InvoiceProForma"; // Not used.
+			$labelshort = "ProForma";
 		} elseif ($this->type == CommonInvoice::TYPE_SITUATION) {
-			return $langs->trans("InvoiceSituation");
+			$labellong = "InvoiceSituation";
+			$labelshort = "Situation";
 		}
-		return $langs->trans("Unknown");
+
+		$out = '';
+		if ($withbadge) {
+			$out .= '<span class="badgeneutral" title="'.dol_escape_htmltag($langs->trans($labellong)).'">';
+		}
+		$out .= $langs->trans($withbadge == 2 ? $labelshort : $labellong);
+		if ($withbadge) {
+			$out .= '</span>';
+		}
+		return $out;
 	}
 
 	/**
@@ -1252,7 +1276,7 @@ abstract class CommonInvoice extends CommonObject
 													dol_syslog("The payment has been created for invoice id " . $this->id);
 												}
 
-												if (!$errorforinvoice && !empty($conf->banque->enabled)) {
+												if (!$errorforinvoice && isModEnabled('banque')) {
 													dol_syslog('* Add payment to bank');
 
 													$bankaccountid = 0;

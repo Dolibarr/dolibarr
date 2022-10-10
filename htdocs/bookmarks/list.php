@@ -50,7 +50,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = 'position';
+	$sortfield = 'b.position';
 }
 if (!$sortorder) {
 	$sortorder = 'ASC';

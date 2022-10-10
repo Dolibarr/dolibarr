@@ -251,6 +251,13 @@ foreach ($search as $key => $val) {
 			$sql .= natural_search('moparent.ref', $search[$key], 0);
 			continue;
 		}
+
+		if ($key == 'status') {
+			$sql .= natural_search('t.status', $search[$key], 0);
+			continue;
+		}
+
+
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
 			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
