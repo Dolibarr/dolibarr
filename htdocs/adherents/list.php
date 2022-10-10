@@ -142,31 +142,31 @@ if ($db->type == 'pgsql') {
 	unset($fieldstosearchall['d.rowid']);
 }
 $arrayfields = array(
-	'd.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'd.civility'=>array('label'=>$langs->trans("Civility"), 'checked'=>0),
-	'd.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
-	'd.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
-	'd.gender'=>array('label'=>$langs->trans("Gender"), 'checked'=>0),
-	'd.company'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
-	'd.login'=>array('label'=>$langs->trans("Login"), 'checked'=>1),
-	'd.morphy'=>array('label'=>$langs->trans("MemberNature"), 'checked'=>1),
-	't.libelle'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-	'd.email'=>array('label'=>$langs->trans("Email"), 'checked'=>1),
-	'd.address'=>array('label'=>$langs->trans("Address"), 'checked'=>0),
-	'd.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
-	'd.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
-	'd.phone'=>array('label'=>$langs->trans("Phone"), 'checked'=>0),
-	'd.phone_perso'=>array('label'=>$langs->trans("PhonePerso"), 'checked'=>0),
-	'd.phone_mobile'=>array('label'=>$langs->trans("PhoneMobile"), 'checked'=>0),
-	'state.nom'=>array('label'=>$langs->trans("State"), 'checked'=>0),
-	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
-	/*'d.note_public'=>array('label'=>$langs->trans("NotePublic"), 'checked'=>0),
-	'd.note_private'=>array('label'=>$langs->trans("NotePrivate"), 'checked'=>0),*/
-	'd.datefin'=>array('label'=>$langs->trans("EndSubscription"), 'checked'=>1, 'position'=>500),
-	'd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'd.birth'=>array('label'=>$langs->trans("Birthday"), 'checked'=>0, 'position'=>500),
-	'd.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	'd.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+	'd.ref'=>array('label'=>"Ref", 'checked'=>1),
+	'd.civility'=>array('label'=>"Civility", 'checked'=>0),
+	'd.lastname'=>array('label'=>"Lastname", 'checked'=>1),
+	'd.firstname'=>array('label'=>"Firstname", 'checked'=>1),
+	'd.gender'=>array('label'=>"Gender", 'checked'=>0),
+	'd.company'=>array('label'=>"Company", 'checked'=>1),
+	'd.login'=>array('label'=>"Login", 'checked'=>1),
+	'd.morphy'=>array('label'=>"MemberNature", 'checked'=>1),
+	't.libelle'=>array('label'=>"Type", 'checked'=>1),
+	'd.email'=>array('label'=>"Email", 'checked'=>1),
+	'd.address'=>array('label'=>"Address", 'checked'=>0),
+	'd.zip'=>array('label'=>"Zip", 'checked'=>0),
+	'd.town'=>array('label'=>"Town", 'checked'=>0),
+	'd.phone'=>array('label'=>"Phone", 'checked'=>0),
+	'd.phone_perso'=>array('label'=>"PhonePerso", 'checked'=>0),
+	'd.phone_mobile'=>array('label'=>"PhoneMobile", 'checked'=>0),
+	'state.nom'=>array('label'=>"State", 'checked'=>0),
+	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
+	/*'d.note_public'=>array('label'=>"NotePublic", 'checked'=>0),
+	'd.note_private'=>array('label'=>"NotePrivate", 'checked'=>0),*/
+	'd.datefin'=>array('label'=>"EndSubscription", 'checked'=>1, 'position'=>500),
+	'd.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+	'd.birth'=>array('label'=>"Birthday", 'checked'=>0, 'position'=>500),
+	'd.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'd.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 	'd.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
 );
 // Extra fields
@@ -350,27 +350,43 @@ $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
 }
-if ((!empty($search_categ) && ($search_categ > 0 || $search_categ == -2)) || !empty($catid)) {
-	// We need this table joined to the select in order to filter by categ
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_member as cm ON d.rowid = cm.fk_member";
-}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = d.country)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = d.state_id)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
 $sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid";
-if ($catid > 0) {
-	$sql .= " AND cm.fk_categorie = ".((int) $catid);
+
+if ($catid && empty($search_categ)) {
+	$search_categ = $catid;
 }
-if ($catid == -2) {
-	$sql .= " AND cm.fk_categorie IS NULL";
+
+$searchCategoryContactList = $search_categ ? array($search_categ) : array();
+$searchCategoryContactOperator = 0;
+// Search for tag/category ($searchCategoryContactList is an array of ID)
+if (!empty($searchCategoryContactList)) {
+	$searchCategoryContactSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryContactList as $searchCategoryContact) {
+		if (intval($searchCategoryContact) == -2) {
+			$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member)";
+		} elseif (intval($searchCategoryContact) > 0) {
+			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryContactOperator == 1) {
+		if (!empty($searchCategoryContactSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryContactSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryContactSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryContactSqlList).")";
+		}
+	}
 }
-if ($search_categ > 0) {
-	$sql .= " AND cm.fk_categorie = ".((int) $search_categ);
-}
-if ($search_categ == -2) {
-	$sql .= " AND cm.fk_categorie IS NULL";
-}
+
 $sql .= " AND d.entity IN (".getEntity('adherent').")";
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
@@ -391,7 +407,7 @@ if ($search_status != '') {
 	// Peut valoir un nombre ou liste de nombre separes par virgules
 	$sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")";
 }
-if ($search_morphy != '') {
+if ($search_morphy != '' && $search_morphy != '-1') {
 	$sql .= natural_search("d.morphy", $search_morphy);
 }
 if ($search_ref) {
@@ -670,7 +686,7 @@ $moreforfilter = '';
 if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedlength"').$formother->select_categories(Categorie::TYPE_MEMBER, $search_categ, 'search_categ', 1);
+	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedlength"').$formother->select_categories(Categorie::TYPE_MEMBER, $search_categ, 'search_categ', 1, $langs->trans("MembersCategoriesShort"));
 	$moreforfilter .= '</div>';
 }
 $parameters = array();
@@ -741,10 +757,11 @@ if (!empty($arrayfields['d.login']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'"></td>';
 }
+// Nature
 if (!empty($arrayfields['d.morphy']['checked'])) {
-	print '<td class="liste_titre left">';
+	print '<td class="liste_titre center">';
 	$arraymorphy = array('mor'=>$langs->trans("Moral"), 'phy'=>$langs->trans("Physical"));
-	print $form->selectarray('search_morphy', $arraymorphy, $search_morphy, 1);
+	print $form->selectarray('search_morphy', $arraymorphy, $search_morphy, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 	print '</td>';
 }
 if (!empty($arrayfields['t.libelle']['checked'])) {
