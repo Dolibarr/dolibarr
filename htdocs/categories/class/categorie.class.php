@@ -694,6 +694,7 @@ class Categorie extends CommonObject
 	 * @param   CommonObject 	$obj  	Object to link to category
 	 * @param   string     		$type 	Type of category ('product', ...). Use '' to take $obj->element.
 	 * @return  int                		1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
+	 * @see del_type()
 	 */
 	public function add_type($obj, $type = '')
 	{
@@ -785,8 +786,8 @@ class Categorie extends CommonObject
 	 *
 	 * @param   CommonObject $obj  Object
 	 * @param   string       $type Type of category ('customer', 'supplier', 'contact', 'product', 'member')
-	 *
 	 * @return  int          1 if OK, -1 if KO
+	 * @see add_type()
 	 */
 	public function del_type($obj, $type)
 	{

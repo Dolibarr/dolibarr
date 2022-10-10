@@ -48,6 +48,7 @@ ErrorBadImageFormat=Image file has not a supported format (Your PHP does not sup
 ErrorBadDateFormat=Value '%s' has wrong date format
 ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Failed to write in directory %s
+ErrorFailedToBuildArchive=Failed to build archive file %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=User cannot be deleted. Maybe it is associated to Dolibarr entities.
 ErrorFieldsRequired=Some required fields have been left blank.

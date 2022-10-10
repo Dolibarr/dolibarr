@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
- * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Christophe Combelles		<ccomb@free.fr>
@@ -2535,8 +2535,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			if ($tzoutput == 'tzserver') {
 				$to_gmt = false;
 				$offsettzstring = @date_default_timezone_get(); // Example 'Europe/Berlin' or 'Indian/Reunion'
-				$offsettz = 0;	// Timezone offset with server timezone, so 0
-				$offsetdst = 0;	// Dst offset with server timezone, so 0
+				$offsettz = 0;	// Timezone offset with server timezone (because to_gmt is false), so 0
+				$offsetdst = 0;	// Dst offset with server timezone (because to_gmt is false), so 0
 			} elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel') {
 				$to_gmt = true;
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
@@ -2546,8 +2546,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 					$user_dt = new DateTime();
 					$user_dt->setTimezone($user_date_tz);
 					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : (int) $time);
-					$offsettz = $user_dt->getOffset();
-				} else {	// old method (The 'tzuser' was processed like the 'tzuserrel')
+					$offsettz = $user_dt->getOffset();	// should include dst ?
+				} else {	// with old method (The 'tzuser' was processed like the 'tzuserrel')
 					$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60; // Will not be used anymore
 					$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60; // Will not be used anymore
 				}
@@ -2628,6 +2628,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$format = str_replace('%A', '__A__', $format);
 	}
 
+	$useadodb = getDolGlobalInt('MAIN_USE_LEGACY_ADODB_FOR_DATE', 0);
+	//$useadodb = 1;	// To switch to adodb
 
 	// Analyze date
 	$reg = array();
@@ -2647,23 +2649,76 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$ssec	= (!empty($reg[6]) ? $reg[6] : '');
 
 		$time = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
-		$ret = adodb_strftime($format, $time + $offsettz + $offsetdst, $to_gmt);
+		if (empty($useadodb)) {
+			if ($to_gmt) {
+				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
+			} else {
+				$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
+			}
+			$dtts = new DateTime();
+			$dtts->setTimestamp($time);
+			$dtts->setTimezone($tzo);
+			$newformat = str_replace(
+				array('%Y', '%y', '%m', '%d', '%H', '%M', '%S', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+				array('Y', 'y', 'm', 'd', 'H', 'i', 's', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+				$format);
+			$ret = $dtts->format($newformat);
+			$ret = str_replace(
+				array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+				array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+				$ret);
+		} else {
+			$ret = adodb_strftime($format, $time + $offsettz + $offsetdst, $to_gmt);
+		}
 	} else {
 		// Date is a timestamps
 		if ($time < 100000000000) {	// Protection against bad date values
-			$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+			$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
 
-			$ret = adodb_strftime($format, $timetouse, $to_gmt);	// If to_gmt = false then adodb_strftime use TZ of server
+			if (empty($useadodb)) {
+				if ($to_gmt) {
+					$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
+				} else {
+					$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
+				}
+				$dtts = new DateTime();
+				$dtts->setTimestamp($timetouse);
+				$dtts->setTimezone($tzo);
+				$newformat = str_replace(
+					array('%Y', '%y', '%m', '%d', '%H', '%M', '%S', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+					array('Y', 'y', 'm', 'd', 'H', 'i', 's', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+					$format);
+				$ret = $dtts->format($newformat);
+				$ret = str_replace(
+					array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+					array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+					$ret);
+			} else {
+				$ret = adodb_strftime($format, $timetouse, $to_gmt);	// If to_gmt = false then adodb_strftime use TZ of server
+			}
+			//var_dump($ret);exit;
 		} else {
 			$ret = 'Bad value '.$time.' for date';
 		}
 	}
 
 	if (preg_match('/__b__/i', $format)) {
-		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+		$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
 
-		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-		$month = adodb_strftime('%m', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+		if (empty($useadodb)) {
+			if ($to_gmt) {
+				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
+			} else {
+				$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
+			}
+			$dtts = new DateTime();
+			$dtts->setTimestamp($timetouse);
+			$dtts->setTimezone($tzo);
+			$month = $dtts->format("m");
+		} else {
+			// After this ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
+			$month = adodb_strftime('%m', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+		}
 		$month = sprintf("%02d", $month); // $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput) {
 			$monthtext = $outputlangs->transnoentities('Month'.$month);
@@ -2682,8 +2737,21 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		//print "time=$time offsettz=$offsettz offsetdst=$offsetdst offsettzstring=$offsettzstring";
 		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-		$w = adodb_strftime('%w', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+		if (empty($useadodb)) {
+			if ($to_gmt) {
+				$tzo = new DateTimeZone('UTC');
+			} else {
+				$tzo = new DateTimeZone(date_default_timezone_get());
+			}
+			$dtts = new DateTime();
+			$dtts->setTimestamp($timetouse);
+			$dtts->setTimezone($tzo);
+			$w = $dtts->format("w");
+		} else {
+			$w = adodb_strftime('%w', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+		}
 		$dayweek = $outputlangs->transnoentitiesnoconv('Day'.$w);
+
 		$ret = str_replace('__A__', $dayweek, $ret);
 		$ret = str_replace('__a__', dol_substr($dayweek, 0, 3), $ret);
 	}
@@ -2714,7 +2782,6 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
  */
 function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 {
-	//$datetimeobj = new DateTime('@'.$timestamp);
 	$datetimeobj = new DateTime();
 	$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
 	if ($forcetimezone) {
@@ -3189,7 +3256,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	global $conf, $user, $langs, $mysoc, $hookmanager;
 
 	// Clean phone parameter
-	$phone = preg_replace("/[\s.-]/", "", trim($phone));
+	$phone = is_null($phone) ? '' : preg_replace("/[\s.-]/", "", trim($phone));
 	if (empty($phone)) {
 		return '';
 	}
@@ -3987,7 +4054,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 				'technic', 'ticket',
 				'error', 'warning',
-				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring','rss',
+				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
 				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
@@ -4033,7 +4100,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'payment_vat'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'puce'=>'angle-right',
 				'recent' => 'question', 'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
-				'refresh'=>'redo', 'region'=>'map-marked', 'resource'=>'laptop-house', 'recurring'=>'history',
+				'refresh'=>'redo', 'region'=>'map-marked', 'replacement'=>'exchange-alt', 'resource'=>'laptop-house', 'recurring'=>'history',
 				'service'=>'concierge-bell',
 				'state'=>'map-marked-alt', 'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
 				'supplier'=>'building', 'technic'=>'cogs',
