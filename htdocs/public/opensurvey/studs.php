@@ -116,9 +116,9 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 	if (GETPOST('nom', 'alphanohtml')) {
 		$nouveauchoix = '';
 		for ($i = 0; $i < $nbcolonnes; $i++) {
-			if (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '1') {
+			if (GETPOSTISSET("choix".$i) && GETPOST("choix".$i) == '1') {
 				$nouveauchoix .= "1";
-			} elseif (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '2') {
+			} elseif (GETPOSTISSET("choix".$i) && GETPOST("choix".$i) == '2') {
 				$nouveauchoix .= "2";
 			} else {
 				$nouveauchoix .= "0";
