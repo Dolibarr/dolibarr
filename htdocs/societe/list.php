@@ -526,7 +526,7 @@ if ($search_sale == -2) {
 } elseif ($search_sale > 0) {
 	$sql .= " AND sc.fk_user = ".((int) $search_sale);
 }
-$searchCategoryCustomerList = array($search_categ_cus);
+$searchCategoryCustomerList = $search_categ_cus ? array($search_categ_cus) : array();;
 $searchCategoryCustomerOperator = 0;
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
 if (!empty($searchCategoryCustomerList)) {
@@ -552,7 +552,7 @@ if (!empty($searchCategoryCustomerList)) {
 		}
 	}
 }
-$searchCategorySupplierList = array($search_categ_sup);
+$searchCategorySupplierList = $search_categ_sup ? array($search_categ_sup) : array();
 $searchCategorySupplierOperator = 0;
 // Search for tag/category ($searchCategorySupplierList is an array of ID)
 if (!empty($searchCategorySupplierList)) {
