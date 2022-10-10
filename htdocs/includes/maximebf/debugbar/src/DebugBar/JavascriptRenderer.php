@@ -762,7 +762,7 @@ class JavascriptRenderer
             return $uris;
         }
 
-        if (substr($uri, 0, 1) === '/' || preg_match('/^([a-zA-Z]+:\/\/|[a-zA-Z]:\/|[a-zA-Z]:\\\)/', $uri)) {
+        if ($uri && (substr($uri, 0, 1) === '/' || preg_match('/^([a-zA-Z]+:\/\/|[a-zA-Z]:\/|[a-zA-Z]:\\\)/', $uri))) {
             return $uri;
         }
         return rtrim($root, '/') . "/$uri";
@@ -778,7 +778,7 @@ class JavascriptRenderer
     protected function filterAssetArray($array, $type = null)
     {
         $types = array('css', 'js', 'inline_css', 'inline_js', 'inline_head');
-        $typeIndex = array_search(strtolower($type), $types);
+        $typeIndex = is_null($type) ? false : array_search(strtolower($type), $types);
         return $typeIndex !== false ? $array[$typeIndex] : $array;
     }
 

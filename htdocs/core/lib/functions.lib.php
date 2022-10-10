@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
- * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Christophe Combelles		<ccomb@free.fr>
@@ -2628,8 +2628,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$format = str_replace('%A', '__A__', $format);
 	}
 
-	$noadodb = getDolGlobalInt('MAIN_NO_ADODB_FOR_DATE');
-	//$noadodb = 1;	// To force test
+	$useadodb = getDolGlobalInt('MAIN_USE_LEGACY_ADODB_FOR_DATE', 0);
+	//$useadodb = 1;	// To switch to adodb
 
 	// Analyze date
 	$reg = array();
@@ -2649,7 +2649,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$ssec	= (!empty($reg[6]) ? $reg[6] : '');
 
 		$time = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
-		if ($noadodb) {
+		if (empty($useadodb)) {
 			if ($to_gmt) {
 				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
 			} else {
@@ -2675,7 +2675,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		if ($time < 100000000000) {	// Protection against bad date values
 			$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
 
-			if ($noadodb) {
+			if (empty($useadodb)) {
 				if ($to_gmt) {
 					$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
 				} else {
@@ -2705,7 +2705,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	if (preg_match('/__b__/i', $format)) {
 		$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
 
-		if ($noadodb) {
+		if (empty($useadodb)) {
 			if ($to_gmt) {
 				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
 			} else {
@@ -2737,7 +2737,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		//print "time=$time offsettz=$offsettz offsetdst=$offsetdst offsettzstring=$offsettzstring";
 		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-		if ($noadodb) {
+		if (empty($useadodb)) {
 			if ($to_gmt) {
 				$tzo = new DateTimeZone('UTC');
 			} else {
@@ -2782,7 +2782,6 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
  */
 function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 {
-	//$datetimeobj = new DateTime('@'.$timestamp);
 	$datetimeobj = new DateTime();
 	$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
 	if ($forcetimezone) {
