@@ -3256,7 +3256,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	global $conf, $user, $langs, $mysoc, $hookmanager;
 
 	// Clean phone parameter
-	$phone = preg_replace("/[\s.-]/", "", trim($phone));
+	$phone = is_null($phone) ? '' : preg_replace("/[\s.-]/", "", trim($phone));
 	if (empty($phone)) {
 		return '';
 	}
