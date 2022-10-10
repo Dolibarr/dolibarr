@@ -161,31 +161,39 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 */
 	public function getExample($langs, $objsoc = 0, $type = -1)
 	{
+		$error = 0;
 		$examplecust = '';
 		$examplesup = '';
 		$errmsg = array(
 			"ErrorBadMask",
 			"ErrorCantUseRazIfNoYearInMask",
 			"ErrorCantUseRazInStartedYearIfNoYearMonthInMask",
+			"ErrorCounterMustHaveMoreThan3Digits",
+			"ErrorBadMaskBadRazMonth",
+			"ErrorCantUseRazWithYearOnOneDigit",
 		);
 		if ($type != 1) {
 			$examplecust = $this->getNextValue($objsoc, 0);
 			if (!$examplecust) {
-				$examplecust = $langs->trans('NotConfigured');
+				$examplecust = '<div class="error">'.$langs->trans('NotConfigured').'</div>';
+				$error = 1;
 			}
 			if (in_array($examplecust, $errmsg)) {
 				$langs->load("errors");
-				$examplecust = $langs->trans($examplecust);
+				$examplecust = '<div class="error">'.$langs->trans($examplecust).'</div>';
+				$error = 1;
 			}
 		}
 		if ($type != 0) {
 			$examplesup = $this->getNextValue($objsoc, 1);
 			if (!$examplesup) {
-				$examplesup = $langs->trans('NotConfigured');
+				$examplesup = '<div class="error">'.$langs->trans('NotConfigured').'</div>';
+				$error = 1;
 			}
 			if (in_array($examplesup, $errmsg)) {
 				$langs->load("errors");
-				$examplesup = $langs->trans($examplesup);
+				$examplesup = '<div class="error">'.$langs->trans($examplesup).'</div>';
+				$error = 1;
 			}
 		}
 
@@ -194,7 +202,11 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		} elseif ($type == 1) {
 			return $examplesup;
 		} else {
-			return $examplecust.'<br>'.$examplesup;
+			if ($error == 1) {
+				return $examplecust.' '.$examplesup;
+			} else {
+				return $examplecust.'<br>'.$examplesup;
+			}
 		}
 	}
 

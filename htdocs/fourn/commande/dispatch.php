@@ -221,6 +221,7 @@ if ($action == 'denydispatchline' && $permissiontocontrol) {
 
 if ($action == 'dispatch' && $permissiontoreceive) {
 	$error = 0;
+	$notrigger = 0;
 
 	$db->begin();
 
@@ -1005,7 +1006,7 @@ if ($id > 0 || !empty($ref)) {
 							if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
 								// Price
 								print '<td class="right">';
-								print '<input id="pu'.$suffix.'" name="pu'.$suffix.'" type="text" size="8" value="'.price((GETPOST('pu'.$suffix) != '' ? GETPOST('pu'.$suffix) : $up_ht_disc)).'">';
+								print '<input id="pu'.$suffix.'" name="pu'.$suffix.'" type="text" size="8" value="'.price((GETPOST('pu'.$suffix) != '' ? price2num(GETPOST('pu'.$suffix)) : $up_ht_disc)).'">';
 								print '</td>';
 
 								// Discount
@@ -1200,10 +1201,6 @@ if ($id > 0 || !empty($ref)) {
 
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
-
-				$tmpproduct->id = $objp->fk_product;
-				$tmpproduct->ref = $objp->ref;
-				$tmpproduct->label = $objp->label;
 
 				if ($action == 'editline' && $lineid == $objp->dispatchlineid) {
 					print '<form name="editdispatchedlines" id="editdispatchedlines" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'#line_'.GETPOST('lineid', 'int').'" method="POST">
