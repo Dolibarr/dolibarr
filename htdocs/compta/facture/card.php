@@ -5744,8 +5744,7 @@ if ($action == 'create') {
 				}
 				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $deleteHref, '', $enableDelete, $params);
 			} else {
-				$params['attr']['title'] = $langs->trans('NotAllowed');
-				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', '', false, $params);
+				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', '', false);
 			}
 		}
 		print '</div>';

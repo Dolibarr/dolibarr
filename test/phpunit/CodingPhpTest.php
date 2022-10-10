@@ -178,6 +178,9 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			if (preg_match('/\/htdocs\/includes\//', $file['fullname'])) {
 				continue;
 			}
+			if (preg_match('/\/htdocs\/install\/doctemplates\/websites\//', $file['fullname'])) {
+				continue;
+			}
 			if (preg_match('/\/htdocs\/custom\//', $file['fullname'])) {
 				continue;
 			}
