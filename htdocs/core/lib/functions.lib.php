@@ -5753,6 +5753,11 @@ function price2num($amount, $rounding = '', $option = 0)
 {
 	global $langs, $conf;
 
+	// Clean parameters
+	if (is_null($amount)) {
+		$amount = '';
+	}
+
 	// Round PHP function does not allow number like '1,234.56' nor '1.234,56' nor '1 234,56'
 	// Numbers must be '1234.56'
 	// Decimal delimiter for PHP and database SQL requests must be '.'
@@ -6784,6 +6789,10 @@ function picto_required()
  */
 function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto = 'UTF-8', $strip_tags = 0, $removedoublespaces = 1)
 {
+	if (is_null($stringtoclean)) {
+		return '';
+	}
+
 	if ($removelinefeed == 2) {
 		$stringtoclean = preg_replace('/<br[^>]*>(\n|\r)+/ims', '<br>', $stringtoclean);
 	}

@@ -376,7 +376,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 			}
 		}
 	} else {
-		$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+		$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 		$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'contratdet as cd ON c.rowid = cd.fk_contrat/', '', $sqlforcount);
 		$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=cd.fk_product/', '', $sqlforcount);
 		$sqlforcount = preg_replace('/AND cp.fk_categorie = '.((int) $search_product_category).'/', '', $sqlforcount);
