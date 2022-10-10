@@ -7099,6 +7099,10 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
  */
 function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UTF-8', $removelasteolbr = 1)
 {
+	if (is_null($stringtoencode)) {
+		return '';
+	}
+
 	$newstring = $stringtoencode;
 	if (dol_textishtml($stringtoencode)) {	// Check if text is already HTML or not
 		$newstring = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $newstring); // Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
@@ -7293,6 +7297,10 @@ function dol_nboflines_bis($text, $maxlinesize = 0, $charset = 'UTF-8')
  */
 function dol_textishtml($msg, $option = 0)
 {
+	if (is_null($msg)) {
+		return false;
+	}
+
 	if ($option == 1) {
 		if (preg_match('/<html/i', $msg)) {
 			return true;
