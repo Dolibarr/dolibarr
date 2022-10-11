@@ -77,12 +77,15 @@ if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryProductOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
 }
 $searchCategoryProductList = GETPOST('search_category_product_list', 'array');
+$catid = GETPOST('catid', 'int');
+if (!empty($catid) && empty($searchCategoryProductList)) {
+	$searchCategoryProductList = array($catid);
+}
 $search_tosell = GETPOST("search_tosell", 'int');
 $search_tobuy = GETPOST("search_tobuy", 'int');
 $search_country = GETPOST("search_country", 'int');
 $search_state = GETPOST("state_id", 'int');
 $fourn_id = GETPOST("fourn_id", 'int');
-$catid = GETPOST('catid', 'int');
 $search_tobatch = GETPOST("search_tobatch", 'int');
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell", 'alpha');
 $search_accountancy_code_sell_intra = GETPOST("search_accountancy_code_sell_intra", 'alpha');
@@ -296,6 +299,7 @@ if ($search_type == '0') {
 	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
 }
 
+
 /*
  * Actions
  */
@@ -452,7 +456,6 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units cu ON cu.rowid = p.fk_unit";
 }
 
-
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
@@ -497,13 +500,6 @@ if ($search_vatrate) {
 if (dol_strlen($canvas) > 0) {
 	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 }
-if ($catid > 0) {
-	$sql .= " AND cp.fk_categorie = ".((int) $catid);
-}
-if ($catid == -2) {
-	$sql .= " AND cp.fk_categorie IS NULL";
-}
-
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -528,7 +524,6 @@ if (!empty($searchCategoryProductList)) {
 		}
 	}
 }
-
 if ($fourn_id > 0) {
 	$sql .= " AND pfp.fk_soc = ".((int) $fourn_id);
 }
@@ -692,7 +687,6 @@ if ($resql) {
 	if ($fourn_id > 0) {
 		$param .= "&fourn_id=".urlencode($fourn_id);
 	}
-	//if ($seach_categ) $param.=($search_categ?"&search_categ=".urlencode($search_categ):"");
 	if ($show_childproducts) {
 		$param .= ($show_childproducts ? "&search_show_childproducts=".urlencode($show_childproducts) : "");
 	}
