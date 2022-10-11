@@ -427,7 +427,7 @@ class CMailFile
 			// Use Swift Mailer library
 			$host = dol_getprefix('email');
 
-//			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lexer/lib/Doctrine/Common/Lexer/AbstractLexer.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lexer/lib/Doctrine/Common/Lexer/AbstractLexer.php';
 
 			// egulias autoloader lib
 			require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/autoload.php';
