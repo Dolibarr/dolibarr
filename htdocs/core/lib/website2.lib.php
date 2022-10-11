@@ -563,7 +563,7 @@ function dolSaveLicense($file, $content)
  */
 function showWebsiteTemplates(Website $website)
 {
-	global $conf, $langs, $db, $form;
+	global $conf, $langs, $db, $form, $user;
 
 	$dirthemes = array('/doctemplates/websites');
 	if (!empty($conf->modules_parts['websitetemplates'])) {		// Using this feature slow down application
@@ -582,11 +582,15 @@ function showWebsiteTemplates(Website $website)
 	// Title
 	print '<tr class="liste_titre"><th class="titlefield">';
 	print $form->textwithpicto($langs->trans("Templates"), $langs->trans("ThemeDir").' : '.join(", ", $dirthemes));
+	print ' ';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&importsite=1" target="_blank" rel="noopener noreferrer external">';
+	print img_picto('', 'refresh');
+	print '</a>';
 	print '</th>';
 	print '<th class="right">';
 	$url = 'https://www.dolistore.com/43-web-site-templates';
 	print '<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
-	print $langs->trans('DownloadMoreSkins');
+	print img_picto('', 'globe', 'class="pictofixedwidth"').$langs->trans('DownloadMoreSkins');
 	print '</a>';
 	print '</th></tr>';
 
@@ -645,6 +649,9 @@ function showWebsiteTemplates(Website $website)
 							print $subdir;
 							print '<br>';
 							print '<span class="opacitymedium">'.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).' - '.dol_print_date(dol_filemtime($templatedir), 'dayhour', 'tzuserrel').'</span>';
+							if ($user->hasRight('website', 'delete')) {
+								print ' <a href="'.$_SERVER["PHP_SELF"].'?action=deletetemplate&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'">'.img_picto('', 'delete').'</a>';
+							}
 							print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'" class="button">'.$langs->trans("Load").'</a>';
 							print '</div>';
 

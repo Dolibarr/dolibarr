@@ -558,7 +558,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					}
 
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
-					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
+					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil(empty($board->warning_delay) ? 0 : $board->warning_delay) >= 0 ? '+' : '').ceil(empty($board->warning_delay) ? 0 : $board->warning_delay).' '.$langs->trans("days").')';
 
 					if ($board->id == 'bank_account') {
 						$textLateTitle .= '<br><span class="opacitymedium">'.$langs->trans("IfYouDontReconcileDisableProperty", $langs->transnoentitiesnoconv("Conciliable")).'</span>';

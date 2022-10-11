@@ -1865,7 +1865,7 @@ if ($id > 0) {
 
 		// Location
 		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
-			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="width500" value="'.$object->location.'"></td></tr>';
+			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="minwidth300 maxwidth150onsmartphone" value="'.$object->location.'"></td></tr>';
 		}
 
 		// Status
@@ -1997,7 +1997,7 @@ if ($id > 0) {
 		print '</table>';
 
 		// Reminders
-		if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER) {
+		if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
 			$filteruserid = $user->id;
 			if ($user->rights->agenda->allactions->read) {
 				$filteruserid = 0;

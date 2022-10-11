@@ -84,7 +84,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $permissiontoread = $user->rights->stocktransfer->stocktransfer->read;
 $permissiontoadd = $user->rights->stocktransfer->stocktransfer->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissionnote = $user->rights->stocktransfer->stocktransfer->write; // Used by the include of actions_setnotes.inc.php
-$permissiontodelete = $user->rights->stocktransfer->stocktransfer->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->rights->stocktransfer->stocktransfer->delete || ($permissiontoadd && isset($object->status) && $object->status < $object::STATUS_TRANSFERED);
 $permissiondellink = $user->rights->stocktransfer->stocktransfer->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->stocktransfer->multidir_output[isset($object->entity) ? $object->entity : 1];
 
@@ -964,7 +964,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=stocktransfer">'.$langs->trans("ToClone").'</a>'."\n";
+				print dolGetButtonAction($langs->trans("ToClone"), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=stocktransfer', 'clone', $permissiontoadd);
 			}
 
 			/*
@@ -992,14 +992,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 			*/
 
-			// Delete (need delete permission, or if draft, just need create/modify permission)
-			if ($object->status < $object::STATUS_TRANSFERED && $permissiontodelete) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
-			}
-			/*else
-			{
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
-			}*/
+			// Delete
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 		}
 		print '</div>'."\n";
 	}

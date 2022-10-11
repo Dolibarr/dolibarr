@@ -150,4 +150,6 @@ ErrorFaviconSize=Favicon must be sized 16x16, 32x32 or 64x64
 FaviconTooltip=Upload an image which needs to be a png (16x16, 32x32 or 64x64)
 NextContainer=Next page/container
 PreviousContainer=Previous page/container
-WebsiteMustBeDisabled=The website must have the status "Disabled"
+WebsiteMustBeDisabled=The website must have the status "%s"
+WebpageMustBeDisabled=The web page must have the status "%s"
+SetWebsiteOnlineBefore=When website is offline, all pages are offline. Change status of website first.

@@ -4996,7 +4996,7 @@ tr.visible {
 .websiteformtoolbar {
 	position: sticky;
 	top: <?php echo empty($dol_hide_topmenu) ? ($disableimages ? '36px' : '50px') : '0'; ?>;
-	z-index: 1000;
+	z-index: 1002;	/* Dolibarr menu is 1001, Website menu is 1002 */
 }
 
 .exampleapachesetup {
