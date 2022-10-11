@@ -297,7 +297,7 @@ if ($type || $tag) {
 print "\n</div>\n";
 
 
-htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, 'fixed');
+htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, null, 'fixed');
 
 
 llxFooter('', 'public');
