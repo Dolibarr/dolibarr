@@ -39,14 +39,10 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
-
-$permissionstatcustomer = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->commande->lire) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->commande->order_advance->statistics)));
-$permissionstatsupplier = $user->rights->fournisseur->commande->lire;
-
-if ($mode == 'customer' && !$permissionstatcustomer) {
+if ($mode == 'customer' && !$user->rights->commande->export) {
 	accessforbidden();
 }
-if ($mode == 'supplier' && empty($permissionstatsupplier)) {
+if ($mode == 'supplier' && empty($user->rights->fournisseur->commande->export)) {
 	accessforbidden();
 }
 
