@@ -585,7 +585,9 @@ function New() {
  * return   {void}
  */
 function Search2(keyCodeForEnter, moreorless) {
-	console.log("Search2 Call ajax search to replace products keyCodeForEnter="+keyCodeForEnter);
+	var eventKeyCode = window.event.keyCode;
+
+	console.log("Search2 Call ajax search to replace products keyCodeForEnter="+keyCodeForEnter+", eventKeyCode="+eventKeyCode);
 
 	var search_term  = $('#search').val();
 	var search_start = 0;
@@ -608,20 +610,19 @@ function Search2(keyCodeForEnter, moreorless) {
 	}
 
 	var search = false;
-	var eventKeyCode = window.event.keyCode;
-	if (keyCodeForEnter == '' || eventKeyCode == keyCodeForEnter) {
+	if (keyCodeForEnter != '' || eventKeyCode == keyCodeForEnter) {
 		search = true;
 	}
 
 	if (search === true) {
-
-		// temporization time to give time to type
+		// if a timer has been already started (search2_timer is a global js variable), we cancel it now
+		// we click onto another key, we will restart another timer just after
 		if (search2_timer) {
 			clearTimeout(search2_timer);
 		}
 
+		// temporization time to give time to type
 		search2_timer = setTimeout(function(){
-
 			pageproducts = 0;
 			jQuery(".wrapper2 .catwatermark").hide();
 			var nbsearchresults = 0;
@@ -693,8 +694,8 @@ function Search2(keyCodeForEnter, moreorless) {
 					if (data.length == 0) {
 						$('#search').val('<?php
 						$langs->load('errors');
-						echo dol_escape_js($langs->trans("ErrorRecordNotFound"));
-						?>');
+						echo dol_escape_js($langs->transnoentitiesnoconv("ErrorRecordNotFoundShort"));
+						?> ('+search_term+')');
 						$('#search').select();
 					}
 					else ClearSearch();
