@@ -156,6 +156,7 @@ ErrorInvoiceAvoirMustBeNegative=خرابی، درست انوائس میں منف
 ErrorInvoiceOfThisTypeMustBePositive=خرابی، اس قسم کی رسید میں ٹیکس مثبت (یا کالعدم) کے علاوہ رقم ہونی چاہیے
 ErrorCantCancelIfReplacementInvoiceNotValidated=خرابی، ایک انوائس کو منسوخ نہیں کیا جا سکتا جس کی جگہ کسی اور انوائس نے لے لی ہو جو ابھی بھی مسودہ کی حالت میں ہے
 ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=یہ حصہ یا دوسرا حصہ پہلے ہی استعمال ہو چکا ہے لہذا ڈسکاؤنٹ سیریز کو ہٹایا نہیں جا سکتا۔
+ErrorInvoiceIsNotLastOfSameType=Error: The date of invoice %s  is %s. It must be posterior or equal to last date for same type invoices (%s). Please change the invoice date.
 BillFrom=سے
 BillTo=کو
 ActionsOnBill=انوائس پر کارروائیاں
@@ -282,6 +283,8 @@ RecurringInvoices=بار بار چلنے والی رسیدیں
 RecurringInvoice=بار بار چلنے والی رسید
 RepeatableInvoice=ٹیمپلیٹ رسید
 RepeatableInvoices=ٹیمپلیٹ رسیدیں
+RecurringInvoicesJob=Generation of recurring invoices (sales invoices)
+RecurringSupplierInvoicesJob=Generation of recurring invoices (purchase invoices)
 Repeatable=سانچے
 Repeatables=ٹیمپلیٹس
 ChangeIntoRepeatableInvoice=ٹیمپلیٹ انوائس میں تبدیل کریں۔
@@ -482,6 +485,7 @@ PaymentByChequeOrderedToShort=چیک کی ادائیگیاں (ٹیکس سمیت)
 SendTo=کو بھیجا
 PaymentByTransferOnThisBankAccount=درج ذیل بینک اکاؤنٹ میں ٹرانسفر کے ذریعے ادائیگی
 VATIsNotUsedForInvoice=* CGI کا غیر قابل اطلاق VAT آرٹ-293B
+VATIsNotUsedForInvoiceAsso=* Non applicable VAT art-261-7 of CGI
 LawApplicationPart1=قانون 80.335 از 12/05/80 کے اطلاق سے
 LawApplicationPart2=سامان کی ملکیت رہتی ہے
 LawApplicationPart3=کی مکمل ادائیگی تک بیچنے والے
@@ -599,7 +603,6 @@ BILL_SUPPLIER_DELETEInDolibarr=فراہم کنندہ کی رسید حذف کر �
 UnitPriceXQtyLessDiscount=یونٹ کی قیمت x مقدار - ڈسکاؤنٹ
 CustomersInvoicesArea=کسٹمر بلنگ ایریا
 SupplierInvoicesArea=سپلائر بلنگ ایریا
-FacParentLine=انوائس لائن والدین
 SituationTotalRayToRest=ٹیکس کے بغیر ادا کرنے کے لیے باقی ہے۔
 PDFSituationTitle=صورتحال n° %d
 SituationTotalProgress=کل پیش رفت %d %%
@@ -607,3 +610,5 @@ SearchUnpaidInvoicesWithDueDate=مقررہ تاریخ = %s کے ساتھ بلا 
 NoPaymentAvailable=%s کے لیے کوئی ادائیگی دستیاب نہیں ہے۔
 PaymentRegisteredAndInvoiceSetToPaid=ادائیگی رجسٹرڈ اور انوائس %s ادا کرنے پر سیٹ ہے۔
 SendEmailsRemindersOnInvoiceDueDate=بلا معاوضہ رسیدوں کے لیے ای میل کے ذریعے یاد دہانی بھیجیں۔
+MakePaymentAndClassifyPayed=Record payment
+BulkPaymentNotPossibleForInvoice=Bulk payment is not possible for invoice %s (bad type or status)

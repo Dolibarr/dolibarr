@@ -71,7 +71,7 @@ class ActionsStripeconnect
 	{
 		global $db, $conf, $user, $langs, $form;
 
-		if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+		if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 			$service = 'StripeTest';
 			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 		} else {
@@ -175,6 +175,8 @@ class ActionsStripeconnect
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
 			$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);
 
+			$totalpaid = 0;
+
 			$result = $this->db->query($sql);
 			if ($result) {
 				$i = 0;
@@ -182,14 +184,14 @@ class ActionsStripeconnect
 
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($result);
-					$totalpaye += $objp->amount;
+					$totalpaid += $objp->amount;
 					$i++;
 				}
 			} else {
 				dol_print_error($this->db, '');
 			}
 
-			$resteapayer = $object->total_ttc - $totalpaye;
+			$resteapayer = $object->total_ttc - $totalpaid;
 			// Request a direct debit order
 			if ($object->statut > Facture::STATUS_DRAFT && $object->statut < Facture::STATUS_ABANDONED && $object->paye == 0) {
 				$stripe = new Stripe($this->db);

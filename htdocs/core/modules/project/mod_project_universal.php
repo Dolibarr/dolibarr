@@ -136,8 +136,11 @@ class mod_project_universal extends ModeleNumRefProjects
 			return 0;
 		}
 
-		$date = empty($project->date_c) ?dol_now() : $project->date_c;
-		$numFinal = get_next_value($db, $mask, 'projet', 'ref', '', (is_object($objsoc) ? $objsoc->code_client : ''), $date);
+		// Get entities
+		$entity = getEntity('projectnumber', 1, $project);
+
+		$date = (empty($project->date_c) ? dol_now() : $project->date_c);
+		$numFinal = get_next_value($db, $mask, 'projet', 'ref', '', (is_object($objsoc) ? $objsoc : ''), $date, 'next', false, null, $entity);
 
 		return  $numFinal;
 	}

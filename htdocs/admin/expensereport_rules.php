@@ -25,6 +25,7 @@
  *		\brief      Page to display expense tax ik
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
@@ -34,13 +35,19 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_rule.class.ph
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "trips", "errors", "dict"));
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('admin', 'dictionaryadmin','expensereport_rules'));
+
+$object = new ExpenseReportRule($db);
+
 if (!$user->admin) {
 	accessforbidden();
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('admin', 'dictionaryadmin','expensereport_rules'));
 
+/*
+ * Action
+ */
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -51,7 +58,6 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	//Init error
 	$error = false;
-	$message = false;
 
 	$action = GETPOST('action', 'aZ09');
 	$id = GETPOST('id', 'int');
@@ -59,21 +65,20 @@ if (empty($reshook)) {
 	$apply_to = GETPOST('apply_to');
 	$fk_user = GETPOST('fk_user', 'int');
 	$fk_usergroup = GETPOST('fk_usergroup', 'int');
-
-	$fk_c_type_fees = GETPOST('fk_c_type_fees');
+	$restrictive = GETPOST('restrictive', 'int');
+	$fk_c_type_fees = GETPOST('fk_c_type_fees', 'int');
 	$code_expense_rules_type = GETPOST('code_expense_rules_type');
 	$dates = dol_mktime(12, 0, 0, GETPOST('startmonth'), GETPOST('startday'), GETPOST('startyear'));
 	$datee = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
-	$amount = GETPOST('amount');
+	$amount = price2num(GETPOST('amount'), 'MT', 2);
 
-	$object = new ExpenseReportRule($db);
 	if (!empty($id)) {
 		$result = $object->fetch($id);
 		if ($result < 0) {
 			dol_print_error('', $object->error, $object->errors);
 		}
 	}
-	// TODO do action
+
 	if ($action == 'save') {
 		$error = 0;
 
@@ -104,8 +109,6 @@ if (empty($reshook)) {
 		}
 
 		if (empty($error)) {
-			$object->setValues($_POST);
-
 			if ($apply_to == 'U') {
 				$object->fk_user = (int) $fk_user;
 				$object->fk_usergroup = 0;
@@ -122,18 +125,30 @@ if (empty($reshook)) {
 
 			$object->dates = $dates;
 			$object->datee = $datee;
-
+			$object->restrictive = $restrictive;
+			$object->fk_c_type_fees = $fk_c_type_fees;
+			$object->code_expense_rules_type = $code_expense_rules_type;
+			$object->amount = $amount;
 			$object->entity = $conf->entity;
 
-			$res = $object->create($user);
+			if ($object->id > 0) {
+				$res = $object->update($user);
+			} else {
+				$res = $object->create($user);
+			}
 			if ($res > 0) {
 				setEventMessages($langs->trans('ExpenseReportRuleSave'), null);
 			} else {
 				dol_print_error($object->db);
+				$error++;
 			}
 
-			header('Location: ' . $_SERVER['PHP_SELF']);
-			exit;
+			if (!$error) {
+				header('Location: ' . $_SERVER['PHP_SELF']);
+				exit;
+			} else {
+				$action = '';
+			}
 		}
 	} elseif ($action == 'delete') {
 		// TODO add confirm
@@ -185,31 +200,31 @@ if ($action != 'edit') {
 
 	echo '<table class="noborder centpercent">';
 
-	echo '<tr class="liste_titre">';
-	echo '<th>' . $langs->trans('ExpenseReportApplyTo') . '</th>';
-	echo '<th>' . $langs->trans('Type') . '</th>';
-	echo '<th>' . $langs->trans('ExpenseReportLimitOn') . '</th>';
-	echo '<th>' . $langs->trans('ExpenseReportDateStart') . '</th>';
-	echo '<th>' . $langs->trans('ExpenseReportDateEnd') . '</th>';
-	echo '<th>' . $langs->trans('ExpenseReportLimitAmount') . '</th>';
-	echo '<th>' . $langs->trans('ExpenseReportRestrictive') . '</th>';
+	echo '<tr class="liste_titre headerexpensereportrules">';
+	echo '<th class="linecolapplyto">' . $langs->trans('ExpenseReportApplyTo') . '</th>';
+	echo '<th class="linecoltype">' . $langs->trans('Type') . '</th>';
+	echo '<th class="linecollimiton">' . $langs->trans('ExpenseReportLimitOn') . '</th>';
+	echo '<th class="linecoldatestart">' . $langs->trans('ExpenseReportDateStart') . '</th>';
+	echo '<th class="linecoldateend">' . $langs->trans('ExpenseReportDateEnd') . '</th>';
+	echo '<th class="linecollimitamount">' . $langs->trans('ExpenseReportLimitAmount') . '</th>';
+	echo '<th class="linecolrestrictive">' . $langs->trans('ExpenseReportRestrictive') . '</th>';
 	echo '<th>&nbsp;</th>';
 	echo '</tr>';
 
 	echo '<tr class="oddeven">';
 	echo '<td>';
-	echo '<div class="float">' . $form->selectarray('apply_to', $tab_apply, '', 0) . '</div>';
-	echo '<div id="user" class="float">' . $form->select_dolusers('', 'fk_user') . '</div>';
-	echo '<div id="group" class="float">' . $form->select_dolgroups('', 'fk_usergroup') . '</div>';
+	echo '<div class="float linecolapplyto">' . $form->selectarray('apply_to', $tab_apply, '', 0) . '</div>';
+	echo '<div id="user" class="float linecoluser">' . $form->select_dolusers('', 'fk_user') . '</div>';
+	echo '<div id="group" class="float linecolgroup">' . $form->select_dolgroups('', 'fk_usergroup') . '</div>';
 	echo '</td>';
 
-	echo '<td>' . $form->selectExpense('', 'fk_c_type_fees', 0, 1, 1) . '</td>';
-	echo '<td>' . $form->selectarray('code_expense_rules_type', $tab_rules_type, '', 0) . '</td>';
-	echo '<td>' . $form->selectDate(strtotime(date('Y-m-01', dol_now())), 'start', '', '', 0, '', 1, 0) . '</td>';
-	echo '<td>' . $form->selectDate(strtotime(date('Y-m-t', dol_now())), 'end', '', '', 0, '', 1, 0) . '</td>';
-	echo '<td><input type="text" value="" class="maxwidth100" name="amount" class="amount" /> ' . $conf->currency . '</td>';
-	echo '<td>' . $form->selectyesno('restrictive', 0, 1) . '</td>';
-	echo '<td class="right"><input type="submit" class="button button-add" value="' . $langs->trans('Add') . '" /></td>';
+	echo '<td class="linecoltype">' . $form->selectExpense('', 'fk_c_type_fees', 0, 1, 1) . '</td>';
+	echo '<td class="linecoltyperule">' . $form->selectarray('code_expense_rules_type', $tab_rules_type, '', 0) . '</td>';
+	echo '<td class="linecoldatestart">' . $form->selectDate(strtotime(date('Y-m-01', dol_now())), 'start', '', '', 0, '', 1, 0) . '</td>';
+	echo '<td class="linecoldateend>' . $form->selectDate(strtotime(date('Y-m-t', dol_now())), 'end', '', '', 0, '', 1, 0) . '</td>';
+	echo '<td class="linecolamount"><input type="text" value="" class="maxwidth100" name="amount" class="amount right" /></td>';
+	echo '<td class="linecolrestrictive">' . $form->selectyesno('restrictive', 0, 1) . '</td>';
+	echo '<td class="right linecolbutton"><input type="submit" class="button button-add" value="' . $langs->trans('Add') . '" /></td>';
 	echo '</tr>';
 
 	echo '</table>';
@@ -227,21 +242,21 @@ if ($action == 'edit') {
 
 	echo '<table class="noborder centpercent">';
 
-	echo '<tr class="liste_titre">';
-	echo '<th>' . $langs->trans('ExpenseReportApplyTo') . '</th>';
-	echo '<th>' . $langs->trans('Type') . '</th>';
-	echo '<th>' . $langs->trans('ExpenseReportLimitOn') . '</th>';
-	echo '<th>' . $langs->trans('ExpenseReportDateStart') . '</th>';
-	echo '<th>' . $langs->trans('ExpenseReportDateEnd') . '</th>';
-	echo '<th>' . $langs->trans('ExpenseReportLimitAmount') . '</th>';
-	echo '<th>' . $langs->trans('ExpenseReportRestrictive') . '</th>';
+	echo '<tr class="liste_titre expensereportrules">';
+	echo '<th class="linecolapplyto">' . $langs->trans('ExpenseReportApplyTo') . '</th>';
+	echo '<th class="linecoltype">' . $langs->trans('Type') . '</th>';
+	echo '<th class="linecollimiton">' . $langs->trans('ExpenseReportLimitOn') . '</th>';
+	echo '<th class="linecoldatestart">' . $langs->trans('ExpenseReportDateStart') . '</th>';
+	echo '<th class="linecoldateend">' . $langs->trans('ExpenseReportDateEnd') . '</th>';
+	echo '<th class="linecollimitamount">' . $langs->trans('ExpenseReportLimitAmount') . '</th>';
+	echo '<th class="linecolrestrictive">' . $langs->trans('ExpenseReportRestrictive') . '</th>';
 	echo '<th>&nbsp;</th>';
 	echo '</tr>';
 
 foreach ($rules as $rule) {
-	echo '<tr class="oddeven">';
+	echo '<tr class="oddeven linetrdata" id="'.$rule->id.'">';
 
-	echo '<td>';
+	echo '<td class="linecolusergroup">';
 	if ($action == 'edit' && $object->id == $rule->id) {
 		$selected = ($object->is_for_all > 0) ? 'A' : ($object->fk_usergroup > 0 ? 'G' : 'U');
 		echo '<div class="float">' . $form->selectarray('apply_to', $tab_apply, $selected, 0) . '</div>';
@@ -259,18 +274,18 @@ foreach ($rules as $rule) {
 	echo '</td>';
 
 
-	echo '<td>';
+	echo '<td class="linecoltype">';
 	if ($action == 'edit' && $object->id == $rule->id) {
 		echo $form->selectExpense($object->fk_c_type_fees, 'fk_c_type_fees', 0, 1, 1);
 	} else {
 		if ($rule->fk_c_type_fees == -1) {
 			echo $langs->trans('AllExpenseReport');
 		} else {
-			$key = getDictionaryValue(MAIN_DB_PREFIX . 'c_type_fees', 'code', $rule->fk_c_type_fees, false, 'id');
+			$key = getDictionaryValue('c_type_fees', 'code', $rule->fk_c_type_fees, false, 'id');
 			if ($key && $key != $langs->trans($key)) {
 				echo $langs->trans($key);
 			} else {
-				$value = getDictionaryValue(MAIN_DB_PREFIX . 'c_type_fees', 'label', $rule->fk_c_type_fees, false, 'id');
+				$value = getDictionaryValue('c_type_fees', 'label', $rule->fk_c_type_fees, false, 'id');
 				echo $langs->trans($value ? $value : 'Undefined'); // TODO check to return trans of 'code'
 			}
 		}
@@ -278,7 +293,7 @@ foreach ($rules as $rule) {
 	echo '</td>';
 
 
-	echo '<td>';
+	echo '<td class="linecoltyperule">';
 	if ($action == 'edit' && $object->id == $rule->id) {
 		echo $form->selectarray('code_expense_rules_type', $tab_rules_type, $object->code_expense_rules_type, 0);
 	} else {
@@ -287,7 +302,7 @@ foreach ($rules as $rule) {
 	echo '</td>';
 
 
-	echo '<td>';
+	echo '<td class="linecoldatestart">';
 	if ($action == 'edit' && $object->id == $rule->id) {
 		print $form->selectDate(strtotime(date('Y-m-d', $object->dates)), 'start', '', '', 0, '', 1, 0);
 	} else {
@@ -296,7 +311,7 @@ foreach ($rules as $rule) {
 	echo '</td>';
 
 
-	echo '<td>';
+	echo '<td class="linecoldateend">';
 	if ($action == 'edit' && $object->id == $rule->id) {
 		print $form->selectDate(strtotime(date('Y-m-d', $object->datee)), 'end', '', '', 0, '', 1, 0);
 	} else {
@@ -304,17 +319,17 @@ foreach ($rules as $rule) {
 	}
 	echo '</td>';
 
-
-	echo '<td>';
+	// Amount
+	echo '<td class="linecolamount">';
 	if ($action == 'edit' && $object->id == $rule->id) {
-		echo '<input type="text" value="' . price2num($object->amount) . '" name="amount" class="amount" />' . $conf->currency;
+		echo '<input type="text" value="' . price2num($object->amount) . '" name="amount" class="amount width50 right" />';
 	} else {
 		echo price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency);
 	}
 	echo '</td>';
 
 
-	echo '<td>';
+	echo '<td class="linecolrestrictive">';
 	if ($action == 'edit' && $object->id == $rule->id) {
 		echo $form->selectyesno('restrictive', $object->restrictive, 1);
 	} else {

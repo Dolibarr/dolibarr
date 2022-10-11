@@ -23,6 +23,7 @@
  *		\brief      Page of second or third tax payments (like IRPF for spain, ...)
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -32,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 $langs->loadLangs(array('compta', 'banks', 'bills'));
 
 $id = GETPOST("id", 'int');
-$action = GETPOST("action", "alpha");
-$cancel = GETPOST('cancel');
+$action = GETPOST("action", "aZ09");
+$cancel = GETPOST('cancel', 'aZ09');
 
 $refund = GETPOST("refund", "int");
 if (empty($refund)) {
@@ -143,7 +144,7 @@ $form = new Form($db);
 
 $title = $langs->trans("LT".$object->ltt)." - ".$langs->trans("Card");
 $help_url = '';
-llxHeader("", $title, $helpurl);
+llxHeader('', $title, $helpurl);
 
 if ($action == 'create') {
 	print load_fiche_titre($langs->transcountry($lttype == 2 ? "newLT2Payment" : "newLT1Payment", $mysoc->country_code));
@@ -157,11 +158,13 @@ if ($action == 'create') {
 
 	print '<table class="border centpercent">';
 
+	// Date of payment
 	print "<tr>";
 	print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
 	print $form->selectDate($datep, "datep", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
 
+	// End date of period
 	print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
 	print $form->selectDate($datev, "datev", '', '', '', 'add', 1, 1);
 	print '</td></tr>';
@@ -172,21 +175,25 @@ if ($action == 'create') {
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
 
-	if (!empty($conf->banque->enabled)) {
-		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-		$form->select_comptes(GETPOST("accountid", "int"), "accountid", 0, "courant=1", 2); // Affiche liste des comptes courant
-		print '</td></tr>';
-
+	if (isModEnabled("banque")) {
+		// Type payment
 		print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-		$form->select_types_paiements(GETPOST("paiementtype"), "paiementtype");
+		print $form->select_types_paiements(GETPOST("paiementtype"), "paiementtype", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx', 1);
 		print "</td>\n";
 		print "</tr>";
+
+		// Bank account
+		print '<tr><td class="fieldrequired" id="label_fk_account">'.$langs->trans("Account").'</td><td>';
+		print img_picto('', 'bank_account', 'pictofixedwidth');
+		$form->select_comptes(GETPOST("accountid", "int"), "accountid", 0, "courant=1", 2, '', 0, 'maxwidth500 widthcentpercentminusx'); // Affiche liste des comptes courant
+		print '</td></tr>';
 
 		// Number
 		print '<tr><td>'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
+
 	// Other attributes
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -237,7 +244,7 @@ if ($id) {
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		if ($object->fk_account > 0) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->fk_bank);

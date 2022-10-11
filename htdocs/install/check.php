@@ -80,9 +80,9 @@ if (!empty($useragent)) {
 }
 
 
-// Check PHP version
-$arrayphpminversionerror = array(5, 5, 0);
-$arrayphpminversionwarning = array(5, 6, 0);
+// Check PHP version min
+$arrayphpminversionerror = array(5, 6, 0);
+$arrayphpminversionwarning = array(7, 0, 0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {        // Minimum to use (error if lower)
 	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 	$checksok = 0; // 0=error, 1=warning
@@ -96,6 +96,14 @@ if (empty($force_install_nophpinfo)) {
 	print ' (<a href="phpinfo.php" target="_blank" rel="noopener noreferrer">'.$langs->trans("MoreInformation").'</a>)';
 }
 print "<br>\n";
+
+// Check PHP version max
+$arrayphpmaxversionwarning = array(8, 1, 0);
+if (versioncompare(versionphparray(), $arrayphpmaxversionwarning) > 0 && versioncompare(versionphparray(), $arrayphpmaxversionwarning) < 3) {        // Maximum to use (warning if higher)
+	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooHigh", versiontostring($arrayphpmaxversionwarning));
+	$checksok = 1; // 0=error, 1=warning
+	print "<br>\n";
+}
 
 
 // Check PHP support for $_GET and $_POST
@@ -118,10 +126,28 @@ if (!function_exists("session_id")) {
 }
 
 
+// Check for mbstring extension
+if (!extension_loaded("mbstring")) {
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "MBString")."<br>\n";
+	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "MBString")."<br>\n";
+}
+
+// Check for json extension
+if (!extension_loaded("json")) {
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "JSON")."<br>\n";
+	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "JSON")."<br>\n";
+}
+
 // Check if GD is supported (we need GD for image conversion)
 if (!function_exists("imagecreate")) {
 	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupportGD")."<br>\n";
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "GD")."<br>\n";
 	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "GD")."<br>\n";
@@ -131,7 +157,7 @@ if (!function_exists("imagecreate")) {
 // Check if Curl is supported
 if (!function_exists("curl_init")) {
 	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupportCurl")."<br>\n";
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Curl")."<br>\n";
 	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Curl")."<br>\n";
@@ -139,39 +165,47 @@ if (!function_exists("curl_init")) {
 
 // Check if PHP calendar extension is available
 if (!function_exists("easter_date")) {
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupportCalendar")."<br>\n";
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Calendar")."<br>\n";
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Calendar")."<br>\n";
 }
 
+// Check if Curl is supported
+if (!function_exists("simplexml_load_string")) {
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Xml")."<br>\n";
+	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Xml")."<br>\n";
+}
 
 // Check if UTF8 is supported
 if (!function_exists("utf8_encode")) {
 	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8")."<br>\n";
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "UTF8")."<br>\n";
 	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
 } else {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "UTF8")."<br>\n";
-}
-
-// Check for mbstring extension
-if (!extension_loaded("mbstring")) {
-	$langs->load("errors");
-	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupportMbstring")."<br>\n";
-	// $checksok = 0; // If ko, just warning. So check must still be 1 (otherwise no way to install)
-} else {
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "mbstring")."<br>\n";
 }
 
 // Check if intl methods are supported
 if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@localhost') {
 	if (!function_exists("locale_get_primary_language") || !function_exists("locale_get_region")) {
 		$langs->load("errors");
-		print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupportIntl")."<br>\n";
+		print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "Intl")."<br>\n";
 		// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
 	} else {
 		print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "Intl")."<br>\n";
 	}
+}
+
+// Check if Curl is supported
+if (!function_exists("imap_open")) {
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPDoesNotSupport", "IMAP")."<br>\n";
+	// $checksok = 0;		// If ko, just warning. So check must still be 1 (otherwise no way to install)
+} else {
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok" class="valignmiddle"> '.$langs->trans("PHPSupport", "IMAP")."<br>\n";
 }
 
 if (!class_exists('ZipArchive')) {
@@ -414,7 +448,7 @@ if (!file_exists($conffile)) {
 		if (empty($dolibarr_main_db_host)) {	// This means install process was not run
 			$allowupgrade = false;
 		}
-		if (defined("MAIN_NOT_INSTALLED")) {
+		if (getDolGlobalInt("MAIN_NOT_INSTALLED")) {
 			$allowupgrade = false;
 		}
 		if (GETPOST('allowupgrade')) {
@@ -428,10 +462,12 @@ if (!file_exists($conffile)) {
 		$migrationscript = array();
 		$handle = opendir($dir);
 		if (is_resource($handle)) {
+			$versiontousetoqualifyscript = preg_replace('/-.*/', '', DOL_VERSION);
 			while (($file = readdir($handle)) !== false) {
 				$reg = array();
 				if (preg_match('/^(\d+\.\d+\.\d+)-(\d+\.\d+\.\d+)\.sql$/i', $file, $reg)) {
-					if (!empty($reg[2]) && version_compare(DOL_VERSION, $reg[2])) {
+					//var_dump(DOL_VERSION." ".$reg[2]." ".$versiontousetoqualifyscript." ".version_compare($versiontousetoqualifyscript, $reg[2]));
+					if (!empty($reg[2]) && version_compare($versiontousetoqualifyscript, $reg[2]) >= 0) {
 						$migrationscript[] = array('from' => $reg[1], 'to' => $reg[2]);
 					}
 				}

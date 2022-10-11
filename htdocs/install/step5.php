@@ -128,9 +128,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 	$error = 0;
 
 	// If password is encoded, we decode it
-	if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
+	if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
 		require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-		if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
+		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
 			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
@@ -228,7 +228,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					$success = 1;
 				} else {
 					dolibarr_install_syslog('step5: FailedToCreateAdminLogin '.$newuser->error, LOG_ERR);
-					setEventMessage($langs->trans("FailedToCreateAdminLogin").' '.$newuser->error, null, 'errors');
+					setEventMessages($langs->trans("FailedToCreateAdminLogin").' '.$newuser->error, null, 'errors');
 					//header("Location: step4.php?error=3&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
 					print '<br><div class="error">'.$langs->trans("FailedToCreateAdminLogin").': '.$newuser->error.'</div><br><br>';
 					print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';

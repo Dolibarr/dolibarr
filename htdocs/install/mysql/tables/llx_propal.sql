@@ -26,7 +26,6 @@ create table llx_propal
   entity				integer DEFAULT 1 NOT NULL,		-- multi company id
 
   ref_ext				varchar(255),					-- reference into an external system (not used by dolibarr)
-  ref_int				varchar(255),					-- reference into an internal system (used by dolibarr to store extern id like paypal info)
   ref_client			varchar(255),					-- customer proposal number
 
   fk_soc				integer,
@@ -58,6 +57,7 @@ create table llx_propal
   fk_account			integer,						-- bank account
   fk_currency			varchar(3),						-- currency code
   fk_cond_reglement		integer,						-- condition de reglement (30 jours, fin de mois ...)
+  deposit_percent		varchar(63) DEFAULT NULL,		-- default deposit % if payment term needs it
   fk_mode_reglement		integer,						-- mode de reglement (Virement, Prelevement)
  
   online_sign_ip		varchar(48),

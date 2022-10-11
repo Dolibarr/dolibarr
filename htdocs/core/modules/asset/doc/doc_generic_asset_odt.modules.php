@@ -48,9 +48,9 @@ class doc_generic_asset_odt extends ModelePDFAsset
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
-	public $phpmin = array(5, 6);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * @var string Dolibarr version of the loaded document
@@ -89,7 +89,6 @@ class doc_generic_asset_odt extends ModelePDFAsset
 		$this->option_tva = 0; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 0; // Display payment mode
 		$this->option_condreg = 0; // Display payment terms
-		$this->option_codeproduitservice = 0; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
@@ -285,8 +284,8 @@ class doc_generic_asset_odt extends ModelePDFAsset
 
 				dol_mkdir($conf->asset->dir_temp);
 				if (!is_writable($conf->asset->dir_temp)) {
-					$this->error = "Failed to write in temp directory ".$conf->asset->dir_temp;
-					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->asset->dir_temp);
+					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
 				}
 

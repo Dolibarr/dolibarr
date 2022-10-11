@@ -30,7 +30,7 @@ function partnershipAdminPrepareHead()
 {
 	global $langs, $conf;
 
-	$langs->load("partnership");
+	$langs->loadLangs(array("members", "partnership"));
 
 	$h = 0;
 	$head = array();
@@ -67,6 +67,8 @@ function partnershipAdminPrepareHead()
 	//	'entity:-tabname:Title:@partnership:/partnership/mypage.php?id=__ID__'
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'partnership');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'partnership', 'remove');
 
 	return $head;
 }

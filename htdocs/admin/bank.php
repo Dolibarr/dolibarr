@@ -53,8 +53,6 @@ $type = 'bankaccount';
 // Order display of bank account
 if ($action == 'setbankorder') {
 	if (dolibarr_set_const($db, "BANK_SHOW_ORDER_OPTION", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
 	} else {
 		dol_print_error($db);
 	}
@@ -63,15 +61,11 @@ if ($action == 'setbankorder') {
 // Auto report last num releve on conciliate
 if ($action == 'setreportlastnumreleve') {
 	if (dolibarr_set_const($db, "BANK_REPORT_LAST_NUM_RELEVE", 1, 'chaine', 0, '', $conf->entity) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
 	} else {
 		dol_print_error($db);
 	}
 } elseif ($action == 'unsetreportlastnumreleve') {
 	if (dolibarr_set_const($db, "BANK_REPORT_LAST_NUM_RELEVE", 0, 'chaine', 0, '', $conf->entity) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
 	} else {
 		dol_print_error($db);
 	}
@@ -80,15 +74,11 @@ if ($action == 'setreportlastnumreleve') {
 // Colorize movements
 if ($action == 'setbankcolorizemovement') {
 	if (dolibarr_set_const($db, "BANK_COLORIZE_MOVEMENT", 1, 'chaine', 0, '', $conf->entity) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
 	} else {
 		dol_print_error($db);
 	}
 } elseif ($action == 'unsetbankcolorizemovement') {
 	if (dolibarr_set_const($db, "BANK_COLORIZE_MOVEMENT", 0, 'chaine', 0, '', $conf->entity) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
 	} else {
 		dol_print_error($db);
 	}
@@ -427,13 +417,13 @@ print "</td>";
 // Active
 if ($conf->global->BANK_COLORIZE_MOVEMENT) {
 	print '<td class="center">'."\n";
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetbankcolorizemovement&token='.newToken().'">';
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unsetbankcolorizemovement&token='.newToken().'">';
 	print img_picto($langs->trans("Enabled"), 'switch_on');
 	print '</a>';
 	print '</td>';
 } else {
 	print '<td class="center">'."\n";
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setbankcolorizemovement&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setbankcolorizemovement&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	print "</td>";
 }
 
@@ -483,13 +473,13 @@ print '</td>';
 // Active
 if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
 	print '<td class="center">'."\n";
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetreportlastnumreleve&amp;token='.newToken().'">';
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unsetreportlastnumreleve&token='.newToken().'">';
 	print img_picto($langs->trans("Enabled"), 'switch_on');
 	print '</a>';
 	print '</td>';
 } else {
 	print '<td class="center">'."\n";
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setreportlastnumreleve">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setreportlastnumreleve&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	print "</td>";
 }
 

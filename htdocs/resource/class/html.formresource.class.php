@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) - 2013-2015 Jean-François FERRY	<jfefe@aternatik.fr>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT."/resource/class/dolresource.class.php";
 
 
 /**
- * Classe permettant la gestion des formulaire du module resource
+ * Class to manage forms for the module resource
  *
  * \remarks Utilisation: $formresource = new FormResource($db)
  * \remarks $formplace->proprietes=1 ou chaine ou tableau de valeurs
@@ -88,9 +89,9 @@ class FormResource
 
 		$resourcestat = new Dolresource($this->db);
 
-		$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, 0, $filter);
+		$resources_used = $resourcestat->fetchAll('ASC', 't.rowid', $limit, 0, $filter);
 
-		if (!is_array($selected)) {
+		if (!empty($selected) && !is_array($selected)) {
 			$selected = array($selected);
 		}
 
@@ -100,13 +101,6 @@ class FormResource
 		}
 
 		if ($resourcestat) {
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->RESOURCE_USE_SEARCH_TO_SELECT) && !$forcecombo) {
-				//$minLength = (is_numeric($conf->global->RESOURCE_USE_SEARCH_TO_SELECT)?$conf->global->RESOURCE_USE_SEARCH_TO_SELECT:2);
-				$out .= ajax_combobox($htmlname, $event, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
-			} else {
-				$out .= ajax_combobox($htmlname);
-			}
-
 			// Construct $out and $outarray
 			$out .= '<select id="'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').'>'."\n";
 			if ($showempty) {
@@ -129,13 +123,14 @@ class FormResource
 						$label .= ' ('.$langs->trans($resourceclass).')';
 					}
 
-					if ((is_object($selected[0]) && $selected[0]->id == $resourcestat->lines[$i]->id) || (!is_object($selected[0]) && in_array($resourcestat->lines[$i]->id, $selected))) {
+					// Test if entry is the first element of $selected.
+					if ((isset($selected[0]) && is_object($selected[0]) && $selected[0]->id == $resourcestat->lines[$i]->id) || ((!isset($selected[0]) || !is_object($selected[0])) && !empty($selected) && in_array($resourcestat->lines[$i]->id, $selected))) {
 						$out .= '<option value="'.$resourcestat->lines[$i]->id.'" selected>'.$label.'</option>';
 					} else {
 						$out .= '<option value="'.$resourcestat->lines[$i]->id.'">'.$label.'</option>';
 					}
 
-					array_push($outarray, array('key'=>$resourcestat->lines[$i]->id, 'value'=>$resourcestat->lines[$i]->label, 'label'=>$resourcestat->lines[$i]->label));
+					array_push($outarray, array('key'=>$resourcestat->lines[$i]->id, 'value'=>$resourcestat->lines[$i]->id, 'label'=>$label));
 
 					$i++;
 					if (($i % 10) == 0) {
@@ -144,6 +139,13 @@ class FormResource
 				}
 			}
 			$out .= '</select>'."\n";
+
+			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->RESOURCE_USE_SEARCH_TO_SELECT) && !$forcecombo) {
+				//$minLength = (is_numeric($conf->global->RESOURCE_USE_SEARCH_TO_SELECT)?$conf->global->RESOURCE_USE_SEARCH_TO_SELECT:2);
+				$out .= ajax_combobox($htmlname, $event, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
+			} else {
+				$out .= ajax_combobox($htmlname);
+			}
 
 			if ($outputmode != 2) {
 				$out .= '<input type="submit" class="button" value="'.$langs->trans("Search").'"> &nbsp; &nbsp; ';
@@ -224,9 +226,11 @@ class FormResource
 					$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 				} elseif ($format == 3) {
 					$value = $arraytypes['code'];
-				} elseif (empty($value)) {
-					print  '&nbsp;';
 				}
+				if (empty($value)) {
+					$value = '&nbsp;';
+				}
+				print $value;
 				print '</option>';
 			}
 		}

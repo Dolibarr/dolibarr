@@ -125,14 +125,14 @@ class mod_project_simple extends ModeleNumRefProjects
 	 */
 	public function getNextValue($objsoc, $project)
 	{
-		global $db, $conf;
+		global $db;
 
 		// First, we get the max value
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " AND entity IN (".getEntity('projectnumber', 1, $project).")";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -147,7 +147,7 @@ class mod_project_simple extends ModeleNumRefProjects
 			return -1;
 		}
 
-		$date = empty($project->date_c) ?dol_now() : $project->date_c;
+		$date = (empty($project->date_c) ? dol_now() : $project->date_c);
 
 		//$yymm = strftime("%y%m",time());
 		$yymm = strftime("%y%m", $date);

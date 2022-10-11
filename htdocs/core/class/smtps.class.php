@@ -69,6 +69,11 @@ class SMTPs
 	private $_smtpsPW = null;
 
 	/**
+	 * Token in case we use OAUTH2
+	 */
+	private $_smtpsToken = null;
+
+	/**
 	 * Who sent the Message
 	 * This can be defined via a INI file or via a setter method
 	 */
@@ -565,13 +570,13 @@ class SMTPs
 			}
 
 			// Default authentication method is LOGIN
-			if (empty($conf->global->MAIL_SMTP_AUTH_TYPE)) {
-				$conf->global->MAIL_SMTP_AUTH_TYPE = 'LOGIN';
+			if (empty($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE)) {
+				$conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE = 'LOGIN';
 			}
 
 			// Send Authentication to Server
 			// Check for errors along the way
-			switch ($conf->global->MAIL_SMTP_AUTH_TYPE) {
+			switch ($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE) {
 				case 'NONE':
 					// Do not send the 'AUTH type' message. For test purpose, if you don't need authentication, it is better to not enter login/pass into setup.
 					$_retVal = true;
@@ -580,6 +585,16 @@ class SMTPs
 					$this->socket_send_str('AUTH PLAIN', '334');
 					// The error here just means the ID/password combo doesn't work.
 					$_retVal = $this->socket_send_str(base64_encode("\0".$this->_smtpsID."\0".$this->_smtpsPW), '235');
+					break;
+				case 'XOAUTH2':
+					// "user=$email\1auth=Bearer $token\1\1"
+					$user = $this->_smtpsID;
+					$token = $this->_smtpsToken;
+					$initRes = "user=".$user."\001auth=Bearer ".$token."\001\001";
+					$_retVal = $this->socket_send_str('AUTH XOAUTH2 '.base64_encode($initRes), '235');
+					if (!$_retVal) {
+						$this->_setErr(130, 'Error when asking for AUTH XOAUTH2');
+					}
 					break;
 				case 'LOGIN':	// most common case
 				default:
@@ -590,7 +605,7 @@ class SMTPs
 						// User name will not return any error, server will take anything we give it.
 						$this->socket_send_str(base64_encode($this->_smtpsID), '334');
 						// The error here just means the ID/password combo doesn't work.
-						// There is not a method to determine which is the problem, ID or password
+						// There is no method to determine which is the problem, ID or password
 						$_retVal = $this->socket_send_str(base64_encode($this->_smtpsPW), '235');
 					}
 					break;
@@ -622,7 +637,7 @@ class SMTPs
 		// Connect to Server
 		if ($this->socket = $this->_server_connect()) {
 			// If a User ID *and* a password is given, assume Authentication is desired
-			if (!empty($this->_smtpsID) && !empty($this->_smtpsPW)) {
+			if (!empty($this->_smtpsID) && (!empty($this->_smtpsPW) || !empty($this->_smtpsToken))) {
 				// Send the RFC2554 specified EHLO.
 				$_retVal = $this->_server_authenticate();
 			} else {
@@ -912,6 +927,27 @@ class SMTPs
 	public function getPW()
 	{
 		return $this->_smtpsPW;
+	}
+
+	/**
+	 * User token for OAUTH2
+	 *
+	 * @param 	string 	$_strToken 	User token
+	 * @return 	void
+	 */
+	public function setToken($_strToken)
+	{
+		$this->_smtpsToken = $_strToken;
+	}
+
+	/**
+	 * Retrieves the User token for OAUTH2
+	 *
+	 * @return 	string 		User token for OAUTH2
+	 */
+	public function getToken()
+	{
+		return $this->_smtpsToken;
 	}
 
 	/**
@@ -1857,7 +1893,7 @@ class SMTPs
 		}
 
 		if (!(substr($server_response, 0, 3) == $response)) {
-			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse: $server_response");
+			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse:".$server_response);
 			$_retVal = false;
 		}
 

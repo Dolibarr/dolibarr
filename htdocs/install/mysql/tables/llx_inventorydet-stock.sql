@@ -29,6 +29,8 @@ CREATE TABLE llx_inventorydet
 	qty_stock double DEFAULT NULL,     -- Value or real stock we have, when we start the inventory (may be updated during intermediary steps).
 	qty_view double DEFAULT NULL, 	   -- Quantity found during inventory. It is the targeted value, filled during edition of inventory.
 	qty_regulated double DEFAULT NULL, -- Never used. Deprecated because we already have the fk_movement now.
+	pmp_real double DEFAULT NULL,
+	pmp_expected double DEFAULT NULL,
 	fk_movement integer NULL           -- can contain the id of stock movement we recorded to make the inventory regulation of this line
 ) 
 ENGINE=innodb;

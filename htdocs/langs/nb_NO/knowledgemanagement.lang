@@ -46,9 +46,9 @@ KnowledgeRecords = Artikler
 KnowledgeRecord = Artikkel
 KnowledgeRecordExtraFields = Ekstra felt for artikkel
 GroupOfTicket=Billettgrupper
-YouCanLinkArticleToATicketCategory=Du kan koble en artikkel til en billettgruppe (artikkelen vil bli foreslått under kvalifisering av nye billetter)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
+SuggestedForTicketsInGroup=Foreslått for billetter når gruppen er
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=Angi som foreldet
+ConfirmCloseKM=Bekrefter du at avslutningen av denne artikkelen som foreldet?
+ConfirmReopenKM=Vil du gjenopprette denne artikkelen til status "Validert"?

@@ -25,15 +25,16 @@
  */
 
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
 
@@ -45,10 +46,6 @@ $sortorder                      = GETPOST('sortorder','alpha');
 $sortfield                      = GETPOST('sortfield','alpha');
 $page                           = GETPOST('page','int');
 */
-
-if (!$user->rights->resource->read) {
-		accessforbidden();
-}
 
 $object = new Dolresource($db);
 
@@ -71,9 +68,20 @@ $cancel                 = GETPOST('cancel', 'alpha');
 $confirm                = GETPOST('confirm', 'alpha');
 $socid                  = GETPOST('socid', 'int');
 
+if (empty($mandatory)) {
+	$mandatory = 0;
+}
+if (empty($busy)) {
+	$busy = 0;
+}
+
 if ($socid > 0) { // Special for thirdparty
 	$element_id = $socid;
 	$element = 'societe';
+}
+
+if (!$user->rights->resource->read) {
+	accessforbidden();
 }
 
 // Permission is not permission on resources. We just make link here on objects.
@@ -158,7 +166,7 @@ if (empty($reshook)) {
 					$objstat->errors[] = $objstat->error;
 				} else {
 					if ($db->num_rows($resql) > 0) {
-						// already in use
+						// Resource already in use
 						$error++;
 						$objstat->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
 						while ($obj = $db->fetch_object($resql)) {
@@ -234,7 +242,7 @@ if (empty($reshook)) {
 					$object->errors[] = $object->error;
 				} else {
 					if ($db->num_rows($resql) > 0) {
-						// already in use
+						// Resource already in use
 						$error++;
 						$object->error = $langs->trans('ErrorResourcesAlreadyInUse').' : ';
 						while ($obj = $db->fetch_object($resql)) {
@@ -342,7 +350,7 @@ if (!$ret) {
 			// Thirdparty
 			//$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->projet->enabled)) {
+			if (isModEnabled('project')) {
 				$langs->load("projects");
 				//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 				$morehtmlref .= $langs->trans('Project').': ';
@@ -365,7 +373,7 @@ if (!$ret) {
 
 			print '<div class="underbanner clearboth"></div>';
 
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield centpercent">';
 
 			// Type
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
@@ -510,7 +518,7 @@ if (!$ret) {
 			// Thirdparty
 			$morehtmlref .= $langs->trans('ThirdParty').' : '.$fichinter->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->projet->enabled)) {
+			if (isModEnabled('project')) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 				if ($user->rights->commande->creer) {

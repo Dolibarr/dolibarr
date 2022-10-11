@@ -79,8 +79,19 @@ class FactureFournisseurRec extends CommonInvoice
 
 	public $suspended;
 	public $libelle;
+	public $label;
+
+	/**
+	 * @var double $amount
+	 * @deprecated
+	 */
 	public $amount;
+	/**
+	 * @var double $remise
+	 * @deprecated
+	 */
 	public $remise;
+
 	public $vat_src_code;
 	public $localtax1;
 	public $localtax2;
@@ -115,6 +126,13 @@ class FactureFournisseurRec extends CommonInvoice
 	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
 	public $model_pdf;
+
+	/**
+	 * Invoice lines
+	 * @var FactureFournisseurLigneRec[]
+	 */
+	public $lines = array();
+
 
 	/* Override fields in CommonObject
 	public $entity;
@@ -163,13 +181,11 @@ class FactureFournisseurRec extends CommonInvoice
 		'titre' =>array('type'=>'varchar(100)', 'label'=>'Titre', 'enabled'=>1, 'showoncombobox' => 1, 'visible'=>-1, 'position'=>15),
 		'ref_supplier' =>array('type'=>'varchar(180)', 'label'=>'RefSupplier', 'enabled'=>1, 'showoncombobox' => 1, 'visible'=>-1, 'position'=>20),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25, 'index'=>1),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>30),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>30),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>40),
 		'suspended' =>array('type'=>'integer', 'label'=>'Suspended', 'enabled'=>1, 'visible'=>-1, 'position'=>225),
 		'libelle' =>array('type'=>'varchar(100)', 'label'=>'Libelle', 'enabled'=>1, 'showoncombobox' => 0, 'visible'=>-1, 'position'=>15),
-		'amount' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
-		'remise' =>array('type'=>'double', 'label'=>'Remise', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
 
 		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'Localtax1', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'isameasure'=>1),
 		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'Localtax2', 'enabled'=>1, 'visible'=>-1, 'position'=>65, 'isameasure'=>1),
@@ -179,8 +195,8 @@ class FactureFournisseurRec extends CommonInvoice
 
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>210),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
-		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>85),
+		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>175),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'Fk cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'Fk mode reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'date_lim_reglement' =>array('type'=>'date', 'label'=>'Date lim reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
@@ -273,8 +289,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', datec';
 			$sql .= ', suspended';
 			$sql .= ', libelle';
-			$sql .= ', amount';
-			$sql .= ', remise';
+			$sql .= ', total_ttc';
 			$sql .= ', fk_user_author';
 			$sql .= ', fk_projet';
 			$sql .= ', fk_account';
@@ -305,7 +320,6 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ", ".((int) $this->suspended);
 			$sql .= ", '".$this->db->escape($this->libelle)."'";
 			$sql .= ", " .(!empty($facfourn_src->total_ttc) ? (float) $facfourn_src->total_ttc : '0');                              // amount
-			$sql .= ", " .(!empty($facfourn_src->remise) ? (float) $facfourn_src->remise : '0');
 			$sql .= ", " .((int) $user->id);
 			$sql .= ", " .(!empty($this->fk_project) ? ((int) $this->fk_project) : 'NULL');
 			$sql .= ", " .(!empty($facfourn_src->fk_account) ? ((int) $facfourn_src->fk_account) : 'NULL');
@@ -475,8 +489,6 @@ class FactureFournisseurRec extends CommonInvoice
 		if ($this->fk_soc > 0) $sql .= " fk_soc = ". (int) $this->fk_soc. ',';
 		$sql .= " suspended = ". (!empty($this->suspended) ? ((int) $this->suspended) : 0) . ',';
 		$sql .= " libelle = ". (!empty($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : 'NULL') . ",";
-		$sql .= " amount = ". (!empty($this->amount) ? ((float) $this->amount) : 0.00) . ',';
-		$sql .= " remise = ". (!empty($this->remise) ? ((float) $this->remise) : 'NULL') . ',';
 		$sql .= " vat_src_code = ". (!empty($this->vat_src_code) ? "'".$this->db->escape($this->vat_src_code)."'" : 'NULL') . ',';
 		$sql .= " localtax1 = ". (!empty($this->localtax1) ? ((float) $this->localtax1) : 0.00) . ',';
 		$sql .= " localtax2 = ". (!empty($this->localtax2) ? ((float) $this->localtax2) : 0.00) . ',';
@@ -548,11 +560,11 @@ class FactureFournisseurRec extends CommonInvoice
 	{
 		$sql = 'SELECT f.rowid, f.titre, f.ref_supplier, f.entity, f.fk_soc';
 		$sql .= ', f.datec, f.tms, f.suspended';
-		$sql .= ', f.libelle, f.amount, f.remise';
+		$sql .= ', f.libelle as label';
 		$sql .= ', f.vat_src_code, f.localtax1, f.localtax2';
 		$sql .= ', f.total_tva, f.total_ht, f.total_ttc';
 		$sql .= ', f.fk_user_author, f.fk_user_modif';
-		$sql .= ', f.fk_projet, f.fk_account';
+		$sql .= ', f.fk_projet as fk_project, f.fk_account';
 		$sql .= ', f.fk_mode_reglement, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= ', f.fk_cond_reglement, c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql .= ', f.date_lim_reglement';
@@ -588,9 +600,8 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->date_creation            = $obj->datec;
 				$this->date_modification        = $obj->tms;
 				$this->suspended                = $obj->suspended;
-				$this->libelle                  = $obj->libelle;
-				$this->amount                   = $obj->amount;
-				$this->remise                   = $obj->remise;
+				$this->libelle                  = $obj->label;
+				$this->label                    = $obj->label;
 				$this->vat_src_code             = $obj->vat_src_code;
 				$this->total_localtax1          = $obj->localtax1;
 				$this->total_localtax2          = $obj->localtax2;
@@ -599,7 +610,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->total_ttc                = $obj->total_ttc;
 				$this->user_author              = $obj->fk_user_author;
 				$this->user_modif               = $obj->fk_user_modif;
-				$this->fk_project               = $obj->fk_projet;
+				$this->fk_project               = $obj->fk_project;
 				$this->fk_account               = $obj->fk_account;
 				$this->mode_reglement_id        = $obj->fk_mode_reglement;
 				$this->mode_reglement_code      = $obj->mode_reglement_code;
@@ -971,9 +982,9 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 			$sql .= ') VALUES (';
 			$sql .= ' ' . (int) $facid;   // source supplier invoie id
-			$sql .= ', ' . (! empty($fk_product) ? "'" . $this->db->escape($fk_product) . "'" : 'null');
-			$sql .= ', ' . (! empty($ref) ? "'" . $this->db->escape($ref) . "'" : 'null');
-			$sql .= ', ' . (! empty($label) ? "'" . $this->db->escape($label) . "'" : 'null');
+			$sql .= ', ' . (!empty($fk_product) ? "'" . $this->db->escape($fk_product) . "'" : 'null');
+			$sql .= ', ' . (!empty($ref) ? "'" . $this->db->escape($ref) . "'" : 'null');
+			$sql .= ', ' . (!empty($label) ? "'" . $this->db->escape($label) . "'" : 'null');
 			$sql .= ", '" . $this->db->escape($desc) . "'";
 			$sql .= ', ' . price2num($pu_ht);
 			$sql .= ', ' . price2num($pu_ttc);
@@ -2143,8 +2154,8 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 		$sql .= ' fk_facture_fourn = ' . (int) $this->fk_facture_fourn;
 		$sql .= ', fk_parent_line = ' . (int) $this->fk_parent;
 		$sql .= ', fk_product = ' . (int) $this->fk_product;
-		$sql .= ', ref = ' . (! empty($this->ref) ? "'" . $this->db->escape($this->ref) . "'" : 'NULL');
-		$sql .= ", label = " . (! empty($this->label) ? "'" . $this->db->escape($this->label) . "'" : 'NULL');
+		$sql .= ', ref = ' . (!empty($this->ref) ? "'" . $this->db->escape($this->ref) . "'" : 'NULL');
+		$sql .= ", label = " . (!empty($this->label) ? "'" . $this->db->escape($this->label) . "'" : 'NULL');
 		$sql .= ", description = '" . $this->db->escape($this->description) . "'";
 		$sql .= ', pu_ht = ' . price2num($this->pu_ht);
 		$sql .= ', pu_ttc = ' . price2num($this->pu_ttc);

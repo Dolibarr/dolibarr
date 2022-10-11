@@ -23,6 +23,7 @@
  *   \brief      Page to setup boxes
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
@@ -229,6 +230,7 @@ $sql .= " WHERE b.box_id = bd.rowid";
 $sql .= " AND b.entity IN (0,".$conf->entity.")";
 $sql .= " AND b.fk_user=0";
 $sql .= " ORDER by b.position, b.box_order";
+//print $sql;
 
 dol_syslog("Search available boxes", LOG_DEBUG);
 $resql = $db->query($sql);

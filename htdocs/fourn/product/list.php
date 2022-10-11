@@ -21,22 +21,24 @@
  */
 
 /**
- *		\file       htdocs/fourn/product/list.php
- *		\ingroup    produit
- *		\brief      Page to list supplier products and services
+ *    \file       htdocs/fourn/product/list.php
+ *    \ingroup    product
+ *    \brief      Page to list supplier products and services
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.class.php';
 
-$langs->loadLangs(array("products", "suppliers"));
 
-if (!$user->rights->produit->lire && !$user->rights->service->lire) {
-	accessforbidden();
-}
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'suppliers'));
 
+
+// Get Parameters
 $sref = GETPOST('sref', 'alphanohtml');
 $sRefSupplier = GETPOST('srefsupplier');
 $snom = GETPOST('snom', 'alphanohtml');
@@ -72,13 +74,16 @@ $catid = GETPOST('catid', 'intcomma');
 $hookmanager->initHooks(array('supplierpricelist'));
 $extrafields = new ExtraFields($db);
 
+if (empty($user->rights->produit->lire) && empty($user->rights->service->lire)) {
+	accessforbidden();
+}
 
+// Permissions
+$permissiontoadd = ($user->hasRight('product', 'read') || $user->hasRight('service', 'read'));
 
 
 /*
- * ACTIONS
- *
- * Put here all code to do according to value of "action" parameter
+ * Actions
  */
 
 if (GETPOST('cancel', 'alpha')) {
@@ -108,10 +113,11 @@ if (empty($reshook)) {
 		$search_field2 = '';
 		$search_date_creation = '';
 		$search_date_update = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 }
+
 
 /*
  * View
@@ -228,7 +234,11 @@ if ($resql) {
 	if ($optioncss != '') {
 		$param .= '&optioncss='.$optioncss;
 	}
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
+
+	$newcardbutton = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/list.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton);
 
 	if (!empty($catid)) {
 		print "<div id='ways'>";
@@ -357,6 +367,12 @@ if ($resql) {
 		$i++;
 	}
 	$db->free($resql);
+
+	// If no record found
+	if ($num == 0) {
+		$colspan = 8;
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
 
 	print "</table></div>";
 

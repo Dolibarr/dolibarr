@@ -49,7 +49,7 @@ function dolSaveMasterFile($filemaster)
 		@chmod($filemaster, octdec($conf->global->MAIN_UMASK));
 	}
 
-		return $result;
+	return $result;
 }
 
 /**
@@ -291,11 +291,12 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
  * @param	string		$fileindex				Full path of file index.php
  * @param	string		$filetpl				File tpl the index.php page redirect to (used only if $fileindex is provided)
  * @param	string		$filewrapper			Full path of file wrapper.php
+ * @param	Website		$object					Object website
  * @return	boolean								True if OK
  */
-function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
+function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object = null)
 {
-	global $conf;
+	global $conf, $db;
 
 	$result1 = false;
 	$result2 = false;
@@ -308,7 +309,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 		$indexcontent .= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
 		$indexcontent .= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
 		$indexcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
-		$indexcontent .= 'if (! empty($_GET[\'pageref\']) || ! empty($_GET[\'pagealiasalt\']) || ! empty($_GET[\'pageid\'])) {'."\n";
+		$indexcontent .= 'if (!empty($_GET[\'pageref\']) || !empty($_GET[\'pagealiasalt\']) || !empty($_GET[\'pageid\'])) {'."\n";
 		$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
 		$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 		$indexcontent .= '	redirectToContainer($_GET[\'pageref\'], $_GET[\'pagealiasalt\'], $_GET[\'pageid\']);'."\n";
@@ -319,6 +320,44 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 		$result1 = file_put_contents($fileindex, $indexcontent);
 		if (!empty($conf->global->MAIN_UMASK)) {
 			@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+		}
+
+		if (is_object($object) && $object->fk_default_home > 0) {
+			$objectpage = new WebsitePage($db);
+			$objectpage->fetch($object->fk_default_home);
+
+			// Create a version for sublanguages
+			if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
+				if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR) && is_object($object) && !empty($object->otherlang)) {
+					$dirname = dirname($fileindex);
+					foreach (explode(',', $object->otherlang) as $sublang) {
+						// Avoid to erase main alias file if $sublang is empty string
+						if (empty(trim($sublang))) continue;
+						$fileindexsub = $dirname.'/'.$sublang.'/index.php';
+
+						// Same indexcontent than previously but with ../ instead of ./ for master and tpl file include/require_once.
+						$relpath = '..';
+						$indexcontent = '<?php'."\n";
+						$indexcontent .= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
+						$indexcontent .= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
+						$indexcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once '".$relpath."/master.inc.php'; } // Load master if not already loaded\n";
+						$indexcontent .= 'if (!empty($_GET[\'pageref\']) || !empty($_GET[\'pagealiasalt\']) || !empty($_GET[\'pageid\'])) {'."\n";
+						$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+						$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+						$indexcontent .= '	redirectToContainer($_GET[\'pageref\'], $_GET[\'pagealiasalt\'], $_GET[\'pageid\']);'."\n";
+						$indexcontent .= "}\n";
+						$indexcontent .= "include_once '".$relpath."/".basename($filetpl)."'\n";	// use .. instead of .
+						$indexcontent .= '// END PHP ?>'."\n";
+						$result = file_put_contents($fileindexsub, $indexcontent);
+						if ($result === false) {
+							dol_syslog("Failed to write file ".$fileindexsub, LOG_WARNING);
+						}
+						if (!empty($conf->global->MAIN_UMASK)) {
+							@chmod($fileindexsub, octdec($conf->global->MAIN_UMASK));
+						}
+					}
+				}
+			}
 		}
 	} else {
 		$result1 = true;
@@ -491,9 +530,30 @@ function dolSaveReadme($file, $content)
 		@chmod($file, octdec($conf->global->MAIN_UMASK));
 	}
 
-		return $result;
+	return $result;
 }
 
+/**
+ * Save content of a page on disk
+ *
+ * @param	string		$file				Full path of filename to generate
+ * @param	string		$content			Content of file
+ * @return	boolean							True if OK
+ */
+function dolSaveLicense($file, $content)
+{
+	global $conf, $pathofwebsite;
+
+	dol_syslog("Save LICENSE file into ".$file);
+
+	dol_mkdir($pathofwebsite);
+	$result = file_put_contents($file, $content);
+	if (!empty($conf->global->MAIN_UMASK)) {
+		@chmod($file, octdec($conf->global->MAIN_UMASK));
+	}
+
+	return $result;
+}
 
 /**
  * 	Show list of themes. Show all thumbs of themes/skins
@@ -503,7 +563,7 @@ function dolSaveReadme($file, $content)
  */
 function showWebsiteTemplates(Website $website)
 {
-	global $conf, $langs, $db, $form;
+	global $conf, $langs, $db, $form, $user;
 
 	$dirthemes = array('/doctemplates/websites');
 	if (!empty($conf->modules_parts['websitetemplates'])) {		// Using this feature slow down application
@@ -522,17 +582,21 @@ function showWebsiteTemplates(Website $website)
 	// Title
 	print '<tr class="liste_titre"><th class="titlefield">';
 	print $form->textwithpicto($langs->trans("Templates"), $langs->trans("ThemeDir").' : '.join(", ", $dirthemes));
+	print ' ';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&importsite=1" target="_blank" rel="noopener noreferrer external">';
+	print img_picto('', 'refresh');
+	print '</a>';
 	print '</th>';
 	print '<th class="right">';
 	$url = 'https://www.dolistore.com/43-web-site-templates';
 	print '<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
-	print $langs->trans('DownloadMoreSkins');
+	print img_picto('', 'globe', 'class="pictofixedwidth"').$langs->trans('DownloadMoreSkins');
 	print '</a>';
 	print '</th></tr>';
 
 	print '<tr><td colspan="'.$colspan.'">';
 
-	print '<table class="nobordernopadding" width="100%"><tr><td><div class="center">';
+	print '<table class="nobordernopadding centpercent"><tr><td><div class="center">';
 
 	if (count($dirthemes)) {
 		$i = 0;
@@ -543,8 +607,7 @@ function showWebsiteTemplates(Website $website)
 				$handle = opendir($dirtheme);
 				if (is_resource($handle)) {
 					while (($subdir = readdir($handle)) !== false) {
-						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
-							&& substr($subdir, 0, 3) <> 'CVS' && preg_match('/\.zip$/i', $subdir)) {
+						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.' && substr($subdir, 0, 3) <> 'CVS' && preg_match('/\.zip$/i', $subdir)) {
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 
 							// Disable not stable themes (dir ends with _exp or _dev)
@@ -557,6 +620,7 @@ function showWebsiteTemplates(Website $website)
 
 							print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 
+							$templatedir = $dirtheme."/".$subdir;
 							$file = $dirtheme."/".$subdirwithoutzip.".jpg";
 							$url = DOL_URL_ROOT.'/viewimage.php?modulepart=doctemplateswebsite&file='.$subdirwithoutzip.".jpg";
 
@@ -575,15 +639,20 @@ function showWebsiteTemplates(Website $website)
 							if (!empty($urladvanced)) {
 								$ret .= '<a class="'.$urladvanced['css'].'" target="'.$urladvanced['target'].'" mime="'.$urladvanced['mime'].'" href="'.$urladvanced['url'].'">';
 							} else {
-								$ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+								$ret .= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.((int) $entity).'&file='.urlencode($originalfile).'&cache='.((int) $cache).'">';
 							}
 							print $ret;
 							print '<img class="img-skinthumb shadow" src="'.$url.'" border="0" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
 							print '</a>';
 
 							print '<br>';
-							print $subdir.' ('.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).')';
-							print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&website='.$website->ref.'&templateuserfile='.$subdir.'" class="button">'.$langs->trans("Load").'</a>';
+							print $subdir;
+							print '<br>';
+							print '<span class="opacitymedium">'.dol_print_size(dol_filesize($dirtheme."/".$subdir), 1, 1).' - '.dol_print_date(dol_filemtime($templatedir), 'dayhour', 'tzuserrel').'</span>';
+							if ($user->hasRight('website', 'delete')) {
+								print ' <a href="'.$_SERVER["PHP_SELF"].'?action=deletetemplate&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'">'.img_picto('', 'delete').'</a>';
+							}
+							print '<br><a href="'.$_SERVER["PHP_SELF"].'?action=importsiteconfirm&token='.newToken().'&website='.urlencode($website->ref).'&templateuserfile='.urlencode($subdir).'" class="button">'.$langs->trans("Load").'</a>';
 							print '</div>';
 
 							$i++;

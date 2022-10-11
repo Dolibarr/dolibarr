@@ -187,6 +187,14 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->actionmsg = $langs->transnoentities("PropalValidatedInDolibarr", ($object->newref ? $object->newref : $object->ref));
 
 			$object->sendtoid = 0;
+		} elseif ($action == 'PROPAL_MODIFY') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "propal"));
+
+			if (empty($object->actionmsg2)) $object->actionmsg2 = $langs->transnoentities("PropalBackToDraftInDolibarr", ($object->newref ? $object->newref : $object->ref));
+			$object->actionmsg = $langs->transnoentities("PropalBackToDraftInDolibarr", ($object->newref ? $object->newref : $object->ref));
+
+			$object->sendtoid = 0;
 		} elseif ($action == 'PROPAL_SENTBYMAIL') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "propal"));
@@ -705,7 +713,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "members"));
 
-			$member = $this->context['member'];
+			$member = (isset($this->context['member']) ? $this->context['member'] : null);
 			if (!is_object($member)) {	// This should not happen
 				dol_syslog("Execute a trigger MEMBER_SUBSCRIPTION_CREATE with context key 'member' not an object");
 				include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -723,7 +731,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->actionmsg .= "\n".$langs->transnoentities("Period").': '.dol_print_date($object->dateh, 'day').' - '.dol_print_date($object->datef, 'day');
 
 			$object->sendtoid = 0;
-			if ($object->fk_soc > 0) {
+			if (isset($object->fk_soc) && $object->fk_soc > 0) {
 				$object->socid = $object->fk_soc;
 			}
 		} elseif ($action == 'MEMBER_SUBSCRIPTION_MODIFY') {
@@ -759,12 +767,12 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 			$object->actionmsg = $langs->transnoentities("MemberSubscriptionDeletedInDolibarr", $object->ref, $object->getFullName($langs));
 			$object->actionmsg .= "\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
-			$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->type;
-			$object->actionmsg .= "\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
-			$object->actionmsg .= "\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start, 'day').' - '.dol_print_date($object->last_subscription_date_end, 'day');
+			$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->fk_type;
+			$object->actionmsg .= "\n".$langs->transnoentities("Amount").': '.$object->amount;
+			$object->actionmsg .= "\n".$langs->transnoentities("Period").': '.dol_print_date($object->dateh, 'day').' - '.dol_print_date($object->datef, 'day');
 
 			$object->sendtoid = 0;
-			if ($object->fk_soc > 0) {
+			if (isset($object->fk_soc) && $object->fk_soc > 0) {
 				$object->socid = $object->fk_soc;
 			}
 		} elseif ($action == 'MEMBER_RESILIATE') {
@@ -787,6 +795,18 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg2 = $langs->transnoentities("MemberDeletedInDolibarr", $object->getFullName($langs));
 			}
 			$object->actionmsg = $langs->transnoentities("MemberDeletedInDolibarr", $object->getFullName($langs));
+			$object->actionmsg .= "\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
+			$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->type;
+
+			$object->sendtoid = 0;
+		} elseif ($action == 'MEMBER_EXCLUDE') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "members"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("MemberExcludedInDolibarr", $object->getFullName($langs));
+			}
+			$object->actionmsg = $langs->transnoentities("MemberExcludedInDolibarr", $object->getFullName($langs));
 			$object->actionmsg .= "\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
 			$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->type;
 
@@ -828,6 +848,19 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = 0;
+		} elseif ($action == 'PROJECT_SENTBYMAIL') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "projects"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("ProjectSentByEMail", $object->ref);
+			}
+			if (empty($object->actionmsg)) {
+				$object->actionmsg = $langs->transnoentities("ProjectSentByEMail", $object->ref);
+			}
+
+			// Parameters $object->sendtoid defined by caller
+			//$object->sendtoid=0;
 		} elseif ($action == 'TASK_CREATE') {
 			// Project tasks
 			// Load translation files required by the page
@@ -916,7 +949,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 		}
 
-		// If trackid is not defined, we set it
+		// If trackid is not defined, we set it.
+		// Note that it should be set by caller. This is for compatibility purpose only.
 		if (empty($object->trackid)) {
 			// See also similar list into emailcollector.class.php
 			if (preg_match('/^COMPANY_/', $action)) {
@@ -953,18 +987,22 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->trackid = 'tas'.$object->id;
 			} elseif (preg_match('/^TICKET_/', $action)) {
 				$object->trackid = 'tic'.$object->id;
+			} elseif (preg_match('/^USER_/', $action)) {
+				$object->trackid = 'use'.$object->id;
 			} else {
 				$object->trackid = '';
 			}
 		}
 
+		/* Seems no more required: We have the data in dedicated field now.
 		if (!empty($user->login)) {
 			$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$user->login, $object->actionmsg);
 		} elseif (isset($object->origin_email)) {
 			$object->actionmsg = dol_concatdesc($langs->transnoentities("Author").': '.$object->origin_email, $object->actionmsg);
 		}
+		*/
 
-		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 		// Add entry in event table
 		$now = dol_now();
@@ -1019,7 +1057,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->type_code   = $object->actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 		$actioncomm->code        = 'AC_'.$action;
 		$actioncomm->label       = $object->actionmsg2;
-		$actioncomm->note_private = $object->actionmsg; // TODO Replace with ($actioncomm->email_msgid ? $object->email_content : $object->actionmsg)
+		$actioncomm->note_private = $object->actionmsg;
 		$actioncomm->fk_project  = $projectid;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
@@ -1029,15 +1067,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->contact_id = $contactforaction->id; // deprecated, use ->socpeopleassigned instead
 		$actioncomm->authorid    = $user->id; // User saving action
 		$actioncomm->userownerid = $user->id; // Owner of action
-		// Fields defined when action is an email (content should be into object->actionmsg to be added into note, subject into object->actionms2 to be added into label)
-		$actioncomm->email_msgid   = empty($object->email_msgid) ? null : $object->email_msgid;
-		$actioncomm->email_from    = empty($object->email_from) ? null : $object->email_from;
-		$actioncomm->email_sender  = empty($object->email_sender) ? null : $object->email_sender;
-		$actioncomm->email_to      = empty($object->email_to) ? null : $object->email_to;
-		$actioncomm->email_tocc    = empty($object->email_tocc) ? null : $object->email_tocc;
-		$actioncomm->email_tobcc   = empty($object->email_tobcc) ? null : $object->email_tobcc;
-		$actioncomm->email_subject = empty($object->email_subject) ? null : $object->email_subject;
-		$actioncomm->errors_to     = empty($object->errors_to) ? null : $object->errors_to;
+		// Fields defined when action is an email (content should be into object->actionmsg to be added into event note, subject should be into object->actionms2 to be added into event label)
+		if (!property_exists($object, 'email_fields_no_propagate_in_actioncomm') || empty($object->email_fields_no_propagate_in_actioncomm)) {
+			$actioncomm->email_msgid   = empty($object->email_msgid) ? null : $object->email_msgid;
+			$actioncomm->email_from    = empty($object->email_from) ? null : $object->email_from;
+			$actioncomm->email_sender  = empty($object->email_sender) ? null : $object->email_sender;
+			$actioncomm->email_to      = empty($object->email_to) ? null : $object->email_to;
+			$actioncomm->email_tocc    = empty($object->email_tocc) ? null : $object->email_tocc;
+			$actioncomm->email_tobcc   = empty($object->email_tobcc) ? null : $object->email_tobcc;
+			$actioncomm->email_subject = empty($object->email_subject) ? null : $object->email_subject;
+			$actioncomm->errors_to     = empty($object->errors_to) ? null : $object->errors_to;
+		}
 
 		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
 		// for such objects because there is already a dedicated field into table llx_actioncomm or llx_actioncomm_resources.

@@ -67,7 +67,7 @@ class modLoan extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("loan");
 
 		// Constants
@@ -160,7 +160,7 @@ class modLoan extends DolibarrModules
 	{
 		global $conf;
 
-		$result = $this->_load_tables('/install/mysql/tables/', 'loan');
+		$result = $this->_load_tables('/install/mysql/', 'loan');
 		if ($result < 0) {
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}

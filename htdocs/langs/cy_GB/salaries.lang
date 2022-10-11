@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cyfrif cyfrifo a ddefnyddir ar gyfer trydydd parti defnyddwyr
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Bydd y cyfrif cyfrifyddu pwrpasol a ddiffinnir ar gerdyn defnyddiwr yn cael ei ddefnyddio ar gyfer cyfrifyddu Subledger yn unig. Bydd yr un hwn yn cael ei ddefnyddio ar gyfer y Cyfriflyfr Cyffredinol ac fel gwerth rhagosodedig cyfrifyddu Subledger os nad yw cyfrif cyfrif defnyddiwr pwrpasol ar ddefnyddiwr wedi'i ddiffinio.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Cyfrif cyfrifo yn ddiofyn ar gyfer taliadau cyflog
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Yn ddiofyn, gadewch yn wag yr opsiwn "Creu cyfanswm taliad yn awtomatig" wrth greu Cyflog
+Salary=Cyflog
+Salaries=Cyflogau
+NewSalary=Cyflog newydd
+AddSalary=Ychwanegu cyflog
+NewSalaryPayment=Cerdyn cyflog newydd
+AddSalaryPayment=Ychwanegu taliad cyflog
+SalaryPayment=Taliad cyflog
+SalariesPayments=Taliadau cyflogau
+SalariesPaymentsOf=Taliadau cyflogau o %s
+ShowSalaryPayment=Dangos taliad cyflog
+THM=Cyfradd fesul awr ar gyfartaledd
+TJM=Cyfradd ddyddiol ar gyfartaledd
+CurrentSalary=Cyflog presennol
+THMDescription=Gellir defnyddio'r gwerth hwn i gyfrifo cost yr amser a dreuliwyd ar brosiect a gofnodwyd gan ddefnyddwyr os defnyddir prosiect modiwl
+TJMDescription=Mae'r gwerth hwn er gwybodaeth yn unig ar hyn o bryd ac ni chaiff ei ddefnyddio ar gyfer unrhyw gyfrifiad
+LastSalaries=%s cyflogau diweddaraf
+AllSalaries=Pob cyflog
+SalariesStatistics=Ystadegau cyflog
+SalariesAndPayments=Cyflogau a thaliadau
+ConfirmDeleteSalaryPayment=Ydych chi am ddileu'r taliad cyflog hwn ?
+FillFieldFirst=Llenwch y maes gweithiwr yn gyntaf
+UpdateAmountWithLastSalary=Swm gosod gyda chyflog diwethaf

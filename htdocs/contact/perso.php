@@ -24,6 +24,7 @@
  *       \brief      Onglet informations personnelles d'un contact
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
@@ -60,7 +61,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->societe->contact
 
 	$result = $object->update_perso($id, $user);
 	if ($result > 0) {
-		$object->oldcopy = clone $object;
+		$object->oldcopy = dol_clone($object);
 
 		// Logo/Photo save
 		$dir = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos';
@@ -159,7 +160,14 @@ if ($action == 'edit') {
 		print '<tr><td class="center"><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
 	}
 	print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
-	print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+	print '<tr><td>';
+	$maxfilesizearray = getMaxFileSizeArray();
+	$maxmin = $maxfilesizearray['maxmin'];
+	if ($maxmin > 0) {
+		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+	}
+	print '<input type="file" class="flat" name="photo" id="photoinput">';
+	print '</td></tr>';
 	print '</table>';
 
 	print '</td></tr>';

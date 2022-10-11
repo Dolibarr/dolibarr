@@ -25,11 +25,12 @@
  *      \brief      Fiche de notes sur une facture
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -44,7 +45,7 @@ $action = GETPOST('action', 'aZ09');
 $object = new Facture($db);
 // Load object
 if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref, '', '', $conf->global->INVOICE_USE_SITUATION);
+	$object->fetch($id, $ref, '', '', (!empty($conf->global->INVOICE_USE_SITUATION) ? $conf->global->INVOICE_USE_SITUATION : 0));
 }
 
 $permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
@@ -77,19 +78,24 @@ if (empty($reshook)) {
  * View
  */
 
+$form = new Form($db);
+
 if (empty($object->id)) {
-	llxHeader();
+	$title = $object->ref." - ".$langs->trans('Notes');
+} else {
+	$title = $langs->trans('Notes');
+}
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+
+llxHeader('', $title, $helpurl);
+
+if (empty($object->id)) {
 	$langs->load('errors');
 	echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
 	llxFooter();
 	exit;
 }
 
-$title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Notes');
-$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
-llxHeader('', $title, $helpurl);
-
-$form = new Form($db);
 
 if ($id > 0 || !empty($ref)) {
 	$object = new Facture($db);
@@ -99,7 +105,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$head = facture_prepare_head($object);
 
-	$totalpaye = $object->getSommePaiement();
+	$totalpaid = $object->getSommePaiement();
 
 	print dol_get_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"), -1, 'bill');
 
@@ -114,7 +120,7 @@ if ($id > 0 || !empty($ref)) {
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		if ($user->rights->facture->creer) {
@@ -148,7 +154,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 	$morehtmlref .= '</div>';
 
-	$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+	$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0);
 

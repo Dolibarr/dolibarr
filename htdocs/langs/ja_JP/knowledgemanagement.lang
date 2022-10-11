@@ -39,16 +39,16 @@ KnowledgeManagementAboutPage = 知識管理に関するページ
 
 KnowledgeManagementArea = 知識管理
 MenuKnowledgeRecord = 知識ベース
-ListKnowledgeRecord = 記事一覧
-NewKnowledgeRecord = 新しい記事
-ValidateReply = ソリューションを検証する
-KnowledgeRecords = 記事
-KnowledgeRecord = 記事
-KnowledgeRecordExtraFields = 記事のエクストラフィールド
+ListKnowledgeRecord = 項目一覧
+NewKnowledgeRecord = 新しい項目
+ValidateReply = ソリューションを検証
+KnowledgeRecords = 項目s
+KnowledgeRecord = 項目
+KnowledgeRecordExtraFields = 項目のエクストラフィールド
 GroupOfTicket=チケットのグループ
-YouCanLinkArticleToATicketCategory=記事をチケットグループにリンクできる(新規チケット認定時に記事が提案されるようになる)
+YouCanLinkArticleToATicketCategory=記事をチケット グループにリンクできる（すると、記事はこのグループのすべてのチケットで強調表示される）。
 SuggestedForTicketsInGroup=チケットに対して提案されるのは、グループが
 
 SetObsolete=廃止として設定
-ConfirmCloseKM=この記事の締めくくりが廃止されたことを確定するか？
-ConfirmReopenKM=この記事をステータス「検証済み」に復元するか？
+ConfirmCloseKM=この項目の締めくくりが廃止されたことを確定するか？
+ConfirmReopenKM=この項目を状態「検証済」に復元するか？

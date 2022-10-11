@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016-2017  Jamal Elbaz             <jamelbaz@gmail.com>
- * Copyright (C) 2016       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Laurent Destailleur     <eldy@destailleur.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -24,6 +24,7 @@
  * \brief 		Page for accounting result
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
@@ -137,7 +138,7 @@ if ($cat_id == 0) {
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
 $modecompta = $conf->global->ACCOUNTING_MODE;
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$modecompta = 'BOOKKEEPING';
 }
 if (GETPOST("modecompta")) {
@@ -151,10 +152,10 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-if (!empty($conf->comptabilite->enabled)) {
+if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
@@ -193,7 +194,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("AnnualByAccountDueDebtMode");
 	$calcmode = $langs->trans("CalcModeDebt");
 	$calcmode .= '<br>('.$langs->trans("SeeReportInInputOutputMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$start_year.(GETPOST("month") > 0 ? '&month='.GETPOST("month") : '').'&modecompta=RECETTES-DEPENSES">', '</a>').')';
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$start_year.'&modecompta=BOOKKEEPING">', '</a>').')';
 	}
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -210,7 +211,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("AnnualByAccountInputOutputMode");
 	$calcmode = $langs->trans("CalcModeEngagement");
 	$calcmode .= '<br>('.$langs->trans("SeeReportInDueDebtMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month") > 0 ? '&month='.GETPOST("month") : '').'&modecompta=CREANCES-DETTES">', '</a>').')';
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		$calcmode .= '<br>('.$langs->trans("SeeReportInBookkeepingMode", '<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=BOOKKEEPING">', '</a>').')';
 	}
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -228,9 +229,9 @@ if ($modecompta == "CREANCES-DETTES") {
 	$period .= ' &nbsp; &nbsp; '.$langs->trans("DetailByAccount").' '.$form->selectarray('showaccountdetail', $arraylist, $showaccountdetail, 0);
 	$periodlink = $textprevyear.$textnextyear;
 	$exportlink = '';
-	$description = $langs->trans("RulesResultBookkeepingPersonalized").
+	$description = $langs->trans("RulesResultBookkeepingPersonalized");
 	$description .= ' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/categories_list.php?search_country_id='.$mysoc->country_id.'&mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->transnoentitiesnoconv("AccountingCategory")).')';
-	//if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
+	//if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 	//else  $description.= $langs->trans("DepositsAreIncluded");
 	$builddate = dol_now();
 }
@@ -238,7 +239,7 @@ if ($modecompta == "CREANCES-DETTES") {
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta, 'action' => ''), $calcmode);
 
 
-if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
+if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
@@ -266,21 +267,22 @@ foreach ($months as $k => $v) {
 print	'</tr>';
 
 if ($modecompta == 'CREANCES-DETTES') {
-	//if (! empty($date_start) && ! empty($date_end))
+	//if (!empty($date_start) && !empty($date_end))
 	//	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 } elseif ($modecompta == "RECETTES-DEPENSES") {
-	//if (! empty($date_start) && ! empty($date_end))
+	//if (!empty($date_start) && !empty($date_end))
 	//	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 } elseif ($modecompta == "BOOKKEEPING") {
 	// Get array of all report groups that are active
 	$cats = $AccCat->getCats(); // WARNING: Computed groups must be after group they include
+	$unactive_cats = $AccCat->getCats(-1, 0);
 
 	/*
 	$sql = 'SELECT DISTINCT t.numero_compte as nb FROM '.MAIN_DB_PREFIX.'accounting_bookkeeping as t, '.MAIN_DB_PREFIX.'accounting_account as aa';
 	$sql.= " WHERE t.numero_compte = aa.account_number AND aa.fk_accounting_category = 0";
-	if (! empty($date_start) && ! empty($date_end))
+	if (!empty($date_start) && !empty($date_end))
 		$sql.= " AND t.doc_date >= '".$db->idate($date_start)."' AND t.doc_date <= '".$db->idate($date_end)."'";
-	if (! empty($month)) {
+	if (!empty($month)) {
 		$sql .= " AND MONTH(t.doc_date) = " . ((int) $month);
 	}
 	$resql = $db->query($sql);
@@ -324,6 +326,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 				print '</td>';
 
 				$vars = array();
+
+				// Unactive categories have a total of 0 to be used in the formula.
+				foreach ($unactive_cats as $un_cat) {
+					$vars[$un_cat['code']] = 0;
+				}
 
 				// Previous Fiscal year (N-1)
 				foreach ($sommes as $code => $det) {
@@ -405,6 +412,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Set $cpts with array of accounts in the category/group
 				$cpts = $AccCat->getCptsCat($cat['rowid']);
+				// We should loop over empty $cpts array, else the category _code_ is used in the formula, which leads to wrong result if the code is a number.
+				if (empty($cpts)) $cpts[] = array();
+
 
 				$arrayofaccountforfilter = array();
 				foreach ($cpts as $i => $cpt) {    // Loop on each account.
@@ -477,7 +487,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				// Label of group
 				print '<td>';
 				print dol_escape_htmltag($cat['label']);
-				if (count($cpts) > 0) {    // Show example of 5 first accounting accounts
+				if (count($cpts) > 0 && !empty($cpts[0])) {    // Show example of 5 first accounting accounts
 					$i = 0;
 					foreach ($cpts as $cpt) {
 						if ($i > 5) {

@@ -64,9 +64,39 @@ abstract class CommonStickerGenerator
 	public $code; // Code of format
 
 	/**
-	 * @var array format Array with informations
+	 * @var int page_largeur
+	 */
+	public $page_largeur;
+
+	/**
+	 * @var int page_hauteur
+	 */
+	public $page_hauteur;
+
+	/**
+	 * @var array format
 	 */
 	public $format;
+
+	/**
+	 * @var int marge_gauche
+	 */
+	public $marge_gauche;
+
+	/**
+	 * @var int marge_droite
+	 */
+	public $marge_droite;
+
+	/**
+	 * @var int marge_haute
+	 */
+	public $marge_haute;
+
+	/**
+	 * @var int marge_basse
+	 */
+	public $marge_basse;
 
 	// phpcs:disable PEAR.NamingConventions.ValidVariableName.PublicUnderscore
 	// protected
@@ -100,6 +130,8 @@ abstract class CommonStickerGenerator
 	protected $_COUNTY = 1;
 	protected $_First = 1;
 	public $Tformat;
+
+
 	// phpcs:enable
 	/**
 	 *	Constructor
@@ -289,7 +321,7 @@ abstract class CommonStickerGenerator
 		// phpcs:enable
 		$this->_Metric = $format['metric'];
 		$this->_Avery_Name = $format['name'];
-		$this->_Avery_Code = $format['code'];
+		$this->_Avery_Code = empty($format['code'])?'':$format['code'];
 		$this->_Margin_Left = $this->convertMetric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
 		$this->_Margin_Top = $this->convertMetric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
 		$this->_X_Space = $this->convertMetric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);

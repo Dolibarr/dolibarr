@@ -22,6 +22,7 @@
  *		\brief      Page with events on project
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -109,8 +110,8 @@ if ($id > 0 || !empty($ref)) {
 	}
 	$object->info($object->id);
 }
-
-$title = $langs->trans("Project").' - '.$object->ref.' '.$object->name;
+$agenda = (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) ? '/'.$langs->trans("Agenda") : '';
+$title = $langs->trans('Events').$agenda.' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }
@@ -167,7 +168,7 @@ if ($permok) {
 
 //print '<div class="tabsAction">';
 $morehtmlcenter = '';
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	$addActionBtnRight = !empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create);
 	$morehtmlcenter .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&socid='.$object->socid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
 }

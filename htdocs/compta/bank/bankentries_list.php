@@ -31,15 +31,17 @@
  *	\brief      List of bank transactions
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
@@ -54,6 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "categories", "companies", "margins", "salaries", "loan", "donations", "trips", "members", "compta", "accountancy"));
@@ -99,6 +102,7 @@ $search_thirdparty_user = GETPOST("search_thirdparty", 'alpha') ?GETPOST("search
 $search_req_nb = GETPOST("req_nb", 'alpha');
 $search_num_releve = GETPOST("search_num_releve", 'alpha');
 $search_conciliated = GETPOST("search_conciliated", 'int');
+$search_fk_bordereau = GETPOST("search_fk_bordereau", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $num_releve = GETPOST("num_releve", "alpha");
@@ -157,27 +161,27 @@ $extrafields->fetch_name_optionals_label('banktransaction');
 $search_array_options = $extrafields->getOptionalsFromPost('banktransaction', '', 'search_');
 
 $arrayfields = array(
-	'b.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'b.label'=>array('label'=>$langs->trans("Description"), 'checked'=>1),
-	'b.dateo'=>array('label'=>$langs->trans("DateOperationShort"), 'checked'=>1),
-	'b.datev'=>array('label'=>$langs->trans("DateValueShort"), 'checked'=>1),
-	'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-	'b.num_chq'=>array('label'=>$langs->trans("Numero"), 'checked'=>1),
-	'bu.label'=>array('label'=>$langs->trans("ThirdParty").'/'.$langs->trans("User"), 'checked'=>1, 'position'=>500),
-	'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>(($id > 0 || !empty($ref)) ? 0 : 1), 'position'=>1000),
-	'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>600),
-	'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
-	'balancebefore'=>array('label'=>$langs->trans("BalanceBefore"), 'checked'=>0, 'position'=>1000),
-	'balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1, 'position'=>1001),
-	'b.num_releve'=>array('label'=>$langs->trans("AccountStatement"), 'checked'=>1, 'position'=>1010),
-	'b.conciliated'=>array('label'=>$langs->trans("BankLineReconciled"), 'enabled'=> $object->rappro, 'checked'=>($action == 'reconcile' ? 1 : 0), 'position'=>1020),
+	'b.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1,'position'=>10),
+	'b.label'=>array('label'=>$langs->trans("Description"), 'checked'=>1,'position'=>20),
+	'b.dateo'=>array('label'=>$langs->trans("DateOperationShort"), 'checked'=>1,'position'=>30),
+	'b.datev'=>array('label'=>$langs->trans("DateValueShort"), 'checked'=>1,'position'=>40),
+	'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1,'position'=>50),
+	'b.num_chq'=>array('label'=>$langs->trans("Numero"), 'checked'=>1,'position'=>60),
+	'bu.label'=>array('label'=>$langs->trans("ThirdParty").'/'.$langs->trans("User"), 'checked'=>1, 'position'=>70),
+	'ba.ref'=>array('label'=>$langs->trans("BankAccount"), 'checked'=>(($id > 0 || !empty($ref)) ? 0 : 1), 'position'=>80),
+	'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>90),
+	'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>100),
+	'balancebefore'=>array('label'=>$langs->trans("BalanceBefore"), 'checked'=>0, 'position'=>110),
+	'balance'=>array('label'=>$langs->trans("Balance"), 'checked'=>1, 'position'=>120),
+	'b.num_releve'=>array('label'=>$langs->trans("AccountStatement"), 'checked'=>1, 'position'=>130),
+	'b.conciliated'=>array('label'=>$langs->trans("BankLineReconciled"), 'enabled'=> $object->rappro, 'checked'=>($action == 'reconcile' ? 1 : 0), 'position'=>140),
+	'b.fk_bordereau'=>array('label'=>$langs->trans("ChequeReceipt"), 'checked'=>0, 'position'=>150),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-
 
 /*
  * Actions
@@ -214,7 +218,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_thirdparty_user = '';
 	$search_num_releve = '';
 	$search_conciliated = '';
-	$toselect = '';
+	$search_fk_bordereau = '';
+	$toselect = array();
 
 	$search_account = "";
 	if ($id > 0 || !empty($ref)) {
@@ -231,8 +236,12 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+$rowids = GETPOST('rowid', 'array');
+
 // Conciliation
-if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha')) && !empty($user->rights->banque->consolidate)
+if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha'))
+	&& (GETPOST("num_releve", "alpha") || !empty($rowids))
+	&& !empty($user->rights->banque->consolidate)
 	&& (!GETPOSTISSET('pageplusone') || (GETPOST('pageplusone') == GETPOST('pageplusoneold')))) {
 	$error = 0;
 
@@ -275,6 +284,9 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 		}
 		if ($offset) {
 			$param .= '&offset='.urlencode($offset);
+		}
+		if ($limit) {
+			$param .= '&limit='.urlencode($limit);
 		}
 		if ($search_conciliated != '' && $search_conciliated != '-1') {
 			$param .= '&search_conciliated='.urlencode($search_conciliated);
@@ -350,11 +362,11 @@ if (GETPOST('save') && !$cancel && !empty($user->rights->banque->modifier)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 	}
-	if (!$bankaccountid > 0) {
+	if (!($bankaccountid > 0)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 	}
-	/*if (! empty($conf->accounting->enabled) && (empty($search_accountancy_code) || $search_accountancy_code == '-1'))
+	/*if (isModEnabled('accounting') && (empty($search_accountancy_code) || $search_accountancy_code == '-1'))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountAccounting")), null, 'errors');
 		$error++;
@@ -387,8 +399,6 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && !empty($user->rights->ba
 	}
 }
 
-
-
 /*
  * View
  */
@@ -418,6 +428,7 @@ $paymentvariousstatic = new PaymentVarious($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $bankstatic = new Account($db);
 $banklinestatic = new AccountLine($db);
+$bordereaustatic = new RemiseCheque($db);
 
 $now = dol_now();
 
@@ -462,6 +473,9 @@ if (!empty($search_num_releve)) {
 if ($search_conciliated != '' && $search_conciliated != '-1') {
 	$param .= '&search_conciliated='.urlencode($search_conciliated);
 }
+if ($search_fk_bordereau > 0) {
+	$param .= '$&search_fk_bordereau='.urlencode($search_fk_bordereau);
+}
 if ($search_bid > 0) {
 	$param .= '&search_bid='.urlencode($search_bid);
 }
@@ -503,10 +517,16 @@ $buttonreconcile = '';
 $morehtmlref = '';
 
 if ($id > 0 || !empty($ref)) {
-	$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Transactions");
-	$helpurl = "";
-	llxHeader('', $title, $helpurl);
+	$title = $object->ref.' - '.$langs->trans("Transactions");
+} else {
+	$title = $langs->trans("BankTransactions");
+}
+$help_url = '';
 
+llxHeader('', $title, $help_url, '', 0, 0, array(), array(), $param);
+
+
+if ($id > 0 || !empty($ref)) {
 	// Load bank groups
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 	$bankcateg = new BankCateg($db);
@@ -544,7 +564,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($user->rights->banque->consolidate) {
 				$newparam = $param;
 				$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
-				$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc,desc,desc&search_conciliated=0'.$newparam.'">'.$titletoconciliatemanual.'</a>';
+				$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliatemanual.'</a>';
 			} else {
 				$buttonreconcile = '<a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliatemanual.'</a>';
 			}
@@ -554,19 +574,17 @@ if ($id > 0 || !empty($ref)) {
 				if ($user->rights->banque->consolidate) {
 					$newparam = $param;
 					$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
-					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc,desc,desc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
+					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
 				} else {
 					$buttonreconcile .= ' <a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliateauto.'</a>';
 				}
 			}
 		}
 	}
-} else {
-	llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
 }
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
-$sql .= " b.fk_account, b.fk_type,";
+$sql .= " b.fk_account, b.fk_type, b.fk_bordereau,";
 $sql .= " ba.rowid as bankid, ba.ref as bankref";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -617,6 +635,9 @@ if ($search_num_releve) {
 }
 if ($search_conciliated != '' && $search_conciliated != '-1') {
 	$sql .= " AND b.rappro = ".((int) $search_conciliated);
+}
+if ($search_fk_bordereau > 0) {
+	$sql .= " AND b.fk_bordereau = " . ((int) $search_fk_bordereau);
 }
 if ($search_thirdparty_user) {
 	$sql.= " AND (b.rowid IN ";
@@ -732,6 +753,9 @@ if ($search_conciliated != '' && $search_conciliated != '-1') {
 	$mode_balance_ok = false;
 }
 if (!empty($search_num_releve)) {
+	$mode_balance_ok = false;
+}
+if (!empty($search_fk_bordereau)) {
 	$mode_balance_ok = false;
 }
 
@@ -859,7 +883,7 @@ if ($resql) {
 		print '<td class=right>'.$langs->trans("BankAccount").'</td>';
 		print '<td class=right>'.$langs->trans("Debit").'</td>';
 		print '<td class=right>'.$langs->trans("Credit").'</td>';
-		/*if (! empty($conf->accounting->enabled))
+		/*if (isModEnabled('accounting'))
 		{
 			print '<td class="center">';
 			print $langs->trans("AccountAccounting");
@@ -894,7 +918,7 @@ if ($resql) {
 		//}
 		print '<td class="right"><input name="adddebit" class="flat" type="text" size="4" value="'.GETPOST("adddebit", "alpha").'"></td>';
 		print '<td class="right"><input name="addcredit" class="flat" type="text" size="4" value="'.GETPOST("addcredit", "alpha").'"></td>';
-		/*if (! empty($conf->accounting->enabled))
+		/*if (isModEnabled('accounting'))
 		{
 			print '<td class="center">';
 			print $formaccounting->select_account($search_accountancy_code, 'search_accountancy_code', 1, null, 1, 1, '');
@@ -980,26 +1004,32 @@ if ($resql) {
 	$moreforfilter = '';
 
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('DateOperationShort').' ';
+	$moreforfilter .= $langs->trans('DateOperationShort');
 	$moreforfilter .= ($conf->browser->layout == 'phone' ? '<br>' : ' ');
 	$moreforfilter .= '<div class="nowrap inline-block">';
-	$moreforfilter .= $form->selectDate($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From')).'</div>';
-	//$moreforfilter .= ' - ';
-	$moreforfilter .= '<div class="nowrap inline-block">'.$form->selectDate($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to')).'</div>';
+	$moreforfilter .= $form->selectDate($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	$moreforfilter .= '</div>';
+	$moreforfilter .= ($conf->browser->layout == 'phone' ? '' : ' ');
+	$moreforfilter .= '<div class="nowrap inline-block">';
+	$moreforfilter .= $form->selectDate($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('DateValueShort').' ';
+	$moreforfilter .= $langs->trans('DateValueShort');
 	$moreforfilter .= ($conf->browser->layout == 'phone' ? '<br>' : ' ');
 	$moreforfilter .= '<div class="nowrap inline-block">';
-	$moreforfilter .= $form->selectDate($search_dv_start, 'search_start_dv', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From')).'</div>';
-	//$moreforfilter .= ' - ';
-	$moreforfilter .= '<div class="nowrap inline-block">'.$form->selectDate($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to')).'</div>';
+	$moreforfilter .= $form->selectDate($search_dv_start, 'search_start_dv', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	$moreforfilter .= '</div>';
+	$moreforfilter .= ($conf->browser->layout == 'phone' ? '' : ' ');
+	$moreforfilter .= '<div class="nowrap inline-block">';
+	$moreforfilter .= $form->selectDate($search_dv_end, 'search_end_dv', 0, 0, 1, "search_form", 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
 
-	if (!empty($conf->categorie->enabled)) {
+	if (isModEnabled('categorie')) {
 		// Categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 			$langs->load('categories');
 
 			// Bank line
@@ -1055,37 +1085,43 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['type']['checked'])) {
 		print '<td class="liste_titre" align="center">';
-		$form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100');
+		print $form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
+	// Numero
 	if (!empty($arrayfields['b.num_chq']['checked'])) {
-		// Numero
 		print '<td class="liste_titre" align="center"><input type="text" class="flat" name="req_nb" value="'.dol_escape_htmltag($search_req_nb).'" size="2"></td>';
 	}
+	// Checked
 	if (!empty($arrayfields['bu.label']['checked'])) {
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty_user).'"></td>';
 	}
+	// Ref
 	if (!empty($arrayfields['ba.ref']['checked'])) {
 		print '<td class="liste_titre">';
 		$form->select_comptes($search_account, 'search_account', 0, '', 1, ($id > 0 || !empty($ref) ? ' disabled="disabled"' : ''), 0, 'maxwidth100');
 		print '</td>';
 	}
+	// Debit
 	if (!empty($arrayfields['b.debit']['checked'])) {
 		print '<td class="liste_titre right">';
 		print '<input type="text" class="flat width50" name="search_debit" value="'.dol_escape_htmltag($search_debit).'">';
 		print '</td>';
 	}
+	// Credit
 	if (!empty($arrayfields['b.credit']['checked'])) {
 		print '<td class="liste_titre right">';
 		print '<input type="text" class="flat width50" name="search_credit" value="'.dol_escape_htmltag($search_credit).'">';
 		print '</td>';
 	}
+	// Balance before
 	if (!empty($arrayfields['balancebefore']['checked'])) {
 		print '<td class="liste_titre right">';
 		$htmltext = $langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
 		print $form->textwithpicto('', $htmltext, 1);
 		print '</td>';
 	}
+	// Balance
 	if (!empty($arrayfields['balance']['checked'])) {
 		print '<td class="liste_titre right">';
 		$htmltext = $langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
@@ -1102,6 +1138,11 @@ if ($resql) {
 		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1);
 		print '</td>';
 	}
+	// Bordereau
+	if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
+		print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_fk_bordereau" value="'.dol_escape_htmltag($search_fk_bordereau).'" size="3"></td>';
+	}
+
 	// Actions and select
 	print '<td class="liste_titre" align="middle">';
 	$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
@@ -1153,6 +1194,10 @@ if ($resql) {
 	if (!empty($arrayfields['b.conciliated']['checked'])) {
 		print_liste_field_titre($arrayfields['b.conciliated']['label'], $_SERVER['PHP_SELF'], 'b.rappro', '', $param, '', $sortfield, $sortorder, "center ");
 	}
+	if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
+		print_liste_field_titre($arrayfields['b.fk_bordereau']['label'], $_SERVER['PHP_SELF'], 'b.fk_bordereau', '', $param, '', $sortfield, $sortorder, "center ");
+	}
+
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
@@ -1233,7 +1278,7 @@ if ($resql) {
 				}
 				// Extra fields
 				$element = 'banktransaction';
-				if (is_array($extrafields->attributes[$element]['label']) && count($extrafields->attributes[$element]['label'])) {
+				if (!empty($extrafields->attributes[$element]['label']) && is_array($extrafields->attributes[$element]['label']) && count($extrafields->attributes[$element]['label'])) {
 					foreach ($extrafields->attributes[$element]['label'] as $key => $val) {
 						if (!empty($arrayfields["ef.".$key]['checked'])) {
 							if (!empty($arrayfields[$key]['checked'])) {
@@ -1658,6 +1703,16 @@ if ($resql) {
 		if (!empty($arrayfields['b.conciliated']['checked'])) {
 			print '<td class="nowraponall" align="center">';
 			print yn($objp->conciliated);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
+			$bordereaustatic->fetch($objp->fk_bordereau);
+			print '<td class="nowraponall" align="center">';
+			print $bordereaustatic->getNomUrl();
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

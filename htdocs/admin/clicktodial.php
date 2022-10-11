@@ -23,6 +23,7 @@
  *   \brief      Page to setup module ClickToDial
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -35,8 +36,8 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 
-if (!in_array('clicktodial', $conf->modules)) {
-	accessforbidden($langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module58Name")));
+if (!isModEnabled('clicktodial')) {
+	accessforbidden($langs->transnoentitiesnoconv("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module58Name")));
 }
 
 
@@ -47,8 +48,9 @@ if (!in_array('clicktodial', $conf->modules)) {
 if ($action == 'setvalue' && $user->admin) {
 	$result1 = dolibarr_set_const($db, "CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", GETPOST("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS"), 'chaine', 0, '', $conf->entity);
 	$result2 = dolibarr_set_const($db, "CLICKTODIAL_URL", GETPOST("CLICKTODIAL_URL"), 'chaine', 0, '', $conf->entity);
+	$result3 = dolibarr_set_const($db, "CLICKTODIAL_KEY_FOR_CIDLOOKUP", GETPOST("CLICKTODIAL_KEY_FOR_CIDLOOKUP"), 'chaine', 0, '', $conf->entity);
 
-	if ($result1 >= 0 && $result2 >= 0) {
+	if ($result1 >= 0 && $result2 >= 0 && $result3 >= 0) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
@@ -80,7 +82,7 @@ print '<input type="hidden" name="action" value="setvalue">';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
+print '<td class="minwidth200">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
@@ -89,30 +91,61 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("ClickToDialUseTelLink").'</td><td>';
 print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", $conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS, 1).'<br>';
 print '<br>';
-print $langs->trans("ClickToDialUseTelLinkDesc");
+print '<span class="opacitymedium small">'.$langs->trans("ClickToDialUseTelLinkDesc").'</span>';
 print '</td></tr>';
 
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("DefaultLink").'</td><td>';
-print '<input class="quatrevingtpercent" type="text" id="CLICKTODIAL_URL" name="CLICKTODIAL_URL"'.($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS ? ' disabled="disabled"' : '').' value="'.$conf->global->CLICKTODIAL_URL.'"><br>';
+print '<input class="quatrevingtpercent" type="text" id="CLICKTODIAL_URL" name="CLICKTODIAL_URL"'.(getDolGlobalString('CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS') ? ' disabled="disabled"' : '').' value="'.getDolGlobalString('CLICKTODIAL_URL').'"><br>';
 print ajax_autoselect('CLICKTODIAL_URL');
 print '<br>';
 print $langs->trans("ClickToDialUrlDesc").'<br>';
 print '<br>';
 print '<span class="opacitymedium">';
 print $langs->trans("Examples").':<br>';
-print 'https://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__<br>';
-print 'sip:__PHONETO__@my.sip.server';
+print '* https://myphoneserver/phoneurl?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__<br>';
+print '* sip:__PHONETO__@my.sip.server';
 print '</span>';
 
-//if (! empty($user->clicktodial_url))
+//if (!empty($user->clicktodial_url))
 //{
 	print '<br>';
 	print info_admin($langs->trans("ValueOverwrittenByUserSetup"));
 //}
 
 print '</td></tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("SecurityKey").'</td>';
+print '<td>';
+
+global $dolibarr_main_url_root;
+
+// Define $urlwithroot
+$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+// Url for CIDLookup
+//print '<div class="div-table-responsive-no-min">';
+//print $langs->trans("URLToLaunchCronJobs").':<br>';
+$url = $urlwithroot.'/public/clicktodial/cidlookup.php?securitykey='.getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP', 'ValueToDefine').'&phone=...';
+//print img_picto('', 'globe').' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$url."</a><br>\n";
+//print '</div>';
+//print '<br>';
+
+
+print '<span class="opacitymedium">'.$langs->trans("CIDLookupURL").'</span>';
+print '<br>'.$url;
+print '<br>';
+print '<br>';
+print '<input type="text" class="flat minwidth300" id="CLICKTODIAL_KEY_FOR_CIDLOOKUP" name="CLICKTODIAL_KEY_FOR_CIDLOOKUP" value="'.(GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') : (!empty($conf->global->CLICKTODIAL_KEY_FOR_CIDLOOKUP) ? $conf->global->CLICKTODIAL_KEY_FOR_CIDLOOKUP : '')).'">';
+if (!empty($conf->use_javascript_ajax)) {
+	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+}
+print '</td>';
+print '</tr>';
 
 print '</table>';
 print '</div>';
@@ -155,6 +188,11 @@ if (!empty($conf->global->CLICKTODIAL_URL)) {
 		print '<div class="warning">'.$langs->trans("WarningClickToDialUserSetupNotComplete").'</div>';
 	}
 }
+
+// Add button to autosuggest a key
+include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+print dolJSToSetRandomPassword('CLICKTODIAL_KEY_FOR_CIDLOOKUP');
+
 
 // End of page
 llxFooter();

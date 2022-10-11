@@ -3,7 +3,7 @@
 if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) {
 	foreach ($totalarray['totalizable'] as $keytotalizable => $valtotalizable) {
 		$totalarray['pos'][$valtotalizable['pos']] = $keytotalizable;
-		$totalarray['val'][$keytotalizable] = $valtotalizable['total'];
+		$totalarray['val'][$keytotalizable] = isset($valtotalizable['total']) ? $valtotalizable['total'] : 0;
 	}
 }
 // Show total line
@@ -14,7 +14,7 @@ if (isset($totalarray['pos'])) {
 		$i++;
 		if (!empty($totalarray['pos'][$i])) {
 			print '<td class="right">';
-			if ($totalarray['type'][$i] == 'duration') {
+			if (isset($totalarray['type']) && $totalarray['type'][$i] == 'duration') {
 				print (!empty($totalarray['val'][$totalarray['pos'][$i]])?convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin'):0);
 			} else {
 				print price(!empty($totalarray['val'][$totalarray['pos'][$i]])?$totalarray['val'][$totalarray['pos'][$i]]:0);

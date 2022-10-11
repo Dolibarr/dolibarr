@@ -23,6 +23,7 @@
  *      \brief      Page to manage resource objects
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
@@ -143,8 +144,8 @@ $form = new Form($db);
 
 //$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
 $help_url = '';
-$pagetitle = $langs->trans('ResourcePageIndex');
-llxHeader('', $pagetitle, $help_url);
+$title = $langs->trans('Resources');
+llxHeader('', $title, $help_url);
 
 
 $sql = '';
@@ -168,7 +169,7 @@ if ($search_type != '') {
 }
 
 // Including the previous script generate the correct SQL filter for all the extrafields
-// we are playing with the behaviour of the Dolresource::fetch_all() by generating a fake
+// we are playing with the behaviour of the Dolresource::fetchAll() by generating a fake
 // extrafields filter key to make it works
 $filter['ef.resource'] = $sql;
 
@@ -199,7 +200,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$ret = $object->fetch_all('', '', 0, 0, $filter);
+	$ret = $object->fetchAll('', '', 0, 0, $filter);
 	if ($ret == -1) {
 		dol_print_error($db, $object->error);
 		exit;
@@ -209,7 +210,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 }
 
 // Load object list
-$ret = $object->fetch_all($sortorder, $sortfield, $limit, $offset, $filter);
+$ret = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
 if ($ret == -1) {
 	dol_print_error($db, $object->error);
 	exit;
@@ -219,7 +220,7 @@ if ($ret == -1) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuResourceAdd'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/resource/card.php?action=create');
 	}
 
-	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret + 1, $nbtotalofrecords, 'object_resource', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret + 1, $nbtotalofrecords, 'object_resource', 0, $newcardbutton, '', $limit, 0, 0, 1);
 }
 
 $moreforfilter = '';

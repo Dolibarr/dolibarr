@@ -40,7 +40,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
-	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 		$entity = 1;
 	}
 
@@ -124,8 +124,8 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				if ($passok) {
 					$login = $obj->login;
 				} else {
-					sleep(2); // Anti brut force protection
 					dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO bad password for '".$usertotest."', cryptType=".$cryptType, LOG_NOTICE);
+					sleep(1); // Anti brut force protection. Must be same delay when login is not valid
 
 					// Load translation files required by the page
 					$langs->loadLangs(array('main', 'errors'));
@@ -134,22 +134,26 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				}
 
 				// We must check entity
-				if ($passok && !empty($conf->multicompany->enabled)) {	// We must check entity
+				if ($passok && isModEnabled('multicompany')) {	// We must check entity
 					global $mc;
 
 					if (!isset($mc)) {
-						$conf->multicompany->enabled = false; // Global not available, disable $conf->multicompany->enabled for safety
+						!isModEnabled('multicompany'); // Global not available, disable $conf->multicompany->enabled for safety
 					} else {
 						$ret = $mc->checkRight($obj->rowid, $entitytotest);
 						if ($ret < 0) {
 							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO entity '".$entitytotest."' not allowed for user '".$obj->rowid."'", LOG_NOTICE);
+
 							$login = ''; // force authentication failure
+							if ($mc->db->lasterror()) {
+								$_SESSION["dol_loginmesg"] = $mc->db->lasterror();
+							}
 						}
 					}
 				}
 			} else {
 				dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO user not found for '".$usertotest."'", LOG_NOTICE);
-				sleep(1);
+				sleep(1);	// Anti brut force protection. Must be same delay when password is not valid
 
 				// Load translation files required by the page
 				$langs->loadLangs(array('main', 'errors'));

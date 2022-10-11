@@ -22,6 +22,7 @@
  *  \brief      Page to show Dolibarr information
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -360,6 +361,7 @@ $configfileparameters = array(
 	'dolibarr_main_restrict_ip' => 'Restrict access to some IPs only',
 	'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
 	'?dolibarr_mailing_limit_sendbycli' => 'Limit nb of email sent by cli',
+	'?dolibarr_mailing_limit_sendbyday' => 'Limit nb of email sent per day',
 	'?dolibarr_strict_mode' => 'Strict mode is on/off',
 	'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks'
 );
@@ -381,7 +383,7 @@ foreach ($configfileparameters as $key => $value) {
 		$newkey = preg_replace('/^\?/', '', $key);
 
 		if (preg_match('/^\?/', $key) && empty(${$newkey})) {
-			if ($newkey != 'multicompany_transverse_mode' || empty($conf->multicompany->enabled)) {
+			if ($newkey != 'multicompany_transverse_mode' || !isModEnabled('multicompany')) {
 				continue; // We discard parameters starting with ?
 			}
 		}
@@ -409,7 +411,7 @@ foreach ($configfileparameters as $key => $value) {
 			} elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) {
 				print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
 			} elseif ($newkey == 'dolibarr_main_document_root_alt') {
-				$tmparray = explode(',', ${$newkey});
+				$tmparray = explode(',', $dolibarr_main_document_root_alt);
 				$i = 0;
 				foreach ($tmparray as $value2) {
 					if ($i > 0) {
@@ -427,7 +429,7 @@ foreach ($configfileparameters as $key => $value) {
 				global $dolibarr_main_cookie_cryptkey, $dolibarr_main_instance_unique_id;
 				$valuetoshow = $dolibarr_main_instance_unique_id ? $dolibarr_main_instance_unique_id : $dolibarr_main_cookie_cryptkey; // Use $dolibarr_main_instance_unique_id first then $dolibarr_main_cookie_cryptkey
 				if (empty($dolibarr_main_prod)) {
-					print '<!-- '.${$newkey}.' -->';
+					print '<!-- '.$dolibarr_main_instance_unique_id.' -->';
 					print showValueWithClipboardCPButton($valuetoshow, 0, '********');
 				} else {
 					print '**********';
@@ -435,7 +437,8 @@ foreach ($configfileparameters as $key => $value) {
 				if (empty($valuetoshow)) {
 					print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
 				}
-				print ' &nbsp; <span class="opacitymedium">('.$langs->trans("HashForPing").'='.md5('dolibarr'.$valuetoshow).')</span>';
+				print '</td></tr>';
+				print '<tr class="oddeven"><td></td><td>&nbsp; => '.$langs->trans("HashForPing").'</td><td>'.md5('dolibarr'.$valuetoshow).'</td></tr>'."\n";
 			} elseif ($newkey == 'dolibarr_main_prod') {
 				print ${$newkey};
 
@@ -481,7 +484,7 @@ print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td class="titlefield">'.$langs->trans("Parameters").' '.$langs->trans("Database").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
-if (empty($conf->multicompany->enabled) || !$user->entity) {
+if (!isModEnabled('multicompany') || !$user->entity) {
 	print '<td class="center width="80px"">'.$langs->trans("Entity").'</td>'; // If superadmin or multicompany disabled
 }
 print "</tr>\n";
@@ -494,7 +497,7 @@ $sql .= ", type";
 $sql .= ", note";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
-if (empty($conf->multicompany->enabled)) {
+if (!isModEnabled('multicompany')) {
 	// If no multicompany mode, admins can see global and their constantes
 	$sql .= " WHERE entity IN (0,".$conf->entity.")";
 } else {
@@ -524,7 +527,7 @@ if ($resql) {
 			print dol_escape_htmltag($obj->value);
 		}
 		print '</td>'."\n";
-		if (empty($conf->multicompany->enabled) || !$user->entity) {
+		if (!isModEnabled('multicompany') || !$user->entity) {
 			print '<td class="center" width="80px">'.$obj->entity.'</td>'."\n"; // If superadmin or multicompany disabled
 		}
 		print "</tr>\n";

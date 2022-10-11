@@ -559,11 +559,11 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Get the conversion of amount with invoice rate
 	 *
-	 * @param	int		$fk_facture		id of facture
-	 * @param	double	$amount			amount to convert
-	 * @param	string	$way			'dolibarr' mean the amount is in dolibarr currency
-	 * @param	string	$table			facture or facture_fourn
-	 * @return	double					amount converted
+	 * @param	int				$fk_facture				id of facture
+	 * @param	double			$amount					amount to convert
+	 * @param	string			$way					'dolibarr' mean the amount is in dolibarr currency
+	 * @param	string			$table					facture or facture_fourn
+	 * @return	double|boolean 							amount converted or false if conversion fails
 	 */
 	public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
 	{
@@ -576,16 +576,16 @@ class MultiCurrency extends CommonObject
 				return price2num($amount / $multicurrency_tx, 'MU');
 			}
 		} else {
-			return $amount;
+			return false;
 		}
 	}
 
 	/**
 	 *  Get current invoite rate
 	 *
-	 *  @param	int 	$fk_facture 	id of facture
-	 *  @param 	string 	$table 			facture or facture_fourn
-	 *  @return bool
+	 *  @param	int 		$fk_facture 	id of facture
+	 *  @param 	string 		$table 			facture or facture_fourn
+	 *  @return float|bool					Rate of currency or false if error
 	 */
 	public static function getInvoiceRate($fk_facture, $table = 'facture')
 	{

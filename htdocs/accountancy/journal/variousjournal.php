@@ -21,6 +21,7 @@
  * \brief		Page of a journal
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -43,17 +44,6 @@ if ($in_bookkeeping == '') {
 	$in_bookkeeping = 'notyet';
 }
 
-// Security check
-if (empty($conf->accounting->enabled)) {
-	accessforbidden();
-}
-if ($user->socid > 0) {
-	accessforbidden();
-}
-if (empty($user->rights->accounting->mouvements->lire)) {
-	accessforbidden();
-}
-
 // Get information of journal
 $object = new AccountingJournal($db);
 $result = $object->fetch($id_journal);
@@ -62,10 +52,10 @@ if ($result > 0) {
 } elseif ($result < 0) {
 	dol_print_error('', $object->error, $object->errors);
 } elseif ($result == 0) {
-	accessforbidden($langs->trans('ErrorRecordNotFound'));
+	accessforbidden('ErrorRecordNotFound');
 }
 
-$hookmanager->initHooks(array('globaljournal', $object->nature_text . 'journal'));
+$hookmanager->initHooks(array('globaljournal', $object->nature.'journal'));
 $parameters = array();
 
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
@@ -92,6 +82,18 @@ $journal_data = $object->getData($user, $data_type, $date_start, $date_end, $in_
 if (!is_array($journal_data)) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
+
+// Security check
+if (!isModEnabled('accounting')) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (empty($user->rights->accounting->mouvements->lire)) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
@@ -235,7 +237,7 @@ if ($some_mandatory_steps_of_setup_were_not_done) {
 	print ' : ' . $langs->trans("AccountancyAreaDescMisc", 4, '<strong>' . $langs->transnoentitiesnoconv("MenuAccountancy") . '-' . $langs->transnoentitiesnoconv("Setup") . "-" . $langs->transnoentitiesnoconv("MenuDefaultAccounts") . '</strong>');
 	print '</div>';
 }
-print '<div class="tabsAction tabsActionNoBottom">';
+print '<div class="tabsAction tabsActionNoBottom centerimp">';
 if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
 	print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 }
@@ -288,19 +290,21 @@ print '<td class="right">' . $langs->trans("Debit") . '</td>';
 print '<td class="right">' . $langs->trans("Credit") . '</td>';
 print "</tr>\n";
 
-foreach ($journal_data as $element_id => $element) {
-	foreach ($element['blocks'] as $lines) {
-		foreach ($lines as $line) {
-			print '<tr class="oddeven">';
-			print '<td>' . $line['date'] . '</td>';
-			print '<td>' . $line['piece'] . '</td>';
-			print '<td>' . $line['account_accounting'] . '</td>';
-			print '<td>' . $line['subledger_account'] . '</td>';
-			print '<td>' . $line['label_operation'] . '</td>';
-			if ($object->nature == 4) print '<td class="center">' . $line['payment_mode'] . '</td>';
-			print '<td class="right nowraponall">' . $line['debit'] . '</td>';
-			print '<td class="right nowraponall">' . $line['credit'] . '</td>';
-			print '</tr>';
+if (is_array($journal_data) && !empty($journal_data)) {
+	foreach ($journal_data as $element_id => $element) {
+		foreach ($element['blocks'] as $lines) {
+			foreach ($lines as $line) {
+				print '<tr class="oddeven">';
+				print '<td>' . $line['date'] . '</td>';
+				print '<td>' . $line['piece'] . '</td>';
+				print '<td>' . $line['account_accounting'] . '</td>';
+				print '<td>' . $line['subledger_account'] . '</td>';
+				print '<td>' . $line['label_operation'] . '</td>';
+				if ($object->nature == 4) print '<td class="center">' . $line['payment_mode'] . '</td>';
+				print '<td class="right nowraponall">' . $line['debit'] . '</td>';
+				print '<td class="right nowraponall">' . $line['credit'] . '</td>';
+				print '</tr>';
+			}
 		}
 	}
 }
