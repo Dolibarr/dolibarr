@@ -4385,7 +4385,7 @@ abstract class CommonObject
 
 			$nb_rows_affected = $this->db->affected_rows($resql);	// should be 1 or 0 if status was already correct
 
-			if ($nb_rows_affected >= 0) {
+			if ($nb_rows_affected > 0) {
 				if (empty($trigkey)) {
 					// Try to guess trigkey (for backward compatibility, now we should have trigkey defined into the call of setStatus)
 					if ($this->element == 'supplier_proposal' && $status == 2) {
