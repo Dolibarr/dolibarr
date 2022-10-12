@@ -94,7 +94,7 @@ $periodlink = '';
 $exportlink = '';
 $builddate = dol_now();
 $description = $langs->trans("DescPurchasesJournal").'<br>';
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$description .= $langs->trans("DepositsAreNotIncluded");
 } else {
 	$description .= $langs->trans("DepositsAreIncluded");
@@ -118,7 +118,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 $sql .= " WHERE f.fk_statut > 0 AND f.entity IN (".getEntity('invoice').")";
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$sql .= " AND f.type IN (0,1,2)";
 } else {
 	$sql .= " AND f.type IN (0,1,2,3)";

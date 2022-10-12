@@ -216,6 +216,9 @@ if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$description .= '<br>'.$langs->trans("DepositsAreNotIncluded");
 }
+if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$description .= $langs->trans("SupplierDepositsAreNotIncluded");
+}
 if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
 	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
 }
@@ -252,6 +255,9 @@ if ($modecompta == "CREANCES-DETTES") {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
+	}
+	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 	}
 
 	$builddate = dol_now();
@@ -403,7 +409,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql2 .= " WHERE ff.datef >= '".$db->idate($date_start)."'";
 	$sql2 .= "  AND ff.datef <= '".$db->idate($date_end)."'";
 	$sql .= " AND ff.fk_statut in (1,2)";
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$sql .= " AND ff.type IN (0,1,2,5)";
 	} else {
 		$sql .= " AND ff.type IN (0,1,2,3,5)";

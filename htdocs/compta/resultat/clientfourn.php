@@ -186,6 +186,9 @@ if ($modecompta == "CREANCES-DETTES") {
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
+	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
+	}
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
@@ -594,7 +597,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND f.fk_statut IN (1,2)";
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 			$sql .= " AND f.type IN (0,1,2)";
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3)";
@@ -1227,7 +1230,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total_tva) as amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 			$sql .= " WHERE f.fk_statut IN (1,2)";
-			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 				$sql .= " AND f.type IN (0,1,2)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3)";
