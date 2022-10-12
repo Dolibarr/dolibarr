@@ -419,7 +419,11 @@ class ProductFournisseur extends Product
 							$productfournisseurprice->array_options[$key] = $value;
 						}
 						$res = $productfournisseurprice->update($user);
-						if ($res < 0) $error++;
+						if ($res < 0) {
+							$this->error = $productfournisseurprice->error;
+							$this->errors = $productfournisseurprice->errors;
+							$error++;
+						}
 					}
 				}
 			}
@@ -506,6 +510,7 @@ class ProductFournisseur extends Product
 				if ($resql) {
 					$this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
 				} else {
+					$this->error = $this->db->lasterror();
 					$error++;
 				}
 
@@ -518,7 +523,11 @@ class ProductFournisseur extends Product
 								$productfournisseurprice->array_options[$key] = $value;
 							}
 							$res = $productfournisseurprice->update($user);
-							if ($res < 0) $error++;
+							if ($res < 0) {
+								$this->error = $productfournisseurprice->error;
+								$this->errors = $productfournisseurprice->errors;
+								$error++;
+							}
 						}
 					}
 				}
