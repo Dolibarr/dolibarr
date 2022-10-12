@@ -5701,7 +5701,7 @@ class Form
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<div class="inline-block">';
 			if (!empty($discount_type)) {
-				if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 					if (!$filter || $filter == "fk_invoice_supplier_source IS NULL") {
 						$translationKey = 'HasAbsoluteDiscountFromSupplier'; // If we want deposit to be substracted to payments only and not to total of final invoice
 					} else {
