@@ -2161,25 +2161,30 @@ if ($module == 'initmodule') {
 	print '<div class="tagtr"><div class="tagtd">';
 	print '<span class="opacitymedium">'.$langs->trans("Version").'</span>';
 	print '</div><div class="tagtd">';
-	print '<input type="text" name="version" class="width75" value="1.0" placeholder="'.dol_escape_htmltag($langs->trans("Version")).'">';
+	print '<input type="text" name="version" class="width75" value="'.(GETPOSTISSET('version') ? GETPOST('version') : getDolGlobalString('MODULEBUILDER_SPECIFIC_VERSION', '1.0')).'" placeholder="'.dol_escape_htmltag($langs->trans("Version")).'">';
 	print '</div></div>';
 
 	print '<div class="tagtr"><div class="tagtd">';
 	print '<span class="opacitymedium">'.$langs->trans("Family").'</span>';
 	print '</div><div class="tagtd">';
 	print '<select name="family" id="family" class="minwidth400">';
-	print '<option value="hr">'.$langs->trans("ModuleFamilyHr").'</option>';
-	print '<option value="crm">'.$langs->trans("ModuleFamilyCrm").'</option>';
-	print '<option value="srm">'.$langs->trans("ModuleFamilySrm").'</option>';
-	print '<option value="financial">'.$langs->trans("ModuleFamilyFinancial").'</option>';
-	print '<option value="products">'.$langs->trans("ModuleFamilyProducts").'</option>';
-	print '<option value="projects">'.$langs->trans("ModuleFamilyProjects").'</option>';
-	print '<option value="ecm">'.$langs->trans("ModuleFamilyECM").'</option>';
-	print '<option value="technic">'.$langs->trans("ModuleFamilyTechnic").'</option>';
-	print '<option value="portal">'.$langs->trans("ModuleFamilyPortal").'</option>';
-	print '<option value="interface">'.$langs->trans("ModuleFamilyInterface").'</option>';
-	print '<option value="base">'.$langs->trans("ModuleFamilyBase").'</option>';
-	print '<option value="other" selected="">'.$langs->trans("ModuleFamilyOther").'</option>';
+	$arrayoffamilies = array(
+		'hr' => "ModuleFamilyHr",
+		'crm' => "ModuleFamilyCrm",
+		'srm' => "ModuleFamilySrm",
+		'financial' => 'ModuleFamilyFinancial',
+		'products' => 'ModuleFamilyProducts',
+		'projects' => 'ModuleFamilyProjects',
+		'ecm' => 'ModuleFamilyECM',
+		'technic' => 'ModuleFamilyTechnic',
+		'portal' => 'ModuleFamilyPortal',
+		'interface' => 'ModuleFamilyInterface',
+		'base' => 'ModuleFamilyBase',
+		'other' => 'ModuleFamilyOther'
+	);
+	foreach ($arrayoffamilies as $key => $value) {
+		print '<option value="hr"'.($key == getDolGlobalString('MODULEBUILDER_SPECIFIC_FAMILY', 'other') ? ' selected="selected"' : '').' data-html="'.dol_escape_htmltag($langs->trans($value).' <span class="opacitymedium">- '.$key.'</span>').'">'.$langs->trans($value).'</option>';
+	}
 	print '</select>';
 	print ajax_combobox("family");
 	print '</div></div>';
@@ -2187,20 +2192,20 @@ if ($module == 'initmodule') {
 	print '<div class="tagtr"><div class="tagtd">';
 	print '<span class="opacitymedium">'.$langs->trans("Picto").'</span>';
 	print '</div><div class="tagtd">';
-	print '<input type="text" name="idpicto" value="fa-generic" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
+	print '<input type="text" name="idpicto" value="'.(GETPOSTISSET('idpicto') ? GETPOST('idpicto') : getDolGlobalString('MODULEBUILDER_DEFAULTPICTO', 'fa-generic')).'" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
 	print $form->textwithpicto('', $langs->trans("Example").': fa-generic, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
 	print '</div></div>';
 
 	print '<div class="tagtr"><div class="tagtd">';
 	print '<span class="opacitymedium">'.$langs->trans("EditorName").'</span>';
 	print '</div><div class="tagtd">';
-	print '<input type="text" name="editorname" value="'.$mysoc->name.'" placeholder="'.dol_escape_htmltag($langs->trans("EditorName")).'"><br>';
+	print '<input type="text" name="editorname" value="'.(GETPOSTISSET('editorname') ? GETPOST('editorname') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_NAME', $mysoc->name)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorName")).'"><br>';
 	print '</div></div>';
 
 	print '<div class="tagtr"><div class="tagtd">';
 	print '<span class="opacitymedium">'.$langs->trans("EditorUrl").'</span>';
 	print '</div><div class="tagtd">';
-	print '<input type="text" name="editorurl" value="'.$mysoc->url.'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'"><br>';
+	print '<input type="text" name="editorurl" value="'.(GETPOSTISSET('editorurl') ? GETPOST('editorurl') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_URL', $mysoc->url)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'"><br>';
 	print '</div></div>';
 
 	print '<br><input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
@@ -2416,7 +2421,7 @@ if ($module == 'initmodule') {
 					print $langs->trans("EditorUrl");
 					print '</td><td>';
 					if (!empty($moduleobj->editor_url)) {
-						print '<a href="'.$moduleobj->editor_url.'" class="_blank" rel="noopener">'.$moduleobj->editor_url.' '.img_picto('', 'globe').'</a>';
+						print '<a href="'.$moduleobj->editor_url.'" target="_blank" rel="noopener">'.$moduleobj->editor_url.' '.img_picto('', 'globe').'</a>';
 					}
 					print '</td></tr>';
 
