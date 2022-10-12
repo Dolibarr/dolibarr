@@ -604,9 +604,12 @@ if ($permissiontoadd) {
 if (isModEnabled('category') && $permissiontoadd) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
+if ($permissiontoadd) {
+	$arrayofmassactions['presetsupervisor'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("SetSupervisor");
+}
 //if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'presetsupervisor'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
