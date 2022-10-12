@@ -2988,7 +2988,7 @@ if ($module == 'initmodule') {
 							print '<th class="center">'.$form->textwithpicto($langs->trans("NotNull"), $langs->trans("NotNullDesc")).'</th>';
 							print '<th class="center">'.$langs->trans("DefaultValue").'</th>';
 							print '<th class="center">'.$langs->trans("DatabaseIndex").'</th>';
-							print '<th class="center">'.$langs->trans("ForeignKey").'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("ForeignKey"), $langs->trans("ForeignKeyDesc"), 1, 'help', 'extracss', 0, 3, 'foreignkeyhelp').'</th>';
 							print '<th class="right">'.$langs->trans("Position").'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc"), 1, 'help', 'extracss', 0, 3, 'enabledhelp').'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression"), 1, 'help', 'extracss', 0, 3, 'visiblehelp').'</th>';
@@ -3099,7 +3099,9 @@ if ($module == 'initmodule') {
 										print '<td class="tdoverflowmax200">';
 										print '<input name="proparrayofkeyval" value="';
 										if (isset($proparrayofkeyval)) {
-											print dol_escape_htmltag(json_encode($proparrayofkeyval, JSON_UNESCAPED_UNICODE));
+											if (is_array($proparrayofkeyval) || $proparrayofkeyval != '') {
+												print dol_escape_htmltag(json_encode($proparrayofkeyval, JSON_UNESCAPED_UNICODE));
+											}
 										}
 										print '">';
 										print '</input>';
@@ -3114,7 +3116,7 @@ if ($module == 'initmodule') {
 										print '<input class="center maxwidth50" name="propindex" value="'.dol_escape_htmltag($propindex).'">';
 										print '</td>';
 										print '<td>';
-										print '<input class="center" name="propforeignkey" value="'.dol_escape_htmltag($propforeignkey).'">';
+										print '<input class="center maxwidth100" name="propforeignkey" value="'.dol_escape_htmltag($propforeignkey).'">';
 										print '</td>';
 										print '<td>';
 										print '<input class="right width50" name="propposition" value="'.dol_escape_htmltag($propposition).'">';
@@ -3188,13 +3190,15 @@ if ($module == 'initmodule') {
 										print '<td class="right">';
 										print dol_escape_htmltag($propposition);
 										print '</td>';
-										print '<td class="center">';
+										print '<td class="center tdoverflowmax100" title="'.($propnoteditable ? dol_escape_htmltag($propnoteditable) : '').'">';
 										print $propenabled ? dol_escape_htmltag($propenabled) : '';
 										print '</td>';
-										print '<td class="center">';
+										// Visibility
+										print '<td class="center tdoverflowmax100" title="'.($propvisible ? dol_escape_htmltag($propvisible) : '0').'">';
 										print $propvisible ? dol_escape_htmltag($propvisible) : '0';
 										print '</td>';
-										print '<td class="center">';
+										// Readonly
+										print '<td class="center tdoverflowmax100" title="'.($propnoteditable ? dol_escape_htmltag($propnoteditable) : '').'">';
 										print $propnoteditable ? dol_escape_htmltag($propnoteditable) : '';
 										print '</td>';
 										print '<td class="center">';
@@ -3206,16 +3210,17 @@ if ($module == 'initmodule') {
 										print '<td class="center">';
 										print $propisameasure ? dol_escape_htmltag($propisameasure) : '';
 										print '</td>';
-										print '<td class="center">';
+										print '<td class="center tdoverflowmax100" title="'.($propcss ? dol_escape_htmltag($propcss) : '').'">';
 										print $propcss ? dol_escape_htmltag($propcss) : '';
 										print '</td>';
-										print '<td class="center">';
+										print '<td class="center tdoverflowmax100" title="'.($propcssview ? dol_escape_htmltag($propcssview) : '').'">';
 										print $propcssview ? dol_escape_htmltag($propcssview) : '';
 										print '</td>';
-										print '<td class="center">';
+										print '<td class="center tdoverflowmax100" title="'.($propcsslist ? dol_escape_htmltag($propcsslist) : '').'">';
 										print $propcsslist ? dol_escape_htmltag($propcsslist) : '';
 										print '</td>';
-										print '<td class="tdoverflowmax200">';
+										// Key for tooltop
+										print '<td class="tdoverflowmax150" title="'.($prophelp ? dol_escape_htmltag($prophelp) : '').'">';
 										print $prophelp ? dol_escape_htmltag($prophelp) : '';
 										print '</td>';
 										print '<td class="center">';

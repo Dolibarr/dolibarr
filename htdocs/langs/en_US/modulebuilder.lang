@@ -147,6 +147,7 @@ CSSViewClass=CSS for read form
 CSSListClass=CSS for list
 NotEditable=Not editable
 ForeignKey=Foreign key
+ForeignKeyDesc=If the value of this field must be guaranted to exists into another table. Enter here a value matching syntax: tablename.parentfieldtocheck
 TypeOfFieldsHelp=Example:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
 TypeOfFieldsHelpIntro=This is the type of the field/attribute.
 AsciiToHtmlConverter=Ascii to HTML converter
