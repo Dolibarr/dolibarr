@@ -5,6 +5,7 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -239,7 +240,7 @@ class modFacture extends DolibarrModules
 			'f.ref' => 'InvoiceRef*',
 			'f.ref_ext' => 'ExternalRef',
 			'f.ref_int' => 'ExternalRef',
-			'f.ref_client' => 'CutomerRef',
+			'f.ref_client' => 'CustomerRef',
 			'f.type' => 'Type*',
 			'f.fk_soc' => 'Customer*',
 			'f.datec' => 'InvoiceDateCreation',
@@ -352,7 +353,7 @@ class modFacture extends DolibarrModules
 			)
 		);
 
-		//Import Supplier Invoice Lines
+		// Import Invoice Lines
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "InvoiceLine"; // Translation key
