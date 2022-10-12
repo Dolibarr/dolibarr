@@ -673,7 +673,7 @@ class Form
 		if ($direction < 0) {
 			$s .= '<'.$tag.$paramfortooltipimg;
 			if ($tag == 'td') {
-				$s .= ' class=valigntop" width="14"';
+				$s .= ' class="valigntop" width="14"';
 			}
 			$s .= '>'.$textfordialog.$img.'</'.$tag.'>';
 		}

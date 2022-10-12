@@ -2974,21 +2974,24 @@ if ($module == 'initmodule') {
 							print '<div class="div-table-responsive">';
 							print '<table class="noborder small">';
 							print '<tr class="liste_titre">';
-							print '<th class="none">'.$langs->trans("Property");
-							print ' (<a class="" href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeExamples").'</a>)';
+							print '<th class="none">';
+
+							$htmltext = $langs->trans("PropertyDesc").'<br><br><a class="" href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeExamples").'</a>';
+							print $form->textwithpicto($langs->trans("Code"), $htmltext, 1, 'help', 'extracss', 0, 3, 'propertyhelp');
+
 							print '</th>';
 							print '<th>';
 							print $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey"));
 							print '</th>';
-							print '<th>'.$form->textwithpicto($langs->trans("Type"), $langs->trans("TypeOfFieldsHelp")).'</th>';
+							print '<th>'.$form->textwithpicto($langs->trans("Type"), $langs->trans("TypeOfFieldsHelpIntro").'<br><br>'.$langs->trans("TypeOfFieldsHelp"), 1, 'help', 'extracss', 0, 3, 'typehelp').'</th>';
 							print '<th>'.$form->textwithpicto($langs->trans("ArrayOfKeyValues"), $langs->trans("ArrayOfKeyValuesDesc")).'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("NotNull"), $langs->trans("NotNullDesc")).'</th>';
 							print '<th class="center">'.$langs->trans("DefaultValue").'</th>';
 							print '<th class="center">'.$langs->trans("DatabaseIndex").'</th>';
 							print '<th class="center">'.$langs->trans("ForeignKey").'</th>';
 							print '<th class="right">'.$langs->trans("Position").'</th>';
-							print '<th class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</th>';
-							print '<th class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc"), 1, 'help', 'extracss', 0, 3, 'enabledhelp').'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression"), 1, 'help', 'extracss', 0, 3, 'visiblehelp').'</th>';
 							print '<th class="center">'.$langs->trans("NotEditable").'</th>';
 							print '<th class="center">'.$langs->trans("AlwaysEditable").'</th>';
 							print '<th class="center">'.$form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")).'</th>';
