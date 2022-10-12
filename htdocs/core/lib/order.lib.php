@@ -189,7 +189,7 @@ function order_admin_prepare_head()
 
 
 /**
- * Return a HTML table that contains a pie chart of customer orders
+ * Return a HTML table that contains a pie chart of sales orders
  *
  * @param	int		$socid		(Optional) Show only results from the customer with this id
  * @return	string				A HTML table that contains a pie chart of customer invoices

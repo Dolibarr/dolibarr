@@ -9133,10 +9133,10 @@ function getLanguageCodeFromCountryCode($countrycode)
  *  @param  string			$type           Value for object where objectvalue can be
  *                              			'thirdparty'       to add a tab in third party view
  *		                        	      	'intervention'     to add a tab in intervention view
- *     		                    	     	'supplier_order'   to add a tab in supplier order view
- *          		            	        'supplier_invoice' to add a tab in supplier invoice view
- *                  		    	        'invoice'          to add a tab in customer invoice view
- *                          			    'order'            to add a tab in customer order view
+ *     		                    	     	'supplier_order'   to add a tab in purchase order view
+ *          		            	        'supplier_invoice' to add a tab in purchase invoice view
+ *                  		    	        'invoice'          to add a tab in sales invoice view
+ *                          			    'order'            to add a tab in sales order view
  *                          				'contract'		   to add a tabl in contract view
  *                      			        'product'          to add a tab in product view
  *                              			'propal'           to add a tab in propal view

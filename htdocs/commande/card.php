@@ -32,7 +32,7 @@
 /**
  *   \file      htdocs/commande/card.php
  *   \ingroup   commande
- *   \brief     Page to show customer order
+ *   \brief     Page to show sales order
  */
 
 // Load Dolibarr environment
