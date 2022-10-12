@@ -1240,6 +1240,45 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 	}
 }
 
+if (!$error && ($action == 'setsupervisor' && $confirm == 'yes') && $permissiontoadd) {
+	$db->begin();
+	$supervisortoset=GETPOST('supervisortoset');
+	if (!empty($supervisortoset)) {
+		foreach ($toselect as $toselectid) {
+			$result = $object->fetch($toselectid);
+			//var_dump($contcats);exit;
+			if ($result > 0) {
+				$object->fk_user = $supervisortoset;
+				$res = $object->update($user);
+				if ($res > 0) {
+					$nbok++;
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+	} else {
+		setEventMessage('UserNotFound', 'errors');
+		$error++;
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		} else {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		}
+		$db->commit();
+		$toselect=array();
+	} else {
+		$db->rollback();
+	}
+}
+
 if (!$error && ($massaction == 'enable' || ($action == 'enable' && $confirm == 'yes')) && $permissiontoadd) {
 	$db->begin();
 
