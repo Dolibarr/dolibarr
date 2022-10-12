@@ -354,7 +354,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 								$out .= "\n".$textnoformat."\n";
 							}
 
-							$out .= "</td>\n";
+							$out .= "</td>boximg\n";
 						}
 
 						$out .= "</tr>\n";
@@ -495,7 +495,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 				}
 
 				// We set info of modules
-				$widget[$j]['picto'] = $objMod->picto ? img_object('', $objMod->picto) : img_object('', 'generic');
+				$widget[$j]['picto'] = (empty($objMod->picto) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
 				$widget[$j]['file'] = $files[$key];
 				$widget[$j]['fullpath'] = $fullpath[$key];
 				$widget[$j]['relpath'] = $relpath[$key];
