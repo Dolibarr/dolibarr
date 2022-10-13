@@ -200,7 +200,6 @@ if ($id > 0 || !empty($ref)) {
 			if ($result) {
 				$num = $db->num_rows($result);
 
-				// Fetch of product is mandatory
 				$option .= '&id='.$product->id;
 
 				if ($limit > 0 && $limit != $conf->liste_limit) {
