@@ -3319,7 +3319,7 @@ li.expanded > a.fmdirlia.jqft.ecmjqft {
 }
 
 .divfmdirlia {
-    width: calc(100% - 100px);
+	width: calc(100% - 100px);
 }
 
 a.fmdirlia {
