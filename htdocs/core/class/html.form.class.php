@@ -3146,6 +3146,8 @@ class Form
 			'type'=>$outtype,
 			'price_ht'=>price2num($outprice_ht),
 			'price_ttc'=>price2num($outprice_ttc),
+			'price_ht_locale'=>price(price2num($outprice_ht)),
+			'price_ttc_locale'=>price(price2num($outprice_ttc)),
 			'pricebasetype'=>$outpricebasetype,
 			'tva_tx'=>$outtva_tx,
 			'default_vat_code'=>$outdefault_vat_code,
@@ -3247,9 +3249,9 @@ class Form
 		$sql .= " pfp.supplier_reputation";
 		// if we use supplier description of the products
 		if (!empty($conf->global->PRODUIT_FOURN_TEXTS)) {
-			$sql .= " ,pfp.desc_fourn as description";
+			$sql .= ", pfp.desc_fourn as description";
 		} else {
-			$sql .= " ,p.description";
+			$sql .= ", p.description";
 		}
 		// Units
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -3532,7 +3534,7 @@ class Form
 					$opt .= ' disabled';
 				}
 				if (!empty($objp->idprodfournprice) && $objp->idprodfournprice > 0) {
-					$opt .= ' data-product-id="'.$objp->rowid.'" data-price-id="'.$objp->idprodfournprice.'" data-qty="'.$objp->quantity.'" data-up="'.$objp->unitprice.'" data-discount="'.$outdiscount.'" data-tvatx="'.$objp->tva_tx.'"';
+					$opt .= ' data-product-id="'.dol_escape_htmltag($objp->rowid).'" data-price-id="'.dol_escape_htmltag($objp->idprodfournprice).'" data-qty="'.dol_escape_htmltag($objp->quantity).'" data-up="'.dol_escape_htmltag($objp->unitprice).'" data-discount="'.dol_escape_htmltag($outdiscount).'" data-tvatx="'.dol_escape_htmltag($objp->tva_tx).'"';
 				}
 				$opt .= ' data-description="'.dol_escape_htmltag($objp->description, 0, 1).'"';
 				$opt .= ' data-html="'.dol_escape_htmltag($optlabel).'"';
@@ -3553,9 +3555,11 @@ class Form
 						'value'=>$outref,
 						'label'=>$outval,
 						'qty'=>$outqty,
-						'price_qty_ht'=>price2num($objp->fprice, 'MU'),	// Keep higher resolution for price for the min qty
+						'price_qty_ht'=>price2num($objp->fprice, 'MU'),		// Keep higher resolution for price for the min qty
 						'price_unit_ht'=>price2num($objp->unitprice, 'MU'),	// This is used to fill the Unit Price
 						'price_ht'=>price2num($objp->unitprice, 'MU'),		// This is used to fill the Unit Price (for compatibility)
+						'price_qty_ht_locale'=>price($objp->fprice),
+						'price_unit_ht_locale'=>price($objp->unitprice),
 						'tva_tx'=>$objp->tva_tx,
 						'default_vat_code'=>$objp->default_vat_code,
 						'discount'=>$outdiscount,
