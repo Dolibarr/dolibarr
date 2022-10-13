@@ -186,6 +186,7 @@ $coldisplay++;
 		?>
 		<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 		<?php
+		print('<input type="hidden" id="fournprice" name="fournprice"  class="" value="'.$line->fk_fournprice.'">');
 	}
 
 	$coldisplay++;
