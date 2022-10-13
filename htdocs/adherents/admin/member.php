@@ -228,7 +228,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updatemainoptions">';
 
 
-/** Main options */
+// Main options
 
 print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
 
@@ -324,7 +324,7 @@ print '</form>';
 print '<br>';
 
 
-/** Document templates for documents generated from member record */
+// Document templates for documents generated from member record
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
@@ -464,7 +464,7 @@ print '</div>';
 
 
 
-/** Generation of cards for members */
+// Generation of cards for members
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -531,7 +531,7 @@ print '</form>';
 
 print '<br>';
 
-/** Membership address sheet */
+// Membership address sheet
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
