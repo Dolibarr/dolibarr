@@ -5889,6 +5889,11 @@ ul.ecmjqft a {
 	padding: 0px 0px;
 	font-weight:normal;
 	display: inline-block !important;
+
+	width: calc(100% - 100px);
+    overflow: hidden;
+    white-space: break-spaces;
+    word-break: break-all;
 }
 ul.ecmjqft a:active {
 	font-weight: bold !important;

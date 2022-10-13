@@ -414,13 +414,15 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 						}
 						print '<li class="directory '.$collapsedorexpanded.' lidirecm">'; // collapsed is opposite if expanded
 
-						print '<div class="divfmdirlia inline-block"><a class="fmdirlia jqft ecmjqft" href="';
+						//print '<div class="divfmdirlia inline-block">';	// Disabled, this break the javascrip component
+						print '<a class="fmdirlia jqft ecmjqft" href="';
 						print "#";
 						print "\" rel=\"".dol_escape_htmltag($val['fullrelativename'].'/')."\" id=\"fmdirlia_id_".$val['id']."\"";
 						print " onClick=\"loadandshowpreview('".dol_escape_js($val['fullrelativename'])."',".$val['id'].")";
 						print "\">";
 						print dol_escape_htmltag($file);
-						print "</a></div>";
+						print '</a>';
+						//print '</div>';
 
 						print '<div class="ecmjqft">';
 
