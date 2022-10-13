@@ -585,7 +585,10 @@ if (empty($reshook)) {
 				$db->commit();
 				$rowid = $object->id;
 				$id = $object->id;
+
+				$backtopage = preg_replace('/__ID__/', $id, $backtopage);
 			} else {
+				$error++;
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -1041,8 +1044,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $soc->email).'"></td></tr>';
 
 		// Website
-		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', '', $object, 0).'</td>';
-		print '<td>'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.$object->url.'"></td></tr>';
+		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
+		print '<td>'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url', 'alpha') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
 
 		// Address
 		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
