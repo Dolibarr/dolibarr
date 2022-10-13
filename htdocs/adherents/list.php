@@ -994,6 +994,7 @@ while ($i < min($num, $limit)) {
 	$memberstatic->morphy = $obj->morphy;
 	$memberstatic->note_public = $obj->note_public;
 	$memberstatic->note_private = $obj->note_private;
+	$memberstatic->need_subscription = $obj->subscription;
 
 	if (!empty($obj->fk_soc)) {
 		$memberstatic->fetch_thirdparty();
