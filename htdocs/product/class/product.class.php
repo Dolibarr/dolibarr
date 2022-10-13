@@ -3491,7 +3491,7 @@ class Product extends CommonObject
 		global $db, $conf, $user, $hookmanager;
 
 		$sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
-		$sql .= " COUNT(fd.rowid) as nb_rows, SUM('fd.qty') as qty";
+		$sql .= " COUNT(fd.rowid) as nb_rows, SUM(fd.qty) as qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet_rec as fd";
 		$sql .= ", ".MAIN_DB_PREFIX."facture_rec as f";
 		$sql .= ", ".MAIN_DB_PREFIX."societe as s";
