@@ -5612,29 +5612,38 @@ class Form
 	 *    @param    int     $active         Active or not, -1 = all
 	 *    @param   	int     $addempty       1=Add empty entry
 	 *    @param	string	$type			Type ('direct-debit' or 'bank-transfer')
+	 *    @param	int		$nooutput		1=Return string, no output
 	 *    @return	void
 	 */
-	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '')
+	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs;
+
+		$out = '';
 		if ($htmlname != "none") {
-			print '<form method="POST" action="'.$page.'">';
-			print '<input type="hidden" name="action" value="setmode">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
+			$out .= '<form method="POST" action="'.$page.'">';
+			$out .= '<input type="hidden" name="action" value="setmode">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			if ($type) {
-				print '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
+				$out .= '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
 			}
-			print $this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active, '', 1);
-			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
-			print '</form>';
+			$out .= $this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active, '', 1);
+			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
+			$out .= '</form>';
 		} else {
 			if ($selected) {
 				$this->load_cache_types_paiements();
-				print $this->cache_types_paiements[$selected]['label'];
+				$out .= $this->cache_types_paiements[$selected]['label'];
 			} else {
-				print "&nbsp;";
+				$out .= "&nbsp;";
 			}
+		}
+
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
 		}
 	}
 

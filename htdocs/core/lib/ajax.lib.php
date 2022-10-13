@@ -193,6 +193,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 	$script .= '
 							$("#'.$htmlnamejquery.'").val(ui.item.id).trigger("change");	// Select new value
 
+							// Complementary actions
+
     						// Disable an element
     						if (options.option_disabled) {
     							console.log("Make action option_disabled on #"+options.option_disabled+" with disabled="+ui.item.disabled)
@@ -224,7 +226,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 
     						// Update an input
     						if (ui.item.update) {
-    							console.log("Make action update on each ui.item.update")
+    							console.log("Make action update on each ui.item.update (if there is)")
     							// loop on each "update" fields
     							$.each(ui.item.update, function(key, value) {
 									console.log("Set value "+value+" into #"+key);
@@ -232,7 +234,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     							});
     						}
     						if (ui.item.textarea) {
-    							console.log("Make action textarea on each ui.item.textarea")
+    							console.log("Make action textarea on each ui.item.textarea (if there is)")
     							$.each(ui.item.textarea, function(key, value) {
     								if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key] != "undefined") {
     									CKEDITOR.instances[key].setData(value);
