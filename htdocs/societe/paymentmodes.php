@@ -1591,7 +1591,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			if ($permissiontoaddupdatepaymentinformation) {
 				if (empty($rib->stripe_card_ref)) {
 					// Add link to create BAN on Stripe
-					print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=syncsepatostripe">';
+					print '<a class="editfielda marginrightonly marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=syncsepatostripe&token='.newToken().'">';
 					print img_picto($langs->trans("CreateBANOnStripe"), 'stripe');
 					print '</a>';
 				}
