@@ -3331,7 +3331,7 @@ if ($action == 'create') {
 					print '</td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day').'</td>';
 					$s = $form->form_modes_reglement(null, $objp->paiement_type, 'none', '', 1, 0, '', 1).' '.$objp->num_payment;
-					print '<td class="tdoverflow125" title="'.dol_escape_htmltag($s).'">';
+					print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($s).'">';
 					print $s;
 					print '</td>';
 					if (isModEnabled("banque")) {
