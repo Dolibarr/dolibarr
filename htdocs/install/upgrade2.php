@@ -5160,9 +5160,10 @@ function migrate_contractdet_rank()
 
 	$db->begin();
 	print '<tr class="trforrunsql"><td colspan="4">';
+	print '<b>'.$langs->trans('MigrationContractLineRank')."</b><br>\n";
 
-	 $sql = "SELECT c.rowid as cid ,cd.rowid as cdid,cd.rang FROM ".$db->prefix()."contratdet as cd INNER JOIN ".$db->prefix()."contrat as c ON c.rowid=cd.fk_contrat AND cd.rang=0";
-	 $sql .=" ORDER BY c.rowid,cd.rowid";
+	$sql = "SELECT c.rowid as cid ,cd.rowid as cdid,cd.rang FROM ".$db->prefix()."contratdet as cd INNER JOIN ".$db->prefix()."contrat as c ON c.rowid=cd.fk_contrat AND cd.rang=0";
+	$sql .=" ORDER BY c.rowid,cd.rowid";
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -5176,7 +5177,8 @@ function migrate_contractdet_rank()
 			}
 
 			$sqlUpd = "UPDATE ".$db->prefix()."contratdet SET rang=".(int) $currentRank." WHERE rowid=".(int) $obj->cdid;
-			$resultstring .= '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$sqlUpd."</td></tr>\n";
+			$resultstring = '.';
+			print $resultstring;
 			$resqlUpd = $db->query($sqlUpd);
 			if (!$resqlUpd) {
 				dol_print_error($db);
@@ -5194,12 +5196,9 @@ function migrate_contractdet_rank()
 		$db->rollback();
 	}
 
-	print '<b>'.$langs->trans('MigrationContractLineRank')."</b><br>\n";
 	print '</td></tr>';
 
-	if ($resultstring) {
-		print $resultstring;
-	} else {
+	if (!$resultstring) {
 		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
 	}
 }
