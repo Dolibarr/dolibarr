@@ -282,10 +282,9 @@ if (count($listinsetup) > 0) {
 		}
 		print '</td>';
 
+		// Delete
 		print '<td>';
-
 		$label = preg_replace('/_NAME$/', '', $keyforsupportedoauth2array);
-
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&provider='.$keyforprovider.'&label='.$label.'">';
 		print img_picto('', 'delete');
 		print '</a>';
@@ -300,41 +299,53 @@ if (count($listinsetup) > 0) {
 			print '<tr class="oddeven value">';
 			print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
 			print '<td><input style="width: 80%" type"text" name="uri'.$keyforsupportedoauth2array.'" value="'.$redirect_uri.'" disabled>';
-			print '</td></tr>';
+			print '</td>';
+			print '<td></td>';
+			print '</tr>';
 
 			if ($keyforsupportedoauth2array == 'OAUTH_OTHER_NAME') {
 				print '<tr class="oddeven value">';
 				print '<td>'.$langs->trans("URLOfServiceForAuthorization").'</td>';
 				print '<td><input style="width: 80%" type"text" name="'.$key[3].'" value="'.getDolGlobalString($key[3]).'" >';
-				print '</td></tr>';
+				print '</td>';
+				print '<td></td>';
+				print '</tr>';
 			}
 		} else {
 			print '<tr class="oddeven value">';
 			print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
 			print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
-			print '</td></tr>';
+			print '</td>';
+			print '<td></td>';
+			print '</tr>';
 		}
 
 		// Api Id
 		print '<tr class="oddeven value">';
 		print '<td><label for="'.$key[1].'">'.$langs->trans("OAUTH_ID").'</label></td>';
 		print '<td><input type="text" size="100" id="'.$key[1].'" name="'.$key[1].'" value="'.getDolGlobalString($key[1]).'">';
-		print '</td></tr>';
+		print '</td>';
+		print '<td></td>';
+		print '</tr>';
 
 		// Api Secret
 		print '<tr class="oddeven value">';
 		print '<td><label for="'.$key[2].'">'.$langs->trans("OAUTH_SECRET").'</label></td>';
 		print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.getDolGlobalString($key[2]).'">';
-		print '</td></tr>';
+		print '</td>';
+		print '<td></td>';
+		print '</tr>';
 
-		// TODO Move this into token generation
+		// TODO Move this into token generation ?
 		if ($supported) {
 			if ($keyforsupportedoauth2array == 'OAUTH_OTHER_NAME') {
 				print '<tr class="oddeven value">';
 				print '<td>'.$langs->trans("Scopes").'</td>';
 				print '<td>';
 				print '<input style="width: 80%" type"text" name="'.$key[4].'" value="'.getDolGlobalString($key[4]).'" >';
-				print '</td></tr>';
+				print '</td>';
+				print '<td></td>';
+				print '</tr>';
 			} else {
 				$availablescopes = array_flip(explode(',', $supportedoauth2array[$keyforsupportedoauth2array]['availablescopes']));
 				$currentscopes = explode(',', getDolGlobalString($key[4]));
@@ -354,13 +365,17 @@ if (count($listinsetup) > 0) {
 					print '<input type="checkbox" id="'.$keyforprovider.$scope.'" name="'.$key[4].'[]" value="'.$scope.'"'.($val ? ' checked' : '').'>';
 					print '<label style="margin-right: 10px" for="'.$keyforprovider.$scope.'">'.$scope.'</label>';
 				}
-				print '</td></tr>';
+				print '</td>';
+				print '<td></td>';
+				print '</tr>';
 			}
 		} else {
 			print '<tr class="oddeven value">';
 			print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
 			print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';
-			print '</td></tr>';
+			print '</td>';
+			print '<td></td>';
+			print '</tr>';
 		}
 
 		print '</table>'."\n";

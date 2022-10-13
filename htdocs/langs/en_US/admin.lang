@@ -2311,7 +2311,6 @@ MAIN_MAIL_SMTPS_AUTH_TYPE=Authentification method
 UsePassword=Use a password
 UseOauth=Use a OAUTH token
 Images=Images
-Posts=Posts
 MaxNumberOfImagesInGetPost=Max number of images allowed in a HTML field submitted in a form
 MaxNumberOfPostOnPublicPagesByIP=Max number of posts on public pages with an IP Address
 CIDLookupURL=The module brings an URL that can be used by an external tool to get the name of a thirdparty or contact from its phone number. URL to use is:

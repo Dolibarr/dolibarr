@@ -30,7 +30,7 @@ dol_include_once('/mymodule/core/modules/mymodule/modules_myobject.php');
 
 
 /**
- *	Class to manage customer Bom numbering rules advanced
+ *	Class to manage the Advanced numbering rule for MyObject
  */
 class mod_myobject_advanced extends ModeleNumRefMyObject
 {

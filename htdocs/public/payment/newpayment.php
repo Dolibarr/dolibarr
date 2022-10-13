@@ -1005,7 +1005,7 @@ if (!$source) {
 }
 
 
-// Payment on customer order
+// Payment on sales order
 if ($source == 'order') {
 	$found = true;
 	$langs->load("orders");

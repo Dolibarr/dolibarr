@@ -527,7 +527,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$cmd->classifyBilled($user); // TODO Move this in workflow like done for customer orders
+			$cmd->classifyBilled($user); // TODO Move this in workflow like done for sales orders
 
 			if (!empty($createbills_onebythird) && empty($TFactThird[$cmd->socid])) {
 				$TFactThird[$cmd->socid] = $objecttmp;

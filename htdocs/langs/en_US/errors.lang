@@ -14,6 +14,7 @@ ErrorLoginAlreadyExists=Login %s already exists.
 ErrorGroupAlreadyExists=Group %s already exists.
 ErrorEmailAlreadyExists=Email %s already exists.
 ErrorRecordNotFound=Record not found.
+ErrorRecordNotFoundShort=Not found
 ErrorFailToCopyFile=Failed to copy file '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToCopyDir=Failed to copy directory '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToRenameFile=Failed to rename file '<b>%s</b>' into '<b>%s</b>'.
