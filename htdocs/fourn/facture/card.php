@@ -2919,7 +2919,7 @@ if ($action == 'create') {
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Type
 		print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
@@ -3015,7 +3015,7 @@ if ($action == 'create') {
 		// Default terms of the settlement
 		$langs->load('bills');
 		print '<tr><td class="nowrap">';
-		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('PaymentConditions');
 		print '<td>';
 		if ($action != 'editconditions' && $form_permission) {
@@ -3044,7 +3044,7 @@ if ($action == 'create') {
 		// Mode of payment
 		$langs->load('bills');
 		print '<tr><td class="nowrap">';
-		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('PaymentMode');
 		print '</td>';
 		if ($action != 'editmode' && $form_permission2) {
@@ -3326,12 +3326,13 @@ if ($action == 'create') {
 					$paymentstatic->type_label = $objp->payment_type;
 
 					print '<tr class="oddeven">';
-					print '<td>';
+					print '<td class="nowrap">';
 					print $paymentstatic->getNomUrl(1);
 					print '</td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day').'</td>';
-					print '<td>';
-					print $form->form_modes_reglement(null, $objp->paiement_type, 'none').' '.$objp->num_payment;
+					$s = $form->form_modes_reglement(null, $objp->paiement_type, 'none').' '.$objp->num_payment;
+					print '<td class="tdoverflow125" title="'.dol_escape_htmltag($s).'">';
+					print $s;
 					print '</td>';
 					if (isModEnabled("banque")) {
 						$bankaccountstatic->id = $objp->baid;
