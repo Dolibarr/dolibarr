@@ -3330,7 +3330,7 @@ if ($action == 'create') {
 					print $paymentstatic->getNomUrl(1);
 					print '</td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day').'</td>';
-					$s = $form->form_modes_reglement(null, $objp->paiement_type, 'none').' '.$objp->num_payment;
+					$s = $form->form_modes_reglement(null, $objp->paiement_type, 'none', '', 1, 0, '', 1).' '.$objp->num_payment;
 					print '<td class="tdoverflow125" title="'.dol_escape_htmltag($s).'">';
 					print $s;
 					print '</td>';
