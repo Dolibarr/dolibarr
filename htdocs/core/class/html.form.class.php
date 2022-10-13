@@ -3534,7 +3534,13 @@ class Form
 					$opt .= ' disabled';
 				}
 				if (!empty($objp->idprodfournprice) && $objp->idprodfournprice > 0) {
-					$opt .= ' data-product-id="'.dol_escape_htmltag($objp->rowid).'" data-price-id="'.dol_escape_htmltag($objp->idprodfournprice).'" data-qty="'.dol_escape_htmltag($objp->quantity).'" data-up="'.dol_escape_htmltag($objp->unitprice).'" data-discount="'.dol_escape_htmltag($outdiscount).'" data-tvatx="'.dol_escape_htmltag($objp->tva_tx).'"';
+					$opt .= ' data-product-id="'.dol_escape_htmltag($objp->rowid).'"';
+					$opt .= ' data-price-id="'.dol_escape_htmltag($objp->idprodfournprice).'"';
+					$opt .= ' data-qty="'.dol_escape_htmltag($objp->quantity).'"';
+					$opt .= ' data-up="'.dol_escape_htmltag($objp->unitprice).'"';
+					$opt .= ' data-up-locale="'.dol_escape_htmltag(price($objp->unitprice)).'"';
+					$opt .= ' data-discount="'.dol_escape_htmltag($outdiscount).'"';
+					$opt .= ' data-tvatx="'.dol_escape_htmltag($objp->tva_tx).'"';
 				}
 				$opt .= ' data-description="'.dol_escape_htmltag($objp->description, 0, 1).'"';
 				$opt .= ' data-html="'.dol_escape_htmltag($optlabel).'"';
