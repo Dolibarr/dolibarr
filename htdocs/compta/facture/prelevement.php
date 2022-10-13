@@ -114,11 +114,7 @@ if (empty($reshook)) {
 			}
 			$paymentservice = GETPOST('paymentservice');
 
-			if (preg_match('/stripesepa/', $paymentservice)) {
-				$result = $object->demande_prelevement_stripe($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
-			} else {
-				$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
-			}
+			$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
 
 			if ($result > 0) {
 				$db->commit();
@@ -139,6 +135,14 @@ if (empty($reshook)) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.'&type='.$type);
 				exit;
 			}
+		}
+	}
+
+	// Payment with Direct Debit Stripe
+	if ($action == 'sepastripepayment' && $usercancreate) {
+		$result = $object->makeStripeSepaRequest($user, GETPOST('did', 'int'), 'direct-debit', 'facture');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -871,7 +875,8 @@ if ($object->id > 0) {
 
 			print '<td>';
 			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=new&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("SendToStripe").'</a>';
+				$langs->load("stripe");
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripepayment&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
 			}
 			print '</td>';
 
