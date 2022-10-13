@@ -6089,6 +6089,7 @@ abstract class CommonObject
 				// 2 : key fields name (if differ of rowid)
 				// 3 : key field parent (for dependent lists)
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
+				// 5 : sort field
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
@@ -6144,7 +6145,13 @@ abstract class CommonObject
 				$sql .= $sqlwhere;
 				//print $sql;
 
-				$sql .= ' ORDER BY '.implode(', ', $fields_label);
+				//fix #22571 : order by could be set
+				//remember 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]',
+				if(isset($InfoFieldList[5]) && $InfoFieldList[5] != "") {
+                    $sql .= ' ORDER BY '.$InfoFieldList[5];
+				} else {
+					$sql .= ' ORDER BY '.implode(', ', $fields_label);
+                }
 
 				dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
 				$resql = $this->db->query($sql);
