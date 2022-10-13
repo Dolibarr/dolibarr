@@ -3303,6 +3303,11 @@ li.expanded > a.fmdirlia.jqft.ecmjqft {
 	font-weight: bold !important;
 }
 
+a.fmdirlia {
+	white-space: break-spaces;
+	word-break: break-all;
+}
+
 
 /* ============================================================================== */
 /* Onglets                                                                        */
