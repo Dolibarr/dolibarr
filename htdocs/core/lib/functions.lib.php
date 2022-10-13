@@ -966,13 +966,15 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 
 			break;
 		case 'custom':
-			if (empty($filter)) {
-				return 'BadParameterForGETPOST - Param 3 of sanitizeVal()';
+			if (!empty($out)) {
+				if (empty($filter)) {
+					return 'BadParameterForGETPOST - Param 3 of sanitizeVal()';
+				}
+				/*if (empty($options)) {
+					return 'BadParameterForGETPOST - Param 4 of sanitizeVal()';
+				}*/
+				$out = filter_var($out, $filter, $options);
 			}
-			if (empty($options)) {
-				return 'BadParameterForGETPOST - Param 4 of sanitizeVal()';
-			}
-			$out = filter_var($out, $filter, $options);
 			break;
 	}
 

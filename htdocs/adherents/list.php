@@ -395,7 +395,10 @@ if ($search_type > 0) {
 	$sql .= " AND t.rowid=".((int) $search_type);
 }
 if ($search_filter == 'withoutsubscription') {
-	$sql .= " AND (datefin IS NULL OR t.subscription = '0')";
+	$sql .= " AND (datefin IS NULL)";
+}
+if ($search_filter == 'waitingsubscription') {
+	$sql .= " AND (datefin IS NULL AND t.subscription = '1')";
 }
 if ($search_filter == 'uptodate') {
 	$sql .= " AND (datefin >= '".$db->idate($now)."' OR t.subscription = '0')";
@@ -523,6 +526,9 @@ if (GETPOSTISSET("search_status")) {
 	}
 	if ($search_status == Adherent::STATUS_VALIDATED && $filter == '') {
 		$title = $langs->trans("MenuMembersValidated");
+	}
+	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'waitingsubscription') {
+		$title = $langs->trans("MembersWithWaitingSubscription");
 	}
 	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'withoutsubscription') {
 		$title = $langs->trans("MembersWithSubscriptionToReceive");
@@ -822,7 +828,8 @@ if (!empty($arrayfields['d.email']['checked'])) {
 // End of subscription date
 if (!empty($arrayfields['d.datefin']['checked'])) {
 	print '<td class="liste_titre center">';
-	$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
+	//$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
+	$selectarray = array('-1'=>'', 'waitingsubscription'=>$langs->trans("WaitingSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
 	print $form->selectarray('search_filter', $selectarray, $search_filter);
 	print '</td>';
 }
@@ -936,7 +943,7 @@ if (!empty($arrayfields['d.email']['checked'])) {
 	print_liste_field_titre($arrayfields['d.email']['label'], $_SERVER["PHP_SELF"], 'd.email', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['d.datefin']['checked'])) {
-	print_liste_field_titre($arrayfields['d.datefin']['label'], $_SERVER["PHP_SELF"], 'd.datefin', '', $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['d.datefin']['label'], $_SERVER["PHP_SELF"], 'd.datefin,t.subscription', '', $param, '', $sortfield, $sortorder, 'center ');
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -955,7 +962,7 @@ if (!empty($arrayfields['d.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['d.statut']['checked'])) {
-	print_liste_field_titre($arrayfields['d.statut']['label'], $_SERVER["PHP_SELF"], "d.statut", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['d.statut']['label'], $_SERVER["PHP_SELF"], "d.statut,t.subscription,d.datefin", "", $param, 'class="right"', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['d.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['d.import_key']['label'], $_SERVER["PHP_SELF"], "d.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1200,7 +1207,7 @@ while ($i < min($num, $limit)) {
 			}
 		} else {
 			if (!empty($obj->subscription)) {
-				print $langs->trans("SubscriptionNotReceived");
+				print '<span class="opacitymedium">'.$langs->trans("SubscriptionNotReceived").'</span>';
 				if ($obj->statut > 0) {
 					print " ".img_warning();
 				}
