@@ -354,7 +354,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 								$out .= "\n".$textnoformat."\n";
 							}
 
-							$out .= "</td>boximg\n";
+							$out .= "</td>\n";
 						}
 
 						$out .= "</tr>\n";
