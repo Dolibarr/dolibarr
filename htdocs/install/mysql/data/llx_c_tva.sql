@@ -400,5 +400,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (23
 --delete from llx_c_tva where rowid = 1181;		-- to delete a record that does not follow rules for rowid (fk_pays+'1')
 --insert into llx_c_tva(rowid, fk_pays, taux, recuperableonly, note, active) SELECT CONCAT(c.rowid, '1'), c.rowid, 0, 0, 'No VAT', 1 from llx_c_country as c where c.rowid not in (select fk_pays from llx_c_tva);
 
-
-
+-- BURUNDI (id country=61) -- https://www.objectif-import-export.fr/fr/marches-internationaux/fiche-pays/burundi/presentation-fiscalite
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2335,61,     '0','0','No VAT',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2336,61,    '10','0','VAT 10%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (2337,61,    '18','0','VAT 18%',1);

@@ -119,7 +119,7 @@ class MouvementStock extends CommonObject
 		'fk_origin' =>array('type'=>'integer', 'label'=>'Fk origin', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
 		'origintype' =>array('type'=>'varchar(32)', 'label'=>'Origintype', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>70),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->projet->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>75),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>75),
 		'inventorycode' =>array('type'=>'varchar(128)', 'label'=>'InventoryCode', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'batch' =>array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'eatby' =>array('type'=>'date', 'label'=>'Eatby', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
@@ -163,9 +163,10 @@ class MouvementStock extends CommonObject
 	 *	@param		boolean			$skip_batch			If set to true, stock movement is done without impacting batch record
 	 * 	@param		int				$id_product_batch	Id product_batch (when skip_batch is false and we already know which record of product_batch to use)
 	 *  @param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (usefull only if product is a subproduct)
+	 *  @param		int				$donotcleanemptylines				Do not clean lines in stock table with qty=0 (because we want to have this done by the caller)
 	 *	@return		int									<0 if KO, 0 if fk_product is null or product id does not exists, >0 if OK
 	 */
-	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0)
+	public function _create($user, $fk_product, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $skip_batch = false, $id_product_batch = 0, $disablestockchangeforsubproduct = 0, $donotcleanemptylines = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -271,7 +272,7 @@ class MouvementStock extends CommonObject
 		}
 
 		// Test if product require batch data. If yes, and there is not or values are not correct, we throw an error.
-		if (!empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch) {
+		if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 			if (empty($batch)) {
 				$langs->load("errors");
 				$this->errors[] = $langs->transnoentitiesnoconv("ErrorTryToMakeMoveOnProductRequiringBatchData", $product->ref);
@@ -383,7 +384,7 @@ class MouvementStock extends CommonObject
 		// Check if stock is enough when qty is < 0
 		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
 		if ($movestock && $qty < 0 && empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
-			if (!empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch) {
+			if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				$foundforbatch = 0;
 				$qtyisnotenough = 0;
 
@@ -543,7 +544,7 @@ class MouvementStock extends CommonObject
 			}
 
 			// Update detail of stock for the lot.
-			if (!$error && !empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch) {
+			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				if ($id_product_batch > 0) {
 					$result = $this->createBatch($id_product_batch, $qty);
 				} else {
@@ -574,16 +575,18 @@ class MouvementStock extends CommonObject
 				}
 			}
 
-			// If stock is now 0, we can remove entry into llx_product_stock, but only if there is no child lines into llx_product_batch (detail of batch, because we can imagine
-			// having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
-			$sql = "DELETE FROM ".$this->db->prefix()."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".$this->db->prefix()."product_batch as pb)";
-			$resql = $this->db->query($sql);
-			// We do not test error, it can fails if there is child in batch details
+			if (empty($donotcleanemptylines)) {
+				// If stock is now 0, we can remove entry into llx_product_stock, but only if there is no child lines into llx_product_batch (detail of batch, because we can imagine
+				// having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
+				$sql = "DELETE FROM ".$this->db->prefix()."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".$this->db->prefix()."product_batch as pb)";
+				$resql = $this->db->query($sql);
+				// We do not test error, it can fails if there is child in batch details
+			}
 		}
 
 		// Add movement for sub products (recursive call)
 		if (!$error && !empty($conf->global->PRODUIT_SOUSPRODUITS) && empty($conf->global->INDEPENDANT_SUBPRODUCT_STOCK) && empty($disablestockchangeforsubproduct)) {
-			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label, $inventorycode); // we use 0 as price, because AWP must not change for subproduct
+			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label, $inventorycode, $datem); // we use 0 as price, because AWP must not change for subproduct
 		}
 
 		if ($movestock && !$error) {
@@ -593,7 +596,7 @@ class MouvementStock extends CommonObject
 			// End call triggers
 
 			// Check unicity for serial numbered equipments once all movement were done.
-			if (!$error && !empty($conf->productbatch->enabled) && $product->hasbatch() && !$skip_batch) {
+			if (!$error && isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				if ($product->status_batch == 2 && $qty > 0) {	// We check only if we increased qty
 					if ($this->getBatchCount($fk_product, $batch) > 1) {
 						$error++;
@@ -702,17 +705,18 @@ class MouvementStock extends CommonObject
 	/**
 	 *  Create movement in database for all subproducts
 	 *
-	 * 	@param 		User	$user			Object user
-	 * 	@param		int		$idProduct		Id product
-	 * 	@param		int		$entrepot_id	Warehouse id
-	 * 	@param		int		$qty			Quantity
-	 * 	@param		int		$type			Type
-	 * 	@param		int		$price			Price
-	 * 	@param		string	$label			Label of movement
-	 *  @param		string	$inventorycode	Inventory code
-	 * 	@return 	int     				<0 if KO, 0 if OK
+	 * 	@param 		User			$user			Object user
+	 * 	@param		int				$idProduct		Id product
+	 * 	@param		int				$entrepot_id	Warehouse id
+	 * 	@param		int				$qty			Quantity
+	 * 	@param		int				$type			Type
+	 * 	@param		int				$price			Price
+	 * 	@param		string			$label			Label of movement
+	 *  @param		string			$inventorycode	Inventory code
+	 *  @param		integer|string	$datem			Force date of movement
+	 * 	@return 	int     		<0 if KO, 0 if OK
 	 */
-	private function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '')
+	private function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '')
 	{
 		global $langs;
 
@@ -744,7 +748,7 @@ class MouvementStock extends CommonObject
 			if (!$error) {
 				$tmpmove = dol_clone($this, 1);
 
-				$result = $tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode); // This will also call _createSubProduct making this recursive
+				$result = $tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode, $datem); // This will also call _createSubProduct making this recursive
 				if ($result < 0) {
 					$this->error = $tmpmove->error;
 					$this->errors = array_merge($this->errors, $tmpmove->errors);
@@ -764,53 +768,55 @@ class MouvementStock extends CommonObject
 	/**
 	 *	Decrease stock for product and subproducts
 	 *
-	 * 	@param 		User			$user			    Object user
-	 * 	@param		int				$fk_product		    Id product
-	 * 	@param		int				$entrepot_id	    Warehouse id
-	 * 	@param		int				$qty			    Quantity
-	 * 	@param		int				$price			    Price
-	 * 	@param		string			$label			    Label of stock movement
-	 * 	@param		integer|string	$datem			    Force date of movement
-	 *	@param		integer			$eatby			    eat-by date
-	 *	@param		integer			$sellby			    sell-by date
-	 *	@param		string			$batch			    batch number
-	 * 	@param		int				$id_product_batch	Id product_batch
-	 *  @param      string  		$inventorycode      Inventory code
-	 * 	@return		int								    <0 if KO, >0 if OK
+	 * 	@param 		User			$user			    	Object user
+	 * 	@param		int				$fk_product		    	Id product
+	 * 	@param		int				$entrepot_id	    	Warehouse id
+	 * 	@param		int				$qty			    	Quantity
+	 * 	@param		int				$price			    	Price
+	 * 	@param		string			$label			    	Label of stock movement
+	 * 	@param		integer|string	$datem			    	Force date of movement
+	 *	@param		integer			$eatby			    	eat-by date
+	 *	@param		integer			$sellby			    	sell-by date
+	 *	@param		string			$batch			    	batch number
+	 * 	@param		int				$id_product_batch		Id product_batch
+	 *  @param      string  		$inventorycode      	Inventory code
+	 *  @param		int				$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
+	 * 	@return		int								    	<0 if KO, >0 if OK
 	 */
-	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0, $inventorycode = '')
+	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)
 	{
 		global $conf;
 
 		$skip_batch = empty($conf->productbatch->enabled);
 
-		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
+		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch, 0, $donotcleanemptylines);
 	}
 
 	/**
 	 *	Increase stock for product and subproducts
 	 *
-	 * 	@param 		User			$user			     Object user
-	 * 	@param		int				$fk_product		     Id product
-	 * 	@param		int				$entrepot_id	     Warehouse id
-	 * 	@param		int				$qty			     Quantity
-	 * 	@param		int				$price			     Price
-	 * 	@param		string			$label			     Label of stock movement
-	 *	@param		integer|string	$eatby			     eat-by date
-	 *	@param		integer|string	$sellby			     sell-by date
-	 *	@param		string			$batch			     batch number
-	 * 	@param		integer|string	$datem			     Force date of movement
-	 * 	@param		int				$id_product_batch    Id product_batch
-	 *  @param      string			$inventorycode       Inventory code
-	 *	@return		int								     <0 if KO, >0 if OK
+	 * 	@param 		User			$user			     	Object user
+	 * 	@param		int				$fk_product		     	Id product
+	 * 	@param		int				$entrepot_id	     	Warehouse id
+	 * 	@param		int				$qty			     	Quantity
+	 * 	@param		int				$price			     	Price
+	 * 	@param		string			$label			     	Label of stock movement
+	 *	@param		integer|string	$eatby			     	eat-by date
+	 *	@param		integer|string	$sellby			     	sell-by date
+	 *	@param		string			$batch			     	batch number
+	 * 	@param		integer|string	$datem			     	Force date of movement
+	 * 	@param		int				$id_product_batch    	Id product_batch
+	 *  @param      string			$inventorycode       	Inventory code
+	 *  @param		int				$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
+	 *	@return		int								     	<0 if KO, >0 if OK
 	 */
-	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '')
+	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)
 	{
 		global $conf;
 
 		$skip_batch = empty($conf->productbatch->enabled);
 
-		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
+		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch, 0, $donotcleanemptylines);
 	}
 
 	/**

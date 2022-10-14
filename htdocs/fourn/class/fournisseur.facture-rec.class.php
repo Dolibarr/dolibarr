@@ -195,7 +195,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>210),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'$conf->projet->enabled', 'visible'=>-1, 'position'=>85),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>85),
 		'fk_account' =>array('type'=>'integer', 'label'=>'Fk account', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>175),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'Fk cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'Fk mode reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
@@ -564,7 +564,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= ', f.vat_src_code, f.localtax1, f.localtax2';
 		$sql .= ', f.total_tva, f.total_ht, f.total_ttc';
 		$sql .= ', f.fk_user_author, f.fk_user_modif';
-		$sql .= ', f.fk_projet, f.fk_account';
+		$sql .= ', f.fk_projet as fk_project, f.fk_account';
 		$sql .= ', f.fk_mode_reglement, p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= ', f.fk_cond_reglement, c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql .= ', f.date_lim_reglement';
@@ -610,7 +610,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->total_ttc                = $obj->total_ttc;
 				$this->user_author              = $obj->fk_user_author;
 				$this->user_modif               = $obj->fk_user_modif;
-				$this->fk_project               = $obj->fk_projet;
+				$this->fk_project               = $obj->fk_project;
 				$this->fk_account               = $obj->fk_account;
 				$this->mode_reglement_id        = $obj->fk_mode_reglement;
 				$this->mode_reglement_code      = $obj->mode_reglement_code;
@@ -982,9 +982,9 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 			$sql .= ') VALUES (';
 			$sql .= ' ' . (int) $facid;   // source supplier invoie id
-			$sql .= ', ' . (! empty($fk_product) ? "'" . $this->db->escape($fk_product) . "'" : 'null');
-			$sql .= ', ' . (! empty($ref) ? "'" . $this->db->escape($ref) . "'" : 'null');
-			$sql .= ', ' . (! empty($label) ? "'" . $this->db->escape($label) . "'" : 'null');
+			$sql .= ', ' . (!empty($fk_product) ? "'" . $this->db->escape($fk_product) . "'" : 'null');
+			$sql .= ', ' . (!empty($ref) ? "'" . $this->db->escape($ref) . "'" : 'null');
+			$sql .= ', ' . (!empty($label) ? "'" . $this->db->escape($label) . "'" : 'null');
 			$sql .= ", '" . $this->db->escape($desc) . "'";
 			$sql .= ', ' . price2num($pu_ht);
 			$sql .= ', ' . price2num($pu_ttc);
@@ -2154,8 +2154,8 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 		$sql .= ' fk_facture_fourn = ' . (int) $this->fk_facture_fourn;
 		$sql .= ', fk_parent_line = ' . (int) $this->fk_parent;
 		$sql .= ', fk_product = ' . (int) $this->fk_product;
-		$sql .= ', ref = ' . (! empty($this->ref) ? "'" . $this->db->escape($this->ref) . "'" : 'NULL');
-		$sql .= ", label = " . (! empty($this->label) ? "'" . $this->db->escape($this->label) . "'" : 'NULL');
+		$sql .= ', ref = ' . (!empty($this->ref) ? "'" . $this->db->escape($this->ref) . "'" : 'NULL');
+		$sql .= ", label = " . (!empty($this->label) ? "'" . $this->db->escape($this->label) . "'" : 'NULL');
 		$sql .= ", description = '" . $this->db->escape($this->description) . "'";
 		$sql .= ', pu_ht = ' . price2num($this->pu_ht);
 		$sql .= ', pu_ttc = ' . price2num($this->pu_ttc);

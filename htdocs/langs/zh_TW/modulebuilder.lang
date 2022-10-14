@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=此工具只能由有經驗的用戶或開發人員使用。它提供了構建或編輯您自己的模組的實用程序。替代 <a href="%s" target="_blank" rel="noopener noreferrer"> 手動開發的文件在此處 </a> 。
-EnterNameOfModuleDesc=輸入要新建的 模組/程式 名稱不留空白。使用大寫字母分隔單詞（例如：example: MyModule, EcommerceForShop, SyncWithMySystem...）
-EnterNameOfObjectDesc=輸入要新建的物件名稱不留空白。使用大寫字母分隔單詞（例如：MyObject, Student, Teacher...）。將生成 CRUD class 檔案，以及 API 檔案，頁面用來 列出/新增/編輯/刪除 對象及SQL的檔案將自動生成。
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=已生成/已編輯 模組的路徑（外部模組的首個目錄定義為%s）: <strong> %s </strong>
 ModuleBuilderDesc3=已找到 生成的/可編輯的模組：<strong> %s </strong>
 ModuleBuilderDesc4=當模組目錄的根目錄中存在檔案<strong> %s </strong>時，模組被偵測為"可編輯”
 NewModule=新模組
 NewObjectInModulebuilder=新項目
+NewDictionary=New dictionary
 ModuleKey=模組金鑰
 ObjectKey=項目金鑰
+DicKey=Dictionary key
 ModuleInitialized=模組初始化
 FilesForObjectInitialized=初始化新項目'%s'的檔案
 FilesForObjectUpdated=項目'%s'的檔案已更新（.sql檔案和.class.php檔案）

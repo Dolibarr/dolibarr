@@ -78,11 +78,11 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 
-		if (! empty($conf->global->MAIN_MODULE_LDAP)) {
+		if (!empty($conf->global->MAIN_MODULE_LDAP)) {
 			print "\n".__METHOD__." module LDAP must be disabled.\n"; die(1);
 		}
 
@@ -96,7 +96,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -109,7 +109,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -125,7 +125,7 @@ class UserTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -262,11 +262,39 @@ class UserTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
+	 * testUserHasRight
+	 * @param	User  $localobject		 User
+	 * @return  User  $localobject		 User
+	 * @depends testUserOther
+	 */
+	public function testUserHasRight($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+		/*$result=$localobject->setstatus(0);
+		print __METHOD__." id=".$localobject->id." result=".$result."\n";
+		$this->assertLessThan($result, 0);
+		*/
+
+		print __METHOD__." id=". $localobject->id ."\n";
+		//$this->assertNotEquals($user->date_creation, '');
+		$localobject->addrights(0, 'supplier_proposal');
+		$this->assertEquals($localobject->hasRight('member', ''), 0);
+		$this->assertEquals($localobject->hasRight('member', 'member'), 0);$this->assertEquals($localobject->hasRight('product', 'member', 'read'), 0);
+		$this->assertEquals($localobject->hasRight('member', 'member'), 0);$this->assertEquals($localobject->hasRight('produit', 'member', 'read'), 0);
+
+		return $localobject;
+	}
+
+	/**
 	 * testUserSetPassword
 	 *
 	 * @param   User  $localobject     User
 	 * @return  void
-	 * @depends testUserOther
+	 * @depends testUserHasRight
 	 * The depends says test is run only if previous is ok
 	 */
 	public function testUserSetPassword($localobject)

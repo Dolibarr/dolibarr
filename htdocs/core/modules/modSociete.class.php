@@ -71,7 +71,7 @@ class modSociete extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array("modExpedition", "modFacture", "modFournisseur", "modFicheinter", "modPropale", "modContrat", "modCommande"); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("companies", 'bills', "compta", "admin", "banks");
 
 		// Constants
@@ -148,7 +148,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][1] = 'Read thirdparties customers';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'thirparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][4] = 'thirdparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
 
 		$r++;
@@ -172,7 +172,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][1] = 'Create thirdparties customers';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'thirparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][4] = 'thirdparty_customer_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
 		$this->rights[$r][5] = 'read';
 
 		$r++;
@@ -295,7 +295,7 @@ class modSociete extends DolibarrModules
 		// Add multicompany field
 		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			$nbofallowedentities = count(explode(',', getEntity('societe'))); // If project are shared, nb will be > 1
-			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) {
+			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
 				$this->export_fields_array[$r] += array('s.entity'=>'Entity');
 			}
 		}
@@ -378,8 +378,8 @@ class modSociete extends DolibarrModules
 			't.libelle'=>"ThirdPartyType"
 		);
 		// Add multicompany field
-		if (! empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
-			if (!empty($conf->multicompany->enabled)) {
+		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+			if (isModEnabled('multicompany')) {
 				$nbofallowedentities = count(explode(',', getEntity('contact')));
 				if ($nbofallowedentities > 1) {
 					$this->export_fields_array[$r]['c.entity'] = 'Entity';
@@ -413,7 +413,7 @@ class modSociete extends DolibarrModules
 			't.libelle'=>"company",
 			's.entity'=>'company',
 		); // We define here only fields that use another picto
-		if (empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+		if (!isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 			unset($this->export_fields_array[$r]['s.code_fournisseur']);
 			unset($this->export_entities_array[$r]['s.code_fournisseur']);
 		}
@@ -464,7 +464,7 @@ class modSociete extends DolibarrModules
 			'extra' => MAIN_DB_PREFIX.'societe_extrafields'
 		); // List of tables to insert into (insert done in same order)
 		$this->import_fields_array[$r] = array(//field order as per structure of table llx_societe
-			's.nom' => "Name*",
+			's.nom' => "ThirdPartyName*",
 			's.name_alias' => "AliasNameShort",
 			's.parent' => "ParentCompany",
 			's.status' => "Status*",
@@ -520,7 +520,7 @@ class modSociete extends DolibarrModules
 			$this->import_fields_array[$r] += array('s.accountancy_code_sell'=>'ProductAccountancySellCode', 's.accountancy_code_buy'=>'ProductAccountancyBuyCode');
 		}
 		// Add social networks fields
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -586,7 +586,26 @@ class modSociete extends DolibarrModules
 				'class' => 'Account',
 				'method' => 'fetch',
 				'element' => 'BankAccount'
-		//          ),
+			),
+			's.fk_stcomm' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/core/class/cgenericdic.class.php',
+				'class' => 'CGenericDic',
+				'method' => 'fetch',
+				'dict' => 'DictionaryProspectStatus',
+				'element' => 'c_stcomm',
+				'table_element' => 'c_stcomm'
+			),
+			/*
+			's.fk_prospectlevel' => array(
+				'rule' => 'fetchidfromcodeid',
+				'classfile' => '/core/class/cgenericdic.class.php',
+				'class' => 'CGenericDic',
+				'method' => 'fetch',
+				'dict' => 'DictionaryProspectLevel',
+				'element' => 'c_prospectlevel',
+				'table_element' => 'c_prospectlevel'
+			),*/
 		//          TODO
 		//          's.fk_incoterms' => array(
 		//              'rule' => 'fetchidfromcodeid',
@@ -594,7 +613,7 @@ class modSociete extends DolibarrModules
 		//              'class' => 'Cincoterm',
 		//              'method' => 'fetch',
 		//              'dict' => 'IncotermLabel'
-			)
+		//			)
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 		$this->import_regex_array[$r] = array(//field order as per structure of table llx_societe
@@ -666,7 +685,7 @@ class modSociete extends DolibarrModules
 			's.accountancy_code_buy' => '607',
 		);
 		$this->import_updatekeys_array[$r] = array(
-			's.nom' => 'Name',
+			's.nom' => 'ThirdPartyName',
 			's.zip' => 'Zip',
 			's.email' => 'Email',
 			's.code_client' => 'CustomerCode',
@@ -674,6 +693,15 @@ class modSociete extends DolibarrModules
 			's.code_compta' => 'CustomerAccountancyCode',
 			's.code_compta_fournisseur' => 'SupplierAccountancyCode'
 		);
+		if (isModEnabled('socialnetworks')) {
+			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
+			$resql = $this->db->query($sql);
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 's.socialnetworks_'.$obj->code;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_updatekeys_array[$r][$fieldname] = $fieldlabel;
+			}
+		}
 		// Add profids as criteria to search duplicates
 		$langs->load("companies");
 		$i=1;
@@ -696,7 +724,7 @@ class modSociete extends DolibarrModules
 			$i++;
 		}
 
-		// Import list of contacts/additional addresses and attributes
+		// Import list of contacts/addresses of thirparties and attributes
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = 'ImportDataset_company_2';
@@ -719,7 +747,7 @@ class modSociete extends DolibarrModules
 			's.fk_departement' => "StateCode",
 			's.fk_pays' => "CountryCode",
 			's.birthday' => "DateOfBirth",
-			's.poste' => "Role",
+			's.poste' => "PostOrFunction",
 			's.phone' => "Phone",
 			's.phone_perso' => "PhonePerso",
 			's.phone_mobile' => "PhoneMobile",
@@ -729,7 +757,7 @@ class modSociete extends DolibarrModules
 			's.note_public' => "NotePublic"
 		);
 		// Add social networks fields
-		if (!empty($conf->socialnetworks->enabled)) {
+		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -739,7 +767,7 @@ class modSociete extends DolibarrModules
 			}
 		}
 		// Add extra fields
-		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type != 'separate' AND elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'socpeople' AND entity IN (0, ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if ($resql) {    // This can fail when class is used on an old database (during a migration for example)
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -766,7 +794,7 @@ class modSociete extends DolibarrModules
 				'classfile' => '/core/class/cstate.class.php',
 				'class' => 'Cstate',
 				'method' => 'fetch',
-				'dict' => 'DictionaryStateCode'
+				'dict' => 'DictionaryCanton'
 			),
 			's.fk_pays' => array(
 				'rule' => 'fetchidfromcodeid',
@@ -804,8 +832,18 @@ class modSociete extends DolibarrModules
 			's.note_public' => "My public note"
 		);
 		$this->import_updatekeys_array[$r] = array(
-			's.rowid' => 'Id'
+			's.rowid' => 'Id',
+			's.lastname' => "Lastname",
 		);
+		if (isModEnabled('socialnetworks')) {
+			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
+			$resql = $this->db->query($sql);
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 's.socialnetworks_'.$obj->code;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_updatekeys_array[$r][$fieldname] = $fieldlabel;
+			}
+		}
 
 		// Import Bank Accounts
 		$r++;

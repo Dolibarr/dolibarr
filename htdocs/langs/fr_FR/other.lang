@@ -110,7 +110,7 @@ ChooseYourDemoProfilMore=...ou construisez votre propre profil<br>(sélection ma
 DemoFundation=Gestion des adhérents d'une association
 DemoFundation2=Gestion des adhérents et trésorerie d'une association
 DemoCompanyServiceOnly=Société ou indépendant faisant du service uniquement
-DemoCompanyShopWithCashDesk=Gestion d'un magasin avec caisse
+DemoCompanyShopWithCashDesk=Gérer une boutique avec caisse
 DemoCompanyProductAndStocks=Magasin vendant des produits via points de vente
 DemoCompanyManufacturing=Société de fabrication de produits
 DemoCompanyAll=Société avec de multiples activités (tous les modules principaux)
@@ -303,3 +303,31 @@ SelectTheTypeOfObjectToAnalyze=Sélectionner un objet pour en voir les statistiq
 ConfirmBtnCommonContent = Êtes-vous sûr de vouloir "%s" ?
 ConfirmBtnCommonTitle = Confirmer votre action
 CloseDialog = Fermer
+Autofill = Remplissage automatique
+
+# externalsite
+ExternalSiteSetup=Configuration du lien vers le site externe
+ExternalSiteURL=URL du site externe du contenu iFrame HTML
+ExternalSiteModuleNotComplete=La configuration du module "Site externe" est incomplète.
+ExampleMyMenuEntry=Mon entrée de menu
+
+# ftp
+FTPClientSetup=Connexion client FTP/FTPS
+NewFTPClient=Nouvelle connexion FTP/FTPS
+FTPArea=Zone FTP/SFTP
+FTPAreaDesc=Vue d'un serveur FTP/FTPS
+SetupOfFTPClientModuleNotComplete=La configuration du client FTP/FTPS semble incomplète
+FTPFeatureNotSupportedByYourPHP=Votre version de PHP ne supporte pas les fonctions FTP/FTPS
+FailedToConnectToFTPServer=Échec de connexion au serveur (serveur %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Échec de l'identification sur le serveur avec l'identifiant et le mot de passe saisis
+FTPFailedToRemoveFile=Échec suppression fichier <b>%s</b>.
+FTPFailedToRemoveDir=Échec suppression répertoire <b>%s</b> (Vérifiez les permissions et que le répertoire soit vide).
+FTPPassiveMode=Mode passif
+ChooseAFTPEntryIntoMenu=Sélection d'un site FTP/FTPS depuis le menu
+FailedToGetFile=Echec à la récupération du fichier %s
+ErrorFTPNodisconnect=Erreur de déconnexion du serveur FTP/SFTP
+FileWasUpload=Le fichier <b>%s</b> a été téléchargé
+FTPFailedToUploadFile=Impossible de télécharger le fichier <b>%s</b>.
+AddFolder=Créer un dossier
+FileWasCreateFolder=Le dossier <b>%s</b> a été créé
+FTPFailedToCreateFolder=Échec de la création du dossier <b>%s</b>.

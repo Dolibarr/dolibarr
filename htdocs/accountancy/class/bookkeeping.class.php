@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2020  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  *
@@ -168,6 +168,16 @@ class BookKeeping extends CommonObject
 	 * @var int accounting transaction id
 	 */
 	public $piece_num;
+
+	/**
+	 * @var integer|string date of movement validated & lock
+	 */
+	public $date_validation;
+
+	/**
+	 * @var integer|string date of movement who are noticed like exported
+	 */
+	public $date_export;
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -606,9 +616,13 @@ class BookKeeping extends CommonObject
 		if (empty($this->credit)) {
 			$this->credit = 0;
 		}
+		if (empty($this->montant)) {
+			$this->montant = 0;
+		}
 
 		$this->debit = price2num($this->debit, 'MT');
 		$this->credit = price2num($this->credit, 'MT');
+		$this->montant = price2num($this->montant, 'MT');
 
 		$now = dol_now();
 
@@ -784,8 +798,7 @@ class BookKeeping extends CommonObject
 				$this->piece_num = $obj->piece_num;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_export = $this->db->jdate($obj->date_export);
-				$this->date_validation = $this->db->jdate($obj->date_validated);
-				$this->date_validation = $this->db->jdate($obj->date_validation);
+				$this->date_validation = isset($obj->date_validated) ? $this->db->jdate($obj->date_validated) : '';
 			}
 			$this->db->free($resql);
 
@@ -897,7 +910,8 @@ class BookKeeping extends CommonObject
 		}
 		// Affichage par compte comptable
 		if (!empty($option)) {
-			$sql .= ' AND t.subledger_account IS NOT NULL';
+			$sql .= " AND t.subledger_account IS NOT NULL";
+			$sql .= " AND t.subledger_account <> ''";
 			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
 			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
 		} else {
@@ -1119,14 +1133,13 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int $limit offset limit
-	 * @param int $offset offset limit
-	 * @param array $filter filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param 	string 	$sortorder 		Sort Order
+	 * @param 	string 	$sortfield 		Sort field
+	 * @param 	int 	$limit 			offset limit
+	 * @param 	int 	$offset 		offset limit
+	 * @param 	array 	$filter 		filter array
+	 * @param 	string 	$filtermode 	filter mode (AND or OR)
+	 * @return 	int 					<0 if KO, >0 if OK
 	 */
 	public function fetchAllBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
@@ -1147,7 +1160,7 @@ class BookKeeping extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.doc_date') {
 					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
+				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=' || $key == 't.doc_date>' || $key == 't.doc_date<') {
 					$sqlwhere[] = $key."'".$this->db->idate($value)."'";
 				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.subledger_account>=' || $key == 't.subledger_account<=') {
 					$sqlwhere[] = $key."'".$this->db->escape($value)."'";
@@ -1661,11 +1674,12 @@ class BookKeeping extends CommonObject
 			$this->doc_date = $this->db->jdate($obj->doc_date);
 			$this->doc_ref = $obj->doc_ref;
 			$this->doc_type = $obj->doc_type;
-			$this->date_creation = $obj->date_creation;
-			$this->date_modification = $obj->date_modification;
-			$this->date_export = $obj->date_export;
-			$this->date_validation = $obj->date_validated;
-			$this->date_validation = $obj->date_validation;
+			$this->date_creation = $this->db->jdate($obj->date_creation);
+			$this->date_modification = $this->db->jdate($obj->date_modification);
+			if ($mode != "_tmp") {
+				$this->date_export = $this->db->jdate($obj->date_export);
+			}
+			$this->date_validation = $this->db->jdate($obj->date_validation);
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(__METHOD__.$this->error, LOG_ERR);
@@ -1761,7 +1775,9 @@ class BookKeeping extends CommonObject
 				$line->piece_num = $obj->piece_num;
 				$line->date_creation = $obj->date_creation;
 				$line->date_modification = $obj->date_modification;
-				$line->date_export = $obj->date_export;
+				if ($mode != "_tmp") {
+					$line->date_export = $obj->date_export;
+				}
 				$line->date_validation = $obj->date_validation;
 
 				$this->linesmvt[] = $line;

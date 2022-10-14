@@ -25,6 +25,7 @@
  *	\brief      Member translation page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -34,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('members', 'languages'));
 
-$id = GETPOST('rowid', 'int');
+$id = GETPOST('rowid', 'int') ? GETPOST('rowid', 'int') : GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $ref = GETPOST('ref', 'alphanohtml');
@@ -61,7 +62,12 @@ if ($cancel == $langs->trans("Cancel")) {
 if ($action == 'delete' && GETPOST('langtodelete', 'alpha')) {
 	$object = new AdherentType($db);
 	$object->fetch($id);
-	$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
+	$result = $object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
+	if ($result > 0) {
+		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
+		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id);
+		exit;
+	}
 }
 
 // Add translation
@@ -220,7 +226,7 @@ if ($action == 'edit') {
 			print '<table class="border centpercent">';
 			print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" class="minwidth300" value="'.dol_escape_htmltag($object->multilangs[$key]["label"]).'"></td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
+			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_3, '90%');
 			$doleditor->Create();
 			print '</td></tr>';
 			print '</td></tr>';
@@ -283,7 +289,7 @@ if ($action == 'create' && $user->rights->adherent->configurer) {
 	print '</td></tr>';
 	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" class="minwidth300" value="'.dol_escape_htmltag(GETPOST("libelle", 'alphanohtml')).'"></td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_3, '90%');
+	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 

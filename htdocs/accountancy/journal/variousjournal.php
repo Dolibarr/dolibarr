@@ -21,6 +21,7 @@
  * \brief		Page of a journal
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -51,7 +52,7 @@ if ($result > 0) {
 } elseif ($result < 0) {
 	dol_print_error('', $object->error, $object->errors);
 } elseif ($result == 0) {
-	accessforbidden($langs->trans('ErrorRecordNotFound'));
+	accessforbidden('ErrorRecordNotFound');
 }
 
 $hookmanager->initHooks(array('globaljournal', $object->nature.'journal'));
@@ -83,7 +84,7 @@ if (!is_array($journal_data)) {
 }
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
@@ -201,6 +202,9 @@ if ($object->nature == 2 || $object->nature == 3) {
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
+	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
+	}
 }
 
 $listofchoices = array('notyet' => $langs->trans("NotYetInGeneralLedger"), 'already' => $langs->trans("AlreadyInGeneralLedger"));
@@ -236,7 +240,7 @@ if ($some_mandatory_steps_of_setup_were_not_done) {
 	print ' : ' . $langs->trans("AccountancyAreaDescMisc", 4, '<strong>' . $langs->transnoentitiesnoconv("MenuAccountancy") . '-' . $langs->transnoentitiesnoconv("Setup") . "-" . $langs->transnoentitiesnoconv("MenuDefaultAccounts") . '</strong>');
 	print '</div>';
 }
-print '<div class="tabsAction tabsActionNoBottom">';
+print '<div class="tabsAction tabsActionNoBottom centerimp">';
 if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
 	print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 }
@@ -289,19 +293,21 @@ print '<td class="right">' . $langs->trans("Debit") . '</td>';
 print '<td class="right">' . $langs->trans("Credit") . '</td>';
 print "</tr>\n";
 
-foreach ($journal_data as $element_id => $element) {
-	foreach ($element['blocks'] as $lines) {
-		foreach ($lines as $line) {
-			print '<tr class="oddeven">';
-			print '<td>' . $line['date'] . '</td>';
-			print '<td>' . $line['piece'] . '</td>';
-			print '<td>' . $line['account_accounting'] . '</td>';
-			print '<td>' . $line['subledger_account'] . '</td>';
-			print '<td>' . $line['label_operation'] . '</td>';
-			if ($object->nature == 4) print '<td class="center">' . $line['payment_mode'] . '</td>';
-			print '<td class="right nowraponall">' . $line['debit'] . '</td>';
-			print '<td class="right nowraponall">' . $line['credit'] . '</td>';
-			print '</tr>';
+if (is_array($journal_data) && !empty($journal_data)) {
+	foreach ($journal_data as $element_id => $element) {
+		foreach ($element['blocks'] as $lines) {
+			foreach ($lines as $line) {
+				print '<tr class="oddeven">';
+				print '<td>' . $line['date'] . '</td>';
+				print '<td>' . $line['piece'] . '</td>';
+				print '<td>' . $line['account_accounting'] . '</td>';
+				print '<td>' . $line['subledger_account'] . '</td>';
+				print '<td>' . $line['label_operation'] . '</td>';
+				if ($object->nature == 4) print '<td class="center">' . $line['payment_mode'] . '</td>';
+				print '<td class="right nowraponall">' . $line['debit'] . '</td>';
+				print '<td class="right nowraponall">' . $line['credit'] . '</td>';
+				print '</tr>';
+			}
 		}
 	}
 }

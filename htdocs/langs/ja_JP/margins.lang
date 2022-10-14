@@ -17,9 +17,9 @@ ProductMargins=製品利益
 CustomerMargins=顧客利益
 SalesRepresentativeMargins=営業担当者の利益
 ContactOfInvoice=請求書の連絡先
-UserMargins=ユーザー利益
+UserMargins=ユーザ利益
 ProductService=製品やサービス
-AllProducts=すべての製品とサービス
+AllProducts=全製品とサービス
 ChooseProduct/Service=製品またはサービスを選択すること
 ForceBuyingPriceIfNull=定義されていない場合、購入/原価を販売価格に強制する
 ForceBuyingPriceIfNullDetails=新しい行を追加するときに購入/原価が提供されておらず、このオプションが「オン」の場合、マージンは新しい行の0%%になる（購入/原価=販売価格）。このオプションが「オフ」（推奨）の場合、マージンはデフォルトで提案されている値と等しくなる（デフォルト値が見つからない場合は、100%%になる可能性がある）。
@@ -42,4 +42,4 @@ rateMustBeNumeric=レートは数値でなければならない
 markRateShouldBeLesserThan100=マーク率は100未満である必要がある
 ShowMarginInfos=利益情報を表示する
 CheckMargins=利益の詳細
-MarginPerSaleRepresentativeWarning=ユーザーあたりの利益の報告書は、取引先と営業担当者の間のリンクを使用して、各営業担当者の利益を計算する。一部の取引先には専任の営業担当者がいない場合や、一部の取引先が複数にリンクされている場合があるため、一部の金額はこの報告書に含まれない場合があり(営業担当者がいない場合)、一部は異なる行に表示される場合がある(営業担当者ごとに) 。
+MarginPerSaleRepresentativeWarning=ユーザあたりの利益の報告書は、取引先と営業担当者の間のリンクを使用して、各営業担当者の利益を計算する。一部の取引先には専任の営業担当者がいない場合や、一部の取引先が複数にリンクされている場合があるため、一部の金額はこの報告書に含まれない場合があり(営業担当者がいない場合)、一部は異なる行に表示される場合がある(営業担当者ごとに) 。

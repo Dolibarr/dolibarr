@@ -113,7 +113,7 @@ class FormAdmin
 			$out .= '>'.$langs->trans("AutoDetectLang").'</option>';
 		}
 
-		asort($langs_available);
+		asort($langs_available);	// array('XX' => 'Language (Country)', ...)
 
 		foreach ($langs_available as $key => $value) {
 			$valuetoshow = $value;
@@ -343,6 +343,8 @@ class FormAdmin
 			print '</option>'."\n";
 		}
 		print '</select>';
+
+		print ajax_combobox($htmlname);
 	}
 
 

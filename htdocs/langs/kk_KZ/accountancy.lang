@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Қайырымдылықты тіркеу үшін б
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Жазылымдарды тіркеу үшін бухгалтерлік есеп
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Клиенттердің депозитін тіркеу үшін әдепкі бойынша бухгалтерлік есеп
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Сатып алынған өнімдер бойынша әдепкі бойынша бухгалтерлік есеп шоты (егер өнім парағында анықталмаса қолданылады)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=ЕЭК -те сатып алынған өнімдер бойынша әдепкі бойынша бухгалтерлік есеп шоты (егер өнім парағында анықталмаса қолданылады)
@@ -289,7 +290,7 @@ ValidateHistory=Автоматты түрде байлау
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Қате, сіз бұл есептік жазбаны жоя алмайсыз, себебі ол пайдаланылады
-MvtNotCorrectlyBalanced=Қозғалыс дұрыс теңгерілмеген. Дебет = %s | Несие = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Тепе -теңдік
 FicheVentilation=Міндетті карта
 GeneralLedgerIsWritten=Мәмілелер кітапта жазылады

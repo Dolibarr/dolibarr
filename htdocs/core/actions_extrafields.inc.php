@@ -28,8 +28,11 @@ $maxsizeint = 10;
 $mesg = array();
 
 $extrasize = GETPOST('size', 'intcomma');
-$type = GETPOST('type', 'alpha');
-$param = GETPOST('param', 'alpha');
+$type = GETPOST('type', 'alphanohtml');
+$param = GETPOST('param', 'alphanohtml');
+$css = GETPOST('css', 'alphanohtml');
+$cssview = GETPOST('cssview', 'alphanohtml');
+$csslist = GETPOST('csslist', 'alphanohtml');
 
 if ($type == 'double' && strpos($extrasize, ',') === false) {
 	$extrasize = '24,8';
@@ -195,7 +198,8 @@ if ($action == 'add') {
 					GETPOST('langfile', 'alpha'),
 					1,
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
-					GETPOST('printable', 'alpha')
+					GETPOST('printable', 'alpha'),
+					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist)
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
@@ -365,7 +369,8 @@ if ($action == 'update') {
 					GETPOST('langfile'),
 					GETPOST('enabled', 'alpha'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
-					GETPOST('printable', 'alpha')
+					GETPOST('printable', 'alpha'),
+					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist)
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');

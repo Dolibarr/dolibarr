@@ -26,8 +26,6 @@
 /**
  * Class Ctyperesource
  *
- * Put here description of your class
- *
  * @see CommonObject
  */
 class Ctyperesource
@@ -93,26 +91,15 @@ class Ctyperesource
 			 $this->active = trim($this->active);
 		}
 
-
-
-		// Check parameters
-		// Put here code to add control on parameters values
-
 		// Insert request
 		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
-
 		$sql .= 'code,';
 		$sql .= 'label';
 		$sql .= 'active';
-
-
 		$sql .= ') VALUES (';
-
 		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
 		$sql .= ' '.(!isset($this->active) ? 'NULL' : $this->active);
-
-
 		$sql .= ')';
 
 		$this->db->begin();
@@ -176,7 +163,6 @@ class Ctyperesource
 		} elseif ($label) {
 			$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
 		}
-
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -308,12 +294,9 @@ class Ctyperesource
 
 		// Update request
 		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
-
 		$sql .= ' code = '.(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").',';
 		$sql .= ' label = '.(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").',';
 		$sql .= ' active = '.(isset($this->active) ? $this->active : "null");
-
-
 		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();

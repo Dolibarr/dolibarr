@@ -26,6 +26,7 @@
  *       \brief      Page to setup GUI display options
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -76,7 +77,7 @@ if (preg_match('/^(set|del)_([A-Z_]+)$/', $action, $regs)) {
 }
 
 if ($action == 'removebackgroundlogin' && !empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
-	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$logofile = $conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_LOGIN_BACKGROUND;
@@ -99,11 +100,29 @@ if ($action == 'update') {
 	$error = 0;
 
 	if ($mode == 'template') {
-		dolibarr_set_const($db, "MAIN_THEME", GETPOST("main_theme", 'aZ09'), 'chaine', 0, '', $conf->entity);
+		//dolibarr_del_const($db, "MAIN_THEME", 0);	// To be sure we don't have this constant set for all entities
 
-		/*$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
-		if (! $val) dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
-		else dolibarr_set_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', GETPOST('THEME_TOPMENU_DISABLE_IMAGE'), 'chaine', 0, '', $conf->entity);*/
+		dolibarr_set_const($db, "MAIN_THEME", GETPOST("main_theme", 'aZ09'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
+
+		if (GETPOSTISSET('THEME_DARKMODEENABLED')) {
+			$val = GETPOST('THEME_DARKMODEENABLED');
+			if (!$val) {
+				dolibarr_del_const($db, "THEME_DARKMODEENABLED", $conf->entity);
+			}
+			if ($val) {
+				dolibarr_set_const($db, "THEME_DARKMODEENABLED", $val, 'chaine', 0, '', $conf->entity);
+			}
+		}
+
+		if (GETPOSTISSET('THEME_TOPMENU_DISABLE_IMAGE')) {
+			$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
+			if (!$val) {
+				dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
+			} else {
+				dolibarr_set_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', GETPOST('THEME_TOPMENU_DISABLE_IMAGE'), 'chaine', 0, '', $conf->entity);
+			}
+		}
 
 		$val = (implode(',', (colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'), array()))));
 		if ($val == '') {
@@ -222,7 +241,7 @@ if ($action == 'update') {
 
 	if ($mode == 'other') {
 		dolibarr_set_const($db, "MAIN_LANG_DEFAULT", GETPOST("MAIN_LANG_DEFAULT", 'aZ09'), 'chaine', 0, '', $conf->entity);
-		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 
 		dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT", GETPOST("main_size_liste_limit", 'int'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT", GETPOST("main_size_shortliste_limit", 'int'), 'chaine', 0, '', $conf->entity);
@@ -367,6 +386,20 @@ if ($mode == 'other') {
 	print '<td class="titlefieldmiddle"></td>';
 	print '</tr>';
 
+	// Show Quick Add link
+	print '<tr class="oddeven"><td>' . $langs->trans("ShowQuickAddLink") . '</td><td>';
+	print ajax_constantonoff("MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
+	print '</tr>';
+
+	// Hide wiki link on login page
+	$pictohelp = '<span class="fa fa-question-circle"></span>';
+	print '<tr class="oddeven"><td>' . str_replace('{picto}', $pictohelp, $langs->trans("DisableLinkToHelp", '{picto}')) . '</td><td>';
+	print ajax_constantonoff("MAIN_HELP_DISABLELINK", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	//print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK) ? $conf->global->MAIN_HELP_DISABLELINK : 0, 1);
+	print '</td>';
+	print '</tr>';
+
 	// Max size of lists
 	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
 	print '</tr>';
@@ -431,25 +464,11 @@ if ($mode == 'other') {
 	print '</tr>';
 	*/
 
-	// Show Quick Add link
-	print '<tr class="oddeven"><td>' . $langs->trans("ShowQuickAddLink") . '</td><td>';
-	print ajax_constantonoff("MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
-	print '</td>';
-	print '</tr>';
-
 	// Show bugtrack link
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")), $langs->trans("ShowBugTrackLinkDesc"));
 	print '</td><td>';
 	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . (empty($conf->global->MAIN_BUGTRACK_ENABLELINK) ? '' : $conf->global->MAIN_BUGTRACK_ENABLELINK) . '">';
-	print '</td>';
-	print '</tr>';
-
-	// Hide wiki link on login page
-	$pictohelp = '<span class="fa fa-question-circle"></span>';
-	print '<tr class="oddeven"><td>' . str_replace('{picto}', $pictohelp, $langs->trans("DisableLinkToHelp", '{picto}')) . '</td><td>';
-	print ajax_constantonoff("MAIN_HELP_DISABLELINK", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
-	//print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK) ? $conf->global->MAIN_HELP_DISABLELINK : 0, 1);
 	print '</td>';
 	print '</tr>';
 
@@ -628,12 +647,17 @@ if ($mode == 'login') {
 	if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
 		$disabled = ' disabled="disabled"';
 	}
+	$maxfilesizearray = getMaxFileSizeArray();
+	$maxmin = $maxfilesizearray['maxmin'];
+	if ($maxmin > 0) {
+		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+	}
 	print '<input type="file" class="flat maxwidthinputfileonsmartphone" name="imagebackground" id="imagebackground"' . $disabled . '>';
 	if ($disabled) {
 		print '(' . $langs->trans("DisabledByOptionADD_UNSPLASH_LOGIN_BACKGROUND") . ') ';
 	}
 	if (!empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
-		print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=removebackgroundlogin">' . img_delete($langs->trans("Delete")) . '</a>';
+		print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=removebackgroundlogin&token='.newToken().'&mode=login">' . img_delete($langs->trans("Delete")) . '</a>';
 		if (file_exists($conf->mycompany->dir_output . '/logos/' . $conf->global->MAIN_LOGIN_BACKGROUND)) {
 			print ' &nbsp; ';
 			print '<img class="paddingleft valignmiddle" width="100" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;file=' . urlencode('logos/' . $conf->global->MAIN_LOGIN_BACKGROUND) . '">';

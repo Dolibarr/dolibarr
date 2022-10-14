@@ -27,10 +27,7 @@
  *		\brief      Page to list actions
  */
 
-if (!defined("NOREDIRECTBYMAINTOLOGIN")) {
-	define('NOREDIRECTBYMAINTOLOGIN', 1);
-}
-
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -398,7 +395,7 @@ $arrayofmassactions = array(
 if ($user->rights->agenda->allactions->delete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if ($user->rights->agenda->myactions->create) {
+if (isModEnabled('category') && $user->rights->agenda->myactions->create) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
@@ -576,7 +573,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$nbtotalofrecords++;
 	}*/
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),]+FROM/i', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	$resql = $db->query($sqlforcount);
 	$objforcount = $db->fetch_object($resql);
 	$nbtotalofrecords = $objforcount->nbtotalofrecords;
@@ -642,7 +639,6 @@ $s = $newtitle;
 
 // Calendars from hooks
 $parameters = array();
-$object = null;
 $reshook = $hookmanager->executeHooks('addCalendarChoice', $parameters, $object, $action);
 if (empty($reshook)) {
 	$s .= $hookmanager->resPrint;
@@ -655,7 +651,7 @@ $viewday = is_object($object) ? dol_print_date($object->datep, '%d') : '';
 $viewmode = '';
 $viewmode .= '<a class="btnTitle btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
-$viewmode .= img_picto($langs->trans("List"), 'object_list', 'class="imgforviewmode pictoactionview block"');
+$viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
 $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
 
@@ -687,7 +683,6 @@ $viewmode .= '<span class="marginrightonly"></span>';
 
 // Add more views from hooks
 $parameters = array();
-$object = null;
 $reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
 if (empty($reshook)) {
 	$viewmode .= $hookmanager->resPrint;
@@ -832,7 +827,7 @@ if (!empty($arrayfields['a.note']['checked'])) {
 	print_liste_field_titre($arrayfields['a.note']['label'], $_SERVER["PHP_SELF"], "a.note", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-//if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 if (!empty($arrayfields['a.datep']['checked'])) {
 	print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep,a.id", $param, '', 'align="center"', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -989,10 +984,10 @@ while ($i < $imaxinloop) {
 	if (!empty($arrayfields['a.datep']['checked'])) {
 		print '<td class="center nowraponall">';
 		if (empty($obj->fulldayevent)) {
-			print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuser');
+			print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuserrel');
 		} else {
 			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
-			print dol_print_date($db->jdate($obj->dp), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuser'));
+			print dol_print_date($db->jdate($obj->dp), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuserrel'));
 		}
 		$late = 0;
 		if ($actionstatic->hasDelay() && $actionstatic->percentage >= 0 && $actionstatic->percentage < 100 ) {
@@ -1008,10 +1003,10 @@ while ($i < $imaxinloop) {
 	if (!empty($arrayfields['a.datep2']['checked'])) {
 		print '<td class="center nowraponall">';
 		if (empty($obj->fulldayevent)) {
-			print dol_print_date($db->jdate($obj->dp2), $formatToUse, 'tzuser');
+			print dol_print_date($db->jdate($obj->dp2), $formatToUse, 'tzuserrel');
 		} else {
 			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
-			print dol_print_date($db->jdate($obj->dp2), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuser'));
+			print dol_print_date($db->jdate($obj->dp2), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuserrel'));
 		}
 		print '</td>';
 	}
@@ -1093,11 +1088,11 @@ while ($i < $imaxinloop) {
 	// Date creation
 	if (!empty($arrayfields['a.datec']['checked'])) {
 		// Status/Percent
-		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour', 'tzuser').'</td>';
+		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour', 'tzuserrel').'</td>';
 	}
 	// Date update
 	if (!empty($arrayfields['a.tms']['checked'])) {
-		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datem), 'dayhour', 'tzuser').'</td>';
+		print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->datem), 'dayhour', 'tzuserrel').'</td>';
 	}
 	if (!empty($arrayfields['a.percent']['checked'])) {
 		// Status/Percent

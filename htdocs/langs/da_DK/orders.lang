@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - orders
+OrderExists=En åben ordre var allerede knyttet til dette tilbud, så ingen anden ordre blev oprettet automatisk
 OrdersArea=Kundeordrer
 SuppliersOrdersArea=Indkøbsordreområde
 OrderCard=Ordreside

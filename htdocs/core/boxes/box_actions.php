@@ -34,7 +34,7 @@ class box_actions extends ModeleBoxes
 {
 	public $boxcode = "lastactions";
 	public $boximg = "object_action";
-	public $boxlabel = "BoxLastActions";
+	public $boxlabel = "BoxOldestActions";
 	public $depends = array("agenda");
 
 	/**
@@ -62,7 +62,7 @@ class box_actions extends ModeleBoxes
 
 		$this->enabled = $conf->agenda->enabled;
 
-		$this->hidden = !($user->rights->agenda->myactions->read);
+		$this->hidden = !($user->hasRight('agenda', 'myactions', 'read'));
 	}
 
 	/**
@@ -82,7 +82,7 @@ class box_actions extends ModeleBoxes
 		$societestatic = new Societe($this->db);
 		$actionstatic = new ActionComm($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo", $max));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestActionsToDo", $max));
 
 		if ($user->rights->agenda->myactions->read) {
 			$sql = "SELECT a.id, a.label, a.datep as dp, a.percent as percentage";
@@ -108,7 +108,7 @@ class box_actions extends ModeleBoxes
 			if (empty($user->rights->agenda->allactions->read)) {
 				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id).")";
 			}
-			$sql .= " ORDER BY a.datec DESC";
+			$sql .= " ORDER BY a.datep ASC";
 			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);

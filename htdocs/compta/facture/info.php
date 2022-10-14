@@ -23,12 +23,13 @@
  *		\brief      Page des informations d'une facture
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -51,12 +52,12 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Security check
-$fieldid = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
-$result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $fieldid, $isdraft);
+
+$result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 
 /*
@@ -65,7 +66,7 @@ $result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', $field
 
 $form = new Form($db);
 
-$title = $langs->trans('InvoiceCustomer')." - ".$langs->trans('Info');
+$title = $object->ref." - ".$langs->trans('Info');
 $help_url = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
 
 llxHeader('', $title, $help_url);
@@ -97,7 +98,7 @@ $morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_cl
 // Thirdparty
 $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'customer');
 // Project
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 	if ($user->rights->facture->creer) {

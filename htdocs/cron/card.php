@@ -24,6 +24,7 @@
  *  \brief      Cron Jobs Card
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -140,6 +141,7 @@ if ($action == 'add') {
 	$object->unitfrequency = GETPOST('unitfrequency', 'int');
 	$object->frequency = GETPOST('nbfrequency', 'int');
 	$object->maxrun = GETPOST('maxrun', 'int');
+	$object->email_alert = GETPOST('email_alert');
 
 	// Add cron task
 	$result = $object->create($user);
@@ -174,6 +176,7 @@ if ($action == 'update') {
 	$object->unitfrequency = GETPOST('unitfrequency', 'int');
 	$object->frequency = GETPOST('nbfrequency', 'int');
 	$object->maxrun = GETPOST('maxrun', 'int');
+	$object->email_alert = GETPOST('email_alert');
 
 	// Add cron task
 	$result = $object->update($user);
@@ -337,7 +340,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr><td class="fieldrequired titlefieldcreate">';
 	print $langs->trans('CronLabel')."</td>";
-	print "<td><input type=\"text\" size=\"30\" name=\"label\" value=\"".$object->label."\" /> ";
+	print '<td><input type="text" class="width200" name="label" value="'.dol_escape_htmltag($object->label).'"> ';
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -353,7 +356,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronModule')."</td><td>";
-	print "<input type=\"text\" class=\"width200\" name=\"module_name\" value=\"".$object->module_name."\" /> ";
+	print '<input type="text" class="width200" name="module_name" value="'.dol_escape_htmltag($object->module_name).'"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronModuleHelp"), 1, 'help');
@@ -362,7 +365,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronClassFile')."</td><td>";
-	print '<input type="text" class="minwidth300" name="classesname" value="'.$object->classesname.'" /> ';
+	print '<input type="text" class="minwidth300" name="classesname" value="'.dol_escape_htmltag($object->classesname).'"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronClassFileHelp"), 1, 'help');
@@ -371,7 +374,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronObject')."</td><td>";
-	print "<input type=\"text\" class=\"width200\" name=\"objectname\" value=\"".$object->objectname."\" /> ";
+	print '<input type="text" class="width200" name="objectname" value="'.dol_escape_htmltag($object->objectname).'"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronObjectHelp"), 1, 'help');
@@ -380,7 +383,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronMethod')."</td><td>";
-	print '<input type="text" class="minwidth300" name="methodename" value="'.$object->methodename.'" /> ';
+	print '<input type="text" class="minwidth300" name="methodename" value="'.dol_escape_htmltag($object->methodename).'" /> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronMethodHelp"), 1, 'help');
@@ -389,7 +392,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronArgs')."</td><td>";
-	print "<input type=\"text\" class=\"quatrevingtpercent\" name=\"params\" value=\"".$object->params."\" /> ";
+	print '<input type="text" class="quatrevingtpercent" name="params" value="'.$object->params.'" /> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronArgsHelp"), 1, 'help');
@@ -398,7 +401,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockcommand"><td>';
 	print $langs->trans('CronCommand')."</td><td>";
-	print "<input type=\"text\" size=\"50\" name=\"command\" value=\"".$object->command."\" /> ";
+	print '<input type="text" class="minwidth150" name="command" value="'.$object->command.'" /> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronCommandHelp"), 1, 'help');
@@ -411,6 +414,15 @@ if (($action == "create") || ($action == "edit")) {
 	$doleditor->Create();
 	print "</td>";
 	print "<td>";
+	print "</td>";
+	print "</tr>\n";
+
+	print '<tr class="blockemailalert"><td>';
+	print $langs->trans('EmailIfError')."</td><td>";
+	print '<input type="text" class="minwidth150" name="email_alert" value="'.dol_escape_htmltag($object->email_alert).'" /> ';
+	print "</td>";
+	print "<td>";
+	//print $form->textwithpicto('', $langs->trans("CronCommandHelp"), 1, 'help');
 	print "</td>";
 	print "</tr>\n";
 
@@ -471,7 +483,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->datestart)) {
 		print $form->selectDate($object->datestart, 'datestart', 1, 1, '', "cronform");
 	} else {
-		print $form->selectDate('', 'datestart', 1, 1, '', "cronform");
+		print $form->selectDate(-1, 'datestart', 1, 1, '', "cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -483,7 +495,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->dateend)) {
 		print $form->selectDate($object->dateend, 'dateend', 1, 1, '', "cronform");
 	} else {
-		print $form->selectDate(-1, 'dateend', 1, 1, 1, "cronform");
+		print $form->selectDate(-1, 'dateend', 1, 1, '', "cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -514,7 +526,7 @@ if (($action == "create") || ($action == "edit")) {
 	print "</td>";
 	print "</tr>\n";
 
-	print '<tr><td>';
+	print '<tr><td class="fieldrequired">';
 	print $langs->trans('CronDtNextLaunch');
 	print ' ('.$langs->trans('CronFrom').')';
 	print "</td><td>";
@@ -545,54 +557,64 @@ if (($action == "create") || ($action == "edit")) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/cron/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
+	$reg = array();
+	if (preg_match('/:(.*)$/', $object->label, $reg)) {
+		$langs->load($reg[1]);
+	}
+
+	$labeltoshow =  preg_replace('/:.*$/', '', $object->label);
+
 	$morehtmlref = '<div class="refidno">';
+	$morehtmlref .= $langs->trans($labeltoshow);
 	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
 	// box add_jobs_box
 	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	print '<tr><td class="titlefield">';
+	/*print '<tr><td class="titlefield">';
 	print $langs->trans('CronLabel')."</td>";
 	print "<td>".$langs->trans($object->label);
-	print "</td></tr>";
+	print "</td></tr>";*/
 
-	print "<tr><td>";
+	print '<tr><td class="titlefield">';
 	print $langs->trans('CronType')."</td><td>";
 	print $formCron->select_typejob('jobtype', $object->jobtype, 1);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronModule')."</td><td>";
-	print $object->module_name;
+	print dol_escape_htmltag($object->module_name);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronClassFile')."</td><td>";
-	print $object->classesname;
+	print dol_escape_htmltag($object->classesname);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronObject')."</td><td>";
-	print $object->objectname;
+	print dol_escape_htmltag($object->objectname);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronMethod')."</td><td>";
-	print $object->methodename;
+	print dol_escape_htmltag($object->methodename);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronArgs')."</td><td>";
-	print $object->params;
+	print dol_escape_htmltag($object->params);
 	print "</td></tr>";
 
 	print '<tr class="blockcommand"><td>';
 	print $langs->trans('CronCommand')."</td><td>";
-	print $object->command;
+	print dol_escape_htmltag($object->command);
 	print "</td></tr>";
 
 	print '<tr><td>';
@@ -602,14 +624,19 @@ if (($action == "create") || ($action == "edit")) {
 	}
 	print "</td></tr>";
 
-	if (!empty($conf->multicompany->enabled)) {
+	print '<tr class="blockemailalert"><td>';
+	print $langs->trans('EmailIfError')."</td><td>";
+	print dol_escape_htmltag($object->email_alert);
+	print "</td></tr>";
+
+	if (isModEnabled('multicompany')) {
 		print '<tr><td>';
 		print $langs->trans('Entity')."</td><td>";
-		if (!$object->entity) {
-			print $langs->trans("AllEntities");
+		if (empty($object->entity)) {
+			print img_picto($langs->trans("AllEntities"), 'entity', 'class="pictofixedwidth"').$langs->trans("AllEntities");
 		} else {
 			$mc->getInfo($object->entity);
-			print $mc->label;
+			print img_picto($langs->trans("AllEntities"), 'entity', 'class="pictofixedwidth"').$mc->label;
 		}
 		print "</td></tr>";
 	}
@@ -617,10 +644,8 @@ if (($action == "create") || ($action == "edit")) {
 	print '</table>';
 	print '</div>';
 
-	print '<br>';
+	print '<div class="fichehalfright">';
 
-
-	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
@@ -693,11 +718,11 @@ if (($action == "create") || ($action == "edit")) {
 	print "</td></tr>";
 
 	print '</table>';
-	print '</div>';
+
 
 	print '<br>';
 
-	print '<div class="fichecenter">';
+
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
@@ -715,7 +740,11 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->datelastresult)) {
 		print $form->textwithpicto(dol_print_date($object->datelastresult, 'dayhoursec'), $langs->trans("CurrentTimeZone"));
 	} else {
-		print $langs->trans('CronNone');
+		if (empty($object->datelastrun)) {
+			print $langs->trans('CronNone');
+		} else {
+			// In progress
+		}
 	}
 	print "</td></tr>";
 
@@ -736,7 +765,11 @@ if (($action == "create") || ($action == "edit")) {
 	print "</td></tr>";
 
 	print '</table>';
+
 	print '</div>';
+
+	print '<div class="clearboth"></div>';
+
 
 	print dol_get_fiche_end();
 
@@ -759,7 +792,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!$user->rights->cron->create) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronStatusActiveBtn").'/'.$langs->trans("CronStatusInactiveBtn").'</a>';
 	} else {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Clone").'</a>';
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&token='.newToken().'&id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
 
 		if (empty($object->status)) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=activate&token='.newToken().'&id='.$object->id.'">'.$langs->trans("CronStatusActiveBtn").'</a>';

@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
-EnterNameOfModuleDesc=ໃສ່ຊື່ຂອງໂມດູນ/ແອັບພລິເຄຊັນເພື່ອສ້າງໂດຍບໍ່ມີຍະຫວ່າງ. ໃຊ້ຕົວພິມໃຫຍ່ເພື່ອແຍກຄໍາ (ຕົວຢ່າງ: MyModule, EcommerceForShop, SyncWithMySystem ... )
-EnterNameOfObjectDesc=ໃສ່ຊື່ຂອງອອບເຈັກເພື່ອສ້າງໂດຍບໍ່ມີຍະຫວ່າງ. ໃຊ້ຕົວພິມໃຫຍ່ເພື່ອແຍກຄໍາ (ຕົວຢ່າງ: MyObject, ນັກຮຽນ, ຄູ ... ). ໄຟລ class ຊັ້ນ CRUD, ແຕ່ຍັງມີໄຟລ API API, ໜ້າ ເພື່ອສ້າງລາຍການ/ເພີ່ມ/ແກ້ໄຂ/ລຶບວັດຖຸແລະໄຟລ S SQL ຈະຖືກສ້າງຂຶ້ນ.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=ເສັ້ນທາງບ່ອນທີ່ມີການສ້າງ/ແກ້ໄຂໂມດູນ (ໄດເຣັກທໍຣີ ທຳ ອິດ ສຳ ລັບໂມດູນພາຍນອກທີ່ ກຳ ນົດໄວ້ໃນ %s): <strong> %s </strong>
 ModuleBuilderDesc3=ພົບໂມດູນທີ່ສ້າງຂຶ້ນ/ແກ້ໄຂໄດ້: <strong> %s </strong>
 ModuleBuilderDesc4=ໂມດູນຖືກກວດພົບວ່າສາມາດແກ້ໄຂໄດ້ເມື່ອໄຟລ a <strong> %s </strong> ມີຢູ່ໃນຮາກຂອງລະບົບໂມດູນ
 NewModule=ໂມດູນໃຫມ່
 NewObjectInModulebuilder=ວັດຖຸໃ່
+NewDictionary=New dictionary
 ModuleKey=ປຸ່ມໂມດູນ
 ObjectKey=ປຸ່ມວັດຖຸ
+DicKey=Dictionary key
 ModuleInitialized=ໂມດູນເລີ່ມຕົ້ນ
 FilesForObjectInitialized=ເລີ່ມຕົ້ນໄຟລ for ສໍາລັບວັດຖຸໃ'່ '%s'
 FilesForObjectUpdated=ອັບເດດໄຟລ for ສຳ ລັບວັດຖຸ '%s' (ໄຟລ. .sql ແລະແຟ້ມ .class.php)

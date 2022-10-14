@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -347,7 +347,7 @@ $nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&month=".
 $nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $month, 1, $year), "%Y").", ".$langs->trans(date('F', mktime(0, 0, 0, $month, 10)))." </span>\n";
 $nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&month=".$next_month."&day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
 $nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
-$nav .= ' <button type="submit" name="button_search_x" value="x" class="bordertransp"><span class="fa fa-search"></span></button>';
+$nav .= ' <button type="submit" name="button_search_x" value="x" class="bordertransp nobordertransp button_search_x"><span class="fa fa-search"></span></button>';
 
 $picto = 'clock';
 
@@ -407,7 +407,7 @@ $moreforfilter = '';
 
 // Filter on categories
 /*
-if (! empty($conf->categorie->enabled))
+if (!empty($conf->categorie->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 	$moreforfilter.='<div class="divsearchfield">';

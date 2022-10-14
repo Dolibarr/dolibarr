@@ -1,5 +1,5 @@
 <?php
-/*
+/* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
  *      \brief      Page to get oauth callback
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 use OAuth\Common\Storage\DoliStorage;
@@ -40,6 +41,11 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 $action = GETPOST('action', 'aZ09');
 $backtourl = GETPOST('backtourl', 'alpha');
+$keyforprovider = GETPOST('keyforprovider', 'aZ09');
+if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthjump"]) && (GETPOST('code') || $action == 'delete')) {
+	// If we are coming from the Oauth page
+	$keyforprovider = $_SESSION["oauthkeyforproviderbeforeoauthjump"];
+}
 
 
 /**
@@ -63,31 +69,38 @@ $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 //$httpClient->setCurlParameters($params);
 $serviceFactory->setHttpClient($httpClient);
 
-// Dolibarr storage
-$storage = new DoliStorage($db, $conf);
-
 // Setup the credentials for the requests
+$keyforparamid = 'OAUTH_GOOGLE'.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
+$keyforparamsecret = 'OAUTH_GOOGLE'.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
 $credentials = new Credentials(
-	$conf->global->OAUTH_GOOGLE_ID,
-	$conf->global->OAUTH_GOOGLE_SECRET,
+	getDolGlobalString($keyforparamid),
+	getDolGlobalString($keyforparamsecret),
 	$currentUri->getAbsoluteUri()
 );
 
 $state = GETPOST('state');
+$statewithscopeonly = '';
+$statewithanticsrfonly = '';
 
 $requestedpermissionsarray = array();
 if ($state) {
 	// 'state' parameter is standard to store a hash value and can be used to retrieve some parameters back
 	$statewithscopeonly = preg_replace('/\-.*$/', '', $state);
 	$requestedpermissionsarray = explode(',', $statewithscopeonly); // Example: 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print'.
+	$statewithanticsrfonly = preg_replace('/^.*\-/', '', $state);
 }
-if ($action != 'delete' && empty($requestedpermissionsarray)) {
-	print 'Error, parameter state is not defined';
-	exit;
+
+if ($action != 'delete' && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+	setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
+	header('Location: '.$backtourl);
+	exit();
 }
+
 //var_dump($requestedpermissionsarray);exit;
 
 
+// Dolibarr storage
+$storage = new DoliStorage($db, $conf, $keyforprovider);
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 // $requestedpermissionsarray contains list of scopes.
@@ -100,6 +113,13 @@ $apiService->setAccessType('offline');
 
 
 $langs->load("oauth");
+
+if (!getDolGlobalString($keyforparamid)) {
+	accessforbidden('Setup of service is not complete. Customer ID is missing');
+}
+if (!getDolGlobalString($keyforparamsecret)) {
+	accessforbidden('Setup of service is not complete. Secret key is missing');
+}
 
 
 /*
@@ -117,7 +137,7 @@ if ($action == 'delete') {
 }
 
 if (GETPOST('code')) {     // We are coming from oauth provider page.
-	dol_syslog("We are coming from the oauth provider page");
+	dol_syslog("We are coming from the oauth provider page keyforprovider=".$keyforprovider);
 
 	// We must validate that the $state is the same than the one into $_SESSION['oauthstateanticsrf'], return error if not.
 	if (isset($_SESSION['oauthstateanticsrf']) && $state != $_SESSION['oauthstateanticsrf']) {
@@ -174,8 +194,10 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
 	}
 } else {
 	// If we enter this page without 'code' parameter, we arrive here. this is the case when we want to get the redirect
-	// to the OAuth provider login page
+	// to the OAuth provider login page.
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
+	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
+	$_SESSION['oauthstateanticsrf'] = $state;
 
 	if (!preg_match('/^forlogin/', $state)) {
 		$apiService->setApprouvalPrompt('force');

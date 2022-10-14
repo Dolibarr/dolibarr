@@ -1,6 +1,6 @@
 Module68000Name = Intracomm-Report
-Module68000Desc = Berichtsverwaltung (französisches DEB/DES-Format)
-IntracommReportSetup = Modul Intracomm-Report einrichten
+Module68000Desc = Berichtsverwaltung innergemeinschaftlicher Handel (französisches DEB/DES-Format)
+IntracommReportSetup = Einstellungen Modul Intracomm-Report
 IntracommReportAbout = Über Intracomm-Report
 
 # Setup
@@ -27,10 +27,10 @@ DEB=Warenaustauscherklärung
 DES=Leistungsaustauscherklärung
 
 # Export page
-IntracommReportTitle=XML-Datei der Zollerklärung vorbereiten
+IntracommReportTitle=XML-Datei der Zollerklärung vorbereiten (ProDouane-Format)
 
 # List
-IntracommReportList=Liste der Erkärungen
+IntracommReportList=Liste der generierten Erkärungen
 IntracommReportNumber=Numero der Erklärung
 IntracommReportPeriod=Analysezeitraum
 IntracommReportTypeDeclaration=Art der Erklärung

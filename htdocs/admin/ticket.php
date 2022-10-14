@@ -22,6 +22,7 @@
  *     \brief       Page to setup module ticket
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
@@ -81,6 +82,27 @@ if ($action == 'updateMask') {
 			dolibarr_del_const($db, 'TICKET_ADDON_PDF', $conf->entity);
 		}
 	}
+} elseif (preg_match('/set_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$value = GETPOSTISSET($code) ? GETPOST($code, 'int') : 1;
+	if ($code == 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS' && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+	} else {
+		$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+	}
+} elseif (preg_match('/del_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$res = dolibarr_del_const($db, $code, $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 } elseif ($action == 'setdoc') {
 	// Set default model
 	if (dolibarr_set_const($db, "TICKET_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
@@ -100,16 +122,25 @@ if ($action == 'updateMask') {
 
 	dolibarr_set_const($db, "TICKET_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif ($action == 'setvarworkflow') {
-	$param_auto_read = GETPOST('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', $param_auto_read, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
+	// For compatibility when javascript is not enabled
+	if (empty($conf->use_javascript_ajax)) {
+		$param_auto_read = GETPOST('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', 'alpha');
+		$res = dolibarr_set_const($db, 'TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', $param_auto_read, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
 
-	$param_auto_assign = GETPOST('TICKET_AUTO_ASSIGN_USER_CREATE', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
+		$param_auto_assign = GETPOST('TICKET_AUTO_ASSIGN_USER_CREATE', 'alpha');
+		$res = dolibarr_set_const($db, 'TICKET_AUTO_ASSIGN_USER_CREATE', $param_auto_assign, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+
+		$param_auto_notify_close = GETPOST('TICKET_NOTIFY_AT_CLOSING', 'alpha');
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFY_AT_CLOSING', $param_auto_notify_close, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
 	}
 
 	$param_limit_view = GETPOST('TICKET_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
@@ -134,12 +165,6 @@ if ($action == 'updateMask') {
 
 	$param_delay_between_responses = GETPOST('delay_between_responses', 'int');
 	$res = dolibarr_set_const($db, 'TICKET_DELAY_SINCE_LAST_RESPONSE', $param_delay_between_responses, 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	$param_auto_notify_close = GETPOST('TICKET_NOTIFY_AT_CLOSING', 'alpha');
-	$res = dolibarr_set_const($db, 'TICKET_NOTIFY_AT_CLOSING', $param_auto_notify_close, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -191,7 +216,8 @@ if ($action == 'updateMask') {
 		$error++;
 	}
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	// For compatibility when javascript is not enabled
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2 && empty($conf->use_javascript_ajax)) {
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -428,7 +454,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->TICKET_ADDON_PDF == $name) {
+								if (getDolGlobalString("TICKET_ADDON_PDF") == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -539,10 +565,11 @@ print $formcategory->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp
 print '</td>';
 print '</tr>';
 
-if (! empty($conf->product->enabled)) {
+if (isModEnabled('product')) {
+	$htmlname = "product_category_id";
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketChooseProductCategory").'</td>';
 	print '<td class="left">';
-	$formcategory->selectProductCategory($conf->global->TICKET_PRODUCT_CATEGORY, 'product_category_id');
+	$formcategory->selectProductCategory($conf->global->TICKET_PRODUCT_CATEGORY, $htmlname);
 	if ($conf->use_javascript_ajax) {
 		print ajax_combobox('select_'.$htmlname);
 	}
@@ -637,28 +664,30 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	print '</tr>';
 }
 
-// Texte d'introduction
-$mail_intro = $conf->global->TICKET_MESSAGE_MAIL_INTRO ? $conf->global->TICKET_MESSAGE_MAIL_INTRO : $langs->trans('TicketMessageMailIntroText');
-print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailIntroLabelAdmin");
+// Message header
+//$mail_intro = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'));
+$mail_intro = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', '');
+print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailIntro");
 print '</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
+$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 90, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, 70);
 $doleditor->Create();
 print '</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketMessageMailIntroHelpAdmin"), 1, 'help');
 print '</td></tr>';
 
-// Texte de signature
-$mail_signature = $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE : $langs->trans('TicketMessageMailSignatureText');
-print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailSignatureLabelAdmin").'</label>';
+// Message footer
+//$mail_signature = getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE', $langs->trans('TicketMessageMailFooterText'));
+$mail_signature = getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
+print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailFooter").'</label>';
 print '</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
+$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, '100%', 90, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, 70);
 $doleditor->Create();
 print '</td>';
 print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelpAdmin"), 1, 'help');
+print $formcategory->textwithpicto('', $langs->trans("TicketMessageMailFooterHelpAdmin"), 1, 'help');
 print '</td></tr>';
 
 print '</table>';

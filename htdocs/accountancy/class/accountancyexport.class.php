@@ -111,7 +111,7 @@ class AccountancyExport
 	 */
 	public function getType()
 	{
-		global $langs;
+		global $langs, $hookmanager;
 
 		$listofexporttypes = array(
 			self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
@@ -137,7 +137,7 @@ class AccountancyExport
 		);
 
 		// allow modules to define export formats
-		global $hookmanager;
+		$parameters = array();
 		$reshook = $hookmanager->executeHooks('getType', $parameters, $listofexporttypes);
 
 		ksort($listofexporttypes, SORT_NUMERIC);
@@ -285,6 +285,28 @@ class AccountancyExport
 		return $exporttypes;
 	}
 
+
+	/**
+	 * Return the MIME type of a file
+	 *
+	 * @param	int		$formatexportset	Id of export format
+	 * @return 	string						MIME type.
+	 */
+	public function getMimeType($formatexportset)
+	{
+		$mime = 'text/csv';
+
+		switch ($formatexportset) {
+			case self::$EXPORT_TYPE_FEC:
+				$mime = 'text/tab-separated-values';
+				break;
+			default:
+				$mime = 'text/csv';
+				break;
+		}
+
+		return $mime;
+	}
 
 	/**
 	 * Function who chose which export to use with the default config, and make the export into a file
@@ -1347,7 +1369,7 @@ class AccountancyExport
 			}
 			print $nature_piece.$separator;
 			// RACI
-			//			if (! empty($line->subledger_account)) {
+			//			if (!empty($line->subledger_account)) {
 			//              if ($line->doc_type == 'supplier_invoice') {
 			//                  $racine_subledger_account = '40';
 			//              } elseif ($line->doc_type == 'customer_invoice') {
@@ -1610,7 +1632,7 @@ class AccountancyExport
 			}
 			print $nature_piece.$separator;
 			// RACI
-			//			if (! empty($line->subledger_account)) {
+			//			if (!empty($line->subledger_account)) {
 			//				if ($line->doc_type == 'supplier_invoice') {
 			//					$racine_subledger_account = '40';
 			//				} elseif ($line->doc_type == 'customer_invoice') {

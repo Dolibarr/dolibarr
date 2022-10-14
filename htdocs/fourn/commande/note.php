@@ -20,21 +20,24 @@
  */
 
 /**
- *       \file       htdocs/fourn/commande/note.php
- *       \ingroup    commande
- *       \brief      Fiche note commande
+ *    \file       htdocs/fourn/commande/note.php
+ *    \ingroup    commande
+ *    \brief      page for notes on supplier orders
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array("suppliers", "orders", "companies", "stocks"));
 
+// Get Parameters
 $id = GETPOST('facid', 'int') ?GETPOST('facid', 'int') : GETPOST('id', 'int');
 $ref = GETPOST('ref');
 $action = GETPOST('action', 'aZ09');
@@ -44,12 +47,14 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+// Init Objects
 $hookmanager->initHooks(array('ordersuppliercardnote'));
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
 $object = new CommandeFournisseur($db);
 $object->fetch($id, $ref);
 
+// Permissions
 $permissionnote = ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer); // Used by the include of actions_setnotes.inc.php
 
 
@@ -69,7 +74,8 @@ if (empty($reshook)) {
 /*
  * View
  */
-$title = $langs->trans('SupplierOrder')." - ".$langs->trans('Notes');
+
+$title = $object->ref." - ".$langs->trans('Notes');
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 llxHeader('', $title, $help_url);
 
@@ -106,7 +112,7 @@ if ($id > 0 || !empty($ref)) {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {

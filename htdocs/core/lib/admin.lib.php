@@ -151,19 +151,20 @@ function versiondolibarrarray()
  *  Install process however does not use it.
  *  Note that Sql files must have all comments at start of line. Also this function take ';' as the char to detect end of sql request
  *
- *	@param		string	$sqlfile			Full path to sql file
- * 	@param		int		$silent				1=Do not output anything, 0=Output line for update page
- * 	@param		int		$entity				Entity targeted for multicompany module
- *	@param		int		$usesavepoint		1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
- *	@param		string	$handler			Handler targeted for menu (replace __HANDLER__ with this value)
- *	@param 		string	$okerror			Family of errors we accept ('default', 'none')
- *  @param		int		$linelengthlimit	Limit for length of each line (Use 0 if unknown, may be faster if defined)
- *  @param		int		$nocommentremoval	Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
+ *	@param		string	$sqlfile					Full path to sql file
+ * 	@param		int		$silent						1=Do not output anything, 0=Output line for update page
+ * 	@param		int		$entity						Entity targeted for multicompany module
+ *	@param		int		$usesavepoint				1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+ *	@param		string	$handler					Handler targeted for menu (replace __HANDLER__ with this value)
+ *	@param 		string	$okerror					Family of errors we accept ('default', 'none')
+ *  @param		int		$linelengthlimit			Limit for length of each line (Use 0 if unknown, may be faster if defined)
+ *  @param		int		$nocommentremoval			Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
  *  @param		int		$offsetforchartofaccount	Offset to use to load chart of account table to update sql on the fly to add offset to rowid and account_parent value
- *  @param		int		$colspan			2=Add a colspan=2 on td
- * 	@return		int							<=0 if KO, >0 if OK
+ *  @param		int		$colspan					2=Add a colspan=2 on td
+ *  @param		int		$onlysqltoimportwebsite		Only sql resquests used to import a website template is allowed
+ * 	@return		int									<=0 if KO, >0 if OK
  */
-function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0, $colspan = 0)
+function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0, $colspan = 0, $onlysqltoimportwebsite = 0)
 {
 	global $db, $conf, $langs, $user;
 
@@ -323,6 +324,61 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 	$keyforsql = md5($sqlfile);
 	foreach ($arraysql as $i => $sql) {
 		if ($sql) {
+			// Test if th SQL is allowed SQL
+			if ($onlysqltoimportwebsite) {
+				$newsql = str_replace(array("\'"), '__BACKSLASHQUOTE__', $sql);	// Replace the \' seque,ce
+
+				// Remove all strings contents including the ' so we can analyse SQL instruction only later
+				$l = strlen($newsql);
+				$is = 0;
+				$quoteopen = 0;
+				$newsqlclean = '';
+				while ($is < $l) {
+					$char = $newsql[$is];
+					if ($char == "'") {
+						if ($quoteopen) {
+							$quoteopen--;
+						} else {
+							$quoteopen++;
+						}
+					} elseif (empty($quoteopen)) {
+						$newsqlclean .= $char;
+					}
+					$is++;
+				}
+				$newsqlclean = str_replace(array("null"), '__000__', $newsqlclean);
+				//print $newsqlclean."<br>\n";
+
+				$qualified = 0;
+
+				// A very small control. This can still by bypassed by adding a second SQL request concatenated
+				if (preg_match('/^--/', $newsqlclean)) {
+					$qualified = 1;
+				} elseif (preg_match('/^UPDATE llx_website SET \w+ = \d+\+\d+ WHERE rowid = \d+;$/', $newsqlclean)) {
+					$qualified = 1;
+				} elseif (preg_match('/^INSERT INTO llx_website_page\([a-z0-9_\s,]+\) VALUES\([0-9_\s,\+]+\);$/', $newsqlclean)) {
+					// Insert must match
+					// INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content, author_alias) VALUES(1+123, null, 17, , , , , , , , , , , null, , , , , );
+					$qualified = 1;
+				}
+
+				// Another check to allow some legitimate original urls
+				if (!$qualified) {
+					if (preg_match('/^UPDATE llx_website SET \w+ = \'[a-zA-Z,\s]*\' WHERE rowid = \d+;$/', $sql)) {
+						$qualified = 1;
+					}
+				}
+
+				if (!$qualified) {
+					$error++;
+					//print 'Request '.($i + 1)." contains non allowed instructions.<br>\n";
+					//print "newsqlclean = ".$newsqlclean."<br>\n";
+					dol_syslog('Admin.lib::run_sql Request '.($i + 1)." contains non allowed instructions.", LOG_WARNING);
+					dol_syslog('$newsqlclean='.$newsqlclean, LOG_DEBUG);
+					break;
+				}
+			}
+
 			// Replace the prefix tables
 			if (MAIN_DB_PREFIX != 'llx_') {
 				$sql = preg_replace('/llx_/i', MAIN_DB_PREFIX, $sql);
@@ -365,7 +421,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 				$sqlmodified++;
 			}
 
-			// Replace __x__ with rowid of insert nb x
+			// Replace __x__ with the rowid of the result of the insert number x
 			while (preg_match('/__([0-9]+)__/', $newsql, $reg)) {
 				$cursor = $reg[1];
 				if (empty($listofinsertedrowid[$cursor])) {
@@ -377,6 +433,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 					$error++;
 					break;
 				}
+
 				$from = '__'.$cursor.'__';
 				$to = $listofinsertedrowid[$cursor];
 				$newsql = str_replace($from, $to, $newsql);
@@ -466,7 +523,11 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 			});
 		});
 		</script>';
-		print ' - <a class="trforrunsqlshowhide'.$keyforsql.'" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+		if (count($arraysql)) {
+			print ' - <a class="trforrunsqlshowhide'.$keyforsql.'" href="#" title="'.($langs->trans("ShowHideTheNRequests", count($arraysql))).'">'.$langs->trans("ShowHideDetails").'</a>';
+		} else {
+			print ' - <span class="opacitymedium">'.$langs->trans("ScriptIsEmpty").'</span>';
+		}
 		//}
 
 		print '</td></tr>'."\n";
@@ -546,7 +607,8 @@ function dolibarr_get_const($db, $name, $entity = 1)
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$value = $obj->value;
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+			$value = dolDecrypt($obj->value);
 		}
 	}
 	return $value;
@@ -594,11 +656,22 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	$resql = $db->query($sql);
 
 	if (strcmp($value, '')) {	// true if different. Must work for $value='0' or $value=0
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity)";
+		if (!preg_match('/^MAIN_LOGEVENTS/', $name) && (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_SECURITY_TOKEN|_WEB_TOKEN)$/', $name))) {
+			// This seems a sensitive constant, we encrypt its value
+			// To list all sensitive constant, you can make a
+			// WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' or name like '%\_SERVERKEY' or name like '%\_PASS' or name like '%\_PASSWORD' or name like '%\_SECRET'
+			// or name like '%\_SECURITY_TOKEN' or name like '%\WEB_TOKEN'
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+			$newvalue = dolEncrypt($value);
+		} else {
+			$newvalue = $value;
+		}
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity)";
 		$sql .= " VALUES (";
 		$sql .= $db->encrypt($name);
-		$sql .= ", ".$db->encrypt($value);
-		$sql .= ",'".$db->escape($type)."',".((int) $visible).",'".$db->escape($note)."',".((int) $entity).")";
+		$sql .= ", ".$db->encrypt($newvalue);
+		$sql .= ", '".$db->escape($type)."', ".((int) $visible).", '".$db->escape($note)."', ".((int) $entity).")";
 
 		//print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
 		//print "xx".$db->escape($value);
@@ -636,7 +709,7 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 
 	$h = 0;
 	$head = array();
-	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common';
+	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT;
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
 	if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled)
 		//$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);
@@ -1495,10 +1568,10 @@ function complete_elementList_with_modules(&$elementList)
 
 						// We discard modules according to features level (PS: if module is activated we always show it)
 						$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
-						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && !$conf->global->$const_name) {
+						if ($objMod->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2 && getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
-						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && !$conf->global->$const_name) {
+						if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && getDolGlobalString($const_name)) {
 							$modulequalified = 0;
 						}
 						//If module is not activated disqualified
@@ -1665,7 +1738,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 				print 'mymailmanlist<br>';
 				print 'mymailmanlist1,mymailmanlist2<br>';
 				print 'TYPE:Type1:mymailmanlist1,TYPE:Type2:mymailmanlist2<br>';
-				if ($conf->categorie->enabled) {
+				if (isModEnabled('categorie')) {
 					print 'CATEG:Categ1:mymailmanlist1,CATEG:Categ2:mymailmanlist2<br>';
 				}
 				print '</div>';
@@ -1697,7 +1770,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '', $text = 'Valu
 					print "</textarea>\n";
 				} elseif ($obj->type == 'html') {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-					$doleditor = new DolEditor('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
+					$doleditor = new DolEditor('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 					$doleditor->Create();
 				} elseif ($obj->type == 'yesno') {
 					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, 1);
@@ -1944,14 +2017,14 @@ function email_admin_prepare_head()
 		$head[$h][2] = 'common';
 		$h++;
 
-		if (!empty($conf->mailing->enabled)) {
+		if (isModEnabled('mailing')) {
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
 			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("EMailing"));
 			$head[$h][2] = 'common_emailing';
 			$h++;
 		}
 
-		if (!empty($conf->ticket->enabled)) {
+		if (isModEnabled('ticket')) {
 			$head[$h][0] = DOL_URL_ROOT."/admin/mails_ticket.php";
 			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("Ticket"));
 			$head[$h][2] = 'common_ticket';

@@ -171,7 +171,7 @@ class box_services_contracts extends ModeleBoxes
 
 						// Add description in form
 						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
-							//$text .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+							//$text .= (!empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 							$description = ''; // Already added into main visible desc
 						}
 
@@ -200,7 +200,7 @@ class box_services_contracts extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$i][] = array(
-						'td' => 'class="center nowraponall"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, 'day', 'tzuserrel'),
 						'text2'=> $late,
 					);

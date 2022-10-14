@@ -1,7 +1,8 @@
 # Dolibarr language file - Source file is en_US - orders
+OrderExists=Mit diesem Angebot war bereits eine offener Auftrag verknüpft, so dass keine weiterer Auftrag automatisch erstellt wurde
 OrdersArea=Übersicht Kundenaufträge
 SuppliersOrdersArea=Übersicht Lieferantenbestellungen
-OrderCard=Bestellung - Übersicht
+OrderCard=Auftrag – Übersicht
 OrderId=Bestell-ID
 Order=Kundenauftrag
 PdfOrderTitle=Auftragsbestätigung
@@ -62,9 +63,9 @@ QtyOrdered=Bestellmenge
 ProductQtyInDraft=Produktmenge in Bestellentwurf
 ProductQtyInDraftOrWaitingApproved=Produktmenge in Bestellentwurf oder Bestellung benötigt Genehmigung, noch nicht bestellt
 MenuOrdersToBill=Bestellverrechnung
-MenuOrdersToBill2=abrechenbare Aufträge
+MenuOrdersToBill2=Abrechenbare Aufträge
 ShipProduct=Produkt versenden
-CreateOrder=Bestellung erstellen
+CreateOrder=Auftrag erstellen
 RefuseOrder=Bestellung ablehnen
 ApproveOrder=Bestellung genehmigen
 Approve2Order=Genehmige Bestellung (2. Bestätigung)
@@ -128,8 +129,8 @@ SupplierOrderReceivedInDolibarr=Lieferantenbestellung %s erhalten %s
 SupplierOrderSubmitedInDolibarr=Lieferantenbestellung %s versendet
 SupplierOrderClassifiedBilled=Bestellung %s als verrechnet markieren
 OtherOrders=zeige weitere Bestellungen dieses Partners
-SupplierOrderValidatedAndApproved=Die Lieferantenbestellung ist validiert und genehmigt: %s
-SupplierOrderValidated=Lieferantenbestellung ist validiert: %s
+SupplierOrderValidatedAndApproved=Die Lieferantenbestellung ist freigegeben und genehmigt: %s
+SupplierOrderValidated=Lieferantenbestellung ist freigegeben: %s
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Kundenauftrag-Nachbetreuung durch Vertreter
 TypeContact_commande_internal_SHIPPING=Versand-Nachbetreuung durch Vertreter

@@ -46,7 +46,7 @@ $mode = GETPOST('mode', 'aZ');
 $id = GETPOST('id', 'int');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_categ = GETPOST("search_categ", 'alpha');
+$search_categ = GETPOST("search_categ", 'int');
 
 $search_projectstatus = GETPOST('search_projectstatus');
 if (!isset($search_projectstatus) || $search_projectstatus === '') {
@@ -68,6 +68,7 @@ $search_task_user = GETPOST('search_task_user', 'int');
 $search_task_progress = GETPOST('search_task_progress');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_societe = GETPOST('search_societe');
+$search_societe_alias = GETPOST('search_societe_alias');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
 
 $mine = GETPOST('mode', 'alpha') == 'mine' ? 1 : 0;
@@ -113,7 +114,7 @@ if (!$user->rights->projet->lire) {
 	accessforbidden();
 }
 
-$diroutputmassaction = $conf->projet->dir_output.'/tasks/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->project->dir_output.'/tasks/temp/massgeneration/'.$user->id;
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -154,13 +155,14 @@ $arrayfields = array(
 	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1),
 	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>0),
+	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1),
 	'p.fk_statut'=>array('label'=>"ProjectStatus", 'checked'=>1),
 	't.planned_workload'=>array('label'=>"PlannedWorkload", 'checked'=>1, 'position'=>102),
 	't.duration_effective'=>array('label'=>"TimeSpent", 'checked'=>1, 'position'=>103),
 	't.progress_calculated'=>array('label'=>"ProgressCalculated", 'checked'=>1, 'position'=>104),
 	't.progress'=>array('label'=>"ProgressDeclared", 'checked'=>1, 'position'=>105),
 	't.progress_summary'=>array('label'=>"TaskProgressSummary", 'checked'=>1, 'position'=>106),
-	't.budget_amount'=>array('label'=>"Budget", 'checked'=>1, 'position'=>107),
+	't.budget_amount'=>array('label'=>"Budget", 'checked'=>0, 'position'=>107),
 	't.tobill'=>array('label'=>"TimeToBill", 'checked'=>0, 'position'=>110),
 	't.billed'=>array('label'=>"TimeBilled", 'checked'=>0, 'position'=>111),
 	't.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
@@ -205,6 +207,8 @@ if (empty($reshook)) {
 		$search_categ = "";
 		$search_projectstatus = -1;
 		$search_project_ref = "";
+		$search_societe = "";
+		$search_societe_alias = "";
 		$search_project_title = "";
 		$search_task_ref = "";
 		$search_task_label = "";
@@ -237,7 +241,7 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Task';
 	$objectlabel = 'Tasks';
-	$uploaddir = $conf->projet->dir_output.'/tasks';
+	$uploaddir = $conf->project->dir_output.'/tasks';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -274,7 +278,7 @@ if ($search_task_user > 0) {
 
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 
 
 $title = $langs->trans("Activities");
@@ -326,15 +330,11 @@ if (count($listoftaskcontacttype) == 0) {
 
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is assigned only once.
 $sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.usage_bill_time,";
-$sql .= " s.nom as name, s.rowid as socid,";
+$sql .= " s.nom as name, s.name_alias as alias, s.rowid as socid,";
 $sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update,";
-$sql .= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut, ";
+$sql .= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut,";
 $sql .= " t.description, t.fk_task_parent";
 $sql .= " ,t.budget_amount";
-// We'll need these fields in order to filter by categ
-if ($search_categ) {
-	$sql .= ", cs.fk_categorie, cs.fk_project";
-}
 // Add sum fields
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
 	$sql .= " , SUM(tt.task_duration * ".$db->ifsql("invoice_id IS NULL", "1", "0").") as tobill, SUM(tt.task_duration * ".$db->ifsql("invoice_id IS NULL", "0", "1").") as billed";
@@ -351,10 +351,6 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-// We'll need this table joined to the select in order to filter by categ
-if (!empty($search_categ)) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_project as cs ON p.rowid = cs.fk_project"; // We'll need this table joined to the select in order to filter by categ
-}
 $sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
@@ -379,12 +375,6 @@ if (is_object($projectstatic) && $projectstatic->id > 0) {
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) {
 	$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
-}
-if ($search_categ > 0) {
-	$sql .= " AND cs.fk_categorie = ".((int) $search_categ);
-}
-if ($search_categ == -2) {
-	$sql .= " AND cs.fk_categorie IS NULL";
 }
 if ($search_project_ref) {
 	$sql .= natural_search('p.ref', $search_project_ref);
@@ -412,6 +402,9 @@ if ($search_task_budget_amount) {
 }
 if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
+}
+if ($search_societe_alias) {
+	$sql .= natural_search('s.name_alias', $search_societe_alias);
 }
 if ($search_date_start) {
 	$sql .= " AND t.dateo >= '".$db->idate($search_date_start)."'";
@@ -441,6 +434,32 @@ if ($search_project_user > 0) {
 if ($search_task_user > 0) {
 	$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $search_task_user);
 }
+// Search for tag/category ($searchCategoryProjectList is an array of ID)
+$searchCategoryProjectList = array($search_categ);
+$searchCategoryProjectOperator = 0;
+if (!empty($searchCategoryProjectList)) {
+	$searchCategoryProjectSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryProjectList as $searchCategoryProject) {
+		if (intval($searchCategoryProject) == -2) {
+			$searchCategoryProjectSqlList[] = "NOT EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project)";
+		} elseif (intval($searchCategoryProject) > 0) {
+			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProject);
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryProjectSqlList[] = " EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryProjectOperator == 1) {
+		if (!empty($searchCategoryProjectSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryProjectSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryProjectSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryProjectSqlList).")";
+		}
+	}
+}
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -452,9 +471,6 @@ if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed
 	$sql .= " s.nom, s.rowid,";
 	$sql .= " t.datec, t.dateo, t.datee, t.tms,";
 	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress,t.budget_amount, t.fk_statut";
-	if ($search_categ) {
-		$sql .= ", cs.fk_categorie, cs.fk_project";
-	}
 	// Add fields from extrafields
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -579,6 +595,9 @@ if ($search_task_progress != '') {
 if ($search_societe != '') {
 	$param .= '&search_societe='.urlencode($search_societe);
 }
+if ($search_societe != '') {
+	$param .= '&search_societe_alias='.urlencode($search_societe_alias);
+}
 if ($search_projectstatus != '') {
 	$param .= '&search_projectstatus='.urlencode($search_projectstatus);
 }
@@ -661,11 +680,11 @@ if ($search_all) {
 $moreforfilter = '';
 
 // Filter on categories
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ProjectCategories');
-	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('project', $search_categ, 'search_categ', 0, $tmptitle, 'maxwidth300');
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('project', $search_categ, 'search_categ', 1, $tmptitle, 'maxwidth300');
 	$moreforfilter .= '</div>';
 }
 
@@ -708,6 +727,13 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
+// Action column
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
 if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_task_ref_parent" value="'.dol_escape_htmltag($search_task_ref_parent).'" size="4">';
@@ -768,6 +794,11 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<input type="text" class="flat" name="search_societe" value="'.dol_escape_htmltag($search_societe).'" size="4">';
 	print '</td>';
 }
+if (!empty($arrayfields['s.name_alias']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_societe_alias" value="'.dol_escape_htmltag($search_societe_alias).'" size="4">';
+	print '</td>';
+}
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '<td class="liste_titre center">';
 	$arrayofstatus = array();
@@ -826,10 +857,12 @@ if (!empty($arrayfields['t.tms']['checked'])) {
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre maxwidthsearch">';
-$searchpicto = $form->showFilterButtons();
-print $searchpicto;
-print '</td>';
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 print '</tr>'."\n";
 
 $totalarray = array(
@@ -854,6 +887,9 @@ $totalarray = array(
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
 	print_liste_field_titre($arrayfields['t.fk_task_parent']['label'], $_SERVER["PHP_SELF"], "t.fk_task_parent", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -888,6 +924,10 @@ if (!empty($arrayfields['p.title']['checked'])) {
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['s.name_alias']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
@@ -946,7 +986,9 @@ if (!empty($arrayfields['t.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['t.tms']['label'], $_SERVER["PHP_SELF"], "t.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 $totalarray['nbfield']++;
 print '</tr>'."\n";
 
@@ -992,6 +1034,11 @@ while ($i < $imaxinloop) {
 	$projectstatic->statut = $obj->projectstatus;
 	$projectstatic->datee = $db->jdate($obj->projectdatee);
 
+	if ($obj->socid) {
+		$socstatic->id = $obj->socid;
+		$socstatic->name = $obj->name;
+		$socstatic->name_alias = $obj->alias;
+	}
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="'.$savnbfield.'">';
@@ -1008,6 +1055,18 @@ while ($i < $imaxinloop) {
 		if ($userAccess >= 0) {
 			print '<tr data-rowid="'.$object->id.'" class="oddeven">';
 
+			// Action column
+			if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+				print '<td class="nowrap center">';
+				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+					$selected = 0;
+					if (in_array($object->id, $arrayofselected)) {
+						$selected = 1;
+					}
+					print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
+				}
+				print '</td>';
+			}
 			// Ref Parent
 			if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
 				print '<td class="nowraponall">';
@@ -1052,7 +1111,7 @@ while ($i < $imaxinloop) {
 			// Description
 			if (!empty($arrayfields['t.description']['checked'])) {
 				print '<td>';
-				print dol_escape_htmltag($object->description);
+				print dolGetFirstLineOfText($object->description, 5);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1101,9 +1160,20 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['s.nom']['checked'])) {
 				print '<td>';
 				if ($obj->socid) {
-					$socstatic->id = $obj->socid;
-					$socstatic->name = $obj->name;
-					print $socstatic->getNomUrl(1);
+					print $socstatic->getNomUrl(1, '', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				} else {
+					print '&nbsp;';
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			// Alias
+			if (!empty($arrayfields['s.name_alias']['checked'])) {
+				print '<td>';
+				if ($obj->socid) {
+					print $socstatic->name_alias;
 				} else {
 					print '&nbsp;';
 				}
@@ -1229,9 +1299,12 @@ while ($i < $imaxinloop) {
 					$totalarray['totalprogress_summary'] = $totalarray['nbfield'];
 				}
 			}
+			// Budget for task
 			if (!empty($arrayfields['t.budget_amount']['checked'])) {
 				print '<td class="center">';
-				print price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency);
+				if ($object->budget_amount) {
+					print '<span class="amount">'.price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
+				}
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1312,21 +1385,23 @@ while ($i < $imaxinloop) {
 				}
 			}
 			// Status
-			/*if (! empty($arrayfields['p.fk_statut']['checked']))
+			/*if (!empty($arrayfields['p.fk_statut']['checked']))
 			{
 				$projectstatic->statut = $obj->fk_statut;
 				print '<td class="right">'.$projectstatic->getLibStatut(5).'</td>';
 			}*/
 			// Action column
-			print '<td class="nowrap center">';
-			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-				$selected = 0;
-				if (in_array($object->id, $arrayofselected)) {
-					$selected = 1;
+			if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+				print '<td class="nowrap center">';
+				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+					$selected = 0;
+					if (in_array($object->id, $arrayofselected)) {
+						$selected = 1;
+					}
+					print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 				}
-				print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
+				print '</td>';
 			}
-			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

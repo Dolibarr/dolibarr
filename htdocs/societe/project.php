@@ -28,11 +28,14 @@
  *  \brief      Page of third party projects
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->loadLangs(array("companies", "projects"));
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'projects'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -81,7 +84,7 @@ if ($socid) {
 	}
 	llxHeader('', $title);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = societe_prepare_head($object);

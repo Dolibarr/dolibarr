@@ -31,10 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 
@@ -105,6 +105,8 @@ class Delivery extends CommonObject
 	 * @var string model pdf
 	 */
 	public $model_pdf;
+
+	public $commande_id;
 
 	public $lines = array();
 
@@ -971,7 +973,7 @@ class Delivery extends CommonObject
 		$sqlSourceLine .= ", p.ref, p.label";
 		$sqlSourceLine .= " FROM ".MAIN_DB_PREFIX.$this->linkedObjectsIds[0]['type']."det as st";
 		$sqlSourceLine .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON st.fk_product = p.rowid";
-		$sqlSourceLine .= " WHERE fk_".$this->linked_object[0]['type']." = ".((int) $this->linked_object[0]['linkid']);
+		$sqlSourceLine .= " WHERE fk_".$this->linked_objects[0]['type']." = ".((int) $this->linked_objects[0]['linkid']);
 
 		$resultSourceLine = $this->db->query($sqlSourceLine);
 		if ($resultSourceLine) {
@@ -984,12 +986,12 @@ class Delivery extends CommonObject
 				// Get lines of sources alread delivered
 				$sql = "SELECT ld.fk_origin_line, sum(ld.qty) as qty";
 				$sql .= " FROM ".MAIN_DB_PREFIX."deliverydet as ld, ".MAIN_DB_PREFIX."delivery as l,";
-				$sql .= " ".MAIN_DB_PREFIX.$this->linked_object[0]['type']." as c";
-				$sql .= ", ".MAIN_DB_PREFIX.$this->linked_object[0]['type']."det as cd";
+				$sql .= " ".MAIN_DB_PREFIX.$this->linked_objects[0]['type']." as c";
+				$sql .= ", ".MAIN_DB_PREFIX.$this->linked_objects[0]['type']."det as cd";
 				$sql .= " WHERE ld.fk_delivery = l.rowid";
 				$sql .= " AND ld.fk_origin_line = cd.rowid";
-				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = c.rowid";
-				$sql .= " AND cd.fk_".$this->linked_object[0]['type']." = ".((int) $this->linked_object[0]['linkid']);
+				$sql .= " AND cd.fk_".$this->linked_objects[0]['type']." = c.rowid";
+				$sql .= " AND cd.fk_".$this->linked_objects[0]['type']." = ".((int) $this->linked_objects[0]['linkid']);
 				$sql .= " AND ld.fk_origin_line = ".((int) $objSourceLine->rowid);
 				$sql .= " GROUP BY ld.fk_origin_line";
 

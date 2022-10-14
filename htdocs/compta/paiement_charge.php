@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +23,7 @@
  *      \brief      Page to add payment of a tax
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
@@ -70,7 +72,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$error++;
 		$action = 'create';
 	}
-	if (!empty($conf->banque->enabled) && !(GETPOST("accountid") > 0)) {
+	if (isModEnabled("banque") && !(GETPOST("accountid") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 		$action = 'create';
@@ -168,13 +170,8 @@ if ($action == 'create') {
 	}
 
 	print load_fiche_titre($langs->trans("DoPayment"));
-	print "<br>\n";
 
-	if ($mesg) {
-		print "<div class=\"error\">$mesg</div>";
-	}
-
-	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
+	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="id" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
@@ -254,6 +251,7 @@ if ($action == 'create') {
 	print "</tr>\n";
 
 	$total = 0;
+	$total_ttc = 0;
 	$totalrecu = 0;
 
 	while ($i < $num) {

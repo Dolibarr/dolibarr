@@ -31,7 +31,7 @@
 // $parameters, $object, $action must be defined for the hook.
 
 // $permissiontoread, $permissiontoadd, $permissiontodelete, $permissiontoclose may be defined
-// $uploaddir may be defined (example to $conf->projet->dir_output."/";)
+// $uploaddir may be defined (example to $conf->project->dir_output."/";)
 // $toselect may be defined
 // $diroutputmassaction may be defined
 
@@ -40,6 +40,9 @@
 if (empty($objectclass) || empty($uploaddir)) {
 	dol_print_error(null, 'include of actions_massactions.inc.php is done but var $objectclass or $uploaddir was not defined');
 	exit;
+}
+if (empty($massaction)) {
+	$massaction = '';
 }
 
 // For backward compatibility
@@ -53,14 +56,13 @@ if (!empty($permtodelete) && empty($permissiontodelete)) {
 	$permissiontodelete = $permtodelete;
 }
 
-
 // Mass actions. Controls on number of lines checked.
 $maxformassaction = (empty($conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS) ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
-if (!empty($massaction) && is_array($toselect) && count($toselect) < 1) {
+if ($massaction && is_array($toselect) && count($toselect) < 1) {
 	$error++;
 	setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
 }
-if (!$error && is_array($toselect) && count($toselect) > $maxformassaction) {
+if (!$error && isset($toselect) && is_array($toselect) && count($toselect) > $maxformassaction) {
 	setEventMessages($langs->trans('TooManyRecordForMassAction', $maxformassaction), null, 'errors');
 	$error++;
 }
@@ -74,6 +76,7 @@ if (!$error && $massaction == 'confirm_presend') {
 	$nbignored = 0;
 	$langs->load("mails");
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 
 	$listofobjectid = array();
 	$listofobjectthirdparties = array();
@@ -455,7 +458,7 @@ if (!$error && $massaction == 'confirm_presend') {
 				//var_dump($oneemailperrecipient); var_dump($listofqualifiedobj); var_dump($listofqualifiedref);
 				foreach ($looparray as $objectid => $objecttmp) {		// $objecttmp is a real object or an empty object if we choose to send one email per thirdparty instead of one per object
 					// Make substitution in email content
-					if (!empty($conf->projet->enabled) && method_exists($objecttmp, 'fetch_projet') && is_null($objecttmp->project)) {
+					if (isModEnabled('project') && method_exists($objecttmp, 'fetch_projet') && is_null($objecttmp->project)) {
 						$objecttmp->fetch_projet();
 					}
 					$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $objecttmp);
@@ -614,6 +617,9 @@ if (!$error && $massaction == 'confirm_presend') {
 								if ($triggername == 'SUPPLIERPROPOSAL_SENTBYMAIL') {
 									$triggername = 'PROPOSAL_SUPPLIER_SENTBYMAIL';
 								}
+								if ($triggername == 'PROJET_SENTBYMAIL') {
+									$triggername = 'PROJECT_SENTBYMAIL';
+								}
 
 								if (!empty($triggername)) {
 									// Call trigger
@@ -667,6 +673,7 @@ if (!$error && $massaction == 'confirm_presend') {
 		$massaction = '';
 	}
 }
+
 
 if (!$error && $massaction == 'cancelorders') {
 	$db->begin();
@@ -761,10 +768,10 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 	// Define output language (Here it is not used because we do only merging existing PDF)
 	$outputlangs = $langs;
 	$newlang = '';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 		$newlang = GETPOST('lang_id', 'aZ09');
 	}
-	//elseif ($conf->global->MAIN_MULTILANGS && empty($newlang) && is_object($objecttmp->thirdparty)) {		// On massaction, we can have several values for $objecttmp->thirdparty
+	//elseif (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && is_object($objecttmp->thirdparty)) {		// On massaction, we can have several values for $objecttmp->thirdparty
 	//	$newlang = $objecttmp->thirdparty->default_lang;
 	//}
 	if (!empty($newlang)) {
@@ -836,7 +843,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		}
 		$pdf->SetFont(pdf_getPDFFont($outputlangs));
 
-		if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
 		}
 
@@ -910,12 +917,12 @@ if ($action == 'remove_file') {
 if (!$error && $massaction == 'validate' && $permissiontoadd) {
 	$objecttmp = new $objectclass($db);
 
-	if (($objecttmp->element == 'facture' || $objecttmp->element == 'invoice') && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+	if (($objecttmp->element == 'facture' || $objecttmp->element == 'invoice') && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorMassValidationNotAllowedWhenStockIncreaseOnAction'), null, 'errors');
 		$error++;
 	}
-	if ($objecttmp->element == 'invoice_supplier' && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
+	if ($objecttmp->element == 'invoice_supplier' && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorMassValidationNotAllowedWhenStockIncreaseOnAction'), null, 'errors');
 		$error++;
@@ -963,10 +970,10 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						$outputlangs = $langs;
 						$newlang = '';
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 							$newlang = $objecttmp->thirdparty->default_lang;
 						}
 						if (!empty($newlang)) {
@@ -1055,6 +1062,8 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 
 			if (in_array($objecttmp->element, array('societe', 'member'))) {
 				$result = $objecttmp->delete($objecttmp->id, $user, 1);
+			} elseif (in_array($objecttmp->element, array('action'))) {
+				$result = $objecttmp->delete();
 			} else {
 				$result = $objecttmp->delete($user);
 			}
@@ -1103,7 +1112,6 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 // @todo : propose model selection
 if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 	$db->begin();
-
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
 	foreach ($toselect as $toselectid) {
@@ -1112,14 +1120,18 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 			$outputlangs = $langs;
 			$newlang = '';
 
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->thirdparty->default_lang)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($objecttmp->thirdparty->default_lang)) {
 				$newlang = $objecttmp->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($objecttmp->default_lang)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($objecttmp->default_lang)) {
 				$newlang = $objecttmp->default_lang; // for thirdparty
+			}
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && empty($objecttmp->thirdparty)) { //load lang from thirdparty
+				$objecttmp->fetch_thirdparty();
+				$newlang = $objecttmp->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
 			if (!empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
@@ -1213,6 +1225,45 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 				}
 			}
 		}
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		} else {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		}
+		$db->commit();
+		$toselect=array();
+	} else {
+		$db->rollback();
+	}
+}
+
+if (!$error && ($action == 'setsupervisor' && $confirm == 'yes') && $permissiontoadd) {
+	$db->begin();
+	$supervisortoset=GETPOST('supervisortoset');
+	if (!empty($supervisortoset)) {
+		foreach ($toselect as $toselectid) {
+			$result = $object->fetch($toselectid);
+			//var_dump($contcats);exit;
+			if ($result > 0) {
+				$object->fk_user = $supervisortoset;
+				$res = $object->update($user);
+				if ($res > 0) {
+					$nbok++;
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+	} else {
+		setEventMessage('UserNotFound', 'errors');
+		$error++;
 	}
 
 	if (!$error) {
@@ -1503,7 +1554,58 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	}
 }
 
-$parameters['toselect'] = $toselect;
+if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $permissiontoapprove) {
+	$db->begin();
+	$objecttmp = new $objectclass($db);
+	$nbok = 0;
+	$typeholiday = GETPOST('typeholiday', 'alpha');
+	$nbdaysholidays = GETPOST('nbdaysholidays', 'double');
+
+	if ($nbdaysholidays <= 0) {
+		setEventMessages($langs->trans("WrongAmount"), "", 'errors');
+		$error++;
+	}
+
+	if (!$error) {
+		foreach ($toselect as $toselectid) {
+			$balancecpuser = $objecttmp->getCPforUser($toselectid, $typeholiday);
+			if (!empty($balancecpuser)) {
+				$newnbdaysholidays = $nbdaysholidays + $balancecpuser;
+			} else {
+				$newnbdaysholidays = $nbdaysholidays;
+			}
+			$result = $holiday->addLogCP($user->id, $toselectid, $langs->transnoentitiesnoconv('ManualUpdate'), $newnbdaysholidays, $typeholiday);
+			if ($result <= 0) {
+				setEventMessages($holiday->error, $holiday->errors, 'errors');
+				$error++;
+				break;
+			}
+
+			$objecttmp->updateSoldeCP($toselectid, $newnbdaysholidays, $typeholiday);
+			if ($result > 0) {
+				$nbok++;
+			} else {
+				setEventMessages("", $langs->trans("ErrorUpdatingUsersCP"), 'errors');
+				$error++;
+				break;
+			}
+		}
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("HolidayRecordsIncreased", $nbok), null, 'mesgs');
+		} elseif ($nbok == 1) {
+			setEventMessages($langs->trans("HolidayRecordIncreased"), null, 'mesgs');
+		}
+		$db->commit();
+		$toselect=array();
+	} else {
+		$db->rollback();
+	}
+}
+
+$parameters['toselect'] = (empty($toselect) ? array() : $toselect);
 $parameters['uploaddir'] = $uploaddir;
 $parameters['massaction'] = $massaction;
 $parameters['diroutputmassaction'] = isset($diroutputmassaction) ? $diroutputmassaction : null;

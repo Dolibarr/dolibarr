@@ -29,6 +29,7 @@
  *		\brief      list of expense reports
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -482,7 +483,7 @@ if ($resql) {
 			if ($canedit) {
 				print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&fk_user_author='.$fuser->id.'" class="butAction">'.$langs->trans("AddTrip").'</a>';
 			} else {
-				print '<a href="#" class="butActionRefused" title="'.$langs->trans("NotEnoughPermission").'">'.$langs->trans("AddTrip").'</a>';
+				print '<a href="#" class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddTrip").'</a>';
 			}
 
 			print '</div>';
