@@ -302,7 +302,6 @@ if (empty($reshook)) {
 				$qty .= '_'.$j;
 				while (GETPOSTISSET($stockLocation)) {
 					// save sub line of warehouse
-
 					$stockLine[$i][$j]['qty'] = price2num(GETPOST($qty, 'alpha'), 'MS');
 					$stockLine[$i][$j]['warehouse_id'] = GETPOST($stockLocation, 'int');
 					$stockLine[$i][$j]['ix_l'] = GETPOST($idl, 'int');
