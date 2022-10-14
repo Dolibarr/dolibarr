@@ -265,7 +265,6 @@ if (empty($reshook)) {
 				if (GETPOSTISSET($batch)) {
 					//shipment line with batch-enable product
 					$qty .= '_'.$j;
-
 					while (GETPOSTISSET($batch)) {
 						// save line of detail into sub_qty
 						$sub_qty[$j]['q'] = GETPOST($qty, 'int'); // the qty we want to move for this stock record
