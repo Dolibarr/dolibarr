@@ -42,6 +42,9 @@ if (!empty($conf->adherent->enabled)) {
 if (!empty($conf->categorie->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
+if (!empty($conf->accounting->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+}
 
 // Load translation files required by page
 $langs->loadLangs(array(
@@ -97,14 +100,29 @@ if (empty($reshook)) {
 		$action = "";
 	}
 
-	if ($action == 'setsupplieraccountancycode') {
+	// set accountancy code
+	if ($action == 'setsupplieraccountancycodegeneral') {
 		$result = $object->fetch($id);
-		$object->code_compta_fournisseur = GETPOST("supplieraccountancycode");
+		$object->accountancy_code_supplier_general = GETPOST("supplieraccountancycodegeneral");
 		$result = $object->update($object->id, $user, 1, 0, 1);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
+
+	if ($action == 'setsupplieraccountancycode') {
+		$result = $object->fetch($id);
+		if (isset($conf->global->ACCOUNTING_MANAGE_ZERO) && $conf->global->ACCOUNTING_MANAGE_ZERO == 1) {
+			$object->code_compta_fournisseur = GETPOST("supplieraccountancycode");
+		} else {
+			$object->code_compta_fournisseur = clean_account(GETPOST("supplieraccountancycode"));
+		}
+		$result = $object->update($object->id, $user, 1, 0, 1);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
 	// terms of the settlement
 	if ($action == 'setconditions' && $user->rights->societe->creer) {
 		$object->fetch($id);
@@ -207,6 +225,8 @@ if ($object->id > 0) {
 	}
 
 	if ($object->fournisseur) {
+		$langs->loadLangs(array('accountancy', 'compta'));
+
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("SupplierCode").'</td><td>';
 		print showValueWithClipboardCPButton(dol_escape_htmltag($object->code_fournisseur));
@@ -217,7 +237,20 @@ if ($object->id > 0) {
 		print '</td>';
 		print '</tr>';
 
-		$langs->load('compta');
+		if (!empty($conf->accounting->enabled)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+
+			print '<tr>';
+			print '<td>';
+			print $form->editfieldkey("SupplierAccountancyCodeGeneral", 'supplieraccountancycodegeneral', length_accountg($object->accountancy_code_supplier_general), $object, $user->rights->societe->creer);
+			print '</td><td>';
+			print $form->editfieldval("SupplierAccountancyCodeGeneral", 'supplieraccountancycodegeneral', length_accountg($object->accountancy_code_supplier_general), $object, $user->rights->societe->creer);
+			$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . ")";
+			print !empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) ? $accountingAccountByDefault : '';
+			print '</td>';
+			print '</tr>';
+		}
+
 		print '<tr>';
 		print '<td>';
 		print $form->editfieldkey("SupplierAccountancyCode", 'supplieraccountancycode', $object->code_compta_fournisseur, $object, $user->rights->societe->creer);

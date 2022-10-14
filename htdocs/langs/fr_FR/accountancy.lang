@@ -52,6 +52,8 @@ ExportAccountingSourceDocHelp=Avec cet outil, vous pouvez exporter les événeme
 ExportAccountingSourceDocHelp2=Pour exporter vos journaux, utilisez l'entrée de menu %s - %s.
 VueByAccountAccounting=Vue par comptes comptables
 VueBySubAccountAccounting=Affichage par compte auxiliaire
+AccountingAccountByDefault=Compte comptable par défaut
+AccountingAccountByDefaultShort=Compte par défaut
 
 MainAccountForCustomersNotDefined=Compte comptable général pour les clients non défini dans la configuration
 MainAccountForSuppliersNotDefined=Compte comptable général pour les fournisseurs non défini dans la configuration
