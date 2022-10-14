@@ -708,76 +708,8 @@ class Expedition extends CommonObject
 
 		// If stock increment is done on sending (recommanded choice)
 		if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
-			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-
-			$langs->load("agenda");
-
-			// Loop on each product line to add a stock movement
-			$sql = "SELECT cd.fk_product, cd.subprice,";
-			$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
-			$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
-			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-			$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
-			$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-			$sql .= " AND cd.rowid = ed.fk_origin_line";
-
-			dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$cpt = $this->db->num_rows($resql);
-				for ($i = 0; $i < $cpt; $i++) {
-					$obj = $this->db->fetch_object($resql);
-					if (empty($obj->edbrowid)) {
-						$qty = $obj->qty;
-					} else {
-						$qty = $obj->edbqty;
-					}
-					if ($qty <= 0) {
-						continue;
-					}
-					dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
-
-					//var_dump($this->lines[$i]);
-					$mouvS = new MouvementStock($this->db);
-
-					$mouvS->setOrigin($this->element, $this->id);
-
-					if (empty($obj->edbrowid)) {
-						// line without batch detail
-
-						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
-						$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr", $numref), '', '', '', '', 0, '', 1);
-
-						if ($result < 0) {
-							$error++;
-							$this->error = $mouvS->error;
-							$this->errors = array_merge($this->errors, $mouvS->errors);
-							break;
-						}
-					} else {
-						// line with batch detail
-
-						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
-						// Note: ->fk_origin_stock = id into table llx_product_batch (may be renamed into llx_product_stock_batch in another version)
-						$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr", $numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock, '', 1);
-						if ($result < 0) {
-							$error++;
-							$this->error = $mouvS->error;
-							$this->errors = array_merge($this->errors, $mouvS->errors);
-							break;
-						}
-					}
-				}
-
-				// If some stock lines are now 0, we can remove entry into llx_product_stock, but only if there is no child lines into llx_product_batch (detail of batch, because we can imagine
-				// having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".MAIN_DB_PREFIX."product_batch as pb)";
-				$resql = $this->db->query($sql);
-				// We do not test error, it can fails if there is child in batch details
-			} else {
-				$this->db->rollback();
-				$this->error = $this->db->error();
+			$result = $this->manageStockMvtOnEvt($user);
+			if ($result < 0) {
 				return -2;
 			}
 		}
@@ -2151,69 +2083,8 @@ class Expedition extends CommonObject
 
 			// If stock increment is done on closing
 			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-
-				$langs->load("agenda");
-
-				// Loop on each product line to add a stock movement
-				// TODO possibilite d'expedier a partir d'une propale ou autre origine ?
-				$sql = "SELECT cd.fk_product, cd.subprice,";
-				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
-				$sql .= " e.ref,";
-				$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
-				$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-				$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
-				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expedition as e ON ed.fk_expedition = e.rowid";
-				$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
-				$sql .= " AND cd.rowid = ed.fk_origin_line";
-
-				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
-				$resql = $this->db->query($sql);
-				if ($resql) {
-					$cpt = $this->db->num_rows($resql);
-					for ($i = 0; $i < $cpt; $i++) {
-						$obj = $this->db->fetch_object($resql);
-						if (empty($obj->edbrowid)) {
-							$qty = $obj->qty;
-						} else {
-							$qty = $obj->edbqty;
-						}
-						if ($qty <= 0) {
-							continue;
-						}
-						dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
-
-						$mouvS = new MouvementStock($this->db);
-						$mouvS->origin = &$this;
-						$mouvS->setOrigin($this->element, $this->id);
-
-						if (empty($obj->edbrowid)) {
-							// line without batch detail
-
-							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentClassifyClosedInDolibarr", $obj->ref));
-							if ($result < 0) {
-								$this->error = $mouvS->error;
-								$this->errors = $mouvS->errors;
-								$error++;
-								break;
-							}
-						} else {
-							// line with batch detail
-
-							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentClassifyClosedInDolibarr", $obj->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
-							if ($result < 0) {
-								$this->error = $mouvS->error;
-								$this->errors = $mouvS->errors;
-								$error++;
-								break;
-							}
-						}
-					}
-				} else {
-					$this->error = $this->db->lasterror();
+				$result = $this->manageStockMvtOnEvt($user);
+				if ($result<0) {
 					$error++;
 				}
 			}
@@ -2240,6 +2111,93 @@ class Expedition extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 * Manage Stock MVt onb Close or valid Shipment
+	 * @param      User 	$user        		Object user that modify
+	 * @return     int     <0 if ko, >0 if ok
+	 * @throws Exception
+	 *
+	 */
+	private function manageStockMvtOnEvt($user)
+	{
+		$error=0;
+
+		require_once DOL_DOCUMENT_ROOT . '/product/stock/class/mouvementstock.class.php';
+
+		$langs->load("agenda");
+
+		// Loop on each product line to add a stock movement
+		$sql = "SELECT cd.fk_product, cd.subprice,";
+		$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
+		$sql .= " e.ref,";
+		$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
+		$sql .= " ,cd.rowid as cdid, ed.rowid as edid";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "commandedet as cd,";
+		$sql .= " " . MAIN_DB_PREFIX . "expeditiondet as ed";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
+		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "expedition as e ON ed.fk_expedition = e.rowid";
+		$sql .= " WHERE ed.fk_expedition = " . ((int) $this->id);
+		$sql .= " AND cd.rowid = ed.fk_origin_line";
+
+		dol_syslog(get_class($this) . "::valid select details", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$cpt = $this->db->num_rows($resql);
+			for ($i = 0; $i < $cpt; $i++) {
+				$obj = $this->db->fetch_object($resql);
+				if (empty($obj->edbrowid)) {
+					$qty = $obj->qty;
+				} else {
+					$qty = $obj->edbqty;
+				}
+				if ($qty <= 0) {
+					continue;
+				}
+				dol_syslog(get_class($this) . "::valid movement index " . $i . " ed.rowid=" . $obj->rowid . " edb.rowid=" . $obj->edbrowid);
+
+				$mouvS = new MouvementStock($this->db);
+				$mouvS->origin = &$this;
+				$mouvS->setOrigin($this->element, $this->id, $obj->cdid, $obj->edid);
+
+				if (empty($obj->edbrowid)) {
+					// line without batch detail
+
+					// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentClassifyClosedInDolibarr", $obj->ref));
+					if ($result < 0) {
+						$this->error = $mouvS->error;
+						$this->errors = $mouvS->errors;
+						$error++;
+						break;
+					}
+				} else {
+					// line with batch detail
+
+					// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentClassifyClosedInDolibarr", $obj->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+					if ($result < 0) {
+						$this->error = $mouvS->error;
+						$this->errors = $mouvS->errors;
+						$error++;
+						break;
+					}
+				}
+
+				// If some stock lines are now 0, we can remove entry into llx_product_stock, but only if there is no child lines into llx_product_batch (detail of batch, because we can imagine
+				// having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".MAIN_DB_PREFIX."product_batch as pb)";
+				$resql = $this->db->query($sql);
+				// We do not test error, it can fails if there is child in batch details
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->db->lasterror();
+			$error ++;
+		}
+
+		return $error;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
