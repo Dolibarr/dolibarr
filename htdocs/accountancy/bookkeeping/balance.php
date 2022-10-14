@@ -59,6 +59,7 @@ $search_accountancy_code_end = GETPOST('search_accountancy_code_end', 'alpha');
 if ($search_accountancy_code_end == - 1) {
 	$search_accountancy_code_end = '';
 }
+$search_not_reconciled = GETPOST('search_not_reconciled', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -140,8 +141,15 @@ if (empty($reshook)) {
 		$show_subgroup = '';
 		$search_date_start = '';
 		$search_date_end = '';
+		$search_date_startyear = '';
+		$search_date_startmonth = '';
+		$search_date_startday = '';
+		$search_date_endyear = '';
+		$search_date_endmonth = '';
+		$search_date_endday = '';
 		$search_accountancy_code_start = '';
 		$search_accountancy_code_end = '';
+		$search_not_reconciled = '';
 		$search_ledger_code = array();
 		$filter = array();
 	}
@@ -182,6 +190,10 @@ if (empty($reshook)) {
 		foreach ($search_ledger_code as $code) {
 			$param .= '&search_ledger_code[]=' . urlencode($code);
 		}
+	}
+	if (!empty($search_not_reconciled)) {
+		$filter['t.reconciled_option'] = $search_not_reconciled;
+		$param .= '&search_not_reconciled='.urlencode($search_not_reconciled);
 	}
 
 	// param with type of list
@@ -319,36 +331,20 @@ if ($action != 'export_csv') {
 	$moreforfilter .= $form->selectDate($search_date_start ? $search_date_start : -1, 'date_start', 0, 0, 1, '', 1, 0);
 	$moreforfilter .= $langs->trans('DateEnd').': ';
 	$moreforfilter .= $form->selectDate($search_date_end ? $search_date_end : -1, 'date_end', 0, 0, 1, '', 1, 0);
-
-	$moreforfilter .= ' - ';
-	$moreforfilter .= '<label for="show_subgroup">'.$langs->trans('ShowSubtotalByGroup').'</label>: ';
-	$moreforfilter .= '<input type="checkbox" name="show_subgroup" id="show_subgroup" value="show_subgroup"'.($show_subgroup == 'show_subgroup' ? ' checked' : '').'>';
-
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
-
-	$moreforfilter .= $langs->trans("Journal");
-	$moreforfilter .= $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
-
+	$moreforfilter .= '<label for="show_subgroup">'.$langs->trans('ShowSubtotalByGroup').'</label>: ';
+	$moreforfilter .= '<input type="checkbox" name="show_subgroup" id="show_subgroup" value="show_subgroup"'.($show_subgroup == 'show_subgroup' ? ' checked' : '').'>';
 	$moreforfilter .= '</div>';
 
-	if (!empty($moreforfilter)) {
-		print '<div class="liste_titre liste_titre_bydiv centpercent">';
-		print $moreforfilter;
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		print '</div>';
-	}
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= $langs->trans("Journal");
+	$moreforfilter .= $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	$moreforfilter .= '</div>';
 
-
-	$colspan = (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE) ? 5 : 4);
-
-	print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
-
-	$moreforfilter = '';
-
+	$moreforfilter .= '</br>';
+	$moreforfilter .= '<div class="divsearchfield">';
 	// Accountancy account
 	$moreforfilter .= $langs->trans('AccountAccounting').': ';
 	if ($type == 'sub') {
@@ -362,10 +358,29 @@ if ($action != 'export_csv') {
 	} else {
 		$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200', 'accounts');
 	}
+	$moreforfilter .= '</div>';
+
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<label for="notreconciled">'.$langs->trans('NotReconciled').'</label>: ';
+	$moreforfilter .= '<input type="checkbox" name="search_not_reconciled" id="notreconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>';
+	$moreforfilter .= '</div>';
+
+	if (!empty($moreforfilter)) {
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
+		print $moreforfilter;
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		print '</div>';
+	}
+
+
+	$colspan = (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE) ? 6 : 5);
+
+	print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre" colspan="'.$colspan.'">';
-	print $moreforfilter;
 	print '</td>';
 
 	// Fields from hook
@@ -382,6 +397,9 @@ if ($action != 'export_csv') {
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("AccountAccounting", $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
+	if ($type == 'sub') {
+		print_liste_field_titre("Type", $_SERVER['PHP_SELF'], "t.type", "", $param, "", $sortfield, $sortorder);
+	}
 	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		print_liste_field_titre("OpeningBalance", $_SERVER['PHP_SELF'], "", $param, "", 'class="right"', $sortfield, $sortorder);
 	}
@@ -498,11 +516,18 @@ if ($action != 'export_csv') {
 		}
 
 		print '<tr class="oddeven">';
+		// Accounting account
 		if ($type == 'sub') {
 			print '<td>'.$line->subledger_account.' <span class="opacitymedium">('.$line->subledger_label.')</span></td>';
 		} else {
 			print '<td>'.$accounting_account.'</td>';
 		}
+
+		// Type
+		if ($type == 'sub') {
+			print '<td></td>';
+		}
+
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			print '<td class="right nowraponall amount">'.price(price2num($opening_balance, 'MT')).'</td>';
 		}
@@ -551,7 +576,7 @@ if ($action != 'export_csv') {
 	}
 
 	if (!empty($show_subgroup)) {
-		print '<tr class="liste_total"><td class="right">'.$langs->trans("SubTotal").':</td>';
+		print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("SubTotal").':</td>';
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			print '<td class="right nowraponall amount">'.price(price2num($sous_total_opening_balance, 'MT')).'</td>';
 		}
@@ -566,7 +591,7 @@ if ($action != 'export_csv') {
 		print '</tr>';
 	}
 
-	print '<tr class="liste_total"><td class="right">'.$langs->trans("AccountBalance").':</td>';
+	print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("AccountBalance").':</td>';
 	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		print '<td class="nowrap right">'.price(price2num($total_opening_balance, 'MT')).'</td>';
 	}

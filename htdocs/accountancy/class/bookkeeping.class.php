@@ -1171,6 +1171,8 @@ class BookKeeping extends CommonObject
 					} else {
 						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 					}
+				} elseif ($key == 't.reconciled_option') {
+					$sqlwhere[] = 't.lettering_code IS NULL';
 				} else {
 					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
