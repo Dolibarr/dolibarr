@@ -1372,7 +1372,7 @@ function dol_delete_dir($dir, $nophperrors = 0)
 	// Security:
 	// We refuse transversal using .. and pipes into filenames.
 	if (preg_match('/\.\./', $dir) || preg_match('/[<>|]/', $dir)) {
-		dol_syslog("Refused to delete dir ".$dir, LOG_WARNING);
+		dol_syslog("Refused to delete dir ".$dir.' (contains invalid char sequence)', LOG_WARNING);
 		return false;
 	}
 
