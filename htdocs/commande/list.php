@@ -1089,8 +1089,8 @@ if ($resql) {
 	}
 	// Parent company
 	if (!empty($arrayfields['s2.nom']['checked'])) {
-		print '<td class="liste_titre center">';
-		print '<input class="flat searchstring maxwidth75imp" type="text" name="search_parent_name" value="'.dol_escape_htmltag($search_parent_name).'">';
+		print '<td class="liste_titre">';
+		print '<input class="flat maxwidth100" type="text" name="search_parent_name" value="'.dol_escape_htmltag($search_parent_name).'">';
 		print '</td>';
 	}
 	// Town
@@ -1332,7 +1332,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], 's.name_alias', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['s2.nom']['checked'])) {
-		print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER['PHP_SELF'], 's2.nom', '', $param, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER['PHP_SELF'], 's2.nom', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['s.town']['checked'])) {
 		print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
@@ -1602,7 +1602,7 @@ if ($resql) {
 
 		// Parent company
 		if (!empty($arrayfields['s2.nom']['checked'])) {
-			print '<td class="center tdoverflowmax100">';
+			print '<td class="tdoverflowmax200">';
 			if ($obj->fk_parent > 0) {
 				if (!isset($company_url_list[$obj->fk_parent])) {
 					$companyparent = new Societe($db);
