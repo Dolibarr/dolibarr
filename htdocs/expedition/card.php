@@ -1290,10 +1290,10 @@ if ($action == 'create') {
 
 									$detail = '';
 									$detail .= $langs->trans("Batch").': '.$dbatch->batch;
-									if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+									if (empty($conf->global->PRODUCT_DISABLE_SELLBY) && !empty($dbatch->sellby)) {
 										$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
 									}
-									if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+									if (empty($conf->global->PRODUCT_DISABLE_EATBY) && !empty($dbatch->eatby)) {
 										$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 									}
 									$detail .= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
@@ -1445,6 +1445,10 @@ if ($action == 'create') {
 							}
 
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
+								if (!empty($warehousePicking) && !in_array($warehouse_id, $warehousePicking)) {
+									// if a warehouse was selected by user, picking is limited to this warehouse and his children.
+									continue;
+								}
 								$tmpwarehouseObject->fetch($warehouse_id);
 								if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
 									foreach ($stock_warehouse->detail_batch as $dbatch) {
@@ -1495,6 +1499,12 @@ if ($action == 'create') {
 											print $productlotObject->getNomUrl(1);
 										} else {
 											print 'TableLotIncompleteRunRepairWithParamStandardEqualConfirmed';
+										}
+										if (empty($conf->global->PRODUCT_DISABLE_SELLBY) && !empty($dbatch->sellby)) {
+											print ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
+										}
+										if (empty($conf->global->PRODUCT_DISABLE_EATBY) && !empty($dbatch->eatby)) {
+											print ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
 										}
 										print ' ('.$dbatch->qty.')';
 										$quantityToBeDelivered -= $deliverableQty;
@@ -1694,7 +1704,7 @@ if ($action == 'create') {
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer shipment
 		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->expedition->creer, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_customer', $object->ref_customer, $object, $user->rights->expedition->creer, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project

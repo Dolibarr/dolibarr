@@ -159,6 +159,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	} else {
 		$description .= "<br>".$langs->trans("DepositsAreIncluded");
 	}
+	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
+	}
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
@@ -325,7 +328,7 @@ if (!empty($conf->facture->enabled) && ($modecompta == 'CREANCES-DETTES' || $mod
 		$sql = "SELECT sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " WHERE f.fk_statut IN (1,2)";
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 			$sql .= " AND f.type IN (0,1,2)";
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3)";
@@ -433,7 +436,7 @@ if (!empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecom
 		$sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " WHERE f.fk_statut IN (1,2)";
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 			$sql .= " AND f.type IN (0,1,2)";
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3)";

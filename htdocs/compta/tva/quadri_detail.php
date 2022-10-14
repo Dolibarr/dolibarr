@@ -163,6 +163,9 @@ if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$description .= '<br>'.$langs->trans("DepositsAreNotIncluded");
 }
+if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$description .= '<br>'.$langs->trans("SupplierDepositsAreNotIncluded");
+}
 if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
 	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
 }

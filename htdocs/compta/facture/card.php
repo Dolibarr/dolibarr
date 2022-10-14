@@ -154,7 +154,6 @@ if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 }
 
 // Security check
-$fieldid = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -530,7 +529,8 @@ if (empty($reshook)) {
 		$object->fetch($id);
 		$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), '', 2));
 	} elseif ($action == "setabsolutediscount" && $usercancreate) {
-		// POST[remise_id] or POST[remise_id_for_payment]
+		// We have POST[remise_id] or POST[remise_id_for_payment]
+		$db->begin();
 
 		// We use the credit to reduce amount of invoice
 		if (GETPOST("remise_id", 'int') > 0) {
@@ -541,7 +541,8 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			} else {
-				dol_print_error($db, $object->error);
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 		// We use the credit to reduce remain to pay
@@ -552,7 +553,8 @@ if (empty($reshook)) {
 
 			//var_dump($object->getRemainToPay(0));
 			//var_dump($discount->amount_ttc);exit;
-			if (price2num($discount->amount_ttc) > price2num($object->getRemainToPay(0))) {
+			$remaintopay = $object->getRemainToPay(0);
+			if (price2num($discount->amount_ttc) > price2num($remaintopay)) {
 				// TODO Split the discount in 2 automatically
 				$error++;
 				setEventMessages($langs->trans("ErrorDiscountLargerThanRemainToPaySplitItBefore"), null, 'errors');
@@ -561,12 +563,26 @@ if (empty($reshook)) {
 			if (!$error) {
 				$result = $discount->link_to_invoice(0, $id);
 				if ($result < 0) {
+					$error++;
 					setEventMessages($discount->error, $discount->errors, 'errors');
+				}
+			}
+
+			if (!$error) {
+				$newremaintopay = $object->getRemainToPay(0);
+				if ($newremaintopay == 0) {
+					$object->setPaid($user);
 				}
 			}
 		}
 
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!$error) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+
+		if (empty($error) && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 			$outputlangs = $langs;
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -2752,7 +2768,18 @@ if (empty($reshook)) {
 	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
+	// Make calculation according to calculationrule
+	if ($action == 'calculate') {
+		$calculationrule = GETPOST('calculationrule');
 
+		$object->fetch($id);
+		$object->fetch_thirdparty();
+		$result = $object->update_price(0, (($calculationrule == 'totalofround') ? '0' : '1'), 0, $object->thirdparty);
+		if ($result <= 0) {
+			dol_print_error($db, $result);
+			exit;
+		}
+	}
 	if ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object);
 
@@ -2861,6 +2888,7 @@ if ($action == 'create') {
 	}
 
 	$currency_code = $conf->currency;
+	$fk_account = 0;
 
 	// Load objectsrc
 	$remise_absolue = 0;
@@ -3180,7 +3208,7 @@ if ($action == 'create') {
 
 	// Standard invoice
 	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-	$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type') == 0 ? ' checked' : '').'> ';
+	$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOST('type', 'int') ? '' : ' checked').'> ';
 	$tmp  = $tmp.'<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk").'</label>';
 	$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
 	print '<table class="nobordernopadding"><tr>';
@@ -3618,7 +3646,7 @@ if ($action == 'create') {
 	if (!empty($conf->banque->enabled)) {
 		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
 		print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-		print $form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+		print $form->select_comptes(($fk_account < 0 ? '' : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 		print '</td></tr>';
 	}
 
@@ -4228,7 +4256,7 @@ if ($action == 'create') {
 	}
 	// Ref customer
 	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'customer');
 	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
@@ -4692,9 +4720,31 @@ if ($action == 'create') {
 	print '<td class="nowrap right amountcard">'.price($sign * $object->total_ht, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 
 	// Vat
-	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td colspan="3" class="nowrap right amountcard">'.price($sign * $object->total_tva, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
-	print '</tr>';
+	print '<tr><td>'.$langs->trans('AmountVAT').'</td>';
+	print '<td class="nowrap right amountcard">';
 
+	print '<div class="inline-block">';
+	if (GETPOST('calculationrule')) {
+		$calculationrule = GETPOST('calculationrule', 'alpha');
+	} else {
+		$calculationrule = (empty($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND) ? 'totalofround' : 'roundoftotal');
+	}
+	if ($calculationrule == 'totalofround') {
+		$calculationrulenum = 1;
+	} else {
+		$calculationrulenum = 2;
+	}
+	// Show link for "recalculate"
+	if ($object->getVentilExportCompta() == 0) {
+		$s = $langs->trans("ReCalculate").' ';
+		$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
+		$s .= ' / ';
+		$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
+		print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum), 2, 1, img_picto('', 'help'));
+	}
+	print '</div>';
+	print  "&nbsp; &nbsp; &nbsp; &nbsp; ".price($sign * $object->total_tva, 1, $langs, 1, -1, -1, $conf->currency);
+	print '</td></tr>';
 	// Amount Local Taxes
 	if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) { 	// Localtax1
 		print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';

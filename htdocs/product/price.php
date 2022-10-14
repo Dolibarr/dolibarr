@@ -1067,21 +1067,29 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 	print '</td></tr>';
 
 	// Price
-	print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
+	print '<tr class="field_selling_price"><td>'.$langs->trans("SellingPrice").'</td><td>';
 	if ($object->price_base_type == 'TTC') {
 		print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
 	} else {
 		print price($object->price).' '.$langs->trans($object->price_base_type);
+		if (!empty($conf->global->PRODUCT_DISPLAY_VAT_INCL_PRICES) && !empty($object->price_ttc)) {
+			print '<i class="opacitymedium"> - ' . price($object->price_ttc).' '.$langs->trans('TTC') . '</i>';
+		}
 	}
+
 	print '</td></tr>';
 
 	// Price minimum
-	print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
+	print '<tr class="field_min_price"><td>'.$langs->trans("MinPrice").'</td><td>';
 	if ($object->price_base_type == 'TTC') {
 		print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
 	} else {
 		print price($object->price_min).' '.$langs->trans($object->price_base_type);
+		if (!empty($conf->global->PRODUCT_DISPLAY_VAT_INCL_PRICES) && !empty($object->price_min_ttc)) {
+			print '<i class="opacitymedium"> - ' . price($object->price_min_ttc).' '.$langs->trans('TTC') . '</i>';
+		}
 	}
+
 	print '</td></tr>';
 
 	// Price by quantity

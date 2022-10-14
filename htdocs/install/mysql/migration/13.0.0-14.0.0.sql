@@ -85,7 +85,8 @@ UPDATE llx_const set value = __ENCRYPT('eldy')__ WHERE __DECRYPT('value')__ = 'c
 DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', 'amarok', 'cameleo');
 
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging real DEFAULT NULL;
-ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL;
+-- VMYSQL4.3 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging real DEFAULT NULL USING packaging::real;
 
 
 -- For v14
@@ -689,6 +690,13 @@ ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NUL
 
 -- Add input reason on invoice
 ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
+
+-- Add accountancy code general on user / customer / supplier subledger
+ALTER TABLE llx_user ADD COLUMN accountancy_code_user_general varchar(32) DEFAULT NULL AFTER fk_barcode_type;
+ALTER TABLE llx_societe ADD COLUMN accountancy_code_customer_general varchar(32) DEFAULT NULL AFTER code_fournisseur;
+ALTER TABLE llx_societe ADD COLUMN accountancy_code_supplier_general varchar(32) DEFAULT NULL AFTER code_compta;
+ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_customer_general varchar(32) DEFAULT NULL AFTER entity;
+ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_supplier_general varchar(32) DEFAULT NULL AFTER accountancy_code_customer;
 
 -- Make sell-by or eat-by date mandatory
 ALTER TABLE llx_product ADD COLUMN sell_or_eat_by_mandatory tinyint DEFAULT 0 NOT NULL AFTER tobatch;

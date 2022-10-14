@@ -157,6 +157,15 @@ if (empty($reshook)) {
 	}
 
 	// set accountancy code
+	if ($action == 'setcustomeraccountancycodegeneral') {
+		$result = $object->fetch($id);
+		$object->accountancy_code_customer_general = GETPOST("customeraccountancycodegeneral");
+		$result = $object->update($object->id, $user, 1, 1, 0);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
 	if ($action == 'setcustomeraccountancycode') {
 		$result = $object->fetch($id);
 		$object->code_compta = GETPOST("customeraccountancycode");
@@ -354,6 +363,18 @@ if ($object->id > 0) {
 			print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 		}
 		print '</td></tr>';
+
+		if (!empty($conf->accounting->enabled)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+			print '<tr>';
+			print '<td>';
+			print $form->editfieldkey("CustomerAccountancyCodeGeneral", 'customeraccountancycodegeneral', length_accountg($object->accountancy_code_customer_general), $object, $user->rights->societe->creer);
+			print '</td><td>';
+			print $form->editfieldval("CustomerAccountancyCodeGeneral", 'customeraccountancycodegeneral', length_accountg($object->accountancy_code_customer_general), $object, $user->rights->societe->creer);
+			$accountingAccountByDefault = " (" . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . ")";
+			print isset($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) ? $accountingAccountByDefault : '';
+			print '</td>';
+		}
 
 		print '<tr>';
 		print '<td>';

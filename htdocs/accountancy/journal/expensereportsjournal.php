@@ -100,7 +100,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 
 $sql = "SELECT er.rowid, er.ref, er.date_debut as de,";
 $sql .= " erd.rowid as erdid, erd.comments, erd.total_ht, erd.total_tva, erd.total_localtax1, erd.total_localtax2, erd.tva_tx, erd.total_ttc, erd.fk_code_ventilation, erd.vat_src_code, ";
-$sql .= " u.rowid as uid, u.firstname, u.lastname, u.accountancy_code as user_accountancy_account,";
+$sql .= " u.rowid as uid, u.firstname, u.lastname, u.accountancy_code_user_general, u.accountancy_code as user_accountancy_account,";
 $sql .= " f.accountancy_code, aa.rowid as fk_compte, aa.account_number as compte, aa.label as label_compte";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport_det as erd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as f ON f.id = erd.fk_c_type_fees";
@@ -149,6 +149,7 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 
 		// Controls
+		$accountancy_code_user_general = (!empty($obj->accountancy_code_user_general)) ? $obj->accountancy_code_user_general : $account_salary;
 		$compta_user = (!empty($obj->user_accountancy_account)) ? $obj->user_accountancy_account : $account_salary;
 		$compta_fees = $obj->compte;
 
@@ -192,7 +193,8 @@ if ($result) {
 		$tabuser[$obj->rowid] = array(
 				'id' => $obj->uid,
 				'name' => dolGetFirstLastname($obj->firstname, $obj->lastname),
-				'user_accountancy_code' => $obj->user_accountancy_account
+				'accountancy_code_user_general' => $accountancy_code_user_general,
+				'user_accountancy_code' => $compta_user
 		);
 
 		$i++;
@@ -205,9 +207,6 @@ if ($result) {
 if ($action == 'writebookkeeping') {
 	$now = dol_now();
 	$error = 0;
-
-	$accountingaccountexpense = new AccountingAccount($db);
-	$accountingaccountexpense->fetch(null, $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT, true);
 
 	foreach ($taber as $key => $val) {		// Loop on each expense report
 		$errorforline = 0;
@@ -232,7 +231,9 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->subledger_account = $tabuser[$key]['user_accountancy_code'];
 					$bookkeeping->subledger_label = $tabuser[$key]['name'];
 
-					$bookkeeping->numero_compte = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+					$bookkeeping->numero_compte =  $tabuser[$key]['accountancy_code_user_general'];
+					$accountingaccountexpense = new AccountingAccount($db);
+					$accountingaccountexpense->fetch(null, $tabuser[$key]['accountancy_code_user_general'], true);
 					$bookkeeping->label_compte = $accountingaccountexpense->label;
 
 					$bookkeeping->label_operation = $tabuser[$key]['name'];
@@ -328,7 +329,7 @@ if ($action == 'writebookkeeping') {
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
-						$accountingaccount->fetch($k, null, true);	// TODO Use a cache for label
+						$accountingaccount->fetch(null, $k, true);	// TODO Use a cache for label
 						$account_label = $accountingaccount->label;
 
 						// get compte id and label
@@ -482,7 +483,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 			}
 		}
 
-		// Third party
+		// Thirdparty
 		foreach ($tabttc[$key] as $k => $mt) {
 			print '"'.$date.'"'.$sep;
 			print '"'.$val["ref"].'"'.$sep;
@@ -503,7 +504,7 @@ if (empty($action) || $action == 'view') {
 	$periodlink = '';
 	$exportlink = '';
 	$builddate = dol_now();
-	$description .= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
+	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
 	$listofchoices = array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
 	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
@@ -616,7 +617,7 @@ if (empty($action) || $action == 'view') {
 			}
 		}
 
-		// Third party
+		// Thirdparty
 		foreach ($tabttc[$key] as $k => $mt) {
 			$userstatic->id = $tabuser[$key]['id'];
 			$userstatic->name = $tabuser[$key]['name'];
@@ -627,7 +628,7 @@ if (empty($action) || $action == 'view') {
 			print "<td>".$expensereportstatic->getNomUrl(1)."</td>";
 			// Account
 			print "<td>";
-			$accountoshow = length_accountg($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT);
+			$accountoshow = length_accountg($k);
 			if (($accountoshow == "") || $accountoshow == 'NotDefined') {
 				print '<span class="error">'.$langs->trans("MainAccountForUsersNotDefined").'</span>';
 			} else {

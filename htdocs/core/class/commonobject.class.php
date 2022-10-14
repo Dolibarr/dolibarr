@@ -1957,7 +1957,7 @@ abstract class CommonObject
 		if ($resql) {
 			if ($trigkey) {
 				// call trigger with updated object values
-				if (empty($this->fields) && method_exists($this, 'fetch')) {
+				if (method_exists($this, 'fetch')) {
 					$result = $this->fetch($id);
 				} else {
 					$result = $this->fetchCommon($id);
@@ -2566,7 +2566,7 @@ abstract class CommonObject
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET '.$fieldname.' = '.(($id > 0 || $id == '0') ? $id : 'NULL');
-			if (in_array($this->table_element, array('propal', 'commande'))) {
+			if (in_array($this->table_element, array('propal', 'commande', 'societe'))) {
 				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape($deposit_percent)."'");
 			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
@@ -7563,7 +7563,7 @@ abstract class CommonObject
 						$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
 					}
 
-					$colspan = '';
+					$colspan = 0;
 					if (is_array($params) && count($params) > 0 && $display_type=='card') {
 						if (array_key_exists('cols', $params)) {
 							$colspan = $params['cols'];
@@ -7576,6 +7576,7 @@ abstract class CommonObject
 							}
 						}
 					}
+					$colspan = intval($colspan);
 
 					switch ($mode) {
 						case "view":
@@ -7621,7 +7622,7 @@ abstract class CommonObject
 							}
 						}
 
-						$out .= $extrafields->showSeparator($key, $this, ($colspan + 1), $display_type);
+						$out .= $extrafields->showSeparator($key, $this, ($colspan ? $colspan + 1 : 2), $display_type);
 					} else {
 						$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
 						$csstyle = '';
@@ -7642,7 +7643,7 @@ abstract class CommonObject
 						$html_id = (empty($this->id) ? '' : 'extrarow-'.$this->element.'_'.$key.'_'.$this->id);
 						if ($display_type=='card') {
 							if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) {
-								$colspan = '0';
+								$colspan = 0;
 							}
 
 							if ($action == 'selectlines') {

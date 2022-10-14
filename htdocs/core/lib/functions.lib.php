@@ -303,7 +303,7 @@ function dol_shutdown()
 		$depth = $db->transaction_opened;
 		$disconnectdone = $db->close();
 	}
-	dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].(($disconnectdone && $depth) ? ' (Warn: db disconnection forced, transaction depth was '.$depth.')' : ''), (($disconnectdone && $depth) ?LOG_WARNING:LOG_INFO));
+	dol_syslog("--- End access to ".$_SERVER["PHP_SELF"].(($disconnectdone && $depth) ? ' (Warn: db disconnection forced, transaction depth was '.$depth.')' : ''), (($disconnectdone && $depth) ? LOG_WARNING : LOG_INFO));
 }
 
 /**
@@ -2888,8 +2888,8 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 /**
  *	Format profIDs according to country
  *
- *	@param	string	$profID			value of profID to format
- *	@param	string	$profIDtype		type of profID to format (ProfId1, ProfId2, ProfId3, ProfId4, ProfId5, ProfId6 or VATIntra)
+ *	@param	string	$profID			Value of profID to format
+ *	@param	string	$profIDtype		Type of profID to format ('1', '2', '3', '4', '5', '6' or 'VAT')
  *	@param	string	$countrycode	Country code to use for formatting
  *	@param	int		$addcpButton	Add button to copy to clipboard (1 => show only on hoover ; 2 => always display )
  * 	@param	string	$separ			Separation between numbers for a better visibility example : xxx xxx xxx xxxxx
@@ -2899,7 +2899,9 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
 {
 	global $mysoc;
 
-	if (empty($profID) || empty($profIDtype))	return '';
+	if (empty($profID) || empty($profIDtype)) {
+		return '';
+	}
 	if (empty($countrycode))	$countrycode = $mysoc->country_code;
 	$newProfID = $profID;
 	$id = substr($profIDtype, -1);
@@ -2908,10 +2910,10 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
 		// France
 		if ($id == 1 && dol_strlen($newProfID) == 9)	$newProfID = substr($newProfID, 0, 3).$separ.substr($newProfID, 3, 3).$separ.substr($newProfID, 6, 3);
 		if ($id == 2 && dol_strlen($newProfID) == 14)	$newProfID = substr($newProfID, 0, 3).$separ.substr($newProfID, 3, 3).$separ.substr($newProfID, 6, 3).$separ.substr($newProfID, 9, 5);
-		if ($profIDtype == 'VATIntra' && dol_strlen($newProfID) == 13)	$newProfID = substr($newProfID, 0, 4).$separ.substr($newProfID, 4, 3).$separ.substr($newProfID, 7, 3).$separ.substr($newProfID, 10, 3);
+		if ($profIDtype === 'VAT' && dol_strlen($newProfID) == 13)	$newProfID = substr($newProfID, 0, 4).$separ.substr($newProfID, 4, 3).$separ.substr($newProfID, 7, 3).$separ.substr($newProfID, 10, 3);
 	}
 	if (!empty($addcpButton))	$ret = showValueWithClipboardCPButton(dol_escape_htmltag($profID), ($addcpButton == 1 ? 1 : 0), $newProfID);
-	else	$ret = $newProfID;
+	else $ret = $newProfID;
 	return $ret;
 }
 
@@ -2963,6 +2965,8 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 2).$separ.substr($newphone, 5, 2).$separ.substr($newphone, 7, 2).$separ.substr($newphone, 9, 2);
 		} elseif (dol_strlen($phone) == 12) {
 			$newphone = substr($newphone, 0, 3).$separ.substr($newphone, 3, 1).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 2);
+		} elseif (dol_strlen($phone) == 13) {
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 3).$separ.substr($newphone, 11, 2);
 		}
 	} elseif (strtoupper($countrycode) == "CA") {
 		if (dol_strlen($phone) == 10) {
@@ -3074,8 +3078,8 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			$newphone = substr($newphone, 0, 5).$separ.substr($newphone, 5, 3).$separ.substr($newphone, 8, 4);
 		}
 	} elseif (strtoupper($countrycode) == "MG") {//Madagascar
-		if (dol_strlen($phone) == 13) {//ex: +261_AB_CD_EF_GHI
-			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 2).$separ.substr($newphone, 10, 3);
+		if (dol_strlen($phone) == 13) {//ex: +261_AB_CD_EFG_HI
+			$newphone = substr($newphone, 0, 4).$separ.substr($newphone, 4, 2).$separ.substr($newphone, 6, 2).$separ.substr($newphone, 8, 3).$separ.substr($newphone, 11, 2);
 		}
 	} elseif (strtoupper($countrycode) == "GB") {//Royaume uni
 		if (dol_strlen($phone) == 13) {//ex: +44_ABCD_EFG_HIJ

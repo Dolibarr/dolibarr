@@ -555,6 +555,12 @@ class Societe extends CommonObject
 	public $code_fournisseur;
 
 	/**
+	 * Accounting general code for customer
+	 * @var string
+	 */
+	public $accountancy_code_customer_general;
+
+	/**
 	 * Accounting code for client
 	 * @var string
 	 */
@@ -565,6 +571,12 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $code_compta_client;
+
+	/**
+	 * Accounting general code for supplier
+	 * @var string
+	 */
+	public $accountancy_code_supplier_general;
 
 	/**
 	 * Accounting code for suppliers
@@ -842,6 +854,10 @@ class Societe extends CommonObject
 		}
 		$this->import_key = trim($this->import_key);
 
+		$this->accountancy_code_customer_general = trim($this->accountancy_code_customer_general);
+		$this->accountancy_code_customer = trim($this->code_compta);
+		$this->accountancy_code_supplier_general = trim($this->accountancy_code_supplier_general);
+		$this->accountancy_code_supplier = trim($this->code_compta_fournisseur);
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
@@ -894,7 +910,7 @@ class Societe extends CommonObject
 				$sql .= ", accountancy_code_buy";
 				$sql .= ", accountancy_code_sell";
 			}
-			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$this->db->escape($this->entity).", '".$this->db->idate($now)."'";
+			$sql .= ") VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".((int) $this->entity).", '".$this->db->idate($now)."'";
 			$sql .= ", ".(!empty($user->id) ? ((int) $user->id) : "null");
 			$sql .= ", ".(!empty($this->typent_id) ? ((int) $this->typent_id) : "null");
 			$sql .= ", ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null");
@@ -1284,8 +1300,10 @@ class Societe extends CommonObject
 			$this->get_codefournisseur($this, 1);
 		}
 
+		$this->accountancy_code_customer_general = trim($this->accountancy_code_customer_general);
 		$this->code_compta_client = trim(empty($this->code_compta) ? $this->code_compta_client : $this->code_compta);
-		$this->code_compta = $this->code_compta_client;		// for backward compatbility
+		$this->code_compta = $this->code_compta_client;		// for backward compatibility
+		$this->accountancy_code_supplier_general = trim($this->accountancy_code_supplier_general);
 		$this->code_compta_fournisseur = trim($this->code_compta_fournisseur);
 
 		// Check parameters. More tests are done later in the ->verify()
@@ -1456,6 +1474,15 @@ class Societe extends CommonObject
 			if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 				$sql .= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";
 				$sql .= ", accountancy_code_sell= '" . $this->db->escape($this->accountancy_code_sell) . "'";
+				if ($customer) {
+					$sql .= ", accountancy_code_customer_general = ".(!empty($this->accountancy_code_customer_general) ? "'".$this->db->escape($this->accountancy_code_customer_general)."'" : "null");
+					$sql .= ", code_compta = ".(!empty($this->code_compta_client) ? "'".$this->db->escape($this->code_compta_client)."'" : "null");
+				}
+
+				if ($supplier) {
+					$sql .= ", accountancy_code_supplier_general = ".(!empty($this->accountancy_code_supplier_general) ? "'".$this->db->escape($this->accountancy_code_supplier_general)."'" : "null");
+					$sql .= ", code_compta_fournisseur = ".(($this->code_compta_fournisseur != "") ? "'".$this->db->escape($this->code_compta_fournisseur)."'" : "null");
+				}
 			}
 			$sql .= ",webservices_url = ".(!empty($this->webservices_url) ? "'".$this->db->escape($this->webservices_url)."'" : "null");
 			$sql .= ",webservices_key = ".(!empty($this->webservices_key) ? "'".$this->db->escape($this->webservices_key)."'" : "null");
@@ -1466,12 +1493,10 @@ class Societe extends CommonObject
 
 			if ($customer) {
 				$sql .= ", code_client = ".(!empty($this->code_client) ? "'".$this->db->escape($this->code_client)."'" : "null");
-				$sql .= ", code_compta = ".(!empty($this->code_compta_client) ? "'".$this->db->escape($this->code_compta_client)."'" : "null");
 			}
 
 			if ($supplier) {
 				$sql .= ", code_fournisseur = ".(!empty($this->code_fournisseur) ? "'".$this->db->escape($this->code_fournisseur)."'" : "null");
-				$sql .= ", code_compta_fournisseur = ".(($this->code_compta_fournisseur != "") ? "'".$this->db->escape($this->code_compta_fournisseur)."'" : "null");
 			}
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : "null");
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
@@ -1545,13 +1570,21 @@ class Societe extends CommonObject
 					$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_perentity (";
 					$sql .= " fk_soc";
 					$sql .= ", entity";
+					$sql .= ", accountancy_code_customer_general";
+					$sql .= ", accountancy_code_customer";
+					$sql .= ", accountancy_code_supplier_general";
+					$sql .= ", accountancy_code_supplier";
 					$sql .= ", accountancy_code_buy";
 					$sql .= ", accountancy_code_sell";
 					$sql .= ") VALUES (";
 					$sql .= $this->id;
 					$sql .= ", " . $conf->entity;
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_buy) . "'";
-					$sql .= ", '" . $this->db->escape($this->accountancy_code_sell) . "'";
+					$sql .= ", '".$this->db->escape($this->accountancy_code_customer_general)."'";
+					$sql .= ", '".$this->db->escape($this->code_compta_client)."'";
+					$sql .= ", '".$this->db->escape($this->accountancy_code_supplier_general)."'";
+					$sql .= ", '".$this->db->escape($this->code_compta_fournisseur)."'";
+					$sql .= ", '".$this->db->escape($this->accountancy_code_buy)."'";
+					$sql .= ", '".$this->db->escape($this->accountancy_code_sell)."'";
 					$sql .= ")";
 					$result = $this->db->query($sql);
 					if (!$result) {
@@ -1651,11 +1684,15 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
 		$sql .= ', s.webservices_url, s.webservices_key, s.model_pdf';
 		if (empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+			$sql .= ', s.accountancy_code_customer_general, s.code_compta';
+			$sql .= ', s.accountancy_code_supplier_general, s.code_compta_fournisseur';
 			$sql .= ', s.accountancy_code_buy, s.accountancy_code_sell';
 		} else {
+			$sql .= ', spe.accountancy_code_customer_general, spe.accountancy_code_customer as code_compta';
+			$sql .= ', spe.accountancy_code_supplier_general, spe.accountancy_code_supplier as code_compta_fournisseur';
 			$sql .= ', spe.accountancy_code_buy, spe.accountancy_code_sell';
 		}
-		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
+		$sql .= ', s.code_client, s.code_fournisseur, s.parent, s.barcode';
 		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.mode_reglement, s.cond_reglement, s.deposit_percent, s.transport_mode';
 		$sql .= ', s.fk_account, s.tva_assuj';
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.transport_mode_supplier';
@@ -1799,7 +1836,9 @@ class Societe extends CommonObject
 				$this->code_client = $obj->code_client;
 				$this->code_fournisseur = $obj->code_fournisseur;
 
+				$this->accountancy_code_customer_general = $obj->accountancy_code_customer_general;
 				$this->code_compta = $obj->code_compta;
+				$this->accountancy_code_supplier_general = $obj->accountancy_code_supplier_general;
 				$this->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 				$this->barcode = $obj->barcode;
@@ -4731,15 +4770,16 @@ class Societe extends CommonObject
 	 */
 	public function setThirdpartyType($typent_id)
 	{
+		global $user;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
 		if ($this->id) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET fk_typent = ".($typent_id > 0 ? $typent_id : "null");
-			$sql .= " WHERE rowid = ".$this->id;
-			dol_syslog(get_class($this).'::setThirdpartyType', LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
+			$result = $this->setValueFrom('fk_typent', $typent_id, '', null, '', '', $user, 'COMPANY_MODIFY');
+
+			if ($result > 0) {
 				$this->typent_id = $typent_id;
-				$this->typent_code = dol_getIdFromCode($this->db, $this->$typent_id, 'c_typent', 'id', 'code');
+				$this->typent_code = dol_getIdFromCode($this->db, $this->typent_id, 'c_typent', 'id', 'code');
 				return 1;
 			} else {
 				return -1;

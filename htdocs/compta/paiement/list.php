@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2017		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2017-2022	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2021	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
@@ -40,18 +40,15 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'compta', 'companies'));
 
-$action				= GETPOST('action', 'alpha');
-$massaction			= GETPOST('massaction', 'alpha');
-$confirm			= GETPOST('confirm', 'alpha');
-$optioncss = GETPOST('optioncss', 'alpha');
-$contextpage		= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'paymentlist';
+$action			= GETPOST('action', 'alpha');
+$massaction		= GETPOST('massaction', 'alpha');
+$confirm		= GETPOST('confirm', 'alpha');
+$optioncss		= GETPOST('optioncss', 'alpha');
+$contextpage	= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'paymentlist';
 
-$facid				= GETPOST('facid', 'int');
-$socid				= GETPOST('socid', 'int');
-$userid = GETPOST('userid', 'int');
-$day = GETPOST('day', 'int');
-$month				= GETPOST('month', 'int');
-$year = GETPOST('year', 'int');
+$facid			= GETPOST('facid', 'int');
+$socid			= GETPOST('socid', 'int');
+$userid			= GETPOST('userid', 'int');
 
 // Security check
 if ($user->socid) $socid = $user->socid;
@@ -63,6 +60,14 @@ $search_paymenttype	= GETPOST("search_paymenttype");
 $search_account		= GETPOST("search_account", "int");
 $search_payment_num	= GETPOST('search_payment_num', 'alpha');
 $search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be able to search on "< x"
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield			= GETPOST("sortfield", 'alpha');
@@ -132,9 +137,14 @@ if (empty($reshook)) {
 		$search_paymenttype = '';
 		$search_payment_num = '';
 		$search_company = '';
-		$day = '';
-		$year = '';
-		$month = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
 		$option = '';
 		$toselect = '';
 		$search_array_options = array();
@@ -208,7 +218,12 @@ if (GETPOST("orphelins", "alpha")) {
 	}
 
 	// Search criteria
-	$sql .= dolSqlDateFilter("p.datep", $day, $month, $year);
+	if ($search_date_start) {
+		$sql .= " AND p.datep >= '".$db->idate($search_date_start)."'";
+	}
+	if ($search_date_end) {
+		$sql .= " AND p.datep <= '".$db->idate($search_date_end)."'";
+	}
 	if ($search_ref) {
 		$sql .= natural_search('p.ref', $search_ref);
 	}
@@ -244,7 +259,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 
-	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	// if total resultset is smaller than paging size (filtering), goto and load page 0
 	if (($page * $limit) > $nbtotalofrecords) {
 		$page = 0;
 		$offset = 0;
@@ -270,16 +285,45 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
 }
-$param .= (GETPOST("orphelins") ? "&orphelins=1" : '');
-$param .= ($search_ref ? "&search_ref=".urlencode($search_ref) : '');
-$param .= ($search_company ? "&search_company=".urlencode($search_company) : '');
-$param .= ($search_amount ? "&search_amount=".urlencode($search_amount) : '');
-$param .= ($search_paymenttype ? "&search_paymenttype=".urlencode($search_paymenttype) : '');
-$param .= ($search_account ? "&search_account=".urlencode($search_account) : '');
-$param .= ($day ? "&day=".urlencode($day) : '');
-$param .= ($month ? "&month=".urlencode($month) : '');
-$param .= ($year ? "&year=".urlencode($year) : '');
-$param .= ($search_payment_num ? "&search_payment_num=".urlencode($search_payment_num) : '');
+if (GETPOST("orphelins")) {
+	$param .= "&orphelins=1";
+}
+if ($search_ref) {
+	$param .= "&search_ref=".urlencode($search_ref);
+}
+if ($search_company) {
+	$param .= "&search_company=".urlencode($search_company);
+}
+if ($search_amount) {
+	$param .= "&search_amount=".urlencode($search_amount);
+}
+if ($search_paymenttype) {
+	$param .= "&search_paymenttype=".urlencode($search_paymenttype);
+}
+if ($search_account) {
+	$param .= "&search_account=".urlencode($search_account);
+}
+if ($search_date_startday) {
+	$param .= '&search_date_startday='.urlencode($search_date_startday);
+}
+if ($search_date_startmonth) {
+	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+}
+if ($search_date_startyear) {
+	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+}
+if ($search_date_endday) {
+	$param .= '&search_date_endday='.urlencode($search_date_endday);
+}
+if ($search_date_endmonth) {
+	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+}
+if ($search_date_endyear) {
+	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+}
+if ($search_payment_num) {
+	$param .= "&search_payment_num=".urlencode($search_payment_num);
+}
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
@@ -332,11 +376,12 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 // Filter: Date
 if (!empty($arrayfields['p.datep']['checked'])) {
 	print '<td class="liste_titre center">';
-	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
-	}
-	print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
-	$formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 
@@ -517,8 +562,12 @@ while ($i < min($num, $limit)) {
 
 	// Bank transaction
 	if (!empty($arrayfields['transaction']['checked'])) {
-		$bankline->fetch($objp->fk_bank);
-		print '<td>'.$bankline->getNomUrl(1, 0).'</td>';
+		print '<td>';
+		if ($objp->fk_bank > 0) {
+			$bankline->fetch($objp->fk_bank);
+			print $bankline->getNomUrl(1, 0);
+		}
+		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

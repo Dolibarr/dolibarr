@@ -52,6 +52,8 @@ ExportAccountingSourceDocHelp=Avec cet outil, vous pouvez exporter les événeme
 ExportAccountingSourceDocHelp2=Pour exporter vos journaux, utilisez l'entrée de menu %s - %s.
 VueByAccountAccounting=Vue par comptes comptables
 VueBySubAccountAccounting=Affichage par compte auxiliaire
+AccountingAccountByDefault=Compte comptable par défaut
+AccountingAccountByDefaultShort=Compte par défaut
 
 MainAccountForCustomersNotDefined=Compte comptable général pour les clients non défini dans la configuration
 MainAccountForSuppliersNotDefined=Compte comptable général pour les fournisseurs non défini dans la configuration
@@ -183,6 +185,7 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable pour enregistrer les ad
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte comptable par défaut pour les acomptes clients
 UseAuxiliaryAccountOnCustomerDeposit=Utiliser des comptes auxiliaires sur les acomptes clients
+ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Compte comptable par défaut pour les dépôts de garantie clients
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable par défaut pour les produits achetés (utilisé si non défini dans la fiche produit)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Compte comptable par défaut pour les produits achetés dans la CEE (utilisé si non défini dans la fiche produit)
@@ -331,8 +334,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Désactiver la liaison et le transfert e
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Désactiver la liaison et le transfert en comptabilité des notes de frais (les notes de frais ne seront pas prises en compte en comptabilité).
 
 ## Export
-NotifiedExportDate=Date d'exportation notifiée sur les lignes exportées (la modification des enregistrements ne sera pas possible)
-NotifiedValidationDate=Validation des enregistrements (la modification ou la suppression des enregistrements ne sera pas possible)
+NotifiedExportDate=Marquer les lignes exportées comme Exportées <span class="warning">(pour modifier une ligne, vous devrez supprimer toute la transaction et la retransférer en comptabilité)</span>
+NotifiedValidationDate=Valider et bloquer les lignes exportées <span class="warning">(même effet que la fonctionnalité de "%s", la modification et la suppression de ces lignes ne sera DÉFINITIVEMENT plus possible)</span>
+DateValidationAndLock=Validation et verrouillage de la date
 ConfirmExportFile=Confirmation de la génération du fichier d'export comptable ?
 ExportDraftJournal=Exporter le journal brouillon
 Modelcsv=Modèle d'export
@@ -396,7 +400,11 @@ Calculated=Calculé
 Formula=Formule
 
 ## Lettering
+LetteringAuto=Lettrage auto
+LetteringManual=Lettrage manuel
 Unlettering=Délettrage
+UnletteringAuto=Délettrage auto
+UnletteringManual=Délettrage manuel
 AccountancyNoLetteringModified=Aucun lettrage éffectué
 AccountancyOneLetteringModifiedSuccessfully=Un lettrage a été éffectué
 AccountancyLetteringModifiedSuccessfully=%s lettrages ont été éffectués
@@ -405,7 +413,8 @@ AccountancyOneUnletteringModifiedSuccessfully=Un délettrage a été éffectué
 AccountancyUnletteringModifiedSuccessfully=%s délettrage ont été éffectués
 
 ## Confirm box
-ConfirmMassUnlettering=Confirmation de délettrage en masse
+ConfirmMassUnletteringAuto=Confirmation de délettrage auto en masse
+ConfirmMassUnletteringManual=Confirmation de délettrage manuel en masse
 ConfirmMassUnletteringQuestion=Êtes-vous sur de vouloir délettrer les %s enregistrement(s) sélectionné(s) ?
 ConfirmMassDeleteBookkeepingWriting=Confirmation de suppression en masse
 ConfirmMassDeleteBookkeepingWritingQuestion=Cette action supprime l'écriture de la comptabilité (toutes les lignes opérations liées à une même écriture seront effacées). Êtes-vous sur de vouloir supprimer les %s enregistrement(s) sélectionné(s) ?
