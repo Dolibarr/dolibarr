@@ -1079,7 +1079,7 @@ class FormSetupItem
 			$tmp = explode(':', $this->type);
 
 			$template = $formmail->getEMailTemplate($this->db, $tmp[1], $user, $this->langs, $this->fieldValue);
-			if ($template<0) {
+			if (is_numeric($template) && $template < 0) {
 				$this->setErrors($formmail->errors);
 			}
 			$out.= $this->langs->trans($template->label);
