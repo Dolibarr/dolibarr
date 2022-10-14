@@ -5667,7 +5667,7 @@ if ($action == 'create') {
 				&& $usercancreate
 				&& !$objectidnext
 				&& $object->is_last_in_cycle()
-				&& $conf->global->INVOICE_USE_SITUATION_CREDIT_NOTE
+				&& getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE')
 				) {
 				if ($usercanunvalidate) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&amp;fac_avoir='.$object->id.'&amp;invoiceAvoirWithLines=1&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').'">'.$langs->trans("CreateCreditNote").'</a>';
