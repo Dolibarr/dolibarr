@@ -1026,6 +1026,33 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// -----------------------------------------
 	// When used in standard mode
 	// -----------------------------------------
+	
+	$jscodespecifictofrenchprofid = "\n".'
+		<!-- BEGIN JavaScript code specific to French third parties only. -->
+		<script type="text/javascript">
+            jQuery(document).ready(function() {
+				
+				/** 
+				 * Clean pasted text from any non-alphanumeric character.
+				 * ("ex: "123 123 123" => "123123123", "20.90Z" => "2090Z" or "FR87 520 339 938" => "FR87520339938")	
+				 */
+				function onlyAlphaNum(e) {
+					e.preventDefault();
+					var pastedText = "";
+					var pastedText = e.originalEvent.clipboardData.getData("text/plain");
+					var cleanText = pastedText.replace(/[^a-z0-9]/gi, "");
+					$(this).val(cleanText);
+				}
+
+				// Apply to the following input fields:
+				$("#idprof1").on("paste", onlyAlphaNum);	// SIREN
+				$("#idprof2").on("paste", onlyAlphaNum);	// SIRET
+				$("#idprof3").on("paste", onlyAlphaNum);	// NAF or APE
+				$("#intra_vat").on("paste", onlyAlphaNum);	// TVA intracommunautaire
+			})
+		</script>
+		<!-- END JavaScript code specific to French third parties only. -->'."\n";
+		
 	if ($action == 'create') {
 		/*
 		 *  Creation
@@ -1201,6 +1228,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$object->country_code = $tmparray['code'];
 			$object->country = $tmparray['label'];
 		}
+		
+		if ($object->country_code == 'FR') {
+			print $jscodespecifictofrenchprofid;
+		}
+		
 		$object->forme_juridique_code = GETPOST('forme_juridique_code');
 
 		// We set multicurrency_code if enabled
@@ -2318,6 +2350,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 			print '</td></tr>';
 
+			if ($object->country_code == 'FR') {
+				print $jscodespecifictofrenchprofid;
+			}
+			
 			// State
 			if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
