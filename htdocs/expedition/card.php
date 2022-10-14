@@ -215,6 +215,8 @@ if (empty($reshook)) {
 		$object->size_units = GETPOST('size_units', 'int');
 		$object->weight_units = GETPOST('weight_units', 'int');
 
+		$product = new Product($db);
+
 		// We will loop on each line of the original document to complete the shipping object with various info and quantity to deliver
 		$classname = ucfirst($object->origin);
 		$objectsrc = new $classname($db);
@@ -250,10 +252,20 @@ if (empty($reshook)) {
 			$stockLocation = "ent1".$i."_0";
 			$qty = "qtyl".$i;
 
+			$is_batch_or_serial=0;
+			if (!empty($objectsrc->lines[$i]->fk_product)) {
+				$resultFetch = $product->fetch($objectsrc->lines[$i]->fk_product, '', '', '', 1, 1, 1);
+				if ($resultFetch < 0) {
+					setEventMessages($product->error, $product->errors, 'errors');
+				}
+				$is_batch_or_serial = $product->status_batch;
+			}
+
 			if (!empty($conf->productbatch->enabled) && $objectsrc->lines[$i]->product_tobatch) {      // If product need a batch number
 				if (GETPOSTISSET($batch)) {
 					//shipment line with batch-enable product
 					$qty .= '_'.$j;
+
 					while (GETPOSTISSET($batch)) {
 						// save line of detail into sub_qty
 						$sub_qty[$j]['q'] = GETPOST($qty, 'int'); // the qty we want to move for this stock record
@@ -261,7 +273,11 @@ if (empty($reshook)) {
 						$subtotalqty += $sub_qty[$j]['q'];
 
 						//var_dump($qty);var_dump($batch);var_dump($sub_qty[$j]['q']);var_dump($sub_qty[$j]['id_batch']);
-
+						if ($is_batch_or_serial==2 && $sub_qty[$j]['q']>1) {
+							setEventMessages($langs->trans("TooManyQtyForSerialNumber", $product->ref, ''), null, 'errors');
+							$totalqty=0;
+							break 2;
+						}
 						$j++;
 						$batch = "batchl".$i."_".$j;
 						$qty = "qtyl".$i.'_'.$j;
@@ -286,6 +302,7 @@ if (empty($reshook)) {
 				$qty .= '_'.$j;
 				while (GETPOSTISSET($stockLocation)) {
 					// save sub line of warehouse
+
 					$stockLine[$i][$j]['qty'] = price2num(GETPOST($qty, 'alpha'), 'MS');
 					$stockLine[$i][$j]['warehouse_id'] = GETPOST($stockLocation, 'int');
 					$stockLine[$i][$j]['ix_l'] = GETPOST($idl, 'int');
@@ -316,7 +333,6 @@ if (empty($reshook)) {
 		}
 
 		//var_dump($batch_line[2]);
-
 		if ($totalqty > 0) {		// There is at least one thing to ship
 			//var_dump($_POST);exit;
 			for ($i = 0; $i < $num; $i++) {
