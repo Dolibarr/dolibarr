@@ -275,9 +275,14 @@ if (empty($conf->use_javascript_ajax) || !empty($conf->global->MAIN_ECM_DISABLE_
 			print '<div class="ecmjqft">';
 
 			// Nb of docs
-			print '<table class="nobordernopadding"><tr><td>';
+			print '<table class="nobordernopadding"><tr>';
+
+			print '<!-- nb of docs -->';
+			print '<td>';
 			print $val['cachenbofdoc'];
 			print '</td>';
+
+			print '<!-- nb in subdir -->';
 			print '<td class="left">';
 			if ($nbofsubdir && $nboffilesinsubdir) {
 				print '<span style="color: #AAAAAA">+'.$nboffilesinsubdir.'</span> ';
@@ -285,6 +290,7 @@ if (empty($conf->use_javascript_ajax) || !empty($conf->global->MAIN_ECM_DISABLE_
 			print '</td>';
 
 			// Info
+			print '<!-- info -->';
 			print '<td class="center">';
 			$userstatic->id = $val['fk_user_c'];
 			$userstatic->lastname = $val['login_c'];
@@ -433,9 +439,12 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 						 print '</td>';*/
 
 						// Nb of docs
+						print '<!-- nb of docs -->';
 						print '<td class="right">';
 						print (isset($val['cachenbofdoc']) && $val['cachenbofdoc'] >= 0) ? $val['cachenbofdoc'] : '&nbsp;';
 						print '</td>';
+
+						print '<!-- nb of subdirs -->';
 						print '<td class="left">';
 						if ($nbofsubdir > 0 && $nboffilesinsubdir > 0) {
 							print '<span class="opacitymedium">+'.$nboffilesinsubdir.'</span> ';
@@ -443,6 +452,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 						print '</td>';
 
 						// Edit link
+						print '<!-- edit link -->';
 						print '<td class="right" width="18"><a class="editfielda" href="';
 						print DOL_URL_ROOT.'/ecm/dir_card.php?module='.urlencode($modulepart).'&section='.$val['id'].'&relativedir='.urlencode($val['fullrelativename']);
 						print '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
@@ -454,6 +464,7 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 
 						// Info
 						if ($modulepart == 'ecm') {
+							print '<!-- info -->';
 							print '<td class="right" width="18">';
 							$userstatic->id = isset($val['fk_user_c']) ? $val['fk_user_c'] : 0;
 							$userstatic->lastname = isset($val['login_c']) ? $val['login_c'] : 0;
