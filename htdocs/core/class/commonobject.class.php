@@ -4917,15 +4917,18 @@ abstract class CommonObject
 			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook.
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir) {
+				$res = 0;
 				if (!empty($module)) {
 					$tpl = dol_buildpath($reldir.'/objectline_title.tpl.php');
 				} else {
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_title.tpl.php';
 				}
-				if (empty($conf->file->strict_mode)) {
-					$res = @include $tpl;
-				} else {
-					$res = include $tpl; // for debug
+				if (file_exists($tpl)) {
+					if (empty($conf->file->strict_mode)) {
+						$res = @include $tpl;
+					} else {
+						$res = include $tpl; // for debug
+					}
 				}
 				if ($res) {
 					break;
@@ -5040,16 +5043,18 @@ abstract class CommonObject
 			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook printObjectLine and printObjectSubLine.
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir) {
+				$res = 0;
 				if (!empty($module)) {
 					$tpl = dol_buildpath($reldir.'/objectline_view.tpl.php');
 				} else {
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_view.tpl.php';
 				}
-
-				if (empty($conf->file->strict_mode)) {
-					$res = @include $tpl;
-				} else {
-					$res = include $tpl; // for debug
+				if (file_exists($tpl)) {
+					if (empty($conf->file->strict_mode)) {
+						$res = @include $tpl;
+					} else {
+						$res = include $tpl; // for debug
+					}
 				}
 				if ($res) {
 					break;
