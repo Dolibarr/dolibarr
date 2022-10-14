@@ -2122,6 +2122,8 @@ class Expedition extends CommonObject
 	 */
 	private function manageStockMvtOnEvt($user)
 	{
+		global $langs;
+
 		$error=0;
 
 		require_once DOL_DOCUMENT_ROOT . '/product/stock/class/mouvementstock.class.php';
