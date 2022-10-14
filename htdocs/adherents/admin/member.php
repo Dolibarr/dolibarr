@@ -30,6 +30,7 @@
  *		\brief      Page to setup the module Foundation
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
@@ -111,7 +112,7 @@ if ($action == 'set_default') {
 	if (isModEnabled('facture')) {
 		$res4 = dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
 		$res5 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+		if (isModEnabled("product") || isModEnabled("service")) {
 			$res6 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
 		}
 	}
@@ -238,13 +239,13 @@ print "</td></tr>\n";
 // Insert subscription into bank account
 print '<tr class="oddeven"><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
 $arraychoices = array('0'=>$langs->trans("None"));
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	$arraychoices['bankdirect'] = $langs->trans("MoreActionBankDirect");
 }
-if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
+if (isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 	$arraychoices['invoiceonly'] = $langs->trans("MoreActionInvoiceOnly");
 }
-if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && isModEnabled('facture')) {
+if (isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
 	$arraychoices['bankviainvoice'] = $langs->trans("MoreActionBankViaInvoice");
 }
 print '<td>';
@@ -258,7 +259,7 @@ print "</tr>\n";
 // Use vat for invoice creation
 if (isModEnabled('facture')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		print '<td>';
 		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) ? '0' : $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
 		print '</td>';
@@ -269,7 +270,7 @@ if (isModEnabled('facture')) {
 	}
 	print "</tr>\n";
 
-	if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+	if (isModEnabled("product") || isModEnabled("service")) {
 		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
 		print '<td>';
 		$selected = (empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);

@@ -45,10 +45,10 @@ ValidateReply = Lösung bestätigen
 KnowledgeRecords = Artikel
 KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Extrafelder für Artikel
-GroupOfTicket=Ticket-Gruppe
-YouCanLinkArticleToATicketCategory=Sie können einen Artikel mit einer Ticket-Gruppe verknüpfen (so wird der Artikel bei der Qualifizierung neuer Tickets vorgeschlagen)
+GroupOfTicket=Ticket-Themengruppe
+YouCanLinkArticleToATicketCategory=Sie können einen Artikel mit einer Ticket-Themengruppe verknüpfen (so wird auf den Artikel bei der Erfassung neuer Tickets hingewiesen)
 SuggestedForTicketsInGroup=Vorschlagen für Tickets der Gruppe
 
 SetObsolete=Als veraltet festlegen
 ConfirmCloseKM=Bestätigen Sie das Schließen dieses Artikels als veraltet?
-ConfirmReopenKM=Möchten Sie diesen Artikel auf den Status "Validiert" zurücksetzen?
+ConfirmReopenKM=Möchten Sie diesen Artikel auf den Status "freigegeben" zurücksetzen?

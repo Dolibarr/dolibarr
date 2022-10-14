@@ -24,6 +24,7 @@
  *		\brief      Page des infos systeme de php
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -33,7 +34,6 @@ $langs->loadLangs(array("admin", "install", "errors"));
 if (!$user->admin) {
 	accessforbidden();
 }
-
 
 
 /*
@@ -211,6 +211,14 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 
 $functions = ["imap_open"];
 $name      = "IMAP";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
+$functions = array();
+$name      = "zip";
 
 print "<tr>";
 print "<td>".$name."</td>";

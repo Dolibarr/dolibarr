@@ -27,6 +27,7 @@
  *	\brief      Setup page to configure company/foundation
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -107,7 +108,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	$dirforimage = $conf->mycompany->dir_output.'/logos/';
 
 	$arrayofimages = array('logo', 'logo_squarred');
-
+	//var_dump($_FILES); exit;
 	foreach ($arrayofimages as $varforimage) {
 		if ($_FILES[$varforimage]["name"] && !preg_match('/(\.jpeg|\.jpg|\.png)$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
 			$langs->load("errors");
@@ -115,67 +116,71 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 			break;
 		}
 
-		if ($_FILES[$varforimage]["tmp_name"]) {
+		// Remove to check file size to large
+		/*if ($_FILES[$varforimage]["tmp_name"]) {*/
 			$reg = array();
-			if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg)) {
-				$original_file = $reg[1];
+		if (preg_match('/([^\\/:]+)$/i', $_FILES[$varforimage]["name"], $reg)) {
+			$original_file = $reg[1];
 
-				$isimage = image_format_supported($original_file);
-				if ($isimage >= 0) {
-					dol_syslog("Move file ".$_FILES[$varforimage]["tmp_name"]." to ".$dirforimage.$original_file);
-					if (!is_dir($dirforimage)) {
-						dol_mkdir($dirforimage);
+			$isimage = image_format_supported($original_file);
+			if ($isimage >= 0) {
+				dol_syslog("Move file ".$_FILES[$varforimage]["tmp_name"]." to ".$dirforimage.$original_file);
+				if (!is_dir($dirforimage)) {
+					dol_mkdir($dirforimage);
+				}
+				$result = dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"], $dirforimage.$original_file, 1, 0, $_FILES[$varforimage]['error']);
+				if ($result > 0) {
+					$constant = "MAIN_INFO_SOCIETE_LOGO";
+					if ($varforimage == 'logo_squarred') {
+						$constant = "MAIN_INFO_SOCIETE_LOGO_SQUARRED";
 					}
-					$result = dol_move_uploaded_file($_FILES[$varforimage]["tmp_name"], $dirforimage.$original_file, 1, 0, $_FILES[$varforimage]['error']);
-					if ($result > 0) {
-						$constant = "MAIN_INFO_SOCIETE_LOGO";
-						if ($varforimage == 'logo_squarred') {
-							$constant = "MAIN_INFO_SOCIETE_LOGO_SQUARRED";
-						}
 
-						dolibarr_set_const($db, $constant, $original_file, 'chaine', 0, '', $conf->entity);
+					dolibarr_set_const($db, $constant, $original_file, 'chaine', 0, '', $conf->entity);
 
-						// Create thumbs of logo (Note that PDF use original file and not thumbs)
-						if ($isimage > 0) {
-							// Create thumbs
-							//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retrieve value with get...
+					// Create thumbs of logo (Note that PDF use original file and not thumbs)
+					if ($isimage > 0) {
+						// Create thumbs
+						//$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retrieve value with get...
 
-							// Create small thumb, Used on logon for example
-							$imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-							if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg)) {
-								$imgThumbSmall = $reg[1]; // Save only basename
-								dolibarr_set_const($db, $constant."_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
-							} else {
-								dol_syslog($imgThumbSmall);
-							}
-
-							// Create mini thumb, Used on menu or for setup page for example
-							$imgThumbMini = vignette($dirforimage.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
-							if (image_format_supported($imgThumbMini) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg)) {
-								$imgThumbMini = $reg[1]; // Save only basename
-								dolibarr_set_const($db, $constant."_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);
-							} else {
-								dol_syslog($imgThumbMini);
-							}
+						// Create small thumb, Used on logon for example
+						$imgThumbSmall = vignette($dirforimage.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
+						if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbSmall, $reg)) {
+							$imgThumbSmall = $reg[1]; // Save only basename
+							dolibarr_set_const($db, $constant."_SMALL", $imgThumbSmall, 'chaine', 0, '', $conf->entity);
 						} else {
-							dol_syslog("ErrorImageFormatNotSupported", LOG_WARNING);
+							dol_syslog($imgThumbSmall);
 						}
-					} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
-						$error++;
-						$langs->load("errors");
-						$tmparray = explode(':', $result);
-						setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
+
+						// Create mini thumb, Used on menu or for setup page for example
+						$imgThumbMini = vignette($dirforimage.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
+						if (image_format_supported($imgThumbMini) >= 0 && preg_match('/([^\\/:]+)$/i', $imgThumbMini, $reg)) {
+							$imgThumbMini = $reg[1]; // Save only basename
+							dolibarr_set_const($db, $constant."_MINI", $imgThumbMini, 'chaine', 0, '', $conf->entity);
+						} else {
+							dol_syslog($imgThumbMini);
+						}
 					} else {
-						$error++;
-						setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+						dol_syslog("ErrorImageFormatNotSupported", LOG_WARNING);
 					}
-				} else {
+				} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result)) {
 					$error++;
 					$langs->load("errors");
-					setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
+					$tmparray = explode(':', $result);
+					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
+				} elseif (preg_match('/^ErrorFileSizeTooLarge/', $result)) {
+					$error++;
+					setEventMessages($langs->trans("ErrorFileSizeTooLarge"), null, 'errors');
+				} else {
+					$error++;
+					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 				}
+			} else {
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			}
 		}
+		/*}*/
 	}
 
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS", GETPOST("MAIN_INFO_SOCIETE_MANAGERS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -466,7 +471,7 @@ print '<input class="maxwidth300 widthcentpercentminusx" name="web" id="web" val
 print '</td></tr>'."\n";
 
 // Barcode
-if (!empty($conf->barcode->enabled)) {
+if (isModEnabled('barcode')) {
 	print '<tr class="oddeven"><td>';
 	print '<label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
 	print '<span class="fa fa-barcode pictofixedwidth"></span>';
@@ -474,11 +479,15 @@ if (!empty($conf->barcode->enabled)) {
 	print '</td></tr>';
 }
 
-// Logo
-print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("Logo"), 'png, jpg').'</label></td><td>';
-print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
+// Tooltip for both Logo and LogSquarred
+$tooltiplogo = $langs->trans('AvailableFormats').' : png, jpg, jpeg';
 $maxfilesizearray = getMaxFileSizeArray();
 $maxmin = $maxfilesizearray['maxmin'];
+$tooltiplogo .= ($maxmin > 0) ? '<br>'.$langs->trans('MaxSize').' : '.$maxmin.' '.$langs->trans('Kb') : '';
+
+// Logo
+print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("Logo"), $tooltiplogo).'</label></td><td>';
+print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
 if ($maxmin > 0) {
 	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 }
@@ -517,7 +526,7 @@ print '</div>';
 print '</td></tr>';
 
 // Logo (squarred)
-print '<tr class="oddeven"><td><label for="logo_squarred">'.$form->textwithpicto($langs->trans("LogoSquarred"), 'png, jpg').'</label></td><td>';
+print '<tr class="oddeven"><td><label for="logo_squarred">'.$form->textwithpicto($langs->trans("LogoSquarred"), $tooltiplogo).'</label></td><td>';
 print '<div class="centpercent nobordernopadding valignmiddle"><div class="inline-block marginrightonly">';
 $maxfilesizearray = getMaxFileSizeArray();
 $maxmin = $maxfilesizearray['maxmin'];

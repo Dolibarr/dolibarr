@@ -60,6 +60,8 @@ ConferenceOrBoothTab = 会議またはブース
 AmountPaid = 払込金額
 DateOfRegistration = 登録日
 ConferenceOrBoothAttendee = 会議またはブースの参加者
+ApplicantOrVisitor=申請者または訪問者
+Speaker=スピーカー
 
 #
 # Template Mail
@@ -139,6 +141,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=イベント登録の支払が
 OrganizationEventBulkMailToAttendees=これは、参加者としてのイベントへの参加を思い出させるものだ。
 OrganizationEventBulkMailToSpeakers=これは、スピーカーとしてのイベントへの参加を思い出させるものだ。
 OrganizationEventLinkToThirdParty=サードパーティ（顧客、サプライヤー、またはパートナー）へのリンク
+OrganizationEvenLabelName=会議またはブースの公開名
 
 NewSuggestionOfBooth=ブース申請
 NewSuggestionOfConference=会議申請

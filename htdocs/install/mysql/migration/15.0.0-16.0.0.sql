@@ -135,7 +135,31 @@ ALTER TABLE llx_partnership ADD UNIQUE INDEX uk_fk_type_fk_member (fk_type, fk_m
 ALTER TABLE llx_bank ADD COLUMN amount_main_currency double(24,8) NULL;
 
 
+
 -- v16
+
+ALTER TABLE llx_element_contact DROP FOREIGN KEY fk_element_contact_fk_c_type_contact;
+ALTER TABLE llx_societe_contacts DROP FOREIGN KEY fk_societe_contacts_fk_c_type_contact;
+
+-- VMYSQL4.3 ALTER TABLE llx_c_type_contact ADD PRIMARY KEY(rowid);
+-- VMYSQL4.3 ALTER TABLE llx_c_type_contact CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+
+-- VPGSQL8.2 CREATE SEQUENCE llx_c_type_contact_rowid_seq OWNED BY llx_c_type_contact.rowid;
+-- VPGSQL8.2 ALTER TABLE llx_c_type_contact ADD PRIMARY KEY (rowid);
+-- VPGSQL8.2 ALTER TABLE llx_c_type_contact ALTER COLUMN rowid SET DEFAULT nextval('llx_c_type_contact_rowid_seq');
+-- VPGSQL8.2 SELECT setval('llx_c_type_contact_rowid_seq', MAX(rowid)) FROM llx_c_type_contact;
+
+insert into llx_c_type_contact(element, source, code, libelle, active ) values ('conferenceorbooth', 'internal', 'MANAGER',  'Conference or Booth manager', 1);
+insert into llx_c_type_contact(element, source, code, libelle, active ) values ('conferenceorbooth', 'external', 'SPEAKER',   'Conference Speaker', 1);
+insert into llx_c_type_contact(element, source, code, libelle, active ) values ('conferenceorbooth', 'external', 'RESPONSIBLE',   'Booth responsible', 1);
+
+ALTER TABLE llx_element_contact ADD CONSTRAINT fk_element_contact_fk_c_type_contact FOREIGN KEY (fk_c_type_contact)     REFERENCES llx_c_type_contact(rowid);
+ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_c_type_contact FOREIGN KEY (fk_c_type_contact)  REFERENCES llx_c_type_contact(rowid);
+
+
+DROP TABLE llx_payment_salary_extrafields;
+DROP TABLE llx_asset_model_extrafields;
+DROP TABLE llx_asset_type_extrafields;
 
 ALTER TABLE llx_projet_task_time ADD COLUMN intervention_id integer DEFAULT NULL;
 ALTER TABLE llx_projet_task_time ADD COLUMN intervention_line_id integer DEFAULT NULL;
@@ -341,7 +365,52 @@ ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti smallint DEFAULT 0 AFTER dom
 -- Set default ticket type to OTHER if no default exists
 UPDATE llx_c_ticket_type SET use_default=1 WHERE code='OTHER' AND NOT EXISTS(SELECT * FROM (SELECT * FROM llx_c_ticket_type) AS t WHERE use_default=1);
 
+
 -- Assets - New module
+
+CREATE TABLE llx_asset(
+    rowid                   integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    ref                     varchar(128)    NOT NULL,
+    entity                  integer         DEFAULT 1 NOT NULL,
+    label                   varchar(255),
+
+    fk_asset_model          integer,
+
+    reversal_amount_ht      double(24,8),
+    acquisition_value_ht    double(24,8)    DEFAULT NULL,
+    recovered_vat           double(24,8),
+
+    reversal_date           date,
+
+    date_acquisition        date            NOT NULL,
+    date_start              date            NOT NULL,
+
+    qty                     real            DEFAULT 1 NOT NULL,
+
+    acquisition_type        smallint        DEFAULT 0 NOT NULL,
+    asset_type              smallint        DEFAULT 0 NOT NULL,
+
+    not_depreciated         integer         DEFAULT 0,
+
+    disposal_date           date,
+    disposal_amount_ht      double(24,8),
+    fk_disposal_type        integer,
+    disposal_depreciated    integer         DEFAULT 0,
+    disposal_subject_to_vat integer         DEFAULT 0,
+
+    note_public             text,
+    note_private            text,
+
+    date_creation           datetime        NOT NULL,
+    tms                     timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_user_creat           integer         NOT NULL,
+    fk_user_modif           integer,
+    last_main_doc           varchar(255),
+    import_key              varchar(14),
+    model_pdf               varchar(255),
+    status                  integer         NOT NULL
+) ENGINE=innodb;
+
 ALTER TABLE llx_asset DROP FOREIGN KEY fk_asset_asset_type;
 ALTER TABLE llx_asset DROP INDEX idx_asset_fk_asset_type;
 
@@ -663,3 +732,8 @@ ALTER TABLE llx_cronjob DROP INDEX uk_cronjob;
 ALTER TABLE llx_cronjob ADD UNIQUE INDEX uk_cronjob (label, entity);
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
+
+ALTER TABLE llx_loan_schedule ADD UNIQUE INDEX uk_loan_schedule_ref (fk_loan, datep);
+
+-- We need when upgrade 15 to 16 with Dolibarr v17+ for upgrade2 function migrate_user_photospath2()
+ALTER TABLE llx_user CHANGE COLUMN note note_private text;

@@ -48,9 +48,9 @@ class doc_generic_asset_odt extends ModelePDFAsset
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
-	public $phpmin = array(5, 6);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * @var string Dolibarr version of the loaded document
@@ -284,8 +284,8 @@ class doc_generic_asset_odt extends ModelePDFAsset
 
 				dol_mkdir($conf->asset->dir_temp);
 				if (!is_writable($conf->asset->dir_temp)) {
-					$this->error = "Failed to write in temp directory ".$conf->asset->dir_temp;
-					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->asset->dir_temp);
+					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
 				}
 

@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2018-2022  Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  *  \brief      Tab shipments/delivery receipts on the order
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
@@ -33,17 +34,17 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
 
@@ -160,7 +161,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled)) {
+	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 		if ($result < 0) {
@@ -227,7 +228,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
@@ -287,7 +288,7 @@ if ($id > 0 || !empty($ref)) {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$soc->getNomUrl(1);
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->commande->creer) {
@@ -430,7 +431,7 @@ if ($id > 0 || !empty($ref)) {
 		print '</tr>';
 
 		// Warehouse
-		if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+		if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
 			print '<tr><td>';
@@ -522,7 +523,7 @@ if ($id > 0 || !empty($ref)) {
 		// TODO How record was recorded OrderMode (llx_c_input_method)
 
 		// Incoterms
-		if (!empty($conf->incoterm->enabled)) {
+		if (isModEnabled('incoterm')) {
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
 			print $langs->trans('IncotermLabel');
@@ -558,7 +559,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<table class="border centpercent tableforfield">';
 
-		if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency)) {
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code != $conf->currency)) {
 			// Multicurrency Amount HT
 			print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
 			print '<td class="nowrap">'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
@@ -641,7 +642,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<th class="center">'.$langs->trans("QtyOrdered").'</th>';
 			print '<th class="center">'.$langs->trans("QtyShipped").'</th>';
 			print '<th class="center">'.$langs->trans("KeepToShip").'</th>';
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				print '<th class="center">'.$langs->trans("RealStock").'</th>';
 			} else {
 				print '<th>&nbsp;</th>';
@@ -678,7 +679,7 @@ if ($id > 0 || !empty($ref)) {
 					// Product label
 					if ($objp->fk_product > 0) {
 						// Define output language
-						if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 							$object->fetch_thirdparty();
 
 							$prod = new Product($db);
@@ -793,7 +794,7 @@ if ($id > 0 || !empty($ref)) {
 						$product->load_stock('warehouseopen');
 					}
 
-					if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && !empty($conf->stock->enabled)) {
+					if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && isModEnabled('stock')) {
 						print '<td class="center">';
 						print $product->stock_reel;
 						if ($product->stock_reel < $toBeShipped[$objp->fk_product]) {
@@ -857,7 +858,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<div class="tabsAction">';
 
 			// Bouton expedier sans gestion des stocks
-			if (empty($conf->stock->enabled) && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
+			if (!isModEnabled('stock') && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
 				if ($user->rights->expedition->creer) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create&amp;origin=commande&amp;object_id='.$id.'">'.$langs->trans("CreateShipment").'</a>';
 					if ($toBeShippedTotal <= 0) {
@@ -873,11 +874,11 @@ if ($id > 0 || !empty($ref)) {
 
 		// Bouton expedier avec gestion des stocks
 
-		if (!empty($conf->stock->enabled) && $object->statut == Commande::STATUS_DRAFT) {
+		if (isModEnabled('stock') && $object->statut == Commande::STATUS_DRAFT) {
 			print $langs->trans("ValidateOrderFirstBeforeShipment");
 		}
 
-		if (!empty($conf->stock->enabled) && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
+		if (isModEnabled('stock') && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
 			if ($user->rights->expedition->creer) {
 				//print load_fiche_titre($langs->trans("CreateShipment"));
 				print '<div class="tabsAction">';
@@ -895,7 +896,7 @@ if ($id > 0 || !empty($ref)) {
 
 				//print '<tr>';
 
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					//print '<td>';
 					print $langs->trans("WarehouseSource");
 					//print '</td>';

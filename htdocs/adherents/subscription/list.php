@@ -23,6 +23,7 @@
  *      \brief      list of subscription
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
@@ -89,7 +90,7 @@ $arrayfields = array(
 	'd.firstname'=>array('label'=>"Firstname", 'checked'=>1),
 	'd.login'=>array('label'=>"Login", 'checked'=>1),
 	't.libelle'=>array('label'=>"Label", 'checked'=>1),
-	'd.bank'=>array('label'=>"BankAccount", 'checked'=>1, 'enabled'=>(!empty($conf->banque->enabled))),
+	'd.bank'=>array('label'=>"BankAccount", 'checked'=>1, 'enabled'=>(isModEnabled('banque'))),
 	/*'d.note_public'=>array('label'=>"NotePublic", 'checked'=>0),
 	 'd.note_private'=>array('label'=>"NotePrivate", 'checked'=>0),*/
 	'c.dateadh'=>array('label'=>"DateSubscription", 'checked'=>1, 'position'=>100),
@@ -598,7 +599,11 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['pos'][$totalarray['nbfield']] = 'd.amount';
 		}
-		$totalarray['val']['d.amount'] += $obj->subscription;
+		if (empty($totalarray['val']['d.amount'])) {
+			$totalarray['val']['d.amount'] = $obj->subscription;
+		} else {
+			$totalarray['val']['d.amount'] += $obj->subscription;
+		}
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';

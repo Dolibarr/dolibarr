@@ -25,6 +25,7 @@
 
 if (! defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
@@ -85,7 +86,7 @@ if (!$sortfield) {
 $ecmdir = new EcmDirectory($db);
 if (!empty($section)) {
 	$result = $ecmdir->fetch($section);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
@@ -282,11 +283,10 @@ if (empty($action) || $action == 'delete_section') {
 
 	// Actions buttons
 	print '<div class="tabsAction">';
-	if ($user->rights->ecm->setup) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_section&token='.newToken().'">'.$langs->trans('Delete').'</a>';
-	} else {
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
-	}
+
+	// Delete
+	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->ecm->setup);
+
 	print '</div>';
 }
 

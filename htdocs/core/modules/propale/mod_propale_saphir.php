@@ -85,7 +85,8 @@ class mod_propale_saphir extends ModeleNumRefPropales
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskpropal" value="'.$conf->global->PROPALE_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
+		$mask = empty($conf->global->PROPALE_SAPHIR_MASK) ? '' : $conf->global->PROPALE_SAPHIR_MASK;
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskpropal" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -134,7 +135,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask = $conf->global->PROPALE_SAPHIR_MASK;
+		$mask = empty($conf->global->PROPALE_SAPHIR_MASK) ? '' : $conf->global->PROPALE_SAPHIR_MASK;
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
@@ -144,7 +145,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		// Get entities
 		$entity = getEntity('proposalnumber', 1, $propal);
 
-		$date = $propal->date;
+		$date = empty($propal->date) ? dol_now() : $propal->date;
 
 		$numFinal = get_next_value($db, $mask, 'propal', 'ref', '', $objsoc, $date, 'next', false, null, $entity);
 

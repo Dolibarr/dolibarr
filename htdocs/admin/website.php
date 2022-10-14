@@ -21,6 +21,7 @@
  *		\brief      Page to administer web sites
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -109,7 +110,7 @@ $tabrowid[1] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[1] = (!empty($conf->website->enabled));
+$tabcond[1] = (isModEnabled('website'));
 
 // List of help for fields
 $tabhelp = array();

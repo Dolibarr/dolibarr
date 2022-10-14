@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2014 Regis Houssin                <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
- * Copyright (C) 2011-2018 Philippe Grand			    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2022 Philippe Grand			    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
  *	\brief      Setup page of module ExpenseReport
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -148,7 +149,7 @@ if ($action == 'updateMask') {
 	$res2 = dolibarr_set_const($db, "EXPENSEREPORT_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
 	$res3 = 0;
-	if (!empty($conf->project->enabled) && GETPOSTISSET('EXPENSEREPORT_PROJECT_IS_REQUIRED')) {  // Option may not be provided
+	if (isModEnabled('project') && GETPOSTISSET('EXPENSEREPORT_PROJECT_IS_REQUIRED')) {  // Option may not be provided
 		$res3 = dolibarr_set_const($db, 'EXPENSEREPORT_PROJECT_IS_REQUIRED', GETPOST('EXPENSEREPORT_PROJECT_IS_REQUIRED', 'int'), 'chaine', 0, '', $conf->entity);
 	}
 
@@ -468,10 +469,10 @@ print '</td></tr>'."\n";
 
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftExpenseReports"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
-print '<input class="flat minwidth200" type="text" name="EXPENSEREPORT_DRAFT_WATERMARK" value="'.$conf->global->EXPENSEREPORT_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="EXPENSEREPORT_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('EXPENSEREPORT_DRAFT_WATERMARK')).'">';
 print '</td></tr>'."\n";
 
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('ProjectIsRequiredOnExpenseReports');
 	print '</td><td class="right">';

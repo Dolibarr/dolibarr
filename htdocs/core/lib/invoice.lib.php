@@ -71,6 +71,8 @@ function facture_prepare_head($object)
 		} else {
 			dol_print_error($db);
 		}
+		$langs->load("banks");
+
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.urlencode($object->id);
 		$head[$h][1] = $langs->trans('StandingOrders');
 		if ($nbStandingOrders > 0) {
@@ -84,7 +86,7 @@ function facture_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice', 'add', 'core');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -120,6 +122,8 @@ function facture_prepare_head($object)
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice', 'remove');
 
@@ -254,7 +258,9 @@ function supplier_invoice_rec_prepare_head($object)
 function getNumberInvoicesPieChart($mode)
 {
 	global $conf, $db, $langs, $user;
-	if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+	if (($mode == 'customers' && isModEnabled('facture') && !empty($user->rights->facture->lire))
+		|| ($mode = 'suppliers') && (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) && !empty($user->rights->facture->lire)
+		) {
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		$now = date_create(date('Y-m-d', dol_now()));
@@ -749,7 +755,10 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$result .= '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 		$result .= '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
 		$result .= '<td class="right amount">'.price($obj->total_ttc).'</td>';
-		$result .= '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
+
+		// Load amount of existing payment of invoice (needed for complete status)
+		$payment = $objectstatic->getSommePaiement();
+		$result .= '<td class="right">'.$objectstatic->getLibStatut(5, $payment).'</td>';
 
 		$result .= '</tr>';
 
@@ -1070,7 +1079,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 
 	$result = '';
 
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)) {
 		$facstatic = new FactureFournisseur($db);
 
 		$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut as status, ff.type, ff.libelle as label, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";

@@ -88,7 +88,7 @@ $upload_dir 			= $conf->partnership->multidir_output[isset($object->entity) ? $o
 if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') != 'member') {
 	accessforbidden('Partnership module is not activated for members');
 }
-if (empty($conf->partnership->enabled)) {
+if (!isModEnabled('partnership')) {
 	accessforbidden();
 }
 if (empty($permissiontoread)) {
@@ -151,7 +151,7 @@ if ($id > 0) {
 	$object = new Adherent($db);
 	$result = $object->fetch($id);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 

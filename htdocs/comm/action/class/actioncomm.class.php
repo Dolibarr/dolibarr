@@ -457,11 +457,11 @@ class ActionComm extends CommonObject
 		if (!empty($this->datep) && !empty($this->datef)) {
 			$this->durationp = ($this->datef - $this->datep); // deprecated
 		}
-		//if (! empty($this->date)  && ! empty($this->dateend)) $this->durationa=($this->dateend - $this->date);
+		//if (!empty($this->date)  && !empty($this->dateend)) $this->durationa=($this->dateend - $this->date);
 		if (!empty($this->datep) && !empty($this->datef) && $this->datep > $this->datef) {
 			$this->datef = $this->datep;
 		}
-		//if (! empty($this->date)  && ! empty($this->dateend) && $this->date > $this->dateend) $this->dateend=$this->date;
+		//if (!empty($this->date)  && !empty($this->dateend) && $this->date > $this->dateend) $this->dateend=$this->date;
 		if (!isset($this->fk_project) || $this->fk_project < 0) {
 			$this->fk_project = 0;
 		}
@@ -1558,13 +1558,13 @@ class ActionComm extends CommonObject
 		}
 
 		$canread = 0;
-		if ($user->rights->agenda->myactions->read && $this->authorid == $user->id) {
+		if (!empty($user->rights->agenda->myactions->read) && $this->authorid == $user->id) {
 			$canread = 1; // Can read my event
 		}
-		if ($user->rights->agenda->myactions->read && array_key_exists($user->id, $this->userassigned)) {
+		if (!empty($user->rights->agenda->myactions->read) && array_key_exists($user->id, $this->userassigned)) {
 			$canread = 1; // Can read my event i am assigned
 		}
-		if ($user->rights->agenda->allactions->read) {
+		if (!empty($user->rights->agenda->allactions->read)) {
 			$canread = 1; // Can read all event of other
 		}
 		if (!$canread) {
@@ -2355,7 +2355,7 @@ class ActionComm extends CommonObject
 		$nbMailSend = 0;
 		$errorsMsg = array();
 
-		if (empty($conf->agenda->enabled)) {	// Should not happen. If module disabled, cron job should not be visible.
+		if (!isModEnabled('agenda')) {	// Should not happen. If module disabled, cron job should not be visible.
 			$langs->load("agenda");
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
 			return 0;

@@ -75,7 +75,7 @@ $langs->loadLangs(array("admin", "cron", "dict"));
 
 // Security check
 if (empty($conf->cron->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Cron not enabled');
 }
 
 
@@ -93,7 +93,7 @@ if (empty($key)) {
 	echo 'Securitykey is required. Check setup of cron jobs module.';
 	exit;
 }
-if ($key != $conf->global->CRON_KEY) {
+if ($key != getDolGlobalString('CRON_KEY')) {
 	echo 'Securitykey is wrong.';
 	exit;
 }
@@ -135,7 +135,7 @@ if (!empty($id)) {
 	$filter['t.rowid'] = $id;
 }
 
-$result = $object->fetch_all('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
+$result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result < 0) {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php fetch Error".$object->error, LOG_ERR);

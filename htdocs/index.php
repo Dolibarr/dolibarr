@@ -114,7 +114,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 	$lockfile = DOL_DATA_ROOT.'/install.lock';
 	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
 		$langs->load("errors");
-		//if (! empty($message)) $message.='<br>';
+		//if (!empty($message)) $message.='<br>';
 		$message .= info_admin($langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
@@ -122,7 +122,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 	if (is_writable($conffile)) {
 		$langs->load("errors");
 		//$langs->load("other");
-		//if (! empty($message)) $message.='<br>';
+		//if (!empty($message)) $message.='<br>';
 		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
@@ -155,28 +155,28 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
 	// Number of actions to do (late)
-	if (isModEnabled('agenda') && empty($conf->global->MAIN_DISABLE_BLOCK_AGENDA) && $user->rights->agenda->myactions->read) {
+	if (isModEnabled('agenda') && empty($conf->global->MAIN_DISABLE_BLOCK_AGENDA) && $user->hasRight('agenda', 'myactions', 'read')) {
 		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$board = new ActionComm($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
 	// Number of project opened
-	if (!empty($conf->project->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_PROJECT) && $user->rights->projet->lire) {
+	if (isModEnabled('project') && empty($conf->global->MAIN_DISABLE_BLOCK_PROJECT) && $user->hasRight('projet', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		$board = new Project($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
 	// Number of tasks to do (late)
-	if (!empty($conf->project->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_PROJECT) && empty($conf->global->PROJECT_HIDE_TASKS) && $user->rights->projet->lire) {
+	if (isModEnabled('project') && empty($conf->global->MAIN_DISABLE_BLOCK_PROJECT) && empty($conf->global->PROJECT_HIDE_TASKS) && $user->hasRight('projet', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 		$board = new Task($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
 	// Number of commercial customer proposals open (expired)
-	if (!empty($conf->propal->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->rights->propale->lire) {
+	if (isModEnabled('propal') && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('propal', 'read')) {
 		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		$board = new Propal($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
@@ -185,7 +185,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of supplier proposals open (expired)
-	if (!empty($conf->supplier_proposal->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->rights->supplier_proposal->lire) {
+	if (isModEnabled('supplier_proposal')  && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->hasRight('supplier_proposal', 'lire')) {
 		$langs->load("supplier_proposal");
 		include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 		$board = new SupplierProposal($db);
@@ -194,15 +194,15 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		$dashboardlines[$board->element.'_signed'] = $board->load_board($user, "signed");
 	}
 
-	// Number of customer orders a deal
-	if (!empty($conf->commande->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->rights->commande->lire) {
+	// Number of sales orders a deal
+	if (isModEnabled('commande')  && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('commande', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		$board = new Commande($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
 	// Number of suppliers orders a deal
-	if (!empty($conf->supplier_order->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->rights->fournisseur->commande->lire) {
+	if (isModEnabled('supplier_order')  && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->hasRight('fournisseur', 'commande', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$board = new CommandeFournisseur($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
@@ -210,7 +210,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of contract / services enabled (delayed)
-	if (!empty($conf->contrat->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_CONTRACT) && $user->rights->contrat->lire) {
+	if (isModEnabled('contrat')  && empty($conf->global->MAIN_DISABLE_BLOCK_CONTRACT) && $user->hasRight('contrat', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 		$board = new Contrat($db);
 		$dashboardlines[$board->element.'_inactive'] = $board->load_board($user, "inactive");
@@ -219,7 +219,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of tickets open
-	if (!empty($conf->ticket->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_TICKET) && $user->rights->ticket->read) {
+	if (isModEnabled('ticket')  && empty($conf->global->MAIN_DISABLE_BLOCK_TICKET) && $user->hasRight('ticket', 'read')) {
 		include_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$board = new Ticket($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
@@ -228,21 +228,21 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of invoices customers (paid)
-	if (isModEnabled('facture') && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->rights->facture->lire) {
+	if (isModEnabled('facture') && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('facture', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$board = new Facture($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
 	// Number of supplier invoices (paid)
-	if (!empty($conf->supplier_invoice->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && !empty($user->rights->fournisseur->facture->lire)) {
+	if (isModEnabled('supplier_invoice') && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->hasRight('fournisseur', 'facture', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		$board = new FactureFournisseur($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
 	// Number of transactions to conciliate
-	if (!empty($conf->banque->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_BANK) && $user->rights->banque->lire && !$user->socid) {
+	if (isModEnabled('banque')  && empty($conf->global->MAIN_DISABLE_BLOCK_BANK) && $user->hasRight('banque', 'lire') && !$user->socid) {
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$board = new Account($db);
 		$nb = $board->countAccountToReconcile(); // Get nb of account to reconciliate
@@ -253,26 +253,26 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
 
 	// Number of cheque to send
-	if (!empty($conf->banque->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_BANK) && $user->rights->banque->lire && !$user->socid) {
+	if (isModEnabled('banque')  && empty($conf->global->MAIN_DISABLE_BLOCK_BANK) && $user->hasRight('banque', 'lire') && !$user->socid) {
 		if (empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT)) {
-			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
+			include_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
 			$board = new RemiseCheque($db);
 			$dashboardlines[$board->element] = $board->load_board($user);
 		}
-		if (!empty($conf->prelevement->enabled)) {
+		if (isModEnabled('prelevement')) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$board = new BonPrelevement($db);
-			$dashboardlines[$board->element.'_direct_debit'] = $board->load_board($user, 'direct_debit');
+			$dashboardlines[$board->element . '_direct_debit'] = $board->load_board($user, 'direct_debit');
 		}
-		if (!empty($conf->paymentbybanktransfer->enabled)) {
+		if (isModEnabled('paymentbybanktransfer')) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$board = new BonPrelevement($db);
-			$dashboardlines[$board->element.'_credit_transfer'] = $board->load_board($user, 'credit_transfer');
+			$dashboardlines[$board->element . '_credit_transfer'] = $board->load_board($user, 'credit_transfer');
 		}
 	}
 
 	// Number of foundation members
-	if (!empty($conf->adherent->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_ADHERENT) && $user->rights->adherent->lire && !$user->socid) {
+	if (isModEnabled('adherent')  && empty($conf->global->MAIN_DISABLE_BLOCK_ADHERENT) && $user->hasRight('adherent', 'lire') && !$user->socid) {
 		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$board = new Adherent($db);
 		$dashboardlines[$board->element.'_shift'] = $board->load_board($user, 'shift');
@@ -280,21 +280,21 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of expense reports to approve
-	if (!empty($conf->expensereport->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_EXPENSEREPORT) && $user->rights->expensereport->approve) {
+	if (isModEnabled('expensereport')  && empty($conf->global->MAIN_DISABLE_BLOCK_EXPENSEREPORT) && $user->hasRight('expensereport', 'approve')) {
 		include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 		$board = new ExpenseReport($db);
 		$dashboardlines[$board->element.'_toapprove'] = $board->load_board($user, 'toapprove');
 	}
 
 	// Number of expense reports to pay
-	if (!empty($conf->expensereport->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_EXPENSEREPORT) && $user->rights->expensereport->to_paid) {
+	if (isModEnabled('expensereport')  && empty($conf->global->MAIN_DISABLE_BLOCK_EXPENSEREPORT) && $user->hasRight('expensereport', 'to_paid')) {
 		include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 		$board = new ExpenseReport($db);
 		$dashboardlines[$board->element.'_topay'] = $board->load_board($user, 'topay');
 	}
 
 	// Number of holidays to approve
-	if (!empty($conf->holiday->enabled) && empty($conf->global->MAIN_DISABLE_BLOCK_HOLIDAY) && $user->rights->holiday->approve) {
+	if (isModEnabled('holiday')  && empty($conf->global->MAIN_DISABLE_BLOCK_HOLIDAY) && $user->hasRight('holiday', 'approve')) {
 		include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 		$board = new Holiday($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
@@ -558,7 +558,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					}
 
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
-					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
+					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil(empty($board->warning_delay) ? 0 : $board->warning_delay) >= 0 ? '+' : '').ceil(empty($board->warning_delay) ? 0 : $board->warning_delay).' '.$langs->trans("days").')';
 
 					if ($board->id == 'bank_account') {
 						$textLateTitle .= '<br><span class="opacitymedium">'.$langs->trans("IfYouDontReconcileDisableProperty", $langs->transnoentitiesnoconv("Conciliable")).'</span>';

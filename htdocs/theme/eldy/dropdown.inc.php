@@ -183,7 +183,7 @@ div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 	border-top-left-radius: 0;
 	padding: 1px 0 0 0;
 	border-top-width: 0;
-	width: 300px;
+	width: 360px;
 }
 .topnav .user-menu .dropdown-menu {
 	top: 50px;
@@ -257,7 +257,7 @@ a.top-menu-dropdown-link {
 .dropdown-menu > .user-body, .dropdown-body {
 	padding: 15px;
 	border-bottom: 1px solid #f4f4f4;
-	border-top: 1px solid #dddddd;
+	border-top: 1px solid #f0f0f0;
 	white-space: normal;
 }
 
@@ -522,6 +522,9 @@ div.quickaddblock:focus {
 		max-width: 360px;
 	}
 
+	.side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
+		width: 300px;
+	}
 	.dropdown-menu {
 		border: none;
 		-webkit-box-shadow: none;

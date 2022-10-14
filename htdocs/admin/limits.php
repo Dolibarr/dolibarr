@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2018	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent		<jmenent@2byte.es>
  *
@@ -22,6 +22,7 @@
  *       \brief      Page to setup limits
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -29,14 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'products', 'admin'));
 
-if (!$user->admin) {
-	accessforbidden();
-}
-
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
 $currencycode = GETPOST('currencycode', 'alpha');
 
-if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+if (isModEnabled('multicompany') && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
 	// When MULTICURRENCY_USE_LIMIT_BY_CURRENCY is on, we use always a defined currency code instead of '' even for default.
 	$currencycode = (!empty($currencycode) ? $currencycode : $conf->currency);
 }
@@ -48,25 +46,36 @@ $mainroundingruletot = 'MAIN_ROUNDING_RULE_TOT'.(!empty($currencycode) ? '_'.$cu
 
 $valmainmaxdecimalsunit = GETPOST($mainmaxdecimalsunit, 'int');
 $valmainmaxdecimalstot = GETPOST($mainmaxdecimalstot, 'int');
-$valmainmaxdecimalsshown = GETPOST($mainmaxdecimalsshown, 'int');
+$valmainmaxdecimalsshown = GETPOST($mainmaxdecimalsshown, 'alpha');	// Can be 'x.y' but also 'x...'
 $valmainroundingruletot = price2num(GETPOST($mainroundingruletot, 'alphanohtml'), '', 2);
 
-if ($action == 'update') {
+if (!$user->admin) {
+	accessforbidden();
+}
+
+
+/*
+ * Actions
+ */
+
+if ($action == 'update' && !$cancel) {
 	$error = 0;
 	$MAXDEC = 8;
-	if ($_POST[$mainmaxdecimalsunit] > $MAXDEC
-	|| $_POST[$mainmaxdecimalstot] > $MAXDEC
-	|| $_POST[$mainmaxdecimalsshown] > $MAXDEC) {
+	if ($valmainmaxdecimalsunit > $MAXDEC
+		|| $valmainmaxdecimalstot > $MAXDEC
+		|| $valmainmaxdecimalsshown > $MAXDEC) {
 		$error++;
 		setEventMessages($langs->trans("ErrorDecimalLargerThanAreForbidden", $MAXDEC), null, 'errors');
+		$action = 'edit';
 	}
 
-	if ($_POST[$mainmaxdecimalsunit].(!empty($currencycode) ? '_'.$currencycode : '') < 0
-	|| $_POST[$mainmaxdecimalstot] < 0
-	|| $_POST[$mainmaxdecimalsshown] < 0) {
+	if ($valmainmaxdecimalsunit < 0
+		|| $valmainmaxdecimalstot < 0
+		|| $valmainmaxdecimalsshown < 0) {
 		$langs->load("errors");
 		$error++;
 		setEventMessages($langs->trans("ErrorNegativeValueNotAllowed"), null, 'errors');
+		$action = 'edit';
 	}
 
 	if ($valmainroundingruletot) {
@@ -74,7 +83,21 @@ if ($action == 'update') {
 			$langs->load("errors");
 			$error++;
 			setEventMessages($langs->trans("ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT"), null, 'errors');
+			$action = 'edit';
 		}
+	}
+
+	if ((float) $valmainmaxdecimalsshown == 0) {
+		$langs->load("errors");
+		$error++;
+		setEventMessages($langs->trans("ErrorValueCantBeNull", dol_trunc(dol_string_nohtmltag($langs->transnoentitiesnoconv("MAIN_MAX_DECIMALS_SHOWN")), 40)), null, 'errors');
+		$action = 'edit';
+	}
+	if (! $error && ((float) $valmainmaxdecimalsshown < $valmainmaxdecimalsunit || (float) $valmainmaxdecimalsshown < $valmainmaxdecimalstot)) {
+		$langs->load("errors");
+		$error++;
+		setEventMessages($langs->trans("ErrorValueForTooLow", dol_trunc(dol_string_nohtmltag($langs->transnoentitiesnoconv("MAIN_MAX_DECIMALS_SHOWN")), 40)), null, 'errors');
+		$action = 'edit';
 	}
 
 	if (!$error) {
@@ -105,12 +128,12 @@ print load_fiche_titre($title, '', 'title_setup');
 
 $aCurrencies = array($conf->currency); // Default currency always first position
 
-if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
+if (isModEnabled('multicompany') && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/multicurrency.lib.php';
 
-	$sql = "SELECT rowid, code FROM ".MAIN_DB_PREFIX."multicurrency";
-	$sql .= " WHERE entity = ".((int) $conf->entity);
-	$sql .= " AND code <> '".$db->escape($conf->currency)."'"; // Default currency always first position
+	$sql = "SELECT rowid, code FROM " . MAIN_DB_PREFIX . "multicurrency";
+	$sql .= " WHERE entity = " . ((int) $conf->entity);
+	$sql .= " AND code <> '" . $db->escape($conf->currency) . "'"; // Default currency always first position
 	$resql = $db->query($sql);
 	if ($resql) {
 		while ($obj = $db->fetch_object($resql)) {
@@ -129,11 +152,11 @@ print '<span class="opacitymedium">'.$langs->trans("LimitsDesc")."</span><br>\n"
 print "<br>\n";
 
 if ($action == 'edit') {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="action" value="update">';
-	if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
-		print '<input type="hidden" name="currencycode" value="'.$currencycode.'">';
+	if (isModEnabled('multicompany') && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+		print '<input type="hidden" name="currencycode" value="' . $currencycode . '">';
 	}
 
 	clearstatcache();
@@ -143,24 +166,25 @@ if ($action == 'edit') {
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_UNIT"), $langs->trans("ParameterActiveForNextInputOnly"));
-	print '</td><td><input class="flat" name="'.$mainmaxdecimalsunit.'" size="3" value="'.(isset($conf->global->$mainmaxdecimalsunit) ? $conf->global->$mainmaxdecimalsunit : $conf->global->MAIN_MAX_DECIMALS_UNIT).'"></td></tr>';
+	print '</td><td><input class="flat right" name="'.$mainmaxdecimalsunit.'" size="3" value="'.(GETPOSTISSET($mainmaxdecimalsunit) ? GETPOST($mainmaxdecimalsunit) : getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT', 0)).'"></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
-	print '</td><td><input class="flat" name="'.$mainmaxdecimalstot.'" size="3" value="'.(isset($conf->global->$mainmaxdecimalstot) ? $conf->global->$mainmaxdecimalstot : $conf->global->MAIN_MAX_DECIMALS_TOT).'"></td></tr>';
+	print '</td><td><input class="flat right" name="'.$mainmaxdecimalstot.'" size="3" value="'.(GETPOSTISSET($mainmaxdecimalstot) ? GETPOST($mainmaxdecimalstot) : getDolGlobalInt('MAIN_MAX_DECIMALS_TOT', 0)).'"></td></tr>';
 
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td>';
-	print '<td><input class="flat" name="'.$mainmaxdecimalsshown.'" size="3" value="'.(isset($conf->global->$mainmaxdecimalsshown) ? $conf->global->$mainmaxdecimalsshown : $conf->global->MAIN_MAX_DECIMALS_SHOWN).'"></td></tr>';
+	print '<td><input class="flat right" name="'.$mainmaxdecimalsshown.'" size="3" value="'.(GETPOSTISSET($mainmaxdecimalsshown) ? GETPOST($mainmaxdecimalsshown) : getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN')).'"></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"), $langs->trans("ParameterActiveForNextInputOnly"));
-	print '</td><td><input class="flat" name="'.$mainroundingruletot.'" size="3" value="'.(isset($conf->global->$mainroundingruletot) ? $conf->global->$mainroundingruletot : (!empty($conf->global->MAIN_ROUNDING_RULE_TOT) ? $conf->global->MAIN_ROUNDING_RULE_TOT : '')).'"></td></tr>';
+	print '</td><td><input class="flat right" name="'.$mainroundingruletot.'" size="3" value="'.(GETPOSTISSET($mainroundingruletot) ? GETPOST($mainroundingruletot) : getDolGlobalString('MAIN_ROUNDING_RULE_TOT')).'"></td></tr>';
 
 	print '</table>';
 
-	print '<br>';
 	print '<div class="center">';
-	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; ';
+	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 	print '<br>';
 
@@ -169,7 +193,7 @@ if ($action == 'edit') {
 } else {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="right">'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_UNIT"), $langs->trans("ParameterActiveForNextInputOnly"));
@@ -190,11 +214,11 @@ if ($action == 'edit') {
 	print '</div>';
 
 	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().''.(!empty($currencycode) ? '&currencycode='.$currencycode : '').'">'.$langs->trans("Modify").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().(!empty($currencycode) ? '&currencycode='.$currencycode : '').'">'.$langs->trans("Modify").'</a>';
 	print '</div>';
 }
 
-if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+if (isModEnabled('multicompany') && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
 	if (!empty($aCurrencies) && count($aCurrencies) > 1) {
 		print dol_get_fiche_end();
 	}

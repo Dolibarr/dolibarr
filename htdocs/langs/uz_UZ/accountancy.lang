@@ -48,7 +48,7 @@ CountriesNotInEEC=EEC tarkibiga kirmagan mamlakatlar
 CountriesInEECExceptMe=%s dan tashqari EECdagi mamlakatlar
 CountriesExceptMe=%s dan tashqari barcha mamlakatlar
 AccountantFiles=Dastlabki hujjatlarni eksport qilish
-ExportAccountingSourceDocHelp=Ushbu vosita yordamida siz buxgalteriya hisobingizni yaratish uchun foydalaniladigan manba voqealarini (CSV va PDF-dagi ro'yxat) eksport qilishingiz mumkin.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=Jurnallaringizni eksport qilish uchun %s - %s menyu yozuvidan foydalaning.
 VueByAccountAccounting=Buxgalteriya hisobi bo'yicha ko'rish
 VueBySubAccountAccounting=Buxgalteriya subkontaji bo'yicha ko'rish
@@ -161,7 +161,7 @@ BANK_DISABLE_DIRECT_INPUT=Bank hisobvarag'idagi operatsiyani to'g'ridan-to'g'ri 
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Jurnalda qoralama eksportni yoqish
 ACCOUNTANCY_COMBO_FOR_AUX=Yordamchi hisob uchun kombinatsiyalangan ro'yxatni yoqish (agar sizda uchinchi shaxslar ko'p bo'lsa, sekin bo'lishi mumkin, qiymatning bir qismini qidirish qobiliyati buziladi)
 ACCOUNTING_DATE_START_BINDING=Buxgalteriyada majburiy va o'tkazishni boshlash uchun sanani aniqlang. Ushbu sana ostida operatsiyalar buxgalteriya hisobiga o'tkazilmaydi.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Buxgalteriya o'tkazmalarida sukut bo'yicha davr ko'rsatilishini tanlang
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=Sell journal
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
@@ -182,7 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Xayriya mablag'larini ro'yxatdan o'tkazish uchun buxg
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Obunalarni ro'yxatdan o'tkazish uchun buxgalteriya hisobi
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Mijozlar depozitini ro'yxatdan o'tkazish uchun sukut bo'yicha buxgalteriya hisobi
-UseAuxiliaryAccountOnCustomerDeposit=Mijozlarning depozit liniyalarida sub-hisoblardan foydalaning
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Xarid qilingan mahsulotlar uchun sukut bo'yicha buxgalteriya hisobi (agar mahsulot varag'ida belgilanmagan bo'lsa foydalaniladi)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=EECda sotib olingan mahsulotlar uchun sukut bo'yicha buxgalteriya hisobi (agar mahsulot varag'ida belgilanmagan bo'lsa foydalaniladi)
@@ -279,7 +279,7 @@ DescVentilExpenseReportMore=Agar siz buxgalteriya hisobini xarajatlar to'g'risid
 DescVentilDoneExpenseReport=Xarajatlar hisobotlari ro'yxati va ularning to'lovlarini hisobga olish hisobi bilan bu erda maslahatlashing
 
 Closure=Yillik yopilish
-DescClosure=Hali tasdiqlanmagan va qulflanmagan oylar bo'yicha harakatlar soni bilan bu erda maslahatlashing
+DescClosure=Consult here the number of movements by month not yet validated & locked
 OverviewOfMovementsNotValidated=Tasdiqlanmagan va qulflanmagan harakatlarning umumiy ko'rinishi
 AllMovementsWereRecordedAsValidated=Barcha harakatlar tasdiqlangan va qulflangan sifatida qayd etilgan
 NotAllMovementsCouldBeRecordedAsValidated=Hamma harakatlarni tasdiqlangan va qulflangan deb yozib bo'lmaydi
@@ -332,7 +332,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Xarajatlar hisobotlari bo'yicha bux
 
 ## Export
 NotifiedExportDate=Eksport qilingan qatorlarni eksport qilingan deb belgilash <span class="warning"> (chiziqni o‘zgartirish uchun siz butun tranzaksiyani o‘chirib tashlashingiz va uni buxgalteriya hisobiga qayta o‘tkazishingiz kerak) </span>
-NotifiedValidationDate=Eksport qilingan yozuvlarni tekshirish va bloklash <span class="warning"> (“Yopish” funksiyasi bilan bir xil effekt, satrlarni o‘zgartirish va o‘chirish ALBATTA mumkin emas) </span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=Sanani tekshirish va qulflash
 ConfirmExportFile=Buxgalteriya eksporti faylini yaratishni tasdiqlashmi?
 ExportDraftJournal=Jurnal jurnalini eksport qiling
@@ -427,6 +427,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Kech
 AccountancyErrorMismatchLetterCode=Kelishuv kodidagi nomuvofiqlik
 AccountancyErrorMismatchBalanceAmount=Balans (%s) 0 ga teng emas
 AccountancyErrorLetteringBookkeeping=Tranzaktsiyalarda xatoliklar yuz berdi: %s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 
 ## Import
 ImportAccountingEntries=Buxgalteriya yozuvlari

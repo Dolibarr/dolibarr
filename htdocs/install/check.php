@@ -80,9 +80,9 @@ if (!empty($useragent)) {
 }
 
 
-// Check PHP version
-$arrayphpminversionerror = array(5, 5, 0);
-$arrayphpminversionwarning = array(5, 6, 0);
+// Check PHP version min
+$arrayphpminversionerror = array(5, 6, 0);
+$arrayphpminversionwarning = array(7, 0, 0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0) {        // Minimum to use (error if lower)
 	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 	$checksok = 0; // 0=error, 1=warning
@@ -96,6 +96,14 @@ if (empty($force_install_nophpinfo)) {
 	print ' (<a href="phpinfo.php" target="_blank" rel="noopener noreferrer">'.$langs->trans("MoreInformation").'</a>)';
 }
 print "<br>\n";
+
+// Check PHP version max
+$arrayphpmaxversionwarning = array(8, 1, 0);
+if (versioncompare(versionphparray(), $arrayphpmaxversionwarning) > 0 && versioncompare(versionphparray(), $arrayphpmaxversionwarning) < 3) {        // Maximum to use (warning if higher)
+	print '<img src="../theme/eldy/img/error.png" alt="Error" class="valignmiddle"> '.$langs->trans("ErrorPHPVersionTooHigh", versiontostring($arrayphpmaxversionwarning));
+	$checksok = 1; // 0=error, 1=warning
+	print "<br>\n";
+}
 
 
 // Check PHP support for $_GET and $_POST
