@@ -1026,7 +1026,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// -----------------------------------------
 	// When used in standard mode
 	// -----------------------------------------
-	
+
 	$jscodespecifictofrenchprofid = "\n".'
 		<!-- BEGIN JavaScript code specific to French third parties only. -->
 		<script type="text/javascript">
@@ -1052,7 +1052,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			})
 		</script>
 		<!-- END JavaScript code specific to French third parties only. -->'."\n";
-		
+
 	if ($action == 'create') {
 		/*
 		 *  Creation
@@ -1228,11 +1228,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$object->country_code = $tmparray['code'];
 			$object->country = $tmparray['label'];
 		}
-		
+
 		if ($object->country_code == 'FR') {
 			print $jscodespecifictofrenchprofid;
 		}
-		
+
 		$object->forme_juridique_code = GETPOST('forme_juridique_code');
 
 		// We set multicurrency_code if enabled
@@ -2353,7 +2353,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if ($object->country_code == 'FR') {
 				print $jscodespecifictofrenchprofid;
 			}
-			
+
 			// State
 			if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
