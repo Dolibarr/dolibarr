@@ -10,7 +10,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  */
 
 .info-box-module.--external span.info-box-icon-version {
-	background: #bbb;
+	background: rgba(0,0,0,0.2);
 }
 
 .info-box-module.--external.--need-update span.info-box-icon-version{
@@ -336,15 +336,15 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	color: #b06080 !important;
 }
 /* Color for customer object */
-.infobox-propal:not(.pictotitle):not(.error),
-.infobox-facture:not(.pictotitle):not(.error),
-.infobox-commande:not(.pictotitle):not(.error) {
+.infobox-propal:not(.error),
+.infobox-facture:not(.error),
+.infobox-commande:not(.error) {
 	color: #65953d !important;
 }
 /* Color for vendor object */
-.infobox-supplier_proposal:not(.pictotitle):not(.error),
-.infobox-invoice_supplier:not(.pictotitle):not(.error),
-.infobox-order_supplier:not(.pictotitle):not(.error) {
+.infobox-supplier_proposal:not(.error),
+.infobox-invoice_supplier:not(.error),
+.infobox-order_supplier:not(.error) {
 	color: #599caf !important;
 }
 .infobox-contrat, .infobox-ticket{
@@ -489,6 +489,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	.box-flex-container {
 		margin: 0 0 0 0px !important;
 		width: 100% !important;
+		justify-content: space-between;
 	}
 	.info-box-module {
 		width: 100%;

@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=Ovaj alat smiju koristiti samo iskusni korisnici ili programeri. Pruža pomoćne programe za izgradnju ili uređivanje vlastitog modula. Dokumentacija za alternativni <a href="%s" target="_blank" rel="noopener noreferrer"> ručni razvoj je ovdje </a>.
-EnterNameOfModuleDesc=Unesite naziv modula/aplikacije za izradu bez razmaka. Koristite velika slova za odvajanje riječi (na primjer: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Unesite naziv objekta za izradu bez razmaka. Upotrijebite velika slova za odvajanje riječi (na primjer: moj objekt, učenik, učitelj...). Generirati će se datoteka klase CRUD, ali i API datoteka, stranice za popis/dodavanje/uređivanje/brisanje objekata i SQL datoteke.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Putanja na kojoj se moduli generiraju/uređuju (prvi direktorij za vanjske module definiran u %s): <strong> %s </strong>
 ModuleBuilderDesc3=Generated/editable modules found: <strong>%s</strong>
 ModuleBuilderDesc4=Modul se detektira kao 'koji se može uređivati' kada datoteka <strong> %s </strong> postoji u korijenu direktorija modula
 NewModule=Novi modul
 NewObjectInModulebuilder=Novi objekt
+NewDictionary=New dictionary
 ModuleKey=Module key
 ObjectKey=Object key
+DicKey=Dictionary key
 ModuleInitialized=Modul je inicijaliziran
 FilesForObjectInitialized=Datoteke za novi objekt '%s' su inicijalizirane
 FilesForObjectUpdated=Ažurirane datoteke za objekt '%s' (.sql datoteke i .class.php datoteka)

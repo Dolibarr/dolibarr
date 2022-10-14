@@ -110,7 +110,7 @@ ChooseYourDemoProfilMore=...vagy készítse el saját profilját<br>(manuális m
 DemoFundation=Alapítvány tagjainak kezelése
 DemoFundation2=Alapítvány tagjainak és bankszámlájának kezelése
 DemoCompanyServiceOnly=Csak vállalati vagy szabadúszó értékesítési szolgáltatás
-DemoCompanyShopWithCashDesk=Pénztárral rendelkező üzlet kezelése
+DemoCompanyShopWithCashDesk=Pénztárral rendelkező üzlet vezetése
 DemoCompanyProductAndStocks=Termékeket árusító bolt az értékesítési ponton
 DemoCompanyManufacturing=Vállalati termékek gyártása
 DemoCompanyAll=Több tevékenységgel rendelkező vállalat (minden fő modul)
@@ -304,3 +304,24 @@ ConfirmBtnCommonContent = Biztos, hogy "%s"?
 ConfirmBtnCommonTitle = Erősítse meg a műveletet
 CloseDialog = Bezárás
 Autofill = Automatikus kitöltés
+
+# externalsite
+ExternalSiteSetup=Külső weboldalra mutató link beállítása
+ExternalSiteURL=A HTML iframe tartalom külső webhely URL-je
+ExternalSiteModuleNotComplete=Az ExternalSite modul nincs megfelelően beállítva.
+ExampleMyMenuEntry=A menüpontom
+
+# FTP
+FTPClientSetup=FTP vagy SFTP kliens modul beállítása
+NewFTPClient=Új FTP/FTPS kapcsolat beállítása
+FTPArea=FTP/FTPS terület
+FTPAreaDesc=Ez a képernyő egy FTP és SFTP szerver nézetét mutatja.
+SetupOfFTPClientModuleNotComplete=Úgy tűnik, az FTP vagy SFTP kliens modul beállítása nem teljes
+FTPFeatureNotSupportedByYourPHP=A PHP-d nem támogatja az FTP vagy SFTP funkciókat
+FailedToConnectToFTPServer=Nem sikerült csatlakozni a szerverhez (%s szerver, %s port)
+FailedToConnectToFTPServerWithCredentials=Nem sikerült bejelentkezni a szerverre meghatározott bejelentkezési névvel/jelszóval
+FTPFailedToRemoveFile=Nem sikerült eltávolítani a(z) <b>%s</b> fájlt.
+FTPFailedToRemoveDir=Nem sikerült eltávolítani a(z) <b>%s</b> könyvtárat: ellenőrizze a jogosultságokat és azt, hogy a könyvtár üres-e.
+FTPPassiveMode=Passzív mód
+ChooseAFTPEntryIntoMenu=Válasszon FTP/SFTP webhelyet a menüből...
+FailedToGetFile=A %s fájlok letöltése sikertelen

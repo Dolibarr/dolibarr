@@ -129,6 +129,10 @@ class ExpenseReport extends CommonObject
 	public $localtax1;	// for backward compatibility (real field should be total_localtax1 defined into CommonObject)
 	public $localtax2;	// for backward compatibility (real field should be total_localtax2 defined into CommonObject)
 
+	public $statuts = array();
+	public $statuts_short = array();
+	public $statuts_logo;
+
 
 	/**
 	 * Draft status
@@ -397,7 +401,6 @@ class ExpenseReport extends CommonObject
 			return -1;
 		}
 	}
-
 
 	/**
 	 *	Load an object from its id and create a new one in database
@@ -768,6 +771,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.date_approve as datea,";
 		$sql .= " f.fk_user_creat as fk_user_creation,";
+		$sql .= " f.fk_user_author as fk_user_author,";
 		$sql .= " f.fk_user_modif as fk_user_modification,";
 		$sql .= " f.fk_user_valid,";
 		$sql .= " f.fk_user_approve";
@@ -2066,6 +2070,7 @@ class ExpenseReport extends CommonObject
 		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_REFUSED) {
 			$this->db->begin();
 
+			$error = 0;
 			$type = 0; // TODO What if type is service ?
 
 			// We don't know seller and buyer for expense reports
@@ -2149,10 +2154,13 @@ class ExpenseReport extends CommonObject
 
 			$this->applyOffset();
 			$this->checkRules();
-			$error = 0;
-			$result = $this->line->update($user);
 
-			if ($result > 0 && !$notrigger) {
+			$result = $this->line->update($user);
+			if ($result < 0) {
+				$error++;
+			}
+
+			if (!$error && !$notrigger) {
 				// Call triggers
 				$result = $this->call_trigger('EXPENSE_REPORT_DET_MODIFY', $user);
 				if ($result < 0) {
@@ -2161,7 +2169,7 @@ class ExpenseReport extends CommonObject
 				// End call triggers
 			}
 
-			if ($result > 0 && $error == 0) {
+			if (!$error) {
 				$this->db->commit();
 				return 1;
 			} else {
@@ -2559,6 +2567,106 @@ class ExpenseReport extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 *  \brief Compute the cost of the kilometers expense based on the number of kilometers and the vehicule category
+	 *
+	 *  @param     int		$fk_cat           Category of the vehicule used
+	 *  @param     real		$qty              Number of kilometers
+	 *  @param     real		$tva              VAT rate
+	 *  @return    int              		  <0 if KO, total ttc if OK
+	 */
+	public function computeTotalKm($fk_cat, $qty, $tva)
+	{
+		global $langs,$user,$db,$conf;
+
+
+		$cumulYearQty = 0;
+		$ranges = array();
+		$coef = 0;
+
+
+		if ($fk_cat < 0) {
+			$this->error = $langs->trans('ErrorBadParameterCat');
+			return -1;
+		}
+
+		if ($qty <= 0) {
+			$this->error = $langs->trans('ErrorBadParameterQty');
+			return -1;
+		}
+
+		$currentUser = new User($db);
+		$currentUser->fetch($this->fk_user);
+		$currentUser->getrights('expensereport');
+		//Clean
+		$qty = price2num($qty);
+
+		$sql  = " SELECT r.range_ik, t.ikoffset as offset, t.coef";
+		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_ik t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_exp_tax_range r ON r.rowid = t.fk_range";
+		$sql .= " WHERE t.fk_c_exp_tax_cat = ".(int) $fk_cat;
+		$sql .= " ORDER BY r.range_ik ASC";
+
+		dol_syslog("expenseReport::computeTotalkm sql=".$sql, LOG_DEBUG);
+
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			if ($conf->global->EXPENSEREPORT_CALCULATE_MILEAGE_EXPENSE_COEFFICIENT_ON_CURRENT_YEAR) {
+				$arrayDate = dol_getdate(dol_now());
+				$sql = " SELECT count(n.qty) as cumul FROM ".MAIN_DB_PREFIX."expensereport_det n";
+				$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."expensereport e ON e.rowid = n.fk_expensereport";
+				$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."c_type_fees tf ON tf.id = n.fk_c_type_fees";
+				$sql.= " WHERE e.fk_user_author = ".(int) $this->fk_user_author;
+				$sql.= " AND YEAR(n.date) = ".(int) $arrayDate['year'];
+				$sql.= " AND tf.code = 'EX_KME' ";
+				$sql.= " AND e.fk_statut = ".(int) ExpenseReport::STATUS_VALIDATED;
+
+				$resql = $this->db->query($sql);
+
+				if ($resql) {
+					$obj = $this->db->fetch_object($resql);
+					$cumulYearQty = $obj->cumul;
+				}
+				$qty = $cumulYearQty + $qty;
+			}
+
+			$num = $this->db->num_rows($result);
+
+			if ($num) {
+				for ($i = 0; $i < $num; $i++) {
+					$obj = $this->db->fetch_object($result);
+
+					$ranges[$i] = $obj;
+				}
+
+
+				for ($i = 0; $i < $num; $i++) {
+					if ($i < ($num - 1)) {
+						if ($qty > $ranges[$i]->range_ik && $qty < $ranges[$i+1]->range_ik) {
+							$coef = $ranges[$i]->coef;
+							$offset = $ranges[$i]->offset;
+						}
+					} else {
+						if ($qty > $ranges[$i]->range_ik) {
+							$coef = $ranges[$i]->coef;
+							$offset = $ranges[$i]->offset;
+						}
+					}
+				}
+				$total_ht = $coef;
+				return $total_ht;
+			} else {
+				$this->error = $langs->trans('TaxUndefinedForThisCategory');
+				return 0;
+			}
+		} else {
+			$this->error = $this->db->error()." sql=".$sql;
+
+			return -1;
+		}
+	}
 }
 
 
@@ -2941,4 +3049,6 @@ class ExpenseReportLine extends CommonObjectLine
 			return -2;
 		}
 	}
+
+	// ajouter ici comput_ ...
 }

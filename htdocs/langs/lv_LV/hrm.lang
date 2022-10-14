@@ -12,7 +12,7 @@ OpenEtablishment=Atvērts uzņēmums
 CloseEtablishment=Aizvērt uzņēmumu
 # Dictionary
 DictionaryPublicHolidays=Atvaļinājums - svētku dienas
-DictionaryDepartment=HRM - Department list
+DictionaryDepartment=HRM - Organizatoriskā vienība
 DictionaryFunction=HRM - darba vietas
 # Module
 Employees=Darbinieki
@@ -70,9 +70,9 @@ RequiredSkills=Nepieciešamās prasmes šim darbam
 UserRank=Lietotāja rangs
 SkillList=Prasmju saraksts
 SaveRank=Saglabāt rangu
-knowHow=Zināt, kā
-HowToBe=Kā būt
-knowledge=Zināšanas
+TypeKnowHow=Zināt, kā
+TypeHowToBe=Kā būt
+TypeKnowledge=Zināšanas
 AbandonmentComment=Atteikšanās komentārs
 DateLastEval=Pēdējās vērtēšanas datums
 NoEval=Šim darbiniekam nav veikts novērtējums
@@ -88,3 +88,4 @@ DeleteSkill = Prasme noņemta
 SkillsExtraFields=Attributs supplémentaires (kompetences)
 JobsExtraFields=Attributs supplémentaires (Emplois)
 EvaluationsExtraFields=Atribūti supplémentaires (novērtējumi)
+NeedBusinessTravels=Nepieciešami biznesa ceļojumi

@@ -110,7 +110,7 @@ ChooseYourDemoProfilMore=...ili napravite vlastiti profil <br> (ručni odabir mo
 DemoFundation=Upravljanje članovima zaklade
 DemoFundation2=Upravljanje članovima i bankovnim računom zaklade
 DemoCompanyServiceOnly=Company or freelance selling service only
-DemoCompanyShopWithCashDesk=Upravljajte trgovinom s blagajnom
+DemoCompanyShopWithCashDesk=Manage a shop with a cash box
 DemoCompanyProductAndStocks=Shop selling products with Point Of Sales
 DemoCompanyManufacturing=Tvrtka koja proizvodi proizvode
 DemoCompanyAll=Tvrtka s više djelatnosti (svi glavni moduli)
@@ -304,3 +304,24 @@ ConfirmBtnCommonContent = Jeste li sigurni da želite "%s"?
 ConfirmBtnCommonTitle = Potvrdite svoju radnju
 CloseDialog = Zatvori
 Autofill = Automatsko popunjavanje
+
+# externalsite
+ExternalSiteSetup=Postavljanje linkova na vanjske web stranice
+ExternalSiteURL=URL vanjske web-lokacije HTML iframe sadržaja
+ExternalSiteModuleNotComplete=Modul ExternalSite nije ispravno podešen.
+ExampleMyMenuEntry=Moj izbornik unos
+
+# FTP
+FTPClientSetup=Postavljanje modula FTP ili SFTP klijenta
+NewFTPClient=Nova postavka FTP/FTPS veze
+FTPArea=FTP/FTPS sučelje
+FTPAreaDesc=Ovaj zaslon prikazuje prikaz FTP i SFTP poslužitelja.
+SetupOfFTPClientModuleNotComplete=Čini se da postavljanje FTP ili SFTP klijentskog modula nije dovršeno
+FTPFeatureNotSupportedByYourPHP=Vaš PHP ne podržava FTP ili SFTP funkcije
+FailedToConnectToFTPServer=Povezivanje s poslužiteljem nije uspjelo (poslužitelj %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Prijava na poslužitelj s definiranom prijavom/lozinkom nije uspjela
+FTPFailedToRemoveFile=Neuspješno brisanje datoteke <b>%s</b>.
+FTPFailedToRemoveDir=Uklanjanje direktorija <b> %s </b> nije uspjelo: provjerite dopuštenja i je li direktorij prazan.
+FTPPassiveMode=Pasivni mod
+ChooseAFTPEntryIntoMenu=Odaberite FTP/SFTP stranicu s izbornika...
+FailedToGetFile=Neuspješno preuzimanje datoteka %s

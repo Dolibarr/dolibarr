@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Účtování účet registrovaných darů
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Účtovací účet pro registraci předplatného
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Účetní účet ve výchozím nastavení pro zakoupené produkty (používá se, pokud není definováno v produktovém listu)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Účetní účet ve výchozím nastavení u zakoupených produktů v EHS (používá se, pokud není definováno v produktovém listu)
@@ -289,7 +290,7 @@ ValidateHistory=Ověřit automaticky
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Chyba, nelze odstranit tento účetní účet, protože ho zrovna používáte
-MvtNotCorrectlyBalanced=Pohyb není správně vyvážený. Debit = %s | Úvěr = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Vyvažování
 FicheVentilation=Ověřovací karta
 GeneralLedgerIsWritten=Transakce jsou zapsány do knihy

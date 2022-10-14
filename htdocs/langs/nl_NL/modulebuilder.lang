@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
-EnterNameOfModuleDesc=Voer de naam in van de module / toepassing die u wilt maken zonder spaties. Gebruik hoofdletters om woorden te scheiden (bijvoorbeeld: MyModule, EcommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Voer de naam in van het object dat u wilt maken zonder spaties. Gebruik hoofdletters om woorden te scheiden (bijvoorbeeld: MyObject, Student, Teacher ...). Het CRUD-classfile, maar ook het API-bestand, pagina's voor het weergeven/toevoegen/bewerken/verwijderen van objecten en SQL-bestanden worden gegenereerd.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Pad waar modules worden gegenereerd / bewerkt (eerste map voor externe modules gedefinieerd in %s): <strong>%s</strong>
 ModuleBuilderDesc3=Gegenereerde/bewerkbare modules gevonden: <strong>%s</strong>
 ModuleBuilderDesc4=Een module is gedetecteerd als 'bewerkbaar' wanneer het bestand <strong>%s</strong> bestaat in de hoofdmap van de module map
 NewModule=Nieuwe module
 NewObjectInModulebuilder=Nieuw object
+NewDictionary=New dictionary
 ModuleKey=Module sleutel
 ObjectKey=Object sleutel
+DicKey=Dictionary key
 ModuleInitialized=Module geïnitialiseerd
 FilesForObjectInitialized=Bestanden voor nieuw object '%s' geïnitialiseerd
 FilesForObjectUpdated=Bestanden voor object '%s' bijgewerkt (.sql-bestanden en .class.php bestand)

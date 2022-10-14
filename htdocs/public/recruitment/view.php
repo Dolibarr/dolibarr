@@ -34,6 +34,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -77,7 +78,7 @@ $urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than curren
 
 // Security check
 if (empty($conf->recruitment->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Recruitment not enabled');
 }
 
 
@@ -217,7 +218,13 @@ if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumb
 if ($urllogo) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
+	if (!empty($mysoc->url)) {
+		print '<a href="'.$mysoc->url.'" target="_blank" rel="noopener">';
+	}
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
+	if (!empty($mysoc->url)) {
+		print '</a>';
+	}
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
@@ -323,9 +330,10 @@ print "\n";
 
 
 if ($action != 'dosubmit') {
-	if ($found && !$error) {	// We are in a management option and no error
+	if ($found && !$error) {
+		// We are in a management option and no error
 	} else {
-		dol_print_error_email('ERRORNEWONLINESIGN');
+		dol_print_error_email('ERRORSUBMITAPPLICATION');
 	}
 } else {
 	// Print

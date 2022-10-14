@@ -637,7 +637,11 @@ class Translate
 			);
 
 			if (strpos($key, 'Format') !== 0) {
-				$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
+				try {
+					$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
+				} catch (Exception $e) {
+					// No exception managed
+				}
 			}
 
 			// Crypt string into HTML
@@ -904,11 +908,11 @@ class Translate
 	 *      This function need module "numberwords" to be installed. If not it will return
 	 *      same number (this module is not provided by default as it use non GPL source code).
 	 *
-	 *		@param	int		$number		Number to encode in full text
-	 *      @param  string	$isamount	''=it's just a number, '1'=It's an amount (default currency), 'currencycode'=It's an amount (foreign currency)
-	 *      @return string				Label translated in UTF8 (but without entities)
-	 * 									10 if setDefaultLang was en_US => ten
-	 * 									123 if setDefaultLang was fr_FR => cent vingt trois
+	 *		@param	int|string	$number		Number to encode in full text
+	 *      @param  string		$isamount	''=it's just a number, '1'=It's an amount (default currency), 'currencycode'=It's an amount (foreign currency)
+	 *      @return string					Label translated in UTF8 (but without entities)
+	 * 										10 if setDefaultLang was en_US => ten
+	 * 										123 if setDefaultLang was fr_FR => cent vingt trois
 	 */
 	public function getLabelFromNumber($number, $isamount = '')
 	{
@@ -1092,7 +1096,7 @@ class Translate
 				if ($obj) {
 					// If a translation exists, we use it lese we use the default label
 					$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $this->trans("Currency".$obj->code_iso) != "Currency".$obj->code_iso ? $this->trans("Currency".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
-					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode($obj->unicode, true);
+					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode((empty($obj->unicode) ? '' : $obj->unicode), true);
 					$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
 				}
 				$i++;

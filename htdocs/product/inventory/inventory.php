@@ -21,6 +21,7 @@
  *		\brief      Tabe to enter counting
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -41,6 +42,15 @@ $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$listoffset = GETPOST('listoffset', 'alpha');
+$limit = GETPOST('limit', 'int') > 0 ?GETPOST('limit', 'int') : $conf->liste_limit;
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1) {
+	$page = 0;
+}
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 $fk_warehouse = GETPOST('fk_warehouse', 'int');
 $fk_product = GETPOST('fk_product', 'int');
@@ -86,6 +96,14 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mymodule', $id);
 
+//Parameters Page
+$param = '&id='.$object->id;
+if ($limit > 0 && $limit != $conf->liste_limit) {
+	$param .= '&limit='.urlencode($limit);
+}
+$paramwithsearch = $param;
+
+
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 	$permissiontoadd = $user->rights->stock->creer;
 	$permissiontodelete = $user->rights->stock->supprimer;
@@ -97,6 +115,7 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 $now = dol_now();
 
 
+
 /*
  * Actions
  */
@@ -104,6 +123,7 @@ $now = dol_now();
 if ($cancel) {
 	$action = '';
 }
+
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -160,7 +180,7 @@ if (empty($reshook)) {
 
 				// Get the real quantity in stock now, but before the stock move for inventory.
 				$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->real;
-				if ($conf->productbatch->enabled && $product_static->hasbatch()) {
+				if (isModEnabled('productbatch') && $product_static->hasbatch()) {
 					$realqtynow = $product_static->stock_warehouse[$line->fk_warehouse]->detail_batch[$line->batch]->qty;
 				}
 
@@ -245,6 +265,7 @@ if (empty($reshook)) {
 		$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 		$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+		$sql .= $db->plimit($limit, $offset);
 
 		$db->begin();
 
@@ -295,7 +316,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		// Update user that update quantities
+		// Update line with id of stock movement (and the start quantity if it has changed this last recording)
 		if (! $error) {
 			$sqlupdate = "UPDATE ".MAIN_DB_PREFIX."inventory";
 			$sqlupdate .= " SET fk_user_modif = ".((int) $user->id);
@@ -314,9 +335,8 @@ if (empty($reshook)) {
 		}
 	}
 
-
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
-	$backtopage = DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id;
+	$backtopage = DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&page='.$page.$paramwithsearch;
 
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -347,7 +367,7 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv("RealQty")), null, 'errors');
 		}
-		if (!$error && !empty($conf->productbatch->enabled)) {
+		if (!$error && isModEnabled('productbatch')) {
 			$tmpproduct = new Product($db);
 			$result = $tmpproduct->fetch($fk_product);
 
@@ -407,30 +427,6 @@ $help_url = '';
 
 llxHeader('', $langs->trans('Inventory'), $help_url);
 
-
-// Disable button Generate movement if data were modified and not saved
-print '<script type="text/javascript">
-function disablebuttonmakemovementandclose() {
-	console.log("Disable button idbuttonmakemovementandclose until we save");
-	jQuery("#idbuttonmakemovementandclose").attr(\'disabled\',\'disabled\');
-	jQuery("#idbuttonmakemovementandclose").attr(\'onclick\', \'return false;\');
-	jQuery("#idbuttonmakemovementandclose").attr(\'title\',\''.dol_escape_js($langs->trans("SaveQtyFirst")).'\');
-	jQuery("#idbuttonmakemovementandclose").attr(\'class\',\'butActionRefused classfortooltip\');
-};
-
-jQuery(document).ready(function() {
-	jQuery(".realqty").keyup(function() {
-		console.log("keyup on realqty");
-		disablebuttonmakemovementandclose();
-	});
-	jQuery(".realqty").change(function() {
-		console.log("change on realqty");
-		disablebuttonmakemovementandclose();
-	});
-});
-</script>';
-
-
 // Part to show record
 if ($object->id > 0) {
 	$res = $object->fetch_optionals();
@@ -446,7 +442,7 @@ if ($object->id > 0) {
 	}
 	// Confirmation to delete line
 	if ($action == 'deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid.'&page='.$page.$paramwithsearch, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
 	// Clone confirmation
@@ -493,7 +489,7 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	// Project
-	if (! empty($conf->projet->enabled))
+	if (!empty($conf->project->enabled))
 	{
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -515,7 +511,7 @@ if ($object->id > 0) {
 				}
 			}
 		} else {
-			if (! empty($object->fk_project)) {
+			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
 				$morehtmlref.=$proj->getNomUrl();
@@ -552,8 +548,7 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
-
-	print '<form id="formrecord" name="formrecord" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form id="formrecord" name="formrecord" method="POST" action="'.$_SERVER["PHP_SELF"].'?page='.$page.'&id='.$object->id.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="updateinventorylines">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -607,7 +602,7 @@ if ($object->id > 0) {
 		if (!empty($conf->use_javascript_ajax)) {
 			if ($permissiontoadd) {
 				// Link to launch scan tool
-				if (!empty($conf->barcode->enabled) || !empty($conf->productbatch->enabled)) {
+				if (isModEnabled('barcode') || isModEnabled('productbatch')) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
 				}
 
@@ -905,7 +900,7 @@ if ($object->id > 0) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Warehouse").'</td>';
 	print '<td>'.$langs->trans("Product").'</td>';
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		print '<td>';
 		print $langs->trans("Batch");
 		print '</td>';
@@ -943,23 +938,27 @@ if ($object->id > 0) {
 		print '<td>';
 		print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOST('fk_product', 'int') : $object->fk_product), 'fk_product', '', 0, 0, -1, 2, '', 0, null, 0, '1', 0, 'maxwidth300');
 		print '</td>';
-		if (!empty($conf->productbatch->enabled)) {
+		if (isModEnabled('productbatch')) {
 			print '<td>';
 			print '<input type="text" name="batch" class="maxwidth100" value="'.(GETPOSTISSET('batch') ? GETPOST('batch') : '').'">';
 			print '</td>';
 		}
 		print '<td class="right"></td>';
-		print '<td class="right">';
-		print '<input type="text" name="qtytoadd" class="maxwidth75" value="">';
-		print '</td>';
 		if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
 			print '<td class="right">';
 			print '</td>';
 			print '<td class="right">';
 			print '</td>';
 			print '<td class="right">';
+			print '<input type="text" name="qtytoadd" class="maxwidth75" value="">';
 			print '</td>';
 			print '<td class="right">';
+			print '</td>';
+			print '<td class="right">';
+			print '</td>';
+		} else {
+			print '<td class="right">';
+			print '<input type="text" name="qtytoadd" class="maxwidth75" value="">';
 			print '</td>';
 		}
 		// Actions
@@ -974,6 +973,7 @@ if ($object->id > 0) {
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated, id.fk_movement, id.pmp_real, id.pmp_expected';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+	$sql .= $db->plimit($limit, $offset);
 
 	$cacheOfProducts = array();
 	$cacheOfWarehouses = array();
@@ -982,6 +982,10 @@ if ($object->id > 0) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
+
+		if (!empty($limit != 0) || $num > $limit || $page) {
+			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num >= $limit), '<li class="pagination"><span>' . $langs->trans("Page") . ' ' . ($page + 1) . '</span></li>', '', $limit);
+		}
 
 		$i = 0;
 		$hasinput = false;
@@ -1021,7 +1025,7 @@ if ($object->id > 0) {
 			print $product_static->getNomUrl(1).' - '.$product_static->label;
 			print '</td>';
 
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				print '<td id="id_'.$obj->rowid.'_batch" data-batch="'.dol_escape_htmltag($obj->batch).'">';
 				$batch_static = new Productlot($db);
 				$res = $batch_static->fetch(0, $product_static->id, $obj->batch);
@@ -1038,7 +1042,7 @@ if ($object->id > 0) {
 			$valuetoshow = $obj->qty_stock;
 			// For inventory not yet close, we overwrite with the real value in stock now
 			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) {
-				if (!empty($conf->productbatch->enabled) && $product_static->hasbatch()) {
+				if (isModEnabled('productbatch') && $product_static->hasbatch()) {
 					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->detail_batch[$obj->batch]->qty;
 				} else {
 					$valuetoshow = $product_static->stock_warehouse[$obj->fk_warehouse]->real;
@@ -1057,9 +1061,9 @@ if ($object->id > 0) {
 					$hasinput = true;
 				}
 
-				if (! empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+				if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
 					//PMP Expected
-					if (! empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
+					if (!empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
 					else $pmp_expected = $product_static->pmp;
 					$pmp_valuation = $pmp_expected * $valuetoshow;
 					print '<td class="right">';
@@ -1081,7 +1085,7 @@ if ($object->id > 0) {
 					print '<td class="right">';
 
 
-					if (! empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
+					if (!empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
 					else $pmp_real = $product_static->pmp;
 					$pmp_valuation_real = $pmp_real * $qty_view;
 					print '<input type="text" class="maxwidth75 right realpmp'.$obj->fk_product.'" name="realpmp_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input_pmp" value="'.price2num($pmp_real).'">';
@@ -1103,14 +1107,14 @@ if ($object->id > 0) {
 
 				// Picto delete line
 				print '<td class="right">';
-				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&token='.newToken().'">'.img_delete().'</a>';
+				print '<a class="reposition" href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&lineid='.$obj->rowid.'&action=deleteline&page='.$page.$paramwithsearch.'&token='.newToken().'">'.img_delete().'</a>';
 				$qty_tmp = price2num(GETPOST("id_".$obj->rowid."_input_tmp", 'MS')) >= 0 ? GETPOST("id_".$obj->rowid."_input_tmp") : $qty_view;
 				print '<input type="hidden" class="maxwidth50 right realqty" name="id_'.$obj->rowid.'_input_tmp" id="id_'.$obj->rowid.'_input_tmp" value="'.$qty_tmp.'">';
 				print '</td>';
 			} else {
 				if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
 					//PMP Expected
-					if (! empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
+					if (!empty($obj->pmp_expected)) $pmp_expected = $obj->pmp_expected;
 					else $pmp_expected = $product_static->pmp;
 					$pmp_valuation = $pmp_expected * $valuetoshow;
 					print '<td class="right">';
@@ -1126,7 +1130,7 @@ if ($object->id > 0) {
 
 					//PMP Real
 					print '<td class="right">';
-					if (! empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
+					if (!empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
 					else $pmp_real = $product_static->pmp;
 					$pmp_valuation_real = $pmp_real * $obj->qty_view;
 					print price($pmp_real);
@@ -1159,9 +1163,9 @@ if ($object->id > 0) {
 	}
 	if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
 		print '<tr class="liste_total">';
-		print '<td colspan="5">'.$langs->trans("Total").'</td>';
+		print '<td colspan="4">'.$langs->trans("Total").'</td>';
 		print '<td class="right" colspan="2">'.price($totalExpectedValuation).'</td>';
-		print '<td class="right" id="totalRealValuation" colspan="2">'.price($totalRealValuation).'</td>';
+		print '<td class="right" id="totalRealValuation" colspan="3">'.price($totalRealValuation).'</td>';
 		print '<td></td>';
 		print '</tr>';
 	}
@@ -1188,8 +1192,50 @@ if ($object->id > 0) {
 	}
 	print '</form>';
 
+	print '<script type="text/javascript">
+					$(document).ready(function() {
 
-	if (! empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
+                        $(".paginationnext:last").click(function(e){
+                            var form = $("#formrecord");
+   							var actionURL = "'.$_SERVER['PHP_SELF']."?page=".($page).$paramwithsearch.'";
+   							$.ajax({
+      					 	url: actionURL,
+        					data: form.serialize(),
+        					cache: false,
+        					success: function(result){
+           				 	window.location.href = "'.$_SERVER['PHP_SELF']."?page=".($page + 1).$paramwithsearch.'";
+    						}});
+    					});
+
+
+                         $(".paginationprevious:last").click(function(e){
+                            var form = $("#formrecord");
+   							var actionURL = "'.$_SERVER['PHP_SELF']."?page=".($page).$paramwithsearch.'";
+   							$.ajax({
+      					 	url: actionURL,
+        					data: form.serialize(),
+        					cache: false,
+        					success: function(result){
+           				 	window.location.href = "'.$_SERVER['PHP_SELF']."?page=".($page - 1).$paramwithsearch.'";
+       					 	}});
+						 });
+
+                          $("#idbuttonmakemovementandclose").click(function(e){
+                            var form = $("#formrecord");
+   							var actionURL = "'.$_SERVER['PHP_SELF']."?page=".($page).$paramwithsearch.'";
+   							$.ajax({
+      					 	url: actionURL,
+        					data: form.serialize(),
+        					cache: false,
+        					success: function(result){
+           				 	window.location.href = "'.$_SERVER['PHP_SELF']."?page=".($page - 1).$paramwithsearch.'&action=record";
+       					 	}});
+						 });
+					});
+				</script>';
+
+
+	if (!empty($conf->global->INVENTORY_MANAGE_REAL_PMP)) {
 		?>
 		<script type="text/javascript">
 			$('.realqty').on('change', function () {

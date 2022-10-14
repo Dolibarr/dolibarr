@@ -24,11 +24,12 @@
  *	\brief      Page with info about salaries contribution
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -100,7 +101,7 @@ if ($action == 'setlabel' && $user->rights->salaries->write) {
  * View
  */
 
-if (!empty($conf->projet->enabled)) $formproject = new FormProjets($db);
+if (isModEnabled('project')) $formproject = new FormProjets($db);
 
 $title = $langs->trans('Salary')." - ".$langs->trans('Info');
 $help_url = "";
@@ -139,7 +140,7 @@ if ($action != 'editlabel') {
 $morehtmlref .= '<br>'.$langs->trans('Employee').' : '.$userstatic->getNomUrl(-1);
 
 // Project
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 	if ($user->rights->salaries->write) {
 		if ($action != 'classify') {

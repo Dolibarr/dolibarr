@@ -29,7 +29,6 @@ create table llx_societe
   entity                   integer DEFAULT 1 NOT NULL,                  -- multi company id
 
   ref_ext                  varchar(255),                                -- reference into an external system (not used by dolibarr)
-  ref_int                  varchar(255),                                -- reference into an internal system (deprecated)
 
   statut                   tinyint        DEFAULT 0,            		-- statut
   parent                   integer,

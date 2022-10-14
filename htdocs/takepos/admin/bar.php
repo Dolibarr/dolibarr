@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2017 Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2008-2011  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2017  Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +23,7 @@
  *	\brief      Setup page for TakePos module - Bar Restaurant features
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -67,7 +69,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 	}
 }
 
-if ($conf->global->TAKEPOS_ORDER_NOTES == 1) {
+if (getDolGlobalInt('TAKEPOS_ORDER_NOTES') == 1) {
 	$extrafields = new ExtraFields($db);
 	$extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, 255, 'facturedet', 0, 0, '', '', 0, '', 0, 1);
 }
@@ -79,6 +81,7 @@ if ($conf->global->TAKEPOS_ORDER_NOTES == 1) {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
+$arrayofjs = array();
 $arrayofcss = array("/takepos/css/colorbox.css");
 
 llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss);
@@ -112,7 +115,7 @@ print '</center>';
 
 print '<br>';
 
-if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
+if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 	print '<br>';
 	print '<a href="" onclick="Floors(); return false;"><span class="fa fa-glass-cheers"></span> '.$langs->trans("DefineTablePlan").'</a><br>';
 	print '<br><br>';
@@ -171,12 +174,12 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
 	print ajax_constantonoff("TAKEPOS_SUPPLEMENTS", array(), $conf->entity, 0, 0, 1, 0);
 	print '</td></tr>';
 
-	if ($conf->global->TAKEPOS_SUPPLEMENTS) {
+	if (getDolGlobalInt('TAKEPOS_SUPPLEMENTS')) {
 		print '<tr class="oddeven"><td>';
 		print $langs->trans("SupplementCategory");
 		print '</td>';
 		print '<td class="center">';
-		print $form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY, 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0);
+		print $form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalString('TAKEPOS_SUPPLEMENTS_CATEGORY'), 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0);
 		print ajax_combobox('TAKEPOS_SUPPLEMENTS_CATEGORY');
 		print "</td></tr>\n";
 	}
@@ -203,8 +206,8 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
 	print $form->buttonsSaveCancel("Save", '');
 }
 
-if (!empty($conf->global->TAKEPOS_BAR_RESTAURANT)) {
-	if ($conf->global->TAKEPOS_QR_MENU) {
+if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
+	if (getDolGlobalInt('TAKEPOS_QR_MENU')) {
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 		print '<br>';
@@ -221,7 +224,7 @@ if (!empty($conf->global->TAKEPOS_BAR_RESTAURANT)) {
 		print '</table>';
 	}
 
-	if ($conf->global->TAKEPOS_AUTO_ORDER) {
+	if (getDolGlobalInt('TAKEPOS_AUTO_ORDER')) {
 		print '<br>';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';

@@ -62,6 +62,7 @@ UserCreationShort=Creat. gebruiker
 UserModificationShort=Modif. gebruiker
 UserValidationShort=Geldig. gebruiker
 CurrencyRate=Wisselkoers van valuta
+UserAuthor=Gemaakt door
 Amount=Hoeveelheid
 MulticurrencyRemainderToPay=Blijf betalen, oorspronkelijke valuta
 MulticurrencyAmountHT=Bedrag (excl. Btw), oorspronkelijke valuta

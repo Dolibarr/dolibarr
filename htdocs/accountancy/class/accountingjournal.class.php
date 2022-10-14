@@ -281,7 +281,7 @@ class AccountingJournal extends CommonObject
 		}
 
 		$label_link = $this->code;
-		if ($withlabel) {
+		if ($withlabel && !empty($this->label)) {
 			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$langs->transnoentities($this->label).($nourl ? '</span>' : '');
 		}
 
@@ -429,7 +429,7 @@ class AccountingJournal extends CommonObject
 	{
 		global $conf, $langs;
 
-		if (empty($conf->asset->enabled)) {
+		if (!isModEnabled('asset')) {
 			return array();
 		}
 
@@ -441,26 +441,40 @@ class AccountingJournal extends CommonObject
 		$langs->loadLangs(array("assets"));
 
 		// Clean parameters
-		if (empty($type)) $type = 'view';
-		if (empty($in_bookkeeping)) $in_bookkeeping = 'notyet';
+		if (empty($type)) {
+			$type = 'view';
+		}
+		if (empty($in_bookkeeping)) {
+			$in_bookkeeping = 'notyet';
+		}
 
 		$sql = "";
-		if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
+
+		// FIXME sql error with Mysql 5.7
+		/*if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
 			$sql .= "WITH in_accounting_bookkeeping(fk_docdet) AS (";
 			$sql .= " SELECT DISTINCT fk_docdet";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 			$sql .= " WHERE doc_type = 'asset'";
-			$sql .= ")";
-		}
+			$sql .= ") ";
+		}*/
+
 		$sql .= "SELECT ad.fk_asset AS rowid, a.ref AS asset_ref, a.label AS asset_label, a.acquisition_value_ht AS asset_acquisition_value_ht";
 		$sql .= ", a.disposal_date AS asset_disposal_date, a.disposal_amount_ht AS asset_disposal_amount_ht, a.disposal_subject_to_vat AS asset_disposal_subject_to_vat";
 		$sql .= ", ad.rowid AS depreciation_id, ad.depreciation_mode, ad.ref AS depreciation_ref, ad.depreciation_date, ad.depreciation_ht, ad.accountancy_code_debit, ad.accountancy_code_credit";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation as ad";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "asset as a ON a.rowid = ad.fk_asset";
-		if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
+		// FIXME sql error with Mysql 5.7
+		/*if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
 			$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
-		}
+		}*/
 		$sql .= " WHERE a.entity IN (" . getEntity('asset', 0) . ')'; // We don't share object for accountancy, we use source object sharing
+		// Compatibility with Mysql 5.7
+		if ($in_bookkeeping == 'already') {
+			$sql .= " AND EXISTS (SELECT iab.fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS iab WHERE iab.fk_docdet = ad.rowid AND doc_type = 'asset')";
+		} elseif ($in_bookkeeping == 'notyet') {
+			$sql .= " AND NOT EXISTS (SELECT iab.fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS iab WHERE iab.fk_docdet = ad.rowid AND doc_type = 'asset')";
+		}
 		$sql .= " AND ad.ref != ''"; // not reversal lines
 		if ($date_start && $date_end) {
 			$sql .= " AND ad.depreciation_date >= '" . $this->db->idate($date_start) . "' AND ad.depreciation_date <= '" . $this->db->idate($date_end) . "'";
@@ -470,9 +484,10 @@ class AccountingJournal extends CommonObject
 			$sql .= " AND ad.depreciation_date >= '" . $this->db->idate($conf->global->ACCOUNTING_DATE_START_BINDING) . "'";
 		}
 		// Already in bookkeeping or not
-		if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
+		// FIXME sql error with Mysql 5.7
+		/*if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
 			$sql .= " AND iab.fk_docdet IS" . ($in_bookkeeping == 'already' ? " NOT" : "") . " NULL";
-		}
+		}*/
 		$sql .= " ORDER BY ad.depreciation_date";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -867,7 +882,7 @@ class AccountingJournal extends CommonObject
 								}
 							}
 							//
-							//                          if (!$error_for_line && !empty($conf->asset->enabled) && $this->nature == 1 && $bookkeeping->fk_doc > 0) {
+							//                          if (!$error_for_line && isModEnabled('asset') && $this->nature == 1 && $bookkeeping->fk_doc > 0) {
 							//                              // Set last cumulative depreciation
 							//                              require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
 							//                              $asset = new Asset($this->db);

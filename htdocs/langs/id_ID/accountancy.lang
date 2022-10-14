@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=Akun akuntansi untuk mendaftarkan sumbangan
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Akun akuntansi untuk mendaftar langganan
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Akun akuntansi secara default untuk mendaftarkan deposit pelanggan
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Akun akuntansi secara default untuk produk yang dibeli (digunakan jika tidak didefinisikan dalam lembar produk)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Akun akuntansi secara default untuk produk yang dibeli di EEC (digunakan jika tidak didefinisikan dalam lembar produk)
@@ -289,7 +290,7 @@ ValidateHistory=Mengikat Secara Otomatis
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=Kesalahan, Anda tidak dapat menghapus akun akuntansi ini karena digunakan
-MvtNotCorrectlyBalanced=Gerakan tidak seimbang dengan benar. Debit = %s | Kredit = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=Menyeimbangkan
 FicheVentilation=Binding card
 GeneralLedgerIsWritten=Transaksi ditulis dalam Buku Besar

@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
 ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
-EnterNameOfModuleDesc=Въведете име на модул / приложение за създаване, без интервали. Използвайте главни букви за отделяне на думи (Например: MyModule, EcommerceForShop, SyncWithMySystem ...).
-EnterNameOfObjectDesc=Въведете име на обект, който да създадете, без интервали. Използвайте главни букви за отделяне на думи (Например: MyObject, Student, Teacher ...). CRUD class файл, API файл, страници за листване / добавяне / променяне / изтриване на обект и SQL файлове ще бъдат генерирани.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Път, където модулите се генерират / променят (главна директория за външни модули, дефинирани в %s): <strong>%s</strong>
 ModuleBuilderDesc3=Намерени генерирани / променяеми модули: <strong>%s</strong>
 ModuleBuilderDesc4=Един модул се открива като 'променяем', когато файлът <strong>%s</strong> съществува в главната директория на модула.
 NewModule=Нов модул
 NewObjectInModulebuilder=Нов обект
+NewDictionary=New dictionary
 ModuleKey=Модулен ключ
 ObjectKey=Обектен ключ
+DicKey=Dictionary key
 ModuleInitialized=Модулът е инициализиран
 FilesForObjectInitialized=Файловете за нов обект '%s' са инициализирани
 FilesForObjectUpdated=Файловете за обект '%s' са актуализирани (.sql файлове и .class.php файл)

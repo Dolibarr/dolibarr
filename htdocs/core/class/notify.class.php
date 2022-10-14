@@ -456,7 +456,7 @@ class Notify
 					$notifcodedefid = $obj->adid;
 					$trackid = '';
 					if ($obj->type_target == 'tocontactid') {
-						$trackid = 'con'.$obj->cid;
+						$trackid = 'ctc'.$obj->cid;
 					}
 					if ($obj->type_target == 'touserid') {
 						$trackid = 'use'.$obj->cid;
@@ -615,7 +615,7 @@ class Notify
 
 						$ref = dol_sanitizeFileName($newref);
 						$pdf_path = $dir_output."/".$ref.".pdf";
-						if (!dol_is_file($pdf_path)) {
+						if (!dol_is_file($pdf_path)||(is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0 && !$arraydefaultmessage->joinfiles)) {
 							// We can't add PDF as it is not generated yet.
 							$filepdf = '';
 						} else {
@@ -624,6 +624,8 @@ class Notify
 							$mimetype_list[] = mime_content_type($filepdf);
 							$mimefilename_list[] = $ref.".pdf";
 						}
+
+						$labeltouse = !empty($labeltouse) ? $labeltouse : '';
 
 						$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list, 'outputlangs'=>$outputlangs, 'labeltouse'=>$labeltouse);
 						if (!isset($action)) {
@@ -847,6 +849,7 @@ class Notify
 					$mimefilename_list[] = $ref.".pdf";
 				}
 
+				$message = '';
 				$message .= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
 				$message .= "\n";
 				$message .= $mesg;

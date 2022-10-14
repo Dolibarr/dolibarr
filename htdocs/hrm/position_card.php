@@ -20,9 +20,9 @@
  */
 
 /**
- *    \file       position_card.php
- *        \ingroup    hrm
- *        \brief      Page to create/edit/view position
+ *    \file       htdocs/hrm/position_card.php
+ *    \ingroup    hrm
+ *    \brief      Page to create/edit/view job position
  */
 
 
@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_position.lib.php';
 //dol_include_once('/hrm/position.php');
 
+// Get Parameters
 $action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -50,6 +51,7 @@ if ($res < 0) {
 	dol_print_error($db, $object->error);
 }
 
+// Permissions
 $permissiontoread = $user->rights->hrm->all->read;
 $permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->hrm->all->delete;
@@ -171,18 +173,18 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
 }
 
-DisplayPositionCard($object);
+
+displayPositionCard($object);
+
 
 /**
  * 		Show the card of a position
  *
  * 		@param	Position		 $object		  Position object
- *
  * 		@return void
  */
-function DisplayPositionCard(&$object)
+function displayPositionCard(&$object)
 {
-
 	global $user, $langs, $db, $conf, $extrafields, $hookmanager, $action, $permissiontoadd, $permissiontodelete;
 
 	$id = $object->id;
@@ -245,7 +247,7 @@ function DisplayPositionCard(&$object)
 		$res = $object->fetch_optionals();
 
 
-		$head = PositionCardPrepareHead($object);
+		$head = positionCardPrepareHead($object);
 		print dol_get_fiche_head($head, 'position', $langs->trans("Workstation"), -1, $object->picto);
 
 		$formconfirm = '';
@@ -337,7 +339,7 @@ function DisplayPositionCard(&$object)
 //		 */
 //		$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
 //		$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
-//		$genallowed = $user->rights->societe->lire;
+//		$genallowed = $user->hasRight('societe', 'lire');
 //		$delallowed = $user->rights->societe->creer;
 //
 //		print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);

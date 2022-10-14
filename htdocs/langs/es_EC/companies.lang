@@ -44,7 +44,6 @@ StateCode=Código de estado / provincia
 StateShort=Provincia
 Region-State=Región - Provincia
 CountryCode=Código de país
-CountryId=ID del país
 Call=Llamada
 PhonePerso=Teléfono Personal
 PhoneMobile=Celular

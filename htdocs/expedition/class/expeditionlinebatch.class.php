@@ -44,7 +44,7 @@ class ExpeditionLineBatch extends CommonObject
 	public $qty;
 	public $dluo_qty; // deprecated, use qty
 	public $entrepot_id;
-	public $fk_origin_stock;
+	public $fk_origin_stock;		// rowid in llx_product_batch table
 	public $fk_expeditiondet;
 
 
