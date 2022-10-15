@@ -359,7 +359,7 @@ foreach ($search as $key => $val) {
 }
 if ($managedfor == 'member') {
 	if ($search_filter == 'withoutsubscription') {
-		$sql .= " AND (d.datefin IS NULL OR dty.subscription = 0)";
+		$sql .= " AND (d.datefin IS NULL)";
 	}
 	if ($search_filter == 'uptodate') {
 		$sql .= " AND (d.datefin >= '".$db->idate($now)."' OR dty.subscription = 0)";

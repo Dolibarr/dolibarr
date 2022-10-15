@@ -370,7 +370,7 @@ if ($search_type > 0) {
 	$sql .= " AND t.rowid=".((int) $search_type);
 }
 if ($search_filter == 'withoutsubscription') {
-	$sql .= " AND (datefin IS NULL OR t.subscription = '0')";
+	$sql .= " AND (datefin IS NULL)";
 }
 if ($search_filter == 'uptodate') {
 	$sql .= " AND (datefin >= '".$db->idate($now)."' OR t.subscription = '0')";
