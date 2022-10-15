@@ -2820,9 +2820,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr>';
 				print '<td>'.$idprof.'</td><td>';
 				$key = 'idprof'.$i;
-
 				print dol_print_profids($object->$key, 'ProfId'.$i, $object->country_code, 1);
-
 				if ($object->$key) {
 					if ($object->id_prof_check($i, $object) > 0) {
 						if (!empty($object->id_prof_url($i, $object))) {
