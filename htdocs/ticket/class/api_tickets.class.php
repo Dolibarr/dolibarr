@@ -241,7 +241,7 @@ class Tickets extends DolibarrApi
 		if (!$socid && DolibarrApiAccess::$user->socid) {
 			$socid = DolibarrApiAccess::$user->socid;
 		}
-		
+
 		$search_sale = null;
 		// If the internal user must only see his customers, force searching by him
 		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
