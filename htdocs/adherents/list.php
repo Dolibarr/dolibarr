@@ -517,38 +517,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 llxHeader('', $title, $help_url);
 
-if (GETPOSTISSET("search_status")) {
-	if ($search_status == '-1,1') { // TODO : check this test as -1 == Adherent::STATUS_DRAFT and -2 == Adherent::STATUS_EXLCUDED
-		$title = $langs->trans("MembersListQualified");
-	}
-	if ($search_status == Adherent::STATUS_DRAFT) {
-		$title = $langs->trans("MembersListToValid");
-	}
-	if ($search_status == Adherent::STATUS_VALIDATED && $filter == '') {
-		$title = $langs->trans("MenuMembersValidated");
-	}
-	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'waitingsubscription') {
-		$title = $langs->trans("MembersWithWaitingSubscription");
-	}
-	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'withoutsubscription') {
-		$title = $langs->trans("MembersWithSubscriptionToReceive");
-	}
-	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'uptodate') {
-		$title = $langs->trans("MembersListUpToDate");
-	}
-	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'outofdate') {
-		$title = $langs->trans("MembersListNotUpToDate");
-	}
-	if ((string) $search_status == (string) Adherent::STATUS_RESILIATED) {	// The cast to string is required to have test false when search_status is ''
-		$title = $langs->trans("MembersListResiliated");
-	}
-	if ($search_status == Adherent::STATUS_EXCLUDED) {
-		$title = $langs->trans("MembersListExcluded");
-	}
-} elseif ($action == 'search') {
-	$title = $langs->trans("MembersListQualified");
-}
-
 if ($search_type > 0) {
 	$membertype = new AdherentType($db);
 	$result = $membertype->fetch($search_type);
