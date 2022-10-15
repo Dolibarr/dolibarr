@@ -535,8 +535,8 @@ if (empty($reshook) && $action == 'update') {
 			$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
 		}
 
-		if($object->elementtype == 'ticket'){
-			if($private){
+		if ($object->elementtype == 'ticket') {
+			if ($private) {
 				$object->type_code = 'TICKET_MSG_PRIVATE';
 			} else {
 				$object->type_id = dol_getIdFromCode($db, 'AC_EMAIL', 'c_actioncomm');
@@ -1542,7 +1542,7 @@ if ($id > 0) {
 		}
 
 		// Private
-		if($object->elementtype == 'ticket') print '<tr><td>'.$langs->trans("PrivateEventMessage").'</td><td colspan="3"><input type="checkbox" id="private" name="private" '.(($object->code == 'TICKET_MSG_PRIVATE') ? ' checked' : '').'></td></tr>';
+		if ($object->elementtype == 'ticket') print '<tr><td>'.$langs->trans("PrivateEventMessage").'</td><td colspan="3"><input type="checkbox" id="private" name="private" '.(($object->code == 'TICKET_MSG_PRIVATE') ? ' checked' : '').'></td></tr>';
 
 		// Title
 		print '<tr><td class="fieldrequired">'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
@@ -1999,7 +1999,7 @@ if ($id > 0) {
 		}
 
 		// Private
-		if($object->elementtype == 'ticket')  print '<tr><td class="titlefield">'.$langs->trans("PrivateEventMessage").'</td><td>'.yn(($object->code == 'TICKET_MSG_PRIVATE') ? 1 : 0, 3).'</td></tr>';
+		if ($object->elementtype == 'ticket')  print '<tr><td class="titlefield">'.$langs->trans("PrivateEventMessage").'</td><td>'.yn(($object->code == 'TICKET_MSG_PRIVATE') ? 1 : 0, 3).'</td></tr>';
 
 		// Full day event
 		print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent ? 1 : 0, 3).'</td></tr>';
