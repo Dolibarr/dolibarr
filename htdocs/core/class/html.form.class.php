@@ -8914,7 +8914,7 @@ class Form
 							$form = new Form($this->db);
 							print $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")).' ';
 						}
-						print '<span class="amount">'.price($objp->total_ht).'</span>';
+						print '<span class="amount">'.(isset($objp->total_ht) ? price($objp->total_ht) : '').'</span>';
 						print '</td>';
 						print '<td>'.$objp->name.'</td>';
 						print '</tr>';

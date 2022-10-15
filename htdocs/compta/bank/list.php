@@ -652,7 +652,7 @@ foreach ($accounts as $key => $type) {
 			print '<span class="opacitymedium">'.$langs->trans("ConciliationDisabled").'</span>';
 		} else {
 			$result = $objecttmp->load_board($user, $objecttmp->id);
-			if ($result < 0) {
+			if (is_numeric($result) && $result < 0) {
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			} else {
 				print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&id='.$objecttmp->id.'&search_account='.$objecttmp->id.'&search_conciliated=0&contextpage=banktransactionlist">';

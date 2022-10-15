@@ -1102,6 +1102,7 @@ class Propal extends CommonObject
 		$sql .= ", fk_mode_reglement";
 		$sql .= ", fk_account";
 		$sql .= ", ref_client";
+		$sql .= ", ref_ext";
 		$sql .= ", date_livraison";
 		$sql .= ", fk_shipping_method";
 		$sql .= ", fk_warehouse";
@@ -1136,6 +1137,7 @@ class Propal extends CommonObject
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : 'NULL');
 		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", '".$this->db->escape($this->ref_client)."'";
+		$sql .= ", '".$this->db->escape($this->ref_ext)."'";
 		$sql .= ", ".(empty($delivery_date) ? "NULL" : "'".$this->db->idate($delivery_date)."'");
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
 		$sql .= ", ".($this->warehouse_id > 0 ? $this->warehouse_id : 'NULL');
@@ -1520,7 +1522,7 @@ class Propal extends CommonObject
 		$sql .= ", p.datep as dp";
 		$sql .= ", p.fin_validite as dfv";
 		$sql .= ", p.date_livraison as delivery_date";
-		$sql .= ", p.model_pdf, p.last_main_doc, p.ref_client, p.extraparams";
+		$sql .= ", p.model_pdf, p.last_main_doc, p.ref_client, ref_ext, p.extraparams";
 		$sql .= ", p.note_private, p.note_public";
 		$sql .= ", p.fk_projet as fk_project, p.fk_statut";
 		$sql .= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
@@ -1572,6 +1574,7 @@ class Propal extends CommonObject
 
 				$this->ref                  = $obj->ref;
 				$this->ref_client           = $obj->ref_client;
+				$this->ref_ext           = $obj->ref_ext;
 				$this->remise               = $obj->remise;
 				$this->remise_percent       = $obj->remise_percent;
 				$this->remise_absolue       = $obj->remise_absolue;

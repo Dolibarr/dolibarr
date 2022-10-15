@@ -432,6 +432,9 @@ if ($action == 'confirm_generateinvoice') {
 		$tmpinvoice->socid = $projectstatic->thirdparty->id;
 		$tmpinvoice->date = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$tmpinvoice->fk_project = $projectstatic->id;
+		$tmpinvoice->cond_reglement_id = $projectstatic->thirdparty->cond_reglement_id;
+		$tmpinvoice->mode_reglement_id = $projectstatic->thirdparty->mode_reglement_id;
+		$tmpinvoice->fk_account = $projectstatic->thirdparty->fk_account;
 
 		if ($invoiceToUse) {
 			$tmpinvoice->fetch($invoiceToUse);
