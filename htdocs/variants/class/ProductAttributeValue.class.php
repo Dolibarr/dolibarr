@@ -99,11 +99,12 @@ class ProductAttributeValue extends CommonObject
 	/**
 	 * Returns all product attribute values of a product attribute
 	 *
-	 * @param int $prodattr_id Product attribute id
-	 * @param bool $only_used Fetch only used attribute values
-	 * @return ProductAttributeValue[]
+	 * @param	int		$prodattr_id		Product attribute id
+	 * @param	bool	$only_used			Fetch only used attribute values
+	 * @param	int		$returnonlydata		0: return object, 1: return only data
+	 * @return								ProductAttributeValue[]
 	 */
-	public function fetchAllByProductAttribute($prodattr_id, $only_used = false)
+	public function fetchAllByProductAttribute($prodattr_id, $only_used = false, $returnonlydata = 0)
 	{
 		$return = array();
 
@@ -130,7 +131,12 @@ class ProductAttributeValue extends CommonObject
 		$query = $this->db->query($sql);
 
 		while ($result = $this->db->fetch_object($query)) {
-			$tmp = new ProductAttributeValue($this->db);
+			if (empty($returnonlydata)) {
+				$tmp = new ProductAttributeValue($this->db);
+			} else {
+				$tmp = new stdClass();
+			}
+
 			$tmp->fk_product_attribute = $result->fk_product_attribute;
 			$tmp->id = $result->rowid;
 			$tmp->ref = $result->ref;
