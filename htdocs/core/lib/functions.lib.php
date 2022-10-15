@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
- * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Christophe Combelles		<ccomb@free.fr>
@@ -18,6 +18,7 @@
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
+ * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -966,10 +967,15 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 
 			break;
 		case 'custom':
-			if (empty($filter)) {
-				return 'BadFourthParameterForGETPOST';
+			if (!empty($out)) {
+				if (empty($filter)) {
+					return 'BadParameterForGETPOST - Param 3 of sanitizeVal()';
+				}
+				/*if (empty($options)) {
+					return 'BadParameterForGETPOST - Param 4 of sanitizeVal()';
+				}*/
+				$out = filter_var($out, $filter, $options);
 			}
-			$out = filter_var($out, $filter, $options);
 			break;
 	}
 
@@ -2535,8 +2541,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			if ($tzoutput == 'tzserver') {
 				$to_gmt = false;
 				$offsettzstring = @date_default_timezone_get(); // Example 'Europe/Berlin' or 'Indian/Reunion'
-				$offsettz = 0;	// Timezone offset with server timezone, so 0
-				$offsetdst = 0;	// Dst offset with server timezone, so 0
+				$offsettz = 0;	// Timezone offset with server timezone (because to_gmt is false), so 0
+				$offsetdst = 0;	// Dst offset with server timezone (because to_gmt is false), so 0
 			} elseif ($tzoutput == 'tzuser' || $tzoutput == 'tzuserrel') {
 				$to_gmt = true;
 				$offsettzstring = (empty($_SESSION['dol_tz_string']) ? 'UTC' : $_SESSION['dol_tz_string']); // Example 'Europe/Berlin' or 'Indian/Reunion'
@@ -2546,8 +2552,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 					$user_dt = new DateTime();
 					$user_dt->setTimezone($user_date_tz);
 					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : (int) $time);
-					$offsettz = $user_dt->getOffset();
-				} else {	// old method (The 'tzuser' was processed like the 'tzuserrel')
+					$offsettz = $user_dt->getOffset();	// should include dst ?
+				} else {	// with old method (The 'tzuser' was processed like the 'tzuserrel')
 					$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60; // Will not be used anymore
 					$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60; // Will not be used anymore
 				}
@@ -2628,6 +2634,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$format = str_replace('%A', '__A__', $format);
 	}
 
+	$useadodb = getDolGlobalInt('MAIN_USE_LEGACY_ADODB_FOR_DATE', 0);
+	//$useadodb = 1;	// To switch to adodb
 
 	// Analyze date
 	$reg = array();
@@ -2647,23 +2655,76 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$ssec	= (!empty($reg[6]) ? $reg[6] : '');
 
 		$time = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
-		$ret = adodb_strftime($format, $time + $offsettz + $offsetdst, $to_gmt);
+		if (empty($useadodb)) {
+			if ($to_gmt) {
+				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
+			} else {
+				$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
+			}
+			$dtts = new DateTime();
+			$dtts->setTimestamp($time);
+			$dtts->setTimezone($tzo);
+			$newformat = str_replace(
+				array('%Y', '%y', '%m', '%d', '%H', '%M', '%S', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+				array('Y', 'y', 'm', 'd', 'H', 'i', 's', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+				$format);
+			$ret = $dtts->format($newformat);
+			$ret = str_replace(
+				array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+				array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+				$ret);
+		} else {
+			$ret = adodb_strftime($format, $time + $offsettz + $offsetdst, $to_gmt);
+		}
 	} else {
 		// Date is a timestamps
 		if ($time < 100000000000) {	// Protection against bad date values
-			$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+			$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
 
-			$ret = adodb_strftime($format, $timetouse, $to_gmt);	// If to_gmt = false then adodb_strftime use TZ of server
+			if (empty($useadodb)) {
+				if ($to_gmt) {
+					$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
+				} else {
+					$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
+				}
+				$dtts = new DateTime();
+				$dtts->setTimestamp($timetouse);
+				$dtts->setTimezone($tzo);
+				$newformat = str_replace(
+					array('%Y', '%y', '%m', '%d', '%H', '%M', '%S', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+					array('Y', 'y', 'm', 'd', 'H', 'i', 's', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+					$format);
+				$ret = $dtts->format($newformat);
+				$ret = str_replace(
+					array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+					array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+					$ret);
+			} else {
+				$ret = adodb_strftime($format, $timetouse, $to_gmt);	// If to_gmt = false then adodb_strftime use TZ of server
+			}
+			//var_dump($ret);exit;
 		} else {
 			$ret = 'Bad value '.$time.' for date';
 		}
 	}
 
 	if (preg_match('/__b__/i', $format)) {
-		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
+		$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
 
-		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-		$month = adodb_strftime('%m', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+		if (empty($useadodb)) {
+			if ($to_gmt) {
+				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
+			} else {
+				$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
+			}
+			$dtts = new DateTime();
+			$dtts->setTimestamp($timetouse);
+			$dtts->setTimezone($tzo);
+			$month = $dtts->format("m");
+		} else {
+			// After this ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
+			$month = adodb_strftime('%m', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+		}
 		$month = sprintf("%02d", $month); // $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput) {
 			$monthtext = $outputlangs->transnoentities('Month'.$month);
@@ -2682,8 +2743,21 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		//print "time=$time offsettz=$offsettz offsetdst=$offsetdst offsettzstring=$offsettzstring";
 		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-		$w = adodb_strftime('%w', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+		if (empty($useadodb)) {
+			if ($to_gmt) {
+				$tzo = new DateTimeZone('UTC');
+			} else {
+				$tzo = new DateTimeZone(date_default_timezone_get());
+			}
+			$dtts = new DateTime();
+			$dtts->setTimestamp($timetouse);
+			$dtts->setTimezone($tzo);
+			$w = $dtts->format("w");
+		} else {
+			$w = adodb_strftime('%w', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+		}
 		$dayweek = $outputlangs->transnoentitiesnoconv('Day'.$w);
+
 		$ret = str_replace('__A__', $dayweek, $ret);
 		$ret = str_replace('__a__', dol_substr($dayweek, 0, 3), $ret);
 	}
@@ -2714,7 +2788,6 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
  */
 function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
 {
-	//$datetimeobj = new DateTime('@'.$timestamp);
 	$datetimeobj = new DateTime();
 	$datetimeobj->setTimestamp($timestamp); // Use local PHP server timezone
 	if ($forcetimezone) {
@@ -3202,7 +3275,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 	global $conf, $user, $langs, $mysoc, $hookmanager;
 
 	// Clean phone parameter
-	$phone = preg_replace("/[\s.-]/", "", trim($phone));
+	$phone = is_null($phone) ? '' : preg_replace("/[\s.-]/", "", trim($phone));
 	if (empty($phone)) {
 		return '';
 	}
@@ -3774,6 +3847,10 @@ function isValidPhone($phone)
  */
 function dol_strlen($string, $stringencoding = 'UTF-8')
 {
+	if (is_null($string)) {
+		return 0;
+	}
+
 	if (function_exists('mb_strlen')) {
 		return mb_strlen($string, $stringencoding);
 	} else {
@@ -4000,7 +4077,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 				'technic', 'ticket',
 				'error', 'warning',
-				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'resource', 'recurring','rss',
+				'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
 				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
@@ -4046,7 +4123,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'partnership'=>'handshake', 'payment'=>'money-check-alt', 'payment_vat'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'previous'=>'arrow-alt-circle-left', 'printer'=>'print', 'product'=>'cube', 'puce'=>'angle-right',
 				'recent' => 'question', 'reception'=>'dolly', 'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 				'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
-				'refresh'=>'redo', 'region'=>'map-marked', 'resource'=>'laptop-house', 'recurring'=>'history',
+				'refresh'=>'redo', 'region'=>'map-marked', 'replacement'=>'exchange-alt', 'resource'=>'laptop-house', 'recurring'=>'history',
 				'service'=>'concierge-bell',
 				'state'=>'map-marked-alt', 'security'=>'key', 'salary'=>'wallet', 'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'stripe'=>'stripe-s',
 				'supplier'=>'building', 'technic'=>'cogs',
@@ -5699,6 +5776,11 @@ function price2num($amount, $rounding = '', $option = 0)
 {
 	global $langs, $conf;
 
+	// Clean parameters
+	if (is_null($amount)) {
+		$amount = '';
+	}
+
 	// Round PHP function does not allow number like '1,234.56' nor '1.234,56' nor '1 234,56'
 	// Numbers must be '1234.56'
 	// Decimal delimiter for PHP and database SQL requests must be '.'
@@ -6594,7 +6676,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 	$path = '';
 
 	$arrayforoldpath = array('cheque', 'category', 'holiday', 'supplier_invoice', 'invoice_supplier', 'mailing', 'supplier_payment');
-	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		$arrayforoldpath[] = 'product';
 	}
 	if (!empty($level) && in_array($modulepart, $arrayforoldpath)) {
@@ -6730,6 +6812,10 @@ function picto_required()
  */
 function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto = 'UTF-8', $strip_tags = 0, $removedoublespaces = 1)
 {
+	if (is_null($stringtoclean)) {
+		return '';
+	}
+
 	if ($removelinefeed == 2) {
 		$stringtoclean = preg_replace('/<br[^>]*>(\n|\r)+/ims', '<br>', $stringtoclean);
 	}
@@ -7032,6 +7118,10 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
  */
 function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UTF-8', $removelasteolbr = 1)
 {
+	if (is_null($stringtoencode)) {
+		return '';
+	}
+
 	$newstring = $stringtoencode;
 	if (dol_textishtml($stringtoencode)) {	// Check if text is already HTML or not
 		$newstring = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $newstring); // Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
@@ -7226,6 +7316,10 @@ function dol_nboflines_bis($text, $maxlinesize = 0, $charset = 'UTF-8')
  */
 function dol_textishtml($msg, $option = 0)
 {
+	if (is_null($msg)) {
+		return false;
+	}
+
 	if ($option == 1) {
 		if (preg_match('/<html/i', $msg)) {
 			return true;
@@ -7595,6 +7689,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__PROJECT_ID__'] = (is_object($object->projet) ? $object->projet->id : '');
 				$substitutionarray['__PROJECT_REF__'] = (is_object($object->projet) ? $object->projet->ref : '');
 				$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet) ? $object->projet->title : '');
+			}
+			if (is_object($object) && $object->element == 'project') {
+				$substitutionarray['__PROJECT_NAME__'] = $object->title;
 			}
 
 			if (is_object($object) && $object->element == 'shipping') {
@@ -8631,8 +8728,6 @@ function verifCond($strToEvaluate)
 	//print $strToEvaluate."<br>\n";
 	$rights = true;
 	if (isset($strToEvaluate) && $strToEvaluate !== '') {
-		//$str = 'if(!('.$strToEvaluate.')) $rights = false;';
-		//dol_eval($str, 0, 1, '2'); // The dol_eval must contains all the global $xxx used into a condition
 		//var_dump($strToEvaluate);
 		$rep = dol_eval($strToEvaluate, 1, 1, '1'); // The dol_eval must contains all the global $xxx for all variables $xxx found into the string condition
 		$rights = $rep && (!is_string($rep) || strpos($rep, 'Bad string syntax to evaluate') === false);
@@ -8648,7 +8743,7 @@ function verifCond($strToEvaluate)
  * @param 	string	$s					String to evaluate
  * @param	int		$returnvalue		0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @param   int     $hideerrors     	1=Hide errors
- * @param	string	$onlysimplestring	0=Accept all chars, 1=Accept only simple string with char 'a-z0-9\s^$_+-.*\/>&|=!?():"\',/';', 2=Accept also ';[]'
+ * @param	string	$onlysimplestring	'0' (used for computed property of extrafields)=Accept all chars, '1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',  '2' (not used)=Accept also ';[]'
  * @return	mixed						Nothing or return result of eval
  */
 function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1')
@@ -8666,8 +8761,8 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 	// Test on dangerous char (used for RCE), we allow only characters to make PHP variable testing
 	if ($onlysimplestring == '1') {
 		// We must accept: '1 && getDolGlobalInt("doesnotexist1") && $conf->global->MAIN_FEATURES_LEVEL'
-		// We must accept: '$conf->barcode->enabled && preg_match(\'/^(AAA|BBB)/\',$leftmenu)'
-		// We must accept: '$user->rights->cabinetmed->read && $object->canvas=="patient@cabinetmed"'
+		// We must accept: '$conf->barcode->enabled || preg_match(\'/^AAA/\',$leftmenu)'
+		// We must accept: '$user->rights->cabinetmed->read && !$object->canvas=="patient@cabinetmed"'
 		if (preg_match('/[^a-z0-9\s'.preg_quote('^$_+-.*>&|=!?():"\',/@', '/').']/i', $s)) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s;
@@ -8675,7 +8770,8 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 				dol_syslog('Bad string syntax to evaluate (found chars that are not chars for simplestring): '.$s);
 				return '';
 			}
-			// TODO We can exclude all () that is not '($db)' and 'getDolGlobalInt(' and 'getDolGlobalString(' and 'preg_match('
+			// TODO
+			// We can exclude all parenthesis ( that are not '($db' and 'getDolGlobalInt(' and 'getDolGlobalString(' and 'preg_match(' and 'isModEnabled('
 			// ...
 		}
 	} elseif ($onlysimplestring == '2') {
@@ -9056,10 +9152,10 @@ function getLanguageCodeFromCountryCode($countrycode)
  *  @param  string			$type           Value for object where objectvalue can be
  *                              			'thirdparty'       to add a tab in third party view
  *		                        	      	'intervention'     to add a tab in intervention view
- *     		                    	     	'supplier_order'   to add a tab in supplier order view
- *          		            	        'supplier_invoice' to add a tab in supplier invoice view
- *                  		    	        'invoice'          to add a tab in customer invoice view
- *                          			    'order'            to add a tab in customer order view
+ *     		                    	     	'supplier_order'   to add a tab in purchase order view
+ *          		            	        'supplier_invoice' to add a tab in purchase invoice view
+ *                  		    	        'invoice'          to add a tab in sales invoice view
+ *                          			    'order'            to add a tab in sales order view
  *                          				'contract'		   to add a tabl in contract view
  *                      			        'product'          to add a tab in product view
  *                              			'propal'           to add a tab in propal view

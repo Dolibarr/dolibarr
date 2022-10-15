@@ -155,7 +155,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'MYECMDIR_MODIFY':
 			//case 'MYECMDIR_DELETE':
 
-			// Customer orders
+			// Sales orders
 			//case 'ORDER_CREATE':
 			//case 'ORDER_MODIFY':
 			//case 'ORDER_VALIDATE':

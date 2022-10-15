@@ -76,7 +76,7 @@ function product_prepare_head($object)
 	// Multilangs
 	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$object->id;
-		$head[$h][1] = $langs->trans("Translation");
+		$head[$h][1] = $langs->trans("Translations");
 		$head[$h][2] = 'translation';
 		$h++;
 	}
@@ -183,7 +183,7 @@ function product_prepare_head($object)
 		$upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	}
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
 			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'product').$object->id.'/photos';
 		}
@@ -252,6 +252,24 @@ function productlot_prepare_head($object)
 	}
 	$head[$h][2] = 'documents';
 	$h++;
+
+	// Notes
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+		$nbNote = 0;
+		if (!empty($object->note_private)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
+		$head[$h][0] = DOL_URL_ROOT .'/product/stock/productlot_note.php?id=' . $object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		if ($nbNote > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
+		}
+		$head[$h][2] = 'note';
+		$h++;
+	}
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -430,7 +448,7 @@ function show_stats_for_company($product, $socid)
 		print '</td>';
 		print '</tr>';
 	}
-	// Customer orders
+	// Sales orders
 	if (isModEnabled('commande') && $user->rights->commande->lire) {
 		$nblines++;
 		$ret = $product->load_stats_commande($socid);

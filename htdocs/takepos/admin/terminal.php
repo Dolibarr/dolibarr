@@ -414,7 +414,7 @@ $htmltext .= '</i>';
 print '<br>';
 print load_fiche_titre($langs->trans('FreeLegalTextOnInvoices'), '', '');
 
-print '<div class="div-table-responsive">';
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans('Value').'</td>';

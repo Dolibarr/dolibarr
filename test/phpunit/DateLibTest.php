@@ -363,6 +363,12 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		// Check %Y-%m-%d %H:%M:%S format
+		$result=dol_print_date('1970-01-01', '%Y-%m-%d %H:%M:%S', true);	// A case for compatibility check
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('1970-01-01 00:00:00', $result);
+
+
+		// Check %Y-%m-%d %H:%M:%S format
 		$result=dol_print_date(0, '%Y-%m-%d %H:%M:%S', true);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('1970-01-01 00:00:00', $result);

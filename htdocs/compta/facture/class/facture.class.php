@@ -3611,7 +3611,7 @@ class Facture extends CommonInvoice
 
 		global $mysoc, $conf, $langs;
 
-		dol_syslog(get_class($this)."::addline id=$this->id,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type, fk_unit=$fk_unit", LOG_DEBUG);
+		dol_syslog(get_class($this)."::addline id=$this->id, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product, remise_percent=$remise_percent, date_start=$date_start, date_end=$date_end, ventil=$ventil, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, type=$type, fk_unit=$fk_unit, desc=".dol_trunc($desc, 25), LOG_DEBUG);
 
 		if ($this->statut == self::STATUS_DRAFT) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -5526,12 +5526,20 @@ class Facture extends CommonInvoice
 						$sendContent = make_substitutions($content, $substitutionarray, $outputlangs, 1);
 
 						// Recipient
-						$to = '';
+						$to = array();
 						$res = $tmpinvoice->fetch_thirdparty();
 						$recipient = $tmpinvoice->thirdparty;
 						if ($res > 0) {
-							if (!empty($recipient->email)) {
-								$to = $recipient->email;
+							$tmparraycontact = $tmpinvoice->liste_contact(-1, 'external', 0, 'BILLING');
+							if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
+								foreach ($tmparraycontact as $data_email) {
+									if (!empty($data_email['email'])) {
+										$to[] = $tmpinvoice->thirdparty->contact_get_property($data_email['id'], 'email');
+									}
+								}
+							}
+							if (empty($to) && !empty($recipient->email)) {
+								$to[] = $recipient->email;
 							} else {
 								$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for user.";
 								$error++;
@@ -5548,8 +5556,10 @@ class Facture extends CommonInvoice
 							$error++;
 						}
 
-						if (!$error && $to) {
+						if (!$error && !empty($to)) {
 							$this->db->begin();
+
+							$to = implode(',', $to);
 
 							// Errors Recipient
 							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;

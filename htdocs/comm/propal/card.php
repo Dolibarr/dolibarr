@@ -2933,10 +2933,7 @@ if ($action == 'create') {
 				}
 
 				// Delete
-				if ($usercandelete) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'"';
-					print '>'.$langs->trans('Delete').'</a>';
-				}
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $usercandelete);
 			}
 		}
 

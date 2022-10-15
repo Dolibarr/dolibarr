@@ -78,6 +78,24 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 	}
 }
 
+if ($massaction == 'presetsupervisor') {
+	$formquestion = array();
+
+	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
+	$valuefield .= img_picto('', 'user').' ';
+	$valuefield .= $form->select_dolusers('', 'supervisortoset', 1, $arrayofselected, 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+	$valuefield .= '</div>';
+
+	$formquestion[] = array(
+				'type' => 'other',
+				'name' => 'supervisortoset',
+				'label' => $langs->trans("Supervisor"),
+				'value' => $valuefield
+			);
+
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmSetSupervisor"), $langs->trans("ConfirmSetSupervisorQuestion", count($toselect)), "setsupervisor", $formquestion, 1, 0, 200, 500, 1);
+}
+
 if ($massaction == 'presend') {
 	$langs->load("mails");
 
@@ -285,7 +303,7 @@ if ($massaction == 'preapproveleave') {
 
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
-	'toselect' => $toselect,
+	'toselect' => isset($toselect) ? $toselect : array(),
 	'uploaddir' => isset($uploaddir) ? $uploaddir : null
 );
 

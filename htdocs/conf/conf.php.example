@@ -409,7 +409,6 @@ $dolibarr_cron_allow_cli='0';
 //#################################
 
 // Value to overwrite path to use shared libraries instead of embedded one
-//$dolibarr_lib_ADODB_PATH='/usr/share/php/adodb';
 //$dolibarr_lib_TCPDF_PATH='/usr/share/php/tcpdf';
 //$dolibarr_lib_FPDI_PATH='/usr/share/php/fpdi';
 //$dolibarr_lib_FPDF_PATH='/usr/share/php/fpdf';
