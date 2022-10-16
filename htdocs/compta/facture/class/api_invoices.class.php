@@ -1450,7 +1450,6 @@ class Invoices extends DolibarrApi
 			$multicurrency_amounts[$id] = $newvalue;
 		}
 
-
 		// Creation of payment line
 		$paymentobj = new Paiement($this->db);
 		$paymentobj->datepaye     = $datepaye;

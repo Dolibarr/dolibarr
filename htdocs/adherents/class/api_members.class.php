@@ -480,11 +480,11 @@ class Members extends DolibarrApi
 	/**
 	 * Add a subscription for a member
 	 *
-	 * @param int $id               ID of member
-	 * @param int $start_date       Start date {@from body} {@type timestamp}
-	 * @param int $end_date         End date {@from body} {@type timestamp}
-	 * @param float $amount         Amount (may be 0) {@from body}
-	 * @param string $label         Label {@from body}
+	 * @param int 		$id             ID of member
+	 * @param string 	$start_date     Start date {@from body} {@type timestamp}
+	 * @param string 	$end_date       End date {@from body} {@type timestamp}
+	 * @param float 	$amount         Amount (may be 0) {@from body}
+	 * @param string 	$label         	Label {@from body}
 	 * @return int  ID of subscription
 	 *
 	 * @url POST {id}/subscriptions
