@@ -626,11 +626,11 @@ class Form
 		$extrastyle = '';
 		if ($direction < 0) {
 			$extracss = ($extracss ? $extracss.' ' : '').($notabs != 3 ? 'inline-block' : '');
-			$extrastyle = 'padding: 0px; paddingleft;';
+			$extrastyle = 'padding: 0px; padding-left: 3px;';
 		}
 		if ($direction > 0) {
 			$extracss = ($extracss ? $extracss.' ' : '').($notabs != 3 ? 'inline-block' : '');
-			$extrastyle = 'padding: 0px; paddingright;';
+			$extrastyle = 'padding: 0px; padding-right: 3px;';
 		}
 
 		$classfortooltip = 'classfortooltip';
