@@ -1115,7 +1115,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			$newmenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"), 1);
 
 			$warnpicto = '';
-			if (!empty($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
+			if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && empty($conf->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
 				$langs->load("errors");
 				$warnpicto = img_warning($langs->trans("WarningPHPMailD"));
 			}
