@@ -2110,11 +2110,11 @@ class Propal extends CommonObject
 	 *	Define end validity date
 	 *
 	 *	@param		User	$user        		Object user that modify
-	 *	@param      int		$date_fin_validite	End of validity date
+	 *	@param      int		$date_end_validity	End of validity date
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 if KO, >0 if OK
 	 */
-	public function set_echeance($user, $date_fin_validite, $notrigger = 0)
+	public function set_echeance($user, $date_end_validity, $notrigger = 0)
 	{
 		// phpcs:enable
 		if (!empty($user->rights->propal->creer)) {
@@ -2122,8 +2122,8 @@ class Propal extends CommonObject
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fin_validite = ".($date_fin_validite != '' ? "'".$this->db->idate($date_fin_validite)."'" : 'null');
-			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".self::STATUS_DRAFT;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fin_validite = ".($date_end_validity != '' ? "'".$this->db->idate($date_end_validity)."'" : 'null');
+			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".((int) self::STATUS_DRAFT);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2135,7 +2135,7 @@ class Propal extends CommonObject
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->fin_validite = $date_fin_validite;
+				$this->fin_validite = $date_end_validity;
 			}
 
 			if (!$notrigger && empty($error)) {
