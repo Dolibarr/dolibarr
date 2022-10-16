@@ -440,7 +440,7 @@ if ($result || !($id > 0)) {
 				continue;
 			}
 
-			if ($graphfiles == 'propal' && !$user->rights->propale->lire) {
+			if ($graphfiles == 'propal' && !$user->rights->propal->lire) {
 				continue;
 			}
 			if ($graphfiles == 'order' && !$user->rights->commande->lire) {
