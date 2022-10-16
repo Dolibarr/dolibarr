@@ -943,11 +943,14 @@ if ($action == 'create' || $action == 'presend') {
 		} elseif (!empty($object->email_msgid)) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
-			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
+			$htmltooltip = $langs->trans("EmailMsgID").': '.$object->email_msgid;
+			$htmltooltip .= '<br>'.$langs->trans("EmailDate").': '.dol_print_date($object->email_date, 'dayhour');
+			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $htmltooltip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
 		} elseif (!empty($object->origin_email)) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
-			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
+			$htmltooptip = $langs->trans("IP").': '.$object->ip;
+			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooptip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
 		}
 
 		// Thirdparty
@@ -1071,7 +1074,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 		print $langs->trans("AssignedTo");
 		if (isset($object->status) && $object->status < $object::STATUS_CLOSED && GETPOST('set', 'alpha') != "assign_ticket" && $user->rights->ticket->manage) {
-			print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?track_id='.$object->track_id.'&set=assign_ticket">'.img_edit($langs->trans('Modify'), '').'</a>';
+			print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?track_id='.urlencode($object->track_id).'&set=assign_ticket">'.img_edit($langs->trans('Modify'), '').'</a>';
 		}
 		print '</td></tr></table>';
 		print '</td><td>';
@@ -1099,7 +1102,7 @@ if ($action == 'create' || $action == 'presend') {
 		print $langs->trans('Progression').'</td><td class="left">';
 		print '</td>';
 		if ($action != 'progression' && isset($object->status) && $object->status < $object::STATUS_CLOSED && !$user->socid) {
-			print '<td class="right"><a class="editfielda" href="'.$url_page_current.'?action=progression&amp;track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$url_page_current.'?action=progression&token='.newToken().'&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
