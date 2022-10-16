@@ -3002,8 +3002,8 @@ if ($action == 'create') {
 		print '<td>'.$form->editfieldval("Label", 'label', $object->label, $object, $usercancreate).'</td>';
 		print '</tr>';
 
-		$form_permission = ($object->statut < FactureFournisseur::STATUS_CLOSED) && $usercancreate && ($object->getSommePaiement() <= 0);
-		$form_permission2 = ($object->statut < FactureFournisseur::STATUS_CLOSED) && $usercancreate;
+		//$form_permission = ($object->statut < FactureFournisseur::STATUS_CLOSED) && $usercancreate && ($object->getSommePaiement() <= 0);
+		$form_permission = ($object->statut < FactureFournisseur::STATUS_CLOSED) && $usercancreate;
 
 		// Date
 		print '<tr><td>';
@@ -3033,9 +3033,9 @@ if ($action == 'create') {
 
 		// Due date
 		print '<tr><td>';
-		print $form->editfieldkey("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission2, 'datepicker');
+		print $form->editfieldkey("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission, 'datepicker');
 		print '</td><td>';
-		print $form->editfieldval("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission2, 'datepicker');
+		print $form->editfieldval("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission, 'datepicker');
 		if ($action != 'editdate_lim_reglement' && $object->hasDelay()) {
 			print img_warning($langs->trans('Late'));
 		}
@@ -3047,7 +3047,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode' && $form_permission2) {
+		if ($action != 'editmode' && $form_permission) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
