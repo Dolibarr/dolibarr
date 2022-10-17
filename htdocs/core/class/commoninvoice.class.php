@@ -175,7 +175,7 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *    	Return amount (with tax) of all deposits invoices used by invoice.
 	 *      Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on for sale invoices (not recommended),
-   *      of FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on for purchase invoices (not recommended).
+	 *      of FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on for purchase invoices (not recommended).
 	 *
 	 * 		@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
 	 *		@return		float						<0 and set ->error if KO, Sum of deposits amount otherwise
@@ -183,7 +183,7 @@ abstract class CommonInvoice extends CommonObject
 	public function getSumDepositsUsed($multicurrency = 0)
 	{
 		/*if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier') {
-			// FACTURE_DEPOSITS_ARE_JUST_PAYMENTS was never supported for purchase invoice, so we can return 0 with no need of SQL for this case.
+			// FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS was never supported for purchase invoice, so we can return 0 with no need of SQL for this case.
 			return 0.0;
 		}*/
 
@@ -379,7 +379,7 @@ abstract class CommonInvoice extends CommonObject
 				$sql = "SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type";
 				$sql .= ' FROM '.$this->db->prefix().'societe_remise_except as rc, '.$this->db->prefix().'facture_fourn as f';
 				$sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.((int) $this->id);
-				$sql .= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)'; // Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
+				$sql .= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)'; // Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is set)
 			}
 
 			if ($sql) {
@@ -848,20 +848,18 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Create a withdrawal request for a direct debit order or a credit transfer order.
 	 *  Use the remain to pay excluding all existing open direct debit requests.
 	 *
 	 *	@param      User	$fuser      	User asking the direct debit transfer
-	 *  @param		float	$amount			Amount we request direct debit for
+	 *  @param		int		$did			ID of payment request
 	 *  @param		string	$type			'direct-debit' or 'bank-transfer'
 	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
 	 *	@return     int         			<0 if KO, >0 if OK
 	 */
-	public function demande_prelevement_stripe($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture')
+	public function makeStripeSepaRequest($fuser, $did = 0, $type = 'direct-debit', $sourcetype = 'facture')
 	{
-		// phpcs:enable
 		global $conf, $mysoc, $user, $langs;
 
 		if (empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
@@ -871,753 +869,755 @@ abstract class CommonInvoice extends CommonObject
 
 		$error = 0;
 
-		dol_syslog(get_class($this)."::demande_prelevement_stripe 0", LOG_DEBUG);
+		dol_syslog(get_class($this)."::makeStripeSepaRequest 0", LOG_DEBUG);
 
 		if ($this->statut > self::STATUS_DRAFT && $this->paye == 0) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
-			$bac->fetch(0, $this->socid);
+			$result = $bac->fetch(0, $this->socid, 1, 'ban');
+			if ($result <= 0 || empty($bac->id)) {
+				$this->error = $langs->trans("ThirdpartyHasNoDefaultBanAccount");
+				$this->errors[] = $this->error;
+				dol_syslog(get_class($this)."::makeStripeSepaRequest ".$this->error);
+				return -1;
+			}
 
-			$sql = "SELECT count(*)";
+			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_facture_demande";
-			$sql .= " WHERE fk_facture = ".((int) $this->id);
-			$sql .= " AND ext_payment_id IS NULL"; // To exclude record done for some online payments
-			$sql .= " AND traite = 0";
+			$sql .= " WHERE rowid = ".((int) $did);
 
-			dol_syslog(get_class($this)."::demande_prelevement_stripe 1", LOG_DEBUG);
+			dol_syslog(get_class($this)."::makeStripeSepaRequest 1", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				$row = $this->db->fetch_row($resql);
+				$obj = $this->db->fetch_object($resql);
+				if (!$obj) {
+					dol_print_error($this->db, 'CantFindRequestWithId');
+					return -2;
+				}
 
-				if ($row[0] == 0) {
-					$now = dol_now();
+				//
+				$amount = $obj->amount;
 
-					$totalpaye = $this->getSommePaiement();
-					$totalcreditnotes = $this->getSumCreditNotesUsed();
-					$totaldeposits = $this->getSumDepositsUsed();
-					//print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
+				$now = dol_now();
 
-					// We can also use bcadd to avoid pb with floating points
-					// For example print 239.2 - 229.3 - 9.9; does not return 0.
-					//$resteapayer=bcadd($this->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
-					//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-					if (empty($amount)) {
-						$amount = price2num($this->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+				$totalpaye = $this->getSommePaiement();
+				$totalcreditnotes = $this->getSumCreditNotesUsed();
+				$totaldeposits = $this->getSumDepositsUsed();
+				//print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
+
+				// We can also use bcadd to avoid pb with floating points
+				// For example print 239.2 - 229.3 - 9.9; does not return 0.
+				//$resteapayer=bcadd($this->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
+				//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
+				$amounttocheck = price2num($this->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+
+				// TODO We can compare $amount and $amounttocheck
+
+				if (is_numeric($amount) && $amount != 0) {
+					require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
+					$companypaymentmode = new CompanyPaymentMode($this->db);
+					$companypaymentmode->fetch($bac->id);
+
+					// Start code for Stripe
+					$service = 'StripeTest';
+					$servicestatus = 0;
+					if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
+						$service = 'StripeLive';
+						$servicestatus = 1;
 					}
 
-					if (is_numeric($amount) && $amount != 0) {
-						require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
-						$companypaymentmode = new CompanyPaymentMode($this->db);
-						$companypaymentmode->fetch($bac->id);
+					dol_syslog("makeStripeSepaRequest amount = ".$amount." service=" . $service . " servicestatus=" . $servicestatus . " thirdparty_id=" . $this->socid . " companypaymentmode=" . $companypaymentmode->id);
 
-						dol_syslog(get_class($this)."::demande_prelevement_stripe amount=$amount, companypaymentmode = " . $companypaymentmode->id, LOG_DEBUG);
+					$this->stripechargedone = 0;
+					$this->stripechargeerror = 0;
+					$now = dol_now();
 
-						//Start code from sellyoursaas
-						$service = 'StripeTest';
-						$servicestatus = 0;
-						if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha')) {
-							$service = 'StripeLive';
-							$servicestatus = 1;
-						}
+					$currency = $conf->currency;
 
-						$langs->load("agenda");
-						dol_syslog("doTakePaymentStripeForThirdparty service=" . $service . " servicestatus=" . $servicestatus . " thirdparty_id=" . $this->socid . " companypaymentmode=" . $companypaymentmode->id . " noemailtocustomeriferror=" . $noemailtocustomeriferror . " nocancelifpaymenterror=" . $nocancelifpaymenterror . " calledinmyaccountcontext=" . $calledinmyaccountcontext);
+					global $stripearrayofkeysbyenv;
+					global $savstripearrayofkeysbyenv;
 
-						$this->stripechargedone = 0;
-						$this->stripechargeerror = 0;
-						$now = dol_now();
+					$errorforinvoice = 0;     // We reset the $errorforinvoice at each invoice loop
 
-						$currency = $conf->currency;
+					$this->fetch_thirdparty();
 
-						global $stripearrayofkeysbyenv;
-						global $savstripearrayofkeysbyenv;
+					dol_syslog("--- Process invoice thirdparty_id=" . $this->id . ", thirdparty_name=" . $this->thirdparty->name . " id=" . $this->id . ", ref=" . $this->ref . ", datef=" . dol_print_date($this->date, 'dayhourlog'), LOG_DEBUG);
 
-						$errorforinvoice = 0;     // We reset the $errorforinvoice at each invoice loop
+					$alreadypayed = $this->getSommePaiement();
+					$amount_credit_notes_included = $this->getSumCreditNotesUsed();
+					$amounttopay = $this->total_ttc - $alreadypayed - $amount_credit_notes_included;
 
-						$this->fetch_thirdparty();
+					// Correct the amount according to unit of currency
+					// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
+					$arrayzerounitcurrency = ['BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF'];
+					$amountstripe = $amounttopay;
+					if (!in_array($currency, $arrayzerounitcurrency)) {
+						$amountstripe = $amountstripe * 100;
+					}
 
-						dol_syslog("--- Process invoice thirdparty_id=" . $this->id . ", thirdparty_name=" . $this->thirdparty->name . " id=" . $this->id . ", ref=" . $this->ref . ", datef=" . dol_print_date($this->date, 'dayhourlog'), LOG_DEBUG);
+					if ($amountstripe > 0) {
+						try {
+							//var_dump($companypaymentmode);
+							dol_syslog("We will try to pay with companypaymentmodeid=" . $companypaymentmode->id . " stripe_card_ref=" . $companypaymentmode->stripe_card_ref . " mode=" . $companypaymentmode->status, LOG_DEBUG);
 
-						$alreadypayed = $this->getSommePaiement();
-						$amount_credit_notes_included = $this->getSumCreditNotesUsed();
-						$amounttopay = $this->total_ttc - $alreadypayed - $amount_credit_notes_included;
+							$thirdparty = new Societe($this->db);
+							$resultthirdparty = $thirdparty->fetch($this->socid);
 
-						// Correct the amount according to unit of currency
-						// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
-						$arrayzerounitcurrency = ['BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF'];
-						$amountstripe = $amounttopay;
-						if (!in_array($currency, $arrayzerounitcurrency)) {
-							$amountstripe = $amountstripe * 100;
-						}
+							include_once DOL_DOCUMENT_ROOT . '/stripe/class/stripe.class.php';        // This include the include of htdocs/stripe/config.php
+							// So it inits or erases the $stripearrayofkeysbyenv
+							$stripe = new Stripe($this->db);
 
-						if ($amountstripe > 0) {
-							try {
-								//var_dump($companypaymentmode);
-								dol_syslog("We will try to pay with companypaymentmodeid=" . $companypaymentmode->id . " stripe_card_ref=" . $companypaymentmode->stripe_card_ref . " mode=" . $companypaymentmode->status, LOG_DEBUG);
+							if (empty($savstripearrayofkeysbyenv)) {
+								$savstripearrayofkeysbyenv = $stripearrayofkeysbyenv;
+							}
+							dol_syslog("makeStripeSepaRequest Current Stripe environment is " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key']);
+							dol_syslog("makeStripeSepaRequest Current Saved Stripe environment is " . $savstripearrayofkeysbyenv[$servicestatus]['publishable_key']);
 
-								$thirdparty = new Societe($this->db);
-								$resultthirdparty = $thirdparty->fetch($this->socid);
+							$foundalternativestripeaccount = '';
 
-								include_once DOL_DOCUMENT_ROOT . '/stripe/class/stripe.class.php';        // This include the include of htdocs/stripe/config.php
-								// So it inits or erases the $stripearrayofkeysbyenv
-								$stripe = new Stripe($this->db);
+							// Force stripe to another value (by default this value is empty)
+							if (!empty($thirdparty->array_options['options_stripeaccount'])) {
+								dol_syslog("makeStripeSepaRequest The thirdparty id=" . $thirdparty->id . " has a dedicated Stripe Account, so we switch to it.");
 
-								if (empty($savstripearrayofkeysbyenv)) {
-									$savstripearrayofkeysbyenv = $stripearrayofkeysbyenv;
-								}
-								dol_syslog("Current Stripe environment is " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key']);
-								dol_syslog("Current Saved Stripe environment is " . $savstripearrayofkeysbyenv[$servicestatus]['publishable_key']);
+								$tmparray = explode('@', $thirdparty->array_options['options_stripeaccount']);
+								if (!empty($tmparray[1])) {
+									$tmparray2 = explode(':', $tmparray[1]);
+									if (!empty($tmparray2[3])) {
+										$stripearrayofkeysbyenv = [
+											0 => [
+												"publishable_key" => $tmparray2[0],
+												"secret_key" => $tmparray2[1]
+											],
+											1 => [
+												"publishable_key" => $tmparray2[2],
+												"secret_key" => $tmparray2[3]
+											]
+										];
 
-								$foundalternativestripeaccount = '';
-
-								// Force stripe to another value (by default this value is empty)
-								if (!empty($thirdparty->array_options['options_stripeaccount'])) {
-									dol_syslog("The thirdparty id=" . $thirdparty->id . " has a dedicated Stripe Account, so we switch to it.");
-
-									$tmparray = explode('@', $thirdparty->array_options['options_stripeaccount']);
-									if (!empty($tmparray[1])) {
-										$tmparray2 = explode(':', $tmparray[1]);
-										if (!empty($tmparray2[3])) {
-											$stripearrayofkeysbyenv = [
-												0 => [
-													"publishable_key" => $tmparray2[0],
-													"secret_key" => $tmparray2[1]
-												],
-												1 => [
-													"publishable_key" => $tmparray2[2],
-													"secret_key" => $tmparray2[3]
-												]
-											];
-
-											$stripearrayofkeys = $stripearrayofkeysbyenv[$servicestatus];
-											\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
-
-											$foundalternativestripeaccount = $tmparray[0];    // Store the customer id
-
-											dol_syslog("We use now customer=" . $foundalternativestripeaccount . " publishable_key=" . $stripearrayofkeys['publishable_key'], LOG_DEBUG);
-										}
-									}
-
-									if (!$foundalternativestripeaccount) {
-										$stripearrayofkeysbyenv = $savstripearrayofkeysbyenv;
-
-										$stripearrayofkeys = $savstripearrayofkeysbyenv[$servicestatus];
+										$stripearrayofkeys = $stripearrayofkeysbyenv[$servicestatus];
 										\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
-										dol_syslog("We found a bad value for Stripe Account for thirdparty id=" . $thirdparty->id . ", so we ignore it and keep using the global one, so " . $stripearrayofkeys['publishable_key'], LOG_WARNING);
+
+										$foundalternativestripeaccount = $tmparray[0];    // Store the customer id
+
+										dol_syslog("We use now customer=" . $foundalternativestripeaccount . " publishable_key=" . $stripearrayofkeys['publishable_key'], LOG_DEBUG);
 									}
-								} else {
+								}
+
+								if (!$foundalternativestripeaccount) {
 									$stripearrayofkeysbyenv = $savstripearrayofkeysbyenv;
 
 									$stripearrayofkeys = $savstripearrayofkeysbyenv[$servicestatus];
 									\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
-									dol_syslog("The thirdparty id=" . $thirdparty->id . " has no dedicated Stripe Account, so we use global one, so " . json_encode($stripearrayofkeys), LOG_DEBUG);
+									dol_syslog("We found a bad value for Stripe Account for thirdparty id=" . $thirdparty->id . ", so we ignore it and keep using the global one, so " . $stripearrayofkeys['publishable_key'], LOG_WARNING);
 								}
+							} else {
+								$stripearrayofkeysbyenv = $savstripearrayofkeysbyenv;
+
+								$stripearrayofkeys = $savstripearrayofkeysbyenv[$servicestatus];
+								\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
+								dol_syslog("The thirdparty id=" . $thirdparty->id . " has no dedicated Stripe Account, so we use global one, so " . json_encode($stripearrayofkeys), LOG_DEBUG);
+							}
 
 
-								dol_syslog("get stripe account", LOG_DEBUG);
-								$stripeacc = $stripe->getStripeAccount($service, $this->socid);								// Get Stripe OAuth connect account if it exists (no network access here)
-								dol_syslog("get stripe account return " . json_encode($stripeacc), LOG_DEBUG);
+							dol_syslog("makeStripeSepaRequest get stripe account", LOG_DEBUG);
+							$stripeacc = $stripe->getStripeAccount($service, $this->socid);								// Get Stripe OAuth connect account if it exists (no network access here)
+							dol_syslog("makeStripeSepaRequest get stripe account return " . json_encode($stripeacc), LOG_DEBUG);
 
-								if ($foundalternativestripeaccount) {
-									if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-										$customer = \Stripe\Customer::retrieve(['id' => "$foundalternativestripeaccount", 'expand[]' => 'sources']);
-									} else {
-										$customer = \Stripe\Customer::retrieve(['id' => "$foundalternativestripeaccount", 'expand[]' => 'sources'], ["stripe_account" => $stripeacc]);
-									}
+							if ($foundalternativestripeaccount) {
+								if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+									$customer = \Stripe\Customer::retrieve(['id' => "$foundalternativestripeaccount", 'expand[]' => 'sources']);
 								} else {
-									$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
-									if (empty($customer) && !empty($stripe->error)) {
-										$this->errors[] = $stripe->error;
-									}
-									/*if (!empty($customer) && empty($customer->sources)) {
-									 $customer = null;
-									 $this->errors[] = '\Stripe\Customer::retrieve did not returned the sources';
-									 }*/
+									$customer = \Stripe\Customer::retrieve(['id' => "$foundalternativestripeaccount", 'expand[]' => 'sources'], ["stripe_account" => $stripeacc]);
+								}
+							} else {
+								$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
+								if (empty($customer) && !empty($stripe->error)) {
+									$this->errors[] = $stripe->error;
+								}
+								/*if (!empty($customer) && empty($customer->sources)) {
+								 $customer = null;
+								 $this->errors[] = '\Stripe\Customer::retrieve did not returned the sources';
+								 }*/
+							}
+
+							// $nbhoursbetweentries = (empty($conf->global->SELLYOURSAAS_NBHOURSBETWEENTRIES) ? 49 : $conf->global->SELLYOURSAAS_NBHOURSBETWEENTRIES);				// Must have more that 48 hours + 1 between each try (so 1 try every 3 daily batch)
+							// $nbdaysbeforeendoftries = (empty($conf->global->SELLYOURSAAS_NBDAYSBEFOREENDOFTRIES) ? 35 : $conf->global->SELLYOURSAAS_NBDAYSBEFOREENDOFTRIES);
+							$labeltouse = '';
+							$postactionmessages = [];
+
+							if ($resultthirdparty > 0 && !empty($customer)) {
+								if (!$error && !empty($this->array_options['options_delayautopayment']) && $this->array_options['options_delayautopayment'] > $now && empty($calledinmyaccountcontext)) {
+									$errmsg = 'Payment try was canceled (invoice qualified by the automatic payment was delayed after the ' . dol_print_date($this->array_options['options_delayautopayment'], 'day') . ')';
+									dol_syslog($errmsg, LOG_DEBUG);
+
+									$error++;
+									$errorforinvoice++;
+									$this->errors[] = $errmsg;
 								}
 
-								// $nbhoursbetweentries = (empty($conf->global->SELLYOURSAAS_NBHOURSBETWEENTRIES) ? 49 : $conf->global->SELLYOURSAAS_NBHOURSBETWEENTRIES);				// Must have more that 48 hours + 1 between each try (so 1 try every 3 daily batch)
-								// $nbdaysbeforeendoftries = (empty($conf->global->SELLYOURSAAS_NBDAYSBEFOREENDOFTRIES) ? 35 : $conf->global->SELLYOURSAAS_NBDAYSBEFOREENDOFTRIES);
-								$labeltouse = '';
-								$postactionmessages = [];
-
-								if ($resultthirdparty > 0 && !empty($customer)) {
-									if (!$error && !empty($this->array_options['options_delayautopayment']) && $this->array_options['options_delayautopayment'] > $now && empty($calledinmyaccountcontext)) {
-										$errmsg = 'Payment try was canceled (invoice qualified by the automatic payment was delayed after the ' . dol_print_date($this->array_options['options_delayautopayment'], 'day') . ')';
-										dol_syslog($errmsg, LOG_DEBUG);
-
-										$error++;
-										$errorforinvoice++;
-										$this->errors[] = $errmsg;
+								if (!$error) {	// Payment was not canceled
+									//erics card or sepa ?
+									$sepaMode = false;
+									if ($companypaymentmode->type == 'ban') {
+										$sepaMode = true;
+										$stripecard = $stripe->sepaStripe($customer, $companypaymentmode, $stripeacc, $servicestatus, 0);
+									} else {
+										$stripecard = $stripe->cardStripe($customer, $companypaymentmode, $stripeacc, $servicestatus, 0);
 									}
 
-									if (!$error) {	// Payment was not canceled
-										//erics card or sepa ?
-										$sepaMode = false;
-										if ($companypaymentmode->type == 'ban') {
-											$sepaMode = true;
-											$stripecard = $stripe->sepaStripe($customer, $companypaymentmode, $stripeacc, $servicestatus, 0);
-										} else {
-											$stripecard = $stripe->cardStripe($customer, $companypaymentmode, $stripeacc, $servicestatus, 0);
-										}
+									if ($stripecard) {  // Can be card_... (old mode) or pm_... (new mode)
+										$FULLTAG = 'INV=' . $this->id . '-CUS=' . $thirdparty->id;
+										$description = 'Stripe payment from doTakePaymentStripeForThirdparty: ' . $FULLTAG . ' ref=' . $this->ref;
 
-										if ($stripecard) {  // Can be card_... (old mode) or pm_... (new mode)
-											$FULLTAG = 'INV=' . $this->id . '-CUS=' . $thirdparty->id;
-											$description = 'Stripe payment from doTakePaymentStripeForThirdparty: ' . $FULLTAG . ' ref=' . $this->ref;
+										$stripefailurecode = '';
+										$stripefailuremessage = '';
+										$stripefailuredeclinecode = '';
 
-											$stripefailurecode = '';
-											$stripefailuremessage = '';
-											$stripefailuredeclinecode = '';
+										if (preg_match('/^card_/', $stripecard->id)) { // Using old method
+											dol_syslog("* Create charge on card " . $stripecard->id . ", amountstripe=" . $amountstripe . ", FULLTAG=" . $FULLTAG, LOG_DEBUG);
 
-											if (preg_match('/^card_/', $stripecard->id)) { // Using old method
-												dol_syslog("* Create charge on card " . $stripecard->id . ", amountstripe=" . $amountstripe . ", FULLTAG=" . $FULLTAG, LOG_DEBUG);
+											$ipaddress = getUserRemoteIP();
 
-												$ipaddress = getUserRemoteIP();
+											$charge = null;		// Force reset of $charge, so, if already set from a previous fetch, it will be empty even if there is an exception at next step
+											try {
+												$charge = \Stripe\Charge::create([
+													'amount' => price2num($amountstripe, 'MU'),
+													'currency' => $currency,
+													'capture' => true,							// Charge immediatly
+													'description' => $description,
+													'metadata' => ["FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name, 'dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress],
+													'customer' => $customer->id,
+													//'customer' => 'bidon_to_force_error',		// To use to force a stripe error
+													'source' => $stripecard,
+													'statement_descriptor' => dol_trunc('INV=' . $this->id, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
+												]);
+											} catch (\Stripe\Error\Card $e) {
+												// Since it's a decline, Stripe_CardError will be caught
+												$body = $e->getJsonBody();
+												$err = $body['error'];
 
-												$charge = null;		// Force reset of $charge, so, if already set from a previous fetch, it will be empty even if there is an exception at next step
-												try {
-													$charge = \Stripe\Charge::create([
-														'amount' => price2num($amountstripe, 'MU'),
-														'currency' => $currency,
-														'capture' => true,							// Charge immediatly
-														'description' => $description,
-														'metadata' => ["FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name, 'dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress],
-														'customer' => $customer->id,
-														//'customer' => 'bidon_to_force_error',		// To use to force a stripe error
-														'source' => $stripecard,
-														'statement_descriptor' => dol_trunc('INV=' . $this->id, 10, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt (company + description)
-													]);
-												} catch (\Stripe\Error\Card $e) {
-													// Since it's a decline, Stripe_CardError will be caught
-													$body = $e->getJsonBody();
-													$err = $body['error'];
-
-													$stripefailurecode = $err['code'];
-													$stripefailuremessage = $err['message'];
-													$stripefailuredeclinecode = $err['decline_code'];
-												} catch (Exception $e) {
-													$stripefailurecode = 'UnknownChargeError';
-													$stripefailuremessage = $e->getMessage();
-												}
-											} else { // Using new SCA method
-												if ($sepaMode) {
-													dol_syslog("* Create payment on SEPA " . $stripecard->id . ", amounttopay=" . $amounttopay . ", amountstripe=" . $amountstripe . ", FULLTAG=" . $FULLTAG, LOG_DEBUG);
-												} else {
-													dol_syslog("* Create payment on card " . $stripecard->id . ", amounttopay=" . $amounttopay . ", amountstripe=" . $amountstripe . ", FULLTAG=" . $FULLTAG, LOG_DEBUG);
-												}
-
-												// Create payment intent and charge payment (confirmnow = true)
-												$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $invoice, $customer->id, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard->id, 1);
-
-												$charge = new stdClass();
-												//erics add processing sepa is like success ?
-												if ($paymentintent->status === 'succeeded' || $paymentintent->status === 'processing') {
-													$charge->status = 'ok';
-													$charge->id = $paymentintent->id;
-													$charge->customer = $customer->id;
-												} elseif ($paymentintent->status === 'requires_action') {
-													//paymentintent->status may be => 'requires_action' (no error in such a case)
-													dol_syslog(var_export($paymentintent, true), LOG_DEBUG);
-
-													$charge->status = 'failed';
-													$charge->customer = $customer->id;
-													$charge->failure_code = $stripe->code;
-													$charge->failure_message = $stripe->error;
-													$charge->failure_declinecode = $stripe->declinecode;
-													$stripefailurecode = $stripe->code;
-													$stripefailuremessage = 'Action required. Contact the support at ';// . $conf->global->SELLYOURSAAS_MAIN_EMAIL;
-													$stripefailuredeclinecode = $stripe->declinecode;
-												} else {
-													dol_syslog(var_export($paymentintent, true), LOG_DEBUG);
-
-													$charge->status = 'failed';
-													$charge->customer = $customer->id;
-													$charge->failure_code = $stripe->code;
-													$charge->failure_message = $stripe->error;
-													$charge->failure_declinecode = $stripe->declinecode;
-													$stripefailurecode = $stripe->code;
-													$stripefailuremessage = $stripe->error;
-													$stripefailuredeclinecode = $stripe->declinecode;
-												}
-
-												//var_dump("stripefailurecode=".$stripefailurecode." stripefailuremessage=".$stripefailuremessage." stripefailuredeclinecode=".$stripefailuredeclinecode);
-												//exit;
+												$stripefailurecode = $err['code'];
+												$stripefailuremessage = $err['message'];
+												$stripefailuredeclinecode = $err['decline_code'];
+											} catch (Exception $e) {
+												$stripefailurecode = 'UnknownChargeError';
+												$stripefailuremessage = $e->getMessage();
+											}
+										} else { // Using new SCA method
+											if ($sepaMode) {
+												dol_syslog("* Create payment on SEPA " . $stripecard->id . ", amounttopay=" . $amounttopay . ", amountstripe=" . $amountstripe . ", FULLTAG=" . $FULLTAG, LOG_DEBUG);
+											} else {
+												dol_syslog("* Create payment on card " . $stripecard->id . ", amounttopay=" . $amounttopay . ", amountstripe=" . $amountstripe . ", FULLTAG=" . $FULLTAG, LOG_DEBUG);
 											}
 
-											// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
-											if (empty($charge) || $charge->status == 'failed') {
-												dol_syslog('Failed to charge card or payment mode ' . $stripecard->id . ' stripefailurecode=' . $stripefailurecode . ' stripefailuremessage=' . $stripefailuremessage . ' stripefailuredeclinecode=' . $stripefailuredeclinecode, LOG_WARNING);
+											// Create payment intent and charge payment (confirmnow = true)
+											$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $invoice, $customer->id, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard->id, 1);
 
-												// Save a stripe payment was in error
-												$this->stripechargeerror++;
+											$charge = new stdClass();
+											//erics add processing sepa is like success ?
+											if ($paymentintent->status === 'succeeded' || $paymentintent->status === 'processing') {
+												$charge->status = 'ok';
+												$charge->id = $paymentintent->id;
+												$charge->customer = $customer->id;
+											} elseif ($paymentintent->status === 'requires_action') {
+												//paymentintent->status may be => 'requires_action' (no error in such a case)
+												dol_syslog(var_export($paymentintent, true), LOG_DEBUG);
 
+												$charge->status = 'failed';
+												$charge->customer = $customer->id;
+												$charge->failure_code = $stripe->code;
+												$charge->failure_message = $stripe->error;
+												$charge->failure_declinecode = $stripe->declinecode;
+												$stripefailurecode = $stripe->code;
+												$stripefailuremessage = 'Action required. Contact the support at ';// . $conf->global->SELLYOURSAAS_MAIN_EMAIL;
+												$stripefailuredeclinecode = $stripe->declinecode;
+											} else {
+												dol_syslog(var_export($paymentintent, true), LOG_DEBUG);
+
+												$charge->status = 'failed';
+												$charge->customer = $customer->id;
+												$charge->failure_code = $stripe->code;
+												$charge->failure_message = $stripe->error;
+												$charge->failure_declinecode = $stripe->declinecode;
+												$stripefailurecode = $stripe->code;
+												$stripefailuremessage = $stripe->error;
+												$stripefailuredeclinecode = $stripe->declinecode;
+											}
+
+											//var_dump("stripefailurecode=".$stripefailurecode." stripefailuremessage=".$stripefailuremessage." stripefailuredeclinecode=".$stripefailuredeclinecode);
+											//exit;
+										}
+
+										// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
+										if (empty($charge) || $charge->status == 'failed') {
+											dol_syslog('Failed to charge card or payment mode ' . $stripecard->id . ' stripefailurecode=' . $stripefailurecode . ' stripefailuremessage=' . $stripefailuremessage . ' stripefailuredeclinecode=' . $stripefailuredeclinecode, LOG_WARNING);
+
+											// Save a stripe payment was in error
+											$this->stripechargeerror++;
+
+											$error++;
+											$errorforinvoice++;
+											$errmsg = $langs->trans("FailedToChargeCard");
+											if (!empty($charge)) {
+												if ($stripefailuredeclinecode == 'authentication_required') {
+													$errauthenticationmessage = $langs->trans("ErrSCAAuthentication");
+													$errmsg = $errauthenticationmessage;
+												} elseif (in_array($stripefailuredeclinecode, ['insufficient_funds', 'generic_decline'])) {
+													$errmsg .= ': ' . $charge->failure_code;
+													$errmsg .= ($charge->failure_message ? ' - ' : '') . ' ' . $charge->failure_message;
+													if (empty($stripefailurecode)) {
+														$stripefailurecode = $charge->failure_code;
+													}
+													if (empty($stripefailuremessage)) {
+														$stripefailuremessage = $charge->failure_message;
+													}
+												} else {
+													$errmsg .= ': failure_code=' . $charge->failure_code;
+													$errmsg .= ($charge->failure_message ? ' - ' : '') . ' failure_message=' . $charge->failure_message;
+													if (empty($stripefailurecode)) {
+														$stripefailurecode = $charge->failure_code;
+													}
+													if (empty($stripefailuremessage)) {
+														$stripefailuremessage = $charge->failure_message;
+													}
+												}
+											} else {
+												$errmsg .= ': ' . $stripefailurecode . ' - ' . $stripefailuremessage;
+												$errmsg .= ($stripefailuredeclinecode ? ' - ' . $stripefailuredeclinecode : '');
+											}
+
+											$description = 'Stripe payment ERROR from doTakePaymentStripeForThirdparty: ' . $FULLTAG;
+											$postactionmessages[] = $errmsg . ' (' . $stripearrayofkeys['publishable_key'] . ')';
+											$this->errors[] = $errmsg;
+										} else {
+											dol_syslog('Successfuly charge card ' . $stripecard->id);
+
+											$postactionmessages[] = 'Success to charge card (' . $charge->id . ' with ' . $stripearrayofkeys['publishable_key'] . ')';
+
+											// Save a stripe payment was done in realy life so later we will be able to force a commit on recorded payments
+											// even if in batch mode (method doTakePaymentStripe), we will always make all action in one transaction with a forced commit.
+											$this->stripechargedone++;
+
+											// Default description used for label of event. Will be overwrite by another value later.
+											$description = 'Stripe payment OK (' . $charge->id . ') from doTakePaymentStripeForThirdparty: ' . $FULLTAG;
+
+											$db = $this->db;
+
+											$ipaddress = getUserRemoteIP();
+
+											$TRANSACTIONID = $charge->id;
+											$currency = $conf->currency;
+											$paymentmethod = 'stripe';
+											$emetteur_name = $charge->customer;
+
+											// Same code than into paymentok.php...
+
+											$paymentTypeId = 0;
+											if ($paymentmethod == 'paybox') {
+												$paymentTypeId = $conf->global->PAYBOX_PAYMENT_MODE_FOR_PAYMENTS;
+											}
+											if ($paymentmethod == 'paypal') {
+												$paymentTypeId = $conf->global->PAYPAL_PAYMENT_MODE_FOR_PAYMENTS;
+											}
+											if ($paymentmethod == 'stripe') {
+												$paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
+											}
+											if (empty($paymentTypeId)) {
+												//erics
+												if ($sepaMode) {
+													$paymentType = 'PRE';
+												} else {
+													$paymentType = $_SESSION["paymentType"];
+													if (empty($paymentType)) {
+														$paymentType = 'CB';
+													}
+												}
+												$paymentTypeId = dol_getIdFromCode($this->db, $paymentType, 'c_paiement', 'code', 'id', 1);
+											}
+
+											$currencyCodeType = $currency;
+
+											$ispostactionok = 1;
+
+											// Creation of payment line
+											include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
+											$paiement = new Paiement($this->db);
+											$paiement->datepaye = $now;
+											$paiement->date = $now;
+											if ($currencyCodeType == $conf->currency) {
+												$paiement->amounts = [$this->id => $amounttopay];   // Array with all payments dispatching with invoice id
+											} else {
+												$paiement->multicurrency_amounts = [$this->id => $amounttopay];   // Array with all payments dispatching
+
+												$postactionmessages[] = 'Payment was done in a different currency than currency expected of company';
+												$ispostactionok = -1;
+												// Not yet supported, so error
 												$error++;
 												$errorforinvoice++;
-												$errmsg = $langs->trans("FailedToChargeCard");
-												if (!empty($charge)) {
-													if ($stripefailuredeclinecode == 'authentication_required') {
-														$errauthenticationmessage = $langs->trans("ErrSCAAuthentication");
-														$errmsg = $errauthenticationmessage;
-													} elseif (in_array($stripefailuredeclinecode, ['insufficient_funds', 'generic_decline'])) {
-														$errmsg .= ': ' . $charge->failure_code;
-														$errmsg .= ($charge->failure_message ? ' - ' : '') . ' ' . $charge->failure_message;
-														if (empty($stripefailurecode)) {
-															$stripefailurecode = $charge->failure_code;
-														}
-														if (empty($stripefailuremessage)) {
-															$stripefailuremessage = $charge->failure_message;
-														}
-													} else {
-														$errmsg .= ': failure_code=' . $charge->failure_code;
-														$errmsg .= ($charge->failure_message ? ' - ' : '') . ' failure_message=' . $charge->failure_message;
-														if (empty($stripefailurecode)) {
-															$stripefailurecode = $charge->failure_code;
-														}
-														if (empty($stripefailuremessage)) {
-															$stripefailuremessage = $charge->failure_message;
-														}
-													}
-												} else {
-													$errmsg .= ': ' . $stripefailurecode . ' - ' . $stripefailuremessage;
-													$errmsg .= ($stripefailuredeclinecode ? ' - ' . $stripefailuredeclinecode : '');
-												}
+											}
+											$paiement->paiementid = $paymentTypeId;
+											$paiement->num_paiement = '';
+											$paiement->num_payment = '';
+											// Add a comment with keyword 'SellYourSaas' in text. Used by trigger.
+											$paiement->note_public = 'StripeSepa payment ' . dol_print_date($now, 'standard') . ' using ' . $paymentmethod . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
+											$paiement->note_private = 'StripeSepa payment ' . dol_print_date($now, 'standard') . ' using ' . $paymentmethod . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
+											$paiement->ext_payment_id = $charge->id . ':' . $customer->id . '@' . $stripearrayofkeys['publishable_key'];
+											$paiement->ext_payment_site = 'stripe';
 
-												$description = 'Stripe payment ERROR from doTakePaymentStripeForThirdparty: ' . $FULLTAG;
-												$postactionmessages[] = $errmsg . ' (' . $stripearrayofkeys['publishable_key'] . ')';
-												$this->errors[] = $errmsg;
-											} else {
-												dol_syslog('Successfuly charge card ' . $stripecard->id);
+											if (!$errorforinvoice) {
+												dol_syslog('* Record payment for invoice id ' . $this->id . '. It includes closing of invoice and regenerating document');
 
-												$postactionmessages[] = 'Success to charge card (' . $charge->id . ' with ' . $stripearrayofkeys['publishable_key'] . ')';
-
-												// Save a stripe payment was done in realy life so later we will be able to force a commit on recorded payments
-												// even if in batch mode (method doTakePaymentStripe), we will always make all action in one transaction with a forced commit.
-												$this->stripechargedone++;
-
-												// Default description used for label of event. Will be overwrite by another value later.
-												$description = 'Stripe payment OK (' . $charge->id . ') from doTakePaymentStripeForThirdparty: ' . $FULLTAG;
-
-												$db = $this->db;
-
-												$ipaddress = getUserRemoteIP();
-
-												$TRANSACTIONID = $charge->id;
-												$currency = $conf->currency;
-												$paymentmethod = 'stripe';
-												$emetteur_name = $charge->customer;
-
-												// Same code than into paymentok.php...
-
-												$paymentTypeId = 0;
-												if ($paymentmethod == 'paybox') {
-													$paymentTypeId = $conf->global->PAYBOX_PAYMENT_MODE_FOR_PAYMENTS;
-												}
-												if ($paymentmethod == 'paypal') {
-													$paymentTypeId = $conf->global->PAYPAL_PAYMENT_MODE_FOR_PAYMENTS;
-												}
-												if ($paymentmethod == 'stripe') {
-													$paymentTypeId = $conf->global->STRIPE_PAYMENT_MODE_FOR_PAYMENTS;
-												}
-												if (empty($paymentTypeId)) {
-													//erics
-													if ($sepaMode) {
-														$paymentType = 'PRE';
-													} else {
-														$paymentType = $_SESSION["paymentType"];
-														if (empty($paymentType)) {
-															$paymentType = 'CB';
-														}
-													}
-													$paymentTypeId = dol_getIdFromCode($this->db, $paymentType, 'c_paiement', 'code', 'id', 1);
-												}
-
-												$currencyCodeType = $currency;
-
-												$ispostactionok = 1;
-
-												// Creation of payment line
-												include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
-												$paiement = new Paiement($this->db);
-												$paiement->datepaye = $now;
-												$paiement->date = $now;
-												if ($currencyCodeType == $conf->currency) {
-													$paiement->amounts = [$this->id => $amounttopay];   // Array with all payments dispatching with invoice id
-												} else {
-													$paiement->multicurrency_amounts = [$this->id => $amounttopay];   // Array with all payments dispatching
-
-													$postactionmessages[] = 'Payment was done in a different currency than currency expected of company';
+												// This include closing invoices to 'paid' (and trigger including unsuspending) and regenerating document
+												$paiement_id = $paiement->create($user, 1);
+												if ($paiement_id < 0) {
+													$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
 													$ispostactionok = -1;
-													// Not yet supported, so error
 													$error++;
 													$errorforinvoice++;
+												} else {
+													$postactionmessages[] = 'Payment created';
 												}
-												$paiement->paiementid = $paymentTypeId;
-												$paiement->num_paiement = '';
-												$paiement->num_payment = '';
-												// Add a comment with keyword 'SellYourSaas' in text. Used by trigger.
-												$paiement->note_public = 'StripeSepa payment ' . dol_print_date($now, 'standard') . ' using ' . $paymentmethod . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
-												$paiement->note_private = 'StripeSepa payment ' . dol_print_date($now, 'standard') . ' using ' . $paymentmethod . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
-												$paiement->ext_payment_id = $charge->id . ':' . $customer->id . '@' . $stripearrayofkeys['publishable_key'];
-												$paiement->ext_payment_site = 'stripe';
 
-												if (!$errorforinvoice) {
-													dol_syslog('* Record payment for invoice id ' . $this->id . '. It includes closing of invoice and regenerating document');
+												dol_syslog("The payment has been created for invoice id " . $this->id);
+											}
 
-													// This include closing invoices to 'paid' (and trigger including unsuspending) and regenerating document
-													$paiement_id = $paiement->create($user, 1);
-													if ($paiement_id < 0) {
+											if (!$errorforinvoice && isModEnabled('banque')) {
+												dol_syslog('* Add payment to bank');
+
+												$bankaccountid = 0;
+												if ($paymentmethod == 'paybox') {
+													$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
+												}
+												if ($paymentmethod == 'paypal') {
+													$bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
+												}
+												if ($paymentmethod == 'stripe') {
+													$bankaccountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
+												}
+
+												if ($bankaccountid > 0) {
+													$label = '(CustomerInvoicePayment)';
+													if ($this->type == Facture::TYPE_CREDIT_NOTE) {
+														$label = '(CustomerInvoicePaymentBack)';
+													}  // Refund of a credit note
+													$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, $emetteur_name, '');
+													if ($result < 0) {
 														$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
 														$ispostactionok = -1;
 														$error++;
 														$errorforinvoice++;
 													} else {
-														$postactionmessages[] = 'Payment created';
+														$postactionmessages[] = 'Bank transaction of payment created (by doTakePaymentStripeForThirdparty)';
 													}
-
-													dol_syslog("The payment has been created for invoice id " . $this->id);
-												}
-
-												if (!$errorforinvoice && !empty($conf->banque->enabled)) {
-													dol_syslog('* Add payment to bank');
-
-													$bankaccountid = 0;
-													if ($paymentmethod == 'paybox') {
-														$bankaccountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
-													}
-													if ($paymentmethod == 'paypal') {
-														$bankaccountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
-													}
-													if ($paymentmethod == 'stripe') {
-														$bankaccountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
-													}
-
-													if ($bankaccountid > 0) {
-														$label = '(CustomerInvoicePayment)';
-														if ($this->type == Facture::TYPE_CREDIT_NOTE) {
-															$label = '(CustomerInvoicePaymentBack)';
-														}  // Refund of a credit note
-														$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, $emetteur_name, '');
-														if ($result < 0) {
-															$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
-															$ispostactionok = -1;
-															$error++;
-															$errorforinvoice++;
-														} else {
-															$postactionmessages[] = 'Bank transaction of payment created (by doTakePaymentStripeForThirdparty)';
-														}
-													} else {
-														$postactionmessages[] = 'Setup of bank account to use in module ' . $paymentmethod . ' was not set. No way to record the payment.';
-														$ispostactionok = -1;
-														$error++;
-														$errorforinvoice++;
-													}
-												}
-
-												if ($ispostactionok < 1) {
-													$description = 'Stripe payment OK (' . $charge->id . ' - ' . $amounttopay . ' ' . $conf->currency . ') but post action KO from doTakePaymentStripeForThirdparty: ' . $FULLTAG;
 												} else {
-													$description = 'Stripe payment+post action OK (' . $charge->id . ' - ' . $amounttopay . ' ' . $conf->currency . ') from doTakePaymentStripeForThirdparty: ' . $FULLTAG;
+													$postactionmessages[] = 'Setup of bank account to use in module ' . $paymentmethod . ' was not set. No way to record the payment.';
+													$ispostactionok = -1;
+													$error++;
+													$errorforinvoice++;
 												}
 											}
 
-											$object = $invoice;
-
-											// Send emails
-											$labeltouse = 'InvoicePaymentSuccess';
-											$sendemailtocustomer = 1;
-
-											if (empty($charge) || $charge->status == 'failed') {
-												$labeltouse = 'InvoicePaymentFailure';
-												if ($noemailtocustomeriferror) {
-													$sendemailtocustomer = 0;
-												}		// $noemailtocustomeriferror is set when error already reported on myaccount screen
-											}
-
-											// Track an event
-											if (empty($charge) || $charge->status == 'failed') {
-												$actioncode = 'PAYMENT_STRIPE_KO';
-												$extraparams = $stripefailurecode;
-												$extraparams .= (($extraparams && $stripefailuremessage) ? ' - ' : '') . $stripefailuremessage;
-												$extraparams .= (($extraparams && $stripefailuredeclinecode) ? ' - ' : '') . $stripefailuredeclinecode;
+											if ($ispostactionok < 1) {
+												$description = 'Stripe payment OK (' . $charge->id . ' - ' . $amounttopay . ' ' . $conf->currency . ') but post action KO from doTakePaymentStripeForThirdparty: ' . $FULLTAG;
 											} else {
-												$actioncode = 'PAYMENT_STRIPE_OK';
-												$extraparams = '';
+												$description = 'Stripe payment+post action OK (' . $charge->id . ' - ' . $amounttopay . ' ' . $conf->currency . ') from doTakePaymentStripeForThirdparty: ' . $FULLTAG;
 											}
-										} else {
-											$error++;
-											$errorforinvoice++;
-											dol_syslog("No card or payment method found for this stripe customer " . $customer->id, LOG_WARNING);
-											$this->errors[] = 'Failed to get card | payment method for stripe customer = ' . $customer->id;
-
-											$labeltouse = 'InvoicePaymentFailure';
-											$sendemailtocustomer = 1;
-											if ($noemailtocustomeriferror) {
-												$sendemailtocustomer = 0;
-											}		// $noemailtocustomeriferror is set when error already reported on myaccount screen
-
-											$description = 'Failed to find or use the payment mode - no credit card defined for the customer account';
-											$stripefailurecode = 'BADPAYMENTMODE';
-											$stripefailuremessage = 'Failed to find or use the payment mode - no credit card defined for the customer account';
-											$postactionmessages[] = $description . ' (' . $stripearrayofkeys['publishable_key'] . ')';
-
-											$object = $invoice;
-
-											$actioncode = 'PAYMENT_STRIPE_KO';
-											$extraparams = '';
 										}
-									} else {
-										// If error because payment was canceled for a logical reason, we do nothing (no email and no event added)
-										$labeltouse = '';
-										$sendemailtocustomer = 0;
-
-										$description = '';
-										$stripefailurecode = '';
-										$stripefailuremessage = '';
 
 										$object = $invoice;
 
-										$actioncode = '';
+										// Send emails
+										$labeltouse = 'InvoicePaymentSuccess';
+										$sendemailtocustomer = 1;
+
+										if (empty($charge) || $charge->status == 'failed') {
+											$labeltouse = 'InvoicePaymentFailure';
+											if ($noemailtocustomeriferror) {
+												$sendemailtocustomer = 0;
+											}		// $noemailtocustomeriferror is set when error already reported on myaccount screen
+										}
+
+										// Track an event
+										if (empty($charge) || $charge->status == 'failed') {
+											$actioncode = 'PAYMENT_STRIPE_KO';
+											$extraparams = $stripefailurecode;
+											$extraparams .= (($extraparams && $stripefailuremessage) ? ' - ' : '') . $stripefailuremessage;
+											$extraparams .= (($extraparams && $stripefailuredeclinecode) ? ' - ' : '') . $stripefailuredeclinecode;
+										} else {
+											$actioncode = 'PAYMENT_STRIPE_OK';
+											$extraparams = '';
+										}
+									} else {
+										$error++;
+										$errorforinvoice++;
+										dol_syslog("No card or payment method found for this stripe customer " . $customer->id, LOG_WARNING);
+										$this->errors[] = 'Failed to get card | payment method for stripe customer = ' . $customer->id;
+
+										$labeltouse = 'InvoicePaymentFailure';
+										$sendemailtocustomer = 1;
+										if ($noemailtocustomeriferror) {
+											$sendemailtocustomer = 0;
+										}		// $noemailtocustomeriferror is set when error already reported on myaccount screen
+
+										$description = 'Failed to find or use the payment mode - no credit card defined for the customer account';
+										$stripefailurecode = 'BADPAYMENTMODE';
+										$stripefailuremessage = 'Failed to find or use the payment mode - no credit card defined for the customer account';
+										$postactionmessages[] = $description . ' (' . $stripearrayofkeys['publishable_key'] . ')';
+
+										$object = $invoice;
+
+										$actioncode = 'PAYMENT_STRIPE_KO';
 										$extraparams = '';
 									}
-								} else {	// Else of the   if ($resultthirdparty > 0 && ! empty($customer)) {
-									if ($resultthirdparty <= 0) {
-										dol_syslog('SellYourSaasUtils Failed to load customer for thirdparty_id = ' . $thirdparty->id, LOG_WARNING);
-										$this->errors[] = 'Failed to load customer for thirdparty_id = ' . $thirdparty->id;
-									} else { // $customer stripe not found
-										dol_syslog('SellYourSaasUtils Failed to get Stripe customer id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'], LOG_WARNING);
-										$this->errors[] = 'Failed to get Stripe customer id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-									}
-									$error++;
-									$errorforinvoice++;
+								} else {
+									// If error because payment was canceled for a logical reason, we do nothing (no email and no event added)
+									$labeltouse = '';
+									$sendemailtocustomer = 0;
 
-									$labeltouse = 'InvoicePaymentFailure';
-									$sendemailtocustomer = 1;
-									if ($noemailtocustomeriferror) {
-										$sendemailtocustomer = 0;
-									}		// $noemailtocustomeriferror is set when error already reported on myaccount screen
-
-									$description = 'Failed to find or use your payment mode (no payment mode for this customer id)';
-									$stripefailurecode = 'BADPAYMENTMODE';
-									$stripefailuremessage = 'Failed to find or use your payment mode (no payment mode for this customer id)';
-									$postactionmessages = [];
+									$description = '';
+									$stripefailurecode = '';
+									$stripefailuremessage = '';
 
 									$object = $invoice;
 
-									$actioncode = 'PAYMENT_STRIPE_KO';
+									$actioncode = '';
 									$extraparams = '';
 								}
-
-								// Send email + create action after
-								if ($sendemailtocustomer && $labeltouse) {
-									dol_syslog("* Send email with result of payment - " . $labeltouse);
-
-									// Set output language
-									$outputlangs = new Translate('', $conf);
-									$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-									$outputlangs->loadLangs(["main", "members", "bills"]);
-
-									// Get email content from templae
-									$arraydefaultmessage = null;
-
-									include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-									$formmail = new FormMail($this->db);
-
-									if (!empty($labeltouse)) {
-										$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, 0, 1, $labeltouse);
-									}
-
-									if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-										$subject = $arraydefaultmessage->topic;
-										$msg = $arraydefaultmessage->content;
-									}
-
-									$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-
-									//$substitutionarray['__SELLYOURSAAS_PAYMENT_ERROR_DESC__'] = $stripefailurecode . ' ' . $stripefailuremessage;
-
-									complete_substitutions_array($substitutionarray, $outputlangs, $object);
-
-									// Set the property ->ref_customer with ref_customer of contract so __REF_CLIENT__ will be replaced in email content
-									// Search contract linked to invoice
-									$foundcontract = null;
-									$this->fetchObjectLinked();
-									if (is_array($this->linkedObjects['contrat']) && count($this->linkedObjects['contrat']) > 0) {
-										//dol_sort_array($object->linkedObjects['facture'], 'date');
-										foreach ($this->linkedObjects['contrat'] as $idcontract => $contract) {
-											$substitutionarray['__CONTRACT_REF__'] = $contract->ref_customer;
-											$substitutionarray['__REFCLIENT__'] = $contract->ref_customer;	// For backward compatibility
-											$substitutionarray['__REF_CLIENT__'] = $contract->ref_customer;
-											$foundcontract = $contract;
-											break;
-										}
-									}
-
-									dol_syslog('__DIRECTDOWNLOAD_URL_INVOICE__=' . $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__']);
-
-									//erics - erreur de réécriture de l'url de téléchargement direct de la facture ... le lien de base est le bon
-									//on cherche donc d'ou vien le pb ...
-									//$urlforsellyoursaasaccount = getRootUrlForAccount($foundcontract);
-									// if ($urlforsellyoursaasaccount) {
-									// 	$tmpforurl = preg_replace('/.*document.php/', '', $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__']);
-									// 	if ($tmpforurl) {
-									// 		dol_syslog('__DIRECTDOWNLOAD_URL_INVOICE__ cas 1, urlforsellyoursaasaccount=' . $urlforsellyoursaasaccount);
-									// 		// $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = $urlforsellyoursaasaccount . '/source/document.php' . $tmpforurl;
-									// 	} else {
-									// 		dol_syslog('__DIRECTDOWNLOAD_URL_INVOICE__ cas 2, urlforsellyoursaasaccount=' . $urlforsellyoursaasaccount);
-									// 		// $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = $urlforsellyoursaasaccount;
-									// 	}
-									// }
-
-									$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-									$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
-
-									// Attach a file ?
-									$file = '';
-									$listofpaths = [];
-									$listofnames = [];
-									$listofmimes = [];
-									if (is_object($invoice)) {
-										$invoicediroutput = $conf->facture->dir_output;
-										//erics - choix du PDF a joindre aux mails
-										$fileparams = dol_most_recent_file($invoicediroutput . '/' . $this->ref, preg_quote($this->ref, '/') . '[^\-]+*.pdf');
-										$file = $fileparams['fullname'];
-										//$file = $invoicediroutput . '/' . $this->ref . '/' . $this->ref . '.pdf';
-										// $file = '';		// Disable attachment of invoice in emails
-
-										if ($file) {
-											$listofpaths = [$file];
-											$listofnames = [basename($file)];
-											$listofmimes = [dol_mimetype($file)];
-										}
-									}
-									$from = "";//$conf->global->SELLYOURSAAS_NOREPLY_EMAIL;
-
-									$trackid = 'inv' . $this->id;
-									$moreinheader = 'X-Dolibarr-Info: doTakeStripePaymentForThirdParty' . "\r\n";
-
-									// Send email (substitutionarray must be done just before this)
-									include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
-									$mailfile = new CMailFile($subjecttosend, $this->thirdparty->email, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, '', '', 0, -1, '', '', $trackid, $moreinheader);
-									if ($mailfile->sendfile()) {
-										$result = 1;
-									} else {
-										$this->error = $langs->trans("ErrorFailedToSendMail", $from, $this->thirdparty->email) . '. ' . $mailfile->error;
-										$result = -1;
-									}
-
-									if ($result < 0) {
-										$errmsg = $this->error;
-										$postactionmessages[] = $errmsg;
-										$ispostactionok = -1;
-									} else {
-										if ($file) {
-											$postactionmessages[] = 'Email sent to thirdparty (to ' . $this->thirdparty->email . ' with invoice document attached: ' . $file . ', language = ' . $outputlangs->defaultlang . ')';
-										} else {
-											$postactionmessages[] = 'Email sent to thirdparty (to ' . $this->thirdparty->email . ' without any attached document, language = ' . $outputlangs->defaultlang . ')';
-										}
-									}
+							} else {	// Else of the   if ($resultthirdparty > 0 && ! empty($customer)) {
+								if ($resultthirdparty <= 0) {
+									dol_syslog('SellYourSaasUtils Failed to load customer for thirdparty_id = ' . $thirdparty->id, LOG_WARNING);
+									$this->errors[] = 'Failed to load customer for thirdparty_id = ' . $thirdparty->id;
+								} else { // $customer stripe not found
+									dol_syslog('SellYourSaasUtils Failed to get Stripe customer id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'], LOG_WARNING);
+									$this->errors[] = 'Failed to get Stripe customer id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
 								}
-
-								if ($description) {
-									dol_syslog("* Record event for payment result - " . $description);
-									require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-
-									// Insert record of payment (success or error)
-									$actioncomm = new ActionComm($this->db);
-
-									$actioncomm->type_code = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
-									$actioncomm->code = 'AC_' . $actioncode;
-									$actioncomm->label = $description;
-									$actioncomm->note_private = join(",\n", $postactionmessages);
-									$actioncomm->fk_project = $this->fk_project;
-									$actioncomm->datep = $now;
-									$actioncomm->datef = $now;
-									$actioncomm->percentage = -1;   // Not applicable
-									$actioncomm->socid = $thirdparty->id;
-									$actioncomm->contactid = 0;
-									$actioncomm->authorid = $user->id;   // User saving action
-									$actioncomm->userownerid = $user->id;	// Owner of action
-									// Fields when action is a real email (content is already into note)
-									/*$actioncomm->email_msgid = $object->email_msgid;
-									 $actioncomm->email_from  = $object->email_from;
-									 $actioncomm->email_sender= $object->email_sender;
-									 $actioncomm->email_to    = $object->email_to;
-									 $actioncomm->email_tocc  = $object->email_tocc;
-									 $actioncomm->email_tobcc = $object->email_tobcc;
-									 $actioncomm->email_subject = $object->email_subject;
-									 $actioncomm->errors_to   = $object->errors_to;*/
-									$actioncomm->fk_element = $this->id;
-									$actioncomm->elementtype = $this->element;
-									$actioncomm->extraparams = dol_trunc($extraparams, 250);
-
-									$actioncomm->create($user);
-								}
-
-								$this->description = $description;
-								$this->postactionmessages = $postactionmessages;
-							} catch (Exception $e) {
 								$error++;
 								$errorforinvoice++;
-								dol_syslog('Error ' . $e->getMessage(), LOG_ERR);
-								$this->errors[] = 'Error ' . $e->getMessage();
+
+								$labeltouse = 'InvoicePaymentFailure';
+								$sendemailtocustomer = 1;
+								if ($noemailtocustomeriferror) {
+									$sendemailtocustomer = 0;
+								}		// $noemailtocustomeriferror is set when error already reported on myaccount screen
+
+								$description = 'Failed to find or use your payment mode (no payment mode for this customer id)';
+								$stripefailurecode = 'BADPAYMENTMODE';
+								$stripefailuremessage = 'Failed to find or use your payment mode (no payment mode for this customer id)';
+								$postactionmessages = [];
+
+								$object = $invoice;
+
+								$actioncode = 'PAYMENT_STRIPE_KO';
+								$extraparams = '';
 							}
-						} else {	// If remain to pay is null
+
+							// Send email + create action after
+							if ($sendemailtocustomer && $labeltouse) {
+								dol_syslog("* Send email with result of payment - " . $labeltouse);
+
+								// Set output language
+								$outputlangs = new Translate('', $conf);
+								$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+								$outputlangs->loadLangs(["main", "members", "bills"]);
+
+								// Get email content from templae
+								$arraydefaultmessage = null;
+
+								include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+								$formmail = new FormMail($this->db);
+
+								if (!empty($labeltouse)) {
+									$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, 0, 1, $labeltouse);
+								}
+
+								if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+									$subject = $arraydefaultmessage->topic;
+									$msg = $arraydefaultmessage->content;
+								}
+
+								$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+
+								//$substitutionarray['__SELLYOURSAAS_PAYMENT_ERROR_DESC__'] = $stripefailurecode . ' ' . $stripefailuremessage;
+
+								complete_substitutions_array($substitutionarray, $outputlangs, $object);
+
+								// Set the property ->ref_customer with ref_customer of contract so __REF_CLIENT__ will be replaced in email content
+								// Search contract linked to invoice
+								$foundcontract = null;
+								$this->fetchObjectLinked();
+								if (is_array($this->linkedObjects['contrat']) && count($this->linkedObjects['contrat']) > 0) {
+									//dol_sort_array($object->linkedObjects['facture'], 'date');
+									foreach ($this->linkedObjects['contrat'] as $idcontract => $contract) {
+										$substitutionarray['__CONTRACT_REF__'] = $contract->ref_customer;
+										$substitutionarray['__REFCLIENT__'] = $contract->ref_customer;	// For backward compatibility
+										$substitutionarray['__REF_CLIENT__'] = $contract->ref_customer;
+										$foundcontract = $contract;
+										break;
+									}
+								}
+
+								dol_syslog('__DIRECTDOWNLOAD_URL_INVOICE__=' . $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__']);
+
+								//erics - erreur de réécriture de l'url de téléchargement direct de la facture ... le lien de base est le bon
+								//on cherche donc d'ou vien le pb ...
+								//$urlforsellyoursaasaccount = getRootUrlForAccount($foundcontract);
+								// if ($urlforsellyoursaasaccount) {
+								// 	$tmpforurl = preg_replace('/.*document.php/', '', $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__']);
+								// 	if ($tmpforurl) {
+								// 		dol_syslog('__DIRECTDOWNLOAD_URL_INVOICE__ cas 1, urlforsellyoursaasaccount=' . $urlforsellyoursaasaccount);
+								// 		// $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = $urlforsellyoursaasaccount . '/source/document.php' . $tmpforurl;
+								// 	} else {
+								// 		dol_syslog('__DIRECTDOWNLOAD_URL_INVOICE__ cas 2, urlforsellyoursaasaccount=' . $urlforsellyoursaasaccount);
+								// 		// $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = $urlforsellyoursaasaccount;
+								// 	}
+								// }
+
+								$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+								$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
+
+								// Attach a file ?
+								$file = '';
+								$listofpaths = [];
+								$listofnames = [];
+								$listofmimes = [];
+								if (is_object($invoice)) {
+									$invoicediroutput = $conf->facture->dir_output;
+									//erics - choix du PDF a joindre aux mails
+									$fileparams = dol_most_recent_file($invoicediroutput . '/' . $this->ref, preg_quote($this->ref, '/') . '[^\-]+*.pdf');
+									$file = $fileparams['fullname'];
+									//$file = $invoicediroutput . '/' . $this->ref . '/' . $this->ref . '.pdf';
+									// $file = '';		// Disable attachment of invoice in emails
+
+									if ($file) {
+										$listofpaths = [$file];
+										$listofnames = [basename($file)];
+										$listofmimes = [dol_mimetype($file)];
+									}
+								}
+								$from = "";//$conf->global->SELLYOURSAAS_NOREPLY_EMAIL;
+
+								$trackid = 'inv' . $this->id;
+								$moreinheader = 'X-Dolibarr-Info: makeStripeSepaRequest' . "\r\n";
+
+								// Send email (substitutionarray must be done just before this)
+								include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
+								$mailfile = new CMailFile($subjecttosend, $this->thirdparty->email, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, '', '', 0, -1, '', '', $trackid, $moreinheader);
+								if ($mailfile->sendfile()) {
+									$result = 1;
+								} else {
+									$this->error = $langs->trans("ErrorFailedToSendMail", $from, $this->thirdparty->email) . '. ' . $mailfile->error;
+									$result = -1;
+								}
+
+								if ($result < 0) {
+									$errmsg = $this->error;
+									$postactionmessages[] = $errmsg;
+									$ispostactionok = -1;
+								} else {
+									if ($file) {
+										$postactionmessages[] = 'Email sent to thirdparty (to ' . $this->thirdparty->email . ' with invoice document attached: ' . $file . ', language = ' . $outputlangs->defaultlang . ')';
+									} else {
+										$postactionmessages[] = 'Email sent to thirdparty (to ' . $this->thirdparty->email . ' without any attached document, language = ' . $outputlangs->defaultlang . ')';
+									}
+								}
+							}
+
+							if ($description) {
+								dol_syslog("* Record event for payment result - " . $description);
+								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+								// Insert record of payment (success or error)
+								$actioncomm = new ActionComm($this->db);
+
+								$actioncomm->type_code = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+								$actioncomm->code = 'AC_' . $actioncode;
+								$actioncomm->label = $description;
+								$actioncomm->note_private = join(",\n", $postactionmessages);
+								$actioncomm->fk_project = $this->fk_project;
+								$actioncomm->datep = $now;
+								$actioncomm->datef = $now;
+								$actioncomm->percentage = -1;   // Not applicable
+								$actioncomm->socid = $thirdparty->id;
+								$actioncomm->contactid = 0;
+								$actioncomm->authorid = $user->id;   // User saving action
+								$actioncomm->userownerid = $user->id;	// Owner of action
+								// Fields when action is a real email (content is already into note)
+								/*$actioncomm->email_msgid = $object->email_msgid;
+								 $actioncomm->email_from  = $object->email_from;
+								 $actioncomm->email_sender= $object->email_sender;
+								 $actioncomm->email_to    = $object->email_to;
+								 $actioncomm->email_tocc  = $object->email_tocc;
+								 $actioncomm->email_tobcc = $object->email_tobcc;
+								 $actioncomm->email_subject = $object->email_subject;
+								 $actioncomm->errors_to   = $object->errors_to;*/
+								$actioncomm->fk_element = $this->id;
+								$actioncomm->elementtype = $this->element;
+								$actioncomm->extraparams = dol_trunc($extraparams, 250);
+
+								$actioncomm->create($user);
+							}
+
+							$this->description = $description;
+							$this->postactionmessages = $postactionmessages;
+						} catch (Exception $e) {
 							$error++;
 							$errorforinvoice++;
-							dol_syslog("Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?", LOG_WARNING);
-							$this->errors[] = "Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?";
+							dol_syslog('Error ' . $e->getMessage(), LOG_ERR);
+							$this->errors[] = 'Error ' . $e->getMessage();
 						}
+					} else {	// If remain to pay is null
+						$error++;
+						$errorforinvoice++;
+						dol_syslog("Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?", LOG_WARNING);
+						$this->errors[] = "Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?";
+					}
 
-						$sql = "INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande(";
-						$sql .= "fk_facture, ";
-						$sql .= " amount, date_demande, fk_user_demande, ext_payment_id, ext_payment_site, sourcetype, entity)";
-						$sql .= " VALUES (".$this->id;
-						$sql .= ",".((float) price2num($amount));
-						$sql .= ",'".$this->db->idate($now)."'";
-						$sql .= ",".((int) $fuser->id);
-						$sql .= ",'".$this->db->escape($stripe_id)."'";
-						$sql .= ",'".$this->db->escape($stripe_uri)."'";
-						$sql .= ",'".$this->db->escape($sourcetype)."'";
-						$sql .= ",".$conf->entity;
-						$sql .= ")";
+					$sql = "INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande(";
+					$sql .= "fk_facture, ";
+					$sql .= " amount, date_demande, fk_user_demande, ext_payment_id, ext_payment_site, sourcetype, entity)";
+					$sql .= " VALUES (".$this->id;
+					$sql .= ",".((float) price2num($amount));
+					$sql .= ",'".$this->db->idate($now)."'";
+					$sql .= ",".((int) $fuser->id);
+					$sql .= ",'".$this->db->escape($stripe_id)."'";
+					$sql .= ",'".$this->db->escape($stripe_uri)."'";
+					$sql .= ",'".$this->db->escape($sourcetype)."'";
+					$sql .= ",".$conf->entity;
+					$sql .= ")";
 
-						dol_syslog(get_class($this)."::demande_prelevement_stripe", LOG_DEBUG);
-						$resql = $this->db->query($sql);
-						if (!$resql) {
-							$this->error = $this->db->lasterror();
-							dol_syslog(get_class($this).'::demande_prelevement_stripe Erreur');
-							$error++;
-						}
-					} else {
-						$this->error = 'WithdrawRequestErrorNilAmount';
-						dol_syslog(get_class($this).'::demande_prelevement_stripe WithdrawRequestErrorNilAmount');
+					dol_syslog(get_class($this)."::makeStripeSepaRequest", LOG_DEBUG);
+					$resql = $this->db->query($sql);
+					if (!$resql) {
+						$this->error = $this->db->lasterror();
+						dol_syslog(get_class($this).'::makeStripeSepaRequest Erreur');
 						$error++;
 					}
-
-					if (!$error) {
-						// Force payment mode of invoice to withdraw
-						$payment_mode_id = dol_getIdFromCode($this->db, ($type == 'bank-transfer' ? 'VIR' : 'PRE'), 'c_paiement', 'code', 'id', 1);
-						if ($payment_mode_id > 0) {
-							$result = $this->setPaymentMethods($payment_mode_id);
-						}
-					}
-
-					if ($error) {
-						return -1;
-					}
-					return 1;
 				} else {
-					$this->error = "A request already exists";
-					dol_syslog(get_class($this).'::demande_prelevement_stripe Impossible de creer une demande, demande deja en cours');
-					return 0;
+					$this->error = 'WithdrawRequestErrorNilAmount';
+					dol_syslog(get_class($this).'::makeStripeSepaRequest WithdrawRequestErrorNilAmount');
+					$error++;
 				}
+
+				if (!$error) {
+					// Force payment mode of invoice to withdraw
+					$payment_mode_id = dol_getIdFromCode($this->db, ($type == 'bank-transfer' ? 'VIR' : 'PRE'), 'c_paiement', 'code', 'id', 1);
+					if ($payment_mode_id > 0) {
+						$result = $this->setPaymentMethods($payment_mode_id);
+					}
+				}
+
+				if ($error) {
+					return -1;
+				}
+				return 1;
 			} else {
 				$this->error = $this->db->error();
-				dol_syslog(get_class($this).'::demande_prelevement_stripe Erreur -2');
+				dol_syslog(get_class($this).'::makeStripeSepaRequest Erreur -2');
 				return -2;
 			}
 		} else {
 			$this->error = "Status of invoice does not allow this";
-			dol_syslog(get_class($this)."::demande_prelevement_stripe ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
+			dol_syslog(get_class($this)."::makeStripeSepaRequest ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
 			return -3;
 		}
 	}

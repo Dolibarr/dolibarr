@@ -694,7 +694,7 @@ class RecruitmentJobPosition extends CommonObject
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				// Define output language
 				$outputlangs = $langs;
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$outputlangs = new Translate("", $conf);
 					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);

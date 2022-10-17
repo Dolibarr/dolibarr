@@ -155,6 +155,9 @@ $permissiontoadd = $user->rights->expensereport->creer;	// Used by the include o
 /*
  * Actions
  */
+$value_unit_ht = price2num(GETPOST('value_unit_ht', 'alpha'), 'MU');
+$value_unit = price2num(GETPOST('value_unit', 'alpha'), 'MU');
+$qty = price2num(GETPOST('qty', 'alpha'));
 
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -384,10 +387,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -494,10 +497,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -604,10 +607,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -718,10 +721,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -832,10 +835,10 @@ if (empty($reshook)) {
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						$outputlangs = $langs;
 						$newlang = '';
-						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
-						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 							$newlang = $object->thirdparty->default_lang;
 						}
 						if (!empty($newlang)) {
@@ -944,10 +947,10 @@ if (empty($reshook)) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -983,10 +986,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -1012,10 +1015,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -1186,7 +1189,7 @@ if (empty($reshook)) {
 					// Define output language
 					$outputlangs = $langs;
 					$newlang = GETPOST('lang_id', 'alpha');
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -1230,10 +1233,10 @@ if (empty($reshook)) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -1322,10 +1325,10 @@ if (empty($reshook)) {
 					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 						$outputlangs = $langs;
 						$newlang = '';
-						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
-						if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 							$newlang = $object->thirdparty->default_lang;
 						}
 						if (!empty($newlang)) {
@@ -2370,14 +2373,14 @@ if ($action == 'create') {
 						print '</td>';
 
 						// VAT
-						$selectedvat = price2num($line->vatrate).($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
+						$selectedvat = price2num($line->vatrate).(!empty($line->vat_src_code) ? ' ('.$line->vat_src_code.')' : '');
 						print '<td class="right">';
 						print $form->load_tva('vatrate', (GETPOSTISSET("vatrate") ? GETPOST("vatrate") : $selectedvat), $mysoc, '', 0, 0, '', false, 1);
 						print '</td>';
 
 						// Unit price
 						print '<td class="right">';
-						print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num($line->value_unit_ht)).'"'.$taxlessUnitPriceDisabled.' />';
+						print '<input type="text" min="0" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag(price2num((!empty($line->value_unit_ht) ? $line->value_unit_ht : ""))).'"'.$taxlessUnitPriceDisabled.' />';
 						print '</td>';
 
 						// Unit price with tax
@@ -2521,19 +2524,19 @@ if ($action == 'create') {
 
 				// Select date
 				print '<td class="center inputdate">';
-				print $form->selectDate($date ? $date : -1, 'date', 0, 0, 0, '', 1, 1);
+				print $form->selectDate(!empty($date) ? $date : -1, 'date', 0, 0, 0, '', 1, 1);
 				print '</td>';
 
 				// Select project
 				if (isModEnabled('project')) {
 					print '<td class="inputproject">';
-					$formproject->select_projects(-1, $fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+					$formproject->select_projects(-1, !empty($fk_project) ? $fk_project : 0, 'fk_project', 0, 0, $projectRequired ? 0 : 1, -1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 					print '</td>';
 				}
 
 					// Select type
 					print '<td class="center inputtype">';
-					print $formexpensereport->selectTypeExpenseReport($fk_c_type_fees, 'fk_c_type_fees', 1);
+					print $formexpensereport->selectTypeExpenseReport(!empty($fk_c_type_fees) ? $fk_c_type_fees : "", 'fk_c_type_fees', 1);
 					print '</td>';
 
 				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
@@ -2545,7 +2548,7 @@ if ($action == 'create') {
 
 				// Add comments
 				print '<td class="inputcomment">';
-				print '<textarea class="flat_ndf centpercent" name="comments" rows="'.ROWS_2.'">'.dol_escape_htmltag($comments, 0, 1).'</textarea>';
+				print '<textarea class="flat_ndf centpercent" name="comments" rows="'.ROWS_2.'">'.dol_escape_htmltag(!empty($comments) ? $comments : "", 0, 1).'</textarea>';
 				print '</td>';
 
 				// Select VAT
@@ -2554,22 +2557,22 @@ if ($action == 'create') {
 				if (!empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) {
 					$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 				}
-				print $form->load_tva('vatrate', ($vatrate != '' ? $vatrate : $defaultvat), $mysoc, '', 0, 0, '', false, 1);
+				print $form->load_tva('vatrate', (!empty($vatrate) ? $vatrate : $defaultvat), $mysoc, '', 0, 0, '', false, 1);
 				print '</td>';
 
 				// Unit price net
 				print '<td class="right inputpricenet">';
-				print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag($value_unit_ht).'"'.$taxlessUnitPriceDisabled.' />';
+				print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag((!empty($value_unit_ht) ? $value_unit_ht : 0)).'"'.$taxlessUnitPriceDisabled.' />';
 				print '</td>';
 
 				// Unit price with tax
 				print '<td class="right inputtax">';
-				print '<input type="text" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag($value_unit).'">';
+				print '<input type="text" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag((!empty($value_unit) ? $value_unit : 0)).'">';
 				print '</td>';
 
 				// Quantity
 				print '<td class="right inputqty">';
-				print '<input type="text" min="0" class=" input_qty right maxwidth50"  name="qty" value="'.dol_escape_htmltag($qty ? $qty : 1).'">'; // We must be able to enter decimal qty
+				print '<input type="text" min="0" class=" input_qty right maxwidth50"  name="qty" value="'.dol_escape_htmltag(!empty($qty) ? $qty : 1).'">'; // We must be able to enter decimal qty
 				print '</td>';
 
 				// Picture

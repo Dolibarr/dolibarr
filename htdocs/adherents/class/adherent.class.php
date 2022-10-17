@@ -1867,10 +1867,10 @@ class Adherent extends CommonObject
 				$outputlangs = $langs;
 				$newlang = '';
 				$lang_id = GETPOST('lang_id');
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && !empty($lang_id)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && !empty($lang_id)) {
 					$newlang = $lang_id;
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $customer->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -2352,8 +2352,8 @@ class Adherent extends CommonObject
 				$statusType = 'status1';
 				$labelStatus = $langs->trans("MemberStatusActive");
 				$labelStatusShort = $langs->trans("MemberStatusActiveShort");
-			} elseif ($date_end_subscription < dol_now()) {
-				$statusType = 'status3';
+			} elseif ($date_end_subscription < dol_now()) {	// expired
+				$statusType = 'status8';
 				$labelStatus = $langs->trans("MemberStatusActiveLate");
 				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
 			} else {

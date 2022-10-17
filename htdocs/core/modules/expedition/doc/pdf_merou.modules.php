@@ -64,9 +64,9 @@ class pdf_merou extends ModelePdfExpedition
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
-	public $phpmin = array(5, 6);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -266,7 +266,7 @@ class pdf_merou extends ModelePdfExpedition
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Shipment"));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -281,7 +281,7 @@ class pdf_merou extends ModelePdfExpedition
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 52;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 

@@ -1376,7 +1376,7 @@ class BOM extends CommonObject
 					$unit = measuringUnitString($line->fk_unit, '', '', 1);
 					$qty = convertDurationtoHour($line->qty, $unit);
 
-					if ($conf->workstation->enabled && !empty($tmpproduct->fk_default_workstation)) {
+					if (isModEnabled('workstation') && !empty($tmpproduct->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);
 						$res = $workstation->fetch($tmpproduct->fk_default_workstation);
 

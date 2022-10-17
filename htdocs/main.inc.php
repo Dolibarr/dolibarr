@@ -518,7 +518,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 	$sensitiveget = false;
 	if ((GETPOSTISSET('massaction') || GETPOST('action', 'aZ09')) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 3) {
 		// All GET actions and mass actions are processed as sensitive.
-		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'edit', 'file_manager', 'presend', 'presend_addmessage'))) {	// We exclude the case action='create' and action='file_manager' that are legitimate
+		if (GETPOSTISSET('massaction') || !in_array(GETPOST('action', 'aZ09'), array('create', 'createsite', 'createcard', 'edit', 'editvalidator', 'file_manager', 'presend', 'presend_addmessage', 'preview', 'specimen'))) {	// We exclude the case action='create' and action='file_manager' that are legitimate
 			$sensitiveget = true;
 		}
 	} elseif (getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN') >= 2) {
@@ -850,7 +850,7 @@ if (!defined('NOLOGIN')) {
 		// End test login / passwords
 		if (!$login || (in_array('ldap', $authmode) && empty($passwordtotest))) {	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connexion is a success.
 			// No data to test login, so we show the login page.
-			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09')." - actionlogin=".GETPOST('actionlogin', 'aZ09')." - showing the login form and exit", LOG_INFO);
+			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." - action=".GETPOST('action', 'aZ09')." - actionlogin=".GETPOST('actionlogin', 'aZ09')." - showing the login form and exit", LOG_NOTICE);
 			if (defined('NOREDIRECTBYMAINTOLOGIN')) {
 				// When used with NOREDIRECTBYMAINTOLOGIN set, the http header must already be set when including the main.
 				// See example with selectsearchbox.php. This case is reserverd for the selectesearchbox.php so we can
@@ -1540,6 +1540,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		print '<meta name="robots" content="'.($disablenoindex ? 'index' : 'noindex').($disablenofollow ? ',follow' : ',nofollow').'">'."\n"; // Do not index
 		print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n"; // Scale for mobile device
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
+		print '<meta name="anti-csrf-token" content="'.newToken().'">'."\n";
 		if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 			print '<meta name="MAIN_FEATURES_LEVEL" content="'.getDolGlobalInt('MAIN_FEATURES_LEVEL').'">'."\n";
 		}
@@ -1548,8 +1549,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (!empty($mysoc->logo_squarred_mini)) {
 			$favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 		}
-		if (!empty($conf->global->MAIN_FAVICON_URL)) {
-			$favicon = $conf->global->MAIN_FAVICON_URL;
+		if (getDolGlobalString('MAIN_FAVICON_URL')) {
+			$favicon = getDolGlobalString('MAIN_FAVICON_URL');
 		}
 		if (empty($conf->dol_use_jmobile)) {
 			print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n"; // Not required into an Android webview
@@ -2603,7 +2604,7 @@ function top_menu_bookmark()
 	$html = '';
 
 	// Define $bookmarks
-	if (empty($conf->bookmark->enabled) || empty($user->rights->bookmark->lire)) {
+	if (!isModEnabled('bookmark') || empty($user->rights->bookmark->lire)) {
 		return $html;
 	}
 
@@ -3004,7 +3005,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			}
 
 			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
-			print '<a class="help" target="_blank" rel="noopener noreferrer" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
+			print '<a class="help" target="_blank" rel="noopener noreferrer" href="'.$bugbaseurl.'"><i class="fas fa-bug"></i> '.$langs->trans("FindBug").'</a>';
 			print '</div>';
 		}
 
@@ -3304,7 +3305,7 @@ if (!function_exists("llxFooter")) {
 		}
 
 		// Wrapper to add log when clicking on download or preview
-		if (!empty($conf->blockedlog->enabled) && is_object($object) && !empty($object->id) && $object->id > 0 && $object->statut > 0) {
+		if (isModEnabled('blockedlog') && is_object($object) && !empty($object->id) && $object->id > 0 && $object->statut > 0) {
 			if (in_array($object->element, array('facture'))) {       // Restrict for the moment to element 'facture'
 				print "\n<!-- JS CODE TO ENABLE log when making a download or a preview of a document -->\n";
 				?>

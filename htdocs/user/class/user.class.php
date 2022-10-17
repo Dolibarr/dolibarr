@@ -720,6 +720,7 @@ class User extends CommonObject
 			'inventory' => 'stock',
 			'invoice' => 'facture',
 			'invoice_supplier' => 'fournisseur',
+			'order_supplier' => 'fournisseur',
 			'knowledgerecord' => 'knowledgerecord@knowledgemanagement',
 			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
 			'job@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
@@ -2691,7 +2692,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 *  Return a HTML link to the user card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
@@ -2719,8 +2720,7 @@ class User extends CommonObject
 			$withpictoimg = 0;
 		}
 
-		$result = ''; $label = '';
-		$companylink = '';
+		$result = ''; $label = ''; $companylink = '';
 
 		if (!empty($this->photo)) {
 			$label .= '<div class="photointooltip floatright">';

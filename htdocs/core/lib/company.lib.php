@@ -438,7 +438,11 @@ function societe_prepare_head2($object)
  */
 function societe_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('societe');
+	$extrafields->fetch_name_optionals_label('socpeople');
 
 	$h = 0;
 	$head = array();
@@ -456,11 +460,19 @@ function societe_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/societe/admin/societe_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsThirdParties");
+	$nbExtrafields = $extrafields->attributes['societe']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/societe/admin/contact_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsContacts");
+	$nbExtrafields = $extrafields->attributes['socpeople']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_contacts';
 	$h++;
 
@@ -962,7 +974,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		$sortfield = "t.lastname";
 	}
 
-	if (!empty($conf->clicktodial->enabled)) {
+	if (isModEnabled('clicktodial')) {
 		$user->fetch_clicktodial(); // lecture des infos de clicktodial du user
 	}
 
@@ -1737,7 +1749,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre">';
-		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, (empty($conf->global->AGENDA_USE_MULTISELECT_TYPE) ? 0 : 1), 1, 'minwidth200');
+		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, (empty($conf->global->AGENDA_USE_MULTISELECT_TYPE) ? 0 : 1), 1, 'minwidth100 maxwidth150');
 		$out .= '</td>';
 		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
 		$out .= '<td class="liste_titre center">';
@@ -1957,6 +1969,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= "</tr>\n";
 			$i++;
 		}
+		if (empty($histo)) {
+			$colspan = 9;
+			$out .= '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		}
+
 		$out .= "</table>\n";
 		$out .= "</div>\n";
 

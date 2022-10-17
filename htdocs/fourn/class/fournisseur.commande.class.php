@@ -836,7 +836,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$label = '';
 
-		if ($user->rights->fournisseur->commande->lire) {
+		if ($user->hasRight("fournisseur", "commande", "read")) {
 			$label = '<u class="paddingrightonly">'.$langs->trans("SupplierOrder").'</u>';
 			if (isset($this->statut)) {
 				$label .= ' '.$this->getLibStatut(5);
@@ -1097,7 +1097,7 @@ class CommandeFournisseur extends CommonOrder
 				}
 
 				// If stock is incremented on validate order, we must increment it
-				if (!$error && $movetoapprovestatus && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
+				if (!$error && $movetoapprovestatus && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
 					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 					$langs->load("agenda");
 
@@ -1832,7 +1832,7 @@ class CommandeFournisseur extends CommonOrder
 						// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
 						$result = $prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', (isset($this->fk_soc) ? $this->fk_soc : $this->socid)); // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
 
-						// If supplier order created from customer order, we take best supplier price
+						// If supplier order created from sales order, we take best supplier price
 						// If $pu (defined previously from pu_ht or pu_ttc) is not defined at all, we also take the best supplier price
 						if ($result > 0 && ($origin == 'commande' || $pu === '')) {
 							$pu = $prod->fourn_pu; // Unit price supplier price set by get_buyprice
@@ -2085,7 +2085,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			// If module stock is enabled and the stock increase is done on purchase order dispatching
-			if (!$error && $entrepot > 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+			if (!$error && $entrepot > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
 				$mouv = new MouvementStock($this->db);
 				if ($product > 0) {
 					// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
@@ -2094,9 +2094,9 @@ class CommandeFournisseur extends CommonOrder
 
 					// Method change if qty < 0
 					if (!empty($conf->global->SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN) && $qty < 0) {
-						$result = $mouv->livraison($user, $product, $entrepot, $qty*(-1), $price, $comment, $now, $eatby, $sellby, $batch);
+						$result = $mouv->livraison($user, $product, $entrepot, $qty*(-1), $price, $comment, $now, $eatby, $sellby, $batch, 0, $inventorycode);
 					} else {
-						$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch, $inventorycode);
+						$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch, '', 0, $inventorycode);
 					}
 
 					if ($result < 0) {
@@ -2382,7 +2382,7 @@ class CommandeFournisseur extends CommonOrder
 		dol_syslog(get_class($this)."::Livraison");
 
 		$usercanreceive = 0;
-		if (empty($conf->reception->enabled)) {
+		if (!isModEnabled('reception')) {
 			$usercanreceive = $user->rights->fournisseur->commande->receptionner;
 		} else {
 			$usercanreceive = $user->rights->reception->creer;
@@ -2608,11 +2608,11 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
-	 *  Update a supplier order from a customer order
+	 *  Update a supplier order from a sales order
 	 *
 	 *  @param  User	$user           User that create
-	 *  @param  int		$idc			Id of supplier order to update
-	 *  @param	int		$comclientid	Id of customer order to use as template
+	 *  @param  int		$idc			Id of purchase order to update
+	 *  @param	int		$comclientid	Id of sale order to use as template
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	public function updateFromCommandeClient($user, $idc, $comclientid)

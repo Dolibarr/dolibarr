@@ -108,7 +108,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 		$now = dol_now();
 
 		// La requete doit retourner: id, email, name
-		$sql = "SELECT s.rowid as id, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture, cd.date_fin_validite, cd.fk_contrat";
+		$sql = "SELECT s.rowid as id, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture as date_start_real, cd.date_fin_validite as date_end, cd.fk_contrat";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
@@ -135,8 +135,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
 					'lastname' => $obj->name, // For thirdparties, lastname must be name
 					'firstname' => '', // For thirdparties, firstname is ''
 					'other' =>
-					('DateStart='.dol_print_date($this->db->jdate($obj->date_ouverture), 'day')).';'.
-					('DateEnd='.dol_print_date($this->db->jdate($obj->date_fin_validite), 'day')).';'.
+					('DateStart='.dol_print_date($this->db->jdate($obj->date_start_real), 'day')).';'.	// date start real
+					('DateEnd='.dol_print_date($this->db->jdate($obj->date_end), 'day')).';'.			// date end planned
 					('Contract='.$obj->fk_contrat).';'.
 					('ContactLine='.$obj->cdid),
 					'source_url' => $this->url($obj->id),

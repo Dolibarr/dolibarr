@@ -140,7 +140,7 @@ if ($object->id) {
 	/*
 	 * Affichage onglets
 	 */
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = user_prepare_head($object);

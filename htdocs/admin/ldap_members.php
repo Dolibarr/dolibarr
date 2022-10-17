@@ -188,7 +188,7 @@ if (!function_exists("ldap_connect")) {
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&token='.newToken().'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print dol_get_fiche_head($head, 'members', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'members', '', -1);
 
 
 print '<span class="opacitymedium">'.$langs->trans("LDAPDescMembers").'</span><br>';

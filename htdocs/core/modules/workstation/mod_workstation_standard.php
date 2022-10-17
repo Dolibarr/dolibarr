@@ -26,7 +26,7 @@
 require_once DOL_DOCUMENT_ROOT . '/core/modules/workstation/modules_workstation.php';
 
 /**
- *	Class to manage customer order numbering rules standard
+ * Class to manage the Standard numbering rule for Workstation
  */
 class mod_workstation_standard extends ModeleNumRefWorkstation
 {

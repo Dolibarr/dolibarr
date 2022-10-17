@@ -432,6 +432,9 @@ if ($action == 'confirm_generateinvoice') {
 		$tmpinvoice->socid = $projectstatic->thirdparty->id;
 		$tmpinvoice->date = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$tmpinvoice->fk_project = $projectstatic->id;
+		$tmpinvoice->cond_reglement_id = $projectstatic->thirdparty->cond_reglement_id;
+		$tmpinvoice->mode_reglement_id = $projectstatic->thirdparty->mode_reglement_id;
+		$tmpinvoice->fk_account = $projectstatic->thirdparty->fk_account;
 
 		if ($invoiceToUse) {
 			$tmpinvoice->fetch($invoiceToUse);
@@ -1060,7 +1063,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				//'builddoc'=>$langs->trans("PDFMerge"),
 			);
 		}
-		if ( !empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer) {
+		if ( isModEnabled('ficheinter') && $user->rights->ficheinter->creer) {
 			$langs->load("interventions");
 			$arrayofmassactions['generateinter'] = $langs->trans("GenerateInter");
 		}
@@ -1985,7 +1988,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (!empty($arrayfields['t.note']['checked'])) {
 				print '<td class="small">';
 				if ($action == 'editline' && GETPOST('lineid', 'int') == $task_time->rowid) {
-					print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_1.'">'.dol_escape_htmltag($task_time->note).'</textarea>';
+					print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_1.'">'.dol_escape_htmltag($task_time->note, 0, 1).'</textarea>';
 				} else {
 					print dol_nl2br($task_time->note);
 				}
@@ -1994,7 +1997,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					$totalarray['nbfield']++;
 				}
 			} elseif ($action == 'editline' && GETPOST('lineid', 'int') == $task_time->rowid) {
-				print '<input type="hidden" name="timespent_note_line" value="'.dol_escape_htmltag($task_time->note).'">';
+				print '<input type="hidden" name="timespent_note_line" value="'.dol_escape_htmltag($task_time->note, 0, 1).'">';
 			}
 
 			// Time spent
@@ -2216,13 +2219,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!empty($arrayfields['t.note']['checked'])) {
 					print '<td class="tdoverflowmax300">';
 					if ($action == 'splitline' && GETPOST('lineid', 'int') == $task_time->rowid) {
-						print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_1.'">'.dol_escape_htmltag($task_time->note).'</textarea>';
+						print '<textarea name="timespent_note_line" width="95%" rows="'.ROWS_1.'">'.dol_escape_htmltag($task_time->note, 0, 1).'</textarea>';
 					} else {
 						print dol_nl2br($task_time->note);
 					}
 					print '</td>';
 				} elseif ($action == 'splitline' && GETPOST('lineid', 'int') == $task_time->rowid) {
-					print '<input type="hidden" name="timespent_note_line" rows="'.ROWS_1.'" value="'.dol_escape_htmltag($task_time->note).'">';
+					print '<input type="hidden" name="timespent_note_line" rows="'.ROWS_1.'" value="'.dol_escape_htmltag($task_time->note, 0, 1).'">';
 				}
 
 				// Time spent
@@ -2354,13 +2357,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!empty($arrayfields['t.note']['checked'])) {
 					print '<td class="small tdoverflowmax300"">';
 					if ($action == 'splitline' && GETPOST('lineid', 'int') == $task_time->rowid) {
-						print '<textarea name="timespent_note_line_2" width="95%" rows="'.ROWS_1.'">'.dol_escape_htmltag($task_time->note).'</textarea>';
+						print '<textarea name="timespent_note_line_2" width="95%" rows="'.ROWS_1.'">'.dol_escape_htmltag($task_time->note, 0, 1).'</textarea>';
 					} else {
 						print dol_nl2br($task_time->note);
 					}
 					print '</td>';
 				} elseif ($action == 'splitline' && GETPOST('lineid', 'int') == $task_time->rowid) {
-					print '<input type="hidden" name="timespent_note_line_2" value="'.dol_escape_htmltag($task_time->note).'">';
+					print '<input type="hidden" name="timespent_note_line_2" value="'.dol_escape_htmltag($task_time->note, 0, 1).'">';
 				}
 
 				// Time spent

@@ -68,7 +68,7 @@ $conditions = array(
 	'USERSIGN' => 1,
 	'MAILING' => isModEnabled('mailing'),
 	'MAIL' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande')),
-	'TICKET' => !empty($conf->ticket->enabled),
+	'TICKET' => isModEnabled('ticket'),
 );
 // Picto
 $picto = array(

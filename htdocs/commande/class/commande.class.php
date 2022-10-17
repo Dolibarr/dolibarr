@@ -103,12 +103,6 @@ class Commande extends CommonOrder
 	public $ref_client;
 
 	/**
-	 * @var string Internal ref for order
-	 * @deprecated
-	 */
-	public $ref_int;
-
-	/**
 	 * @var int Contact ID
 	 */
 	public $contactid;
@@ -311,7 +305,6 @@ class Commande extends CommonOrder
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20, 'index'=>1),
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>25),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>26),
-		'ref_int' =>array('type'=>'varchar(255)', 'label'=>'RefInt', 'enabled'=>1, 'visible'=>0, 'position'=>27), // deprecated
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>28),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>20),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>25),
@@ -521,7 +514,7 @@ class Commande extends CommonOrder
 
 		if (!$error) {
 			// If stock is incremented on validate order, we must increment it
-			if ($result >= 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
+			if ($result >= 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
@@ -649,7 +642,7 @@ class Commande extends CommonOrder
 			}
 
 			// If stock is decremented on validate order, we must reincrement it
-			if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
 				$result = 0;
 
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
@@ -834,7 +827,7 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			// If stock is decremented on validate order, we must reincrement it
-			if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
+			if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
@@ -945,7 +938,7 @@ class Commande extends CommonOrder
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
-		$sql .= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_ext, ref_client, ref_int";
+		$sql .= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_ext, ref_client";
 		$sql .= ", model_pdf, fk_cond_reglement, deposit_percent, fk_mode_reglement, fk_account, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
 		$sql .= ", fk_shipping_method";
 		$sql .= ", fk_warehouse";
@@ -964,7 +957,6 @@ class Commande extends CommonOrder
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
 		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
-		$sql .= ", ".($this->ref_int ? "'".$this->db->escape($this->ref_int)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->cond_reglement_id > 0 ? ((int) $this->cond_reglement_id) : "null");
 		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null");
@@ -1827,7 +1819,7 @@ class Commande extends CommonOrder
 		$sql .= ', c.fk_shipping_method';
 		$sql .= ', c.fk_warehouse';
 		$sql .= ', c.fk_projet as fk_project, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
-		$sql .= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.last_main_doc, c.fk_delivery_address, c.extraparams';
+		$sql .= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.model_pdf, c.last_main_doc, c.fk_delivery_address, c.extraparams';
 		$sql .= ', c.fk_incoterms, c.location_incoterms';
 		$sql .= ", c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc";
 		$sql .= ", c.module_source, c.pos_source";
@@ -1855,9 +1847,6 @@ class Commande extends CommonOrder
 		if ($ref_ext) {
 			$sql .= " AND c.ref_ext='".$this->db->escape($ref_ext)."'";
 		}
-		if ($notused) {
-			$sql .= " AND c.ref_int='".$this->db->escape($notused)."'";
-		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1871,7 +1860,6 @@ class Commande extends CommonOrder
 				$this->ref_client = $obj->ref_client;
 				$this->ref_customer = $obj->ref_client;
 				$this->ref_ext				= $obj->ref_ext;
-				$this->ref_int				= $obj->ref_int;
 
 				$this->socid = $obj->fk_soc;
 				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
@@ -2155,7 +2143,7 @@ class Commande extends CommonOrder
 				$line->fetch_optionals();
 
 				// multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($objp->fk_product) && !empty($loadalsotranslation)) {
 					$tmpproduct = new Product($this->db);
 					$tmpproduct->fetch($objp->fk_product);
 					$tmpproduct->getMultiLangs();
@@ -3407,7 +3395,7 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 *	Delete the customer order
+	 *	Delete the sales order
 	 *
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
@@ -4074,7 +4062,7 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 * Is the customer order delayed?
+	 * Is the sales order delayed?
 	 *
 	 * @return bool     true if late, false if not
 	 */

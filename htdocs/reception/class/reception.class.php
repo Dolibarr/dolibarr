@@ -71,12 +71,6 @@ class Reception extends CommonObject
 	public $socid;
 	public $ref_supplier;
 
-	/**
-	 * @var int		Ref int
-	 * @deprecated
-	 */
-	public $ref_int;
-
 	public $brouillon;
 	public $entrepot_id;
 	public $tracking_number;
@@ -365,13 +359,10 @@ class Reception extends CommonObject
 	 *	@param	int		$id       	Id of object to load
 	 * 	@param	string	$ref		Ref of object
 	 * 	@param	string	$ref_ext	External reference of object
-	 * 	@param	string	$notused	Internal reference of other object
 	 *	@return int			        >0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($id, $ref = '', $ref_ext = '', $notused = '')
+	public function fetch($id, $ref = '', $ref_ext = '')
 	{
-		global $conf;
-
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($ref_ext)) {
 			return -1;
@@ -397,9 +388,6 @@ class Reception extends CommonObject
 		}
 		if ($ref_ext) {
 			$sql .= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
-		}
-		if ($notused) {
-			$sql .= " AND e.ref_int='".$this->db->escape($notused)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -558,7 +546,7 @@ class Reception extends CommonObject
 		}
 
 		// If stock increment is done on reception (recommanded choice)
-		if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)) {
+		if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 			$langs->load("agenda");
@@ -836,7 +824,7 @@ class Reception extends CommonObject
 		}
 
 		$fk_product = 0;
-		if (!empty($conf->stock->enabled) && !empty($supplierorderline->fk_product)) {
+		if (isModEnabled('stock') && !empty($supplierorderline->fk_product)) {
 			$fk_product = $supplierorderline->fk_product;
 
 			if (!($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_RECEPTIONS)) {
@@ -1181,7 +1169,7 @@ class Reception extends CommonObject
 				// TODO Remove or keep this ?
 				$line->fetch_product();
 
-				$sql_commfourndet = 'SELECT qty, ref,  label, description, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent';
+				$sql_commfourndet = 'SELECT qty, ref, label, description, tva_tx, vat_src_code, subprice, multicurrency_subprice, remise_percent, total_ht, total_ttc, total_tva';
 				$sql_commfourndet .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet';
 				$sql_commfourndet .= ' WHERE rowid = '.((int) $line->fk_commandefourndet);
 				$sql_commfourndet .= ' ORDER BY rang';
@@ -1199,6 +1187,9 @@ class Reception extends CommonObject
 					$line->remise_percent = $obj->remise_percent;
 					$line->label = !empty($obj->label) ? $obj->label : $line->product->label;
 					$line->ref_supplier = $obj->ref;
+					$line->total_ht = $obj->total_ht;
+					$line->total_ttc = $obj->total_ttc;
+					$line->total_tva = $obj->total_tva;
 				} else {
 					$line->qty_asked = 0;
 					$line->description = '';
@@ -1563,7 +1554,7 @@ class Reception extends CommonObject
 
 
 			// If stock increment is done on closing
-			if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 				$langs->load("agenda");
@@ -1728,7 +1719,7 @@ class Reception extends CommonObject
 			$this->billed = 0;
 
 			// If stock increment is done on closing
-			if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$numref = $this->ref;
 				$langs->load("agenda");
@@ -1860,7 +1851,7 @@ class Reception extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			// If stock increment is done on closing
-			if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)) {
+			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 				$langs->load("agenda");

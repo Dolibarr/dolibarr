@@ -73,7 +73,7 @@ function propal_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'propal');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'propal', 'add', 'core');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -109,6 +109,8 @@ function propal_prepare_head($object)
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'propal', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'propal', 'remove');
 
@@ -146,7 +148,7 @@ function propal_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$nbExtrafields = $extrafields->attributes['propal']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'attributes';
 	$h++;
@@ -155,7 +157,7 @@ function propal_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$nbExtrafields = $extrafields->attributes['propaldet']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
 	$head[$h][2] = 'attributeslines';
 	$h++;
@@ -179,7 +181,7 @@ function getCustomerProposalPieChart($socid = 0)
 
 	$result= '';
 
-	if (empty($conf->propal->enabled) || empty($user->rights->propal->lire)) {
+	if (!isModEnabled('propal') || empty($user->rights->propal->lire)) {
 		return '';
 	}
 

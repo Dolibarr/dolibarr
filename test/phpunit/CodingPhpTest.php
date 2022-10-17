@@ -178,6 +178,9 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			if (preg_match('/\/htdocs\/includes\//', $file['fullname'])) {
 				continue;
 			}
+			if (preg_match('/\/htdocs\/install\/doctemplates\/websites\//', $file['fullname'])) {
+				continue;
+			}
 			if (preg_match('/\/htdocs\/custom\//', $file['fullname'])) {
 				continue;
 			}
@@ -552,6 +555,15 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			}
 			$this->assertTrue($ok, 'Found code empty($user->hasRight in file '.$file['relativename'].'. empty() must not be used with hasRight.');
 
+			// Test we don't have empty(DolibarrApiAccess::$user->hasRight
+			$ok=true;
+			$matches=array();
+			preg_match_all('/empty\(DolibarrApiAccess::\$user->hasRight/', $filecontent, $matches, PREG_SET_ORDER);
+			foreach ($matches as $key => $val) {
+				$ok=false;
+				break;
+			}
+			$this->assertTrue($ok, 'Found code empty(DolibarrApiAccess::$user->hasRight in file '.$file['relativename'].'. empty() must not be used with hasRight.');
 
 			// Test we don't have @var array(
 			$ok=true;

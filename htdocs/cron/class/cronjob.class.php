@@ -143,6 +143,11 @@ class Cronjob extends CommonObject
 	public $pid;
 
 	/**
+	 * @var string 			Email when an error occurs
+	 */
+	public $email_alert;
+
+	/**
 	 * @var int 			User ID of creation
 	 */
 	public $fk_user_author;
@@ -168,9 +173,15 @@ class Cronjob extends CommonObject
 	public $libname;
 
 	/**
-	 * @var string A test condition to know if job is visible/qualified
+	 * @var string 			A test condition to know if job is visible/qualified
 	 */
 	public $test;
+
+	/**
+	 * @var string 			Autodelete
+	 */
+	public $autodelete;
+
 
 	const STATUS_DISABLED = 0;
 	const STATUS_ENABLED = 1;
@@ -428,6 +439,7 @@ class Cronjob extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.processing,";
 		$sql .= " t.pid,";
+		$sql .= " t.email_alert,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.fk_user_mod,";
 		$sql .= " t.note as note_private,";
@@ -477,6 +489,7 @@ class Cronjob extends CommonObject
 				$this->status = $obj->status;
 				$this->processing = $obj->processing;
 				$this->pid = $obj->pid;
+				$this->email_alert = $obj->email_alert;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->fk_user_mod = $obj->fk_user_mod;
 				$this->note_private = $obj->note_private;
@@ -538,6 +551,7 @@ class Cronjob extends CommonObject
 		$sql .= " t.status,";
 		$sql .= " t.processing,";
 		$sql .= " t.pid,";
+		$sql .= " t.email_alert,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.fk_user_mod,";
 		$sql .= " t.note as note_private,";
@@ -576,7 +590,7 @@ class Cronjob extends CommonObject
 			$sql .= " WHERE ".implode(' AND ', $sqlwhere);
 		}
 
-		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -615,6 +629,7 @@ class Cronjob extends CommonObject
 					$line->status = $obj->status;
 					$line->processing = $obj->processing;
 					$line->pid = $obj->pid;
+					$line->email_alert = $obj->email_alert;
 					$line->fk_user_author = $obj->fk_user_author;
 					$line->fk_user_mod = $obj->fk_user_mod;
 					$line->note_private = $obj->note_private;
@@ -716,9 +731,11 @@ class Cronjob extends CommonObject
 		if (empty($this->processing)) {
 			$this->processing = 0;
 		}
-
 		if (empty($this->pid)) {
 			$this->pid = null;
+		}
+		if (empty($this->email_alert)) {
+			$this->email_alert = '';
 		}
 
 		// Check parameters
@@ -764,7 +781,7 @@ class Cronjob extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob SET";
-		$sql .= " entity=".(isset($this->entity) ? $this->db->escape($this->entity) : $conf->entity).",";
+		$sql .= " entity=".(isset($this->entity) ? ((int) $this->entity) : $conf->entity).",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " jobtype=".(isset($this->jobtype) ? "'".$this->db->escape($this->jobtype)."'" : "null").",";
 		$sql .= " command=".(isset($this->command) ? "'".$this->db->escape($this->command)."'" : "null").",";
@@ -774,7 +791,7 @@ class Cronjob extends CommonObject
 		$sql .= " params=".(isset($this->params) ? "'".$this->db->escape($this->params)."'" : "null").",";
 		$sql .= " md5params=".(isset($this->md5params) ? "'".$this->db->escape($this->md5params)."'" : "null").",";
 		$sql .= " module_name=".(isset($this->module_name) ? "'".$this->db->escape($this->module_name)."'" : "null").",";
-		$sql .= " priority=".(isset($this->priority) ? $this->priority : "null").",";
+		$sql .= " priority=".(isset($this->priority) ? ((int) $this->priority) : "null").",";
 		$sql .= " datelastrun=".(dol_strlen($this->datelastrun) != 0 ? "'".$this->db->idate($this->datelastrun)."'" : 'null').",";
 		$sql .= " datenextrun=".(dol_strlen($this->datenextrun) != 0 ? "'".$this->db->idate($this->datenextrun)."'" : 'null').",";
 		$sql .= " dateend=".(dol_strlen($this->dateend) != 0 ? "'".$this->db->idate($this->dateend)."'" : 'null').",";
@@ -786,8 +803,9 @@ class Cronjob extends CommonObject
 		$sql .= " frequency=".(isset($this->frequency) ? $this->frequency : "null").",";
 		$sql .= " status=".(isset($this->status) ? $this->status : "null").",";
 		$sql .= " processing=".((isset($this->processing) && $this->processing > 0) ? $this->processing : "0").",";
-		$sql .= " pid=".(isset($this->pid) ? $this->pid : "null").",";
-		$sql .= " fk_user_mod=".$user->id.",";
+		$sql .= " pid=".(isset($this->pid) ? ((int) $this->pid) : "null").",";
+		$sql .= " email_alert = ".(isset($this->email_alert) ? "'".$this->db->escape($this->email_alert)."'" : "null").",";
+		$sql .= " fk_user_mod = ".((int) $user->id).",";
 		$sql .= " note=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " nbrun=".((isset($this->nbrun) && $this->nbrun > 0) ? $this->nbrun : "null").",";
 		$sql .= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0) ? $this->maxrun : "0").",";
@@ -940,6 +958,7 @@ class Cronjob extends CommonObject
 		$this->status = 0;
 		$this->processing = 0;
 		$this->pid = null;
+		$this->email_alert = '';
 		$this->fk_user_author = 0;
 		$this->fk_user_mod = 0;
 		$this->note_private = '';
@@ -1130,6 +1149,7 @@ class Cronjob extends CommonObject
 			@set_time_limit($ExecTimeLimit); // Need more than 240 on Windows 7/64
 			error_reporting($err);
 		}
+		$MemoryLimit = 0;
 		if (!empty($MemoryLimit)) {
 			@ini_set('memory_limit', $MemoryLimit);
 		}
@@ -1207,7 +1227,8 @@ class Cronjob extends CommonObject
 				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params.");", LOG_DEBUG);
 
 				// Create Object for the called module
-				$object = new $this->objectname($this->db);
+				$nameofclass = $this->objectname;
+				$object = new $nameofclass($this->db);
 				if ($this->entity > 0) {
 					$object->entity = $this->entity; // We work on a dedicated entity
 				}
@@ -1341,6 +1362,16 @@ class Cronjob extends CommonObject
 		}
 
 		$conf->setEntityValues($this->db, $savcurrententity);
+
+		if ($error && !empty($this->email_alert)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			$subject = $langs->trans("ErrorInBatch", $this->label);
+			$msg = $langs->trans("ErrorInBatch", $this->label);
+			$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+			$cmailfile = new CMailFile($subject, $this->email_alert, $from, $msg);
+			$result = $cmailfile->sendfile();	// Do not test result
+		}
+
 		return $error ?-1 : 1;
 	}
 

@@ -68,9 +68,9 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
-	public $phpmin = array(5, 6);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -230,7 +230,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				$objphoto = new Product($this->db);
 				$objphoto->fetch($object->lines[$i]->fk_product);
 
-				if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+				if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 					$pdir = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$object->lines[$i]->fk_product."/photos/";
 					$dir = $conf->product->dir_output.'/'.$pdir;
 				} else {
@@ -335,7 +335,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -361,12 +361,12 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 90 + $top_shift;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Incoterm
-				if (!empty($conf->incoterm->enabled)) {
+				if (isModEnabled('incoterm')) {
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms) {
 						$tab_top -= 2;
@@ -423,7 +423,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 							// $this->_pagefoot($pdf,$object,$outputlangs,1);
@@ -481,7 +481,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						if (!empty($tplidx)) {
 							$pdf->useTemplate($tplidx);
 						}
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						$height_note = $posyafter - $tab_top_newpage;
@@ -503,7 +503,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 							if (!empty($tplidx)) {
 								$pdf->useTemplate($tplidx);
 							}
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 								$this->_pagehead($pdf, $object, 0, $outputlangs);
 							}
 
@@ -592,7 +592,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 									if (!empty($tplidx)) {
 										$pdf->useTemplate($tplidx);
 									}
-									//if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+									//if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 									$pdf->setPage($pageposafter + 1);
 								}
 							} else {
@@ -774,7 +774,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						if (!empty($tplidx)) {
@@ -794,7 +794,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 							$pdf->useTemplate($tplidx);
 						}
 						$pagenb++;
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
@@ -1484,8 +1484,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
-		global $conf;
-		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, 'SUPPLIER_ORDER_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 

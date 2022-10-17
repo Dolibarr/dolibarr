@@ -123,7 +123,7 @@ class modEventOrganization extends DolibarrModules
 		$this->langfiles = array("eventorganization");
 
 		// Prerequisites
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(13, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
@@ -169,7 +169,7 @@ class modEventOrganization extends DolibarrModules
 		// 'invoice_supplier' to add a tab in supplier invoice view
 		// 'member'           to add a tab in fundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view

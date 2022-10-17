@@ -452,7 +452,7 @@ $sql .= $hookmanager->resPrint;
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-z0-9\._\s\(\),]+FROM/i', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	$resql = $db->query($sqlforcount);
 	$objforcount = $db->fetch_object($resql);
 	$nbtotalofrecords = $objforcount->nbtotalofrecords;
@@ -814,19 +814,19 @@ foreach ($object->fields as $key => $val) {
 			print '</td>';
 		} elseif ($key == 'type_code') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			$formTicket->selectTypesTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
+			$formTicket->selectTypesTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'category_code') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			$formTicket->selectGroupTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
+			$formTicket->selectGroupTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'severity_code') {
 			print '<td class="liste_titre center'.($cssforfield ? ' '.$cssforfield : '').'">';
-			$formTicket->selectSeveritiesTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, ($val['css'] ? $val['css'] : 'maxwidth150'));
+			$formTicket->selectSeveritiesTickets(dol_escape_htmltag(empty($search[$key]) ? '' : $search[$key]), 'search_'.$key.'', '', 2, 1, 1, 0, (!empty($val['css']) ? $val['css'] : 'maxwidth150'));
 			print '</td>';
 		} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create') {
 			print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
-			print $form->select_dolusers((empty($search[$key]) ? '' : $search[$key]), 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', ($val['css'] ? $val['css'] : 'maxwidth100'));
+			print $form->select_dolusers((empty($search[$key]) ? '' : $search[$key]), 'search_'.$key, 1, null, 0, '', '', '0', 0, 0, '', 0, '', (!empty($val['css']) ? $val['css'] : 'maxwidth100'));
 			print '</td>';
 		} elseif ($key == 'fk_statut') {
 			$arrayofstatus = array();

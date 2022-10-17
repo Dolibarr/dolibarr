@@ -455,7 +455,7 @@ class Paiement extends CommonObject
 
 							$newlang = '';
 							$outputlangs = $langs;
-							if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 								$invoice->fetch_thirdparty();
 								$newlang = $invoice->thirdparty->default_lang;
 							}

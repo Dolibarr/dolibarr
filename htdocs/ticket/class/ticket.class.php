@@ -467,7 +467,8 @@ class Ticket extends CommonObject
 			$sql .= "date_read,";
 			$sql .= "date_close,";
 			$sql .= "entity,";
-			$sql .= "notify_tiers_at_create";
+			$sql .= "notify_tiers_at_create,";
+			$sql .= "ip";
 			$sql .= ") VALUES (";
 			$sql .= " ".(!isset($this->ref) ? '' : "'".$this->db->escape($this->ref)."'").",";
 			$sql .= " ".(!isset($this->track_id) ? 'NULL' : "'".$this->db->escape($this->track_id)."'").",";
@@ -492,6 +493,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->date_close) || dol_strlen($this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'")."";
 			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? '1' : "'".$this->db->escape($this->notify_tiers_at_create)."'");
+			$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 			$sql .= ")";
 
 			$this->db->begin();
@@ -1629,7 +1631,7 @@ class Ticket extends CommonObject
 					$url_internal_ticket = dol_buildpath('/ticket/card.php', 2).'?track_id='.$this->track_id;
 					$tmpmessage .= "\n".$langs->transnoentities('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$this->track_id.'</a>'."\n";
 				} else {
-					$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$this->track_id;
+					$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/view.php' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$this->track_id;
 					$tmpmessage .= "\n".$langs->transnoentities('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$this->track_id.'</a>'."\n";
 				}
 
@@ -2493,7 +2495,8 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 * Add new message on a ticket (private/public area). Can also send it be email if GETPOST('send_email', 'int') is set.
+	 * Add new message on a ticket (private/public area).
+	 * Can also send it be email if GETPOST('send_email', 'int') is set. For such email, header and footer is added.
 	 *
 	 * @param   User    $user       User for action
 	 * @param   string  $action     Action string
@@ -2554,11 +2557,10 @@ class Ticket extends CommonObject
 				//var_dump($_SESSION);
 				//var_dump($listofpaths);exit;
 
-				/*
-				 * Public area
-				 */
 				if (!empty($public_area)) {
 					/*
+					 * Message created fromthe Public interface
+					 *
 					 * Send emails to assigned users (public area notification)
 					 */
 					if (!empty($conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED)) {
@@ -2627,9 +2629,8 @@ class Ticket extends CommonObject
 					}
 				} else {
 					/*
-					 * Private area
-					 */
-					/*
+					 * Send from Backoffice / Private area
+					 *
 					 * Send emails to internal users (linked contacts)
 					 */
 					if ($send_email > 0) {
@@ -2643,7 +2644,7 @@ class Ticket extends CommonObject
 							$subject = GETPOST('subject', 'alphanohtml') ? GETPOST('subject', 'alphanohtml') : '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 							$message_intro = $langs->trans('TicketNotificationEmailBody', "#".$object->id);
-							$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
+							$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
 
 							$message = $langs->trans('TicketMessageMailIntroText');
 							$message .= '<br><br>';
@@ -2681,7 +2682,7 @@ class Ticket extends CommonObject
 							// URL ticket
 							$url_internal_ticket = dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id;
 
-							// altairis: make html link on url
+							// add html link on url
 							$message .= '<br>'.$langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a><br>';
 
 							// Add global email address recipient
@@ -2691,7 +2692,7 @@ class Ticket extends CommonObject
 								}
 							}
 
-							// altairis: dont try to send email if no recipient
+							// dont try to send email if no recipient
 							if (!empty($sendto)) {
 								$this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
 							}
@@ -2722,8 +2723,8 @@ class Ticket extends CommonObject
 								$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
 								$subject = GETPOST('subject') ? GETPOST('subject') : '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
-								$message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro', 'restricthtml') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
-								$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature', 'restricthtml') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
+								$message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro', 'restricthtml') : getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO');
+								$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature', 'restricthtml') : getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
 								if (!dol_textishtml($message_intro)) {
 									$message_intro = dol_nl2br($message_intro);
 								}
@@ -2790,8 +2791,8 @@ class Ticket extends CommonObject
 									$result = $this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
 									if ($result) {
 										// update last_msg_sent date
-										$object->date_last_msg_sent = dol_now();
-										$object->update($user);
+										$this->date_last_msg_sent = dol_now();
+										$this->update($user);
 									}
 								}
 							}
@@ -2800,7 +2801,7 @@ class Ticket extends CommonObject
 				}
 
 				// Set status to "answered" if not set yet, but only if internal user
-				if ($object->fk_statut < 3 && !$user->socid) {
+				if ($object->status < 3 && !$user->socid) {
 					$object->setStatut(3);
 				}
 				return 1;

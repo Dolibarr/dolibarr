@@ -48,7 +48,7 @@ if (!empty($conf->project->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-if (!empty($conf->variants->enabled)) {
+if (isModEnabled('variants')) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
@@ -761,7 +761,7 @@ if ($id > 0 || $ref) {
 
 			$found = 0;
 			$helpondiff = '<strong>'.$langs->trans("StockDiffPhysicTeoric").':</strong><br>';
-			// Number of customer orders running
+			// Number of sales orders running
 			if (isModEnabled('commande')) {
 				if ($found) {
 					$helpondiff .= '<br>';
@@ -776,7 +776,7 @@ if ($id > 0 || $ref) {
 				$helpondiff .= ' <span class="opacitymedium">('.$langs->trans("ProductQtyInDraft").': '.$object->stats_commande['qty'].')</span>';
 			}
 
-			// Number of product from customer order already sent (partial shipping)
+			// Number of product from sales order already sent (partial shipping)
 			if (isModEnabled("expedition")) {
 				require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 				$filterShipmentStatus = '';
@@ -821,7 +821,7 @@ if ($id > 0 || $ref) {
 			}
 
 			// Number of product in production
-			if (!empty($conf->mrp->enabled)) {
+			if (isModEnabled('mrp')) {
 				if ($found) {
 					$helpondiff .= '<br>';
 				} else {

@@ -141,6 +141,7 @@ if ($action == 'add') {
 	$object->unitfrequency = GETPOST('unitfrequency', 'int');
 	$object->frequency = GETPOST('nbfrequency', 'int');
 	$object->maxrun = GETPOST('maxrun', 'int');
+	$object->email_alert = GETPOST('email_alert');
 
 	// Add cron task
 	$result = $object->create($user);
@@ -175,6 +176,7 @@ if ($action == 'update') {
 	$object->unitfrequency = GETPOST('unitfrequency', 'int');
 	$object->frequency = GETPOST('nbfrequency', 'int');
 	$object->maxrun = GETPOST('maxrun', 'int');
+	$object->email_alert = GETPOST('email_alert');
 
 	// Add cron task
 	$result = $object->update($user);
@@ -415,6 +417,15 @@ if (($action == "create") || ($action == "edit")) {
 	print "</td>";
 	print "</tr>\n";
 
+	print '<tr class="blockemailalert"><td>';
+	print $langs->trans('EmailIfError')."</td><td>";
+	print '<input type="text" class="minwidth150" name="email_alert" value="'.dol_escape_htmltag($object->email_alert).'" /> ';
+	print "</td>";
+	print "<td>";
+	//print $form->textwithpicto('', $langs->trans("CronCommandHelp"), 1, 'help');
+	print "</td>";
+	print "</tr>\n";
+
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('CronEvery')."</td>";
 	print "<td>";
@@ -578,32 +589,32 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronModule')."</td><td>";
-	print $object->module_name;
+	print dol_escape_htmltag($object->module_name);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronClassFile')."</td><td>";
-	print $object->classesname;
+	print dol_escape_htmltag($object->classesname);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronObject')."</td><td>";
-	print $object->objectname;
+	print dol_escape_htmltag($object->objectname);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronMethod')."</td><td>";
-	print $object->methodename;
+	print dol_escape_htmltag($object->methodename);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronArgs')."</td><td>";
-	print $object->params;
+	print dol_escape_htmltag($object->params);
 	print "</td></tr>";
 
 	print '<tr class="blockcommand"><td>';
 	print $langs->trans('CronCommand')."</td><td>";
-	print $object->command;
+	print dol_escape_htmltag($object->command);
 	print "</td></tr>";
 
 	print '<tr><td>';
@@ -611,6 +622,11 @@ if (($action == "create") || ($action == "edit")) {
 	if (!is_null($object->note_private) && $object->note_private != '') {
 		print $langs->trans($object->note_private);
 	}
+	print "</td></tr>";
+
+	print '<tr class="blockemailalert"><td>';
+	print $langs->trans('EmailIfError')."</td><td>";
+	print dol_escape_htmltag($object->email_alert);
 	print "</td></tr>";
 
 	if (isModEnabled('multicompany')) {

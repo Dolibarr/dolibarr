@@ -81,9 +81,9 @@ class pdf_beluga extends ModelePDFProjects
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
-	public $phpmin = array(5, 6);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -315,7 +315,7 @@ class pdf_beluga extends ModelePDFProjects
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Project"));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -333,7 +333,7 @@ class pdf_beluga extends ModelePDFProjects
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 50;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -587,7 +587,7 @@ class pdf_beluga extends ModelePDFProjects
 											if (!empty($tplidx)) {
 												$pdf->useTemplate($tplidx);
 											}
-											if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+											if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 												$this->_pagehead($pdf, $object, 0, $outputlangs);
 											}
 											$pdf->setPage($pageposafter + 1);
@@ -612,7 +612,7 @@ class pdf_beluga extends ModelePDFProjects
 											if (!empty($tplidx)) {
 												$pdf->useTemplate($tplidx);
 											}
-											if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+											if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 												$this->_pagehead($pdf, $object, 0, $outputlangs);
 											}
 											$pdf->setPage($pageposafter + 1);
@@ -740,7 +740,7 @@ class pdf_beluga extends ModelePDFProjects
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation($this->orientation, 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						if (!empty($tplidx)) {
@@ -895,8 +895,7 @@ class pdf_beluga extends ModelePDFProjects
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
-		global $conf;
-		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, 'PROJECT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

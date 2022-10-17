@@ -196,7 +196,7 @@ class Societe extends CommonObject
 		'fk_stcomm' =>array('type'=>'integer', 'label'=>'CommercialStatus', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>220),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>225),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>230),
-		'prefix_comm' =>array('type'=>'varchar(5)', 'label'=>'Prefix comm', 'enabled'=>'$conf->global->SOCIETE_USEPREFIX', 'visible'=>-1, 'position'=>235),
+		'prefix_comm' =>array('type'=>'varchar(5)', 'label'=>'Prefix comm', 'enabled'=>"getDolGlobalInt('SOCIETE_USEPREFIX')", 'visible'=>-1, 'position'=>235),
 		'client' =>array('type'=>'tinyint(4)', 'label'=>'Client', 'enabled'=>1, 'visible'=>-1, 'position'=>240),
 		'fournisseur' =>array('type'=>'tinyint(4)', 'label'=>'Fournisseur', 'enabled'=>1, 'visible'=>-1, 'position'=>245),
 		'supplier_account' =>array('type'=>'varchar(32)', 'label'=>'Supplier account', 'enabled'=>1, 'visible'=>-1, 'position'=>250),
@@ -699,12 +699,6 @@ class Societe extends CommonObject
 	 * @var string Ref
 	 */
 	public $ref;
-
-	/**
-	 * @var string Internal ref
-	 * @deprecated
-	 */
-	public $ref_int;
 
 	/**
 	 * External user reference.
@@ -2274,14 +2268,15 @@ class Societe extends CommonObject
 	/**
 	 *    	Add a discount for third party
 	 *
-	 *    	@param	float	$remise     	Amount of discount
-	 *    	@param  User	$user       	User adding discount
-	 *    	@param  string	$desc			Reason of discount
-	 *      @param  string	$vatrate     	VAT rate (may contain the vat code too). Exemple: '1.23', '1.23 (ABC)', ...
-	 *      @param	int		$discount_type	0 => customer discount, 1 => supplier discount
-	 *		@return	int						<0 if KO, id of discount record if OK
+	 *    	@param	float	$remise     		Amount of discount
+	 *    	@param  User	$user       		User adding discount
+	 *    	@param  string	$desc				Reason of discount
+	 *      @param  string	$vatrate     		VAT rate (may contain the vat code too). Exemple: '1.23', '1.23 (ABC)', ...
+	 *      @param	int		$discount_type		0 => customer discount, 1 => supplier discount
+	 *      @param	string	$price_base_type	Price base type 'HT' or 'TTC'
+	 *		@return	int							<0 if KO, id of discount record if OK
 	 */
-	public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0)
+	public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0, $price_base_type = 'HT')
 	{
 		// phpcs:enable
 		global $langs;
@@ -2316,9 +2311,15 @@ class Societe extends CommonObject
 
 			$discount->discount_type = $discount_type;
 
-			$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise, 'MT');
-			$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $vatrate / 100, 'MT');
-			$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($discount->amount_ht + $discount->amount_tva, 'MT');
+			if ($price_base_type == 'TTC') {
+				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($remise, 'MT');
+				$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise / (1 + $vatrate / 100), 'MT');
+				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($discount->amount_ttc - $discount->amount_ht, 'MT');
+			} else {
+				$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise, 'MT');
+				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $vatrate / 100, 'MT');
+				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($discount->amount_ht + $discount->amount_tva, 'MT');
+			}
 
 			$discount->tva_tx = price2num($vatrate);
 			$discount->vat_src_code = $vat_src_code;
@@ -4938,15 +4939,16 @@ class Societe extends CommonObject
 	 */
 	public function setThirdpartyType($typent_id)
 	{
+		global $user;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
 		if ($this->id) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " SET fk_typent = ".($typent_id > 0 ? $typent_id : "null");
-			$sql .= " WHERE rowid = ".((int) $this->id);
-			dol_syslog(get_class($this).'::setThirdpartyType', LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
+			$result = $this->setValueFrom('fk_typent', $typent_id, '', null, '', '', $user, 'COMPANY_MODIFY');
+
+			if ($result > 0) {
 				$this->typent_id = $typent_id;
-				$this->typent_code = dol_getIdFromCode($this->db, $this->$typent_id, 'c_typent', 'id', 'code');
+				$this->typent_code = dol_getIdFromCode($this->db, $this->typent_id, 'c_typent', 'id', 'code');
 				return 1;
 			} else {
 				return -1;

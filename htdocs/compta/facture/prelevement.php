@@ -114,11 +114,7 @@ if (empty($reshook)) {
 			}
 			$paymentservice = GETPOST('paymentservice');
 
-			if (preg_match('/stripesepa/', $paymentservice)) {
-				$result = $object->demande_prelevement_stripe($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
-			} else {
-				$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
-			}
+			$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
 
 			if ($result > 0) {
 				$db->commit();
@@ -139,6 +135,14 @@ if (empty($reshook)) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.'&type='.$type);
 				exit;
 			}
+		}
+	}
+
+	// Payment with Direct Debit Stripe
+	if ($action == 'sepastripepayment' && $usercancreate) {
+		$result = $object->makeStripeSepaRequest($user, GETPOST('did', 'int'), 'direct-debit', 'facture');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -260,7 +264,7 @@ if ($object->id > 0) {
 	$resteapayeraffiche = $resteapayer;
 
 	if ($type == 'bank-transfer') {
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Never use this
+		if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Not recommended
 			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		} else {
@@ -273,7 +277,7 @@ if ($object->id > 0) {
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 	} else {
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Not recommended
 			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		} else {
@@ -871,7 +875,8 @@ if ($object->id > 0) {
 
 			print '<td>';
 			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=new&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("SendToStripe").'</a>';
+				$langs->load("stripe");
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripepayment&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
 			}
 			print '</td>';
 

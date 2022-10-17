@@ -55,6 +55,8 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 
 -- v17
 
+UPDATE llx_c_paiement SET code = 'BANCON' WHERE code = 'BAN' AND libelle = 'Bancontact';
+
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN fk_user_creat integer NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN fk_user_creat DROP NOT NULL;
 
@@ -143,6 +145,9 @@ CREATE TABLE llx_bank_extrafields
 
 ALTER TABLE llx_bank_extrafields ADD INDEX idx_bank_extrafields (fk_object);
 
+ALTER TABLE llx_product_lot ADD COLUMN note_public text DEFAULT NULL after batch;
+ALTER TABLE llx_product_lot ADD COLUMN note_private text DEFAULT NULL after note_public;
+
 ALTER TABLE llx_user CHANGE COLUMN note note_private text;
 
 UPDATE llx_c_effectif SET code='EF101-500', libelle='101 - 500' WHERE code='EF100-500';
@@ -176,4 +181,17 @@ create table llx_element_categorie
 ALTER TABLE llx_element_categorie ADD UNIQUE INDEX idx_element_categorie_idx (fk_element, fk_categorie);
 
 ALTER TABLE llx_element_categorie ADD CONSTRAINT fk_element_categorie_fk_categorie FOREIGN KEY (fk_categorie) REFERENCES llx_categorie(rowid);
+
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('PROJECT_SENTBYMAIL','Project sent by mail','Executed when a project is sent by email','project',144);
+
+ALTER TABLE llx_socpeople ADD INDEX idx_socpeople_lastname (lastname);
+
+ALTER TABLE llx_societe ADD INDEX idx_societe_nom(nom);
+
+ALTER TABLE llx_extrafields MODIFY COLUMN fielddefault text;
+
+ALTER TABLE llx_bank_url ADD INDEX idx_bank_url_url_id (url_id);
+
+ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_code varchar(3) NULL;
+ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_tx double(24,8) NULL;
 

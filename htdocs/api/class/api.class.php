@@ -127,7 +127,6 @@ class DolibarrApi
 
 		unset($object->ref_previous);
 		unset($object->ref_next);
-		unset($object->ref_int);
 		unset($object->imgWidth);
 		unset($object->imgHeight);
 		unset($object->barcode_type_code);

@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/modules/stocktransfer/modules_stocktrans
 
 
 /**
- *	Class to manage customer order numbering rules standard
+ * Class to manage the Standard numbering rule for Stock
  */
 class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 {

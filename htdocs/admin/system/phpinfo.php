@@ -36,7 +36,6 @@ if (!$user->admin) {
 }
 
 
-
 /*
  * View
  */
@@ -212,6 +211,14 @@ if (empty($_SERVER["SERVER_ADMIN"]) || $_SERVER["SERVER_ADMIN"] != 'doliwamp@loc
 
 $functions = ["imap_open"];
 $name      = "IMAP";
+
+print "<tr>";
+print "<td>".$name."</td>";
+print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
+print "</tr>";
+
+$functions = array();
+$name      = "zip";
 
 print "<tr>";
 print "<td>".$name."</td>";
