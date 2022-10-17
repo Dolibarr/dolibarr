@@ -89,6 +89,7 @@ $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
+$search_parent_name = trim(GETPOST('search_parent_name', 'alphanohtml'));
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_localtax1 = GETPOST('search_montant_localtax1', 'alpha');
@@ -220,6 +221,7 @@ $arrayfields = array(
 	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(!isModEnabled('project') ? 0 : 1), 'position'=>41),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>50),
 	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1, 'position'=>51),
+	's2.nom'=>array('label'=>'ParentCompany', 'position'=>32, 'checked'=>0),
 	's.town'=>array('label'=>"Town", 'checked'=>-1, 'position'=>55),
 	's.zip'=>array('label'=>"Zip", 'checked'=>1, 'position'=>60),
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0, 'position'=>65),
@@ -317,6 +319,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_project = '';
 	$search_company = '';
 	$search_company_alias = '';
+	$search_parent_name = '';
 	$search_montant_ht = '';
 	$search_montant_vat = '';
 	$search_montant_localtax1 = '';
@@ -336,7 +339,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_town = '';
 	$search_zip = "";
 	$search_state = "";
-	$search_type = '';
 	$search_country = '';
 	$search_type_thirdparty = '';
 	$search_date_startday = '';
@@ -553,6 +555,8 @@ $bankaccountstatic = new Account($db);
 $facturestatic = new Facture($db);
 $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
+$companyparent = new Societe($db);
+$company_url_list = array();
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
@@ -567,6 +571,8 @@ $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
+$sql .= " s.parent as fk_parent,";
+$sql .= " s2.nom as name2,";
 $sql .= ' typent.code as typent_code,';
 $sql .= ' state.code_departement as state_code, state.nom as state_name,';
 $sql .= ' country.code as country_code,';
@@ -592,6 +598,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s2.rowid = s.parent";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
@@ -665,6 +672,9 @@ if ($search_company) {
 }
 if ($search_company_alias) {
 	$sql .= natural_search('s.name_alias', $search_company_alias);
+}
+if ($search_parent_name) {
+	$sql .= natural_search('s2.nom', $search_parent_name);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -1040,10 +1050,13 @@ if ($resql) {
 		$param .= '&search_type='.urlencode($search_type);
 	}
 	if ($search_company) {
-		$param .= '&search_societe='.urlencode($search_company);
+		$param .= '&search_company='.urlencode($search_company);
 	}
 	if ($search_company_alias) {
-		$param .= '&search_societe_alias='.urlencode($search_company_alias);
+		$param .= '&search_company_alias='.urlencode($search_company_alias);
+	}
+	if ($search_parent_name != '') {
+		$param .= '&search_parent_name='.urlencode($search_parent_name);
 	}
 	if ($search_town) {
 		$param .= '&search_town='.urlencode($search_town);
@@ -1053,6 +1066,9 @@ if ($resql) {
 	}
 	if ($search_country) {
 		$param .= "&search_country=".urlencode($search_country);
+	}
+	if ($search_type_thirdparty != '') {
+		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 	}
 	if ($search_sale > 0) {
 		$param .= '&search_sale='.urlencode($search_sale);
@@ -1369,6 +1385,12 @@ if ($resql) {
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
 		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_alias" value="'.$search_company_alias.'"></td>';
 	}
+	// Parent company
+	if (!empty($arrayfields['s2.nom']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input class="flat maxwidth100" type="text" name="search_parent_name" value="'.dol_escape_htmltag($search_parent_name).'">';
+		print '</td>';
+	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
 		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
@@ -1618,6 +1640,9 @@ if ($resql) {
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
 		print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER['PHP_SELF'], 's.name_alias', '', $param, '', $sortfield, $sortorder);
 	}
+	if (!empty($arrayfields['s2.nom']['checked'])) {
+		print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER['PHP_SELF'], 's2.nom', '', $param, '', $sortfield, $sortorder);
+	}
 	if (!empty($arrayfields['s.town']['checked'])) {
 		print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1747,6 +1772,7 @@ if ($resql) {
 
 	if ($num > 0) {
 		$i = 0;
+		$typenArray = $formcompany->typent_array(1);
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
 		$totalarray['val'] = array();
@@ -2017,6 +2043,26 @@ if ($resql) {
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
 				print dol_escape_htmltag($companystatic->name_alias);
 				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			// Parent company
+			if (!empty($arrayfields['s2.nom']['checked'])) {
+				print '<td class="tdoverflowmax200">';
+				if ($obj->fk_parent > 0) {
+					if (!isset($company_url_list[$obj->fk_parent])) {
+						$companyparent = new Societe($db);
+						$res = $companyparent->fetch($obj->fk_parent);
+						if ($res > 0) {
+							$company_url_list[$obj->fk_parent] = $companyparent->getNomUrl(1);
+						}
+					}
+					if (isset($company_url_list[$obj->fk_parent])) {
+						print $company_url_list[$obj->fk_parent];
+					}
+				}
+				print "</td>";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
