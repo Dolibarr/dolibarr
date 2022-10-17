@@ -126,6 +126,7 @@ WriteBookKeeping=Enregistrer les écritures en comptabilité
 Bookkeeping=Grand livre
 BookkeepingSubAccount=Grand livre auxiliaire
 AccountBalance=Balance des comptes
+AccountBalanceSubAccount=Balance des comptes auxiliaires
 ObjectsRef=Référence de l'objet source
 CAHTF=Total achat fournisseur HT
 TotalExpenseReport=Total note de frais
