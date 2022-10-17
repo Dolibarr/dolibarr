@@ -5526,12 +5526,20 @@ class Facture extends CommonInvoice
 						$sendContent = make_substitutions($content, $substitutionarray, $outputlangs, 1);
 
 						// Recipient
-						$to = '';
+						$to = array();
 						$res = $tmpinvoice->fetch_thirdparty();
 						$recipient = $tmpinvoice->thirdparty;
 						if ($res > 0) {
-							if (!empty($recipient->email)) {
-								$to = $recipient->email;
+							$tmparraycontact = $tmpinvoice->liste_contact(-1, 'external', 0, 'BILLING');
+							if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
+								foreach ($tmparraycontact as $data_email) {
+									if (!empty($data_email['email'])) {
+										$to[] = $tmpinvoice->thirdparty->contact_get_property($data_email['id'], 'email');
+									}
+								}
+							}
+							if (empty($to) && !empty($recipient->email)) {
+								$to[] = $recipient->email;
 							} else {
 								$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for user.";
 								$error++;
@@ -5548,8 +5556,10 @@ class Facture extends CommonInvoice
 							$error++;
 						}
 
-						if (!$error && $to) {
+						if (!$error && !empty($to)) {
 							$this->db->begin();
+
+							$to = implode(',', $to);
 
 							// Errors Recipient
 							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;

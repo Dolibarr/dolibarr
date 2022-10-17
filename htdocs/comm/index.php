@@ -321,7 +321,7 @@ if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire)
 
 
 /*
- * Draft customer orders
+ * Draft sales orders
  */
 
 if (isModEnabled('commande') && $user->rights->commande->lire) {

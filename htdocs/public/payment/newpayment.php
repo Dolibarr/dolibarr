@@ -1005,7 +1005,7 @@ if (!$source) {
 }
 
 
-// Payment on customer order
+// Payment on sales order
 if ($source == 'order') {
 	$found = true;
 	$langs->load("orders");
@@ -1361,10 +1361,6 @@ if ($source == 'contractline') {
 	if ($contractline->description) {
 		$text .= '<br>'.dol_htmlentitiesbr($contractline->description);
 	}
-	//if ($contractline->date_fin_validite) {
-	//	$text.='<br>'.$langs->trans("DateEndPlanned").': ';
-	//	$text.=dol_print_date($contractline->date_fin_validite);
-	//}
 	if ($contractline->date_end) {
 		$text .= '<br>'.$langs->trans("ExpiredSince").': '.dol_print_date($contractline->date_end);
 	}

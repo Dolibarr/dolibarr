@@ -2775,7 +2775,7 @@ if (!GETPOST('hide_websitemenu')) {
 	// Toolbar for websites
 	//
 
-	print '<!-- Bar for website -->';
+	print '<!-- Toolbar for website -->';
 	if ($action != 'file_manager') {
 		print '<div class="websiteselection hideonsmartphoneimp minwidth75 tdoverflowmax100 inline-block">';
 		print $langs->trans("Website").': ';
@@ -3012,7 +3012,7 @@ if (!GETPOST('hide_websitemenu')) {
 	if ($websitekey && $websitekey != '-1' && (!in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesiteconfirm'))) && (!in_array($mode, array('replacesite'))) && !$file_manager) {
 		print '</div>'; // Close current websitebar to open a new one
 
-		print '<!-- Bar for websitepage -->';
+		print '<!-- Toolbar for websitepage -->';
 		print '<div class="centpercent websitebar"'.($style ? ' style="'.$style.'"' : '').'">';
 
 		print '<div class="websiteselection hideonsmartphoneimp minwidth75 tdoverflowmax100 inline-block">';
@@ -3052,19 +3052,18 @@ if (!GETPOST('hide_websitemenu')) {
 
 		print $out;
 
-
 		if (!empty($conf->use_javascript_ajax)) {
 			print '<span class="websiteselection">';
 			//print '<div class="inline-block marginrightonly">';
 			if ($object->status == $object::STATUS_DRAFT) {	// website is off, we do not allow to change status of page
 				$text_off = 'SetWebsiteOnlineBefore';
-				if ($objectpage->status == $objectpage::STATUS_DRAFT) {
+				if ($websitepage->status == $websitepage::STATUS_DRAFT) {	// page is off
 					print '<span class="valignmiddle disabled opacitymedium">'.img_picto($langs->trans($text_off), 'switch_off').'</span>';
 				} else {
 					print '<span class="valignmiddle disabled opacitymedium">'.img_picto($langs->trans($text_off), 'switch_on').'</span>';
 				}
 			} else {
-				print ajax_object_onoff($objectpage, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle', 'statuswebsitepage');
+				print ajax_object_onoff($websitepage, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle'.(empty($websitepage->id) ? ' opacitymedium disabled' : ''), 'statuswebsitepage');
 			}
 			//print '</div>';
 			print '</span>';

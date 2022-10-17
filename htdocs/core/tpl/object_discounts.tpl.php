@@ -54,7 +54,7 @@ if ($fixedDiscount > 0) {
 	print $langs->trans($translationKey, $fixedDiscount).'.';
 } else {
 	$translationKey = (!empty($discount_type)) ? 'HasNoRelativeDiscountFromSupplier' : 'CompanyHasNoRelativeDiscount';
-	print '<span class="opacitymedium">'.$langs->trans($translationKey).'.</span>';
+	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans($translationKey).'.</span>';
 }
 if ($isNewObject) {
 	print ' ('.$addrelativediscount.')';
@@ -115,7 +115,7 @@ if ($absolute_creditnote > 0) {
 
 if ($absolute_discount <= 0 && $absolute_creditnote <= 0) {
 	$translationKey = !empty($discount_type) ? 'HasNoAbsoluteDiscountFromSupplier' : 'CompanyHasNoAbsoluteDiscount';
-	print '<br><span class="opacitymedium">'.$langs->trans($translationKey).'.</span>';
+	print '<br class="hideonsmartphone"><span class="opacitymedium hideonsmartphone">'.$langs->trans($translationKey).'.</span>';
 
 	if ($isInvoice && $object->statut == $objclassname::STATUS_DRAFT && $object->type != $objclassname::TYPE_CREDIT_NOTE && $object->type != $objclassname::TYPE_DEPOSIT) {
 		print ' ('.$addabsolutediscount.')';

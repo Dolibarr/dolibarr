@@ -120,4 +120,4 @@ errorCostUpdatingInDb= error on updating costs in db
 errorLoadProductSupplierClass=error on load product Supplier class
 
 BomCantAddChildBom=The nomenclature %s is already present in the tree leading to the nomenclature %s
-
+BOMNetNeeds = BOM Net Needs

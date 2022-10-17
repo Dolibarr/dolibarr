@@ -270,6 +270,7 @@ foreach ($search as $key => $val) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+// Search for tag/category
 $searchCategoryProductSqlList = array();
 if ($searchCategoryProductOperator == 1) {
 	$existsCategoryProductList = array();
@@ -314,7 +315,6 @@ if ($searchCategoryProductOperator == 1) {
 		$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
 	}
 }
-//$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks

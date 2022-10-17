@@ -4410,7 +4410,7 @@ abstract class CommonObject
 
 			$nb_rows_affected = $this->db->affected_rows($resql);	// should be 1 or 0 if status was already correct
 
-			if ($nb_rows_affected >= 0) {
+			if ($nb_rows_affected > 0) {
 				if (empty($trigkey)) {
 					// Try to guess trigkey (for backward compatibility, now we should have trigkey defined into the call of setStatus)
 					if ($this->element == 'supplier_proposal' && $status == 2) {
@@ -4917,15 +4917,18 @@ abstract class CommonObject
 			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook.
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir) {
+				$res = 0;
 				if (!empty($module)) {
 					$tpl = dol_buildpath($reldir.'/objectline_title.tpl.php');
 				} else {
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_title.tpl.php';
 				}
-				if (empty($conf->file->strict_mode)) {
-					$res = @include $tpl;
-				} else {
-					$res = include $tpl; // for debug
+				if (file_exists($tpl)) {
+					if (empty($conf->file->strict_mode)) {
+						$res = @include $tpl;
+					} else {
+						$res = include $tpl; // for debug
+					}
 				}
 				if ($res) {
 					break;
@@ -5040,16 +5043,18 @@ abstract class CommonObject
 			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook printObjectLine and printObjectSubLine.
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
 			foreach ($dirtpls as $module => $reldir) {
+				$res = 0;
 				if (!empty($module)) {
 					$tpl = dol_buildpath($reldir.'/objectline_view.tpl.php');
 				} else {
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_view.tpl.php';
 				}
-
-				if (empty($conf->file->strict_mode)) {
-					$res = @include $tpl;
-				} else {
-					$res = include $tpl; // for debug
+				if (file_exists($tpl)) {
+					if (empty($conf->file->strict_mode)) {
+						$res = @include $tpl;
+					} else {
+						$res = include $tpl; // for debug
+					}
 				}
 				if ($res) {
 					break;
@@ -6067,14 +6072,15 @@ abstract class CommonObject
 							//var_dump('key '.$key.' '.$value.' type='.$extrafields->attributes[$this->table_element]['type'][$key].' '.$this->array_options["options_".$key]);
 						}
 					}
+				}
 
-					// If field is a computed field, value must become result of compute
-					foreach ($tab as $key => $value) {
-						if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
-							//var_dump($conf->disable_compute);
-							if (empty($conf->disable_compute)) {
-								$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
-							}
+				// If field is a computed field, value must become result of compute (regardless of whether a row exists
+				// in the element's extrafields table)
+				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+					if (!empty($extrafields->attributes[$this->table_element]) && !empty($extrafields->attributes[$this->table_element]['computed'][$key])) {
+						//var_dump($conf->disable_compute);
+						if (empty($conf->disable_compute)) {
+							$this->array_options["options_".$key] = dol_eval($extrafields->attributes[$this->table_element]['computed'][$key], 1, 0, '');
 						}
 					}
 				}

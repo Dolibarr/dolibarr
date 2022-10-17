@@ -1981,6 +1981,7 @@ class Categorie extends CommonObject
 	 * @param string	$type			The category type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
 	 * @return string					A additional SQL JOIN query
+	 * @deprecated	search on some categories must be done using a WHERE EXISTS or NOT EXISTS and not a LEFT JOIN. @TODO Replace with getWhereQuery($type, $searchCategoryList)
 	 */
 	public static function getFilterJoinQuery($type, $rowIdName)
 	{
@@ -1998,6 +1999,7 @@ class Categorie extends CommonObject
 	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
 	 * @param Array		$searchList		A list with the selected categories
 	 * @return string					A additional SQL SELECT query
+	 * @deprecated	search on some categories must be done using a WHERE EXISTS or NOT EXISTS and not a LEFT JOIN
 	 */
 	public static function getFilterSelectQuery($type, $rowIdName, $searchList)
 	{

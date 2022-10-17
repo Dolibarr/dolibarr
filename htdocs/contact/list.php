@@ -399,15 +399,6 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcommcontact as st ON st.id = p.fk_stcommcontact";
-if (!empty($search_categ) && $search_categ != '-1') {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cc ON p.rowid = cc.fk_socpeople"; // We need this table joined to the select in order to filter by categ
-}
-if (!empty($search_categ_thirdparty) && $search_categ_thirdparty != '-1') {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc"; // We need this table joined to the select in order to filter by categ
-}
-if (!empty($search_categ_supplier) && $search_categ_supplier != '-1') {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs2 ON s.rowid = cs2.fk_soc"; // We need this table joined to the select in order to filter by categ
-}
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 }
@@ -437,23 +428,83 @@ if ($search_priv != '0' && $search_priv != '1') {
 	}
 }
 
-if ($search_categ > 0) {
-	$sql .= " AND cc.fk_categorie = ".((int) $search_categ);
+$searchCategoryContactList = $search_categ ? array($search_categ) : array();
+$searchCategoryContactOperator = 0;
+// Search for tag/category ($searchCategoryContactList is an array of ID)
+if (!empty($searchCategoryContactList)) {
+	$searchCategoryContactSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryContactList as $searchCategoryContact) {
+		if (intval($searchCategoryContact) == -2) {
+			$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE s.rowid = ck.fk_socpeople)";
+		} elseif (intval($searchCategoryContact) > 0) {
+			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE s.rowid = ck.fk_socpeople AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryContactOperator == 1) {
+		if (!empty($searchCategoryContactSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryContactSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryContactSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryContactSqlList).")";
+		}
+	}
 }
-if ($search_categ == -2) {
-	$sql .= " AND cc.fk_categorie IS NULL";
+$searchCategoryCustomerList = $search_categ_thirdparty ? array($search_categ_thirdparty) : array();
+$searchCategoryCustomerOperator = 0;
+// Search for tag/category ($searchCategoryCustomerList is an array of ID)
+if (!empty($searchCategoryCustomerList)) {
+	$searchCategoryCustomerSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc)";
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryCustomerOperator == 1) {
+		if (!empty($searchCategoryCustomerSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryCustomerSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryCustomerSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
+		}
+	}
 }
-if ($search_categ_thirdparty > 0) {
-	$sql .= " AND cs.fk_categorie = ".((int) $search_categ_thirdparty);
-}
-if ($search_categ_thirdparty == -2) {
-	$sql .= " AND cs.fk_categorie IS NULL";
-}
-if ($search_categ_supplier > 0) {
-	$sql .= " AND cs2.fk_categorie = ".((int) $search_categ_supplier);
-}
-if ($search_categ_supplier == -2) {
-	$sql .= " AND cs2.fk_categorie IS NULL";
+$searchCategorySupplierList = $search_categ_supplier ? array($search_categ_supplier) : array();
+$searchCategorySupplierOperator = 0;
+// Search for tag/category ($searchCategorySupplierList is an array of ID)
+if (!empty($searchCategorySupplierList)) {
+	$searchCategorySupplierSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategorySupplierList as $searchCategorySupplier) {
+		if (intval($searchCategorySupplier) == -2) {
+			$searchCategorySupplierSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc)";
+		} elseif (intval($searchCategorySupplier) > 0) {
+			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplier);
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategorySupplierOperator == 1) {
+		if (!empty($searchCategorySupplierSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategorySupplierSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategorySupplierSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategorySupplierSqlList).")";
+		}
+	}
 }
 
 if ($sall) {
@@ -1222,7 +1273,7 @@ while ($i < min($num, $limit)) {
 	if (isModEnabled('socialnetworks')) {
 		foreach ($socialnetworks as $key => $value) {
 			if ($value['active'] && !empty($arrayfields['p.'.$key]['checked'])) {
-				print '<td class="tdoverflowmax100">'.dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key, $socialnetworks).'</td>';
+				print '<td class="tdoverflowmax100">'.(empty($arraysocialnetworks[$key]) ? '' : dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key, $socialnetworks)).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

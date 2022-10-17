@@ -1677,10 +1677,8 @@ if ($action == 'create') {
 			}
 		}
 
-		//if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->supprimer)
-		if ($user->rights->facture->supprimer) {
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=ask_deleteinvoice&id='.$object->id.'&token='.newToken().'">'.$langs->trans('Delete').'</a></div>';
-		}
+		// Delete
+		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->rights->facture->supprimer);
 
 		print '</div>';
 

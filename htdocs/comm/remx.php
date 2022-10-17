@@ -53,6 +53,9 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
 
+$permissiontocreate = ($user->rights->societe->creer || $user->rights->facture->creer);
+
+
 
 /*
  * Actions
@@ -63,7 +66,7 @@ if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
 	 exit;
 }
 
-if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && ($user->rights->societe->creer || $user->rights->facture->creer)) {
+if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permissiontocreate) {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
@@ -154,16 +157,17 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && ($user
 	}
 }
 
-if ($action == 'setremise' && ($user->rights->societe->creer || $user->rights->facture->creer)) {
+if ($action == 'setremise' && $permissiontocreate) {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
-	$amount_ht = price2num(GETPOST('amount_ht', 'alpha'));
+	$amount = price2num(GETPOST('amount', 'alpha'), '', 2);
 	$desc = GETPOST('desc', 'alpha');
 	$tva_tx = GETPOST('tva_tx', 'alpha');
 	$discount_type = GETPOSTISSET('discount_type') ? GETPOST('discount_type', 'alpha') : 0;
+	$price_base_type = GETPOST('price_base_type', 'alpha');
 
-	if ($amount_ht > 0) {
+	if ($amount > 0) {
 		$error = 0;
 		if (empty($desc)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReasonDiscount")), null, 'errors');
@@ -173,14 +177,14 @@ if ($action == 'setremise' && ($user->rights->societe->creer || $user->rights->f
 		if (!$error) {
 			$soc = new Societe($db);
 			$soc->fetch($id);
-			$discountid = $soc->set_remise_except($amount_ht, $user, $desc, $tva_tx, $discount_type);
+			$discountid = $soc->set_remise_except($amount, $user, $desc, $tva_tx, $discount_type, $price_base_type);
 
 			if ($discountid > 0) {
 				if (!empty($backtopage)) {
-					header("Location: ".$backtopage.'&discountid='.$discountid);
+					header("Location: ".$backtopage.'&discountid='.((int) $discountid));
 					exit;
 				} else {
-					header("Location: remx.php?id=".$id);
+					header("Location: remx.php?id=".((int) $id));
 					exit;
 				}
 			} else {
@@ -193,7 +197,7 @@ if ($action == 'setremise' && ($user->rights->societe->creer || $user->rights->f
 	}
 }
 
-if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes' && ($user->rights->societe->creer || $user->rights->facture->creer)) {
+if (GETPOST('action', 'aZ09') == 'confirm_remove' && GETPOST("confirm") == 'yes' && $permissiontocreate) {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
 
@@ -231,9 +235,8 @@ if ($socid > 0) {
 	$isCustomer = $object->client == 1 || $object->client == 3;
 	$isSupplier = $object->fournisseur == 1;
 
-	/*
-	 * Display tabs
-	 */
+	// Display tabs
+
 	$head = societe_prepare_head($object);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
@@ -262,6 +265,7 @@ if ($socid > 0) {
 	}
 
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="border centpercent tableforfield borderbottom">';
 
 	if ($isCustomer) {	// Calcul avoirs client en cours
@@ -324,8 +328,9 @@ if ($socid > 0) {
 	}
 
 	print '</table>';
-
 	print '</div>';
+
+	print '</div>';	// close fichecenter
 
 	print dol_get_fiche_end();
 
@@ -346,6 +351,8 @@ if ($socid > 0) {
 
 		print dol_get_fiche_head();
 
+
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="border centpercent">';
 		if ($isCustomer && $isSupplier) {
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
@@ -353,9 +360,19 @@ if ($socid > 0) {
 			print ' &nbsp; <input type="radio" name="discount_type" id="discount_type_1" value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
 			print '</td></tr>';
 		}
-		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("AmountHT").'</td>';
-		print '<td><input type="text" size="5" name="amount_ht" value="'.price2num(GETPOST("amount_ht")).'" autofocus>';
+
+		// Amount
+		print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Amount").'</td>';
+		print '<td><input type="text" size="5" name="amount" value="'.price2num(GETPOST("amount")).'" autofocus>';
 		print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+
+		// Price base (HT / TTC)
+		print '<tr><td class="titlefield">'.$langs->trans("PriceBase").'</td>';
+		print '<td>';
+		print $form->selectPriceBaseType(GETPOST("price_base_type"), "price_base_type");
+		print '</td></tr>';
+
+		// VAT
 		print '<tr><td>'.$langs->trans("VAT").'</td>';
 		print '<td>';
 		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : 0, $mysoc, $object, 0, 0, '', 0, 1);
@@ -364,6 +381,7 @@ if ($socid > 0) {
 		print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc', 'alphanohtml').'"></td></tr>';
 
 		print "</table>";
+		print '</div>';
 
 		print dol_get_fiche_end();
 	}

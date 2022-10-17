@@ -3395,7 +3395,7 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 *	Delete the customer order
+	 *	Delete the sales order
 	 *
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
@@ -4062,7 +4062,7 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 * Is the customer order delayed?
+	 * Is the sales order delayed?
 	 *
 	 * @return bool     true if late, false if not
 	 */

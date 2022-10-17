@@ -1613,7 +1613,7 @@ if ($action == 'create') {
 	print '<table class="border tableforfield" width="100%">';
 
 	// Relative and absolute discounts
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 	} else {
@@ -2003,10 +2003,7 @@ if ($action == 'create') {
 				}
 
 				// Delete
-				if (($object->statut == SupplierProposal::STATUS_DRAFT && $usercancreate) || $usercandelete) {
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'"';
-					print '>'.$langs->trans('Delete').'</a></div>';
-				}
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', ($object->statut == SupplierProposal::STATUS_DRAFT && $usercancreate) || $usercandelete);
 			}
 		}
 

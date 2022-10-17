@@ -1579,7 +1579,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Delete
 			if ($user->rights->societe->contact->supprimer) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().''.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.$langs->trans('Delete').'</a>';
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().($backtopage ? '&backtopage='.urlencode($backtopage) : ''), 'delete', $user->rights->societe->contact->supprimer);
 			}
 		}
 

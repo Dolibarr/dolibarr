@@ -362,7 +362,6 @@ ValueOverwrittenByUserSetup=Advertencia, este valor puede ser sobrescrito por la
 BarcodeInitForThirdparties=init para código de barras masivo para terceros
 BarcodeInitForProductsOrServices=Código de barras masivo de inicio o reinicio para productos o servicios.
 CurrentlyNWithoutBarCode=Actualmente, tienes el registro <strong> %s </strong> en <strong> %s </strong> %s sin un código de barras definido.
-InitEmptyBarCode=Init value for the %s empty barcodes
 EraseAllCurrentBarCode=Borrar todos los valores de código de barras actuales
 ConfirmEraseAllCurrentBarCode=¿Está seguro de que desea borrar todos los valores de código de barras actuales?
 AllBarcodeReset=Todos los valores de código de barras han sido eliminados

@@ -165,7 +165,7 @@ class Form
 				$ret .= '<td class="right">';
 			}
 			if ($htmlname && GETPOST('action', 'aZ09') != 'edit'.$htmlname && $perm) {
-				$ret .= '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&token='.newToken().'&'.$paramid.'='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
+				$ret .= '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&token='.newToken().'&'.$paramid.'='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
 			}
 			if (!empty($notabletag) && $notabletag == 1) {
 				$ret .= ' : ';
@@ -626,11 +626,11 @@ class Form
 		$extrastyle = '';
 		if ($direction < 0) {
 			$extracss = ($extracss ? $extracss.' ' : '').($notabs != 3 ? 'inline-block' : '');
-			$extrastyle = 'padding: 0px; padding-left: 3px !important;';
+			$extrastyle = 'padding: 0px; padding-left: 3px;';
 		}
 		if ($direction > 0) {
 			$extracss = ($extracss ? $extracss.' ' : '').($notabs != 3 ? 'inline-block' : '');
-			$extrastyle = 'padding: 0px; padding-right: 3px !important;';
+			$extrastyle = 'padding: 0px; padding-right: 3px;';
 		}
 
 		$classfortooltip = 'classfortooltip';
@@ -673,7 +673,7 @@ class Form
 		if ($direction < 0) {
 			$s .= '<'.$tag.$paramfortooltipimg;
 			if ($tag == 'td') {
-				$s .= ' class=valigntop" width="14"';
+				$s .= ' class="valigntop" width="14"';
 			}
 			$s .= '>'.$textfordialog.$img.'</'.$tag.'>';
 		}
@@ -3173,6 +3173,8 @@ class Form
 			'type'=>$outtype,
 			'price_ht'=>price2num($outprice_ht),
 			'price_ttc'=>price2num($outprice_ttc),
+			'price_ht_locale'=>price(price2num($outprice_ht)),
+			'price_ttc_locale'=>price(price2num($outprice_ttc)),
 			'pricebasetype'=>$outpricebasetype,
 			'tva_tx'=>$outtva_tx,
 			'default_vat_code'=>$outdefault_vat_code,
@@ -3274,9 +3276,9 @@ class Form
 		$sql .= " pfp.supplier_reputation";
 		// if we use supplier description of the products
 		if (!empty($conf->global->PRODUIT_FOURN_TEXTS)) {
-			$sql .= " ,pfp.desc_fourn as description";
+			$sql .= ", pfp.desc_fourn as description";
 		} else {
-			$sql .= " ,p.description";
+			$sql .= ", p.description";
 		}
 		// Units
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -3558,7 +3560,13 @@ class Form
 					$optstart .= ' disabled';
 				}
 				if (!empty($objp->idprodfournprice) && $objp->idprodfournprice > 0) {
-					$optstart .= ' data-product-id="'.$objp->rowid.'" data-price-id="'.$objp->idprodfournprice.'" data-qty="'.$objp->quantity.'" data-up="'.$objp->unitprice.'" data-discount="'.$outdiscount.'" data-tvatx="'.$objp->tva_tx.'"';
+					$opt .= ' data-product-id="'.dol_escape_htmltag($objp->rowid).'"';
+					$opt .= ' data-price-id="'.dol_escape_htmltag($objp->idprodfournprice).'"';
+					$opt .= ' data-qty="'.dol_escape_htmltag($objp->quantity).'"';
+					$opt .= ' data-up="'.dol_escape_htmltag($objp->unitprice).'"';
+					$opt .= ' data-up-locale="'.dol_escape_htmltag(price($objp->unitprice)).'"';
+					$opt .= ' data-discount="'.dol_escape_htmltag($outdiscount).'"';
+					$opt .= ' data-tvatx="'.dol_escape_htmltag($objp->tva_tx).'"';
 				}
 				$optstart .= ' data-description="'.dol_escape_htmltag($objp->description, 0, 1).'"';
 
@@ -3594,8 +3602,27 @@ class Form
 				// "key" value of json key array is used by jQuery automatically as selected value. Example: 'type' = product or service, 'price_ht' = unit price without tax
 				// "label" value of json key array is used by jQuery automatically as text for combo box
 				$out .= $optstart . ' data-html="'.dol_escape_htmltag($optlabel).'">' . $optlabel . "</option>\n";;
-				array_push($outarray, $outarrayentry);
-
+				array_push(
+					$outarray,
+					array('key'=>$outkey,
+						'value'=>$outref,
+						'label'=>$outval,
+						'qty'=>$outqty,
+						'price_qty_ht'=>price2num($objp->fprice, 'MU'),		// Keep higher resolution for price for the min qty
+						'price_unit_ht'=>price2num($objp->unitprice, 'MU'),	// This is used to fill the Unit Price
+						'price_ht'=>price2num($objp->unitprice, 'MU'),		// This is used to fill the Unit Price (for compatibility)
+						'price_qty_ht_locale'=>price($objp->fprice),
+						'price_unit_ht_locale'=>price($objp->unitprice),
+						'tva_tx'=>$objp->tva_tx,
+						'default_vat_code'=>$objp->default_vat_code,
+						'discount'=>$outdiscount,
+						'type'=>$outtype,
+						'duration_value'=>$outdurationvalue,
+						'duration_unit'=>$outdurationunit,
+						'disabled'=>(empty($objp->idprodfournprice) ? true : false),
+						'description'=>$objp->description
+					)
+				);
 				// Exemple of var_dump $outarray
 				// array(1) {[0]=>array(6) {[key"]=>string(1) "2" ["value"]=>string(3) "ppp"
 				//           ["label"]=>string(76) "ppp (<strong>f</strong>ff2) - ppp - 20,00 Euros/1unité (20,00 Euros/unité)"
@@ -5612,29 +5639,38 @@ class Form
 	 *    @param    int     $active         Active or not, -1 = all
 	 *    @param   	int     $addempty       1=Add empty entry
 	 *    @param	string	$type			Type ('direct-debit' or 'bank-transfer')
+	 *    @param	int		$nooutput		1=Return string, no output
 	 *    @return	void
 	 */
-	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '')
+	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs;
+
+		$out = '';
 		if ($htmlname != "none") {
-			print '<form method="POST" action="'.$page.'">';
-			print '<input type="hidden" name="action" value="setmode">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
+			$out .= '<form method="POST" action="'.$page.'">';
+			$out .= '<input type="hidden" name="action" value="setmode">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			if ($type) {
-				print '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
+				$out .= '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
 			}
-			print $this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active, '', 1);
-			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
-			print '</form>';
+			$out .= $this->select_types_paiements($selected, $htmlname, $filtertype, 0, $addempty, 0, 0, $active, '', 1);
+			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
+			$out .= '</form>';
 		} else {
 			if ($selected) {
 				$this->load_cache_types_paiements();
-				print $this->cache_types_paiements[$selected]['label'];
+				$out .= $this->cache_types_paiements[$selected]['label'];
 			} else {
-				print "&nbsp;";
+				$out .= "&nbsp;";
 			}
+		}
+
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
 		}
 	}
 
@@ -5759,7 +5795,7 @@ class Form
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<div class="inline-block">';
 			if (!empty($discount_type)) {
-				if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 					if (!$filter || $filter == "fk_invoice_supplier_source IS NULL") {
 						$translationKey = 'HasAbsoluteDiscountFromSupplier'; // If we want deposit to be substracted to payments only and not to total of final invoice
 					} else {
@@ -8878,7 +8914,7 @@ class Form
 							$form = new Form($this->db);
 							print $form->textwithpicto('', $langs->trans("InformationOnLinkToContract")).' ';
 						}
-						print '<span class="amount">'.price($objp->total_ht).'</span>';
+						print '<span class="amount">'.(isset($objp->total_ht) ? price($objp->total_ht) : '').'</span>';
 						print '</td>';
 						print '<td>'.$objp->name.'</td>';
 						print '</tr>';

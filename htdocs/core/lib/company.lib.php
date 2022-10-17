@@ -438,7 +438,11 @@ function societe_prepare_head2($object)
  */
 function societe_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('societe');
+	$extrafields->fetch_name_optionals_label('socpeople');
 
 	$h = 0;
 	$head = array();
@@ -456,11 +460,19 @@ function societe_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/societe/admin/societe_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsThirdParties");
+	$nbExtrafields = $extrafields->attributes['societe']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/societe/admin/contact_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsContacts");
+	$nbExtrafields = $extrafields->attributes['socpeople']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_contacts';
 	$h++;
 
