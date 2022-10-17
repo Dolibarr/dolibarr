@@ -451,8 +451,8 @@ class DataPolicyCron
 		$this->db->begin();
 
 		foreach ($arrayofparameters as $key => $params) {
-			if ($conf->global->$key != '' && is_numeric($conf->global->$key) && (int) $conf->global->$key > 0) {
-				$sql = sprintf($params['sql'], (int) $conf->entity, (int) $conf->global->$key, (int) $conf->global->$key);
+			if (getDolGlobalInt($key) > 0) {
+				$sql = sprintf($params['sql'], (int) $conf->entity, (int) getDolGlobalInt($key), (int) getDolGlobalInt($key));
 
 				$resql = $this->db->query($sql);
 
