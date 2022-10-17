@@ -8167,6 +8167,7 @@ class Form
 							if(! data.id) return null;';
 
 			if ($callurlonselect) {
+				// We forge the url with 'sall='
 				$outdelayed .= '
 
 							var urlBase = data.url;
