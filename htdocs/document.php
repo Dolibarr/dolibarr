@@ -168,7 +168,7 @@ if (!empty($hashp)) {
 			$conf->entity = $entity;
 			$conf->setValues($db);
 		}
-		$fullpath_original_file = $ecmfile->fullpath_orig;
+		$fullpath_original_file = DOL_DATA_ROOT . '/' . $ecmfile->filepath . '/' . $ecmfile->filename;
 	} else {
 		$langs->load("errors");
 		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 0, 0, 1);
