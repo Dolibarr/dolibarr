@@ -294,6 +294,7 @@ ErrorFailedToWriteInTempDirectory=Failed to write in temp directory
 ErrorQuantityIsLimitedTo=Quantity is limited to %s
 ErrorValueForTooLow=Value for <b>%s</b> is too low
 ErrorValueCantBeNull=Value for <b>%s</b> can't be null
+ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.

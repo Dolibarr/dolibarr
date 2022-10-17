@@ -353,7 +353,8 @@ class BonPrelevement extends CommonObject
 
 		if ($this->fetched == 1) {
 			if ($date < $this->date_trans) {
-				$this->error = 'DateOfMovementLowerThanDateOfFileTransmission';
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorDateOfMovementLowerThanDateOfFileTransmission');
 				dol_syslog("bon-prelevment::set_infocredit 1027 ".$this->error);
 				return -1027;
 			}
