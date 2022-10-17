@@ -26,6 +26,7 @@ Following changes may create regressions for some external modules, but were nec
 * The signature of method getNomUrl() of class ProductFournisseur has been modified to match the signature of method Product
 * Trigger ORDER_SUPPLIER_DISPATCH is removed, use ORDER_SUPPLIER_RECEIVE and/or LINEORDER_SUPPLIER_DISPATCH instead.
 * All functions fetch_all() are deprecated for naming consitency, use fetchAll() instead
+* Code standardization: $user->rights->propale is now $user->rights->propal everywhere.
 
 
 ***** ChangeLog for 16.0.1 compared to 16.0.0 *****
