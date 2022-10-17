@@ -838,6 +838,7 @@ class FormFile
 
 					// Show file name with link to download
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
+					$out .= '<span class="spanoverflow widthcentpercentminusxx">';
 					$out .= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 
 					$mime = dol_mimetype($relativepath, '', 0);
@@ -847,7 +848,8 @@ class FormFile
 					$out .= '>';
 					$out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
 					$out .= dol_trunc($file["name"], 150);
-					$out .= '</a>'."\n";
+					$out .= '</a>';
+					$out .= '</span>'."\n";
 					$out .= $this->showPreview($file, $modulepart, $relativepath, 0, $param);
 					$out .= '</td>';
 

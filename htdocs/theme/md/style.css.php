@@ -1405,11 +1405,18 @@ select.flat.selectlimit {
 	width: 130px;
 }
 /* using a tdoverflowxxx make the min-width not working */
+.tdnooverflowimp {
+   text-overflow: none;
+}
 .tdoverflow {
 	max-width: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+.spanoverflow {
+	overflow-x: clip;
+	text-overflow: ellipsis;
 }
 .tdoverflowmax50 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 50px;
