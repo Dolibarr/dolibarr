@@ -564,23 +564,25 @@ class FormTicket
 	/**
 	 *      Return html list of tickets type
 	 *
-	 *      @param  string $selected    Id du type pre-selectionne
-	 *      @param  string $htmlname    Nom de la zone select
-	 *      @param  string $filtertype  To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
-	 *      @param  int    $format      0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
-	 *      @param  int    $empty       1=peut etre vide, 0 sinon
-	 *      @param  int    $noadmininfo 0=Add admin info, 1=Disable admin info
-	 *      @param  int    $maxlength   Max length of label
-	 *      @param	string	$morecss	More CSS
+	 *      @param  string|array	$selected		Id du type pre-selectionne
+	 *      @param  string			$htmlname		Nom de la zone select
+	 *      @param  string			$filtertype		To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
+	 *      @param  int				$format			0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
+	 *      @param  int				$empty			1=peut etre vide, 0 sinon
+	 *      @param  int				$noadmininfo	0=Add admin info, 1=Disable admin info
+	 *      @param  int				$maxlength		Max length of label
+	 *      @param	string			$morecss		More CSS
+	 *      @param  int				$multiselect	Is multiselect ?
 	 *      @return void
 	 */
-	public function selectTypesTickets($selected = '', $htmlname = 'tickettype', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
+	public function selectTypesTickets($selected = '', $htmlname = 'tickettype', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '', $multiselect = 0)
 	{
 		global $langs, $user;
 
+		$selected = is_array($selected) ? $selected : (!empty($selected) ? implode(',', $selected) : array());
 		$ticketstat = new Ticket($this->db);
 
-		dol_syslog(get_class($this)."::select_types_tickets ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
+		dol_syslog(get_class($this)."::select_types_tickets ".implode(';',$selected).", ".$htmlname.", ".$filtertype.", ".$format.", ".$multiselect, LOG_DEBUG);
 
 		$filterarray = array();
 
@@ -590,7 +592,7 @@ class FormTicket
 
 		$ticketstat->loadCacheTypesTickets();
 
-		print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
+		print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiselect?'[]':'').'"'.($multiselect?' multiple':'').'>';
 		if ($empty) {
 			print '<option value="">&nbsp;</option>';
 		}
@@ -624,9 +626,9 @@ class FormTicket
 				}
 
 				// Si selected est text, on compare avec code, sinon avec id
-				if (preg_match('/[a-z]/i', $selected) && $selected == $arraytypes['code']) {
+				if (in_array($arraytypes['code'], $selected)) {
 					print ' selected="selected"';
-				} elseif ($selected == $id) {
+				} elseif (in_array($id, $selected)) {
 					print ' selected="selected"';
 				} elseif ($arraytypes['use_default'] == "1" && !$selected && !$empty) {
 					print ' selected="selected"';
