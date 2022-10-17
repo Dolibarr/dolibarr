@@ -649,15 +649,19 @@ if ($id > 0 || $ref) {
 			$textdesc = $langs->trans("CostPriceDescription");
 			$textdesc .= "<br>".$langs->trans("CostPriceUsage");
 			$text = $form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
-			$costprice = $object->cost_price;
 			if (!$usercancreadprice) {
-				$costprice = '';
+				print $form->editfieldkey($text, 'cost_price', '', $object, 0, 'amount:6');
+				print '</td><td>';
+				print $form->editfieldval($text, 'cost_price', '', $object, 0, 'amount:6');
+				print '</td></tr>';
+			} else {
+				print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+				print '</td><td>';
+				print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+				print '</td></tr>';
 			}
 
-			print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
-			print '</td><td>';
-			print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
-			print '</td></tr>';
+
 
 			// AWP
 			print '<tr><td class="titlefield">';
