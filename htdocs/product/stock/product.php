@@ -653,13 +653,12 @@ if ($id > 0 || $ref) {
 				print $form->editfieldkey($text, 'cost_price', '', $object, 0, 'amount:6');
 				print '</td><td>';
 				print $form->editfieldval($text, 'cost_price', '', $object, 0, 'amount:6');
-				print '</td></tr>';
 			} else {
 				print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
 				print '</td><td>';
 				print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
-				print '</td></tr>';
 			}
+			print '</td></tr>';
 
 
 
