@@ -2469,7 +2469,7 @@ function printDropdownQuickadd()
 				"title" => "NewPropal@propal",
 				"name" => "Proposal@propal",
 				"picto" => "object_propal",
-				"activation" => isModEnabled("propal") && $user->hasRight("propale", "write"), // vs hooking
+				"activation" => isModEnabled("propal") && $user->hasRight("propal", "write"), // vs hooking
 				"position" => 30,
 			),
 
