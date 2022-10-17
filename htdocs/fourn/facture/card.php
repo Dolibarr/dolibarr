@@ -3784,21 +3784,26 @@ if ($action == 'create') {
 
 				// Delete
 				$isErasable = $object->is_erasable();
-				if ($action != 'confirm_edit' && ($user->rights->fournisseur->facture->supprimer || ($usercancreate && $isErasable == 1))) {	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
-					//var_dump($isErasable);
+				if ($action != 'confirm_edit' && ($usercandelete || ($usercancreate && $isErasable == 1))) {	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
+					$enableDelete = false;
+					$htmltooltip = '';
+					$params = (empty($conf->use_javascript_ajax) ? array() : array('attr' => array('class' => 'reposition')));
+					//var_dump($isErasable); var_dump($params);
 					if ($isErasable == -4) {
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecausePayments").'">'.$langs->trans('Delete').'</a>';
+						$htmltooltip = $langs->trans("DisabledBecausePayments");
 					} elseif ($isErasable == -3) {	// Should never happen with supplier invoice
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseNotLastSituationInvoice").'">'.$langs->trans('Delete').'</a>';
+						$htmltooltip = $langs->trans("DisabledBecauseNotLastSituationInvoice");
 					} elseif ($isErasable == -2) {	// Should never happen with supplier invoice
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseNotLastInvoice").'">'.$langs->trans('Delete').'</a>';
+						$htmltooltip = $langs->trans("DisabledBecauseNotLastInvoice");
 					} elseif ($isErasable == -1) {
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseDispatchedInBookkeeping").'">'.$langs->trans('Delete').'</a>';
+						$htmltooltip = $langs->trans("DisabledBecauseDispatchedInBookkeeping");
 					} elseif ($isErasable <= 0) {	// Any other cases
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseNotErasable").'">'.$langs->trans('Delete').'</a>';
+						$htmltooltip = $langs->trans("DisabledBecauseNotErasable");
 					} else {
-						print '<a class="butActionDelete'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
+						$enableDelete = true;
+						$htmltooltip = '';
 					}
+					print dolGetButtonAction($htmltooltip, $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), $object->id, $enableDelete, $params);
 				}
 				print '</div>';
 
