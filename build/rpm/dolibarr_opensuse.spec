@@ -66,7 +66,6 @@ ed essere facile da usare.
 Programmo web, progettato per poter fornire solo ciò di 
 cui hai bisogno ed essere facile da usare.
 
-%_datadir/dolibarr/htdocs/webhook
 
 #---- prep
 %prep
