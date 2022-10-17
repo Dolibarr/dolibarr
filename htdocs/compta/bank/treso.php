@@ -137,7 +137,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 	$sql = " SELECT 'expense_reports' as family, ex.rowid as objid, ex.ref as ref, (-1*ex.total_ttc) as total_ttc, ex.date_fin as dlr,";
 	$sql .= " s.rowid as socid, CONCAT(s.firstname, ' ', s.lastname) as name, 0 as fournisseur";
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as s ON ex.fk_user = s.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as s ON ex.fk_user_author = s.rowid";
 	$sql .= " WHERE ex.entity = ".$conf->entity;
 	$sql .= " AND ex.paid = 0 AND fk_statut = 5"; // Not paid & approved
 	$sql .= " AND (ex.fk_bank_account IN (0, ".$object->id.") OR ex.fk_bank_account IS NULL)"; // Id bank account of supplier invoice
@@ -311,7 +311,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 				$userstatic->name = $tmpobj->name;
 				$refcomp = $userstatic->getNomUrl(1);
 
-				$totalpayment = -1 * $expensereportstatic->getSommePaiement(); // Payment already done
+				$totalpayment = -1 * $expensereportstatic->getSumPayments(); // Payment already done
 			}
 			if ($tmpobj->family == 'social_contribution') {
 				$socialcontribstatic->ref = $tmpobj->ref;
