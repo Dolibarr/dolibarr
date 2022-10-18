@@ -220,7 +220,7 @@ if ($action == 'edit') {
 	foreach ($arrayofparameters as $constname => $val) {
 		if ($val['enabled']==1) {
 			$setupnotempty++;
-			print '<tr class="oddeven"><td>';
+			print '<tr class="oddeven"><td><!-- '.$constname.' -->';
 			$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
 			$tooltiphelp .= (($langs->trans($constname . 'Tooltip2') && $langs->trans($constname . 'Tooltip2') != $constname . 'Tooltip2') ? '<br><br>'."\n".$langs->trans($constname . 'Tooltip2') : '');
 			print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';
@@ -313,7 +313,8 @@ if ($action == 'edit') {
 		foreach ($arrayofparameters as $constname => $val) {
 			if ($val['enabled']==1) {
 				$setupnotempty++;
-				print '<tr class="oddeven"><td>';
+				print '<tr class="oddeven">';
+				print '<td><!-- '.$constname.' -->';
 				$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
 				$tooltiphelp .= (($langs->trans($constname . 'Tooltip2') && $langs->trans($constname . 'Tooltip2') != $constname . 'Tooltip2') ? '<br><br>'."\n".$langs->trans($constname . 'Tooltip2') : '');
 				print $form->textwithpicto($langs->trans($constname), $tooltiphelp);
@@ -331,12 +332,17 @@ if ($action == 'edit') {
 						$formmail = new FormMail($db);
 
 						$tmp = explode(':', $val['type']);
-
-						$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, getDolGlobalString($constname));
-						if ($template < 0) {
-							setEventMessages(null, $formmail->errors, 'errors');
+						$labelemailtemplate = getDolGlobalString($constname);
+						if ($labelemailtemplate && $labelemailtemplate != '-1') {
+							$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, getDolGlobalString($constname));
+							if (is_numeric($template) && $template < 0) {
+								setEventMessages($formmail->error, $formmail->errors, 'errors');
+							} else {
+								if ($template->label != 'default') {
+									print $langs->trans($template->label);
+								}
+							}
 						}
-						print $langs->trans($template->label);
 					}
 				} elseif (preg_match('/category:/', $val['type'])) {
 					if (getDolGlobalString($constname)) {
@@ -364,16 +370,21 @@ if ($action == 'edit') {
 					}
 				} elseif ($val['type'] == 'product') {
 					$product = new Product($db);
-					$resprod = $product->fetch(getDolGlobalString($constname));
-					if ($resprod > 0) {
-						print $product->getNomUrl(1);
-					} elseif ($resprod < 0) {
-						setEventMessages($product->error, $product->errors, "errors");
+					$idproduct = getDolGlobalString($constname);
+					if ($idproduct > 0) {
+						$resprod = $product->fetch($idproduct);
+						if ($resprod > 0) {
+							print $product->getNomUrl(1);
+						} elseif ($resprod < 0) {
+							setEventMessages($product->error, $product->errors, "errors");
+						}
 					}
 				} else {
 					print getDolGlobalString($constname);
 				}
-				print '</td></tr>';
+				print '</td>';
+
+				print '</tr>';
 			}
 		}
 
