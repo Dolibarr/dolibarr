@@ -1542,10 +1542,7 @@ if ($ispaymentok) {
 
 
 // Set $appli for emails title
-$appli = constant('DOL_APPLICATION_TITLE');
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$appli = $conf->global->MAIN_APPLICATION_TITLE;
-}
+$appli = $mysoc->name;
 
 
 if ($ispaymentok) {
