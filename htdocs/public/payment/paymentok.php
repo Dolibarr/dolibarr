@@ -1266,7 +1266,7 @@ if ($ispaymentok) {
 						$thirdparty = new Societe($db);
 						$resultthirdparty = $thirdparty->fetch($attendeetovalidate->fk_soc);
 						if ($resultthirdparty < 0) {
-							setEventMessages(null, $attendeetovalidate->errors, "errors");
+							setEventMessages($resultthirdparty->error, $resultthirdparty->errors, "errors");
 						} else {
 							require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 							include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -1293,7 +1293,6 @@ if ($ispaymentok) {
 								$msg = $outputlangs->trans("OrganizationEventPaymentOfRegistrationWasReceived");
 							}
 
-
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
 
@@ -1301,6 +1300,13 @@ if ($ispaymentok) {
 							$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
 							$sendto = $attendeetovalidate->email;
+							$cc = '';
+							if ($thirdparty->email) {
+								$cc = $thirdparty->email;
+							}
+							if ($attendeetovalidate->email_company && $attendeetovalidate->email_company != $thirdparty->email) {
+								$cc = ($cc ? ', ' : '').$attendeetovalidate->email_company;
+							}
 							$from = $conf->global->MAILING_EMAIL_FROM;
 							$urlback = $_SERVER["REQUEST_URI"];
 
@@ -1321,7 +1327,7 @@ if ($ispaymentok) {
 								$listofmimes = array(dol_mimetype($file));
 							}
 
-							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, '', '', 0, $ishtml);
+							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, $cc, '', 0, $ishtml);
 
 							$result = $mailfile->sendfile();
 							if ($result) {
