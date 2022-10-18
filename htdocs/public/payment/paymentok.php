@@ -1289,7 +1289,7 @@ if ($ispaymentok) {
 								$subject = $arraydefaultmessage->topic;
 								$msg     = $arraydefaultmessage->content;
 							} else {
-								$subject = '['.$object->ref.' - '.$outputlangs->trans("NewRegistration").']';
+								$subject = '['.$appli.'] '.$object->ref.' - '.$outputlangs->trans("NewRegistration").']';
 								$msg = $outputlangs->trans("OrganizationEventPaymentOfRegistrationWasReceived");
 							}
 
@@ -1493,7 +1493,7 @@ if ($ispaymentok) {
 											$subject = $arraydefaultmessage->topic;
 											$msg     = $arraydefaultmessage->content;
 										} else {
-											$subject = '['.$booth->ref.' - '.$outputlangs->trans("NewRegistration").']';
+											$subject = '['.$appli.'] '.$booth->ref.' - '.$outputlangs->trans("NewRegistration").']';
 											$msg = $outputlangs->trans("OrganizationEventPaymentOfBoothWasReceived");
 										}
 
@@ -1541,6 +1541,14 @@ if ($ispaymentok) {
 		// Nothing done
 	}
 }
+
+
+// Set $appli for emails title
+$appli = constant('DOL_APPLICATION_TITLE');
+if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+	$appli = $conf->global->MAIN_APPLICATION_TITLE;
+}
+
 
 if ($ispaymentok) {
 	// Get on url call
@@ -1600,19 +1608,6 @@ if ($ispaymentok) {
 		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 		// Define link to login card
-		$appli = constant('DOL_APPLICATION_TITLE');
-		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-			$appli = $conf->global->MAIN_APPLICATION_TITLE;
-			if (preg_match('/\d\.\d/', $appli)) {
-				if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
-					$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-				}
-			} else {
-				$appli .= " ".DOL_VERSION;
-			}
-		} else {
-			$appli .= " ".DOL_VERSION;
-		}
 
 		$urlback = $_SERVER["REQUEST_URI"];
 		$topic = '['.$appli.'] '.$companylangs->transnoentitiesnoconv("NewOnlinePaymentReceived");
@@ -1739,21 +1734,6 @@ if ($ispaymentok) {
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
-		// Define link to login card
-		$appli = constant('DOL_APPLICATION_TITLE');
-		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-			$appli = $conf->global->MAIN_APPLICATION_TITLE;
-			if (preg_match('/\d\.\d/', $appli)) {
-				if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
-					$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-				}
-			} else {
-				$appli .= " ".DOL_VERSION;
-			}
-		} else {
-			$appli .= " ".DOL_VERSION;
-		}
 
 		$urlback = $_SERVER["REQUEST_URI"];
 		$topic = '['.$appli.'] '.$companylangs->transnoentitiesnoconv("ValidationOfPaymentFailed");
