@@ -224,6 +224,8 @@ if (empty($reshook)) {
 		$object->size_units = GETPOST('size_units', 'int');
 		$object->weight_units = GETPOST('weight_units', 'int');
 
+		$product = new Product($db);
+
 		// We will loop on each line of the original document to complete the shipping object with various info and quantity to deliver
 		$classname = ucfirst($object->origin);
 		$objectsrc = new $classname($db);
@@ -259,7 +261,17 @@ if (empty($reshook)) {
 			$stockLocation = "ent1".$i."_0";
 			$qty = "qtyl".$i;
 
-			if (isModEnabled('productbatch') && $objectsrc->lines[$i]->product_tobatch) {      // If product need a batch number
+			$is_batch_or_serial=0;
+			if (!empty($objectsrc->lines[$i]->fk_product)) {
+				$resultFetch = $product->fetch($objectsrc->lines[$i]->fk_product, '', '', '', 1, 1, 1);
+				if ($resultFetch < 0) {
+					setEventMessages($product->error, $product->errors, 'errors');
+				}
+				$is_batch_or_serial = $product->status_batch;
+			}
+
+			// If product need a batch or serial number
+			if (isModEnabled('productbatch') && $objectsrc->lines[$i]->product_tobatch) {
 				if (GETPOSTISSET($batch)) {
 					//shipment line with batch-enable product
 					$qty .= '_'.$j;
@@ -274,6 +286,12 @@ if (empty($reshook)) {
 						//var_dump($sub_qty[$j]['q']);
 						//var_dump($sub_qty[$j]['id_batch']);
 
+						//var_dump($qty);var_dump($batch);var_dump($sub_qty[$j]['q']);var_dump($sub_qty[$j]['id_batch']);
+						if ($is_batch_or_serial==2 && $sub_qty[$j]['q']>1) {
+							setEventMessages($langs->trans("TooManyQtyForSerialNumber", $product->ref, ''), null, 'errors');
+							$totalqty=0;
+							break 2;
+						}
 						$j++;
 						$batch = "batchl".$i."_".$j;
 						$qty = "qtyl".$i.'_'.$j;
@@ -328,7 +346,6 @@ if (empty($reshook)) {
 		}
 
 		//var_dump($batch_line[2]);
-
 		if ($totalqty > 0 && !$error) {		// There is at least one thing to ship and no error
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
