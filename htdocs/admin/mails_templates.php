@@ -1173,7 +1173,7 @@ if ($num) {
 							$class .= ' tdoverflowmax100';
 						}
 						if ($value == 'topic') {
-							$class .= 'tdoverflowmax200 small';
+							$class .= ' tdoverflowmax200 small';
 						}
 						if ($value == 'type_template') {
 							$valuetoshow = isset($elementList[$valuetoshow]) ? $elementList[$valuetoshow] : $valuetoshow;
