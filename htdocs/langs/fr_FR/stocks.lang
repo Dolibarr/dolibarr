@@ -316,3 +316,4 @@ StockTransferRightRead=Lire les transferts de stocks
 StockTransferRightCreateUpdate=Créer/Mettre à jour les transferts de stocks
 StockTransferRightDelete=Supprimer les transferts de stocks
 BatchNotFound=Lot/série introuvable pour ce produit
+StockEntryDate=Dernière date <br>d'entrée en stock
