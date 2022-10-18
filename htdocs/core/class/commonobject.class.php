@@ -3525,7 +3525,9 @@ abstract class CommonObject
 						}
 						$sqlfix = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".price2num($obj->total_tva - $diff).", total_ttc = ".price2num($obj->total_ttc - $diff)." WHERE rowid = ".((int) $obj->rowid);
 						dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
-								$resqlfix = $this->db->query($sqlfix);
+
+						$resqlfix = $this->db->query($sqlfix);
+
 						if (!$resqlfix) {
 							dol_print_error($this->db, 'Failed to update line');
 						}
