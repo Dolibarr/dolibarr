@@ -473,6 +473,16 @@ if (($action == "create") || ($action == "edit")) {
 	}
 	$input .= "<label for=\"frequency_semaine\">".$langs->trans('Weeks')."</label>";
 	print $input;
+
+	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"2678400\" id=\"frequency_month\" ";
+	if ($object->unitfrequency == "2678400") {
+		$input .= ' checked />';
+	} else {
+		$input .= ' />';
+	}
+	$input .= "<label for=\"frequency_month\">".$langs->trans('Monthly')."</label>";
+	print $input;
+
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -663,6 +673,9 @@ if (($action == "create") || ($action == "edit")) {
 	}
 	if ($object->unitfrequency == "604800") {
 		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Weeks');
+	}
+	if ($object->unitfrequency == "2678400") {
+		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Month');
 	}
 	print "</td></tr>";
 
