@@ -93,7 +93,7 @@ if ($object->element == 'product') {
 	if (empty($ident) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
 		$ident = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 	}
-	print img_picto('', 'stock').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100');
+	print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100 maxwidth300 widthcentpercentminusx');
 	print '</td>';
 }
 if ($object->element == 'stock') {
@@ -134,9 +134,10 @@ if (!empty($conf->productbatch->enabled) &&
 ) {
 	print '<tr>';
 	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
-	print '<input type="text" name="batch_number" class="minwidth300" value="'.GETPOST("batch_number").'">';
+	print img_picto('', 'barcode', 'class="pictofixedwidth"').'<input type="text" name="batch_number" class="minwidth300 maxwidth300 widthcentpercentminusx" value="'.GETPOST("batch_number").'">';
 	print '</td>';
 	print '</tr>';
+
 	print '<tr>';
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 		print '<td>'.$langs->trans("SellByDate").'</td><td>';
