@@ -2208,7 +2208,7 @@ class Project extends CommonObject
 	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
 	 * 	@return int		>0 if OK, <0 if KO
 	 */
-	public function getLinesArray($user,  $loadRoleMode = 1)
+	public function getLinesArray($user, $loadRoleMode = 1)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 		$taskstatic = new Task($this->db);
