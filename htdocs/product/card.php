@@ -2831,7 +2831,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 	//print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	// Propals
-	if (isModEnabled("propal") && $user->rights->propale->creer) {
+	if (isModEnabled("propal") && $user->rights->propal->creer) {
 		$propal = new Propal($db);
 
 		$langs->load("propal");
