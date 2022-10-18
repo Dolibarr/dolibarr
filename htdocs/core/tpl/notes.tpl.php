@@ -60,7 +60,7 @@ if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES)) {
 
 // Special cases
 if ($module == 'propal') {
-	$permission = $user->rights->propal->creer;
+	$permission = $user->rights->propale->creer;
 } elseif ($module == 'supplier_proposal') {
 	$permission = $user->rights->supplier_proposal->creer;
 } elseif ($module == 'fichinter') {

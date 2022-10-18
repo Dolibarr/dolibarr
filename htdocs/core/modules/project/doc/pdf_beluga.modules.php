@@ -374,7 +374,7 @@ class pdf_beluga extends ModelePDFProjects
 						'class'=>'Propal',
 						'table'=>'propal',
 						'datefieldname'=>'datep',
-						'test'=>$conf->propal->enabled && $user->rights->propal->lire,
+						'test'=>$conf->propal->enabled && $user->rights->propale->lire,
 						'lang'=>'propal'),
 					'order'=>array(
 						'name'=>"CustomersOrders",

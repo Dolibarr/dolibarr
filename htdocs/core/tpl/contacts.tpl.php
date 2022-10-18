@@ -41,7 +41,7 @@ $module = $object->element;
 
 // Special cases
 if ($module == 'propal') {
-	$permission = $user->rights->propal->creer;
+	$permission = $user->rights->propale->creer;
 } elseif ($module == 'fichinter') {
 	$permission = $user->rights->ficheinter->creer;
 } elseif ($module == 'order_supplier') {

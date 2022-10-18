@@ -2539,7 +2539,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->facture->multidir_output[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'apercupropal' && !empty($conf->propal->multidir_output[$entity])) {
 		// Wrapping pour les apercu propal
-		if ($fuser->rights->propal->{$lire}) {
+		if ($fuser->rights->propale->{$lire}) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;
@@ -2611,7 +2611,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->expensereport->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'propalstats' && !empty($conf->propal->multidir_temp[$entity])) {
 		// Wrapping pour les images des stats propales
-		if ($fuser->rights->propal->{$lire}) {
+		if ($fuser->rights->propale->{$lire}) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_temp[$entity].'/'.$original_file;
@@ -2832,7 +2832,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	} elseif (($modulepart == 'propal' || $modulepart == 'propale') && !empty($conf->propal->multidir_output[$entity])) {
 		// Wrapping pour les propales
-		if ($fuser->rights->propal->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->rights->propale->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;

@@ -943,7 +943,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListProposalsAssociatedProject",
 						'class' => 'Propal',
 						'table' => 'propal',
-						'test' => $conf->propal->enabled && $user->rights->propal->lire
+						'test' => $conf->propal->enabled && $user->rights->propale->lire
 					),
 					'order' => array(
 						'title' => "ListOrdersAssociatedProject",
