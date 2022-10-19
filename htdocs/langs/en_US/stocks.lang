@@ -316,3 +316,4 @@ StockTransferRightRead=Read stocks transfers
 StockTransferRightCreateUpdate=Create/Update stocks transfers
 StockTransferRightDelete=Delete stocks transfers
 BatchNotFound=Lot / serial not found for this product
+StockEntryDate=Date of <br>entry in stock
