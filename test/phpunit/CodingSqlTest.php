@@ -193,7 +193,7 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 
 				$result=strpos($filecontent, '"');
 				if ($result) {
-					$result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"'));
+					$result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"') && ! strpos($filecontent, '("'));
 				}
 				//print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
 				$this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) into '.$file.'. Bad.');
