@@ -1780,7 +1780,7 @@ if ($dirins && $action == 'generatepackage') {
 				dol_mkdir($dirofmodule);
 			}
 			// Note: We exclude /bin/ to not include the already generated zip
-			$result = dol_compress_dir($dir, $outputfilezip, 'zip', '/\/bin\//', $modulelowercase);
+			$result = dol_compress_dir($dir, $outputfilezip, 'zip', '/\/bin\/|\.git/', $modulelowercase);
 		} else {
 			$result = -1;
 		}

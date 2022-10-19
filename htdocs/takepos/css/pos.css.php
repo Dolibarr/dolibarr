@@ -825,3 +825,118 @@ div#moreinfo, div#infowarehouse {
   display: table;
   clear: both;
 }
+
+.div5 .price {
+	display: none;
+}
+
+.div5 .imgadd {
+	display: none;
+}
+
+@media screen and (max-width: 767px) {
+	.div4 {
+		height: auto;
+		width: 100%;
+		float: left;
+		box-sizing: border-box;
+		font-size: 6px;
+		padding-top: 10px;
+		padding-bottom: 2px;
+		margin-left: 2px;
+	}
+	
+	.div4 .wrapper.divempty, .div4 img, .div4 .wrapper:nth-last-child(1), .div4 .wrapper:nth-last-child(2), #prodiv22, #prodiv23, .catwatermark {
+		display: none!important;
+	}
+	
+	.tab-category {
+		float: left;
+		position: relative;
+		width: 25%;
+		height: 33%;
+		margin: 0;
+		padding: 1px;
+		border: 2px solid #EEE;
+		text-align: center;
+		box-sizing: border-box;
+		background-color: #fff;
+	}
+	
+	.div4 .wrapper, .tab-category {
+		width: auto;
+		height: auto;
+		padding: 6px;
+		text-align: center;
+		cursor: pointer;
+		border: 1px solid #FFF!important;
+		border-top: 3px solid #FFF!important;
+	}
+	
+	.div4 .tab-category.active {
+		border-right: 1px solid #CCC !important;
+		border-left: 1px solid #CCC !important;
+		border-top: 3px solid var(--colorbackhmenu1) !important;
+	}
+
+	.div5 {
+		height: 100%;
+		width: 100%;
+		padding-top: 0px;
+	}
+
+	div.description {
+		position: initial;
+		width: auto;
+		background-color: black;
+		opacity: 1;
+		text-align: center;
+		padding-top: 0px;
+		background: -webkit-linear-gradient(top, rgba(250,250,250,0), rgba(250,250,250,0.5), rgba(250,250,250,0.95), rgba(250,250,250,1));
+	}
+	
+	.div5 .description .description_content {
+		font-weight: bold;
+		font-size: 14px;
+		padding-left: 10px;
+	}
+	
+	.div5 .wrapper2 {
+		width: 100%;
+		display: inline-flex;
+		align-items: center;
+		padding: 10px;
+	}
+	
+	.div5 .wrapper2.divempty {
+		display: none;
+	}
+	
+	div.wrapper2 {
+		float: none;
+	}
+	
+	.div5 .arrow {
+		width: auto;
+		height: auto;
+		display: none!important;
+	}
+	
+	.div5 .arrow .centerinmiddle {
+		transform: translate(0, 0);
+	}
+
+	.div5 .price {
+		font-size: 14px;
+		margin-left: auto;
+		margin-right: 30px;
+		padding-right: 10px;
+		font-weight: bold;
+		color: #ff6d6d;
+		display: flex;
+	}
+	
+	.div5 .imgadd {
+		display: flex;
+	}
+}
