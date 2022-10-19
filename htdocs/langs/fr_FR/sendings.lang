@@ -74,5 +74,5 @@ SumOfProductWeights=Somme des poids des produits
 # warehouse details
 DetailWarehouseNumber= Détail de l'entrepôt
 DetailWarehouseFormat= W:%s (Qté : %d)
-SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Afficher la dernière date d'entrée en stock à la création d'une expédition
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Afficher la dernière date d'entrée en stock à la création d'une expédition pour les numéros de séries et lots
 CreationOptions=Options disponibles à la création d'une expédition
