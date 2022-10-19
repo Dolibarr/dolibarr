@@ -4138,6 +4138,12 @@ class OrderLine extends CommonOrderLine
 		$result = $this->db->query($sql);
 		if ($result) {
 			$objp = $this->db->fetch_object($result);
+
+			if (!$objp) {
+				$this->error = 'OrderLine with id '. $rowid .' not found sql='.$sql;
+				return 0;
+			}
+
 			$this->rowid            = $objp->rowid;
 			$this->id = $objp->rowid;
 			$this->fk_commande      = $objp->fk_commande;
