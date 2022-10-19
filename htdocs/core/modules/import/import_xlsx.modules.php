@@ -889,8 +889,6 @@ class ImportXlsx extends ModeleImports
 						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 
-							$where = array();
-
 							if (empty($lastinsertid)) {	// No insert done yet for a parent table
 								$sqlSelect = "SELECT ".$fname." FROM " . $tablename;
 
