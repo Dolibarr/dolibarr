@@ -468,7 +468,10 @@ class Productbatch extends CommonObject
 		}
 		if(!empty($conf->global->SHIPPING_DISPLAY_STOCK_ENTRY_DATE)) {
 			$sql .= ' AND sm.type_mouvement IN (0,3)';
-			$sql .= ' GROUP BY t.rowid';
+			$sql .= ' GROUP BY t.rowid, t.tms, t.fk_product_stock,t.sellby,t.eatby , t.batch,t.qty,t.import_key';
+			if ($fk_product > 0) {
+				$sql .= ', pl.rowid, pl.eatby, pl.sellby';
+			}
 		}
 		$sql .= " ORDER BY ";
 		// TODO : use product lifo and fifo when product will implement it
