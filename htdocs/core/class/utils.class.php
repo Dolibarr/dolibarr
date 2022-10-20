@@ -1237,9 +1237,10 @@ class Utils
 	 *	@param 	string	$message             Message
 	 *	@param 	string	$filename		     List of files to attach (full path of filename on file system)
 	 * 	@param 	string	$filter			     Filter file send
+	 * 	@param 	string	$sizelimit			 Limit size to send file
 	 *  @return	int						     0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '')
+	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '', $sizelimit = 100000000)
 	{
 		global $conf, $langs;
 
