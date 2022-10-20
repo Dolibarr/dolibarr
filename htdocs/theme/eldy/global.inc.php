@@ -4835,8 +4835,12 @@ input#cardholder-name {
 }
 
 .divmainbodylarge { margin-left: 40px; margin-right: 40px; }
+.publicnewmemberform div.titre { font-size: 2em; }
 #divsubscribe { max-width: 900px; }
 #tablesubscribe { width: 100%; }
+#tablesubscribe tr td { font-size: 1.15em; }
+#tablesubscribe .price-registration { font-size: 1.5em; }
+
 
 div#card-element {
 	border: 1px solid #ccc;

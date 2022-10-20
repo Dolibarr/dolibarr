@@ -652,21 +652,23 @@ print '<div class="center subscriptionformhelptext justify">';
 print $langs->trans("EvntOrgWelcomeMessage", $project->title . ' '. $conference->label);
 print '<br>';
 $maxattendees = 0;
-if ($conference->id) {
+if ($conference->id > 0) {
+	/* date of project is not  date of event so commented
 	print $langs->trans("Date").': ';
 	print dol_print_date($conference->datep);
 	if ($conference->date_end) {
 		print ' - ';
 		print dol_print_date($conference->datef);
-	}
+	}*/
 } else {
+	/* date of project is not  date of event so commented
 	print $langs->trans("Date").': ';
 	print dol_print_date($project->date_start);
 	if ($project->date_end) {
 		print ' - ';
 		print dol_print_date($project->date_end);
-	}
-	$maxattendees = $project->max_attendees;
+	}*/
+	$maxattendees = $project->max_attendees;	// Max attendeed for the project/event
 }
 print '</div>';
 
@@ -729,7 +731,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 
 		// Email company for invoice
 		if ($project->price_registration) {
-			print '<tr><td>' . $langs->trans("EmailCompanyForInvoice") . '</td><td>';
+			print '<tr><td>' . $form->textwithpicto($langs->trans("EmailCompany"), $langs->trans("EmailCompanyForInvoice")) . '</td><td>';
 			print img_picto('', 'email', 'class="pictofixedwidth"');
 			print '<input type="text" name="emailcompany" maxlength="255" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('emailcompany')) . '"></td></tr>' . "\n";
 		}
@@ -780,7 +782,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 
 		if ($project->price_registration) {
 			print '<tr><td>' . $langs->trans('Price') . '</td><td>';
-			print price($project->price_registration, 1, $langs, 1, -1, -1, $conf->currency);
+			print '<span class="amount price-registration">'.price($project->price_registration, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 			print '</td></tr>';
 		}
 

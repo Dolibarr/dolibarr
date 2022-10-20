@@ -165,6 +165,7 @@ PaymentBoothLocation = Booth location payment
 DeleteConferenceOrBoothAttendee=Remove attendee
 RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
 EmailAttendee=Attendee email
+EmailCompany=Company email
 EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
 ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
 ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
