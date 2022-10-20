@@ -1298,9 +1298,13 @@ class Utils
 		}
 
 		if ($filepath) {
-			if ($filesize > 100000000) {
-				$output = 'Sorry, last backup file is too large to be send by email';
-				$error++;
+			if ($filesize > $sizelimit) {
+				$message .= '<br>'.$langs->trans("BackupIsTooLargeSend");
+				$documenturl =  $dolibarr_main_url_root.'/document.php?modulepart=systemtools&atachement=1&file=backup/'.urlencode($filename[0]);
+				$message .= '<br><a href='.$documenturl.'>Lien de téléchargement</a>';
+				$filepath = '';
+				$mimetype = '';
+				$filename = '';
 			}
 		} else {
 			$output = 'No backup file found';
