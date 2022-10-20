@@ -131,6 +131,21 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1)
 		} else {
 			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $object->entity), '0');
 		}
+	} elseif ($type == 'fichinter') {
+		$securekeyseed = isset($conf->global->FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN) ? $conf->global->FICHINTER_ONLINE_SIGNATURE_SECURITY_TOKEN : '';
+		$out = $urltouse.'/public/onlinesign/newonlinesign.php?source=fichinter&ref='.($mode ? '<span style="color: #666666">' : '');
+		if ($mode == 1) {
+			$out .= 'fichinter_ref';
+		}
+		if ($mode == 0) {
+			$out .= urlencode($ref);
+		}
+		$out .= ($mode ? '</span>' : '');
+		if ($mode == 1) {
+			$out .= "hash('".$securekeyseed."' + '".$type."' + fichinter_ref)";
+		} else {
+			$out .= '&securekey='.dol_hash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $object->entity), '0');
+		}
 	}
 
 	// For multicompany
