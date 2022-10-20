@@ -645,11 +645,13 @@ print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center')
 
 print '<div align="center">';
 print '<div id="divsubscribe">';
-print '<div class="center subscriptionformhelptext justify">';
+print '<div class="center subscriptionformhelptext">';
 
 // Welcome message
 
-print $langs->trans("EvntOrgWelcomeMessage", $project->title . ' '. $conference->label);
+print $langs->trans("EvntOrgWelcomeMessage");
+print '<br>';
+print '<span class="eventlabel">'.$project->title . ' '. $conference->label.'</span>';
 print '<br>';
 $maxattendees = 0;
 if ($conference->id > 0) {

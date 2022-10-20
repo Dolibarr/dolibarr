@@ -122,7 +122,7 @@ ViewAndVote = View and vote for suggested events
 PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
 PublicAttendeeSubscriptionPage = Public link for registration to this event only
 MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
 EvntOrgDuration = This conference starts on %s and ends on %s.
 ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
 BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
@@ -132,7 +132,7 @@ LabelOfconference=Conference label
 ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
 DateMustBeBeforeThan=%s must be before %s
 DateMustBeAfterThan=%s must be after %s
-
+MaxNbOfAttendeesReached=The maximum number of participants has been reached
 NewSubscription=Registration
 OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
 OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
