@@ -947,6 +947,7 @@ while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
 	$datefin = $db->jdate($obj->datefin);
+
 	$memberstatic->id = $obj->rowid;
 	$memberstatic->ref = $obj->ref;
 	$memberstatic->civility_id = $obj->civility;
@@ -1063,14 +1064,7 @@ while ($i < min($num, $limit)) {
 	// Nature (Moral/Physical)
 	if (!empty($arrayfields['d.morphy']['checked'])) {
 		print '<td class="center">';
-		$s = '';
-		if ($obj->morphy == 'phy') {
-			$s .= '<span class="customer-back" title="'.$langs->trans("Physical").'">'.dol_substr($langs->trans("Physical"), 0, 1).'</span>';
-		}
-		if ($obj->morphy == 'mor') {
-			$s .= '<span class="vendor-back" title="'.$langs->trans("Moral").'">'.dol_substr($langs->trans("Moral"), 0, 1).'</span>';
-		}
-		print $s;
+		print $memberstatic->getmorphylib('', 2);
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
