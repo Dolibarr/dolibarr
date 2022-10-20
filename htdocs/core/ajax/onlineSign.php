@@ -313,7 +313,7 @@ if ($action == "importSignature") {
 					// Document format not supported to insert online signature.
 					// We should just create an image file with the signature.
 				}
-			} 
+			}
 		} elseif ($mode == 'fichinter') {
 			require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';

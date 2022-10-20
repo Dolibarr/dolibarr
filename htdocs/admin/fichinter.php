@@ -620,7 +620,7 @@ print '<input type="submit" class="button button-edit" value="'.$langs->trans("M
 print '</td>';
 print '</tr>';
 print '</form>';
-// Allow online signing 
+// Allow online signing
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_ALLOW_ONLINE_SIGN">';
@@ -635,7 +635,7 @@ print '<td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr>';
-print '</form>'; 
+print '</form>';
 // Allow external download
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';

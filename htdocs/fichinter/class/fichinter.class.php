@@ -483,7 +483,7 @@ class Fichinter extends CommonObject
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
 
 				$this->last_main_doc = $obj->last_main_doc;
-				
+
 				if ($this->statut == 0) {
 					$this->brouillon = 1;
 				}
