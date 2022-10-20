@@ -5611,6 +5611,9 @@ abstract class CommonObject
 			if ($this->element == 'contrat' && !empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD)) {
 				$setsharekey = true;
 			}
+			if ($this->element == 'fichinter' && !empty($conf->global->FICHINTER_ALLOW_EXTERNAL_DOWNLOAD)) {
+				$setsharekey = true;
+			}
 			if ($this->element == 'supplier_proposal' && !empty($conf->global->SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) {
 				$setsharekey = true;
 			}

@@ -7782,6 +7782,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (is_object($object) && $object->element == 'contrat') {
 					$typeforonlinepayment = 'contract';
 				}
+				if (is_object($object) && $object->element == 'fichinter') {
+					$typeforonlinepayment = 'ficheinter';
+				}
 				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__']);
 				$paymenturl = $url;
 			}
@@ -7814,6 +7817,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				} else {
 					$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = '';
 				}
+				if (!empty($conf->global->FICHINTER_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'fichinter') {
+					$substitutionarray['__DIRECTDOWNLOAD_URL_FICHINTER__'] = $object->getLastMainDocLink($object->element);
+				} else {
+					$substitutionarray['__DIRECTDOWNLOAD_URL_FICHINTER__'] = '';
+				}
 				if (!empty($conf->global->SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'supplier_proposal') {
 					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = $object->getLastMainDocLink($object->element);
 				} else {
@@ -7831,6 +7839,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				if (is_object($object) && $object->element == 'contrat') {
 					$substitutionarray['__URL_CONTRACT__'] = DOL_MAIN_URL_ROOT."/contrat/card.php?id=".$object->id;
+				}
+				if (is_object($object) && $object->element == 'fichinter') {
+					$substitutionarray['__URL_FICHINTER__'] = DOL_MAIN_URL_ROOT."/fichinter/card.php?id=".$object->id;
 				}
 				if (is_object($object) && $object->element == 'supplier_proposal') {
 					$substitutionarray['__URL_SUPPLIER_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/supplier_proposal/card.php?id=".$object->id;
