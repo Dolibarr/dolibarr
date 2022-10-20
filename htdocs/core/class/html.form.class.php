@@ -2426,6 +2426,7 @@ class Form
 	 * @param string $morecss Add more css on select
 	 * @param string $nooutput No print, return the output into a string
 	 * @param int $forcecombo Force to use combo box
+	 * @param array $TProducts  Add filter on a defined product
 	 * @return        void|string
 	 */
 	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 0, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0, $TProducts = [])
