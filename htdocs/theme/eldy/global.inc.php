@@ -5606,8 +5606,12 @@ a.cke_dialog_ui_button
 }
 .cke_dialog_ui_hbox_last
 {
-	vertical-align: bottom ! important;
+	vertical-align: bottom !important;
 }
+.cke_dialog_ui_hbox_first {
+	vertical-align: middle !important;
+}
+
 /*
 .cke_editable
 {
