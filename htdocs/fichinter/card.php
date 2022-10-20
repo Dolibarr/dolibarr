@@ -1714,12 +1714,11 @@ if ($action == 'create') {
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 		//Show direct download link
-		if ($object->statut != Fichinter::STATUS_DRAFT && !empty($conf->global->FICHINTER_ALLOW_EXTERNAL_DOWNLOAD))
-		{
+		if ($object->statut != Fichinter::STATUS_DRAFT && !empty($conf->global->FICHINTER_ALLOW_EXTERNAL_DOWNLOAD)) {
 			print '<br><!-- Link to download main doc -->'."\n";
 			print showDirectDownloadLink($object).'<br>';
 		}
-		
+
 		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
