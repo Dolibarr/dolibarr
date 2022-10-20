@@ -139,7 +139,12 @@ if (empty($reshook)) {
 				$username = '';
 			} else {
 				if (!$edituser->email) {
-					$message = '<div class="error">'.$langs->trans("ErrorLoginHasNoEmail").'</div>';
+					//$message = '<div class="error">'.$langs->trans("ErrorLoginHasNoEmail").'</div>';
+					if (!$isanemail) {
+						$message .= $langs->trans("IfLoginExistPasswordRequestSent");
+					} else {
+						$message .= $langs->trans("IfEmailExistPasswordRequestSent");
+					}
 				} else {
 					$newpassword = $edituser->setPassword($user, '', 1);
 					if ($newpassword < 0) {
