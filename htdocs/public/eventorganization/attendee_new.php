@@ -681,7 +681,6 @@ if ($maxattendees && $currentnbofattendees >= $maxattendees) {
 }
 
 
-print '<br>';
 
 dol_htmloutput_errors($errmsg, $errors);
 
