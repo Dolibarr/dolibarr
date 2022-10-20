@@ -215,6 +215,9 @@ class Utils
 		dol_syslog("Utils::dumpDatabase type=".$type." compression=".$compression." file=".$file, LOG_DEBUG);
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+		// Clean data
+		$file = dol_sanitizeFileName($file);
+
 		// Check compression parameter
 		if (!in_array($compression, array('none', 'gz', 'bz', 'zip', 'zstd'))) {
 			$langs->load("errors");
@@ -373,23 +376,23 @@ class Utils
 				}
 			} else {
 				if ($compression == 'none') {
-					$fullcommandclear .= " > ".dol_sanitizePathName($outputfile);
-					$fullcommandcrypted .= " > ".dol_sanitizePathName($outputfile);
+					$fullcommandclear .= ' > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' > "'.dol_sanitizePathName($outputfile).'"';
 					$handle = 1;
 				} elseif ($compression == 'gz') {
-					$fullcommandclear .= " | gzip > ".dol_sanitizePathName($outputfile);
-					$fullcommandcrypted .= " | gzip > ".dol_sanitizePathName($outputfile);
-					$paramcrypted.=" | gzip";
+					$fullcommandclear .= ' | gzip > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | gzip > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | gzip';
 					$handle = 1;
 				} elseif ($compression == 'bz') {
-					$fullcommandclear .= " | bzip2 > ".dol_sanitizePathName($outputfile);
-					$fullcommandcrypted .= " | bzip2 > ".dol_sanitizePathName($outputfile);
-					$paramcrypted.=" | bzip2";
+					$fullcommandclear .= ' | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | bzip2';
 					$handle = 1;
 				} elseif ($compression == 'zstd') {
-					$fullcommandclear .= " | zstd > ".dol_sanitizePathName($outputfile);
-					$fullcommandcrypted .= " | zstd > ".dol_sanitizePathName($outputfile);
-					$paramcrypted.=" | zstd";
+					$fullcommandclear .= ' | zstd > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | zstd > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | zstd';
 					$handle = 1;
 				}
 			}
@@ -473,15 +476,16 @@ class Utils
 					}
 				}
 
-
-				if ($compression == 'none') {
-					fclose($handle);
-				} elseif ($compression == 'gz') {
-					gzclose($handle);
-				} elseif ($compression == 'bz') {
-					bzclose($handle);
-				} elseif ($compression == 'zstd') {
-					fclose($handle);
+				if (!$lowmemorydump) {
+					if ($compression == 'none') {
+						fclose($handle);
+					} elseif ($compression == 'gz') {
+						gzclose($handle);
+					} elseif ($compression == 'bz') {
+						bzclose($handle);
+					} elseif ($compression == 'zstd') {
+						fclose($handle);
+					}
 				}
 
 				if (!empty($conf->global->MAIN_UMASK)) {
