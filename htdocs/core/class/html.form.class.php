@@ -2428,7 +2428,7 @@ class Form
 	 * @param int $forcecombo Force to use combo box
 	 * @return        void|string
 	 */
-	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 1, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0)
+	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 0, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0, $TProducts = [])
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $db;
@@ -2450,8 +2450,9 @@ class Form
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'bom_bom as b';
 		$sql.= ' WHERE b.entity IN ('.getEntity('bom').')';
 		if (!empty($status)) $sql.= ' AND status = '. (int) $status;
-		if (!empty($type)) $sql.= ' AND status = '. (int) $type;
-		if (!empty($limit)) $sql.= 'LIMIT '. (int) $limit;
+		if (!empty($type)) $sql.= ' AND bomtype = '. (int) $type;
+		if(! empty($TProducts)) $sql .= ' AND fk_product IN ('.implode(',', $TProducts).')';
+		if (!empty($limit)) $sql.= ' LIMIT '. (int) $limit;
 		$resql = $db->query($sql);
 		if ($resql) {
 			if ($showempty)	{
