@@ -474,7 +474,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION);
 			}
 
-			// Create invoice
+			// Create the draft invoice for the payment
 			if ($resultprod < 0) {
 				$error++;
 				$errmsg .= $productforinvoicerow->error;
@@ -528,7 +528,11 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 				// If there is no lines yet, we add one
 				if (empty($facture->lines)) {
-					$result = $facture->addline($labelforproduct, floatval($project->price_registration), 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, $date_start, $date_end, 0, 0, '', 'HT', 0, 1);
+					$pu_ttc = floatval($project->price_registration);
+					$pu_ht = 0;
+					$price_base_type = 'TTC';
+
+					$result = $facture->addline($labelforproduct, $pu_ht, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, $date_start, $date_end, 0, 0, '', $price_base_type, $pu_ttc, 1);
 					if ($result <= 0) {
 						$confattendee->error = $facture->error;
 						$confattendee->errors = $facture->errors;
