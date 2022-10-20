@@ -157,7 +157,7 @@ VoteOk = Your vote has been accepted.
 AlreadyVoted = You have already voted for this event.
 VoteError = An error has occurred during the vote, please try again.
 
-SubscriptionOk = Your registration has been validated
+SubscriptionOk=Your registration has been recorded
 ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
 Attendee = Attendee
 PaymentConferenceAttendee = Conference attendee payment

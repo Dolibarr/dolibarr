@@ -698,6 +698,9 @@ ALTER TABLE llx_eventorganization_conferenceorboothattendee 	ADD COLUMN firstnam
 ALTER TABLE llx_eventorganization_conferenceorboothattendee 	ADD COLUMN lastname 	 varchar(100);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee 	ADD COLUMN email_company varchar(128) after email;
 
+-- VMYSQL4.3 ALTER TABLE llx_eventorganization_conferenceorboothattendee MODIFY COLUMN fk_user_creat integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_eventorganization_conferenceorboothattendee ALTER COLUMN fk_user_creat DROP NOT NULL;
+
 
 ALTER TABLE llx_c_email_templates ADD COLUMN joinfiles text;
 ALTER TABLE llx_c_email_templates ADD COLUMN email_from varchar(255);
