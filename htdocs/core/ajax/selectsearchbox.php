@@ -21,12 +21,9 @@
  *      \brief      This script returns content of possible search
  */
 
-
 // This script is called with a POST method or as an include.
 
 if (!isset($usedbyinclude) || empty($usedbyinclude)) {
-	top_httphead('application/json');
-
 	if (!defined('NOTOKENRENEWAL')) {
 		define('NOTOKENRENEWAL', 1); // Disables token renewal
 	}
@@ -45,6 +42,9 @@ if (!isset($usedbyinclude) || empty($usedbyinclude)) {
 	}
 
 	$res = @include '../../main.inc.php';
+
+	top_httphead('application/json');
+
 	if ($res == 'ERROR_NOT_LOGGED') {
 		$langs->load("other");
 		$arrayresult['jumptologin'] = array('img'=>'object_generic', 'label'=>$langs->trans("JumpToLogin"), 'text'=>'<span class="fa fa-sign-in"></span> '.$langs->trans("JumpToLogin"), 'url'=>DOL_URL_ROOT.'/index.php');
