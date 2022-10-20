@@ -1346,7 +1346,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 	<?php
 	$count = 0;
 	while ($count < $MAXPRODUCT) {
-			print '<div class="wrapper2" id="prodiv'.$count.'"  ';
+			print '<div class="wrapper2 arrow" id="prodiv'.$count.'"  ';
 		?>
 				<?php if ($count == ($MAXPRODUCT - 2)) {
 					?> onclick="MoreProducts('less');" <?php
@@ -1375,6 +1375,9 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 					<div class="description" id="prodivdesc<?php echo $count; ?>">
 						<div class="description_content" id="prodesc<?php echo $count; ?>"></div>
 					</div>
+					<div class="price" id="prodivprice<?php echo $count; ?>">
+					</div>
+					<span class="fa fa-plus"></span>
 					<?php } ?>
 					<div class="catwatermark" id='prowatermark<?php echo $count; ?>'>...</div>
 				</div>

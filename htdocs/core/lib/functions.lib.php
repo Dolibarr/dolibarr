@@ -10567,7 +10567,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param array 		$params = [ // Various params for future : recommended rather than adding more function arguments
  *                          'attr' => [ // to add or override button attributes
  *                          'xxxxx' => '', // your xxxxx attribute you want
- *                          'class' => '', // to add more css class to the button class attribute
+ *                          'class' => 'reposition', // to add more css class to the button class attribute
  *                          'classOverride' => '' // to replace class attribute of the button
  *                          ],
  *                          'confirm' => [
@@ -10614,7 +10614,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 	if (empty($userRight)) {
 		$attr['class'] = 'butActionRefused';
 		$attr['href'] = '';
-		$attr['title'] = $langs->trans('NotEnoughPermissions');
+		$attr['title'] = (($label && $text && $label != $text) ? $label : $langs->trans('NotEnoughPermissions'));
 	}
 
 	if (!empty($id)) {
@@ -10670,7 +10670,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 	$TCompiledAttr = array();
 	foreach ($attr as $key => $value) {
-		$TCompiledAttr[] = $key.'="'.$value.'"';
+		$TCompiledAttr[] = $key.'= "'.$value.'"';
 	}
 
 	$compiledAttributes = empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr);

@@ -90,7 +90,6 @@ if (((isModEnabled('product') && $user->hasRight('product', 'read')) || (isModEn
 if (isModEnabled('mrp') && $user->hasRight('mrp', 'read') && empty($conf->global->MAIN_SEARCHFORM_MRP_DISABLED)) {
 	$arrayresult['searchintomo'] = array('position'=>35, 'shortcut'=>'', 'img'=>'object_mrp', 'label'=>$langs->trans("SearchIntoMO", $search_boxvalue), 'text'=>img_picto('', 'object_mrp', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoMO", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/mrp/mo_list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
-
 if (isModEnabled('project') && empty($conf->global->MAIN_SEARCHFORM_PROJECT_DISABLED) && $user->hasRight('projet', 'lire')) {
 	$arrayresult['searchintoprojects'] = array('position'=>40, 'shortcut'=>'Q', 'img'=>'object_project', 'label'=>$langs->trans("SearchIntoProjects", $search_boxvalue), 'text'=>img_picto('', 'object_project', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoProjects", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/projet/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }

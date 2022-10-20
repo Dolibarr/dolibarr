@@ -837,18 +837,27 @@ class FormFile
 					}
 
 					// Show file name with link to download
+					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);;
+
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
-					$out .= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
+					if ($imgpreview) {
+						$out .= '<span class="spanoverflow widthcentpercentminusx">';
+					} else {
+						$out .= '<span class="spanoverflow">';
+					}
+					$out .= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 
 					$mime = dol_mimetype($relativepath, '', 0);
 					if (preg_match('/text/', $mime)) {
 						$out .= ' target="_blank" rel="noopener noreferrer"';
 					}
+					$out .= ' title="'.dol_escape_htmltag($file["name"]).'"';
 					$out .= '>';
 					$out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
 					$out .= dol_trunc($file["name"], 150);
-					$out .= '</a>'."\n";
-					$out .= $this->showPreview($file, $modulepart, $relativepath, 0, $param);
+					$out .= '</a>';
+					$out .= '</span>'."\n";
+					$out .= $imgpreview;
 					$out .= '</td>';
 
 					// Show file size
