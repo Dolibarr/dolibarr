@@ -2638,6 +2638,9 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 
 	$useadodb = getDolGlobalInt('MAIN_USE_LEGACY_ADODB_FOR_DATE', 0);
 	//$useadodb = 1;	// To switch to adodb
+	if (!empty($useadodb)) {
+		include_once DOL_DOCUMENT_ROOT.'/includes/adodbtime/adodb-time.inc.php';
+	}
 
 	// Analyze date
 	$reg = array();
