@@ -524,8 +524,11 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
 
 				$labelforproduct = $outputlangs->trans("EventFee", $project->title);
-				$date_start = $project->date_start;
-				$date_end = $project->date_end;
+				if ($project->location) {
+					$labelforproduct .= ' - '.$project->location;
+				}
+				$date_start = $project->date_start_event;
+				$date_end = $project->date_end_event;
 
 				// If there is no lines yet, we add one
 				if (empty($facture->lines)) {
@@ -652,8 +655,36 @@ print '<div class="center subscriptionformhelptext">';
 
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgWelcomeMessage").'</span>';
 print '<br>';
-print '<span class="eventlabel">'.$project->title . ' '. $conference->label.'</span>';
-print '<br>';
+print '<span class="eventlabel">'.$project->title . ' '. $conference->label.'</span><br>';
+if ($project->date_start_event || $project->date_end_event) {
+	print '<span class="fa fa-calendar pictofixedwidth"></span>';
+}
+if ($project->date_start_event) {
+	$format = 'day';
+	$tmparray = dol_getdate($project->date_start_event, false, '');
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+		$format = 'dayhour';
+	}
+	print dol_print_date($project->date_start_event, $format);
+}
+if ($project->date_start_event && $project->date_end_event) {
+	print ' - ';
+}
+if ($project->date_end_event) {
+	$format = 'day';
+	$tmparray = dol_getdate($project->date_end_event, false, '');
+	if ($tmparray['hours'] || $tmparray['minutes'] || $tmparray['minutes']) {
+		$format = 'dayhour';
+	}
+	print dol_print_date($project->date_end_event, $format);
+}
+if ($project->date_start_event || $project->date_end_event) {
+	print '<br>';
+}
+if ($project->location) {
+	print '<span class="fa fa-map-marked-alt pictofixedwidth"></span>'.$project->location.'<br>';
+}
+
 $maxattendees = 0;
 if ($conference->id > 0) {
 	/* date of project is not  date of event so commented
@@ -812,8 +843,8 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		}
 		print '</div>';
 
-
 		print "</form>\n";
+
 		print "<br>";
 		print '</div></div>';
 	}

@@ -60,8 +60,8 @@ $objcanvas = GETPOST("objcanvas", "alphanohtml");
 $comefromclone = GETPOST("comefromclone", "alphanohtml");
 $date_start = dol_mktime(0, 0, 0, GETPOST('projectstartmonth', 'int'), GETPOST('projectstartday', 'int'), GETPOST('projectstartyear', 'int'));
 $date_end = dol_mktime(0, 0, 0, GETPOST('projectendmonth', 'int'), GETPOST('projectendday', 'int'), GETPOST('projectendyear', 'int'));
-$date_start_event = dol_mktime(0, 0, 0, GETPOST('date_start_eventmonth', 'int'), GETPOST('date_start_eventday', 'int'), GETPOST('date_start_eventyear', 'int'));
-$date_end_event = dol_mktime(0, 0, 0, GETPOST('date_end_eventmonth', 'int'), GETPOST('date_end_eventday', 'int'), GETPOST('date_end_eventyear', 'int'));
+$date_start_event = dol_mktime(GETPOST('date_start_eventhour', 'int'), GETPOST('date_start_eventmin', 'int'), GETPOST('date_start_eventsec', 'int'), GETPOST('date_start_eventmonth', 'int'), GETPOST('date_start_eventday', 'int'), GETPOST('date_start_eventyear', 'int'));
+$date_end_event = dol_mktime(GETPOST('date_end_eventhour', 'int'), GETPOST('date_end_eventmin', 'int'), GETPOST('date_end_eventsec', 'int'), GETPOST('date_end_eventmonth', 'int'), GETPOST('date_end_eventday', 'int'), GETPOST('date_end_eventyear', 'int'));
 $location = GETPOST('location', 'alphanohtml');
 
 
@@ -734,9 +734,9 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	if (isModEnabled('eventorganization')) {
 		// Date event
 		print '<tr class="classuseorganizeevent"><td>'.$langs->trans("Date").' ('.$langs->trans("Event").')</td><td>';
-		print $form->selectDate(($date_start_event ? $date_start_event : -1), 'date_start_event', 0, 0, 0, '', 1, 0);
+		print $form->selectDate(($date_start_event ? $date_start_event : -1), 'date_start_event', 1, 1, 1, '', 1, 0);
 		print ' <span class="opacitymedium"> '.$langs->trans("to").' </span> ';
-		print $form->selectDate(($date_end_event ? $date_end_event : -1), 'date_end_event', 0, 0, 0, '', 1, 0);
+		print $form->selectDate(($date_end_event ? $date_end_event : -1), 'date_end_event', 1, 1, 1, '', 1, 0);
 		print '</td></tr>';
 
 		// Location
@@ -1056,9 +1056,9 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		if (isModEnabled('eventorganization')) {
 			// Date event
 			print '<tr class="classuseorganizeevent"><td>'.$langs->trans("Date").' ('.$langs->trans("Event").')</td><td>';
-			print $form->selectDate(($date_start_event ? $date_start_event : ($object->date_start_event ? $object->date_start_event : -1)), 'date_start_event', 0, 0, 0, '', 1, 0);
+			print $form->selectDate(($date_start_event ? $date_start_event : ($object->date_start_event ? $object->date_start_event : -1)), 'date_start_event', 1, 1, 1, '', 1, 0);
 			print ' <span class="opacitymedium"> '.$langs->trans("to").' </span> ';
-			print $form->selectDate(($date_end_event ? $date_end_event : ($object->date_end_event ? $object->date_end_event : -1)), 'date_end_event', 0, 0, 0, '', 1, 0);
+			print $form->selectDate(($date_end_event ? $date_end_event : ($object->date_end_event ? $object->date_end_event : -1)), 'date_end_event', 1, 1, 1, '', 1, 0);
 			print '</td></tr>';
 
 			// Location
