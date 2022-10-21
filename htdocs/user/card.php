@@ -2829,7 +2829,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'user', $socid, 1);
+			$somethingshown = $formactions->showactions($object, 'user', $socid, 1, 'listactions', 0, '', '', $object->id);
 
 			print '</div></div>';
 		}
