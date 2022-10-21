@@ -1207,14 +1207,22 @@ if (GETPOST('dol_no_mouse_hover', 'int') || !empty($_SESSION['dol_no_mouse_hover
 if (GETPOST('dol_use_jmobile', 'int') || !empty($_SESSION['dol_use_jmobile'])) {
 	$conf->dol_use_jmobile = 1;
 }
+// If not on Desktop
 if (!empty($conf->browser->layout) && $conf->browser->layout != 'classic') {
 	$conf->dol_no_mouse_hover = 1;
 }
+
+// If on smartphone or optmized for small screen
 if ((!empty($conf->browser->layout) && $conf->browser->layout == 'phone')
 	|| (!empty($_SESSION['dol_screenwidth']) && $_SESSION['dol_screenwidth'] < 400)
-	|| (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 400)
+	|| (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 400
+	|| !empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 ) {
 	$conf->dol_optimize_smallscreen = 1;
+
+	if (isset($conf->global->PRODUIT_DESC_IN_FORM) && $conf->global->PRODUIT_DESC_IN_FORM == 1) {
+		$conf->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = 0;
+	}
 }
 // Replace themes bugged with jmobile with eldy
 if (!empty($conf->dol_use_jmobile) && in_array($conf->theme, array('bureau2crea', 'cameleo', 'amarok'))) {

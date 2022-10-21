@@ -577,11 +577,11 @@ if ($action == 'create') {
 						}
 						$text .= ' '.$object->lines[$i]->product_ref.'</a>';
 						$text .= ' - '.$label;
-						$description = (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($object->lines[$i]->description));
+						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($object->lines[$i]->description));
 						//print $description;
 						print $form->textwithtooltip($text, $description, 3, '', '', $i);
 						print_date_range($object->lines[$i]->date_start, $object->lines[$i]->date_end);
-						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+						if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 							print (!empty($object->lines[$i]->description) && $object->lines[$i]->description != $object->lines[$i]->product_label) ? '<br>'.dol_htmlentitiesbr($object->lines[$i]->description) : '';
 						}
 					} else {

@@ -733,7 +733,7 @@ if ($id > 0 || !empty($ref)) {
 
 						$text = $product_static->getNomUrl(1);
 						$text .= ' - '.$label;
-						$description = ($conf->global->PRODUIT_DESC_IN_FORM ? '' : dol_htmlentitiesbr($objp->description)).'<br>';
+						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description)).'<br>';
 						$description .= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity], 1, 1, 0, 0, 0, 80);
 						print $form->textwithtooltip($text, $description, 3, '', '', $i);
 
@@ -741,7 +741,7 @@ if ($id > 0 || !empty($ref)) {
 						print_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
 
 						// Add description in form
-						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+						if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 							print ($objp->description && $objp->description != $objp->product_label) ? '<br>'.dol_htmlentitiesbr($objp->description) : '';
 						}
 

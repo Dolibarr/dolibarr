@@ -1589,7 +1589,7 @@ if ($action == 'create') {
 						$description = $objp->description;
 
 						// Add description in form
-						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+						if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 							$text .= (!empty($objp->description) && $objp->description != $objp->plabel) ? '<br>'.dol_htmlentitiesbr($objp->description) : '';
 							$description = ''; // Already added into main visible desc
 						}

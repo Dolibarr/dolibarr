@@ -1102,14 +1102,14 @@ if ($action == 'create') {
 
 						$text = $product_static->getNomUrl(1);
 						$text .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
-						$description = ($conf->global->PRODUIT_DESC_IN_FORM ? '' : dol_htmlentitiesbr($line->desc));
+						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($line->desc));
 						print $form->textwithtooltip($text, $description, 3, '', '', $i);
 
 						// Show range
 						print_date_range($db->jdate($line->date_start), $db->jdate($line->date_end));
 
 						// Add description in form
-						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+						if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 							print ($line->desc && $line->desc != $line->product_label) ? '<br>'.dol_htmlentitiesbr($line->desc) : '';
 						}
 					}
@@ -1825,10 +1825,10 @@ if ($action == 'create') {
 				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 					$text = $lines[$i]->product->getNomUrl(1);
 					$text .= ' - '.$label;
-					$description = (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($lines[$i]->product->description));
+					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($lines[$i]->product->description));
 					print $form->textwithtooltip($text, $description, 3, '', '', $i);
 					print_date_range(!empty($lines[$i]->date_start) ? $lines[$i]->date_start : 0, !empty($lines[$i]->date_end) ? $lines[$i]->date_end : 0);
-					if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+					if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 						print (!empty($lines[$i]->product->description) && $lines[$i]->description != $lines[$i]->product->description) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
 					}
 				}

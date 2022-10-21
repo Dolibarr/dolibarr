@@ -1143,7 +1143,7 @@ if ($action == 'create') {
 						$product_static->status_buy = $line->product_tobuy;
 						$product_static->status_batch = $line->product_tobatch;
 
-						$showdescinproductdesc = (getDolGlobalString('PRODUIT_DESC_IN_FORM') == 2 ? 1 : 0);
+						$showdescinproductdesc = getDolGlobalString('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE');
 
 						$text = $product_static->getNomUrl(1);
 						$text .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
@@ -2202,10 +2202,10 @@ if ($action == 'create') {
 
 					$text = $product_static->getNomUrl(1);
 					$text .= ' - '.$label;
-					$description = (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($lines[$i]->description));
+					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($lines[$i]->description));
 					print $form->textwithtooltip($text, $description, 3, '', '', $i);
 					print_date_range(!empty($lines[$i]->date_start) ? $lines[$i]->date_start : '', !empty($lines[$i]->date_end) ? $lines[$i]->date_end : '');
-					if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+					if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 						print (!empty($lines[$i]->description) && $lines[$i]->description != $lines[$i]->product) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
 					}
 					print "</td>\n";

@@ -169,12 +169,6 @@ class box_services_contracts extends ModeleBoxes
 						}
 						$description = $objp->description;
 
-						// Add description in form
-						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
-							//$text .= (!empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-							$description = ''; // Already added into main visible desc
-						}
-
 						$s = $form->textwithtooltip($text, $description, 3, '', '', '', 0, (!empty($objp->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 					} else {
 						$s = img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description);

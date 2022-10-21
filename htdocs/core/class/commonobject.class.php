@@ -5015,7 +5015,7 @@ abstract class CommonObject
 				}
 
 				$text .= ' - '.(!empty($line->label) ? $line->label : $label);
-				$description .= (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : (!empty($line->description) ? dol_htmlentitiesbr($line->description) : '')); // Description is what to show on popup. We shown nothing if already into desc.
+				$description .= (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : (!empty($line->description) ? dol_htmlentitiesbr($line->description) : '')); // Description is what to show on popup. We shown nothing if already into desc.
 			}
 
 			$line->pu_ttc = price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
