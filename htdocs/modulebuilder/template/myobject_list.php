@@ -136,7 +136,7 @@ if (!$sortorder) {
 }
 
 // Initialize array of search criterias
-$search_all = GETPOST('search_all', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -198,7 +198,7 @@ if ($user->socid > 0) accessforbidden();
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, 0, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
 if (!isModEnabled("mymodule")) {
-	accessforbidden();
+	accessforbidden('Module mymodule not enabled');
 }
 if (!$permissiontoread) accessforbidden();
 

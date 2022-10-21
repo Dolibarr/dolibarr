@@ -646,9 +646,9 @@ Module2400Name=Events/Agenda
 Module2400Desc=Track events. Log automatic events for tracking purposes or record manual events or meetings. This is the principal module for good Customer or Vendor Relationship Management.
 Module2500Name=DMS / ECM
 Module2500Desc=Document Management System / Electronic Content Management. Automatic organization of your generated or stored documents. Share them when you need.
-Module2600Name=API/Web services (SOAP server)
+Module2600Name=API / Web services (SOAP server)
 Module2600Desc=Enable the Dolibarr SOAP server providing API services
-Module2610Name=API/Web services (REST server)
+Module2610Name=API / Web services (REST server)
 Module2610Desc=Enable the Dolibarr REST server providing API services
 Module2660Name=Call WebServices (SOAP client)
 Module2660Desc=Enable the Dolibarr web services client (Can be used to push data/requests to external servers. Only Purchase orders are currently supported.)
@@ -2270,7 +2270,7 @@ LateWarningAfter="Late" warning after
 TemplateforBusinessCards=Template for a business card in different size
 InventorySetup= Inventory Setup
 ExportUseLowMemoryMode=Use a low memory mode
-ExportUseLowMemoryModeHelp=Use the low memory mode to execute the exec of the dump (compression is done through a pipe instead of into the PHP memory). This method does not allow to check that file is completed and error message can't be reported if it fails.
+ExportUseLowMemoryModeHelp=Use the low memory mode to generate the dump file (compression is done through a pipe instead of into the PHP memory). This method does not allow to check that the file is complete and error message can't be reported if it fails. Use it if you experience not enough memory errors.
 
 ModuleWebhookName = Webhook
 ModuleWebhookDesc = Interface to catch dolibarr triggers and send it to an URL
@@ -2330,3 +2330,5 @@ HelpCssOnListDesc=The Css used when field is inside a list table.<br>Example: "t
 RECEPTION_PDF_HIDE_ORDERED=Hide the quantity ordered on the generated documents for receptions
 MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT=Show the price on the generated documents for receptions
 WarningDisabled=Warning disabled
+LimitsAndMitigation=Access limits and mitigation
+ 
