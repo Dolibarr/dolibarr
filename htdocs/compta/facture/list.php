@@ -87,6 +87,7 @@ $search_project_ref = GETPOST('search_project_ref', 'alpha');
 $search_project = GETPOST('search_project', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
+$search_parent_name = trim(GETPOST('search_parent_name', 'alphanohtml'));
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_localtax1 = GETPOST('search_montant_localtax1', 'alpha');
@@ -214,51 +215,52 @@ $fieldstosearchall["f.note_private"] = "NotePrivate";
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-'f.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
-'f.ref_client'=>array('label'=>"RefCustomer", 'checked'=>-1, 'position'=>10),
-'f.type'=>array('label'=>"Type", 'checked'=>0, 'position'=>15),
-'f.datef'=>array('label'=>"DateInvoice", 'checked'=>1, 'position'=>20),
-'f.date_valid'=>array('label'=>"DateValidation", 'checked'=>0, 'position'=>22),
-'f.date_lim_reglement'=>array('label'=>"DateDue", 'checked'=>1, 'position'=>25),
-'f.date_closing'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>30),
-'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>40),
-'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>41),
-'s.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>50),
-'s.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1, 'position'=>51),
-'s.town'=>array('label'=>"Town", 'checked'=>-1, 'position'=>55),
-'s.zip'=>array('label'=>"Zip", 'checked'=>1, 'position'=>60),
-'state.nom'=>array('label'=>"StateShort", 'checked'=>0, 'position'=>65),
-'country.code_iso'=>array('label'=>"Country", 'checked'=>0, 'position'=>70),
-'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>75),
-'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>80),
-'f.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>1, 'position'=>85),
-'f.fk_input_reason'=>array('label'=>"Source", 'checked'=>0, 'enabled'=>1, 'position'=>88),
-'f.module_source'=>array('label'=>"POSModule", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>90),
-'f.pos_source'=>array('label'=>"POSTerminal", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>91),
-'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>95),
-'f.total_tva'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>100),
-'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>110),
-'f.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax2_assuj == "1"), 'position'=>120),
-'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>130),
-'dynamount_payed'=>array('label'=>"Received", 'checked'=>0, 'position'=>140),
-'rtp'=>array('label'=>"Rest", 'checked'=>0, 'position'=>150), // Not enabled by default because slow
-'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>165),
-'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>280),
-'f.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>285),
-'f.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>290),
-'f.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>291),
-'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>292),
-'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>295),
-'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>296), // Not enabled by default because slow
-'total_pa' => array('label' => ($conf->global->MARGIN_TYPE == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
-'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
-'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
-'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
-'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
-'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>502),
-'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
-'f.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES))),
-'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
+	'f.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>5),
+	'f.ref_client'=>array('label'=>"RefCustomer", 'checked'=>-1, 'position'=>10),
+	'f.type'=>array('label'=>"Type", 'checked'=>0, 'position'=>15),
+	'f.datef'=>array('label'=>"DateInvoice", 'checked'=>1, 'position'=>20),
+	'f.date_valid'=>array('label'=>"DateValidation", 'checked'=>0, 'position'=>22),
+	'f.date_lim_reglement'=>array('label'=>"DateDue", 'checked'=>1, 'position'=>25),
+	'f.date_closing'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>30),
+	'p.ref'=>array('label'=>"ProjectRef", 'checked'=>1, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>40),
+	'p.title'=>array('label'=>"ProjectLabel", 'checked'=>0, 'enabled'=>(empty($conf->projet->enabled) ? 0 : 1), 'position'=>41),
+	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>50),
+	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>1, 'position'=>51),
+	's2.nom'=>array('label'=>'ParentCompany', 'position'=>32, 'checked'=>0),
+	's.town'=>array('label'=>"Town", 'checked'=>-1, 'position'=>55),
+	's.zip'=>array('label'=>"Zip", 'checked'=>1, 'position'=>60),
+	'state.nom'=>array('label'=>"StateShort", 'checked'=>0, 'position'=>65),
+	'country.code_iso'=>array('label'=>"Country", 'checked'=>0, 'position'=>70),
+	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>75),
+	'f.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>80),
+	'f.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>1, 'position'=>85),
+	'f.fk_input_reason'=>array('label'=>"Source", 'checked'=>0, 'enabled'=>1, 'position'=>88),
+	'f.module_source'=>array('label'=>"POSModule", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>90),
+	'f.pos_source'=>array('label'=>"POSTerminal", 'checked'=>($contextpage == 'poslist' ? 1 : 0), 'enabled'=>((empty($conf->cashdesk->enabled) && empty($conf->takepos->enabled) && empty($conf->global->INVOICE_SHOW_POS)) ? 0 : 1), 'position'=>91),
+	'f.total_ht'=>array('label'=>"AmountHT", 'checked'=>1, 'position'=>95),
+	'f.total_tva'=>array('label'=>"AmountVAT", 'checked'=>0, 'position'=>100),
+	'f.total_localtax1'=>array('label'=>$langs->transcountry("AmountLT1", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax1_assuj == "1"), 'position'=>110),
+	'f.total_localtax2'=>array('label'=>$langs->transcountry("AmountLT2", $mysoc->country_code), 'checked'=>0, 'enabled'=>($mysoc->localtax2_assuj == "1"), 'position'=>120),
+	'f.total_ttc'=>array('label'=>"AmountTTC", 'checked'=>0, 'position'=>130),
+	'dynamount_payed'=>array('label'=>"Received", 'checked'=>0, 'position'=>140),
+	'rtp'=>array('label'=>"Rest", 'checked'=>0, 'position'=>150), // Not enabled by default because slow
+	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>165),
+	'f.multicurrency_code'=>array('label'=>'Currency', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>280),
+	'f.multicurrency_tx'=>array('label'=>'CurrencyRate', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>285),
+	'f.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>290),
+	'f.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>291),
+	'f.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>292),
+	'multicurrency_dynamount_payed'=>array('label'=>'MulticurrencyAlreadyPaid', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>295),
+	'multicurrency_rtp'=>array('label'=>'MulticurrencyRemainderToPay', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>296), // Not enabled by default because slow
+	'total_pa' => array('label' => ($conf->global->MARGIN_TYPE == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
+	'f.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+	'f.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>502),
+	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
+	'f.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES))),
+	'f.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 
 if ($conf->global->INVOICE_USE_SITUATION && $conf->global->INVOICE_USE_RETAINED_WARRANTY) {
@@ -321,6 +323,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_project = '';
 	$search_company = '';
 	$search_company_alias = '';
+	$search_parent_name = '';
 	$search_montant_ht = '';
 	$search_montant_vat = '';
 	$search_montant_localtax1 = '';
@@ -341,7 +344,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_town = '';
 	$search_zip = "";
 	$search_state = "";
-	$search_type = '';
 	$search_country = '';
 	$search_type_thirdparty = '';
 	$search_date_startday = '';
@@ -489,6 +491,8 @@ $bankaccountstatic = new Account($db);
 $facturestatic = new Facture($db);
 $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
+$companyparent = new Societe($db);
+$company_url_list = array();
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0 || $search_user > 0) {
@@ -505,6 +509,8 @@ $sql .= ' f.paye as paye, f.fk_statut, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_update, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta as code_compta_client, s.code_compta_fournisseur,';
+$sql .= " s.parent as fk_parent,";
+$sql .= " s2.nom as name2,";
 $sql .= ' typent.code as typent_code,';
 $sql .= ' state.code_departement as state_code, state.nom as state_name,';
 $sql .= ' country.code as country_code,';
@@ -529,6 +535,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s2.rowid = s.parent";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
@@ -602,6 +609,9 @@ if ($search_company) {
 }
 if ($search_company_alias) {
 	$sql .= natural_search('s.name_alias', $search_company_alias);
+}
+if ($search_parent_name) {
+	$sql .= natural_search('s2.nom', $search_parent_name);
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -852,94 +862,97 @@ $search_company = $soc->name;
 
 $param = '&socid='.urlencode($socid);
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-$param .= '&contextpage='.urlencode($contextpage);
+	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.urlencode($limit);
 }
 if ($sall) {
-$param .= '&sall='.urlencode($sall);
+	$param .= '&sall='.urlencode($sall);
 }
 if ($search_date_startday) {
-$param .= '&search_date_startday='.urlencode($search_date_startday);
+	$param .= '&search_date_startday='.urlencode($search_date_startday);
 }
 if ($search_date_startmonth) {
-$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
 }
 if ($search_date_startyear) {
-$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
 }
 if ($search_date_endday) {
-$param .= '&search_date_endday='.urlencode($search_date_endday);
+	$param .= '&search_date_endday='.urlencode($search_date_endday);
 }
 if ($search_date_endmonth) {
-$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
 }
 if ($search_date_endyear) {
-$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
 }
 if ($search_date_valid_startday) {
-$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
+	$param .= '&search_date_valid_startday='.urlencode($search_date_valid_startday);
 }
 if ($search_date_valid_startmonth) {
-$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
+	$param .= '&search_date_valid_startmonth='.urlencode($search_date_valid_startmonth);
 }
 if ($search_date_valid_startyear) {
-$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
+	$param .= '&search_date_valid_startyear='.urlencode($search_date_valid_startyear);
 }
 if ($search_date_valid_endday) {
-$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
+	$param .= '&search_date_valid_endday='.urlencode($search_date_valid_endday);
 }
 if ($search_date_valid_endmonth) {
-$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
+	$param .= '&search_date_valid_endmonth='.urlencode($search_date_valid_endmonth);
 }
 if ($search_date_valid_endyear) {
-$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
+	$param .= '&search_date_valid_endyear='.urlencode($search_date_valid_endyear);
 }
 if ($search_datelimit_startday)	{
-$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
+	$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
 }
 if ($search_datelimit_startmonth) {
-$param .= '&search_datelimit_startmonth='.urlencode($search_datelimit_startmonth);
+	$param .= '&search_datelimit_startmonth='.urlencode($search_datelimit_startmonth);
 }
 if ($search_datelimit_startyear) {
-$param .= '&search_datelimit_startyear='.urlencode($search_datelimit_startyear);
+	$param .= '&search_datelimit_startyear='.urlencode($search_datelimit_startyear);
 }
 if ($search_datelimit_endday) {
-$param .= '&search_datelimit_endday='.urlencode($search_datelimit_endday);
+	$param .= '&search_datelimit_endday='.urlencode($search_datelimit_endday);
 }
 if ($search_datelimit_endmonth) {
-$param .= '&search_datelimit_endmonth='.urlencode($search_datelimit_endmonth);
+	$param .= '&search_datelimit_endmonth='.urlencode($search_datelimit_endmonth);
 }
 if ($search_datelimit_endyear) {
-$param .= '&search_datelimit_endyear='.urlencode($search_datelimit_endyear);
+	$param .= '&search_datelimit_endyear='.urlencode($search_datelimit_endyear);
 }
 if ($search_ref) {
-$param .= '&search_ref='.urlencode($search_ref);
+	$param .= '&search_ref='.urlencode($search_ref);
 }
 if ($search_refcustomer) {
-$param .= '&search_refcustomer='.urlencode($search_refcustomer);
+	$param .= '&search_refcustomer='.urlencode($search_refcustomer);
 }
 if ($search_project_ref) {
-$param .= '&search_project_ref='.urlencode($search_project_ref);
+	$param .= '&search_project_ref='.urlencode($search_project_ref);
 }
 if ($search_project) {
-$param .= '&search_project='.urlencode($search_project);
+	$param .= '&search_project='.urlencode($search_project);
 }
 if ($search_type != '') {
-$param .= '&search_type='.urlencode($search_type);
+	$param .= '&search_type='.urlencode($search_type);
 }
 if ($search_company) {
-$param .= '&search_societe='.urlencode($search_company);
+	$param .= '&search_company='.urlencode($search_company);
 }
 if ($search_company_alias) {
-$param .= '&search_societe_alias='.urlencode($search_company_alias);
+	$param .= '&search_company_alias='.urlencode($search_company_alias);
+}
+if ($search_parent_name != '') {
+	$param .= '&search_parent_name='.urlencode($search_parent_name);
 }
 if ($search_town) {
-$param .= '&search_town='.urlencode($search_town);
+	$param .= '&search_town='.urlencode($search_town);
 }
 if ($search_zip) {
-$param .= '&search_zip='.urlencode($search_zip);
+	$param .= '&search_zip='.urlencode($search_zip);
 }
 // Easya 2022 - PR18552 - Invoice list - Use complete country select field with EEC or not
 // Code remplacé
@@ -948,76 +961,76 @@ if ($search_country) {
 }
 // Easya 2022 - PR18552 - Fin
 if ($search_sale > 0) {
-$param .= '&search_sale='.urlencode($search_sale);
+	$param .= '&search_sale='.urlencode($search_sale);
 }
 if ($search_user > 0) {
-$param .= '&search_user='.urlencode($search_user);
+	$param .= '&search_user='.urlencode($search_user);
 }
 if ($search_login) {
-$param .= '&search_login='.urlencode($search_login);
+	$param .= '&search_login='.urlencode($search_login);
 }
 if ($search_product_category > 0) {
-$param .= '&search_product_category='.urlencode($search_product_category);
+	$param .= '&search_product_category='.urlencode($search_product_category);
 }
 if ($search_montant_ht != '') {
-$param .= '&search_montant_ht='.urlencode($search_montant_ht);
+	$param .= '&search_montant_ht='.urlencode($search_montant_ht);
 }
 if ($search_montant_vat != '') {
-$param .= '&search_montant_vat='.urlencode($search_montant_vat);
+	$param .= '&search_montant_vat='.urlencode($search_montant_vat);
 }
 if ($search_montant_localtax1 != '') {
-$param .= '&search_montant_localtax1='.urlencode($search_montant_localtax1);
+	$param .= '&search_montant_localtax1='.urlencode($search_montant_localtax1);
 }
 if ($search_montant_localtax2 != '') {
-$param .= '&search_montant_localtax2='.urlencode($search_montant_localtax2);
+	$param .= '&search_montant_localtax2='.urlencode($search_montant_localtax2);
 }
 if ($search_montant_ttc != '') {
-$param .= '&search_montant_ttc='.urlencode($search_montant_ttc);
+	$param .= '&search_montant_ttc='.urlencode($search_montant_ttc);
 }
 if ($search_multicurrency_code != '') {
-$param .= '&search_multicurrency_code='.urlencode($search_multicurrency_code);
+	$param .= '&search_multicurrency_code='.urlencode($search_multicurrency_code);
 }
 if ($search_multicurrency_tx != '') {
-$param .= '&search_multicurrency_tx='.urlencode($search_multicurrency_tx);
+	$param .= '&search_multicurrency_tx='.urlencode($search_multicurrency_tx);
 }
 if ($search_multicurrency_montant_ht != '') {
-$param .= '&search_multicurrency_montant_ht='.urlencode($search_multicurrency_montant_ht);
+	$param .= '&search_multicurrency_montant_ht='.urlencode($search_multicurrency_montant_ht);
 }
 if ($search_multicurrency_montant_vat != '') {
-$param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
+	$param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
 }
 if ($search_multicurrency_montant_ttc != '') {
-$param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
+	$param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
 }
 if ($search_status != '') {
-$param .= '&search_status='.urlencode($search_status);
+	$param .= '&search_status='.urlencode($search_status);
 }
 if ($search_paymentmode > 0) {
-$param .= '&search_paymentmode='.urlencode($search_paymentmode);
+	$param .= '&search_paymentmode='.urlencode($search_paymentmode);
 }
 if ($search_paymentterms > 0) {
-$param .= '&search_paymentterms='.urlencode($search_paymentterms);
+	$param .= '&search_paymentterms='.urlencode($search_paymentterms);
 }
 if ($search_fk_input_reason > 0) {
 	$param .= '&search_fk_input_reason='.urlencode($search_fk_input_reason);
 }
 if ($search_module_source) {
-$param .= '&search_module_source='.urlencode($search_module_source);
+	$param .= '&search_module_source='.urlencode($search_module_source);
 }
 if ($search_pos_source) {
-$param .= '&search_pos_source='.urlencode($search_pos_source);
+	$param .= '&search_pos_source='.urlencode($search_pos_source);
 }
 if ($show_files) {
-$param .= '&show_files='.urlencode($show_files);
+	$param .= '&show_files='.urlencode($show_files);
 }
 if ($option) {
-$param .= "&search_option=".urlencode($option);
+	$param .= "&search_option=".urlencode($option);
 }
 if ($optioncss != '') {
-$param .= '&optioncss='.urlencode($optioncss);
+	$param .= '&optioncss='.urlencode($optioncss);
 }
 if ($search_categ_cus > 0) {
-$param .= '&search_categ_cus='.urlencode($search_categ_cus);
+	$param .= '&search_categ_cus='.urlencode($search_categ_cus);
 }
 
 // Add $param from extra fields
@@ -1231,6 +1244,12 @@ print $langs->trans('to').' ';*/
 	// Alias
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
 		print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_company_alias" value="'.$search_company_alias.'"></td>';
+	}
+	// Parent company
+	if (!empty($arrayfields['s2.nom']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input class="flat maxwidth100" type="text" name="search_parent_name" value="'.dol_escape_htmltag($search_parent_name).'">';
+		print '</td>';
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
@@ -1478,6 +1497,9 @@ print $langs->trans('to').' ';*/
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
 		print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER['PHP_SELF'], 's.name_alias', '', $param, '', $sortfield, $sortorder);
 	}
+	if (!empty($arrayfields['s2.nom']['checked'])) {
+		print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER['PHP_SELF'], 's2.nom', '', $param, '', $sortfield, $sortorder);
+	}
 	if (!empty($arrayfields['s.town']['checked'])) {
 		print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1601,6 +1623,7 @@ print $langs->trans('to').' ';*/
 
 	if ($num > 0) {
 		$i = 0;
+		$typenArray = $formcompany->typent_array(1);
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
 		$totalarray['val'] = array();
@@ -1845,6 +1868,26 @@ print $langs->trans('to').' ';*/
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
 				print dol_escape_htmltag($companystatic->name_alias);
 				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			// Parent company
+			if (!empty($arrayfields['s2.nom']['checked'])) {
+				print '<td class="tdoverflowmax200">';
+				if ($obj->fk_parent > 0) {
+					if (!isset($company_url_list[$obj->fk_parent])) {
+						$companyparent = new Societe($db);
+						$res = $companyparent->fetch($obj->fk_parent);
+						if ($res > 0) {
+							$company_url_list[$obj->fk_parent] = $companyparent->getNomUrl(1);
+						}
+					}
+					if (isset($company_url_list[$obj->fk_parent])) {
+						print $company_url_list[$obj->fk_parent];
+					}
+				}
+				print "</td>";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
