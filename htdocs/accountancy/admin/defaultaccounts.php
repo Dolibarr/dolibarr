@@ -136,6 +136,11 @@ if ($action == 'update') {
 		$error++;
 	}
 
+	$constname = 'ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT';
+	$constvalue = GETPOST($constname, 'int');
+	if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
