@@ -474,8 +474,15 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		}
 		print '</td></tr>';
 
-		// Date start - end
-		print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+		// Budget
+		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+		if (strcmp($projectstatic->budget_amount, '')) {
+			print '<span class="amount">'.price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
+		}
+		print '</td></tr>';
+
+		// Date start - end project
+		print '<tr><td>'.$langs->trans("Dates").' ('.$langs->trans("Project").')</td><td>';
 		$start = dol_print_date($projectstatic->date_start, 'day');
 		print ($start ? $start : '?');
 		$end = dol_print_date($projectstatic->date_end, 'day');
@@ -486,11 +493,21 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		}
 		print '</td></tr>';
 
-		// Budget
-		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-		if (strcmp($projectstatic->budget_amount, '')) {
-			print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+		// Date start - end of event
+		print '<tr><td>'.$langs->trans("Dates").' ('.$langs->trans("Event").')</td><td>';
+		$start = dol_print_date($projectstatic->date_start_event, 'day');
+		print ($start ? $start : '?');
+		$end = dol_print_date($projectstatic->date_end_event, 'day');
+		print ' - ';
+		print ($end ? $end : '?');
+		if ($projectstatic->hasDelay()) {
+			print img_warning("Late");
 		}
+		print '</td></tr>';
+
+		// Location event
+		print '<tr><td>'.$langs->trans("Location").'</td><td>';
+		print $projectstatic->location;
 		print '</td></tr>';
 
 		// Other attributes

@@ -646,7 +646,7 @@ print '<div class="center subscriptionformhelptext justify">';
 
 // Welcome message
 
-print $langs->trans("EvntOrgWelcomeMessage", $project->title . ' '. $conference->label);
+print '<span class="opacitymedium">'.$langs->trans("EvntOrgWelcomeMessage", $project->title . ' '. $conference->label).'</span>';
 print '<br>';
 $maxattendees = 0;
 if ($conference->id) {
@@ -691,8 +691,8 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print '<input type="hidden" name="securekey" value="' . $securekeyreceived . '" />';
 
 		print '<br>';
-
-		print '<br><span class="opacitymedium">' . $langs->trans("FieldsWithAreMandatory", '*') . '</span><br>';
+		print '<br>';
+		//print '<span class="opacitymedium">' . $langs->trans("FieldsWithAreMandatory", '*') . '</span><br>';
 		//print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
 		print dol_get_fiche_head('');
@@ -711,18 +711,22 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print '<table class="border" summary="form to subscribe" id="tablesubscribe">' . "\n";
 
 		// Email
-		print '<tr><td>' . $langs->trans("EmailAttendee") . '<span style="color: red">*</span></td><td>';
+		print '<tr><td><span class="fieldrequired">' . $langs->trans("EmailAttendee") . '</span></td><td>';
 		print img_picto('', 'email', 'class="pictofixedwidth"');
-		print '<input type="text" name="email" maxlength="255" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('email')) . '"></td></tr>' . "\n";
+		print '<input type="text" name="email" maxlength="255" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('email')) . '" required></td></tr>' . "\n";
 
 		// Company
-		print '<tr id="trcompany" class="trcompany"><td>' . $langs->trans("Company");
+		print '<tr id="trcompany" class="trcompany"><td>';
 		if (!empty(floatval($project->price_registration))) {
-			print '<span style="color: red">*</span>';
+			print '<span class="fieldrequired">';
 		}
-		print ' </td><td>';
+		print $langs->trans("Company");
+		if (!empty(floatval($project->price_registration))) {
+			print '</span>';
+		}
+		print '</td><td>';
 		print img_picto('', 'company', 'class="pictofixedwidth"');
-		print '<input type="text" name="societe" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('societe')) . '"></td></tr>' . "\n";
+		print '<input type="text" name="societe" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('societe')) . '"'.(empty(floatval($project->price_registration)) ? '' : ' required').'></td></tr>' . "\n";
 
 		// Email company for invoice
 		if ($project->price_registration) {
@@ -743,7 +747,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print '</td></tr>';
 
 		// Country
-		print '<tr><td>' . $langs->trans('Country') . '<span style="color: red">*</span></td><td>';
+		print '<tr><td><span class="fieldrequired"' . $langs->trans('Country') . '</span></td><td>';
 		print img_picto('', 'country', 'class="pictofixedwidth"');
 		$country_id = GETPOST('country_id');
 		if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {

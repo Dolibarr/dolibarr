@@ -196,3 +196,8 @@ ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_code varchar(3) N
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_tx double(24,8) NULL;
 
 ALTER TABLE llx_hrm_evaluationdet CHANGE COLUMN rank rankorder integer;
+
+ALTER TABLE llx_projet ADD COLUMN date_start_event datetime;
+ALTER TABLE llx_projet ADD COLUMN date_end_event   datetime;
+ALTER TABLE llx_projet ADD COLUMN location         varchar(255);
+

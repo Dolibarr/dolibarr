@@ -179,8 +179,15 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	}
 	print '</td></tr>';
 
-	// Date start - end
-	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+	// Budget
+	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+	if (strcmp($object->budget_amount, '')) {
+		print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+	}
+	print '</td></tr>';
+
+	// Date start - end project
+	print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 	$start = dol_print_date($object->date_start, 'day');
 	print ($start ? $start : '?');
 	$end = dol_print_date($object->date_end, 'day');
@@ -188,13 +195,6 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	print ($end ? $end : '?');
 	if ($object->hasDelay()) {
 		print img_warning("Late");
-	}
-	print '</td></tr>';
-
-	// Budget
-	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-	if (strcmp($object->budget_amount, '')) {
-		print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
 	}
 	print '</td></tr>';
 
