@@ -475,7 +475,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$resultprod = $productforinvoicerow->fetch($conf->global->SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION);
 			}
 
-			// Create invoice
+			// Create the draft invoice for the payment
 			if ($resultprod < 0) {
 				$error++;
 				$errmsg .= $productforinvoicerow->error;
@@ -529,7 +529,11 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 				// If there is no lines yet, we add one
 				if (empty($facture->lines)) {
-					$result = $facture->addline($labelforproduct, floatval($project->price_registration), 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, $date_start, $date_end, 0, 0, '', 'HT', 0, 1);
+					$pu_ttc = floatval($project->price_registration);
+					$pu_ht = 0;
+					$price_base_type = 'TTC';
+
+					$result = $facture->addline($labelforproduct, $pu_ht, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, $date_start, $date_end, 0, 0, '', $price_base_type, $pu_ttc, 1);
 					if ($result <= 0) {
 						$confattendee->error = $facture->error;
 						$confattendee->errors = $facture->errors;
@@ -642,28 +646,32 @@ print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, 0, 'center')
 
 print '<div align="center">';
 print '<div id="divsubscribe">';
-print '<div class="center subscriptionformhelptext justify">';
+print '<div class="center subscriptionformhelptext">';
 
 // Welcome message
 
-print '<span class="opacitymedium">'.$langs->trans("EvntOrgWelcomeMessage", $project->title . ' '. $conference->label).'</span>';
+print '<span class="opacitymedium">'.$langs->trans("EvntOrgWelcomeMessage").'</span>';
+print '<br>';
+print '<span class="eventlabel">'.$project->title . ' '. $conference->label.'</span>';
 print '<br>';
 $maxattendees = 0;
-if ($conference->id) {
+if ($conference->id > 0) {
+	/* date of project is not  date of event so commented
 	print $langs->trans("Date").': ';
 	print dol_print_date($conference->datep);
 	if ($conference->date_end) {
 		print ' - ';
 		print dol_print_date($conference->datef);
-	}
+	}*/
 } else {
+	/* date of project is not  date of event so commented
 	print $langs->trans("Date").': ';
 	print dol_print_date($project->date_start);
 	if ($project->date_end) {
 		print ' - ';
 		print dol_print_date($project->date_end);
-	}
-	$maxattendees = $project->max_attendees;
+	}*/
+	$maxattendees = $project->max_attendees;	// Max attendeed for the project/event
 }
 print '</div>';
 
@@ -674,7 +682,6 @@ if ($maxattendees && $currentnbofattendees >= $maxattendees) {
 }
 
 
-print '<br>';
 
 dol_htmloutput_errors($errmsg, $errors);
 
@@ -730,7 +737,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 
 		// Email company for invoice
 		if ($project->price_registration) {
-			print '<tr><td>' . $langs->trans("EmailCompanyForInvoice") . '</td><td>';
+			print '<tr><td>' . $form->textwithpicto($langs->trans("EmailCompany"), $langs->trans("EmailCompanyForInvoice")) . '</td><td>';
 			print img_picto('', 'email', 'class="pictofixedwidth"');
 			print '<input type="text" name="emailcompany" maxlength="255" class="minwidth200 widthcentpercentminusx maxwidth300" value="' . dol_escape_htmltag(GETPOST('emailcompany')) . '"></td></tr>' . "\n";
 		}
@@ -781,7 +788,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 
 		if ($project->price_registration) {
 			print '<tr><td>' . $langs->trans('Price') . '</td><td>';
-			print price($project->price_registration, 1, $langs, 1, -1, -1, $conf->currency);
+			print '<span class="amount price-registration">'.price($project->price_registration, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 			print '</td></tr>';
 		}
 
