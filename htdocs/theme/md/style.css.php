@@ -6374,6 +6374,7 @@ dl.dropdown {
 	list-style:none;
 	max-height: 264px;
 	overflow: auto;
+	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {
 	right: auto;
