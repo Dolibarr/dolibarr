@@ -2805,7 +2805,8 @@ class ContratLigne extends CommonObjectLine
 	public $table_element = 'contratdet';
 
 	/**
-	 * @var string Name to use for 'features' parameter to check module permissions with restrictedArea()
+	 * @var string 	Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().
+	 * 				Undefined means same value than $element. Can be use to force a check on another element for example for class of line, we mention here the parent element.
 	 */
 	public $element_for_permission = 'contrat';
 
