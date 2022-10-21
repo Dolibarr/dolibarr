@@ -328,14 +328,14 @@ if ($action == 'create') {
 			$morehtmlref .= $form->editfieldval("RefCustomer", '', $expedition->ref_customer, $expedition, $user->rights->expedition->creer, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
 			$morehtmlref .= '<br>'.$langs->trans("RefDeliveryReceipt").' : '.$object->ref;
 			// Thirdparty
-			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$expedition->thirdparty->getNomUrl(1);
+			$morehtmlref .= '<br>'.$expedition->thirdparty->getNomUrl(1);
 			// Project
 			if (isModEnabled('project')) {
 				$langs->load("projects");
-				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
+				$morehtmlref .= '<br>';
 				if (0) {    // Do not change on shipment
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$expedition->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$expedition->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
 					if ($action == 'classify') {
 						// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'projectid', 0, 0, 1, 1);
@@ -346,14 +346,13 @@ if ($action == 'create') {
 						$morehtmlref .= '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 						$morehtmlref .= '</form>';
 					} else {
-						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$expedition->id, $expedition->socid, $expedition->fk_project, 'none', 0, 0, 0, 1);
+						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$expedition->id, $expedition->socid, $expedition->fk_project, 'none', 0, 0, 0, 1, $langs->trans("OutOfProject"));
 					}
 				} else {
-					$morehtmlref .= ' : ';
 					if (!empty($objectsrc->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($objectsrc->fk_project);
-						$morehtmlref .= ' : '.$proj->getNomUrl(1);
+						$morehtmlref .= $proj->getNomUrl(1);
 						if ($proj->title) {
 							$morehtmlref .= ' - '.$proj->title;
 						}

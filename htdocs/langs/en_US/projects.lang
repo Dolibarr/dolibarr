@@ -38,6 +38,7 @@ OpportunitiesStatusForProjects=Leads amount of projects by status
 ShowProject=Show project
 ShowTask=Show task
 SetProject=Set project
+OutOfProject=Out of project
 NoProject=No project defined or owned
 NbOfProjects=Number of projects
 NbOfTasks=Number of tasks

@@ -955,9 +955,9 @@ if ($action == 'create' || $action == 'presend') {
 
 		// Thirdparty
 		if (isModEnabled("societe")) {
-			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' ';
+			$morehtmlref .= '<br>';
 			if ($action != 'editcustomer' && $object->status < 8 && !$user->socid && $user->rights->ticket->write) {
-				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 0).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 0).'</a> ';
 			}
 			if ($action == 'editcustomer') {
 				$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
@@ -969,7 +969,7 @@ if ($action == 'create' || $action == 'presend') {
 		// Project
 		if (isModEnabled('project')) {
 			$langs->load("projects");
-			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
+			$morehtmlref .= '<br>';
 			if ($user->rights->ticket->write) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a>';
@@ -984,7 +984,7 @@ if ($action == 'create' || $action == 'presend') {
 					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1, $langs->trans("OutOfProject"));
 				}
 			} else {
 				if (!empty($object->fk_project)) {

@@ -287,7 +287,7 @@ if ($projectid > 0) {
 	$morehtmlref .= $project->title;
 	// Thirdparty
 	if (isset($project->thirdparty->id) && $project->thirdparty->id > 0) {
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$project->thirdparty->getNomUrl(1, 'project');
+		$morehtmlref .= '<br>'.$project->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 

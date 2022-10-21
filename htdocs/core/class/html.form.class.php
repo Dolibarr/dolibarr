@@ -5384,9 +5384,10 @@ class Form
 	 *    @param	int		$maxlength			Max length
 	 *    @param	int		$forcefocus			Force focus on field (works with javascript only)
 	 *    @param    int     $nooutput           No print is done. String is returned.
+	 *    @param	string	$textifnoproject	Text to show if no project
 	 *    @return	string                      Return html content
 	 */
-	public function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0)
+	public function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0, $textifnoproject = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -5414,7 +5415,7 @@ class Form
 				$projet->fetch($selected);
 				$out .= $projet->getNomUrl(1, '', 1);
 			} else {
-				$out .= "&nbsp;";
+				$out .= '<span class="opacitymedium">'.$textifnoproject.'</span>';
 			}
 			$out .= '</span>';
 		}

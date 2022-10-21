@@ -2302,13 +2302,13 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 	// Add alias for thirdparty
 	if (!empty($object->name_alias)) {
-		$morehtmlref .= '<div class="refidno">'.$object->name_alias.'</div>';
+		$morehtmlref .= '<div class="refidno opacitymedium">'.$object->name_alias.'</div>';
 	}
 
 	// Add label
 	if (in_array($object->element, array('product', 'bank_account', 'project_task'))) {
 		if (!empty($object->label)) {
-			$morehtmlref .= '<div class="refidno">'.$object->label.'</div>';
+			$morehtmlref .= '<div class="refidno opacitymedium">'.$object->label.'</div>';
 		}
 	}
 
@@ -2323,7 +2323,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && ($conf->global->MAIN_SHOW_TECHNICAL_ID == '1' || preg_match('/'.preg_quote($object->element, '/').'/i', $conf->global->MAIN_SHOW_TECHNICAL_ID)) && !empty($object->id)) {
 		$morehtmlref .= '<div style="clear: both;"></div>';
-		$morehtmlref .= '<div class="refidno">';
+		$morehtmlref .= '<div class="refidno opacitymedium">';
 		$morehtmlref .= $langs->trans("TechnicalID").': '.$object->id;
 		$morehtmlref .= '</div>';
 	}

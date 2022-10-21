@@ -1107,7 +1107,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Title
 		$morehtmlref .= dol_escape_htmltag($object->title);
 		// Thirdparty
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : ';
+		$morehtmlref .= '<br>';
 		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$morehtmlref .= $object->thirdparty->getNomUrl(1, 'project');
 		}

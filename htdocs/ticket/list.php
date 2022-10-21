@@ -578,7 +578,7 @@ if ($projectid > 0 || $project_ref) {
 		$morehtmlref .= $object->title;
 		// Thirdparty
 		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-			$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+			$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
 		}
 		$morehtmlref .= '</div>';
 
@@ -593,7 +593,7 @@ if ($projectid > 0 || $project_ref) {
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';

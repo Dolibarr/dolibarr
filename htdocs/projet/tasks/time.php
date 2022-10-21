@@ -906,7 +906,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$morehtmlref .= $projectstatic->title;
 			// Thirdparty
 			if (!empty($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
-				$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
+				$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');
 			}
 			$morehtmlref .= '</div>';
 
