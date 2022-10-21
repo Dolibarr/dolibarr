@@ -97,6 +97,7 @@ if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accou
 	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid='.$conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity.')';
 	$sql1 .= ' AND fd.fk_facture_fourn IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE entity = '.$conf->entity.')';
 	$sql1 .= ' AND fk_code_ventilation <> 0';
+
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
 	$resql1 = $db->query($sql1);
 	if (!$resql1) {
@@ -180,6 +181,8 @@ if ($action == 'validatehistory') {
 	} else {
 		$num_lines = $db->num_rows($result);
 
+		$facturefourn_static = new FactureFournisseur($db);
+
 		$isBuyerInEEC = isInEEC($mysoc);
 
 		$i = 0;
@@ -212,6 +215,18 @@ if ($action == 'validatehistory') {
 					$objp->code_buy_t = $objp->company_code_buy;
 					$objp->aarowid_suggest = $objp->aarowid_thirdparty;
 					$suggestedaccountingaccountfor = '';
+				}
+			}
+
+			// Manage Deposit
+			if (!empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT)) {
+				if ($objp->description == "(DEPOSIT)" || $objp->ftype == $facturefourn_static::TYPE_DEPOSIT) {
+					$accountdeposittoventilated = new AccountingAccount($db);
+					$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+					$objp->code_buy_l = $accountdeposittoventilated->ref;
+					$objp->code_buy_p = '';
+					$objp->code_buy_t = '';
+					$objp->aarowid_suggest = $accountdeposittoventilated->rowid;
 				}
 			}
 

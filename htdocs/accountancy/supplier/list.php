@@ -628,6 +628,18 @@ if ($result) {
 			}
 		}
 
+		// Manage Deposit
+		if (!empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT)) {
+			if ($objp->description == "(DEPOSIT)" || $objp->ftype == $facturefourn_static::TYPE_DEPOSIT) {
+				$accountdeposittoventilated = new AccountingAccount($db);
+				$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+				$objp->code_buy_l = $accountdeposittoventilated->ref;
+				$objp->code_buy_p = '';
+				$objp->code_buy_t = '';
+				$objp->aarowid_suggest = $accountdeposittoventilated->rowid;
+			}
+		}
+
 		if (!empty($objp->code_buy_p)) {
 			// Value was defined previously
 		} else {
