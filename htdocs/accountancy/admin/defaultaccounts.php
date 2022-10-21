@@ -307,7 +307,7 @@ if (!empty($conf->societe->enabled) && getDolGlobalString('ACCOUNTING_ACCOUNT_CU
 print '<tr class="oddeven value">';
 // Param
 print '<td>';
-print img_picto('', 'bill', 'class="pictofixedwidth"') . $langs->trans('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT');
+print img_picto('', 'supplier_invoice', 'class="pictofixedwidth"') . $langs->trans('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT');
 print '</td>';
 // Value
 print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
@@ -317,7 +317,7 @@ print '</tr>';
 
 if (!empty($conf->societe->enabled) && getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT') && getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT') != '-1') {
 	print '<tr class="oddeven">';
-	print '<td>' . img_picto('', 'bill', 'class="pictofixedwidth"') . $langs->trans("UseAuxiliaryAccountOnSupplierDeposit") . '</td>';
+	print '<td>' . img_picto('', 'supplier_invoice', 'class="pictofixedwidth"') . $langs->trans("UseAuxiliaryAccountOnSupplierDeposit") . '</td>';
 	if (getDolGlobalInt('ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT')) {
 		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT&value=0">';
 		print img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', 'warning');
