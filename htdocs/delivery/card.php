@@ -333,31 +333,20 @@ if ($action == 'create') {
 			if (isModEnabled('project')) {
 				$langs->load("projects");
 				$morehtmlref .= '<br>';
-				if (0) {    // Do not change on shipment
+				if (0) {	// Do not change on shipment
+					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 					if ($action != 'classify') {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$expedition->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
-					if ($action == 'classify') {
-						// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $expedition->id, $expedition->socid, $expedition->fk_project, 'projectid', 0, 0, 1, 1);
-						$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$expedition->id.'">';
-						$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-						$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-						$morehtmlref .= $formproject->select_projects($expedition->socid, $expedition->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-						$morehtmlref .= '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
-						$morehtmlref .= '</form>';
-					} else {
-						$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$expedition->id, $expedition->socid, $expedition->fk_project, 'none', 0, 0, 0, 1, $langs->trans("OutOfProject"));
-					}
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
 				} else {
 					if (!empty($objectsrc->fk_project)) {
 						$proj = new Project($db);
 						$proj->fetch($objectsrc->fk_project);
 						$morehtmlref .= $proj->getNomUrl(1);
 						if ($proj->title) {
-							$morehtmlref .= ' - '.$proj->title;
+							$morehtmlref .= ' - '.dol_escape_htmltag($proj->title);
 						}
-					} else {
-						$morehtmlref .= '';
 					}
 				}
 			}

@@ -5401,7 +5401,6 @@ class Form
 
 		$langs->load("project");
 		if ($htmlname != "none") {
-			$out .= "\n";
 			$out .= '<form method="post" action="'.$page.'">';
 			$out .= '<input type="hidden" name="action" value="classin">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -5413,7 +5412,7 @@ class Form
 			if ($selected) {
 				$projet = new Project($this->db);
 				$projet->fetch($selected);
-				$out .= $projet->getNomUrl(1, '', 1);
+				$out .= $projet->getNomUrl(0, '', 1);
 			} else {
 				$out .= '<span class="opacitymedium">'.$textifnoproject.'</span>';
 			}
