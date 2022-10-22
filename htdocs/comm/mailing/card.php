@@ -729,8 +729,11 @@ if ($action == 'create') {
 	print dol_get_fiche_head();
 
 	print '<table class="border centpercent">';
+
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="title" value="'.dol_escape_htmltag(GETPOST('title')).'" autofocus="autofocus"></td></tr>';
+
 	print '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat minwidth200" name="from" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
+
 	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat minwidth200" name="errorsto" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO) ? $conf->global->MAILING_EMAIL_ERRORSTO : $conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
 
 	// Other attributes
@@ -742,7 +745,7 @@ if ($action == 'create') {
 	}
 
 	print '</table>';
-	print '</br><br>';
+	print '<br><br>';
 
 	print '<table class="border centpercent">';
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet', 'alphanohtml')).'"></td></tr>';
@@ -887,16 +890,16 @@ if ($action == 'create') {
 
 			// Description
 			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("MailTitle", 'title', $object->title, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldkey("MailTitle", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string');
 			print '</td><td>';
-			print $form->editfieldval("MailTitle", 'title', $object->title, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldval("MailTitle", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string');
 			print '</td></tr>';
 
 			// From
 			print '<tr><td>';
-			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'string');
 			print '</td><td>';
-			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'string');
 			$email = CMailFile::getValidAddress($object->email_from, 2);
 			if ($email && !isValidEmail($email)) {
 				$langs->load("errors");
@@ -910,9 +913,9 @@ if ($action == 'create') {
 
 			// Errors to
 			print '<tr><td>';
-			print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'string');
 			print '</td><td>';
-			print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'string');
 			$email = CMailFile::getValidAddress($object->email_errorsto, 2);
 			if ($email && !isValidEmail($email)) {
 				$langs->load("errors");
@@ -977,11 +980,11 @@ if ($action == 'create') {
 			if (GETPOST('cancel', 'alpha') || $confirm == 'no' || $action == '' || in_array($action, array('settodraft', 'valid', 'delete', 'sendall', 'clone', 'test'))) {
 				print "\n\n<div class=\"tabsAction\">\n";
 
-				if (($object->statut == 1) && ($user->rights->mailing->valider || $object->user_validation == $user->id)) {
+				if (($object->statut == 1) && ($user->hasRight('mailing', 'valider') || $object->user_validation == $user->id)) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=settodraft&token='.newToken().'&id='.$object->id.'">'.$langs->trans("SetToDraft").'</a>';
 				}
 
-				if (($object->statut == 0 || $object->statut == 1 || $object->statut == 2) && $user->rights->mailing->creer) {
+				if (($object->statut == 0 || $object->statut == 1 || $object->statut == 2) && $user->hasRight('mailing', 'creer')) {
 					if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_MAILING)) {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("EditWithEditor").'</a>';
 					} else {
@@ -1011,7 +1014,7 @@ if ($action == 'create') {
 					}
 				}
 
-				if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->rights->mailing->valider) {
+				if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->hasRight('mailing', 'valider')) {
 					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SendingFromWebInterfaceIsNotAllowed")).'">'.$langs->trans("SendMailing").'</a>';
 					} elseif (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send) {
@@ -1021,11 +1024,11 @@ if ($action == 'create') {
 					}
 				}
 
-				if ($user->rights->mailing->creer) {
+				if ($user->hasRight('mailing', 'creer')) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&amp;object=emailing&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
 				}
 
-				if (($object->statut == 2 || $object->statut == 3) && $user->rights->mailing->valider) {
+				if (($object->statut == 2 || $object->statut == 3) && $user->hasRight('mailing', 'valider')) {
 					if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ResetMailing").'</a>';
 					} else {
@@ -1033,7 +1036,7 @@ if ($action == 'create') {
 					}
 				}
 
-				if (($object->statut <= 1 && $user->rights->mailing->creer) || $user->rights->mailing->supprimer) {
+				if (($object->statut <= 1 && $user->hasRight('mailing', 'creer')) || $user->hasRight('mailing', 'supprimer')) {
 					if ($object->statut > 0 && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->delete)) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("DeleteMailing").'</a>';
 					} else {
