@@ -2392,13 +2392,13 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			// Create a Stripe client.
 				<?php
 				if (empty($stripeacc)) {
-				?>
+					?>
 			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
-				<?php
+					<?php
 				} else {
-				?>
+					?>
 			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>', { stripeAccount: '<?php echo $stripeacc; ?>' });
-				<?php
+					<?php
 				}
 				?>
 
@@ -2447,13 +2447,13 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			// Create a Stripe client.
 				<?php
 				if (empty($stripeacc)) {
-				?>
+					?>
 			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
-				<?php
+					<?php
 				} else {
-				?>
+					?>
 			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>', { stripeAccount: '<?php echo $stripeacc; ?>' });
-				<?php
+					<?php
 				}
 				?>
 
