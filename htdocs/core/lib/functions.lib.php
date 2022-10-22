@@ -8155,7 +8155,7 @@ function print_date_range($date_start, $date_end, $format = '', $outputlangs = '
  *
  *    @param	int			$date_start    		Start date
  *    @param    int			$date_end      		End date
- *    @param    string		$format        		Output format
+ *    @param    string		$format        		Output date format ('day', 'dayhour', ...)
  *    @param	Translate	$outputlangs   		Output language
  *    @param	integer		$withparenthesis	1=Add parenthesis, 0=no parenthesis
  *    @return	string							String

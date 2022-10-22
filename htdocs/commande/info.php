@@ -89,7 +89,7 @@ $morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>';
-	if ($usercancreate) {
+	if (0) {
 		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 		if ($action != 'classify') {
 			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';

@@ -2332,7 +2332,7 @@ if ($action == 'create') {
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border tableforfield" width="100%">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Link for thirdparty discounts
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -2392,7 +2392,7 @@ if ($action == 'create') {
 	// Date end proposal
 	print '<tr>';
 	print '<td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print '<table class="nobordernopadding centpercent"><tr><td>';
 	print $langs->trans('DateEndPropal');
 	print '</td>';
 	if ($action != 'editecheance' && $usercancreate && $caneditfield) {
