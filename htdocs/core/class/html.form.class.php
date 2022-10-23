@@ -5916,19 +5916,20 @@ class Form
 	/**
 	 *  Output html select to select thirdparty
 	 *
-	 *  @param	string	$page       	Page
-	 *  @param  string	$selected   	Id preselected
-	 *  @param  string	$htmlname		Name of HTML select
-	 *  @param  string	$filter         Optional filters criteras. Do not use a filter coming from input of users.
-	 *	@param	int		$showempty		Add an empty field
-	 * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
-	 * 	@param	int		$forcecombo		Force to use combo box
-	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 *  @param  int     $nooutput       No print output. Return it only.
-	 *  @param	array	$excludeids		Exclude IDs from the select combo
+	 *  @param	string	$page       			Page
+	 *  @param  string	$selected   			Id preselected
+	 *  @param  string	$htmlname				Name of HTML select
+	 *  @param  string	$filter         		Optional filters criteras. Do not use a filter coming from input of users.
+	 *	@param	int		$showempty				Add an empty field
+	 * 	@param	int		$showtype				Show third party type in combolist (customer, prospect or supplier)
+	 * 	@param	int		$forcecombo				Force to use combo box
+	 *  @param	array	$events					Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 *  @param  int     $nooutput       		No print output. Return it only.
+	 *  @param	array	$excludeids				Exclude IDs from the select combo
+	 *  @param	string	$textifnothirdparty		Text to show if no thirdparty
 	 *  @return	void|string
 	 */
-	public function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0, $excludeids = array())
+	public function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0, $excludeids = array(), $textifnothirdparty = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -5946,9 +5947,9 @@ class Form
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 				$soc = new Societe($this->db);
 				$soc->fetch($selected);
-				$out .= $soc->getNomUrl($langs);
+				$out .= $soc->getNomUrl(0, '');
 			} else {
-				$out .= "&nbsp;";
+				$out .= '<span class="opacitymedium">'.$textifnothirdparty.'</span>';
 			}
 		}
 
