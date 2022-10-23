@@ -991,7 +991,7 @@ class Societe extends CommonObject
 				// Ajout du commercial affecte
 				if ($this->commercial_id != '' && $this->commercial_id != -1) {
 					$this->add_commercial($user, $this->commercial_id);
-				} elseif (empty($user->rights->societe->client->voir)) {
+				} elseif (!$user->hasRight('societe', 'client', 'voir')) {
 					// si un commercial cree un client il lui est affecte automatiquement
 					$this->add_commercial($user, $user->id);
 				}
@@ -2754,7 +2754,7 @@ class Societe extends CommonObject
 		$linkend = '</a>';
 
 		global $user;
-		if (empty($user->rights->societe->client->voir) && $user->socid > 0 && $this->id != $user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && $user->socid > 0 && $this->id != $user->socid) {
 			$linkstart = '';
 			$linkend = '';
 		}
