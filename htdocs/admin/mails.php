@@ -505,7 +505,8 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
 
 	// From
-	print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined")).'</td>';
+	$help = img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
+	print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined")).' '.$help.'</td>';
 	print '<td><input class="flat minwidth200" name="MAIN_MAIL_EMAIL_FROM" value="'.(!empty($conf->global->MAIN_MAIL_EMAIL_FROM) ? $conf->global->MAIN_MAIL_EMAIL_FROM : '');
 	print '"></td></tr>';
 
@@ -702,7 +703,8 @@ if ($action == 'edit') {
 		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
 
 		// From
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined")).'</td>';
+		$help = img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM", ini_get('sendmail_from') ?ini_get('sendmail_from') : $langs->transnoentities("Undefined")).' '.$help.'</td>';
 		print '<td>'.$conf->global->MAIN_MAIL_EMAIL_FROM;
 		if (empty($conf->global->MAIN_MAIL_EMAIL_FROM)) {
 			print img_warning($langs->trans("Mandatory"));
