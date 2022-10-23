@@ -551,9 +551,9 @@ if (!empty($object->piece_num)) {
 
 			$total_debit = 0;
 			$total_credit = 0;
-/* daraelmin test
-		// Don't show in tmp mode, inevitably empty
-		if ($mode != "_tmp") {
+			/* daraelmin test
+			// Don't show in tmp mode, inevitably empty
+			if ($mode != "_tmp") {
 			// Date document export
 			print '<tr>';
 			print '<td class="titlefield">' . $langs->trans("DateExport") . '</td>';
@@ -569,8 +569,8 @@ if (!empty($object->piece_num)) {
 			print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
 			print '</td>';
 			print '</tr>';
-		}
-  end daraelmin test */
+			}
+			end daraelmin test */
 
 			print '<tr class="liste_titre">';
 
