@@ -283,12 +283,12 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn_rec as f';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_rec_extrafields as ef ON ef.fk_object = f.rowid';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
 }
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '. (int) $user->id;
 }
 if ($search_ref) {
