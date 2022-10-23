@@ -110,11 +110,11 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 		$tmpobject = new Product($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'product';
-	} elseif ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer) {
+	} elseif ($type == Categorie::TYPE_SUPPLIER && $user->hasRight('societe', 'creer')) {
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'supplier';
-	} elseif ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer) {
+	} elseif ($type == Categorie::TYPE_CUSTOMER && $user->hasRight('societe', 'creer')) {
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'customer';
@@ -123,7 +123,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {
 		$tmpobject = new Adherent($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'member';
-	} elseif ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) {
+	} elseif ($type == Categorie::TYPE_CONTACT && $user->hasRight('societe', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$tmpobject = new Contact($db);
 		$result = $tmpobject->fetch($removeelem);
@@ -172,12 +172,12 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 
 if ($elemid && $action == 'addintocategory' &&
 	(($type == Categorie::TYPE_PRODUCT && ($user->rights->produit->creer || $user->rights->service->creer)) ||
-	 ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer) ||
-	 ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer) ||
+	 ($type == Categorie::TYPE_CUSTOMER && $user->hasRight('societe', 'creer')) ||
+	 ($type == Categorie::TYPE_SUPPLIER && $user->hasRight('societe', 'creer')) ||
 	 ($type == Categorie::TYPE_TICKET && $user->rights->ticket->write) ||
 	 ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer) ||
 	 ($type == Categorie::TYPE_MEMBER && $user->rights->projet->creer) ||
-	 ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) ||
+	 ($type == Categorie::TYPE_CONTACT && $user->hasRight('societe', 'creer')) ||
 	 ($type == Categorie::TYPE_USER && $user->rights->user->user->creer) ||
 	 ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
    )) {
@@ -524,7 +524,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 
 			print '<br>';
 			$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($prods); $nbtotalofrecords = '';
-			$newcardbutton = dolGetButtonTitle($langs->trans("AddProduct"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&categories[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
+			$newcardbutton = dolGetButtonTitle($langs->trans("AddProduct"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&categories[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('societe', 'creer'));
 			print_barre_liste($langs->trans("ProductsAndServices"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'products', 0, $newcardbutton, '', $limit);
 
 
@@ -571,7 +571,7 @@ if ($type == Categorie::TYPE_PRODUCT) {
 // List of customers
 if ($type == Categorie::TYPE_CUSTOMER) {
 	if ($user->hasRight("societe", "read")) {
-		$permission = $user->rights->societe->creer;
+		$permission = $user->hasRight('societe', 'creer');
 
 		$socs = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($socs < 0) {
@@ -606,7 +606,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 
 			print '<br>';
 			$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($socs); $nbtotalofrecords = '';
-			$newcardbutton = dolGetButtonTitle($langs->trans("AddThirdParty"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&client=3&custcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
+			$newcardbutton = dolGetButtonTitle($langs->trans("AddThirdParty"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&client=3&custcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('societe', 'creer'));
 			print_barre_liste($langs->trans("Customers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);
 
 			print '<table class="noborder centpercent">'."\n";
@@ -651,7 +651,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 // List of suppliers
 if ($type == Categorie::TYPE_SUPPLIER) {
 	if ($user->hasRight("fournisseur", "read")) {
-		$permission = $user->rights->societe->creer;
+		$permission = $user->hasRight('societe', 'creer');
 
 		$socs = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($socs < 0) {
@@ -686,7 +686,7 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 
 			print '<br>';
 			$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($socs); $nbtotalofrecords = '';
-			$newcardbutton = dolGetButtonTitle($langs->trans("AddSupplier"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&fournisseur=1&suppcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
+			$newcardbutton = dolGetButtonTitle($langs->trans("AddSupplier"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&fournisseur=1&suppcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('societe', 'creer'));
 			print_barre_liste($langs->trans("Suppliers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);
 
 			print '<table class="noborder centpercent">'."\n";
@@ -816,7 +816,7 @@ if ($type == Categorie::TYPE_MEMBER) {
 // List of contacts
 if ($type == Categorie::TYPE_CONTACT) {
 	if ($user->hasRight("societe", "read")) {
-		$permission = $user->rights->societe->creer;
+		$permission = $user->hasRight('societe', 'creer');
 
 		$contacts = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if (is_numeric($contacts) && $contacts < 0) {
@@ -852,7 +852,7 @@ if ($type == Categorie::TYPE_CONTACT) {
 			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
 			$num = count($contacts);
 			$nbtotalofrecords = '';
-			$newcardbutton = dolGetButtonTitle($langs->trans("AddContact"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create&contcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->rights->societe->creer);
+			$newcardbutton = dolGetButtonTitle($langs->trans("AddContact"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?action=create&contcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('societe', 'creer'));
 			$objsoc = new Societe($db);
 			print_barre_liste($langs->trans("Contact"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contact', 0, $newcardbutton, '', $limit);
 
