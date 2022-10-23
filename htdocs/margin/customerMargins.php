@@ -228,14 +228,14 @@ if (!empty($TSelectedCats)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=d.fk_product';
 }
 
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE f.fk_soc = s.rowid";
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
