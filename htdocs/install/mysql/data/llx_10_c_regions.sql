@@ -4,12 +4,12 @@
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
--- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
+-- Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012      Sebastian Neuwert    <sebastian.neuwert@modula71.de>
--- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
--- Copyright (C) 2015	   Ferran Marcet        <fmarcet@2byte.es>
--- Copyright (C) 2019~	   Lao Tian        <281388879@qq.com>
+-- Copyright (C) 2012      Ricardo Schluter     <info@ripasch.nl>
+-- Copyright (C) 2015      Ferran Marcet        <fmarcet@2byte.es>
+-- Copyright (C) 2019~     Lao Tian             <281388879@qq.com>
 -- Copyright (C) 2020-2021 Udo Tamm             <dev@dolibit.de>
 -- Copyright (C) 2022      Miro Sertić          <miro.sertic0606@gmail.com>
 --
@@ -52,11 +52,12 @@
 -- Belgium
 -- Bolivia
 -- Brazil -> for Departmements
+-- Burundi
 -- Canada -> for Departmements
 -- Chile
 -- China
 -- Colombie -> for Departmements
--- Croatia -> for Departmements
+-- Croatia
 -- Denmark
 -- France
 -- Germany -> for Departmements
@@ -66,6 +67,7 @@
 -- India -> for Departmements
 -- Indonesia -> for Departmements
 -- Italy
+-- Japan -> only for Departmements
 -- Luxembourg
 -- Mauritius
 -- Mexique -> for Departmements
@@ -330,6 +332,10 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 3
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 3, 318, NULL, 1, 'Umbria');
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 3, 319, NULL, 1, 'Valle d Aosta');
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 3, 320, NULL, 1, 'Veneto');
+
+
+-- Japan Region (id country=123)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 123, 12301, '', 0,'日本');
 
 
 -- Luxembourg Regions (districts) (id country=140)

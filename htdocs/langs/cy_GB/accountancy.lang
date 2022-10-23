@@ -48,8 +48,9 @@ CountriesNotInEEC=Gwledydd nad ydynt yn y CEE
 CountriesInEECExceptMe=Gwledydd yn EEC ac eithrio %s
 CountriesExceptMe=Pob gwlad ac eithrio %s
 AccountantFiles=Allforio dogfennau ffynhonnell
-ExportAccountingSourceDocHelp=Gyda'r offeryn hwn, gallwch allforio'r digwyddiadau ffynhonnell (rhestr mewn CSV a PDFs) a ddefnyddir i gynhyrchu eich cyfrifyddiaeth.
+ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=I allforio eich dyddlyfrau, defnyddiwch y cofnod dewislen %s - %s.
+ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=Gweld yn ôl cyfrif cyfrifeg
 VueBySubAccountAccounting=Gweld trwy isgyfrif cyfrifo
 
@@ -161,7 +162,7 @@ BANK_DISABLE_DIRECT_INPUT=Analluogi cofnodi trafodion yn uniongyrchol yn y cyfri
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Galluogi allforio drafft ar y dyddlyfr
 ACCOUNTANCY_COMBO_FOR_AUX=Galluogi rhestr combo ar gyfer cyfrif atodol (gall fod yn araf os oes gennych lawer o drydydd parti, torri'r gallu i chwilio ar ran o werth)
 ACCOUNTING_DATE_START_BINDING=Diffinio dyddiad i ddechrau rhwymo a throsglwyddo mewn cyfrifyddiaeth. O dan y dyddiad hwn, ni fydd y trafodion yn cael eu trosglwyddo i gyfrifeg.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Wrth drosglwyddo cyfrifyddiaeth, dewiswch y cyfnod dangos yn ddiofyn
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=On accountancy transfer, what is the period selected by default
 
 ACCOUNTING_SELL_JOURNAL=Gwerthu dyddlyfr
 ACCOUNTING_PURCHASE_JOURNAL=Dyddiadur prynu
@@ -182,7 +183,7 @@ DONATION_ACCOUNTINGACCOUNT=Cyfrif cyfrifo i gofrestru rhoddion
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cyfrif cyfrif i gofrestru tanysgrifiadau
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Cyfrif cyfrifo yn ddiofyn i gofrestru blaendal cwsmer
-UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
+UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cyfrif cyfrifo yn ddiofyn ar gyfer y cynhyrchion a brynwyd (a ddefnyddir os nad yw wedi'i ddiffinio yn y daflen cynnyrch)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Cyfrif cyfrifo yn ddiofyn ar gyfer y cynhyrchion a brynwyd yn EEC (a ddefnyddir os nad yw wedi'i ddiffinio yn y daflen cynnyrch)
@@ -332,7 +333,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Analluogi rhwymo a throsglwyddo cyf
 
 ## Export
 NotifiedExportDate=Baner llinellau wedi'u hallforio fel Allforiwyd <span class="warning"> (i addasu llinell, bydd angen i chi ddileu'r trafodiad cyfan a'i ail-drosglwyddo i gyfrifeg) </span>
-NotifiedValidationDate=Dilysu a chloi'r cofnodion a allforiwyd <span class="warning"> (yr un effaith â'r nodwedd "Cau", YN BENDERFYNOL ni fydd addasu a dileu'r llinellau yn bosibl) </span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=Dyddiad dilysu a chlo
 ConfirmExportFile=Cadarnhad o gynhyrchu'r ffeil allforio cyfrifo ?
 ExportDraftJournal=Allforio cyfnodolyn drafft
@@ -427,6 +428,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Mae'
 AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
 AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
+ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 
 ## Import
 ImportAccountingEntries=Cofnodion cyfrifeg

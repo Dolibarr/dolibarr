@@ -43,3 +43,4 @@ HideLots=Nascondi un sacco
 OutOfOrder=Fuori servizio
 InWorkingOrder=Funzionante
 ToReplace=Sostituire
+CantMoveNonExistantSerial=Errore. Chiedi una mossa su un record per un seriale che non esiste più. È possibile che tu abbia preso lo stesso numero di serie nello stesso magazzino più volte nella stessa spedizione o sia stato utilizzato da un'altra spedizione. Rimuovi questa spedizione e preparane un'altra.

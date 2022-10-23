@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - loan
 Loan=Préstec
 Loans=Préstecs
-NewLoan=Nou préstec
+NewLoan=Préstec nou
 ShowLoan=Mostrar préstec
 PaymentLoan=Pagament del préstec
 LoanPayment=Pagament del préstec
@@ -24,7 +24,7 @@ FinancialCommitment=Compromís financer
 InterestAmount=Interessos
 CapitalRemain=Capital restant
 TermPaidAllreadyPaid = Aquest termini ja està pagat
-CantUseScheduleWithLoanStartedToPaid = No es pot utilitzar el planificador per a un préstec amb el pagament iniciat
+CantUseScheduleWithLoanStartedToPaid = No es pot generar un calendari per a un préstec amb un pagament iniciat
 CantModifyInterestIfScheduleIsUsed = No pots modificar l’interès si fas servir la programació
 # Admin
 ConfigLoan=Configuració del mòdul de préstecs

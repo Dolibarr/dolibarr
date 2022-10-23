@@ -67,7 +67,6 @@ SendMessageByEmail=Stuur bericht per e-mail
 ErrorMailRecipientIsEmptyForSendTicketMessage=Ontvanger is leeg. Geen e-mail verzonden
 TicketMessageMailIntro=Inleiding
 TicketMessageMailIntroHelp=Deze tekst wordt alleen aan het begin van de e-mail toegevoegd en wordt niet opgeslagen.
-TicketMessageMailSignatureLabelAdmin=Handtekening van reactie-e-mail
 TicketMessageHelp=Alleen deze tekst wordt opgeslagen in de berichtenlijst van het ticket.
 TicketMessageSubstitutionReplacedByGenericValues=Vervangingenvariabelen worden vervangen door generieke waarden.
 TimeElapsedSince=tijd verstreken sinds

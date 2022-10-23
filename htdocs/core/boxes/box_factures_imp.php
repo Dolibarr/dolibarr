@@ -61,7 +61,7 @@ class box_factures_imp extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->facture->lire);
+		$this->hidden = empty($user->rights->facture->lire);
 	}
 
 	/**

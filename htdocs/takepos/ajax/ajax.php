@@ -21,9 +21,6 @@
  *	\brief      Ajax search component for TakePos. It search products of a category.
  */
 
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -40,6 +37,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
@@ -58,11 +56,14 @@ if (empty($user->rights->takepos->run)) {
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('takeposproductsearch')); // new context for product search hooks
 
+
 /*
  * View
  */
 
 if ($action == 'getProducts') {
+	top_httphead('application/json');
+
 	$object = new Categorie($db);
 	if ($category == "supplements") {
 		$category = getDolGlobalInt('TAKEPOS_SUPPLEMENTS_CATEGORY');
@@ -88,9 +89,11 @@ if ($action == 'getProducts') {
 		}
 		echo json_encode($res);
 	} else {
-		echo 'Failed to load category with id='.$category;
+		echo 'Failed to load category with id='.dol_escape_htmltag($category);
 	}
 } elseif ($action == 'search' && $term != '') {
+	top_httphead('application/json');
+
 	// Change thirdparty with barcode
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
@@ -123,7 +126,7 @@ if ($action == 'getProducts') {
 	}
 
 	$barcode_rules = getDolGlobalString('TAKEPOS_BARCODE_RULE_TO_INSERT_PRODUCT');
-	if (!empty($conf->barcode->enabled) && !empty($barcode_rules)) {
+	if (isModEnabled('barcode') && !empty($barcode_rules)) {
 		$barcode_rules_list = array();
 
 		// get barcode rules
@@ -329,8 +332,8 @@ if ($action == 'getProducts') {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	$printer = new dolReceiptPrinter($db);
 	// check printer for terminal
-	if ($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term} > 0) {
-		$printer->initPrinter($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
+	if (getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) {
+		$printer->initPrinter(getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term));
 		// open cashdrawer
 		$printer->pulse();
 		$printer->close();
@@ -340,12 +343,14 @@ if ($action == 'getProducts') {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$printer = new dolReceiptPrinter($db);
 	// check printer for terminal
-	if (($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term} > 0 || $conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") && $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term} > 0) {
+	if ((getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0 || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") && getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term) > 0) {
 		$object = new Facture($db);
 		$object->fetch($id);
-		$ret = $printer->sendToPrinter($object, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
+		$ret = $printer->sendToPrinter($object, getDolGlobalString('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$term));
 	}
 } elseif ($action == 'getInvoice') {
+	top_httphead('application/json');
+
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 	$object = new Facture($db);
@@ -359,5 +364,5 @@ if ($action == 'getProducts') {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 	$printer = new dolReceiptPrinter($db);
-	$printer->sendToPrinter($object, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
+	$printer->sendToPrinter($object, getDolGlobalString('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$term));
 }

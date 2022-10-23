@@ -69,3 +69,4 @@ ToOfferALinkForLiveWebhook=Link de configurare Stripe WebHook pentru a apel IPN 
 PaymentWillBeRecordedForNextPeriod=Plata va fi înregistrată pentru perioada următoare.
 ClickHereToTryAgain=<a href="%s">Clic aici pentru a încerca din nou...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Datorită regulilor de autentificare securizată a clienților, crearea unui card trebuie făcută din backoffice-ul Stripe. Puteți face clic aici pentru a activa înregistrarea clienților Stripe: %s 
+TERMINAL_LOCATION=Locație (adresă) pentru terminale

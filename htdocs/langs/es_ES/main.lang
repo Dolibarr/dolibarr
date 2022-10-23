@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -244,7 +250,7 @@ Designation=Descripción
 DescriptionOfLine=Descripción de línea
 DateOfLine=Fecha de la línea
 DurationOfLine=Duración de la línea
-ParentLine=Parent line ID
+ParentLine=ID de línea principal
 Model=Plantilla documento
 DefaultModel=Plantilla por defecto
 Action=Acción
@@ -621,7 +627,7 @@ MonthVeryShort11=N
 MonthVeryShort12=D
 AttachedFiles=Archivos y documentos adjuntos
 JoinMainDoc=Unir al documento principal
-JoinMainDocOrLastGenerated=Send the main document or the last generated one if not found
+JoinMainDocOrLastGenerated=Enviar el documento principal o el último generado si no se encuentra
 DateFormatYYYYMM=YYYY-MM
 DateFormatYYYYMMDD=YYYY-MM-DD
 DateFormatYYYYMMDDHHMM=YYYY-MM-DD HH:SS
@@ -712,6 +718,7 @@ FeatureDisabled=Función desactivada
 MoveBox=Mover panel
 Offered=Oferta
 NotEnoughPermissions=No tiene permisos para esta acción
+UserNotInHierachy=Esta acción está reservada a los supervisores de este usuario.
 SessionName=Nombre sesión
 Method=Método
 Receive=Recepción
@@ -1169,11 +1176,14 @@ CanceledHidden=Ocultar cancelado
 CanceledShown=Mostrar cancelado
 Terminate=Cancelar
 Terminated=De baja
-AddLineOnPosition=Add line on position (at the end if empty)
-ConfirmAllocateCommercial=Assign sales representative confirmation
-ConfirmAllocateCommercialQuestion=Are you sure you want to assign the %s selected record(s)?
-CommercialsAffected=Sales representatives affected
-CommercialAffected=Sales representative affected
-YourMessage=Votre message
-YourMessageHasBeenReceived=Your message has been received. We will answer or contact you as soon as possible.
-UrlToCheck=Url to check
+AddLineOnPosition=Agregar línea en la posición (al final si está vacío)
+ConfirmAllocateCommercial=Asignar confirmación de representante de ventas
+ConfirmAllocateCommercialQuestion=¿Está seguro de que desea asignar los %sregistros seleccionados?
+CommercialsAffected=Representantes de ventas afectados
+CommercialAffected=Representante de ventas afectado
+YourMessage=Tu mensaje
+YourMessageHasBeenReceived=Tu mensaje ha sido recibido. Le responderemos o contactaremos con usted lo antes posible.
+UrlToCheck=URL para comprobar
+Automation=Automatización
+CreatedByEmailCollector=Creado por el recopilador de correo electrónico
+CreatedByPublicPortal=Creado desde el portal público

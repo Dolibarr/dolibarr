@@ -304,3 +304,24 @@ ConfirmBtnCommonContent = Er du sikker på, at du vil "%s"?
 ConfirmBtnCommonTitle = Bekræft din handling
 CloseDialog = Luk
 Autofill = Autofyld
+
+# externalsite
+ExternalSiteSetup=Opsætning af ekstern hjemmeside modul
+ExternalSiteURL=Ekstern hjemmeside-URL for HTML iframe-indhold
+ExternalSiteModuleNotComplete=Modul ekstern hjemmeside blev ikke konfigureret korrekt.
+ExampleMyMenuEntry=Min menuindgang
+
+# FTP
+FTPClientSetup=Opsætning af FTP klientmodul
+NewFTPClient=Ny opsætning af FTP forbindelse
+FTPArea=FTP område
+FTPAreaDesc=Denne skærm viser opsætning af en FTP-server.
+SetupOfFTPClientModuleNotComplete=Opsætningen af FTP-klientmodulet ser ud til at være ufuldstændig
+FTPFeatureNotSupportedByYourPHP=Din PHP understøtter ikke FTP/FTPS/SFTP-funktioner
+FailedToConnectToFTPServer=Kunne ikke oprette forbindelse til serveren (server %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Kunne ikke logge på serveren med defineret login/adgangskode
+FTPFailedToRemoveFile=Filen <b>%s</b> kunne ikke fjernes.
+FTPFailedToRemoveDir=Det lykkedes ikke at fjerne mappen <b>%s</b>: Kontroller rettigheder og at mappen er tom.
+FTPPassiveMode=Passiv tilstand
+ChooseAFTPEntryIntoMenu=Vælg en FTP server i menuen...
+FailedToGetFile=Kunne ikke hente filer %s

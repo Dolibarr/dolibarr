@@ -114,23 +114,17 @@ class ProductStockEntrepot extends CommonObject
 
 		// Insert request
 		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'(';
-
 		$sql .= 'fk_product,';
 		$sql .= 'fk_entrepot,';
 		$sql .= 'seuil_stock_alerte,';
 		$sql .= 'desiredstock,';
 		$sql .= 'import_key';
-
-
 		$sql .= ') VALUES (';
-
 		$sql .= ' '.(!isset($this->fk_product) ? 'NULL' : $this->fk_product).',';
 		$sql .= ' '.(!isset($this->fk_entrepot) ? 'NULL' : $this->fk_entrepot).',';
 		$sql .= ' '.(!isset($this->seuil_stock_alerte) ? '0' : $this->seuil_stock_alerte).',';
 		$sql .= ' '.(!isset($this->desiredstock) ? '0' : $this->desiredstock).',';
 		$sql .= ' '.(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
-
-
 		$sql .= ')';
 
 		$this->db->begin();

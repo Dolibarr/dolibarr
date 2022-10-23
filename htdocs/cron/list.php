@@ -24,6 +24,7 @@
  *  \brief      Lists Jobs
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php';
@@ -64,6 +65,7 @@ $search_status = (GETPOSTISSET('search_status') ?GETPOST('search_status', 'int')
 $search_label = GETPOST("search_label", 'alpha');
 $search_module_name = GETPOST("search_module_name", 'alpha');
 $search_lastresult = GETPOST("search_lastresult", "alphawithlgt");
+$search_processing = GETPOST("search_processing", "int");
 $securitykey = GETPOST('securitykey', 'alpha');
 
 $outputdir = $conf->cron->dir_output;
@@ -277,6 +279,9 @@ if ($search_status >= 0 && $search_status < 2 && $search_status != '') {
 if ($search_lastresult != '') {
 	$sql .= natural_search("t.lastresult", $search_lastresult, 1);
 }
+if (GETPOSTISSET('search_processing')) {
+	$sql .= " AND t.processing = ".((int) $search_processing);
+}
 //Manage filter
 if (is_array($filter) && count($filter) > 0) {
 	foreach ($filter as $key => $value) {
@@ -489,9 +494,14 @@ if ($num > 0) {
 			}
 		}
 
+		$reg = array();
+		if (preg_match('/:(.*)$/', $obj->label, $reg)) {
+			$langs->load($reg[1]);
+		}
+
 		$object->id = $obj->rowid;
 		$object->ref = $obj->rowid;
-		$object->label = $obj->label;
+		$object->label = preg_replace('/:.*$/', '', $obj->label);
 		$object->status = $obj->status;
 		$object->priority = $obj->priority;
 		$object->processing = $obj->processing;
@@ -512,9 +522,9 @@ if ($num > 0) {
 
 		// Label
 		print '<td class="tdoverflowmax300">';
-		if (!empty($obj->label)) {
-			$object->ref = $langs->trans($obj->label);
-			print '<span title="'.dol_escape_htmltag($langs->trans($obj->label)).'">'.$object->getNomUrl(0, '', 1).'</span>';
+		if (!empty($object->label)) {
+			$object->ref = $langs->trans($object->label);
+			print '<span title="'.dol_escape_htmltag($langs->trans($object->label)).'">'.$object->getNomUrl(0, '', 1).'</span>';
 			$object->ref = $obj->rowid;
 		} else {
 			//print $langs->trans('CronNone');

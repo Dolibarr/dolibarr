@@ -26,19 +26,20 @@
  *       \brief      Home page of bank module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -58,9 +59,7 @@ $search_number = GETPOST('search_number', 'alpha');
 $search_status = GETPOST('search_status') ?GETPOST('search_status', 'alpha') : 'opened'; // 'all' or ''='opened'
 $optioncss = GETPOST('optioncss', 'alpha');
 
-if (!empty($conf->categorie->enabled)) {
-	$search_category_list = GETPOST("search_category_".Categorie::TYPE_ACCOUNT."_list", "array");
-}
+$search_category_list = GETPOST("search_category_".Categorie::TYPE_ACCOUNT."_list", "array");
 
 $socid = 0;
 // Security check
@@ -69,7 +68,7 @@ if ($user->socid) {
 }
 
 $allowed = 0;
-if (!empty($user->rights->accounting->chartofaccount)) {
+if ($user->hasRight('accounting', 'chartofaccount')) {
 	$allowed = 1; // Dictionary with list of banks accounting account allowed to manager of chart account
 }
 if (!$allowed) {
@@ -116,8 +115,8 @@ $arrayfields = array(
 	'b.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1, 'position'=>12),
 	'accountype'=>array('label'=>$langs->trans("Type"), 'checked'=>1, 'position'=>14),
 	'b.number'=>array('label'=>$langs->trans("AccountIdShort"), 'checked'=>1, 'position'=>16),
-	'b.account_number'=>array('label'=>$langs->trans("AccountAccounting"), 'checked'=>(!empty($conf->accounting->enabled) || !empty($conf->accounting->enabled)), 'position'=>18),
-	'b.fk_accountancy_journal'=>array('label'=>$langs->trans("AccountancyJournal"), 'checked'=>(!empty($conf->accounting->enabled) || !empty($conf->accounting->enabled)), 'position'=>20),
+	'b.account_number'=>array('label'=>$langs->trans("AccountAccounting"), 'checked'=>(isModEnabled('accounting')), 'position'=>18),
+	'b.fk_accountancy_journal'=>array('label'=>$langs->trans("AccountancyJournal"), 'checked'=>(isModEnabled('accounting')), 'position'=>20),
 	'toreconcile'=>array('label'=>$langs->trans("TransactionsToConciliate"), 'checked'=>1, 'position'=>50),
 	'b.currency_code'=>array('label'=>$langs->trans("Currency"), 'checked'=>0, 'position'=>22),
 	'b.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
@@ -161,6 +160,7 @@ if (empty($reshook)) {
 		$search_label = '';
 		$search_number = '';
 		$search_status = '';
+		$search_category_list = array();
 	}
 
 	// Mass actions
@@ -196,11 +196,6 @@ $sql .= " FROM ".MAIN_DB_PREFIX."bank_account as b";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
-
-if (!empty($conf->categorie->enabled)) {
-	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_ACCOUNT, "b.rowid");
-}
-
 $sql .= " WHERE b.entity IN (".getEntity('bank_account').")";
 if ($search_status == 'opened') {
 	$sql .= " AND clos = 0";
@@ -208,11 +203,6 @@ if ($search_status == 'opened') {
 if ($search_status == 'closed') {
 	$sql .= " AND clos = 1";
 }
-
-if (!empty($conf->categorie->enabled)) {
-	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_ACCOUNT, "b.rowid", $search_category_list);
-}
-
 if ($search_ref != '') {
 	$sql .= natural_search('b.ref', $search_ref);
 }
@@ -221,6 +211,32 @@ if ($search_label != '') {
 }
 if ($search_number != '') {
 	$sql .= natural_search('b.number', $search_number);
+}
+// Search for tag/category ($searchCategoryBankList is an array of ID)
+$searchCategoryBankList = $search_category_list;
+$searchCategoryBankOperator = 0;
+if (!empty($searchCategoryBankList)) {
+	$searchCategoryBankSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryBankList as $searchCategoryBank) {
+		if (intval($searchCategoryBank) == -2) {
+			$searchCategoryBankSqlList[] = "NOT EXISTS (SELECT ck.fk_account FROM ".MAIN_DB_PREFIX."categorie_account as ck WHERE b.rowid = ck.fk_account)";
+		} elseif (intval($searchCategoryBank) > 0) {
+			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryBank);
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryBankSqlList[] = " EXISTS (SELECT ck.fk_account FROM ".MAIN_DB_PREFIX."categorie_account as ck WHERE b.rowid = ck.fk_account AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryBankOperator == 1) {
+		if (!empty($searchCategoryBankSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryBankSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryBankSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryBankSqlList).")";
+		}
+	}
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -303,7 +319,7 @@ $arrayofmassactions = array(
 if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if ($user->rights->banque->modifier) {
+if (isModEnabled('category') && $user->rights->banque->modifier) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
@@ -344,7 +360,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $moreforfilter = '';
 
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	$moreforfilter .= $form->getFilterBox(Categorie::TYPE_ACCOUNT, $search_category_list);
 }
 
@@ -569,7 +585,7 @@ foreach ($accounts as $key => $type) {
 	// Account number
 	if (!empty($arrayfields['b.account_number']['checked'])) {
 		print '<td class="tdoverflowmax250">';
-		if (!empty($conf->accounting->enabled) && !empty($objecttmp->account_number)) {
+		if (isModEnabled('accounting') && !empty($objecttmp->account_number)) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch('', $objecttmp->account_number, 1);
 			print '<span title="'.dol_escape_htmltag($accountingaccount->account_number.' - '.$accountingaccount->label).'">';
@@ -587,7 +603,7 @@ foreach ($accounts as $key => $type) {
 	// Accountancy journal
 	if (!empty($arrayfields['b.fk_accountancy_journal']['checked'])) {
 		print '<td class="tdoverflowmax125">';
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			if (empty($objecttmp->fk_accountancy_journal)) {
 				print img_warning($langs->trans("Mandatory"));
 			} else {
@@ -636,7 +652,7 @@ foreach ($accounts as $key => $type) {
 			print '<span class="opacitymedium">'.$langs->trans("ConciliationDisabled").'</span>';
 		} else {
 			$result = $objecttmp->load_board($user, $objecttmp->id);
-			if ($result < 0) {
+			if (is_numeric($result) && $result < 0) {
 				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			} else {
 				print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&id='.$objecttmp->id.'&search_account='.$objecttmp->id.'&search_conciliated=0&contextpage=banktransactionlist">';
