@@ -30,6 +30,11 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+if (isModEnabled('project')) {
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'ticket'));
@@ -173,14 +178,13 @@ if ($object->fk_user_create > 0) {
 
 // Thirdparty
 if (isModEnabled("societe")) {
-	$morehtmlref .= '<br>';
-	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
-		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&token='.newToken().'&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a> ';
-	}*/
-	if ($action == 'editcustomer') {
-		$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
-	} else {
-		$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
+	if (isModEnabled("societe")) {
+		$morehtmlref .= '<br>';
+		$morehtmlref .= img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth"');
+		if ($action != 'editcustomer' && 0) {
+			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty'), 0).'</a> ';
+		}
+		$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
 	}
 }
 
@@ -188,7 +192,7 @@ if (isModEnabled("societe")) {
 if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>';
-	if ($permissiontoadd) {
+	if (0) {
 		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 		if ($action != 'classify') {
 			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
@@ -245,7 +249,7 @@ if (!empty($object->id)) {
 
 	// Show link to add event (if read and not closed)
 	$btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
-	$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id);
+	$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep=now&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id);
 	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, 'add-new-ticket-even-button', $btnstatus);
 
 
