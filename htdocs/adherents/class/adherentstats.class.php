@@ -70,7 +70,7 @@ class AdherentStats extends Stats
 
 		$this->where .= " m.statut != -1";
 		$this->where .= " AND p.fk_adherent = m.rowid AND m.entity IN (".getEntity('adherent').")";
-		//if (empty($user->rights->societe->client->voir) && !$user->socid) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
+		//if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
 		if ($this->memberid) {
 			$this->where .= " AND m.rowid = ".((int) $this->memberid);
 		}
@@ -91,7 +91,7 @@ class AdherentStats extends Stats
 
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, count(*)";
 		$sql .= " FROM ".$this->from;
-		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		//if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".dolSqlDateFilter('p.dateadh', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -111,7 +111,7 @@ class AdherentStats extends Stats
 
 		$sql = "SELECT date_format(p.dateadh,'%Y') as dm, count(*)";
 		$sql .= " FROM ".$this->from;
-		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		//if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -132,7 +132,7 @@ class AdherentStats extends Stats
 
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, sum(p.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		//if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".dolSqlDateFilter('p.dateadh', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -153,7 +153,7 @@ class AdherentStats extends Stats
 
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, avg(p.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		//if (empty($user->rights->societe->client->voir) && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		//if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".dolSqlDateFilter('p.dateadh', 0, 0, (int) $year, 1);
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -174,7 +174,7 @@ class AdherentStats extends Stats
 
 		$sql = "SELECT date_format(p.dateadh,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		//if (empty($user->rights->societe->client->voir) && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		//if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
 		$sql .= $this->db->order('year', 'DESC');
