@@ -1347,7 +1347,7 @@ class Project extends CommonObject
 		}
 		$result .= $linkend;
 		if ($withpicto != 2) {
-			$result .= (($addlabel && $this->title) ? $sep.dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
+			$result .= (($addlabel && $this->title) ? '<span class="opacitymedium">'.$sep.dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)).'</span>' : '');
 		}
 
 		global $action;
