@@ -84,6 +84,8 @@ if (empty($user->rights->mailing->lire) || (empty($conf->global->EXTERNAL_USERS_
 	accessforbidden();
 }
 
+$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+
 
 /*
  * Actions
@@ -124,8 +126,6 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'warnings');
 			$action = '';
 		} else {
-			$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
-
 			if ($object->statut == 0) {
 				dol_print_error('', 'ErrorMailIsNotValidated');
 				exit;
@@ -318,7 +318,8 @@ if (empty($reshook)) {
 
 						// Mail making
 						$trackid = 'emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing');
+						$upload_dir_tmp = $upload_dir;
+						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', '', $upload_dir_tmp);
 
 						if ($mail->error) {
 							$res = 0;
@@ -478,7 +479,8 @@ if (empty($reshook)) {
 			}
 
 			$trackid = 'emailing-test';
-			$mailfile = new CMailFile($tmpsujet, $object->sendto, $object->email_from, $tmpbody, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $object->email_errorsto, $arr_css, $trackid, '', 'emailing');
+			$upload_dir_tmp = $upload_dir;
+			$mailfile = new CMailFile($tmpsujet, $object->sendto, $object->email_from, $tmpbody, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $object->email_errorsto, $arr_css, $trackid, '', 'emailing', '', $upload_dir_tmp);
 
 			$result = $mailfile->sendfile();
 			if ($result) {
@@ -1265,8 +1267,9 @@ if ($action == 'create') {
 					$out .= '<br></div>';
 				}
 			} else {
-				$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
+				//$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
 			}
+
 			// Add link to add file
 			$maxfilesizearray = getMaxFileSizeArray();
 			$maxmin = $maxfilesizearray['maxmin'];
