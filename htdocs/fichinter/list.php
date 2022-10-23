@@ -270,7 +270,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-if (empty($user->rights->societe->client->voir) && empty($socid)) {
+if (!$user->hasRight('societe', 'client', 'voir') && empty($socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -301,7 +301,7 @@ if ($search_desc) {
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= ' AND f.fk_statut = '.urlencode($search_status);
 }
-if (empty($user->rights->societe->client->voir) && empty($socid)) {
+if (!$user->hasRight('societe', 'client', 'voir') && empty($socid)) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
