@@ -1408,6 +1408,12 @@ class FormTicket
 			$ticketstat = new Ticket($this->db);
 			$res = $ticketstat->fetch('', '', $this->track_id);
 
+			print '<tr><td></td><td>';
+			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : ($conf->global->TICKETS_MESSAGE_FORCE_MAIL?'checked':''));
+			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
+			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
+			print '</td></tr>';
+
 			// Private message (not visible by customer/external user)
 			if (!$user->socid) {
 				print '<tr><td></td><td>';
@@ -1417,12 +1423,6 @@ class FormTicket
 				print ' '.$form->textwithpicto('', $langs->trans("TicketMessagePrivateHelp"), 1, 'help');
 				print '</td></tr>';
 			}
-
-			print '<tr><td></td><td>';
-			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : ($conf->global->TICKETS_MESSAGE_FORCE_MAIL?'checked':''));
-			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
-			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
-			print '</td></tr>';
 
 			// Zone to select its email template
 			if (count($modelmail_array) > 0) {
@@ -1610,7 +1610,7 @@ class FormTicket
 		print '</table>';
 
 		print '<center><br>';
-		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("AddMessage").'" />';
+		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("Add").'" />';
 		if ($this->withcancel) {
 			print " &nbsp; &nbsp; ";
 			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';

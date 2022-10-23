@@ -1772,7 +1772,7 @@ class CMailFile
 		$matches = array();
 		preg_match_all('/src="data:image\/('.implode('|', $extensions).');base64,([^"]+)"/Ui', $this->html, $matches); // If "xxx.ext" or 'xxx.ext' found
 
-		if (!empty($matches)) {
+		if (!empty($matches) && !empty($matches[1])) {
 			if (empty($images_dir)) {
 				// No temp directory provided, so we are not able to support convertion of data:image into physical images.
 				$this->error = 'NoTempDirProvidedInCMailConstructorSoCantConvertDataImgOnDisk';

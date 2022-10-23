@@ -444,11 +444,7 @@ if (empty($reshook)) {
 
 		if ($ret > 0) {
 			if (!empty($backtopage)) {
-				if (empty($id)) {
-					$url = $backtopage;
-				} else {
-					$url = 'card.php?track_id='.urlencode($object->track_id);
-				}
+				$url = $backtopage;
 			} else {
 				$url = 'card.php?track_id='.urlencode($object->track_id);
 			}
@@ -456,7 +452,7 @@ if (empty($reshook)) {
 			header("Location: ".$url);
 			exit;
 		} else {
-			setEventMessages($object->error, null, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'presend';
 		}
 	}
@@ -690,6 +686,7 @@ if (empty($reshook)) {
 	$permissiontoadd = $user->rights->ticket->write;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 	//var_dump($action);exit;
+
 	// Actions to send emails
 	$triggersendname = 'TICKET_SENTBYMAIL';
 	$paramname = 'id';

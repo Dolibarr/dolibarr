@@ -164,7 +164,7 @@ class ActionsTicket
 		} elseif ($action == 'view') {
 			return $langs->trans("TicketCard");
 		} elseif ($action == 'add_message') {
-			return $langs->trans("AddMessage");
+			return $langs->trans("TicketAddMessage");
 		} else {
 			return $langs->trans("TicketsManagement");
 		}
