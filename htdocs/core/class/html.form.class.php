@@ -4903,8 +4903,8 @@ class Form
                          			if ($("input[name=\'" + inputname + "\']").attr("type") == "radio") {
 										inputvalue = $("input[name=\'" + inputname + "\']:checked").val();
 									} else {
-                         		    	if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
-                         				inputvalue = $("#" + inputname + more).val();
+                         		    	if ($("input[name=\'" + inputname + "\']").attr("type") == "checkbox") { more = ":checked"; }
+                         				inputvalue = $("input[name=\'" + inputname + "\']" + more).val();
 									}
                          			if (typeof inputvalue == "undefined") { inputvalue=""; }
 									console.log("check inputname="+inputname+" inputvalue="+inputvalue);
@@ -4922,8 +4922,8 @@ class Form
                          	if (inputko.length>0) {
                          		$.each(inputko, function(i, inputname) {
                          			var more = "";
-                         			if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
-                         			var inputvalue = $("#" + inputname + more).val();
+                         			if ($("input[name=\'" + inputname + "\']").attr("type") == "checkbox") { more = ":checked"; }
+                         			var inputvalue = $("input[name=\'" + inputname + "\']" + more).val();
                          			if (typeof inputvalue == "undefined") { inputvalue=""; }
                          			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
