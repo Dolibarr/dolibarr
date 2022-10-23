@@ -1379,7 +1379,7 @@ class Form
 		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as dictp ON dictp.rowid = s.fk_pays";
 		}
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE s.entity IN (".getEntity('societe').")";
@@ -1389,7 +1389,7 @@ class Form
 		if ($filter) {
 			$sql .= " AND (".$filter.")";
 		}
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if (!empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) {
@@ -7805,7 +7805,7 @@ class Form
 				$sql .= " INNER JOIN ".$this->db->prefix().$tmparray[1]." as parenttable ON parenttable.rowid = t.".$tmparray[0];
 			}
 			if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
-				if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 					$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 				}
 			}
@@ -7833,7 +7833,7 @@ class Form
 					}
 				}
 				if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
-					if (empty($user->rights->societe->client->voir) && !$user->socid) {
+					if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 						$sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 					}
 				}
