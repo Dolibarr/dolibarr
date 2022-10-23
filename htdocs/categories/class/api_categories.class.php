@@ -371,12 +371,12 @@ class Categories extends DolibarrApi
 			}
 			$object = new Product($this->db);
 		} elseif ($type === Categorie::TYPE_CUSTOMER) {
-			if (!DolibarrApiAccess::$user->rights->societe->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Societe($this->db);
 		} elseif ($type === Categorie::TYPE_SUPPLIER) {
-			if (!DolibarrApiAccess::$user->rights->societe->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Societe($this->db);
@@ -451,12 +451,12 @@ class Categories extends DolibarrApi
 			}
 			$object = new Product($this->db);
 		} elseif ($type === Categorie::TYPE_CUSTOMER) {
-			if (!DolibarrApiAccess::$user->rights->societe->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Societe($this->db);
 		} elseif ($type === Categorie::TYPE_SUPPLIER) {
-			if (!DolibarrApiAccess::$user->rights->societe->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Societe($this->db);
@@ -531,12 +531,12 @@ class Categories extends DolibarrApi
 			}
 			$object = new Product($this->db);
 		} elseif ($type === Categorie::TYPE_CUSTOMER) {
-			if (!DolibarrApiAccess::$user->rights->societe->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Societe($this->db);
 		} elseif ($type === Categorie::TYPE_SUPPLIER) {
-			if (!DolibarrApiAccess::$user->rights->societe->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Societe($this->db);
@@ -609,12 +609,12 @@ class Categories extends DolibarrApi
 			}
 			$object = new Product($this->db);
 		} elseif ($type === Categorie::TYPE_CUSTOMER) {
-			if (!DolibarrApiAccess::$user->rights->societe->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Societe($this->db);
 		} elseif ($type === Categorie::TYPE_SUPPLIER) {
-			if (!DolibarrApiAccess::$user->rights->societe->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Societe($this->db);
