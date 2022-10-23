@@ -113,13 +113,13 @@ class box_activity extends ModeleBoxes
 			if ($refresh) {
 				$sql = "SELECT p.fk_statut, SUM(p.total_ttc) as Mnttot, COUNT(*) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-				if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= ")";
 				$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 				$sql .= " AND p.fk_soc = s.rowid";
-				if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if ($user->socid) {
@@ -203,13 +203,13 @@ class box_activity extends ModeleBoxes
 			if ($refresh) {
 				$sql = "SELECT c.fk_statut, sum(c.total_ttc) as Mnttot, count(*) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-				if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= ")";
 				$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 				$sql .= " AND c.fk_soc = s.rowid";
-				if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if ($user->socid) {
@@ -291,12 +291,12 @@ class box_activity extends ModeleBoxes
 			if ($refresh) {
 				$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-				if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= ")";
 				$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
-				if (empty($user->rights->societe->client->voir) && !$user->socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if ($user->socid) {

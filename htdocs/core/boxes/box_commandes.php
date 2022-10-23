@@ -101,7 +101,7 @@ class box_commandes extends ModeleBoxes
 			$sql .= ", c.total_ttc";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."commande as c";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
@@ -109,7 +109,7 @@ class box_commandes extends ModeleBoxes
 			if (!empty($conf->global->ORDER_BOX_LAST_ORDERS_VALIDATED_ONLY)) {
 				$sql .= " AND c.fk_statut = 1";
 			}
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
