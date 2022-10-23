@@ -76,7 +76,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
 	$filenamenb = $dir.'/shipmentsnbinyear-'.$year.'.png';
@@ -111,7 +111,7 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (empty($user->rights->societe->client->voir) || $user->socid)
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid)
 {
 	$filenameamount = $dir.'/shipmentsamountinyear-'.$user->id.'-'.$year.'.png';
 }
@@ -149,7 +149,7 @@ if (! $mesg)
 /*
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (empty($user->rights->societe->client->voir) || $user->socid)
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid)
 {
 	$filename_avg = $dir.'/shipmentsaverage-'.$user->id.'-'.$year.'.png';
 }
