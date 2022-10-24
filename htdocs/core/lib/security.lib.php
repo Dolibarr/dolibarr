@@ -289,6 +289,11 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		return 1;
 	}
 
+	// To avoid access forbidden with numeric ref
+	if ($dbt_select != 'rowid' && $dbt_select != 'id') {
+		$objectid = "'".$objectid."'";
+	}
+
 	// Features/modules to check
 	$featuresarray = array($features);
 	if (preg_match('/&/', $features)) {
