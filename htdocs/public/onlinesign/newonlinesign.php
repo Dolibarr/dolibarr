@@ -78,6 +78,9 @@ $message = GETPOST('message', 'aZ09');
 $suffix = GETPOST("suffix", 'aZ09');
 $source = GETPOST("source", 'alpha');
 $ref = $REF = GETPOST("ref", 'alpha');
+$urlok = '';
+$urlko = '';
+
 
 if (empty($source)) {
 	$source = 'proposal';
