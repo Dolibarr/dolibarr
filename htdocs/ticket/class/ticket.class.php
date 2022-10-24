@@ -2731,7 +2731,7 @@ class Ticket extends CommonObject
 					$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 				}
 
-				$upload_dir_tmp = $conf->user->dir_output."/".$user->id;
+				$upload_dir_tmp = $conf->user->dir_output."/".$user->id.'/temp';
 
 				include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 				$trackid = "tic".$this->id;
