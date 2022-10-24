@@ -247,6 +247,8 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$productonly = '';
+		$disablelinefree = '';
 		$search_categ = '';
 		$search_user = '';
 		$search_sale = '';
