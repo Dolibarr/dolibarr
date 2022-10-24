@@ -1355,7 +1355,8 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Date start
+
+		// Date start project
 		if (!empty($arrayfields['p.dateo']['checked'])) {
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_start), 'day');
@@ -1364,7 +1365,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Date end
+		// Date end project
 		if (!empty($arrayfields['p.datee']['checked'])) {
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_end), 'day');
@@ -1373,6 +1374,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Visibility
 		if (!empty($arrayfields['p.public']['checked'])) {
 			print '<td class="center">';

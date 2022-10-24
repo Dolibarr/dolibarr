@@ -826,10 +826,6 @@ div#moreinfo, div#infowarehouse {
   clear: both;
 }
 
-.div5 .price {
-	display: none;
-}
-
 .div5 .imgadd {
 	display: none;
 }
@@ -925,18 +921,12 @@ div#moreinfo, div#infowarehouse {
 	.div5 .arrow .centerinmiddle {
 		transform: translate(0, 0);
 	}
-
-	.div5 .price {
-		font-size: 14px;
-		margin-left: auto;
-		margin-right: 30px;
-		padding-right: 10px;
-		font-weight: bold;
-		color: #ff6d6d;
-		display: flex;
-	}
 	
 	.div5 .imgadd {
 		display: flex;
+	}
+	
+	div.wrapper2{
+		height:10%;
 	}
 }

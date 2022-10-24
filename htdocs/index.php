@@ -127,7 +127,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 	}
 
 	if ($message) {
-		print $message;
+		print $message.'<br>';
 		//$message.='<br>';
 		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
 	}

@@ -743,12 +743,12 @@ print '<tr class="liste_titre_filter">';
 
 // Movement number
 if (!empty($arrayfields['t.piece_num']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_mvt_num" class="width50" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
 }
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1, 'maxwidth75');
 	print '</td>';
 }
 // Date document

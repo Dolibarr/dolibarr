@@ -1159,7 +1159,7 @@ if ($action == 'create') {
 	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->ficheinter->creer, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->ficheinter->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br><span class="hideonsmartphone">'.$langs->trans('ThirdParty').' : </span>'.$object->thirdparty->getNomUrl(1, 'customer');
+	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
@@ -1713,10 +1713,18 @@ if ($action == 'create') {
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
-		//Show direct download link
+		// Show direct download link
 		if ($object->statut != Fichinter::STATUS_DRAFT && !empty($conf->global->FICHINTER_ALLOW_EXTERNAL_DOWNLOAD)) {
 			print '<br><!-- Link to download main doc -->'."\n";
 			print showDirectDownloadLink($object).'<br>';
+    }
+    
+		// Show online signature link
+		if ($object->statut != Fichinter::STATUS_DRAFT && !empty($conf->global->FICHINTER_ALLOW_ONLINE_SIGN)) {
+			print '<br><!-- Link to sign -->';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+
+			print showOnlineSignatureUrl('fichinter', $object->ref).'<br>';
 		}
 
 		print '</div><div class="fichehalfright">';

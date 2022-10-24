@@ -2033,9 +2033,8 @@ if ($action == 'create') {
 	$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
+	$morehtmlref .= '<br>';
 	if (!empty($conf->global->MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER) && !empty($usercancreate) && $action == 'edit_thirdparty') {
-		$morehtmlref .= ' : ';
 		$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 		$morehtmlref .= '<input type="hidden" name="action" value="set_thirdparty">';
 		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -2047,7 +2046,7 @@ if ($action == 'create') {
 		if (!empty($conf->global->MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER) && $object->statut == CommandeFournisseur::STATUS_DRAFT) {
 			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_thirdparty&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty')).'</a>';
 		}
-		$morehtmlref .= ' : '.$object->thirdparty->getNomUrl(1, 'supplier');
+		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'supplier');
 		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		}
@@ -2056,32 +2055,21 @@ if ($action == 'create') {
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
-		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($usercancreate) {
+		$morehtmlref .= '<br>';
+		if ($permissiontoadd) {
+			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify' && $caneditproject) {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			if ($action == 'classify') {
-				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 1, 1, 0, 0, '', 1, 0, 'maxwidth500');
-				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-				$morehtmlref .= '</form>';
-			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-			}
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
-					$morehtmlref .= ' - '.$proj->title;
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 				}
-			} else {
-				$morehtmlref .= '';
 			}
 		}
 	}

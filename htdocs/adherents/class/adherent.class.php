@@ -520,21 +520,45 @@ class Adherent extends CommonObject
 	 *	Return translated label by the nature of a adherent (physical or moral)
 	 *
 	 *	@param	string		$morphy		Nature of the adherent (physical or moral)
+	 *  @param	int			$addbadge	Add badge (1=Full label, 2=First letter only)
 	 *	@return	string					Label
 	 */
-	public function getmorphylib($morphy = '')
+	public function getmorphylib($morphy = '', $addbadge = 0)
 	{
 		global $langs;
+
+		// Clean var
 		if (!$morphy) {
 			$morphy = $this->morphy;
 		}
-		if ($morphy == 'phy') {
-			return $langs->trans("Physical");
+
+		if ($addbadge) {
+			$s = '';
+			if ($morphy == 'phy') {
+				if ($addbadge == 2) {
+					$labeltoshow = dol_substr($langs->trans("Physical"), 0, 1);
+				} else {
+					$labeltoshow = $langs->trans("Physical");
+				}
+				$s .= '<span class="customer-back paddingleftimp paddingrightimp" title="'.$langs->trans("Physical").'">'.$labeltoshow.'</span>';
+			}
+			if ($morphy == 'mor') {
+				if ($addbadge == 2) {
+					$labeltoshow = dol_substr($langs->trans("Moral"), 0, 1);
+				} else {
+					$labeltoshow = $langs->trans("Moral");
+				}
+				$s .= '<span class="vendor-back paddingleftimp paddingrightimp" title="'.$langs->trans("Moral").'">'.$labeltoshow.'</span>';
+			}
+		} else {
+			if ($morphy == 'phy') {
+				$s = $langs->trans("Physical");
+			} elseif ($morphy == 'mor') {
+				$s = $langs->trans("Moral");
+			}
 		}
-		if ($morphy == 'mor') {
-			return $langs->trans("Moral");
-		}
-		return $morphy;
+
+		return $s;
 	}
 
 	/**
