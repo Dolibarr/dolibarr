@@ -1713,8 +1713,14 @@ if ($action == 'create') {
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+		// Show direct download link
+		if ($object->statut != Fichinter::STATUS_DRAFT && !empty($conf->global->FICHINTER_ALLOW_EXTERNAL_DOWNLOAD)) {
+			print '<br><!-- Link to download main doc -->'."\n";
+			print showDirectDownloadLink($object).'<br>';
+    }
+    
 		// Show online signature link
-		if ($object->statut != Fichinter::STATUS_DRAFT && $conf->global->FICHINTER_ALLOW_ONLINE_SIGN) {
+		if ($object->statut != Fichinter::STATUS_DRAFT && !empty($conf->global->FICHINTER_ALLOW_ONLINE_SIGN)) {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 
