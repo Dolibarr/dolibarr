@@ -118,19 +118,6 @@ ALTER TABLE llx_element_element MODIFY COLUMN sourcetype VARCHAR(64) NOT NULL;
 ALTER TABLE llx_element_element MODIFY COLUMN targettype VARCHAR(64) NOT NULL;
 ALTER TABLE llx_c_type_contact MODIFY COLUMN element VARCHAR(64) NOT NULL;
 
-CREATE TABLE llx_element_properties
-(
-    rowid             integer AUTO_INCREMENT PRIMARY KEY,
-    element_type      varchar(64) NOT NULL,
-    element           varchar(32) NOT NULL,
-    module_name       varchar(31) NOT NULL,
-    class_dir         text NOT NULL,
-    class_file        varchar(128) NOT NULL,
-    class_name        varchar(128) NOT NULL,
-    datec             datetime,
-    tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=innodb;
-
 
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-VICTORYDAY',  0, 2, '', 0,  5,  8, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-NATIONALDAY', 0, 2, '', 0,  7, 21, 1);

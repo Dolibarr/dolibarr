@@ -10834,22 +10834,34 @@ function getElementProperties($element_type)
 	);
 
 
+	// Add pdfgeneration hook
+	if (!is_object($hookmanager)) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($this->db);
+	}
+	$hookmanager->initHooks(array('elementproperties'));
 
-	if (!class_exists('ElementProperties')) { require_once DOL_DOCUMENT_ROOT . '/core/class/elementproperties.class.php'; }
-	$elementProperties = new ElementProperties($db);
-	if ($elementProperties->fetch(null, $element_type)>0) {
-		// TODO : manage cache or fetch all once in main instead of always fetch  ?
 
-		$element_properties = array(
-			'module' => $elementProperties->module_name,
-			'classpath' => $elementProperties->class_dir,
-			'element' => $elementProperties->element,
-			'subelement' => $elementProperties->class_name,
-			'classfile' => $elementProperties->class_file,
-			'classname' => $elementProperties->class_name
-		);
+	// Hook params
+	$parameters = array(
+		'element_type' => $element_type,
+		'element_properties' => $element_properties
+	);
+
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters);
+
+	if ($reshook) {
+		$element_properties = $hookmanager->resArray;
+	} else {
+		foreach ($hookmanager->resArray as $k => $desc) {
+			$element_properties[$k] = $desc;
+		}
 	}
 
+	// context of elementproperties doesn't need to exist out of this function so delete it to avoid elementproperties is equal to all
+	if (($key = array_search($this->contextarray, 'elementproperties')) !== false) {
+		unset($this->contextarray[$key]);
+	}
 
 	return $element_properties;
 }
