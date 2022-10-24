@@ -2452,7 +2452,7 @@ class Form
 		$sql.= ' WHERE b.entity IN ('.getEntity('bom').')';
 		if (!empty($status)) $sql.= ' AND status = '. (int) $status;
 		if (!empty($type)) $sql.= ' AND bomtype = '. (int) $type;
-		if(! empty($TProducts)) $sql .= ' AND fk_product IN ('.implode(',', $TProducts).')';
+		if (!empty($TProducts)) $sql .= ' AND fk_product IN ('.$this->db->sanitize(implode(',', $TProducts)).')';
 		if (!empty($limit)) $sql.= ' LIMIT '. (int) $limit;
 		$resql = $db->query($sql);
 		if ($resql) {
