@@ -104,7 +104,6 @@ class box_birthdays_members extends ModeleBoxes
 					$memberstatic->id = $objp->rowid;
 					$memberstatic->firstname = $objp->firstname;
 					$memberstatic->lastname = $objp->lastname;
-					$memberstatic->email = $objp->email;
 					$dateb = $this->db->jdate($objp->birth);
 					$age = date('Y', dol_now()) - date('Y', $dateb);
 
