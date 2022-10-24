@@ -68,7 +68,6 @@ CreateDolibarrLogin=Créer un compte utilisateur
 CreateDolibarrThirdParty=Créer un tiers
 LoginAccountDisableInDolibarr=Le compte est désactivé sur Dolibarr.
 UsePersonalValue=Utiliser valeur personnalisée
-InternalUser=Utilisateur interne
 ExportDataset_user_1=Utilisateurs et attributs
 DomainUser=Utilisateur du domaine %s
 Reactivate=Réactiver

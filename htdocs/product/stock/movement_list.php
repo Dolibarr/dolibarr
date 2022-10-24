@@ -269,10 +269,10 @@ if (empty($reshook)) {
 		// Define output language (Here it is not used because we do only merging existing PDF)
 		$outputlangs = $langs;
 		$newlang = '';
-		if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
-		//elseif (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && is_object($objecttmp->thirdparty)) {		// On massaction, we can have several values for $objecttmp->thirdparty
+		//elseif (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && is_object($objecttmp->thirdparty)) {		// On massaction, we can have several values for $objecttmp->thirdparty
 		//	$newlang = $objecttmp->thirdparty->default_lang;
 		//}
 		if (!empty($newlang)) {
@@ -730,7 +730,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	 $nbtotalofrecords++;
 	 }*/
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-z0-9\._\s\(\),]+FROM/i', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	$resql = $db->query($sqlforcount);
 	$objforcount = $db->fetch_object($resql);
 	$nbtotalofrecords = $objforcount->nbtotalofrecords;
@@ -1319,7 +1319,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$userstatic->statut = $obj->user_status;
 
 	// Multilangs
-	if (!empty($conf->global->MAIN_MULTILANGS)) {  // If multilang is enabled
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {  // If multilang is enabled
 		// TODO Use a cache
 		$sql = "SELECT label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";

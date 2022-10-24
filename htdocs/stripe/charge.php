@@ -68,7 +68,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeChargeList"));
 
-if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -225,7 +225,7 @@ if (!$rowid) {
 
 		// Stripe customer
 		print "<td>";
-		if (!empty($conf->stripe->enabled) && !empty($stripeacc)) {
+		if (isModEnabled('stripe') && !empty($stripeacc)) {
 			$connect = $stripeacc.'/';
 		}
 		$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$charge->customer;

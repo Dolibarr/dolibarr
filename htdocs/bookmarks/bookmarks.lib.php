@@ -42,8 +42,12 @@ function printDropdownBookmarksList()
 	if (!empty($_SERVER["QUERY_STRING"])) {
 		if (is_array($_GET)) {
 			foreach ($_GET as $key => $val) {
-				if ($val != '') {
-					$url_param[$key]=http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
+				if (is_array($val)) {
+					foreach ($val as $tmpsubval) {
+						$url_param[] = http_build_query(array(dol_escape_htmltag($key).'[]' => dol_escape_htmltag($tmpsubval)));
+					}
+				} elseif ($val != '') {
+					$url_param[$key] = http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
 				}
 			}
 		}
@@ -56,15 +60,16 @@ function printDropdownBookmarksList()
 	if ($sortorder) {
 		$tmpurl .= ($tmpurl ? '&' : '').'sortorder='.urlencode($sortorder);
 	}
-	if (is_array($_POST)) {
+	if (!empty($_POST) && is_array($_POST)) {
 		foreach ($_POST as $key => $val) {
 			if ((preg_match('/^search_/', $key) || in_array($key, $authorized_var))
 				&& $val != ''
 				&& !array_key_exists($key, $url_param)) {
-				$url_param[$key]=http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
+				$url_param[$key] = http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
 			}
 		}
 	}
+
 	$url .= ($tmpurl ? '?'.$tmpurl : '');
 	if (!empty($url_param)) {
 		$url .= '&'.implode('&', $url_param);
@@ -89,6 +94,7 @@ function printDropdownBookmarksList()
 	$listbtn = '<a class="top-menu-dropdown-link" title="'.dol_escape_htmltag($langs->trans('Bookmarks')).'" href="'.DOL_URL_ROOT.'/bookmarks/list.php">';
 	$listbtn .= img_picto('', 'edit', 'class="paddingright opacitymedium"').$langs->trans('EditBookmarks').'</a>';
 
+	$bookmarkList = '';
 	// Menu with list of bookmarks
 	$sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
 	$sql .= " WHERE (fk_user = ".((int) $user->id)." OR fk_user is NULL OR fk_user = 0)";

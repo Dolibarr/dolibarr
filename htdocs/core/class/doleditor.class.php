@@ -163,7 +163,7 @@ class DolEditor
 					$skin = 'moono-lisa'; // default with ckeditor 4.6 : moono-lisa
 				}
 
-				$pluginstodisable = 'elementspath,save,flash';
+				$pluginstodisable = 'elementspath,save,flash,div,specialchar,anchor';
 				if (!empty($conf->dol_optimize_smallscreen)) {
 					$pluginstodisable .= ',scayt,wsc,find,undo';
 				}
@@ -198,7 +198,7 @@ class DolEditor
                             		htmlEncodeOutput:'.$htmlencode_force.',
             						allowedContent:'.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is own when allowedContent is false */
             						extraAllowedContent: \'a[target];div{float,display}\',				/* Add the style float and display into div to default other allowed tags */
-									disallowedContent: '.($disallowAnyContent ? '\'\'' : '\'\'').',	/* Tags that are not allowed */
+									disallowedContent: '.($disallowAnyContent ? '\'\'' : '\'\'').',		/* Tags that are not allowed */
             						fullPage: '.($fullpage ? 'true' : 'false').',						/* if true, the html, header and body tags are kept */
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',

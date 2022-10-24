@@ -908,7 +908,7 @@ class Stripe extends CommonObject
 
 		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.iban_prefix"; // stripe_card_ref is src_ for sepa
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as sa";
-		$sql .= " WHERE sa.rowid = '".$this->db->escape($object->id)."'"; // We get record from ID, no need for filter on entity
+		$sql .= " WHERE sa.rowid = ".((int) $object->id); // We get record from ID, no need for filter on entity
 		$sql .= " AND sa.type = 'ban'"; //type ban to get normal bank account of customer (prelevement)
 
 		$soc = new Societe($this->db);

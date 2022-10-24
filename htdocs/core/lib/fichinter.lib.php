@@ -61,7 +61,7 @@ function fichinter_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention', 'add', 'core');
 
 	// Tab to link resources
 	if (isModEnabled('resource')) {
@@ -124,6 +124,8 @@ function fichinter_prepare_head($object)
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention', 'remove');
 

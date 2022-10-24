@@ -164,7 +164,7 @@ class Utils
 				}
 
 				// Update cachenbofdoc
-				if (!empty($conf->ecm->enabled) && $choice == 'allfiles') {
+				if (isModEnabled('ecm') && $choice == 'allfiles') {
 					require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 					$ecmdirstatic = new EcmDirectory($this->db);
 					$result = $ecmdirstatic->refreshcachenboffile(1);
@@ -214,6 +214,9 @@ class Utils
 
 		dol_syslog("Utils::dumpDatabase type=".$type." compression=".$compression." file=".$file, LOG_DEBUG);
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+		// Clean data
+		$file = dol_sanitizeFileName($file);
 
 		// Check compression parameter
 		if (!in_array($compression, array('none', 'gz', 'bz', 'zip', 'zstd'))) {
@@ -354,6 +357,8 @@ class Utils
 
 			$handle = '';
 
+			// If $lowmemorydump is set, it means we want to make the compression using an external pipe instead retreiving the
+			// content of the dump in PHP memory array $output_arr and then print it into the PHP pipe open with xopen().
 			$lowmemorydump = GETPOSTISSET("lowmemorydump") ? GETPOST("lowmemorydump") : getDolGlobalString('MAIN_LOW_MEMORY_DUMP');
 
 			// Start call method to execute dump
@@ -371,23 +376,23 @@ class Utils
 				}
 			} else {
 				if ($compression == 'none') {
-					$fullcommandclear .= " > ".$outputfile;
-					$fullcommandcrypted .= " > ".$outputfile;
+					$fullcommandclear .= ' > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' > "'.dol_sanitizePathName($outputfile).'"';
 					$handle = 1;
 				} elseif ($compression == 'gz') {
-					$fullcommandclear .= " | gzip > ".$outputfile;
-					$fullcommandcrypted .= " | gzip > ".$outputfile;
-					$paramcrypted.=" | gzip";
+					$fullcommandclear .= ' | gzip > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | gzip > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | gzip';
 					$handle = 1;
 				} elseif ($compression == 'bz') {
-					$fullcommandclear .= " | bzip2 > ".$outputfile;
-					$fullcommandcrypted .= " | bzip2 > ".$outputfile;
-					$paramcrypted.=" | bzip2";
+					$fullcommandclear .= ' | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | bzip2';
 					$handle = 1;
 				} elseif ($compression == 'zstd') {
-					$fullcommandclear .= " | zstd > ".$outputfile;
-					$fullcommandcrypted .= " | zstd > ".$outputfile;
-					$paramcrypted.=" | zstd";
+					$fullcommandclear .= ' | zstd > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | zstd > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | zstd';
 					$handle = 1;
 				}
 			}
@@ -411,8 +416,8 @@ class Utils
 				}
 
 
-				// TODO Replace with executeCLI function but
-				// we must first introduce a low memory mode
+				// TODO Replace with Utils->executeCLI() function but
+				// we must first introduce the variant with $lowmemorydump into this method.
 				if ($execmethod == 1) {
 					$output_arr = array();
 					$retval = null;
@@ -471,15 +476,16 @@ class Utils
 					}
 				}
 
-
-				if ($compression == 'none') {
-					fclose($handle);
-				} elseif ($compression == 'gz') {
-					gzclose($handle);
-				} elseif ($compression == 'bz') {
-					bzclose($handle);
-				} elseif ($compression == 'zstd') {
-					fclose($handle);
+				if (!$lowmemorydump) {
+					if ($compression == 'none') {
+						fclose($handle);
+					} elseif ($compression == 'gz') {
+						gzclose($handle);
+					} elseif ($compression == 'bz') {
+						bzclose($handle);
+					} elseif ($compression == 'zstd') {
+						fclose($handle);
+					}
 				}
 
 				if (!empty($conf->global->MAIN_UMASK)) {

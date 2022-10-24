@@ -68,7 +68,7 @@ $conditions = array(
 	'USERSIGN' => 1,
 	'MAILING' => isModEnabled('mailing'),
 	'MAIL' => (isModEnabled('facture') || isModEnabled("propal") || isModEnabled('commande')),
-	'TICKET' => !empty($conf->ticket->enabled),
+	'TICKET' => isModEnabled('ticket'),
 );
 // Picto
 $picto = array(
@@ -93,7 +93,7 @@ foreach ($modules as $const => $desc) {
 	if ($action == 'enable_'.strtolower($const)) {
 		dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1", 'chaine', 0, '', $conf->entity);
 		// If fckeditor is active in the product/service description, it is activated in the forms
-		if ($const == 'PRODUCTDESC' && !empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+		if ($const == 'PRODUCTDESC' && getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 			dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1", 'chaine', 0, '', $conf->entity);
 		}
 		header("Location: ".$_SERVER["PHP_SELF"]);
