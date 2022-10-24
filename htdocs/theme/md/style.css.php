@@ -6207,10 +6207,10 @@ ul.select2-results__options li {
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
 	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
-		min-width: 200px !important;
+		min-width: 220px !important;
 	}
 	.select2-container.select2-container--open .select2-dropdown--below {
-		min-width: 200px !important;
+		min-width: 220px !important;
 	}
 	
 	.select2-container--open .select2-dropdown--below {
