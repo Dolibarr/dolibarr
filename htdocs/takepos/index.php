@@ -1375,9 +1375,6 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 					<div class="description" id="prodivdesc<?php echo $count; ?>">
 						<div class="description_content" id="prodesc<?php echo $count; ?>"></div>
 					</div>
-					<div class="price" id="prodivprice<?php echo $count; ?>">
-					</div>
-					<span class="fa fa-plus"></span>
 					<?php } ?>
 					<div class="catwatermark" id='prowatermark<?php echo $count; ?>'>...</div>
 				</div>
