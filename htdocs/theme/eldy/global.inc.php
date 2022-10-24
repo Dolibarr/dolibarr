@@ -1393,6 +1393,7 @@ select.flat.selectlimit {
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	overflow: hidden;
+	height: auto !important;
 }
 
 .tablelistofcalendars {
@@ -6438,9 +6439,14 @@ ul.select2-results__options li {
 
 @media only screen and (min-width: 767px)
 {
+	/* CSS to have the dropdown boxes larger that the input search area */
 	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
 		min-width: 200px !important;
 	}
+	.select2-container.select2-container--open .select2-dropdown--below {
+		min-width: 200px !important;
+	}
+
 	.select2-container--open .select2-dropdown--below {
 		border-top: 1px solid var(--inputbordercolor);
 		/* border-top: 1px solid #aaaaaa; */
