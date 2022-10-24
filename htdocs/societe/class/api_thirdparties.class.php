@@ -1082,7 +1082,7 @@ class Thirdparties extends DolibarrApi
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_replacable_invoices($id);
 		if ($result < 0) {
-			throw new RestException(405, $this->thirdparty->error);
+			throw new RestException(405, $invoice->error);
 		}
 
 		return $result;
@@ -1125,7 +1125,7 @@ class Thirdparties extends DolibarrApi
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_qualified_avoir_invoices($id);
 		if ($result < 0) {
-			throw new RestException(405, $this->thirdparty->error);
+			throw new RestException(405, $invoice->error);
 		}
 
 		return $result;
@@ -1164,10 +1164,9 @@ class Thirdparties extends DolibarrApi
 			$sql .= " WHERE fk_soc  = ".((int) $id);
 		}
 
-
 		$result = $this->db->query($sql);
 
-		if ($result->num_rows == 0) {
+		if ($this->db->num_rows($result) == 0) {
 			throw new RestException(404, 'Account not found');
 		}
 
@@ -1409,7 +1408,7 @@ class Thirdparties extends DolibarrApi
 		if ($result > 0) {
 			return array("success" => $result);
 		} else {
-			throw new RestException(500, 'Error generating the document '.$this->error);
+			throw new RestException(500, 'Error generating the document '.$this->company->error);
 		}
 	}
 
