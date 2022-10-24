@@ -108,6 +108,10 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 		$trackid = GETPOST('trackid', 'aZ09');
 	}
 
+	// Set tmp user directory (used to convert images embedded as img src=data:image)
+	$vardir = $conf->user->dir_output."/".$user->id;
+	$upload_dir_tmp = $vardir.'/temp'; // TODO Add $keytoavoidconflict in upload_dir path
+
 	$subject = '';
 	//$actionmsg = '';
 	$actionmsg2 = '';
@@ -359,7 +363,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			if (empty($sendcontext)) {
 				$sendcontext = 'standard';
 			}
-			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext);
+			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
 
 			if (!empty($mailfile->error) || !empty($mailfile->errors)) {
 				setEventMessages($mailfile->error, $mailfile->errors, 'errors');

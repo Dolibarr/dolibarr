@@ -2792,7 +2792,7 @@ class Ticket extends CommonObject
 									if ($result) {
 										// update last_msg_sent date
 										$this->date_last_msg_sent = dol_now();
-										$this->update($user);
+										$this->update($user, 1);	// disable trigger when updatin date_last_msg_sent. sendTicketMessageByEmail already create an event in actioncomm table.
 									}
 								}
 							}
@@ -2800,8 +2800,8 @@ class Ticket extends CommonObject
 					}
 				}
 
-				// Set status to "answered" if not set yet, but only if internal user
-				if ($object->status < 3 && !$user->socid) {
+				// Set status to "answered" if not set yet, but only if internal user and not private message
+				if ($object->status < 3 && !$user->socid && !$private) {
 					$object->setStatut(3);
 				}
 				return 1;

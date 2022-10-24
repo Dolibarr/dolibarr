@@ -287,7 +287,7 @@ if ($projectid > 0) {
 	$morehtmlref .= $project->title;
 	// Thirdparty
 	if (isset($project->thirdparty->id) && $project->thirdparty->id > 0) {
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$project->thirdparty->getNomUrl(1, 'project');
+		$morehtmlref .= '<br>'.$project->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
@@ -348,8 +348,15 @@ if ($projectid > 0) {
 	}
 	print '</td></tr>';
 
-	// Date start - end
-	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+	// Budget
+	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+	if (strcmp($project->budget_amount, '')) {
+		print '<span class="amount">'.price($project->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
+	}
+	print '</td></tr>';
+
+	// Date start - end project
+	print '<tr><td>'.$langs->trans("Dates").' ('.$langs->trans("Project").')</td><td>';
 	$start = dol_print_date($project->date_start, 'day');
 	print ($start ? $start : '?');
 	$end = dol_print_date($project->date_end, 'day');
@@ -360,11 +367,21 @@ if ($projectid > 0) {
 	}
 	print '</td></tr>';
 
-	// Budget
-	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-	if (strcmp($project->budget_amount, '')) {
-		print price($project->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+	// Date start - end of event
+	print '<tr><td>'.$langs->trans("Dates").' ('.$langs->trans("Event").')</td><td>';
+	$start = dol_print_date($project->date_start_event, 'day');
+	print ($start ? $start : '?');
+	$end = dol_print_date($project->date_end_event, 'day');
+	print ' - ';
+	print ($end ? $end : '?');
+	if ($object->hasDelay()) {
+		print img_warning("Late");
 	}
+	print '</td></tr>';
+
+	// Location event
+	print '<tr><td>'.$langs->trans("Location").'</td><td>';
+	print $project->location;
 	print '</td></tr>';
 
 	// Other attributes

@@ -50,7 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 $action = GETPOST('action', 'aZ09'); // set or del
 $name = GETPOST('name', 'alpha');
 $entity = GETPOST('entity', 'int');
-$value = ((GETPOST('value', 'int') || GETPOST('value', 'int') == '0') ? GETPOST('value', 'int') : 1);
+$value = (GETPOST('value', 'aZ09') != '' ? GETPOST('value', 'aZ09') : 1);
 
 
 /*

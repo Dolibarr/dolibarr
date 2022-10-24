@@ -34,14 +34,15 @@ $langs->loadLangs(array("companies", "products", "admin", "mails", "other", "err
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 
+$trackid = GETPOST('trackid');
+
 if (!$user->admin) {
 	accessforbidden();
 }
 
 $usersignature = $user->signature;
-// For action = test or send, we ensure that content is not html, even for signature, because this we want a test with NO html.
-
-if ($action == 'test' || $action == 'send') {
+// For action = test or send, we ensure that content is not html, even for signature, because for this we want a test with NO html.
+if ($action == 'test' || ($action == 'send' && $trackid = 'test')) {
 	$usersignature = dol_string_nohtmltag($usersignature, 2);
 }
 
@@ -130,7 +131,7 @@ $actiontypecode = ''; // Not an event for agenda
 $triggersendname = ''; // Disable triggers
 $paramname = 'id';
 $mode = 'emailfortest';
-$trackid = (($action == 'testhtml') ? "testhtml" : "test");
+$trackid = ($action == 'send' ? GETPOST('trackid', 'aZ09') : $action);
 $sendcontext = '';
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
@@ -140,7 +141,6 @@ if ($action == 'presend' && GETPOST('trackid', 'alphanohtml') == 'test') {
 if ($action == 'presend' && GETPOST('trackid', 'alphanohtml') == 'testhtml') {
 	$action = 'testhtml';
 }
-
 
 
 
