@@ -422,6 +422,7 @@ $sql .= $hookmanager->resPrint;
 
 $sql .= ' WHERE c.fk_soc = s.rowid';
 $sql .= ' AND c.entity IN ('.getEntity('commande').')';
+$sql .= ' AND cdet.product_type <> 9';
 
 if (!empty($productonly)) {
 	$sql .= " AND (cdet.product_type = 0 OR cdet.product_type = 1)";
