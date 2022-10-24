@@ -694,6 +694,8 @@ if (empty($reshook)) {
 				$error++;
 			}
 			$objectline->fetch_optionals();
+
+			$objectline->oldcopy = dol_clone($objectline);
 		}
 
 		$db->begin();
