@@ -381,10 +381,6 @@ $result = $object->fetchPerMvt($piece_num, $mode);
 if ($result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
 }
-/* daraelmin test
-if ($action == 'create') {
-	print load_fiche_titre($title);
-  end darelmin test */
 
 if (!empty($object->piece_num)) {
 	$backlink = '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?restore_lastsearch_values=1">'.$langs->trans('BackToList').'</a>';
@@ -465,22 +461,24 @@ if (!empty($object->piece_num)) {
 	print '</td>';
 	print '</tr>';
 
-	// Date document export
-	print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("DateExport").'</td>';
-	print '<td>';
-	print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
-	print '</td>';
-	print '</tr>';
+	// Don't show in tmp mode, inevitably empty
+	if ($mode != "_tmp") {
+		// Date document export
+		print '<tr>';
+		print '<td class="titlefield">'.$langs->trans("DateExport").'</td>';
+		print '<td>';
+		print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
 
 		// Date document validation
-	print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("DateValidation").'</td>';
-	print '<td>';
-	print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
-	print '</td>';
-	print '</tr>';
-
+		print '<tr>';
+		print '<td class="titlefield">'.$langs->trans("DateValidation").'</td>';
+		print '<td>';
+		print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
+	}
 	// Validate
 	/*
 	print '<tr>';
@@ -551,26 +549,25 @@ if (!empty($object->piece_num)) {
 
 			$total_debit = 0;
 			$total_credit = 0;
-/* daraelmin test
-		// Don't show in tmp mode, inevitably empty
-		if ($mode != "_tmp") {
-			// Date document export
-			print '<tr>';
-			print '<td class="titlefield">' . $langs->trans("DateExport") . '</td>';
-			print '<td>';
-			print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
-			print '</td>';
-			print '</tr>';
 
-			// Date document validation
-			print '<tr>';
-			print '<td class="titlefield">' . $langs->trans("DateValidation") . '</td>';
-			print '<td>';
-			print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
-			print '</td>';
-			print '</tr>';
-		}
-  end daraelmin test */
+			// Don't show in tmp mode, inevitably empty
+			if ($mode != "_tmp") {
+				// Date document export
+				print '<tr>';
+				print '<td class="titlefield">' . $langs->trans("DateExport") . '</td>';
+				print '<td>';
+				print $object->date_export ? dol_print_date($object->date_export, 'dayhour') : '&nbsp;';
+				print '</td>';
+				print '</tr>';
+
+				// Date document validation
+				print '<tr>';
+				print '<td class="titlefield">' . $langs->trans("DateValidation") . '</td>';
+				print '<td>';
+				print $object->date_validation ? dol_print_date($object->date_validation, 'dayhour') : '&nbsp;';
+				print '</td>';
+				print '</tr>';
+			}
 
 			print '<tr class="liste_titre">';
 
@@ -652,7 +649,7 @@ if (!empty($object->piece_num)) {
 						}
 						print '<br><input type="text" class="maxwidth150" name="subledger_label['.$key.']" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccountLabel")) . '" />';
 						print '</td>';
-						print '<td><input type="text" class="minwidth200" name="label_operation['.$key.']" value="' . $label_operation[$key] . '"/></td>';
+						print '<td><input type="text" class="minwidth200" name="label_operation['.$key.']" value="' . (is_array($label_operation) ? $label_operation[$key] : $label_operation ) . '"/></td>';
 						print '<td class="right"><input type="text" size="6" class="right" name="debit['.$key.']" value="" /></td>';
 						print '<td class="right"><input type="text" size="6" class="right" name="credit['.$key.']" value="" /></td>';
 						// Add button should not appear twice
