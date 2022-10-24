@@ -454,6 +454,13 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT : 0, 1);
 }
 print '</td></tr>';
+print '<tr class="oddeven"><td>'.$langs->trans("HideColumnVATInformationOnPDF").'</td><td';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN');
+} else {
+	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN', (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) ? $conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN : 0, 1);
+}
+print '</td></tr>';
 
 // Locataxes
 print $text;

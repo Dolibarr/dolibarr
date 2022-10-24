@@ -407,6 +407,7 @@ PDFDesc=Global options for PDF generation
 PDFOtherDesc=PDF Option specific to some modules
 PDFAddressForging=Rules for address section
 HideAnyVATInformationOnPDF=Hide all information related to Sales Tax / VAT
+HideColumnVATInformationOnPDF=Hide column Sales Tax / VAT
 PDFRulesForSalesTax=Rules for Sales Tax / VAT
 PDFLocaltax=Rules for %s
 HideLocalTaxOnPDF=Hide %s rate in column Sale Tax / VAT
