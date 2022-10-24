@@ -5439,22 +5439,26 @@ class Form
 	 * 	@param	string	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *										0 : use default deposit percentage from entry
 	 *										> 0 : force deposit percentage (for example, from company object)
+	 *  @param  int     $nooutput           No print is done. String is returned.
 	 *  @return	void
 	 */
-	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $type = '', $filtertype = -1, $deposit_percent = -1)
+	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $type = '', $filtertype = -1, $deposit_percent = -1, $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs;
+
+		$out = '';
+
 		if ($htmlname != "none") {
-			print '<form method="POST" action="'.$page.'">';
-			print '<input type="hidden" name="action" value="setconditions">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
+			$out .= '<form method="POST" action="'.$page.'">';
+			$out .= '<input type="hidden" name="action" value="setconditions">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			if ($type) {
-				print '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
+				$out .= '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
 			}
-			print $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, 0, '', $deposit_percent);
-			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
-			print '</form>';
+			$out .= $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, 0, '', $deposit_percent);
+			$out .= '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
+			$out .= '</form>';
 		} else {
 			if ($selected) {
 				$this->load_cache_conditions_paiements();
@@ -5465,15 +5469,21 @@ class Form
 						$label = str_replace('__DEPOSIT_PERCENT__', $deposit_percent > 0 ? $deposit_percent : $this->cache_conditions_paiements[$selected]['deposit_percent'], $label);
 					}
 
-					print $label;
+					$out .= $label;
 				} else {
 					$langs->load('errors');
-					print $langs->trans('ErrorNotInDictionaryPaymentConditions');
+					$out .= $langs->trans('ErrorNotInDictionaryPaymentConditions');
 				}
 			} else {
-				print "&nbsp;";
+				$out .= '&nbsp;';
 			}
 		}
+
+		if (empty($nooutput)) {
+			print $out;
+			return '';
+		}
+		return $out;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
