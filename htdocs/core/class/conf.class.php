@@ -255,6 +255,8 @@ class Conf
 		);
 
 		if (!is_null($db) && is_object($db)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+
 			// Define all global constants into $this->global->key=value
 			$sql = "SELECT ".$db->decrypt('name')." as name,";
 			$sql .= " ".$db->decrypt('value')." as value, entity";
@@ -278,8 +280,7 @@ class Conf
 							$value = $_ENV['DOLIBARR_'.$key];
 						}
 
-						//if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
-						$this->global->$key = $value;
+						$this->global->$key = dolDecrypt($value);
 
 						if ($value && strpos($key, 'MAIN_MODULE_') === 0) {
 							$reg = array();
@@ -346,7 +347,7 @@ class Conf
 				$db->free($resql);
 			}
 
-			// Include other local consts.php files and fetch their values to the corresponding database constants.
+			// Include other local file xxx/zzz_consts.php to overwrite some variables
 			if (!empty($this->global->LOCAL_CONSTS_FILES)) {
 				$filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
 				foreach ($filesList as $file) {
@@ -370,7 +371,7 @@ class Conf
 			}
 
 			// Object $mc
-			if (!defined('NOREQUIREMC') && !empty($this->multicompany->enabled)) {
+			if (!defined('NOREQUIREMC') && isModEnabled('multicompany')) {
 				global $mc;
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 				if ($ret) {
@@ -424,7 +425,7 @@ class Conf
 			$rootfordata = DOL_DATA_ROOT;
 			$rootforuser = DOL_DATA_ROOT;
 			// If multicompany module is enabled, we redefine the root of data
-			if (!empty($this->multicompany->enabled) && !empty($this->entity) && $this->entity > 1) {
+			if (isModEnabled('multicompany') && !empty($this->entity) && $this->entity > 1) {
 				$rootfordata .= '/'.$this->entity;
 			}
 			// Set standard temporary folder name or global override
@@ -673,6 +674,9 @@ class Conf
 				$this->global->PRODUIT_LIMIT_SIZE = 1000;
 			}
 			$this->product->limit_size = $this->global->PRODUIT_LIMIT_SIZE;
+
+			// Set PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE, may be modified later according to browser
+			$this->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = (isset($this->global->PRODUIT_DESC_IN_FORM) ? $this->global->PRODUIT_DESC_IN_FORM : 0);
 
 			// conf->theme et $this->css
 			if (empty($this->global->MAIN_THEME)) {
@@ -986,7 +990,7 @@ class Conf
 			}
 
 			// Object $mc
-			if (!defined('NOREQUIREMC') && !empty($this->multicompany->enabled)) {
+			if (!defined('NOREQUIREMC') && isModEnabled('multicompany')) {
 				if (is_object($mc)) {
 					$mc->setValues($this);
 				}

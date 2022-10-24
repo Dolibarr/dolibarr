@@ -120,6 +120,10 @@ class CMailFile
 	 * @var array filenames list (List of attached file name in message)
 	 */
 	public $mimefilename_list = array();
+	/**
+	 * @var array filenames cid
+	 */
+	public $cid_list = array();
 
 	// Image
 	public $html;
@@ -156,11 +160,12 @@ class CMailFile
 	 *	@param 	string	$errors_to      	 Email for errors-to
 	 *	@param	string	$css                 Css option
 	 *	@param	string	$trackid             Tracking string (contains type and id of related element)
-	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" (TODO not supported for other MAIL_SEND_MODE different than 'phpmail' and 'smtps' for the moment)
+	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" (TODO not supported for other MAIL_SEND_MODE different than 'mail' and 'smtps' for the moment)
 	 *  @param  string  $sendcontext      	 'standard', 'emailing', ... (used to define which sending mode and parameters to use)
 	 *  @param	string	$replyto			 Reply-to email (will be set to same value than From by default if not provided)
+	 *  @param	string	$upload_dir_tmp		 Temporary directory (used to convert images embedded as img src=data:image)
 	 */
-	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '')
+	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '', $upload_dir_tmp = '')
 	{
 		global $conf, $dolibarr_main_data_root, $user;
 
@@ -171,14 +176,15 @@ class CMailFile
 			}
 		}
 
+		$cid_list = array();
+
 		$this->sendcontext = $sendcontext;
 
-		// Define this->sendmode
+		// Define this->sendmode ('mail', 'smtps', 'siwftmailer', ...) according to $sendcontext ('standard', 'emailing', 'ticket')
 		$this->sendmode = '';
 		if (!empty($this->sendcontext)) {
 			$smtpContextKey = strtoupper($this->sendcontext);
-			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
-			$smtpContextSendMode = empty($conf->global->{$keyForSMTPSendMode}) ? '' : $conf->global->{$keyForSMTPSendMode};
+			$smtpContextSendMode = getDolGlobalString('MAIN_MAIL_SENDMODE_'.$smtpContextKey);
 			if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
 				$this->sendmode = $smtpContextSendMode;
 			}
@@ -249,26 +255,41 @@ class CMailFile
 
 			$findimg = 0;
 			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_IN_MEDIAS)) {
+				// Search into the body for <img tags of links in medias files to replace them with an embedded file
+				// Note because media links are public, this should be useless, except avoid blocking images with email browser.
+				// This convert an embedd file with src="/viewimage.php?modulepart... into a cid link
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
 			}
+			if (!empty($conf->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA)) {
+				// Search into the body for <img src="data:image/ext;base64,..." to replace them with an embedded file
+				// This convert an embedded file with src="data:image... into a cid link + attached file
+				$findimg = $this->findHtmlImagesIsSrcData($upload_dir_tmp);
+			}
 
-			// Define if there is at least one file
+			// Set atleastoneimage if there is at least one embedded file (into ->html_images)
 			if ($findimg) {
 				foreach ($this->html_images as $i => $val) {
 					if ($this->html_images[$i]) {
 						$this->atleastoneimage = 1;
+						if ($this->html_images[$i]['type'] == 'cidfromdata') {
+							$posindice = count($filename_list);
+							$filename_list[$posindice] = $this->html_images[$i]['fullpath'];
+							$mimetype_list[$posindice] = $this->html_images[$i]['content_type'];
+							$mimefilename_list[$posindice] = $this->html_images[$i]['name'];
+							$cid_list[$posindice] = $this->html_images[$i]['cid'];
+						}
 						dol_syslog("CMailFile::CMailfile: html_images[$i]['name']=".$this->html_images[$i]['name'], LOG_DEBUG);
 					}
 				}
 			}
 		}
 
-		// Define if there is at least one file
+		// Set atleastoneimage if there is at least one file (into $filename_list array)
 		if (is_array($filename_list)) {
 			foreach ($filename_list as $i => $val) {
 				if ($filename_list[$i]) {
 					$this->atleastonefile = 1;
-					dol_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i], LOG_DEBUG);
+					dol_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i]." cid_list[$i]=".$cid_list[$i], LOG_DEBUG);
 				}
 			}
 		}
@@ -304,9 +325,6 @@ class CMailFile
 		$this->addr_to = $to;
 		$this->addr_from = $from;
 		$this->msg = $msg;
-		$this->filename_list = $filename_list;
-		$this->mimetype_list = $mimetype_list;
-		$this->mimefilename_list = $mimefilename_list;
 		$this->addr_cc = $addr_cc;
 		$this->addr_bcc = $addr_bcc;
 		$this->deliveryreceipt = $deliveryreceipt;
@@ -316,9 +334,11 @@ class CMailFile
 		$this->reply_to = $replyto;
 		$this->errors_to = $errors_to;
 		$this->trackid = $trackid;
+		// Set arrays with attached files info
 		$this->filename_list = $filename_list;
 		$this->mimetype_list = $mimetype_list;
 		$this->mimefilename_list = $mimefilename_list;
+		$this->cid_list = $cid_list;
 
 		if (!empty($conf->global->MAIN_MAIL_FORCE_SENDTO)) {
 			$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;
@@ -329,8 +349,7 @@ class CMailFile
 		$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
 		if (!empty($this->sendcontext)) {
 			$smtpContextKey = strtoupper($this->sendcontext);
-			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
-			$smtpContextSendMode = empty($conf->global->{$keyForSMTPSendMode}) ? '' : $conf->global->{$keyForSMTPSendMode};
+			$smtpContextSendMode = getDolGlobalString('MAIN_MAIL_SENDMODE_'.$smtpContextKey);
 			if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
 				$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_'.$smtpContextKey;
 			}
@@ -370,7 +389,7 @@ class CMailFile
 
 			// Add attachments to text_encoded
 			if (!empty($this->atleastonefile)) {
-				$files_encoded = $this->write_files($filename_list, $mimetype_list, $mimefilename_list);
+				$files_encoded = $this->write_files($filename_list, $mimetype_list, $mimefilename_list, $cid_list);
 			}
 
 			// We now define $this->headers and $this->message
@@ -434,7 +453,7 @@ class CMailFile
 			if (!empty($this->atleastonefile)) {
 				foreach ($filename_list as $i => $val) {
 					$content = file_get_contents($filename_list[$i]);
-					$smtps->setAttachment($content, $mimefilename_list[$i], $mimetype_list[$i]);
+					$smtps->setAttachment($content, $mimefilename_list[$i], $mimetype_list[$i], $cid_list[$i]);
 				}
 			}
 
@@ -473,7 +492,7 @@ class CMailFile
 			$msgid = $headers->get('Message-ID');
 			$msgid->setId($headerID);
 			$headers->addIdHeader('References', $headerID);
-			// TODO if (! empty($moreinheader)) ...
+			// TODO if (!empty($moreinheader)) ...
 
 			// Give the message a subject
 			try {
@@ -489,6 +508,7 @@ class CMailFile
 					if (!empty($conf->global->MAIN_FORCE_DISABLE_MAIL_SPOOFING)) {
 						// Prevent email spoofing for smtp server with a strict configuration
 						$regexp = '/([a-z0-9_\.\-\+])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+/i'; // This regular expression extracts all emails from a string
+						$adressEmailFrom = array();
 						$emailMatchs = preg_match_all($regexp, $from, $adressEmailFrom);
 						$adressEmailFrom = reset($adressEmailFrom);
 						if ($emailMatchs !== false && filter_var($conf->global->MAIN_MAIL_SMTPS_ID, FILTER_VALIDATE_EMAIL) && $conf->global->MAIN_MAIL_SMTPS_ID !== $adressEmailFrom) {
@@ -582,7 +602,7 @@ class CMailFile
 					$this->errors[] = $e->getMessage();
 				}
 			}
-			//if (! empty($this->errors_to)) $this->message->setErrorsTo($this->getArrayAddress($this->errors_to));
+			//if (!empty($this->errors_to)) $this->message->setErrorsTo($this->getArrayAddress($this->errors_to));
 			if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) {
 				try {
 					$this->message->setReadReceiptTo($this->getArrayAddress($this->addr_from));
@@ -691,23 +711,24 @@ class CMailFile
 			}
 
 			$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER';
-			$keyforsmtpauthtype = "MAIN_MAIL_SMTPS_AUTH_TYPE";
-			$keyforsmtpoauthservice = "MAIN_MAIL_SMTPS_OAUTH_SERVICE";
 			$keyforsmtpport  = 'MAIN_MAIL_SMTP_PORT';
 			$keyforsmtpid    = 'MAIN_MAIL_SMTPS_ID';
 			$keyforsmtppw    = 'MAIN_MAIL_SMTPS_PW';
+			$keyforsmtpauthtype = 'MAIN_MAIL_SMTPS_AUTH_TYPE';
+			$keyforsmtpoauthservice = 'MAIN_MAIL_SMTPS_OAUTH_SERVICE';
 			$keyfortls       = 'MAIN_MAIL_EMAIL_TLS';
 			$keyforstarttls  = 'MAIN_MAIL_EMAIL_STARTTLS';
 			$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
 			if (!empty($this->sendcontext)) {
 				$smtpContextKey = strtoupper($this->sendcontext);
-				$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_'.$smtpContextKey;
-				$smtpContextSendMode = empty($conf->global->{$keyForSMTPSendMode}) ? '' : $conf->global->{$keyForSMTPSendMode};
+				$smtpContextSendMode = getDolGlobalString('MAIN_MAIL_SENDMODE_'.$smtpContextKey);
 				if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
 					$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_'.$smtpContextKey;
 					$keyforsmtpport   = 'MAIN_MAIL_SMTP_PORT_'.$smtpContextKey;
 					$keyforsmtpid     = 'MAIN_MAIL_SMTPS_ID_'.$smtpContextKey;
 					$keyforsmtppw     = 'MAIN_MAIL_SMTPS_PW_'.$smtpContextKey;
+					$keyforsmtpauthtype = 'MAIN_MAIL_SMTPS_AUTH_TYPE_'.$smtpContextKey;
+					$keyforsmtpoauthservice = 'MAIN_MAIL_SMTPS_OAUTH_SERVICE_'.$smtpContextKey;
 					$keyfortls        = 'MAIN_MAIL_EMAIL_TLS_'.$smtpContextKey;
 					$keyforstarttls   = 'MAIN_MAIL_EMAIL_STARTTLS_'.$smtpContextKey;
 					$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_'.$smtpContextKey;
@@ -879,7 +900,11 @@ class CMailFile
 					$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
 					$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
-					$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+					if (isset($supportedoauth2array)) {
+						$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+					} else {
+						$OAUTH_SERVICENAME = 'Unknown';
+					}
 
 					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 
@@ -1377,7 +1402,8 @@ class CMailFile
 		if ($this->msgishtml) {
 			// Similar code to forge a text from html is also in smtps.class.php
 			$strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContent);
-			$strContentAltText = html_entity_decode(strip_tags($strContentAltText));
+			// TODO We could replace <img ...> with [Filename.ext] like Gmail do.
+			$strContentAltText = html_entity_decode(strip_tags($strContentAltText));	// Remove any HTML tags
 			$strContentAltText = trim(wordwrap($strContentAltText, 75, empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA) ? "\r\n" : "\n"));
 
 			// Check if html header already in message, if not complete the message
@@ -1444,9 +1470,10 @@ class CMailFile
 	 * @param	array	$filename_list		Tableau
 	 * @param	array	$mimetype_list		Tableau
 	 * @param 	array	$mimefilename_list	Tableau
-	 * @return	string						Chaine fichiers encodes
+	 * @param	array	$cidlist			Array of CID if file must be completed with CID code
+	 * @return	string						String with files encoded
 	 */
-	public function write_files($filename_list, $mimetype_list, $mimefilename_list)
+	private function write_files($filename_list, $mimetype_list, $mimefilename_list, $cidlist)
 	{
 		// phpcs:enable
 		$out = '';
@@ -1469,6 +1496,10 @@ class CMailFile
 					$out .= "Content-Type: ".$mimetype_list[$i]."; name=\"".$filename_list[$i]."\"".$this->eol;
 					$out .= "Content-Transfer-Encoding: base64".$this->eol;
 					$out .= "Content-Description: ".$filename_list[$i].$this->eol;
+					if (!empty($cidlist) && is_array($cidlist) && $cidlist[$i]) {
+						$out .= "X-Attachment-Id: ".$cidlist[$i].$this->eol;
+						$out .= "Content-ID: <".$cidlist[$i].'>'.$this->eol;
+					}
 					$out .= $this->eol;
 					$out .= $encoded;
 					$out .= $this->eol;
@@ -1535,15 +1566,26 @@ class CMailFile
 			$keyforsmtpport  = 'MAIN_MAIL_SMTP_PORT';
 			$keyforsmtpid    = 'MAIN_MAIL_SMTPS_ID';
 			$keyforsmtppw    = 'MAIN_MAIL_SMTPS_PW';
+			$keyforsmtpauthtype = 'MAIN_MAIL_SMTPS_AUTH_TYPE';
+			$keyforsmtpoauthservice = 'MAIN_MAIL_SMTPS_OAUTH_SERVICE';
 			$keyfortls       = 'MAIN_MAIL_EMAIL_TLS';
 			$keyforstarttls  = 'MAIN_MAIL_EMAIL_STARTTLS';
-			if ($this->sendcontext == 'emailing' && !empty($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING != 'default') {
-				$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_EMAILING';
-				$keyforsmtpport  = 'MAIN_MAIL_SMTP_PORT_EMAILING';
-				$keyforsmtpid    = 'MAIN_MAIL_SMTPS_ID_EMAILING';
-				$keyforsmtppw    = 'MAIN_MAIL_SMTPS_PW_EMAILING';
-				$keyfortls       = 'MAIN_MAIL_EMAIL_TLS_EMAILING';
-				$keyforstarttls  = 'MAIN_MAIL_EMAIL_STARTTLS_EMAILING';
+			$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
+
+			if (!empty($this->sendcontext)) {
+				$smtpContextKey = strtoupper($this->sendcontext);
+				$smtpContextSendMode = getDolGlobalString('MAIN_MAIL_SENDMODE_'.$smtpContextKey);
+				if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
+					$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_'.$smtpContextKey;
+					$keyforsmtpport   = 'MAIN_MAIL_SMTP_PORT_'.$smtpContextKey;
+					$keyforsmtpid     = 'MAIN_MAIL_SMTPS_ID_'.$smtpContextKey;
+					$keyforsmtppw     = 'MAIN_MAIL_SMTPS_PW_'.$smtpContextKey;
+					$keyforsmtpauthtype = 'MAIN_MAIL_SMTPS_AUTH_TYPE_'.$smtpContextKey;
+					$keyforsmtpoauthservice = 'MAIN_MAIL_SMTPS_OAUTH_SERVICE_'.$smtpContextKey;
+					$keyfortls        = 'MAIN_MAIL_EMAIL_TLS_'.$smtpContextKey;
+					$keyforstarttls   = 'MAIN_MAIL_EMAIL_STARTTLS_'.$smtpContextKey;
+					$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_'.$smtpContextKey;
+				}
 			}
 
 			// If we use SSL/TLS
@@ -1551,10 +1593,11 @@ class CMailFile
 				$host = 'ssl://'.$host;
 			}
 			// tls smtp start with no encryption
-			//if (! empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS) && function_exists('openssl_open')) $host='tls://'.$host;
+			//if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS) && function_exists('openssl_open')) $host='tls://'.$host;
 
 			dol_syslog("Try socket connection to host=".$host." port=".$port);
 			//See if we can connect to the SMTP server
+			$errno = 0; $errstr = '';
 			if ($socket = @fsockopen(
 				$host, // Host to test, IP or domain. Add ssl:// for SSL/TLS.
 				$port, // which Port number to use
@@ -1613,41 +1656,46 @@ class CMailFile
 	/**
 	 * Seearch images into html message and init array this->images_encoded if found
 	 *
-	 * @param	string	$images_dir		Location of physical images files
+	 * @param	string	$images_dir		Location of physical images files. For example $dolibarr_main_data_root.'/medias'
 	 * @return	int 		        	>0 if OK, <0 if KO
 	 */
-	public function findHtmlImages($images_dir)
+	private function findHtmlImages($images_dir)
 	{
-		// Build the list of image extensions
+		// Build the array of image extensions
 		$extensions = array_keys($this->image_types);
 
+		// We search (into mail body this->html), if we find some strings like "... file=xxx.img"
+		// For example when:
+		// <img alt="" src="/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/picture.jpg" style="height:356px; width:1040px" />
 		$matches = array();
 		preg_match_all('/(?:"|\')([^"\']+\.('.implode('|', $extensions).'))(?:"|\')/Ui', $this->html, $matches); // If "xxx.ext" or 'xxx.ext' found
 
 		if (!empty($matches)) {
 			$i = 0;
+			// We are interested in $matches[1] only (the second set of parenthesis into regex)
 			foreach ($matches[1] as $full) {
+				$regs = array();
 				if (preg_match('/file=([A-Za-z0-9_\-\/]+[\.]?[A-Za-z0-9]+)?$/i', $full, $regs)) {   // If xxx is 'file=aaa'
 					$img = $regs[1];
 
 					if (file_exists($images_dir.'/'.$img)) {
 						// Image path in src
 						$src = preg_quote($full, '/');
-
 						// Image full path
 						$this->html_images[$i]["fullpath"] = $images_dir.'/'.$img;
-
 						// Image name
 						$this->html_images[$i]["name"] = $img;
-
 						// Content type
-						if (preg_match('/^.+\.(\w{3,4})$/', $img, $reg)) {
-							$ext = strtolower($reg[1]);
+						$regext = array();
+						if (preg_match('/^.+\.(\w{3,4})$/', $img, $regext)) {
+							$ext = strtolower($regext[1]);
 							$this->html_images[$i]["content_type"] = $this->image_types[$ext];
 						}
-
 						// cid
 						$this->html_images[$i]["cid"] = dol_hash(uniqid(time()), 3); // Force md5 hash (does not contains special chars)
+						// type
+						$this->html_images[$i]["type"] = 'cidfromurl';
+
 						$this->html = preg_replace("/src=\"$src\"|src='$src'/i", "src=\"cid:".$this->html_images[$i]["cid"]."\"", $this->html);
 					}
 					$i++;
@@ -1667,6 +1715,7 @@ class CMailFile
 						// Read image file
 						if ($image = file_get_contents($fullpath)) {
 							// On garde que le nom de l'image
+							$regs = array();
 							preg_match('/([A-Za-z0-9_-]+[\.]?[A-Za-z0-9]+)?$/i', $img["name"], $regs);
 							$imgName = $regs[1];
 
@@ -1683,6 +1732,85 @@ class CMailFile
 				}
 			} else {
 				return -1;
+			}
+
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
+	/**
+	 * Seearch images with data:image format into html message
+	 *
+	 * @param	string	$images_dir		Location of where to store physicaly images files. For example $dolibarr_main_data_root.'/medias'
+	 * @return	int 		        	>0 if OK, <0 if KO
+	 */
+	private function findHtmlImagesIsSrcData($images_dir)
+	{
+		global $conf;
+
+		// Build the array of image extensions
+		$extensions = array_keys($this->image_types);
+
+		if ($images_dir && !dol_is_dir($images_dir)) {
+			dol_mkdir($images_dir, DOL_DATA_ROOT);
+		}
+
+		// Uncomment this for debug
+		/*
+		global $dolibarr_main_data_root;
+		$outputfile = $dolibarr_main_data_root."/dolibarr_mail.log";
+		$fp = fopen($outputfile, "w");
+		fwrite($fp, $this->html);
+		fclose($fp);
+		*/
+
+		// We search (into mail body this->html), if we find some strings like "... file=xxx.img"
+		// For example when:
+		// <img alt="" src="/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/picture.jpg" style="height:356px; width:1040px" />
+		$matches = array();
+		preg_match_all('/src="data:image\/('.implode('|', $extensions).');base64,([^"]+)"/Ui', $this->html, $matches); // If "xxx.ext" or 'xxx.ext' found
+
+		if (!empty($matches) && !empty($matches[1])) {
+			if (empty($images_dir)) {
+				// No temp directory provided, so we are not able to support convertion of data:image into physical images.
+				$this->error = 'NoTempDirProvidedInCMailConstructorSoCantConvertDataImgOnDisk';
+				return -1;
+			}
+
+			$i = 0;
+			foreach ($matches[1] as $key => $ext) {
+				// We save the image to send in disk
+				$filecontent = $matches[2][$key];
+				$cid = dol_hash(uniqid(time()), 3);
+				$destfiletmp = $images_dir.'/'.$cid.'.'.$ext;
+
+				$fhandle = @fopen($destfiletmp, 'w');
+				if ($fhandle) {
+					$nbofbyteswrote = fwrite($fhandle, base64_decode($filecontent));
+					fclose($fhandle);
+					@chmod($destfiletmp, octdec($conf->global->MAIN_UMASK));
+				} else {
+					$this->errors[] = "Failed to open file '".$destfiletmp."' for write";
+					return -1;
+				}
+
+				if (file_exists($destfiletmp)) {
+					// Image full path
+					$this->html_images[$i]["fullpath"] = $destfiletmp;
+					// Image name
+					$this->html_images[$i]["name"] = basename($destfiletmp);
+					// Content type
+					$this->html_images[$i]["content_type"] = $this->image_types[strtolower($ext)];
+					// cid
+					$this->html_images[$i]["cid"] = $cid;
+					// type
+					$this->html_images[$i]["type"] = 'cidfromdata';
+
+					$this->html = preg_replace('/src="data:image\/'.$ext.';base64,'.preg_quote($filecontent, '/').'"/', 'src="cid:'.$this->html_images[$i]["cid"].'"', $this->html);
+				}
+				$i++;
 			}
 
 			return 1;

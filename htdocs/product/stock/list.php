@@ -25,10 +25,11 @@
  *      \brief      Page with warehouse and stock value
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
@@ -53,7 +54,7 @@ $search_ref = GETPOST("sref", "alpha") ?GETPOST("sref", "alpha") : GETPOST("sear
 $search_label = GETPOST("snom", "alpha") ?GETPOST("snom", "alpha") : GETPOST("search_label", "alpha");
 $search_status = GETPOST("search_status", "int");
 
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$search_category_list = GETPOST("search_category_".Categorie::TYPE_WAREHOUSE."_list", "array");
 }
 
@@ -226,9 +227,6 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
-if (!empty($conf->categorie->enabled)) {
-	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_WAREHOUSE, "t.rowid");
-}
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
@@ -239,12 +237,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as ccount ON ccount.rowid = t.fk
 if ($separatedPMP) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_perentity as pa ON pa.fk_product = p.rowid AND pa.fk_product = ps.fk_product AND pa.entity = ". (int) $conf->entity;
 }
-
 $sql .= " WHERE t.entity IN (".getEntity('stock').")";
-
-if (!empty($conf->categorie->enabled)) {
-	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_WAREHOUSE, "t.rowid", $search_category_list);
-}
 foreach ($search as $key => $val) {
 	$class_key = $key;
 	if ($class_key == 'status') {
@@ -267,6 +260,33 @@ foreach ($search as $key => $val) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+// Search for tag/category ($searchCategoryWarehouseList is an array of ID)
+$searchCategoryWarehouseList = $search_category_list;
+$searchCategoryWarehouseOperator = 0;
+if (!empty($searchCategoryWarehouseList)) {
+	$searchCategoryWarehouseSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryWarehouseList as $searchCategoryWarehouse) {
+		if (intval($searchCategoryWarehouse) == -2) {
+			$searchCategoryWarehouseSqlList[] = "NOT EXISTS (SELECT ck.fk_warehouse FROM ".MAIN_DB_PREFIX."categorie_warehouse as ck WHERE p.rowid = ck.fk_warehouse)";
+		} elseif (intval($searchCategoryWarehouse) > 0) {
+			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryWarehouse);
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryWarehouseSqlList[] = " EXISTS (SELECT ck.fk_warehouse FROM ".MAIN_DB_PREFIX."categorie_warehouse as ck WHERE p.rowid = ck.fk_warehouse AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryWarehouseOperator == 1) {
+		if (!empty($searchCategoryWarehouseSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryWarehouseSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryWarehouseSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryWarehouseSqlList).")";
+		}
+	}
+}
+
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -382,7 +402,7 @@ $arrayofmassactions = array(
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
-if ($user->rights->stock->creer) {
+if (isModEnabled('category') && $user->rights->stock->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'label', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -419,7 +439,7 @@ if ($search_all) {
 
 $moreforfilter = '';
 
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list);
 }

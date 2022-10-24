@@ -26,6 +26,7 @@
  *		\brief      Page des stats propositions commerciales
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
@@ -59,7 +60,7 @@ $endyear = $year;
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'companies', 'other', 'suppliers', 'supplier_proposal'));
 
-if ($mode == 'customer' && !$user->rights->propale->lire) {
+if ($mode == 'customer' && !$user->rights->propal->lire) {
 	accessforbidden();
 }
 if ($mode == 'supplier' && !$user->rights->supplier_proposal->lire) {

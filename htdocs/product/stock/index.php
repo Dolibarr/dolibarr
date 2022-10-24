@@ -25,6 +25,7 @@
  *  \brief		Home page of stock area
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -164,7 +165,7 @@ if ($resql) {
 	print "<tr class=\"liste_titre\">";
 	print '<th>'.$langs->trans("LastMovements", min($num, $max)).'</th>';
 	print '<th>'.$langs->trans("Product").'</th>';
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		print '<th>'.$langs->trans("Batch").'</th>';
 		/*if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 			print '<th>'.$langs->trans("SellByDate").'</th>';
@@ -204,7 +205,7 @@ if ($resql) {
 		print '<td class="tdoverflowmax200">';
 		print $producttmp->getNomUrl(1);
 		print "</td>\n";
-		if (!empty($conf->productbatch->enabled)) {
+		if (isModEnabled('productbatch')) {
 			print '<td>';
 			print $tmplotstatic->getNomUrl(0, 'nolink');
 			print '</td>';

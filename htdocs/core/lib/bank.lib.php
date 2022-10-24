@@ -153,8 +153,13 @@ function bank_admin_prepare_head($object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/bank_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("BankAccounts").')';
 	$head[$h][2] = 'attributes';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/bankline_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("BankTransactions").')';
+	$head[$h][2] = 'bankline_extrafields';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');

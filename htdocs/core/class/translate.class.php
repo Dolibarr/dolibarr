@@ -1096,7 +1096,7 @@ class Translate
 				if ($obj) {
 					// If a translation exists, we use it lese we use the default label
 					$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $this->trans("Currency".$obj->code_iso) != "Currency".$obj->code_iso ? $this->trans("Currency".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
-					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode($obj->unicode, true);
+					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode((empty($obj->unicode) ? '' : $obj->unicode), true);
 					$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
 				}
 				$i++;

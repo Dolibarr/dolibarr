@@ -20,3 +20,4 @@ ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Wählen Sie aus, ob die verlinkt
 BookmarksManagement=Verwalten von Lesezeichen
 BookmarksMenuShortCut=STRG + Umschalt + m
 NoBookmarks=Keine Lesezeichen definiert
+NoBookmarkFound=Kein Lesezeichen gefunden

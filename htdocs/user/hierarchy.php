@@ -26,6 +26,7 @@
  *      \brief      Page of hierarchy view of user module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
@@ -121,7 +122,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 		$entitystring = '';
 
 		// TODO Set of entitystring should be done with a hook
-		if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+		if (isModEnabled('multicompany') && is_object($mc)) {
 			if (empty($entity)) {
 				$entitystring = $langs->trans("AllEntities");
 			} else {
@@ -131,7 +132,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 		}
 
 		$li = $userstatic->getNomUrl(-1, '', 0, 1);
-		if (!empty($conf->multicompany->enabled) && $userstatic->admin && !$userstatic->entity) {
+		if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
 			$li .= img_picto($langs->trans("SuperAdministrator"), 'redstar');
 		} elseif ($userstatic->admin) {
 			$li .= img_picto($langs->trans("Administrator"), 'star');

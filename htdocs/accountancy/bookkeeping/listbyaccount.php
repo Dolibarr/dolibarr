@@ -25,6 +25,7 @@
  * \brief 		List operation of ledger ordered by account number
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -193,7 +194,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -208,7 +209,7 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'preunlettering' && $massaction != 'predeletebookkeepingwriting') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'preunletteringauto' && $massaction != 'preunletteringmanual' && $massaction != 'predeletebookkeepingwriting') {
 	$massaction = '';
 }
 
@@ -394,50 +395,67 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Bookkeeping';
 	$objectlabel = 'Bookkeeping';
-	$permissiontoread = $user->rights->societe->lire;
-	$permissiontodelete = $user->rights->societe->supprimer;
+	$permissiontoread = $user->hasRight('societe', 'lire');
+	$permissiontodelete = $user->hasRight('societe', 'supprimer');
 	$permissiontoadd = $user->rights->societe->creer;
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-	if (!$error && $action == 'deletebookkeepingwriting' && $confirm == "yes" && $user->rights->accounting->mouvements->supprimer) {
+	if (!$error && $action == 'deletebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'supprimer')) {
+		$db->begin();
+
+		if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+			$lettering = new Lettering($db);
+			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect, true);
+			if ($nb_lettering < 0) {
+				setEventMessages('', $lettering->errors, 'errors');
+				$error++;
+			}
+		}
+
 		$nbok = 0;
-		foreach ($toselect as $toselectid) {
-			$result = $object->fetch($toselectid);
-			if ($result > 0 && (!isset($object->date_validation) || $object->date_validation === '')) {
-				$result = $object->deleteMvtNum($object->piece_num);
-				if ($result > 0) {
-					$nbok++;
-				} else {
+		if (!$error) {
+			foreach ($toselect as $toselectid) {
+				$result = $object->fetch($toselectid);
+				if ($result > 0 && (!isset($object->date_validation) || $object->date_validation === '')) {
+					$result = $object->deleteMvtNum($object->piece_num);
+					if ($result > 0) {
+						$nbok++;
+					} else {
+						setEventMessages($object->error, $object->errors, 'errors');
+						$error++;
+						break;
+					}
+				} elseif ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 					break;
 				}
-			} elseif ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-				$error++;
-				break;
 			}
 		}
 
-		// Message for elements well deleted
-		if ($nbok > 1) {
-			setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
-		} elseif ($nbok > 0) {
-			setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
-		} elseif (!$error) {
-			setEventMessages($langs->trans("NoRecordDeleted"), null, 'mesgs');
-		}
-
 		if (!$error) {
+			$db->commit();
+
+			// Message for elements well deleted
+			if ($nbok > 1) {
+				setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
+			} elseif ($nbok > 0) {
+				setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+			} elseif (!$error) {
+				setEventMessages($langs->trans("NoRecordDeleted"), null, 'mesgs');
+			}
+
 			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
 			exit;
+		} else {
+			$db->rollback();
 		}
 	}
 
 	// others mass actions
-	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->rights->accounting->mouvements->creer) {
-		if ($massaction == 'lettering') {
+	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accounting', 'mouvements', 'creer')) {
+		if ($massaction == 'letteringauto') {
 			$lettering = new Lettering($db);
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect);
 			if ($nb_lettering < 0) {
@@ -458,7 +476,17 @@ if (empty($reshook)) {
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit();
 			}
-		} elseif ($action == 'unlettering' && $confirm == "yes") {
+		} elseif ($massaction == 'letteringmanual') {
+			$lettering = new Lettering($db);
+			$result = $lettering->updateLettering($toselect);
+			if ($result < 0) {
+				setEventMessages('', $lettering->errors, 'errors');
+			} else {
+				setEventMessages($langs->trans('AccountancyOneLetteringModifiedSuccessfully'), array(), 'mesgs');
+				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
+				exit();
+			}
+		} elseif ($action == 'unletteringauto' && $confirm == "yes") {
 			$lettering = new Lettering($db);
 			$nb_lettering = $lettering->bookkeepingLetteringAll($toselect, true);
 			if ($nb_lettering < 0) {
@@ -476,6 +504,16 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
+				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
+				exit();
+			}
+		} elseif ($action == 'unletteringmanual' && $confirm == "yes") {
+			$lettering = new Lettering($db);
+			$nb_lettering = $lettering->deleteLettering($toselect);
+			if ($result < 0) {
+				setEventMessages('', $lettering->errors, 'errors');
+			} else {
+				setEventMessages($langs->trans('AccountancyOneUnletteringModifiedSuccessfully'), array(), 'mesgs');
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit();
 			}
@@ -578,14 +616,16 @@ print $formconfirm;
 
 // List of mass actions available
 $arrayofmassactions = array();
-if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->rights->accounting->mouvements->creer) {
-	$arrayofmassactions['lettering'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('Lettering');
-	$arrayofmassactions['preunlettering'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('Unlettering');
+if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accounting', 'mouvements', 'creer')) {
+	$arrayofmassactions['letteringauto'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringAuto');
+	$arrayofmassactions['preunletteringauto'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringAuto');
+	$arrayofmassactions['letteringmanual'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringManual');
+	$arrayofmassactions['preunletteringmanual'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringManual');
 }
-if ($user->rights->accounting->mouvements->supprimer) {
+if ($user->hasRight('accounting', 'mouvements', 'supprimer')) {
 	$arrayofmassactions['predeletebookkeepingwriting'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('preunlettering', 'predeletebookkeepingwriting'))) {
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('preunletteringauto', 'preunletteringmanual', 'predeletebookkeepingwriting'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction($massaction, $arrayofmassactions);
@@ -625,8 +665,10 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-if ($massaction == 'preunlettering') {
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassUnlettering"), $langs->trans("ConfirmMassUnletteringQuestion", count($toselect)), "unlettering", null, '', 0, 200, 500, 1);
+if ($massaction == 'preunletteringauto') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassUnletteringAuto"), $langs->trans("ConfirmMassUnletteringQuestion", count($toselect)), "unletteringauto", null, '', 0, 200, 500, 1);
+} elseif ($massaction == 'preunletteringmanual') {
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassUnletteringManual"), $langs->trans("ConfirmMassUnletteringQuestion", count($toselect)), "unletteringmanual", null, '', 0, 200, 500, 1);
 } elseif ($massaction == 'predeletebookkeepingwriting') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeleteBookkeepingWriting"), $langs->trans("ConfirmMassDeleteBookkeepingWritingQuestion", count($toselect)), "deletebookkeepingwriting", null, '', 0, 200, 500, 1);
 }
@@ -701,12 +743,12 @@ print '<tr class="liste_titre_filter">';
 
 // Movement number
 if (!empty($arrayfields['t.piece_num']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_mvt_num" size="6" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_mvt_num" class="width50" value="'.dol_escape_htmltag($search_mvt_num).'"></td>';
 }
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1, 'maxwidth75');
 	print '</td>';
 }
 // Date document
@@ -824,17 +866,22 @@ print $hookmanager->resPrint;
 print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
-
-$total_debit = 0;
-$total_credit = 0;
-$sous_total_debit = 0;
-$sous_total_credit = 0;
 $displayed_account_number = null; // Start with undefined to be able to distinguish with empty
 
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
+
 $totalarray = array();
+$totalarray['val'] = array ();
+$totalarray['nbfield'] = 0;
+$total_debit = 0;
+$total_credit = 0;
+$sous_total_debit = 0;
+$sous_total_credit = 0;
+$totalarray['val']['totaldebit'] = 0;
+$totalarray['val']['totalcredit'] = 0;
+
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];
 

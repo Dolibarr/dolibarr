@@ -121,7 +121,7 @@ $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid
  * Actions
  */
 
-$parameters = array();
+$parameters = array('socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -164,7 +164,7 @@ if ($id > 0) {
 	$object = new Societe($db);
 	$result = $object->fetch($id);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = societe_prepare_head($object);

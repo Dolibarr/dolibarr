@@ -48,8 +48,9 @@ CountriesNotInEEC=Països no integrats a la CEE
 CountriesInEECExceptMe=Països a la CEE excepte %s
 CountriesExceptMe=Tots els països, excepte %s
 AccountantFiles=Exporta documents d'origen
-ExportAccountingSourceDocHelp=Amb aquesta eina, podeu exportar els esdeveniments d'origen (llista en CSV i PDF) que s'utilitzen per a generar la vostra comptabilitat.
+ExportAccountingSourceDocHelp=Amb aquesta eina, podeu cercar i exportar els esdeveniments d'origen que s'utilitzen per a generar la vostra comptabilitat. <br> El fitxer ZIP exportat contindrà les llistes dels elements sol·licitats en CSV, així com els seus fitxers adjunts en el seu format original (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Per a exportar els vostres diaris, utilitzeu l'entrada de menú %s - %s.
+ExportAccountingProjectHelp=Especifiqueu un projecte si només necessiteu un informe comptable per a un projecte concret. Els informes de despeses i els pagaments del préstec no s'inclouen als informes del projecte.
 VueByAccountAccounting=Visualització per compte comptable
 VueBySubAccountAccounting=Visualització per subcompte comptable
 
@@ -61,9 +62,9 @@ MainAccountForSubscriptionPaymentNotDefined=Compte comptable per a IVA no defini
 
 AccountancyArea=Àrea de comptabilitat
 AccountancyAreaDescIntro=L'ús del mòdul de comptabilitat es realitza en diverses etapes:
-AccountancyAreaDescActionOnce=Les següents accions s'executen normalment per una sola vegada, o un cop l'any ...
+AccountancyAreaDescActionOnce=Les accions següents s'executen normalment una sola vegada o una vegada a l'any...
 AccountancyAreaDescActionOnceBis=Cal fer els passos següents per a estalviar-vos temps en el futur suggerint-vos automàticament el compte comptable predeterminat correcte quan transferiu dades a la comptabilitat
-AccountancyAreaDescActionFreq=Les següents accions s'executen normalment cada mes, setmana o dia per empreses molt grans ...
+AccountancyAreaDescActionFreq=Les accions següents s'executen normalment cada mes, setmana o dia per empreses molt grans...
 
 AccountancyAreaDescJournalSetup=PAS %s: comproveu el contingut de la vostra llista de diari des del menú %s
 AccountancyAreaDescChartModel=PAS %s: Comproveu que existeix un model de pla comptable o creeu-ne un des del menú %s
@@ -183,6 +184,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable per a registrar les don
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte comptable per defecte per a registrar el dipòsit del client
 UseAuxiliaryAccountOnCustomerDeposit=Emmagatzema el compte del client com a compte individual al llibre major subsidiari per a les línies de pagament inicial (si està desactivat, el compte individual per a les línies de pagament inicial romandrà buit)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Compte comptable per defecte per a registrar el dipòsit del proveïdor
+UseAuxiliaryAccountOnSupplierDeposit=Emmagatzema el compte del proveïdor com a compte individual al llibre major subsidiari per a les línies de pagament inicial (si està desactivat, el compte individual de les línies de pagament inicial romandrà buit)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable per defecte per als productes comprats (utilitzat si no es defineix en el producte)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Compte de comptabilitat per defecte dels productes comprats a la CEE (utilitzat si no està definit a la taula de productes)
@@ -332,7 +335,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Desactiva la vinculació i transfer
 
 ## Export
 NotifiedExportDate=Marca les línies exportades com a Exportades <span class="warning"> (per a modificar una línia, hauràs de suprimir tota la transacció i tornar-la a transferir a la comptabilitat) </span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedValidationDate=Validar i bloquejar les entrades exportades <span class="warning"> (mateix efecte que la característica "%s", la modificació i la supressió de les línies DEFINITIVAMENT no seran possibles) </span>
 DateValidationAndLock=Validació de data i bloqueig
 ConfirmExportFile=Confirmació de la generació del fitxer d'exportació comptable?
 ExportDraftJournal=Exporta els esborranys del llibre

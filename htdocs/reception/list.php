@@ -24,6 +24,7 @@
  *      \brief      Page to list all receptions
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -715,7 +716,7 @@ if ($massaction == 'createbills') {
 	print $langs->trans('ValidateInvoices');
 	print '</td>';
 	print '<td>';
-	if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+	if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
 		print $form->selectyesno('validate_invoices', 0, 1, 1);
 		print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
 	} else {

@@ -97,10 +97,19 @@ class FactureStats extends Stats
 		if ($this->userid > 0) {
 			$this->where .= ' AND f.fk_user_author = '.((int) $this->userid);
 		}
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-			$this->where .= " AND f.type IN (0,1,2,5)";
-		} else {
-			$this->where .= " AND f.type IN (0,1,2,3,5)";
+		if ($mode == 'customer') {
+			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$this->where .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$this->where .= " AND f.type IN (0,1,2,3,5)";
+			}
+		}
+		if ($mode == 'supplier') {
+			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+				$this->where .= " AND f.type IN (0,1,2,5)";
+			} else {
+				$this->where .= " AND f.type IN (0,1,2,3,5)";
+			}
 		}
 
 		if ($typentid) {
@@ -109,9 +118,7 @@ class FactureStats extends Stats
 		}
 
 		if ($categid) {
-			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cs ON cs.fk_soc = f.fk_soc';
-			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as c ON c.rowid = cs.fk_categorie';
-			$this->where .= ' AND c.rowid = '.((int) $categid);
+			$this->where .= ' AND EXISTS (SELECT rowid FROM '.MAIN_DB_PREFIX.'categorie_societe as cats WHERE cats.fk_soc = f.fk_soc AND cats.fk_categorie = '.((int) $categid).')';
 		}
 	}
 

@@ -31,6 +31,8 @@
  *	\brief      Main page of accountancy area
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -50,10 +52,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$langs->load("orders");
 }
 
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 $bid = GETPOST('bid', 'int');
 

@@ -25,9 +25,10 @@
  *      \brief      Page of users
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -110,7 +111,8 @@ $fieldstosearchall = array(
 	'u.office_phone'=>"PhonePro",
 	'u.user_mobile'=>"PhoneMobile",
 	'u.email'=>"EMail",
-	'u.note'=>"Note",
+	'u.note_public'=>"NotePublic",
+	'u.note_private'=>"NotePrivate"
 );
 if (!empty($conf->api->enabled)) {
 	$fieldstosearchall['u.api_key'] = "ApiKey";
@@ -121,7 +123,7 @@ $arrayfields = array(
 	'u.login'=>array('label'=>"Login", 'checked'=>1, 'position'=>10),
 	'u.lastname'=>array('label'=>"Lastname", 'checked'=>1, 'position'=>15),
 	'u.firstname'=>array('label'=>"Firstname", 'checked'=>1, 'position'=>20),
-	'u.entity'=>array('label'=>"Entity", 'checked'=>1, 'position'=>50, 'enabled'=>(!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
+	'u.entity'=>array('label'=>"Entity", 'checked'=>1, 'position'=>50, 'enabled'=>(isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))),
 	'u.gender'=>array('label'=>"Gender", 'checked'=>0, 'position'=>22),
 	'u.employee'=>array('label'=>"Employee", 'checked'=>($mode == 'employee' ? 1 : 0), 'position'=>25),
 	'u.fk_user'=>array('label'=>"HierarchicalResponsible", 'checked'=>1, 'position'=>27),
@@ -161,9 +163,11 @@ $search_statut = GETPOST('search_statut', 'intcomma');
 $search_thirdparty = GETPOST('search_thirdparty', 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'intcomma');
-$optioncss = GETPOST('optioncss', 'alpha');
 $search_categ = GETPOST("search_categ", 'int');
 $catid = GETPOST('catid', 'int');
+if (!empty($catid) && empty($search_categ)) {
+	$search_categ = $catid;
+}
 
 // Default search
 if ($search_statut == '') {
@@ -366,9 +370,6 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
-if (!empty($search_categ) || !empty($catid)) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_user as cu ON u.rowid = cu.fk_user"; // We'll need this table joined to the select in order to filter by categ
-}
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -426,17 +427,31 @@ if ($search_statut != '' && $search_statut >= 0) {
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
-if ($catid > 0) {
-	$sql .= " AND cu.fk_categorie = ".((int) $catid);
-}
-if ($catid == -2) {
-	$sql .= " AND cu.fk_categorie IS NULL";
-}
-if ($search_categ > 0) {
-	$sql .= " AND cu.fk_categorie = ".((int) $search_categ);
-}
-if ($search_categ == -2) {
-	$sql .= " AND cu.fk_categorie IS NULL";
+
+// Search for tag/category ($searchCategoryProductList is an array of ID)
+$searchCategoryProductList = array($search_categ);
+if (!empty($searchCategoryProductList)) {
+	$searchCategoryProductSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryProductList as $searchCategoryProduct) {
+		if (intval($searchCategoryProduct) == -2) {
+			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_user FROM ".MAIN_DB_PREFIX."categorie_user as ck WHERE u.rowid = ck.fk_user)";
+		} elseif (intval($searchCategoryProduct) > 0) {
+			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProduct);
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_user FROM ".MAIN_DB_PREFIX."categorie_user as ck WHERE u.rowid = ck.fk_user AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryProductOperator == 1) {
+		if (!empty($searchCategoryProductSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryProductSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryProductSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
+		}
+	}
 }
 if ($search_warehouse > 0) {
 	$sql .= " AND u.fk_warehouse = ".((int) $search_warehouse);
@@ -468,7 +483,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	 }
 	 }*/
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -586,12 +601,15 @@ if ($permissiontoadd) {
 if ($permissiontoadd) {
 	$arrayofmassactions['reactivate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Reactivate");
 }
-if ($permissiontoadd) {
+if (isModEnabled('category') && $permissiontoadd) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
+if ($permissiontoadd) {
+	$arrayofmassactions['presetsupervisor'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("SetSupervisor");
 }
 //if ($permissiontodelete) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'presetsupervisor'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -658,14 +676,14 @@ $moreforfilter = '';
  $moreforfilter.= '</div>';*/
 
 // Filter on categories
-if (!empty($conf->categorie->enabled) && $user->hasRight("categorie", "read")) {
+if (isModEnabled('categorie') && $user->hasRight("categorie", "read")) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('Category');
 	$moreforfilter .= img_picto($langs->trans("Category"), 'category', 'class="pictofixedwidth"').$formother->select_categories(Categorie::TYPE_USER, $search_categ, 'search_categ', 1, $tmptitle);
 	$moreforfilter .= '</div>';
 }
 // Filter on warehouse
-if (!empty($conf->stock->enabled) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
+if (isModEnabled('stock') && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 	$formproduct = new FormProduct($db);
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -941,7 +959,7 @@ while ($i < $imaxinloop) {
 	$canreadhrmdata = 0;
 	if ((!empty($conf->salaries->enabled) && $user->hasRight("salaries", "read") && in_array($obj->rowid, $childids))
 		|| (!empty($conf->salaries->enabled) && $user->hasRight("salaries", "readall"))
-		|| (!empty($conf->hrm->enabled) && $user->hasRight("hrm", "employee", "read"))) {
+		|| (isModEnabled('hrm') && $user->hasRight("hrm", "employee", "read"))) {
 			$canreadhrmdata = 1;
 	}
 	$canreadsecretapi = 0;
@@ -981,7 +999,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax150">';
 			print $li;
-			if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity) {
+			if (isModEnabled('multicompany') && $obj->admin && !$obj->entity) {
 				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 			} elseif ($obj->admin) {
 				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
@@ -1054,7 +1072,7 @@ while ($i < $imaxinloop) {
 				$user2->statut = $obj->status2;
 				$user2->status = $obj->status2;
 				print $user2->getNomUrl(-1, '', 0, 0, 24, 0, '', '', 1);
-				if (!empty($conf->multicompany->enabled) && $obj->admin2 && !$obj->entity2) {
+				if (isModEnabled('multicompany') && $obj->admin2 && !$obj->entity2) {
 					print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
 				} elseif ($obj->admin2) {
 					print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
@@ -1123,7 +1141,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Multicompany enabled
-		if (!empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+		if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			if (!empty($arrayfields['u.entity']['checked'])) {
 				print '<td>';
 				if (!$obj->entity) {

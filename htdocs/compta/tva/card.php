@@ -26,6 +26,7 @@
  *		\brief      Page of VAT payments
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -35,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 		include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
@@ -490,11 +491,11 @@ if ($action == 'create') {
 
 	// Type payment
 	print '<tr><td class="fieldrequired" id="label_type_payment">'.$langs->trans("PaymentMode").'</td><td>';
-	$form->select_types_paiements(GETPOST("type_payment", 'int'), "type_payment", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx');
+	print $form->select_types_paiements(GETPOST("type_payment", 'int'), "type_payment", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx', 1);
 	print "</td>\n";
 	print "</tr>";
 
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		// Bank account
 		print '<tr><td class="fieldrequired" id="label_fk_account">'.$langs->trans("BankAccount").'</td><td>';
 		print img_picto('', 'bank_account', 'pictofixedwidth');
@@ -629,7 +630,7 @@ if ($id > 0) {
 	print '</td></tr>';
 
 	// Bank account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('BankAccount');
@@ -660,7 +661,7 @@ if ($id > 0) {
 	print '<div class="fichehalfright">';
 
 	$nbcols = 3;
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		$nbcols++;
 	}
 
@@ -695,7 +696,7 @@ if ($id > 0) {
 		print '<td>'.$langs->trans("RefPayment").'</td>';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>'.$langs->trans("Type").'</td>';
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
 		}
 		print '<td class="right">'.$langs->trans("Amount").'</td>';
@@ -712,14 +713,14 @@ if ($id > 0) {
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 				$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 				print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled("banque")) {
 					$bankaccountstatic->id = $objp->baid;
 					$bankaccountstatic->ref = $objp->baref;
 					$bankaccountstatic->label = $objp->baref;
 					$bankaccountstatic->number = $objp->banumber;
 					$bankaccountstatic->currency_code = $objp->bacurrency_code;
 
-					if (!empty($conf->accounting->enabled)) {
+					if (isModEnabled('accounting')) {
 						$bankaccountstatic->account_number = $objp->account_number;
 
 						$accountingjournal = new AccountingJournal($db);

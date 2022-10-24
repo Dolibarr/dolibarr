@@ -114,7 +114,7 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 	$lockfile = DOL_DATA_ROOT.'/install.lock';
 	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
 		$langs->load("errors");
-		//if (! empty($message)) $message.='<br>';
+		//if (!empty($message)) $message.='<br>';
 		$message .= info_admin($langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
@@ -122,12 +122,12 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 	if (is_writable($conffile)) {
 		$langs->load("errors");
 		//$langs->load("other");
-		//if (! empty($message)) $message.='<br>';
+		//if (!empty($message)) $message.='<br>';
 		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 	}
 
 	if ($message) {
-		print $message;
+		print $message.'<br>';
 		//$message.='<br>';
 		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
 	}
@@ -176,7 +176,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of commercial customer proposals open (expired)
-	if (isModEnabled('propal')  && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('propale', 'lire')) {
+	if (isModEnabled('propal') && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('propal', 'read')) {
 		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		$board = new Propal($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
@@ -194,7 +194,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		$dashboardlines[$board->element.'_signed'] = $board->load_board($user, "signed");
 	}
 
-	// Number of customer orders a deal
+	// Number of sales orders a deal
 	if (isModEnabled('commande')  && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('commande', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		$board = new Commande($db);
@@ -558,7 +558,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					}
 
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
-					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
+					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil(empty($board->warning_delay) ? 0 : $board->warning_delay) >= 0 ? '+' : '').ceil(empty($board->warning_delay) ? 0 : $board->warning_delay).' '.$langs->trans("days").')';
 
 					if ($board->id == 'bank_account') {
 						$textLateTitle .= '<br><span class="opacitymedium">'.$langs->trans("IfYouDontReconcileDisableProperty", $langs->transnoentitiesnoconv("Conciliable")).'</span>';

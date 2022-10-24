@@ -29,6 +29,7 @@
  *      \brief      Member's type setup
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -178,6 +179,7 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 	$object->status	= (int) $status;
 	$object->subscription = (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
+	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
 	$object->note = trim($comment);
@@ -718,7 +720,7 @@ if ($rowid > 0) {
 				*/
 
 				// Moral/Physique
-				print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
+				print "<td>".$adh->getmorphylib($objp->morphy, 1)."</td>\n";
 
 				// EMail
 				print "<td>".dol_print_email($objp->email, 0, 0, 1)."</td>\n";
@@ -738,9 +740,9 @@ if ($rowid > 0) {
 					}
 					print '</td>';
 				} else {
-					print '<td class="nowrap left">';
+					print '<td class="nowrap center">';
 					if (!empty($objp->subscription)) {
-						print $langs->trans("SubscriptionNotReceived");
+						print '<span class="opacitymedium">'.$langs->trans("SubscriptionNotReceived").'</span>';
 						if ($objp->status > 0) {
 							print " ".img_warning();
 						}
@@ -752,11 +754,11 @@ if ($rowid > 0) {
 
 				// Actions
 				print '<td class="center">';
-				if ($user->rights->adherent->creer) {
+				if ($user->hasRight('adherent', 'creer')) {
 					print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
 				}
 				if ($user->rights->adherent->supprimer) {
-					print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resign&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
+					print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
 				}
 				print "</td>";
 
@@ -828,6 +830,10 @@ if ($rowid > 0) {
 		print '">';
 		print '</td></tr>';
 
+		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmountDetail")).'</td><td>';
+		print $form->selectyesno("caneditamount", $object->caneditamount);
+		print '</td></tr>';
+
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print $form->selectyesno("vote", $object->vote, 1);
 		print '</td></tr>';
@@ -839,7 +845,7 @@ if ($rowid > 0) {
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('comment', $object->note, '', 280, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
+		$doleditor = new DolEditor('comment', $object->note_public, '', 220, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";
 

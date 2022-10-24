@@ -25,7 +25,7 @@
 /**
  *	\file       htdocs/compta/facture/class/facture-rec.class.php
  *	\ingroup    facture
- *	\brief      Fichier de la classe des factures recurentes
+ *	\brief      File of class to manage recurring invoices
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
@@ -181,12 +181,12 @@ class FactureRec extends CommonInvoice
 		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'Total', 'enabled'=>1, 'visible'=>-1, 'position'=>70, 'isameasure'=>1),
 		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'Total ttc', 'enabled'=>1, 'visible'=>-1, 'position'=>75, 'isameasure'=>1),
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>85),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>85),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'Fk cond reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'Fk mode reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'date_lim_reglement' =>array('type'=>'date', 'label'=>'Date lim reglement', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
-		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105),
-		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>105),
+		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>110),
 		'modelpdf' =>array('type'=>'varchar(255)', 'label'=>'Modelpdf', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
 		'date_last_gen' =>array('type'=>'varchar(7)', 'label'=>'Last gen', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'unit_frequency' =>array('type'=>'varchar(2)', 'label'=>'Unit frequency', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
@@ -462,7 +462,7 @@ class FactureRec extends CommonInvoice
 
 
 	/**
-	 * 	Update a line to invoice_rec.
+	 * 	Update a line invoice_rec.
 	 *
 	 *  @param		User	$user					User
 	 *  @param		int		$notrigger				No trigger
@@ -470,8 +470,6 @@ class FactureRec extends CommonInvoice
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec SET";
@@ -480,8 +478,8 @@ class FactureRec extends CommonInvoice
 		$sql .= " suspended = ".((int) $this->suspended).",";
 		$sql .= " fk_soc = ".((int) $this->socid).",";
 		$sql .= " total_tva = ".((float) $this->total_tva).",";
-		$sql .= " localtax1 = ".((float) $this->localtax1).",";
-		$sql .= " localtax2 = ".((float) $this->localtax2).",";
+		$sql .= " localtax1 = ".((float) $this->total_localtax1).",";
+		$sql .= " localtax2 = ".((float) $this->total_localtax2).",";
 		$sql .= " total_ht = ".((float) $this->total_ht).",";
 		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
 		$sql .= " remise_percent = ".((float) $this->remise_percent);
@@ -1273,6 +1271,8 @@ class FactureRec extends CommonInvoice
 		$now = dol_now();
 		$tmparray = dol_getdate($now);
 		$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']); // Today is last second of current day
+
+		$this->output = null;
 
 		dol_syslog("createRecurringInvoices restrictioninvoiceid=".$restrictioninvoiceid." forcevalidation=".$forcevalidation);
 

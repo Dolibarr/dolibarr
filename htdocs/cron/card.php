@@ -24,6 +24,7 @@
  *  \brief      Cron Jobs Card
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -140,6 +141,7 @@ if ($action == 'add') {
 	$object->unitfrequency = GETPOST('unitfrequency', 'int');
 	$object->frequency = GETPOST('nbfrequency', 'int');
 	$object->maxrun = GETPOST('maxrun', 'int');
+	$object->email_alert = GETPOST('email_alert');
 
 	// Add cron task
 	$result = $object->create($user);
@@ -174,6 +176,7 @@ if ($action == 'update') {
 	$object->unitfrequency = GETPOST('unitfrequency', 'int');
 	$object->frequency = GETPOST('nbfrequency', 'int');
 	$object->maxrun = GETPOST('maxrun', 'int');
+	$object->email_alert = GETPOST('email_alert');
 
 	// Add cron task
 	$result = $object->update($user);
@@ -414,6 +417,15 @@ if (($action == "create") || ($action == "edit")) {
 	print "</td>";
 	print "</tr>\n";
 
+	print '<tr class="blockemailalert"><td>';
+	print $langs->trans('EmailIfError')."</td><td>";
+	print '<input type="text" class="minwidth150" name="email_alert" value="'.dol_escape_htmltag($object->email_alert).'" /> ';
+	print "</td>";
+	print "<td>";
+	//print $form->textwithpicto('', $langs->trans("CronCommandHelp"), 1, 'help');
+	print "</td>";
+	print "</tr>\n";
+
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('CronEvery')."</td>";
 	print "<td>";
@@ -461,6 +473,16 @@ if (($action == "create") || ($action == "edit")) {
 	}
 	$input .= "<label for=\"frequency_semaine\">".$langs->trans('Weeks')."</label>";
 	print $input;
+
+	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"2678400\" id=\"frequency_month\" ";
+	if ($object->unitfrequency == "2678400") {
+		$input .= ' checked />';
+	} else {
+		$input .= ' />';
+	}
+	$input .= "<label for=\"frequency_month\">".$langs->trans('Monthly')."</label>";
+	print $input;
+
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -577,32 +599,32 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronModule')."</td><td>";
-	print $object->module_name;
+	print dol_escape_htmltag($object->module_name);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronClassFile')."</td><td>";
-	print $object->classesname;
+	print dol_escape_htmltag($object->classesname);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronObject')."</td><td>";
-	print $object->objectname;
+	print dol_escape_htmltag($object->objectname);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronMethod')."</td><td>";
-	print $object->methodename;
+	print dol_escape_htmltag($object->methodename);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronArgs')."</td><td>";
-	print $object->params;
+	print dol_escape_htmltag($object->params);
 	print "</td></tr>";
 
 	print '<tr class="blockcommand"><td>';
 	print $langs->trans('CronCommand')."</td><td>";
-	print $object->command;
+	print dol_escape_htmltag($object->command);
 	print "</td></tr>";
 
 	print '<tr><td>';
@@ -612,7 +634,12 @@ if (($action == "create") || ($action == "edit")) {
 	}
 	print "</td></tr>";
 
-	if (!empty($conf->multicompany->enabled)) {
+	print '<tr class="blockemailalert"><td>';
+	print $langs->trans('EmailIfError')."</td><td>";
+	print dol_escape_htmltag($object->email_alert);
+	print "</td></tr>";
+
+	if (isModEnabled('multicompany')) {
 		print '<tr><td>';
 		print $langs->trans('Entity')."</td><td>";
 		if (empty($object->entity)) {
@@ -646,6 +673,9 @@ if (($action == "create") || ($action == "edit")) {
 	}
 	if ($object->unitfrequency == "604800") {
 		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Weeks');
+	}
+	if ($object->unitfrequency == "2678400") {
+		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Month');
 	}
 	print "</td></tr>";
 

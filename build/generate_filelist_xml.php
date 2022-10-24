@@ -56,7 +56,7 @@ if (empty($argv[1])) {
 
 $i=0;
 while ($i < $argc) {
-	if (! empty($argv[$i])) {
+	if (!empty($argv[$i])) {
 		parse_str($argv[$i]);	// set all params $release, $includecustom, $includeconstant, $buildzip ...
 	}
 	if (preg_match('/includeconstant=/', $argv[$i])) {

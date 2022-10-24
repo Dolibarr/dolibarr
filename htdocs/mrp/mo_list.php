@@ -84,7 +84,7 @@ if (!$sortorder) {
 }
 
 // Initialize array of search criterias
-$search_all = GETPOST('search_all', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -230,8 +230,8 @@ $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."mrp_production lineparent ON t.fk_parent_line = lineparent.rowid";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."mrp_mo moparent ON lineparent.fk_mo = moparent.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."mrp_production as lineparent ON t.fk_parent_line = lineparent.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."mrp_mo as moparent ON lineparent.fk_mo = moparent.rowid";
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -251,6 +251,13 @@ foreach ($search as $key => $val) {
 			$sql .= natural_search('moparent.ref', $search[$key], 0);
 			continue;
 		}
+
+		if ($key == 'status') {
+			$sql .= natural_search('t.status', $search[$key], 0);
+			continue;
+		}
+
+
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
 			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
@@ -259,17 +266,17 @@ foreach ($search as $key => $val) {
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search($key, $search[$key], (($key == 'status') ? 2 : $mode_search));
+			$sql .= natural_search("t.".$db->escape($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND t.".$columnName." >= '".$db->idate($search[$key])."'";
+					$sql .= " AND t.".$db->escape($columnName)." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND t." . $columnName . " <= '" . $db->idate($search[$key]) . "'";
+					$sql .= " AND t.".$db->escape($columnName)." <= '".$db->idate($search[$key])."'";
 				}
 			}
 		}
@@ -292,7 +299,7 @@ foreach($object->fields as $key => $val) {
 	$sql .= "t.".$key.", ";
 }
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.", " : "");
 	}

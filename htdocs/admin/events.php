@@ -22,6 +22,7 @@
  *      \brief      Log event setup page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -111,7 +112,7 @@ print '<br>';
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
-print getTitleFieldOfList("LogEvents", 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList("TrackableSecurityEvents", 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 print "</tr>\n";
 // Loop on each event type

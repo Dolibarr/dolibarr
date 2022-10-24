@@ -66,7 +66,6 @@ if (empty($conf->dav->enabled)) {
 	accessforbidden();
 }
 
-
 // Restrict API to some IPs
 if (!empty($conf->global->DAV_RESTRICT_ON_IP)) {
 	$allowedip = explode(' ', $conf->global->DAV_RESTRICT_ON_IP);
@@ -136,7 +135,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 	return true;
 });
 
-$authBackend->setRealm(constant('DOL_APPLICATION_TITLE'));
+$authBackend->setRealm(constant('DOL_APPLICATION_TITLE').' - WebDAV');
 
 
 
@@ -158,7 +157,7 @@ if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR)) {
 // Private dir
 $nodes[] = new \Sabre\DAV\FS\Directory($privateDir);
 // ECM dir
-if (!empty($conf->ecm->enabled) && !empty($conf->global->DAV_ALLOW_ECM_DIR)) {
+if (isModEnabled('ecm') && !empty($conf->global->DAV_ALLOW_ECM_DIR)) {
 	$nodes[] = new \Sabre\DAV\FS\Directory($ecmDir);
 }
 
@@ -200,7 +199,7 @@ $lockBackend = new \Sabre\DAV\Locks\Backend\File($tmpDir.'/.locksdb');
 $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);
 $server->addPlugin($lockPlugin);
 
-// Support for html frontend
+// Support for the html browser
 if (empty($conf->global->DAV_DISABLE_BROWSER)) {
 	$browser = new \Sabre\DAV\Browser\Plugin();
 	$server->addPlugin($browser);

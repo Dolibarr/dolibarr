@@ -397,7 +397,7 @@ class AdherentType extends CommonObject
 			$this->description = $this->db->escape($this->note_public);
 
 			// Multilangs
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				if ($this->setMultiLangs($user) < 0) {
 					$this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
 					return -2;
@@ -509,7 +509,7 @@ class AdherentType extends CommonObject
 				$this->vote           = $obj->vote;
 
 				// multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$this->getMultiLangs();
 				}
 
