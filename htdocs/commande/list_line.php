@@ -57,6 +57,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'orderlist';
+$productobuy = GETPOST('productobuy', 'alpha');
 $productonly = GETPOST('productonly', 'alpha');
 $disablelinefree = GETPOST('disablelinefree', 'alpha');
 
@@ -247,6 +248,7 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$productobuy = '';
 		$productonly = '';
 		$disablelinefree = '';
 		$search_categ = '';
@@ -424,6 +426,9 @@ $sql .= ' WHERE c.fk_soc = s.rowid';
 $sql .= ' AND c.entity IN ('.getEntity('commande').')';
 $sql .= ' AND cdet.product_type <> 9';
 
+if (!empty($productobuy)) {
+	$sql .= " AND pr.tobuy = 1";
+}
 if (!empty($productonly)) {
 	$sql .= " AND (cdet.product_type = 0 OR cdet.product_type = 1)";
 }
@@ -842,6 +847,7 @@ if ($resql) {
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'order', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
+	print '<input type="checkbox" name="productobuy"'.(!empty($productobuy)?'value="productobuychecked" checked':'' ).'><label for="productobuy">'.$langs->trans("productobuy").'</label>';
 	print '<input type="checkbox" name="productonly"'.(!empty($productonly)?'value="productonlychecked" checked':'' ).'><label for="productonly">'.$langs->trans("productonly").'</label>';
 	print '<input type="checkbox" name="disablelinefree"'.(!empty($disablelinefree)?'value="disablelinefreechecked" checked':'' ).'><label for="disablelinefree">'.$langs->trans("disablelinefree").'</label>';
 
