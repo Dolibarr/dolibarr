@@ -30,6 +30,7 @@
  * \brief		Page with sells journal
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -392,7 +393,7 @@ if ($action == 'writebookkeeping') {
 					if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
 						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 						$lettering_static = new Lettering($db);
-						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id), 'customer_invoice');
+						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id));
 					}
 				}
 			}

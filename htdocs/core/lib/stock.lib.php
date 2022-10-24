@@ -17,8 +17,8 @@
  */
 
 /**
- *	    \file       htdocs/core/lib/stock.lib.php
- *		\brief      Library file with function for stock module
+ * \file       htdocs/core/lib/stock.lib.php
+ * \brief      Library file with function for stock module
  */
 
 /**
@@ -54,7 +54,7 @@ function stock_prepare_head($object)
 	*/
 
 	/* Disabled because will never be implemented. Table always empty.
-	if (! empty($conf->global->STOCK_USE_WAREHOUSE_BY_USER))
+	if (!empty($conf->global->STOCK_USE_WAREHOUSE_BY_USER))
 	{
 		// Should not be enabled by defaut because does not work yet correctly because
 		// personnal stocks are not tagged into table llx_entrepot
@@ -69,12 +69,14 @@ function stock_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock', 'add', 'core');
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock', 'remove');
 
@@ -88,7 +90,12 @@ function stock_prepare_head($object)
  */
 function stock_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('entrepot');
+	$extrafields->fetch_name_optionals_label('stock_mouvement');
+	$extrafields->fetch_name_optionals_label('inventory');
 
 	$h = 0;
 	$head = array();
@@ -106,16 +113,28 @@ function stock_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/stock_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['entrepot']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/stock_mouvement_extrafields.php';
 	$head[$h][1] = $langs->trans("StockMouvementExtraFields");
+	$nbExtrafields = $extrafields->attributes['stock_mouvement']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'stockMouvementAttributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/inventory_extrafields.php';
 	$head[$h][1] = $langs->trans("InventoryExtraFields");
+	$nbExtrafields = $extrafields->attributes['inventory']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'inventoryAttributes';
 	$h++;
 

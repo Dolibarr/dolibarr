@@ -2,7 +2,7 @@
 /* Copyright (C) 2016	Xebax Christy	<xebax@wanadoo.fr>
  * Copyright (C) 2017	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2020	Thibault FOUCART<support@ptibogxiv.net>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020	Frédéric France	<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -286,7 +286,7 @@ class Members extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 			throw new RestException(401);
 		}
 		// Check mandatory fields
@@ -311,7 +311,7 @@ class Members extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 			throw new RestException(401);
 		}
 

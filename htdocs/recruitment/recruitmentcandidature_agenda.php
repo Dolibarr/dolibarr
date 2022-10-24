@@ -27,8 +27,8 @@ require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-dol_include_once('/recruitment/class/recruitmentcandidature.class.php');
-dol_include_once('/recruitment/lib/recruitment_recruitmentcandidature.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment_recruitmentcandidature.lib.php';
 
 
 // Load translation files required by the page
@@ -36,9 +36,9 @@ $langs->loadLangs(array("recruitment", "other"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
-$ref        = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cancel     = GETPOST('cancel', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 if (GETPOST('actioncode', 'array')) {
@@ -124,12 +124,12 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 if ($object->id > 0) {
-	$title = $langs->trans("Agenda");
-	//if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
+	$title = $object->ref." - ".$langs->trans('Agenda');
+	//if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 	$help_url = 'Module_Agenda_En';
 	llxHeader('', $title, $help_url);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = recruitmentCandidaturePrepareHead($object);
@@ -150,7 +150,7 @@ if ($object->id > 0) {
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	*/
 	// Project
-	/*if (! empty($conf->project->enabled))
+	/*if (!empty($conf->project->enabled))
 	{
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project') . ' ';
@@ -171,7 +171,7 @@ if ($object->id > 0) {
 				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 			}
 		} else {
-			if (! empty($object->fk_project)) {
+			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
 				$morehtmlref .= ': '.$proj->getNomUrl();

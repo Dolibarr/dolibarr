@@ -20,12 +20,12 @@
 /**
  *  \file       htdocs/core/modules/commande/mod_commande_marbre.php
  *  \ingroup    commande
- *  \brief      File of class to manage customer order numbering rules Marbre
+ *  \brief      File of class to manage Sales Order numbering rules Marbre
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 
 /**
- *	Class to manage customer order numbering rules Marbre
+ *	Class to manage Sales Order numbering rules Marbre
  */
 class mod_commande_marbre extends ModeleNumRefCommandes
 {

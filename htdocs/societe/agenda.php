@@ -27,12 +27,15 @@
  *  \brief      Page of third party events
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->loadLangs(array("companies", "bills", "propal", "orders"));
+// Load translation files required by the page
+$langs->loadLangs(array('agenda', 'bills', 'companies', 'orders', 'propal'));
+
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
@@ -42,6 +45,7 @@ if (GETPOST('actioncode', 'array')) {
 } else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
+
 $search_agenda_label = GETPOST('search_agenda_label');
 
 // Security check
@@ -117,7 +121,7 @@ if ($socid > 0) {
 	}
 	llxHeader('', $title);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = societe_prepare_head($object);

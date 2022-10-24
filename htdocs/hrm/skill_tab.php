@@ -20,11 +20,10 @@
  */
 
 /**
- *    \file       skill_tab.php
- *        \ingroup    hrm
- *        \brief      Page to add/delete/view skill to jobs/users
+ *    \file       htdocs/hrm/skill_tab.php
+ *    \ingroup    hrm
+ *    \brief      Page to add/delete/view skill to jobs/users
  */
-
 
 
 // Load Dolibarr environment
@@ -39,8 +38,9 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "other"));
+$langs->loadLangs(array('hrm', 'other'));
 
+// Get Parameters
 $id = GETPOST('id', 'int');
 $TSkillsToAdd = GETPOST('fk_skill', 'array');
 $objecttype = GETPOST('objecttype', 'alpha');
@@ -64,15 +64,18 @@ if (in_array($objecttype, $TAuthorizedObjects)) {
 	} elseif ($objecttype == "user") {
 		$object = new User($db);
 	}
-} else accessforbidden($langs->trans('ErrorBadObjectType'));
+} else {
+	accessforbidden('ErrorBadObjectType');
+}
 
 $hookmanager->initHooks(array('skilltab', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+// Permissions
 $permissiontoread = $user->rights->hrm->all->read;
-$permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoadd  = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) accessforbidden();
@@ -259,7 +262,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td>';
 		$addadmin = '';
 		if (property_exists($object, 'admin')) {
-			if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
+			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
 				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
 			} elseif (!empty($object->admin)) {
 				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');

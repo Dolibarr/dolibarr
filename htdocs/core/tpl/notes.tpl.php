@@ -60,7 +60,7 @@ if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES)) {
 
 // Special cases
 if ($module == 'propal') {
-	$permission = $user->rights->propale->creer;
+	$permission = $user->rights->propal->creer;
 } elseif ($module == 'supplier_proposal') {
 	$permission = $user->rights->supplier_proposal->creer;
 } elseif ($module == 'fichinter') {
@@ -91,20 +91,22 @@ if ($module == 'propal') {
 	$permission = $user->rights->produit->creer;
 } elseif ($module == 'ecmfiles') {
 	$permission = $user->rights->ecm->setup;
+} elseif ($module == 'user') {
+	$permission = $user->hasRight("user", "self", "write");
 }
 //else dol_print_error('','Bad value '.$module.' for param module');
 
-if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
+if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
 	$typeofdata = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
 } else {
 	$typeofdata = 'textarea:12:95%';
 }
-if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC)) {
+if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC)) {
 	$typeofdatapub = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
 } else {
 	$typeofdatapub = 'textarea:12:95%';
 }
-if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE)) {
+if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE)) {
 	$typeofdatapriv = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
 } else {
 	$typeofdatapriv = 'textarea:12:95%';

@@ -28,13 +28,10 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
-// Needed for create other object with workflow
+// Needed to create other objects with workflow
 /*if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }*/
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 // Do not check anti CSRF attack test
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
@@ -60,7 +57,7 @@ $action = GETPOST('action', 'aZ09');
 
 $signature = GETPOST('signaturebase64');
 $ref = GETPOST('ref', 'aZ09');
-$mode = GETPOST('mode', 'aZ09');
+$mode = GETPOST('mode', 'aZ09');	// 'proposal', ...
 $SECUREKEY = GETPOST("securekey"); // Secure key
 
 $error = 0;
@@ -74,10 +71,8 @@ if ($type == 'proposal') {
 	$securekeyseed = getDolGlobalString('PROPOSAL_ONLINE_SIGNATURE_SECURITY_TOKEN');
 }
 
-if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref.(empty($conf->multicompany->enabled) ? '' : $entity), $SECUREKEY, '0')) {
-	http_response_code(403);
-	print 'Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref);
-	exit(-1);
+if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref.(!isModEnabled('multicompany') ? '' : $entity), $SECUREKEY, '0')) {
+	httponly_accessforbidden('Bad value for securitykey. Value provided '.dol_escape_htmltag($SECUREKEY).' does not match expected value for ref='.dol_escape_htmltag($ref), 403);
 }
 
 
@@ -91,6 +86,8 @@ if (empty($SECUREKEY) || !dol_verifyHash($securekeyseed.$type.$ref.(empty($conf-
 /*
  * View
  */
+
+top_httphead();
 
 if ($action == "importSignature") {
 	if (!empty($signature) && $signature[0] == "image/png;base64") {
@@ -226,6 +223,182 @@ if ($action == "importSignature") {
 					$db->rollback();
 					$error++;
 					$response = "error sql";
+				}
+			}
+		} elseif ($mode == 'contract') {
+			require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+			$object = new Contrat($db);
+			$object->fetch(0, $ref);
+
+			$upload_dir = !empty($conf->contrat->multidir_output[$object->entity])?$conf->contrat->multidir_output[$object->entity]:$conf->contrat->dir_output;
+			$upload_dir .= '/'.dol_sanitizeFileName($object->ref).'/';
+
+			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
+			$filename = "signatures/".$date."_signature.png";
+			if (!is_dir($upload_dir."signatures/")) {
+				if (!dol_mkdir($upload_dir."signatures/")) {
+					$response ="Error mkdir. Failed to create dir ".$upload_dir."signatures/";
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$return = file_put_contents($upload_dir.$filename, $data);
+				if ($return == false) {
+					$error++;
+					$response = 'Error file_put_content: failed to create signature file.';
+				}
+			}
+
+			if (!$error) {
+				// Defined modele of doc
+				$last_main_doc_file = $object->last_main_doc;
+				$directdownloadlink = $object->getLastMainDocLink('contrat');	// url to download the $object->last_main_doc
+				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
+					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
+					$newpdffilename = $upload_dir.$ref."_signed-".$date.".pdf";
+					$sourcefile = $upload_dir.$ref.".pdf";
+
+					if (dol_is_file($sourcefile)) {
+						// We build the new PDF
+						$pdf = pdf_getInstance();
+						if (class_exists('TCPDF')) {
+							$pdf->setPrintHeader(false);
+							$pdf->setPrintFooter(false);
+						}
+						$pdf->SetFont(pdf_getPDFFont($langs));
+
+						if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+							$pdf->SetCompression(false);
+						}
+
+
+						//$pdf->Open();
+						$pagecount = $pdf->setSourceFile($sourcefile);		// original PDF
+						$s = array(); 	// Array with size of each page. Exemple array(w'=>210, 'h'=>297);
+						for ($i=1; $i<($pagecount+1); $i++) {
+							try {
+								$tppl = $pdf->importPage($i);
+								$s = $pdf->getTemplatesize($tppl);
+								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+								$pdf->useTemplate($tppl);
+							} catch (Exception $e) {
+								dol_syslog("Error when manipulating some PDF by onlineSign: ".$e->getMessage(), LOG_ERR);
+								$response = $e->getMessage();
+								$error++;
+							}
+						}
+
+						// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+						// TODO Get position of box from PDF template
+						$xforimgstart = 5;
+						$yforimgstart = (empty($s['h']) ? 240 : $s['h'] - 65);
+						$wforimg = $s['w']/2 - $xforimgstart;
+
+						$pdf->Image($upload_dir.$filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
+						//$pdf->Close();
+						$pdf->Output($newpdffilename, "F");
+
+						// Index the new file and update the last_main_doc property of object.
+						$object->indexFile($newpdffilename, 1);
+					}
+					if (!$error) {
+						$response = "success";
+					}
+				} elseif (preg_match('/\.odt/i', $last_main_doc_file)) {
+					// Adding signature on .ODT not yet supported
+					// TODO
+				} else {
+					// Document format not supported to insert online signature.
+					// We should just create an image file with the signature.
+				}
+			}
+		} elseif ($mode == 'fichinter') {
+			require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+			$object = new Fichinter($db);
+			$object->fetch(0, $ref);
+
+			$upload_dir = !empty($conf->ficheinter->multidir_output[$object->entity])?$conf->ficheinter->multidir_output[$object->entity]:$conf->ficheinter->dir_output;
+			$upload_dir .= '/'.dol_sanitizeFileName($object->ref).'/';
+			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
+			$filename = "signatures/".$date."_signature.png";
+			if (!is_dir($upload_dir."signatures/")) {
+				if (!dol_mkdir($upload_dir."signatures/")) {
+					$response ="Error mkdir. Failed to create dir ".$upload_dir."signatures/";
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$return = file_put_contents($upload_dir.$filename, $data);
+				if ($return == false) {
+					$error++;
+					$response = 'Error file_put_content: failed to create signature file.';
+				}
+			}
+
+			if (!$error) {
+				// Defined modele of doc
+				$last_main_doc_file = $object->last_main_doc;
+				$directdownloadlink = $object->getLastMainDocLink('fichinter');	// url to download the $object->last_main_doc
+				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
+					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
+					$newpdffilename = $upload_dir.$ref."_signed-".$date.".pdf";
+					$sourcefile = $upload_dir.$ref.".pdf";
+
+					if (dol_is_file($sourcefile)) {
+						// We build the new PDF
+						$pdf = pdf_getInstance();
+						if (class_exists('TCPDF')) {
+							$pdf->setPrintHeader(false);
+							$pdf->setPrintFooter(false);
+						}
+						$pdf->SetFont(pdf_getPDFFont($langs));
+
+						if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+							$pdf->SetCompression(false);
+						}
+
+
+						//$pdf->Open();
+						$pagecount = $pdf->setSourceFile($sourcefile);		// original PDF
+						$s = array(); 	// Array with size of each page. Exemple array(w'=>210, 'h'=>297);
+						for ($i=1; $i<($pagecount+1); $i++) {
+							try {
+								$tppl = $pdf->importPage($i);
+								$s = $pdf->getTemplatesize($tppl);
+								$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+								$pdf->useTemplate($tppl);
+							} catch (Exception $e) {
+								dol_syslog("Error when manipulating some PDF by onlineSign: ".$e->getMessage(), LOG_ERR);
+								$response = $e->getMessage();
+								$error++;
+							}
+						}
+
+						// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
+						// TODO Get position of box from PDF template
+						$xforimgstart = 105;
+						$yforimgstart = (empty($s['h']) ? 250 : $s['h'] - 57);
+						$wforimg = $s['w']/1 - ($xforimgstart + 16);
+						$pdf->Image($upload_dir.$filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));
+						//$pdf->Close();
+						$pdf->Output($newpdffilename, "F");
+
+						// Index the new file and update the last_main_doc property of object.
+						$object->indexFile($newpdffilename, 1);
+					}
+					if (!$error) {
+						$response = "success";
+					}
+				} elseif (preg_match('/\.odt/i', $last_main_doc_file)) {
+					// Adding signature on .ODT not yet supported
+					// TODO
+				} else {
+					// Document format not supported to insert online signature.
+					// We should just create an image file with the signature.
 				}
 			}
 		}

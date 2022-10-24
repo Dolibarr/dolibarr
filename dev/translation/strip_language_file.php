@@ -303,8 +303,8 @@ foreach ($filesToProcess as $fileToProcess) {
 
 			// String exists in both files and value into alternative language differs from main language but also from english files
 			// so we keep it.
-			if ((! empty($aSecondary[$key]) && $aSecondary[$key] != $aPrimary[$key]
-				&& ! empty($aEnglish[$key]) && $aSecondary[$key] != $aEnglish[$key])
+			if ((!empty($aSecondary[$key]) && $aSecondary[$key] != $aPrimary[$key]
+				&& !empty($aEnglish[$key]) && $aSecondary[$key] != $aEnglish[$key])
 				|| in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/', $key) || preg_match('/^FormatHour/', $key)
 				) {
 				//print "Key $key differs (aSecondary=".$aSecondary[$key].", aPrimary=".$aPrimary[$key].", aEnglish=".$aEnglish[$key].") so we add it into new secondary language (line: $cnt).\n";

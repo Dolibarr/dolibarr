@@ -40,10 +40,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 
@@ -297,7 +297,7 @@ class FactureFournisseur extends CommonInvoice
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>130),
 		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
 		'fk_facture_source' =>array('type'=>'integer', 'label'=>'Fk facture source', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>145),
+		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>145),
 		'fk_account' =>array('type'=>'integer', 'label'=>'Account', 'enabled'=>'$conf->banque->enabled', 'visible'=>-1, 'position'=>150),
 		'fk_cond_reglement' =>array('type'=>'integer', 'label'=>'PaymentTerm', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
 		'fk_mode_reglement' =>array('type'=>'integer', 'label'=>'PaymentMode', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
@@ -433,7 +433,7 @@ class FactureFournisseur extends CommonInvoice
 			$result = $_facrec->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0); // This load $_facrec->linkedObjectsIds
 
 			// Define some dates
-			if (! empty($_facrec->frequency)) {
+			if (!empty($_facrec->frequency)) {
 				$originaldatewhen = $_facrec->date_when;
 				$nextdatewhen = dol_time_plus_duree($originaldatewhen, $_facrec->frequency, $_facrec->unit_frequency);
 				$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');
@@ -464,7 +464,7 @@ class FactureFournisseur extends CommonInvoice
 			if (! $this->type) {
 				$this->type = self::TYPE_STANDARD;
 			}
-			if (! empty(GETPOST('ref_supplier'))) {
+			if (!empty(GETPOST('ref_supplier'))) {
 				$this->ref_supplier = trim($this->ref_supplier);
 			} else {
 				$this->ref_supplier = trim($this->ref_supplier . '_' . ($_facrec->nb_gen_done + 1));
@@ -504,13 +504,13 @@ class FactureFournisseur extends CommonInvoice
 			$outputlangs = $langs;
 			$newlang = '';
 
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->thirdparty->default_lang)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->thirdparty->default_lang)) {
 				$newlang = $this->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->default_lang)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->default_lang)) {
 				$newlang = $this->default_lang; // for thirdparty
 			}
-			if (! empty($newlang)) {
+			if (!empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
 			}
@@ -540,7 +540,7 @@ class FactureFournisseur extends CommonInvoice
 		}
 
 		// Define due date if not already defined
-		if (! empty($forceduedate)) {
+		if (!empty($forceduedate)) {
 			$this->date_echeance = $forceduedate;
 		}
 
@@ -760,9 +760,9 @@ class FactureFournisseur extends CommonInvoice
 						// If margin module defined on costprice, we try the costprice
 						// If not defined or if module margin defined and pmp and stock module enabled, we try pmp price
 						// else we get the best supplier price
-						if ($conf->global->MARGIN_TYPE == 'costprice' && ! empty($producttmp->cost_price)) {
+						if ($conf->global->MARGIN_TYPE == 'costprice' && !empty($producttmp->cost_price)) {
 							$buyprice = $producttmp->cost_price;
-						} elseif (! empty($conf->stock->enabled) && ($conf->global->MARGIN_TYPE == 'costprice' || $conf->global->MARGIN_TYPE == 'pmp') && ! empty($producttmp->pmp)) {
+						} elseif (isModEnabled('stock') && ($conf->global->MARGIN_TYPE == 'costprice' || $conf->global->MARGIN_TYPE == 'pmp') && !empty($producttmp->pmp)) {
 							$buyprice = $producttmp->pmp;
 						} else {
 							if ($producttmp->find_min_price_product_fournisseur($_facrec->lines[$i]->fk_product) > 0) {
@@ -1812,7 +1812,7 @@ class FactureFournisseur extends CommonInvoice
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			// Si on incrémente le produit principal et ses composants à la validation de facture fournisseur
-			if (!$error && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
+			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
@@ -1943,7 +1943,7 @@ class FactureFournisseur extends CommonInvoice
 			}
 
 			// Si on incremente le produit principal et ses composants a la validation de facture fournisseur, on decremente
-			if ($result >= 0 && !empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
+			if ($result >= 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
@@ -2125,7 +2125,7 @@ class FactureFournisseur extends CommonInvoice
 				$product_type = $type;
 			}
 
-			if (!empty($conf->multicurrency->enabled) && $pu_devise > 0) {
+			if (isModEnabled("multicurrency") && $pu_devise > 0) {
 				$pu = 0;
 			}
 
@@ -3060,7 +3060,7 @@ class FactureFournisseur extends CommonInvoice
 		// Clear fields
 		$object->ref_supplier       = (empty($this->ref_supplier) ? $langs->trans("CopyOf").' '.$object->ref_supplier : $this->ref_supplier);
 		$object->author             = $user->id;
-		$object->user_valid         = '';
+		$object->user_valid         = 0;
 		$object->fk_facture_source  = 0;
 		$object->date_creation      = '';
 		$object->date_validation    = '';
@@ -3861,7 +3861,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".price2num($this->remise_percent).",";
-		$sql .= ' '.(! empty($this->fk_remise_except) ? ((int) $this->fk_remise_except) : "null").',';
+		$sql .= ' '.(!empty($this->fk_remise_except) ? ((int) $this->fk_remise_except) : "null").',';
 		$sql .= " ".price2num($this->subprice).",";
 		$sql .= " ".(!empty($this->qty) ?price2num($this->total_ttc / $this->qty) : price2num($this->total_ttc)).",";
 		$sql .= " ".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null").",";

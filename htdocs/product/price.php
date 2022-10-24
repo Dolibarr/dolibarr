@@ -34,6 +34,7 @@
  * \brief Page to show product prices
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -887,7 +888,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 		$soc->fetch($socid);
 
 		// Type
-		if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+		if (isModEnabled("product") && isModEnabled("service")) {
 			$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 			print '<tr><td class="">';
 			print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
@@ -971,7 +972,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 	} else {
 		if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {  // using this option is a bug. kept for backward compatibility
 			// Type
-			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
@@ -986,7 +987,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 			print '</tr>';
 		} else {
 			// Type
-			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
@@ -1187,21 +1188,29 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 	print '</td></tr>';
 
 	// Price
-	print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
+	print '<tr class="field_selling_price"><td>'.$langs->trans("SellingPrice").'</td><td>';
 	if ($object->price_base_type == 'TTC') {
 		print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
 	} else {
 		print price($object->price).' '.$langs->trans($object->price_base_type);
+		if (!empty($conf->global->PRODUCT_DISPLAY_VAT_INCL_PRICES) && !empty($object->price_ttc)) {
+			print '<i class="opacitymedium"> - ' . price($object->price_ttc).' '.$langs->trans('TTC') . '</i>';
+		}
 	}
+
 	print '</td></tr>';
 
 	// Price minimum
-	print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
+	print '<tr class="field_min_price"><td>'.$langs->trans("MinPrice").'</td><td>';
 	if ($object->price_base_type == 'TTC') {
 		print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
 	} else {
 		print price($object->price_min).' '.$langs->trans($object->price_base_type);
+		if (!empty($conf->global->PRODUCT_DISPLAY_VAT_INCL_PRICES) && !empty($object->price_min_ttc)) {
+			print '<i class="opacitymedium"> - ' . price($object->price_min_ttc).' '.$langs->trans('TTC') . '</i>';
+		}
 	}
+
 	print '</td></tr>';
 
 	// Price by quantity
@@ -2213,10 +2222,10 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		// Count total nb of records
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-			$nbtotalofrecords = $prodcustprice->fetch_all($sortorder, $sortfield, 0, 0, $filter);
+			$nbtotalofrecords = $prodcustprice->fetchAll($sortorder, $sortfield, 0, 0, $filter);
 		}
 
-		$result = $prodcustprice->fetch_all($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
+		$result = $prodcustprice->fetchAll($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}

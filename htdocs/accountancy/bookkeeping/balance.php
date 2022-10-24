@@ -24,6 +24,7 @@
  *  \brief 		Balance of book keeping
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Class
@@ -149,7 +150,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 

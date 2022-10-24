@@ -25,6 +25,7 @@
 
 if (! defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
@@ -230,7 +231,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	// Label
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth100" maxlength="32" value="'.$ecmdir->label.'" autofocus></td></tr>'."\n";
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth100" maxlength="32" value="'.(GETPOST("label", 'alpha') ? GETPOST("label", 'alpha') : $ecmdir->label).'" autofocus></td></tr>'."\n";
 
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 	print $formecm->selectAllSections((GETPOST("catParent", 'alpha') ? GETPOST("catParent", 'alpha') : $ecmdir->fk_parent), 'catParent', $module);
@@ -282,11 +283,10 @@ if (empty($action) || $action == 'delete_section') {
 
 	// Actions buttons
 	print '<div class="tabsAction">';
-	if ($user->rights->ecm->setup) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_section&token='.newToken().'">'.$langs->trans('Delete').'</a>';
-	} else {
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
-	}
+
+	// Delete
+	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->ecm->setup);
+
 	print '</div>';
 }
 

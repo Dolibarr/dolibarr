@@ -361,11 +361,14 @@ if ($managedfor == 'member') {
 	if ($search_filter == 'withoutsubscription') {
 		$sql .= " AND (d.datefin IS NULL)";
 	}
+	if ($search_filter == 'waitingsubscription') {
+		$sql .= " AND (d.datefin IS NULL AND t.subscription = '1')";
+	}
 	if ($search_filter == 'uptodate') {
-		$sql .= " AND (d.datefin >= '".$db->idate($now)."' OR dty.subscription = 0)";
+		$sql .= " AND (d.datefin >= '".$db->idate($now)."' OR dty.subscription = '0')";
 	}
 	if ($search_filter == 'outofdate') {
-		$sql .= " AND (d.datefin < '".$db->idate($now)."' AND dty.subscription = 1)";
+		$sql .= " AND (d.datefin < '".$db->idate($now)."' AND dty.subscription = '1')";
 	}
 }
 if ($search_all) {
@@ -385,7 +388,7 @@ foreach($object->fields as $key => $val) {
 	$sql .= "t.".$db->escape($key).", ";
 }
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
 	}
@@ -401,7 +404,7 @@ $sql=preg_replace('/,\s*$/','', $sql);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -682,7 +685,7 @@ print '</tr>'."\n";
 $needToFetchEachLine = 0;
 if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
-		if (preg_match('/\$object/', $val)) {
+		if ($val && preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
 		}
 	}

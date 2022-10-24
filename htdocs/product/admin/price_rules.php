@@ -19,6 +19,7 @@
  * This page is a tab in the setup of module Product if option PRODUIT_MULTIPRICES_ALLOW_AUTOCALC_PRICELEVEL is set.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';

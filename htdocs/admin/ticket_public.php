@@ -22,6 +22,7 @@
  *     \brief       Page to public interface of module Ticket
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
@@ -234,11 +235,9 @@ $head = ticketAdminPrepareHead();
 
 print dol_get_fiche_head($head, 'public', $langs->trans("Module56000Name"), -1, "ticket");
 
-print '<span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span> : <a class="wordbreak" href="'.DOL_URL_ROOT.'/public/ticket/index.php?entity='.$conf->entity.'" target="_blank" rel="noopener noreferrer">'.dol_buildpath('/public/ticket/index.php?entity='.$conf->entity, 2).'</a>';
-
-print dol_get_fiche_end();
-
 $param = '';
+
+print '<br>';
 
 $enabledisablehtml = $langs->trans("TicketsActivatePublicInterface").' ';
 if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
@@ -255,9 +254,30 @@ if (empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 print $enabledisablehtml;
 print '<input type="hidden" id="TICKET_ENABLE_PUBLIC_INTERFACE" name="TICKET_ENABLE_PUBLIC_INTERFACE" value="'.(empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ? 0 : 1).'">';
 
-print '<br><br>';
+print dol_get_fiche_end();
+
+
 
 if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
+	print '<br>';
+
+
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	print '<span class="opacitymedium">'.$langs->trans("TicketPublicAccess").'</span> :<br>';
+	print '<div class="urllink">';
+	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/ticket/index.php?entity='.$conf->entity.'">';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/ticket/index.php?entity='.$conf->entity.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	print '</div>';
+	print ajax_autoselect('publicurlmember');
+
+
+	print '<br><br>';
+
+
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setvar">';
@@ -385,10 +405,10 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	}
 
 	// Interface topic
-	$url_interface = $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC;
+	$url_interface = getDolGlobalString("TICKET_PUBLIC_INTERFACE_TOPIC");
 	print '<tr><td>'.$langs->trans("TicketPublicInterfaceTopicLabelAdmin").'</label>';
 	print '</td><td>';
-	print '<input type="text"   name="TICKET_PUBLIC_INTERFACE_TOPIC" value="'.$conf->global->TICKET_PUBLIC_INTERFACE_TOPIC.'" size="40" ></td>';
+	print '<input type="text"   name="TICKET_PUBLIC_INTERFACE_TOPIC" value="'.$url_interface.'" size="40" ></td>';
 	print '</td>';
 	print '<td class="center width75">';
 	print $form->textwithpicto('', $langs->trans("TicketPublicInterfaceTopicHelp"), 1, 'help');
@@ -407,7 +427,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '</td></tr>';
 
 	// Text to help to enter a ticket
-	$public_text_help_message = $conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE ? $conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE : $langs->trans('TicketPublicPleaseBeAccuratelyDescribe');
+	$public_text_help_message = getDolGlobalString("TICKET_PUBLIC_TEXT_HELP_MESSAGE", $langs->trans('TicketPublicPleaseBeAccuratelyDescribe'));
 	print '<tr><td>'.$langs->trans("TicketPublicInterfaceTextHelpMessageLabelAdmin").'</label>';
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -419,10 +439,10 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '</td></tr>';
 
 	// Url public interface
-	$url_interface = $conf->global->TICKET_URL_PUBLIC_INTERFACE;
+	$url_interface = getDolGlobalString("TICKET_URL_PUBLIC_INTERFACE");
 	print '<tr><td>'.$langs->trans("TicketUrlPublicInterfaceLabelAdmin").'</label>';
 	print '</td><td>';
-	print '<input type="text" class="minwidth500" name="TICKET_URL_PUBLIC_INTERFACE" value="'.$conf->global->TICKET_URL_PUBLIC_INTERFACE.'"></td>';
+	print '<input type="text" class="minwidth500" name="TICKET_URL_PUBLIC_INTERFACE" value="'.$url_interface.'"></td>';
 	print '</td>';
 	print '<td class="center">';
 	print $form->textwithpicto('', $langs->trans("TicketUrlPublicInterfaceHelpAdmin"), 1, 'help');
@@ -452,7 +472,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '</tr>';
 
 	// Text of email after creatio of a ticket
-	$mail_mesg_new = $conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->trans('TicketNewEmailBody');
+	$mail_mesg_new = getDolGlobalString("TICKET_MESSAGE_MAIL_NEW", $langs->trans('TicketNewEmailBody'));
 	print '<tr><td>';
 	print $form->textwithpicto($langs->trans("TicketNewEmailBodyLabel"), $langs->trans("TicketNewEmailBodyHelp"), 1, 'help');
 	print '</label>';
@@ -472,7 +492,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 		print ajax_constantonoff('TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED", $arrval, $conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED);
+		print $form->selectarray("TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED", $arrval, getDolGlobalString("TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED"));
 	}
 	print '</td>';
 	print '</tr>';
@@ -481,7 +501,7 @@ if (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE)) {
 	print '<tr><td>';
 	print $form->textwithpicto($langs->trans("TicketPublicNotificationNewMessageDefaultEmail"), $langs->trans("TicketPublicNotificationNewMessageDefaultEmailHelp"), 1, 'help');
 	print '</td><td>';
-	print '<input type="text" name="TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL" value="'.$conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL.'" size="40" ></td>';
+	print '<input type="text" name="TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL" value="'.getDolGlobalString("TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL").'" size="40" ></td>';
 	print '</td>';
 	print '</tr>';
 

@@ -198,15 +198,15 @@ if ($action=='downfield' || $action=='upfield')
 	}
 }
 */
-if ($action == 'builddoc') {
-	// Build import file
-	$result = $objimport->build_file($user, GETPOST('model', 'alpha'), $datatoimport, $array_match_file_to_database);
-	if ($result < 0) {
-		setEventMessages($objimport->error, $objimport->errors, 'errors');
-	} else {
-		setEventMessages($langs->trans("FileSuccessfullyBuilt"), null, 'mesgs');
-	}
-}
+// if ($action == 'builddoc') {
+// 	// Build import file
+// 	$result = $objimport->build_file($user, GETPOST('model', 'alpha'), $datatoimport, $array_match_file_to_database);
+// 	if ($result < 0) {
+// 		setEventMessages($objimport->error, $objimport->errors, 'errors');
+// 	} else {
+// 		setEventMessages($langs->trans("FileSuccessfullyBuilt"), null, 'mesgs');
+// 	}
+// }
 
 if ($action == 'deleteprof') {
 	if (GETPOST("id", 'int')) {
@@ -1587,7 +1587,7 @@ if ($step == 5 && $datatoimport) {
 		$param .= '&updatekeys[]='.implode('&updatekeys[]=', $updatekeys);
 	}
 
-	llxHeader('', $langs->trans("NewImport"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+	llxHeader('', $langs->trans("NewImport"), $help_url);
 
 	$head = import_prepare_head($param, 5);
 
@@ -1821,7 +1821,7 @@ if ($step == 5 && $datatoimport) {
 
 		// Actions
 		print '<div class="center">';
-		if ($user->rights->import->run) {
+		if ($user->hasRight('import', 'run')) {
 			print '<input type="submit" class="butAction" value="'.$langs->trans("RunSimulateImportFile").'">';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
@@ -1858,7 +1858,7 @@ if ($step == 5 && $datatoimport) {
 				//dol_syslog("line ".$sourcelinenb.' - '.$nboflines.' - '.$excludefirstline.' - '.$endatlinenb);
 				$arrayrecord = $obj->import_read_record();
 				if ($arrayrecord === false) {
-					$arrayofwarnings[$sourcelinenb][0] = array('lib'=>'File has '.$nboflines.' lines. However we reach end of file after record '.$sourcelinenb.'. This may occurs when some records are split onto several lines. Ensure the complete string is delimited correctly when there is a separator character in the text string.', 'type'=>'EOF_RECORD_ON_SEVERAL_LINES');
+					$arrayofwarnings[$sourcelinenb][0] = array('lib'=>'File has '.$nboflines.' lines. However we reach the end of file or an empty line at record '.$sourcelinenb.'. This may occurs when some records are split onto several lines and not correctly delimited by the "Char delimiter", or if there is line with no data on all fields.', 'type'=>'EOF_RECORD_ON_SEVERAL_LINES');
 					$endoffile++;
 					continue;
 				}
@@ -1911,8 +1911,8 @@ if ($step == 5 && $datatoimport) {
 			print '<br>';
 			print '<div class="info">';
 			print '<div class=""><b>'.$langs->trans("ResultOfSimulationNoError").'</b></div>';
-			print $langs->trans("NbInsert", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
-			print $langs->trans("NbUpdate", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br>';
+			print $langs->trans("NbInsertSim", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
+			print $langs->trans("NbUpdateSim", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br>';
 			print '</div>';
 			print '<br>';
 		} else {
@@ -1977,7 +1977,7 @@ if ($step == 5 && $datatoimport) {
 
 		// Actions
 		print '<div class="center">';
-		if ($user->rights->import->run) {
+		if ($user->hasRight('import', 'run')) {
 			if (empty($nboferrors)) {
 				print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=6&importid='.$importid.$param.'">'.$langs->trans("RunImportFile").'</a>';
 			} else {
@@ -2053,7 +2053,7 @@ if ($step == 6 && $datatoimport) {
 		$param .= '&enclosure='.urlencode($enclosure);
 	}
 
-	llxHeader('', $langs->trans("NewImport"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+	llxHeader('', $langs->trans("NewImport"), $help_url);
 
 	$head = import_prepare_head($param, 6);
 
@@ -2243,7 +2243,7 @@ if ($step == 6 && $datatoimport) {
 			$sourcelinenb++;
 			$arrayrecord = $obj->import_read_record();
 			if ($arrayrecord === false) {
-				$arrayofwarnings[$sourcelinenb][0] = array('lib'=>'File has '.$nboflines.' lines. However we reach end of file after record '.$sourcelinenb.'. This may occurs when some records are split onto several lines.', 'type'=>'EOF_RECORD_ON_SEVERAL_LINES');
+				$arrayofwarnings[$sourcelinenb][0] = array('lib'=>'File has '.$nboflines.' lines. However we reach the end of file or an empty line at record '.$sourcelinenb.'. This may occurs when some records are split onto several lines and not correctly delimited by the "Char delimiter", or if there is line with no data on all fields.', 'type'=>'EOF_RECORD_ON_SEVERAL_LINES');
 				$endoffile++;
 				continue;
 			}

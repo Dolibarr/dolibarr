@@ -239,7 +239,6 @@ class modFacture extends DolibarrModules
 		$this->import_fields_array[$r] = array(
 			'f.ref' => 'InvoiceRef*',
 			'f.ref_ext' => 'ExternalRef',
-			'f.ref_int' => 'ExternalRef',
 			'f.ref_client' => 'CustomerRef',
 			'f.type' => 'Type*',
 			'f.fk_soc' => 'Customer*',
@@ -268,7 +267,7 @@ class modFacture extends DolibarrModules
 			'f.note_private' => 'NotePrivate',
 			'f.model_pdf' => 'Model'
 		);
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->import_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->import_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
 			$this->import_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -293,7 +292,6 @@ class modFacture extends DolibarrModules
 		$import_sample = array(
 			'f.ref' => '(PROV0001)',
 			'f.ref_ext' => '',
-			'f.ref_int' => '',
 			'f.ref_client' => '',
 			'f.type' => '0',
 			'f.fk_soc' => '80LIMIT',
@@ -400,7 +398,7 @@ class modFacture extends DolibarrModules
 			// fk_user_modif
 			// ref_ext
 		);
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->import_fields_array[$r]['fd.multicurrency_code'] = 'Currency';
 			$this->import_fields_array[$r]['fd.multicurrency_subprice'] = 'CurrencyRate';
 			$this->import_fields_array[$r]['fd.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -519,7 +517,7 @@ class modFacture extends DolibarrModules
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic"
 		);
 		// Add multicurrency fields
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
 			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -539,7 +537,7 @@ class modFacture extends DolibarrModules
 		// Add multicompany field
 		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
 			$nbofallowedentities = count(explode(',', getEntity('invoice')));
-			if (!empty($conf->multicompany->enabled) && $nbofallowedentities > 1) {
+			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
 				$this->export_fields_array[$r]['f.entity'] = 'Entity';
 			}
 		}
@@ -548,7 +546,8 @@ class modFacture extends DolibarrModules
 			'fd.subprice'=>"LineUnitPrice", 'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.total_ht'=>"LineTotalHT", 'fd.total_tva'=>"LineTotalVAT",
 			'fd.total_ttc'=>"LineTotalTTC", 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
 			'fd.product_type'=>"TypeOfLineServiceOrProduct", 'fd.fk_product'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel',
-			$alias_product_perentity . '.accountancy_code_sell'=>'ProductAccountancySellCode'
+			$alias_product_perentity . '.accountancy_code_sell'=>'ProductAccountancySellCode',
+			'aa.account_number' => 'AccountingAffectation'
 		);
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>'Numeric', 's.nom'=>'Text', 'ps.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 'cd.nom'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
@@ -557,14 +556,16 @@ class modFacture extends DolibarrModules
 			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date", 'f.fk_mode_reglement'=>'Numeric',
 			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Numeric', 'f.close_code'=>'Text', 'f.close_note'=>'Text',
 			'none.rest'=>"NumericCompute",
-			'f.note_private'=>"Text", 'f.note_public'=>"Text", 'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',
+			'f.note_private'=>"Text", 'f.note_public'=>"Text",
+			'f.module_source' => 'Text',
+			'f.pos_source' => 'Text',
+			'f.entity'=>'List:entity:label:rowid',
+			'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',
 			'pj.ref'=>'Text', 'pj.title'=>'Text', 'fd.rowid'=>'Numeric', 'fd.description'=>"Text", 'fd.subprice'=>"Numeric", 'fd.tva_tx'=>"Numeric",
 			'fd.qty'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_tva'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.date_start'=>"Date", 'fd.date_end'=>"Date",
 			'fd.special_code'=>'Numeric', 'fd.product_type'=>"Numeric", 'fd.fk_product'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text',
 			$alias_product_perentity . '.accountancy_code_sell'=>'Text',
-			'f.entity'=>'List:entity:label:rowid',
-			'f.module_source' => 'Text',
-			'f.pos_source' => 'Text'
+			'aa.account_number' => 'Text'
 		);
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.code_client'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'c.code'=>'company', 'cd.nom'=>'company', 's.phone'=>'company',
@@ -574,7 +575,8 @@ class modFacture extends DolibarrModules
 			'fd.subprice'=>"invoice_line", 'fd.total_ht'=>"invoice_line", 'fd.total_tva'=>"invoice_line", 'fd.total_ttc'=>"invoice_line", 'fd.tva_tx'=>"invoice_line",
 			'fd.qty'=>"invoice_line", 'fd.date_start'=>"invoice_line", 'fd.date_end'=>"invoice_line", 'fd.special_code'=>'invoice_line',
 			'fd.product_type'=>'invoice_line', 'fd.fk_product'=>'product', 'p.ref'=>'product', 'p.label'=>'product', $alias_product_perentity . '.accountancy_code_sell'=>'product',
-			'f.fk_user_author'=>'user', 'uc.login'=>'user', 'f.fk_user_valid'=>'user', 'uv.login'=>'user'
+			'f.fk_user_author'=>'user', 'uc.login'=>'user', 'f.fk_user_valid'=>'user', 'uv.login'=>'user',
+			'aa.account_number' => "invoice_line",
 		);
 		$this->export_special_array[$r] = array('none.rest'=>'getRemainToPay');
 		$this->export_dependencies_array[$r] = array('invoice_line'=>'fd.rowid', 'product'=>'fd.rowid', 'none.rest'=>array('f.rowid', 'f.total_ttc', 'f.close_code')); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
@@ -616,6 +618,7 @@ class modFacture extends DolibarrModules
 			$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_account as aa on fd.fk_code_ventilation = aa.rowid';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
 		if (empty($user->rights->societe->client->voir)) {
@@ -643,7 +646,7 @@ class modFacture extends DolibarrModules
 			'pt.code'=>'CodePaymentMode', 'pt.libelle'=>'LabelPaymentMode', 'p.note'=>'PaymentNote', 'p.fk_bank'=>'IdTransaction', 'ba.ref'=>'AccountRef'
 		);
 		$this->export_help_array[$r] = array('f.paye'=>'InvoicePaidCompletelyHelp');
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
 			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';

@@ -27,12 +27,13 @@
  *		\remarks	Nearly same file than fournisseur/paiement/card.php
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-if (isModEnabled('banque')) {
+if (isModEnabled("banque")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -119,8 +120,8 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 				$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
 			}
 
-			$hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
-			$hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
+			$hidedetails = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
+			$hidedesc = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
 			$hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
 
 			$sql = 'SELECT f.rowid as facid';
@@ -285,7 +286,7 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, '', 
 
 $disable_delete = 0;
 // Bank account
-if (isModEnabled('banque')) {
+if (isModEnabled("banque")) {
 	$bankline = new AccountLine($db);
 
 	if ($object->fk_account > 0) {
@@ -327,7 +328,7 @@ print '</td></tr>';
 */
 
 // Bank account
-if (isModEnabled('banque')) {
+if (isModEnabled("banque")) {
 	if ($object->fk_account > 0) {
 		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
@@ -519,13 +520,7 @@ if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 }
 
 if ($user->socid == 0 && $action == '') {
-	if ($user->rights->facture->paiement) {
-		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
-		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
-		}
-	}
+	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->rights->facture->paiement && !$disable_delete);
 }
 
 print '</div>';

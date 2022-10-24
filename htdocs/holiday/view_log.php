@@ -24,6 +24,7 @@
  *  \ingroup    holiday
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 // Security check (access forbidden for external user too)
@@ -74,11 +75,6 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-// Si l'utilisateur n'a pas le droit de lire cette page
-if (!$user->rights->holiday->readall) {
-	accessforbidden();
-}
-
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'other', 'holiday'));
 
@@ -92,12 +88,12 @@ $arrayfields = array();
 $arrayofmassactions = array();
 
 if (empty($conf->holiday->enabled)) {
-	llxHeader('', $langs->trans('CPTitreMenu'));
-	print '<div class="tabBar">';
-	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
-	print '</div>';
-	llxFooter();
-	exit();
+	accessforbidden('Module not enabled');
+}
+
+// Si l'utilisateur n'a pas le droit de lire cette page
+if (!$user->rights->holiday->readall) {
+	accessforbidden();
 }
 
 
@@ -287,7 +283,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=request', '', $user->rights->holiday->write);
+$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->rights->holiday->write);
 print_barre_liste($langs->trans('LogCP'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_hrm', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': ';

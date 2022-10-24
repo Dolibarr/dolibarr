@@ -24,6 +24,7 @@
  * \brief 		Page for accounting result
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
@@ -267,10 +268,10 @@ foreach ($months as $k => $v) {
 print	'</tr>';
 
 if ($modecompta == 'CREANCES-DETTES') {
-	//if (! empty($date_start) && ! empty($date_end))
+	//if (!empty($date_start) && !empty($date_end))
 	//	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 } elseif ($modecompta == "RECETTES-DEPENSES") {
-	//if (! empty($date_start) && ! empty($date_end))
+	//if (!empty($date_start) && !empty($date_end))
 	//	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 } elseif ($modecompta == "BOOKKEEPING") {
 	// Get array of all report groups that are active
@@ -280,9 +281,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	/*
 	$sql = 'SELECT DISTINCT t.numero_compte as nb FROM '.MAIN_DB_PREFIX.'accounting_bookkeeping as t, '.MAIN_DB_PREFIX.'accounting_account as aa';
 	$sql.= " WHERE t.numero_compte = aa.account_number AND aa.fk_accounting_category = 0";
-	if (! empty($date_start) && ! empty($date_end))
+	if (!empty($date_start) && !empty($date_end))
 		$sql.= " AND t.doc_date >= '".$db->idate($date_start)."' AND t.doc_date <= '".$db->idate($date_end)."'";
-	if (! empty($month)) {
+	if (!empty($month)) {
 		$sql .= " AND MONTH(t.doc_date) = " . ((int) $month);
 	}
 	$resql = $db->query($sql);

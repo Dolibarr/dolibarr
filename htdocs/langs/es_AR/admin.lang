@@ -252,7 +252,6 @@ UpdateServerOffline=Actualizar servidor fuera de línea
 WithCounter=Administrar un contador
 AddCRIfTooLong=No hay ajuste de texto automático. El texto que es demasiado largo no será mostrado en el documento.  Por favor agregar saltos de línea en el área de texto si es necesario.
 String=Cuerda
-InitEmptyBarCode=Init value for the %s empty barcodes
 Module30Name=Facturas
 Module40Desc=Gestión de proveedores y compras (órdenes de compra y facturas de proveedores)
 Module52Name=Inventarios(Stocks)

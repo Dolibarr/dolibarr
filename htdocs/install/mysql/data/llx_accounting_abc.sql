@@ -48,11 +48,11 @@
 
 INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('VT',  'ACCOUNTING_SELL_JOURNAL',          2, 1, 1);
 INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AC',  'ACCOUNTING_PURCHASE_JOURNAL',      3, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('BQ',  'FinanceJournal',                   4, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('BQ',  'ACCOUNTING_BANK_JOURNAL',          4, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('ER',  'ACCOUNTING_EXPENSEREPORT_JOURNAL', 5, 1, 1);
 INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('OD',  'ACCOUNTING_MISCELLANEOUS_JOURNAL', 1, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AN',  'ACCOUNTING_HAS_NEW_JOURNAL',       9, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('ER',  'ExpenseReportsJournal',            5, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'InventoryJournal',                 8, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AN',  'ACCOUNTING_HAS_NEW_JOURNAL',       9, 0, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'ACCOUNTING_INVENTORY_JOURNAL',     8, 0, 1);
 
 
 
@@ -183,3 +183,6 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- Description of chart of account Mexico SAT/24-2019
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 154, 'SAT/24-2019', 'Catalogo y codigo agrupador fiscal del 2019', 1);
+
+-- Description of chart of account Japan JPN-BASE
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 123, 'JPN-BASE', '日本 勘定科目表 基本版', 1);

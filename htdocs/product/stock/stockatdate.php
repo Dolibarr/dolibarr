@@ -26,6 +26,7 @@
  *  \brief      Page to list stocks at a given date
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -242,7 +243,7 @@ $num = 0;
 
 $title = $langs->trans('StockAtDate');
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price,';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price, p.pmp,';
 $sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 $sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock, ';
 if ($fk_warehouse > 0) {
@@ -487,7 +488,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$prod->fetch($objp->rowid);
 
 		// Multilangs
-		/*if (!empty($conf->global->MAIN_MULTILANGS))
+		/*if (getDolGlobalInt('MAIN_MULTILANGS'))
 		{
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_lang';
@@ -520,13 +521,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 
 		if ($mode == 'future') {
-			$prod->load_stock('warehouseopen, warehouseinternal', 0); // This call also ->load_virtual_stock()
-
-			//$result = $prod->load_stats_reception(0, '4');
-			//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
-			//print $prod->stats_reception['qty'];
-
-			$stock = '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
+			$prod->load_stock('warehouseopen, warehouseinternal', 0, $dateendofday);
+			$stock = $prod->stock_theorique;
+			$prod->load_stock('warehouseopen, warehouseinternal', 0);
 			$virtualstock = $prod->stock_theorique;
 		} else {
 			if ($fk_warehouse > 0) {
@@ -568,12 +565,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 			// PMP value
 			print '<td class="right">';
-			if (price2num($objp->estimatedvalue, 'MT')) {
-				print '<span class="amount">'.price(price2num($objp->estimatedvalue, 'MT'), 1).'</span>';
+			if (price2num($stock * $objp->pmp, 'MT')) {
+				print '<span class="amount">'.price(price2num($stock * $objp->pmp, 'MT'), 1).'</span>';
 			} else {
 				print '';
 			}
-			$totalbuyingprice += $objp->estimatedvalue;
+			$totalbuyingprice += $stock * $objp->pmp;
 			print '</td>';
 
 			// Selling value

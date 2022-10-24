@@ -46,7 +46,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
-	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 		$entity = 1;
 	}
 
@@ -122,7 +122,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 						print "DEBUG: User ".$usertotest." must change password<br>\n";
 					}
 					$ldap->unbind();
-					sleep(1);
+					sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
 					$langs->load('ldap');
 					$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("YouMustChangePassNextLogon", $usertotest, $ldap->domainFQDN);
 					return '';
@@ -228,7 +228,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 					unset($usertmp);
 				}
 
-				if (!empty($conf->multicompany->enabled)) {	// We must check entity (even if sync is not active)
+				if (isModEnabled('multicompany')) {	// We must check entity (even if sync is not active)
 					global $mc;
 
 					$usertmp = new User($db);
@@ -245,7 +245,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			}
 			if ($result == 1) {
 				dol_syslog("functions_ldap::check_user_password_ldap Authentication KO bad user/password for '".$usertotest."'", LOG_NOTICE);
-				sleep(1);
+				sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
 
 				// Load translation files required by the page
 				$langs->loadLangs(array('main', 'other'));
@@ -267,7 +267,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 				$ldap->ldapErrorText = ldap_error($ldap->connection);
 				dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);
 			}
-			sleep(1); // Anti brut force protection
+			sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
 
 			// Load translation files required by the page
 			$langs->loadLangs(array('main', 'other', 'errors'));
