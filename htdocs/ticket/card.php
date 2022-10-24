@@ -126,6 +126,8 @@ $permissiontoadd = $user->rights->ticket->write;
 
 $actionobject = new ActionsTicket($db);
 
+$upload_dir = $conf->ticket->dir_output;
+
 $now = dol_now();
 
 
@@ -682,7 +684,6 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
 
 	// Actions to build doc
-	$upload_dir = $conf->ticket->dir_output;
 	$permissiontoadd = $user->rights->ticket->write;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 	//var_dump($action);exit;
