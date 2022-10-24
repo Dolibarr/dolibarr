@@ -139,7 +139,11 @@ function fichinter_prepare_head($object)
  */
 function fichinter_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('fichinter');
+	$extrafields->fetch_name_optionals_label('fichinterdet');
 
 	$h = 0;
 	$head = array();
@@ -159,19 +163,25 @@ function fichinter_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinter_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['fichinter']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinterdet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$nbExtrafields = $extrafields->attributes['fichinterdet']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributesdet';
 	$h++;
 
-
-
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'fichinter_admin', 'remove');
 
-		return $head;
+	return $head;
 }
 
 /**
