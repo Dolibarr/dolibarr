@@ -49,6 +49,7 @@ $result = restrictedArea($user, 'bom|mrp');
 
 $staticbom = new BOM($db);
 $staticmo = new Mo($db);
+$realizableBom = new BOM($db);
 
 llxHeader('', $langs->trans("MRP"), '');
 
@@ -147,6 +148,71 @@ if ($conf->use_javascript_ajax) {
 
 print '<br>';
 
+$sql = "SELECT bom.rowid, bom.ref, bom.label ";
+$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom AS bom, ".MAIN_DB_PREFIX."bom_bomline AS blin, ";
+$sql .= MAIN_DB_PREFIX."entrepot AS entpt, ".MAIN_DB_PREFIX."product_stock AS stk";
+$sql .= " WHERE bom.rowid = blin.fk_bom";
+$sql .= " AND blin.fk_product = stk.fk_product";
+$sql .= " AND stk.fk_entrepot = entpt.rowid";
+$sql .= " AND entpt.statut = 1";
+$sql .= " AND bom.entity = ".getEntity('bom');
+$sql .= " AND bom.status = 1";
+$sql .= " AND bom.rowid NOT IN (";
+$sql .= " SELECT b.rowid";
+$sql .= " FROM ".MAIN_DB_PREFIX."bom_bom AS b";
+$sql .= " WHERE b.entity = ".getEntity('bom');
+$sql .= " AND b.rowid IN (";
+$sql .= " SELECT fk_bom";
+$sql .= " FROM ".MAIN_DB_PREFIX."bom_bomline AS bl";
+$sql .= " LEFT JOIN `llx_product_stock` AS st";
+$sql .= " ON";
+$sql .= " bl.fk_product = st.fk_product";
+$sql .= " WHERE st.fk_product IS NULL OR bl.qty > (";
+$sql .= " SELECT SUM(s.reel)";
+$sql .= " FROM ".MAIN_DB_PREFIX."product_stock AS s,";
+$sql .= " ".MAIN_DB_PREFIX."entrepot AS ent";
+$sql .= " WHERE s.fk_product = bl.fk_product";
+$sql .= " AND s.fk_entrepot = ent.rowid";
+$sql .= " AND ent.statut = 1";
+$sql .= " AND ent.entity =".getEntity('bom');
+$sql .= " )))";
+$sql .= " GROUP BY bom.rowid";
+$sql .= $db->order("bom.ref", "DESC");
+
+$resql = $db->query($sql);
+
+if ($resql) {
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<th colspan="2">'.$langs->trans("BomRealizable").'</th></tr>';
+
+	$num = $db->num_rows($resql);
+	if ($num) {
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+
+			$realizableBom->id = $obj->rowid;
+			$realizableBom->ref = $obj->ref;
+			$realizableBom->label = $obj->label;
+
+			print '<tr class="oddeven">';
+			print '<td>'.$realizableBom->getNomUrl(1, 32).'</td>';
+			print '<td class="center">'.$realizableBom->label.'</td>';
+			print '</tr>';
+			$i++;
+		}
+	} else {
+		print '<tr class="oddeven">';
+		print '<td><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
+		print '</tr>';
+	}
+	print "</table></div>";
+	print "<br>";
+} else {
+	dol_print_error($db);
+}
 
 print '</div><div class="fichetwothirdright">';
 
