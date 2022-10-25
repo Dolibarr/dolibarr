@@ -2441,18 +2441,15 @@ class Contrat extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-	 *  @param   null|array  $moreparams     Array to provide more information
-	 * 	@return     int         				0 if KO, 1 if OK
+	 *  @param   	null|array  $moreparams     Array to provide more information
+	 * 	@return     int         				< 0 if KO, 0 = no doc generated, > 0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		global $conf, $langs;
 
-		$langs->load("contracts");
-		$outputlangs->load("products");
-
 		if (!dol_strlen($modele)) {
-			$modele = 'strato';
+			$modele = '';	// No doc template/generation by default
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
@@ -2463,9 +2460,15 @@ class Contrat extends CommonObject
 			}
 		}
 
-		$modelpath = "core/modules/contract/doc/";
+		if (empty($modele)) {
+			return 0;
+		} else {
+			$langs->load("contracts");
+			$outputlangs->load("products");
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+			$modelpath = "core/modules/contract/doc/";
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		}
 	}
 
 	/**
@@ -2805,7 +2808,8 @@ class ContratLigne extends CommonObjectLine
 	public $table_element = 'contratdet';
 
 	/**
-	 * @var string Name to use for 'features' parameter to check module permissions with restrictedArea()
+	 * @var string 	Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().
+	 * 				Undefined means same value than $element. Can be use to force a check on another element for example for class of line, we mention here the parent element.
 	 */
 	public $element_for_permission = 'contrat';
 
@@ -3388,7 +3392,7 @@ class ContratLigne extends CommonObjectLine
 			}
 		}
 
-		// If we change a planned date (start or end), sync dates for all services
+		// If we change a planned date (start or end) of one contract line, sync dates for all other services too
 		if (!$error && !empty($conf->global->CONTRACT_SYNC_PLANNED_DATE_OF_SERVICES)) {
 			dol_syslog(get_class($this)."::update CONTRACT_SYNC_PLANNED_DATE_OF_SERVICES is on so we update date for all lines", LOG_DEBUG);
 

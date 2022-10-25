@@ -1747,7 +1747,8 @@ FCKeditorForNotePublic=Création/édition WYSIWIG du champ notes publiques des �
 FCKeditorForNotePrivate=Création/édition WYSIWIG du champ notes privées des éléments
 FCKeditorForCompany=Création/édition WYSIWIG de la description des éléments (autre que produits/services)
 FCKeditorForProduct=Création/édition WYSIWIG du champ description des produits/services
-FCKeditorForProductDetails=Création/édition WYSIWYG des lignes de détails produits sur tous les éléments (commandes, propales, factures, etc...). <span class="warning">Attention: L'utilisation pour ce cas est fortement déconseillée car peut créer des problèmes dans la gestion de caractères et mise en page des fichiers PDF générés.</span>
+FCKeditorForProductDetails=Création/édition WYSIWYG des lignes de détails produits sur tous les éléments (commandes, propales, factures, etc...).
+FCKeditorForProductDetails2=Attention: L'utilisation pour ce cas est fortement déconseillée car peut créer des problèmes dans la gestion de caractères et mise en page des fichiers PDF générés.
 FCKeditorForMailing= Création/édition WYSIWIG des emailings (Outils->Emailings)
 FCKeditorForUserSignature=Création/édition WYSIWIG de la signature des utilisateurs
 FCKeditorForMail=Création/édition WYSIWIG tous les emails (sauf Outils->Emailings)

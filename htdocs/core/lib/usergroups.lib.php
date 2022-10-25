@@ -157,7 +157,10 @@ function user_prepare_head(User $object)
 	if (empty($user->socid)) {
 		// Notes
 		$nbNote = 0;
-		if (!empty($object->note)) {
+		if (!empty($object->note_public)) {
+			$nbNote++;
+		}
+		if (!empty($object->note_private)) {
 			$nbNote++;
 		}
 		$head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;

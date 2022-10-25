@@ -160,7 +160,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 	}
 
 	if (is_object($object) && $object->id > 0) {
-		if ($backtopage) {
+		if (!empty($backtopage)) {
 			header('Location: '.$backtopage);
 			exit;
 		} else {

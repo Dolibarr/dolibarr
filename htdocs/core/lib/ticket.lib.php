@@ -567,7 +567,7 @@ function show_ticket_messaging($conf, $langs, $db, $filterobj, $objcon = '', $no
 		}
 	}
 
-	// Set $out to sow events
+	// Set $out to show events
 	$out = '';
 
 	if (!isModEnabled('agenda')) {

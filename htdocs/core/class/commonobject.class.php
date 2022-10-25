@@ -78,7 +78,7 @@ abstract class CommonObject
 	/**
 	 * @var array   To store error results of ->validateField()
 	 */
-	public $validateFieldsErrors = array();
+	private $validateFieldsErrors = array();
 
 	/**
 	 * @var string ID to identify managed object
@@ -86,7 +86,8 @@ abstract class CommonObject
 	public $element;
 
 	/**
-	 * @var string Name to use for 'features' parameter to check module permissions with restrictedArea(). Undefined means same value than $element.
+	 * @var string 	Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().
+	 * 				Undefined means same value than $element. Can be use to force a check on another element for example for class of line, we mention here the parent element.
 	 */
 	public $element_for_permission;
 
@@ -136,9 +137,9 @@ abstract class CommonObject
 	public $linkedObjects;
 
 	/**
-	 * @var boolean		Array of boolean with object id as key and value as true if linkedObjects full loaded. Loaded by ->fetchObjectLinked. Important for pdf generation time reduction.
+	 * @var boolean[]	Array of boolean with object id as key and value as true if linkedObjects full loaded for object id. Loaded by ->fetchObjectLinked. Important for pdf generation time reduction.
 	 */
-	public $linkedObjectsFullLoaded = array();
+	private $linkedObjectsFullLoaded = array();
 
 	/**
 	 * @var CommonObject To store a cloned copy of object before to edit it and keep track of old properties
@@ -5015,7 +5016,7 @@ abstract class CommonObject
 				}
 
 				$text .= ' - '.(!empty($line->label) ? $line->label : $label);
-				$description .= (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : (!empty($line->description) ? dol_htmlentitiesbr($line->description) : '')); // Description is what to show on popup. We shown nothing if already into desc.
+				$description .= (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : (!empty($line->description) ? dol_htmlentitiesbr($line->description) : '')); // Description is what to show on popup. We shown nothing if already into desc.
 			}
 
 			$line->pu_ttc = price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
@@ -5609,6 +5610,9 @@ abstract class CommonObject
 				$setsharekey = true;
 			}
 			if ($this->element == 'contrat' && !empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD)) {
+				$setsharekey = true;
+			}
+			if ($this->element == 'fichinter' && !empty($conf->global->FICHINTER_ALLOW_EXTERNAL_DOWNLOAD)) {
 				$setsharekey = true;
 			}
 			if ($this->element == 'supplier_proposal' && !empty($conf->global->SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) {
@@ -7831,7 +7835,7 @@ abstract class CommonObject
 	 * get field error message
 	 *
 	 * @param  string  $fieldKey            Key of attribute
-	 * @return string
+	 * @return string						Error message of validation ('' if no error)
 	 */
 	public function getFieldError($fieldKey)
 	{

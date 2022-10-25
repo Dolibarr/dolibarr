@@ -1255,9 +1255,10 @@ class Utils
 	 *	@param 	string	$message             Message
 	 *	@param 	string	$filename		     List of files to attach (full path of filename on file system)
 	 * 	@param 	string	$filter			     Filter file send
+	 * 	@param 	string	$sizelimit			 Limit size to send file
 	 *  @return	int						     0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '')
+	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '', $sizelimit = 100000000)
 	{
 		global $conf, $langs;
 
@@ -1315,9 +1316,13 @@ class Utils
 		}
 
 		if ($filepath) {
-			if ($filesize > 100000000) {
-				$output = 'Sorry, last backup file is too large to be send by email';
-				$error++;
+			if ($filesize > $sizelimit) {
+				$message .= '<br>'.$langs->trans("BackupIsTooLargeSend");
+				$documenturl =  $dolibarr_main_url_root.'/document.php?modulepart=systemtools&atachement=1&file=backup/'.urlencode($filename[0]);
+				$message .= '<br><a href='.$documenturl.'>Lien de téléchargement</a>';
+				$filepath = '';
+				$mimetype = '';
+				$filename = '';
 			}
 		} else {
 			$output = 'No backup file found';

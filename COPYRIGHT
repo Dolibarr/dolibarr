@@ -23,7 +23,6 @@ Licence of dependencies of third-party components used by Dolibarr (all compatib
 Component              Version       License                     GPL Compatible  Usage
 -------------------------------------------------------------------------------------
 PHP libraries:
-ADOdb-Date             0.36          Modified BSD License        Yes             Date convertion (not into rpm package)
 EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation
 Escpos-php             2.2           MIT License                 Yes             Thermal receipt printer library, for use with ESC/POS compatible printers
 GeoIP2                 0.2.0         Apache License 2.0          Yes             Lib to make geoip convert
