@@ -976,11 +976,10 @@ class MouvementStock extends CommonObject
 				if ($origin_type) {
 					// Separate originetype with "@" : left part is class name, right part is module name
 					$origin_type_array = explode('@', $origin_type);
-					$classname = strtolower($origin_type_array[0]);
-					$modulename = empty($origin_type_array[1]) ? $classname : $origin_type_array[1];
+					$classname = ucfirst($origin_type_array[0]);
+					$modulename = empty($origin_type_array[1]) ? strtolower($classname) : $origin_type_array[1];
 					$result = dol_include_once('/'.$modulename.'/class/'.strtolower($classname).'.class.php');
 					if ($result) {
-						$classname = ucfirst($classname);
 						$origin = new $classname($this->db);
 					}
 				}
