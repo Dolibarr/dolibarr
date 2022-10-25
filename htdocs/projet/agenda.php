@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/projet/info.php
+ *      \file       htdocs/projet/agenda.php
  *      \ingroup    project
  *		\brief      Page with events on project
  */

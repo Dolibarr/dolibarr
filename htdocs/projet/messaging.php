@@ -132,7 +132,7 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $object->title;
 // Thirdparty
 if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
 }
 $morehtmlref .= '</div>';
 
@@ -180,7 +180,7 @@ if (!empty($object->id)) {
 	$morehtmlcenter .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 2);
 
 	// Show link to change view in agenda
-	$messagingUrl = DOL_URL_ROOT.'/projet/info.php?id='.$object->id;
+	$messagingUrl = DOL_URL_ROOT.'/projet/agenda.php?id='.$object->id;
 	$morehtmlcenter .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1);
 
 

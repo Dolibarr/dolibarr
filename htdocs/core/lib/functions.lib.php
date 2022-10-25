@@ -11470,6 +11470,7 @@ function getActionCommEcmList($object)
 }
 
 
+
 /**
  *    	Show html area with actions in messaging format.
  *      Note: Global parameter $param must be defined.
@@ -11766,7 +11767,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 		}
 	}
 
-	// Set $out to sow events
+	// Set $out to show events
 	$out = '';
 
 	if (!isModEnabled('agenda')) {
