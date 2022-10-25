@@ -469,13 +469,14 @@ if ($action != 'edit' && $action != 'delete' && $action != 'deletefile') {
 	print '</div>';
 }
 
+
 // Confirm remove file
 if ($action == 'deletefile') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode(GETPOST("section", 'alpha')).'&urlfile='.urlencode(GETPOST("urlfile")).($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
 }
 
-// Confirm remove file
-if ($action == 'delete_dir') {
+// Confirm remove dir
+if ($action == 'delete' || $action == 'delete_dir') {
 	$relativepathwithoutslash = preg_replace('/[\/]$/', '', $relativepath);
 
 	//Form to close proposal (signed or not)

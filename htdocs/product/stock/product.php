@@ -761,7 +761,7 @@ if ($id > 0 || $ref) {
 
 			$found = 0;
 			$helpondiff = '<strong>'.$langs->trans("StockDiffPhysicTeoric").':</strong><br>';
-			// Number of customer orders running
+			// Number of sales orders running
 			if (isModEnabled('commande')) {
 				if ($found) {
 					$helpondiff .= '<br>';
@@ -776,7 +776,7 @@ if ($id > 0 || $ref) {
 				$helpondiff .= ' <span class="opacitymedium">('.$langs->trans("ProductQtyInDraft").': '.$object->stats_commande['qty'].')</span>';
 			}
 
-			// Number of product from customer order already sent (partial shipping)
+			// Number of product from sales order already sent (partial shipping)
 			if (isModEnabled("expedition")) {
 				require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 				$filterShipmentStatus = '';

@@ -3395,7 +3395,7 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 *	Delete the customer order
+	 *	Delete the sales order
 	 *
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
@@ -4062,7 +4062,7 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 * Is the customer order delayed?
+	 * Is the sales order delayed?
 	 *
 	 * @return bool     true if late, false if not
 	 */
@@ -4200,6 +4200,12 @@ class OrderLine extends CommonOrderLine
 		$result = $this->db->query($sql);
 		if ($result) {
 			$objp = $this->db->fetch_object($result);
+
+			if (!$objp) {
+				$this->error = 'OrderLine with id '. $rowid .' not found sql='.$sql;
+				return 0;
+			}
+
 			$this->rowid            = $objp->rowid;
 			$this->id = $objp->rowid;
 			$this->fk_commande      = $objp->fk_commande;

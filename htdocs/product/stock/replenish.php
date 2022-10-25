@@ -849,8 +849,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 		$desiredstock = $objp->desiredstock;
 		$alertstock = $objp->seuil_stock_alerte;
-		$desiredstockwarehouse = ($objp->desiredstockpse ? $objp->desiredstockpse : 0);
-		$alertstockwarehouse = ($objp->seuil_stock_alertepse ? $objp->seuil_stock_alertepse : 0);
+		$desiredstockwarehouse = (!empty($objp->desiredstockpse) ? $objp->desiredstockpse : 0);
+		$alertstockwarehouse = (!empty($objp->seuil_stock_alertepse) ? $objp->seuil_stock_alertepse : 0);
 
 		$warning = '';
 		if ($alertstock && ($stock < $alertstock)) {

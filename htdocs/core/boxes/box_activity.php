@@ -102,7 +102,7 @@ class box_activity extends ModeleBoxes
 
 
 		// list the summary of the propals
-		if (isModEnabled("propal") && $user->rights->propale->lire) {
+		if (isModEnabled("propal") && $user->rights->propal->lire) {
 			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$propalstatic = new Propal($this->db);
 

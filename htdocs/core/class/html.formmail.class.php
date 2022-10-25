@@ -1193,7 +1193,7 @@ class FormMail extends Form
 			$out .= "</td></tr>\n";
 		} else {
 			$out = '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-			$out .= '<input size="30" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
+			$out .= '<input class="minwidth200" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
 			$out .= "</td></tr>\n";
 		}
 		return $out;
@@ -1284,7 +1284,7 @@ class FormMail extends Form
 	 *  @param	int			$id				Id of template to get, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
 	 *  @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *  @param	string		$label			Label of template to get
-	 *  @return ModelMail|integer			One instance of ModelMail or -1 if error
+	 *  @return ModelMail|integer			One instance of ModelMail or < 0 if error
 	 */
 	public function getEMailTemplate($dbs, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
 	{

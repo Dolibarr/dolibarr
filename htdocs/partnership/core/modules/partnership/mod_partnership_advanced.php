@@ -30,7 +30,7 @@ dol_include_once('/partnership/core/modules/partnership/modules_partnership.php'
 
 
 /**
- *	Class to manage customer Bom numbering rules advanced
+ *	Class to manage the Advanced numbering rule for Partnership
  */
 class mod_partnership_advanced extends ModeleNumRefPartnership
 {

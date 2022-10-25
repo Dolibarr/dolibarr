@@ -496,7 +496,7 @@ if (!empty($id) || !empty($ref)) {
 		}
 
 		if ($action == 'add') {
-			$prodattr_all = $prodattr->fetchAll();
+			$prodattr_all = $prodattr->fetchAll(1);
 
 			if (!$selected) {
 				$selected = $prodattr_all[key($prodattr_all)]->id;
@@ -507,7 +507,6 @@ if (!empty($id) || !empty($ref)) {
 			foreach ($prodattr_all as $each) {
 				$prodattr_alljson[$each->id] = $each;
 			}
-
 			?>
 
 		<script type="text/javascript">

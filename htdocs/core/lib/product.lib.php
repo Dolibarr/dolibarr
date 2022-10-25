@@ -411,7 +411,7 @@ function show_stats_for_company($product, $socid)
 	print '</tr>';
 
 	// Customer proposals
-	if (isModEnabled("propal") && $user->rights->propale->lire) {
+	if (isModEnabled("propal") && $user->rights->propal->lire) {
 		$nblines++;
 		$ret = $product->load_stats_propale($socid);
 		if ($ret < 0) {
@@ -448,7 +448,7 @@ function show_stats_for_company($product, $socid)
 		print '</td>';
 		print '</tr>';
 	}
-	// Customer orders
+	// Sales orders
 	if (isModEnabled('commande') && $user->rights->commande->lire) {
 		$nblines++;
 		$ret = $product->load_stats_commande($socid);

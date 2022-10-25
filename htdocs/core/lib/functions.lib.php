@@ -18,6 +18,7 @@
  * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
+ * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -966,10 +967,15 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 
 			break;
 		case 'custom':
-			if (empty($filter)) {
-				return 'BadFourthParameterForGETPOST';
+			if (!empty($out)) {
+				if (empty($filter)) {
+					return 'BadParameterForGETPOST - Param 3 of sanitizeVal()';
+				}
+				/*if (empty($options)) {
+					return 'BadParameterForGETPOST - Param 4 of sanitizeVal()';
+				}*/
+				$out = filter_var($out, $filter, $options);
 			}
-			$out = filter_var($out, $filter, $options);
 			break;
 	}
 
@@ -1154,26 +1160,26 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 
 /**
  *	Create a clone of instance of object (new instance with same value for properties)
- *  With native = 0: Property that are reference are also new object (full isolation clone). This means $this->db of new object is not valid.
+ *  With native = 0: Property that are reference are also new object (full isolation clone). This means $this->db of new object may not be valid.
  *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db of new object is still valid but point to same this->db than original object.
  *
  * 	@param	object	$object		Object to clone
- *  @param	int		$native		0=Full isolation method, 1=Native PHP method
+ *  @param	int		$native		0=Full isolation method, 1=Native PHP method, 2=Full isolation method+destroy non scalar or array properties (recommended)
  *	@return object				Clone object
  *  @see https://php.net/manual/language.oop5.cloning.php
  */
 function dol_clone($object, $native = 0)
 {
-	if (empty($native)) {
+	if ($native == 0) {
 		$tmpsavdb = null;
 		if (isset($object->db) && isset($object->db->db) && is_object($object->db->db) && get_class($object->db->db) == 'PgSql\Connection') {
 			$tmpsavdb = $object->db;
-			unset($object->db);		// Such property can not be serialized when PgSql/Connection
+			unset($object->db);		// Such property can not be serialized with pgsl (when object->db->db = 'PgSql\Connection')
 		}
 
 		$myclone = unserialize(serialize($object));	// serialize then unserialize is hack to be sure to have a new object for all fields
 
-		if ($tmpsavdb) {
+		if (!empty($tmpsavdb)) {
 			$object->db = $tmpsavdb;
 		}
 	} else {
@@ -1227,6 +1233,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
+	$tmp = preg_replace('/\s+\-$/', '', $tmp);
 	$tmp = str_replace('..', '', $tmp);
 	return $tmp;
 }
@@ -1251,6 +1258,7 @@ function dol_sanitizePathName($str, $newstr = '_', $unaccent = 1)
 	$tmp = dol_string_nospecial($unaccent ? dol_string_unaccent($str) : $str, $newstr, $filesystem_forbidden_chars);
 	$tmp = preg_replace('/\-\-+/', '_', $tmp);
 	$tmp = preg_replace('/\s+\-([^\s])/', ' _$1', $tmp);
+	$tmp = preg_replace('/\s+\-$/', '', $tmp);
 	$tmp = str_replace('..', '', $tmp);
 	return $tmp;
 }
@@ -1812,7 +1820,7 @@ function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0
  *	@param	array	$links				Array of tabs. Note that label into $links[$i][1] must be already HTML escaped.
  *	@param	string	$active     		Active tab name
  *	@param  string	$title      		Title
- *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after)
+ *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after), -3=-2+'noborderbottom'
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
@@ -1986,8 +1994,8 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 		$out .= "</div>\n";
 	}
 
-	if (!$notab || $notab == -1 || $notab == -2) {
-		$out .= "\n".'<div class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : ' tabBarWithBottom')).'">'."\n";
+	if (!$notab || $notab == -1 || $notab == -2 || $notab == -3) {
+		$out .= "\n".'<div class="tabBar'.($notab == -1 ? '' : ($notab == -2 ? ' tabBarNoTop' : (($notab == -3 ? ' noborderbottom' : '').' tabBarWithBottom'))).'">'."\n";
 	}
 
 	$parameters = array('tabname' => $active, 'out' => $out);
@@ -2294,13 +2302,13 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 	// Add alias for thirdparty
 	if (!empty($object->name_alias)) {
-		$morehtmlref .= '<div class="refidno">'.$object->name_alias.'</div>';
+		$morehtmlref .= '<div class="refidno opacitymedium">'.$object->name_alias.'</div>';
 	}
 
 	// Add label
 	if (in_array($object->element, array('product', 'bank_account', 'project_task'))) {
 		if (!empty($object->label)) {
-			$morehtmlref .= '<div class="refidno">'.$object->label.'</div>';
+			$morehtmlref .= '<div class="refidno opacitymedium">'.$object->label.'</div>';
 		}
 	}
 
@@ -2315,7 +2323,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && ($conf->global->MAIN_SHOW_TECHNICAL_ID == '1' || preg_match('/'.preg_quote($object->element, '/').'/i', $conf->global->MAIN_SHOW_TECHNICAL_ID)) && !empty($object->id)) {
 		$morehtmlref .= '<div style="clear: both;"></div>';
-		$morehtmlref .= '<div class="refidno">';
+		$morehtmlref .= '<div class="refidno opacitymedium">';
 		$morehtmlref .= $langs->trans("TechnicalID").': '.$object->id;
 		$morehtmlref .= '</div>';
 	}
@@ -2630,6 +2638,9 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 
 	$useadodb = getDolGlobalInt('MAIN_USE_LEGACY_ADODB_FOR_DATE', 0);
 	//$useadodb = 1;	// To switch to adodb
+	if (!empty($useadodb)) {
+		include_once DOL_DOCUMENT_ROOT.'/includes/adodbtime/adodb-time.inc.php';
+	}
 
 	// Analyze date
 	$reg = array();
@@ -2659,8 +2670,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			$dtts->setTimestamp($time);
 			$dtts->setTimezone($tzo);
 			$newformat = str_replace(
-				array('%Y', '%y', '%m', '%d', '%H', '%M', '%S', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
-				array('Y', 'y', 'm', 'd', 'H', 'i', 's', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+				array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+				array('Y', 'y', 'm', 'd', 'H', 'h', 'i', 's', 'A', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
 				$format);
 			$ret = $dtts->format($newformat);
 			$ret = str_replace(
@@ -2685,8 +2696,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 				$dtts->setTimestamp($timetouse);
 				$dtts->setTimezone($tzo);
 				$newformat = str_replace(
-					array('%Y', '%y', '%m', '%d', '%H', '%M', '%S', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
-					array('Y', 'y', 'm', 'd', 'H', 'i', 's', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+					array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+					array('Y', 'y', 'm', 'd', 'H', 'h', 'i', 's', 'A', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
 					$format);
 				$ret = $dtts->format($newformat);
 				$ret = str_replace(
@@ -3828,6 +3839,10 @@ function isValidPhone($phone)
  */
 function dol_strlen($string, $stringencoding = 'UTF-8')
 {
+	if (is_null($string)) {
+		return 0;
+	}
+
 	if (function_exists('mb_strlen')) {
 		return mb_strlen($string, $stringencoding);
 	} else {
@@ -5753,6 +5768,11 @@ function price2num($amount, $rounding = '', $option = 0)
 {
 	global $langs, $conf;
 
+	// Clean parameters
+	if (is_null($amount)) {
+		$amount = '';
+	}
+
 	// Round PHP function does not allow number like '1,234.56' nor '1.234,56' nor '1 234,56'
 	// Numbers must be '1234.56'
 	// Decimal delimiter for PHP and database SQL requests must be '.'
@@ -6784,6 +6804,10 @@ function picto_required()
  */
 function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto = 'UTF-8', $strip_tags = 0, $removedoublespaces = 1)
 {
+	if (is_null($stringtoclean)) {
+		return '';
+	}
+
 	if ($removelinefeed == 2) {
 		$stringtoclean = preg_replace('/<br[^>]*>(\n|\r)+/ims', '<br>', $stringtoclean);
 	}
@@ -7086,6 +7110,10 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
  */
 function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UTF-8', $removelasteolbr = 1)
 {
+	if (is_null($stringtoencode)) {
+		return '';
+	}
+
 	$newstring = $stringtoencode;
 	if (dol_textishtml($stringtoencode)) {	// Check if text is already HTML or not
 		$newstring = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $newstring); // Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
@@ -7280,6 +7308,10 @@ function dol_nboflines_bis($text, $maxlinesize = 0, $charset = 'UTF-8')
  */
 function dol_textishtml($msg, $option = 0)
 {
+	if (is_null($msg)) {
+		return false;
+	}
+
 	if ($option == 1) {
 		if (preg_match('/<html/i', $msg)) {
 			return true;
@@ -7650,6 +7682,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__PROJECT_REF__'] = (is_object($object->projet) ? $object->projet->ref : '');
 				$substitutionarray['__PROJECT_NAME__'] = (is_object($object->projet) ? $object->projet->title : '');
 			}
+			if (is_object($object) && $object->element == 'project') {
+				$substitutionarray['__PROJECT_NAME__'] = $object->title;
+			}
 
 			if (is_object($object) && $object->element == 'shipping') {
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = $object->tracking_number;
@@ -7752,6 +7787,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (is_object($object) && $object->element == 'contrat') {
 					$typeforonlinepayment = 'contract';
 				}
+				if (is_object($object) && $object->element == 'fichinter') {
+					$typeforonlinepayment = 'ficheinter';
+				}
 				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__']);
 				$paymenturl = $url;
 			}
@@ -7784,6 +7822,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				} else {
 					$substitutionarray['__DIRECTDOWNLOAD_URL_CONTRACT__'] = '';
 				}
+				if (!empty($conf->global->FICHINTER_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'fichinter') {
+					$substitutionarray['__DIRECTDOWNLOAD_URL_FICHINTER__'] = $object->getLastMainDocLink($object->element);
+				} else {
+					$substitutionarray['__DIRECTDOWNLOAD_URL_FICHINTER__'] = '';
+				}
 				if (!empty($conf->global->SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'supplier_proposal') {
 					$substitutionarray['__DIRECTDOWNLOAD_URL_SUPPLIER_PROPOSAL__'] = $object->getLastMainDocLink($object->element);
 				} else {
@@ -7801,6 +7844,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				if (is_object($object) && $object->element == 'contrat') {
 					$substitutionarray['__URL_CONTRACT__'] = DOL_MAIN_URL_ROOT."/contrat/card.php?id=".$object->id;
+				}
+				if (is_object($object) && $object->element == 'fichinter') {
+					$substitutionarray['__URL_FICHINTER__'] = DOL_MAIN_URL_ROOT."/fichinter/card.php?id=".$object->id;
 				}
 				if (is_object($object) && $object->element == 'supplier_proposal') {
 					$substitutionarray['__URL_SUPPLIER_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/supplier_proposal/card.php?id=".$object->id;
@@ -8120,7 +8166,7 @@ function print_date_range($date_start, $date_end, $format = '', $outputlangs = '
  *
  *    @param	int			$date_start    		Start date
  *    @param    int			$date_end      		End date
- *    @param    string		$format        		Output format
+ *    @param    string		$format        		Output date format ('day', 'dayhour', ...)
  *    @param	Translate	$outputlangs   		Output language
  *    @param	integer		$withparenthesis	1=Add parenthesis, 0=no parenthesis
  *    @return	string							String
@@ -9109,10 +9155,10 @@ function getLanguageCodeFromCountryCode($countrycode)
  *  @param  string			$type           Value for object where objectvalue can be
  *                              			'thirdparty'       to add a tab in third party view
  *		                        	      	'intervention'     to add a tab in intervention view
- *     		                    	     	'supplier_order'   to add a tab in supplier order view
- *          		            	        'supplier_invoice' to add a tab in supplier invoice view
- *                  		    	        'invoice'          to add a tab in customer invoice view
- *                          			    'order'            to add a tab in customer order view
+ *     		                    	     	'supplier_order'   to add a tab in purchase order view
+ *          		            	        'supplier_invoice' to add a tab in purchase invoice view
+ *                  		    	        'invoice'          to add a tab in sales invoice view
+ *                          			    'order'            to add a tab in sales order view
  *                          				'contract'		   to add a tabl in contract view
  *                      			        'product'          to add a tab in product view
  *                              			'propal'           to add a tab in propal view
@@ -10537,7 +10583,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param array 		$params = [ // Various params for future : recommended rather than adding more function arguments
  *                          'attr' => [ // to add or override button attributes
  *                          'xxxxx' => '', // your xxxxx attribute you want
- *                          'class' => '', // to add more css class to the button class attribute
+ *                          'class' => 'reposition', // to add more css class to the button class attribute
  *                          'classOverride' => '' // to replace class attribute of the button
  *                          ],
  *                          'confirm' => [
@@ -10584,7 +10630,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 	if (empty($userRight)) {
 		$attr['class'] = 'butActionRefused';
 		$attr['href'] = '';
-		$attr['title'] = $langs->trans('NotEnoughPermissions');
+		$attr['title'] = (($label && $text && $label != $text) ? $label : $langs->trans('NotEnoughPermissions'));
 	}
 
 	if (!empty($id)) {
@@ -10640,7 +10686,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 
 	$TCompiledAttr = array();
 	foreach ($attr as $key => $value) {
-		$TCompiledAttr[] = $key.'="'.$value.'"';
+		$TCompiledAttr[] = $key.'= "'.$value.'"';
 	}
 
 	$compiledAttributes = empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr);

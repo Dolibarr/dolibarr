@@ -143,8 +143,12 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												textarea[key] = item[value];
 											});
 										}
+
 										console.log("Return value from GET to the rest of code");
-										return { label: label, value: item.value, id: item.key, disabled: item.disabled,
+										return { label: label,
+												 value: item.value,
+												 id: item.key,
+												 disabled: item.disabled,
 												 update: update,
 												 textarea: textarea,
 												 pbq: item.pbq,
@@ -154,6 +158,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												 pricebasetype: item.pricebasetype,
 												 price_ht: item.price_ht,
 												 price_ttc: item.price_ttc,
+												 price_unit_ht: item.price_unit_ht,
+												 price_unit_ht_locale: item.price_unit_ht_locale,
 												 description : item.description,
 												 ref_customer: item.ref_customer,
 												 tva_tx: item.tva_tx }
@@ -173,6 +179,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 
 							// For supplier price and customer when price by quantity is off
 							$("#'.$htmlnamejquery.'").attr("data-up", ui.item.price_ht);
+							$("#'.$htmlnamejquery.'").attr("data-up-locale", ui.item.price_unit_ht_locale);
 							$("#'.$htmlnamejquery.'").attr("data-base", ui.item.pricebasetype);
 							$("#'.$htmlnamejquery.'").attr("data-qty", ui.item.qty);
 							$("#'.$htmlnamejquery.'").attr("data-discount", ui.item.discount);
@@ -191,7 +198,11 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 		';
 	}
 	$script .= '
+							// A new value has been selected, we trigger the handlers on #htmlnamejquery
+							console.log("Trigger changes on #'.$htmlnamejquery.'");
 							$("#'.$htmlnamejquery.'").val(ui.item.id).trigger("change");	// Select new value
+
+							// Complementary actions
 
     						// Disable an element
     						if (options.option_disabled) {
@@ -224,7 +235,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 
     						// Update an input
     						if (ui.item.update) {
-    							console.log("Make action update on each ui.item.update")
+    							console.log("Make action update on each ui.item.update (if there is)")
     							// loop on each "update" fields
     							$.each(ui.item.update, function(key, value) {
 									console.log("Set value "+value+" into #"+key);
@@ -232,7 +243,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     							});
     						}
     						if (ui.item.textarea) {
-    							console.log("Make action textarea on each ui.item.textarea")
+    							console.log("Make action textarea on each ui.item.textarea (if there is)")
     							$.each(ui.item.textarea, function(key, value) {
     								if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key] != "undefined") {
     									CKEDITOR.instances[key].setData(value);

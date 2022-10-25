@@ -311,9 +311,6 @@ define('MAIN_DB_PREFIX', $dolibarr_main_db_prefix);
  * To use other version than embeded libraries, define here constant to path. Use '' to use include class path autodetect.
  */
 // Path to root libraries
-if (!defined('ADODB_PATH')) {
-	define('ADODB_PATH', (!isset($dolibarr_lib_ADODB_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/adodbtime/' : (empty($dolibarr_lib_ADODB_PATH) ? '' : $dolibarr_lib_ADODB_PATH.'/'));
-}
 if (!defined('TCPDF_PATH')) {
 	define('TCPDF_PATH', (empty($dolibarr_lib_TCPDF_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/tecnickcom/tcpdf/' : $dolibarr_lib_TCPDF_PATH.'/');
 }
@@ -353,10 +350,6 @@ if (!defined('DOL_DEFAULT_TTF_BOLD')) {
 /*
  * Include functions
  */
-
-if (!defined('ADODB_DATE_VERSION')) {
-	include_once ADODB_PATH.'adodb-time.inc.php';
-}
 
 // If password is encoded, we decode it. Note: When page is called for install, $dolibarr_main_db_pass may not be defined yet.
 if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
