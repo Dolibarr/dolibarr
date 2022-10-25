@@ -5618,7 +5618,9 @@ a.cke_dialog_ui_button
 .cke_dialog_ui_hbox_first {
 	vertical-align: middle !important;
 }
-
+.cke_combo_text {
+	width: 40px !important;
+}
 /*
 .cke_editable
 {
