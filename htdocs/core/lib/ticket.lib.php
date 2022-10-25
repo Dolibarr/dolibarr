@@ -268,4 +268,3 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<div class="ticketlargemargin">';
 }
-
