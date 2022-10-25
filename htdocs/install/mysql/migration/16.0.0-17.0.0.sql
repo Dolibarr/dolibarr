@@ -195,7 +195,8 @@ ALTER TABLE llx_bank_url ADD INDEX idx_bank_url_url_id (url_id);
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_code varchar(3) NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_tx double(24,8) NULL;
 
-ALTER TABLE llx_hrm_evaluationdet CHANGE COLUMN rank rankorder integer;
+-- VMYSQL4.3 ALTER TABLE llx_hrm_evaluationdet CHANGE COLUMN `rank` rankorder integer;
+-- VPGSQL8.2 ALTER TABLE llx_hrm_evaluationdet CHANGE COLUMN rank rankorder integer;
 
 
 -- Rename const to hide public and private notes (fix allow notes const was used to hide)
