@@ -1677,6 +1677,7 @@ tr.nobottom td {
 .widthauto { width: auto; }
 .width20  { width: 20px; }
 .width25  { width: 25px; }
+.width40  { width: 40px; }
 .width50  { width: 50px; }
 .width75  { width: 75px; }
 .width100 { width: 100px; }
