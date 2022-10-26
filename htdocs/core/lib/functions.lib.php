@@ -10866,7 +10866,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
  */
 function getElementProperties($element_type)
 {
-	global $db;
+	global $db, $hookmanager;
 	$regs = array();
 
 	$classfile = $classname = $classpath = '';
@@ -10989,10 +10989,10 @@ function getElementProperties($element_type)
 	);
 
 
-	// Add pdfgeneration hook
+	// Add  hook
 	if (!is_object($hookmanager)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-		$hookmanager = new HookManager($this->db);
+		$hookmanager = new HookManager($db);
 	}
 	$hookmanager->initHooks(array('elementproperties'));
 
@@ -11014,8 +11014,8 @@ function getElementProperties($element_type)
 	}
 
 	// context of elementproperties doesn't need to exist out of this function so delete it to avoid elementproperties is equal to all
-	if (($key = array_search($this->contextarray, 'elementproperties')) !== false) {
-		unset($this->contextarray[$key]);
+	if (($key = array_search('elementproperties', $hookmanager->contextarray)) !== false) {
+		unset($hookmanager->contextarray[$key]);
 	}
 
 	return $element_properties;
