@@ -173,21 +173,13 @@ if ($result < 0) {
 	exit(-1);
 }
 
-$qualifiedjobs = array();
-foreach ($object->lines as $val) {
-	if (!verifCond($val->test)) {
-		continue;
-	}
-	$qualifiedjobs[] = $val;
-}
-
 // TODO Duplicate code. This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
 
-$nbofjobs = count($qualifiedjobs);
+$nbofjobs = count($object->lines);
 $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
-if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
+if (is_array($object->lines) && (count($object->lines) > 0)) {
 	$savconf = dol_clone($conf);
 
 	// Loop over job
@@ -231,6 +223,10 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 				$langs->tab_translate = array();
 				$langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
 			}
+		}
+
+		if (!verifCond($line->test)) {
+			continue;
 		}
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
