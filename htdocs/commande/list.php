@@ -2565,8 +2565,8 @@ if ($resql) {
 				}
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
+			print '</td>';
 		}
-		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
