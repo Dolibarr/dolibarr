@@ -79,7 +79,7 @@ $workflowcodes = array(
 		'picto'=>'ticket'
 	),
 
-	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>''),
+	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>'', 'enabled'=>((isModEnabled("propal") && isModEnabled('commande')) || (isModEnabled('commande') && isModEnabled('facture')) || (isModEnabled('ticket') && isModEnabled('ficheinter')))),
 
 	// Automatic classification of proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array(
@@ -117,8 +117,6 @@ $workflowcodes = array(
 		'picto'=>'order',
 		'warning'=>''
 	), // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
-
-	'separator2'=>array('family'=>'separator', 'position'=>50),
 
 	// Automatic classification supplier proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array(
@@ -170,17 +168,19 @@ $workflowcodes = array(
 		'picto' => 'shipment'
 	),
 
+	'separator2'=>array('family'=>'separator', 'position'=>400, 'enabled' => (isModEnabled('ticket') && isModEnabled('contract'))),
+
 	// Automatic link ticket -> contract
 	'WORKFLOW_TICKET_LINK_CONTRACT' => array(
 		'family' => 'link_ticket',
-		'position' => 75,
-		'enabled' => isModEnabled('ticket') && !empty($conf->contract->enabled),
+		'position' => 500,
+		'enabled' => (isModEnabled('ticket') && isModEnabled('contract')),
 		'picto' => 'ticket'
 	),
 	'WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS' => array(
 		'family' => 'link_ticket',
-		'position' => 76,
-		'enabled' => isModEnabled('ticket') && !empty($conf->contract->enabled),
+		'position' => 501,
+		'enabled' => (isModEnabled('ticket') && isModEnabled('contract')),
 		'picto' => 'ticket'
 	),
 );
