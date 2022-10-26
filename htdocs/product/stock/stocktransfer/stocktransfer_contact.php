@@ -25,6 +25,7 @@
  *       \brief      Tab to manage contacts/adresses of proposal
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 // Load translation files required by the page
 $langs->loadLangs(array('facture', 'orders', 'sendings', 'companies', 'stocks'));

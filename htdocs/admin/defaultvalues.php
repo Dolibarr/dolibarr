@@ -26,6 +26,7 @@
  *       			Mandatory fields are stored into $user->default_values[url]['mandatory']['querystring'|'_noquery_'][paramkey]=paramvalue
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -294,6 +295,7 @@ if ($mode != 'focus' && $mode != 'mandatory') {
 	if ($mode != 'sortorder') {
 		$substitutionarray = getCommonSubstitutionArray($langs, 2, array('object', 'objectamount')); // Must match list into GETPOST
 		unset($substitutionarray['__USER_SIGNATURE__']);
+		unset($substitutionarray['__SENDEREMAIL_SIGNATURE__']);
 		$texthelp = $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 		foreach ($substitutionarray as $key => $val) {
 			$texthelp .= $key.' -> '.$val.'<br>';

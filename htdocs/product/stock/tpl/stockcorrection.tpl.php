@@ -109,7 +109,7 @@ if ($object->element == 'product') {
 	if (empty($ident) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) {
 		$ident = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 	}
-	print img_picto('', 'stock').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100');
+	print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100 maxwidth300 widthcentpercentminusx');
 	print '</td>';
 }
 if ($object->element == 'stock') {
@@ -155,10 +155,11 @@ if (ismodEnabled('productbatch') &&
 		print '<input type="text" name="batch_number_bis" size="40" disabled="disabled" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
 		print '<input type="hidden" name="batch_number" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
 	} else {
-		print '<input type="text" name="batch_number" class="minwidth300" value="'.(GETPOST('batch_number') ? GETPOST('batch_number') : $pdluo->batch).'">';
+		print img_picto('', 'barcode', 'class="pictofixedwidth"').'<input type="text" name="batch_number" class="minwidth300" value="'.(GETPOST('batch_number') ? GETPOST('batch_number') : $pdluo->batch).'">';
 	}
 	print '</td>';
 	print '</tr>';
+
 	print '<tr>';
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 		print '<td>'.$langs->trans("SellByDate").'</td><td>';

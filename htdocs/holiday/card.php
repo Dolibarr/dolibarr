@@ -29,6 +29,7 @@
  *		\brief      Form and file creation of paid holiday.
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
@@ -254,6 +255,12 @@ if (empty($reshook)) {
 				$error++;
 			}
 
+			$approverslist = $object->fetch_users_approver_holiday();
+			if (!in_array($approverid, $approverslist)) {
+				setEventMessages($langs->transnoentitiesnoconv('InvalidValidator'), null, 'errors');
+				$error++;
+			}
+
 			$result = 0;
 
 			if (!$error) {
@@ -432,7 +439,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Action validate (+ send email for approval)
+	// Action validate (+ send email for approval to the expected approver)
 	if ($action == 'confirm_send') {
 		$object->fetch($id);
 
@@ -1143,7 +1150,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$result = $object->fetch($id, $ref);
 
 			$approverexpected = new User($db);
-			$approverexpected->fetch($object->fk_validator);
+			$approverexpected->fetch($object->fk_validator);	// Use that should be the approver
 
 			$userRequest = new User($db);
 			$userRequest->fetch($object->fk_user);
@@ -1357,21 +1364,23 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '</td>';
 					print '<td>';
 					if ($object->statut == Holiday::STATUS_APPROVED || $object->statut == Holiday::STATUS_CANCELED) {
-						$approverdone = new User($db);
-						$approverdone->fetch($object->fk_user_valid);
-						print $approverdone->getNomUrl(-1);
+						if ($object->fk_user_approve > 0) {
+							$approverdone = new User($db);
+							$approverdone->fetch($object->fk_user_approve);
+							print $approverdone->getNomUrl(-1);
+						}
 					} else {
 						print $approverexpected->getNomUrl(-1);
 					}
 					$include_users = $object->fetch_users_approver_holiday();
 					if (is_array($include_users) && in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED) {
-						print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator&token='.newToken().'">'.img_edit($langs->trans("Edit")).'</a>';
+						print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
 					}
 					print '</td>';
 					print '</tr>';
 				} else {
 					print '<tr>';
-					print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
+					print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';	// Will be approved by
 					print '<td>';
 					$include_users = $object->fetch_users_approver_holiday();
 					if (!in_array($object->fk_validator, $include_users)) {  // Add the current validator to the list to not lose it when editing.
@@ -1399,7 +1408,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				if ($object->statut == Holiday::STATUS_APPROVED || $object->statut == Holiday::STATUS_CANCELED) {
 					print '<tr>';
 					print '<td>'.$langs->trans('DateValidCP').'</td>';
-					print '<td>'.dol_print_date($object->date_valid, 'dayhour', 'tzuser').'</td>'; // warning: date_valid is approval date on holiday module
+					print '<td>'.dol_print_date($object->date_approval, 'dayhour', 'tzuser').'</td>'; // warning: date_valid is approval date on holiday module
 					print '</tr>';
 				}
 				if ($object->statut == Holiday::STATUS_CANCELED) {
@@ -1484,8 +1493,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					if ($object->statut == Holiday::STATUS_VALIDATED) {	// If validated
 						// Button Approve / Refuse
 						if ($user->id == $object->fk_validator) {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid" class="butAction">'.$langs->trans("Approve").'</a>';
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken().'" class="butAction">'.$langs->trans("Approve").'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse&token='.newToken().'" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
 						} else {
 							print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("Approve").'</a>';
 							print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("ActionRefuseCP").'</a>';

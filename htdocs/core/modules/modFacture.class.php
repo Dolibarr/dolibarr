@@ -5,6 +5,7 @@
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -238,8 +239,7 @@ class modFacture extends DolibarrModules
 		$this->import_fields_array[$r] = array(
 			'f.ref' => 'InvoiceRef*',
 			'f.ref_ext' => 'ExternalRef',
-			'f.ref_int' => 'ExternalRef',
-			'f.ref_client' => 'CutomerRef',
+			'f.ref_client' => 'CustomerRef',
 			'f.type' => 'Type*',
 			'f.fk_soc' => 'Customer*',
 			'f.datec' => 'InvoiceDateCreation',
@@ -267,7 +267,7 @@ class modFacture extends DolibarrModules
 			'f.note_private' => 'NotePrivate',
 			'f.model_pdf' => 'Model'
 		);
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->import_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->import_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
 			$this->import_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -292,7 +292,6 @@ class modFacture extends DolibarrModules
 		$import_sample = array(
 			'f.ref' => '(PROV0001)',
 			'f.ref_ext' => '',
-			'f.ref_int' => '',
 			'f.ref_client' => '',
 			'f.type' => '0',
 			'f.fk_soc' => '80LIMIT',
@@ -352,7 +351,7 @@ class modFacture extends DolibarrModules
 			)
 		);
 
-		//Import Supplier Invoice Lines
+		// Import Invoice Lines
 		$r++;
 		$this->import_code[$r] = $this->rights_class.'_'.$r;
 		$this->import_label[$r] = "InvoiceLine"; // Translation key
@@ -399,7 +398,7 @@ class modFacture extends DolibarrModules
 			// fk_user_modif
 			// ref_ext
 		);
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->import_fields_array[$r]['fd.multicurrency_code'] = 'Currency';
 			$this->import_fields_array[$r]['fd.multicurrency_subprice'] = 'CurrencyRate';
 			$this->import_fields_array[$r]['fd.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -518,7 +517,7 @@ class modFacture extends DolibarrModules
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic"
 		);
 		// Add multicurrency fields
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
 			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';
@@ -647,7 +646,7 @@ class modFacture extends DolibarrModules
 			'pt.code'=>'CodePaymentMode', 'pt.libelle'=>'LabelPaymentMode', 'p.note'=>'PaymentNote', 'p.fk_bank'=>'IdTransaction', 'ba.ref'=>'AccountRef'
 		);
 		$this->export_help_array[$r] = array('f.paye'=>'InvoicePaidCompletelyHelp');
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
 			$this->export_fields_array[$r]['f.multicurrency_total_ht'] = 'MulticurrencyAmountHT';

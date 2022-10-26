@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018 Jean-François Ferry <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2019-2020 Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022 Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -108,7 +108,8 @@ class Ticket extends CommonObject
 
 	/**
 	 * @var int  Ticket statut
-	 * @deprecated
+	 * @deprecated use status
+	 * @see $status
 	 */
 	public $fk_statut;
 
@@ -217,7 +218,9 @@ class Ticket extends CommonObject
 	 */
 	public $oldcopy;
 
-
+	/**
+	 * @var array array of TicketsLine
+	 */
 	public $lines;
 
 
@@ -464,7 +467,8 @@ class Ticket extends CommonObject
 			$sql .= "date_read,";
 			$sql .= "date_close,";
 			$sql .= "entity,";
-			$sql .= "notify_tiers_at_create";
+			$sql .= "notify_tiers_at_create,";
+			$sql .= "ip";
 			$sql .= ") VALUES (";
 			$sql .= " ".(!isset($this->ref) ? '' : "'".$this->db->escape($this->ref)."'").",";
 			$sql .= " ".(!isset($this->track_id) ? 'NULL' : "'".$this->db->escape($this->track_id)."'").",";
@@ -489,6 +493,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->date_close) || dol_strlen($this->date_close) == 0 ? 'NULL' : "'".$this->db->idate($this->date_close)."'")."";
 			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", ".(!isset($this->notify_tiers_at_create) ? '1' : "'".$this->db->escape($this->notify_tiers_at_create)."'");
+			$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 			$sql .= ")";
 
 			$this->db->begin();
@@ -504,7 +509,7 @@ class Ticket extends CommonObject
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ticket");
 			}
 
-			if (!$error && ! empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
+			if (!$error && !empty($conf->global->TICKET_ADD_AUTHOR_AS_CONTACT)) {
 				// add creator as contributor
 				if ($this->add_contact($user->id, 'CONTRIBUTOR', 'internal') < 0) {
 					$error++;
@@ -1056,6 +1061,19 @@ class Ticket extends CommonObject
 			}
 		}
 
+		// Delete all child tables
+
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_ticket";
+			$sql .= " WHERE fk_ticket = ".(int) $this->id;
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."ticket";
 			$sql .= " WHERE rowid=".((int) $this->id);
@@ -1562,144 +1580,6 @@ class Ticket extends CommonObject
 		}
 	}
 
-
-	/**
-	 *  Send notification of changes by email
-	 *
-	 * 	@param  User   $user    		User that create
-	 * 	@param  string $message 		Log message
-	 * 	@return int                 	<0 if KO, >0 if OK (number of emails sent)
-	 */
-	private function sendLogByEmail($user, $message)
-	{
-		global $conf, $langs;
-
-		$nb_sent = 0;
-
-		$langs->load('ticket');
-
-		// Retrieve email of all contacts (internal and external)
-		$contacts = $this->listeContact(-1, 'internal');
-		$contacts = array_merge($contacts, $this->listeContact(-1, 'external'));
-
-		/* If origin_email and no socid, we add email to the list * */
-		if (!empty($this->origin_email) && empty($this->fk_soc)) {
-			$array_ext = array(array('firstname' => '', 'lastname' => '', 'email' => $this->origin_email, 'libelle' => $langs->transnoentities('TicketEmailOriginIssuer'), 'socid' => "-1"));
-			$contacts = array_merge($contacts, $array_ext);
-		}
-
-		if (!empty($this->fk_soc)) {
-			$this->fetch_thirdparty($this->fk_soc);
-			$array_company = array(array('firstname' => '', 'lastname' => $this->client->name, 'email' => $this->client->email, 'libelle' => $langs->transnoentities('Customer'), 'socid' => $this->client->id));
-			$contacts = array_merge($contacts, $array_company);
-		}
-
-		// foreach contact send email with notification message
-		if (count($contacts) > 0) {
-			foreach ($contacts as $key => $info_sendto) {
-				$tmpmessage = '';
-				$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketNotificationEmailSubject', $this->track_id);
-				$tmpmessage .= $langs->transnoentities('TicketNotificationEmailBody', $this->track_id)."\n\n";
-				$tmpmessage .= $langs->transnoentities('Title').' : '.$this->subject."\n";
-
-				$recipient_name = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1');
-				$recipient = (!empty($recipient_name) ? $recipient_name : $info_sendto['email']).' ('.strtolower($info_sendto['libelle']).')';
-				$tmpmessage .= $langs->transnoentities('TicketNotificationRecipient').' : '.$recipient."\n";
-				$tmpmessage .= "\n";
-				$tmpmessage .= '* '.$langs->transnoentities('TicketNotificationLogMessage').' *'."\n";
-				$tmpmessage .= dol_html_entity_decode($message, ENT_QUOTES | ENT_HTML5)."\n";
-
-				if ($info_sendto['source'] == 'internal') {
-					$url_internal_ticket = dol_buildpath('/ticket/card.php', 2).'?track_id='.$this->track_id;
-					$tmpmessage .= "\n".$langs->transnoentities('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$this->track_id.'</a>'."\n";
-				} else {
-					$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$this->track_id;
-					$tmpmessage .= "\n".$langs->transnoentities('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$this->track_id.'</a>'."\n";
-				}
-
-				$tmpmessage .= "\n";
-				$tmpmessage .= $langs->transnoentities('TicketEmailPleaseDoNotReplyToThisEmail')."\n";
-
-				$from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
-				$replyto = $from;
-
-				// Init to avoid errors
-				$filepath = array();
-				$filename = array();
-				$mimetype = array();
-
-				$tmpmessage = dol_nl2br($tmpmessage);
-
-				if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-					$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
-					$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
-				}
-				include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-				$sendtocc = '';
-				$deliveryreceipt = 0;
-				$mailfile = new CMailFile($subject, $info_sendto['email'], $from, $tmpmessage, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, 0);
-				if ($mailfile->error || $mailfile->errors) {
-					setEventMessages($mailfile->error, $mailfile->errors, 'errors');
-				} else {
-					$result = $mailfile->sendfile();
-					if ($result > 0) {
-						$nb_sent++;
-					}
-				}
-				if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
-					$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
-				}
-			}
-
-			setEventMessages($langs->trans('TicketNotificationNumberEmailSent', $nb_sent), null, 'mesgs');
-		}
-
-		return $nb_sent;
-	}
-
-	/**
-	 *      Charge la liste des actions sur le ticket
-	 *
-	 *      @return int             Number of lines loaded, 0 if already loaded, <0 if KO
-	 */
-	public function loadCacheLogsTicket()
-	{
-		global $langs;
-
-		if (is_array($this->cache_logs_ticket) && count($this->cache_logs_ticket)) {
-			return 0;
-		}
-		// Cache deja charge
-
-		// TODO Read the table llx_actioncomm
-		/*
-		$sql = "SELECT rowid, fk_user_create, datec, message";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "ticket_logs";
-		$sql .= " WHERE fk_track_id ='" . $this->db->escape($this->track_id) . "'";
-		$sql .= " ORDER BY datec DESC";
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num) {
-				$obj = $this->db->fetch_object($resql);
-				$this->cache_logs_ticket[$i]['id'] = $obj->rowid;
-				$this->cache_logs_ticket[$i]['fk_user_create'] = $obj->fk_user_create;
-				$this->cache_logs_ticket[$i]['datec'] = $this->db->jdate($obj->datec);
-				$this->cache_logs_ticket[$i]['message'] = $obj->message;
-				$i++;
-			}
-			return $num;
-		} else {
-			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::loadCacheLogsTicket " . $this->error, LOG_ERR);
-			return -1;
-		}*/
-
-		return 0;
-	}
-
 	/**
 	 * Add message into database
 	 *
@@ -1708,9 +1588,10 @@ class Ticket extends CommonObject
 	 * @param array	 $filename_list       List of files to attach (full path of filename on file system)
 	 * @param array	 $mimetype_list       List of MIME type of attached files
 	 * @param array	 $mimefilename_list   List of attached file name in message
+	 * @param boolean	 $send_email      Whether the message is sent by email
 	 * @return int						  <0 if KO, >0 if OK
 	 */
-	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
+	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -1735,6 +1616,9 @@ class Ticket extends CommonObject
 		$actioncomm->code = 'TICKET_MSG';
 		if ($this->private) {
 			$actioncomm->code = 'TICKET_MSG_PRIVATE';
+		}
+		if ($send_email) {
+			$actioncomm->type_code = 'AC_EMAIL';
 		}
 		$actioncomm->socid = $this->socid;
 		$actioncomm->label = $this->subject;
@@ -2473,7 +2357,8 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 * Add new message on a ticket (private/public area). Can also send it be email if GETPOST('send_email', 'int') is set.
+	 * Add new message on a ticket (private/public area).
+	 * Can also send it be email if GETPOST('send_email', 'int') is set. For such email, header and footer is added.
 	 *
 	 * @param   User    $user       User for action
 	 * @param   string  $action     Action string
@@ -2520,7 +2405,7 @@ class Ticket extends CommonObject
 			$listofnames = $resarray['listofnames'];
 			$listofmimes = $resarray['listofmimes'];
 
-			$id = $object->createTicketMessage($user, 0, $listofpaths, $listofmimes, $listofnames);
+			$id = $object->createTicketMessage($user, 0, $listofpaths, $listofmimes, $listofnames, $send_email);
 			if ($id <= 0) {
 				$error++;
 				$this->error = $object->error;
@@ -2534,11 +2419,10 @@ class Ticket extends CommonObject
 				//var_dump($_SESSION);
 				//var_dump($listofpaths);exit;
 
-				/*
-				 * Public area
-				 */
 				if (!empty($public_area)) {
 					/*
+					 * Message created fromthe Public interface
+					 *
 					 * Send emails to assigned users (public area notification)
 					 */
 					if (!empty($conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ENABLED)) {
@@ -2607,9 +2491,8 @@ class Ticket extends CommonObject
 					}
 				} else {
 					/*
-					 * Private area
-					 */
-					/*
+					 * Send from Backoffice / Private area
+					 *
 					 * Send emails to internal users (linked contacts)
 					 */
 					if ($send_email > 0) {
@@ -2623,7 +2506,7 @@ class Ticket extends CommonObject
 							$subject = GETPOST('subject', 'alphanohtml') ? GETPOST('subject', 'alphanohtml') : '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
 							$message_intro = $langs->trans('TicketNotificationEmailBody', "#".$object->id);
-							$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
+							$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
 
 							$message = $langs->trans('TicketMessageMailIntroText');
 							$message .= '<br><br>';
@@ -2661,7 +2544,7 @@ class Ticket extends CommonObject
 							// URL ticket
 							$url_internal_ticket = dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id;
 
-							// altairis: make html link on url
+							// add html link on url
 							$message .= '<br>'.$langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a><br>';
 
 							// Add global email address recipient
@@ -2671,7 +2554,7 @@ class Ticket extends CommonObject
 								}
 							}
 
-							// altairis: dont try to send email if no recipient
+							// dont try to send email if no recipient
 							if (!empty($sendto)) {
 								$this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
 							}
@@ -2702,8 +2585,8 @@ class Ticket extends CommonObject
 								$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
 								$subject = GETPOST('subject') ? GETPOST('subject') : '['.$label_title.'- ticket #'.$object->track_id.'] '.$langs->trans('TicketNewMessage');
 
-								$message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro', 'restricthtml') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
-								$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature', 'restricthtml') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
+								$message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro', 'restricthtml') : getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO');
+								$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature', 'restricthtml') : getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
 								if (!dol_textishtml($message_intro)) {
 									$message_intro = dol_nl2br($message_intro);
 								}
@@ -2770,8 +2653,8 @@ class Ticket extends CommonObject
 									$result = $this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
 									if ($result) {
 										// update last_msg_sent date
-										$object->date_last_msg_sent = dol_now();
-										$object->update($user);
+										$this->date_last_msg_sent = dol_now();
+										$this->update($user, 1);	// disable trigger when updatin date_last_msg_sent. sendTicketMessageByEmail already create an event in actioncomm table.
 									}
 								}
 							}
@@ -2779,8 +2662,8 @@ class Ticket extends CommonObject
 					}
 				}
 
-				// Set status to "answered" if not set yet, but only if internal user
-				if ($object->fk_statut < 3 && !$user->socid) {
+				// Set status to "answered" if not set yet, but only if internal user and not private message
+				if ($object->status < 3 && !$user->socid && !$private) {
 					$object->setStatut(3);
 				}
 				return 1;
@@ -2848,9 +2731,11 @@ class Ticket extends CommonObject
 					$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 				}
 
+				$upload_dir_tmp = $conf->user->dir_output."/".$user->id.'/temp';
+
 				include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 				$trackid = "tic".$this->id;
-				$mailfile = new CMailFile($subject, $receiver, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, '', 'ticket');
+				$mailfile = new CMailFile($subject, $receiver, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, '', 'ticket', '', $upload_dir_tmp);
 				if ($mailfile->error) {
 					setEventMessages($mailfile->error, null, 'errors');
 				} else {
@@ -3013,7 +2898,7 @@ class TicketsLine
 {
 	/**
 	 * @var int ID
-	 * @deprecated
+	 * @deprecated use id
 	 */
 	public $rowid;
 

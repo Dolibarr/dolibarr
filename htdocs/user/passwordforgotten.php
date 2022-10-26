@@ -25,6 +25,7 @@
 
 define("NOLOGIN", 1); // This means this output page does not require to be logged.
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
@@ -127,36 +128,34 @@ if (empty($reshook)) {
 				$result = $edituser->fetch('', '', '', 1, -1, $username);
 			}
 
+			// Set the message to show (must be the same if login/email exists or not
+			// to avoid to guess them.
+			$messagewarning = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
+			if (!$isanemail) {
+				$messagewarning .= $langs->trans("IfLoginExistPasswordRequestSent");
+			} else {
+				$messagewarning .= $langs->trans("IfEmailExistPasswordRequestSent");
+			}
+			$messagewarning .= '</div>';
+
 			if ($result <= 0 && $edituser->error == 'USERNOTFOUND') {
-				$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
-				if (!$isanemail) {
-					$message .= $langs->trans("IfLoginExistPasswordRequestSent");
-				} else {
-					$message .= $langs->trans("IfEmailExistPasswordRequestSent");
-				}
-				$message .= '</div>';
+				$message .= $messagewarning;
 				$username = '';
 			} else {
-				if (!$edituser->email) {
-					$message = '<div class="error">'.$langs->trans("ErrorLoginHasNoEmail").'</div>';
+				if (empty($edituser->email)) {
+					$message .= $messagewarning;
 				} else {
 					$newpassword = $edituser->setPassword($user, '', 1);
 					if ($newpassword < 0) {
-						// Failed
+						// Technical failure
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
 						// Success
 						if ($edituser->send_password($user, $newpassword, 1) > 0) {
-							$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
-							if (!$isanemail) {
-								$message .= $langs->trans("IfLoginExistPasswordRequestSent");
-							} else {
-								$message .= $langs->trans("IfEmailExistPasswordRequestSent");
-							}
-							//$message .= $langs->trans("PasswordChangeRequestSent", $edituser->login, dolObfuscateEmail($edituser->email));
-							$message .= '</div>';
+							$message .= $messagewarning;
 							$username = '';
 						} else {
+							// Technical failure
 							$message .= '<div class="error">'.$edituser->error.'</div>';
 						}
 					}

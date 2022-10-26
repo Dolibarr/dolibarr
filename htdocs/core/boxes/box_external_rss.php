@@ -120,6 +120,8 @@ class box_external_rss extends ModeleBoxes
 		// INFO on items
 		$items = $rssparser->getItems();
 		//print '<pre>'.print_r($items,true).'</pre>';
+
+		// Loop on last items
 		$nbitems = count($items);
 		for ($line = 0; $line < $max && $line < $nbitems; $line++) {
 			$item = $items[$line];
@@ -179,18 +181,18 @@ class box_external_rss extends ModeleBoxes
 
 			$this->info_box_contents[$line][0] = array(
 				'td' => 'class="left" width="16"',
-				'logo' => $this->boximg,
+				'text' => img_picto('', 'rss'),
 				'url' => $href,
 				'tooltip' => $tooltip,
 				'target' => 'newrss',
 			);
 
 			$this->info_box_contents[$line][1] = array(
-				'td' => '',
+				'td' => 'class="tdoverflowmax300"',
 				'text' => $title,
 				'url' => $href,
 				'tooltip' => $tooltip,
-				'maxlength' => 64,
+				'maxlength' => 0,
 				'target' => 'newrss',
 			);
 

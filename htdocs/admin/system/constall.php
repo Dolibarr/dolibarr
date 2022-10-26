@@ -22,6 +22,7 @@
  *		\brief      Page to show all Dolibarr setup (config file and database constants)
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Load translation files required by the page
@@ -72,7 +73,6 @@ $configfileparameters = array(
 							'?dolibarr_main_auth_ldap_admin_pass',
 							'?dolibarr_main_auth_ldap_debug',
 							'separator',
-							'?dolibarr_lib_ADODB_PATH',
 							'?dolibarr_lib_FPDF_PATH',
 							'?dolibarr_lib_TCPDF_PATH',
 							'?dolibarr_lib_FPDI_PATH',
@@ -121,7 +121,6 @@ $configfilelib = array(
 					'dolibarr_main_auth_ldap_admin_pass',
 					'dolibarr_main_auth_ldap_debug',
 					'separator',
-					'dolibarr_lib_ADODB_PATH',
 					'dolibarr_lib_TCPDF_PATH',
 					'dolibarr_lib_FPDI_PATH',
 					'dolibarr_lib_NUSOAP_PATH',

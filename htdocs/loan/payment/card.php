@@ -21,6 +21,7 @@
  *  \brief      Payment's card of loan
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
@@ -222,9 +223,9 @@ print '<div class="tabsAction">';
 
 if (empty($action) && !empty($user->rights->loan->delete)) {
 	if (!$disable_delete) {
-		print '<a class="butActionDelete" href="card.php?id='.$id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
+		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 	} else {
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+		print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
 	}
 }
 

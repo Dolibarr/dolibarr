@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Note: This tool can be included into a list page with :
  * define('USE_CUSTOM_REPORT_AS_INCLUDE', 1);
@@ -1096,7 +1096,7 @@ function fillArrayOfXAxis($object, $tablealias, $labelofobject, &$arrayofxaxis, 
 	foreach ($object->fields as $key => $val) {
 		if (empty($val['measure'])) {
 			if (in_array($key, array(
-				'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
+				'id', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
 				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
@@ -1217,7 +1217,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 	foreach ($object->fields as $key => $val) {
 		if (empty($val['isameasure'])) {
 			if (in_array($key, array(
-				'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
+				'id', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
 				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
@@ -1265,7 +1265,7 @@ function fillArrayOfGroupBy($object, $tablealias, $labelofobject, &$arrayofgroup
 	}
 
 	// Add extrafields to Group by
-	if (! empty($object->isextrafieldmanaged)) {
+	if (!empty($object->isextrafieldmanaged)) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') {
 				continue;

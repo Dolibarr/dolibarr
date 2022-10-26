@@ -78,8 +78,8 @@ $search_supplier_code = trim(GETPOST('search_supplier_code', 'alpha'));
 $search_account_customer_code = trim(GETPOST('search_account_customer_code', 'alpha'));
 $search_account_supplier_code = trim(GETPOST('search_account_supplier_code', 'alpha'));
 $search_address = trim(GETPOST('search_address', 'alpha'));
-$search_town = trim(GETPOST("search_town", 'alpha'));
 $search_zip = trim(GETPOST("search_zip", 'alpha'));
+$search_town = trim(GETPOST("search_town", 'alpha'));
 $search_state = trim(GETPOST("search_state", 'alpha'));
 $search_region = trim(GETPOST("search_region", 'alpha'));
 $search_email = trim(GETPOST('search_email', 'alpha'));
@@ -351,8 +351,8 @@ if (empty($reshook)) {
 		$search_account_customer_code = '';
 		$search_account_supplier_code = '';
 		$search_address = '';
-		$search_town = "";
 		$search_zip = "";
+		$search_town = "";
 		$search_state = "";
 		$search_region = "";
 		$search_country = '';
@@ -383,8 +383,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Societe';
 	$objectlabel = 'ThirdParty';
-	$permissiontoread = $user->rights->societe->lire;
-	$permissiontodelete = $user->rights->societe->supprimer;
+	$permissiontoread = $user->hasRight('societe', 'lire');
+	$permissiontodelete = $user->hasRight('societe', 'supprimer');
 	$permissiontoadd = $user->rights->societe->creer;
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
@@ -478,13 +478,6 @@ $sql .= " region.code_region as region_code, region.nom as region_name";
 if ($search_sale && $search_sale != '-1') {
 	$sql .= ", sc.fk_soc, sc.fk_user";
 }
-// We'll need these fields in order to filter by categ
-if ($search_categ_cus && $search_categ_cus != -1) {
-	$sql .= ", cc.fk_categorie, cc.fk_soc";
-}
-if ($search_categ_sup && $search_categ_sup != -1) {
-	$sql .= ", cs.fk_categorie, cs.fk_soc";
-}
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -505,13 +498,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_ty
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_effectif)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)";
-// We'll need this table joined to the select in order to filter by categ
-if (!empty($search_categ_cus) && $search_categ_cus != '-1') {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
-}
-if (!empty($search_categ_sup) && $search_categ_sup != '-1') {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs ON s.rowid = cs.fk_soc"; // We'll need this table joined to the select in order to filter by categ
-}
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale == -2) {
@@ -540,26 +526,64 @@ if ($search_sale == -2) {
 } elseif ($search_sale > 0) {
 	$sql .= " AND sc.fk_user = ".((int) $search_sale);
 }
-if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
+$searchCategoryCustomerList = $search_categ_cus ? array($search_categ_cus) : array();;
+$searchCategoryCustomerOperator = 0;
+// Search for tag/category ($searchCategoryCustomerList is an array of ID)
+if (!empty($searchCategoryCustomerList)) {
+	$searchCategoryCustomerSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc)";
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryCustomerOperator == 1) {
+		if (!empty($searchCategoryCustomerSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryCustomerSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryCustomerSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
+		}
+	}
 }
-if ($search_categ_sup > 0) {
-	$sql .= " AND cs.fk_categorie = ".((int) $search_categ_sup);
+$searchCategorySupplierList = $search_categ_sup ? array($search_categ_sup) : array();
+$searchCategorySupplierOperator = 0;
+// Search for tag/category ($searchCategorySupplierList is an array of ID)
+if (!empty($searchCategorySupplierList)) {
+	$searchCategorySupplierSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategorySupplierList as $searchCategorySupplier) {
+		if (intval($searchCategorySupplier) == -2) {
+			$searchCategorySupplierSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc)";
+		} elseif (intval($searchCategorySupplier) > 0) {
+			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplier);
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategorySupplierOperator == 1) {
+		if (!empty($searchCategorySupplierSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategorySupplierSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategorySupplierSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategorySupplierSqlList).")";
+		}
+	}
 }
-if ($search_categ_cus == -2) {
-	$sql .= " AND cc.fk_categorie IS NULL";
-}
-if ($search_categ_sup == -2) {
-	$sql .= " AND cs.fk_categorie IS NULL";
-}
-
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if (strlen($search_cti)) {
 	$sql .= natural_search('s.phone', $search_cti);
 }
-
 if ($search_id > 0) {
 	$sql .= natural_search("s.rowid", $search_id, 1);
 }
@@ -587,11 +611,11 @@ if ($search_account_supplier_code) {
 if ($search_address) {
 	$sql .= natural_search('s.address', $search_address);
 }
-if ($search_town) {
-	$sql .= natural_search("s.town", $search_town);
-}
 if (strlen($search_zip)) {
 	$sql .= natural_search("s.zip", $search_zip);
+}
+if ($search_town) {
+	$sql .= natural_search("s.town", $search_town);
 }
 if ($search_state) {
 	$sql .= natural_search("state.nom", $search_state);
@@ -691,9 +715,18 @@ $sql .= $hookmanager->resPrint;
 // Count total nb of records with no order and no limits
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$resql = $db->query($sql);
+	/*$resql = $db->query($sql);
 	if ($resql) {
 		$nbtotalofrecords = $db->num_rows($resql);
+	} else {
+		dol_print_error($db);
+	}*/
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
 	} else {
 		dol_print_error($db);
 	}
@@ -774,11 +807,11 @@ if ($search_alias != '') {
 if ($search_address != '') {
 	$param .= '&search_address='.urlencode($search_address);
 }
-if ($search_town != '') {
-	$param .= "&search_town=".urlencode($search_town);
-}
 if ($search_zip != '') {
 	$param .= "&search_zip=".urlencode($search_zip);
+}
+if ($search_town != '') {
+	$param .= "&search_town=".urlencode($search_town);
 }
 if ($search_phone != '') {
 	$param .= "&search_phone=".urlencode($search_phone);
@@ -883,7 +916,7 @@ $arrayofmassactions = array(
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-if ($user->rights->societe->creer) {
+if (isModEnabled('category') && $user->rights->societe->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if ($user->rights->societe->creer) {
@@ -898,7 +931,7 @@ if ($user->rights->societe->creer) {
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();
 }
-if ($user->rights->societe->supprimer) {
+if ($user->hasRight('societe', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -979,7 +1012,7 @@ if ($search_all) {
 // Filter on categories
 $moreforfilter = '';
 if (empty($type) || $type == 'c' || $type == 'p') {
-	if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+	if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('Categories');
@@ -990,7 +1023,7 @@ if (empty($type) || $type == 'c' || $type == 'p') {
 }
 
 if (empty($type) || $type == 'f') {
-	if (isModEnabled("fournisseur") && !empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+	if (isModEnabled("fournisseur") && isModEnabled('categorie') && $user->rights->categorie->lire) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('Categories');
@@ -1217,7 +1250,7 @@ if (!empty($arrayfields['customerorsupplier']['checked'])) {
 		print '<input type="hidden" name="type" value="'.$type.'">';
 	}
 	print $formcompany->selectProspectCustomerType($search_type, 'search_type', 'search_type', 'list');
-	print '</select></td>';
+	print '</td>';
 }
 // Prospect level
 if (!empty($arrayfields['s.fk_prospectlevel']['checked'])) {
@@ -1455,24 +1488,19 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	if (!empty($arrayfields['s.nom']['checked'])) {
-		$savalias = $obj->name_alias;
-		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			$companystatic->name_alias = '';
-		}
 		print '<td'.(empty($conf->global->MAIN_SOCIETE_SHOW_COMPLETE_NAME) ? ' class="tdoverflowmax200"' : '').' data-key="ref">';
 		if ($contextpage == 'poslist') {
-			print $obj->name;
+			print dol_escape_htmltag($obj->name);
 		} else {
-			print $companystatic->getNomUrl(1, '', 100, 0, 1);
+			print $companystatic->getNomUrl(1, '', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 		}
 		print "</td>\n";
-		$companystatic->name_alias = $savalias;
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['s.name_alias']['checked'])) {
-		print '<td class="tdoverflowmax200">';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
 		print dol_escape_htmltag($companystatic->name_alias);
 		print "</td>\n";
 		if (!$i) {
@@ -1481,7 +1509,7 @@ while ($i < min($num, $limit)) {
 	}
 	// Barcode
 	if (!empty($arrayfields['s.barcode']['checked'])) {
-		print '<td>'.dol_escape_htmltag($obj->barcode).'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->barcode).'">'.dol_escape_htmltag($obj->barcode).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

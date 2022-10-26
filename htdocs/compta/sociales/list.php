@@ -28,6 +28,7 @@
  *	\brief		Page to list all social contributions
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -100,7 +101,7 @@ $arrayfields = array(
 	'cs.fk_type'	=>array('label'=>"Type", 'checked'=>1, 'position'=>30),
 	'cs.date_ech'	=>array('label'=>"Date", 'checked'=>1, 'position'=>40),
 	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>50),
-	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(!empty($conf->project->enabled))),
+	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(isModEnabled('project'))),
 	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>70),
 	'cs.fk_mode_reglement'	=>array('checked'=>-1, 'position'=>80, 'label'=>"DefaultPaymentMode"),
 	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>100),
@@ -451,13 +452,14 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 if (!empty($arrayfields['cs.fk_user']['checked'])) {
 	// Employee
 	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_users, 'search_users', 1, null, 0, '', '', '0', '0', 0, '', 0, '', '', 0, 0, true);
+	print $form->select_dolusers($search_users, 'search_users', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth150', 0, 0, true);
+	print '</td>';
 }
 
 // Filter: Type
 if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
 	print '<td class="liste_titre">';
-	$form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 0, 1, 'maxwidth150');
+	print $form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 0, 1, 'maxwidth150', 1);
 	print '</td>';
 }
 
@@ -592,7 +594,7 @@ while ($i < min($num, $limit)) {
 		if (isModEnabled('accounting')) {
 			$typelabelpopup .= ' - '.$langs->trans("AccountancyCode").': '.$obj->type_accountancy_code;
 		}
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($typelabelpopup).'">'.dol_escape_htmltag($typelabeltoshow).'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($typelabelpopup).'">'.dol_escape_htmltag($typelabeltoshow).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -600,7 +602,7 @@ while ($i < min($num, $limit)) {
 
 	// Date
 	if (!empty($arrayfields['cs.date_ech']['checked'])) {
-		print '<td class="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -608,7 +610,7 @@ while ($i < min($num, $limit)) {
 
 	// Date end period
 	if (!empty($arrayfields['cs.periode']['checked'])) {
-		print '<td class="center">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -616,7 +618,7 @@ while ($i < min($num, $limit)) {
 
 	// Project ref
 	if (!empty($arrayfields['p.ref']['checked'])) {
-		print '<td class="nowrap">';
+		print '<td class="nowraponall">';
 		if ($obj->project_id > 0) {
 			print $projectstatic->getNomUrl(1);
 		}
@@ -628,7 +630,7 @@ while ($i < min($num, $limit)) {
 
 	if (!empty($arrayfields['cs.fk_user']['checked'])) {
 		// Employee
-		print "<td>";
+		print '<td class="tdoverflowmax150">';
 		if (!empty($obj->fk_user)) {
 			if (!empty($TLoadedUsers[$obj->fk_user])) {
 				$ustatic = $TLoadedUsers[$obj->fk_user];
@@ -647,7 +649,7 @@ while ($i < min($num, $limit)) {
 
 	// Type
 	if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("PaymentTypeShort".$obj->payment_code)).'">';
 		if (!empty($obj->payment_code)) {
 			print $langs->trans("PaymentTypeShort".$obj->payment_code);
 		}
@@ -659,7 +661,7 @@ while ($i < min($num, $limit)) {
 
 	// Account
 	if (!empty($arrayfields['cs.fk_account']['checked'])) {
-		print '<td>';
+		print '<td class="toverflowmax150">';
 		if ($obj->fk_account > 0) {
 			$bankstatic->id = $obj->fk_account;
 			$bankstatic->ref = $obj->bref;
@@ -682,7 +684,7 @@ while ($i < min($num, $limit)) {
 
 	// Amount
 	if (!empty($arrayfields['cs.amount']['checked'])) {
-		print '<td class="nowrap amount right">'.price($obj->amount).'</td>';
+		print '<td class="nowraponall amount right">'.price($obj->amount).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -694,7 +696,7 @@ while ($i < min($num, $limit)) {
 
 	// Status
 	if (!empty($arrayfields['cs.paye']['checked'])) {
-		print '<td class="nowrap right">'.$chargesociale_static->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
+		print '<td class="nowraponall right">'.$chargesociale_static->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/commande/index.php
  *	\ingroup    commande
- *	\brief      Home page of customer order module
+ *	\brief      Home page of sales order module
  */
 
 
@@ -92,7 +92,7 @@ if ($tmp) {
 /*
  * Draft orders
  */
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
@@ -244,7 +244,7 @@ $max = 10;
 /*
  * Orders to process
  */
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";
@@ -333,7 +333,7 @@ if (!empty($conf->commande->enabled)) {
 /*
  * Orders that are in process
  */
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, c.facture, c.date_commande as date, s.nom as name, s.rowid as socid";
 	$sql .= ", s.client";
 	$sql .= ", s.code_client";

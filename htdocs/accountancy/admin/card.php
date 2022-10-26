@@ -23,6 +23,7 @@
  *  \brief      Card of accounting account
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
@@ -48,7 +49,7 @@ $label = GETPOST('label', 'alpha');
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -84,7 +85,7 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			// Clean code
 
 			// To manage zero or not at the end of the accounting account
-			if ($conf->global->ACCOUNTING_MANAGE_ZERO == 1) {
+			if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
 				$account_number = $account_number;
 			} else {
 				$account_number = clean_account($account_number);
@@ -147,7 +148,7 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			// Clean code
 
 			// To manage zero or not at the end of the accounting account
-			if (isset($conf->global->ACCOUNTING_MANAGE_ZERO) && $conf->global->ACCOUNTING_MANAGE_ZERO == 1) {
+			if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
 				$account_number = $account_number;
 			} else {
 				$account_number = clean_account($account_number);
@@ -425,11 +426,9 @@ if ($action == 'create') {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
 			}
 
-			if ($user->hasRight('accounting', 'chartofaccount')) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
-			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
-			}
+			// Delete
+			$permissiontodelete = $user->hasRight('accounting', 'chartofaccount');
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 
 			print '</div>';
 		}

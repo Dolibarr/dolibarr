@@ -43,13 +43,14 @@ if (!defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Token is required even in GET mode
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $action = GETPOST('action', 'aZ09'); // set or del
 $name = GETPOST('name', 'alpha');
 $entity = GETPOST('entity', 'int');
-$value = ((GETPOST('value', 'int') || GETPOST('value', 'int') == '0') ? GETPOST('value', 'int') : 1);
+$value = (GETPOST('value', 'aZ09') != '' ? GETPOST('value', 'aZ09') : 1);
 
 
 /*

@@ -164,7 +164,7 @@ if ($id > 0) {
 	$object = new Societe($db);
 	$result = $object->fetch($id);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = societe_prepare_head($object);

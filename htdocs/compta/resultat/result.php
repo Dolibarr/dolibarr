@@ -24,6 +24,7 @@
  * \brief 		Page for accounting result
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
@@ -204,6 +205,9 @@ if ($modecompta == "CREANCES-DETTES") {
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
+	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
+	}
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
@@ -230,8 +234,6 @@ if ($modecompta == "CREANCES-DETTES") {
 	$exportlink = '';
 	$description = $langs->trans("RulesResultBookkeepingPersonalized");
 	$description .= ' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/categories_list.php?search_country_id='.$mysoc->country_id.'&mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->transnoentitiesnoconv("AccountingCategory")).')';
-	//if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
-	//else  $description.= $langs->trans("DepositsAreIncluded");
 	$builddate = dol_now();
 }
 
@@ -266,21 +268,22 @@ foreach ($months as $k => $v) {
 print	'</tr>';
 
 if ($modecompta == 'CREANCES-DETTES') {
-	//if (! empty($date_start) && ! empty($date_end))
+	//if (!empty($date_start) && !empty($date_end))
 	//	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 } elseif ($modecompta == "RECETTES-DEPENSES") {
-	//if (! empty($date_start) && ! empty($date_end))
+	//if (!empty($date_start) && !empty($date_end))
 	//	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 } elseif ($modecompta == "BOOKKEEPING") {
 	// Get array of all report groups that are active
 	$cats = $AccCat->getCats(); // WARNING: Computed groups must be after group they include
+	$unactive_cats = $AccCat->getCats(-1, 0);
 
 	/*
 	$sql = 'SELECT DISTINCT t.numero_compte as nb FROM '.MAIN_DB_PREFIX.'accounting_bookkeeping as t, '.MAIN_DB_PREFIX.'accounting_account as aa';
 	$sql.= " WHERE t.numero_compte = aa.account_number AND aa.fk_accounting_category = 0";
-	if (! empty($date_start) && ! empty($date_end))
+	if (!empty($date_start) && !empty($date_end))
 		$sql.= " AND t.doc_date >= '".$db->idate($date_start)."' AND t.doc_date <= '".$db->idate($date_end)."'";
-	if (! empty($month)) {
+	if (!empty($month)) {
 		$sql .= " AND MONTH(t.doc_date) = " . ((int) $month);
 	}
 	$resql = $db->query($sql);
@@ -324,6 +327,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 				print '</td>';
 
 				$vars = array();
+
+				// Unactive categories have a total of 0 to be used in the formula.
+				foreach ($unactive_cats as $un_cat) {
+					$vars[$un_cat['code']] = 0;
+				}
 
 				// Previous Fiscal year (N-1)
 				foreach ($sommes as $code => $det) {
@@ -405,6 +413,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Set $cpts with array of accounts in the category/group
 				$cpts = $AccCat->getCptsCat($cat['rowid']);
+				// We should loop over empty $cpts array, else the category _code_ is used in the formula, which leads to wrong result if the code is a number.
+				if (empty($cpts)) $cpts[] = array();
+
 
 				$arrayofaccountforfilter = array();
 				foreach ($cpts as $i => $cpt) {    // Loop on each account.
@@ -477,7 +488,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				// Label of group
 				print '<td>';
 				print dol_escape_htmltag($cat['label']);
-				if (count($cpts) > 0) {    // Show example of 5 first accounting accounts
+				if (count($cpts) > 0 && !empty($cpts[0])) {    // Show example of 5 first accounting accounts
 					$i = 0;
 					foreach ($cpts as $cpt) {
 						if ($i > 5) {

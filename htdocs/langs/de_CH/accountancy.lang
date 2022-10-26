@@ -39,7 +39,6 @@ CountriesNotInEEC=Nicht EWR - Staaten
 CountriesInEECExceptMe=Länder im EWR ausser %s
 CountriesExceptMe=Alle Staaten, ausser %s
 AccountantFiles=Geschäftsvorgänge exportieren
-ExportAccountingSourceDocHelp=Mit diesem Tool können Sie die Quellereignisse (Liste in CSV und PDFs) exportieren, die zur Erstellung Ihrer Buchhaltung verwendet werden.
 ExportAccountingSourceDocHelp2=Die Journale exportierst du im Menu %s - %s.
 VueByAccountAccounting=Anzeigen nach Buchhaltungskonto
 VueBySubAccountAccounting=Anzeigen nach Nebenbuchkonto

@@ -57,7 +57,7 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'perso';
 	$tab++;
 
-	if (!empty($conf->project->enabled) && $user->hasRight('project', 'lire')) {
+	if (isModEnabled('project') && $user->hasRight('project', 'lire')) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -92,7 +92,7 @@ function contact_prepare_head(Contact $object)
 	}
 
 	// Related items
-	if (!empty($conf->commande->enabled) || isModEnabled("propal") || isModEnabled('facture') || !empty($conf->ficheinter->enabled) || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
+	if (isModEnabled('commande') || isModEnabled("propal") || isModEnabled('facture') || isModEnabled('ficheinter') || (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 		$head[$tab][0] = DOL_URL_ROOT.'/contact/consumption.php?id='.$object->id;
 		$head[$tab][1] = $langs->trans("Referers");
 		$head[$tab][2] = 'consumption';
@@ -103,7 +103,7 @@ function contact_prepare_head(Contact $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact');
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'add', 'core');
 
 	// Notes
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
@@ -147,6 +147,8 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'info';
 	$tab++;*/
 
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'add', 'external');
+
 	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'contact', 'remove');
 
 	return $head;
@@ -170,11 +172,11 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 
 	$i = -1;
 
-	if (!empty($conf->project->enabled) && $user->rights->projet->lire) {
+	if (isModEnabled('project') && $user->rights->projet->lire) {
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (!empty($conf->project->enabled) && $user->rights->projet->creer && empty($nocreatelink)) {
+		if (isModEnabled('project') && $user->rights->projet->creer && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 		}
 

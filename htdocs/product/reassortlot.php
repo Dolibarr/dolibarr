@@ -27,6 +27,7 @@
  *  \brief      Page to list stocks
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
@@ -52,7 +53,8 @@ $type = GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT;
 $search_barcode = GETPOST("search_barcode", 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'alpha');
 $search_batch = GETPOST('search_batch', 'alpha');
-$toolowstock = GETPOST('toolowstock');
+$search_toolowstock = GETPOST('search_toolowstock');
+$search_subjecttolotserial = GETPOST('search_subjecttolotserial');
 $tosell = GETPOST("tosell");
 $tobuy = GETPOST("tobuy");
 $fourn_id = GETPOST("fourn_id", 'int');
@@ -173,7 +175,8 @@ if (empty($reshook)) {
 		$tobuy = "";
 		$search_sale = "";
 		$search_categ = "";
-		$toolowstock = '';
+		$search_toolowstock = '';
+		$search_subjecttolotserial = '';
 		$search_batch = '';
 		$search_warehouse = '';
 		$fourn_id = '';
@@ -252,6 +255,9 @@ if (dol_strlen($type)) {
 		$sql .= " AND p.fk_product_type <> '1'";
 	}
 }
+if ($search_subjecttolotserial) {
+	$sql .= " AND p.tobatch > 0";
+}
 if ($sref) {
 	$sql .= natural_search("p.ref", $sref);
 }
@@ -318,7 +324,7 @@ $sql .= " e.ref, e.lieu, e.fk_parent,";
 $sql .= " pb.batch, pb.eatby, pb.sellby,";
 $sql .= " pl.rowid, pl.eatby, pl.sellby";
 $sql_having = '';
-if ($toolowstock) {
+if ($search_toolowstock) {
 	$sql_having .= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte"; // Not used yet
 }
 if ($search_stock_physique != '') {
@@ -437,8 +443,11 @@ if ($sbarcode) {
 if ($search_warehouse) {
 	$param .= "&search_warehouse=".urlencode($search_warehouse);
 }
-if ($toolowstock) {
-	$param .= "&toolowstock=".urlencode($toolowstock);
+if ($search_toolowstock) {
+	$param .= "&search_toolowstock=".urlencode($search_toolowstock);
+}
+if ($search_subjecttolotserial) {
+	$param .= "&search_subjecttolotserial=".urlencode($search_subjecttolotserial);
 }
 if ($search_sale) {
 	$param .= "&search_sale=".urlencode($search_sale);
@@ -481,13 +490,13 @@ if ($search_categ > 0) {
 
 // Filter on categories
 $moreforfilter = '';
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 	$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1);
 	$moreforfilter .= '</div>';
 }
-//$moreforfilter.=$langs->trans("StockTooLow").' <input type="checkbox" name="toolowstock" value="1"'.($toolowstock?' checked':'').'>';
+$moreforfilter.='<label for="search_subjecttolotserial">'.$langs->trans("SubjectToLotSerialOnly").' </label><input type="checkbox" id="search_subjecttolotserial" name="search_subjecttolotserial" value="1"'.($search_subjecttolotserial?' checked':'').'>';
 
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -599,7 +608,7 @@ while ($i < $imaxinloop) {
 	$objp = $db->fetch_object($resql);
 
 	// Multilangs
-	if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+	if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 		// TODO Use a cache
 		$sql = "SELECT label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";

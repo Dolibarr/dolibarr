@@ -26,6 +26,7 @@
  *       \brief      Page of product statistics
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -374,7 +375,7 @@ if ($result || !($id > 0)) {
 						$morefilters = ' AND d.fk_product IN ('.$db->sanitize((is_array($listofprodids) && count($listofprodids)) ? join(',', $listofprodids) : '0').')';
 					}
 					if ($search_categ == -2) {
-						$morefilters = ' AND d.fk_product NOT IN (SELECT cp.fk_product from '.MAIN_DB_PREFIX.'categorie_product as cp)';
+						$morefilters = ' AND NOT EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE d.fk_product = cp.fk_product)';
 					}
 
 					if ($key == 'propal') {
@@ -439,7 +440,7 @@ if ($result || !($id > 0)) {
 				continue;
 			}
 
-			if ($graphfiles == 'propal' && !$user->rights->propale->lire) {
+			if ($graphfiles == 'propal' && !$user->rights->propal->lire) {
 				continue;
 			}
 			if ($graphfiles == 'order' && !$user->rights->commande->lire) {

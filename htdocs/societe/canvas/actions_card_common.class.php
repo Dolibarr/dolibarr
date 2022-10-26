@@ -246,7 +246,7 @@ abstract class ActionsCardCommon
 			}
 
 			// Language
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				$this->tpl['select_lang'] = $formadmin->select_language(($this->object->default_lang ? $this->object->default_lang : $conf->global->MAIN_LANG_DEFAULT), 'default_lang', 0, 0, 1);
 			}
 
@@ -306,7 +306,7 @@ abstract class ActionsCardCommon
 			$arr = $formcompany->typent_array(1);
 			$this->tpl['typent'] = $arr[$this->object->typent_code];
 
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				//$s=picto_from_langcode($this->default_lang);
 				//print ($s?$s.' ':'');
@@ -342,7 +342,7 @@ abstract class ActionsCardCommon
 			}
 
 			// Linked member
-			if (!empty($conf->adherent->enabled)) {
+			if (isModEnabled('adherent')) {
 				$langs->load("members");
 				$adh = new Adherent($this->db);
 				$result = $adh->fetch('', '', $this->object->id);

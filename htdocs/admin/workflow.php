@@ -24,6 +24,7 @@
  *	\brief		Workflows setup page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -62,19 +63,19 @@ $workflowcodes = array(
 	'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array(
 		'family'=>'create',
 		'position'=>10,
-		'enabled'=>(isModEnabled("propal") && !empty($conf->commande->enabled)),
+		'enabled'=>(isModEnabled("propal") && isModEnabled('commande')),
 		'picto'=>'order'
 	),
 	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array(
 		'family'=>'create',
 		'position'=>20,
-		'enabled'=>(!empty($conf->commande->enabled) && isModEnabled('facture')),
+		'enabled'=>(isModEnabled('commande') && isModEnabled('facture')),
 		'picto'=>'bill'
 	),
 	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array (
 		'family'=>'create',
 		'position'=>25,
-		'enabled'=>(!empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled)),
+		'enabled'=>(isModEnabled('ticket') && isModEnabled('ficheinter')),
 		'picto'=>'ticket'
 	),
 
@@ -84,7 +85,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array(
 		'family'=>'classify_proposal',
 		'position'=>30,
-		'enabled'=>(isModEnabled("propal") && !empty($conf->commande->enabled)),
+		'enabled'=>(isModEnabled("propal") && isModEnabled('commande')),
 		'picto'=>'propal',
 		'warning'=>''
 	),
@@ -100,19 +101,19 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array(  // when shipping validated
 		'family'=>'classify_order',
 		'position'=>40,
-		'enabled'=>(isModEnabled("expedition") && !empty($conf->commande->enabled)),
+		'enabled'=>(isModEnabled("expedition") && isModEnabled('commande')),
 		'picto'=>'order'
 	),
 	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED'=>array( // when shipping closed
 		'family'=>'classify_order',
 		'position'=>41,
-		'enabled'=>(isModEnabled("expedition") && !empty($conf->commande->enabled)),
+		'enabled'=>(isModEnabled("expedition") && isModEnabled('commande')),
 		'picto'=>'order'
 	),
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array(
 		'family'=>'classify_order',
 		'position'=>42,
-		'enabled'=>(isModEnabled('facture') && !empty($conf->commande->enabled)),
+		'enabled'=>(isModEnabled('facture') && isModEnabled('commande')),
 		'picto'=>'order',
 		'warning'=>''
 	), // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
@@ -123,7 +124,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array(
 		'family'=>'classify_supplier_proposal',
 		'position'=>60,
-		'enabled'=>(!empty($conf->supplier_proposal->enabled) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
+		'enabled'=>(isModEnabled('supplier_proposal') && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
 		'picto'=>'supplier_proposal',
 		'warning'=>''
 	),
@@ -132,7 +133,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>63,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled))),
+		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_order'))),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -140,7 +141,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>64,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled))),
+		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_order'))),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -173,13 +174,13 @@ $workflowcodes = array(
 	'WORKFLOW_TICKET_LINK_CONTRACT' => array(
 		'family' => 'link_ticket',
 		'position' => 75,
-		'enabled' => !empty($conf->ticket->enabled) && !empty($conf->contract->enabled),
+		'enabled' => isModEnabled('ticket') && !empty($conf->contract->enabled),
 		'picto' => 'ticket'
 	),
 	'WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS' => array(
 		'family' => 'link_ticket',
 		'position' => 76,
-		'enabled' => !empty($conf->ticket->enabled) && !empty($conf->contract->enabled),
+		'enabled' => isModEnabled('ticket') && !empty($conf->contract->enabled),
 		'picto' => 'ticket'
 	),
 );

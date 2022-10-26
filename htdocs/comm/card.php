@@ -32,6 +32,7 @@
  *       \brief      Page to show customer card of a third party
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -47,29 +48,29 @@ if (isModEnabled('facture')) {
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 if (isModEnabled("expedition")) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'banks'));
 
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$langs->load("contracts");
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$langs->load("orders");
 }
 if (isModEnabled("expedition")) {
@@ -78,13 +79,13 @@ if (isModEnabled("expedition")) {
 if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	$langs->load("projects");
 }
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	$langs->load("interventions");
 }
-if (!empty($conf->notification->enabled)) {
+if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
 
@@ -130,7 +131,7 @@ if ($id > 0 && empty($object->id)) {
 	}
 }
 if ($object->id > 0) {
-	if (!($object->client > 0) || empty($user->rights->societe->lire)) {
+	if (!($object->client > 0) || !$user->hasRight('societe', 'lire')) {
 		accessforbidden();
 	}
 }
@@ -510,7 +511,7 @@ if ($object->id > 0) {
 	}
 
 	if ($object->client) {
-		if (!empty($conf->commande->enabled) && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)) {
+		if (isModEnabled('commande') && !empty($conf->global->ORDER_MANAGE_MIN_AMOUNT)) {
 			print '<!-- Minimim amount for orders -->'."\n";
 			print '<tr class="nowrap">';
 			print '<td>';
@@ -544,7 +545,7 @@ if ($object->id > 0) {
 	}
 
 	// Warehouse
-	if (!empty($conf->stock->enabled) && !empty($conf->global->SOCIETE_ASK_FOR_WAREHOUSE)) {
+	if (isModEnabled('stock') && !empty($conf->global->SOCIETE_ASK_FOR_WAREHOUSE)) {
 		$langs->load('stocks');
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
@@ -584,7 +585,7 @@ if ($object->id > 0) {
 		print '</tr>';
 	}
 
-	if (!empty($conf->intracommreport->enabled)) {
+	if (isModEnabled('intracommreport')) {
 		// Transport mode by default
 		print '<tr><td class="nowrap">';
 		print '<table class="centpercent nobordernopadding"><tr><td class="nowrap">';
@@ -605,7 +606,7 @@ if ($object->id > 0) {
 	}
 
 	// Categories
-	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+	if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 		$langs->load("categories");
 		print '<tr><td>'.$langs->trans("CustomersCategoriesShort").'</td>';
 		print '<td>';
@@ -621,7 +622,7 @@ if ($object->id > 0) {
 	include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 
 	// Module Adherent
-	if (!empty($conf->adherent->enabled)) {
+	if (isModEnabled('adherent')) {
 		$langs->load("members");
 		$langs->load("users");
 
@@ -718,7 +719,7 @@ if ($object->id > 0) {
 		}
 	}
 
-	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+	if (isModEnabled('commande') && $user->rights->commande->lire) {
 		// Box commandes
 		$tmp = $object->getOutstandingOrders();
 		$outstandingOpened = $tmp['opened'];
@@ -913,7 +914,7 @@ if ($object->id > 0) {
 	/*
 	 * Latest orders
 	 */
-	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+	if (isModEnabled('commande') && $user->rights->commande->lire) {
 		$param ="";
 
 		$sql = "SELECT s.nom, s.rowid";
@@ -1122,7 +1123,7 @@ if ($object->id > 0) {
 	/*
 	 * Latest contracts
 	 */
-	if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire) {
+	if (isModEnabled('contrat') && $user->rights->contrat->lire) {
 		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut as contract_status, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup, c.entity,";
 		$sql .= " c.last_main_doc, c.model_pdf";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
@@ -1164,7 +1165,7 @@ if ($object->id > 0) {
 				$late = '';
 				foreach ($contrat->lines as $line) {
 					if ($contrat->statut == Contrat::STATUS_VALIDATED && $line->statut == ContratLigne::STATUS_OPEN) {
-						if (((!empty($line->date_fin_validite) ? $line->date_fin_validite : 0) + $conf->contrat->services->expires->warning_delay) < $now) {
+						if (((!empty($line->date_end) ? $line->date_end : 0) + $conf->contrat->services->expires->warning_delay) < $now) {
 							$late = img_warning($langs->trans("Late"));
 						}
 					}
@@ -1230,7 +1231,7 @@ if ($object->id > 0) {
 	/*
 	 * Latest interventions
 	 */
-	if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire) {
+	if (isModEnabled('ficheinter') && $user->rights->ficheinter->lire) {
 		$sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, f.fk_statut, f.duree as duration, f.datei as startdate, f.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
@@ -1553,7 +1554,7 @@ if ($object->id > 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
 		}
 
-		if (!empty($conf->commande->enabled) && $user->rights->commande->creer && $object->status == 1) {
+		if (isModEnabled('commande') && $user->rights->commande->creer && $object->status == 1) {
 			$langs->load("orders");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a></div>';
 		}
@@ -1563,14 +1564,14 @@ if ($object->id > 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a></div>';
 		}
 
-		if (!empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer && $object->status == 1) {
+		if (isModEnabled('ficheinter') && $user->rights->ficheinter->creer && $object->status == 1) {
 			$langs->load("fichinter");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a></div>';
 		}
 
 		// Add invoice
 		if ($user->socid == 0) {
-			if (!empty($conf->deplacement->enabled) && $object->status == 1) {
+			if (isModEnabled('deplacement') && $object->status == 1) {
 				$langs->load("trips");
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
 			}
@@ -1581,7 +1582,7 @@ if ($object->id > 0) {
 				} else {
 					$langs->loadLangs(array("orders", "bills"));
 
-					if (!empty($conf->commande->enabled)) {
+					if (isModEnabled('commande')) {
 						if ($object->client != 0 && $object->client != 2) {
 							if (!empty($orders2invoice) && $orders2invoice > 0) {
 								print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';

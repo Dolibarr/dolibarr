@@ -32,6 +32,11 @@ class ProjectStats extends Stats
 	public $status;
 	public $opp_status;
 
+	//SQL stat
+	public $field;
+	public $from;
+	public $where;
+
 
 	/**
 	 * Constructor
@@ -46,6 +51,18 @@ class ProjectStats extends Stats
 
 		require_once 'project.class.php';
 		$this->project = new Project($this->db);
+
+		$this->from = MAIN_DB_PREFIX.$this->project->table_element;
+		$this->field = 'opp_amount';
+		$this->where = " entity = ".$conf->entity;
+		if ($this->socid > 0) {
+			$this->where .= " AND fk_soc = ".((int) $this->socid);
+		}
+		if (is_array($this->userid) && count($this->userid) > 0) {
+			$this->where .= ' AND fk_user IN ('.$this->db->sanitize(join(',', $this->userid)).')';
+		} elseif ($this->userid > 0) {
+			$this->where .= " AND fk_user = ".((int) $this->userid);
+		}
 	}
 
 
@@ -538,7 +555,6 @@ class ProjectStats extends Stats
 	{
 		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		$sql .= $this->join;
 		$sql .= " WHERE f.datef BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";

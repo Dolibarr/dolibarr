@@ -24,6 +24,7 @@
  *		\brief      File of main public page for partnership module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -188,13 +189,13 @@ if (!empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
 	$listofval = array();
 	$listofval['-1'] = $langs->trans('No');
 	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (!empty($conf->paybox->enabled)) {
+	if (isModEnabled('paybox')) {
 		$listofval['paybox'] = 'Paybox';
 	}
-	if (!empty($conf->paypal->enabled)) {
+	if (isModEnabled('paypal')) {
 		$listofval['paypal'] = 'PayPal';
 	}
-	if (!empty($conf->stripe->enabled)) {
+	if (isModEnabled('stripe')) {
 		$listofval['stripe'] = 'Stripe';
 	}
 	print $form->selectarray("PARTNERSHIP_NEWFORM_PAYONLINE", $listofval, (!empty($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE) ? $conf->global->PARTNERSHIP_NEWFORM_PAYONLINE : ''), 0);
