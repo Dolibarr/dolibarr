@@ -235,6 +235,7 @@ foreach ($workflowcodes as $key => $params) {
 		continue;
 	}
 
+	$reg = array();
 	if ($oldfamily != $params['family']) {
 		if ($params['family'] == 'create') {
 			$header = $langs->trans("AutomaticCreation");
@@ -269,7 +270,7 @@ foreach ($workflowcodes as $key => $params) {
 
 		print '<tr class="liste_titre">';
 		print '<th>'.$header.'</th>';
-		print '<th align="center">'.$langs->trans("Status").'</th>';
+		print '<th class="right">'.$langs->trans("Status").'</th>';
 		print '</tr>';
 
 		$oldfamily = $params['family'];
@@ -286,7 +287,7 @@ foreach ($workflowcodes as $key => $params) {
 
 	print '</td>';
 
-	print '<td class="center">';
+	print '<td class="right">';
 
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff($key);
