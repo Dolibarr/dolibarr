@@ -126,6 +126,8 @@ $permissiontoadd = $user->rights->ticket->write;
 
 $actionobject = new ActionsTicket($db);
 
+$upload_dir = $conf->ticket->dir_output;
+
 $now = dol_now();
 
 
@@ -682,7 +684,6 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
 
 	// Actions to build doc
-	$upload_dir = $conf->ticket->dir_output;
 	$permissiontoadd = $user->rights->ticket->write;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 	//var_dump($action);exit;
@@ -1555,7 +1556,7 @@ if ($action == 'create' || $action == 'presend') {
 			// List of all actions
 			$filters = array();
 			$filters['search_agenda_label'] = $search_agenda_label;
-			show_ticket_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+			show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 		}
 
 		if ($action != 'presend' && $action != 'presend_addmessage' && $action != 'add_message') {

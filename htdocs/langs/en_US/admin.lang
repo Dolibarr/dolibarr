@@ -1747,8 +1747,8 @@ ActivateFCKeditor=Activate advanced editor for:
 FCKeditorForNotePublic=WYSIWIG creation/edition of the field "public notes" of elements
 FCKeditorForNotePrivate=WYSIWIG creation/edition of the field "private notes" of elements
 FCKeditorForCompany=WYSIWIG creation/edition of the field description of elements (except products/services)
-FCKeditorForProduct=WYSIWIG creation/edition of the field description of products/services
-FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <span class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formatting when building PDF files.</span>
+FCKeditorForProductDetails=WYSIWIG creation/edition of products description or lines for objects (lines of proposals, orders, invoices, etc...).
+FCKeditorForProductDetails2=Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formatting when building PDF files.
 FCKeditorForMailing= WYSIWIG creation/edition for mass eMailings (Tools->eMailing)
 FCKeditorForUserSignature=WYSIWIG creation/edition of user signature
 FCKeditorForMail=WYSIWIG creation/edition for all mail (except Tools->eMailing)

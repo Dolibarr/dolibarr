@@ -276,8 +276,8 @@ if (empty($reshook)) {
 			$object->job = GETPOST("job", 'alphanohtml');
 			$object->signature = GETPOST("signature", 'restricthtml');
 			$object->accountancy_code = GETPOST("accountancy_code", 'alphanohtml');
-			$object->note = GETPOST("note", 'restricthtml');
-			$object->note_private = GETPOST("note", 'restricthtml');
+			$object->note_public = GETPOST("note_public", 'restricthtml');
+			$object->note_private = GETPOST("note_private", 'restricthtml');
 			$object->ldap_sid = GETPOST("ldap_sid", 'alphanohtml');
 			$object->fk_user = GETPOST("fk_user", 'int') > 0 ? GETPOST("fk_user", 'int') : 0;
 			$object->fk_user_expense_validator = GETPOST("fk_user_expense_validator", 'int') > 0 ? GETPOST("fk_user_expense_validator", 'int') : 0;
@@ -1205,15 +1205,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 	$parameters = array();
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
-	// Note
-	print '<tr><td class="tdtop">';
-	print $langs->trans("Note");
-	print '</td><td>';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('note', GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : '', '', 120, 'dolibarr_notes', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
-	$doleditor->Create();
-	print "</td></tr>\n";
-
 	// Signature
 	print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
 	print '<td class="wordbreak">';
@@ -1222,6 +1213,23 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
+	// Note private
+	print '<tr><td class="tdtop">';
+	print $langs->trans("NotePublic");
+	print '</td><td>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('note_public', GETPOSTISSET('note_public') ? GETPOST('note_public', 'restricthtml') : '', '', 100, 'dolibarr_notes', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC'), ROWS_3, '90%');
+	$doleditor->Create();
+	print "</td></tr>\n";
+
+	// Note private
+	print '<tr><td class="tdtop">';
+	print $langs->trans("NotePrivate");
+	print '</td><td>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('note_private', GETPOSTISSET('note_private') ? GETPOST('note_private', 'restricthtml') : '', '', 100, 'dolibarr_notes', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE'), ROWS_3, '90%');
+	$doleditor->Create();
+	print "</td></tr>\n";
 
 	print '</table><hr><table class="border centpercent">';
 

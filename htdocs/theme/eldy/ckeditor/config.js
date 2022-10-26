@@ -100,6 +100,7 @@ CKEDITOR.editorConfig = function( config )
 	[
 	 	['Maximize'],
 	 	['Find'],
+	 	['Image'],
 	 	['Source']
 	];
 };

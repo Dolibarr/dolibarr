@@ -22,7 +22,7 @@
  */
 
 /**
- *  \file       htdocs/societe/agenda.php
+ *  \file       htdocs/societe/messaging.php
  *  \ingroup    societe
  *  \brief      Page of third party events
  */
@@ -163,9 +163,9 @@ if ($socid > 0) {
 	$morehtmlright = '';
 
 	$messagingUrl = DOL_URL_ROOT.'/societe/messaging.php?socid='.$object->id;
-	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 2);
 	$messagingUrl = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
-	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1);
 
 	// // Show link to send an email (if read and not closed)
 	// $btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
@@ -202,7 +202,7 @@ if ($socid > 0) {
 		$filters['search_agenda_label'] = $search_agenda_label;
 
 		// TODO Replace this with same code than into list.php
-		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+		show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 	}
 }
 

@@ -670,7 +670,7 @@ class FormTicket
 	/**
 	 *      Return html list of tickets type
 	 *
-	 *      @param  string|array	$selected		Id du type pre-selectionne
+	 *      @param  string|array	$selected		Id of preselected field or array of Ids
 	 *      @param  string			$htmlname		Nom de la zone select
 	 *      @param  string			$filtertype		To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
 	 *      @param  int				$format			0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
@@ -685,7 +685,7 @@ class FormTicket
 	{
 		global $langs, $user;
 
-		$selected = is_array($selected) ? $selected : (!empty($selected) ? implode(',', $selected) : array());
+		$selected = is_array($selected) ? $selected : (!empty($selected) ? array($selected) : array());
 		$ticketstat = new Ticket($this->db);
 
 		dol_syslog(get_class($this) . "::select_types_tickets " . implode(';', $selected) . ", " . $htmlname . ", " . $filtertype . ", " . $format . ", " . $multiselect, LOG_DEBUG);
@@ -1501,7 +1501,7 @@ class FormTicket
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_2, 70);
+			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_TICKET'), ROWS_2, 70);
 
 			$doleditor->Create();
 			print '</td></tr>';

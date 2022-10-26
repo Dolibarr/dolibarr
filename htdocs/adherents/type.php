@@ -145,6 +145,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
 		$sql .= " WHERE entity IN (".getEntity('member_type').")";
 		$result = $db->query($sql);
+		$num = null;
 		if ($result) {
 			$num = $db->num_rows($result);
 		}

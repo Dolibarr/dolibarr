@@ -6299,7 +6299,7 @@ class Form
 			}
 
 			if (!$options_only) {
-				$return .= '<select class="flat minwidth75imp" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled ? ' disabled' : '').$title.'>';
+				$return .= '<select class="flat minwidth50imp maxwidth100" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled ? ' disabled' : '').$title.'>';
 			}
 
 			$selectedfound = false;
@@ -6346,6 +6346,7 @@ class Form
 
 			if (!$options_only) {
 				$return .= '</select>';
+				//$return .= ajax_combobox($htmlname);		// This break for the moment dynamic autoselection of a value when selecting a product in object lines
 			}
 		} else {
 			$return .= $this->error;
