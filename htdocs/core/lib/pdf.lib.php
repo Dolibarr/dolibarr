@@ -404,7 +404,6 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 			$thirdparty->fetch_thirdparty();
 			$socname = $thirdparty->thirdparty->name;
 			if (($includealias || getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) && !empty($thirdparty->thirdparty->name_alias)) {
-				// TODO PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME not completely implemented
 				if (getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME') == 2) {
 					$socname = $thirdparty->thirdparty->name_alias." - ".$thirdparty->thirdparty->name;
 				} else {
