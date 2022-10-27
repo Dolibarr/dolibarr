@@ -145,8 +145,19 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 		// Le premier contact trouvé est utilisé pour déterminer le contact suivi
 		$contacts = $object->searchContactByEmail($origin_email);
 
+		// Ensure that contact is active and select first active contact
+		$cid = 0;
+		foreach ($contacts as $key => $contact) {
+			if ($contact->statut !== "1") {
+				$cid = $key + 1;
+			} else {
+				break;
+			}
+		}
+
+
 		// Option to require email exists to create ticket
-		if (!empty($conf->global->TICKET_EMAIL_MUST_EXISTS) && !$contacts[0]->socid) {
+		if (!empty($conf->global->TICKET_EMAIL_MUST_EXISTS) && !$contacts[$cid]->socid) {
 			$error++;
 			array_push($object->errors, $langs->trans("ErrorEmailMustExistToCreateTicket"));
 			$action = '';
@@ -198,8 +209,8 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 		}
 
 		if (is_array($contacts) and count($contacts) > 0) {
-			$object->fk_soc = $contacts[0]->socid;
-			$usertoassign = $contacts[0]->id;
+			$object->fk_soc = $contacts[$cid]->socid;
+			$usertoassign = $contacts[$cid]->id;
 		}
 
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
