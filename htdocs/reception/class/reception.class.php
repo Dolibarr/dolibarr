@@ -1642,7 +1642,7 @@ class Reception extends CommonObject
 	}
 
 	/**
-	 *	Classify the reception as invoiced (used when WORKFLOW_BILL_ON_RECEPTION is on)
+	 *	Classify the reception as invoiced (used when WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE is on)
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
 	 */
