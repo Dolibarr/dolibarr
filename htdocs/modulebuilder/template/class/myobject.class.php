@@ -995,7 +995,7 @@ class MyObject extends CommonObject
 		$langs->load("mymodule@mymodule");
 
 		if (empty($conf->global->MYMODULE_MYOBJECT_ADDON)) {
-			$conf->global->MYMODULE_MYOBJECT_ADDON = 'mod_dolipadbaes_standard';
+			$conf->global->MYMODULE_MYOBJECT_ADDON = 'mod_myobject_standard';
 		}
 
 		if (!empty($conf->global->MYMODULE_MYOBJECT_ADDON)) {
