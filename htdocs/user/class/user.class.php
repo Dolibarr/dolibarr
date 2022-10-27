@@ -686,6 +686,7 @@ class User extends CommonObject
 			'shipping' => 'expedition',
 			'task' => 'task@projet',
 			'fichinter' => 'ficheinter',
+			'propale' => 'propal',
 			'inventory' => 'stock',
 			'invoice' => 'facture',
 			'invoice_supplier' => 'fournisseur',
@@ -718,8 +719,6 @@ class User extends CommonObject
 			$permlevel1 = $tmp[0];
 		}
 
-		//var_dump($module);
-		//var_dump($this->rights->$module);
 		if (!in_array($module, $conf->modules)) {
 			return 0;
 		}
