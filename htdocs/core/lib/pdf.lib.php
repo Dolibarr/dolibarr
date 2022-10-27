@@ -400,14 +400,16 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 			}
 		}
 	} elseif ($thirdparty instanceof Contact) {
-		$thirdparty->fetch_thirdparty();
-		$socname = $thirdparty->thirdparty->name;
-		if (($includealias || getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) && !empty($thirdparty->thirdparty->name_alias)) {
-			// TODO PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME not completely implemented
-			if (getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME') == 2) {
-				$socname = $thirdparty->thirdparty->name_alias." - ".$thirdparty->thirdparty->name;
-			} else {
-				$socname = $thirdparty->thirdparty->name." - ".$thirdparty->thirdparty->name_alias;
+		if ($thirdparty->socid > 0) {
+			$thirdparty->fetch_thirdparty();
+			$socname = $thirdparty->thirdparty->name;
+			if (($includealias || getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) && !empty($thirdparty->thirdparty->name_alias)) {
+				// TODO PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME not completely implemented
+				if (getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME') == 2) {
+					$socname = $thirdparty->thirdparty->name_alias." - ".$thirdparty->thirdparty->name;
+				} else {
+					$socname = $thirdparty->thirdparty->name." - ".$thirdparty->thirdparty->name_alias;
+				}
 			}
 		}
 	} else {
