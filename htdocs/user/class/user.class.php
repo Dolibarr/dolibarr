@@ -719,6 +719,8 @@ class User extends CommonObject
 			$permlevel1 = $tmp[0];
 		}
 
+		//var_dump($module);
+		//var_dump($this->rights->$module);
 		if (!in_array($module, $conf->modules)) {
 			return 0;
 		}
