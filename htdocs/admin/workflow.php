@@ -152,20 +152,20 @@ $workflowcodes = array(
 		'warning'=>''
 	),
 
-	// Automatic classification reception
-	'WORKFLOW_BILL_ON_RECEPTION'=>array(
-		'family'=>'classify_reception',
-		'position'=>80,
-		'enabled'=>(isModEnabled("reception") && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
-		'picto'=>'reception'
-	),
-
 	// Automatic classification shipping
 	'WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE' => array(
 		'family' => 'classify_shipping',
 		'position' => 90,
 		'enabled' => isModEnabled("expedition") && isModEnabled("facture"),
 		'picto' => 'shipment'
+	),
+
+	// Automatic classification reception
+	'WORKFLOW_BILL_ON_RECEPTION'=>array(
+		'family'=>'classify_reception',
+		'position'=>95,
+		'enabled'=>(isModEnabled("reception") && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
+		'picto'=>'reception'
 	),
 
 	'separator2'=>array('family'=>'separator', 'position'=>400, 'enabled' => (isModEnabled('ticket') && isModEnabled('contract'))),
