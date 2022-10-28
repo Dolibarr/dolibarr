@@ -1138,7 +1138,7 @@ class Mo extends CommonObject
 			$title .= $labelProd;
 
 
-			$linkclose .= ' title="'.$title.'"';
+			$linkclose .= ' title="'.dol_escape_htmltag($title,1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
