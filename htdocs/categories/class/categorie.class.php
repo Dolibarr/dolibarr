@@ -60,6 +60,7 @@ class Categorie extends CommonObject
 	const TYPE_WEBSITE_PAGE = 'website_page';
 	const TYPE_TICKET = 'ticket';
 	const TYPE_KNOWLEDGEMANAGEMENT = 'knowledgemanagement';
+	const TYPE_INVOICE = 'invoice';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -71,20 +72,21 @@ class Categorie extends CommonObject
 	 * @var array Table of mapping between type string and ID used for field 'type' in table llx_categories
 	 */
 	protected $MAP_ID = array(
-		'product'      => 0,
-		'supplier'     => 1,
-		'customer'     => 2,
-		'member'       => 3,
-		'contact'      => 4,
-		'bank_account' => 5,
-		'project'      => 6,
-		'user'         => 7,
-		'bank_line'    => 8,
-		'warehouse'    => 9,
-		'actioncomm'   => 10,
-		'website_page' => 11,
-		'ticket'       => 12,
-		'knowledgemanagement' => 13
+		'product'             => 0,
+		'supplier'            => 1,
+		'customer'            => 2,
+		'member'              => 3,
+		'contact'             => 4,
+		'bank_account'        => 5,
+		'project'             => 6,
+		'user'                => 7,
+		'bank_line'           => 8,
+		'warehouse'           => 9,
+		'actioncomm'          => 10,
+		'website_page'        => 11,
+		'ticket'              => 12,
+		'knowledgemanagement' => 13,
+		'invoice'             => 14
 	);
 
 	/**
@@ -106,7 +108,8 @@ class Categorie extends CommonObject
 		10 => 'actioncomm',
 		11 => 'website_page',
 		12 => 'ticket',
-		13 => 'knowledgemanagement'
+		13 => 'knowledgemanagement',
+		14 => 'invoice'
 	);
 
 	/**
@@ -129,7 +132,7 @@ class Categorie extends CommonObject
 	public $MAP_CAT_TABLE = array(
 		'customer' => 'societe',
 		'supplier' => 'fournisseur',
-		'bank_account'=> 'account',
+		'bank_account' => 'account',
 	);
 
 	/**
@@ -147,11 +150,12 @@ class Categorie extends CommonObject
 		'account'  => 'Account', // old for bank account
 		'bank_account'  => 'Account',
 		'project'  => 'Project',
-		'warehouse'=> 'Entrepot',
+		'warehouse' => 'Entrepot',
 		'actioncomm' => 'ActionComm',
 		'website_page' => 'WebsitePage',
 		'ticket' => 'Ticket',
-		'knowledgemanagement' => 'KnowledgeRecord'
+		'knowledgemanagement' => 'KnowledgeRecord',
+		'invoice' => 'Invoice'
 	);
 
 	/**
@@ -169,9 +173,10 @@ class Categorie extends CommonObject
 		'account' => 'AccountsCategoriesArea', // old for bank account
 		'bank_account' => 'AccountsCategoriesArea',
 		'project' => 'ProjectsCategoriesArea',
-		'warehouse'=> 'StocksCategoriesArea',
+		'warehouse' => 'StocksCategoriesArea',
 		'actioncomm' => 'ActioncommCategoriesArea',
-		'website_page' => 'WebsitePageCategoriesArea'
+		'website_page' => 'WebsitePageCategoriesArea',
+		'invoice' => 'INvoiceCategoriesArea'
 	);
 
 	/**
@@ -185,8 +190,9 @@ class Categorie extends CommonObject
 		'contact'  => 'socpeople',
 		'account'  => 'bank_account', // old for bank account
 		'project'  => 'projet',
-		'warehouse'=> 'entrepot',
-		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord'
+		'warehouse' => 'entrepot',
+		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord',
+		'invoice' => 'facture'
 	);
 
 	/**
@@ -245,6 +251,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_ACTIONCOMM
 	 * @see Categorie::TYPE_WEBSITE_PAGE
 	 * @see Categorie::TYPE_TICKET
+	 * @see Categorie::TYPE_INVOICE
 	 */
 	public $type;
 

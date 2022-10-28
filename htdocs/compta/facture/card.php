@@ -38,6 +38,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -542,6 +543,8 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {		// Set incoterm
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	} elseif ($action == 'settags' && isModEnabled('categorie')) {		// Set tags
+		$result = $object->setCategories(GETPOST('categories', 'array'));
 	} elseif ($action == 'setbankaccount' && $usercancreate) {	// bank account
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
@@ -1950,6 +1953,13 @@ if (empty($reshook)) {
 
 		// End of object creation, we show it
 		if ($id > 0 && !$error) {
+			if (isModEnabled('categorie')) {
+				$categories = GETPOST('categories', 'array');
+				if (method_exists($object, 'setCategories')) {
+					$object->setCategories($categories);
+				}
+			}
+
 			$db->commit();
 
 			// Define output language
@@ -3682,6 +3692,15 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
+	if (!empty($conf->categorie->enabled)) {
+		// Categories
+		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_INVOICE, '', 'parent', 64, 0, 1);
+		$arrayselected = GETPOST('categories', 'array');
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print "</td></tr>";
+	}
+
 	// Other attributes
 	$parameters = array('objectsrc' => !empty($objectsrc) ? $objectsrc : 0, 'colspan' => ' colspan="2"', 'cols' => '2', 'socid'=>$socid);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -4594,7 +4613,39 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
-
+	// Tags-Categories
+	if (isModEnabled('categorie')) {
+		print '<tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
+		print $langs->trans("Categories");
+		print '<td><td class="right">';
+		if ($usercancreate) {
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$object->id.'&action=edittags&token='.newToken().'">'.img_edit().'</a>';
+		} else {
+			print '&nbsp;';
+		}
+		print '</td></tr></table>';
+		print '</td>';
+		print '<td>';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_INVOICE, '', 'parent', 64, 0, 1);
+		if ($action == 'edittags') {
+			print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
+			print '<input type="hidden" name="action" value="settags">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			$c = new Categorie($db);
+			$cats = $c->containing($object->id, Categorie::TYPE_INVOICE);
+			$arrayselected=[];
+			foreach ($cats as $cat) {
+				$arrayselected[] = $cat->id;
+			}
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
+			print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			print '</form>';
+		} else {
+			print $form->showCategories($object->id, Categorie::TYPE_INVOICE, 1);
+		}
+		print "</td></tr>";
+	}
 
 	if (!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
 		$displayWarranty = true;
