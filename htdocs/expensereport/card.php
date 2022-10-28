@@ -1694,44 +1694,6 @@ if ($action == 'create') {
 			$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlref = '<div class="refidno">';
-			/*
-			 // Ref customer
-			 $morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', 0, 1);
-			 $morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', null, null, '', 1);
-			 // Thirdparty
-			 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
-			 // Project
-			 if (isModEnabled('project'))
-			 {
-			 $langs->load("projects");
-			 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-			 if ($user->rights->commande->creer)
-			 {
-			 if ($action != 'classify')
-			 $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-			 if ($action == 'classify') {
-			 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-			 $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-			 $morehtmlref.='<input type="hidden" name="action" value="classin">';
-			 $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
-			 $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-			 $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-			 $morehtmlref.='</form>';
-			 } else {
-			 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-			 }
-			 } else {
-			 if (!empty($object->fk_project)) {
-			 $proj = new Project($db);
-			 $proj->fetch($object->fk_project);
-			 $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-			 $morehtmlref.=$proj->ref;
-			 $morehtmlref.='</a>';
-			 } else {
-			 $morehtmlref.='';
-			 }
-			 }
-			 }*/
 			$morehtmlref .= '</div>';
 
 			dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

@@ -570,9 +570,10 @@ print 'For a higher security, we also recommend to implement limits and mitigati
 print '</span>';
 
 print '<br>';
-print 'Login process -> This can be done using a fail2ban rule (see example into dev/setup)'."<br>";
-print DOL_URL_ROOT.'/passwordforgotten.php (see example into dev/setup)'."<br>";
-print DOL_URL_ROOT.'/public/* (see example into dev/setup)'."<br>";
+$urlexamplebase = 'https://github.com/Dolibarr/dolibarr/blob/develop/dev/setup/fail2ban/filter.d/';
+print '- Login process (see fail2ban example on <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-rulesbruteforce.conf">GitHub</a>)<br>';
+print '- '.DOL_URL_ROOT.'/passwordforgotten.php (see fail2ban example on <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-rulespassgorgotten.conf">GitHub</a>)<br>';
+print '- '.DOL_URL_ROOT.'/public/* (see fail2ban example on <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-limitpublic.conf">GitHub</a>)<br>';
 
 
 

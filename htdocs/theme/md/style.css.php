@@ -997,6 +997,9 @@ textarea.centpercent {
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
 }
+.paddingleftimp {
+	padding-<?php print $left; ?>: 4px !important;
+}
 .paddingleft2 {
 	padding-<?php print $left; ?>: 2px;
 }
@@ -1005,6 +1008,9 @@ textarea.centpercent {
 }
 .paddingright {
 	padding-<?php print $right; ?>: 4px;
+}
+.paddingrightimp {
+	padding-<?php print $right; ?>: 4px !important;
 }
 .paddingright2 {
 	padding-<?php print $right; ?>: 2px;
@@ -1506,6 +1512,7 @@ select.flat.selectlimit {
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	overflow: hidden;
+	height: auto !important;
 }
 
 .tablelistofcalendars {
@@ -1670,6 +1677,7 @@ tr.nobottom td {
 .widthauto { width: auto; }
 .width20  { width: 20px; }
 .width25  { width: 25px; }
+.width40  { width: 40px; }
 .width50  { width: 50px; }
 .width75  { width: 75px; }
 .width100 { width: 100px; }
@@ -4722,8 +4730,13 @@ span.buttonpaymentsmall {
 #tablepublicpayment tr.liste_total td { border-top: none; }
 
 .divmainbodylarge { margin-left: 40px; margin-right: 40px; }
+.publicnewmemberform div.titre { font-size: 2em; }
 #divsubscribe { max-width: 900px; }
+#divsubscribe .eventlabel { font-size: 1.5em; }
 #tablesubscribe { width: 100%; }
+#tablesubscribe tr td { font-size: 1.15em; }
+#tablesubscribe .price-registration { font-size: 1.5em; }
+
 
 div#card-element {
 	border: 1px solid #ccc;
@@ -5442,7 +5455,14 @@ a.cke_dialog_ui_button
 }
 .cke_dialog_ui_hbox_last
 {
-	vertical-align: bottom ! important;
+	vertical-align: bottom !important;
+}
+.cke_dialog_ui_hbox_last
+{
+	vertical-align: bottom !important;
+}
+.cke_combo_text {
+	width: 40px !important;
 }
 /*
 .cke_editable
@@ -6189,9 +6209,14 @@ ul.select2-results__options li {
 
 @media only screen and (min-width: 767px)
 {
+	/* CSS to have the dropdown boxes larger that the input search area */
 	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
-		min-width: 200px !important;
+		min-width: 220px !important;
 	}
+	.select2-container.select2-container--open .select2-dropdown--below {
+		min-width: 220px !important;
+	}
+	
 	.select2-container--open .select2-dropdown--below {
 		border-top: 1px solid var(--inputbordercolor);
 		/* border-top: 1px solid #aaaaaa; */
@@ -6359,6 +6384,7 @@ dl.dropdown {
 	list-style:none;
 	max-height: 264px;
 	overflow: auto;
+	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {
 	right: auto;

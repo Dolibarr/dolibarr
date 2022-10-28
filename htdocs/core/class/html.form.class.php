@@ -5384,9 +5384,10 @@ class Form
 	 *    @param	int		$maxlength			Max length
 	 *    @param	int		$forcefocus			Force focus on field (works with javascript only)
 	 *    @param    int     $nooutput           No print is done. String is returned.
+	 *    @param	string	$textifnoproject	Text to show if no project
 	 *    @return	string                      Return html content
 	 */
-	public function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0)
+	public function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0, $textifnoproject = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -5400,7 +5401,6 @@ class Form
 
 		$langs->load("project");
 		if ($htmlname != "none") {
-			$out .= "\n";
 			$out .= '<form method="post" action="'.$page.'">';
 			$out .= '<input type="hidden" name="action" value="classin">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -5412,9 +5412,9 @@ class Form
 			if ($selected) {
 				$projet = new Project($this->db);
 				$projet->fetch($selected);
-				$out .= $projet->getNomUrl(1, '', 1);
+				$out .= $projet->getNomUrl(0, '', 1);
 			} else {
-				$out .= "&nbsp;";
+				$out .= '<span class="opacitymedium">'.$textifnoproject.'</span>';
 			}
 			$out .= '</span>';
 		}
@@ -5439,22 +5439,26 @@ class Form
 	 * 	@param	string	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *										0 : use default deposit percentage from entry
 	 *										> 0 : force deposit percentage (for example, from company object)
+	 *  @param  int     $nooutput           No print is done. String is returned.
 	 *  @return	void
 	 */
-	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $type = '', $filtertype = -1, $deposit_percent = -1)
+	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $type = '', $filtertype = -1, $deposit_percent = -1, $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs;
+
+		$out = '';
+
 		if ($htmlname != "none") {
-			print '<form method="POST" action="'.$page.'">';
-			print '<input type="hidden" name="action" value="setconditions">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
+			$out .= '<form method="POST" action="'.$page.'">';
+			$out .= '<input type="hidden" name="action" value="setconditions">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			if ($type) {
-				print '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
+				$out .= '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
 			}
-			print $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, 0, '', $deposit_percent);
-			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
-			print '</form>';
+			$out .= $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, 0, '', $deposit_percent);
+			$out .= '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
+			$out .= '</form>';
 		} else {
 			if ($selected) {
 				$this->load_cache_conditions_paiements();
@@ -5465,15 +5469,21 @@ class Form
 						$label = str_replace('__DEPOSIT_PERCENT__', $deposit_percent > 0 ? $deposit_percent : $this->cache_conditions_paiements[$selected]['deposit_percent'], $label);
 					}
 
-					print $label;
+					$out .= $label;
 				} else {
 					$langs->load('errors');
-					print $langs->trans('ErrorNotInDictionaryPaymentConditions');
+					$out .= $langs->trans('ErrorNotInDictionaryPaymentConditions');
 				}
 			} else {
-				print "&nbsp;";
+				$out .= '&nbsp;';
 			}
 		}
+
+		if (empty($nooutput)) {
+			print $out;
+			return '';
+		}
+		return $out;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -5916,19 +5926,20 @@ class Form
 	/**
 	 *  Output html select to select thirdparty
 	 *
-	 *  @param	string	$page       	Page
-	 *  @param  string	$selected   	Id preselected
-	 *  @param  string	$htmlname		Name of HTML select
-	 *  @param  string	$filter         Optional filters criteras. Do not use a filter coming from input of users.
-	 *	@param	int		$showempty		Add an empty field
-	 * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
-	 * 	@param	int		$forcecombo		Force to use combo box
-	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 *  @param  int     $nooutput       No print output. Return it only.
-	 *  @param	array	$excludeids		Exclude IDs from the select combo
+	 *  @param	string	$page       			Page
+	 *  @param  string	$selected   			Id preselected
+	 *  @param  string	$htmlname				Name of HTML select
+	 *  @param  string	$filter         		Optional filters criteras. Do not use a filter coming from input of users.
+	 *	@param	int		$showempty				Add an empty field
+	 * 	@param	int		$showtype				Show third party type in combolist (customer, prospect or supplier)
+	 * 	@param	int		$forcecombo				Force to use combo box
+	 *  @param	array	$events					Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 *  @param  int     $nooutput       		No print output. Return it only.
+	 *  @param	array	$excludeids				Exclude IDs from the select combo
+	 *  @param	string	$textifnothirdparty		Text to show if no thirdparty
 	 *  @return	void|string
 	 */
-	public function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0, $excludeids = array())
+	public function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0, $excludeids = array(), $textifnothirdparty = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -5946,9 +5957,9 @@ class Form
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 				$soc = new Societe($this->db);
 				$soc->fetch($selected);
-				$out .= $soc->getNomUrl($langs);
+				$out .= $soc->getNomUrl(0, '');
 			} else {
-				$out .= "&nbsp;";
+				$out .= '<span class="opacitymedium">'.$textifnothirdparty.'</span>';
 			}
 		}
 
@@ -6288,7 +6299,7 @@ class Form
 			}
 
 			if (!$options_only) {
-				$return .= '<select class="flat minwidth75imp" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled ? ' disabled' : '').$title.'>';
+				$return .= '<select class="flat minwidth50imp maxwidth100" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled ? ' disabled' : '').$title.'>';
 			}
 
 			$selectedfound = false;
@@ -6335,6 +6346,7 @@ class Form
 
 			if (!$options_only) {
 				$return .= '</select>';
+				//$return .= ajax_combobox($htmlname);		// This break for the moment dynamic autoselection of a value when selecting a product in object lines
 			}
 		} else {
 			$return .= $this->error;
@@ -8251,6 +8263,7 @@ class Form
 							if(! data.id) return null;';
 
 			if ($callurlonselect) {
+				// We forge the url with 'sall='
 				$outdelayed .= '
 
 							var urlBase = data.url;

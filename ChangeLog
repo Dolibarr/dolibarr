@@ -27,6 +27,7 @@ Following changes may create regressions for some external modules, but were nec
 * Trigger ORDER_SUPPLIER_DISPATCH is removed, use ORDER_SUPPLIER_RECEIVE and/or LINEORDER_SUPPLIER_DISPATCH instead.
 * All functions fetch_all() are deprecated for naming consitency, use fetchAll() instead
 * Code standardization: $user->rights->propale is now $user->rights->propal everywhere.
+* Deprecated method set_billed() on shipment and reception class has been removed. Use setBilled() instead.
 
 
 ***** ChangeLog for 16.0.1 compared to 16.0.0 *****

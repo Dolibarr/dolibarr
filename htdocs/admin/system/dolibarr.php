@@ -342,7 +342,6 @@ $configfileparameters = array(
 	'?dolibarr_main_auth_ldap_admin_pass' => 'dolibarr_main_auth_ldap_admin_pass',
 	'?dolibarr_main_auth_ldap_debug' => 'dolibarr_main_auth_ldap_debug',
 	'separator3' => '',
-	'?dolibarr_lib_ADODB_PATH' => 'dolibarr_lib_ADODB_PATH',
 	'?dolibarr_lib_FPDF_PATH' => 'dolibarr_lib_FPDF_PATH',
 	'?dolibarr_lib_TCPDF_PATH' => 'dolibarr_lib_TCPDF_PATH',
 	'?dolibarr_lib_FPDI_PATH' => 'dolibarr_lib_FPDI_PATH',
