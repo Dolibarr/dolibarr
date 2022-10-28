@@ -1783,7 +1783,7 @@ class CMailFile
 			foreach ($matches[1] as $key => $ext) {
 				// We save the image to send in disk
 				$filecontent = $matches[2][$key];
-				$cid = dol_hash(uniqid(time()), 3);
+				$cid = dol_hash($this->html, 'md5');
 				$destfiletmp = $images_dir.'/'.$cid.'.'.$ext;
 
 				$fhandle = @fopen($destfiletmp, 'w');
