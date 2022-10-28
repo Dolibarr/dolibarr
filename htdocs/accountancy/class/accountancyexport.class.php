@@ -657,9 +657,12 @@ class AccountancyExport
 
 	/**
 	 * Export format : WinFic - eWinfic - WinSis Compta
+	 * Last review for this format : 2022-10-28 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
+	 * Help : https://wiki.gestan.fr/lib/exe/fetch.php?media=wiki:v15:compta:accountancy-format_winfic-ewinfic-winsiscompta.pdf
 	 *
 	 * @param array $TData data
+	 *
 	 * @return void
 	 */
 	public function exportWinfic(&$TData)
@@ -679,7 +682,7 @@ class AccountancyExport
 
 			$Tab = array();
 			//$Tab['type_ligne'] = 'M';
-			$Tab['code_journal'] = str_pad(self::trunc($data->code_journal, 2), 2);
+			$Tab['code_journal'] = str_pad(dol_trunc($data->code_journal, 2), 2);
 
 			//We use invoice date $data->doc_date not $date_ecriture which is the transfert date
 			//maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
@@ -688,11 +691,11 @@ class AccountancyExport
 
 			$Tab['folio'] = '     1';
 
-			$Tab['num_ecriture'] = str_pad(self::trunc($data->piece_num, 6), 6, ' ', STR_PAD_LEFT);
+			$Tab['num_ecriture'] = str_pad(dol_trunc($data->piece_num, 6), 6, ' ', STR_PAD_LEFT);
 
 			$Tab['jour_ecriture'] = dol_print_date($data->doc_date, '%d%m%y');
 
-			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 6), 6, '0');
+			$Tab['num_compte'] = str_pad(dol_trunc($code_compta, 6), 6, '0');
 
 			if ($data->sens == 'D') {
 				$Tab['montant_debit']  = str_pad(number_format($data->debit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
@@ -704,9 +707,9 @@ class AccountancyExport
 				$Tab['montant_crebit'] = str_pad(number_format($data->credit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 			}
 
-			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).' '.dol_string_unaccent($data->label_operation), 30), 30);
+			$Tab['libelle_ecriture'] = str_pad(dol_trunc(dol_string_unaccent($data->doc_ref).' '.dol_string_unaccent($data->label_operation), 30), 30);
 
-			$Tab['lettrage'] = str_repeat(' ', 2);
+			$Tab['lettrage'] = str_repeat(dol_trunc($data->lettering_code, 2, 'left'), 2);
 
 			$Tab['code_piece'] = str_repeat(' ', 5);
 
