@@ -1496,7 +1496,7 @@ class Setup extends DolibarrApi
 	  * @param int       $limit      Number of items per page
 	  * @param int       $page       Page number (starting from zero)
 	  * @param int       $active     Payment term is active or not {@min 0} {@max 1}
-	  * @param string    $lang       Code of the language the label of the severity must be translated to
+	  * @param string    $lang       Code of the language the label of the category must be translated to
 	  * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	  * @return array				List of ticket categories
 	  *
@@ -1622,7 +1622,7 @@ class Setup extends DolibarrApi
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number (starting from zero)
 	 * @param int       $active     Payment term is active or not {@min 0} {@max 1}
-	 * @param string    $lang       Code of the language the label of the severity must be translated to
+	 * @param string    $lang       Code of the language the label of the type must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of ticket types
 	 *
