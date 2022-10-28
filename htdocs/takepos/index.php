@@ -960,11 +960,11 @@ $( document ).ready(function() {
 		checkOverflow();
 	});
 	
-       let resizeObserver = new ResizeObserver(() => {
-           checkOverflow();
-       });
-          resizeObserver.observe(elem1);
-       resizeObserver.observe(elem2);
+	   let resizeObserver = new ResizeObserver(() => {
+		   checkOverflow();
+	   });
+		  resizeObserver.observe(elem1);
+	   resizeObserver.observe(elem2);
 	checkOverflow();
 	
 	var pressTimer = [];

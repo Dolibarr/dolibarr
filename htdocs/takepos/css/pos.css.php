@@ -933,9 +933,9 @@ div#moreinfo, div#infowarehouse {
 
 .arrows {
 	display: none;
-    position: absolute;
-    justify-content: space-between;
-    width: 100%;
+	position: absolute;
+	justify-content: space-between;
+	width: 100%;
 }
 
 .indicator {
@@ -970,28 +970,28 @@ html {
 }
 
 .header {
-    height: unset;
+	height: unset;
 }
 
 .topnav {
 	width: 100%;
-    white-space: nowrap;
-    overflow-x: scroll;
+	white-space: nowrap;
+	overflow-x: scroll;
 	display: inline-flex;
 }
 
 .topnav-left {
-    white-space: nowrap;
-    float: none;
+	white-space: nowrap;
+	float: none;
 	margin-right: auto;
-    align-items: center;
+	align-items: center;
 }
 
 .topnav-right {
-    display: flex;
-    white-space: nowrap;
-    float: none;
-    align-items: center;
+	display: flex;
+	white-space: nowrap;
+	float: none;
+	align-items: center;
 }
 
 .topnav-left #shoppingcart {
@@ -1000,7 +1000,7 @@ html {
 
 .topnav-right .login_block_other {
 	display: flex;
-    white-space: nowrap;
+	white-space: nowrap;
 }
 
 ::-webkit-scrollbar {
