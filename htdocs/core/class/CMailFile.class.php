@@ -1761,7 +1761,7 @@ class CMailFile
 		/*
 		global $dolibarr_main_data_root;
 		$outputfile = $dolibarr_main_data_root."/dolibarr_mail.log";
-		$fp = fopen($outputfile, "w");
+		$fp = fopen($outputfile, "w+");
 		fwrite($fp, $this->html);
 		fclose($fp);
 		*/
@@ -1808,7 +1808,7 @@ class CMailFile
 					// type
 					$this->html_images[$i]["type"] = 'cidfromdata';
 
-					$this->html = preg_replace('/src="data:image\/'.$ext.';base64,'.preg_quote($filecontent, '/').'"/', 'src="cid:'.$this->html_images[$i]["cid"].'"', $this->html);
+					$this->html = str_replace('src="data:image/'.$ext.';base64,'.$filecontent.'"', 'src="cid:'.$this->html_images[$i]["cid"].'"', $this->html);
 				}
 				$i++;
 			}
