@@ -939,6 +939,65 @@ $( document ).ready(function() {
 		}
 	}
 	?>
+	
+	/* For Header Scroll */
+	var elem1 = $("#topnav-left")[0];
+	var elem2 = $("#topnav-right")[0];
+	var checkOverflow = function() {
+		if (scrollBars().horizontal) $("#topnav").addClass("overflow");
+		else  $("#topnav").removeClass("overflow");			
+	}
+	
+	var scrollBars = function(){
+		var container= $('#topnav')[0];
+		return {
+			vertical:container.scrollHeight > container.clientHeight,
+			horizontal:container.scrollWidth > container.clientWidth
+		};
+	}
+	
+	$(window).resize(function(){
+		checkOverflow();
+	});
+	
+       let resizeObserver = new ResizeObserver(() => {
+           checkOverflow();
+       });
+          resizeObserver.observe(elem1);
+       resizeObserver.observe(elem2);
+	checkOverflow();
+	
+	var pressTimer = [];
+	var direction = 1;
+	var step = 200;
+	
+	$(".indicator").mousedown(function(){
+		direction = $(this).hasClass("left") ? -1 : 1;
+		scrollTo();
+		pressTimer.push(setInterval(scrollTo, 100));
+	});
+	
+	$(".indicator").mouseup(function(){
+		pressTimer.forEach(clearInterval);
+	});
+	
+	$("body").mouseup(function(){
+		pressTimer.forEach(clearInterval);
+		console.log("body");
+	});
+	
+	function scrollTo(){
+		console.log("here");
+		var pos = $("#topnav").scrollLeft();
+		document.getElementById("topnav").scrollTo({ left: $("#topnav").scrollLeft() + direction * step, behavior: 'smooth' })
+	}
+	
+	$("#topnav").scroll(function(){
+		if (($("#topnav").offsetWidth + $("#topnav").scrollLeft >= $("#topnav").scrollWidth)) {
+			console.log("end");
+		}
+	});
+	/* End Header Scroll */
 });
 </script>
 
@@ -951,8 +1010,8 @@ $keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION
 if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	?>
 	<div class="header">
-		<div class="topnav">
-			<div class="topnav-left">
+		<div id="topnav" class="topnav">
+			<div id="topnav-left" class="topnav-left">
 				<div class="inline-block valignmiddle">
 				<a class="topnav-terminalhour" onclick="ModalBox('ModalTerminal');">
 				<span class="fa fa-cash-register"></span>
@@ -986,7 +1045,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				}
 				?>
 			</div>
-			<div class="topnav-right">
+			<div id="topnav-right" class="topnav-right">
 				<div class="login_block_other">
 				<input type="text" id="search" name="search" class="input-search-takepos" onkeyup="Search2('<?php echo dol_escape_js($keyCodeForEnter); ?>', null);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
@@ -1001,6 +1060,10 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				print top_menu_user(1);
 				?>
 				</div>
+			</div>
+			<div class="arrows">
+				<span class="indicator left"><i class="fa fa-arrow-left"></i></span>
+				<span class="indicator right"><i class="fa fa-arrow-right"></i></span>
 			</div>
 		</div>
 	</div>
