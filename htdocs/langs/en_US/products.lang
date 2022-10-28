@@ -429,3 +429,4 @@ ConfirmEditExtrafieldQuestion = Are you sure you want to modify this extrafield?
 ModifyValueExtrafields = Modify value of an extrafield
 OrProductsWithCategories=Or products with tags/categories
 WarningTransferBatchStockMouvToGlobal = If you want to deserialize this product, all its serialized stock will be transformed into global stock
+CantConvertFromBatchToSerial=It's currently not possible to use serial number choice for this product because Dolibarr doesn't know on which serial numbers to dispatch each quantity of current batch. If you need serial numbers for this product you first have to choose "No (lot/serial not used)", then Dolibarr will empty each batch, after that you will be able to select "Yes (unique serial number required)"
