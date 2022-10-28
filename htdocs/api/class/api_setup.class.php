@@ -624,7 +624,7 @@ class Setup extends DolibarrApi
 				global $conf;
 				$this->translations = new Translate('', $conf);
 				$this->translations->setDefaultLang($lang);
-				$this->translations->load($dict);
+				$this->translations->loadLangs(array($dict));
 			}
 			if ($object->code) {
 				$key = $prefix.$object->code;
