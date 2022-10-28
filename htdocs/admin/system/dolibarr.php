@@ -168,7 +168,7 @@ print '</td></tr>'."\n";
 print '<tr class="oddeven"><td>'.$langs->trans("Screen").'</td><td>';
 print $_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
 print '</td></tr>'."\n";
-print '<tr class="oddeven"><td>'.$langs->trans("Session").'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans("Session").'</td><td class="wordbreak">';
 $i = 0;
 foreach ($_SESSION as $key => $val) {
 	if ($i > 0) {
