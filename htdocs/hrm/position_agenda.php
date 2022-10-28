@@ -20,9 +20,9 @@
  */
 
 /**
- *  \file       position_agenda.php
- *  \ingroup    hrm
- *  \brief      Tab of events on Position
+ *    \file       htdocs/hrm/position_agenda.php
+ *    \ingroup    hrm
+ *    \brief      Tab of events on Position
  */
 
 
@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "other"));
+$langs->loadLangs(array('hrm', 'other'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -79,6 +79,7 @@ $object = new Position($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->hrm->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('positionagenda', 'globalcard')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -88,6 +89,7 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->hrm->multidir_output[$object->entity]."/".$object->id;
 }
 
+// Permissions
 $permissiontoread = $user->rights->hrm->all->read;
 $permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php
 
@@ -138,7 +140,7 @@ if ($object->id > 0) {
 	$help_url = 'EN:Module_Agenda_En';
 	llxHeader('', $title, $help_url);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = positionCardPrepareHead($object);

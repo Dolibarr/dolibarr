@@ -61,7 +61,7 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
-if (empty($conf->hrm->enabled)) accessforbidden();
+if (!isModEnabled('hrm')) accessforbidden();
 if (empty($permissiontoread)) accessforbidden();
 
 
@@ -420,8 +420,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 * Action bar
 	 */
 	print '<div class="tabsAction">';
+
+	// Modify
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$id.'">'.$langs->trans('Delete').'</a>';
+
+	// Delete
+	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+
 	print '</div>';
 }
 

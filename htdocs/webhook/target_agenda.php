@@ -143,7 +143,7 @@ if ($object->id > 0) {
 	$help_url = 'EN:Module_Agenda_En';
 	llxHeader('', $title, $help_url);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = targetPrepareHead($object);
@@ -163,7 +163,7 @@ if ($object->id > 0) {
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	// Project
-	if (!empty($conf->projet->enabled)) {
+	if (isModEnabled('projet')) {
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 		if ($permissiontoadd) {

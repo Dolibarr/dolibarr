@@ -84,6 +84,7 @@ if ($action == 'getProducts') {
 				}
 				unset($prod->fields);
 				unset($prod->db);
+				$prod->price_formated=price(price2num($prod->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency);
 				$res[] = $prod;
 			}
 		}
@@ -301,7 +302,7 @@ if ($action == 'getProducts') {
 				'object' => 'product',
 				'img' => $ig,
 				'qty' => 1,
-				//'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
+				'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
 			);
 			// Add entries to row from hooks
 			$parameters=array();

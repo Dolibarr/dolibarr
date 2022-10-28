@@ -71,13 +71,13 @@ if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
-if (!empty($conf->bom->enabled)) {
+if (isModEnabled('bom')) {
 	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'other'));
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	$langs->load("stocks");
 }
 if (isModEnabled('facture')) {
@@ -147,7 +147,7 @@ if ($id > 0 || !empty($ref)) {
 		$upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 	}
 
-	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {    // For backward compatiblity, we scan also old dirs
+	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {    // For backward compatiblity, we scan also old dirs
 		if (isModEnabled("product")) {
 			$upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 		} else {
@@ -1039,7 +1039,7 @@ if (empty($reshook)) {
 
 				$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $soc->id);
 
-				$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+				$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 				if ($result) {
 					if (count($prodcustprice->lines) > 0) {
 						$pu_ht = price($prodcustprice->lines [0]->price);
@@ -1444,9 +1444,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Description (used in invoice, propal...)
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-		$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_4, '90%');
+		$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_DETAILS'), ROWS_4, '90%');
 		$doleditor->Create();
-
 		print "</td></tr>";
 
 		if (empty($conf->global->PRODUCT_DISABLE_PUBLIC_URL)) {
@@ -1457,7 +1456,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 		}
 
-		if ($type != 1 && !empty($conf->stock->enabled)) {
+		if ($type != 1 && isModEnabled('stock')) {
 			// Default warehouse
 			print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 			print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
@@ -1620,7 +1619,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
 
 			// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-			$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 140, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_8, '90%');
+			$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 140, 'dolibarr_details', '', false, true, getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE'), ROWS_8, '90%');
 			$doleditor->Create();
 
 			print "</td></tr>";
@@ -1866,7 +1865,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<table class="border allwidth">';
 
 			// Ref
-			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
+			if (empty($conf->global->MAIN_PRODUCT_REF_NOT_EDITABLE)) {
+				print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
+			} else {
+				print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag($object->ref).'" readonly="true"></td></tr>';
+			}
+
 
 			// Label
 			print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" class="minwidth300 maxwidth400onsmartphone" maxlength="255" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
@@ -2002,7 +2006,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 
 			// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-			$doleditor = new DolEditor('desc', GETPOSTISSET('desc') ? GETPOST('desc', 'restricthtml') : $object->description, '', 160, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_4, '90%');
+			$doleditor = new DolEditor('desc', GETPOSTISSET('desc') ? GETPOST('desc', 'restricthtml') : $object->description, '', 160, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_4, '90%');
 			$doleditor->Create();
 
 			print "</td></tr>";
@@ -2017,7 +2021,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Stock
-			if ($object->isProduct() && !empty($conf->stock->enabled)) {
+			if ($object->isProduct() && isModEnabled('stock')) {
 				// Default warehouse
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 				print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
@@ -2074,7 +2078,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 
-			if (!$object->isService() && !empty($conf->bom->enabled)) {
+			if (!$object->isService() && isModEnabled('bom')) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
 				$bomkey = "Bom:bom/class/bom.class.php:0:t.status=1 AND t.fk_product=".((int) $object->id);
 				print $form->selectForForms($bomkey, 'fk_default_bom', $object->fk_default_bom, 1);
@@ -2193,7 +2197,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (!empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 				print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
 
-				$doleditor = new DolEditor('note_private', $object->note_private, '', 140, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_4, '90%');
+				$doleditor = new DolEditor('note_private', $object->note_private, '', 140, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_NOTE_PRIVATE'), ROWS_4, '90%');
 				$doleditor->Create();
 
 				print "</td></tr>";
@@ -2515,7 +2519,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Default warehouse
-			if ($object->isProduct() && !empty($conf->stock->enabled)) {
+			if ($object->isProduct() && isModEnabled('stock')) {
 				$warehouse = new Entrepot($db);
 				$warehouse->fetch($object->fk_default_warehouse);
 
@@ -2534,7 +2538,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Parent product.
-			if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
+			if (isModEnabled('variants') && ($object->isProduct() || $object->isService())) {
 				$combination = new ProductCombination($db);
 
 				if ($combination->fetchByFkProductChild($object->id) > 0) {
@@ -2584,7 +2588,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 
-			if (!$object->isService() && !empty($conf->bom->enabled) && $object->finished) {
+			if (!$object->isService() && isModEnabled('bom') && $object->finished) {
 				print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
 				if ($object->fk_default_bom) {
 					$bom_static = new BOM($db);
@@ -2831,7 +2835,7 @@ if (!empty($conf->global->PRODUCT_ADD_FORM_ADD_TO) && $object->id && ($action ==
 	//print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	// Propals
-	if (isModEnabled("propal") && $user->rights->propale->creer) {
+	if (isModEnabled("propal") && $user->rights->propal->creer) {
 		$propal = new Propal($db);
 
 		$langs->load("propal");

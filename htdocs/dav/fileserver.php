@@ -157,7 +157,7 @@ if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR)) {
 // Private dir
 $nodes[] = new \Sabre\DAV\FS\Directory($privateDir);
 // ECM dir
-if (!empty($conf->ecm->enabled) && !empty($conf->global->DAV_ALLOW_ECM_DIR)) {
+if (isModEnabled('ecm') && !empty($conf->global->DAV_ALLOW_ECM_DIR)) {
 	$nodes[] = new \Sabre\DAV\FS\Directory($ecmDir);
 }
 

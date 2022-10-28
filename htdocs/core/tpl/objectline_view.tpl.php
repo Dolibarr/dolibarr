@@ -49,7 +49,7 @@ global $mysoc;
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 $usemargins = 0;
-if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
+if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 	$usemargins = 1;
 }
 
@@ -213,7 +213,7 @@ if (($line->info_bits & 2) == 2) {
 	}
 
 	// Add description in form
-	if ($line->fk_product > 0 && !empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+	if ($line->fk_product > 0 && getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 		if ($line->element == 'facturedetrec') {
 			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start_fill || $line->date_end_fill) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
 		} elseif ($line->element == 'invoice_supplier_det_rec') {
@@ -333,7 +333,7 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	print '<td align="right" class="linecolcycleref2 nowrap">'.price($sign * $tmp[0]).'</td>';
 }
 
-if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid)) {
+if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 	if (!empty($user->rights->margins->creer)) { ?>
 		<td class="linecolmargin1 nowrap margininfos right"><?php $coldisplay++; ?><?php print price($line->pa_ht); ?></td>
 	<?php }

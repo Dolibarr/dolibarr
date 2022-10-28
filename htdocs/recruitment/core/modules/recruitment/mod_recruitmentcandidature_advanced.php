@@ -30,7 +30,7 @@ dol_include_once('/recruitment/core/modules/recruitment/modules_recruitmentcandi
 
 
 /**
- *	Class to manage customer Bom numbering rules advanced
+ *	Class to manage the Advanced numbering rule for Job application
  */
 class mod_recruitmentcandidature_advanced extends ModeleNumRefRecruitmentCandidature
 {

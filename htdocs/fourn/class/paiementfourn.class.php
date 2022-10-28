@@ -349,7 +349,7 @@ class PaiementFourn extends Paiement
 							if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 								$newlang = '';
 								$outputlangs = $langs;
-								if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 									$newlang = $invoice->thirdparty->default_lang;
 								}
 								if (!empty($newlang)) {

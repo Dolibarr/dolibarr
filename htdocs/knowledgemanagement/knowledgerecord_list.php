@@ -246,9 +246,6 @@ $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
-if (!empty($searchCategoryKnowledgemanagementList) || !empty($catid)) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_knowledgemanagement as ck ON t.rowid = ck.fk_knowledgemanagement"; // We'll need this table joined to the select in order to filter by categ
-}
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -287,29 +284,29 @@ foreach ($search as $key => $val) {
 		}
 	}
 }
-//Search for tag/category
-$searchCategoryKnowledgemanagementSqlList = array();
-if ($searchCategoryKnowledgemanagementOperator == 1) {
+
+// Search for tag/category ($searchCategoryKnowledgemanagementList is an array of ID)
+if (!empty($searchCategoryKnowledgemanagementList)) {
+	$searchCategoryKnowledgemanagementSqlList = array();
+	$listofcategoryid = '';
 	foreach ($searchCategoryKnowledgemanagementList as $searchCategoryKnowledgemanagement) {
 		if (intval($searchCategoryKnowledgemanagement) == -2) {
-			$searchCategoryKnowledgemanagementSqlList[] = "ck.fk_categorie IS NULL";
+			$searchCategoryKnowledgemanagementSqlList[] = "NOT EXISTS (SELECT ck.fk_knowledgemanagement FROM ".MAIN_DB_PREFIX."categorie_knowledgemanagement as ck WHERE t.rowid = ck.fk_knowledgemanagement)";
 		} elseif (intval($searchCategoryKnowledgemanagement) > 0) {
-			$searchCategoryKnowledgemanagementSqlList[] = "ck.fk_categorie = ".$db->escape($searchCategoryKnowledgemanagement);
+			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryKnowledgemanagement);
 		}
 	}
-	if (!empty($searchCategoryKnowledgemanagementSqlList)) {
-		$sql .= " AND (".implode(' OR ', $searchCategoryKnowledgemanagementSqlList).")";
+	if ($listofcategoryid) {
+		$searchCategoryKnowledgemanagementSqlList[] = " EXISTS (SELECT ck.fk_knowledgemanagement FROM ".MAIN_DB_PREFIX."categorie_knowledgemanagement as ck WHERE t.rowid = ck.fk_knowledgemanagement AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
 	}
-} else {
-	foreach ($searchCategoryKnowledgemanagementList as $searchCategoryKnowledgemanagement) {
-		if (intval($searchCategoryKnowledgemanagement) == -2) {
-			$searchCategoryKnowledgemanagementSqlList[] = "ck.fk_categorie IS NULL";
-		} elseif (intval($searchCategoryKnowledgemanagement) > 0) {
-			$searchCategoryKnowledgemanagementSqlList[] = "t.rowid IN (SELECT fk_knowledgemanagement FROM ".MAIN_DB_PREFIX."categorie_knowledgemanagement WHERE fk_categorie = ".((int) $searchCategoryKnowledgemanagement).")";
+	if ($searchCategoryKnowledgemanagementOperator == 1) {
+		if (!empty($searchCategoryKnowledgemanagementSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryKnowledgemanagementSqlList).")";
 		}
-	}
-	if (!empty($searchCategoryKnowledgemanagementSqlList)) {
-		$sql .= " AND (".implode(' AND ', $searchCategoryKnowledgemanagementSqlList).")";
+	} else {
+		if (!empty($searchCategoryKnowledgemanagementSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryKnowledgemanagementSqlList).")";
+		}
 	}
 }
 
@@ -427,7 +424,7 @@ if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 
-if ($user->rights->knowledgemanagement->knowledgerecord->write) {
+if (isModEnabled('category') && $user->rights->knowledgemanagement->knowledgerecord->write) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 
@@ -475,7 +472,7 @@ $moreforfilter.= '</div>';*/
 
 // Filter on categories
 $moreforfilter = '';
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 	$categoriesKnowledgeArr = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', '', 64, 0, 1);

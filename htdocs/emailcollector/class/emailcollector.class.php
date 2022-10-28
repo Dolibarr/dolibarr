@@ -16,37 +16,38 @@
  */
 
 /**
- * \file        emailcollector/class/emailcollector.class.php
- * \ingroup     emailcollector
- * \brief       This file is a CRUD class file for EmailCollector (Create/Read/Update/Delete)
+ *    \file        htdocs/emailcollector/class/emailcollector.class.php
+ *    \ingroup     emailcollector
+ *    \brief       This file is a CRUD class file for EmailCollector (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
-require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
+include_once DOL_DOCUMENT_ROOT .'/emailcollector/lib/emailcollector.lib.php';
 
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php'; // customer proposal
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php'; // customer order
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php'; // Shipment
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php'; // supplier invoice
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php'; // supplier order
-require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php'; // supplier proposal
-require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php'; // reception
-include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
-//require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php'; // Holidays (leave request)
-//require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php'; // expernse repor
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
+
+require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';                   // Customer Proposal
+require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';                    // Sale Order
+require_once DOL_DOCUMENT_ROOT .'/compta/facture/class/facture.class.php';               // Customer Invoice
+require_once DOL_DOCUMENT_ROOT .'/contact/class/contact.class.php';                      // Contact / Address
+require_once DOL_DOCUMENT_ROOT .'/expedition/class/expedition.class.php';                // Shipping / Delivery
+require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.commande.class.php';           // Purchase Order
+require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.facture.class.php';            // Purchase Invoice
+require_once DOL_DOCUMENT_ROOT .'/projet/class/project.class.php';                       // Project
+require_once DOL_DOCUMENT_ROOT .'/reception/class/reception.class.php';                  // Reception
+require_once DOL_DOCUMENT_ROOT .'/recruitment/class/recruitmentcandidature.class.php';   // Recruiting
+require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';                      // Third-Party
+require_once DOL_DOCUMENT_ROOT .'/supplier_proposal/class/supplier_proposal.class.php';  // Supplier Proposal
+require_once DOL_DOCUMENT_ROOT .'/ticket/class/ticket.class.php';                        // Ticket
+//require_once DOL_DOCUMENT_ROOT .'/expensereport/class/expensereport.class.php';        // Expense Report
+//require_once DOL_DOCUMENT_ROOT .'/holiday/class/holiday.class.php';                    // Holidays (leave request)
 
 
 // use Webklex\PHPIMAP;
-require DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
-use Webklex\PHPIMAP\ClientManager;
+require DOL_DOCUMENT_ROOT .'/includes/webklex/php-imap/vendor/autoload.php';
 
+use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
 use Webklex\PHPIMAP\Exceptions\InvalidWhereQueryCriteriaException;
 use Webklex\PHPIMAP\Exceptions\GetMessagesFailedException;
@@ -64,14 +65,17 @@ class EmailCollector extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'emailcollector';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'emailcollector_emailcollector';
+
 	/**
 	 * @var int  Does emailcollector support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
+
 	/**
 	 * @var int  Does emailcollector support extrafields ? 0=No, 1=Yes
 	 */
@@ -91,6 +95,7 @@ class EmailCollector extends CommonObject
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array();
+
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
@@ -205,7 +210,6 @@ class EmailCollector extends CommonObject
 	 * @var string import key
 	 */
 	public $import_key;
-
 
 	public $host;
 	public $port;
@@ -851,7 +855,7 @@ class EmailCollector extends CommonObject
 
 		// Loop on each collector
 		foreach ($arrayofcollectors as $emailcollector) {
-			$result = $emailcollector->doCollectOneCollector();
+			$result = $emailcollector->doCollectOneCollector(0);
 			dol_syslog("doCollect result = ".$result." for emailcollector->id = ".$emailcollector->id);
 
 			$this->error .= 'EmailCollector ID '.$emailcollector->id.':'.$emailcollector->error.'<br>';
@@ -872,9 +876,10 @@ class EmailCollector extends CommonObject
 	 * @param	string	$messagetext	Body
 	 * @param	string	$subject		Subject
 	 * @param   string  $header         Header
+	 * @param	string	$operationslog	String with logs of operations done
 	 * @return	int						0=OK, Nb of error if error
 	 */
-	private function overwritePropertiesOfObject(&$object, $actionparam, $messagetext, $subject, $header)
+	private function overwritePropertiesOfObject(&$object, $actionparam, $messagetext, $subject, $header, &$operationslog)
 	{
 		$errorforthisaction = 0;
 
@@ -909,6 +914,7 @@ class EmailCollector extends CommonObject
 					$sourcefield = $regforregex[1];
 					$regexstring = $regforregex[2];
 				}
+
 				if (!empty($sourcefield) && !empty($regexstring)) {
 					if (strtolower($sourcefield) == 'body') {
 						$sourcestring = $messagetext;
@@ -930,7 +936,6 @@ class EmailCollector extends CommonObject
 
 						//var_dump($tmpproperty.' - '.$regexstring.' - '.$regexoptions.' - '.$sourcestring);
 						if (preg_match('/'.$regexstring.'/'.$regexoptions, $sourcestring, $regforval)) {
-							//var_dump($regforval[count($regforval)-1]);exit;
 							// Overwrite param $tmpproperty
 							$valueextracted = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
 							if (strtolower($sourcefield) == 'header') {
@@ -946,9 +951,16 @@ class EmailCollector extends CommonObject
 									$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
 								}
 							}
+							if (preg_match('/^options_/', $tmpproperty)) {
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->array_options[preg_replace('/^options_/', '', $tmpproperty)], 128));
+							} else {
+								$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> found '.dol_escape_htmltag(dol_trunc($object->$tmpproperty, 128));
+							}
 						} else {
 							// Regex not found
 							$object->$tmpproperty = null;
+
+							$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/'.dol_escape_htmltag($regexoptions).' into '.strtolower($sourcefield).' -> not found, so property '.dol_escape_htmltag($tmpproperty).' is set to null.';
 						}
 					} else {
 						// Nothing can be done for this param
@@ -986,6 +998,8 @@ class EmailCollector extends CommonObject
 						} else {
 							$object->$tmpproperty = $valuetouse;
 						}
+
+						$operationslog .= '<br>Set value '.dol_escape_htmltag($valuetouse).' into variable '.dol_escape_htmltag($tmpproperty);
 					}
 				} else {
 					$errorforthisaction++;
@@ -1021,6 +1035,14 @@ class EmailCollector extends CommonObject
 		$this->output = '';
 		$this->error = '';
 		$this->debuginfo = '';
+
+		$search = '';
+		$searchhead = '';
+		$searchfilterdoltrackid = 0;
+		$searchfilternodoltrackid = 0;
+		$searchfilterisanswer = 0;
+		$searchfilterisnotanswer = 0;
+		$operationslog = '';
 
 		$now = dol_now();
 
@@ -1168,12 +1190,6 @@ class EmailCollector extends CommonObject
 
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			$criteria = array(array('UNDELETED')); // Seems not supported by some servers
-			$search = '';
-			$searchhead = '';
-			$searchfilterdoltrackid = 0;
-			$searchfilternodoltrackid = 0;
-			$searchfilterisanswer = 0;
-			$searchfilterisnotanswer = 0;
 			foreach ($this->filters as $rule) {
 				if (empty($rule['status'])) {
 					continue;
@@ -1271,11 +1287,6 @@ class EmailCollector extends CommonObject
 			$search = var_export($criteria, true);
 		} else {
 			$search = 'UNDELETED'; // Seems not supported by some servers
-			$searchhead = '';
-			$searchfilterdoltrackid = 0;
-			$searchfilternodoltrackid = 0;
-			$searchfilterisanswer = 0;
-			$searchfilterisnotanswer = 0;
 			foreach ($this->filters as $rule) {
 				if (empty($rule['status'])) {
 					continue;
@@ -1482,7 +1493,7 @@ class EmailCollector extends CommonObject
 
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
-
+				$operationslog .= '<br>Process email '.dol_escape_htmltag($iforemailloop)." - References: ".dol_escape_htmltag($headers['References'])." - Subject: ".dol_escape_htmltag($headers['Subject']);
 				dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']." Subject: ".$headers['Subject']);
 
 
@@ -1740,61 +1751,61 @@ class EmailCollector extends CommonObject
 
 							$objectid = $reg[2];
 							// See also list into interface_50_modAgenda_ActionsAuto
-							if ($reg[1] == 'thi') {
+							if ($reg[1] == 'thi') {   // Third-party
 								$objectemail = new Societe($this->db);
 							}
-							if ($reg[1] == 'ctc') {
+							if ($reg[1] == 'ctc') {   // Contact
 								$objectemail = new Contact($this->db);
 							}
-							if ($reg[1] == 'inv') { // customer invoices
+							if ($reg[1] == 'inv') {   // Customer Invoice
 								$objectemail = new Facture($this->db);
 							}
-							if ($reg[1] == 'sinv') { // supplier invoices
+							if ($reg[1] == 'sinv') {   // Supplier Invoice
 								$objectemail = new FactureFournisseur($this->db);
 							}
-							if ($reg[1] == 'pro') { // customer proposals
+							if ($reg[1] == 'pro') {   // Customer Proposal
 								$objectemail = new Propal($this->db);
 							}
-							if ($reg[1] == 'ord') { // customer orders
+							if ($reg[1] == 'ord') {   // Sale Order
 								$objectemail = new Commande($this->db);
 							}
-							if ($reg[1] == 'shi') { // shipments
+							if ($reg[1] == 'shi') {   // Shipment
 								$objectemail = new Expedition($this->db);
 							}
-							if ($reg[1] == 'spro') { // supplier proposal
+							if ($reg[1] == 'spro') {   // Supplier Proposal
 								$objectemail = new SupplierProposal($this->db);
 							}
-							if ($reg[1] == 'sord') { // supplier order
+							if ($reg[1] == 'sord') {   // Supplier Order
 								$objectemail = new CommandeFournisseur($this->db);
 							}
-							if ($reg[1] == 'rec') { // Reception
+							if ($reg[1] == 'rec') {   // Reception
 								$objectemail = new Reception($this->db);
 							}
-							if ($reg[1] == 'proj') {
+							if ($reg[1] == 'proj') {   // Project
 								$objectemail = new Project($this->db);
 							}
-							if ($reg[1] == 'tas') {
+							if ($reg[1] == 'tas') {   // Task
 								$objectemail = new Task($this->db);
 							}
-							if ($reg[1] == 'con') {
+							if ($reg[1] == 'con') {   // Contact
 								$objectemail = new Contact($this->db);
 							}
-							if ($reg[1] == 'use') {
+							if ($reg[1] == 'use') {   // User
 								$objectemail = new User($this->db);
 							}
-							if ($reg[1] == 'tic') {
+							if ($reg[1] == 'tic') {   // Ticket
 								$objectemail = new Ticket($this->db);
 							}
-							if ($reg[1] == 'recruitmentcandidature') {
+							if ($reg[1] == 'recruitmentcandidature') {   // Recruiting Candidate
 								$objectemail = new RecruitmentCandidature($this->db);
 							}
-							if ($reg[1] == 'mem') {
+							if ($reg[1] == 'mem') {   // Member
 								$objectemail = new Adherent($this->db);
 							}
-							/*if ($reg[1] == 'leav') {
+							/*if ($reg[1] == 'leav') {   // Leave / Holiday
 								$objectemail = new Holiday($db);
 							}
-							if ($reg[1] == 'exp') {
+							if ($reg[1] == 'exp') {   // ExpenseReport
 								$objectemail = new ExpenseReport($db);
 							}*/
 						} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
@@ -2029,22 +2040,30 @@ class EmailCollector extends CommonObject
 												// Overwrite param $tmpproperty
 												if ($propertytooverwrite == 'id') {
 													$idtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
+
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found idtouseforthirdparty='.dol_escape_htmltag($idtouseforthirdparty);
 												} elseif ($propertytooverwrite == 'email') {
 													$emailtouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
+
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found propertytooverwrite='.dol_escape_htmltag($propertytooverwrite);
 												} else {
 													$nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
+
+													$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Found nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
 												}
 											} else {
 												// Regex not found
 												$idtouseforthirdparty = null;
 												$nametouseforthirdparty = null;
 												$emailtouseforthirdparty = null;
+
+												$operationslog .= '<br>Regex /'.dol_escape_htmltag($regexstring).'/ms into '.strtolower($sourcefield).' -> Not found';
 											}
 											//var_dump($object->$tmpproperty);exit;
 										} else {
 											// Nothing can be done for this param
 											$errorforactions++;
-											$this->error = 'The extract rule to use to load thirdparty has on an unknown source (must be HEADER, SUBJECT or BODY)';
+											$this->error = 'The extract rule to use to load thirdparty has an unknown source (must be HEADER, SUBJECT or BODY)';
 											$this->errors[] = $this->error;
 										}
 									} elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $reg)) {
@@ -2052,10 +2071,16 @@ class EmailCollector extends CommonObject
 										//else $object->$tmpproperty = $reg[1];
 										if ($propertytooverwrite == 'id') {
 											$idtouseforthirdparty = $reg[2];
+
+											$operationslog .= '<br>We set property idtouseforthrdparty='.dol_escape_htmltag($idtouseforthirdparty);
 										} elseif ($propertytooverwrite == 'email') {
 											$emailtouseforthirdparty = $reg[2];
+
+											$operationslog .= '<br>We set property emailtouseforthrdparty='.dol_escape_htmltag($emailtouseforthirdparty);
 										} else {
 											$nametouseforthirdparty = $reg[2];
+
+											$operationslog .= '<br>We set property nametouseforthirdparty='.dol_escape_htmltag($nametouseforthirdparty);
 										}
 									} else {
 										$errorforactions++;
@@ -2091,7 +2116,7 @@ class EmailCollector extends CommonObject
 											$thirdpartystatic->email = ($emailtouseforthirdparty ? $emailtouseforthirdparty : $from);
 
 											// Overwrite values with values extracted from source email
-											$errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject, $header);
+											$errorforthisaction = $this->overwritePropertiesOfObject($thirdpartystatic, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
 
 											if ($thirdpartystatic->client && empty($thirdpartystatic->code_client)) {
 												$thirdpartystatic->code_client = 'auto';
@@ -2108,6 +2133,8 @@ class EmailCollector extends CommonObject
 													$errorforactions++;
 													$this->error = $thirdpartystatic->error;
 													$this->errors = $thirdpartystatic->errors;
+												} else {
+													$operationslog .= '<br>Thirdparty created -> id = '.dol_escape_htmltag($thirdpartystatic->id);
 												}
 											}
 										}
@@ -2184,7 +2211,7 @@ class EmailCollector extends CommonObject
 								//$actioncomm->extraparams = $extraparams;
 
 								// Overwrite values with values extracted from source email
-								$errorforthisaction = $this->overwritePropertiesOfObject($actioncomm, $operation['actionparam'], $messagetext, $subject, $header);
+								$errorforthisaction = $this->overwritePropertiesOfObject($actioncomm, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
 
 								//var_dump($fk_element_id);
 								//var_dump($fk_element_type);
@@ -2200,6 +2227,8 @@ class EmailCollector extends CommonObject
 									if ($result <= 0) {
 										$errorforactions++;
 										$this->errors = $actioncomm->errors;
+									} else {
+										$operationslog .= '<br>Event created -> id='.dol_escape_htmltag($actioncomm->id);
 									}
 								}
 							}
@@ -2216,42 +2245,42 @@ class EmailCollector extends CommonObject
 								}
 								$arrayobject = array(
 								'propale' => array('table' => 'propal',
-								'fields' => array('ref'),
-								'class' => 'comm/propal/class/propal.class.php',
-								'object' => 'Propal'),
+									'fields' => array('ref'),
+									'class' => 'comm/propal/class/propal.class.php',
+									'object' => 'Propal'),
 								'holiday' => array('table' => 'holiday',
-								'fields' => array('ref'),
-								'class' => 'holiday/class/holiday.class.php',
-								'object' => 'Holiday'),
+									'fields' => array('ref'),
+									'class' => 'holiday/class/holiday.class.php',
+									'object' => 'Holiday'),
 								'expensereport' => array('table' => 'expensereport',
-								'fields' => array('ref'),
-								'class' => 'expensereport/class/expensereport.class.php',
-								'object' => 'ExpenseReport'),
+									'fields' => array('ref'),
+									'class' => 'expensereport/class/expensereport.class.php',
+									'object' => 'ExpenseReport'),
 								'recruitment/recruitmentjobposition' => array('table' => 'recruitment_recruitmentjobposition',
-								'fields' => array('ref'),
-								'class' => 'recruitment/class/recruitmentjobposition.class.php',
-								'object' => 'RecruitmentJobPosition'),
+									'fields' => array('ref'),
+									'class' => 'recruitment/class/recruitmentjobposition.class.php',
+									'object' => 'RecruitmentJobPosition'),
 								'recruitment/recruitmentjobposition' => array('table' => 'recruitment_recruitmentcandidature',
-								'fields' => array('ref'),
-								'class' => 'recruitment/class/recruitmentcandidature.class.php',
-								'object' => ' RecruitmentCandidature'),
+									'fields' => array('ref'),
+									'class' => 'recruitment/class/recruitmentcandidature.class.php',
+									'object' => ' RecruitmentCandidature'),
 								'societe' => array('table' => 'societe',
 									'fields' => array('code_client', 'code_fournisseur'),
 									'class' => 'societe/class/societe.class.php',
 									'object' => 'Societe'),
-									'commande' => array('table' => 'commande',
+								'commande' => array('table' => 'commande',
 									'fields' => array('ref'),
 									'class' => 'commande/class/commande.class.php',
 									'object' => 'Commande'),
-									'expedition' => array('table' => 'expedition',
+								'expedition' => array('table' => 'expedition',
 									'fields' => array('ref'),
 									'class' => 'expedition/class/expedition.class.php',
 									'object' => 'Expedition'),
-									'contract' => array('table' => 'contrat',
+								'contract' => array('table' => 'contrat',
 									'fields' => array('ref'),
 									'class' => 'contrat/class/contrat.class.php',
 									'object' => 'Contrat'),
-									'fichinter' => array('table' => 'fichinter',
+								'fichinter' => array('table' => 'fichinter',
 									'fields' => array('ref'),
 									'class' => 'fichinter/class/fichinter.class.php',
 									'object' => 'Fichinter'),
@@ -2259,51 +2288,51 @@ class EmailCollector extends CommonObject
 									'fields' => array('ref'),
 									'class' => 'ticket/class/ticket.class.php',
 									'object' => ' Ticket'),
-									'knowledgemanagement' => array('table' => 'knowledgemanagement_knowledgerecord',
+								'knowledgemanagement' => array('table' => 'knowledgemanagement_knowledgerecord',
 									'fields' => array('ref'),
 									'class' => 'knowledgemanagement/class/knowledgemanagement.class.php',
 									'object' => 'KnowledgeRecord'),
-									'supplier_proposal' => array('table' => 'supplier_proposal',
+								'supplier_proposal' => array('table' => 'supplier_proposal',
 									'fields' => array('ref'),
 									'class' => 'supplier_proposal/class/supplier_proposal.class.php',
 									'object' => 'SupplierProposal'),
-									'fournisseur/commande' => array('table' => 'commande_fournisseur',
+								'fournisseur/commande' => array('table' => 'commande_fournisseur',
 									'fields' => array('ref', 'ref_supplier'),
 									'class' => 'fourn/class/fournisseur.commande.class.php',
 									'object' => 'SupplierProposal'),
-									'facture' => array('table' => 'facture',
+								'facture' => array('table' => 'facture',
 									'fields' => array('ref'),
 									'class' => 'compta/facture/class/facture.class.php',
 									'object' => 'Facture'),
-									'fournisseur/facture' => array('table' => 'facture_fourn',
+								'fournisseur/facture' => array('table' => 'facture_fourn',
 									'fields' => array('ref', ref_client),
 									'class' => 'fourn/class/fournisseur.facture.class.php',
 									'object' => 'FactureFournisseur'),
-									'produit' => array('table' => 'product',
+								'produit' => array('table' => 'product',
 									'fields' => array('ref'),
 									'class' => 'product/class/product.class.php',
 									'object' => 'Product'),
-									'productlot' => array('table' => 'product_lot',
+								'productlot' => array('table' => 'product_lot',
 									'fields' => array('batch'),
 									'class' => 'product/stock/class/productlot.class.php',
 									'object' => 'Productlot'),
-									'projet' => array('table' => 'projet',
+								'projet' => array('table' => 'projet',
 									'fields' => array('ref'),
 									'class' => 'projet/class/projet.class.php',
 									'object' => 'Project'),
-									'projet_task' => array('table' => 'projet_task',
+								'projet_task' => array('table' => 'projet_task',
 									'fields' => array('ref'),
 									'class' => 'projet/class/task.class.php',
 									'object' => 'Task'),
-									'ressource' => array('table' => 'resource',
+								'ressource' => array('table' => 'resource',
 									'fields' => array('ref'),
 									'class' => 'ressource/class/dolressource.class.php',
 									'object' => 'Dolresource'),
-									'bom' => array('table' => 'bom_bom',
+								'bom' => array('table' => 'bom_bom',
 									'fields' => array('ref'),
 									'class' => 'bom/class/bom.class.php',
 									'object' => 'BOM'),
-									'mrp' => array('table' => 'mrp_mo',
+								'mrp' => array('table' => 'mrp_mo',
 									'fields' => array('ref'),
 									'class' => 'mrp/class/mo.class.php',
 									'object' => 'Mo'),
@@ -2364,8 +2393,12 @@ class EmailCollector extends CommonObject
 										}
 									}
 								}
+
+								$operationslog .= '<br>Save attachment files on disk';
 							} else {
 								$this->errors[] = 'no joined piece';
+
+								$operationslog .= '<br>No joinded files';
 							}
 						} elseif ($operation['type'] == 'project') {
 							// Create project / lead
@@ -2414,7 +2447,7 @@ class EmailCollector extends CommonObject
 
 								// Overwrite values with values extracted from source email.
 								// This may overwrite any $projecttocreate->xxx properties.
-								$errorforthisaction = $this->overwritePropertiesOfObject($projecttocreate, $operation['actionparam'], $messagetext, $subject, $header);
+								$errorforthisaction = $this->overwritePropertiesOfObject($projecttocreate, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
 
 								// Set project ref if not yet defined
 								if (empty($projecttocreate->ref)) {
@@ -2480,6 +2513,10 @@ class EmailCollector extends CommonObject
 												} else {
 													$this->getmsg($connection, $imapemail, $destdir);
 												}
+
+												$operationslog .= '<br>Project created with attachments -> id='.dol_escape_htmltag($projecttocreate->id);
+											} else {
+												$operationslog .= '<br>Project created without attachments -> id='.dol_escape_htmltag($projecttocreate->id);
 											}
 										}
 									}
@@ -2537,7 +2574,7 @@ class EmailCollector extends CommonObject
 
 								// Overwrite values with values extracted from source email.
 								// This may overwrite any $projecttocreate->xxx properties.
-								$errorforthisaction = $this->overwritePropertiesOfObject($tickettocreate, $operation['actionparam'], $messagetext, $subject, $header);
+								$errorforthisaction = $this->overwritePropertiesOfObject($tickettocreate, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
 
 								// Set ticket ref if not yet defined
 								if (empty($tickettocreate->ref)) {
@@ -2602,6 +2639,10 @@ class EmailCollector extends CommonObject
 												} else {
 													$this->getmsg($connection, $imapemail, $destdir);
 												}
+
+												$operationslog .= '<br>Ticket created with attachments -> id='.dol_escape_htmltag($tickettocreate->id);
+											} else {
+												$operationslog .= '<br>Ticket created without attachments -> id='.dol_escape_htmltag($tickettocreate->id);
 											}
 										}
 									}
@@ -2643,7 +2684,7 @@ class EmailCollector extends CommonObject
 
 								// Overwrite values with values extracted from source email.
 								// This may overwrite any $projecttocreate->xxx properties.
-								$errorforthisaction = $this->overwritePropertiesOfObject($candidaturetocreate, $operation['actionparam'], $messagetext, $subject, $header);
+								$errorforthisaction = $this->overwritePropertiesOfObject($candidaturetocreate, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
 
 								// Set candidature ref if not yet defined
 								/*if (empty($candidaturetocreate->ref))				We do not need this because we create object in draft status
@@ -2695,6 +2736,8 @@ class EmailCollector extends CommonObject
 										$this->error = 'Failed to create ticket: '.join(', ', $candidaturetocreate->errors);
 										$this->errors = $candidaturetocreate->errors;
 									}
+
+									$operationslog .= '<br>Candidature created without attachments -> id='.dol_escape_htmltag($candidaturetocreate->id);
 								}
 							}
 						} elseif (substr($operation['type'], 0, 4) == 'hook') {
@@ -2706,25 +2749,25 @@ class EmailCollector extends CommonObject
 							}
 
 							$parameters = array(
-							'connection'=>  $connection,
-							'imapemail'=>$imapemail,
-							'overview'=>$overview,
+								'connection'=>  $connection,
+								'imapemail'=>$imapemail,
+								'overview'=>$overview,
 
-							'from' => $from,
-							'fromtext' => $fromtext,
+								'from' => $from,
+								'fromtext' => $fromtext,
 
-							'actionparam'=>  $operation['actionparam'],
+								'actionparam'=>  $operation['actionparam'],
 
-							'thirdpartyid' => $thirdpartyid,
-							'objectid'=> $objectid,
-							'objectemail'=> $objectemail,
+								'thirdpartyid' => $thirdpartyid,
+								'objectid'=> $objectid,
+								'objectemail'=> $objectemail,
 
-							'messagetext'=>$messagetext,
-							'subject'=>$subject,
-							'header'=>$header,
-							'attachments'=>$attachments,
+								'messagetext'=>$messagetext,
+								'subject'=>$subject,
+								'header'=>$header,
+								'attachments'=>$attachments,
 							);
-							$reshook = $hookmanager->executeHooks('doColleimapctOneCollector', $parameters, $this, $operation['type']);
+							$reshook = $hookmanager->executeHooks('doCollectImapOneCollector', $parameters, $this, $operation['type']);
 
 							if ($reshook < 0) {
 								$errorforthisaction++;
@@ -2732,9 +2775,11 @@ class EmailCollector extends CommonObject
 							}
 							if ($errorforthisaction) {
 								$errorforactions++;
+								$operationslog .= '<br>Hook doCollectImapOneCollector executed with error';
+							} else {
+								$operationslog .= '<br>Hook doCollectImapOneCollector executed without error';
 							}
 						}
-
 
 						if (!$errorforactions) {
 							$nbactiondoneforemail++;
@@ -2804,8 +2849,9 @@ class EmailCollector extends CommonObject
 		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
 			$client->disconnect();
 		} else {
-			imap_expunge($connection); // To validate any move
-
+			if (empty($mode)) {
+				imap_expunge($connection); // To validate any move
+			}
 			imap_close($connection);
 		}
 
@@ -2813,7 +2859,10 @@ class EmailCollector extends CommonObject
 		$this->lastresult = $output;
 		$this->debuginfo .= 'IMAP search string used : '.$search;
 		if ($searchhead) {
-			$this->debuginfo .= '<br>Then search string into email header : '.$searchhead;
+			$this->debuginfo .= '<br>Then search string into email header : '.dol_escape_htmltag($searchhead);
+		}
+		if ($operationslog) {
+			$this->debuginfo .= $operationslog;
 		}
 
 		if (empty($error) && empty($mode)) {
@@ -2887,6 +2936,7 @@ class EmailCollector extends CommonObject
 	 2.2.1 text/plain
 	 2.2.2 text/html
 	 */
+
 	/**
 	 * Sub function for getpart(). Only called by createPartArray() and itself.
 	 *
@@ -3005,10 +3055,10 @@ class EmailCollector extends CommonObject
 	/**
 	 * Converts a string from one encoding to another.
 	 *
-	 * @param string $string		String to convert
-	 * @param string $fromEncoding	String encoding
-	 * @param string $toEncoding	String return encoding
-	 * @return string 				Converted string if conversion was successful, or the original string if not
+	 * @param  string 	$string			String to convert
+	 * @param  string 	$fromEncoding	String encoding
+	 * @param  string 	$toEncoding		String return encoding
+	 * @return string 					Converted string if conversion was successful, or the original string if not
 	 * @throws Exception
 	 */
 	protected function convertStringEncoding($string, $fromEncoding, $toEncoding = 'UTF-8')

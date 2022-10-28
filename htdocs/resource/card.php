@@ -63,7 +63,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
 $permissiontoadd = $user->rights->resource->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-
+$permissiontodelete = $user->rights->resource->delete;
 
 
 /*
@@ -349,12 +349,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 			}
 		}
 		if ($action != "delete" && $action != "create" && $action != "edit") {
-			// Delete resource
-			if ($user->rights->resource->delete) {
-				print '<div class="inline-block divButAction">';
-				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=delete&token='.newToken().'" class="butActionDelete">'.$langs->trans('Delete').'</a>';
-				print '</div>';
-			}
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 		}
 	}
 	print '</div>';

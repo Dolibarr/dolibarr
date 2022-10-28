@@ -34,11 +34,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe module customer orders
+ *	Class to describe module Sales Orders
  */
 class modCommande extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *

@@ -657,10 +657,12 @@ if (is_object($db)) {
 }
 /**
  * send email to validator for current leave represented by (id)
- * @param $id validator for current leave represented by (id)
- * @param $cancreate flag for user right
- * @param $now date
- * @param $autoValidation boolean flag on autovalidation
+ *
+ * @param int		$id validator for current leave represented by (id)
+ * @param int 	$cancreate flag for user right
+ * @param int 	$now date
+ * @param int		$autoValidation boolean flag on autovalidation
+ *
  * @return stdClass
  * @throws Exception
  */

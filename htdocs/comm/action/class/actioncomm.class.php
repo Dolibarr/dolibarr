@@ -1591,16 +1591,16 @@ class ActionComm extends CommonObject
 
 		$tooltip = img_picto('', $this->picto).' <u>'.$langs->trans('Action').'</u>';
 		if (!empty($this->ref)) {
-			$tooltip .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+			$tooltip .= '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
 		}
 		if (!empty($label)) {
-			$tooltip .= '<br><b>'.$langs->trans('Title').':</b> '.$label;
+			$tooltip .= '<br><b>'.$langs->trans('Title').':</b> '.dol_escape_htmltag($label);
 		}
 		if (!empty($labeltype)) {
-			$tooltip .= '<br><b>'.$langs->trans('Type').':</b> '.$labeltype;
+			$tooltip .= '<br><b>'.$langs->trans('Type').':</b> '.dol_escape_htmltag($labeltype);
 		}
 		if (!empty($this->location)) {
-			$tooltip .= '<br><b>'.$langs->trans('Location').':</b> '.$this->location;
+			$tooltip .= '<br><b>'.$langs->trans('Location').':</b> '.dol_escape_htmltag($this->location);
 		}
 		if (isset($this->transparency)) {
 			$tooltip .= '<br><b>'.$langs->trans('Busy').':</b> '.yn($this->transparency);
@@ -1609,7 +1609,7 @@ class ActionComm extends CommonObject
 			$langs->load("mails");
 			$tooltip .= '<br>';
 			//$tooltip .= '<br><b>'.img_picto('', 'email').' '.$langs->trans("Email").'</b>';
-			$tooltip .= '<br><b>'.$langs->trans('MailTopic').':</b> '.$this->email_subject;
+			$tooltip .= '<br><b>'.$langs->trans('MailTopic').':</b> '.dol_escape_htmltag($this->email_subject);
 			$tooltip .= '<br><b>'.$langs->trans('MailFrom').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_from);
 			$tooltip .= '<br><b>'.$langs->trans('MailTo').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_to);
 			if (!empty($this->email_tocc)) {
@@ -1697,7 +1697,7 @@ class ActionComm extends CommonObject
 		if ($withpicto) {
 			$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$label), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
-		$result .= $labelshort;
+		$result .= dol_escape_htmltag($labelshort);
 		$result .= $linkend;
 
 		global $action;
@@ -2355,7 +2355,7 @@ class ActionComm extends CommonObject
 		$nbMailSend = 0;
 		$errorsMsg = array();
 
-		if (empty($conf->agenda->enabled)) {	// Should not happen. If module disabled, cron job should not be visible.
+		if (!isModEnabled('agenda')) {	// Should not happen. If module disabled, cron job should not be visible.
 			$langs->load("agenda");
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
 			return 0;

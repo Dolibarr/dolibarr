@@ -670,7 +670,7 @@ class Products extends DolibarrApi
 			if ($thirdparty_id) {
 				$filter['t.fk_soc'] .= $thirdparty_id;
 			}
-			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 		}
 
 		if (empty($prodcustprice->lines)) {

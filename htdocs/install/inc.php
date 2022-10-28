@@ -35,16 +35,9 @@ require_once '../filefunc.inc.php';
 
 
 
-// Define DOL_DOCUMENT_ROOT and ADODB_PATH used for install/upgrade process
+// Define DOL_DOCUMENT_ROOT used for install/upgrade process
 if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', '..');
-}
-if (!defined('ADODB_PATH')) {
-	$foundpath = DOL_DOCUMENT_ROOT.'/includes/adodbtime/';
-	if (!is_dir($foundpath)) {
-		$foundpath = '/usr/share/php/adodb/';
-	}
-	define('ADODB_PATH', $foundpath);
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
@@ -52,7 +45,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once ADODB_PATH.'adodb-time.inc.php';
 
 $conf = new Conf();
 
@@ -319,7 +311,7 @@ function conf($dolibarr_main_document_root)
 	$conf->db->port = trim($dolibarr_main_db_port);
 	$conf->db->name = trim($dolibarr_main_db_name);
 	$conf->db->user = trim($dolibarr_main_db_user);
-	$conf->db->pass = trim($dolibarr_main_db_pass);
+	$conf->db->pass = (empty($dolibarr_main_db_pass) ? '' : trim($dolibarr_main_db_pass));
 
 	// Mysql driver support has been removed in favor of mysqli
 	if ($conf->db->type == 'mysql') {

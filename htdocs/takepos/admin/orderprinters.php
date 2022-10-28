@@ -185,7 +185,7 @@ if ($nbofentries > 0) {
 		} else {
 			$checked = '';
 		}
-		if ($row["fk_menu"] == 0) {
+		if ($row["fk_menu"] >= 0) {
 			print '<input type="checkbox" name="printer1[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
 		}
 	}
@@ -219,7 +219,7 @@ if ($nbofentries > 0) {
 		} else {
 			$checked = '';
 		}
-		if ($row["fk_menu"] == 0) {
+		if ($row["fk_menu"] >= 0) {
 			print '<input type="checkbox" name="printer2[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
 		}
 	}
@@ -253,7 +253,7 @@ if ($nbofentries > 0) {
 		} else {
 			$checked = '';
 		}
-		if ($row["fk_menu"] == 0) {
+		if ($row["fk_menu"] >= 0) {
 			print '<input type="checkbox" name="printer3[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
 		}
 	}
