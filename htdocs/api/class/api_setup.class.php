@@ -612,10 +612,11 @@ class Setup extends DolibarrApi
 	 * @param object   $object    Object with label to translate
 	 * @param string   $lang      Code of the language the name of the object must be translated to
 	 * @param string   $prefix 	  Prefix for translation key
+	 * @param string   $dict 	  Dictionnary for translation
 	 *
 	 * @return void
 	 */
-	private function translateLabel($object, $lang, $prefix = 'Country')
+	private function translateLabel($object, $lang, $prefix = 'Country', $dict = 'dict')
 	{
 		if (!empty($lang)) {
 			// Load the translations if this is a new language.
@@ -623,7 +624,7 @@ class Setup extends DolibarrApi
 				global $conf;
 				$this->translations = new Translate('', $conf);
 				$this->translations->setDefaultLang($lang);
-				$this->translations->load('dict');
+				$this->translations->load($dict);
 			}
 			if ($object->code) {
 				$key = $prefix.$object->code;
@@ -635,7 +636,6 @@ class Setup extends DolibarrApi
 			}
 		}
 	}
-
 
 	/**
 	 * Get the list of events types.
