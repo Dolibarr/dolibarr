@@ -165,7 +165,7 @@ class BlockedLog
 		 */
 
 		// Donation
-		if (!empty($conf->don->enabled)) {
+		if (isModEnabled('don')) {
 			$this->trackedevents['DON_VALIDATE'] = 'logDON_VALIDATE';
 			$this->trackedevents['DON_DELETE'] = 'logDON_DELETE';
 			//$this->trackedevents['DON_SENTBYMAIL']='logDON_SENTBYMAIL';

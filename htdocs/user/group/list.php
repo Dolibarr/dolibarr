@@ -25,6 +25,7 @@
  *      \brief      Page of user groups
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
@@ -128,7 +129,7 @@ $sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, g.tms as datem
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_rights as ugr ON ugr.fk_usergroup = g.rowid";
-if (isModEnabled('multicompany') && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity))) {
+if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
 	$sql .= " WHERE g.entity IS NOT NULL";
 } else {
 	$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
@@ -214,14 +215,14 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		print '<td>';
 		print $grouptemp->getNomUrl(1);
-		if (!$obj->entity) {
+		if (isModEnabled('multicompany') && !$obj->entity) {
 			print img_picto($langs->trans("GlobalGroup"), 'redstar');
 		}
 		print "</td>";
 		//multicompany
 		if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
 			$mc->getInfo($obj->entity);
-			print '<td class="center">'.$mc->label.'</td>';
+			print '<td class="center">'.dol_escape_htmltag($mc->label).'</td>';
 		}
 		print '<td class="center">'.$obj->nb.'</td>';
 		print '<td class="center">';

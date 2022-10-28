@@ -29,6 +29,7 @@
  *       \brief      Page of linked files onto donation
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -77,7 +78,7 @@ if (!$sortfield) {
 $object = new Don($db);
 $object->fetch($id, $ref);
 
-$upload_dir = $conf->don->dir_output.'/'.get_exdir($filename, 0, 0, 0, $object, 'donation').'/'.dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->don->dir_output.'/'.get_exdir($id, 0, 0, 0, $object, 'donation').'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'don';
 
 $permissiontoadd = $user->rights->don->creer;	// Used by the include of actions_dellink.inc.php

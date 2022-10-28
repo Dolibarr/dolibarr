@@ -21,9 +21,6 @@
  *	\brief      Ajax search component for TakePos. It search products of a category.
  */
 
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -40,6 +37,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
@@ -86,6 +84,7 @@ if ($action == 'getProducts') {
 				}
 				unset($prod->fields);
 				unset($prod->db);
+				$prod->price_formated=price(price2num($prod->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency);
 				$res[] = $prod;
 			}
 		}
@@ -303,7 +302,7 @@ if ($action == 'getProducts') {
 				'object' => 'product',
 				'img' => $ig,
 				'qty' => 1,
-				//'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
+				'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
 			);
 			// Add entries to row from hooks
 			$parameters=array();

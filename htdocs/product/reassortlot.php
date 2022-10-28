@@ -27,6 +27,7 @@
  *  \brief      Page to list stocks
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
@@ -607,7 +608,7 @@ while ($i < $imaxinloop) {
 	$objp = $db->fetch_object($resql);
 
 	// Multilangs
-	if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+	if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 		// TODO Use a cache
 		$sql = "SELECT label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";

@@ -48,8 +48,9 @@ CountriesNotInEEC=非歐盟國家
 CountriesInEECExceptMe=除了%s以外的歐盟國家
 CountriesExceptMe=除了%s以外的所有國家
 AccountantFiles=匯出來源文件
-ExportAccountingSourceDocHelp=使用此工具，您可以匯出用於產生會計的來源事件（CSV 和 PDF 中的清單）。
+ExportAccountingSourceDocHelp=With this tool, you can search and export the source events that are used to generate your accountancy. <br>The exported ZIP file will contain the lists of requested items in CSV, as well as their attached files in their original format (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=要匯出您的日記帳，請使用選單條目 %s - %s。
+ExportAccountingProjectHelp=Specify a project if you need an accounting report only for a specific project. Expense reports and loan payments are not included in project reports.
 VueByAccountAccounting=依會計科目檢視
 VueBySubAccountAccounting=依會計子分類帳檢視
 
@@ -107,8 +108,8 @@ MenuTaxAccounts=稅捐會計項目
 MenuExpenseReportAccounts=費用報表會計項目
 MenuLoanAccounts=借款會計項目
 MenuProductsAccounts=產品會計項目
-MenuClosureAccounts=關閉帳戶
-MenuAccountancyClosure=關閉
+MenuClosureAccounts=結束帳戶
+MenuAccountancyClosure=結案
 MenuAccountancyValidationMovements=驗證動作
 ProductsBinding=產品會計項目
 TransferInAccounting=會計轉移
@@ -172,7 +173,7 @@ ACCOUNTING_HAS_NEW_JOURNAL=有新的日記帳
 
 ACCOUNTING_RESULT_PROFIT=結果會計科目（利潤）
 ACCOUNTING_RESULT_LOSS=結果會計科目（虧損）
-ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=關閉日記帳
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=結束日記帳
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=過渡性銀行轉帳的會計帳戶
 TransitionalAccount=過渡銀行轉帳帳戶
@@ -183,6 +184,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=用於註冊訂閱的會計科目
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=會計帳戶預設註冊客戶存款
 UseAuxiliaryAccountOnCustomerDeposit=Store customer account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Accounting account by default to register supplier deposit
+UseAuxiliaryAccountOnSupplierDeposit=Store supplier account as individual account in subsidiary ledger for lines of down payments (if disabled, individual account for down payment lines will remain empty)
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=所購買產品的預設會計科目（如果在產品表中未定義則使用）
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=預設情況下，在EEC中所購買產品的會計帳戶（如果未在產品單中定義則使用）
@@ -278,8 +281,8 @@ DescVentilExpenseReport=在此查閱費用報表行數是否關聯到費用會�
 DescVentilExpenseReportMore=如果您在費用報表類型上設定會計帳戶，則應用程序將能夠在費用報表和會計科目表的會計帳戶之間進行所有綁定，只需點擊按鈕<strong>“ %s”即可</strong> 。如果未在費用字典中設定帳戶，或者您仍有某些行未綁定到任何帳戶，則必須從選單“ <strong>%s</strong> ”進行手動綁定。
 DescVentilDoneExpenseReport=在此查閱費用報表的清單及其費用會計項目。
 
-Closure=年度關閉
-DescClosure=Consult here the number of movements by month not yet validated & locked
+Closure=年度結帳
+DescClosure=請在此處查詢按月排列的尚未驗證及尚未鎖定的異動數
 OverviewOfMovementsNotValidated=未驗證和未鎖定的移動概覽
 AllMovementsWereRecordedAsValidated=所有動作都被記錄為已驗證並鎖定
 NotAllMovementsCouldBeRecordedAsValidated=並非所有動作都可以記錄為已驗證與已鎖定
@@ -332,7 +335,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=停用費用報表中的會計綁�
 
 ## Export
 NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
-NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "%s" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
 DateValidationAndLock=驗證與鎖定的日期
 ConfirmExportFile=確定要產生會計匯出檔案 ?
 ExportDraftJournal=匯出日記帳草稿
@@ -364,7 +367,7 @@ ChartofaccountsId=會計項目表ID
 InitAccountancy=初始會計
 InitAccountancyDesc=此頁可在沒有定義產品及服務的銷售及採購會計項目下使用產品及服務的會計項目。
 DefaultBindingDesc=當沒有設定特定會計項目時，此頁面可設定預設會計項目連結到薪資、捐贈、稅捐及營業稅的交易紀錄。
-DefaultClosureDesc=該頁面可用於設置用於會計結帳的參數。
+DefaultClosureDesc=該頁面可用於設置會計結帳的參數。
 Options=選項
 OptionModeProductSell=銷售模式
 OptionModeProductSellIntra=在EEC中的銷售模式已匯出

@@ -22,6 +22,7 @@
  *		\brief      Page des informations d'une action
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -48,6 +49,8 @@ $result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|
 if ($user->socid && $socid) {
 	$result = restrictedArea($user, 'societe', $socid);
 }
+
+$usercancreate = $user->rights->agenda->allactions->create || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create);
 
 
 /*
@@ -88,17 +91,22 @@ $morehtmlref = '<div class="refidno">';
 // Project
 if (isModEnabled('project')) {
 	$langs->load("projects");
-	//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	$morehtmlref .= $langs->trans('Project').': ';
-	if (!empty($object->fk_project)) {
-		$proj = new Project($db);
-		$proj->fetch($object->fk_project);
-		$morehtmlref .= ' : '.$proj->getNomUrl(1);
-		if ($proj->title) {
-			$morehtmlref .= ' - '.$proj->title;
+	//$morehtmlref .= '<br>';
+	if (0) {
+		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
+		if ($action != 'classify') {
+			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 		}
+		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
 	} else {
-		$morehtmlref .= '';
+		if (!empty($object->fk_project)) {
+			$proj = new Project($db);
+			$proj->fetch($object->fk_project);
+			$morehtmlref .= $proj->getNomUrl(1);
+			if ($proj->title) {
+				$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+			}
+		}
 	}
 }
 $morehtmlref .= '</div>';

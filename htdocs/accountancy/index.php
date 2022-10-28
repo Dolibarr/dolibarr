@@ -44,7 +44,7 @@ if ($user->socid > 0) {
 if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 */
@@ -79,7 +79,7 @@ if (GETPOST('addbox')) {
  * View
  */
 
-$help_url = '';
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup';
 
 llxHeader('', $langs->trans("AccountancyArea"), $help_url);
 

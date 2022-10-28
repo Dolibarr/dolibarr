@@ -60,7 +60,7 @@ if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES)) {
 
 // Special cases
 if ($module == 'propal') {
-	$permission = $user->rights->propale->creer;
+	$permission = $user->rights->propal->creer;
 } elseif ($module == 'supplier_proposal') {
 	$permission = $user->rights->supplier_proposal->creer;
 } elseif ($module == 'fichinter') {
@@ -96,11 +96,6 @@ if ($module == 'propal') {
 }
 //else dol_print_error('','Bad value '.$module.' for param module');
 
-if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
-	$typeofdata = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
-} else {
-	$typeofdata = 'textarea:12:95%';
-}
 if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC)) {
 	$typeofdatapub = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
 } else {

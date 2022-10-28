@@ -32,6 +32,7 @@ if ((array_key_exists('action', $_GET) && $_GET['action'] == 'dl') || (array_key
 	}
 }
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -450,87 +451,86 @@ if (empty($dirfortmpfile)) {
 if ($result && $action == "dl" && !$error) {
 	if (!extension_loaded('zip')) {
 		setEventMessages('PHPZIPExtentionNotLoaded', null, 'errors');
-		exit;
-	}
+	} else {
+		dol_mkdir($dirfortmpfile);
 
-	dol_mkdir($dirfortmpfile);
-
-	$log = $langs->transnoentitiesnoconv("Type");
-	if (isModEnabled('multicompany') && is_object($mc)) {
-		$log .= ','.$langs->transnoentitiesnoconv("Entity");
-	}
-	$log .= ','.$langs->transnoentitiesnoconv("Date");
-	$log .= ','.$langs->transnoentitiesnoconv("DateDue");
-	$log .= ','.$langs->transnoentitiesnoconv("Ref");
-	$log .= ','.$langs->transnoentitiesnoconv("TotalHT");
-	$log .= ','.$langs->transnoentitiesnoconv("TotalTTC");
-	$log .= ','.$langs->transnoentitiesnoconv("TotalVAT");
-	$log .= ','.$langs->transnoentitiesnoconv("Paid");
-	$log .= ','.$langs->transnoentitiesnoconv("Document");
-	$log .= ','.$langs->transnoentitiesnoconv("ItemID");
-	$log .= ','.$langs->transnoentitiesnoconv("ThirdParty");
-	$log .= ','.$langs->transnoentitiesnoconv("Code");
-	$log .= ','.$langs->transnoentitiesnoconv("Country");
-	$log .= ','.$langs->transnoentitiesnoconv("VATIntra");
-	$log .= ','.$langs->transnoentitiesnoconv("Sens")."\n";
-	$zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel');
-	if (!empty($projectid)) {
-		$project = new Project($db);
-		$project->fetch($projectid);
-		if ($project->ref) {
-			$zipname .= '_'.$project->ref;
+		$log = $langs->transnoentitiesnoconv("Type");
+		if (isModEnabled('multicompany') && is_object($mc)) {
+			$log .= ','.$langs->transnoentitiesnoconv("Entity");
 		}
-	}
-	$zipname .='_export.zip';
-
-	dol_delete_file($zipname);
-
-	$zip = new ZipArchive;
-	$res = $zip->open($zipname, ZipArchive::OVERWRITE | ZipArchive::CREATE);
-	if ($res) {
-		foreach ($filesarray as $key => $file) {
-			if (!empty($file['files'])) {
-				foreach ($file['files'] as $filecursor) {
-					if (file_exists($filecursor["fullname"])) {
-						$zip->addFile($filecursor["fullname"], $filecursor["relpathnamelang"]);
-					}
-				}
+		$log .= ','.$langs->transnoentitiesnoconv("Date");
+		$log .= ','.$langs->transnoentitiesnoconv("DateDue");
+		$log .= ','.$langs->transnoentitiesnoconv("Ref");
+		$log .= ','.$langs->transnoentitiesnoconv("TotalHT");
+		$log .= ','.$langs->transnoentitiesnoconv("TotalTTC");
+		$log .= ','.$langs->transnoentitiesnoconv("TotalVAT");
+		$log .= ','.$langs->transnoentitiesnoconv("Paid");
+		$log .= ','.$langs->transnoentitiesnoconv("Document");
+		$log .= ','.$langs->transnoentitiesnoconv("ItemID");
+		$log .= ','.$langs->transnoentitiesnoconv("ThirdParty");
+		$log .= ','.$langs->transnoentitiesnoconv("Code");
+		$log .= ','.$langs->transnoentitiesnoconv("Country");
+		$log .= ','.$langs->transnoentitiesnoconv("VATIntra");
+		$log .= ','.$langs->transnoentitiesnoconv("Sens")."\n";
+		$zipname = $dirfortmpfile.'/'.dol_print_date($date_start, 'dayrfc', 'tzuserrel')."-".dol_print_date($date_stop, 'dayrfc', 'tzuserrel');
+		if (!empty($projectid)) {
+			$project = new Project($db);
+			$project->fetch($projectid);
+			if ($project->ref) {
+				$zipname .= '_'.$project->ref;
 			}
-
-			$log .= '"'.$langs->trans($file['item']).'"';
-			if (isModEnabled('multicompany') && is_object($mc)) {
-				$log .= ',"'.(empty($arrayofentities[$file['entity']]) ? $file['entity'] : $arrayofentities[$file['entity']]).'"';
-			}
-			$log .= ','.dol_print_date($file['date'], 'dayrfc');
-			$log .= ','.dol_print_date($file['date_due'], 'dayrfc');
-			$log .= ',"'.$file['ref'].'"';
-			$log .= ','.$file['amount_ht'];
-			$log .= ','.$file['amount_ttc'];
-			$log .= ','.$file['amount_vat'];
-			$log .= ','.$file['paid'];
-			$log .= ',"'.$file["name"].'"';
-			$log .= ','.$file['fk'];
-			$log .= ',"'.$file['thirdparty_name'].'"';
-			$log .= ',"'.$file['thirdparty_code'].'"';
-			$log .= ',"'.$file['country_code'].'"';
-			$log .= ',"'.$file['vatnum'].'"';
-			$log .= ',"'.$file['sens'].'"';
-			$log .= "\n";
 		}
-		$zip->addFromString('transactions.csv', $log);
-		$zip->close();
-
-		// Then download the zipped file.
-		header('Content-Type: application/zip');
-		header('Content-disposition: attachment; filename='.basename($zipname));
-		header('Content-Length: '.filesize($zipname));
-		readfile($zipname);
+		$zipname .='_export.zip';
 
 		dol_delete_file($zipname);
 
-		exit();
-	} else {
-		setEventMessages($langs->trans("FailedToOpenFile", $zipname), null, 'errors');
+		$zip = new ZipArchive;
+		$res = $zip->open($zipname, ZipArchive::OVERWRITE | ZipArchive::CREATE);
+		if ($res) {
+			foreach ($filesarray as $key => $file) {
+				if (!empty($file['files'])) {
+					foreach ($file['files'] as $filecursor) {
+						if (file_exists($filecursor["fullname"])) {
+							$zip->addFile($filecursor["fullname"], $filecursor["relpathnamelang"]);
+						}
+					}
+				}
+
+				$log .= '"'.$langs->trans($file['item']).'"';
+				if (isModEnabled('multicompany') && is_object($mc)) {
+					$log .= ',"'.(empty($arrayofentities[$file['entity']]) ? $file['entity'] : $arrayofentities[$file['entity']]).'"';
+				}
+				$log .= ','.dol_print_date($file['date'], 'dayrfc');
+				$log .= ','.dol_print_date($file['date_due'], 'dayrfc');
+				$log .= ',"'.$file['ref'].'"';
+				$log .= ','.$file['amount_ht'];
+				$log .= ','.$file['amount_ttc'];
+				$log .= ','.$file['amount_vat'];
+				$log .= ','.$file['paid'];
+				$log .= ',"'.$file["name"].'"';
+				$log .= ','.$file['fk'];
+				$log .= ',"'.$file['thirdparty_name'].'"';
+				$log .= ',"'.$file['thirdparty_code'].'"';
+				$log .= ',"'.$file['country_code'].'"';
+				$log .= ',"'.$file['vatnum'].'"';
+				$log .= ',"'.$file['sens'].'"';
+				$log .= "\n";
+			}
+			$zip->addFromString('transactions.csv', $log);
+			$zip->close();
+
+			// Then download the zipped file.
+			header('Content-Type: application/zip');
+			header('Content-disposition: attachment; filename='.basename($zipname));
+			header('Content-Length: '.filesize($zipname));
+			readfile($zipname);
+
+			dol_delete_file($zipname);
+
+			exit();
+		} else {
+			setEventMessages($langs->trans("FailedToOpenFile", $zipname), null, 'errors');
+		}
 	}
 }
 
@@ -600,7 +600,7 @@ if (isModEnabled('multicompany') && is_object($mc)) {
 print '<br>';
 
 // Project filter
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('projet')) {
 	$formproject = new FormProjets($db);
 	$langs->load('projects');
 	print '<span class="marginrightonly">'.$langs->trans('Project').":</span>";
@@ -648,7 +648,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 
 	echo dol_print_date($date_start, 'day', 'tzuserrel')." - ".dol_print_date($date_stop, 'day', 'tzuserrel');
 
-	print '<a class="marginleftonly small'.(empty($TData) ? ' butActionRefused' : ' butAction').'" href="'.$_SERVER["PHP_SELF"].'?action=dl&token='.newToken().'&projectid='.$projectid.'&output=file&file='.urlencode($filename).$param.'"';
+	print '<a class="marginleftonly small'.(empty($TData) ? ' butActionRefused' : ' butAction').'" href="'.$_SERVER["PHP_SELF"].'?action=dl&token='.currentToken().'&projectid='.$projectid.'&output=file&file='.urlencode($filename).$param.'"';
 	if (empty($TData)) {
 		print " disabled";
 	}

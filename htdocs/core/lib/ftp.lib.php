@@ -193,11 +193,12 @@ function dol_ftp_delete($connect_id, $file, $newsection)
  * Download a FTP file
  *
  * @param 		resource	$connect_id		Connection handler
- * @param 		string		$file			File
+ * @param 		string		$localfile		The local file path
+ * @param 		string		$file					The remote file path
  * @param 		string		$newsection			$newsection
  * @return		result
  */
-function dol_ftp_get($connect_id, $file, $newsection)
+function dol_ftp_get($connect_id, $localfile, $file, $newsection)
 {
 
 	global $conf;

@@ -442,7 +442,7 @@ class Fichinter extends CommonObject
 		$sql .= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.tms as datem,";
-		$sql .= " f.duree, f.fk_projet as fk_project, f.note_public, f.note_private, f.model_pdf, f.extraparams, fk_contrat, f.entity as entity";
+		$sql .= " f.duree, f.fk_projet as fk_project, f.note_public, f.note_private, f.model_pdf, f.last_main_doc, f.extraparams, fk_contrat, f.entity as entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		if ($ref) {
 			$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -481,6 +481,8 @@ class Fichinter extends CommonObject
 				$this->user_creation = $obj->fk_user_author;
 
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
+
+				$this->last_main_doc = $obj->last_main_doc;
 
 				if ($this->statut == 0) {
 					$this->brouillon = 1;
@@ -1217,7 +1219,7 @@ class Fichinter extends CommonObject
 		if (!$error) {
 			// Add lines because it is not included into create function
 			foreach ($this->lines as $line) {
-				$this->addline($user, $this->id, $line->desc, $line->datei, $line->duration);
+				$this->addline($user, $this->id, $line->desc, $line->datei, $line->duration, $line->array_options);
 			}
 
 			// Hook of thirdparty module

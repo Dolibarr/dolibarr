@@ -21,12 +21,9 @@
  *      \brief      This script returns content of possible search
  */
 
-
 // This script is called with a POST method or as an include.
 
 if (!isset($usedbyinclude) || empty($usedbyinclude)) {
-	top_httphead('application/json');
-
 	if (!defined('NOTOKENRENEWAL')) {
 		define('NOTOKENRENEWAL', 1); // Disables token renewal
 	}
@@ -40,10 +37,14 @@ if (!isset($usedbyinclude) || empty($usedbyinclude)) {
 		define('NOREQUIREAJAX', '1');
 	}
 	if (!defined('NOREDIRECTBYMAINTOLOGIN')) {
+		// Disable redirect to main login because the selectsearch must not ask a login
 		define('NOREDIRECTBYMAINTOLOGIN', '1');
 	}
 
 	$res = @include '../../main.inc.php';
+
+	top_httphead('application/json');
+
 	if ($res == 'ERROR_NOT_LOGGED') {
 		$langs->load("other");
 		$arrayresult['jumptologin'] = array('img'=>'object_generic', 'label'=>$langs->trans("JumpToLogin"), 'text'=>'<span class="fa fa-sign-in"></span> '.$langs->trans("JumpToLogin"), 'url'=>DOL_URL_ROOT.'/index.php');
@@ -78,7 +79,7 @@ if (isModEnabled('societe') && empty($conf->global->MAIN_SEARCHFORM_CONTACT_DISA
 	$arrayresult['searchintocontact'] = array('position'=>15, 'shortcut'=>'A', 'img'=>'object_contact', 'label'=>$langs->trans("SearchIntoContacts", $search_boxvalue), 'text'=>img_picto('', 'object_contact', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoContacts", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/contact/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
 
-if (((isModEnabled('product') && $user->hasRight('produit', 'lire')) || (isModEnabled('service') && $user->hasRight('service', 'lire'))) && empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_DISABLED)) {
+if (((isModEnabled('product') && $user->hasRight('product', 'read')) || (isModEnabled('service') && $user->hasRight('service', 'read'))) && empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE_DISABLED)) {
 	$arrayresult['searchintoproduct'] = array('position'=>30, 'shortcut'=>'P', 'img'=>'object_product', 'label'=>$langs->trans("SearchIntoProductsOrServices", $search_boxvalue), 'text'=>img_picto('', 'object_product', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoProductsOrServices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/product/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 	// search on lot/serial numbers
 	if (isModEnabled('productbatch')) {
@@ -89,7 +90,6 @@ if (((isModEnabled('product') && $user->hasRight('produit', 'lire')) || (isModEn
 if (isModEnabled('mrp') && $user->hasRight('mrp', 'read') && empty($conf->global->MAIN_SEARCHFORM_MRP_DISABLED)) {
 	$arrayresult['searchintomo'] = array('position'=>35, 'shortcut'=>'', 'img'=>'object_mrp', 'label'=>$langs->trans("SearchIntoMO", $search_boxvalue), 'text'=>img_picto('', 'object_mrp', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoMO", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/mrp/mo_list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }
-
 if (isModEnabled('project') && empty($conf->global->MAIN_SEARCHFORM_PROJECT_DISABLED) && $user->hasRight('projet', 'lire')) {
 	$arrayresult['searchintoprojects'] = array('position'=>40, 'shortcut'=>'Q', 'img'=>'object_project', 'label'=>$langs->trans("SearchIntoProjects", $search_boxvalue), 'text'=>img_picto('', 'object_project', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoProjects", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/projet/list.php'.($search_boxvalue ? '?search_all='.urlencode($search_boxvalue) : ''));
 }

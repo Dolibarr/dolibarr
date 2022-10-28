@@ -31,6 +31,7 @@
  *	\brief      List of bank transactions
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -1084,7 +1085,7 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['type']['checked'])) {
 		print '<td class="liste_titre" align="center">';
-		$form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100');
+		print $form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
 	// Numero
@@ -1277,7 +1278,7 @@ if ($resql) {
 				}
 				// Extra fields
 				$element = 'banktransaction';
-				if (is_array($extrafields->attributes[$element]['label']) && count($extrafields->attributes[$element]['label'])) {
+				if (!empty($extrafields->attributes[$element]['label']) && is_array($extrafields->attributes[$element]['label']) && count($extrafields->attributes[$element]['label'])) {
 					foreach ($extrafields->attributes[$element]['label'] as $key => $val) {
 						if (!empty($arrayfields["ef.".$key]['checked'])) {
 							if (!empty($arrayfields[$key]['checked'])) {

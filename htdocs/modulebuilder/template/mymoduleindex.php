@@ -62,19 +62,29 @@ $langs->loadLangs(array("mymodule@mymodule"));
 
 $action = GETPOST('action', 'aZ09');
 
+$max = 5;
+$now = dol_now();
 
-// Security check
-// if (! $user->rights->mymodule->myobject->read) {
-// 	accessforbidden();
-// }
+// Security check - Protection if external user
 $socid = GETPOST('socid', 'int');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
-$max = 5;
-$now = dol_now();
+// Security check (enable the most restrictive one)
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//if (!isModEnabled('mymodule')) {
+//	accessforbidden('Module not enabled');
+//}
+//if (! $user->hasRight('mymodule', 'myobject', 'read')) {
+//	accessforbidden();
+//}
+//restrictedArea($user, 'mymodule', 0, 'mymodule_myobject', 'myobject', '', 'rowid');
+//if (empty($user->admin)) {
+//	accessforbidden('Must be admin');
+//}
 
 
 /*

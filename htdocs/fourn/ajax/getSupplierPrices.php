@@ -35,6 +35,7 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
@@ -92,7 +93,7 @@ if ($idprod > 0) {
 	}
 
 	// After best supplier prices and before costprice
-	if (!empty($conf->stock->enabled)) {
+	if (isModEnabled('stock')) {
 		// Add price for pmp
 		$price = $producttmp->pmp;
 		if (empty($price) && !empty($conf->global->PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY)) {

@@ -220,12 +220,21 @@ class ExportCsv extends ModeleExports
 		} else {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
+		$selectlabel = array();
 
 		foreach ($array_selected_sorted as $code => $value) {
 			$newvalue = $outputlangs->transnoentities($array_export_fields_label[$code]); // newvalue is now $outputlangs->charset_output encoded
 			$newvalue = $this->csvClean($newvalue, $outputlangs->charset_output);
 
 			fwrite($this->handle, $newvalue.$this->separator);
+			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
+
+			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
+				$selectlabel[$code."_label"] = $newvalue."_label";
+			}
+		}
+		foreach ($selectlabel as $key => $value) {
+			fwrite($this->handle, $value.$this->separator);
 		}
 		fwrite($this->handle, "\n");
 		return 0;
@@ -256,7 +265,7 @@ class ExportCsv extends ModeleExports
 		$this->col = 0;
 
 		$reg = array();
-
+		$selectlabelvalues = array();
 		foreach ($array_selected_sorted as $code => $value) {
 			if (strpos($code, ' as ') == 0) {
 				$alias = str_replace(array('.', '-', '(', ')'), '_', $code);
@@ -279,12 +288,20 @@ class ExportCsv extends ModeleExports
 			$newvalue = $this->csvClean($newvalue, $outputlangs->charset_output);
 
 			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
-				$array = json_decode($typefield, true);
-				$array = $array['options'];
-				$newvalue = $array[$newvalue];
+				$array = jsonOrUnserialize($typefield);
+				if (is_array($array) && !empty($newvalue)) {
+					$array = $array['options'];
+					$selectlabelvalues[$code."_label"] = $array[$newvalue];
+				} else {
+					$selectlabelvalues[$code."_label"] = "";
+				}
 			}
 
 			fwrite($this->handle, $newvalue.$this->separator);
+			$this->col++;
+		}
+		foreach ($selectlabelvalues as $key => $value) {
+			fwrite($this->handle, $value.$this->separator);
 			$this->col++;
 		}
 

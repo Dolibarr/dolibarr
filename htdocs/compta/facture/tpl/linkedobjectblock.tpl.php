@@ -71,9 +71,9 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	print '<td class="linkedcol-ref left">'.$objectlink->ref_client.'</td>';
 	print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	print '<td class="linkedcol-amount right">';
-	if ($user->rights->facture->lire) {
+	if (!empty($objectlink) && $objectlink->element == 'facture' && $user->hasRight('facture', 'lire')) {
 		$sign = 1;
-		if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+		if ($objectlink->type == Facture::TYPE_CREDIT_NOTE) {
 			$sign = -1;
 		}
 		if ($objectlink->statut != 3) {

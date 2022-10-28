@@ -35,20 +35,24 @@ $langs->loadLangs(array("mrp", "other", "stocks"));
 // Get parameters
 $id = GETPOST('id', 'int');
 $lineid = GETPOST('lineid', 'int');
-$ref        = GETPOST('ref', 'alpha');
+$ref    = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$confirm    = GETPOST('confirm', 'alpha');
-$cancel = GETPOST('cancel', 'aZ09');
+$confirm  = GETPOST('confirm', 'alpha');
+$cancel   = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bomnet_needs'; // To manage different context of search
-$backtopage = GETPOST('backtopage', 'alpha');
-
+$backtopage  = GETPOST('backtopage', 'alpha');
 
 
 // Initialize technical objects
 $object = new BOM($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
+
+// Initialize technical objects for hooks
 $hookmanager->initHooks(array('bomnetneeds')); // Note that conf->hooks_modules contains array
+
+// Massaction
+$diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
+
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
@@ -73,13 +77,13 @@ if ($object->id > 0) {
 }
 
 
-
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'bom', $object->id, 'bom_bom', '', '', 'rowid', $isdraft);
 
+// Permissions
 $permissionnote = $user->rights->bom->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->bom->write; // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->rights->bom->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -123,11 +127,9 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-
 $title = $langs->trans('BOM');
 $help_url ='EN:Module_BOM';
 llxHeader('', $title, $help_url);
-
 
 
 // Part to show record

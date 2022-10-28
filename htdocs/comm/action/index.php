@@ -30,6 +30,7 @@
  *  \brief      Home page of calendar events
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -1271,9 +1272,9 @@ if (count($listofextcals)) {
 					$event->datef = $dateend + $usertime;
 
 					if ($icalevent['SUMMARY']) {
-						$event->label = $icalevent['SUMMARY'];
+						$event->label = dol_string_nohtmltag($icalevent['SUMMARY']);
 					} elseif ($icalevent['DESCRIPTION']) {
-						$event->label = dol_nl2br($icalevent['DESCRIPTION'], 1);
+						$event->label = dol_nl2br(dol_string_nohtmltag($icalevent['DESCRIPTION']), 1);
 					} else {
 						$event->label = $langs->trans("ExtSiteNoLabel");
 					}
@@ -1984,7 +1985,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 						// Show title
 						$titletoshow = $daterange;
-						$titletoshow .= ($titletoshow ? ' ' : '').($event->label ? $event->label : $event->libelle);
+						$titletoshow .= ($titletoshow ? ' ' : '').dol_escape_htmltag($event->label ? $event->label : $event->libelle);
 
 						if ($event->type_code != 'ICALEVENT') {
 							$savlabel = $event->label ? $event->label : $event->libelle;

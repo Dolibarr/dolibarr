@@ -30,6 +30,7 @@
  *  \brief       Page to show predefined fichinter
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinterrec.class.php';
@@ -740,11 +741,9 @@ if ($action == 'create') {
 				print $langs->trans("AddIntervention").'</a></div>';
 			}
 
-			if ($user->rights->ficheinter->supprimer) {
-				print '<div class="inline-block divButAction">';
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.'">';
-				print $langs->trans('Delete').'</a></div>';
-			}
+			// Delete
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->rights->ficheinter->supprimer);
+
 			print '</div>';
 		} else {
 			print $langs->trans("ErrorRecordNotFound");

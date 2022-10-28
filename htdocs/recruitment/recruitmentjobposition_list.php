@@ -29,9 +29,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 
-// for other modules
-//dol_include_once('/othermodule/class/otherobject.class.php');
-
 // Load translation files required by the page
 $langs->loadLangs(array("recruitment", "other"));
 
@@ -303,7 +300,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	 }*/
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	/*
-	$sqlforcount = preg_replace('/^SELECT[a-z0-9\._\s\(\),]+FROM/i', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	print $sqlforcount;
 	$resql = $db->query($sqlforcount);
 	$objforcount = $db->fetch_object($resql);

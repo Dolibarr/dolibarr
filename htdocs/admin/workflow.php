@@ -24,6 +24,7 @@
  *	\brief		Workflows setup page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -74,11 +75,11 @@ $workflowcodes = array(
 	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array (
 		'family'=>'create',
 		'position'=>25,
-		'enabled'=>(!empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled)),
+		'enabled'=>(isModEnabled('ticket') && isModEnabled('ficheinter')),
 		'picto'=>'ticket'
 	),
 
-	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>''),
+	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>'', 'enabled'=>((isModEnabled("propal") && isModEnabled('commande')) || (isModEnabled('commande') && isModEnabled('facture')) || (isModEnabled('ticket') && isModEnabled('ficheinter')))),
 
 	// Automatic classification of proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array(
@@ -117,8 +118,6 @@ $workflowcodes = array(
 		'warning'=>''
 	), // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
 
-	'separator2'=>array('family'=>'separator', 'position'=>50),
-
 	// Automatic classification supplier proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array(
 		'family'=>'classify_supplier_proposal',
@@ -132,7 +131,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>63,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled))),
+		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_order'))),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -140,7 +139,7 @@ $workflowcodes = array(
 	'WORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED'=>array(
 		'family'=>'classify_supplier_order',
 		'position'=>64,
-		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled))),
+		'enabled'=>(!empty($conf->global->MAIN_FEATURES_LEVEL) && (isModEnabled("reception")) && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_order'))),
 		'picto'=>'supplier_order',
 		'warning'=>''
 	),
@@ -153,14 +152,6 @@ $workflowcodes = array(
 		'warning'=>''
 	),
 
-	// Automatic classification reception
-	'WORKFLOW_BILL_ON_RECEPTION'=>array(
-		'family'=>'classify_reception',
-		'position'=>80,
-		'enabled'=>(isModEnabled("reception") && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
-		'picto'=>'reception'
-	),
-
 	// Automatic classification shipping
 	'WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE' => array(
 		'family' => 'classify_shipping',
@@ -169,17 +160,27 @@ $workflowcodes = array(
 		'picto' => 'shipment'
 	),
 
+	// Automatic classification reception
+	'WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE'=>array(
+		'family'=>'classify_reception',
+		'position'=>95,
+		'enabled'=>(isModEnabled("reception") && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))),
+		'picto'=>'reception'
+	),
+
+	'separator2'=>array('family'=>'separator', 'position'=>400, 'enabled' => (isModEnabled('ticket') && isModEnabled('contract'))),
+
 	// Automatic link ticket -> contract
 	'WORKFLOW_TICKET_LINK_CONTRACT' => array(
 		'family' => 'link_ticket',
-		'position' => 75,
-		'enabled' => !empty($conf->ticket->enabled) && !empty($conf->contract->enabled),
+		'position' => 500,
+		'enabled' => (isModEnabled('ticket') && isModEnabled('contract')),
 		'picto' => 'ticket'
 	),
 	'WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS' => array(
 		'family' => 'link_ticket',
-		'position' => 76,
-		'enabled' => !empty($conf->ticket->enabled) && !empty($conf->contract->enabled),
+		'position' => 501,
+		'enabled' => (isModEnabled('ticket') && isModEnabled('contract')),
 		'picto' => 'ticket'
 	),
 );
@@ -234,6 +235,7 @@ foreach ($workflowcodes as $key => $params) {
 		continue;
 	}
 
+	$reg = array();
 	if ($oldfamily != $params['family']) {
 		if ($params['family'] == 'create') {
 			$header = $langs->trans("AutomaticCreation");
@@ -268,7 +270,7 @@ foreach ($workflowcodes as $key => $params) {
 
 		print '<tr class="liste_titre">';
 		print '<th>'.$header.'</th>';
-		print '<th align="center">'.$langs->trans("Status").'</th>';
+		print '<th class="right">'.$langs->trans("Status").'</th>';
 		print '</tr>';
 
 		$oldfamily = $params['family'];
@@ -285,7 +287,7 @@ foreach ($workflowcodes as $key => $params) {
 
 	print '</td>';
 
-	print '<td class="center">';
+	print '<td class="right">';
 
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff($key);

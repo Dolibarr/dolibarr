@@ -102,11 +102,12 @@ class TraceableDB extends DoliDB
 	/**
 	 * Start transaction
 	 *
-	 * @return  int         1 if transaction successfuly opened or already opened, 0 if error
+	 * @param	string	$textinlog		Add a small text into log. '' by default.
+	 * @return  int         			1 if transaction successfuly opened or already opened, 0 if error
 	 */
-	public function begin()
+	public function begin($textinlog = '')
 	{
-		return $this->db->begin();
+		return $this->db->begin($textinlog);
 	}
 
 	/**
@@ -255,10 +256,22 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param   string $stringtoencode String to escape
 	 * @return  string                        String escaped
+	 * @deprecated
 	 */
 	public function escapeunderscore($stringtoencode)
 	{
 		return $this->db->escapeunderscore($stringtoencode);
+	}
+
+	/**
+	 *	Escape a string to insert data into a like
+	 *
+	 *	@param	string	$stringtoencode		String to escape
+	 *	@return	string						String escaped
+	 */
+	public function escapeforlike($stringtoencode)
+	{
+		return str_replace(array('_', '\\', '%'), array('\_', '\\\\', '\%'), (string) $stringtoencode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

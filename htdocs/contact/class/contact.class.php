@@ -344,7 +344,7 @@ class Contact extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->mailing->enabled)) {
+		if (!isModEnabled('mailing')) {
 			$this->fields['no_email']['enabled'] = 0;
 		}
 		// typical ['s.nom'] is used for third-parties
@@ -1068,7 +1068,7 @@ class Contact extends CommonObject
 				$this->phone_mobile = trim($obj->phone_mobile);
 
 				$this->email			= $obj->email;
-				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
+				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 				$this->photo			= $obj->photo;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
@@ -1228,6 +1228,15 @@ class Contact extends CommonObject
 
 		$this->db->begin();
 
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger('CONTACT_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		if (!$error) {
 			// Get all rowid of element_contact linked to a type that is link to llx_socpeople
 			$sql = "SELECT ec.rowid";
@@ -1316,15 +1325,6 @@ class Contact extends CommonObject
 			if ($result < 0) {
 				$error++;
 			}
-		}
-
-		if (!$error && !$notrigger) {
-			// Call trigger
-			$result = $this->call_trigger('CONTACT_DELETE', $user);
-			if ($result < 0) {
-				$error++;
-			}
-			// End call triggers
 		}
 
 		if (!$error) {

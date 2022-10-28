@@ -35,6 +35,7 @@ if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
@@ -59,7 +60,7 @@ $canbemodified = ((empty($object->date_fin) || $object->date_fin > dol_now()) &&
 
 // Security check
 if (empty($conf->opensurvey->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Survey not enabled');
 }
 
 
@@ -74,7 +75,7 @@ $listofvoters = explode(',', $_SESSION["savevoter"]);
 // Add comment
 if (GETPOST('ajoutcomment', 'alpha')) {
 	if (!$canbemodified) {
-		accessforbidden('', 0, 0, 1);
+		httponly_accessforbidden('ErrorForbidden');
 	}
 
 	$error = 0;
@@ -108,16 +109,16 @@ if (GETPOST('ajoutcomment', 'alpha')) {
 // Add vote
 if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// boutonp for chrome, boutonp_x for firefox
 	if (!$canbemodified) {
-		accessforbidden('', 0, 0, 1);
+		httponly_accessforbidden('ErrorForbidden');
 	}
 
 	//Si le nom est bien entré
 	if (GETPOST('nom', 'alphanohtml')) {
 		$nouveauchoix = '';
 		for ($i = 0; $i < $nbcolonnes; $i++) {
-			if (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '1') {
+			if (GETPOSTISSET("choix".$i) && GETPOST("choix".$i) == '1') {
 				$nouveauchoix .= "1";
-			} elseif (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '2') {
+			} elseif (GETPOSTISSET("choix".$i) && GETPOST("choix".$i) == '2') {
 				$nouveauchoix .= "2";
 			} else {
 				$nouveauchoix .= "0";
@@ -214,7 +215,7 @@ if ($testmodifier) {
 	}
 
 	if (!$canbemodified) {
-		accessforbidden('', 0, 0, 1);
+		httponly_accessforbidden('ErrorForbidden');
 	}
 
 	$idtomodify = GETPOST("idtomodify".$modifier);
@@ -232,7 +233,7 @@ if ($testmodifier) {
 $idcomment = GETPOST('deletecomment', 'int');
 if ($idcomment) {
 	if (!$canbemodified) {
-		accessforbidden('', 0, 0, 1);
+		httponly_accessforbidden('ErrorForbidden');
 	}
 
 	$resql = $object->deleteComment($idcomment);

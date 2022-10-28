@@ -573,7 +573,6 @@ Permission281=Leer contactos
 Permission291=Tarifas de lectura
 Permission292=Establecer permisos sobre las tarifas
 Permission293=Modificar las tarifas del cliente.
-Permission300=Leer codigos de barras
 Permission301=Crear / modificar códigos de barras
 Permission311=Leer Servicios
 Permission312=Asignar servicio / suscripción al contrato
@@ -1276,6 +1275,7 @@ MailToSendInvoice=Facturas de cliente
 MailToSendSupplierRequestForQuotation=Solicitud de presupuesto
 MailToSendSupplierOrder=Ordenes de compra
 MailToSendSupplierInvoice=Facturas del vendedor
+MailToExpenseReport=Reporte de gastos
 ByDefaultInList=Mostrar de forma predeterminada en la vista de lista
 YouUseLastStableVersion=Usas la última versión estable
 TitleExampleForMajorRelease=Ejemplo de mensaje que puede usar para anunciar esta versión principal (no dude en utilizarla en sus sitios web)
@@ -1339,7 +1339,7 @@ NbOfEmailsInInbox=Número de correos electrónicos en el directorio de origen
 LoadThirdPartyFromName=Cargar búsqueda de terceros en %s (solo carga)
 LoadThirdPartyFromNameOrCreate=Cargar búsqueda de terceros en %s (crear si no se encuentra)
 ECMAutoTree=Mostrar arbol ECM automatico
-OperationParamDesc=Define the rules to use to extract or set values.<br>Example for operations that need to extract a name from email subject:<br>name=EXTRACT:SUBJECT:Message from company ([^\n]*)<br>Example for operations that create objects:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value including value of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 OpeningHoursDesc=Introduzca aquí el horario habitual de apertura de su empresa.
 ResourceSetup=Configuración del módulo de recursos
 UseSearchToSelectResource=Use un formulario de búsqueda para elegir un recurso (en lugar de una lista desplegable).

@@ -1257,6 +1257,7 @@ class SupplierProposal extends CommonObject
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
 				$this->statut               = (int) $obj->fk_statut;
+				$this->status               = (int) $obj->fk_statut;
 				$this->statut_libelle       = $obj->statut_label;
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
@@ -1720,7 +1721,7 @@ class SupplierProposal extends CommonObject
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				// Define output language
 				$outputlangs = $langs;
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$outputlangs = new Translate("", $conf);
 					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);
@@ -2949,7 +2950,7 @@ class SupplierProposalLine extends CommonObjectLine
 			$this->product_label	= $objp->product_label;
 			$this->product_desc		= $objp->product_desc;
 
-			$this->ref_fourn = $objp->ref_produit_forun;
+			$this->ref_fourn = $objp->ref_produit_fourn;
 
 			// Multicurrency
 			$this->fk_multicurrency = $objp->fk_multicurrency;
