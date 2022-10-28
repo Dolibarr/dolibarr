@@ -1903,19 +1903,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Batch number managment
 			if (isModEnabled('productbatch')) {
-
 				if ($object->isProduct() || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td>';
 					$statutarray = array('0' => $langs->trans("ProductStatusNotOnBatch")
 											, '1' => $langs->trans("ProductStatusOnBatch")
 					);
 
-					if($object->status_batch != 1) {
+					if ($object->status_batch != 1) {
 						$statutarray[2] = $langs->trans("ProductStatusOnSerial");
 					}
 
 					print $form->selectarray('status_batch', $statutarray, $object->status_batch);
-					if($object->status_batch == 1) {
+					if ($object->status_batch == 1) {
 						print img_help('', $langs->trans("CantConvertFromBatchToSerial")) . '&nbsp;';
 					}
 					print '<span id="statusBatchWarning" class="warning" style="display: none;">';
