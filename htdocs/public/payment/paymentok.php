@@ -1266,7 +1266,7 @@ if ($ispaymentok) {
 						$thirdparty = new Societe($db);
 						$resultthirdparty = $thirdparty->fetch($attendeetovalidate->fk_soc);
 						if ($resultthirdparty < 0) {
-							setEventMessages(null, $attendeetovalidate->errors, "errors");
+							setEventMessages($resultthirdparty->error, $resultthirdparty->errors, "errors");
 						} else {
 							require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 							include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -1289,10 +1289,9 @@ if ($ispaymentok) {
 								$subject = $arraydefaultmessage->topic;
 								$msg     = $arraydefaultmessage->content;
 							} else {
-								$subject = '['.$object->ref.' - '.$outputlangs->trans("NewRegistration").']';
+								$subject = '['.$appli.'] '.$object->ref.' - '.$outputlangs->trans("NewRegistration").']';
 								$msg = $outputlangs->trans("OrganizationEventPaymentOfRegistrationWasReceived");
 							}
-
 
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
@@ -1301,6 +1300,13 @@ if ($ispaymentok) {
 							$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
 							$sendto = $attendeetovalidate->email;
+							$cc = '';
+							if ($thirdparty->email) {
+								$cc = $thirdparty->email;
+							}
+							if ($attendeetovalidate->email_company && $attendeetovalidate->email_company != $thirdparty->email) {
+								$cc = ($cc ? ', ' : '').$attendeetovalidate->email_company;
+							}
 							$from = $conf->global->MAILING_EMAIL_FROM;
 							$urlback = $_SERVER["REQUEST_URI"];
 
@@ -1321,7 +1327,7 @@ if ($ispaymentok) {
 								$listofmimes = array(dol_mimetype($file));
 							}
 
-							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, '', '', 0, $ishtml);
+							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, $cc, '', 0, $ishtml);
 
 							$result = $mailfile->sendfile();
 							if ($result) {
@@ -1493,7 +1499,7 @@ if ($ispaymentok) {
 											$subject = $arraydefaultmessage->topic;
 											$msg     = $arraydefaultmessage->content;
 										} else {
-											$subject = '['.$booth->ref.' - '.$outputlangs->trans("NewRegistration").']';
+											$subject = '['.$appli.'] '.$booth->ref.' - '.$outputlangs->trans("NewRegistration").']';
 											$msg = $outputlangs->trans("OrganizationEventPaymentOfBoothWasReceived");
 										}
 
@@ -1541,6 +1547,11 @@ if ($ispaymentok) {
 		// Nothing done
 	}
 }
+
+
+// Set $appli for emails title
+$appli = $mysoc->name;
+
 
 if ($ispaymentok) {
 	// Get on url call
@@ -1600,19 +1611,6 @@ if ($ispaymentok) {
 		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 		// Define link to login card
-		$appli = constant('DOL_APPLICATION_TITLE');
-		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-			$appli = $conf->global->MAIN_APPLICATION_TITLE;
-			if (preg_match('/\d\.\d/', $appli)) {
-				if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
-					$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-				}
-			} else {
-				$appli .= " ".DOL_VERSION;
-			}
-		} else {
-			$appli .= " ".DOL_VERSION;
-		}
 
 		$urlback = $_SERVER["REQUEST_URI"];
 		$topic = '['.$appli.'] '.$companylangs->transnoentitiesnoconv("NewOnlinePaymentReceived");
@@ -1739,21 +1737,6 @@ if ($ispaymentok) {
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-
-		// Define link to login card
-		$appli = constant('DOL_APPLICATION_TITLE');
-		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-			$appli = $conf->global->MAIN_APPLICATION_TITLE;
-			if (preg_match('/\d\.\d/', $appli)) {
-				if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
-					$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-				}
-			} else {
-				$appli .= " ".DOL_VERSION;
-			}
-		} else {
-			$appli .= " ".DOL_VERSION;
-		}
 
 		$urlback = $_SERVER["REQUEST_URI"];
 		$topic = '['.$appli.'] '.$companylangs->transnoentitiesnoconv("ValidationOfPaymentFailed");

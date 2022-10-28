@@ -120,7 +120,7 @@ class modResource extends DolibarrModules
 		// 'order_supplier'		to add a tab in supplier order view
 		// 'invoice_supplier'	to add a tab in supplier invoice view
 		// 'invoice'			to add a tab in customer invoice view
-		// 'order'				to add a tab in customer order view
+		// 'order'				to add a tab in sales order view
 		// 'product'			to add a tab in product view
 		// 'stock'				to add a tab in stock view
 		// 'propal'				to add a tab in propal view

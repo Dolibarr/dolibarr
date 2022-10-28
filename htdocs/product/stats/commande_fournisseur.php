@@ -185,12 +185,10 @@ if ($id > 0 || !empty($ref)) {
 			if ($result) {
 				$num = $db->num_rows($result);
 
-				$option = '';
+				$option = '&id='.$product->id;
+
 				if ($limit > 0 && $limit != $conf->liste_limit) {
 					$option .= '&limit='.urlencode($limit);
-				}
-				if (!empty($id)) {
-					$option .= '&id='.$product->id;
 				}
 				if (!empty($search_month)) {
 					$option .= '&search_month='.urlencode($search_month);
@@ -228,7 +226,7 @@ if ($id > 0 || !empty($ref)) {
 
 				$i = 0;
 				print '<div class="div-table-responsive">';
-				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
+				print '<table class="tagtable liste listwithfilterbefore centpercent">';
 				print '<tr class="liste_titre">';
 				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "c.rowid", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);

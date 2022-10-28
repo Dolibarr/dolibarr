@@ -185,4 +185,4 @@ AlreadyOneBankAccount=un compte bancaire est déjà défini
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=Virement SEPA : 'Type de paiement' au niveau 'Virement'
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=A la génération d'un fichier SEPA XML pour les virements, la section "PaymentTypeInformation" peut maintenant être placée dans la section "CreditTransferTransactionInformation" (à la place de la section "Payment").\nNous recommandons fortement de ne pas cocher cette case pour conserver "PaymentTypeInformation" dans "Payment level" car toutes les banques ne l'accepterons pas obligatoirement au niveau de "CreditTransferTransactionInformation". Contactez votre banque avant de modifier ce paramètre.
 ToCreateRelatedRecordIntoBank=Pour créer un enregistrement bancaire associé manquant
-BanklineExtraFields=Bank Line Extrafields
+BanklineExtraFields=Extrait de la ligne bancaire

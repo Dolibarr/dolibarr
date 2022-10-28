@@ -212,10 +212,10 @@ function hideoptions(){
 
   	if (div.style.display === "none") {
     	div.style.display = "block";
-		lnk.innerText="'.$langs->trans("HideAdvancedoptions").'";
+		lnk.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("HideAdvancedoptions")).'";
   	} else {
     	div.style.display = "none";
-		lnk.innerText="'.$langs->trans("ShowAdvancedOptions").'...";
+		lnk.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("ShowAdvancedOptions")).'...";
 	}
 }
 </script>';

@@ -2268,14 +2268,15 @@ class Societe extends CommonObject
 	/**
 	 *    	Add a discount for third party
 	 *
-	 *    	@param	float	$remise     	Amount of discount
-	 *    	@param  User	$user       	User adding discount
-	 *    	@param  string	$desc			Reason of discount
-	 *      @param  string	$vatrate     	VAT rate (may contain the vat code too). Exemple: '1.23', '1.23 (ABC)', ...
-	 *      @param	int		$discount_type	0 => customer discount, 1 => supplier discount
-	 *		@return	int						<0 if KO, id of discount record if OK
+	 *    	@param	float	$remise     		Amount of discount
+	 *    	@param  User	$user       		User adding discount
+	 *    	@param  string	$desc				Reason of discount
+	 *      @param  string	$vatrate     		VAT rate (may contain the vat code too). Exemple: '1.23', '1.23 (ABC)', ...
+	 *      @param	int		$discount_type		0 => customer discount, 1 => supplier discount
+	 *      @param	string	$price_base_type	Price base type 'HT' or 'TTC'
+	 *		@return	int							<0 if KO, id of discount record if OK
 	 */
-	public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0)
+	public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0, $price_base_type = 'HT')
 	{
 		// phpcs:enable
 		global $langs;
@@ -2310,9 +2311,15 @@ class Societe extends CommonObject
 
 			$discount->discount_type = $discount_type;
 
-			$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise, 'MT');
-			$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $vatrate / 100, 'MT');
-			$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($discount->amount_ht + $discount->amount_tva, 'MT');
+			if ($price_base_type == 'TTC') {
+				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($remise, 'MT');
+				$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise / (1 + $vatrate / 100), 'MT');
+				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($discount->amount_ttc - $discount->amount_ht, 'MT');
+			} else {
+				$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise, 'MT');
+				$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $vatrate / 100, 'MT');
+				$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($discount->amount_ht + $discount->amount_tva, 'MT');
+			}
 
 			$discount->tva_tx = price2num($vatrate);
 			$discount->vat_src_code = $vat_src_code;

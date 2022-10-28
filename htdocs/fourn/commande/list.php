@@ -196,8 +196,8 @@ $arrayfields = array(
 	'country.code_iso'=>array('label'=>"Country", 'enabled'=>1, 'position'=>49),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'enabled'=>$checkedtypetiers, 'position'=>50),
 	'u.login'=>array('label'=>"AuthorRequest", 'enabled'=>1, 'position'=>51),
-	'cf.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position'=>100),
-	'cf.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>110),
+	'cf.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position'=>100),
+	'cf.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position'=>110),
 );
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
@@ -527,7 +527,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$cmd->classifyBilled($user); // TODO Move this in workflow like done for customer orders
+			$cmd->classifyBilled($user); // TODO Move this in workflow like done for sales orders
 
 			if (!empty($createbills_onebythird) && empty($TFactThird[$cmd->socid])) {
 				$TFactThird[$cmd->socid] = $objecttmp;

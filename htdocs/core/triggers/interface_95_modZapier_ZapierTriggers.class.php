@@ -203,7 +203,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			// case 'MYECMDIR_CREATE':
 			// case 'MYECMDIR_MODIFY':
 
-			// Customer orders
+			// Sales orders
 			case 'ORDER_CREATE':
 				$resql = $this->db->query($sql);
 				while ($resql && $obj = $this->db->fetch_array($resql)) {

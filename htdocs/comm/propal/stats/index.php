@@ -60,7 +60,7 @@ $endyear = $year;
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'companies', 'other', 'suppliers', 'supplier_proposal'));
 
-if ($mode == 'customer' && !$user->rights->propale->lire) {
+if ($mode == 'customer' && !$user->rights->propal->lire) {
 	accessforbidden();
 }
 if ($mode == 'supplier' && !$user->rights->supplier_proposal->lire) {

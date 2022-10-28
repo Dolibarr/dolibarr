@@ -319,7 +319,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 
 	// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 	global $modulepart;
-	if ($modulepart == 'produit' && !empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+	if ($modulepart == 'produit' && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 		global $object;
 		if (!empty($object->id)) {
 			if (isModEnabled("product")) {
@@ -1372,7 +1372,7 @@ function dol_delete_dir($dir, $nophperrors = 0)
 	// Security:
 	// We refuse transversal using .. and pipes into filenames.
 	if (preg_match('/\.\./', $dir) || preg_match('/[<>|]/', $dir)) {
-		dol_syslog("Refused to delete dir ".$dir, LOG_WARNING);
+		dol_syslog("Refused to delete dir ".$dir.' (contains invalid char sequence)', LOG_WARNING);
 		return false;
 	}
 
@@ -2033,6 +2033,7 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
  * @param 	string	$mode			'gz' or 'bz' or 'zip'
  * @param	string	$errorstring	Error string
  * @return	int						<0 if KO, >0 if OK
+ * @see dol_uncompress(), dol_compress_dir()
  */
 function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring = null)
 {
@@ -2159,6 +2160,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
  * @param 	string 	$inputfile		File to uncompress
  * @param 	string	$outputdir		Target dir name
  * @return 	array					array('error'=>'Error code') or array() if no error
+ * @see dol_compress_file(), dol_compress_dir()
  */
 function dol_uncompress($inputfile, $outputdir)
 {
@@ -2282,10 +2284,14 @@ function dol_uncompress($inputfile, $outputdir)
  * @param 	string	$mode			'zip'
  * @param	string	$excludefiles   A regex pattern. For example: '/\.log$|\/temp\//'
  * @param	string	$rootdirinzip	Add a root dir level in zip file
+ * @param	string	$newmask		Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @return	int						<0 if KO, >0 if OK
+ * @see dol_uncompress(), dol_compress_file()
  */
-function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '', $rootdirinzip = '')
+function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles = '', $rootdirinzip = '', $newmask = 0)
 {
+	global $conf;
+
 	$foundhandler = 0;
 
 	dol_syslog("Try to zip dir ".$inputdir." into ".$outputfile." mode=".$mode);
@@ -2315,6 +2321,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 			 }
 			 else*/
 			//if (class_exists('ZipArchive') && !empty($conf->global->MAIN_USE_ZIPARCHIVE_FOR_ZIP_COMPRESS))
+
 			if (class_exists('ZipArchive')) {
 				$foundhandler = 1;
 
@@ -2359,6 +2366,16 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 				// Zip archive will be created only after closing object
 				$zip->close();
 
+				if (empty($newmask) && !empty($conf->global->MAIN_UMASK)) {
+					$newmask = $conf->global->MAIN_UMASK;
+				}
+				if (empty($newmask)) {	// This should no happen
+					dol_syslog("Warning: dol_copy called with empty value for newmask and no default value defined", LOG_WARNING);
+					$newmask = '0664';
+				}
+
+				@chmod($outputfile, octdec($newmask));
+
 				return 1;
 			}
 		}
@@ -2374,7 +2391,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 		$langs->load("errors");
 		dol_syslog("Failed to open file ".$outputfile, LOG_ERR);
 		dol_syslog($e->getMessage(), LOG_ERR);
-		$errormsg = $langs->trans("ErrorFailedToWriteInDir", $outputfile);
+		$errormsg = $langs->trans("ErrorFailedToBuildArchive", $outputfile).' - '.$e->getMessage();
 		return -1;
 	}
 }
@@ -2522,7 +2539,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->facture->multidir_output[$entity].'/'.$original_file;
 	} elseif ($modulepart == 'apercupropal' && !empty($conf->propal->multidir_output[$entity])) {
 		// Wrapping pour les apercu propal
-		if ($fuser->rights->propale->{$lire}) {
+		if ($fuser->rights->propal->{$lire}) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;
@@ -2594,7 +2611,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->expensereport->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'propalstats' && !empty($conf->propal->multidir_temp[$entity])) {
 		// Wrapping pour les images des stats propales
-		if ($fuser->rights->propale->{$lire}) {
+		if ($fuser->rights->propal->{$lire}) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_temp[$entity].'/'.$original_file;
@@ -2815,7 +2832,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	} elseif (($modulepart == 'propal' || $modulepart == 'propale') && !empty($conf->propal->multidir_output[$entity])) {
 		// Wrapping pour les propales
-		if ($fuser->rights->propale->{$lire} || preg_match('/^specimen/i', $original_file)) {
+		if ($fuser->rights->propal->{$lire} || preg_match('/^specimen/i', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;
