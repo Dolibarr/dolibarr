@@ -892,7 +892,7 @@ class Setup extends DolibarrApi
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
 				$civility = $this->db->fetch_object($result);
-				$this->translateLabel($civility, $lang, 'Civility', 'dict');
+				$this->translateLabel($civility, $lang, 'Civility', array('dict'));
 				$list[] = $civility;
 			}
 		} else {
