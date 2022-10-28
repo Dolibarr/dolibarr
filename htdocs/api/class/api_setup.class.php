@@ -1541,7 +1541,7 @@ class Setup extends DolibarrApi
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
 				$category = $this->db->fetch_object($result);
-				$this->translateLabel($category, $lang, 'TicketCategoryShort', 'ticket');
+				$this->translateLabel($category, $lang, 'TicketCategoryShort', array('ticket'));
 				$list[] = $category;
 			}
 		} else {
@@ -1604,7 +1604,7 @@ class Setup extends DolibarrApi
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
 				$severity = $this->db->fetch_object($result);
-				$this->translateLabel($severity, $lang, 'TicketSeverityShort', 'ticket');
+				$this->translateLabel($severity, $lang, 'TicketSeverityShort', array('ticket'));
 				$list[] = $severity;
 			}
 		} else {
@@ -1668,7 +1668,7 @@ class Setup extends DolibarrApi
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
 				$type =$this->db->fetch_object($result);
-				$this->translateLabel($type, $lang, 'TicketTypeShort', 'ticket');
+				$this->translateLabel($type, $lang, 'TicketTypeShort', array('ticket'));
 				$list[] = $type;
 			}
 		} else {
