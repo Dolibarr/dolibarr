@@ -616,7 +616,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @return void
 	 */
-	private function translateLabel($object, $lang, $prefix = 'Country', $dict = 'dict')
+	private function translateLabel($object, $lang, $prefix = 'Country', $dict = array('dict'))
 	{
 		if (!empty($lang)) {
 			// Load the translations if this is a new language.
@@ -624,7 +624,7 @@ class Setup extends DolibarrApi
 				global $conf;
 				$this->translations = new Translate('', $conf);
 				$this->translations->setDefaultLang($lang);
-				$this->translations->loadLangs(array($dict));
+				$this->translations->loadLangs($dict);
 			}
 			if ($object->code) {
 				$key = $prefix.$object->code;
