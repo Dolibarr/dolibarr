@@ -3490,7 +3490,7 @@ class User extends CommonObject
 				} else {
 					$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 					$sql .= " WHERE ((ug.fk_user = t.rowid";
-					$sql .= " AND ug.entity IN (".getEntity('user')."))";
+					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
 					$sql .= " OR t.entity = 0)"; // Show always superadmin
 				}
 			} else {
