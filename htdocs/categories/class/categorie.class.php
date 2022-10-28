@@ -155,7 +155,7 @@ class Categorie extends CommonObject
 		'website_page' => 'WebsitePage',
 		'ticket' => 'Ticket',
 		'knowledgemanagement' => 'KnowledgeRecord',
-		'invoice' => 'Invoice'
+		'invoice' => 'Facture'
 	);
 
 	/**
@@ -176,7 +176,7 @@ class Categorie extends CommonObject
 		'warehouse' => 'StocksCategoriesArea',
 		'actioncomm' => 'ActioncommCategoriesArea',
 		'website_page' => 'WebsitePageCategoriesArea',
-		'invoice' => 'INvoiceCategoriesArea'
+		'invoice' => 'InvoiceCategoriesArea'
 	);
 
 	/**

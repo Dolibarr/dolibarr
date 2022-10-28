@@ -9805,22 +9805,23 @@ class Form
 	/**
 	 *  Output a combo list with invoices qualified for a third party
 	 *
-	 *  @param	int		$socid      	Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 *  @param  int		$selected   	Id invoice preselected
-	 *  @param  string	$htmlname   	Name of HTML select
-	 *	@param	int		$maxlength		Maximum length of label
-	 *	@param	int		$option_only	Return only html options lines without the select tag
-	 *	@param	string	$show_empty		Add an empty line ('1' or string to show for empty line)
-	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
-	 *  @param	int		$forcefocus		Force focus on field (works with javascript only)
-	 *  @param	int		$disabled		Disabled
-	 *  @param	string	$morecss        More css added to the select component
-	 *  @param	string	$projectsListId ''=Automatic filter on project allowed. List of id=Filter on project ids.
-	 *  @param	string	$showproject	'all' = Show project info, ''=Hide project info
-	 *  @param	User	$usertofilter	User object to use for filtering
-	 *	@return int         			Nbr of project if OK, <0 if KO
+	 *  @param	int		$socid      		Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 *  @param  int		$selected   		Id invoice preselected
+	 *  @param  string	$htmlname   		Name of HTML select
+	 *	@param	int		$maxlength			Maximum length of label
+	 *	@param	int		$option_only		Return only html options lines without the select tag
+	 *	@param	string	$show_empty			Add an empty line ('1' or string to show for empty line)
+	 *  @param	int		$discard_closed 	Discard closed projects (0=Keep,1=hide completely,2=Disable)
+	 *  @param	int		$forcefocus			Force focus on field (works with javascript only)
+	 *  @param	int		$disabled			Disabled
+	 *  @param	string	$morecss        	More css added to the select component
+	 *  @param	string	$projectsListId 	''=Automatic filter on project allowed. List of id=Filter on project ids.
+	 *  @param	string	$showproject		'all' = Show project info, ''=Hide project info
+	 *  @param	User	$usertofilter		User object to use for filtering
+	 *  @param  int		$status				Invoice status (-1=all or status)
+	 *	@return int         				Nbr of project if OK, <0 if KO
 	 */
-	public function selectInvoice($socid = -1, $selected = '', $htmlname = 'invoiceid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showproject = 'all', $usertofilter = null)
+	public function selectInvoice($socid = -1, $selected = '', $htmlname = 'invoiceid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showproject = 'all', $usertofilter = null, $status = -1)
 	{
 		global $user, $conf, $langs;
 
@@ -9844,19 +9845,37 @@ class Form
 			}
 		}
 
-		// Search all projects
-		$sql = "SELECT f.rowid, f.ref as fref, 'nolabel' as flabel, p.rowid as pid, f.ref,
-            p.title, p.fk_soc, p.fk_statut, p.public,";
-		$sql .= ' s.nom as name';
-		$sql .= ' FROM '.$this->db->prefix().'projet as p';
-		$sql .= ' LEFT JOIN '.$this->db->prefix().'societe as s ON s.rowid = p.fk_soc,';
-		$sql .= ' '.$this->db->prefix().'facture as f';
-		$sql .= " WHERE p.entity IN (".getEntity('project').")";
-		$sql .= " AND f.fk_projet = p.rowid AND f.fk_statut=0"; //Brouillons seulement
+		// Search all invoices
+		$sql = "SELECT f.rowid, f.ref, 'nolabel' as flabel";
+		if ($showproject == 'all') {
+			$sql .= ',f.ref as fref, p.rowid as pid, p.title, p.fk_soc, p.fk_statut, p.public, s.nom as name';
+		}
+		$sql .= ' FROM '.$this->db->prefix().'facture as f';
+		if ($showproject == 'all') {
+			$sql .= ', '.$this->db->prefix().'projet as p';
+			$sql .= ' LEFT JOIN '.$this->db->prefix().'societe as s ON s.rowid = p.fk_soc';
+		}
+		if ($showproject == 'all' || $status > -1) {
+			$sql .= ' WHERE';
+		}
+		if ($showproject == 'all') {
+			$sql .= " p.entity IN (".getEntity('project').")";
+			$sql .= ' AND f.fk_projet = p.rowid';
+		}
+		if ($showproject == 'all' && $status > -1) {
+			$sql .= " AND";
+		}
+		if ($status > -1) {
+			$sql .= ' f.fk_statut=' . $status;
+		}
 		//if ($projectsListId) $sql.= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")";
 		//if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		//if ($socid > 0)  $sql.= " AND (p.fk_soc=".((int) $socid)." OR p.fk_soc IS NULL)";
-		$sql .= " ORDER BY p.ref, f.ref ASC";
+		$sql .= ' ORDER BY';
+		if ($showproject == 'all') {
+			$sql .= ' p.ref,';
+		}
+		$sql .= ' f.ref ASC';
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -9894,10 +9913,9 @@ class Form
 							continue;
 						}
 
-						$labeltoshow = '';
+						$labeltoshow = dol_trunc($obj->ref, 18); // Invoice ref
 
 						if ($showproject == 'all') {
-							$labeltoshow .= dol_trunc($obj->ref, 18); // Invoice ref
 							if ($obj->name) {
 								$labeltoshow .= ' - '.$obj->name; // Soc name
 							}
