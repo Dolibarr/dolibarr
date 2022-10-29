@@ -28,7 +28,9 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 
 // for other modules
@@ -49,7 +51,8 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 $mode       = GETPOST('mode', 'aZ');
 
 $id = GETPOST('id', 'int');
-
+$socid = GETPOST('socid', 'int');
+$memberid = GETPOST('rowid', 'int');
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -68,7 +71,13 @@ $object = new Partnership($db);
 $extrafields = new ExtraFields($db);
 $adherent = new Adherent($db);
 $diroutputmassaction = $conf->partnership->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('partnershiplist')); // Note that conf->hooks_modules contains array
+if ($socid > 0) {
+	$hookmanager->initHooks(array('thirdpartypartnership'));
+} elseif ($memberid > 0) {
+	$hookmanager->initHooks(array('memberpartnership'));
+} else {
+	$hookmanager->initHooks(array('partnershiplist')); // Note that conf->hooks_modules contains array
+}
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -144,7 +153,6 @@ $permissiontodelete = $user->rights->partnership->delete;
 if (empty($conf->partnership->enabled)) {
 	accessforbidden('Module not enabled');
 }
-$socid = 0;
 if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
@@ -325,9 +333,19 @@ if ($object->ismultientitymanaged == 1) {
 } else {
 	$sql .= " WHERE 1 = 1";
 }
-if ($managedfor == 'member')
-	$sql .= " AND fk_member > 0";
-else $sql .= " AND fk_soc > 0";
+if ($managedfor == 'member') {
+	if ($memberid > 0) {
+		$sql .= " AND t.fk_member = ".$memberid;
+	} else {
+		$sql .= " AND fk_member > 0";
+	}
+} else {
+	if ($socid > 0) {
+		$sql .= " AND t.fk_soc = ".((int) $socid);
+	} else {
+		$sql .= " AND fk_soc > 0";
+	}
+}
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {
@@ -449,6 +467,113 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'classforhorizontalscrolloftabs');
 
+if ($managedfor == "member") {
+	if ($memberid > 0 && $user->hasRight('adherent', 'lire')) {
+		$langs->load("members");
+
+		$adhstat = new Adherent($db);
+		$adht = new AdherentType($db);
+		$result = $adhstat->fetch($memberid);
+
+		if (isModEnabled('notification')) {
+			$langs->load("mails");
+		}
+
+		$adht->fetch($adhstat->typeid);
+
+		$head = member_prepare_head($adhstat);
+
+		print dol_get_fiche_head($head, 'partnerships', $langs->trans("ThirdParty"), -1, 'user');
+
+		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+		dol_banner_tab($object, 'rowid', $linkback);
+
+		print '<div class="fichecenter">';
+
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border centpercent tableforfield">';
+
+		// Login
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+		}
+
+		// Type
+		print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+
+		// Morphy
+		print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$adhstat->getmorphylib().'</td>';
+		print '</tr>';
+
+		// Company
+		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adhstat->company.'</td></tr>';
+
+		// Civility
+		print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$adhstat->getCivilityLabel().'&nbsp;</td>';
+		print '</tr>';
+
+		print '</table>';
+
+		print '</div>';
+
+		print dol_get_fiche_end();
+	}
+} elseif ($managedfor == "thirdparty") {
+	if ($socid && $user->hasRight('societe', 'lire')) {
+		$socstat = new Societe($db);
+		$res = $socstat->fetch($socid);
+		if ($res > 0) {
+			$tmpobject = $object;
+			$object = $socstat; // $object must be of type Societe when calling societe_prepare_head
+			$head = societe_prepare_head($socstat);
+			$object = $tmpobject;
+
+			print dol_get_fiche_head($head, 'partnerships', $langs->trans("ThirdParty"), -1, 'company');
+
+			dol_banner_tab($socstat, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
+
+			print '<div class="fichecenter">';
+
+			print '<div class="underbanner clearboth"></div>';
+			print '<table class="border centpercent tableforfield">';
+
+			// Type Prospect/Customer/Supplier
+			print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+			print $socstat->getTypeUrl(1);
+			print '</td></tr>';
+
+			// Customer code
+			if ($socstat->client && !empty($socstat->code_client)) {
+				print '<tr><td class="titlefield">';
+				print $langs->trans('CustomerCode').'</td><td>';
+				print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_client));
+				$tmpcheck = $socstat->check_codeclient();
+				if ($tmpcheck != 0 && $tmpcheck != -5) {
+					print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+				}
+				print '</td>';
+				print '</tr>';
+			}
+			// Supplier code
+			if ($socstat->fournisseur && !empty($socstat->code_fournisseur)) {
+				print '<tr><td class="titlefield">';
+				print $langs->trans('SupplierCode').'</td><td>';
+				print showValueWithClipboardCPButton(dol_escape_htmltag($socstat->code_fournisseur));
+				$tmpcheck = $socstat->check_codefournisseur();
+				if ($tmpcheck != 0 && $tmpcheck != -5) {
+					print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+				}
+				print '</td>';
+				print '</tr>';
+			}
+
+			print '</table>';
+			print '</div>';
+			print dol_get_fiche_end();
+		}
+	}
+}
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -458,6 +583,12 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.urlencode($limit);
+}
+if ($socid) {
+	$param .= '&socid='.urlencode($socid);
+}
+if ($memberid) {
+	$param .= '&rowid='.urlencode($memberid);
 }
 foreach ($search as $key => $val) {
 	if (is_array($search[$key]) && count($search[$key])) {
@@ -512,7 +643,11 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
-
+if ($socid) {
+	print '<input type="hidden" name="socid" value="'.$socid.'" >';
+} elseif ($memberid) {
+	print '<input type="hidden" name="rowid" value="'.$memberid.'" >';
+}
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/partnership/partnership_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
