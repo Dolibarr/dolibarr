@@ -35,7 +35,7 @@ $langs->load("admin");
 $action = GETPOST('action', 'aZ09');
 $what = GETPOST('what', 'alpha');
 $export_type = GETPOST('export_type', 'alpha');
-$file = GETPOST('filename_template', 'alpha');
+$file = dol_sanitizeFileName(GETPOST('filename_template', 'alpha'));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;

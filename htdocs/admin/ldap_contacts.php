@@ -140,7 +140,7 @@ if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-print dol_get_fiche_head($head, 'contacts', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'contacts', '', -1);
 
 
 print '<span class="opacitymedium">'.$langs->trans("LDAPDescContact").'</span><br>';

@@ -458,17 +458,27 @@ class ImportCsv extends ModeleImports
 												$param_array = array('', $newval, 0, $arrayrecord[0]['val']); // Param to fetch parent from account, in chart.
 											}
 
-											call_user_func_array(array($classinstance, $method), $param_array);
+											$result = call_user_func_array(array($classinstance, $method), $param_array);
+
+											// If duplicate record found
+											if (!($classinstance->id != '') && $result == -2) {
+												$this->errors[$error]['lib'] = $langs->trans('ErrorMultipleRecordFoundFromRef', $newval);
+												$this->errors[$error]['type'] = 'FOREIGNKEY';
+												$errorforthistable++;
+												$error++;
+											}
+
 											// If not found, try the fetch from label
 											if (!($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeorlabel') {
 												$param_array = array('', '', $newval);
 												call_user_func_array(array($classinstance, $method), $param_array);
 											}
 											$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] = $classinstance->id;
+
 											//print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
 											if ($classinstance->id != '') {	// id may be 0, it is a found value
 												$newval = $classinstance->id;
-											} else {
+											} elseif (! $error) {
 												if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
 													$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', num2Alpha($key - 1), $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
 												} elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) {
@@ -726,12 +736,16 @@ class ImportCsv extends ModeleImports
 						}
 
 						// Define $listfields and $listvalues to build SQL request
-						if ($conf->socialnetworks->enabled && strpos($fieldname, "socialnetworks") !== false) {
+						if (isModEnabled("socialnetworks") && strpos($fieldname, "socialnetworks") !== false) {
 							if (!in_array("socialnetworks", $listfields)) {
 								$listfields[] = "socialnetworks";
+								$socialkey = array_search("socialnetworks", $listfields);	// Return position of 'socialnetworks' key in array
+								$listvalues[$socialkey] = '';
 							}
+							//var_dump($newval); var_dump($arrayrecord[($key - 1)]['type']);
 							if (!empty($newval) && $arrayrecord[($key - 1)]['type'] > 0) {
-								$socialkey = array_search("socialnetworks", $listfields);
+								$socialkey = array_search("socialnetworks", $listfields);	// Return position of 'socialnetworks' key in array
+								//var_dump('sk='.$socialkey);	// socialkey=19
 								$socialnetwork = explode("_", $fieldname)[1];
 								if (empty($listvalues[$socialkey]) || $listvalues[$socialkey] == "null") {
 									$json = new stdClass();
@@ -833,14 +847,13 @@ class ImportCsv extends ModeleImports
 
 							if (empty($lastinsertid)) {	// No insert done yet for a parent table
 								$sqlSelect = "SELECT ".$fname." FROM ".$tablename;
-
 								$data = array_combine($listfields, $listvalues);
 								$where = array();	// filters to forge SQL request
 								$filters = array();	// filters to forge output error message
 								foreach ($updatekeys as $key) {
 									$col = $objimport->array_import_updatekeys[0][$key];
 									$key = preg_replace('/^.*\./i', '', $key);
-									if ($conf->socialnetworks->enabled && strpos($key, "socialnetworks") !== false) {
+									if (isModEnabled("socialnetworks") && strpos($key, "socialnetworks") !== false) {
 										$tmp = explode("_", $key);
 										$key = $tmp[0];
 										$socialnetwork = $tmp[1];

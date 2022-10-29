@@ -386,7 +386,7 @@ class Stripe extends CommonObject
 			// That's why we can comment the part of code to retrieve a payment intent with object id (never mind if we cumulate payment intent with old ones that will not be used)
 
 			$sql = "SELECT pi.ext_payment_id, pi.entity, pi.fk_facture, pi.sourcetype, pi.ext_payment_site";
-			$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pi";
+			$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
 			$sql .= " WHERE pi.fk_facture = ".((int) $object->id);
 			$sql .= " AND pi.sourcetype = '".$this->db->escape($object->element)."'";
 			$sql .= " AND pi.entity IN (".getEntity('societe').")";
@@ -530,12 +530,12 @@ class Stripe extends CommonObject
 					$paymentintentalreadyexists = 0;
 					// Check that payment intent $paymentintent->id is not already recorded.
 					$sql = "SELECT pi.rowid";
-					$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pi";
+					$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
 					$sql .= " WHERE pi.entity IN (".getEntity('societe').")";
 					$sql .= " AND pi.ext_payment_site = '".$this->db->escape($service)."'";
 					$sql .= " AND pi.ext_payment_id = '".$this->db->escape($paymentintent->id)."'";
 
-					dol_syslog(get_class($this)."::getPaymentIntent search if payment intent already in prelevement_facture_demande", LOG_DEBUG);
+					dol_syslog(get_class($this)."::getPaymentIntent search if payment intent already in prelevement_demande", LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if ($resql) {
 						$num = $this->db->num_rows($resql);
@@ -552,7 +552,7 @@ class Stripe extends CommonObject
 					// If not, we create it.
 					if (!$paymentintentalreadyexists) {
 						$now = dol_now();
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site, amount)";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site, amount)";
 						$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $user->id).", '".$this->db->escape($paymentintent->id)."', ".((int) $object->id).", '".$this->db->escape($object->element)."', ".((int) $conf->entity).", '".$this->db->escape($service)."', ".((float) $amount).")";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
@@ -696,12 +696,12 @@ class Stripe extends CommonObject
 					$setupintentalreadyexists = 0;
 					// Check that payment intent $setupintent->id is not already recorded.
 					$sql = "SELECT pi.rowid";
-					$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_facture_demande as pi";
+					$sql.= " FROM " . MAIN_DB_PREFIX . "prelevement_demande as pi";
 					$sql.= " WHERE pi.entity IN (".getEntity('societe').")";
 					$sql.= " AND pi.ext_payment_site = '" . $this->db->escape($service) . "'";
 					$sql.= " AND pi.ext_payment_id = '".$this->db->escape($setupintent->id)."'";
 
-					dol_syslog(get_class($this) . "::getPaymentIntent search if payment intent already in prelevement_facture_demande", LOG_DEBUG);
+					dol_syslog(get_class($this) . "::getPaymentIntent search if payment intent already in prelevement_demande", LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if ($resql) {
 						$num = $this->db->num_rows($resql);
@@ -717,7 +717,7 @@ class Stripe extends CommonObject
 					if (! $setupintentalreadyexists)
 					{
 						$now=dol_now();
-						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
+						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "prelevement_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
 						$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $user->id).", '".$this->db->escape($setupintent->id)."', ".((int) $object->id).", '".$this->db->escape($object->element)."', " . ((int) $conf->entity) . ", '" . $this->db->escape($service) . "', ".((float) $amount).")";
 						$resql = $this->db->query($sql);
 						if (! $resql)
@@ -908,7 +908,7 @@ class Stripe extends CommonObject
 
 		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.iban_prefix"; // stripe_card_ref is src_ for sepa
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as sa";
-		$sql .= " WHERE sa.rowid = '".$this->db->escape($object->id)."'"; // We get record from ID, no need for filter on entity
+		$sql .= " WHERE sa.rowid = ".((int) $object->id); // We get record from ID, no need for filter on entity
 		$sql .= " AND sa.type = 'ban'"; //type ban to get normal bank account of customer (prelevement)
 
 		$soc = new Societe($this->db);

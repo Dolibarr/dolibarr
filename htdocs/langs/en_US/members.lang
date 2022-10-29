@@ -36,6 +36,7 @@ DateEndSubscription=End date of membership
 EndSubscription=End of membership
 SubscriptionId=Contribution ID
 WithoutSubscription=Without contribution
+WaitingSubscription=Waiting contribution
 MemberId=Member Id
 MemberRef=Member Ref
 NewMember=New member

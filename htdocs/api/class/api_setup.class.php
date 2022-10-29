@@ -1441,7 +1441,7 @@ class Setup extends DolibarrApi
 	{
 		global $conf;
 
-		if (empty($conf->socialnetworks->enabled)) {
+		if (!isModEnabled('socialnetworks')) {
 			throw new RestException(400, 'API not available: this dictionary is not enabled by setup');
 		}
 

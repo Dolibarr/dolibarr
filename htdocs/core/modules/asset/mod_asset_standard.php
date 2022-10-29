@@ -26,7 +26,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/modules/asset/modules_asset.php';
 
 /**
- *	Class to manage customer order numbering rules standard
+ *	Class to manage the Standard numbering rule for Asset
  */
 class mod_asset_standard extends ModeleNumRefAsset
 {

@@ -178,7 +178,7 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&toke
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 
-print dol_get_fiche_head($head, 'users', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'users', '', -1);
 
 print '<span class="opacitymedium">'.$langs->trans("LDAPDescUsers").'</span><br>';
 print '<br>';

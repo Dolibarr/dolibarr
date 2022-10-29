@@ -22,9 +22,9 @@
  */
 
 /**
- *      \file       htdocs/compta/prelevement/class/bonprelevement.class.php
- *      \ingroup    prelevement
- *      \brief      File of withdrawal receipts class
+ * \file       htdocs/compta/prelevement/class/bonprelevement.class.php
+ * \ingroup    prelevement
+ * \brief      File of withdrawal receipts class
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -151,7 +151,7 @@ class BonPrelevement extends CommonObject
 
 		if ($result == 0) {
 			if ($line_id > 0) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_facture (";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement (";
 				if ($type != 'bank-transfer') {
 					$sql .= "fk_facture";
 				} else {
@@ -353,7 +353,8 @@ class BonPrelevement extends CommonObject
 
 		if ($this->fetched == 1) {
 			if ($date < $this->date_trans) {
-				$this->error = 'DateOfMovementLowerThanDateOfFileTransmission';
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorDateOfMovementLowerThanDateOfFileTransmission');
 				dol_syslog("bon-prelevment::set_infocredit 1027 ".$this->error);
 				return -1027;
 			}
@@ -419,8 +420,8 @@ class BonPrelevement extends CommonObject
 					} else {
 						$paiement = new Paiement($this->db);
 					}
-					$paiement->datepaye     = $date;
-					$paiement->amounts      = $cursoramounts; // Array with detail of dispatching of payments for each invoice
+					$paiement->datepaye = $date;
+					$paiement->amounts = $cursoramounts; // Array with detail of dispatching of payments for each invoice
 
 					if ($this->type == 'bank-transfer') {
 						$paiement->paiementid = 2;
@@ -454,9 +455,6 @@ class BonPrelevement extends CommonObject
 							dol_syslog(get_class($this)."::set_infocredit AddPaymentToBank Error ".$this->error);
 						}
 					}
-					//var_dump($paiement->amounts);
-					//var_dump($thirdpartyid);
-					//var_dump($cursoramounts);
 				}
 
 				// Update withdrawal line
@@ -579,7 +577,7 @@ class BonPrelevement extends CommonObject
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 		$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-		$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
+		$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
 		$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
 		$sql .= " AND pl.fk_prelevement_bons = p.rowid";
 		$sql .= " AND p.rowid = ".((int) $this->id);
@@ -637,7 +635,7 @@ class BonPrelevement extends CommonObject
 		} else {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 		}
-		$sql .= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+		$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 		$sql .= " WHERE f.entity IN (".getEntity('invoice').")";
 		if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 			$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
@@ -697,7 +695,7 @@ class BonPrelevement extends CommonObject
 		} else {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 		}
-		$sql .= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+		$sql .= ", ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 		$sql .= " WHERE f.entity IN (".getEntity('invoice').")";
 		if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 			$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
@@ -760,14 +758,14 @@ class BonPrelevement extends CommonObject
 
 		$error = 0;
 
-		$datetimeprev = time();
+		$datetimeprev = dol_now('gmt');
 		//Choice the date of the execution direct debit
 		if (!empty($executiondate)) {
 			$datetimeprev = $executiondate;
 		}
 
-		$month = strftime("%m", $datetimeprev);
-		$year = strftime("%Y", $datetimeprev);
+		$month = dol_print_date($datetimeprev, "%m", 'gmt');
+		$year = dol_print_date($datetimeprev, "%Y", 'gmt');
 
 		$this->invoice_in_error = array();
 		$this->thirdparty_in_error = array();
@@ -790,7 +788,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 			}
 			$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-			$sql .= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+			$sql .= ", ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 			$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
 			if ($type != 'bank-transfer') {
 				$sql .= " AND f.rowid = pfd.fk_facture";
@@ -1016,7 +1014,7 @@ class BonPrelevement extends CommonObject
 						}
 
 						// Update invoice requests as done
-						$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
+						$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande";
 						$sql .= " SET traite = 1";
 						$sql .= ", date_traite = '".$this->db->idate($now)."'";
 						$sql .= ", fk_prelevement_bons = ".((int) $this->id);
@@ -1057,9 +1055,9 @@ class BonPrelevement extends CommonObject
 						$this->emetteur_iban               = $account->iban;
 						$this->emetteur_bic                = $account->bic;
 
-						$this->emetteur_ics                = ($type == 'bank-transfer' ? $account->ics_transfer : $account->ics);
+						$this->emetteur_ics = ($type == 'bank-transfer' ? $account->ics_transfer : $account->ics);
 
-						$this->raison_sociale              = $account->proprio;
+						$this->raison_sociale = $account->proprio;
 					}
 
 					$this->factures = $factures_prev_id;
@@ -1149,7 +1147,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_facture WHERE fk_prelevement_lignes IN (SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = ".((int) $this->id).")";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement WHERE fk_prelevement_lignes IN (SELECT rowid FROM ".MAIN_DB_PREFIX."prelevement_lignes WHERE fk_prelevement_bons = ".((int) $this->id).")";
 			$resql1 = $this->db->query($sql);
 			if (!$resql1) {
 				dol_print_error($this->db);
@@ -1173,7 +1171,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande SET fk_prelevement_bons = NULL, traite = 0 WHERE fk_prelevement_bons = ".((int) $this->id);
+			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_demande SET fk_prelevement_bons = NULL, traite = 0 WHERE fk_prelevement_bons = ".((int) $this->id);
 			$resql4 = $this->db->query($sql);
 			if (!$resql4) {
 				dol_print_error($this->db);
@@ -1427,7 +1425,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " FROM";
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 				$sql .= " ".MAIN_DB_PREFIX."facture as f,";
-				$sql .= " ".MAIN_DB_PREFIX."prelevement_facture as pf,";
+				$sql .= " ".MAIN_DB_PREFIX."prelevement as pf,";
 				$sql .= " ".MAIN_DB_PREFIX."societe as soc,";
 				$sql .= " ".MAIN_DB_PREFIX."c_country as c,";
 				$sql .= " ".MAIN_DB_PREFIX."societe_rib as rib";
@@ -1543,7 +1541,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " FROM";
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 				$sql .= " ".MAIN_DB_PREFIX."facture_fourn as f,";
-				$sql .= " ".MAIN_DB_PREFIX."prelevement_facture as pf,";
+				$sql .= " ".MAIN_DB_PREFIX."prelevement as pf,";
 				$sql .= " ".MAIN_DB_PREFIX."societe as soc,";
 				$sql .= " ".MAIN_DB_PREFIX."c_country as c,";
 				$sql .= " ".MAIN_DB_PREFIX."societe_rib as rib";
@@ -1636,7 +1634,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " FROM";
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 				$sql .= " ".MAIN_DB_PREFIX."facture as f,";
-				$sql .= " ".MAIN_DB_PREFIX."prelevement_facture as pf";
+				$sql .= " ".MAIN_DB_PREFIX."prelevement as pf";
 				$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $this->id);
 				$sql .= " AND pl.rowid = pf.fk_prelevement_lignes";
 				$sql .= " AND pf.fk_facture = f.rowid";
@@ -1662,7 +1660,7 @@ class BonPrelevement extends CommonObject
 				$sql .= " FROM";
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 				$sql .= " ".MAIN_DB_PREFIX."facture_fourn as f,";
-				$sql .= " ".MAIN_DB_PREFIX."prelevement_facture as pf";
+				$sql .= " ".MAIN_DB_PREFIX."prelevement as pf";
 				$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $this->id);
 				$sql .= " AND pl.rowid = pf.fk_prelevement_lignes";
 				$sql .= " AND pf.fk_facture_fourn = f.rowid";
@@ -1693,7 +1691,7 @@ class BonPrelevement extends CommonObject
 
 		fclose($this->file);
 		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($this->file, octdec($conf->global->MAIN_UMASK));
+			@chmod($this->filename, octdec($conf->global->MAIN_UMASK));
 		}
 
 		return $result;
@@ -1712,7 +1710,7 @@ class BonPrelevement extends CommonObject
 	{
 		global $langs;
 		$pre = substr(dol_string_nospecial(dol_string_unaccent($langs->transnoentitiesnoconv('RUM'))), 0, 3); // Must always be on 3 char ('RUM' or 'UMR'. This is a protection against bad translation)
-		return $pre.'-'.$row_code_client.'-'.$row_drum.'-'.date('U', $row_datec);
+		return $pre.($row_code_client ? '-'.$row_code_client : '').'-'.$row_drum.'-'.date('U', $row_datec);
 	}
 
 
@@ -1746,8 +1744,8 @@ class BonPrelevement extends CommonObject
 		// Date d'echeance C1
 
 		fputs($this->file, "       ");
-		fputs($this->file, strftime("%d%m", $this->date_echeance));
-		fputs($this->file, substr(strftime("%y", $this->date_echeance), 1));
+		fputs($this->file, dol_print_date($this->date_echeance, "%d%m", 'gmt'));
+		fputs($this->file, substr(dol_print_date($this->date_echeance, "%y", 'gmt'), 1));
 
 		// Raison Sociale Destinataire C2
 
@@ -1826,8 +1824,8 @@ class BonPrelevement extends CommonObject
 		$Rowing = sprintf("%010d", $row_idfac);
 
 		// Define value for RUM
-		// Example:  RUMCustomerCode-CustomerBankAccountId-01424448606	(note: Date is date of creation of CustomerBankAccountId)
-		$Rum = empty($row_rum) ? $this->buildRumNumber($row_code_client, $row_datec, $row_drum) : $row_rum;
+		// Example:  RUM-CustomerCode-CustomerBankAccountId-01424448606	(note: Date is the timestamp of the date of creation of CustomerBankAccountId)
+		$Rum = (empty($row_rum) ? $this->buildRumNumber($row_code_client, $row_datec, $row_drum) : $row_rum);
 
 		// Define date of RUM signature
 		$DtOfSgntr = dol_print_date($row_datec, '%Y-%m-%d');
@@ -1972,8 +1970,8 @@ class BonPrelevement extends CommonObject
 		// Date d'echeance C1
 
 		fputs($this->file, "       ");
-		fputs($this->file, strftime("%d%m", $this->date_echeance));
-		fputs($this->file, substr(strftime("%y", $this->date_echeance), 1));
+		fputs($this->file, dol_print_date($this->date_echeance, "%d%m", 'gmt'));
+		fputs($this->file, substr(dol_print_date($this->date_echeance, "%y", 'gmt'), 1));
 
 		// Raison Sociale C2
 
@@ -2208,7 +2206,8 @@ class BonPrelevement extends CommonObject
 				 $XML_SEPA_INFO .= '			</CdtrSchmeId>'.$CrLf;*/
 			}
 		} else {
-			fputs($this->file, 'INCORRECT EMETTEUR '.$XML_SEPA_INFO.$CrLf);
+			fputs($this->file, 'INCORRECT EMETTEUR '.$this->raison_sociale.$CrLf);
+			$XML_SEPA_INFO = '';
 		}
 		return $XML_SEPA_INFO;
 	}

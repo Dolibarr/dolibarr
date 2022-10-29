@@ -144,8 +144,8 @@ if ($filtertype != 1) {
 
 	print '</td>';
 
-	//Poste de travail
-	if ($conf->workstation->enabled) {
+	// Work station
+	if (isModEnabled('workstation')) {
 		$workstation = new Workstation($object->db);
 		$res = $workstation->fetch($tmpproduct->fk_default_workstation);
 

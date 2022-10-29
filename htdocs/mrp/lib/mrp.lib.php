@@ -55,5 +55,7 @@ function mrpAdminPrepareHead()
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'mrp');
 
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'mrp', 'remove');
+
 	return $head;
 }

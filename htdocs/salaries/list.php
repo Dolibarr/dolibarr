@@ -403,10 +403,10 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 print '<tr class="liste_titre_filter">';
 // Ref
 print '<td class="liste_titre left">';
-print '<input class="flat" type="text" size="3" name="search_ref" value="'.$db->escape($search_ref).'">';
+print '<input class="flat width50" type="text" name="search_ref" value="'.$db->escape($search_ref).'">';
 print '</td>';
 // Label
-print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$db->escape($search_label).'"></td>';
+print '<td class="liste_titre"><input type="text" class="flat width100" name="search_label" value="'.$db->escape($search_label).'"></td>';
 
 // Date start
 print '<td class="liste_titre center">';
@@ -435,13 +435,13 @@ print '</td>';
 
 // Type
 print '<td class="liste_titre left">';
-print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, '', 1);
+print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, 'maxwidth125', 1);
 print '</td>';
 
 // Bank account
 if (isModEnabled("banque")) {
 	print '<td class="liste_titre">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1);
+	print $form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth125', 1);
 	print '</td>';
 }
 
@@ -546,7 +546,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	// Label payment
-	print "<td>".dol_trunc($obj->label, 40)."</td>\n";
+	print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label)."</td>\n";
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
@@ -564,7 +564,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	// Employee
-	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
+	print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(1)."</td>\n";
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}

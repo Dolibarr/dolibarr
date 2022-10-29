@@ -64,9 +64,10 @@ interface Database
 	/**
 	 * Start transaction
 	 *
-	 * @return  int         1 if transaction successfuly opened or already opened, 0 if error
+	 * @param	string	$textinlog		Add a small text into log. '' by default.
+	 * @return  int      				1 if transaction successfuly opened or already opened, 0 if error
 	 */
-	public function begin();
+	public function begin($textinlog = '');
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**

@@ -268,7 +268,7 @@ if ($rowid && $action != 'edit') {
 
 	// Confirmation to delete subscription
 	if ($action == 'delete') {
-		//$formquestion=array();
+		$formquestion=array();
 		//$formquestion['text']='<b>'.$langs->trans("ThisWillAlsoDeleteBankRecord").'</b>';
 		$text = $langs->trans("ConfirmDeleteSubscription");
 		if (isModEnabled("banque") && !empty($conf->global->ADHERENT_BANK_USE)) {
@@ -351,7 +351,7 @@ if ($rowid && $action != 'edit') {
 	print '<div class="tabsAction">';
 
 	if ($user->rights->adherent->cotisation->creer) {
-		if (!$bankline->rappro) {
+		if (!empty($bankline->rappro)) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Modify")."</a></div>";

@@ -26,7 +26,7 @@ dol_include_once('/core/modules/hrm/modules_evaluation.php');
 
 
 /**
- *	Class to manage customer order numbering rules standard
+ *	Class to manage the Standard numbering rule for HR evaluation
  */
 class mod_evaluation_standard extends ModeleNumRefEvaluation
 {

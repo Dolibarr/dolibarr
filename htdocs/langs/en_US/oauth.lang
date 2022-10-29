@@ -36,4 +36,5 @@ OAUTH_SECRET=OAuth secret
 OAuthProviderAdded=OAuth provider added
 AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=An OAuth entry for this provider and label already exists
 URLOfServiceForAuthorization=URL provided by OAuth service for authentication
-Scopes=Scopes
+Scopes=Permissions (Scopes)
+ScopeUndefined=Permissions (Scopes) undefined (see previous tab)

@@ -811,9 +811,9 @@ class AccountingAccount extends CommonObject
 			$suggestedaccountingaccountfor = '';
 			if ((($buyer->country_code == $seller->country_code) || empty($buyer->country_code))) {
 				// If buyer in same country than seller (if not defined, we assume it is same country)
-				if ($type=='customer' && !empty($product->accountancy_code_sell)) {
+				if ($type == 'customer' && !empty($product->accountancy_code_sell)) {
 					$code_p = $product->accountancy_code_sell;
-				} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
+				} elseif ($type == 'supplier' && !empty($product->accountancy_code_buy)) {
 					$code_p = $product->accountancy_code_buy;
 				}
 				$suggestedid = $accountingAccount['dom'];
@@ -821,36 +821,36 @@ class AccountingAccount extends CommonObject
 			} else {
 				if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {
 					// European intravat sale, but with VAT
-					if ($type=='customer' && !empty($product->accountancy_code_sell)) {
+					if ($type == 'customer' && !empty($product->accountancy_code_sell)) {
 						$code_p = $product->accountancy_code_sell;
-					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
+					} elseif ($type == 'supplier' && !empty($product->accountancy_code_buy)) {
 						$code_p = $product->accountancy_code_buy;
 					}
 					$suggestedid = $accountingAccount['dom'];
 					$suggestedaccountingaccountfor = 'eecwithvat';
 				} elseif ($isSellerInEEC && $isBuyerInEEC && empty($buyer->tva_intra)) {
 					// European intravat sale, without VAT intra community number
-					if ($type=='customer' && !empty($product->accountancy_code_sell)) {
+					if ($type == 'customer' && !empty($product->accountancy_code_sell)) {
 						$code_p = $product->accountancy_code_sell;
-					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy)) {
+					} elseif ($type == 'supplier' && !empty($product->accountancy_code_buy)) {
 						$code_p = $product->accountancy_code_buy;
 					}
 					$suggestedid = $accountingAccount['dom']; // There is a doubt for this case. Is it an error on vat or we just forgot to fill vat number ?
 					$suggestedaccountingaccountfor = 'eecwithoutvatnumber';
 				} elseif ($isSellerInEEC && $isBuyerInEEC && !empty($product->accountancy_code_sell_intra)) {
 					// European intravat sale
-					if ($type=='customer' && !empty($product->accountancy_code_sell_intra)) {
+					if ($type == 'customer' && !empty($product->accountancy_code_sell_intra)) {
 						$code_p = $product->accountancy_code_sell_intra;
-					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy_intra)) {
+					} elseif ($type == 'supplier' && !empty($product->accountancy_code_buy_intra)) {
 						$code_p = $product->accountancy_code_buy_intra;
 					}
 					$suggestedid = $accountingAccount['intra'];
 					$suggestedaccountingaccountfor = 'eec';
 				} else {
 					// Foreign sale
-					if ($type=='customer' && !empty($product->accountancy_code_sell_export)) {
+					if ($type == 'customer' && !empty($product->accountancy_code_sell_export)) {
 						$code_p = $product->accountancy_code_sell_export;
-					} elseif ($type=='supplier' && !empty($product->accountancy_code_buy_export)) {
+					} elseif ($type == 'supplier' && !empty($product->accountancy_code_buy_export)) {
 						$code_p = $product->accountancy_code_buy_export;
 					}
 					$suggestedid = $accountingAccount['export'];
@@ -870,12 +870,12 @@ class AccountingAccount extends CommonObject
 			// Manage Deposit
 			if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
 				$accountdeposittoventilated = new self($this->db);
-				if ($type=='customer') {
+				if ($type == 'customer') {
 					$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
-				} elseif ($type=='supplier') {
+				} elseif ($type == 'supplier') {
 					$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
 				}
-				if ($result < 0) {
+				if (isset($result) && $result < 0) {
 					return -1;
 				}
 

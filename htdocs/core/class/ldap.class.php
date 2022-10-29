@@ -193,11 +193,19 @@ class Ldap
 	{
 		// phpcs:enable
 		global $conf;
+		global $dolibarr_main_auth_ldap_debug;
 
 		$connected = 0;
 		$this->bind = 0;
 		$this->error = 0;
 		$this->connectedServer = '';
+
+		$ldapdebug = ((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false") ? false : true);
+
+		if ($ldapdebug) {
+			dol_syslog(get_class($this)."::connect_bind");
+			print "DEBUG: connect_bind<br>\n";
+		}
 
 		// Check parameters
 		if (count($this->server) == 0 || empty($this->server[0])) {
@@ -223,18 +231,28 @@ class Ldap
 				}
 
 				if ($this->serverPing($host, $this->serverPort) === true) {
+					if ($ldapdebug) {
+						dol_syslog(get_class($this)."::connect_bind serverPing true, we try ldap_connect to ".$host);
+					}
 					$this->connection = ldap_connect($host, $this->serverPort);
 				} else {
 					if (preg_match('/^ldaps/i', $host)) {
 						// With host = ldaps://server, the serverPing to ssl://server sometimes fails, even if the ldap_connect succeed, so
-						// we test this case and continue in suche a case even if serverPing fails.
+						// we test this case and continue in such a case even if serverPing fails.
+						if ($ldapdebug) {
+							dol_syslog(get_class($this)."::connect_bind serverPing false, we try ldap_connect to ".$host);
+						}
 						$this->connection = ldap_connect($host, $this->serverPort);
 					} else {
 						continue;
 					}
 				}
 
-				if (is_resource($this->connection) ||  is_object($this->connection)) {
+				if (is_resource($this->connection) || is_object($this->connection)) {
+					if ($ldapdebug) {
+						dol_syslog(get_class($this)."::connect_bind this->connection is ok", LOG_DEBUG);
+					}
+
 					// Upgrade connexion to TLS, if requested by the configuration
 					if (!empty($conf->global->LDAP_SERVER_USE_TLS)) {
 						// For test/debug
@@ -1060,7 +1078,7 @@ class Ldap
 		//print_r($info);
 
 		for ($i = 0; $i < $info["count"]; $i++) {
-			$recordid = $this->convToOutputCharset($info[$i][$useridentifier][0], $this->ldapcharset);
+			$recordid = $this->convToOutputCharset($info[$i][strtolower($useridentifier)][0], $this->ldapcharset);
 			if ($recordid) {
 				//print "Found record with key $useridentifier=".$recordid."<br>\n";
 				$fulllist[$recordid][$useridentifier] = $recordid;

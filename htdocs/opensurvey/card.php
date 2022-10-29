@@ -61,6 +61,10 @@ $hookmanager->initHooks(array('surveycard', 'globalcard'));
 
 $expiredate = dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GETPOST('expireyear'));
 
+$permissiontoread = $user->rights->opensurvey->read;
+$permissiontoadd = $user->rights->opensurvey->write;
+// permission delete doesn't exists
+$permissiontodelete = $user->rights->opensurvey->write;
 
 
 /*
@@ -364,26 +368,25 @@ print '</form>'."\n";
 
 
 
-/*
- * Action bar
- */
+// Action bar
+
 print '<div class="tabsAction">';
 
 if ($action != 'edit' && $user->rights->opensurvey->write) {
-	//Modify button
+	// Modify button
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Modify").'</a>';
 
 	if ($object->status == Opensurveysondage::STATUS_VALIDATED) {
-		//Close button
+		// Close button
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=close&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("Close").'</a>';
 	}
 	if ($object->status == Opensurveysondage::STATUS_CLOSED) {
-		//Opened button
+		// Re-Open
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans("ReOpen").'</a>';
 	}
 
-	//Delete button
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?suppressionsondage=1&action=delete&token='.newToken().'&id='.urlencode($numsondage).'">'.$langs->trans('Delete').'</a>';
+	// Delete
+	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?suppressionsondage=1&id='.urlencode($numsondage).'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 }
 
 print '</div>';

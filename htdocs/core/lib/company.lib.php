@@ -438,7 +438,11 @@ function societe_prepare_head2($object)
  */
 function societe_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('societe');
+	$extrafields->fetch_name_optionals_label('socpeople');
 
 	$h = 0;
 	$head = array();
@@ -456,11 +460,19 @@ function societe_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/societe/admin/societe_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsThirdParties");
+	$nbExtrafields = $extrafields->attributes['societe']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/societe/admin/contact_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsContacts");
+	$nbExtrafields = $extrafields->attributes['socpeople']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_contacts';
 	$h++;
 
@@ -923,9 +935,11 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		$search_status = 1; // always display active customer first
 	}
 
+	$search_rowid   = GETPOST("search_rowid", 'int');
 	$search_name    = GETPOST("search_name", 'alpha');
 	$search_address = GETPOST("search_address", 'alpha');
 	$search_poste   = GETPOST("search_poste", 'alpha');
+	$search_note_private = GETPOST('search_note_private', 'alphanohtml');
 	$search_roles = GETPOST("search_roles", 'array');
 
 	$socialnetworks = getArrayOfSocialNetworks();
@@ -961,7 +975,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		$sortfield = "t.lastname";
 	}
 
-	if (!empty($conf->clicktodial->enabled)) {
+	if (isModEnabled('clicktodial')) {
 		$user->fetch_clicktodial(); // lecture des infos de clicktodial du user
 	}
 
@@ -971,9 +985,11 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$extrafields->fetch_name_optionals_label($contactstatic->table_element);
 
 	$contactstatic->fields = array(
+		'rowid'     =>array('type'=>'integer', 'label'=>"TechnicalID", 'enabled'=>1, 'visible'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'enabled'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'position'=>1),
 		'name'      =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
 		'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>2, 'index'=>1, 'position'=>20),
 		'address'   =>array('type'=>'varchar(128)', 'label'=>'Address', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>3, 'index'=>1, 'position'=>30),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'visible'=>3, 'position'=>35),
 		'role'      =>array('type'=>'checkbox', 'label'=>'Role', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>4, 'index'=>1, 'position'=>40),
 		'statut'    =>array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'default'=>0, 'index'=>1, 'position'=>50, 'arrayofkeyval'=>array(0=>$contactstatic->LibStatut(0, 1), 1=>$contactstatic->LibStatut(1, 1))),
 	);
@@ -984,6 +1000,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		't.name'=>array('label'=>"Name", 'checked'=>1, 'position'=>10),
 		't.poste'=>array('label'=>"PostOrFunction", 'checked'=>1, 'position'=>20),
 		't.address'=>array('label'=>(empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked'=>1, 'position'=>30),
+		't.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position'=>35),
 		'sc.role'=>array('label'=>"ContactByDefaultFor", 'checked'=>1, 'position'=>40),
 		't.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>50, 'class'=>'center'),
 	);
@@ -1012,11 +1029,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$search_rowid = '';
 		$search_status = '';
 		$search_name = '';
 		$search_roles = array();
 		$search_address = '';
 		$search_poste = '';
+		$search_note_private = '';
 		$search = array();
 		$search_array_options = array();
 
@@ -1055,6 +1074,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	print "\n".'<table class="tagtable liste">'."\n";
 
 	$param = "socid=".urlencode($object->id);
+	if ($search_rowid != '') {
+		$param .= '&search_rowid='.urlencode($search_rowid);
+	}
 	if ($search_status != '') {
 		$param .= '&search_status='.urlencode($search_status);
 	}
@@ -1070,6 +1092,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	if ($search_address != '') {
 		$param .= '&search_address='.urlencode($search_address);
 	}
+	if ($search_note_private != '') {
+		$param .= '&search_note_private='.urlencode($search_note_private);
+	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
@@ -1080,9 +1105,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 	$sql = "SELECT t.rowid, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.socialnetworks, t.statut, t.photo,";
 	$sql .= " t.civility as civility_id, t.address, t.zip, t.town";
+	$sql .= ", t.note_private";
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = ".((int) $object->id);
+	if ($search_rowid) {
+		$sql .= natural_search('t.rowid', $search_rowid);
+	}
 	if ($search_status != '' && $search_status != '-1') {
 		$sql .= " AND t.statut = ".((int) $search_status);
 	}
@@ -1094,6 +1123,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	}
 	if ($search_address) {
 		$sql .= natural_search($searchAddressPhoneDBFields, $search_address);
+	}
+	if ($search_note_private) {
+		$sql .= natural_search('t.note_private', $search_note_private);
 	}
 	if (count($search_roles) > 0) {
 		$sql .= " AND t.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".$db->sanitize(implode(',', $search_roles))."))";
@@ -1146,7 +1178,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		}
 	}
 	if ($showuserlogin) {
-		print '<td></td>';
+		print '<td class="liste_titre"></td>';
 	}
 	// Extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
@@ -1188,7 +1220,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		}
 	}
 	if ($showuserlogin) {
-		print '<td>'.$langs->trans("DolibarrLogin").'</td>';
+		print '<th class="wrapcolumntitle liste_titre">'.$langs->trans("DolibarrLogin").'</th>';
 	}
 	// Extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
@@ -1273,6 +1305,15 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			if (!empty($arrayfields['t.address']['checked'])) {
 				print '<td>';
 				print $contactstatic->getBannerAddress('contact', $object);
+				print '</td>';
+			}
+
+			// Note private
+			if (!empty($arrayfields['t.note_private']['checked'])) {
+				print '<td>';
+				if ($obj->note_private) {
+					print dol_string_nohtmltag($obj->note_private);
+				}
 				print '</td>';
 			}
 
@@ -1728,7 +1769,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre">';
-		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, (empty($conf->global->AGENDA_USE_MULTISELECT_TYPE) ? 0 : 1), 1, 'minwidth200');
+		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, (empty($conf->global->AGENDA_USE_MULTISELECT_TYPE) ? 0 : 1), 1, 'minwidth100 maxwidth150');
 		$out .= '</td>';
 		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
 		$out .= '<td class="liste_titre center">';
@@ -1948,6 +1989,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$out .= "</tr>\n";
 			$i++;
 		}
+		if (empty($histo)) {
+			$colspan = 9;
+			$out .= '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		}
+
 		$out .= "</table>\n";
 		$out .= "</div>\n";
 

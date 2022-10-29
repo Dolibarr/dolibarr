@@ -129,7 +129,7 @@ if ($object->id > 0) {
 	$help_url = 'Module_Agenda_En';
 	llxHeader('', $title, $help_url);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = recruitmentCandidaturePrepareHead($object);

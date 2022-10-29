@@ -811,9 +811,10 @@ class Task extends CommonObjectLine
 	 * @param   int     $includebilltime    Calculate also the time to bill and billed
 	 * @param   array   $search_array_options Array of search
 	 * @param   int     $loadextras         Fetch all Extrafields on each task
+	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
 	 * @return 	array						Array of tasks
 	 */
-	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0)
+	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1)
 	{
 		global $conf, $hookmanager;
 
@@ -968,14 +969,16 @@ class Task extends CommonObjectLine
 
 				$obj = $this->db->fetch_object($resql);
 
-				if ((!$obj->public) && (is_object($userp))) {	// If not public project and we ask a filter on project owned by a user
-					if (!$this->getUserRolesForProjectsOrTasks($userp, 0, $obj->projectid, 0)) {
-						$error++;
+				if ($loadRoleMode) {
+					if ((!$obj->public) && (is_object($userp))) {    // If not public project and we ask a filter on project owned by a user
+						if (!$this->getUserRolesForProjectsOrTasks($userp, 0, $obj->projectid, 0)) {
+							$error++;
+						}
 					}
-				}
-				if (is_object($usert)) {							// If we ask a filter on a user affected to a task
-					if (!$this->getUserRolesForProjectsOrTasks(0, $usert, $obj->projectid, $obj->taskid)) {
-						$error++;
+					if (is_object($usert)) {                            // If we ask a filter on a user affected to a task
+						if (!$this->getUserRolesForProjectsOrTasks(0, $usert, $obj->projectid, $obj->taskid)) {
+							$error++;
+						}
 					}
 				}
 

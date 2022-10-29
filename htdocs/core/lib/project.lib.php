@@ -21,9 +21,9 @@
  */
 
 /**
- *	    \file       htdocs/core/lib/project.lib.php
- *		\brief      Functions used by project module
- *      \ingroup    project
+ * \file       htdocs/core/lib/project.lib.php
+ * \brief      Functions used by project module
+ * \ingroup    project
  */
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -127,7 +127,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
 		|| isModEnabled("propal") || isModEnabled('commande')
 		|| isModEnabled('facture') || isModEnabled('contrat')
-		|| !empty($conf->ficheinter->enabled) || isModEnabled('agenda') || isModEnabled('deplacement') || !empty($conf->stock->enabled)) {
+		|| isModEnabled('ficheinter') || isModEnabled('agenda') || isModEnabled('deplacement') || isModEnabled('stock')) {
 		$nbElements = 0;
 		// Enable caching of thirdrparty count Contacts
 		$cachekey = 'count_elements_project_'.$project->id;
@@ -135,7 +135,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		if (!is_null($dataretrieved)) {
 			$nbElements = $dataretrieved;
 		} else {
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$nbElements += $project->getElementCount('stock', 'entrepot', 'fk_project');
 			}
 			if (isModEnabled("propal")) {
@@ -162,13 +162,13 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('contrat')) {
 				$nbElements += $project->getElementCount('contract', 'contrat');
 			}
-			if (!empty($conf->ficheinter->enabled)) {
+			if (isModEnabled('ficheinter')) {
 				$nbElements += $project->getElementCount('intervention', 'fichinter');
 			}
 			if (isModEnabled("expedition")) {
 				$nbElements += $project->getElementCount('shipping', 'expedition');
 			}
-			if (!empty($conf->mrp->enabled)) {
+			if (isModEnabled('mrp')) {
 				$nbElements += $project->getElementCount('mrp', 'mrp_mo', 'fk_project');
 			}
 			if (isModEnabled('deplacement')) {
@@ -177,7 +177,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('expensereport')) {
 				$nbElements += $project->getElementCount('expensereport', 'expensereport');
 			}
-			if (!empty($conf->don->enabled)) {
+			if (isModEnabled('don')) {
 				$nbElements += $project->getElementCount('donation', 'don');
 			}
 			if (!empty($conf->loan->enabled)) {
@@ -189,7 +189,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 			if (isModEnabled('project')) {
 				$nbElements += $project->getElementCount('project_task', 'projet_task');
 			}
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$nbElements += $project->getElementCount('stock_mouvement', 'stock');
 			}
 			if (!empty($conf->salaries->enabled)) {
@@ -244,7 +244,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $project, $head, $h, 'project');
+	complete_head_from_modules($conf, $langs, $project, $head, $h, 'project', 'add', 'core');
 
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
@@ -311,7 +311,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/info.php?id='.$project->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/messaging.php?id='.$project->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
@@ -319,6 +319,8 @@ function project_prepare_head(Project $project, $moreparam = '')
 	}
 	$head[$h][2] = 'agenda';
 	$h++;
+
+	complete_head_from_modules($conf, $langs, $project, $head, $h, 'project', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $project, $head, $h, 'project', 'remove');
 
@@ -381,7 +383,7 @@ function task_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'task');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'task', 'add', 'core');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -424,6 +426,8 @@ function task_prepare_head($object)
 		$head[$h][2] = 'task_comment';
 		$h++;
 	}
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'task', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'task', 'remove');
 
@@ -487,11 +491,14 @@ function project_timesheet_prepare_head($mode, $fuser = null)
  */
 function project_admin_prepare_head()
 {
-	global $langs, $conf, $user;
-	$h = 0;
-	$head = array();
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('projet');
+	$extrafields->fetch_name_optionals_label('projet_task');
 
 	$h = 0;
+	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/projet/admin/project.php";
 	$head[$h][1] = $langs->trans("Projects");
@@ -502,11 +509,19 @@ function project_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT."/projet/admin/project_extrafields.php";
 	$head[$h][1] = $langs->trans("ExtraFieldsProject");
+	$nbExtrafields = $extrafields->attributes['projet']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/admin/project_task_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsProjectTask");
+	$nbExtrafields = $extrafields->attributes['projet_task']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_task';
 	$h++;
 
@@ -1226,13 +1241,14 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 
 			print convertSecondToTime($lines[$i]->timespent_duration, 'allhourmin');
 
-			$modeinput = 'hours';
+			// Comment for avoid unnecessary multiple calculation
+			/*$modeinput = 'hours';
 
 			print '<script type="text/javascript">';
 			print "jQuery(document).ready(function () {\n";
 			print " 	jQuery('.inputhour, .inputminute').bind('keyup', function(e) { updateTotal(0, '".$modeinput."') });";
 			print "})\n";
-			print '</script>';
+			print '</script>';*/
 
 			print '</td>';
 
@@ -1613,13 +1629,14 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				//$tableCell.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled':'').' value="'.$langs->trans("Add").'">';
 				print $tableCell;
 
-				$modeinput = 'hours';
+				// Comment for avoid unnecessary multiple calculation
+				/*$modeinput = 'hours';
 
 				print '<script type="text/javascript">';
 				print "jQuery(document).ready(function () {\n";
 				print " 	jQuery('.inputhour, .inputminute').bind('keyup', function(e) { updateTotal(0, '".$modeinput."') });";
 				print "})\n";
-				print '</script>';
+				print '</script>';*/
 
 				print '</td>';
 
