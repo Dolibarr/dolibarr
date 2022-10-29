@@ -7,7 +7,6 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2022		Anthony Berton		<bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -444,17 +443,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		print '</a>';
 	}
 	print '</td>';
-	if ((isModEnabled('product') && $user->hasRight('produit', 'creer')) || (isModEnabled('service') && $user->hasRight('service', 'creer'))) {
-		print '<td class="addproduct center">';
-		$coldisplay++;
-		if (!isset($line->fk_product) && ($line->product_type == 0 || $line->product_type == 1)) { // For situation invoice, deletion is not possible if there is a parent company.
-			$url = '/product/card.php?leftmenu=product&action=create&type='.$line->product_type.'&label='.$line->description.'&price'.$line->price.'&tva_tx'.$line->tva_tx.'&backtopage='.urlencode($_SERVER["PHP_SELF"]);
-			$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProduct").'"></span>';
-			$tmpbacktopagejsfields = 'addproduct:id,search_id';
-			print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
-		}
-		print '</td>';
-	}
+
 	if ($num > 1 && $conf->browser->layout != 'phone' && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) {
 		print '<td class="linecolmove tdlineupdown center">';
 		$coldisplay++;
