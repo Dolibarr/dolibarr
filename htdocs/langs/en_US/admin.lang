@@ -292,6 +292,7 @@ MAIN_MAIL_SMTP_SERVER=SMTP/SMTPS Host (default value in php.ini: <b>%s</b>)
 MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=SMTP/SMTPS Port (Not defined into PHP on Unix-like systems)
 MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=SMTP/SMTPS Host (Not defined into PHP on Unix-like systems)
 MAIN_MAIL_EMAIL_FROM=Sender email for automatic emails (default value in php.ini: <b>%s</b>)
+EMailHelpMsgSPFDKIM=To prevent Dolibarr emails to be classified as spam, make sure that the server is authorized to send e-mails from this address by SPF and DKIM configuration
 MAIN_MAIL_ERRORS_TO=Email used for error returns emails (fields 'Errors-To' in emails sent)
 MAIN_MAIL_AUTOCOPY_TO= Copy (Bcc) all sent emails to
 MAIN_DISABLE_ALL_MAILS=Disable all email sending (for test purposes or demos)

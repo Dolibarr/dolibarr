@@ -126,7 +126,7 @@ $arrayfields = array(
 	'cp.date_debut'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>40),
 	'cp.date_fin'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>42),
 	'cp.date_valid'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1, 'position'=>60),
-	'cp.date_approve'=>array('label'=>$langs->trans("DateApprove"), 'checked'=>1, 'position'=>70),
+	'cp.date_approval'=>array('label'=>$langs->trans("DateApprove"), 'checked'=>1, 'position'=>70),
 	'cp.date_create'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'cp.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>501),
 	'cp.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -271,6 +271,8 @@ $sql .= " cp.statut as status,";
 $sql .= " cp.fk_validator,";
 $sql .= " cp.date_valid,";
 $sql .= " cp.fk_user_valid,";
+$sql .= " cp.date_approval,";
+$sql .= " cp.fk_user_approve,";
 $sql .= " cp.date_refuse,";
 $sql .= " cp.fk_user_refuse,";
 $sql .= " cp.date_cancel,";
@@ -636,8 +638,14 @@ if ($resql) {
 		print '</td>';
 	}
 
-	// End date
+	// Date validation
 	if (!empty($arrayfields['cp.date_valid']['checked'])) {
+		print '<td class="liste_titre center nowraponall">';
+		print '</td>';
+	}
+
+	// Date appoval
+	if (!empty($arrayfields['cp.date_approval']['checked'])) {
 		print '<td class="liste_titre center nowraponall">';
 		print '</td>';
 	}
@@ -704,6 +712,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['cp.date_valid']['checked'])) {
 		print_liste_field_titre($arrayfields['cp.date_valid']['label'], $_SERVER["PHP_SELF"], "cp.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['cp.date_approval']['checked'])) {
+		print_liste_field_titre($arrayfields['cp.date_approval']['label'], $_SERVER["PHP_SELF"], "cp.date_approval", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -839,18 +850,20 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
+			// Date validation
 			if (!empty($arrayfields['cp.date_valid']['checked'])) {		// date_valid is both date_valid but also date_approval
-				print '<td class="center">';
+				print '<td class="center" title="'.dol_print_date($db->jdate($obj->date_valid), 'dayhour').'">';
 				print dol_print_date($db->jdate($obj->date_valid), 'day');
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
-			/*if (!empty($arrayfields['cp.date_approve']['checked'])) {
-				 print '<td class="center">';
-				 print dol_print_date($db->jdate($obj->date_approve), 'day');
-				 print '</td>';
-				 if (!$i) $totalarray['nbfield']++;
-			 }*/
+			// Date approval
+			if (!empty($arrayfields['cp.date_approval']['checked'])) {
+				print '<td class="center" title="'.dol_print_date($db->jdate($obj->date_approval), 'dayhour').'">';
+				print dol_print_date($db->jdate($obj->date_approval), 'day');
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
 
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';

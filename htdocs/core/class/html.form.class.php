@@ -2453,9 +2453,10 @@ class Form
 	 * @param string $morecss Add more css on select
 	 * @param string $nooutput No print, return the output into a string
 	 * @param int $forcecombo Force to use combo box
+	 * @param array $TProducts  Add filter on a defined product
 	 * @return        void|string
 	 */
-	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 1, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0)
+	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 0, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0, $TProducts = [])
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $db;
@@ -2477,8 +2478,9 @@ class Form
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'bom_bom as b';
 		$sql.= ' WHERE b.entity IN ('.getEntity('bom').')';
 		if (!empty($status)) $sql.= ' AND status = '. (int) $status;
-		if (!empty($type)) $sql.= ' AND status = '. (int) $type;
-		if (!empty($limit)) $sql.= 'LIMIT '. (int) $limit;
+		if (!empty($type)) $sql.= ' AND bomtype = '. (int) $type;
+		if (!empty($TProducts)) $sql .= ' AND fk_product IN ('.$this->db->sanitize(implode(',', $TProducts)).')';
+		if (!empty($limit)) $sql.= ' LIMIT '. (int) $limit;
 		$resql = $db->query($sql);
 		if ($resql) {
 			if ($showempty)	{
@@ -2489,8 +2491,9 @@ class Form
 			while ($obj = $db->fetch_object($resql)) {
 				$product = new Product($db);
 				$res = $product->fetch($obj->fk_product);
-				if ($obj->rowid == $selected) $out .= '<option value="'.$obj->rowid.'" selected>'.$obj->ref.' - '. $product->label .' - '.$obj->label.'</option>';
-				$out .= '<option value="'.$obj->rowid.'">'.$obj->ref.' - '.$product->label .' - '. $obj->label.'</option>';
+				$out .= '<option value="'.$obj->rowid.'"';
+				if ($obj->rowid == $selected) $out .= 'selected';
+				$out .= '>'.$obj->ref.' - '.$product->label .' - '. $obj->label.'</option>';
 			}
 		} else {
 			$error++;
