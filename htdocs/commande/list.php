@@ -1887,8 +1887,6 @@ if ($resql) {
 	$savnbfield = $totalarray['nbfield'];
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
-	$totalarray['val']['c.total_tva'] = 0;
-	$totalarray['val']['c.total_ttc'] = 0;
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
