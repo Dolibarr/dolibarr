@@ -1415,8 +1415,11 @@ if ($resql) {
 	// Détail commande
 	$totalqty = 0;
 
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+	$totalarray['val']['cdet.total_tva'] = 0;
+	$totalarray['val']['cdet.total_ttc'] = 0;
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
-	$last_num = min($num, $limit);
 	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
 
@@ -1518,15 +1521,15 @@ if ($resql) {
 		if (!empty($arrayfields['cdet.qty']['checked'])) {
 			print '<td class="nowrap tdoverflowmax200">'.$obj->qty.'</td>';
 			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.qty';
 			}
 			if (isset($totalarray['val']['cdet.qty'])) {
 				$totalarray['val']['cdet.qty'] += $obj->qty;
 			} else {
 				$totalarray['val']['cdet.qty'] = $obj->qty;
+			}
+			if (!$i) {
+				$totalarray['nbfield']++;
 			}
 		}
 
@@ -1898,7 +1901,7 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
 			}
-			if ($i >= $last_num - 1) {
+			if ($i >= $imaxinloop - 1) {
 				if (!empty($total_ht)) {
 					$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
 				} else {
