@@ -335,7 +335,7 @@ if ($object->ismultientitymanaged == 1) {
 }
 if ($managedfor == 'member') {
 	if ($memberid > 0) {
-		$sql .= " AND t.fk_member = ".$memberid;
+		$sql .= " AND t.fk_member = ".((int) $memberid);
 	} else {
 		$sql .= " AND fk_member > 0";
 	}
