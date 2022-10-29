@@ -1887,8 +1887,6 @@ if ($resql) {
 	$savnbfield = $totalarray['nbfield'];
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
-	$totalarray['val']['c.total_tva'] = 0;
-	$totalarray['val']['c.total_ttc'] = 0;
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
 	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
@@ -2194,7 +2192,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'c.total_tva';
 			}
-			$totalarray['val']['c.total_tva'] += $obj->total_tva;
+			if (isset($totalarray['val']['c.total_tva'])) {
+				$totalarray['val']['c.total_tva'] += $obj->total_tva;
+			} else {
+				$totalarray['val']['c.total_tva'] = $obj->total_tva;
+			}
 		}
 
 		// Amount TTC / gross
@@ -2206,7 +2208,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'c.total_ttc';
 			}
-			$totalarray['val']['c.total_ttc'] += $obj->total_ttc;
+			if (isset($totalarray['val']['c.total_ttc'])) {
+				$totalarray['val']['c.total_ttc'] += $obj->total_ttc;
+			} else {
+				$totalarray['val']['c.total_ttc'] = $obj->total_ttc;
+			}
 		}
 
 		// Currency
