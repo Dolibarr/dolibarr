@@ -164,6 +164,10 @@ $user->getrights();
 if (isset($argv[3]) && $argv[3]) {
 	$id = $argv[3];
 }
+$forcequalified = 0;
+if (isset($argv[4]) && $argv[4] == '--force') {
+	$forcequalified = 1;
+}
 
 // create a jobs object
 $object = new Cronjob($db);
@@ -313,7 +317,7 @@ exit(0);
  */
 function usage($path, $script_file)
 {
-	print "Usage: ".$script_file." securitykey userlogin|'firstadmin' [cronjobid]\n";
+	print "Usage: ".$script_file." securitykey userlogin|'firstadmin' [cronjobid] [--force]\n";
 	print "The script return 0 when everything worked successfully.\n";
 	print "\n";
 	print "On Linux system, you can have cron jobs ran automatically by adding an entry into cron.\n";
