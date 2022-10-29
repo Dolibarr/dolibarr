@@ -1967,14 +1967,21 @@ class ExtraFields
 
 				$visibility = 1;
 				if (isset($this->attributes[$object->table_element]['list'][$key])) {		// 'list' is option for visibility
-					$visibility = dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '1');
+					$visibility = intval(dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '1'));
 				}
 
 				$perms = 1;
 				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
 					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1, 1, '1');
 				}
-				if (empty($enabled)) {
+				if (empty($enabled)
+					|| (
+						$onlykey === '@GETPOSTISSET'
+						&& in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst'))
+						&& in_array(abs($enabled), array(2, 5))
+						&& ! GETPOSTISSET('options_' . $key) // Update hidden checkboxes and multiselect only if they are provided
+					)
+				) {
 					continue;
 				}
 				if (empty($visibility)) {
