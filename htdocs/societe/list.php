@@ -391,10 +391,6 @@ if (empty($reshook)) {
 		$search_price_level = '';
 		$search_type_thirdparty = '';
 		$search_staff = '';
-		$search_status = -1;
-		$search_stcomm = '';
-		$search_level = '';
-		$search_parent_name = '';
 		$search_date_creation_startmonth = "";
 		$search_date_creation_startyear = "";
 		$search_date_creation_startday = "";
@@ -411,6 +407,10 @@ if (empty($reshook)) {
 		$search_date_modif_endyear = "";
 		$search_date_modif_endday = "";
 		$search_date_modif_end = "";
+		$search_status = -1;
+		$search_stcomm = '';
+		$search_level = '';
+		$search_parent_name = '';
 		$search_import_key = '';
 		$toselect = array();
 		$search_array_options = array();
