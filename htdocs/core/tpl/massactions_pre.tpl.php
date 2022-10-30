@@ -78,6 +78,23 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 	}
 }
 
+if ($massaction == 'preupdateprice' && isModEnabled('category')) {
+	$formquestion = array();
+
+	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
+	$valuefield .= '<input type="number" name="pricevariation" id="pricevariation" min="-100" value="0" style="width: 100px; text-align: right; margin-right: 10px" />%';
+	$valuefield .= '</div>';
+
+	$formquestion[] = array(
+				'type' => 'other',
+				'name' => 'pricevariation',
+				'label' => $langs->trans("PriceVariation"),
+				'value' => $valuefield
+			);
+
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmUpdatePrice"), $langs->trans("ConfirmUpdatePriceQuestion", count($toselect)), "updateprice", $formquestion, 1, 0, 200, 500, 1);
+}
+
 if ($massaction == 'presetsupervisor') {
 	$formquestion = array();
 
@@ -95,6 +112,7 @@ if ($massaction == 'presetsupervisor') {
 
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmSetSupervisor"), $langs->trans("ConfirmSetSupervisorQuestion", count($toselect)), "setsupervisor", $formquestion, 1, 0, 200, 500, 1);
 }
+
 
 if ($massaction == 'presend') {
 	$langs->load("mails");
