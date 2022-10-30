@@ -82,13 +82,13 @@ if ($massaction == 'preupdateprice' && isModEnabled('category')) {
 	$formquestion = array();
 
 	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
-	$valuefield .= '<input type="number" name="pricevariation" id="pricevariation" min="-100" value="0" style="width: 100px; text-align: right; margin-right: 10px" />%';
+	$valuefield .= '<input type="number" name="pricerate" id="pricerate" min="-100" value="0" style="width: 100px; text-align: right; margin-right: 10px" />%';
 	$valuefield .= '</div>';
 
 	$formquestion[] = array(
 				'type' => 'other',
-				'name' => 'pricevariation',
-				'label' => $langs->trans("PriceVariation"),
+				'name' => 'pricerate',
+				'label' => $langs->trans("Rate"),
 				'value' => $valuefield
 			);
 

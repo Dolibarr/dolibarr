@@ -1242,8 +1242,8 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 
 if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoadd) {
 	$db->begin();
-	if (GETPOSTISSET('pricevariation')) {
-		$pricepercentage=GETPOST('pricevariation', 'int');
+	if (GETPOSTISSET('pricerate')) {
+		$pricepercentage=GETPOST('pricerate', 'int');
 		if ($pricepercentage == 0) {
 			setEventMessages($langs->trans("RecordsModified", 0), null);
 		} else {
