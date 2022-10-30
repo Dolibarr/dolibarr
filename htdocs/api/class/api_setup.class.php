@@ -787,7 +787,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function getListOfContactTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $module = '', $active = 1, $lang ='', $sqlfilters = '')
+	public function getListOfContactTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $module = '', $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
