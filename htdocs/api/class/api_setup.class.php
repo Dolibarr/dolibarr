@@ -779,6 +779,7 @@ class Setup extends DolibarrApi
 	 * @param string    $type       To filter on type of contact
 	 * @param string    $module     To filter on module contacts
 	 * @param int       $active     Contact's type is active or not {@min 0} {@max 1}
+	 * @param string    $lang       Code of the language the label of the civility must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array	  List of Contacts types
 	 *
@@ -786,7 +787,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function getListOfContactTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $module = '', $active = 1, $sqlfilters = '')
+	public function getListOfContactTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $type = '', $module = '', $active = 1, $lang ='', $sqlfilters = '')
 	{
 		$list = array();
 
@@ -827,7 +828,9 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
+				$contact_type = $this->db->fetch_object($result);
+				$this->translateLabel($contact_type, $lang, 'TypeContact_'.$contact_type->type.'_'.$contact_type->source.'_', array("eventorganization", "resource", "projects", "contracts", "bills", "orders", "agenda", "propal", "stocks", "supplier_proposal", "interventions", "sendings", "ticket"));
+				$list[] = $contact_type;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of contacts types : '.$this->db->lasterror());
