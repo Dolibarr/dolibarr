@@ -319,20 +319,10 @@ if ($nolinesbefore) {
 			echo '<input type="hidden" name="pbq" id="pbq" value="">';
 			echo '</span>';
 
-			// $url = '/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create');
-			// $newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span>';
-			// // TODO @LDR Implement this
-			// if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-			// 	$tmpbacktopagejsfields = 'addthirdparty:socid,search_socid';
-			// 	print dolButtonToOpenUrlInDialogPopup('addthirdparty', $langs->transnoentitiesnoconv('AddThirdParty'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
-			// } else {
-			// 	print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
-			// }
-
 			if (isModEnabled('product') && $user->hasRight('produit', 'creer')) {
 				$url = '/product/card.php?leftmenu=product&action=create&type=0&backtopage='.urlencode($_SERVER["PHP_SELF"]);
 				$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewProduct").'"></span>';
-				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 6) {
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 					$tmpbacktopagejsfields = 'addproduct:id,search_id';
 					print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
 				} else {
@@ -342,7 +332,7 @@ if ($nolinesbefore) {
 			if (isModEnabled('service') && $user->hasRight('service', 'creer')) {
 				$url = '/product/card.php?leftmenu=product&action=create&type=1&backtopage='.urlencode($_SERVER["PHP_SELF"]);
 				$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("NewService").'"></span>';
-				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 6) {
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 					$tmpbacktopagejsfields = 'addproduct:id,search_id';
 					print dolButtonToOpenUrlInDialogPopup('addproduct', $langs->transnoentitiesnoconv('AddProduct'), $newbutton, $url, '', '', $tmpbacktopagejsfields);
 				} else {
