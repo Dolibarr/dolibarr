@@ -50,6 +50,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (isModEnabled('categorie')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'categories'));
@@ -1080,13 +1084,12 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view products
-	if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
+	if (isModEnabled('categorie') && $user->hasRight('categorie', 'read') && ($user->rights->produit->lire || $user->rights->service->lire)) {
+		$searchCategoryProductOperator = -1;
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, (empty($conf->dol_optimize_smallscreen) ? 'maxwidth300 widthcentpercentminusx' : 'maxwidth250 widthcentpercentminusx'), 1);
-		$moreforfilter .= '</div>';
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, array($search_product_category), 'maxwidth300', $searchCategoryProductOperator, 0, 0, $tmptitle);
 	}
 	if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';

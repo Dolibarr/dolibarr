@@ -4859,7 +4859,7 @@ class Form
 	 *                                                          - int (id of category)
 	 *                                                          - string (categories ids seprated by comma)
 	 *                                                          - array (list of categories ids)
-	 *    @param	int			            $outputmode			0=HTML select string, 1=Array
+	 *    @param	int			            $outputmode			0=HTML select string, 1=Array, 2=Array extended
 	 *    @param	int			            $include			[=0] Removed or 1=Keep only
 	 *    @param	string					$morecss			More CSS
 	 *    @return	string|array
@@ -4892,7 +4892,7 @@ class Form
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($result);
 					if ($objp) {
-						$cate_arbo[$objp->rowid] = array('id'=>$objp->rowid, 'fulllabel'=>$objp->label);
+						$cate_arbo[$objp->rowid] = array('id'=>$objp->rowid, 'fulllabel'=>$objp->label, 'color'=>'', 'picto'=>'category');
 					}
 					$i++;
 				}
@@ -4905,8 +4905,9 @@ class Form
 			$cate_arbo = $cat->get_full_arbo($type, $markafterid, $include);
 		}
 
-		$output = '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 		$outarray = array();
+
+		$output = '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 		if (is_array($cate_arbo)) {
 			if (!count($cate_arbo)) {
 				$output .= '<option value="-1" disabled>'.$langs->trans("NoCategoriesDefined").'</option>';
@@ -4918,7 +4919,11 @@ class Form
 					} else {
 						$add = '';
 					}
-					$output .= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle').'</option>';
+					$output .= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'"';
+					$output .= ' data-html="'.dol_escape_htmltag(img_picto('', 'category', 'class="pictofixedwidth" style="color: #'.$cate_arbo[$key]['color'].'"').dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle')).'"';
+					$output .= '>';
+					$output .= dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle');
+					$output .= '</option>';
 
 					$outarray[$cate_arbo[$key]['id']] = $cate_arbo[$key]['fulllabel'];
 				}
@@ -4927,7 +4932,9 @@ class Form
 		$output .= '</select>';
 		$output .= "\n";
 
-		if ($outputmode) {
+		if ($outputmode == 2) {
+			return $cate_arbo;
+		} elseif ($outputmode) {
 			return $outarray;
 		}
 		return $output;
@@ -8326,8 +8333,8 @@ class Form
 	 *	Show a multiselect form from an array. WARNING: Use this only for short lists.
 	 *
 	 *	@param	string		$htmlname		Name of select
-	 *	@param	array		$array			Array with key+value
-	 *	@param	array		$selected		Array with key+value preselected
+	 *	@param	array		$array			Array(key=>value) or Array(key=>array('id'=> , 'label'=> ))
+	 *	@param	array		$selected		Array of keys preselected
 	 *	@param	int			$key_in_label   1 to show key like in "[key] value"
 	 *	@param	int			$value_as_key   1 to use value as key
 	 *	@param  string		$morecss        Add more css style
@@ -8363,14 +8370,24 @@ class Form
 
 			if (!empty($array)) {
 				foreach ($array as $key => $value) {
-					$newval = ($translate ? $langs->trans($value) : $value);
-					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
+					$tmpkey = $key;
+					$tmpvalue = $value;
+					$tmpcolor = '';
+					$tmppicto = '';
+					if (is_array($value) && array_key_exists('id', $value) && array_key_exists('label', $value)) {
+						$tmpkey = $value['id'];
+						$tmpvalue = $value['label'];
+						$tmpcolor = $value['color'];
+						$tmppicto = $value['picto'];
+					}
+					$newval = ($translate ? $langs->trans($tmpvalue) : $tmpvalue);
+					$newval = ($key_in_label ? $tmpkey.' - '.$newval : $newval);
 
-					$out .= '<option value="'.$key.'"';
-					if (is_array($selected) && !empty($selected) && in_array((string) $key, $selected) && ((string) $key != '')) {
+					$out .= '<option value="'.$tmpkey.'"';
+					if (is_array($selected) && !empty($selected) && in_array((string) $tmpkey, $selected) && ((string) $tmpkey != '')) {
 						$out .= ' selected';
 					}
-					$out .= ' data-html="'.dol_escape_htmltag($newval).'"';
+					$out .= ' data-html="'.dol_escape_htmltag(($tmppicto ? img_picto('', $tmppicto, 'class="pictofixedwidth" style="color: #'.$tmpcolor.'"') : '').$newval).'"';
 					$out .= '>';
 					$out .= dol_htmlentitiesbr($newval);
 					$out .= '</option>'."\n";

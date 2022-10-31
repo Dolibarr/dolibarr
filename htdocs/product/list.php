@@ -823,7 +823,7 @@ if ($resql) {
 
 	// Filter on categories
 	$moreforfilter = '';
-	if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+	if (isModEnabled('categorie') && $user->hasRight('categorie', 'read')) {
 		$formcategory = new FormCategory($db);
 		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductOperator ? $searchCategoryProductOperator : 0);
 	}
