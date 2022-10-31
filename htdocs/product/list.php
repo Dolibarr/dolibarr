@@ -12,6 +12,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Ferran Marcet		    <fmarcet@2byte.es>
  * Copyright (C) 2020-2021	Open-DSI				<support@open-dsi.fr>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1317,43 +1318,43 @@ if ($resql) {
 			}
 		}
 
-		$product_static->id = $obj->rowid;
-		$product_static->ref = $obj->ref;
-		$product_static->ref_fourn = empty($obj->ref_supplier) ? '' : $obj->ref_supplier; // deprecated
-		$product_static->ref_supplier = empty($obj->ref_supplier) ? '' : $obj->ref_supplier;
-		$product_static->label = $obj->label;
-		$product_static->finished = $obj->finished;
-		$product_static->type = $obj->fk_product_type;
-		$product_static->status_buy = $obj->tobuy;
-		$product_static->status     = $obj->tosell;
-		$product_static->status_batch = $obj->tobatch;
-		$product_static->entity = $obj->entity;
-		$product_static->pmp = $obj->pmp;
-		$product_static->accountancy_code_sell = $obj->accountancy_code_sell;
-		$product_static->accountancy_code_sell_export = $obj->accountancy_code_sell_export;
-		$product_static->accountancy_code_sell_intra = $obj->accountancy_code_sell_intra;
-		$product_static->accountancy_code_buy = $obj->accountancy_code_buy;
-		$product_static->accountancy_code_buy_intra = $obj->accountancy_code_buy_intra;
-		$product_static->accountancy_code_buy_export = $obj->accountancy_code_buy_export;
-		$product_static->length = $obj->length;
-		$product_static->length_units = $obj->length_units;
-		$product_static->width = $obj->width;
-		$product_static->width_units = $obj->width_units;
-		$product_static->height = $obj->height;
-		$product_static->height_units = $obj->height_units;
-		$product_static->weight = $obj->weight;
-		$product_static->weight_units = $obj->weight_units;
-		$product_static->volume = $obj->volume;
-		$product_static->volume_units = $obj->volume_units;
-		$product_static->surface = $obj->surface;
-		$product_static->surface_units = $obj->surface_units;
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-			$product_static->fk_unit = $obj->fk_unit;
-		}
+		$product_static->fetch($obj->rowid);
+		// $product_static->ref = $obj->ref;
+		// $product_static->ref_fourn = empty($obj->ref_supplier) ? '' : $obj->ref_supplier; // deprecated
+		// $product_static->ref_supplier = empty($obj->ref_supplier) ? '' : $obj->ref_supplier;
+		// $product_static->label = $obj->label;
+		// $product_static->finished = $obj->finished;
+		// $product_static->type = $obj->fk_product_type;
+		// $product_static->status_buy = $obj->tobuy;
+		// $product_static->status     = $obj->tosell;
+		// $product_static->status_batch = $obj->tobatch;
+		// $product_static->entity = $obj->entity;
+		// $product_static->pmp = $obj->pmp;
+		// $product_static->accountancy_code_sell = $obj->accountancy_code_sell;
+		// $product_static->accountancy_code_sell_export = $obj->accountancy_code_sell_export;
+		// $product_static->accountancy_code_sell_intra = $obj->accountancy_code_sell_intra;
+		// $product_static->accountancy_code_buy = $obj->accountancy_code_buy;
+		// $product_static->accountancy_code_buy_intra = $obj->accountancy_code_buy_intra;
+		// $product_static->accountancy_code_buy_export = $obj->accountancy_code_buy_export;
+		// $product_static->length = $obj->length;
+		// $product_static->length_units = $obj->length_units;
+		// $product_static->width = $obj->width;
+		// $product_static->width_units = $obj->width_units;
+		// $product_static->height = $obj->height;
+		// $product_static->height_units = $obj->height_units;
+		// $product_static->weight = $obj->weight;
+		// $product_static->weight_units = $obj->weight_units;
+		// $product_static->volume = $obj->volume;
+		// $product_static->volume_units = $obj->volume_units;
+		// $product_static->surface = $obj->surface;
+		// $product_static->surface_units = $obj->surface_units;
+		// if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		// 	$product_static->fk_unit = $obj->fk_unit;
+		// }
 
 		// STOCK_DISABLE_OPTIM_LOAD can be set to force load_stock whatever is permissions on stock.
 		if ((isModEnabled('stock') && $user->rights->stock->lire && $search_type != 1) || !empty($conf->global->STOCK_DISABLE_OPTIM_LOAD)) {	// To optimize call of load_stock
-			if ($obj->fk_product_type != 1 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {    // Not a service
+			if ($product_static->type != 1 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {    // Not a service
 				$option = 'nobatch';
 				if (empty($arrayfields['stock_virtual']['checked'])) {
 					$option .= ',novirtual';
@@ -1429,7 +1430,7 @@ if ($resql) {
 
 		// Label
 		if (!empty($arrayfields['p.label']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.$obj->label.'</td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($product_static->label).'">'.$product_static->label.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1439,7 +1440,7 @@ if ($resql) {
 		if (!empty($arrayfields['p.fk_product_type']['checked'])) {
 			print '<td class="center">';
 			$s = '';
-			if ($obj->fk_product_type == 0) {
+			if ($product_static->type == 0) {
 				$s .= img_picto($langs->trans("Product"), 'product', 'class="paddingleftonly paddingrightonly colorgrey"');
 			} else {
 				$s .= img_picto($langs->trans("Service"), 'service', 'class="paddingleftonly paddingrightonly colorgrey"');
@@ -1453,7 +1454,7 @@ if ($resql) {
 
 		// Barcode
 		if (!empty($arrayfields['p.barcode']['checked'])) {
-			print '<td>'.$obj->barcode.'</td>';
+			print '<td>'.$product_static->barcode.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1497,7 +1498,7 @@ if ($resql) {
 		// Weight
 		if (!empty($arrayfields['p.weight']['checked'])) {
 			print '<td class="center">';
-			print $obj->weight;
+			print $product_static->weight;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1517,7 +1518,7 @@ if ($resql) {
 		// Length
 		if (!empty($arrayfields['p.length']['checked'])) {
 			print '<td class="center">';
-			print $obj->length;
+			print $product_static->length;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1537,7 +1538,7 @@ if ($resql) {
 		// Width
 		if (!empty($arrayfields['p.width']['checked'])) {
 			print '<td align="center">';
-			print $obj->width;
+			print $product_static->width;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1557,7 +1558,7 @@ if ($resql) {
 		// Height
 		if (!empty($arrayfields['p.height']['checked'])) {
 			print '<td align="center">';
-			print $obj->height;
+			print $product_static->height;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1577,7 +1578,7 @@ if ($resql) {
 		// Surface
 		if (!empty($arrayfields['p.surface']['checked'])) {
 			print '<td class="center">';
-			print $obj->surface;
+			print $product_static->surface;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1597,7 +1598,7 @@ if ($resql) {
 		// Volume
 		if (!empty($arrayfields['p.volume']['checked'])) {
 			print '<td class="center">';
-			print $obj->volume;
+			print $product_static->volume;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1629,11 +1630,11 @@ if ($resql) {
 		// Sell price
 		if (!empty($arrayfields['p.sellprice']['checked'])) {
 			print '<td class="right nowraponall">';
-			if ($obj->tosell && $usercancreadprice) {
+			if ($product_static->status && $usercancreadprice) {
 				if ($obj->price_base_type == 'TTC') {
-					print '<span class="amount">'.price($obj->price_ttc).' '.$langs->trans("TTC").'</span>';
+					print '<span class="amount">'.price($product_static->price_ttc).' '.$langs->trans("TTC").'</span>';
 				} else {
-					print '<span class="amount">'.price($obj->price).' '.$langs->trans("HT").'</span>';
+					print '<span class="amount">'.price($product_static->price).' '.$langs->trans("HT").'</span>';
 				}
 			}
 			print '</td>';
@@ -1652,7 +1653,7 @@ if ($resql) {
 				$productpricescache[$obj->rowid] = array();
 			}
 
-			if ($obj->tosell && $usercancreadprice) {
+			if ($product_static->status && $usercancreadprice) {
 				// Make 1 request for all price levels (without filter on price_level) and saved result into an cache array
 				// then reuse the cache array if we need prices for other price levels
 				$sqlp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price, p.price_base_type";
@@ -1702,7 +1703,7 @@ if ($resql) {
 		// Better buy price
 		if (!empty($arrayfields['p.minbuyprice']['checked'])) {
 			print  '<td class="right nowraponall">';
-			if ($obj->tobuy && $obj->minsellprice != '' && $usercancreadprice) {
+			if ($product_static->status_buy && $obj->minsellprice != '' && $usercancreadprice) {
 				//print price($obj->minsellprice).' '.$langs->trans("HT");
 				if ($product_fourn->find_min_price_product_fournisseur($obj->rowid) > 0) {
 					if ($product_fourn->product_fourn_price_id > 0) {
@@ -1724,7 +1725,7 @@ if ($resql) {
 		// Number of buy prices
 		if (!empty($arrayfields['p.numbuyprice']['checked'])) {
 			print  '<td class="right">';
-			if ($obj->tobuy && $usercancreadprice) {
+			if ($product_static->status_buy && $usercancreadprice) {
 				if (count($productFournList = $product_fourn->list_product_fournisseur_price($obj->rowid)) > 0) {
 					$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1, $productFournList);
 					print $form->textwithpicto(count($productFournList), $htmltext);
@@ -1764,7 +1765,7 @@ if ($resql) {
 		// Limit alert
 		if (!empty($arrayfields['p.seuil_stock_alerte']['checked'])) {
 			print '<td class="right">';
-			if ($obj->fk_product_type != 1) {
+			if ($product_static->type != 1) {
 				print $obj->seuil_stock_alerte;
 			}
 			print '</td>';
@@ -1775,7 +1776,7 @@ if ($resql) {
 		// Desired stock
 		if (!empty($arrayfields['p.desiredstock']['checked'])) {
 			print '<td class="right">';
-			if ($obj->fk_product_type != 1) {
+			if ($product_static->type != 1) {
 				print $obj->desiredstock;
 			}
 			print '</td>';
@@ -1786,7 +1787,7 @@ if ($resql) {
 		// Stock real
 		if (!empty($arrayfields['p.stock']['checked'])) {
 			print '<td class="right">';
-			if ($obj->fk_product_type != 1) {
+			if ($product_static->type != 1) {
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
@@ -1802,7 +1803,7 @@ if ($resql) {
 		// Stock virtual
 		if (!empty($arrayfields['stock_virtual']['checked'])) {
 			print '<td class="right">';
-			if ($obj->fk_product_type != 1) {
+			if ($product_static->type != 1) {
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
@@ -1844,38 +1845,38 @@ if ($resql) {
 		}
 		// Accountancy code sell
 		if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell']['checked'])) {
-			print '<td>'.$obj->accountancy_code_sell.'</td>';
+			print '<td>'.$product_static->accountancy_code_sell.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell_intra']['checked'])) {
-			print '<td>'.$obj->accountancy_code_sell_intra.'</td>';
+			print '<td>'.$product_static->accountancy_code_sell_intra.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_sell_export']['checked'])) {
-			print '<td>'.$obj->accountancy_code_sell_export.'</td>';
+			print '<td>'.$product_static->accountancy_code_sell_export.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Accountancy code buy
 		if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy']['checked'])) {
-			print '<td>'.$obj->accountancy_code_buy.'</td>';
+			print '<td>'.$product_static->accountancy_code_buy.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_intra']['checked'])) {
-			print '<td>'.$obj->accountancy_code_buy_intra.'</td>';
+			print '<td>'.$product_static->accountancy_code_buy_intra.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields[$alias_product_perentity . '.accountancy_code_buy_export']['checked'])) {
-			print '<td>'.$obj->accountancy_code_buy_export.'</td>';
+			print '<td>'.$product_static->accountancy_code_buy_export.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1911,7 +1912,7 @@ if ($resql) {
 			if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 				print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 			} else {
-				print $product_static->LibStatut($obj->tosell, 5, 0);
+				print $product_static->LibStatut($product_static->status, 5, 0);
 			}
 			print '</td>';
 			if (!$i) {
@@ -1924,7 +1925,7 @@ if ($resql) {
 			if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 				print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 			} else {
-				print $product_static->LibStatut($obj->tobuy, 5, 1);
+				print $product_static->LibStatut($product_static->status_buy, 5, 1);
 			}
 			print '</td>';
 			if (!$i) {
