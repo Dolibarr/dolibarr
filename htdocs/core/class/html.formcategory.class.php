@@ -32,11 +32,13 @@ class FormCategory extends Form
 	/**
 	 * Return a HTML filter box for a list filter view
 	 *
-	 * @param string	$type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
-	 * @param Array		$preSelected	A list with the elements that should pre-selected
-	 * @return string					A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
+	 * @param 	string		$type								The categorie type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param 	array		$preSelected						A list with the elements that should pre-selected
+	 * @param	string		$morecss							More CSS
+	 * @param	int			$searchCategoryProductOperator		0 or 1 to enable the checkbox to search with a or (0=not preseleted, 1=preselected)
+	 * @return 	string											A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
 	 */
-	public function getFilterBox($type, array $preSelected)
+	public function getFilterBox($type, array $preSelected, $morecss = "minwidth300 widthcentpercentminusx", $searchCategoryProductOperator = -1)
 	{
 		global $langs;
 
@@ -45,6 +47,7 @@ class FormCategory extends Form
 		}
 
 		$htmlName = "search_category_".$type."_list";
+		$htmlName2 = "search_category_".$type."_operator";
 
 		$categoryArray = $this->select_all_categories($type, "", "", 64, 0, 1);
 		$categoryArray[-2] = "- ".$langs->trans('NotCategorized')." -";
@@ -55,7 +58,10 @@ class FormCategory extends Form
 		$filter .= '<div class="divsearchfield">';
 		$filter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
 		//$filter .= $langs->trans('Categories').": ";
-		$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, "minwidth300 widthcentpercentminusx", 0, 0, '', '', $tmptitle);
+		$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, $morecss, 0, 0, '', '', $tmptitle);
+		if ($searchCategoryProductOperator >= 0) {
+			$filter .= ' <input type="checkbox" class="valignmiddle" id="'.$htmlName2.'" name="'.$htmlName2.'" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/><label class="none valignmiddle" for="'.$htmlName2.'">'.$langs->trans('UseOrOperatorForCategories').'</label>';
+		}
 		$filter .= "</div>";
 
 		return $filter;
