@@ -311,7 +311,7 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/info.php?id='.$project->id;
+	$head[$h][0] = DOL_URL_ROOT.'/projet/messaging.php?id='.$project->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
@@ -1241,13 +1241,14 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
 
 			print convertSecondToTime($lines[$i]->timespent_duration, 'allhourmin');
 
-			$modeinput = 'hours';
+			// Comment for avoid unnecessary multiple calculation
+			/*$modeinput = 'hours';
 
 			print '<script type="text/javascript">';
 			print "jQuery(document).ready(function () {\n";
 			print " 	jQuery('.inputhour, .inputminute').bind('keyup', function(e) { updateTotal(0, '".$modeinput."') });";
 			print "})\n";
-			print '</script>';
+			print '</script>';*/
 
 			print '</td>';
 
@@ -1628,13 +1629,14 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				//$tableCell.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled':'').' value="'.$langs->trans("Add").'">';
 				print $tableCell;
 
-				$modeinput = 'hours';
+				// Comment for avoid unnecessary multiple calculation
+				/*$modeinput = 'hours';
 
 				print '<script type="text/javascript">';
 				print "jQuery(document).ready(function () {\n";
 				print " 	jQuery('.inputhour, .inputminute').bind('keyup', function(e) { updateTotal(0, '".$modeinput."') });";
 				print "})\n";
-				print '</script>';
+				print '</script>';*/
 
 				print '</td>';
 

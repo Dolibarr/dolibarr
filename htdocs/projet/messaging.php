@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/projet/info.php
+ *      \file       htdocs/projet/messaging.php
  *      \ingroup    project
  *		\brief      Page with events on project
  */
@@ -166,17 +166,39 @@ if ($permok) {
 }
 
 
-//print '<div class="tabsAction">';
-$morehtmlcenter = '';
-if (isModEnabled('agenda')) {
-	$addActionBtnRight = !empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create);
-	$morehtmlcenter .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&socid='.$object->socid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
-}
 
 //print '</div>';
 
 if (!empty($object->id)) {
 	print '<br>';
+
+	//print '<div class="tabsAction">';
+	$morehtmlcenter = '';
+
+	// Show link to change view in message
+	$messagingUrl = DOL_URL_ROOT.'/projet/messaging.php?id='.$object->id;
+	$morehtmlcenter .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 2);
+
+	// Show link to change view in agenda
+	$messagingUrl = DOL_URL_ROOT.'/projet/agenda.php?id='.$object->id;
+	$morehtmlcenter .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1);
+
+
+	// // Show link to send an email (if read and not closed)
+	// $btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+	// $url = 'card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init&private_message=0&send_email=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id).'#formmailbeforetitle';
+	// $morehtmlright .= dolGetButtonTitle($langs->trans('SendMail'), '', 'fa fa-paper-plane', $url, 'email-title-button', $btnstatus);
+
+	// // Show link to add a private message (if read and not closed)
+	// $btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+	// $url = 'card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id).'#formmailbeforetitle';
+	// $morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fa fa-comment-dots', $url, 'add-new-ticket-title-button', $btnstatus);
+
+	// Show link to add event
+	if (isModEnabled('agenda')) {
+		$addActionBtnRight = !empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create);
+		$morehtmlcenter .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&socid='.$object->socid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $addActionBtnRight);
+	}
 
 	$param = '&id='.$object->id;
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -191,7 +213,7 @@ if (!empty($object->id)) {
 	// List of all actions
 	$filters = array();
 	$filters['search_agenda_label'] = $search_agenda_label;
-	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+	show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 
 // End of page

@@ -418,7 +418,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_author);
-			$emailFrom = $expediteur->email;
+			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailTo && $emailFrom) {
 				$filename = array(); $filedir = array(); $mimetype = array();
@@ -525,7 +525,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_author);
-			$emailFrom = $expediteur->email;
+			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
 				$filename = array(); $filedir = array(); $mimetype = array();
@@ -641,7 +641,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_approve > 0 ? $object->fk_user_approve : $object->fk_user_validator);
-			$emailFrom = $expediteur->email;
+			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
 				$filename = array(); $filedir = array(); $mimetype = array();
@@ -749,7 +749,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_refuse);
-			$emailFrom = $expediteur->email;
+			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
 				$filename = array(); $filedir = array(); $mimetype = array();
@@ -863,7 +863,7 @@ if (empty($reshook)) {
 					// FROM
 					$expediteur = new User($db);
 					$expediteur->fetch($object->fk_user_cancel);
-					$emailFrom = $expediteur->email;
+					$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 					if ($emailFrom && $emailTo) {
 						$filename = array(); $filedir = array(); $mimetype = array();
@@ -1043,7 +1043,7 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($user->id);
-			$emailFrom = $expediteur->email;
+			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
 				$filename = array(); $filedir = array(); $mimetype = array();

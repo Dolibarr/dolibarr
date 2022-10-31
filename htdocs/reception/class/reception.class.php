@@ -1641,23 +1641,8 @@ class Reception extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Classify the reception as invoiced (used when WORKFLOW_BILL_ON_RECEPTION is on)
-	 *
-	 *	@deprecated
-	 *  @see setBilled()
-	 *	@return     int     <0 if ko, >0 if ok
-	 */
-	public function set_billed()
-	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::set_billed is deprecated, use setBilled instead", LOG_NOTICE);
-		return $this->setBilled();
-	}
-
-	/**
-	 *	Classify the reception as invoiced (used when WORKFLOW_BILL_ON_RECEPTION is on)
+	 *	Classify the reception as invoiced (used when WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE is on)
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
 	 */

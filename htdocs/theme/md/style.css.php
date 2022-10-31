@@ -5461,6 +5461,9 @@ a.cke_dialog_ui_button
 {
 	vertical-align: bottom !important;
 }
+.cke_combo_text {
+	width: 40px !important;
+}
 /*
 .cke_editable
 {
