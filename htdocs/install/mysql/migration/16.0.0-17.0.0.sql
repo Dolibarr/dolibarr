@@ -366,3 +366,5 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 ALTER TABLE llx_prelevement_facture RENAME TO llx_prelevement;
 ALTER TABLE llx_prelevement_facture_demande RENAME TO llx_prelevement_demande;
 
+ALTER TABLE llx_prelevement ADD COLUMN fk_salary INTEGER NULL AFTER fk_facture_fourn;
+ALTER TABLE llx_prelevement_demande ADD COLUMN fk_salary INTEGER NULL AFTER fk_facture_fourn;
