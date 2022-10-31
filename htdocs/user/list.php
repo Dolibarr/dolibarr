@@ -436,7 +436,6 @@ if ($search_statut != '' && $search_statut >= 0) {
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
-
 // Search for tag/category ($searchCategoryUserList is an array of ID)
 $searchCategoryUserList = array($search_categ);
 if (!empty($searchCategoryUserList)) {
