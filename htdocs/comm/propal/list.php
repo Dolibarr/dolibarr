@@ -462,7 +462,7 @@ if ($action == "nosign" && $permissiontoclose) {
 		$error = 0;
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked) > 0) {
-				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED || !empty($conf->global->PROPAL_BYPASS_VALIDATED_STATUS)) {
+				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED || (!empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE) && $tmpproposal->statut == $tmpproposal::STATUS_DRAFT)) {
 					$tmpproposal->statut = $tmpproposal::STATUS_NOTSIGNED;
 					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_NOTSIGNED) > 0) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('NoSigned'), 'mesgs');
