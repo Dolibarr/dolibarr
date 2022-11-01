@@ -209,7 +209,8 @@ if ($object->id > 0) {
 		if (get_class($objthirdparty) == 'Societe') {
 			$out .= '&amp;socid='.$objthirdparty->id;
 		}
-		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage=1&amp;percentage=-1';
+		$backtopageurl = urlencode($_SERVER['PHP_SELF'].'?id='.$objthirdparty->id);
+		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage='.$backtopageurl.'&amp;percentage=-1';
 		//$out.=$langs->trans("AddAnAction").' ';
 		//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
 		//$out.="</a>";
