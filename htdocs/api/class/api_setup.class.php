@@ -1190,6 +1190,7 @@ class Setup extends DolibarrApi
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number {@min 0}
 	 * @param int       $active     Shipping methodsm is active or not {@min 0} {@max 1}
+	 * @param string    $lang       Code of the language the label of the method must be translated to
 	 * @param string    $sqlfilters SQL criteria to filter. Syntax example "(t.code:=:'CHQ')"
 	 *
 	 * @url     GET dictionary/shipping_methods
@@ -1198,7 +1199,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @throws RestException 400
 	 */
-	public function getShippingModes($limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+	public function getShippingModes($limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
@@ -1234,7 +1235,9 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
+				$method = $this->db->fetch_object($result);
+				$this->translateLabel($method, $lang, '', array('dict'));
+				$list[] = $method;
 			}
 		} else {
 			throw new RestException(400, $this->db->lasterror());
