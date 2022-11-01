@@ -686,7 +686,7 @@ class AccountancyExport
 
 			$Tab = array();
 			//$Tab['type_ligne'] = 'M';
-			$Tab['code_journal'] = str_pad(dol_trunc($data->code_journal, 2), 2);
+			$Tab['code_journal'] = str_pad(dol_trunc($data->code_journal, 2, 'right', 'UTF-8', 1), 2);
 
 			//We use invoice date $data->doc_date not $date_ecriture which is the transfert date
 			//maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
@@ -695,7 +695,7 @@ class AccountancyExport
 
 			$Tab['folio'] = '     1';
 
-			$Tab['num_ecriture'] = str_pad(dol_trunc($index, 6), 6, ' ', STR_PAD_LEFT);
+			$Tab['num_ecriture'] = str_pad(dol_trunc($index, 6, 'right', 'UTF-8', 1), 6, ' ', STR_PAD_LEFT);
 
 			$Tab['jour_ecriture'] = dol_print_date($data->doc_date, '%d%m%y');
 
@@ -713,9 +713,9 @@ class AccountancyExport
 
 			$Tab['libelle_ecriture'] = str_pad(dol_trunc(dol_string_unaccent($data->doc_ref).' '.dol_string_unaccent($data->label_operation), 30, 'right', 'UTF-8', 1), 30);
 
-			$Tab['lettrage'] = str_repeat(dol_trunc($data->lettering_code, 2, 'left'), 2);
+			$Tab['lettrage'] = str_repeat(dol_trunc($data->lettering_code, 2, 'left', 'UTF-8', 1), 2);
 
-			$Tab['code_piece'] = str_pad(dol_trunc($data->piece_num, 5), 5, ' ', STR_PAD_LEFT);
+			$Tab['code_piece'] = str_pad(dol_trunc($data->piece_num, 5, 'left', 'UTF-8', 1), 5, ' ', STR_PAD_LEFT);
 
 			$Tab['code_stat'] = str_repeat(' ', 4);
 
