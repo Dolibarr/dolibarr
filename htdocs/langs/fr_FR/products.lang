@@ -416,6 +416,7 @@ ProductsMergeSuccess=Produits fusionnés
 ErrorsProductsMerge=Erreur lors de la fusion des produits
 SwitchOnSaleStatus=Basculer le statut En vente
 SwitchOnPurchaseStatus=Basculer le statut En achat
+UpdatePrice=Augmenter/baisser le prix de vente
 StockMouvementExtraFields= Champs supplémentaires (mouvement de stock)
 InventoryExtraFields= Attributs supplémentaires (inventaire)
 ScanOrTypeOrCopyPasteYourBarCodes=Scannez ou tapez ou copiez/collez vos codes-barres

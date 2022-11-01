@@ -131,7 +131,6 @@ $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown
 // Security check
 if (!empty($user->socid)) {
 	$socid = $user->socid;
-	$object->id = $user->socid;
 }
 restrictedArea($user, 'propal', $object->id);
 
@@ -2004,8 +2003,8 @@ if ($action == 'create') {
 			$i = 0;
 			while ($i < $num) {
 				$row = $db->fetch_row($resql);
-				$propalRefAndSocName = $row [1]." - ".$row [2];
-				$liste_propal [$row [0]] = $propalRefAndSocName;
+				$propalRefAndSocName = $row[1]." - ".$row[2];
+				$liste_propal[$row[0]] = $propalRefAndSocName;
 				$i++;
 			}
 			print $form->selectarray("copie_propal", $liste_propal, 0);

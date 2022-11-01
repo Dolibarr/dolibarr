@@ -805,6 +805,8 @@ if ($action == 'charge' && isModEnabled('stripe')) {
 	dol_syslog("onlinetoken=".$_SESSION["onlinetoken"]." FinalPaymentAmt=".$_SESSION["FinalPaymentAmt"]." currencyCodeType=".$_SESSION["currencyCodeType"]." payerID=".$_SESSION['payerID']." TRANSACTIONID=".$_SESSION['TRANSACTIONID'], LOG_DEBUG, 0, '_payment');
 	dol_syslog("FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_payment');
 	dol_syslog("error=".$error." errormessage=".$errormessage, LOG_DEBUG, 0, '_payment');
+	dol_syslog("_SERVER[SERVER_NAME] = ".(empty($_SERVER["SERVER_NAME"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_NAME"])), LOG_DEBUG, 0, '_payment');
+	dol_syslog("_SERVER[SERVER_ADDR] = ".(empty($_SERVER["SERVER_ADDR"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_ADDR"])), LOG_DEBUG, 0, '_payment');
 	dol_syslog("Now call the redirect to paymentok or paymentko, URL = ".($error ? $urlko : $urlok), LOG_DEBUG, 0, '_payment');
 
 	if ($error) {
@@ -834,7 +836,10 @@ $conf->dol_hide_leftmenu = 1;
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
-dol_syslog("newpayment.php show page paymentmethod=".$paymentmethod.' amount='.$amount.' newamount='.GETPOST("newamount", 'alpha'), LOG_DEBUG, 0, '_payment');
+dol_syslog("--- newpayment.php action = ".$action, LOG_DEBUG, 0, '_payment');
+dol_syslog("newpayment.php show page source=".$source." paymentmethod=".$paymentmethod.' amount='.$amount.' newamount='.GETPOST("newamount", 'alpha')." ref=".$ref, LOG_DEBUG, 0, '_payment');
+dol_syslog("_SERVER[SERVER_NAME] = ".(empty($_SERVER["SERVER_NAME"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_NAME"])), LOG_DEBUG, 0, '_payment');
+dol_syslog("_SERVER[SERVER_ADDR] = ".(empty($_SERVER["SERVER_ADDR"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_ADDR"])), LOG_DEBUG, 0, '_payment');
 
 // Check link validity
 if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', 'donation_ref', ''))) {
@@ -2358,7 +2363,17 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			   // Code for payment with option STRIPE_USE_NEW_CHECKOUT set
 
 			// Create a Stripe client.
+				<?php
+				if (empty($stripeacc)) {
+					?>
 			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
+					<?php
+				} else {
+					?>
+			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>', { stripeAccount: '<?php echo $stripeacc; ?>' });
+					<?php
+				}
+				?>
 
 			// Create an instance of Elements
 			var elements = stripe.elements();
@@ -2403,7 +2418,17 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION set to 1 or 2
 
 			// Create a Stripe client.
+				<?php
+				if (empty($stripeacc)) {
+					?>
 			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
+					<?php
+				} else {
+					?>
+			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>', { stripeAccount: '<?php echo $stripeacc; ?>' });
+					<?php
+				}
+				?>
 
 				<?php
 				if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2) {

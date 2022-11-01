@@ -222,7 +222,11 @@ if (!empty($searchCategoryBankList)) {
 		if (intval($searchCategoryBank) == -2) {
 			$searchCategoryBankSqlList[] = "NOT EXISTS (SELECT ck.fk_account FROM ".MAIN_DB_PREFIX."categorie_account as ck WHERE b.rowid = ck.fk_account)";
 		} elseif (intval($searchCategoryBank) > 0) {
-			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryBank);
+			if ($searchCategoryBankOperator == 0) {
+				$searchCategoryBankSqlList[] = " EXISTS (SELECT ck.fk_account FROM ".MAIN_DB_PREFIX."categorie_account as ck WHERE b.rowid = ck.fk_account AND ck.fk_categorie = ".((int) $searchCategoryBank).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryBank);
+			}
 		}
 	}
 	if ($listofcategoryid) {

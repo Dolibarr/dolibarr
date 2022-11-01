@@ -288,7 +288,7 @@ if ($rowid && $action != 'edit') {
 
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Member
 	$adh->ref = $adh->getFullName($langs);
@@ -320,7 +320,7 @@ if ($rowid && $action != 'edit') {
 	print '</tr>';
 
 	// Amount
-	print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur">'.price($object->amount).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur"><span class="amount">'.price($object->amount).'</span></td></tr>';
 
 	// Label
 	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur">'.$object->note.'</td></tr>';

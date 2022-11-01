@@ -348,7 +348,7 @@ if ($type == 'bank-transfer') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 }
 $sql .= " ".MAIN_DB_PREFIX."societe as s,";
-$sql .= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {

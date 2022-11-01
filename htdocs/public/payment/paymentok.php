@@ -167,13 +167,20 @@ $error = 0;
 
 $now = dol_now();
 
-dol_syslog("Callback url when a payment was done. query_string=".(dol_escape_htmltag($_SERVER["QUERY_STRING"]) ?dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '')." script_uri=".(dol_escape_htmltag($_SERVER["SCRIPT_URI"]) ?dol_escape_htmltag($_SERVER["SCRIPT_URI"]) : ''), LOG_DEBUG, 0, '_payment');
+dol_syslog("Callback url when a payment was done. query_string=".(empty($_SERVER["QUERY_STRING"]) ? '' : dol_escape_htmltag($_SERVER["QUERY_STRING"]))." script_uri=".(empty($_SERVER["SCRIPT_URI"]) ? '' : dol_escape_htmltag($_SERVER["SCRIPT_URI"])), LOG_DEBUG, 0, '_payment');
+dol_syslog("_SERVER[SERVER_NAME] = ".(empty($_SERVER["SERVER_NAME"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_NAME"])), LOG_DEBUG, 0, '_payment');
+dol_syslog("_SERVER[SERVER_ADDR] = ".(empty($_SERVER["SERVER_ADDR"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_ADDR"])), LOG_DEBUG, 0, '_payment');
 
 $tracepost = "";
 foreach ($_POST as $k => $v) {
 	$tracepost .= "{$k} - {$v}\n";
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
+$tracesession = "";
+foreach ($_SESSION as $k => $v) {
+	$tracesession .= "{$k} - {$v}\n";
+}
+dol_syslog("SESSION=".$tracesession, LOG_DEBUG, 0, '_payment');
 
 $head = '';
 if (!empty($conf->global->ONLINE_PAYMENT_CSS_URL)) {
