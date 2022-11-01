@@ -847,6 +847,7 @@ class Setup extends DolibarrApi
 	 * @param int       $page       Page number (starting from zero)
 	 * @param string    $module     To filter on module events
 	 * @param int       $active     Civility is active or not {@min 0} {@max 1}
+	 * @param string    $lang       Code of the language the label of the civility must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array		List of civility types
 	 *
@@ -854,7 +855,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function getListOfCivilities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $module = '', $active = 1, $sqlfilters = '')
+	public function getListOfCivilities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $module = '', $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
@@ -892,7 +893,9 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
+				$civility = $this->db->fetch_object($result);
+				$this->translateLabel($civility, $lang, 'Civility', array('dict'));
+				$list[] = $civility;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of civility : '.$this->db->lasterror());
