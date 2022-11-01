@@ -1504,6 +1504,7 @@ class Setup extends DolibarrApi
 	  * @param int       $limit      Number of items per page
 	  * @param int       $page       Page number (starting from zero)
 	  * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+	  * @param string    $lang       Code of the language the label of the category must be translated to
 	  * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	  * @return array				List of ticket categories
 	  *
@@ -1511,13 +1512,14 @@ class Setup extends DolibarrApi
 	  *
 	  * @throws RestException
 	  */
-	public function getTicketsCategories($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+	public function getTicketsCategories($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
 		$sql = "SELECT rowid, code, pos,  label, use_default, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_category as t";
-		$sql .= " WHERE t.active = ".((int) $active);
+		$sql .= " WHERE t.entity IN (".getEntity('c_ticket_category').")";
+		$sql .= " AND t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -1546,7 +1548,9 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
+				$category = $this->db->fetch_object($result);
+				$this->translateLabel($category, $lang, 'TicketCategoryShort', array('ticket'));
+				$list[] = $category;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of ticket categories : '.$this->db->lasterror());
@@ -1563,6 +1567,7 @@ class Setup extends DolibarrApi
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number (starting from zero)
 	 * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+	 * @param string    $lang       Code of the language the label of the severity must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of ticket severities
 	 *
@@ -1570,13 +1575,14 @@ class Setup extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function getTicketsSeverities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+	public function getTicketsSeverities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
 		$sql = "SELECT rowid, code, pos,  label, use_default, color, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_severity as t";
-		$sql .= " WHERE t.active = ".((int) $active);
+		$sql .= " WHERE t.entity IN (".getEntity('c_ticket_severity').")";
+		$sql .= " AND t.active = ".((int) $active);
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -1605,7 +1611,9 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
+				$severity = $this->db->fetch_object($result);
+				$this->translateLabel($severity, $lang, 'TicketSeverityShort', array('ticket'));
+				$list[] = $severity;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of ticket severities : '.$this->db->lasterror());
@@ -1622,6 +1630,7 @@ class Setup extends DolibarrApi
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number (starting from zero)
 	 * @param int       $active     Payment term is active or not {@min 0} {@max 1}
+	 * @param string    $lang       Code of the language the label of the type must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of ticket types
 	 *
@@ -1629,15 +1638,15 @@ class Setup extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function getTicketsTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $sqlfilters = '')
+	public function getTicketsTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $active = 1, $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
 		$sql = "SELECT rowid, code, pos,  label, use_default, description";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_ticket_type as t";
-		$sql .= " WHERE t.active = ".(int) $active;
-		// if ($type) $sql .= " AND t.type LIKE '%".$this->db->escape($type)."%'";
-		// if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
+		$sql .= " WHERE t.entity IN (".getEntity('c_ticket_type').")";
+		$sql .= " AND t.active = ".((int) $active);
+
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -1666,7 +1675,9 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
+				$type =$this->db->fetch_object($result);
+				$this->translateLabel($type, $lang, 'TicketTypeShort', array('ticket'));
+				$list[] = $type;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of ticket types : '.$this->db->lasterror());
