@@ -930,3 +930,106 @@ div#moreinfo, div#infowarehouse {
 		height:10%;
 	}
 }
+
+.arrows {
+	display: none;
+	position: absolute;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.indicator {
+	background: #00000042;
+	padding: 15px 5px;
+	cursor: pointer;
+}
+
+.indicator:hover {
+	background: #000000;
+}
+
+.indicator i {
+	color: white;
+}
+
+.topnav-left {
+	margin-left: 20px;
+}
+
+.topnav-right {
+	margin-right: 20px;
+}
+
+/* For Header Scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+.topnav {
+  scroll-behavior: smooth;
+}
+
+.header {
+	height: unset;
+}
+
+.topnav {
+	width: 100%;
+	white-space: nowrap;
+	overflow-x: scroll;
+	display: inline-flex;
+}
+
+.topnav-left {
+	white-space: nowrap;
+	float: none;
+	margin-right: auto;
+	align-items: center;
+}
+
+.topnav-right {
+	display: flex;
+	white-space: nowrap;
+	float: none;
+	align-items: center;
+}
+
+.topnav-left #shoppingcart {
+	display:inline-flex;
+}
+
+.topnav-right .login_block_other {
+	display: flex;
+	white-space: nowrap;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+.topnav::-webkit-scrollbar-track{
+  background: #eeeeee;
+}
+
+.topnav::-webkit-scrollbar{
+  width: 1px;
+  background: #F5F5F5;
+}
+
+.topnav::-webkit-scrollbar-thumb{
+	background: #f9171700;
+}
+
+.topnav.overflow .arrows {
+	display: flex;
+}
