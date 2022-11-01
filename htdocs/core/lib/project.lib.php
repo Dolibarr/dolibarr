@@ -1611,7 +1611,8 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				// Duration
 				print '<td class="center duration'.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
-				$dayWorkLoad = $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id];
+				$dayWorkLoad = !empty($projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id]) ? $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id] : 0;
+				if (!isset($totalforeachday[$preselectedday])) $totalforeachday[$preselectedday] = 0;
 				$totalforeachday[$preselectedday] += $dayWorkLoad;
 
 				$alreadyspent = '';
@@ -1992,7 +1993,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				$modeinput = 'hours';
 				for ($idw = 0; $idw < 7; $idw++) {
 					$tmpday = dol_time_plus_duree($firstdaytoshow, $idw, 'd');
-
+					if (!isset($totalforeachday[$tmpday])) $totalforeachday[$tmpday] = 0;
 					$cssonholiday = '';
 					if (!$isavailable[$tmpday]['morning'] && !$isavailable[$tmpday]['afternoon']) {
 						$cssonholiday .= 'onholidayallday ';
@@ -2003,14 +2004,14 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					}
 
 					$tmparray = dol_getdate($tmpday);
-					$dayWorkLoad = $projectstatic->weekWorkLoadPerTask[$tmpday][$lines[$i]->id];
+					$dayWorkLoad = (!empty($projectstatic->weekWorkLoadPerTask[$tmpday][$lines[$i]->id]) ? $projectstatic->weekWorkLoadPerTask[$tmpday][$lines[$i]->id] : 0);
 					$totalforeachday[$tmpday] += $dayWorkLoad;
 
 					$alreadyspent = '';
 					if ($dayWorkLoad > 0) {
 						$alreadyspent = convertSecondToTime($dayWorkLoad, 'allhourmin');
 					}
-					$alttitle = $langs->trans("AddHereTimeSpentForDay", $tmparray['day'], $tmparray['mon']);
+					$alttitle = $langs->trans("AddHereTimeSpentForDay", !empty($tmparray['day']) ? $tmparray['day'] : 0, $tmparray['mon']);
 
 					global $numstartworkingday, $numendworkingday;
 					$cssweekend = '';
@@ -2290,7 +2291,8 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				$year = $firstdaytoshowarray['year'];
 				$month = $firstdaytoshowarray['mon'];
 				foreach ($TWeek as $weekIndex => $weekNb) {
-					$weekWorkLoad = $projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id];
+					$weekWorkLoad = !empty($projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id]) ? $projectstatic->monthWorkLoadPerTask[$weekNb][$lines[$i]->id] : 0 ;
+					if (!isset($totalforeachweek[$weekNb])) $totalforeachweek[$weekNb] = 0;
 					$totalforeachweek[$weekNb] += $weekWorkLoad;
 
 					$alreadyspent = '';
