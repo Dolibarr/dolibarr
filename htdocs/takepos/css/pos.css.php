@@ -477,7 +477,7 @@ p.description_content{
 div.description_content {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
-	-webkit-line-clamp: <?php echo $conf->global->TAKEPOS_LINES_TO_SHOW; ?>;
+	-webkit-line-clamp: <?php echo getDolGlobalInt('TAKEPOS_LINES_TO_SHOW', 2); ?>;
 	overflow: hidden;
 	padding-left: 2px;
 	padding-right: 2px;
@@ -587,11 +587,11 @@ div#moreinfo, div#infowarehouse {
 	background: var(--colorbackhmenu1);
 	color: var(--colortextbackhmenu);
 	font-size: 2em;
-	padding: 5px;
+	padding: 4px;
 	border-radius: 2px;
 	opacity: 0.9;
-	padding-left: 8px;
-	padding-right: 8px;
+	padding-left: 6px;
+	padding-right: 6px;
 }
 
 
@@ -841,11 +841,11 @@ div#moreinfo, div#infowarehouse {
 		padding-bottom: 2px;
 		margin-left: 2px;
 	}
-	
+
 	.div4 .wrapper.divempty, .div4 img, .div4 .wrapper:nth-last-child(1), .div4 .wrapper:nth-last-child(2), #prodiv22, #prodiv23, .catwatermark {
 		display: none!important;
 	}
-	
+
 	.tab-category {
 		float: left;
 		position: relative;
@@ -858,7 +858,7 @@ div#moreinfo, div#infowarehouse {
 		box-sizing: border-box;
 		background-color: #fff;
 	}
-	
+
 	.div4 .wrapper, .tab-category {
 		width: auto;
 		height: auto;
@@ -868,7 +868,7 @@ div#moreinfo, div#infowarehouse {
 		border: 1px solid #FFF!important;
 		border-top: 3px solid #FFF!important;
 	}
-	
+
 	.div4 .tab-category.active {
 		border-right: 1px solid #CCC !important;
 		border-left: 1px solid #CCC !important;
@@ -890,42 +890,42 @@ div#moreinfo, div#infowarehouse {
 		padding-top: 0px;
 		background: -webkit-linear-gradient(top, rgba(250,250,250,0), rgba(250,250,250,0.5), rgba(250,250,250,0.95), rgba(250,250,250,1));
 	}
-	
+
 	.div5 .description .description_content {
 		font-weight: bold;
 		font-size: 14px;
 		padding-left: 10px;
 	}
-	
+
 	.div5 .wrapper2 {
 		width: 100%;
 		display: inline-flex;
 		align-items: center;
 		padding: 10px;
 	}
-	
+
 	.div5 .wrapper2.divempty {
 		display: none;
 	}
-	
+
 	div.wrapper2 {
 		float: none;
 	}
-	
+
 	.div5 .arrow {
 		width: auto;
 		height: auto;
 		display: none!important;
 	}
-	
+
 	.div5 .arrow .centerinmiddle {
 		transform: translate(0, 0);
 	}
-	
+
 	.div5 .imgadd {
 		display: flex;
 	}
-	
+
 	div.wrapper2{
 		height:10%;
 	}
@@ -1009,12 +1009,12 @@ html {
 
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; 
+  background: #f1f1f1;
 }
- 
+
 
 ::-webkit-scrollbar-thumb {
-  background: #888; 
+  background: #888;
 }
 
 .topnav::-webkit-scrollbar-track{

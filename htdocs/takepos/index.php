@@ -367,7 +367,7 @@ function LoadProducts(position, issubcat) {
 				?>
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
+					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
 				}
 				console.log("#prodiv"+ishow+".data(rowid)="+data[idata]['id']);
 				console.log($("#prodiv"+ishow));
@@ -449,7 +449,7 @@ function MoreProducts(moreorless) {
 				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
+					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
 				}
 				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
@@ -657,7 +657,7 @@ function Search2(keyCodeForEnter, moreorless) {
 					$("#probutton" + i).show();
 					if (data[i]['price_formated']) {
 						$("#proprice" + i).attr("class", "productprice");
-						$("#proprice" + i).html(data[i]['price_formated']);
+						$("#proprice" + i).html(data[i]['price_ttc_formated']);
 					}
 					$("#proimg" + i).attr("title", titlestring);
 					if( undefined !== data[i]['img']) {
@@ -939,15 +939,15 @@ $( document ).ready(function() {
 		}
 	}
 	?>
-	
+
 	/* For Header Scroll */
 	var elem1 = $("#topnav-left")[0];
 	var elem2 = $("#topnav-right")[0];
 	var checkOverflow = function() {
 		if (scrollBars().horizontal) $("#topnav").addClass("overflow");
-		else  $("#topnav").removeClass("overflow");			
+		else  $("#topnav").removeClass("overflow");
 	}
-	
+
 	var scrollBars = function(){
 		var container= $('#topnav')[0];
 		return {
@@ -955,43 +955,43 @@ $( document ).ready(function() {
 			horizontal:container.scrollWidth > container.clientWidth
 		};
 	}
-	
+
 	$(window).resize(function(){
 		checkOverflow();
 	});
-	
+
 	   let resizeObserver = new ResizeObserver(() => {
 		   checkOverflow();
 	   });
 		  resizeObserver.observe(elem1);
 	   resizeObserver.observe(elem2);
 	checkOverflow();
-	
+
 	var pressTimer = [];
 	var direction = 1;
 	var step = 200;
-	
+
 	$(".indicator").mousedown(function(){
 		direction = $(this).hasClass("left") ? -1 : 1;
 		scrollTo();
 		pressTimer.push(setInterval(scrollTo, 100));
 	});
-	
+
 	$(".indicator").mouseup(function(){
 		pressTimer.forEach(clearInterval);
 	});
-	
+
 	$("body").mouseup(function(){
 		pressTimer.forEach(clearInterval);
 		console.log("body");
 	});
-	
+
 	function scrollTo(){
 		console.log("here");
 		var pos = $("#topnav").scrollLeft();
 		document.getElementById("topnav").scrollTo({ left: $("#topnav").scrollLeft() + direction * step, behavior: 'smooth' })
 	}
-	
+
 	$("#topnav").scroll(function(){
 		if (($("#topnav").offsetWidth + $("#topnav").scrollLeft >= $("#topnav").scrollWidth)) {
 			console.log("end");
