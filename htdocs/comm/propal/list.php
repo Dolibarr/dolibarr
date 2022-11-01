@@ -1687,6 +1687,9 @@ if ($resql) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		if (!empty($arrayfields['p.ref']['checked'])) {
@@ -2231,10 +2234,11 @@ if ($resql) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+
 
 		print '</tr>'."\n";
 

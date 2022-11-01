@@ -1973,6 +1973,10 @@ if ($resql) {
 				}
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			print '</td>';
 		}
 
 		// Ref
@@ -2596,10 +2600,10 @@ if ($resql) {
 				}
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		print "</tr>\n";
