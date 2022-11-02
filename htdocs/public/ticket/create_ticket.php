@@ -156,7 +156,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 
 
 		// Option to require email exists to create ticket
-		if (!empty($conf->global->TICKET_EMAIL_MUST_EXISTS) && ($cid <= 0 || empty($contacts[$cid]->socid))) {
+		if (!empty($conf->global->TICKET_EMAIL_MUST_EXISTS) && ($cid < 0 || empty($contacts[$cid]->socid))) {
 			$error++;
 			array_push($object->errors, $langs->trans("ErrorEmailMustExistToCreateTicket"));
 			$action = '';
