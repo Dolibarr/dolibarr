@@ -1484,7 +1484,7 @@ if ($num > 0) {
 
 		// Third party
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			print $thirdparty->getNomUrl(1, 'supplier', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 			print '</td>';
 			if (!$i) {
@@ -1493,7 +1493,7 @@ if ($num > 0) {
 		}
 		// Alias
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			print $thirdparty->name_alias;
 			print '</td>';
 			if (!$i) {
@@ -1639,7 +1639,7 @@ if ($num > 0) {
 
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			if ($userstatic->id) {
 				print $userstatic->getLoginUrl(-1);
 			} else {
