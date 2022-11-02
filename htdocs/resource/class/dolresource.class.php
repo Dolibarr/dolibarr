@@ -527,7 +527,7 @@ class Dolresource extends CommonObject
 		if ($limit) {
 			$sql .= $this->db->plimit($limit, $offset);
 		}
-		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 
 		$this->lines = array();
 		$resql = $this->db->query($sql);

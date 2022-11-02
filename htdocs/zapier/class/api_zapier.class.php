@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class ZapierApi extends DolibarrApi
+class Zapier extends DolibarrApi
 {
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object

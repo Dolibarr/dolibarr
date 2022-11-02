@@ -72,7 +72,6 @@ ExtrafieldCheckBoxFromList=Les cases à cocher du tableau
 ExtrafieldLink=Lier à un objet
 LibraryToBuildPDF=Bibliothèque utilisée pour la génération de PDF
 CurrentlyNWithoutBarCode=Actuellement, vous avez <strong>%s</strong> enregistrements sur <strong>%s</strong> %s sans code à barres défini.
-InitEmptyBarCode=Init value for the %s empty barcodes
 ConfirmEraseAllCurrentBarCode=Êtes-vous sûr de vouloir effacer toutes les valeurs actuelles du code-barres?
 EnableFileCache=Activer le cache de fichiers
 DisplayCompanyManagers=Afficher les noms des gestionnaires

@@ -67,7 +67,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-//$user->rights->societe->lire = 0;$user->rights->fournisseur->lire = 0;
+//$user->hasRight('societe', 'lire') = 0;$user->rights->fournisseur->lire = 0;
 //restrictedArea($user, 'societe', $id);
 
 if (in_array($field, array('status'))) {

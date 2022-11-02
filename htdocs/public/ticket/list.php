@@ -79,7 +79,7 @@ $object = new Ticket($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('ticketpubliclist', 'globalcard'));
 
-if (empty($conf->ticket->enabled)) {
+if (!isModEnabled('ticket')) {
 	httponly_accessforbidden('Module Ticket not enabled');
 }
 

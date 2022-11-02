@@ -843,7 +843,7 @@ if (empty($reshook)) {
 			$_POST["accountancy_code_buy"] = ''; // If empty, we force to null
 		}
 		if ($id == 10 && GETPOSTISSET("code")) {  // Spaces are not allowed into code for tax dictionary
-			$_POST["code"] = preg_replace('/[^a-zA-Z0-9\-\+]/', '', GETPOST("code"));
+			$_POST["code"] = preg_replace('/[^a-zA-Z0-9_\-\+]/', '', GETPOST("code"));
 		}
 
 		$tablename = $tabname[$id];

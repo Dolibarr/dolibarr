@@ -106,10 +106,10 @@ if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
 
-print dol_get_fiche_head($head, 'memberstypes', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'memberstypes', '', -1);
 
 
-print $langs->trans("LDAPDescMembersTypes").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("LDAPDescMembersTypes").'</span><br>';
 print '<br>';
 
 

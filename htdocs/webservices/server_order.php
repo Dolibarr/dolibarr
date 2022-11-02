@@ -183,7 +183,6 @@ $order_fields = array(
 	'ref' => array('name'=>'ref', 'type'=>'xsd:string'),
 	'ref_client' => array('name'=>'ref_client', 'type'=>'xsd:string'),
 	'ref_ext' => array('name'=>'ref_ext', 'type'=>'xsd:string'),
-	'ref_int' => array('name'=>'ref_int', 'type'=>'xsd:string'),
 	'thirdparty_id' => array('name'=>'thirdparty_id', 'type'=>'xsd:int'),
 	'status' => array('name'=>'status', 'type'=>'xsd:int'),
 	'billed' => array('name'=>'billed', 'type'=>'xsd:string'),
@@ -438,7 +437,6 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 					'ref' => $order->ref,
 					'ref_client' => $order->ref_client,
 					'ref_ext' => $order->ref_ext,
-					'ref_int' => $order->ref_int,
 					'thirdparty_id' => $order->socid,
 					'status' => $order->statut,
 
@@ -593,7 +591,6 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 					'ref' => $order->ref,
 					'ref_client' => $order->ref_client,
 					'ref_ext' => $order->ref_ext,
-					'ref_int' => $order->ref_int,
 					'socid' => $order->socid,
 					'status' => $order->statut,
 

@@ -317,7 +317,7 @@ if ($action == 'download') {
 
 		$newsection = $section;
 
-		$result = dol_ftp_get($connect_id, $file, $newsection);
+		$result = dol_ftp_get($connect_id, $localfile, $file, $newsection);
 
 
 		if ($result) {
@@ -709,7 +709,7 @@ print '<br>';
 if (!empty($conn_id)) {
 	$disconnect = dol_ftp_close($conn_id);
 
-	if ($disconnect == false) {
+	if (!$disconnect) {
 		setEventMessages($langs->trans("ErrorFTPNodisconnect"), null, 'errors');
 	}
 }

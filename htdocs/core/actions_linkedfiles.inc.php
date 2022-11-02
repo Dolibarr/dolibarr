@@ -79,7 +79,7 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC) && !emp
 			}
 			$allowoverwrite = (GETPOST('overwritefile', 'int') ? 1 : 0);
 
-			if (!empty($upload_dirold) && !empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+			if (!empty($upload_dirold) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 				$result = dol_add_file_process($upload_dirold, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object);
 			} elseif (!empty($upload_dir)) {
 				$result = dol_add_file_process($upload_dir, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object);
@@ -160,7 +160,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 	}
 
 	if (is_object($object) && $object->id > 0) {
-		if ($backtopage) {
+		if (!empty($backtopage)) {
 			header('Location: '.$backtopage);
 			exit;
 		} else {

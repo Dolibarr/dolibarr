@@ -270,8 +270,8 @@ if ($result) {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		$cum_ht[$obj->dm] = !empty($obj->amount) ? $obj->amount : 0;
-		$cum[$obj->dm] = $obj->amount_ttc;
+		$cum_ht[$obj->dm] = empty($obj->amount) ? 0 : $obj->amount;
+		$cum[$obj->dm] = empty($obj->amount_ttc) ? 0 : $obj->amount_ttc;
 		if ($obj->amount_ttc) {
 			$minyearmonth = ($minyearmonth ? min($minyearmonth, $obj->dm) : $obj->dm);
 			$maxyearmonth = max($maxyearmonth, $obj->dm);
@@ -303,7 +303,11 @@ if ($modecompta == 'RECETTES-DEPENSES') {
 		$i = 0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
-			$cum[$obj->dm] += $obj->amount_ttc;
+			if (empty($cum[$obj->dm])) {
+				$cum[$obj->dm] = $obj->amount_ttc;
+			} else {
+				$cum[$obj->dm] += $obj->amount_ttc;
+			}
 			if ($obj->amount_ttc) {
 				$minyearmonth = ($minyearmonth ?min($minyearmonth, $obj->dm) : $obj->dm);
 				$maxyearmonth = max($maxyearmonth, $obj->dm);
@@ -367,7 +371,7 @@ print '</tr>';
 $now_show_delta = 0;
 $minyear = substr($minyearmonth, 0, 4);
 $maxyear = substr($maxyearmonth, 0, 4);
-$nowyear = strftime("%Y", dol_now());
+$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $nowyearmonth = strftime("%Y-%m", dol_now());
 $maxyearmonth = max($maxyearmonth, $nowyearmonth);
 $now = dol_now();
@@ -404,12 +408,6 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 		}
 		$case = dol_print_date(dol_mktime(1, 1, 1, $mois_modulo, 1, $annee_decalage), "%Y-%m");
 		$caseprev = dol_print_date(dol_mktime(1, 1, 1, $mois_modulo, 1, $annee_decalage - 1), "%Y-%m");
-
-		$total_ht[$annee]=0;
-		$total[$annee]=0;
-		$cum_ht[$case]=0;
-		$cum[$case]=0;
-
 
 		if ($annee >= $year_start) {	// We ignore $annee < $year_start, we loop on it to be able to make delta, nothing is output.
 			if ($modecompta == 'CREANCES-DETTES') {
@@ -453,7 +451,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			print "</td>";
 
 			// Percentage of month
-			print '<td class="borderrightlight right">';
+			print '<td class="borderrightlight right"><span class="opacitymedium">';
 			//var_dump($annee.' '.$year_end.' '.$mois.' '.$month_end);
 			if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 				if ($annee_decalage > $minyear && $case <= $casenow) {
@@ -483,7 +481,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 					}
 				}
 			}
-			print '</td>';
+			print '</span></td>';
 
 			if ($annee_decalage < $year_end || ($annee_decalage == $year_end && $mois > 12 && $annee < $year_end)) {
 				print '<td width="15">&nbsp;</td>';

@@ -172,7 +172,7 @@ if ($mode == 'setup' && $user->admin) {
 
 		$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
 
-		$shortscope = $supportedoauth2array[$keyforsupportedoauth2array]['defaultscope'];
+		$shortscope = '';
 		if (getDolGlobalString($key[4])) {
 			$shortscope = getDolGlobalString($key[4]);
 		}
@@ -290,6 +290,14 @@ if ($mode == 'setup' && $user->admin) {
 		print '<td>';
 		print '</td>';
 		print '</tr>'."\n";
+
+		// Scopes
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("Scopes").'</td>';
+		print '<td colspan="2">';
+		$currentscopes = getDolGlobalString($key[4]);
+		print $currentscopes;
+		print '</td></tr>';
 
 		print '<tr class="oddeven">';
 		print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';

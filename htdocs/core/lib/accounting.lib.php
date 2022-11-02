@@ -274,6 +274,9 @@ function getDefaultDatesForTransfer()
 {
 	global $db, $conf;
 
+	$pastmonth = 0;
+	$pastmonthyear = 0;
+
 	// Period by default on transfer (0: previous month | 1: current month | 2: fiscal year)
 	$periodbydefaultontransfer = (empty($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER) ? 0 : $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER);
 	if ($periodbydefaultontransfer == 2) {
@@ -301,7 +304,7 @@ function getDefaultDatesForTransfer()
 			$date_end = dol_get_last_day($year_end, $month_end);
 		}
 	} elseif ($periodbydefaultontransfer == 1) {
-		$year_current = strftime("%Y", dol_now());
+		$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 		$pastmonth = strftime("%m", dol_now());
 		$pastmonthyear = $year_current;
 		if ($pastmonth == 0) {
@@ -309,7 +312,7 @@ function getDefaultDatesForTransfer()
 			$pastmonthyear--;
 		}
 	} else {
-		$year_current = strftime("%Y", dol_now());
+		$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 		$pastmonth = strftime("%m", dol_now()) - 1;
 		$pastmonthyear = $year_current;
 		if ($pastmonth == 0) {

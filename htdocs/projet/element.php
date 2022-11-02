@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
 if (isModEnabled("propal")) {
@@ -62,7 +62,7 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 if (isModEnabled('contrat')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 if (isModEnabled("expedition")) {
@@ -77,14 +77,14 @@ if (isModEnabled('expensereport')) {
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
-if (!empty($conf->don->enabled)) {
+if (isModEnabled('don')) {
 	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 }
 if (!empty($conf->loan->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 }
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 }
 if (isModEnabled('tax')) {
@@ -99,7 +99,7 @@ if (!empty($conf->salaries->enabled)) {
 if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
-if (!empty($conf->mrp->enabled)) {
+if (isModEnabled('mrp')) {
 	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 }
 
@@ -114,7 +114,7 @@ if (isModEnabled('commande')) {
 if (isModEnabled("propal")) {
 	$langs->load("propal");
 }
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	$langs->load("interventions");
 }
 if (isModEnabled('deplacement')) {
@@ -123,7 +123,7 @@ if (isModEnabled('deplacement')) {
 if (isModEnabled('expensereport')) {
 	$langs->load("trips");
 }
-if (!empty($conf->don->enabled)) {
+if (isModEnabled('don')) {
 	$langs->load("donations");
 }
 if (!empty($conf->loan->enabled)) {
@@ -132,7 +132,7 @@ if (!empty($conf->loan->enabled)) {
 if (!empty($conf->salaries->enabled)) {
 	$langs->load("salaries");
 }
-if (!empty($conf->mrp->enabled)) {
+if (isModEnabled('mrp')) {
 	$langs->load("mrp");
 }
 if (isModEnabled('eventorganization')) {
@@ -218,7 +218,7 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $object->title;
 // Thirdparty
 if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
 }
 $morehtmlref .= '</div>';
 
@@ -307,8 +307,15 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	print '</td></tr>';
 }
 
-// Date start - end
-print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+// Budget
+print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+if (strcmp($object->budget_amount, '')) {
+	print '<span class="amount">'.price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
+}
+print '</td></tr>';
+
+// Date start - end project
+print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 $start = dol_print_date($object->date_start, 'day');
 print ($start ? $start : '?');
 $end = dol_print_date($object->date_end, 'day');
@@ -316,13 +323,6 @@ print ' - ';
 print ($end ? $end : '?');
 if ($object->hasDelay()) {
 	print img_warning("Late");
-}
-print '</td></tr>';
-
-// Budget
-print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-if (strcmp($object->budget_amount, '')) {
-	print '<span class="amount">'.price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
 }
 print '</td></tr>';
 
@@ -388,7 +388,7 @@ $listofreferent = array(
 	'lang'=>'propal',
 	'buttonnew'=>'AddProp',
 	'testnew'=>$user->rights->propal->creer,
-	'test'=>$conf->propal->enabled && $user->rights->propale->lire),
+	'test'=>$conf->propal->enabled && $user->rights->propal->lire),
 'order'=>array(
 	'name'=>"CustomersOrders",
 	'title'=>"ListOrdersAssociatedProject",
@@ -716,7 +716,7 @@ if (!$showdatefilter) {
 
 $langs->loadLangs(array("suppliers", "bills", "orders", "proposals", "margins"));
 
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	$langs->load('stocks');
 }
 

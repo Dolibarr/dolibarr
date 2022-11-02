@@ -68,6 +68,8 @@ function partnershipAdminPrepareHead()
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'partnership');
 
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'partnership', 'remove');
+
 	return $head;
 }
 
