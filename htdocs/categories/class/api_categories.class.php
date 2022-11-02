@@ -57,7 +57,8 @@ class Categories extends DolibarrApi
 		10 => 'actioncomm',
 		11 => 'website_page',
 		12 => 'ticket',
-		13 => 'knowledgemanagement'
+		13 => 'knowledgemanagement',
+		14 => 'supplier_invoice'
 	);
 
 	/**

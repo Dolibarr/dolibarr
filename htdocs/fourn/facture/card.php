@@ -34,9 +34,10 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefournisseur.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
@@ -518,6 +519,8 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
+	} elseif ($action == 'settags' && isModEnabled('categorie') && $usercancreate) {		// Set tags
+		$result = $object->setCategories(GETPOST('categories', 'array'));
 	} elseif ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $usercancreate) {
 		// Convertir en reduc
 		$object->fetch($id);
@@ -1280,6 +1283,13 @@ if (empty($reshook)) {
 			$action = 'create';
 			$_GET['socid'] = $_POST['socid'];
 		} else {
+			if (isModEnabled('categorie')) {
+				$categories = GETPOST('categories', 'array');
+				if (method_exists($object, 'setCategories')) {
+					$object->setCategories($categories);
+				}
+			}
+
 			$db->commit();
 
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
@@ -2469,6 +2479,15 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
+	// Categories
+	if (!empty($conf->categorie->enabled)) {
+		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER_INVOICE, '', 'parent', 64, 0, 1);
+		$arrayselected = GETPOST('categories', 'array');
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print "</td></tr>";
+	}
+
 	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'create');
 	}
@@ -3156,6 +3175,40 @@ if ($action == 'create') {
 				$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'none');
 			}
 			print '</td></tr>';
+		}
+
+		// Tags-Categories
+		if (isModEnabled('categorie')) {
+			print '<tr><td>';
+			print '<table class="nobordernopadding centpercent"><tr><td>';
+			print $langs->trans("Categories");
+			print '<td><td class="right">';
+			if ($usercancreate) {
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id.'&action=edittags&token='.newToken().'">'.img_edit().'</a>';
+			} else {
+				print '&nbsp;';
+			}
+			print '</td></tr></table>';
+			print '</td>';
+			print '<td>';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER_INVOICE, '', 'parent', 64, 0, 1);
+			if ($action == 'edittags') {
+				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
+				print '<input type="hidden" name="action" value="settags">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER_INVOICE);
+				$arrayselected=[];
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
+				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
+				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				print '</form>';
+			} else {
+				print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER_INVOICE, 1);
+			}
+			print "</td></tr>";
 		}
 
 		// Other attributes
