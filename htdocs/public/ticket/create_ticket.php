@@ -148,9 +148,8 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 		// Ensure that contact is active and select first active contact
 		$cid = 0;
 		foreach ($contacts as $key => $contact) {
-			if ($contact->statut !== "1") {
-				$cid = $key + 1;
-			} else {
+			if ((int) $contact->statut == 1) {
+				$cid = $key;
 				break;
 			}
 		}
