@@ -147,7 +147,7 @@ if ($id > 0 && $removeelem > 0) {
 		$tmpobject = new Ticket($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'ticket';
-	} elseif ($type == Categorie::TYPE_INVOICE && $user->rights->projet->creer) {
+	} elseif ($type == Categorie::TYPE_INVOICE && $user->rights->facture->creer) {
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$tmpobject = new Facture($db);
 		$result = $tmpobject->fetch($removeelem);
