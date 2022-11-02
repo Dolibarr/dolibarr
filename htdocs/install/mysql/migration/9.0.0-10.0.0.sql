@@ -407,3 +407,24 @@ ALTER TABLE llx_ticket_extrafields ADD INDEX idx_ticket_extrafields (fk_object);
 
 UPDATE llx_website_page set fk_user_creat = fk_user_modif WHERE fk_user_creat IS NULL and fk_user_modif IS NOT NULL;
 
+ALTER TABLE llx_loan ADD COLUMN fk_periodicity INTEGER NULL;
+
+ALTER TABLE llx_loan ADD COLUMN calc_mode INTEGER NOT NULL DEFAULT 0;
+
+ALTER TABLE llx_loan ADD COLUMN future_value INTEGER NOT NULL DEFAULT 0;
+
+ALTER TABLE llx_loan_schedule ADD CONSTRAINT fk_loan_schedule_fk_loan FOREIGN KEY (fk_loan) REFERENCES llx_loan(rowid) ON DELETE CASCADE;
+
+-- spécifique cpro, cf. plus bas pour la version non spécifique (commentée)
+
+CREATE OR REPLACE VIEW llx_c_periodicity AS SELECT * FROM llx_c_financement_periodicite;
+--  Version non spécifique: create table llx_c_term_duration (
+--    rowid INTEGER AUTO_INCREMENT PRIMARY KEY,
+--    entity int        default 1 not null, --
+--    code   varchar(10)          not null, -- code de périodicité
+--    label  varchar(15)          not null, -- clé de traduction
+--    value  tinyint unsigned     not null, -- durée (en mois) du type de périodicité
+--    active tinyint(1) default 1 not null,
+--    constraint uc_entity_code unique (entity, code),
+--    constraint llx_c_financement_periodicite_ibfk foreign key (entity) references llx_entity (rowid)
+-- ) ENGINE=innodb;

@@ -23,6 +23,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 
 
 /**
@@ -60,6 +61,8 @@ class LoanSchedule extends CommonObject
 	public $amount_capital; // Total amount of payment
 	public $amount_insurance;
 	public $amount_interest;
+
+	public $payment_periodicity; // same as parent loan's Period duration
 
 	/**
 	 * @var int Payment Type ID
@@ -180,7 +183,7 @@ class LoanSchedule extends CommonObject
 			$sql .= " ".price2num($this->amount_capital).",";
 			$sql .= " ".price2num($this->amount_insurance).",";
 			$sql .= " ".price2num($this->amount_interest).",";
-			$sql .= " ".price2num($this->fk_typepayment).", ";
+			$sql.= " ".(int) $this->fk_typepayment.", ";
 			$sql .= " ".((int) $user->id).",";
 			$sql .= " ".((int) $this->fk_bank).")";
 
@@ -189,7 +192,8 @@ class LoanSchedule extends CommonObject
 			if ($resql) {
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_loan");
 			} else {
-				$this->error = $this->db->lasterror();
+				$this->error = __FILE__ . ':' . __LINE__ . ":\n" . $this->db->lasterror() . "\n" . $this->db->lastqueryerror();
+                $this->errors[] = $this->error;
 				$error++;
 			}
 		}
@@ -402,17 +406,16 @@ class LoanSchedule extends CommonObject
 	/**
 	 * Calculate Monthly Payments
 	 *
-	 * @param   double  $capital        Capital
-	 * @param   double  $rate           rate
-	 * @param   int     $nbterm         nb term
-	 * @return  double                  mensuality
+	 * @param   double  $capital            Capital
+	 * @param   double  $rate               rate
+	 * @param   int     $nbPeriods          nb Period
+	 * @return  double  mensuality
 	 */
-	public function calcMonthlyPayments($capital, $rate, $nbterm)
+	public function calcMonthlyPayments($capital, $rate, $nbPeriods)
 	{
-		$result = '';
-
-		if (!empty($capital) && !empty($rate) && !empty($nbterm)) {
-			$result = ($capital * ($rate / 12)) / (1 - pow((1 + ($rate / 12)), ($nbterm * -1)));
+		$result='';
+		if (!empty($capital) && !empty($rate) && !empty($nbPeriods)) {
+			$result = (($capital * ($rate / 12)) / (1 - pow((1 + ($rate / 12)), ($nbPeriods * -1))));
 		}
 
 		return $result;

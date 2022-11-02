@@ -1,0 +1,73 @@
+:root {
+	--transient-highlight-bg-color: yellow;
+}
+
+table.loanschedule {
+	width: 100%;
+}
+
+table.loanschedule col.period {
+	width: 3%;
+}
+
+table.loanschedule col.date {
+	width: 7%;
+}
+
+table.loanschedule col.insurance {
+	width: 11%;
+}
+
+table.loanschedule col.ppmt {
+	width: 11%;
+}
+
+table.loanschedule col.ipmt {
+	width: 11%;
+}
+
+table.loanschedule col.pmt {
+	width: 26%;
+}
+
+table.loanschedule col.fv {
+	width: 27%;
+}
+
+table.loanschedule th, table.loanschedule td {
+	/* par défaut, on centre le contenu de toutes les cellules */
+	text-align: center;
+}
+
+table.loanschedule tr.installment.transient-highlight > td {
+	animation: 1s ease-out 0s 1 highlight_fadeout;
+}
+
+@keyframes highlight_fadeout {
+	0% {
+		background-color: var(--transient-highlight-bg-color);
+	}
+	100% {
+		background-color: unset;
+	}
+}
+
+table.loanschedule span.number,
+table.loanschedule input.number {
+	/*border: solid 0.2px red;*/
+	display: inline-block;
+	text-align: right;
+	padding: 2px 2em;
+	width: 5em;
+}
+
+table.loanschedule input.number:read-only {
+	background-color: unset;
+	border: unset;
+	color: unset;
+}
+
+table.loanschedule td.payment, table.loanschedule th.payment {
+	/* Pour cacher la colonne, il suffit de définir à 'none' la variable */
+	display: var(--payment-column-visibility, table-cell);
+}
