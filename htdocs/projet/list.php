@@ -1008,7 +1008,7 @@ if (!empty($arrayfields['c.assigned']['checked'])) {
 // Opp status
 if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
 	print '<td class="liste_titre nowrap center">';
-	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth100 nowrapoption', 1, 0);
+	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 1, 1, 0, 'maxwidth125 nowrapoption', 1, 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.opp_amount']['checked'])) {
@@ -1267,6 +1267,9 @@ while ($i < $imaxinloop) {
 				print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Project url
 		if (!empty($arrayfields['p.ref']['checked'])) {
@@ -1428,6 +1431,9 @@ while ($i < $imaxinloop) {
 				}
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Opp Status
 		if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
@@ -1612,7 +1618,7 @@ while ($i < $imaxinloop) {
 		$userstatic->gender = $obj->gender;
 
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td class="center tdoverflowmax200">';
+			print '<td class="center tdoverflowmax150">';
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1);
 			} else {
@@ -1672,9 +1678,9 @@ while ($i < $imaxinloop) {
 				print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
-		}
-		if (!$i) {
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		print "</tr>\n";
