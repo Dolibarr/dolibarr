@@ -146,7 +146,7 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 		}
 		$ivseed = dolGetRandomBytes($ivlen);
 
-		$newchain = openssl_encrypt($chain, $ciphering, $key, null, $ivseed);
+		$newchain = openssl_encrypt($chain, $ciphering, $key, 0, $ivseed);
 		return 'dolcrypt:'.$ciphering.':'.$ivseed.':'.$newchain;
 	} else {
 		return $chain;
@@ -180,9 +180,9 @@ function dolDecrypt($chain, $key = '')
 		if (function_exists('openssl_decrypt')) {
 			$tmpexplode = explode(':', $reg[2]);
 			if (!empty($tmpexplode[1]) && is_string($tmpexplode[0])) {
-				$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $key, null, $tmpexplode[0]);
+				$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $key, 0, $tmpexplode[0]);
 			} else {
-				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, null, null);
+				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, 0, null);
 			}
 		} else {
 			$newchain = 'Error function openssl_decrypt() not available';
