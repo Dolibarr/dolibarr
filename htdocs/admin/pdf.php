@@ -174,9 +174,6 @@ if ($action == 'update') {
 	if (GETPOSTISSET('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) {
 		dolibarr_set_const($db, "PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", GETPOST('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
-	if (GETPOSTISSET('MAIN_USE_COMPANY_NAME_OF_CONTACT')) {
-		dolibarr_set_const($db, "MAIN_USE_COMPANY_NAME_OF_CONTACT", GETPOST('MAIN_USE_COMPANY_NAME_OF_CONTACT', 'alpha'), 'chaine', 0, '', $conf->entity);
-	}
 	if (GETPOSTISSET('PDF_USE_A')) {
 		dolibarr_set_const($db, "PDF_USE_A", GETPOST('PDF_USE_A', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
@@ -406,14 +403,6 @@ print '<tr class="oddeven"><td>'.$langs->trans("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_
 if ($conf->use_javascript_ajax) {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("THIRDPARTY_ALIAS"), '2' => $langs->trans("ALIAS_THIRDPARTY"));
 	print $form->selectarray("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", $arrval, getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME'));
-}
-
-print '<tr class="oddeven"><td>'.$langs->trans("MAIN_USE_COMPANY_NAME_OF_CONTACT").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_USE_COMPANY_NAME_OF_CONTACT');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MAIN_USE_COMPANY_NAME_OF_CONTACT", $arrval, $conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT);
 }
 
 print '</table>';
