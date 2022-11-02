@@ -207,7 +207,7 @@ if (empty($reshook) && $action == 'create_ticket' && GETPOST('save', 'alpha')) {
 			$object->fk_soc = $searched_companies[0]->id;
 		}
 
-		if (is_array($contacts) and count($contacts) > 0) {
+		if (is_array($contacts) && count($contacts) > 0) {
 			$object->fk_soc = $contacts[$cid]->socid;
 			$usertoassign = $contacts[$cid]->id;
 		}
