@@ -1171,7 +1171,7 @@ class Societe extends CommonObject
 		}
 
 		// Check for duplicate or mandatory fields defined into setup
-		$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL');
+		$array_to_check = array('IDPROF1', 'IDPROF2', 'IDPROF3', 'IDPROF4', 'IDPROF5', 'IDPROF6', 'EMAIL', 'TVA_INTRA');
 		foreach ($array_to_check as $key) {
 			$keymin = strtolower($key);
 			$i = (int) preg_replace('/[^0-9]/', '', $key);
@@ -1214,6 +1214,14 @@ class Societe extends CommonObject
 						if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0))) {
 							$langs->load("errors");
 							$error++; $this->errors[] = $langs->trans('Email')." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
+						}
+					}
+				} elseif ($key == 'TVA_INTRA') {
+					// Check for unicity
+					if ($vallabel && !empty($conf->global->SOCIETE_VAT_INTRA_UNIQUE)) {
+						if ($this->id_prof_exists($keymin, $vallabel, ($this->id > 0 ? $this->id : 0))) {
+							$langs->load("errors");
+							$error++; $this->errors[] = $langs->trans('VATIntra')." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
 						}
 					}
 				}
