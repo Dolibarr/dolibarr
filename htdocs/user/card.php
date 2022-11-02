@@ -1290,7 +1290,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print "</tr>\n";
 
 	// Date employment
-	print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
+	print '<tr><td>'.$langs->trans("DateOfEmployment").'</td>';
 	print '<td>';
 	print $form->selectDate($dateemployment, 'dateemployment', 0, 0, 1, 'formdateemployment', 1, 1);
 
@@ -2307,25 +2307,25 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
 					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;');
-					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
+					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
 					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;'); // We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, '', false, 1);
+					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} elseif (!($object->socid > 0) && $object->contact_id > 0) {	// internal user with a link to a contact
 					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;'); // We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, '', false, 1);
+					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} else {	// $object->socid is not > 0 here
 					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;'); // We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
+					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 				}
 			}
 			print '</td></tr>';
