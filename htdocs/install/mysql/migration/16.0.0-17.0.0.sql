@@ -211,6 +211,9 @@ ALTER TABLE llx_projet ADD COLUMN location         varchar(255);
 
 ALTER TABLE llx_c_action_trigger MODIFY COLUMN code varchar(128);
 
+ALTER TABLE llx_overwrite_trans DROP INDEX uk_overwrite_trans;
+ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(entity, lang, transkey);
+
 --
 -- List of all managed triggered events (used for trigger agenda automatic events and for notification)
 --
