@@ -332,14 +332,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 			while ($i < $num) {
 				$objp = $db->fetch_object($result);
 
-				$product_static->id = $objp->rowid;
-				$product_static->ref = $objp->ref;
-				$product_static->label = $objp->label;
-				$product_static->type = $objp->fk_product_type;
-				$product_static->entity = $objp->entity;
-				$product_static->status = $objp->tosell;
-				$product_static->status_buy = $objp->tobuy;
-				$product_static->status_batch = $objp->tobatch;
+				$product_static->fetch($objp->rowid);
 
 				$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'read');
 				if ($product_static->isService()) {
@@ -357,46 +350,36 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 					if ($resultd) {
 						$objtp = $db->fetch_object($resultd);
 						if ($objtp && $objtp->label != '') {
-							$objp->label = $objtp->label;
+							$product_static->label = $objtp->label;
 						}
 					}
 				}
-
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall tdoverflowmax100">';
 				print $product_static->getNomUrl(1, '', 16);
 				print "</td>\n";
-				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->label).'">'.dol_escape_htmltag($objp->label).'</td>';
+				print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($product_static->label).'">'.dol_escape_htmltag($product_static->label).'</td>';
 				print '<td title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($db->jdate($objp->datem), 'dayhour', 'tzuserrel')).'">';
 				print dol_print_date($db->jdate($objp->datem), 'day', 'tzuserrel');
 				print "</td>";
 				// Sell price
 				if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-					if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression)) {
-						$product = new Product($db);
-						$product->fetch($objp->rowid);
-						$priceparser = new PriceParser($db);
-						$price_result = $priceparser->parseProduct($product);
-						if ($price_result >= 0) {
-							$objp->price = $price_result;
-						}
-					}
 					print '<td class="nowraponall amount right">';
 					if ($usercancreadprice) {
-						if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') {
-							print price($objp->price_ttc).' '.$langs->trans("TTC");
+						if (isset($product_static->price_base_type) && $product_static->price_base_type == 'TTC') {
+							print price($product_static->price_ttc).' '.$langs->trans("TTC");
 						} else {
-							print price($objp->price).' '.$langs->trans("HT");
+							print price($product_static->price).' '.$langs->trans("HT");
 						}
 					}
 					print '</td>';
 				}
 				print '<td class="right nowrap width25"><span class="statusrefsell">';
-				print $product_static->LibStatut($objp->tosell, 3, 0);
+				print $product_static->LibStatut($product_static->status, 3, 0);
 				print "</span></td>";
 				print '<td class="right nowrap width25"><span class="statusrefbuy">';
-				print $product_static->LibStatut($objp->tobuy, 3, 1);
+				print $product_static->LibStatut($product_static->status_buy, 3, 1);
 				print "</span></td>";
 				print "</tr>\n";
 				$i++;
