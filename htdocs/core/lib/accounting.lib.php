@@ -304,7 +304,7 @@ function getDefaultDatesForTransfer()
 			$date_end = dol_get_last_day($year_end, $month_end);
 		}
 	} elseif ($periodbydefaultontransfer == 1) {
-		$year_current = strftime("%Y", dol_now());
+		$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 		$pastmonth = strftime("%m", dol_now());
 		$pastmonthyear = $year_current;
 		if ($pastmonth == 0) {
@@ -312,7 +312,7 @@ function getDefaultDatesForTransfer()
 			$pastmonthyear--;
 		}
 	} else {
-		$year_current = strftime("%Y", dol_now());
+		$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 		$pastmonth = strftime("%m", dol_now()) - 1;
 		$pastmonthyear = $year_current;
 		if ($pastmonth == 0) {

@@ -368,3 +368,6 @@ ALTER TABLE llx_prelevement_facture_demande RENAME TO llx_prelevement_demande;
 
 ALTER TABLE llx_prelevement ADD COLUMN fk_salary INTEGER NULL AFTER fk_facture_fourn;
 ALTER TABLE llx_prelevement_demande ADD COLUMN fk_salary INTEGER NULL AFTER fk_facture_fourn;
+
+
+ALTER TABLE llx_user ADD COLUMN birth_place varchar(64);
