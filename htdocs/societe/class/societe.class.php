@@ -3604,14 +3604,14 @@ class Societe extends CommonObject
 		}
 
 		 //Verify duplicate entries
-		$sql = "SELECT COUNT(*) as idprof FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$this->db->escape($value)."' AND entity IN (".getEntity('societe').")";
+		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE ".$field." = '".$this->db->escape($value)."' AND entity IN (".getEntity('societe').")";
 		if ($socid) {
 			$sql .= " AND rowid <> ".$socid;
 		}
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$count = $obj->idprof;
+			$count = $obj->nb;
 		} else {
 			$count = 0;
 			print $this->db->error();
