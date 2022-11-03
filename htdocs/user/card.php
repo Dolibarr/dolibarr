@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2021 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
@@ -1434,7 +1434,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<div class="fichehalfleft">';
 
 			print '<div class="underbanner clearboth"></div>';
-			print '<table class="border tableforfield" width="100%">';
+			print '<table class="border tableforfield centpercent">';
 
 			// Login
 			print '<tr><td class="titlefieldmiddle">'.$langs->trans("Login").'</td>';
@@ -1739,9 +1739,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			print "</table>\n";
 
+
 			// Credentials
+			print '<br>';
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="border tableforfield margintable centpercent">';
+			print '<table class="border tableforfield centpercent">';
 			print '<tr class="liste_titre"><td class="liste_titre">';
 			print img_picto('', 'security', 'class="paddingleft pictofixedwidth"').$langs->trans("Credentials");
 			print '</td>';
@@ -1749,7 +1751,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</tr>';
 
 			// Date login validity
-			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';
+			print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("RangeOfLoginValidity").'</td>';
 			print '<td>';
 			if ($object->datestartvalidity) {
 				print '<span class="opacitymedium">'.$langs->trans("FromDate").'</span> ';
@@ -1763,9 +1765,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print "</tr>\n";
 
 			// Password
-			print '<tr><td class="titlefield">'.$langs->trans("Password").'</td>';
-
-			print '<td class="wordbreak">';
 			$valuetoshow = '';
 			if (preg_match('/ldap/', $dolibarr_main_authentication)) {
 				if (!empty($object->ldap_sid)) {
@@ -1785,6 +1784,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (preg_match('/http/', $dolibarr_main_authentication)) {
 				$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("HTTPBasicPassword");
 			}
+			/*
 			if (preg_match('/dolibarr/', $dolibarr_main_authentication)) {
 				if ($object->pass) {
 					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
@@ -1792,15 +1792,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 				} else {
 					if ($user->admin && $user->id == $object->id) {
 						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
-						//$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Crypted").' - </span>';
 						$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
-						// TODO Add a feature to reveal the hash
 						$valuetoshow .= '<!-- Crypted into '.$object->pass_indatabase_crypted.' -->';
 					} else {
-						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
+						$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 					}
 				}
 			}
+			*/
 
 			// Other form for user password
 			$parameters = array('valuetoshow' => $valuetoshow);
@@ -1811,13 +1811,17 @@ if ($action == 'create' || $action == 'adduserldap') {
 				$valuetoshow .= $hookmanager->resPrint; // to add
 			}
 
-			print $valuetoshow;
-			print "</td>";
-			print '</tr>'."\n";
+			if (dol_string_nohtmltag($valuetoshow)) {	// If there is a real visible content to show
+				print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("Password").'</td>';
+				print '<td class="wordbreak">';
+				print $valuetoshow;
+				print "</td>";
+				print '</tr>'."\n";
+			}
 
 			// API key
 			if (!empty($conf->api->enabled) && ($user->id == $id || $user->admin || $user->hasRight("api", "apikey", "generate"))) {
-				print '<tr><td>'.$langs->trans("ApiKey").'</td>';
+				print '<tr class="nooddeven"><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
 				if (!empty($object->api_key)) {
 					print '<span class="opacitymedium">';
@@ -1827,7 +1831,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td></tr>';
 			}
 
-			print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
+			print '<tr class="nooddeven"><td>'.$langs->trans("LastConnexion").'</td>';
 			print '<td>';
 			if ($object->datepreviouslogin) {
 				print dol_print_date($object->datepreviouslogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
@@ -1838,7 +1842,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td>';
 			print "</tr>\n";
 
-			print '</table></div>';
+			print '</table>';
+			print '</div>';
 
 			print '</div>';
 

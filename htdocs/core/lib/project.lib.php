@@ -2451,6 +2451,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 	$arrayidtypeofcontact = array();
 
+	print '<!-- print_projecttasks_array -->';
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
@@ -2650,12 +2651,12 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					$plannedworkload = $objp->planned_workload;
 					$total_plannedworkload += $plannedworkload;
 					if (!in_array('plannedworkload', $hiddenfields)) {
-						print '<td class="right">'.($plannedworkload ?convertSecondToTime($plannedworkload) : '').'</td>';
+						print '<td class="right nowraponall">'.($plannedworkload ?convertSecondToTime($plannedworkload) : '').'</td>';
 					}
 					if (!in_array('declaredprogress', $hiddenfields)) {
 						$declaredprogressworkload = $objp->declared_progess_workload;
 						$total_declaredprogressworkload += $declaredprogressworkload;
-						print '<td class="right">';
+						print '<td class="right nowraponall">';
 						//print $objp->planned_workload.'-'.$objp->declared_progess_workload."<br>";
 						print ($plannedworkload ?round(100 * $declaredprogressworkload / $plannedworkload, 0).'%' : '');
 						print '</td>';
