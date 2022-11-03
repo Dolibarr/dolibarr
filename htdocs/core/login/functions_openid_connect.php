@@ -43,11 +43,9 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 	// Step 1 is done by user: request an authorization code
 
 	if (GETPOSTISSET('username')) {
-
 		// OIDC does not require credentials here: pass on to next auth handler
 		$_SESSION["dol_loginmesg"] = "Not an OpenID Connect flow";
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect not an OIDC flow");
-
 	} elseif (GETPOSTISSET['code']) {
 		$auth_code = GETPOST('code', 'aZ09');
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect code=".$auth_code);
@@ -58,7 +56,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 			'client_id'     => $conf->global->MAIN_AUTHENTICATION_OIDC_CLIENT_ID,
 			'client_secret' => $conf->global->MAIN_AUTHENTICATION_OIDC_CLIENT_SECRET,
 			'code'          => $auth_code,
-                        'redirect_uri'  => $conf->global->MAIN_AUTHENTICATION_OIDC_REDIRECT_URL
+						'redirect_uri'  => $conf->global->MAIN_AUTHENTICATION_OIDC_REDIRECT_URL
 		];
 
 		$token_response = getURLContent($conf->global->MAIN_AUTHENTICATION_OIDC_TOKEN_URL, 'POST', http_build_query($auth_param));
@@ -66,7 +64,6 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 		dol_syslog("functions_openid_connect::check_user_password_openid_connect /token=".print_r($token_response, true), LOG_DEBUG);
 
 		if ($token_content->access_token) {
-
 			// Step 3: retrieve user info using token
 			$userinfo_headers = array('Authorization: Bearer '.$token_content->access_token);
 			$userinfo_response = getURLContent($conf->global->MAIN_AUTHENTICATION_OIDC_USERINFO_URL, 'GET', '', 1, $userinfo_headers);
@@ -96,7 +93,6 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 				// Other user info request error
 				$_SESSION["dol_loginmesg"] = "Userinfo request error (".$userinfo_response['http_code'].")";
 			}
-
 		} elseif ($token_content->error) {
 			// Got token response but content is an error
 			$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (".$token_content->error_description.")";
@@ -107,14 +103,12 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 			// Other token request error
 			$_SESSION["dol_loginmesg"] = "Token request error (".$token_response['http_code'].")";
 		}
-
-        } else {
+	} else {
 		// No code received
 		$_SESSION["dol_loginmesg"] = "Error in OAuth 2.0 flow (no code received)";
-        }
+	}
 
 	dol_syslog("functions_openid_connect::check_user_password_openid_connect END");
 
 	return !empty($login) ? $login : false;
 }
-
