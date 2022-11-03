@@ -3831,6 +3831,26 @@ function isValidPhone($phone)
 
 
 /**
+ * Return first letters of a strings.
+ * Example with nbofchar=1: 'ghi' will return 'g' but 'abc def' will return 'ad'
+ * Example with nbofchar=2: 'ghi' will return 'gh' but 'abc def' will return 'abde'
+ *
+ * @param	string	$s				String to truncate
+ * @param 	int		$nbofchar		Nb of characters to keep
+ * @return	string					Return first chars.
+ */
+function dolGetFirstLetters($s, $nbofchar = 1) {
+	$ret = '';
+	$tmparray = explode(' ', $s);
+	foreach($tmparray as $tmps) {
+		$ret .= dol_substr($tmps, 0, $nbofchar);
+	}
+
+	return $ret;
+}
+
+
+/**
  * Make a strlen call. Works even if mbstring module not enabled
  *
  * @param   string		$string				String to calculate length
