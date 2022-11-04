@@ -283,7 +283,7 @@ class FormAccounting extends Form
 				$out .= '</select>';
 				//if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			} else {
-				$out .= $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code);
+				$out = $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code);
 			}
 		} else {
 			dol_print_error($this->db);
@@ -307,7 +307,7 @@ class FormAccounting extends Form
 		// phpcs:enable
 		$options = array();
 
-		$sql = 'SELECT DISTINCT import_key from '.MAIN_DB_PREFIX.'accounting_bookkeeping';
+		$sql = "SELECT DISTINCT import_key from ".MAIN_DB_PREFIX."accounting_bookkeeping";
 		$sql .= " WHERE entity IN (".getEntity('accountancy').")";
 		$sql .= ' ORDER BY import_key DESC';
 
@@ -439,9 +439,10 @@ class FormAccounting extends Form
 	 * @param int|string    $showempty      Add an empty field
 	 * @param string   		$morecss        More css
 	 * @param string   		$usecache       Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @param string		$labelhtmlname	HTML name of label for autofill of account from name.
 	 * @return string       	   			String with HTML select
 	 */
-	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth250', $usecache = '')
+	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'maxwidth250', $usecache = '', $labelhtmlname = '')
 	{
 		// phpcs:enable
 
@@ -504,7 +505,21 @@ class FormAccounting extends Form
 		}
 
 		// Build select
+		$out = '';
 		$out .= Form::selectarray($htmlname, $aux_account, $selectid, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		//automatic filling if we give the name of the subledger_label input
+		if (!empty($conf->use_javascript_ajax) && !empty($labelhtmlname)) {
+			$out .= '<script>
+				jQuery(document).ready(() => {
+					$("#'.$htmlname.'").on("select2:select", function(e) {
+						var regExp = /\(([^)]+)\)/;
+						const match = regExp.exec(e.params.data.text);
+						$(\'input[name="'.dol_escape_js($labelhtmlname).'"]\').val(match[1]);
+					});
+				});
+
+			</script>';
+		}
 
 		return $out;
 	}

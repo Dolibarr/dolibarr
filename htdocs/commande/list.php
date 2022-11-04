@@ -199,8 +199,8 @@ $arrayfields = array(
 	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>120),
 	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>125),
 	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>130),
-	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position'=>135),
-	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>140),
+	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position'=>135),
+	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position'=>140),
 	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(!empty($conf->expedition->enabled)), 'position'=>990),
 	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)), 'position'=>995),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
@@ -1089,8 +1089,8 @@ if ($resql) {
 	}
 	// Parent company
 	if (!empty($arrayfields['s2.nom']['checked'])) {
-		print '<td class="liste_titre center">';
-		print '<input class="flat searchstring maxwidth75imp" type="text" name="search_parent_name" value="'.dol_escape_htmltag($search_parent_name).'">';
+		print '<td class="liste_titre">';
+		print '<input class="flat maxwidth100" type="text" name="search_parent_name" value="'.dol_escape_htmltag($search_parent_name).'">';
 		print '</td>';
 	}
 	// Town
@@ -1332,7 +1332,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], 's.name_alias', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['s2.nom']['checked'])) {
-		print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER['PHP_SELF'], 's2.nom', '', $param, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre($arrayfields['s2.nom']['label'], $_SERVER['PHP_SELF'], 's2.nom', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['s.town']['checked'])) {
 		print_liste_field_titre($arrayfields['s.town']['label'], $_SERVER["PHP_SELF"], 's.town', '', $param, '', $sortfield, $sortorder);
@@ -1602,7 +1602,7 @@ if ($resql) {
 
 		// Parent company
 		if (!empty($arrayfields['s2.nom']['checked'])) {
-			print '<td class="center tdoverflowmax100">';
+			print '<td class="tdoverflowmax200">';
 			if ($obj->fk_parent > 0) {
 				if (!isset($company_url_list[$obj->fk_parent])) {
 					$companyparent = new Societe($db);
