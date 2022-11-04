@@ -267,6 +267,13 @@ if (empty($reshook)) {
 			$stockLocation = "ent1".$i."_0";
 			$qty = "qtyl".$i;
 
+			// for components of product (virtual products)
+			$children_input_name = '';
+			$objectsrc_line = $objectsrc->lines[$i];
+			if ($objectsrc_line->fk_product > 0) {
+				$children_input_name = $dispatcher_prefix.'children_'.$i;
+			}
+
 			$is_batch_or_serial=0;
 			if (!empty($objectsrc->lines[$i]->fk_product)) {
 				$resultFetch = $product->fetch($objectsrc->lines[$i]->fk_product, '', '', '', 1, 1, 1);
@@ -278,14 +285,6 @@ if (empty($reshook)) {
 
 			// If product need a batch or serial number
 			if (isModEnabled('productbatch') && $objectsrc->lines[$i]->product_tobatch) {
-			// for components of product (virtual products)
-			$children_input_name = '';
-			$objectsrc_line = $objectsrc->lines[$i];
-			if ($objectsrc_line->fk_product > 0) {
-				$children_input_name = $dispatcher_prefix.'children_'.$i;
-			}
-
-			if (isModEnabled('productbatch') && $objectsrc->lines[$i]->product_tobatch) {      // If product need a batch number
 				if (GETPOSTISSET($batch)) {
 					//shipment line with batch-enable product
 					$qty .= '_'.$j;
