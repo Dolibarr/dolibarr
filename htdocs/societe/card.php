@@ -74,7 +74,7 @@ if (isModEnabled('adherent')) {
 if (isModEnabled('categorie')) {
 	$langs->load("categories");
 }
-if (!empty($conf->incoterm->enabled)) {
+if (isModEnabled('incoterm')) {
 	$langs->load("incoterm");
 }
 if (isModEnabled('notification')) {
@@ -537,7 +537,7 @@ if (empty($reshook)) {
 			}
 
 			// Incoterms
-			if (!empty($conf->incoterm->enabled)) {
+			if (isModEnabled('incoterm')) {
 				$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			}
@@ -938,7 +938,7 @@ if (empty($reshook)) {
 	}
 
 	// Set incoterm
-	if ($action == 'set_incoterms' && $user->rights->societe->creer && !empty($conf->incoterm->enabled)) {
+	if ($action == 'set_incoterms' && $user->rights->societe->creer && isModEnabled('incoterm')) {
 		$object->fetch($socid);
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	}
@@ -1812,7 +1812,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Incoterms
-		if (!empty($conf->incoterm->enabled)) {
+		if (isModEnabled('incoterm')) {
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('IncotermLabel', 'incoterm_id', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
@@ -2042,7 +2042,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				//Incoterms
-				if (!empty($conf->incoterm->enabled)) {
+				if (isModEnabled('incoterm')) {
 					$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 					$object->location_incoterms = GETPOST('lcoation_incoterms', 'alpha');
 				}
@@ -2562,7 +2562,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Incoterms
-			if (!empty($conf->incoterm->enabled)) {
+			if (isModEnabled('incoterm')) {
 				print '<tr>';
 					print '<td>'.$form->editfieldkey('IncotermLabel', 'incoterm_id', '', $object, 0).'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
@@ -2935,7 +2935,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
 		if ($object->tva_intra) {
 			$s = '';
-			$s .= dol_print_profids($object->tva_intra, 'VATIntra', $object->country_code, 1);
+			$s .= dol_print_profids($object->tva_intra, 'VAT', $object->country_code, 1);
 			$s .= '<input type="hidden" id="tva_intra" name="tva_intra" maxlength="20" value="'.$object->tva_intra.'">';
 
 			if (empty($conf->global->MAIN_DISABLEVATCHECK) && isInEEC($object)) {
@@ -3084,7 +3084,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		// Incoterms
-		if (!empty($conf->incoterm->enabled)) {
+		if (isModEnabled('incoterm')) {
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans('IncotermLabel').'</td>';
 			if ($action != 'editincoterm' && $user->rights->societe->creer) {
@@ -3285,7 +3285,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Subsidiaries list
-			if (!empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && empty($conf->global->SOCIETE_DISABLE_SHOW_SUBSIDIARIES)) {
+			if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY) && empty($conf->global->SOCIETE_DISABLE_SHOW_SUBSIDIARIES)) {
 				$result = show_subsidiaries($conf, $langs, $db, $object);
 			}
 

@@ -113,11 +113,15 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 		}
 
 		if (!empty($conf->global->SYSLOG_FILE_ONEPERSESSION)) {
-			if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 1) {	// file depend on session key name (Note that session name is same for all users and is not a per user value)
-				$suffixinfilename .= '_'.session_name();
-			}
-			if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 2) {	// file depend on session value sor per user
-				$suffixinfilename .= '_'.session_name().'_'.$_SERVER["REMOTE_ADDR"];
+			if (is_numeric($conf->global->SYSLOG_FILE_ONEPERSESSION)) {
+				if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 1) {	// file depend on instance session key name (Note that session name is same for the instance so for all users and is not a per user value)
+					$suffixinfilename .= '_'.session_name();
+				}
+				if ($conf->global->SYSLOG_FILE_ONEPERSESSION == 2) {	// file depend on instance session key name + ip so nearly per user
+					$suffixinfilename .= '_'.session_name().'_'.$_SERVER["REMOTE_ADDR"];
+				}
+			} else {
+				$suffixinfilename .= '_'.$conf->global->SYSLOG_FILE_ONEPERSESSION;
 			}
 		}
 

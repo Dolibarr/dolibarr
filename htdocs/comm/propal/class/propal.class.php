@@ -1102,6 +1102,7 @@ class Propal extends CommonObject
 		$sql .= ", fk_mode_reglement";
 		$sql .= ", fk_account";
 		$sql .= ", ref_client";
+		$sql .= ", ref_ext";
 		$sql .= ", date_livraison";
 		$sql .= ", fk_shipping_method";
 		$sql .= ", fk_warehouse";
@@ -1136,6 +1137,7 @@ class Propal extends CommonObject
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : 'NULL');
 		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
 		$sql .= ", '".$this->db->escape($this->ref_client)."'";
+		$sql .= ", '".$this->db->escape($this->ref_ext)."'";
 		$sql .= ", ".(empty($delivery_date) ? "NULL" : "'".$this->db->idate($delivery_date)."'");
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
 		$sql .= ", ".($this->warehouse_id > 0 ? $this->warehouse_id : 'NULL');
@@ -1412,7 +1414,7 @@ class Propal extends CommonObject
 							} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 								$prodcustprice = new Productcustomerprice($this->db);
 								$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $objsoc->id);
-								$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+								$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 								if ($result) {
 									// If there is some prices specific to the customer
 									if (count($prodcustprice->lines) > 0) {
@@ -1520,7 +1522,7 @@ class Propal extends CommonObject
 		$sql .= ", p.datep as dp";
 		$sql .= ", p.fin_validite as dfv";
 		$sql .= ", p.date_livraison as delivery_date";
-		$sql .= ", p.model_pdf, p.last_main_doc, p.ref_client, p.extraparams";
+		$sql .= ", p.model_pdf, p.last_main_doc, p.ref_client, ref_ext, p.extraparams";
 		$sql .= ", p.note_private, p.note_public";
 		$sql .= ", p.fk_projet as fk_project, p.fk_statut";
 		$sql .= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
@@ -1572,6 +1574,7 @@ class Propal extends CommonObject
 
 				$this->ref                  = $obj->ref;
 				$this->ref_client           = $obj->ref_client;
+				$this->ref_ext           = $obj->ref_ext;
 				$this->remise               = $obj->remise;
 				$this->remise_percent       = $obj->remise_percent;
 				$this->remise_absolue       = $obj->remise_absolue;
@@ -2107,11 +2110,11 @@ class Propal extends CommonObject
 	 *	Define end validity date
 	 *
 	 *	@param		User	$user        		Object user that modify
-	 *	@param      int		$date_fin_validite	End of validity date
+	 *	@param      int		$date_end_validity	End of validity date
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 if KO, >0 if OK
 	 */
-	public function set_echeance($user, $date_fin_validite, $notrigger = 0)
+	public function set_echeance($user, $date_end_validity, $notrigger = 0)
 	{
 		// phpcs:enable
 		if (!empty($user->rights->propal->creer)) {
@@ -2119,8 +2122,8 @@ class Propal extends CommonObject
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fin_validite = ".($date_fin_validite != '' ? "'".$this->db->idate($date_fin_validite)."'" : 'null');
-			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".self::STATUS_DRAFT;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fin_validite = ".($date_end_validity != '' ? "'".$this->db->idate($date_end_validity)."'" : 'null');
+			$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut = ".((int) self::STATUS_DRAFT);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2132,7 +2135,7 @@ class Propal extends CommonObject
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->fin_validite = $date_fin_validite;
+				$this->fin_validite = $date_end_validity;
 			}
 
 			if (!$notrigger && empty($error)) {

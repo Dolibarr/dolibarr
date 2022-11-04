@@ -143,8 +143,12 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												textarea[key] = item[value];
 											});
 										}
+
 										console.log("Return value from GET to the rest of code");
-										return { label: label, value: item.value, id: item.key, disabled: item.disabled,
+										return { label: label,
+												 value: item.value,
+												 id: item.key,
+												 disabled: item.disabled,
 												 update: update,
 												 textarea: textarea,
 												 pbq: item.pbq,
@@ -154,6 +158,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												 pricebasetype: item.pricebasetype,
 												 price_ht: item.price_ht,
 												 price_ttc: item.price_ttc,
+												 price_unit_ht: item.price_unit_ht,
+												 price_unit_ht_locale: item.price_unit_ht_locale,
 												 description : item.description,
 												 ref_customer: item.ref_customer,
 												 tva_tx: item.tva_tx }
@@ -173,6 +179,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 
 							// For supplier price and customer when price by quantity is off
 							$("#'.$htmlnamejquery.'").attr("data-up", ui.item.price_ht);
+							$("#'.$htmlnamejquery.'").attr("data-up-locale", ui.item.price_unit_ht_locale);
 							$("#'.$htmlnamejquery.'").attr("data-base", ui.item.pricebasetype);
 							$("#'.$htmlnamejquery.'").attr("data-qty", ui.item.qty);
 							$("#'.$htmlnamejquery.'").attr("data-discount", ui.item.discount);
@@ -191,7 +198,11 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 		';
 	}
 	$script .= '
+							// A new value has been selected, we trigger the handlers on #htmlnamejquery
+							console.log("Trigger changes on #'.$htmlnamejquery.'");
 							$("#'.$htmlnamejquery.'").val(ui.item.id).trigger("change");	// Select new value
+
+							// Complementary actions
 
     						// Disable an element
     						if (options.option_disabled) {
@@ -224,7 +235,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 
     						// Update an input
     						if (ui.item.update) {
-    							console.log("Make action update on each ui.item.update")
+    							console.log("Make action update on each ui.item.update (if there is)")
     							// loop on each "update" fields
     							$.each(ui.item.update, function(key, value) {
 									console.log("Set value "+value+" into #"+key);
@@ -232,7 +243,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     							});
     						}
     						if (ui.item.textarea) {
-    							console.log("Make action textarea on each ui.item.textarea")
+    							console.log("Make action textarea on each ui.item.textarea (if there is)")
     							$.each(ui.item.textarea, function(key, value) {
     								if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key] != "undefined") {
     									CKEDITOR.instances[key].setData(value);
@@ -644,35 +655,41 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
  *  This is called when MAIN_DIRECT_STATUS_UPDATE is set and it use tha ajax service objectonoff.php
  *
  *  @param  Object  $object     Object to set
- *  @param  string  $code       Name of constant : status or status_buy for product by example
+ *  @param  string  $code       Name of property in object : 'status' or 'status_buy' for product by example
  *  @param  string  $field      Name of database field : 'tosell' or 'tobuy' for product by example
  *  @param  string  $text_on    Text if on
  *  @param  string  $text_off   Text if off
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  *  @param	string	$morecss	More CSS
+ *  @param	string	$htmlname	Name of HTML component. Keep '' or use a different value if you need to use this component several time on same page for same property.
  *  @return string              html for button on/off
  */
-function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array(), $morecss = '')
+function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array(), $morecss = '', $htmlname = '')
 {
 	global $langs;
+
+	if (empty($htmlname)) {
+		$htmlname = $code;
+	}
 
 	$out = '<script>
         $(function() {
             var input = '.json_encode($input).';
 
             // Set constant
-            $("#set_'.$code.'_'.$object->id.'").click(function() {
+            $("#set_'.$htmlname.'_'.$object->id.'").click(function() {
+				console.log("Click managed by ajax_object_onoff");
                 $.get( "'.DOL_URL_ROOT.'/core/ajax/objectonoff.php", {
                     action: \'set\',
-                    field: \''.$field.'\',
+                    field: \''.dol_escape_js($field).'\',
                     value: \'1\',
-                    element: \''.$object->element.'\',
+                    element: \''.dol_escape_js($object->element).'\',
                     id: \''.$object->id.'\',
-					token: \''.newToken().'\'
+					token: \''.currentToken().'\'
                 },
                 function() {
-                    $("#set_'.$code.'_'.$object->id.'").hide();
-                    $("#del_'.$code.'_'.$object->id.'").show();
+                    $("#set_'.$htmlname.'_'.$object->id.'").hide();
+                    $("#del_'.$htmlname.'_'.$object->id.'").show();
                     // Enable another element
                     if (input.disabled && input.disabled.length > 0) {
                         $.each(input.disabled, function(key,value) {
@@ -692,18 +709,19 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
             });
 
             // Del constant
-            $("#del_'.$code.'_'.$object->id.'").click(function() {
+            $("#del_'.$htmlname.'_'.$object->id.'").click(function() {
+				console.log("Click managed by ajax_object_onoff");
                 $.get( "'.DOL_URL_ROOT.'/core/ajax/objectonoff.php", {
                     action: \'set\',
-                    field: \''.$field.'\',
+                    field: \''.dol_escape_js($field).'\',
                     value: \'0\',
-                    element: \''.$object->element.'\',
+                    element: \''.dol_escape_js($object->element).'\',
                     id: \''.$object->id.'\',
-					token: \''.newToken().'\'
+					token: \''.currentToken().'\'
                 },
                 function() {
-                    $("#del_'.$code.'_'.$object->id.'").hide();
-                    $("#set_'.$code.'_'.$object->id.'").show();
+                    $("#del_'.$htmlname.'_'.$object->id.'").hide();
+                    $("#set_'.$htmlname.'_'.$object->id.'").show();
                     // Disable another element
                     if (input.disabled && input.disabled.length > 0) {
                         $.each(input.disabled, function(key,value) {
@@ -723,8 +741,8 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
             });
         });
     </script>';
-	$out .= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_off), 'switch_off').'</span>';
-	$out .= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_on), 'switch_on').'</span>';
+	$out .= '<span id="set_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_off), 'switch_off').'</span>';
+	$out .= '<span id="del_'.$htmlname.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_on), 'switch_on').'</span>';
 
 	return $out;
 }

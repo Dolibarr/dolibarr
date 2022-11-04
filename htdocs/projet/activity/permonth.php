@@ -524,7 +524,7 @@ if (count($tasksarray) > 0) {
 
 	// Calculate total for all tasks
 	$listofdistinctprojectid = array(); // List of all distinct projects
-	if (is_array($tasksarraywithoutfilter) && count($tasksarraywithoutfilter)) {
+	if (!empty($tasksarraywithoutfilter) && is_array($tasksarraywithoutfilter) && count($tasksarraywithoutfilter)) {
 		foreach ($tasksarraywithoutfilter as $tmptask) {
 			$listofdistinctprojectid[$tmptask->fk_project] = $tmptask->fk_project;
 		}

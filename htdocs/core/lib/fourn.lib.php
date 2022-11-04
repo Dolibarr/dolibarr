@@ -58,7 +58,7 @@ function facturefourn_prepare_head($object)
 	if (!empty($conf->paymentbybanktransfer->enabled)) {
 		$nbStandingOrders = 0;
 		$sql = "SELECT COUNT(pfd.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 		$sql .= " WHERE pfd.fk_facture_fourn = ".((int) $object->id);
 		$sql .= " AND pfd.ext_payment_id IS NULL";
 		$resql = $db->query($sql);

@@ -127,18 +127,22 @@ class Product extends CommonObject
 	public $type = self::TYPE_PRODUCT;
 
 	/**
-	 * Selling price
+	 * Selling price without tax
 	 *
 	 * @var float
 	 */
-	public $price; // Price net
+	public $price;
+
+	public $price_formated;			// used by takepos/ajax/ajax.php
 
 	/**
-	 * Price with tax
+	 * Selling price with tax
 	 *
 	 * @var float
 	 */
 	public $price_ttc;
+
+	public $price_ttc_formated;		// used by takepos/ajax/ajax.php
 
 	/**
 	 * Minimum price net
@@ -1872,7 +1876,7 @@ class Product extends CommonObject
 
 			$filter = array('t.fk_product' => $this->id, 't.fk_soc' => $thirdparty_buyer->id);
 
-			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
 					$pu_ht = price($prodcustprice->lines[0]->price);
@@ -3525,7 +3529,7 @@ class Product extends CommonObject
 		global $db, $conf, $user, $hookmanager;
 
 		$sql = "SELECT COUNT(DISTINCT f.fk_soc) as nb_customers, COUNT(DISTINCT f.rowid) as nb,";
-		$sql .= " COUNT(fd.rowid) as nb_rows, SUM('fd.qty') as qty";
+		$sql .= " COUNT(fd.rowid) as nb_rows, SUM(fd.qty) as qty";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facturedet_rec as fd";
 		$sql .= ", ".MAIN_DB_PREFIX."facture_rec as f";
 		$sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -4871,7 +4875,7 @@ class Product extends CommonObject
 		$sql .= " AND pa.fk_product_fils <> ".((int) $id); // This should not happens, it is to avoid infinite loop if it happens
 		$sql.= " ORDER BY pa.rang";
 
-		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level. ' parents='.implode(',', $parents), LOG_DEBUG);
+		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level. ' parents='.(is_array($parents)?implode(',', $parents):$parents), LOG_DEBUG);
 
 		if ($level == 1) {
 			$alreadyfound = array($id=>1); // We init array of found object to start of tree, so if we found it later (should not happened), we stop immediatly
@@ -5562,7 +5566,7 @@ class Product extends CommonObject
 			}
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
-		if (!empty($conf->mrp->enabled)) {
+		if (isModEnabled('mrp')) {
 			$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
@@ -5657,7 +5661,7 @@ class Product extends CommonObject
 		$result = 0;
 
 		$dir = $sdir;
-		if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 			$dir .= '/'.get_exdir($this->id, 2, 0, 0, $this, 'product').$this->id."/photos";
 		} else {
 			$dir .= '/'.get_exdir(0, 0, 0, 0, $this, 'product').dol_sanitizeFileName($this->ref);
@@ -5702,7 +5706,7 @@ class Product extends CommonObject
 		global $conf;
 
 		$dir = $sdir;
-		if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 			$dir .= '/'.get_exdir($this->id, 2, 0, 0, $this, 'product').$this->id."/photos/";
 		} else {
 			$dir .= '/'.get_exdir(0, 0, 0, 0, $this, 'product');

@@ -28,12 +28,12 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
 
 require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';                   // Customer Proposal
-require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';                    // Customer Order
+require_once DOL_DOCUMENT_ROOT .'/commande/class/commande.class.php';                    // Sale Order
 require_once DOL_DOCUMENT_ROOT .'/compta/facture/class/facture.class.php';               // Customer Invoice
 require_once DOL_DOCUMENT_ROOT .'/contact/class/contact.class.php';                      // Contact / Address
 require_once DOL_DOCUMENT_ROOT .'/expedition/class/expedition.class.php';                // Shipping / Delivery
-require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.commande.class.php';           // Supplier Order
-require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.facture.class.php';            // Supplier Invoice
+require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.commande.class.php';           // Purchase Order
+require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.facture.class.php';            // Purchase Invoice
 require_once DOL_DOCUMENT_ROOT .'/projet/class/project.class.php';                       // Project
 require_once DOL_DOCUMENT_ROOT .'/reception/class/reception.class.php';                  // Reception
 require_once DOL_DOCUMENT_ROOT .'/recruitment/class/recruitmentcandidature.class.php';   // Recruiting
@@ -1766,7 +1766,7 @@ class EmailCollector extends CommonObject
 							if ($reg[1] == 'pro') {   // Customer Proposal
 								$objectemail = new Propal($this->db);
 							}
-							if ($reg[1] == 'ord') {   // Customer Order
+							if ($reg[1] == 'ord') {   // Sale Order
 								$objectemail = new Commande($this->db);
 							}
 							if ($reg[1] == 'shi') {   // Shipment

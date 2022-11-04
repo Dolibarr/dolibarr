@@ -45,6 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 }
 
 // Load translation files required by the page
@@ -72,17 +73,20 @@ $search_type = GETPOST("search_type", 'int');
 $search_vatrate = GETPOST("search_vatrate", 'alpha');
 $searchCategoryProductOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
-	$searchCategoryProductOperator = GETPOST('search_category_product_operator', 'int');
+	$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 } elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
 	$searchCategoryProductOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
 }
 $searchCategoryProductList = GETPOST('search_category_product_list', 'array');
+$catid = GETPOST('catid', 'int');
+if (!empty($catid) && empty($searchCategoryProductList)) {
+	$searchCategoryProductList = array($catid);
+}
 $search_tosell = GETPOST("search_tosell", 'int');
 $search_tobuy = GETPOST("search_tobuy", 'int');
 $search_country = GETPOST("search_country", 'int');
 $search_state = GETPOST("state_id", 'int');
 $fourn_id = GETPOST("fourn_id", 'int');
-$catid = GETPOST('catid', 'int');
 $search_tobatch = GETPOST("search_tobatch", 'int');
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell", 'alpha');
 $search_accountancy_code_sell_intra = GETPOST("search_accountancy_code_sell_intra", 'alpha');
@@ -296,6 +300,7 @@ if ($search_type == '0') {
 	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
 }
 
+
 /*
  * Actions
  */
@@ -306,7 +311,6 @@ if (GETPOST('cancel', 'alpha')) {
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
-
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -439,9 +443,6 @@ if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as ef on (p.rowid = ef.fk_object)";
 }
-if (!empty($searchCategoryProductList) || !empty($catid)) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
-}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 // multilang
 if (getDolGlobalInt('MAIN_MULTILANGS')) {
@@ -454,7 +455,6 @@ if (isModEnabled('variants') && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECH
 if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units cu ON cu.rowid = p.fk_unit";
 }
-
 
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($sall) {
@@ -500,34 +500,32 @@ if ($search_vatrate) {
 if (dol_strlen($canvas) > 0) {
 	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 }
-if ($catid > 0) {
-	$sql .= " AND cp.fk_categorie = ".((int) $catid);
-}
-if ($catid == -2) {
-	$sql .= " AND cp.fk_categorie IS NULL";
-}
-$searchCategoryProductSqlList = array();
-if ($searchCategoryProductOperator == 1) {
+// Search for tag/category ($searchCategoryProductList is an array of ID)
+if (!empty($searchCategoryProductList)) {
+	$searchCategoryProductSqlList = array();
+	$listofcategoryid = '';
 	foreach ($searchCategoryProductList as $searchCategoryProduct) {
 		if (intval($searchCategoryProduct) == -2) {
-			$searchCategoryProductSqlList[] = "cp.fk_categorie IS NULL";
+			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE p.rowid = ck.fk_product)";
 		} elseif (intval($searchCategoryProduct) > 0) {
-			$searchCategoryProductSqlList[] = "cp.fk_categorie = ".$db->escape($searchCategoryProduct);
+			if ($searchCategoryProductOperator == 0) {
+				$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE p.rowid = ck.fk_product AND ck.fk_categorie = ".((int) $searchCategoryProduct).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProduct);
+			}
 		}
 	}
-	if (!empty($searchCategoryProductSqlList)) {
-		$sql .= " AND (".implode(' OR ', $searchCategoryProductSqlList).")";
+	if ($listofcategoryid) {
+		$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE p.rowid = ck.fk_product AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
 	}
-} else {
-	foreach ($searchCategoryProductList as $searchCategoryProduct) {
-		if (intval($searchCategoryProduct) == -2) {
-			$searchCategoryProductSqlList[] = "cp.fk_categorie IS NULL";
-		} elseif (intval($searchCategoryProduct) > 0) {
-			$searchCategoryProductSqlList[] = "p.rowid IN (SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product WHERE fk_categorie = ".((int) $searchCategoryProduct).")";
+	if ($searchCategoryProductOperator == 1) {
+		if (!empty($searchCategoryProductSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryProductSqlList).")";
 		}
-	}
-	if (!empty($searchCategoryProductSqlList)) {
-		$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
+	} else {
+		if (!empty($searchCategoryProductSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
+		}
 	}
 }
 if ($fourn_id > 0) {
@@ -560,7 +558,6 @@ if ($search_accountancy_code_buy_intra) {
 if ($search_accountancy_code_buy_export) {
 	$sql .= natural_search($alias_product_perentity . '.accountancy_code_buy_export', $search_accountancy_code_buy_export);
 }
-
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -693,7 +690,6 @@ if ($resql) {
 	if ($fourn_id > 0) {
 		$param .= "&fourn_id=".urlencode($fourn_id);
 	}
-	//if ($seach_categ) $param.=($search_categ?"&search_categ=".urlencode($search_categ):"");
 	if ($show_childproducts) {
 		$param .= ($show_childproducts ? "&search_show_childproducts=".urlencode($show_childproducts) : "");
 	}
@@ -744,11 +740,12 @@ if ($resql) {
 	if ($user->rights->{$rightskey}->creer) {
 		$arrayofmassactions['switchonsalestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnSaleStatus");
 		$arrayofmassactions['switchonpurchasestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnPurchaseStatus");
+		$arrayofmassactions['preupdateprice'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("UpdatePrice");
 	}
 	if (isModEnabled('category') && $user->rights->{$rightskey}->creer) {
 		$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 	}
-	if (in_array($massaction, array('presend', 'predelete','preaffecttag', 'edit_extrafields'))) {
+	if (in_array($massaction, array('presend', 'predelete','preaffecttag', 'edit_extrafields', 'preupdateprice'))) {
 		$arrayofmassactions = array();
 	}
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -826,14 +823,9 @@ if ($resql) {
 
 	// Filter on categories
 	$moreforfilter = '';
-	if (isModEnabled('categorie') && $user->rights->categorie->lire) {
-		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
-		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
-		$categoriesProductArr[-2] = '- '.$langs->trans('NotCategorized').' -';
-		$moreforfilter .= Form::multiselectarray('search_category_product_list', $categoriesProductArr, $searchCategoryProductList, 0, 0, 'minwidth300');
-		$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_product_operator" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/><label class="none valignmiddle" for="search_category_product_operator">'.$langs->trans('UseOrOperatorForCategories').'</label>';
-		$moreforfilter .= '</div>';
+	if (isModEnabled('categorie') && $user->hasRight('categorie', 'read')) {
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductOperator ? $searchCategoryProductOperator : 0);
 	}
 
 	//Show/hide child products. Hidden by default
@@ -1388,6 +1380,9 @@ if ($resql) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Ref
 		if (!empty($arrayfields['p.rowid']['checked'])) {
@@ -1916,7 +1911,7 @@ if ($resql) {
 		// Status (to sell)
 		if (!empty($arrayfields['p.tosell']['checked'])) {
 			print '<td class="center nowrap">';
-			if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+			if (!empty($conf->use_javascript_ajax) && $user->hasRight("produit", "creer") && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 				print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 			} else {
 				print $product_static->LibStatut($obj->tosell, 5, 0);
@@ -1929,7 +1924,7 @@ if ($resql) {
 		// Status (to buy)
 		if (!empty($arrayfields['p.tobuy']['checked'])) {
 			print '<td class="center nowrap">';
-			if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+			if (!empty($conf->use_javascript_ajax) && $user->hasRight("produit", "creer") && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 				print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 			} else {
 				print $product_static->LibStatut($obj->tobuy, 5, 1);
@@ -1951,9 +1946,9 @@ if ($resql) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
-		}
-		if (!$i) {
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		print "</tr>\n";

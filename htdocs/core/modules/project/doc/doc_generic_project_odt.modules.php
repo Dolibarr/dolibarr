@@ -67,7 +67,9 @@ if (isModEnabled('deplacement')) {
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
-
+if (isModEnabled('expedition')) {
+	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+}
 
 /**
  *	Class to build documents using ODF templates generator
@@ -82,9 +84,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
-	public $phpmin = array(5, 6);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -941,7 +943,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListProposalsAssociatedProject",
 						'class' => 'Propal',
 						'table' => 'propal',
-						'test' => $conf->propal->enabled && $user->rights->propale->lire
+						'test' => $conf->propal->enabled && $user->rights->propal->lire
 					),
 					'order' => array(
 						'title' => "ListOrdersAssociatedProject",

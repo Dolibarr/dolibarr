@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
@@ -259,7 +259,7 @@ if ($resql) {
 			$companystatic->status = $obj->thirdpartystatus;
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			print '<td width="96" class="nobordernopadding nowrap">';
+			print '<td width="96" class="nobordernopadding nowraponall">';
 			print $projectstatic->getNomUrl(1);
 			print '</td>';
 

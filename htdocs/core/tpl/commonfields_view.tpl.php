@@ -91,7 +91,7 @@ foreach ($object->fields as $key => $val) {
 	}
 	print '">';
 	if (empty($val['alwayseditable'])) {
-		if (in_array($val['type'], array('text', 'html'))) {
+		if (preg_match('/^(text|html)/', $val['type'])) {
 			print '<div class="longmessagecut">';
 		}
 		if ($key == 'lang') {
@@ -108,7 +108,7 @@ foreach ($object->fields as $key => $val) {
 			}
 		}
 		//print dol_escape_htmltag($object->$key, 1, 1);
-		if (in_array($val['type'], array('text', 'html'))) {
+		if (preg_match('/^(text|html)/', $val['type'])) {
 			print '</div>';
 		}
 	} else {
@@ -182,7 +182,7 @@ foreach ($object->fields as $key => $val) {
 	$rightpart .= '">';
 
 	if (empty($val['alwayseditable'])) {
-		if (in_array($val['type'], array('text', 'html'))) {
+		if (preg_match('/^(text|html)/', $val['type'])) {
 			$rightpart .= '<div class="longmessagecut">';
 		}
 		if ($key == 'lang') {
@@ -198,7 +198,7 @@ foreach ($object->fields as $key => $val) {
 				$rightpart.= $object->showOutputField($val, $key, $value, '', '', '', 0);
 			}
 		}
-		if (in_array($val['type'], array('text', 'html'))) {
+		if (preg_match('/^(text|html)/', $val['type'])) {
 			$rightpart .= '</div>';
 		}
 	} else {

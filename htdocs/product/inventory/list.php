@@ -270,51 +270,34 @@ foreach ($search as $key => $val) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
-$searchCategoryProductSqlList = array();
-if ($searchCategoryProductOperator == 1) {
-	$existsCategoryProductList = array();
+// Search for tag/category ($searchCategoryProductList is an array of ID)
+if (!empty($searchCategoryProductList)) {
+	$searchCategoryProductSqlList = array();
+	$listofcategoryid = '';
 	foreach ($searchCategoryProductList as $searchCategoryProduct) {
 		if (intval($searchCategoryProduct) == -2) {
-			$sqlCategoryProductNotExists  = " NOT EXISTS (";
-			$sqlCategoryProductNotExists .= " SELECT cp.fk_product";
-			$sqlCategoryProductNotExists .= " FROM ".$db->prefix()."categorie_product AS cp";
-			$sqlCategoryProductNotExists .= " WHERE cp.fk_product = t.fk_product";
-			$sqlCategoryProductNotExists .= " )";
-			$searchCategoryProductSqlList[] = $sqlCategoryProductNotExists;
+			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE p.rowid = ck.fk_product)";
 		} elseif (intval($searchCategoryProduct) > 0) {
-			$existsCategoryProductList[] = $db->escape($searchCategoryProduct);
+			if ($searchCategoryProductOperator == 0) {
+				$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE p.rowid = ck.fk_product AND ck.fk_categorie = ".((int) $searchCategoryProduct).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProduct);
+			}
 		}
 	}
-	if (!empty($existsCategoryProductList)) {
-		$sqlCategoryProductExists = " EXISTS (";
-		$sqlCategoryProductExists .= " SELECT cp.fk_product";
-		$sqlCategoryProductExists .= " FROM ".$db->prefix()."categorie_product AS cp";
-		$sqlCategoryProductExists .= " WHERE cp.fk_product = t.fk_product";
-		$sqlCategoryProductExists .= " AND cp.fk_categorie IN (".$db->sanitize(implode(',', $existsCategoryProductList)).")";
-		$sqlCategoryProductExists .= " )";
-		$searchCategoryProductSqlList[] = $sqlCategoryProductExists;
+	if ($listofcategoryid) {
+		$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE p.rowid = ck.fk_product AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
 	}
-	if (!empty($searchCategoryProductSqlList)) {
-		$sql .= " AND (".implode(' OR ', $searchCategoryProductSqlList).")";
-	}
-} else {
-	foreach ($searchCategoryProductList as $searchCategoryProduct) {
-		if (intval($searchCategoryProduct) == -2) {
-			$sqlCategoryProductNotExists = " NOT EXISTS (";
-			$sqlCategoryProductNotExists .= " SELECT cp.fk_product";
-			$sqlCategoryProductNotExists .= " FROM ".$db->prefix()."categorie_product AS cp";
-			$sqlCategoryProductNotExists .= " WHERE cp.fk_product = t.fk_product";
-			$sqlCategoryProductNotExists .= " )";
-			$searchCategoryProductSqlList[] = $sqlCategoryProductNotExists;
-		} elseif (intval($searchCategoryProduct) > 0) {
-			$searchCategoryProductSqlList[] = "t.fk_product IN (SELECT fk_product FROM ".$db->prefix()."categorie_product WHERE fk_categorie = ".((int) $searchCategoryProduct).")";
+	if ($searchCategoryProductOperator == 1) {
+		if (!empty($searchCategoryProductSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryProductSqlList).")";
 		}
-	}
-	if (!empty($searchCategoryProductSqlList)) {
-		$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
+	} else {
+		if (!empty($searchCategoryProductSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
+		}
 	}
 }
-//$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks

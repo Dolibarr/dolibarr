@@ -247,7 +247,6 @@ if ($modecompta == "CREANCES-DETTES") {
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
-
 	$builddate = dol_now();
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByProductsAndServices");

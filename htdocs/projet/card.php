@@ -55,13 +55,15 @@ $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 $status = GETPOST('status', 'int');
 $opp_status = GETPOST('opp_status', 'int');
-$opp_percent = price2num(GETPOST('opp_percent', 'alpha'));
-$objcanvas = GETPOST("objcanvas", "alpha");
-$comefromclone = GETPOST("comefromclone", "alpha");
+$opp_percent = price2num(GETPOST('opp_percent', 'alphanohtml'));
+$objcanvas = GETPOST("objcanvas", "alphanohtml");
+$comefromclone = GETPOST("comefromclone", "alphanohtml");
+$date_start = dol_mktime(0, 0, 0, GETPOST('projectstartmonth', 'int'), GETPOST('projectstartday', 'int'), GETPOST('projectstartyear', 'int'));
+$date_end = dol_mktime(0, 0, 0, GETPOST('projectendmonth', 'int'), GETPOST('projectendday', 'int'), GETPOST('projectendyear', 'int'));
+$date_start_event = dol_mktime(GETPOST('date_start_eventhour', 'int'), GETPOST('date_start_eventmin', 'int'), GETPOST('date_start_eventsec', 'int'), GETPOST('date_start_eventmonth', 'int'), GETPOST('date_start_eventday', 'int'), GETPOST('date_start_eventyear', 'int'));
+$date_end_event = dol_mktime(GETPOST('date_end_eventhour', 'int'), GETPOST('date_end_eventmin', 'int'), GETPOST('date_end_eventsec', 'int'), GETPOST('date_end_eventmonth', 'int'), GETPOST('date_end_eventday', 'int'), GETPOST('date_end_eventyear', 'int'));
+$location = GETPOST('location', 'alphanohtml');
 
-if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !GETPOST("cancel"))) {
-	accessforbidden();
-}
 
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
@@ -88,13 +90,14 @@ if ($id > 0 || !empty($ref)) {
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-$date_start = dol_mktime(0, 0, 0, GETPOST('projectstartmonth', 'int'), GETPOST('projectstartday', 'int'), GETPOST('projectstartyear', 'int'));
-$date_end = dol_mktime(0, 0, 0, GETPOST('projectendmonth', 'int'), GETPOST('projectendday', 'int'), GETPOST('projectendyear', 'int'));
-
 // Security check
 $socid = GETPOST('socid', 'int');
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 restrictedArea($user, 'projet', $object->id, 'projet&project');
+
+if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $action != "update" && !GETPOST("cancel"))) {
+	accessforbidden();
+}
 
 $permissiondellink = $user->rights->projet->creer;	// Used by the include of actions_dellink.inc.php
 
@@ -187,6 +190,9 @@ if (empty($reshook)) {
 			$object->date_c = dol_now();
 			$object->date_start      = $date_start;
 			$object->date_end        = $date_end;
+			$object->date_start_event = $date_start_event;
+			$object->date_end_event   = $date_end_event;
+			$object->location        = $location;
 			$object->statut          = $status;
 			$object->opp_status      = $opp_status;
 			$object->opp_percent     = $opp_percent;
@@ -281,6 +287,9 @@ if (empty($reshook)) {
 			$object->public       = GETPOST('public', 'alpha');
 			$object->date_start   = (!GETPOST('projectstart')) ? '' : $date_start;
 			$object->date_end     = (!GETPOST('projectend')) ? '' : $date_end;
+			$object->date_start_event = (!GETPOST('date_start_event')) ? '' : $date_start_event;
+			$object->date_end_event   = (!GETPOST('date_end_event')) ? '' : $date_end_event;
+			$object->location     = $location;
 			if (GETPOSTISSET('opp_amount')) {
 				$object->opp_amount   = price2num(GETPOST('opp_amount', 'alpha'));
 			}
@@ -552,7 +561,9 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	// Ref
 	$suggestedref = (GETPOST("ref") ? GETPOST("ref") : $defaultref);
 	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td class><input class="maxwidth150onsmartphone" type="text" name="ref" value="'.dol_escape_htmltag($suggestedref).'">';
-	print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+	if ($suggestedref) {
+		print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+	}
 	print '</td></tr>';
 
 	// Label
@@ -603,6 +614,23 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print '<input type="checkbox" id="usage_organize_event" name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') ? ' checked="checked"' : '') :'').'"> ';
 			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 			print '<label for="usage_organize_event">'.$form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext).'</label>';
+			print '<script>';
+			print '$( document ).ready(function() {
+					jQuery("#usage_organize_event").change(function() {
+						if (jQuery("#usage_organize_event").prop("checked")) {
+							console.log("Show organize event fields");
+							jQuery(".classuseorganizeevent").show();
+						} else {
+							console.log("Hide organize event fields "+jQuery("#usage_organize_event").prop("checked"));
+							jQuery(".classuseorganizeevent").hide();
+						}
+					});
+					';
+			if (!GETPOST('usage_organize_event')) {
+				print 'jQuery(".classuseorganizeevent").hide();';
+			}
+			print '});';
+			print '</script>';
 		}
 		print '</td>';
 		print '</tr>';
@@ -673,16 +701,6 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	}
 	print '</td></tr>';
 
-	// Date start
-	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print $form->selectDate(($date_start ? $date_start : ''), 'projectstart', 0, 0, 0, '', 1, 0);
-	print '</td></tr>';
-
-	// Date end
-	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print $form->selectDate(($date_end ? $date_end : -1), 'projectend', 0, 0, 0, '', 1, 0);
-	print '</td></tr>';
-
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 		// Opportunity status
 		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityStatus").'</td>';
@@ -707,6 +725,27 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print '<tr><td>'.$langs->trans("Budget").'</td>';
 	print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : '').'"></td>';
 	print '</tr>';
+
+	// Date project
+	print '<tr><td>'.$langs->trans("Date").(isModEnabled('eventorganization') ? ' <span class="classuseorganizeevent">('.$langs->trans("Project").')</span>' : '').'</td><td>';
+	print $form->selectDate(($date_start ? $date_start : ''), 'projectstart', 0, 0, 0, '', 1, 0);
+	print ' <span class="opacitymedium"> '.$langs->trans("to").' </span> ';
+	print $form->selectDate(($date_end ? $date_end : -1), 'projectend', 0, 0, 0, '', 1, 0);
+	print '</td></tr>';
+
+	if (isModEnabled('eventorganization')) {
+		// Date event
+		print '<tr class="classuseorganizeevent"><td>'.$langs->trans("Date").' ('.$langs->trans("Event").')</td><td>';
+		print $form->selectDate(($date_start_event ? $date_start_event : -1), 'date_start_event', 1, 1, 1, '', 1, 0);
+		print ' <span class="opacitymedium"> '.$langs->trans("to").' </span> ';
+		print $form->selectDate(($date_end_event ? $date_end_event : -1), 'date_end_event', 1, 1, 1, '', 1, 0);
+		print '</td></tr>';
+
+		// Location
+		print '<tr class="classuseorganizeevent"><td>'.$langs->trans("Location").'</td>';
+		print '<td><input class="minwidth300 maxwidth500" type="text" name="location" value="'.dol_escape_htmltag($location).'"></td>';
+		print '</tr>';
+	}
 
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
@@ -852,11 +891,12 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
-		print '<select class="flat" name="status">';
+		print '<select class="flat" name="status" id="status">';
 		foreach ($object->statuts_short as $key => $val) {
-			print '<option value="'.$key.'"'.((GETPOSTISSET('status') ?GETPOST('status') : $object->statut) == $key ? ' selected="selected"' : '').'>'.$langs->trans($val).'</option>';
+			print '<option value="'.$key.'"'.((GETPOSTISSET('status') ? GETPOST('status') : $object->statut) == $key ? ' selected="selected"' : '').'>'.$langs->trans($val).'</option>';
 		}
 		print '</select>';
+		print ajax_combobox('status');
 		print '</td></tr>';
 
 		// Usage
@@ -902,6 +942,21 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print '<input type="checkbox" id="usage_organize_event" name="usage_organize_event"'. (GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')) . '"> ';
 				$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 				print '<label for="usage_organize_event">'.$form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext).'</label>';
+				print '<script>';
+				print '$( document ).ready(function() {
+				jQuery("#usage_organize_event").change(function() {
+						if (jQuery("#usage_organize_event").prop("checked")) {
+							console.log("Show organize event fields");
+							jQuery(".classuseorganizeevent").show();
+						} else {
+							console.log("Hide organize event fields "+jQuery("#usage_organize_event").prop("checked"));
+							jQuery(".classuseorganizeevent").hide();
+						}
+					});
+				';
+				print '
+				});';
+				print '</script>';
 			}
 			print '</td></tr>';
 		}
@@ -981,9 +1036,18 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print '</tr>';
 		}
 
-		// Date start
-		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+		// Budget
+		print '<tr><td>'.$langs->trans("Budget").'</td>';
+		print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'">';
+		print $langs->getCurrencySymbol($conf->currency);
+		print '</td>';
+		print '</tr>';
+
+		// Date project
+		print '<tr><td>'.$langs->trans("Date").(isModEnabled('eventorganization') ? ' <span class="classuseorganizeevent">('.$langs->trans("Project").')</span>' : '').'</td><td>';
 		print $form->selectDate($object->date_start ? $object->date_start : -1, 'projectstart', 0, 0, 0, '', 1, 0);
+		print ' <span class="opacitymedium"> '.$langs->trans("to").' </span> ';
+		print $form->selectDate($object->date_end ? $object->date_end : -1, 'projectend', 0, 0, 0, '', 1, 0);
 		print ' &nbsp; &nbsp; <input type="checkbox" class="valignmiddle" id="reportdate" name="reportdate" value="yes" ';
 		if ($comefromclone) {
 			print ' checked ';
@@ -991,17 +1055,19 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '/><label for="reportdate" class="opacitymedium">'.$langs->trans("ProjectReportDate").'</label>';
 		print '</td></tr>';
 
-		// Date end
-		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-		print $form->selectDate($object->date_end ? $object->date_end : -1, 'projectend', 0, 0, 0, '', 1, 0);
-		print '</td></tr>';
+		if (isModEnabled('eventorganization')) {
+			// Date event
+			print '<tr class="classuseorganizeevent"><td>'.$langs->trans("Date").' ('.$langs->trans("Event").')</td><td>';
+			print $form->selectDate(($date_start_event ? $date_start_event : ($object->date_start_event ? $object->date_start_event : -1)), 'date_start_event', 1, 1, 1, '', 1, 0);
+			print ' <span class="opacitymedium"> '.$langs->trans("to").' </span> ';
+			print $form->selectDate(($date_end_event ? $date_end_event : ($object->date_end_event ? $object->date_end_event : -1)), 'date_end_event', 1, 1, 1, '', 1, 0);
+			print '</td></tr>';
 
-		// Budget
-		print '<tr><td>'.$langs->trans("Budget").'</td>';
-		print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'">';
-		print $langs->getCurrencySymbol($conf->currency);
-		print '</td>';
-		print '</tr>';
+			// Location
+			print '<tr class="classuseorganizeevent"><td>'.$langs->trans("Location").'</td>';
+			print '<td><input class="minwidth300 maxwidth500" type="text" name="location" value="'.dol_escape_htmltag(GETPOSTISSET('location') ? GETPOST('location') : $object->location).'"></td>';
+			print '</tr>';
+		}
 
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
@@ -1043,7 +1109,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Title
 		$morehtmlref .= dol_escape_htmltag($object->title);
 		// Thirdparty
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : ';
+		$morehtmlref .= '<br>';
 		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$morehtmlref .= $object->thirdparty->getNomUrl(1, 'project');
 		}
@@ -1143,22 +1209,22 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			*/
 		}
 
-		// Date start - end
-		print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-		$start = dol_print_date($object->date_start, 'day');
-		print ($start ? $start : '?');
-		$end = dol_print_date($object->date_end, 'day');
-		print ' - ';
-		print ($end ? $end : '?');
-		if ($object->hasDelay()) {
-			print img_warning("Late");
-		}
-		print '</td></tr>';
-
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 		if (strcmp($object->budget_amount, '')) {
 			print '<span class="amount">'.price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
+		}
+		print '</td></tr>';
+
+		// Date start - end project
+		print '<tr><td>'.$langs->trans("Dates").'</td><td>';
+		$start = dol_print_date($object->date_start, 'day');
+		print ($start ? $start : '?');
+		$end = dol_print_date($object->date_end, 'day');
+		print ' <span class="opacitymedium">-</span> ';
+		print ($end ? $end : '?');
+		if ($object->hasDelay()) {
+			print img_warning("Late");
 		}
 		print '</td></tr>';
 
@@ -1286,7 +1352,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Send
 			if (empty($user->socid)) {
 				if ($object->statut != Project::STATUS_CLOSED) {
-					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&amp;token='.newToken().'&amp;id='.$object->id.'&amp;mode=init#formmailbeforetitle', '');
+					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 				}
 			}
 
@@ -1306,7 +1372,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Modify
 			if ($object->statut != Project::STATUS_CLOSED && $user->rights->projet->creer) {
 				if ($userWrite > 0) {
-					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&amp;token='.newToken().'&amp;id='.$object->id, '');
+					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '');
 				} else {
 					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Modify'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 				}
@@ -1401,7 +1467,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Delete
 			if ($user->rights->projet->supprimer || ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer)) {
 				if ($userDelete > 0 || ($object->statut == Project::STATUS_DRAFT && $user->rights->projet->creer)) {
-					print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&amp;token='.newToken().'&amp;id='.$object->id, '');
+					print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id, '');
 				} else {
 					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Delete'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 				}

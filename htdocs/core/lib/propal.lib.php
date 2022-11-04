@@ -181,7 +181,7 @@ function getCustomerProposalPieChart($socid = 0)
 
 	$result= '';
 
-	if (empty($conf->propal->enabled) || empty($user->rights->propal->lire)) {
+	if (!isModEnabled('propal') || empty($user->rights->propal->lire)) {
 		return '';
 	}
 

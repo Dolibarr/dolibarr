@@ -494,7 +494,9 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
-
+	if (!isset($note_public)) {
+		$note_public = $object->getDefaultCreateValueFor('note_public');
+	}
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
@@ -504,7 +506,9 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
-
+		if (!isset($note_private)) {
+			$note_private = $object->getDefaultCreateValueFor('note_private');
+		}
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
@@ -672,6 +676,7 @@ if (!empty($id) && $action == 'edit') {
 /*                                                              */
 /* ************************************************************ */
 if (!empty($id) && $action != 'edit') {
+	$formconfirm = "";
 	// Confirmation delete
 	if ($action == 'delete') {
 		$text = $langs->trans("ConfirmDeleteADonation");
@@ -802,7 +807,7 @@ if (!empty($id) && $action != 'edit') {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		$i = 0; $total = 0;
+		$i = 0; $total = 0; $totalpaid = 0;
 		print '<table class="noborder paymenttable centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("RefPayment").'</td>';
@@ -832,7 +837,7 @@ if (!empty($id) && $action != 'edit') {
 			$remaintopay = $object->amount - $totalpaid;
 
 			print "<tr><td colspan=\"3\" class=\"right\">".$langs->trans("RemainderToPay")." :</td>";
-			print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : '').'">'.price($remaintopay)."</td></tr>\n";
+			print '<td class="right'.(!empty($resteapayeraffiche) ? ' amountremaintopay' : '').'">'.price($remaintopay)."</td></tr>\n";
 		}
 		print "</table>";
 		$db->free($resql);
@@ -914,7 +919,7 @@ if (!empty($id) && $action != 'edit') {
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	// Show online payment link
-	$useonlinepayment = (!empty($conf->paypal->enabled) || !empty($conf->stripe->enabled) || !empty($conf->paybox->enabled));
+	$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
 
 	if ($useonlinepayment) { //$object->statut != Facture::STATUS_DRAFT &&
 		print '<br><!-- Link to pay -->'."\n";

@@ -138,7 +138,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 
-		if ($user->rights->propale->lire) {
+		if ($user->rights->propal->lire) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, p.rowid as propalid, p.ref, d.total_ht as amount,";
 			$sql .= " p.ref_client,";
 			$sql .= "p.datep, p.fk_statut as statut, d.rowid, d.qty";
@@ -186,11 +186,10 @@ if ($id > 0 || !empty($ref)) {
 			if ($result) {
 				$num = $db->num_rows($result);
 
+				$option = '&id='.$product->id;
+
 				if ($limit > 0 && $limit != $conf->liste_limit) {
 					$option .= '&limit='.urlencode($limit);
-				}
-				if (!empty($id)) {
-					$option .= '&id='.$product->id;
 				}
 				if (!empty($search_month)) {
 					$option .= '&search_month='.urlencode($search_month);

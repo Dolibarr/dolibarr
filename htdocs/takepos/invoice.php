@@ -703,7 +703,9 @@ if (empty($reshook)) {
 				$pu_ht = price2num($number / (1 + ($line->tva_tx / 100)), 'MU');
 				//Check min price
 				if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($line->remise_percent) / 100) < price2num($price_min)))) {
-					echo $langs->trans("CantBeLessThanMinPrice");
+					$langs->load("products");
+					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
+					//echo $langs->trans("CantBeLessThanMinPrice");
 				} else {
 					if (empty($user->rights->takepos->editlines) || (empty($user->rights->takepos->editorderedlines) && $line->special_code == "4")) {
 						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
@@ -739,7 +741,8 @@ if (empty($reshook)) {
 
 				// Check min price
 				if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($line->subprice) * (1 - price2num($number) / 100) < price2num($price_min)))) {
-					echo $langs->trans("CantBeLessThanMinPrice");
+					$langs->load("products");
+					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
 				} else {
 					if (empty($user->rights->takepos->editlines) || (empty($user->rights->takepos->editorderedlines) && $line->special_code == "4")) {
 						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);

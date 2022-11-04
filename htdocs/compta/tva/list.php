@@ -55,6 +55,7 @@ $search_type = GETPOST('search_type', 'int');
 $search_account				= GETPOST('search_account', 'int');
 $search_amount 				= GETPOST('search_amount', 'alpha');
 $search_status = GETPOST('search_status', 'int');
+$ltt = GETPOST("ltt", "int");
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield					= GETPOST('sortfield', 'aZ09comma');
@@ -278,6 +279,13 @@ if (!empty($search_amount)) {
 if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
 }
+$arrayofmassactions = array(
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+);
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+
+$moreforfilter = '';
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') {
@@ -294,7 +302,7 @@ $url = DOL_URL_ROOT.'/compta/tva/card.php?action=create';
 if (!empty($socid)) {
 	$url .= '&socid='.$socid;
 }
-$newcardbutton = dolGetButtonTitle($langs->trans('NewVATPayment', ($ltt + 1)), '', 'fa fa-plus-circle', $url, '', $user->rights->tax->charges->creer);
+$newcardbutton = dolGetButtonTitle($langs->trans('NewVATPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->tax->charges->creer);
 print_barre_liste($langs->trans("VATDeclarations"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $varpage = empty($contextpage) ? $_SERVER['PHP_SELF'] : $contextpage;
@@ -429,6 +437,9 @@ print '</tr>';
 
 $i = 0;
 $totalarray = array();
+$totalarray['nbfield'] = 0;
+$total = 0;
+
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
@@ -523,7 +534,11 @@ while ($i < min($num, $limit)) {
 			$totalarray['nbfield']++;
 		}
 		$totalarray['pos'][$totalarray['nbfield']] = 'amount';
-		$totalarray['val']['amount'] += $obj->amount;
+		if (empty($totalarray['val']['amount'])) {
+			$totalarray['val']['amount'] = $obj->amount;
+		} else {
+			$totalarray['val']['amount'] += $obj->amount;
+		}
 	}
 
 	if (!empty($arrayfields['t.status']['checked'])) {

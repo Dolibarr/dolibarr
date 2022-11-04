@@ -205,10 +205,23 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'perms'=> ($user->hasRight('projet',  'lire') ? 1 : 0),
 		'module'=>'projet'
 	);
+
+	if ($mode == 'jmobile') {
+		$titleboth = $langs->trans("LeadsOrProjects");
+	} else {
+		$titleboth = $langs->trans("Projects");
+	}
+	if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		$titleboth = $langs->trans("Projects");
+	}
+	if (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+		$titleboth = $langs->trans("Leads");
+	}
+
 	$menu_arr[] = array(
-		'name' => 'Projet',
+		'name' => 'Project',
 		'link' => '/projet/index.php?mainmenu=project&amp;leftmenu=',
-		'title' => (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 2 ? "Leads" : "Projects"),
+		'title' => $titleboth,
 		'level' => 0,
 		'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
 		'target' => $atarget,
@@ -397,7 +410,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	}
 	$menu_arr[] = array(
 		'name' => 'Ticket',
-		'link' => '/ticket/index.php?mainmenu=ticket&amp;leftmenu=',
+		'link' => $link,
 		'title' =>  "Tickets",
 		'level' => 0,
 		'enabled' => $showmode = isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal),
@@ -1102,7 +1115,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			$newmenu->add("/admin/pdf.php?mainmenu=home", $langs->trans("PDF"), 1);
 
 			$warnpicto = '';
-			if (!empty($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
+			if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && empty($conf->global->MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP)) {
 				$langs->load("errors");
 				$warnpicto = img_warning($langs->trans("WarningPHPMailD"));
 			}
@@ -2238,9 +2251,9 @@ function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
 		if (isModEnabled('hrm')) {
 			$langs->load("hrm");
 
-			$newmenu->add("/user/list.php?mainmenu=hrm&leftmenu=hrm&mode=employee", $langs->trans("Employees"), 0, $user->hasRight('user', 'user', 'read'), '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'user', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/user/list.php?mainmenu=hrm&leftmenu=hrm&contextpage=employeelist", $langs->trans("Employees"), 0, $user->hasRight('user', 'user', 'read'), '', $mainmenu, 'hrm', 0, '', '', '', img_picto('', 'user', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/user/card.php?mainmenu=hrm&leftmenu=hrm&action=create&employee=1", $langs->trans("NewEmployee"), 1, $user->hasRight('user', 'user', 'write'));
-			$newmenu->add("/user/list.php?mainmenu=hrm&leftmenu=hrm&mode=employee&contextpage=employeelist", $langs->trans("List"), 1, $user->hasRight('user', 'user', 'read'));
+			$newmenu->add("/user/list.php?mainmenu=hrm&leftmenu=hrm&contextpage=employeelist", $langs->trans("List"), 1, $user->hasRight('user', 'user', 'read'));
 
 			$newmenu->add("/hrm/skill_list.php?mainmenu=hrm&leftmenu=hrm_sm", $langs->trans("SkillsManagement"), 0, $user->hasRight('hrm', 'all', 'read'), '', $mainmenu, 'hrm_sm', 0, '', '', '', img_picto('', 'shapes', 'class="paddingright pictofixedwidth"'));
 
@@ -2392,10 +2405,11 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			$newmenu->add("/adherents/list.php?leftmenu=members", $langs->trans("List"), 1, $user->hasRight('adherent', 'read'));
 			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=-1", $langs->trans("MenuMembersToValidate"), 2, $user->hasRight('adherent', 'read'));
 			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1", $langs->trans("MenuMembersValidated"), 2, $user->hasRight('adherent', 'read'));
-			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1&amp;filter=withoutsubscription", $langs->trans("WithoutSubscription"), 3, $user->hasRight('adherent', 'read'));
+			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1&amp;filter=waitingsubscription", $langs->trans("WaitingSubscription"), 3, $user->hasRight('adherent', 'read'));
 			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1&amp;filter=uptodate", $langs->trans("UpToDate"), 3, $user->hasRight('adherent', 'read'));
 			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=1&amp;filter=outofdate", $langs->trans("OutOfDate"), 3, $user->hasRight('adherent', 'read'));
 			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=0", $langs->trans("MenuMembersResiliated"), 2, $user->hasRight('adherent', 'read'));
+			$newmenu->add("/adherents/list.php?leftmenu=members&amp;statut=-2", $langs->trans("MenuMembersExcluded"), 2, $user->hasRight('adherent', 'read'));
 			$newmenu->add("/adherents/stats/index.php?leftmenu=members", $langs->trans("MenuMembersStats"), 1, $user->hasRight('adherent', 'read'));
 
 			$newmenu->add("/adherents/cartes/carte.php?leftmenu=export", $langs->trans("MembersCards"), 1, $user->hasRight('adherent', 'export'));

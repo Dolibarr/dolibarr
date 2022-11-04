@@ -2074,14 +2074,21 @@ class ExtraFields
 
 				$visibility = 1;
 				if (isset($this->attributes[$object->table_element]['list'][$key])) {		// 'list' is option for visibility
-					$visibility = dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '1');
+					$visibility = intval(dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '1'));
 				}
 
 				$perms = 1;
 				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
 					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1, 1, '1');
 				}
-				if (empty($enabled)) {
+				if (empty($enabled)
+					|| (
+						$onlykey === '@GETPOSTISSET'
+						&& in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst'))
+						&& in_array(abs($enabled), array(2, 5))
+						&& ! GETPOSTISSET('options_' . $key) // Update hidden checkboxes and multiselect only if they are provided
+					)
+				) {
 					continue;
 				}
 				if (empty($visibility)) {
@@ -2209,9 +2216,12 @@ class ExtraFields
 					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
 					if (GETPOSTISSET($dateparamname_start . 'year') && GETPOSTISSET($dateparamname_end . 'year')) {
 						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
+						$dateparamname_end_hour = GETPOST($dateparamname_end . 'hour', 'int') !='-1' ? GETPOST($dateparamname_end . 'hour', 'int') : '23';
+						$dateparamname_end_min = GETPOST($dateparamname_end . 'min', 'int') !='-1' ? GETPOST($dateparamname_end . 'min', 'int') : '59';
+						$dateparamname_end_sec = GETPOST($dateparamname_end . 'sec', 'int') !='-1' ? GETPOST($dateparamname_end . 'sec', 'int') : '59';
 						$value_key = array(
 							'start' => dol_mktime(GETPOST($dateparamname_start . 'hour', 'int'), GETPOST($dateparamname_start . 'min', 'int'), GETPOST($dateparamname_start . 'sec', 'int'), GETPOST($dateparamname_start . 'month', 'int'), GETPOST($dateparamname_start . 'day', 'int'), GETPOST($dateparamname_start . 'year', 'int'), 'tzuserrel'),
-							'end' => dol_mktime(GETPOST($dateparamname_end . 'hour', 'int'), GETPOST($dateparamname_start . 'min', 'int'), GETPOST($dateparamname_start . 'sec', 'int'), GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'), 'tzuserrel')
+							'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOST($dateparamname_end . 'month', 'int'), GETPOST($dateparamname_end . 'day', 'int'), GETPOST($dateparamname_end . 'year', 'int'), 'tzuserrel')
 						);
 					} elseif (GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) {
 						// Clean parameters

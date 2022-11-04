@@ -76,7 +76,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-if (empty($user->rights->fournisseur->lire)) {
+if (empty($user->rights->fournisseur->lire) && (empty($conf->margin->enabled) && !$user->hasRight("margin", "liretous"))) {
 	accessforbidden();
 }
 
@@ -821,7 +821,7 @@ END;
 					print '<td>'.$langs->trans('ProductSupplierDescription').'</td>';
 					print '<td>';
 
-					$doleditor = new DolEditor('supplier_description', $object->desc_supplier, '', 160, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_4, '90%');
+					$doleditor = new DolEditor('supplier_description', $object->desc_supplier, '', 160, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_4, '90%');
 					$doleditor->Create();
 
 					print '</td>';
@@ -919,7 +919,7 @@ END;
 
 			print "</div>\n";
 
-			if ($user->rights->fournisseur->lire) { // Duplicate ? this check is already in the head of this file
+			if ($user->hasRight("fournisseur", "read")) { // Duplicate ? this check is already in the head of this file
 				$param = '';
 				if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 					$param .= '&contextpage='.urlencode($contextpage);

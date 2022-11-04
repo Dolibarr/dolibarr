@@ -13,6 +13,7 @@ BillsStatistics=Customers invoices statistics
 BillsStatisticsSuppliers=Vendors invoices statistics
 DisabledBecauseDispatchedInBookkeeping=Disabled because invoice was dispatched into bookkeeping
 DisabledBecauseNotLastInvoice=Disabled because invoice is not erasable. Some invoices were recorded after this one and it will create holes in the counter.
+DisabledBecauseNotLastSituationInvoice=Disabled because invoice is not erasable. This invoice is not the last one in situation invoice cycle.
 DisabledBecauseNotErasable=Disabled because cannot be erased
 InvoiceStandard=Standard invoice
 InvoiceStandardAsk=Standard invoice

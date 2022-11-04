@@ -521,7 +521,8 @@ class FormMail extends Form
 				))) {
 				// If list of template is empty
 				$out .= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
-				$out .= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>'; // Do not put 'disabled' on 'option' tag, it is already on 'select' and it makes chrome crazy.
+				$out .= '<span class="opacitymedium">'.$langs->trans('SelectMailModel').':</span> ';
+				$out .= '<select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>'; // Do not put 'disabled' on 'option' tag, it is already on 'select' and it makes chrome crazy.
 				if ($user->admin) {
 					$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')), 1);
 				}
@@ -750,7 +751,7 @@ class FormMail extends Form
 			}
 
 			// Ask delivery receipt
-			if (!empty($this->withdeliveryreceipt)) {
+			if (!empty($this->withdeliveryreceipt) && getDolGlobalInt('MAIN_EMAIL_SUPPORT_ACK')) {
 				$out .= $this->getHtmlForDeliveryReceipt();
 			}
 
@@ -1192,7 +1193,7 @@ class FormMail extends Form
 			$out .= "</td></tr>\n";
 		} else {
 			$out = '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-			$out .= '<input size="30" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
+			$out .= '<input class="minwidth200" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
 			$out .= "</td></tr>\n";
 		}
 		return $out;
@@ -1283,7 +1284,7 @@ class FormMail extends Form
 	 *  @param	int			$id				Id of template to get, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
 	 *  @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *  @param	string		$label			Label of template to get
-	 *  @return ModelMail|integer			One instance of ModelMail or -1 if error
+	 *  @return ModelMail|integer			One instance of ModelMail or < 0 if error
 	 */
 	public function getEMailTemplate($dbs, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
 	{
@@ -1394,8 +1395,6 @@ class FormMail extends Form
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
 					} elseif ($type_template == 'actioncomm_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm");
-					} elseif ($type_template == 'thirdparty') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentThirdparty");
 					} elseif (!empty($type_template)) {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");
 					}
@@ -1619,13 +1618,13 @@ class FormMail extends Form
 			//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet in mass emailing
 
 			$onlinepaymentenabled = 0;
-			if (!empty($conf->paypal->enabled)) {
+			if (isModEnabled('paypal')) {
 				$onlinepaymentenabled++;
 			}
-			if (!empty($conf->paybox->enabled)) {
+			if (isModEnabled('paybox')) {
 				$onlinepaymentenabled++;
 			}
-			if (!empty($conf->stripe->enabled)) {
+			if (isModEnabled('stripe')) {
 				$onlinepaymentenabled++;
 			}
 			if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {

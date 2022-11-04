@@ -836,7 +836,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$label = '';
 
-		if ($user->rights->fournisseur->commande->lire) {
+		if ($user->hasRight("fournisseur", "commande", "read")) {
 			$label = '<u class="paddingrightonly">'.$langs->trans("SupplierOrder").'</u>';
 			if (isset($this->statut)) {
 				$label .= ' '.$this->getLibStatut(5);
@@ -1398,7 +1398,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
-		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".setEntity($this);
 		$sql .= ", ".((int) $this->socid);
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
@@ -1832,7 +1832,7 @@ class CommandeFournisseur extends CommonOrder
 						// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
 						$result = $prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', (isset($this->fk_soc) ? $this->fk_soc : $this->socid)); // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
 
-						// If supplier order created from customer order, we take best supplier price
+						// If supplier order created from sales order, we take best supplier price
 						// If $pu (defined previously from pu_ht or pu_ttc) is not defined at all, we also take the best supplier price
 						if ($result > 0 && ($origin == 'commande' || $pu === '')) {
 							$pu = $prod->fourn_pu; // Unit price supplier price set by get_buyprice
@@ -2608,11 +2608,11 @@ class CommandeFournisseur extends CommonOrder
 	}
 
 	/**
-	 *  Update a supplier order from a customer order
+	 *  Update a supplier order from a sales order
 	 *
 	 *  @param  User	$user           User that create
-	 *  @param  int		$idc			Id of supplier order to update
-	 *  @param	int		$comclientid	Id of customer order to use as template
+	 *  @param  int		$idc			Id of purchase order to update
+	 *  @param	int		$comclientid	Id of sale order to use as template
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	public function updateFromCommandeClient($user, $idc, $comclientid)
@@ -3187,26 +3187,28 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
 	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int          				0 if KO, 1 if OK
+	 *  @return     int          				< 0 if KO, 0 = no doc generated, > 0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
 		global $conf, $langs;
 
-		$langs->load("suppliers");
-		$outputlangs->load("products");
-
 		if (!dol_strlen($modele)) {
-			$modele = '';
-			if ($this->model_pdf) {
+			$modele = '';	// No doc template/generation by default
+
+			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (!empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF)) {
 				$modele = $conf->global->COMMANDE_SUPPLIER_ADDON_PDF;
 			}
 		}
+
 		if (empty($modele)) {
 			return 0;
 		} else {
+			$langs->load("suppliers");
+			$outputlangs->load("products");
+
 			$modelpath = "core/modules/supplier_order/doc/";
 			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}

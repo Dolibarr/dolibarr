@@ -429,8 +429,7 @@ class FormOther
 			if (!is_numeric($showempty)) {
 				$textforempty = $showempty;
 			}
-			$moreforfilter .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').'>'.$textforempty.'</option>'."\n";
-			//$moreforfilter .= '<option value="0" '.($moreparamonempty ? $moreparamonempty.' ' : '').' class="optiongrey">'.(is_numeric($showempty) ? '&nbsp;' : $showempty).'</option>'; // Should use -1 to say nothing
+			$moreforfilter .= '<option class="optiongrey" value="'.($showempty < 0 ? $showempty : -1).'"'.($selected == $showempty ? ' selected' : '').' data-html="'.dol_escape_htmltag($textforempty).'">'.dol_escape_htmltag($textforempty).'</option>'."\n";
 		}
 
 		if (is_array($tab_categs)) {
@@ -439,6 +438,7 @@ class FormOther
 				if ($categ['id'] == $selected) {
 					$moreforfilter .= ' selected';
 				}
+				$moreforfilter .= ' data-html="'.dol_escape_htmltag(img_picto('', 'category', 'class="pictofixedwidth" style="color: #'.$categ['color'].'"').dol_trunc($categ['fulllabel'], 50, 'middle')).'"';
 				$moreforfilter .= '>'.dol_trunc($categ['fulllabel'], 50, 'middle').'</option>';
 			}
 		}

@@ -1110,7 +1110,7 @@ if ($step == 4 && $datatoimport) {
 	$height = '32px'; //needs px for css height attribute below
 	$i = 0;
 	$mandatoryfieldshavesource = true;
-	$more = "";
+
 	//var_dump($fieldstarget);
 	//var_dump($optionsall);
 	//exit;
@@ -1176,10 +1176,10 @@ if ($step == 4 && $datatoimport) {
 				$filecolumntoshow = num2Alpha($i);
 			} else {
 				if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromref') {
-					$htmltext .= $langs->trans("DataComeFromIdFoundFromRef", $filecolumn, $langs->transnoentitiesnoconv($entitylang)).'<br>';
+					$htmltext .= $langs->trans("DataComeFromIdFoundFromRef", $langs->transnoentitiesnoconv($entitylang)).'<br>';
 				}
 				if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromcodeid') {
-					$htmltext .= $langs->trans("DataComeFromIdFoundFromCodeId", $filecolumn, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).'<br>';
+					$htmltext .= $langs->trans("DataComeFromIdFoundFromCodeId", $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$tmpcode]['dict'])).'<br>';
 				}
 			}
 			// Source required
@@ -1191,9 +1191,9 @@ if ($step == 4 && $datatoimport) {
 				}
 			} else {
 				if ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromref') {
-					$htmltext .= $langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement", $entitylang).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')' : '').'</b><br>';
+					$htmltext .= $langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement", $entitylang).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.str_replace('"', '', $example).')' : '').'</b><br>';
 				} elseif ($objimport->array_import_convertvalue[0][$tmpcode]['rule'] == 'fetchidfromcodeid') {
-					$htmltext .= $langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary", $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')' : '').'</b><br>';
+					$htmltext .= $langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary", $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$tmpcode]['dict'])).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.str_replace('"', '', $example).')' : '').'</b><br>';
 				} elseif ($example) {
 					$htmltext .= $langs->trans("SourceExample").': <b>'.str_replace('"', '', $example).'</b><br>';
 				}
@@ -1203,7 +1203,8 @@ if ($step == 4 && $datatoimport) {
 				$htmltext .= $langs->trans("FormatControlRule").': <b>'.str_replace('"', '', $objimport->array_import_regex[0][$tmpcode]).'</b><br>';
 			}
 
-			$htmltext .= $langs->trans("Table")."->".$langs->trans("Field").': &nbsp; <b>'.$tablename."->".preg_replace('/^.*\./', '', $tmpcode)."</b>";
+			//var_dump($htmltext);
+			$htmltext .= $langs->trans("InformationOnTargetTables").': &nbsp; <b>'.$tablename."->".preg_replace('/^.*\./', '', $tmpcode)."</b>";
 
 			$labelhtml = $label.' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 1);
 
@@ -1857,7 +1858,7 @@ if ($step == 5 && $datatoimport) {
 				//dol_syslog("line ".$sourcelinenb.' - '.$nboflines.' - '.$excludefirstline.' - '.$endatlinenb);
 				$arrayrecord = $obj->import_read_record();
 				if ($arrayrecord === false) {
-					$arrayofwarnings[$sourcelinenb][0] = array('lib'=>'File has '.$nboflines.' lines. However we reach end of file after record '.$sourcelinenb.'. This may occurs when some records are split onto several lines. Ensure the complete string is delimited correctly when there is a separator character in the text string.', 'type'=>'EOF_RECORD_ON_SEVERAL_LINES');
+					$arrayofwarnings[$sourcelinenb][0] = array('lib'=>'File has '.$nboflines.' lines. However we reach the end of file or an empty line at record '.$sourcelinenb.'. This may occurs when some records are split onto several lines and not correctly delimited by the "Char delimiter", or if there is line with no data on all fields.', 'type'=>'EOF_RECORD_ON_SEVERAL_LINES');
 					$endoffile++;
 					continue;
 				}
@@ -1910,8 +1911,8 @@ if ($step == 5 && $datatoimport) {
 			print '<br>';
 			print '<div class="info">';
 			print '<div class=""><b>'.$langs->trans("ResultOfSimulationNoError").'</b></div>';
-			print $langs->trans("NbInsert", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
-			print $langs->trans("NbUpdate", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br>';
+			print $langs->trans("NbInsertSim", empty($obj->nbinsert) ? 0 : $obj->nbinsert).'<br>';
+			print $langs->trans("NbUpdateSim", empty($obj->nbupdate) ? 0 : $obj->nbupdate).'<br>';
 			print '</div>';
 			print '<br>';
 		} else {
@@ -2242,7 +2243,7 @@ if ($step == 6 && $datatoimport) {
 			$sourcelinenb++;
 			$arrayrecord = $obj->import_read_record();
 			if ($arrayrecord === false) {
-				$arrayofwarnings[$sourcelinenb][0] = array('lib'=>'File has '.$nboflines.' lines. However we reach end of file after record '.$sourcelinenb.'. This may occurs when some records are split onto several lines.', 'type'=>'EOF_RECORD_ON_SEVERAL_LINES');
+				$arrayofwarnings[$sourcelinenb][0] = array('lib'=>'File has '.$nboflines.' lines. However we reach the end of file or an empty line at record '.$sourcelinenb.'. This may occurs when some records are split onto several lines and not correctly delimited by the "Char delimiter", or if there is line with no data on all fields.', 'type'=>'EOF_RECORD_ON_SEVERAL_LINES');
 				$endoffile++;
 				continue;
 			}
