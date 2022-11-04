@@ -2590,7 +2590,7 @@ if ($action == 'create') {
 
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('shipping'));
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array());
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

@@ -2916,7 +2916,7 @@ if ($action == 'create' && $usercancreate) {
 
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+			$linktoelem = $form->showLinkToObjectBlock($object, null, array());
 
 			$compatibleImportElementsList = false;
 			if ($usercancreate
