@@ -369,7 +369,7 @@ $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email,";
 $sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
-$sql .= " st.libelle as stcomm, st.picto as stcomm_picto, p.fk_stcommcontact as stcomm_id, p.fk_prospectcontactlevel,";
+$sql .= " st.libelle as stcomm, st.picto as stcomm_picto, p.fk_stcommcontact as stcomm_id, p.fk_prospectlevel,";
 $sql .= " co.label as country, co.code as country_code";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -411,7 +411,7 @@ if (!empty($userid)) {    // propre au commercial
 	$sql .= " AND p.fk_user_creat=".((int) $userid);
 }
 if ($search_level) {
-	$sql .= natural_search("p.fk_prospectcontactlevel", join(',', $search_level), 3);
+	$sql .= natural_search("p.fk_prospectlevel", join(',', $search_level), 3);
 }
 if ($search_stcomm != '' && $search_stcomm != -2) {
 	$sql .= natural_search("p.fk_stcommcontact", $search_stcomm, 2);
@@ -877,7 +877,7 @@ if (!empty($arrayfields['p.priv']['checked'])) {
 	print '</td>';
 }
 // Prospect level
-if (!empty($arrayfields['p.fk_prospectcontactlevel']['checked'])) {
+if (!empty($arrayfields['p.fk_prospectlevel']['checked'])) {
 	print '<td class="liste_titre center">';
 	print $form->multiselectarray('search_level', $tab_level, $search_level, 0, 0, 'width75', 0, 0, '', '', '', 2);
 	print '</td>';
@@ -987,8 +987,8 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 if (!empty($arrayfields['p.priv']['checked'])) {
 	print_liste_field_titre($arrayfields['p.priv']['label'], $_SERVER["PHP_SELF"], "p.priv", $begin, $param, '', $sortfield, $sortorder, 'center ');
 }
-if (!empty($arrayfields['p.fk_prospectcontactlevel']['checked'])) {
-	print_liste_field_titre($arrayfields['p.fk_prospectcontactlevel']['label'], $_SERVER["PHP_SELF"], "p.fk_prospectcontactlevel", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['p.fk_prospectlevel']['checked'])) {
+	print_liste_field_titre($arrayfields['p.fk_prospectlevel']['label'], $_SERVER["PHP_SELF"], "p.fk_prospectlevel", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['p.fk_stcommcontact']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_stcommcontact']['label'], $_SERVER["PHP_SELF"], "p.fk_stcommcontact", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1042,9 +1042,9 @@ while ($i < min($num, $limit)) {
 	$contactstatic->country_code = $obj->country_code;
 	$contactstatic->photo = $obj->photo;
 
-	$contactstatic->fk_prospectlevel = $obj->fk_prospectcontactlevel;
+	$contactstatic->fk_prospectlevel = $obj->fk_prospectlevel;
 
-	print '<tr class="oddeven">';
+	print '<tr class="oddeven" id="rowid-' . $obj->rowid . '">';
 
 	// ID
 	if (!empty($arrayfields['p.rowid']['checked'])) {
@@ -1196,7 +1196,7 @@ while ($i < min($num, $limit)) {
 		}
 	}
 
-	if (!empty($arrayfields['p.fk_prospectcontactlevel']['checked'])) {
+	if (!empty($arrayfields['p.fk_prospectlevel']['checked'])) {
 		// Prospect level
 		print '<td class="center">';
 		print $contactstatic->getLibProspLevel();
