@@ -370,7 +370,11 @@ if (!empty($searchCategoryContactList)) {
 		if (intval($searchCategoryContact) == -2) {
 			$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member)";
 		} elseif (intval($searchCategoryContact) > 0) {
-			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
+			if ($searchCategoryContactOperator == 0) {
+				$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member AND ck.fk_categorie = ".((int) $searchCategoryContact).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
+			}
 		}
 	}
 	if ($listofcategoryid) {
@@ -516,38 +520,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 llxHeader('', $title, $help_url);
-
-if (GETPOSTISSET("search_status")) {
-	if ($search_status == '-1,1') { // TODO : check this test as -1 == Adherent::STATUS_DRAFT and -2 == Adherent::STATUS_EXLCUDED
-		$title = $langs->trans("MembersListQualified");
-	}
-	if ($search_status == Adherent::STATUS_DRAFT) {
-		$title = $langs->trans("MembersListToValid");
-	}
-	if ($search_status == Adherent::STATUS_VALIDATED && $filter == '') {
-		$title = $langs->trans("MenuMembersValidated");
-	}
-	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'waitingsubscription') {
-		$title = $langs->trans("MembersWithWaitingSubscription");
-	}
-	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'withoutsubscription') {
-		$title = $langs->trans("MembersWithSubscriptionToReceive");
-	}
-	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'uptodate') {
-		$title = $langs->trans("MembersListUpToDate");
-	}
-	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'outofdate') {
-		$title = $langs->trans("MembersListNotUpToDate");
-	}
-	if ((string) $search_status == (string) Adherent::STATUS_RESILIATED) {	// The cast to string is required to have test false when search_status is ''
-		$title = $langs->trans("MembersListResiliated");
-	}
-	if ($search_status == Adherent::STATUS_EXCLUDED) {
-		$title = $langs->trans("MembersListExcluded");
-	}
-} elseif ($action == 'search') {
-	$title = $langs->trans("MembersListQualified");
-}
 
 if ($search_type > 0) {
 	$membertype = new AdherentType($db);
@@ -979,6 +951,7 @@ while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
 	$datefin = $db->jdate($obj->datefin);
+
 	$memberstatic->id = $obj->rowid;
 	$memberstatic->ref = $obj->ref;
 	$memberstatic->civility_id = $obj->civility;
@@ -1095,14 +1068,7 @@ while ($i < min($num, $limit)) {
 	// Nature (Moral/Physical)
 	if (!empty($arrayfields['d.morphy']['checked'])) {
 		print '<td class="center">';
-		$s = '';
-		if ($obj->morphy == 'phy') {
-			$s .= '<span class="customer-back" title="'.$langs->trans("Physical").'">'.dol_substr($langs->trans("Physical"), 0, 1).'</span>';
-		}
-		if ($obj->morphy == 'mor') {
-			$s .= '<span class="vendor-back" title="'.$langs->trans("Moral").'">'.dol_substr($langs->trans("Moral"), 0, 1).'</span>';
-		}
-		print $s;
+		print $memberstatic->getmorphylib('', 2);
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;

@@ -150,6 +150,8 @@ class PriceParser
 			"length" => $product->length,
 			"surface" => $product->surface,
 			"price_min" => $product->price_min,
+			"cost_price" => $product->cost_price,
+			"pmp" => $product->pmp,
 		));
 
 		//Retrieve all extrafield for product and add it to values

@@ -100,7 +100,7 @@ if ($action == 'set_default') {
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($action == 'updateall') {
+} elseif ($action == 'updatemainoptions') {
 	$db->begin();
 	$res1 = $res2 = $res3 = $res4 = $res5 = $res6 = $res7 = 0;
 	$res1 = dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha') ? 0 : 1, 'chaine', 0, '', $conf->entity);
@@ -123,12 +123,42 @@ if ($action == 'set_default') {
 		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
 		$db->commit();
 	}
+} elseif ($action == 'updatememberscards') {
+	$db->begin();
+	$res1 = $res2 = $res3 = $res4 = 0;
+	$res1 = dolibarr_set_const($db, 'ADHERENT_CARD_TYPE', GETPOST('ADHERENT_CARD_TYPE'), 'chaine', 0, '', $conf->entity);
+	$res2 = dolibarr_set_const($db, 'ADHERENT_CARD_HEADER_TEXT', GETPOST('ADHERENT_CARD_HEADER_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res3 = dolibarr_set_const($db, 'ADHERENT_CARD_TEXT', GETPOST('ADHERENT_CARD_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res3 = dolibarr_set_const($db, 'ADHERENT_CARD_TEXT_RIGHT', GETPOST('ADHERENT_CARD_TEXT_RIGHT', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res4 = dolibarr_set_const($db, 'ADHERENT_CARD_FOOTER_TEXT', GETPOST('ADHERENT_CARD_FOOTER_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
+
+	if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0) {
+		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
+		$db->rollback();
+	} else {
+		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
+		$db->commit();
+	}
+} elseif ($action == 'updatememberstickets') {
+	$db->begin();
+	$res1 = $res2 = 0;
+	$res1 = dolibarr_set_const($db, 'ADHERENT_ETIQUETTE_TYPE', GETPOST('ADHERENT_ETIQUETTE_TYPE'), 'chaine', 0, '', $conf->entity);
+	$res2 = dolibarr_set_const($db, 'ADHERENT_ETIQUETTE_TEXT', GETPOST('ADHERENT_ETIQUETTE_TEXT', 'alpha'), 'chaine', 0, '', $conf->entity);
+
+	if ($res1 < 0 || $res2 < 0) {
+		setEventMessages('ErrorFailedToSaveDate', null, 'errors');
+		$db->rollback();
+	} else {
+		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
+		$db->commit();
+	}
 }
 
 // Action to update or add a constant
 if ($action == 'update' || $action == 'add') {
 	$constname = GETPOST('constname', 'alpha');
 	$constvalue = (GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
+
 
 	if (($constname == 'ADHERENT_CARD_TYPE' || $constname == 'ADHERENT_ETIQUETTE_TYPE' || $constname == 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && $constvalue == -1) {
 		$constvalue = '';
@@ -195,10 +225,10 @@ print dol_get_fiche_head($head, 'general', $langs->trans("Members"), -1, 'user')
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="updateall">';
+print '<input type="hidden" name="action" value="updatemainoptions">';
 
 
-// Mains options
+// Main options
 
 print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
 
@@ -293,6 +323,8 @@ print '</form>';
 
 print '<br>';
 
+
+// Document templates for documents generated from member record
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
@@ -431,24 +463,12 @@ print '</div>';
 
 
 
-/*
-TODO Use a global form instead of embeded form into table
+
+// Generation of cards for members
+
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="updateall">';
-*/
-
-/*
- * Edit info of model document
- */
-$constantes = array(
-		'ADHERENT_CARD_TYPE',
-		//'ADHERENT_CARD_BACKGROUND',
-		'ADHERENT_CARD_HEADER_TEXT',
-		'ADHERENT_CARD_TEXT',
-		'ADHERENT_CARD_TEXT_RIGHT',
-		'ADHERENT_CARD_FOOTER_TEXT'
-);
+print '<input type="hidden" name="action" value="updatememberscards">';
 
 print load_fiche_titre($langs->trans("MembersCards"), '', '');
 
@@ -457,15 +477,65 @@ $helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULL
 $helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
 $helptext .= '__YEAR__, __MONTH__, __DAY__';
 
-form_constantes($constantes, 0, $helptext);
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$form->textwithpicto($langs->trans("Value"), $helptext, 1, 'help', '', 0, 2, 'idhelptext').'</td>';
+print "</tr>\n";
+
+// Format of cards page
+print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_TYPE").'</td><td>';
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php'; // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
+$arrayoflabels = array();
+foreach (array_keys($_Avery_Labels) as $codecards) {
+	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
+}
+print $form->selectarray('ADHERENT_CARD_TYPE', $arrayoflabels, getDolGlobalString('ADHERENT_CARD_TYPE') ? getDolGlobalString('ADHERENT_CARD_TYPE') : 'CARD', 1, 0, 0);
+
+print "</td></tr>\n";
+
+// Text printed on top of member cards
+print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_HEADER_TEXT").'</td><td>';
+print '<input type="text" class="flat minwidth300" name="ADHERENT_CARD_HEADER_TEXT" value="'.dol_escape_htmltag(getDolGlobalString('ADHERENT_CARD_HEADER_TEXT')).'">';
+print "</td></tr>\n";
+
+// Text printed on member cards (align on left)
+print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_TEXT").'</td><td>';
+print '<textarea class="flat" name="ADHERENT_CARD_TEXT" cols="50" rows="5" wrap="soft">'."\n";
+print getDolGlobalString('ADHERENT_CARD_TEXT');
+print '</textarea>';
+print "</td></tr>\n";
+
+// Text printed on member cards (align on right)
+print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_TEXT_RIGHT").'</td><td>';
+print '<textarea class="flat" name="ADHERENT_CARD_TEXT_RIGHT" cols="50" rows="5" wrap="soft">'."\n";
+print getDolGlobalString('ADHERENT_CARD_TEXT_RIGHT');
+print '</textarea>';
+print "</td></tr>\n";
+
+// Text printed on bottom of member cards
+print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_FOOTER_TEXT").'</td><td>';
+print '<input type="text" class="flat minwidth300" name="ADHERENT_CARD_FOOTER_TEXT" value="'.dol_escape_htmltag(getDolGlobalString('ADHERENT_CARD_FOOTER_TEXT')).'">';
+print "</td></tr>\n";
+
+print '</table>';
+print '</div>';
+
+print '<div class="center">';
+print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+print '</div>';
+
+print '</form>';
 
 print '<br>';
 
+// Membership address sheet
 
-/*
- * Edit info of model document
- */
-$constantes = array('ADHERENT_ETIQUETTE_TYPE', 'ADHERENT_ETIQUETTE_TEXT');
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updatememberstickets">';
 
 print load_fiche_titre($langs->trans("MembersTickets"), '', '');
 
@@ -474,9 +544,42 @@ $helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULL
 $helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
 $helptext .= '__YEAR__, __MONTH__, __DAY__';
 
-form_constantes($constantes, 0, $helptext);
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$form->textwithpicto($langs->trans("Value"), $helptext, 1, 'help', '', 0, 2, 'idhelptext').'</td>';
+print "</tr>\n";
 
-//print '</form>';
+// Format of labels page
+print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_ETIQUETTE_TYPE").'</td><td>';
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php'; // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
+$arrayoflabels = array();
+foreach (array_keys($_Avery_Labels) as $codecards) {
+	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
+}
+print $form->selectarray('ADHERENT_ETIQUETTE_TYPE', $arrayoflabels, getDolGlobalString('ADHERENT_ETIQUETTE_TYPE') ? getDolGlobalString('ADHERENT_ETIQUETTE_TYPE') : 'CARD', 1, 0, 0);
+
+print "</td></tr>\n";
+
+// Text printed on member address sheets
+print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_ETIQUETTE_TEXT").'</td><td>';
+print '<textarea class="flat" name="ADHERENT_ETIQUETTE_TEXT" cols="50" rows="5" wrap="soft">'."\n";
+print getDolGlobalString('ADHERENT_ETIQUETTE_TEXT');
+print '</textarea>';
+print "</td></tr>\n";
+
+print '</table>';
+print '</div>';
+
+print '<div class="center">';
+print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+print '</div>';
+
+print '</form>';
+
+print '<br>';
 
 print "<br>";
 
