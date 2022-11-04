@@ -270,7 +270,7 @@ if (empty($reshook)) {
 	}
 
 	// Set tags
-    if ($action == 'settags' && isModEnabled('categorie') && $usercancreate) {
+	if ($action == 'settags' && isModEnabled('categorie') && $usercancreate) {
 		$result = $object->setCategories(GETPOST('categories', 'array'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
