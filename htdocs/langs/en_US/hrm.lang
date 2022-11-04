@@ -12,7 +12,7 @@ OpenEtablishment=Open establishment
 CloseEtablishment=Close establishment
 # Dictionary
 DictionaryPublicHolidays=Leave - Public holidays
-DictionaryDepartment=HRM - Department list
+DictionaryDepartment=HRM - Organizational Unit
 DictionaryFunction=HRM - Job positions
 # Module
 Employees=Employees
@@ -26,8 +26,8 @@ HRM_DEFAULT_SKILL_DESCRIPTION=Default description of ranks when skill is created
 deplacement=Shift
 DateEval=Evaluation date
 JobCard=Job card
-JobPosition=Job
-JobsPosition=Jobs
+JobPosition=Job profile
+JobsPosition=Job profiles
 NewSkill=New Skill
 SkillType=Skill type
 Skilldets=List of ranks for this skill
@@ -89,3 +89,4 @@ SkillsExtraFields=Attributs supplémentaires (Compétences)
 JobsExtraFields=Attributs supplémentaires (Emplois)
 EvaluationsExtraFields=Attributs supplémentaires (Evaluations)
 NeedBusinessTravels=Need business travels
+NoDescription=No description

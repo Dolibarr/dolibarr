@@ -27,6 +27,7 @@
  *	\brief      Page to create a direct debit order or a credit transfer order
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -61,6 +62,7 @@ $offset = $limit * $page;
 $hookmanager->initHooks(array('directdebitcreatecard', 'globalcard'));
 
 // Security check
+$socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -71,7 +73,7 @@ if ($type == 'bank-transfer') {
 }
 
 $error = 0;
-
+$option = "";
 
 /*
  * Actions
@@ -284,8 +286,8 @@ if ($nb) {
 
 			if ($type != 'bank-transfer') {
 				print '<select name="format">';
-				print '<option value="FRST"'.(GETPOST('format', 'aZ09') == 'FRST' ? ' selected="selected"' : '').'>'.$langs->trans('SEPAFRST').'</option>';
-				print '<option value="RCUR"'.(GETPOST('format', 'aZ09') == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
+				print '<option value="FRST"'.($format == 'FRST' ? ' selected="selected"' : '').'>'.$langs->trans('SEPAFRST').'</option>';
+				print '<option value="RCUR"'.($format == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
 				print '</select>';
 			}
 			print '<input type="submit" class="butAction" value="'.$title.'"/>';
@@ -346,7 +348,7 @@ if ($type == 'bank-transfer') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 }
 $sql .= " ".MAIN_DB_PREFIX."societe as s,";
-$sql .= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {

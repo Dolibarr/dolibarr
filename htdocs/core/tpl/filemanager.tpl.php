@@ -54,7 +54,9 @@ if ($module == 'medias') {
 	$showroot = 1;
 }
 
-
+if (!isset($section)) {
+	$section = 0;
+}
 
 // Confirm remove file (for non javascript users)
 if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->use_javascript_ajax)) {
@@ -106,12 +108,26 @@ $('#acreatedir').on('click', function() {
 	try{
 		section_dir = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].rel;
 		section = $('.directory.expanded')[$('.directory.expanded').length-1].children[0].id.split('_')[2];
+		catParent = ";
+if ($module == 'ecm') {
+	print "section;";
+} else {
+	print "section_dir.substring(0, section_dir.length - 1);";
+}
+print "
 	} catch{
 		section_dir = '/';
 		section = 0;
+		catParent = ";
+if ($module == 'ecm') {
+	print "section;";
+} else {
+	print "section_dir;";
+}
+print "
 	}
 	console.log('We click to create a new directory, we set current section_dir='+section_dir+' into href url of button acreatedir');
-	$('#acreatedir').attr('href', $('#acreatedir').attr('href')+'&section_dir='+encodeURI(section_dir)+'&section='+encodeURI(section));
+	$('#acreatedir').attr('href', $('#acreatedir').attr('href')+'%26section_dir%3D'+encodeURI(section_dir)+'%26section%3D'+encodeURI(section)+'&section_dir='+encodeURI(section_dir)+'&section='+encodeURI(section)+'&catParent='+encodeURI(catParent));
 	console.log($('#acreatedir').attr('href'));
 });
 $('#agenerateimgwebp').on('click', function() {
@@ -253,7 +269,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
 		// Show the link to "Root"
 		if ($showroot) {
-			print '<tr><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode($pageid).'">';
+			print '<tr class="nooddeven"><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode($pageid).'">';
 			if ($module == 'medias') {
 				print $langs->trans("RootOfMedias");
 			} else {
@@ -262,7 +278,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 			print '</a></div></td></tr>';
 		}
 
-		print '<tr><td>';
+		print '<tr class="nooddeven"><td>';
 
 		// Show filemanager tree (will be filled by a call of ajax /ecm/tpl/enablefiletreeajax.tpl.php, later, that executes ajaxdirtree.php)
 		print '<div id="filetree" class="ecmfiletree"></div>';

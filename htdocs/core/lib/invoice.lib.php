@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2015      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015       Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017      	Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2017       ATM-CONSULTING		<contact@atm-consulting.fr>
  *
@@ -59,7 +59,7 @@ function facture_prepare_head($object)
 	if (!empty($conf->prelevement->enabled)) {
 		$nbStandingOrders = 0;
 		$sql = "SELECT COUNT(pfd.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 		$sql .= " WHERE pfd.fk_facture = ".((int) $object->id);
 		$sql .= " AND pfd.ext_payment_id IS NULL";
 		$resql = $db->query($sql);
@@ -71,6 +71,8 @@ function facture_prepare_head($object)
 		} else {
 			dol_print_error($db);
 		}
+		$langs->load("banks");
+
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.urlencode($object->id);
 		$head[$h][1] = $langs->trans('StandingOrders');
 		if ($nbStandingOrders > 0) {
@@ -84,7 +86,7 @@ function facture_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice', 'add', 'core');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -121,6 +123,8 @@ function facture_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice', 'add', 'external');
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'invoice', 'remove');
 
 	return $head;
@@ -133,7 +137,13 @@ function facture_prepare_head($object)
  */
 function invoice_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('facture');
+	$extrafields->fetch_name_optionals_label('facturedet');
+	$extrafields->fetch_name_optionals_label('facture_rec');
+	$extrafields->fetch_name_optionals_label('facturedet_rec');
 
 	$h = 0;
 	$head = array();
@@ -156,25 +166,41 @@ function invoice_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facture_cust_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsCustomerInvoices");
+	$nbExtrafields = $extrafields->attributes['facture']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facturedet_cust_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$nbExtrafields = $extrafields->attributes['facturedet']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facture_rec_cust_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsCustomerInvoicesRec");
+	$nbExtrafields = $extrafields->attributes['facture_rec']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributesrec';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facturedet_rec_cust_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLinesRec");
+	$nbExtrafields = $extrafields->attributes['facturedet_rec']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributeslinesrec';
 	$h++;
 
-	if ($conf->global->INVOICE_USE_SITUATION) {	// Warning, implementation is seriously bugged and a new one not compatible is expected to become stable
+	if (!empty($conf->global->INVOICE_USE_SITUATION)) {	// Warning, implementation is seriously bugged and a new one not compatible is expected to become stable
 		$head[$h][0] = DOL_URL_ROOT.'/admin/facture_situation.php';
 		$head[$h][1] = $langs->trans("InvoiceSituation");
 		$head[$h][2] = 'situation';
@@ -254,7 +280,9 @@ function supplier_invoice_rec_prepare_head($object)
 function getNumberInvoicesPieChart($mode)
 {
 	global $conf, $db, $langs, $user;
-	if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+	if (($mode == 'customers' && isModEnabled('facture') && !empty($user->rights->facture->lire))
+		|| ($mode = 'suppliers') && (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) && !empty($user->rights->facture->lire)
+		) {
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		$now = date_create(date('Y-m-d', dol_now()));
@@ -749,7 +777,10 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$result .= '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 		$result .= '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
 		$result .= '<td class="right amount">'.price($obj->total_ttc).'</td>';
-		$result .= '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
+
+		// Load amount of existing payment of invoice (needed for complete status)
+		$payment = $objectstatic->getSommePaiement();
+		$result .= '<td class="right">'.$objectstatic->getLibStatut(5, $payment).'</td>';
 
 		$result .= '</tr>';
 
@@ -954,6 +985,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 						$i++;
 						$total += $obj->total_ht;
 						$total_ttc += $obj->total_ttc;
+						$totalam += $obj->am;
 						continue;
 					}
 
@@ -1069,7 +1101,7 @@ function getPurchaseInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 
 	$result = '';
 
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)) {
 		$facstatic = new FactureFournisseur($db);
 
 		$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut as status, ff.type, ff.libelle as label, ff.total_ht, ff.total_tva, ff.total_ttc, ff.paye";

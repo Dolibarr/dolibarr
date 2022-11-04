@@ -24,6 +24,7 @@
  *       \brief      Page of MO referring product
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
@@ -258,11 +259,10 @@ if ($id > 0 || !empty($ref)) {
 		}
 		$db->free($result);
 
+		$option .= '&id='.$product->id;
+
 		if ($limit > 0 && $limit != $conf->liste_limit) {
 			$option .= '&limit='.urlencode($limit);
-		}
-		if (!empty($id)) {
-			$option .= '&id='.$product->id;
 		}
 		if (!empty($search_month)) {
 			$option .= '&search_month='.urlencode($search_month);

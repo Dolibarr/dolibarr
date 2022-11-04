@@ -23,6 +23,7 @@
  *      \brief      Security options setup
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -112,7 +113,7 @@ print '<br>';
 // Upload options
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
+print '<table class="noborder centpercent nomarginbottom">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -128,7 +129,7 @@ if (isset($max)) {
 }
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.htmlentities($conf->global->MAIN_UPLOAD_DOC).'"> '.$langs->trans("Kb");
+print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.dol_escape_htmltag($conf->global->MAIN_UPLOAD_DOC).'"> '.$langs->trans("Kb");
 print '</td>';
 print '</tr>';
 
@@ -138,7 +139,7 @@ print '<td>'.$langs->trans("UMask").'</td><td class="right">';
 print $form->textwithpicto('', $langs->trans("UMaskExplanation"));
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.htmlentities($conf->global->MAIN_UMASK).'">';
+print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.dol_escape_htmltag($conf->global->MAIN_UMASK).'">';
 print '</td>';
 print '</tr>';
 

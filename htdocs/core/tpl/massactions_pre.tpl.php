@@ -40,7 +40,7 @@ if ($massaction == 'predelete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
 }
 
-if ($massaction == 'preaffecttag') {
+if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$categ = new Categorie($db);
 	$categ_types = array();
@@ -77,6 +77,42 @@ if ($massaction == 'preaffecttag') {
 		setEventMessage('CategTypeNotFound');
 	}
 }
+
+if ($massaction == 'preupdateprice' && isModEnabled('category')) {
+	$formquestion = array();
+
+	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
+	$valuefield .= '<input type="number" name="pricerate" id="pricerate" min="-100" value="0" style="width: 100px; text-align: right; margin-right: 10px" />%';
+	$valuefield .= '</div>';
+
+	$formquestion[] = array(
+				'type' => 'other',
+				'name' => 'pricerate',
+				'label' => $langs->trans("Rate"),
+				'value' => $valuefield
+			);
+
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmUpdatePrice"), $langs->trans("ConfirmUpdatePriceQuestion", count($toselect)), "updateprice", $formquestion, 1, 0, 200, 500, 1);
+}
+
+if ($massaction == 'presetsupervisor') {
+	$formquestion = array();
+
+	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
+	$valuefield .= img_picto('', 'user').' ';
+	$valuefield .= $form->select_dolusers('', 'supervisortoset', 1, $arrayofselected, 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+	$valuefield .= '</div>';
+
+	$formquestion[] = array(
+				'type' => 'other',
+				'name' => 'supervisortoset',
+				'label' => $langs->trans("Supervisor"),
+				'value' => $valuefield
+			);
+
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmSetSupervisor"), $langs->trans("ConfirmSetSupervisorQuestion", count($toselect)), "setsupervisor", $formquestion, 1, 0, 200, 500, 1);
+}
+
 
 if ($massaction == 'presend') {
 	$langs->load("mails");
@@ -285,7 +321,7 @@ if ($massaction == 'preapproveleave') {
 
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
-	'toselect' => $toselect,
+	'toselect' => isset($toselect) ? $toselect : array(),
 	'uploaddir' => isset($uploaddir) ? $uploaddir : null
 );
 

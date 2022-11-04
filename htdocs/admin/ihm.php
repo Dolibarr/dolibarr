@@ -26,6 +26,7 @@
  *       \brief      Page to setup GUI display options
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -103,6 +104,16 @@ if ($action == 'update') {
 
 		dolibarr_set_const($db, "MAIN_THEME", GETPOST("main_theme", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
+
+		if (GETPOSTISSET('THEME_DARKMODEENABLED')) {
+			$val = GETPOST('THEME_DARKMODEENABLED');
+			if (!$val) {
+				dolibarr_del_const($db, "THEME_DARKMODEENABLED", $conf->entity);
+			}
+			if ($val) {
+				dolibarr_set_const($db, "THEME_DARKMODEENABLED", $val, 'chaine', 0, '', $conf->entity);
+			}
+		}
 
 		if (GETPOSTISSET('THEME_TOPMENU_DISABLE_IMAGE')) {
 			$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
@@ -375,6 +386,20 @@ if ($mode == 'other') {
 	print '<td class="titlefieldmiddle"></td>';
 	print '</tr>';
 
+	// Show Quick Add link
+	print '<tr class="oddeven"><td>' . $langs->trans("ShowQuickAddLink") . '</td><td>';
+	print ajax_constantonoff("MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print '</td>';
+	print '</tr>';
+
+	// Hide wiki link on login page
+	$pictohelp = '<span class="fa fa-question-circle"></span>';
+	print '<tr class="oddeven"><td>' . str_replace('{picto}', $pictohelp, $langs->trans("DisableLinkToHelp", '{picto}')) . '</td><td>';
+	print ajax_constantonoff("MAIN_HELP_DISABLELINK", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	//print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK) ? $conf->global->MAIN_HELP_DISABLELINK : 0, 1);
+	print '</td>';
+	print '</tr>';
+
 	// Max size of lists
 	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
 	print '</tr>';
@@ -439,25 +464,11 @@ if ($mode == 'other') {
 	print '</tr>';
 	*/
 
-	// Show Quick Add link
-	print '<tr class="oddeven"><td>' . $langs->trans("ShowQuickAddLink") . '</td><td>';
-	print ajax_constantonoff("MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
-	print '</td>';
-	print '</tr>';
-
 	// Show bugtrack link
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")), $langs->trans("ShowBugTrackLinkDesc"));
 	print '</td><td>';
 	print '<input type="text" name="MAIN_BUGTRACK_ENABLELINK" value="' . (empty($conf->global->MAIN_BUGTRACK_ENABLELINK) ? '' : $conf->global->MAIN_BUGTRACK_ENABLELINK) . '">';
-	print '</td>';
-	print '</tr>';
-
-	// Hide wiki link on login page
-	$pictohelp = '<span class="fa fa-question-circle"></span>';
-	print '<tr class="oddeven"><td>' . str_replace('{picto}', $pictohelp, $langs->trans("DisableLinkToHelp", '{picto}')) . '</td><td>';
-	print ajax_constantonoff("MAIN_HELP_DISABLELINK", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
-	//print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK) ? $conf->global->MAIN_HELP_DISABLELINK : 0, 1);
 	print '</td>';
 	print '</tr>';
 
@@ -646,7 +657,7 @@ if ($mode == 'login') {
 		print '(' . $langs->trans("DisabledByOptionADD_UNSPLASH_LOGIN_BACKGROUND") . ') ';
 	}
 	if (!empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
-		print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=removebackgroundlogin&token='.newToken().'">' . img_delete($langs->trans("Delete")) . '</a>';
+		print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=removebackgroundlogin&token='.newToken().'&mode=login">' . img_delete($langs->trans("Delete")) . '</a>';
 		if (file_exists($conf->mycompany->dir_output . '/logos/' . $conf->global->MAIN_LOGIN_BACKGROUND)) {
 			print ' &nbsp; ';
 			print '<img class="paddingleft valignmiddle" width="100" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=mycompany&amp;file=' . urlencode('logos/' . $conf->global->MAIN_LOGIN_BACKGROUND) . '">';

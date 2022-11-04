@@ -76,6 +76,8 @@ if (preg_match('/\/api\/index\.php/', $_SERVER["PHP_SELF"])) {
 	header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 	header('Access-Control-Allow-Headers: Content-Type, Authorization, api_key, DOLAPIKEY');
 }
+header('X-Frame-Options: SAMEORIGIN');
+
 
 $res = 0;
 if (!$res && file_exists("../main.inc.php")) {
@@ -120,7 +122,7 @@ if (empty($conf->global->MAIN_MODULE_API)) {
 // Test if explorer is not disabled
 if (preg_match('/api\/index\.php\/explorer/', $url) && !empty($conf->global->API_EXPLORER_DISABLED)) {
 	$langs->load("admin");
-	dol_syslog("Call Dolibarr API interfaces with module REST disabled");
+	dol_syslog("Call Dolibarr API interfaces with module API REST disabled");
 	print $langs->trans("WarningAPIExplorerDisabled").'.<br><br>';
 	//session_destroy();
 	exit(0);
@@ -153,6 +155,10 @@ preg_match('/index\.php\/([^\/]+)(.*)$/', $url, $reg);
 $refreshcache = (empty($conf->global->API_PRODUCTION_DO_NOT_ALWAYS_REFRESH_CACHE) ? true : false);
 if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root')) {
 	$refreshcache = true;
+	if (!is_writable($conf->api->dir_temp)) {
+		print 'Erreur temp dir api/temp not writable';
+		exit(0);
+	}
 }
 
 $api = new DolibarrApi($db, '', $refreshcache);
@@ -235,7 +241,7 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 
 					// Defined if module is enabled
 					$enabled = true;
-					if (empty($conf->$modulenameforenabled->enabled)) {
+					if (!isModEnabled($modulenameforenabled)) {
 						$enabled = false;
 					}
 
@@ -256,6 +262,8 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 								if ($file_searched == 'api_login.class.php' && !empty($conf->global->MAIN_MODULE_API_LOGIN_DISABLED)) {
 									continue;
 								}
+
+								//dol_syslog("We scan to search api file with into ".$dir_part.$file_searched);
 
 								$regapi = array();
 								if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $regapi)) {

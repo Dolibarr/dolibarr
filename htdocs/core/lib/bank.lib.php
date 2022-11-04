@@ -131,7 +131,12 @@ function bank_prepare_head(Account $object)
  */
 function bank_admin_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('bank_account');
+	$extrafields->fetch_name_optionals_label('bank');
+
 	$h = 0;
 	$head = array();
 
@@ -153,8 +158,21 @@ function bank_admin_prepare_head($object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/bank_extrafields.php';
-	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("BankAccounts").')';
+	$nbExtrafields = $extrafields->attributes['bank_account']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/bankline_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("BankTransactions").')';
+	$nbExtrafields = $extrafields->attributes['bank']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'bankline_extrafields';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
@@ -288,6 +306,24 @@ function checkIbanForAccount(Account $account)
 	} else {
 		return false;
 	}
+}
+
+/**
+ * Returns the iban human readable
+ *
+ * @param Account $account Account object
+ * @return string
+ */
+function getIbanHumanReadable(Account $account)
+{
+	if ($account->getCountryCode() == 'FR') {
+		require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
+		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', $account->iban);
+		$iban = new PHP_IBAN\IBAN($ibantoprint);
+		return $iban->HumanFormat();
+	}
+
+	return $account->iban;
 }
 
 /**

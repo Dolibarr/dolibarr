@@ -178,3 +178,4 @@ IsAnAnswer= Este un răspuns al unui email inițial
 RecordCreatedByEmailCollector=Înregistrare creată de colectorul de email %s din adresa %s
 DefaultBlacklistMailingStatus=Valoare implicită pentru câmpul '%s' când este creat un nou contact
 DefaultStatusEmptyMandatory= Necompletat, dar obligatoriu
+WarningLimitSendByDay=ATENȚIE: Configurarea sau contractul instanței tale limitează numărul de email-uri pe zi la <b>%s</b>. Încercarea de a trimite mai multe poate duce la încetinirea sau suspendarea instanței. Contactează serviciul de asistență dacă ai de o cotă mai mare.

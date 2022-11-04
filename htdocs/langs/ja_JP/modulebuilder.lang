@@ -153,3 +153,4 @@ LinkToParentMenu=親メニュー（fk_xxxxmenu）
 ListOfTabsEntries=タブエントリのリスト
 TabsDefDesc=モジュールによって提供されるタブをここで定義する
 TabsDefDescTooltip=モジュール/アプリケーションによって提供されるタブは、配列<strong> $this->tabs</strong>においてモジュール記述子ファイルに定義される。このファイルを手動で編集できるし、埋め込みエディターの使用もできる。
+BadValueForType=タイプ%sの値が正しくない

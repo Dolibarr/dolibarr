@@ -456,7 +456,7 @@ class Notify
 					$notifcodedefid = $obj->adid;
 					$trackid = '';
 					if ($obj->type_target == 'tocontactid') {
-						$trackid = 'con'.$obj->cid;
+						$trackid = 'ctc'.$obj->cid;
 					}
 					if ($obj->type_target == 'touserid') {
 						$trackid = 'use'.$obj->cid;
@@ -624,6 +624,8 @@ class Notify
 							$mimetype_list[] = mime_content_type($filepdf);
 							$mimefilename_list[] = $ref.".pdf";
 						}
+
+						$labeltouse = !empty($labeltouse) ? $labeltouse : '';
 
 						$parameters = array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list, 'outputlangs'=>$outputlangs, 'labeltouse'=>$labeltouse);
 						if (!isset($action)) {

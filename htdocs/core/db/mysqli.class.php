@@ -208,6 +208,7 @@ class DoliDBMysqli extends DoliDB
 		try {
 			$result = $this->db->select_db($database);
 		} catch (Exception $e) {
+			// Nothing done on error
 		}
 		return $result;
 	}
@@ -420,7 +421,7 @@ class DoliDBMysqli extends DoliDB
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		return $resultset->num_rows;
+		return isset($resultset->num_rows) ? $resultset->num_rows : 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -470,7 +471,7 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function escape($stringtoencode)
 	{
-		return $this->db->real_escape_string($stringtoencode);
+		return $this->db->real_escape_string((string) $stringtoencode);
 	}
 
 	/**
@@ -478,10 +479,22 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 *	@param	string	$stringtoencode		String to escape
 	 *	@return	string						String escaped
+	 *  @deprecated
 	 */
 	public function escapeunderscore($stringtoencode)
 	{
-		return str_replace('_', '\_', $stringtoencode);
+		return str_replace('_', '\_', (string) $stringtoencode);
+	}
+
+	/**
+	 *	Escape a string to insert data into a like
+	 *
+	 *	@param	string	$stringtoencode		String to escape
+	 *	@return	string						String escaped
+	 */
+	public function escapeforlike($stringtoencode)
+	{
+		return str_replace(array('_', '\\', '%'), array('\_', '\\\\', '\%'), (string) $stringtoencode);
 	}
 
 	/**
@@ -756,6 +769,9 @@ class DoliDBMysqli extends DoliDB
 	{
 		// phpcs:enable
 		// FIXME: $fulltext_keys parameter is unused
+
+		$pk = '';
+		$sqluq = $sqlk = array();
 
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');

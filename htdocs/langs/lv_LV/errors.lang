@@ -92,6 +92,7 @@ ErrorModuleRequireJavascript=Javascript nedrīkst tikt izslēgti, ka šī funkci
 ErrorPasswordsMustMatch=Abām ievadītām parolēm jāsakrīt
 ErrorContactEMail=Radās tehniska kļūda. Lūdzu, sazinieties ar administratoru uz šādu e-pastu <b> %s </b> un savā ziņojumā uzrakstiet kļūdas kodu <b> %s </b> vai pievienojiet šīs lapas ekrāna kopiju.
 ErrorWrongValueForField=Lauks <b> %s </b>: “<b> %s </b>” neatbilst regex noteikumam <b> %s </b>
+ErrorHtmlInjectionForField=Lauks <b> %s </b> : Vērtība ' <b> %s a09a4b739f17f satur mazlicious data'nav atļauts
 ErrorFieldValueNotIn=Lauks <b> %s </b>: “<b> %s </b>” nav vērtība, kas norādīta laukā <b> %s </b> no <b> %s </b>
 ErrorFieldRefNotIn=Lauks <b> %s </b>: “<b> %s </b>” nav esošais ref. <b> %s </b>
 ErrorsOnXLines=atrastas %s kļūdas
@@ -270,7 +271,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=Vispirms jums ir jāiestata konta plān
 ErrorFailedToFindEmailTemplate=Neizdevās atrast veidni ar koda nosaukumu %s
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Ilgums pakalpojumā nav noteikts. Nav iespējams aprēķināt stundas cenu.
 ErrorActionCommPropertyUserowneridNotDefined=Nepieciešams lietotāja īpašnieks
-ErrorActionCommBadType=Atlasītais notikuma veids (id: %n, kods: %s) nepastāv notikuma veida vārdnīcā
+ErrorActionCommBadType=Selected event type (id: %s, code: %s) do not exist in Event Type dictionary
 CheckVersionFail=Versijas pārbaude neizdevās
 ErrorWrongFileName=Faila nosaukumā nedrīkst būt __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=Nav Maksājumu nosacījumu vārdnīcā, lūdzu, modificējiet.
@@ -285,13 +286,16 @@ ErrorPaymentInBothCurrency=Kļūda, visas summas jāievada vienā kolonnā
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Jūs mēģināt apmaksāt rēķinus valūtā %s no konta ar valūtu %s
 ErrorInvoiceLoadThirdParty=Nevar ielādēt trešās puses objektu rēķinam "%s"
 ErrorInvoiceLoadThirdPartyKey=Trešās puses atslēga "%s" nav iestatīta rēķinam "%s"
-ErrorDeleteLineNotAllowedByObjectStatus=Dzēst rindu nav atļauts faktiskais objekta statuss
-ErrorAjaxRequestFailed=Request failed
+ErrorDeleteLineNotAllowedByObjectStatus=Pašreizējais objekta statuss neļauj dzēst rindu
+ErrorAjaxRequestFailed=Pieprasījums neizdevās
+ErrorThirpdartyOrMemberidIsMandatory=Trešās puses vai partnerības dalībnieka dalība ir obligāta
+ErrorFailedToWriteInTempDirectory=Failed to write in temp directory
+ErrorQuantityIsLimitedTo=Quantity is limited to %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Jūsu PHP parametrs upload_max_filesize (%s) ir augstāks nekā PHP parametrs post_max_size (%s). Šī nav konsekventa iestatīšana.
 WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.
-WarningMandatorySetupNotComplete=Noklikšķiniet šeit, lai iestatītu obligātos parametrus
+WarningMandatorySetupNotComplete=Click here to setup main parameters
 WarningEnableYourModulesApplications=Noklikšķiniet šeit, lai iespējotu moduļus un lietojumprogrammas
 WarningSafeModeOnCheckExecDir=Uzmanību, PHP iespēja <b>safe_mode</b> ir par tik komanda jāuzglabā iekšpusē direktorijā deklarēto php parametru <b>safe_mode_exec_dir.</b>
 WarningBookmarkAlreadyExists=Ar šo nosaukumu, vai šī mērķa grāmatzīmes (URL) jau pastāv.
@@ -321,12 +325,8 @@ WarningCreateSubAccounts=Brīdinājums: jūs nevarat izveidot tieši apakškontu
 WarningAvailableOnlyForHTTPSServers=Pieejams tikai tad, ja tiek izmantots HTTPS drošais savienojums.
 WarningModuleXDisabledSoYouMayMissEventHere=Modulis %s nav iespējots. Tāpēc jūs varat izlaist daudz notikumu šeit.
 WarningPaypalPaymentNotCompatibleWithStrict=Vērtība “Stingrs” neļauj tiešsaistes maksājumu funkcijām darboties pareizi. Tā vietā izmantojiet “Lax”.
+WarningThemeForcedTo=Brīdinājums! Motīvs ir spiests uz <b> %s </b>, izmantojot slēpto konstanti MAIN_FORCETHEME
 
-<<<<<<< GALVA
-=======
-<<<<<<< GALVA
-<<<<<<< GALVA
->>>>>>> git@github.com:Dolibarr/dolibarr.git filiāle “15.0”
 # Validate
 RequireValidValue = Vērtība nav derīga
 RequireAtLeastXString = Nepieciešama vismaz %s rakstzīme (s)
@@ -347,12 +347,3 @@ BadSetupOfField = Kļūda, nepareizi iestatot lauku
 BadSetupOfFieldClassNotFoundForValidation = Kļūda, nepareizi iestatot lauku: klase nav atrasta validācijai
 BadSetupOfFieldFileNotFound = Kļūda, nepareizi iestatot lauku: fails netika atrasts iekļaušanai
 BadSetupOfFieldFetchNotCallable = Kļūda, nepareizi iestatot lauku: izgūšana nav izsaucama klasē
-<<<<<<< GALVA
-=======
-=======
-=======
->>>>>>> git@github.com:Dolibarr/dolibarr.git filiāle “15.0”
->>>>>>> git@github.com:Dolibarr/dolibarr.git filiāle “15.0”
-=======
->>>>>>> git@github.com:Dolibarr/dolibarr.git filiāle “15.0”
->>>>>>> git@github.com:Dolibarr/dolibarr.git filiāle “15.0”

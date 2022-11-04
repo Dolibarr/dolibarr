@@ -127,7 +127,7 @@ class EmailCollectorFilter extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -158,6 +158,7 @@ class EmailCollectorFilter extends CommonObject
 	public function create(User $user, $notrigger = false)
 	{
 		global $langs;
+
 		if (empty($this->type)) {
 			$langs->load("errors");
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
@@ -167,6 +168,12 @@ class EmailCollectorFilter extends CommonObject
 			$langs->load("errors");
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SearchString"));
 			return -2;
+		}
+
+		if (in_array($this->type, array('to')) && strpos($this->rulevalue, '+') != false) {
+			$langs->load("errors");
+			$this->errors[] = $langs->trans("ErrorCharPlusNotSupportedByImapForSearch");
+			return -3;
 		}
 
 		return $this->createCommon($user, $notrigger);

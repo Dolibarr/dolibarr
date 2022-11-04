@@ -26,6 +26,7 @@
  */
 
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -108,7 +109,7 @@ $sql .= " ".MAIN_DB_PREFIX."societe as s";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-$sql .= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 $sql .= " AND f.total_ttc > 0";

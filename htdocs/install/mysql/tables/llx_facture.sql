@@ -30,7 +30,6 @@ create table llx_facture
   entity				integer  DEFAULT 1 NOT NULL,			-- multi company id
 
   ref_ext				varchar(255),							-- reference into an external system (not used by dolibarr)
-  ref_int				varchar(255),							-- reference into an internal system (used by dolibarr to store extern id like paypal info)
   ref_client			varchar(255),							-- reference for customer
 
   type					smallint DEFAULT 0 NOT NULL,			-- type of invoice

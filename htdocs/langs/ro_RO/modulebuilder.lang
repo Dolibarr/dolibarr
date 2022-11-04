@@ -153,3 +153,4 @@ LinkToParentMenu=Meniu părinte (fk_xxxxmenu)
 ListOfTabsEntries=Listă tab-uri
 TabsDefDesc=Defineşte aici tab-urile furnizate de modulul tău
 TabsDefDescTooltip=Tab-urile furnizate de modulul/aplicația ta sunt definite în matricea <strong>$this->tabs</strong> în fișierul descriptor al modulului. Poți edita manual acest fișier sau poți utiliza editorul încorporat. 
+BadValueForType=Valoare incorectă pentru tipul %s

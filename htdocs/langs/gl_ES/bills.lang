@@ -446,6 +446,7 @@ ErrorPaymentConditionsNotEligibleToDepositCreation=As condicións de pagamento e
 PaymentTypeVIR=Transferencia bancaria
 PaymentTypeShortVIR=Transferencia bancaria
 PaymentTypePRE=Domiciliación
+PaymentTypePREdetails=(na conta *-%s)
 PaymentTypeShortPRE=Domiciliación
 PaymentTypeLIQ=Efectivo
 PaymentTypeShortLIQ=Efectivo

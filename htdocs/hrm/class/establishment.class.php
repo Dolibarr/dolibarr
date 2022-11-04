@@ -445,6 +445,9 @@ class Establishment extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Residence').':</b> '.$this->address.', '.$this->zip.' '.$this->town;
+
 		$url = DOL_URL_ROOT.'/hrm/establishment/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
@@ -489,7 +492,7 @@ class Establishment extends CommonObject
 		}
 
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			$result .= $this->label;
 		}
 
 		$result .= $linkend;

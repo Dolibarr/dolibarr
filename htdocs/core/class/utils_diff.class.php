@@ -247,6 +247,7 @@ class Diff
 		$html = '';
 
 		// loop over the lines in the diff
+		$element = 'unknown';
 		foreach ($diff as $line) {
 			// extend the HTML with the line
 			switch ($line[1]) {
@@ -260,10 +261,7 @@ class Diff
 					$element = 'ins';
 					break;
 			}
-			$html .=
-			'<'.$element.'>'
-			. htmlspecialchars($line[0])
-				. '</'.$element.'>';
+			$html .= '<'.$element.'>'.dol_escape_htmltag($line[0]).'</'.$element.'>';
 
 			// extend the HTML with the separator
 			$html .= $separator;
@@ -285,6 +283,8 @@ class Diff
 	{
 		// initialise the HTML
 		$html = $indentation."<table class=\"diff\">\n";
+
+		$rightCell = $leftCell = '';
 
 		// loop over the lines in the diff
 		$index = 0;

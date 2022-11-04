@@ -22,6 +22,7 @@
  *		\brief      Page to create/edit/view emailcollector
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -34,10 +35,20 @@ include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectorfilter.class
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectoraction.class.php';
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
+// use Webklex\PHPIMAP;
+require DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
+use Webklex\PHPIMAP\ClientManager;
+use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
+use Webklex\PHPIMAP\Exceptions\InvalidWhereQueryCriteriaException;
+
+
+use OAuth\Common\Storage\DoliStorage;
+use OAuth\Common\Consumer\Credentials;
+
 if (!$user->admin) {
 	accessforbidden();
 }
-if (empty($conf->emailcollector->enabled)) {
+if (!isModEnabled('emailcollector')) {
 	accessforbidden();
 }
 
@@ -91,9 +102,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 //$isdraft = (($object->statut == MyObject::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'mymodule', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-$permissionnote = $user->rights->emailcollector->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->emailcollector->write; // Used by the include of actions_dellink.inc.php
-$permissiontoadd = $user->rights->emailcollector->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissionnote = $user->admin; // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->admin; // Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->admin; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 $debuginfo = '';
 
@@ -135,6 +146,7 @@ if (GETPOST('addfilter', 'alpha')) {
 	$emailcollectorfilter->rulevalue = GETPOST('rulevalue', 'alpha');
 	$emailcollectorfilter->fk_emailcollector = $object->id;
 	$emailcollectorfilter->status = 1;
+
 	$result = $emailcollectorfilter->create($user);
 
 	if ($result > 0) {
@@ -192,7 +204,7 @@ if ($action == 'updateoperation') {
 	$emailcollectoroperation = new EmailCollectorAction($db);
 	$emailcollectoroperation->fetch(GETPOST('rowidoperation2', 'int'));
 
-	$emailcollectoroperation->actionparam = GETPOST('operationparam2', 'restricthtml');
+	$emailcollectoroperation->actionparam = GETPOST('operationparam2', 'alphawithlgt');
 
 	if (in_array($emailcollectoroperation->type, array('loadthirdparty', 'loadandcreatethirdparty'))
 		&& empty($emailcollectoroperation->actionparam)) {
@@ -224,10 +236,25 @@ if ($action == 'deleteoperation') {
 	}
 }
 
+if ($action == 'collecttest') {
+	dol_include_once('/emailcollector/class/emailcollector.class.php');
+
+	$res = $object->doCollectOneCollector(1);
+	if ($res > 0) {
+		$debuginfo = $object->debuginfo;
+		setEventMessages($object->lastresult, null, 'mesgs');
+	} else {
+		$debuginfo = $object->debuginfo;
+		setEventMessages($object->error, null, 'errors');
+	}
+
+	$action = '';
+}
+
 if ($action == 'confirm_collect') {
 	dol_include_once('/emailcollector/class/emailcollector.class.php');
 
-	$res = $object->doCollectOneCollector();
+	$res = $object->doCollectOneCollector(0);
 	if ($res > 0) {
 		$debuginfo = $object->debuginfo;
 		setEventMessages($object->lastresult, null, 'mesgs');
@@ -337,14 +364,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation of action process
 	if ($action == 'collect') {
-		$formquestion = array(
-			'text' => $langs->trans("EmailCollectorConfirmCollect"),
-		);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('EmailCollectorConfirmCollectTitle'), $text, 'confirm_collect', $formquestion, 0, 1, 220);
+		$formquestion = array();
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('EmailCollectorConfirmCollectTitle'), $langs->trans('EmailCollectorConfirmCollect'), 'confirm_collect', $formquestion, 0, 1, 220);
 	}
 
 	// Call Hook formConfirm
-	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$formconfirm .= $hookmanager->resPrint;
@@ -378,55 +403,151 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$connectstringserver = $object->getConnectStringIMAP($usessl);
 
-		try {
-			if ($sourcedir) {
-				//$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
-				$connectstringsource = $connectstringserver.$object->getEncodedUtf7($sourcedir);
+		if ($action == 'scan') {
+			if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+				if ($object->acces_type == 1) {
+					// Mode OAUth2 with PHP-IMAP
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+					$keyforsupportedoauth2array = $object->oauth_service;
+					if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
+						$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
+					} else {
+						$keyforprovider = '';
+					}
+					$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+					$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
+
+					$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+
+					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+					//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
+					//dol_syslog($debugtext);
+
+					$storage = new DoliStorage($db, $conf);
+
+					try {
+						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+						$expire = true;
+						// Is token expired or will token expire in the next 30 seconds
+						// if (is_object($tokenobj)) {
+						// 	$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
+						// }
+						// Token expired so we refresh it
+						if (is_object($tokenobj) && $expire) {
+							$credentials = new Credentials(
+								getDolGlobalString('OAUTH_'.$object->oauth_service.'_ID'),
+								getDolGlobalString('OAUTH_'.$object->oauth_service.'_SECRET'),
+								getDolGlobalString('OAUTH_'.$object->oauth_service.'_URLAUTHORIZE')
+							);
+							$serviceFactory = new \OAuth\ServiceFactory();
+							$oauthname = explode('-', $OAUTH_SERVICENAME);
+							// ex service is Google-Emails we need only the first part Google
+							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+							// We have to save the token because Google give it only once
+							$refreshtoken = $tokenobj->getRefreshToken();
+							$tokenobj = $apiService->refreshAccessToken($tokenobj);
+							$tokenobj->setRefreshToken($refreshtoken);
+							$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+						}
+						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+						if (is_object($tokenobj)) {
+							$token = $tokenobj->getAccessToken();
+						} else {
+							$object->error = "Token not found";
+							return -1;
+						}
+					} catch (Exception $e) {
+						print $e->getMessage();
+					}
+
+					$cm = new ClientManager();
+					$client = $cm->make([
+						'host'           => $object->host,
+						'port'           => $object->port,
+						'encryption'     => 'ssl',
+						'validate_cert'  => true,
+						'protocol'       => 'imap',
+						'username'       => $object->login,
+						'password'       => $token,
+						'authentication' => "oauth",
+					]);
+				} else {
+					// Mode login/pass with PHP-IMAP
+					$cm = new ClientManager();
+					$client = $cm->make([
+						'host'           => $object->host,
+						'port'           => $object->port,
+						'encryption'     => 'ssl',
+						'validate_cert'  => true,
+						'protocol'       => 'imap',
+						'username'       => $object->login,
+						'password'       => $object->password,
+						'authentication' => "login",
+					]);
+				}
+				try {
+					$client->connect();
+				} catch (ConnectionFailedException $e) {
+					print $e->getMessage();
+				}
+
+				$f = $client->getFolders(false, $object->source_directory);
+				$nbemail = $f[0]->examine()["exists"];
+				$morehtml .= $nbemail;
+			} else {
+				try {
+					if ($sourcedir) {
+						//$connectstringsource = $connectstringserver.imap_utf7_encode($sourcedir);
+						$connectstringsource = $connectstringserver.$object->getEncodedUtf7($sourcedir);
+					}
+					if ($targetdir) {
+						//$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
+						$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
+					}
+
+					$timeoutconnect = empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
+					$timeoutread = empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 20 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
+
+					dol_syslog("imap_open connectstring=".$connectstringsource." login=".$object->login." password=".$object->password." timeoutconnect=".$timeoutconnect." timeoutread=".$timeoutread);
+
+					$result1 = imap_timeout(IMAP_OPENTIMEOUT, $timeoutconnect);	// timeout seems ignored with ssl connect
+					$result2 = imap_timeout(IMAP_READTIMEOUT, $timeoutread);
+					$result3 = imap_timeout(IMAP_WRITETIMEOUT, 5);
+					$result4 = imap_timeout(IMAP_CLOSETIMEOUT, 5);
+
+					dol_syslog("result1=".$result1." result2=".$result2." result3=".$result3." result4=".$result4);
+
+					$connection = imap_open($connectstringsource, $object->login, $object->password);
+
+					//dol_syslog("end imap_open connection=".var_export($connection, true));
+				} catch (Exception $e) {
+					print $e->getMessage();
+				}
+
+				if (!$connection) {
+					$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
+					if (function_exists('imap_last_error')) {
+						$morehtml .= '<br>'.imap_last_error();
+					}
+					dol_syslog("Error ".$morehtml, LOG_WARNING);
+					//var_dump(imap_errors())
+				} else {
+					dol_syslog("Imap connected. Now we call imap_num_msg()");
+					$morehtml .= imap_num_msg($connection);
+				}
+
+				if ($connection) {
+					dol_syslog("Imap close");
+					imap_close($connection);
+				}
 			}
-			if ($targetdir) {
-				//$connectstringtarget = $connectstringserver.imap_utf7_encode($targetdir);
-				$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
-			}
-
-			$timeoutconnect = empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
-			$timeoutread = empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 20 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
-
-			dol_syslog("imap_open connectstring=".$connectstringsource." login=".$object->login." password=".$object->password." timeoutconnect=".$timeoutconnect." timeoutread=".$timeoutread);
-
-			$result1 = imap_timeout(IMAP_OPENTIMEOUT, $timeoutconnect);	// timeout seems ignored with ssl connect
-			$result2 = imap_timeout(IMAP_READTIMEOUT, $timeoutread);
-			$result3 = imap_timeout(IMAP_WRITETIMEOUT, 5);
-			$result4 = imap_timeout(IMAP_CLOSETIMEOUT, 5);
-
-			dol_syslog("result1=".$result1." result2=".$result2." result3=".$result3." result4=".$result4);
-
-			$connection = imap_open($connectstringsource, $object->login, $object->password);
-
-			//dol_syslog("end imap_open connection=".var_export($connection, true));
-		} catch (Exception $e) {
-			print $e->getMessage();
+		} else {
+			$morehtml .= '<a class="flat" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=scan&token='.newToken().'">'.img_picto('', 'refresh', 'class="paddingrightonly"').$langs->trans("Refresh").'</a>';
 		}
 
 		$morehtml .= $form->textwithpicto('', 'connect string '.$connectstringserver);
 	} else {
 		$morehtml .= 'IMAP functions not available on your PHP. ';
-	}
-
-	if (!$connection) {
-		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
-		if (function_exists('imap_last_error')) {
-			$morehtml .= '<br>'.imap_last_error();
-		}
-		dol_syslog("Error ".$morehtml, LOG_WARNING);
-		//var_dump(imap_errors())
-	} else {
-		dol_syslog("Imap connected. Now we call imap_num_msg()");
-		$morehtml .= imap_num_msg($connection);
-	}
-
-	if ($connection) {
-		dol_syslog("Imap close");
-		imap_close($connection);
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref.'<div class="refidno">'.$morehtml.'</div>', '', 0, '', '', 0, '');
@@ -545,20 +666,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</tr>';
 
 	$arrayoftypes = array(
-		'loadthirdparty'=>$langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
-		'loadandcreatethirdparty'=>$langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
-		'recordjoinpiece'=>'AttachJoinedDocumentsToObject',
-		'recordevent'=>'RecordEvent');
+		'loadthirdparty' => $langs->trans('LoadThirdPartyFromName', $langs->transnoentities("ThirdPartyName")),
+		'loadandcreatethirdparty' => $langs->trans('LoadThirdPartyFromNameOrCreate', $langs->transnoentities("ThirdPartyName")),
+		'recordjoinpiece' => 'AttachJoinedDocumentsToObject',
+		'recordevent' => 'RecordEvent'
+	);
 	$arrayoftypesnocondition = $arrayoftypes;
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$arrayoftypes['project'] = 'CreateLeadAndThirdParty';
 	}
 	$arrayoftypesnocondition['project'] = 'CreateLeadAndThirdParty';
-	if (!empty($conf->ticket->enabled)) {
+	if (isModEnabled('ticket')) {
 		$arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
 	}
 	$arrayoftypesnocondition['ticket'] = 'CreateTicketAndThirdParty';
-	if (!empty($conf->recruitment->enabled)) {
+	if (isModEnabled('recruitment')) {
 		$arrayoftypes['candidature'] = 'CreateCandidature';
 	}
 	$arrayoftypesnocondition['candidature'] = 'CreateCandidature';
@@ -580,11 +702,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<td>';
 	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300', 1);
 	print '</td><td>';
-	print '<input type="text" name="operationparam">';
+	//print '<input type="text" name="operationparam">';
+	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");
+	print $form->textwithpicto('<input type="text" name="operationparam">', $htmltext, 1, 'help', '', 0, 2, 'operationparamtt');
 	print '</td>';
 	print '<td>';
-	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");
-	print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'operationparamtt');
 	print '</td>';
 	print '<td class="right"><input type="submit" name="addoperation" id="addoperation" class="flat button small" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
@@ -616,12 +738,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</td>';
 		print '<td class="wordbreak minwidth300 small">';
 		if ($action == 'editoperation' && $ruleaction['id'] == $operationid) {
-			print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';
+			print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.dol_escape_htmltag($ruleaction['actionparam']).'"><br>';
 			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'">';
 			print '<input type="submit" class="button small button-save" name="saveoperation2" value="'.$langs->trans("Save").'">';
 			print '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		} else {
-			print $ruleaction['actionparam'];
+			print dol_escape_htmltag($ruleaction['actionparam']);
 		}
 		print '</td>';
 		// Move up/down
@@ -675,9 +797,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Edit").'</a></div>';
 
 			// Clone
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=order">'.$langs->trans("ToClone").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&object=order">'.$langs->trans("ToClone").'</a></div>';
 
 			// Collect now
+			print '<div class="inline-block divButAction"><a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=collecttest&token='.newToken().'">'.$langs->trans("TestCollectNow").'</a></div>';
+
 			if (count($object->actions) > 0) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=collect&token='.newToken().'">'.$langs->trans("CollectNow").'</a></div>';
 			} else {

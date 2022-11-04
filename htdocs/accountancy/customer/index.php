@@ -26,6 +26,7 @@
  * \brief 	Home customer journalization page
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -40,13 +41,13 @@ $validatemonth = GETPOST('validatemonth', 'int');
 $validateyear = GETPOST('validateyear', 'int');
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->bind->write)) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -77,13 +78,13 @@ $action = GETPOST('action', 'aZ09');
 $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -92,7 +93,7 @@ if (empty($user->rights->accounting->mouvements->lire)) {
  * Actions
  */
 
-if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accounting->bind->write) {
+if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('accounting', 'bind', 'write')) {
 	// Clean database by removing binding done on non existing or no more existing accounts
 	$db->begin();
 	$sql1 = "UPDATE ".MAIN_DB_PREFIX."facturedet as fd";
@@ -622,7 +623,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange
 	print '</div>';
 
 
-	if (!empty($conf->margin->enabled)) {
+	if (isModEnabled('margin')) {
 		print "<br>\n";
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';

@@ -27,14 +27,17 @@ if (!defined('NOTOKENRENEWAL')) {
  *      \ingroup    admin
  *      \brief      Page des informations dolistore
  */
+
 require "../../../main.inc.php";
-
-// CORE
-
-global $lang, $user, $conf;
-
-
 require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
+
+
+/*
+ * View
+ */
+
+top_httphead('image');
+
 $dolistore = new Dolistore();
 
 $id_product = GETPOST('id_product', 'int');
@@ -51,7 +54,7 @@ try {
 	);
 	//echo $url;
 	$request = $api->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
-	header('Content-type:image');
+
 	print $request['response'];
 } catch (PrestaShopWebserviceException $e) {
 	// Here we are dealing with errors
