@@ -107,7 +107,7 @@ if ($nolinesbefore) {
 		<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 			<td class="linecolnum center"></td>
 		<?php } ?>
-		<td class="linecoldescription minwidth500imp">
+		<td class="linecoldescription minwidth400imp">
 			<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span>
 		</td>
 		<?php
@@ -176,8 +176,7 @@ if ($nolinesbefore) {
 	}
 	$coldisplay++;
 	?>
-	<td class="nobottom linecoldescription minwidth500imp">
-
+	<td class="nobottom linecoldescription minwidth400imp">
 		<?php
 		$freelines = false;
 		if (empty($conf->global->MAIN_DISABLE_FREE_LINES)) {
