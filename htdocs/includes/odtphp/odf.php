@@ -156,7 +156,22 @@ class Odf
      */
 	public function convertVarToOdf($value, $encode = true, $charset = 'ISO-8859')
 	{
-		$value = $encode ? htmlspecialchars($value) : $value;
+		if ($encode) {
+			//some values are already encoded
+			$value = html_entity_decode($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401);
+			// Protect some chars; see PR 14974
+			//$value = $encode ? htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1) : $value;
+			$value = $encode ? htmlspecialchars($value, ENT_QUOTES | ENT_XHTML) : $value;
+			// we want to keep some HTML tags
+			$value = str_replace('&lt;', '<', $value);
+			$value = str_replace('&gt;', '>', $value);
+			// correct line breaks
+			$value = str_replace("<br>", "<br />", $value);
+			// Note : $allowed_tags as an array is only valid in PHP > 7.4
+			// For earlyer versions, all tags will be stripped.
+			$value = strip_tags($value, ['<br>', '<strong>', '<b>', '<i>', '<em>', '<u>', '<s>', '<sub>', '<sup>', '<span>']);
+		}
+
 		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
 		$convertedValue = $value;
 
@@ -196,7 +211,7 @@ class Odf
 			}
 			$this->contentXml = str_replace('</office:font-face-decls>', $fonts . '</office:font-face-decls>', $this->contentXml);
 		}
-		else $convertedValue = preg_replace('/(\r\n|\r|\n)/i', "<text:line-break/>", $value);
+		$convertedValue = preg_replace('/(\r\n|\r|\n)/i', "<text:line-break/>", $convertedValue);
 
 		return $convertedValue;
 	}
@@ -325,7 +340,7 @@ class Odf
 
         while (strlen($tempHtml) > 0) {
             // Check if the string includes a html tag
-            if (preg_match_all('/<([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/', $tempHtml, $matches)) {
+            if (preg_match_all('/<([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/U', $tempHtml, $matches)) {
                 $tagOffset = strpos($tempHtml, $matches[0][0]);
                 // Check if the string starts with the html tag
                 if ($tagOffset > 0) {
