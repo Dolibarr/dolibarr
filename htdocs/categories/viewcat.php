@@ -148,7 +148,7 @@ if ($id > 0 && $removeelem > 0) {
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'ticket';
 	} elseif ($type == Categorie::TYPE_SUPPLIER_INVOICE && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
-		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		$tmpobject = new FactureFournisseur($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'supplier_invoice';
@@ -223,7 +223,7 @@ if ($elemid && $action == 'addintocategory' &&
 		$newobject = new User($db);
 		$elementtype = 'bank_account';
 	} elseif ($type == Categorie::TYPE_SUPPLIER_INVOICE) {
-		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		$newobject = new FactureFournisseur($db);
 		$elementtype = 'supplier_invoice';
 	}

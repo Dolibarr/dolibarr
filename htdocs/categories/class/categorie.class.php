@@ -36,7 +36,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
@@ -165,18 +164,18 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
-		'product' => 'ProductsCategoriesArea',
-		'customer' => 'CustomersCategoriesArea',
-		'supplier' => 'SuppliersCategoriesArea',
-		'member' => 'MembersCategoriesArea',
-		'contact' => 'ContactsCategoriesArea',
-		'user' => 'UsersCategoriesArea',
-		'account' => 'AccountsCategoriesArea', // old for bank account
-		'bank_account' => 'AccountsCategoriesArea',
-		'project' => 'ProjectsCategoriesArea',
-		'warehouse'=> 'StocksCategoriesArea',
-		'actioncomm' => 'ActioncommCategoriesArea',
-		'website_page' => 'WebsitePageCategoriesArea',
+		'product'          => 'ProductsCategoriesArea',
+		'customer'         => 'CustomersCategoriesArea',
+		'supplier'         => 'SuppliersCategoriesArea',
+		'member'           => 'MembersCategoriesArea',
+		'contact'          => 'ContactsCategoriesArea',
+		'user'             => 'UsersCategoriesArea',
+		'account'          => 'AccountsCategoriesArea', // old for bank account
+		'bank_account'     => 'AccountsCategoriesArea',
+		'project'          => 'ProjectsCategoriesArea',
+		'warehouse'        => 'StocksCategoriesArea',
+		'actioncomm'       => 'ActioncommCategoriesArea',
+		'website_page'     => 'WebsitePageCategoriesArea',
 		'supplier_invoice' => 'SupplierInvoiceCategoriesArea'
 	);
 
