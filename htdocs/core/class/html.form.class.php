@@ -7544,7 +7544,6 @@ class Form
 	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '')
 	{
 		global $conf, $user;
-
 		$objecttmp = null;
 
 		// Example of value for $objectdec:
@@ -7771,7 +7770,7 @@ class Form
 		}
 		$sql .= $this->db->order($sortfield ? $sortfield : $fieldstoshow, "ASC");
 		//$sql.=$this->db->plimit($limit, 0);
-		//print $sql;
+//		print $sql;
 
 		// Build output string
 		$resql = $this->db->query($sql);
@@ -8509,7 +8508,6 @@ class Form
 	{
 		global $conf, $langs, $hookmanager;
 		global $bc, $action;
-
 		$object->fetchObjectLinked();
 
 		// Bypass the default method
@@ -8624,6 +8622,7 @@ class Form
 
 				// Output template part (modules that overwrite templates must declare this into descriptor)
 				$dirtpls = array_merge($conf->modules_parts['tpl'], array('/'.$tplpath.'/tpl'));
+
 				foreach ($dirtpls as $reldir) {
 					if ($nboftypesoutput == ($nbofdifferenttypes - 1)) {    // No more type to show after
 						global $noMoreLinkedObjectBlockAfter;
