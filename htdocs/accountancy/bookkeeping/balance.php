@@ -40,21 +40,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->loadLangs(array("accountancy", "compta"));
 
 $action = GETPOST('action', 'aZ09');
-
-// Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
-	$page = 0;
-}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
-$offset = $limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-//if (! $sortfield) $sortfield="p.date_fin";
-//if (! $sortorder) $sortorder="DESC";
-
+$type = GETPOST('type', 'alpha');
+if ($type == 'sub') {
+	$context_default = 'balancesubaccountlist';
+} else {
+	$context_default = 'balancelist';
+}
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : $context_default;
 $show_subgroup = GETPOST('show_subgroup', 'alpha');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
 $search_date_end = dol_mktime(23, 59, 59, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
@@ -67,10 +59,29 @@ $search_accountancy_code_end = GETPOST('search_accountancy_code_end', 'alpha');
 if ($search_accountancy_code_end == - 1) {
 	$search_accountancy_code_end = '';
 }
+$search_not_reconciled = GETPOST('search_not_reconciled', 'alpha');
+
+// Load variable for pagination
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
+	$page = 0;
+}     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if ($sortorder == "") {
+	$sortorder = "ASC";
+}
+if ($sortfield == "") {
+	$sortfield = "t.numero_compte";
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new BookKeeping($db);
-$hookmanager->initHooks(array('balancelist'));  // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array($contextpage));  // Note that conf->hooks_modules contains array
 
 $formaccounting = new FormAccounting($db);
 $formother = new FormOther($db);
@@ -81,6 +92,7 @@ if (empty($search_date_start) && !GETPOSTISSET('formfilteraction')) {
 	$sql .= " WHERE date_start < '".$db->idate(dol_now())."' AND date_end > '".$db->idate(dol_now())."'";
 	$sql .= $db->plimit(1);
 	$res = $db->query($sql);
+
 	if ($res->num_rows > 0) {
 		$fiscalYear = $db->fetch_object($res);
 		$search_date_start = strtotime($fiscalYear->date_start);
@@ -101,45 +113,6 @@ if (empty($search_date_start) && !GETPOSTISSET('formfilteraction')) {
 		$search_date_end = dol_get_last_day($year_end, $month_end);
 	}
 }
-if ($sortorder == "") {
-	$sortorder = "ASC";
-}
-if ($sortfield == "") {
-	$sortfield = "t.numero_compte";
-}
-
-
-$param = '';
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-	$param .= '&contextpage='.urlencode($contextpage);
-}
-if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
-}
-
-$filter = array();
-if (!empty($search_date_start)) {
-	$filter['t.doc_date>='] = $search_date_start;
-	$param .= '&amp;date_startmonth='.GETPOST('date_startmonth', 'int').'&amp;date_startday='.GETPOST('date_startday', 'int').'&amp;date_startyear='.GETPOST('date_startyear', 'int');
-}
-if (!empty($search_date_end)) {
-	$filter['t.doc_date<='] = $search_date_end;
-	$param .= '&amp;date_endmonth='.GETPOST('date_endmonth', 'int').'&amp;date_endday='.GETPOST('date_endday', 'int').'&amp;date_endyear='.GETPOST('date_endyear', 'int');
-}
-if (!empty($search_accountancy_code_start)) {
-	$filter['t.numero_compte>='] = $search_accountancy_code_start;
-	$param .= '&amp;search_accountancy_code_start='.$search_accountancy_code_start;
-}
-if (!empty($search_accountancy_code_end)) {
-	$filter['t.numero_compte<='] = $search_accountancy_code_end;
-	$param .= '&amp;search_accountancy_code_end='.$search_accountancy_code_end;
-}
-if (!empty($search_ledger_code)) {
-	$filter['t.code_journal'] = $search_ledger_code;
-	foreach ($search_ledger_code as $code) {
-		$param .= '&search_ledger_code[]='.urlencode($code);
-	}
-}
 
 if (empty($conf->accounting->enabled)) {
 	accessforbidden();
@@ -151,11 +124,11 @@ if (empty($user->rights->accounting->mouvements->lire)) {
 	accessforbidden();
 }
 
-
-
 /*
  * Action
  */
+
+$param = '';
 
 $parameters = array('socid'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -168,16 +141,67 @@ if (empty($reshook)) {
 		$show_subgroup = '';
 		$search_date_start = '';
 		$search_date_end = '';
+		$search_date_startyear = '';
+		$search_date_startmonth = '';
+		$search_date_startday = '';
+		$search_date_endyear = '';
+		$search_date_endmonth = '';
+		$search_date_endday = '';
 		$search_accountancy_code_start = '';
 		$search_accountancy_code_end = '';
+		$search_not_reconciled = '';
 		$search_ledger_code = array();
 		$filter = array();
 	}
-}
 
-/*
- * View
- */
+	// Must be after the remove filter action, before the export.
+	$filter = array();
+
+	if (!empty($search_date_start)) {
+		$filter['t.doc_date>='] = $search_date_start;
+		$param .= '&amp;date_startmonth=' . GETPOST('date_startmonth', 'int') . '&amp;date_startday=' . GETPOST('date_startday', 'int') . '&amp;date_startyear=' . GETPOST('date_startyear', 'int');
+	}
+	if (!empty($search_date_end)) {
+		$filter['t.doc_date<='] = $search_date_end;
+		$param .= '&amp;date_endmonth=' . GETPOST('date_endmonth', 'int') . '&amp;date_endday=' . GETPOST('date_endday', 'int') . '&amp;date_endyear=' . GETPOST('date_endyear', 'int');
+	}
+	if (!empty($search_doc_date)) {
+		$filter['t.doc_date'] = $search_doc_date;
+		$param .= '&doc_datemonth=' . GETPOST('doc_datemonth', 'int') . '&doc_dateday=' . GETPOST('doc_dateday', 'int') . '&doc_dateyear=' . GETPOST('doc_dateyear', 'int');
+	}
+	if (!empty($search_accountancy_code_start)) {
+		if ($type == 'sub') {
+			$filter['t.subledger_account>='] = $search_accountancy_code_start;
+		} else {
+			$filter['t.numero_compte>='] = $search_accountancy_code_start;
+		}
+		$param .= '&amp;search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
+	}
+	if (!empty($search_accountancy_code_end)) {
+		if ($type == 'sub') {
+			$filter['t.subledger_account<='] = $search_accountancy_code_end;
+		} else {
+			$filter['t.numero_compte<='] = $search_accountancy_code_end;
+		}
+		$param .= '&amp;search_accountancy_code_end=' . urlencode($search_accountancy_code_end);
+	}
+	if (!empty($search_ledger_code)) {
+		$filter['t.code_journal'] = $search_ledger_code;
+		foreach ($search_ledger_code as $code) {
+			$param .= '&search_ledger_code[]=' . urlencode($code);
+		}
+	}
+	if (!empty($search_not_reconciled)) {
+		$filter['t.reconciled_option'] = $search_not_reconciled;
+		$param .= '&search_not_reconciled='.urlencode($search_not_reconciled);
+	}
+
+	// param with type of list
+	$url_param = substr($param, 1); // remove first "&"
+	if (!empty($type)) {
+		$param = '&type=' . $type . $param;
+	}
+}
 
 if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
@@ -186,14 +210,23 @@ if ($action == 'export_csv') {
 	$type_export = 'balance';
 	include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
-	$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, 0, $filter);
+	if ($type == 'sub') {
+		$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, 0, $filter, 'AND', 1);
+	} else {
+		$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, 0, $filter);
+	}
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	foreach ($object->lines as $line) {
-		print '"'.length_accountg($line->numero_compte).'"'.$sep;
-		print '"'.$object->get_compte_desc($line->numero_compte).'"'.$sep;
+		if ($type == 'sub') {
+			print '"' . length_accounta($line->subledger_account) . '"' . $sep;
+			print '"' . $line->subledger_label . '"' . $sep;
+		} else {
+			print '"' . length_accountg($line->numero_compte) . '"' . $sep;
+			print '"' . $object->get_compte_desc($line->numero_compte) . '"' . $sep;
+		}
 		print '"'.price($line->debit).'"'.$sep;
 		print '"'.price($line->credit).'"'.$sep;
 		print '"'.price($line->debit - $line->credit).'"'.$sep;
@@ -203,8 +236,15 @@ if ($action == 'export_csv') {
 	exit;
 }
 
+/*
+ * View
+ */
 
-$title_page = $langs->trans("AccountBalance");
+if ($type == 'sub') {
+	$title_page = $langs->trans("AccountBalanceSubAccount");
+} else {
+	$title_page = $langs->trans("AccountBalance");
+}
 
 llxHeader('', $title_page);
 
@@ -213,32 +253,44 @@ if ($action != 'export_csv') {
 	// List
 	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-		$nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
+		if ($type == 'sub') {
+			$nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter, 'AND', 1);
+		} else {
+			$nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
+		}
+
 		if ($nbtotalofrecords < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
-	$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, $offset, $filter);
+	if ($type == 'sub') {
+		$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, $offset, $filter, 'AND', 1);
+	} else {
+		$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, $offset, $filter);
+	}
+
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" id="action" value="list">';
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
-	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="action" id="action" value="list">';
+	print '<input type="hidden" name="type" value="'.$type.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
-		$button = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
+		$newcardbutton = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 
 		print '<script type="text/javascript" language="javascript">
 		jQuery(document).ready(function() {
@@ -251,9 +303,24 @@ if ($action != 'export_csv') {
 			});
 		});
 		</script>';
+
+		if ($type == 'sub') {
+			$newcardbutton .= dolGetButtonTitle($langs->trans('AccountBalance')." - ".$langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/balance.php?' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
+			$newcardbutton .= dolGetButtonTitle($langs->trans('AccountBalance')." - ".$langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/balance.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
+		} else {
+			$newcardbutton .= dolGetButtonTitle($langs->trans('AccountBalance')." - ".$langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/balance.php?' . $url_param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
+			$newcardbutton .= dolGetButtonTitle($langs->trans('AccountBalance')." - ".$langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/balance.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
+		}
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create');
+	}
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage='.urlencode($contextpage);
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.urlencode($limit);
 	}
 
-	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
+	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$selectedfields = '';
 
@@ -264,18 +331,38 @@ if ($action != 'export_csv') {
 	$moreforfilter .= $form->selectDate($search_date_start ? $search_date_start : -1, 'date_start', 0, 0, 1, '', 1, 0);
 	$moreforfilter .= $langs->trans('DateEnd').': ';
 	$moreforfilter .= $form->selectDate($search_date_end ? $search_date_end : -1, 'date_end', 0, 0, 1, '', 1, 0);
-
-	$moreforfilter .= ' - ';
-	$moreforfilter .= '<label for="show_subgroup">'.$langs->trans('ShowSubtotalByGroup').'</label>: ';
-	$moreforfilter .= '<input type="checkbox" name="show_subgroup" id="show_subgroup" value="show_subgroup"'.($show_subgroup == 'show_subgroup' ? ' checked' : '').'>';
-
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<label for="show_subgroup">'.$langs->trans('ShowSubtotalByGroup').'</label>: ';
+	$moreforfilter .= '<input type="checkbox" name="show_subgroup" id="show_subgroup" value="show_subgroup"'.($show_subgroup == 'show_subgroup' ? ' checked' : '').'>';
+	$moreforfilter .= '</div>';
 
+	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans("Journal");
 	$moreforfilter .= $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+	$moreforfilter .= '</div>';
 
+	$moreforfilter .= '</br>';
+	$moreforfilter .= '<div class="divsearchfield">';
+	// Accountancy account
+	$moreforfilter .= $langs->trans('AccountAccounting').': ';
+	if ($type == 'sub') {
+		$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
+	} else {
+		$moreforfilter .= $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200', 'accounts');
+	}
+	$moreforfilter .= ' ';
+	if ($type == 'sub') {
+		$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
+	} else {
+		$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200', 'accounts');
+	}
+	$moreforfilter .= '</div>';
+
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<label for="notreconciled">'.$langs->trans('NotReconciled').'</label>: ';
+	$moreforfilter .= '<input type="checkbox" name="search_not_reconciled" id="notreconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>';
 	$moreforfilter .= '</div>';
 
 	if (!empty($moreforfilter)) {
@@ -288,15 +375,12 @@ if ($action != 'export_csv') {
 	}
 
 
-	$colspan = (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE) ? 5 : 4);
+	$colspan = (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE) ? 6 : 5);
 
 	print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre" colspan="'.$colspan.'">';
-	print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, '', 'accounts');
-	print ' ';
-	print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, '', 'accounts');
 	print '</td>';
 
 	// Fields from hook
@@ -313,6 +397,9 @@ if ($action != 'export_csv') {
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("AccountAccounting", $_SERVER['PHP_SELF'], "t.numero_compte", "", $param, "", $sortfield, $sortorder);
+	if ($type == 'sub') {
+		print_liste_field_titre("Type", $_SERVER['PHP_SELF'], "t.type", "", $param, "", $sortfield, $sortorder);
+	}
 	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		print_liste_field_titre("OpeningBalance", $_SERVER['PHP_SELF'], "", $param, "", 'class="right"', $sortfield, $sortorder);
 	}
@@ -361,11 +448,13 @@ if ($action != 'export_csv') {
 		$accountingaccountstatic->id = 0;
 		$accountingaccountstatic->account_number = '';
 
-		$accountingaccountstatic->fetch(null, $line->numero_compte, true);
-		if (!empty($accountingaccountstatic->account_number)) {
-			$accounting_account = $accountingaccountstatic->getNomUrl(0, 1, 0, '', 0, -1, 0, 'ledger');
-		} else {
-			$accounting_account = length_accountg($line->numero_compte);
+		if ($type != 'sub') {
+			$accountingaccountstatic->fetch(null, $line->numero_compte, true);
+			if (!empty($accountingaccountstatic->account_number)) {
+				$accounting_account = $accountingaccountstatic->getNomUrl(0, 1, 0, '', 0, -1, 0, 'ledger');
+			} else {
+				$accounting_account = length_accountg($line->numero_compte);
+			}
 		}
 
 		$link = '';
@@ -427,19 +516,42 @@ if ($action != 'export_csv') {
 		}
 
 		print '<tr class="oddeven">';
-		print '<td>'.$accounting_account.'</td>';
+		// Accounting account
+		if ($type == 'sub') {
+			print '<td>'.$line->subledger_account.' <span class="opacitymedium">('.$line->subledger_label.')</span></td>';
+		} else {
+			print '<td>'.$accounting_account.'</td>';
+		}
+
+		// Type
+		if ($type == 'sub') {
+			print '<td></td>';
+		}
+
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			print '<td class="right nowraponall amount">'.price(price2num($opening_balance, 'MT')).'</td>';
 		}
 
 		$urlzoom = '';
-		if ($line->numero_compte) {
-			$urlzoom = DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start='.urlencode($line->numero_compte).'&search_accountancy_code_end='.urlencode($line->numero_compte);
-			if (GETPOSTISSET('date_startmonth')) {
-				$urlzoom .= '&search_date_startmonth='.GETPOST('date_startmonth', 'int').'&search_date_startday='.GETPOST('date_startday', 'int').'&search_date_startyear='.GETPOST('date_startyear', 'int');
+		if ($type == 'sub') {
+			if ($line->subledger_account) {
+				$urlzoom = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&search_accountancy_code_start=' . urlencode($line->subledger_account) . '&search_accountancy_code_end=' . urlencode($line->subledger_account);
+				if (GETPOSTISSET('date_startmonth')) {
+					$urlzoom .= '&search_date_startmonth=' . GETPOST('date_startmonth', 'int') . '&search_date_startday=' . GETPOST('date_startday', 'int') . '&search_date_startyear=' . GETPOST('date_startyear', 'int');
+				}
+				if (GETPOSTISSET('date_endmonth')) {
+					$urlzoom .= '&search_date_endmonth=' . GETPOST('date_endmonth', 'int') . '&search_date_endday=' . GETPOST('date_endday', 'int') . '&search_date_endyear=' . GETPOST('date_endyear', 'int');
+				}
 			}
-			if (GETPOSTISSET('date_endmonth')) {
-				$urlzoom .= '&search_date_endmonth='.GETPOST('date_endmonth', 'int').'&search_date_endday='.GETPOST('date_endday', 'int').'&search_date_endyear='.GETPOST('date_endyear', 'int');
+		} else {
+			if ($line->numero_compte) {
+				$urlzoom = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . urlencode($line->numero_compte) . '&search_accountancy_code_end=' . urlencode($line->numero_compte);
+				if (GETPOSTISSET('date_startmonth')) {
+					$urlzoom .= '&search_date_startmonth=' . GETPOST('date_startmonth', 'int') . '&search_date_startday=' . GETPOST('date_startday', 'int') . '&search_date_startyear=' . GETPOST('date_startyear', 'int');
+				}
+				if (GETPOSTISSET('date_endmonth')) {
+					$urlzoom .= '&search_date_endmonth=' . GETPOST('date_endmonth', 'int') . '&search_date_endday=' . GETPOST('date_endday', 'int') . '&search_date_endyear=' . GETPOST('date_endyear', 'int');
+				}
 			}
 		}
 		// Debit
@@ -464,7 +576,7 @@ if ($action != 'export_csv') {
 	}
 
 	if (!empty($show_subgroup)) {
-		print '<tr class="liste_total"><td class="right">'.$langs->trans("SubTotal").':</td>';
+		print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("SubTotal").':</td>';
 		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 			print '<td class="right nowraponall amount">'.price(price2num($sous_total_opening_balance, 'MT')).'</td>';
 		}
@@ -479,7 +591,7 @@ if ($action != 'export_csv') {
 		print '</tr>';
 	}
 
-	print '<tr class="liste_total"><td class="right">'.$langs->trans("AccountBalance").':</td>';
+	print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("AccountBalance").':</td>';
 	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
 		print '<td class="nowrap right">'.price(price2num($total_opening_balance, 'MT')).'</td>';
 	}

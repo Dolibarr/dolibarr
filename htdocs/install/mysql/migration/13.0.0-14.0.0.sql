@@ -698,6 +698,10 @@ ALTER TABLE llx_societe ADD COLUMN accountancy_code_supplier_general varchar(32)
 ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_customer_general varchar(32) DEFAULT NULL AFTER entity;
 ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_supplier_general varchar(32) DEFAULT NULL AFTER accountancy_code_customer;
 
+-- Rename const to hide public and private notes (fix allow notes const was used to hide)
+UPDATE llx_const SET name = 'MAIN_LIST_HIDE_PUBLIC_NOTES' WHERE name = 'MAIN_LIST_ALLOW_PUBLIC_NOTES';
+UPDATE llx_const SET name = 'MAIN_LIST_HIDE_PRIVATE_NOTES' WHERE name = 'MAIN_LIST_ALLOW_PRIVATE_NOTES';
+
 -- Add shipment lines dispatcher
 create table llx_expeditiondet_dispatch
 (

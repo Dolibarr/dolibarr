@@ -126,6 +126,7 @@ WriteBookKeeping=Enregistrer les écritures en comptabilité
 Bookkeeping=Grand livre
 BookkeepingSubAccount=Grand livre auxiliaire
 AccountBalance=Balance des comptes
+AccountBalanceSubAccount=Balance des comptes auxiliaires
 ObjectsRef=Référence de l'objet source
 CAHTF=Total achat fournisseur HT
 TotalExpenseReport=Total note de frais
@@ -185,6 +186,8 @@ ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable pour enregistrer les ad
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte comptable par défaut pour les acomptes clients
 UseAuxiliaryAccountOnCustomerDeposit=Utiliser des comptes auxiliaires sur les acomptes clients
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Compte comptable par défaut pour les acomptes fournisseurs
+UseAuxiliaryAccountOnSupplierDeposit=Utiliser des comptes auxiliaires sur les acomptes fournisseurs
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Compte comptable par défaut pour les dépôts de garantie clients
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable par défaut pour les produits achetés (utilisé si non défini dans la fiche produit)
