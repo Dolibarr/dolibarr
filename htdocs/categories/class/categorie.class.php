@@ -62,6 +62,7 @@ class Categorie extends CommonObject
 	const TYPE_KNOWLEDGEMANAGEMENT = 'knowledgemanagement';
 	const TYPE_INVOICE             = 'invoice';
 	const TYPE_SUPPLIER_INVOICE    = 'supplier_invoice';
+	const TYPE_SUPPLIER_ORDER      = 'supplier_order';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -88,7 +89,8 @@ class Categorie extends CommonObject
 		'ticket'              => 12,
 		'knowledgemanagement' => 13,
 		'invoice'             => 14,
-		'supplier_invoice'    => 15
+		'supplier_invoice'    => 15,
+		'supplier_order'      => 16
 	);
 
 	/**
@@ -112,7 +114,8 @@ class Categorie extends CommonObject
 		12 => 'ticket',
 		13 => 'knowledgemanagement',
 		14 => 'invoice',
-		15 => 'supplier_invoice'
+		15 => 'supplier_invoice',
+		16 => 'supplier_order'
 	);
 
 	/**
@@ -159,7 +162,8 @@ class Categorie extends CommonObject
 		'ticket'              => 'Ticket',
 		'knowledgemanagement' => 'KnowledgeRecord',
 		'invoice'             => 'Facture',
-		'supplier_invoice'    => 'FactureFournisseur'
+		'supplier_invoice'    => 'FactureFournisseur',
+		'supplier_order'      => 'CommandeFournisseur'
 	);
 
 	/**
@@ -181,7 +185,8 @@ class Categorie extends CommonObject
 		'actioncomm'       => 'ActioncommCategoriesArea',
 		'website_page'     => 'WebsitePageCategoriesArea',
 		'invoice'          => 'InvoiceCategoriesArea',
-		'supplier_invoice' => 'SupplierInvoiceCategoriesArea'
+		'supplier_invoice' => 'SupplierInvoiceCategoriesArea',
+		'supplier_order'   => 'SupplierOrderCategoriesArea'
 	);
 
 	/**
@@ -198,7 +203,8 @@ class Categorie extends CommonObject
 		'warehouse'           => 'entrepot',
 		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord',
 		'invoice'             => 'facture',
-		'supplier_invoice'    => 'facture_fourn'
+		'supplier_invoice'    => 'facture_fourn',
+		'supplier_order'      => 'commande_fournisseur'
 	);
 
 	/**
@@ -259,6 +265,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_TICKET
 	 * @see Categorie::TYPE_INVOICE
 	 * @see Categorie::TYPE_SUPPLIER_INVOICE
+	 * @see Categorie::TYPE_SUPPLIER_ORDER
 	 */
 	public $type;
 
