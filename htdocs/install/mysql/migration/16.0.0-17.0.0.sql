@@ -374,3 +374,5 @@ ALTER TABLE llx_prelevement_demande ADD COLUMN fk_salary INTEGER NULL AFTER fk_f
 
 
 ALTER TABLE llx_user ADD COLUMN birth_place varchar(64);
+
+ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
