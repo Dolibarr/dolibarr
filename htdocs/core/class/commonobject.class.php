@@ -2072,7 +2072,7 @@ abstract class CommonObject
 					$sql .= " AND te.entity IS NOT NULL"; // Show all users
 				} else {
 					$sql .= " AND ug.fk_user = te.rowid";
-					$sql .= " AND ug.entity IN (".getEntity($this->element).")";
+					$sql .= " AND ug.entity IN (".getEntity('usergroup').")";
 				}
 			} else {
 				$sql .= ' AND te.entity IN ('.getEntity($this->element).')';
@@ -2142,7 +2142,7 @@ abstract class CommonObject
 					$sql .= " AND te.entity IS NOT NULL"; // Show all users
 				} else {
 					$sql .= " AND ug.fk_user = te.rowid";
-					$sql .= " AND ug.entity IN (".getEntity($this->element).")";
+					$sql .= " AND ug.entity IN (".getEntity('usergroup').")";
 				}
 			} else {
 				$sql .= ' AND te.entity IN ('.getEntity($this->element).')';
