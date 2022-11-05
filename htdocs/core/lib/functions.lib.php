@@ -5651,8 +5651,8 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
  *		@param	integer				$form			Type of format, HTML or not (not by default)
  *		@param	Translate|string	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
  *		@param	int					$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before beeing inserted into database or after a computation, so this parameter should be useless.
- *		@param	int					$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
- *		@param	int					$forcerounding	Force the number of decimal to forcerounding decimal (-1=do not force)
+ *		@param	int					$rounding		MINIMUM number of decimal to show. 0=no change, -1=we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
+ *		@param	int|string			$forcerounding	Force the MAXIMUM of decimal to forcerounding decimal (-1=no change, 'MU' or 'MT' or numeric to round to MU or MT or to a given number of decimal)
  *		@param	string				$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
  *		@return	string								String with formated amount
  *
@@ -5723,8 +5723,14 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 
 	// If force rounding
-	if ($forcerounding >= 0) {
-		$nbdecimal = $forcerounding;
+	if ((string) $forcerounding != '-1') {
+		if ($forcerounding == 'MU') {
+			$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_UNIT;
+		} else if ($forcerounding == 'MT') {
+			$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_TOT;
+		} elseif ($forcerounding >= 0) {
+			$nbdecimal = $forcerounding;
+		}
 	}
 
 	// Format number
