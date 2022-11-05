@@ -51,6 +51,8 @@ if (!$mode) {
 
 $username = GETPOST('username', 'alphanohtml');
 $passworduidhash = GETPOST('passworduidhash', 'alpha');
+$setnewpassword = GETPOST('setnewpassword', 'aZ09');
+
 $conf->entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : 1);
 
 // Instantiate hooks of thirdparty module only if not already define
@@ -90,7 +92,7 @@ if (empty($reshook)) {
 		$edituser = new User($db);
 		$result = $edituser->fetch('', $username);
 		if ($result < 0) {
-			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorLoginDoesNotExists", $username)).'</div>';
+			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 		} else {
 			global $dolibarr_main_instance_unique_id;
 
@@ -98,7 +100,7 @@ if (empty($reshook)) {
 			if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id, $passworduidhash)) {
 				// Clear session
 				unset($_SESSION['dol_login']);
-				$_SESSION['dol_loginmesg'] = $langs->transnoentitiesnoconv('NewPasswordValidated'); // Save message for the session page
+				$_SESSION['dol_loginmesg'] = '<!-- warning -->'.$langs->transnoentitiesnoconv('NewPasswordValidated'); // Save message for the session page
 
 				$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
 				dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
@@ -111,7 +113,8 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	// Action modif mot de passe
+
+	// Action to set a temporary password and send email for reset
 	if ($action == 'buildnewpassword' && $username) {
 		$sessionkey = 'dol_antispam_value';
 		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
@@ -235,4 +238,8 @@ $parameters = array('entity' => GETPOST('entity', 'int'));
 $reshook = $hookmanager->executeHooks('getPasswordForgottenPageExtraOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 $moreloginextracontent = $hookmanager->resPrint;
 
-include $template_dir.'passwordforgotten.tpl.php'; // To use native PHP
+if (empty($setnewpassword)) {
+	include $template_dir.'passwordforgotten.tpl.php'; // To use native PHP
+} else {
+	include $template_dir.'passwordreset.tpl.php'; // To use native PHP
+}
