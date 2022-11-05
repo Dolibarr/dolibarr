@@ -787,7 +787,7 @@ if (($action == "create") || ($action == "edit")) {
 	print dol_get_fiche_end();
 
 
-	print "\n\n<div class=\"tabsAction\">\n";
+	print "\n\n".'<div class="tabsAction">'."\n";
 	if (!$user->rights->cron->create) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Edit").'</a>';
 	} else {
