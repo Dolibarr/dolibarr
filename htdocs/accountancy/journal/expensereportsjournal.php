@@ -496,14 +496,14 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 }
 
 if (empty($action) || $action == 'view') {
-	llxHeader('', $langs->trans("ExpenseReportsJournal"));
+	llxHeader('', $langs->trans("GenerationOfAccountingEntries").' | '.$langs->trans("AccountingJournalType5"));
 
-	$nom = $langs->trans("ExpenseReportsJournal").' | '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
+	$nom = $langs->trans("GenerationOfAccountingEntries").' | '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
 	$builddate = dol_now();
-	$description .= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
+	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
 	$listofchoices = array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
 	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
