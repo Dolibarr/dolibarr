@@ -5812,6 +5812,11 @@ class FactureLigne extends CommonInvoiceLine
 		if ($result) {
 			$objp = $this->db->fetch_object($result);
 
+			if (!$objp) {
+				$this->error = 'InvoiceLine with id '. $rowid .' not found sql='.$sql;
+				return 0;
+			}
+
 			$this->rowid = $objp->rowid;
 			$this->id = $objp->rowid;
 			$this->fk_facture = $objp->fk_facture;

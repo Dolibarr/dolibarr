@@ -127,18 +127,22 @@ class Product extends CommonObject
 	public $type = self::TYPE_PRODUCT;
 
 	/**
-	 * Selling price
+	 * Selling price without tax
 	 *
 	 * @var float
 	 */
-	public $price; // Price net
+	public $price;
+
+	public $price_formated;			// used by takepos/ajax/ajax.php
 
 	/**
-	 * Price with tax
+	 * Selling price with tax
 	 *
 	 * @var float
 	 */
 	public $price_ttc;
+
+	public $price_ttc_formated;		// used by takepos/ajax/ajax.php
 
 	/**
 	 * Minimum price net

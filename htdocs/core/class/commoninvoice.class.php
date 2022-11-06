@@ -756,7 +756,7 @@ abstract class CommonInvoice extends CommonObject
 			$bac->fetch(0, $this->socid);
 
 			$sql = "SELECT count(*)";
-			$sql .= " FROM ".$this->db->prefix()."prelevement_facture_demande";
+			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			if ($type == 'bank-transfer') {
 				$sql .= " WHERE fk_facture_fourn = ".((int) $this->id);
 			} else {
@@ -786,7 +786,7 @@ abstract class CommonInvoice extends CommonObject
 					}
 
 					if (is_numeric($amount) && $amount != 0) {
-						$sql = 'INSERT INTO '.$this->db->prefix().'prelevement_facture_demande(';
+						$sql = 'INSERT INTO '.$this->db->prefix().'prelevement_demande(';
 						if ($type == 'bank-transfer') {
 							$sql .= 'fk_facture_fourn, ';
 						} else {
@@ -883,7 +883,7 @@ abstract class CommonInvoice extends CommonObject
 			}
 
 			$sql = "SELECT rowid, date_demande, amount, fk_facture, fk_facture_fourn";
-			$sql .= " FROM ".$this->db->prefix()."prelevement_facture_demande";
+			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
 			$sql .= " WHERE rowid = ".((int) $did);
 
 			dol_syslog(get_class($this)."::makeStripeSepaRequest 1", LOG_DEBUG);
@@ -1572,7 +1572,7 @@ abstract class CommonInvoice extends CommonObject
 						$this->errors[] = "Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?";
 					}
 
-					$sql = "INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande(";
+					$sql = "INSERT INTO '.MAIN_DB_PREFIX.'prelevement_demande(";
 					$sql .= "fk_facture, ";
 					$sql .= " amount, date_demande, fk_user_demande, ext_payment_id, ext_payment_site, sourcetype, entity)";
 					$sql .= " VALUES (".$this->id;
@@ -1633,7 +1633,7 @@ abstract class CommonInvoice extends CommonObject
 	public function demande_prelevement_delete($fuser, $did)
 	{
 		// phpcs:enable
-		$sql = 'DELETE FROM '.$this->db->prefix().'prelevement_facture_demande';
+		$sql = 'DELETE FROM '.$this->db->prefix().'prelevement_demande';
 		$sql .= ' WHERE rowid = '.((int) $did);
 		$sql .= ' AND traite = 0';
 		if ($this->db->query($sql)) {

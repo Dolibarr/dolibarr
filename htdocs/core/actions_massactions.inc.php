@@ -1240,6 +1240,50 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 	}
 }
 
+if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoadd) {
+	$db->begin();
+	if (GETPOSTISSET('pricerate')) {
+		$pricepercentage=GETPOST('pricerate', 'int');
+		if ($pricepercentage == 0) {
+			setEventMessages($langs->trans("RecordsModified", 0), null);
+		} else {
+			foreach ($toselect as $toselectid) {
+				$result = $object->fetch($toselectid);
+				//var_dump($contcats);exit;
+				if ($result > 0) {
+					if ($obj->price_base_type == 'TTC') {
+						$newprice = $object->price_ttc * (100 + $pricepercentage) / 100;
+						$minprice = $object->price_min_ttc;
+					} else {
+						$newprice = $object->price * (100 + $pricepercentage) / 100;
+						$minprice = $object->price_min;
+					}
+					$res = $object->updatePrice($newprice, $obj->price_base_type, $user, $object->tva_tx, $minprice, 0, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+					if ($res > 0) {
+						$nbok++;
+					} else {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+					break;
+				}
+			}
+		}
+	}
+
+	if (!$error) {
+		if ($nbok > 0) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		}
+		$db->commit();
+		$toselect=array();
+	} else {
+		$db->rollback();
+	}
+}
+
 if (!$error && ($action == 'setsupervisor' && $confirm == 'yes') && $permissiontoadd) {
 	$db->begin();
 	$supervisortoset=GETPOST('supervisortoset');

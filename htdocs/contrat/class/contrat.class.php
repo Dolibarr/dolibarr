@@ -3392,7 +3392,7 @@ class ContratLigne extends CommonObjectLine
 			}
 		}
 
-		// If we change a planned date (start or end), sync dates for all services
+		// If we change a planned date (start or end) of one contract line, sync dates for all other services too
 		if (!$error && !empty($conf->global->CONTRACT_SYNC_PLANNED_DATE_OF_SERVICES)) {
 			dol_syslog(get_class($this)."::update CONTRACT_SYNC_PLANNED_DATE_OF_SERVICES is on so we update date for all lines", LOG_DEBUG);
 

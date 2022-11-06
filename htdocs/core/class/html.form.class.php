@@ -2453,9 +2453,10 @@ class Form
 	 * @param string $morecss Add more css on select
 	 * @param string $nooutput No print, return the output into a string
 	 * @param int $forcecombo Force to use combo box
+	 * @param array $TProducts  Add filter on a defined product
 	 * @return        void|string
 	 */
-	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 1, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0)
+	public function select_bom($selected = '', $htmlname = 'bom_id', $limit = 0, $status = 1, $type = 0, $showempty = '1', $morecss = '', $nooutput = '', $forcecombo = 0, $TProducts = [])
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $db;
@@ -2477,8 +2478,9 @@ class Form
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'bom_bom as b';
 		$sql.= ' WHERE b.entity IN ('.getEntity('bom').')';
 		if (!empty($status)) $sql.= ' AND status = '. (int) $status;
-		if (!empty($type)) $sql.= ' AND status = '. (int) $type;
-		if (!empty($limit)) $sql.= 'LIMIT '. (int) $limit;
+		if (!empty($type)) $sql.= ' AND bomtype = '. (int) $type;
+		if (!empty($TProducts)) $sql .= ' AND fk_product IN ('.$this->db->sanitize(implode(',', $TProducts)).')';
+		if (!empty($limit)) $sql.= ' LIMIT '. (int) $limit;
 		$resql = $db->query($sql);
 		if ($resql) {
 			if ($showempty)	{
@@ -2489,8 +2491,9 @@ class Form
 			while ($obj = $db->fetch_object($resql)) {
 				$product = new Product($db);
 				$res = $product->fetch($obj->fk_product);
-				if ($obj->rowid == $selected) $out .= '<option value="'.$obj->rowid.'" selected>'.$obj->ref.' - '. $product->label .' - '.$obj->label.'</option>';
-				$out .= '<option value="'.$obj->rowid.'">'.$obj->ref.' - '.$product->label .' - '. $obj->label.'</option>';
+				$out .= '<option value="'.$obj->rowid.'"';
+				if ($obj->rowid == $selected) $out .= 'selected';
+				$out .= '>'.$obj->ref.' - '.$product->label .' - '. $obj->label.'</option>';
 			}
 		} else {
 			$error++;
@@ -4856,7 +4859,7 @@ class Form
 	 *                                                          - int (id of category)
 	 *                                                          - string (categories ids seprated by comma)
 	 *                                                          - array (list of categories ids)
-	 *    @param	int			            $outputmode			0=HTML select string, 1=Array
+	 *    @param	int			            $outputmode			0=HTML select string, 1=Array, 2=Array extended
 	 *    @param	int			            $include			[=0] Removed or 1=Keep only
 	 *    @param	string					$morecss			More CSS
 	 *    @return	string|array
@@ -4889,7 +4892,7 @@ class Form
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($result);
 					if ($objp) {
-						$cate_arbo[$objp->rowid] = array('id'=>$objp->rowid, 'fulllabel'=>$objp->label);
+						$cate_arbo[$objp->rowid] = array('id'=>$objp->rowid, 'fulllabel'=>$objp->label, 'color'=>'', 'picto'=>'category');
 					}
 					$i++;
 				}
@@ -4902,8 +4905,9 @@ class Form
 			$cate_arbo = $cat->get_full_arbo($type, $markafterid, $include);
 		}
 
-		$output = '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 		$outarray = array();
+
+		$output = '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 		if (is_array($cate_arbo)) {
 			if (!count($cate_arbo)) {
 				$output .= '<option value="-1" disabled>'.$langs->trans("NoCategoriesDefined").'</option>';
@@ -4915,7 +4919,11 @@ class Form
 					} else {
 						$add = '';
 					}
-					$output .= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle').'</option>';
+					$output .= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'"';
+					$output .= ' data-html="'.dol_escape_htmltag(img_picto('', 'category', 'class="pictofixedwidth" style="color: #'.$cate_arbo[$key]['color'].'"').dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle')).'"';
+					$output .= '>';
+					$output .= dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle');
+					$output .= '</option>';
 
 					$outarray[$cate_arbo[$key]['id']] = $cate_arbo[$key]['fulllabel'];
 				}
@@ -4924,7 +4932,9 @@ class Form
 		$output .= '</select>';
 		$output .= "\n";
 
-		if ($outputmode) {
+		if ($outputmode == 2) {
+			return $cate_arbo;
+		} elseif ($outputmode) {
 			return $outarray;
 		}
 		return $output;
@@ -5060,7 +5070,7 @@ class Form
 							$more .= $input['label'].'</div><div class="tagtd left">';
 						}
 						if ($input['type'] == 'select') {
-							$more .= $this->selectarray($input['name'], $input['values'], $input['default'], $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
+							$more .= $this->selectarray($input['name'], $input['values'], !empty($input['default']) ? $input['default'] : '-1', $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
 						} else {
 							$more .= $this->multiselectarray($input['name'], $input['values'], is_array($input['default']) ? $input['default'] : [$input['default']], $key_in_label, $value_as_key, $morecss, $translate, $maxlen, $moreattr);
 						}
@@ -5439,22 +5449,26 @@ class Form
 	 * 	@param	string	$deposit_percent	< 0 : deposit_percent input makes no sense (for example, in list filters)
 	 *										0 : use default deposit percentage from entry
 	 *										> 0 : force deposit percentage (for example, from company object)
+	 *  @param  int     $nooutput           No print is done. String is returned.
 	 *  @return	void
 	 */
-	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $type = '', $filtertype = -1, $deposit_percent = -1)
+	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $type = '', $filtertype = -1, $deposit_percent = -1, $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs;
+
+		$out = '';
+
 		if ($htmlname != "none") {
-			print '<form method="POST" action="'.$page.'">';
-			print '<input type="hidden" name="action" value="setconditions">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
+			$out .= '<form method="POST" action="'.$page.'">';
+			$out .= '<input type="hidden" name="action" value="setconditions">';
+			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			if ($type) {
-				print '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
+				$out .= '<input type="hidden" name="type" value="'.dol_escape_htmltag($type).'">';
 			}
-			print $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, 0, '', $deposit_percent);
-			print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
-			print '</form>';
+			$out .= $this->getSelectConditionsPaiements($selected, $htmlname, $filtertype, $addempty, 0, '', $deposit_percent);
+			$out .= '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
+			$out .= '</form>';
 		} else {
 			if ($selected) {
 				$this->load_cache_conditions_paiements();
@@ -5465,15 +5479,21 @@ class Form
 						$label = str_replace('__DEPOSIT_PERCENT__', $deposit_percent > 0 ? $deposit_percent : $this->cache_conditions_paiements[$selected]['deposit_percent'], $label);
 					}
 
-					print $label;
+					$out .= $label;
 				} else {
 					$langs->load('errors');
-					print $langs->trans('ErrorNotInDictionaryPaymentConditions');
+					$out .= $langs->trans('ErrorNotInDictionaryPaymentConditions');
 				}
 			} else {
-				print "&nbsp;";
+				$out .= '&nbsp;';
 			}
 		}
+
+		if (empty($nooutput)) {
+			print $out;
+			return '';
+		}
+		return $out;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -5916,19 +5936,20 @@ class Form
 	/**
 	 *  Output html select to select thirdparty
 	 *
-	 *  @param	string	$page       	Page
-	 *  @param  string	$selected   	Id preselected
-	 *  @param  string	$htmlname		Name of HTML select
-	 *  @param  string	$filter         Optional filters criteras. Do not use a filter coming from input of users.
-	 *	@param	int		$showempty		Add an empty field
-	 * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
-	 * 	@param	int		$forcecombo		Force to use combo box
-	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-	 *  @param  int     $nooutput       No print output. Return it only.
-	 *  @param	array	$excludeids		Exclude IDs from the select combo
+	 *  @param	string	$page       			Page
+	 *  @param  string	$selected   			Id preselected
+	 *  @param  string	$htmlname				Name of HTML select
+	 *  @param  string	$filter         		Optional filters criteras. Do not use a filter coming from input of users.
+	 *	@param	int		$showempty				Add an empty field
+	 * 	@param	int		$showtype				Show third party type in combolist (customer, prospect or supplier)
+	 * 	@param	int		$forcecombo				Force to use combo box
+	 *  @param	array	$events					Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+	 *  @param  int     $nooutput       		No print output. Return it only.
+	 *  @param	array	$excludeids				Exclude IDs from the select combo
+	 *  @param	string	$textifnothirdparty		Text to show if no thirdparty
 	 *  @return	void|string
 	 */
-	public function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0, $excludeids = array())
+	public function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0, $excludeids = array(), $textifnothirdparty = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -5946,9 +5967,9 @@ class Form
 				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 				$soc = new Societe($this->db);
 				$soc->fetch($selected);
-				$out .= $soc->getNomUrl($langs);
+				$out .= $soc->getNomUrl(0, '');
 			} else {
-				$out .= "&nbsp;";
+				$out .= '<span class="opacitymedium">'.$textifnothirdparty.'</span>';
 			}
 		}
 
@@ -6288,7 +6309,7 @@ class Form
 			}
 
 			if (!$options_only) {
-				$return .= '<select class="flat minwidth75imp" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled ? ' disabled' : '').$title.'>';
+				$return .= '<select class="flat minwidth50imp maxwidth100" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled ? ' disabled' : '').$title.'>';
 			}
 
 			$selectedfound = false;
@@ -6335,6 +6356,7 @@ class Form
 
 			if (!$options_only) {
 				$return .= '</select>';
+				//$return .= ajax_combobox($htmlname);		// This break for the moment dynamic autoselection of a value when selecting a product in object lines
 			}
 		} else {
 			$return .= $this->error;
@@ -8311,8 +8333,8 @@ class Form
 	 *	Show a multiselect form from an array. WARNING: Use this only for short lists.
 	 *
 	 *	@param	string		$htmlname		Name of select
-	 *	@param	array		$array			Array with key+value
-	 *	@param	array		$selected		Array with key+value preselected
+	 *	@param	array		$array			Array(key=>value) or Array(key=>array('id'=> , 'label'=> ))
+	 *	@param	array		$selected		Array of keys preselected
 	 *	@param	int			$key_in_label   1 to show key like in "[key] value"
 	 *	@param	int			$value_as_key   1 to use value as key
 	 *	@param  string		$morecss        Add more css style
@@ -8348,14 +8370,24 @@ class Form
 
 			if (!empty($array)) {
 				foreach ($array as $key => $value) {
-					$newval = ($translate ? $langs->trans($value) : $value);
-					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
+					$tmpkey = $key;
+					$tmpvalue = $value;
+					$tmpcolor = '';
+					$tmppicto = '';
+					if (is_array($value) && array_key_exists('id', $value) && array_key_exists('label', $value)) {
+						$tmpkey = $value['id'];
+						$tmpvalue = $value['label'];
+						$tmpcolor = $value['color'];
+						$tmppicto = $value['picto'];
+					}
+					$newval = ($translate ? $langs->trans($tmpvalue) : $tmpvalue);
+					$newval = ($key_in_label ? $tmpkey.' - '.$newval : $newval);
 
-					$out .= '<option value="'.$key.'"';
-					if (is_array($selected) && !empty($selected) && in_array((string) $key, $selected) && ((string) $key != '')) {
+					$out .= '<option value="'.$tmpkey.'"';
+					if (is_array($selected) && !empty($selected) && in_array((string) $tmpkey, $selected) && ((string) $tmpkey != '')) {
 						$out .= ' selected';
 					}
-					$out .= ' data-html="'.dol_escape_htmltag($newval).'"';
+					$out .= ' data-html="'.dol_escape_htmltag(($tmppicto ? img_picto('', $tmppicto, 'class="pictofixedwidth" style="color: #'.$tmpcolor.'"') : '').$newval).'"';
 					$out .= '>';
 					$out .= dol_htmlentitiesbr($newval);
 					$out .= '</option>'."\n";

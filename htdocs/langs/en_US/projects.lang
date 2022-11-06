@@ -37,6 +37,7 @@ OpportunitiesStatusForOpenedProjects=Leads amount of open projects by status
 OpportunitiesStatusForProjects=Leads amount of projects by status
 ShowProject=Show project
 ShowTask=Show task
+SetThirdParty=Set third party
 SetProject=Set project
 OutOfProject=Out of project
 NoProject=No project defined or owned

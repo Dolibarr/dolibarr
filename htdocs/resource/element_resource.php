@@ -324,6 +324,9 @@ if (!$ret) {
 	if (($element_id || $element_ref) && $element == 'action') {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
+		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		$hookmanager->initHooks(array('actioncard', 'globalcard'));
+
 		$act = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($act)) {
 			$head = actions_prepare_head($act);
@@ -343,6 +346,15 @@ if (!$ret) {
 			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
 			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
 			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
+
+			// Add more views from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
+			if (empty($reshook)) {
+				$out .= $hookmanager->resPrint;
+			} elseif ($reshook > 1) {
+				$out = $hookmanager->resPrint;
+			}
 
 			$linkback .= $out;
 
@@ -367,7 +379,7 @@ if (!$ret) {
 						$proj->fetch($object->fk_project);
 						$morehtmlref .= $proj->getNomUrl(1);
 						if ($proj->title) {
-							$morehtmlref .= ' - '.dol_escape_htmltag($proj->title);
+							$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 						}
 					}
 				}

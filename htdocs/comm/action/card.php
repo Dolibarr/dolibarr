@@ -90,6 +90,14 @@ if ($fulldayevent) {
 	$datep = dol_mktime($aphour, $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuserrel');
 	$datef = dol_mktime($p2hour, $p2min, '59', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
 }
+$reg = array();
+if (GETPOST('datep')) {
+	if (GETPOST('datep') == 'now') {
+		$datep = dol_now();
+	} elseif (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/', GETPOST("datep"), $reg)) {		// Try to not use this. Use insteead '&datep=now'
+		$datep = dol_mktime(0, 0, 0, $reg[2], $reg[3], $reg[1], 'tzuser');
+	}
+}
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -1070,7 +1078,6 @@ if (empty($reshook)) {
 }
 
 
-
 /*
  * View
  */
@@ -1496,11 +1503,6 @@ if ($action == 'create') {
 			}
 			print '</td></tr>';
 		}
-	}
-
-	$reg = array();
-	if (GETPOST("datep") && preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/', GETPOST("datep"), $reg)) {
-		$object->datep = dol_mktime(0, 0, 0, $reg[2], $reg[3], $reg[1]);
 	}
 
 	// Priority
@@ -2146,6 +2148,15 @@ if ($id > 0) {
 		$linkback .= '<span class="hideonsmartphone">'.$langs->trans("ViewPerUser").'</span>';
 		$linkback .= '</a>';
 
+		// Add more views from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
+		if (empty($reshook)) {
+			$linkback .= $hookmanager->resPrint;
+		} elseif ($reshook > 1) {
+			$linkback = $hookmanager->resPrint;
+		}
+
 		//$linkback.=$out;
 
 		$morehtmlref = '<div class="refidno">';
@@ -2167,7 +2178,7 @@ if ($id > 0) {
 					$proj->fetch($object->fk_project);
 					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
-						$morehtmlref .= ' - '.dol_escape_htmltag($proj->title);
+						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 					}
 				}
 			}

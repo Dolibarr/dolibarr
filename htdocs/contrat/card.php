@@ -694,6 +694,8 @@ if (empty($reshook)) {
 				$error++;
 			}
 			$objectline->fetch_optionals();
+
+			$objectline->oldcopy = dol_clone($objectline);
 		}
 
 		$db->begin();
@@ -1391,7 +1393,7 @@ if ($action == 'create') {
 					$proj->fetch($object->fk_project);
 					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
-						$morehtmlref .= ' - '.dol_escape_htmltag($proj->title);
+						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 					}
 				}
 			}
