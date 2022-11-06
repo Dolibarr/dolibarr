@@ -1725,7 +1725,7 @@ while ($i < min($num, $limit)) {
 
 	if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 		// Prospect status
-		print '<td class="center nowrap"><div class="nowrap">';
+		print '<td class="center nowrap"><div class="nowraponall">';
 		print '<div class="inline-block">';
 		print $companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
 		print '</div> - <div class="inline-block">';
