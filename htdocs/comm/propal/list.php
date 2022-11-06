@@ -466,7 +466,7 @@ if ($action == "nosign" && $permissiontoclose) {
 		$error = 0;
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked) > 0) {
-				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED) {
+				if ($tmpproposal->statut == $tmpproposal::STATUS_VALIDATED || (!empty($conf->global->PROPAL_SKIP_ACCEPT_REFUSE) && $tmpproposal->statut == $tmpproposal::STATUS_DRAFT)) {
 					$tmpproposal->statut = $tmpproposal::STATUS_NOTSIGNED;
 					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_NOTSIGNED) > 0) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('NoSigned'), 'mesgs');
@@ -1687,6 +1687,9 @@ if ($resql) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		if (!empty($arrayfields['p.ref']['checked'])) {
@@ -2231,10 +2234,11 @@ if ($resql) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
+
 
 		print '</tr>'."\n";
 

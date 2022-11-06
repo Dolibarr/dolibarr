@@ -2148,6 +2148,15 @@ if ($id > 0) {
 		$linkback .= '<span class="hideonsmartphone">'.$langs->trans("ViewPerUser").'</span>';
 		$linkback .= '</a>';
 
+		// Add more views from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
+		if (empty($reshook)) {
+			$linkback .= $hookmanager->resPrint;
+		} elseif ($reshook > 1) {
+			$linkback = $hookmanager->resPrint;
+		}
+
 		//$linkback.=$out;
 
 		$morehtmlref = '<div class="refidno">';

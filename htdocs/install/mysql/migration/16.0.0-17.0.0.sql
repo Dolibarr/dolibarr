@@ -211,6 +211,9 @@ ALTER TABLE llx_projet ADD COLUMN location         varchar(255);
 
 ALTER TABLE llx_c_action_trigger MODIFY COLUMN code varchar(128);
 
+ALTER TABLE llx_overwrite_trans DROP INDEX uk_overwrite_trans;
+ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(entity, lang, transkey);
+
 --
 -- List of all managed triggered events (used for trigger agenda automatic events and for notification)
 --
@@ -368,3 +371,6 @@ ALTER TABLE llx_prelevement_facture_demande RENAME TO llx_prelevement_demande;
 
 ALTER TABLE llx_prelevement ADD COLUMN fk_salary INTEGER NULL AFTER fk_facture_fourn;
 ALTER TABLE llx_prelevement_demande ADD COLUMN fk_salary INTEGER NULL AFTER fk_facture_fourn;
+
+
+ALTER TABLE llx_user ADD COLUMN birth_place varchar(64);

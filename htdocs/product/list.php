@@ -311,7 +311,6 @@ if (GETPOST('cancel', 'alpha')) {
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
-
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -741,11 +740,12 @@ if ($resql) {
 	if ($user->rights->{$rightskey}->creer) {
 		$arrayofmassactions['switchonsalestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnSaleStatus");
 		$arrayofmassactions['switchonpurchasestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnPurchaseStatus");
+		$arrayofmassactions['preupdateprice'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("UpdatePrice");
 	}
 	if (isModEnabled('category') && $user->rights->{$rightskey}->creer) {
 		$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 	}
-	if (in_array($massaction, array('presend', 'predelete','preaffecttag', 'edit_extrafields'))) {
+	if (in_array($massaction, array('presend', 'predelete','preaffecttag', 'edit_extrafields', 'preupdateprice'))) {
 		$arrayofmassactions = array();
 	}
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -1380,6 +1380,9 @@ if ($resql) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Ref
 		if (!empty($arrayfields['p.rowid']['checked'])) {
@@ -1908,7 +1911,7 @@ if ($resql) {
 		// Status (to sell)
 		if (!empty($arrayfields['p.tosell']['checked'])) {
 			print '<td class="center nowrap">';
-			if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+			if (!empty($conf->use_javascript_ajax) && $user->hasRight("produit", "creer") && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 				print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 			} else {
 				print $product_static->LibStatut($obj->tosell, 5, 0);
@@ -1921,7 +1924,7 @@ if ($resql) {
 		// Status (to buy)
 		if (!empty($arrayfields['p.tobuy']['checked'])) {
 			print '<td class="center nowrap">';
-			if (!empty($conf->use_javascript_ajax) && $user->rights->produit->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+			if (!empty($conf->use_javascript_ajax) && $user->hasRight("produit", "creer") && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 				print ajax_object_onoff($product_static, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
 			} else {
 				print $product_static->LibStatut($obj->tobuy, 5, 1);
@@ -1943,9 +1946,9 @@ if ($resql) {
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
-		}
-		if (!$i) {
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		print "</tr>\n";

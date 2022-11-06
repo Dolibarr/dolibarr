@@ -493,7 +493,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->datestart)) {
 		print $form->selectDate($object->datestart, 'datestart', 1, 1, '', "cronform");
 	} else {
-		print $form->selectDate(-1, 'datestart', 1, 1, '', "cronform");
+		print $form->selectDate(-1, 'datestart', 1, 1, 1, "cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -505,7 +505,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->dateend)) {
 		print $form->selectDate($object->dateend, 'dateend', 1, 1, '', "cronform");
 	} else {
-		print $form->selectDate(-1, 'dateend', 1, 1, '', "cronform");
+		print $form->selectDate(-1, 'dateend', 1, 1, 1, "cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -518,7 +518,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->priority)) {
 		$priority = $object->priority;
 	}
-	print "<td><input type=\"text\" size=\"2\" name=\"priority\" value=\"".$priority."\" /> ";
+	print '<td><input type="text" class="width50" name="priority" value="'.$priority.'" /> ';
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -530,7 +530,7 @@ if (($action == "create") || ($action == "edit")) {
 		$maxrun = $object->maxrun;
 	}
 	print $langs->trans('CronMaxRun')."</td>";
-	print "<td><input type=\"text\" size=\"2\" name=\"maxrun\" value=\"".$maxrun."\" /> ";
+	print '<td><input type="text" class="width50" name="maxrun" value="'.$maxrun.'" /> ';
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -538,12 +538,12 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('CronDtNextLaunch');
-	print ' ('.$langs->trans('CronFrom').')';
+	//print ' ('.$langs->trans('CronFrom').')';
 	print "</td><td>";
 	if (!empty($object->datenextrun)) {
 		print $form->selectDate($object->datenextrun, 'datenextrun', 1, 1, '', "cronform");
 	} else {
-		print $form->selectDate(-1, 'datenextrun', 1, 1, '', "cronform");
+		print $form->selectDate(-1, 'datenextrun', 1, 1, '', "cronform", 1, 1);
 	}
 	print "</td>";
 	print "<td>";
@@ -774,7 +774,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr><td>';
 	print $langs->trans('CronLastOutput')."</td><td>";
-	print nl2br($object->lastoutput);
+	print '<span class="small">'.nl2br($object->lastoutput).'</span>';
 	print "</td></tr>";
 
 	print '</table>';
@@ -787,7 +787,7 @@ if (($action == "create") || ($action == "edit")) {
 	print dol_get_fiche_end();
 
 
-	print "\n\n<div class=\"tabsAction\">\n";
+	print "\n\n".'<div class="tabsAction">'."\n";
 	if (!$user->rights->cron->create) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Edit").'</a>';
 	} else {

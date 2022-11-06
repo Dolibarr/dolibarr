@@ -1102,14 +1102,15 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		// Phone
 		if (!empty($arrayfields['u.office_phone']['checked'])) {
-			print '<td>'.dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+			print '<td class="tdoverflowmax125">'.dol_print_phone($obj->office_phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields['u.user_mobile']['checked'])) {
-			print '<td>'.dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
+			print '<td class="tdoverflowmax125">'.dol_print_phone($obj->user_mobile, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1121,10 +1122,10 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['u.api_key']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->api_key).'">';
 			if ($obj->api_key) {
 				if ($canreadsecretapi) {
-					print $obj->api_key;
+					print dol_escape_htmltag($obj->api_key);
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 				}

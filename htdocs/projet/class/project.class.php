@@ -2046,7 +2046,7 @@ class Project extends CommonObject
 		$sql .= " AND pt.fk_projet = ".((int) $this->id);
 		$sql .= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
 		$sql .= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
-		if ($task_id) {
+		if ($taskid) {
 			$sql .= " AND ptt.fk_task=".((int) $taskid);
 		}
 		if (is_numeric($userid)) {

@@ -5070,7 +5070,7 @@ class Form
 							$more .= $input['label'].'</div><div class="tagtd left">';
 						}
 						if ($input['type'] == 'select') {
-							$more .= $this->selectarray($input['name'], $input['values'], $input['default'], $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
+							$more .= $this->selectarray($input['name'], $input['values'], !empty($input['default']) ? $input['default'] : '-1', $show_empty, $key_in_label, $value_as_key, $moreattr, $translate, $maxlen, $disabled, $sort, $morecss);
 						} else {
 							$more .= $this->multiselectarray($input['name'], $input['values'], is_array($input['default']) ? $input['default'] : [$input['default']], $key_in_label, $value_as_key, $morecss, $translate, $maxlen, $moreattr);
 						}
