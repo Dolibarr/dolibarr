@@ -1177,12 +1177,12 @@ $( document ).ready(function() {
 			echo $obj->rowid;
 			echo '\\\'; Refresh();">';
 			if ($placeid == $obj->rowid) {
-				echo "<b>";
+				echo '<span class="basketselected">';
+			} else {
+				echo '<span class="basketnotselected">';
 			}
 			echo '<span class="fa fa-shopping-cart paddingright"></span>'.dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
-			if ($placeid == $obj->rowid) {
-				echo "</b>";
-			}
+			echo '</span>';
 			echo '</a>\');';
 		}
 		echo '$("#shoppingcart").append(\'<a onclick="place=\\\'0-';
