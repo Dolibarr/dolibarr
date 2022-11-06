@@ -165,6 +165,9 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
 		require_once dirname(__FILE__).'/../../htdocs/core/modules/modExpenseReport.class.php';
 		print "Enable module modExpenseReport";
 		$moduledescriptor=new modExpenseReport($db);
+
+		$result = $moduledescriptor->remove();
+
 		$result = $moduledescriptor->init();
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(1, $result);
@@ -173,6 +176,9 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
 		require_once dirname(__FILE__).'/../../htdocs/core/modules/modApi.class.php';
 		print "Enable module modAPI";
 		$moduledescriptor=new modApi($db);
+
+		$result = $moduledescriptor->remove();
+
 		$result = $moduledescriptor->init();
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(1, $result);

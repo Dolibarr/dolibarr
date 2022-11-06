@@ -59,7 +59,7 @@ $nbofyear = 1;
 // Date range
 $year = GETPOST('year', 'int');
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
+	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$month_current = strftime("%m", dol_now());
 	$year_start = $year_current - ($nbofyear - 1);
 } else {

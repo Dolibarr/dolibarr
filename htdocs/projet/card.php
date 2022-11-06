@@ -561,7 +561,9 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	// Ref
 	$suggestedref = (GETPOST("ref") ? GETPOST("ref") : $defaultref);
 	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td class><input class="maxwidth150onsmartphone" type="text" name="ref" value="'.dol_escape_htmltag($suggestedref).'">';
-	print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+	if ($suggestedref) {
+		print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+	}
 	print '</td></tr>';
 
 	// Label

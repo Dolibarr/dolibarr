@@ -102,16 +102,18 @@ class modModuleBuilder extends DolibarrModules
 		//------------------
 		$this->menu = array();
 
-		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',
+		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=tools',
 			'type'=>'left',
 			'titre'=>'ModuleBuilder',
-			'mainmenu'=>'home',
-			'leftmenu'=>'admintools_modulebuilder',
-			'url'=>'/modulebuilder/index.php?mainmenu=home&amp;leftmenu=admintools',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'mainmenu'=>'tools',
+			'leftmenu'=>'devtools_modulebuilder',
+			'url'=>'/modulebuilder/index.php?mainmenu=tools&amp;leftmenu=devtools',
 			'langs'=>'modulebuilder',
 			'position'=>100,
-			'perms'=>'1',
-			'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
+			'perms'=>'$user->hasRight("modulebuilder", "run")',
+			//'enabled'=>'isModEnabled("modulebuilder") && preg_match(\'/^(devtools|all)/\',$leftmenu)',
+			'enabled'=>'isModEnabled("modulebuilder")',
 			'target'=>'_modulebuilder',
 			'user'=>0);
 	}

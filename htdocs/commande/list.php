@@ -1973,6 +1973,10 @@ if ($resql) {
 				}
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			print '</td>';
 		}
 
 		// Ref
@@ -2215,7 +2219,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'c.total_tva';
 			}
-			$totalarray['val']['c.total_tva'] += $obj->total_tva;
+			if (isset($totalarray['val']['c.total_tva'])) {
+				$totalarray['val']['c.total_tva'] += $obj->total_tva;
+			} else {
+				$totalarray['val']['c.total_tva'] = $obj->total_tva;
+			}
 		}
 
 		// Amount TTC / gross
@@ -2227,7 +2235,11 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'c.total_ttc';
 			}
-			$totalarray['val']['c.total_ttc'] += $obj->total_ttc;
+			if (isset($totalarray['val']['c.total_ttc'])) {
+				$totalarray['val']['c.total_ttc'] += $obj->total_ttc;
+			} else {
+				$totalarray['val']['c.total_ttc'] = $obj->total_ttc;
+			}
 		}
 
 		// Currency
@@ -2588,10 +2600,10 @@ if ($resql) {
 				}
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		print "</tr>\n";
