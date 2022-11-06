@@ -193,14 +193,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_create_endyear = '';
 	$search_date_create_start = '';
 	$search_date_create_end = '';
-	$search_datelimit_startday = '';
-	$search_datelimit_startmonth = '';
-	$search_datelimit_startyear = '';
-	$search_datelimit_endday = '';
-	$search_datelimit_endmonth = '';
-	$search_datelimit_endyear = '';
-	$search_datelimit_start = '';
-	$search_datelimit_end = '';
 	$search_billed = '';
 	$search_status = '';
 	$search_array_options = array();
