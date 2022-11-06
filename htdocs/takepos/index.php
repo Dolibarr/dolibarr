@@ -581,8 +581,9 @@ function New() {
 /**
  * Search products
  *
- * @param   {int}			keyCodeForEnter     Key code for "enter"
- * return   {void}
+ * @param   string			keyCodeForEnter     Key code for "enter" or '' if not
+ * @param   int				moreorless          ??
+ * return   void
  */
 function Search2(keyCodeForEnter, moreorless) {
 	var eventKeyCode = window.event.keyCode;
@@ -597,6 +598,8 @@ function Search2(keyCodeForEnter, moreorless) {
 		search_start = $('#search_start_'+moreorless).val();
 	}
 
+	console.log("search_term="+search_term);
+
 	if (search_term == '') {
 		$("[id^=prowatermark]").html("");
 		$("[id^=prodesc]").text("");
@@ -610,7 +613,7 @@ function Search2(keyCodeForEnter, moreorless) {
 	}
 
 	var search = false;
-	if (keyCodeForEnter != '' || eventKeyCode == keyCodeForEnter) {
+	if (keyCodeForEnter == '' || eventKeyCode == keyCodeForEnter) {
 		search = true;
 	}
 
