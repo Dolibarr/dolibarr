@@ -1484,7 +1484,7 @@ if ($num > 0) {
 
 		// Third party
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			print $thirdparty->getNomUrl(1, 'supplier', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 			print '</td>';
 			if (!$i) {
@@ -1493,7 +1493,7 @@ if ($num > 0) {
 		}
 		// Alias
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			print $thirdparty->name_alias;
 			print '</td>';
 			if (!$i) {
@@ -1550,8 +1550,9 @@ if ($num > 0) {
 
 		// Payment condition
 		if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
-			print '<td class="tdoverflowmax100">';
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', 1);
+			$s = $form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', 1, '', -1, -1, 1);
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
+			print dol_escape_htmltag($s);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1559,8 +1560,9 @@ if ($num > 0) {
 		}
 		// Payment mode
 		if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
-			print '<td class="tdoverflowmax100">';
-			$form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1);
+			$s = $form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1, 0, '', 1);
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
+			print dol_escape_htmltag($s);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1639,7 +1641,7 @@ if ($num > 0) {
 
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			if ($userstatic->id) {
 				print $userstatic->getLoginUrl(-1);
 			} else {

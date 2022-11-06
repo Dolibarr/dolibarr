@@ -117,6 +117,12 @@ $error = 0;
 
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'lire');
+
+if ($object->isService()) {
+	$label = $langs->trans('Service');
+	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'lire');
+}
 
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
@@ -643,17 +649,25 @@ if ($id > 0 || $ref) {
 			$textdesc = $langs->trans("CostPriceDescription");
 			$textdesc .= "<br>".$langs->trans("CostPriceUsage");
 			$text = $form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
-			print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
-			print '</td><td>';
-			print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+			if (!$usercancreadprice) {
+				print $form->editfieldkey($text, 'cost_price', '', $object, 0, 'amount:6');
+				print '</td><td>';
+				print $form->editfieldval($text, 'cost_price', '', $object, 0, 'amount:6');
+			} else {
+				print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+				print '</td><td>';
+				print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+			}
 			print '</td></tr>';
+
+
 
 			// AWP
 			print '<tr><td class="titlefield">';
 			print $form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc"));
 			print '</td>';
 			print '<td>';
-			if ($object->pmp > 0) {
+			if ($object->pmp > 0 && $usercancreadprice) {
 				print price($object->pmp).' '.$langs->trans("HT");
 			}
 			print '</td>';
@@ -664,7 +678,7 @@ if ($id > 0 || $ref) {
 			print '<td>';
 			$product_fourn = new ProductFournisseur($db);
 			if ($product_fourn->find_min_price_product_fournisseur($object->id) > 0) {
-				if ($product_fourn->product_fourn_price_id > 0) {
+				if ($product_fourn->product_fourn_price_id > 0 && $usercancreadprice) {
 					print $product_fourn->display_price_product_fournisseur();
 				} else {
 					print $langs->trans("NotDefined");
@@ -675,19 +689,23 @@ if ($id > 0 || $ref) {
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				// Price
 				print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
-				if ($object->price_base_type == 'TTC') {
-					print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
-				} else {
-					print price($object->price).' '.$langs->trans($object->price_base_type);
+				if ($usercancreadprice) {
+					if ($object->price_base_type == 'TTC') {
+						print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
+					} else {
+						print price($object->price).' '.$langs->trans($object->price_base_type);
+					}
 				}
 				print '</td></tr>';
 
 				// Price minimum
 				print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
-				if ($object->price_base_type == 'TTC') {
-					print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
-				} else {
-					print price($object->price_min).' '.$langs->trans($object->price_base_type);
+				if ($usercancreadprice) {
+					if ($object->price_base_type == 'TTC') {
+						print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
+					} else {
+						print price($object->price_min).' '.$langs->trans($object->price_base_type);
+					}
 				}
 				print '</td></tr>';
 			} else {
@@ -1043,7 +1061,11 @@ if (!$variants) {
 			print '<td class="right nowraponall">'.(price2num($object->pmp) ? price2num($object->pmp, 'MU') : '').'</td>';
 
 			// Value purchase
-			print '<td class="right amount nowraponall">'.(price2num($object->pmp) ? price(price2num($object->pmp * $obj->reel, 'MT')) : '').'</td>';
+			if ($usercancreadprice) {
+				print '<td class="right amount nowraponall">'.(price2num($object->pmp) ? price(price2num($object->pmp * $obj->reel, 'MT')) : '').'</td>';
+			} else {
+				print '<td class="right amount nowraponall"></td>';
+			}
 
 			// Sell price
 			$minsellprice = null; $maxsellprice = null;
@@ -1060,14 +1082,16 @@ if (!$variants) {
 					}
 				}
 				print '<span class="valignmiddle">';
-				if ($minsellprice != $maxsellprice) {
-					print price(price2num($minsellprice, 'MU'), 1).' - '.price(price2num($maxsellprice, 'MU'), 1);
-				} else {
-					print price(price2num($minsellprice, 'MU'), 1);
+				if ($usercancreadprice) {
+					if ($minsellprice != $maxsellprice) {
+						print price(price2num($minsellprice, 'MU'), 1).' - '.price(price2num($maxsellprice, 'MU'), 1);
+					} else {
+						print price(price2num($minsellprice, 'MU'), 1);
+					}
 				}
 				print '</span>';
 				print $form->textwithpicto('', $langs->trans("Variable"));
-			} else {
+			} elseif ($usercancreadprice) {
 				print price(price2num($object->price, 'MU'), 1);
 			}
 			print '</td>';
@@ -1076,15 +1100,19 @@ if (!$variants) {
 			print '<td class="right amount nowraponall">';
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print '<span class="valignmiddle">';
-				if ($minsellprice != $maxsellprice) {
-					print price(price2num($minsellprice * $obj->reel, 'MT'), 1).' - '.price(price2num($maxsellprice * $obj->reel, 'MT'), 1);
-				} else {
-					print price(price2num($minsellprice * $obj->reel, 'MT'), 1);
+				if ($usercancreadprice) {
+					if ($minsellprice != $maxsellprice) {
+						print price(price2num($minsellprice * $obj->reel, 'MT'), 1).' - '.price(price2num($maxsellprice * $obj->reel, 'MT'), 1);
+					} else {
+						print price(price2num($minsellprice * $obj->reel, 'MT'), 1);
+					}
 				}
 				print '</span>';
 				print $form->textwithpicto('', $langs->trans("Variable"));
 			} else {
-				print price(price2num($object->price * $obj->reel, 'MT'), 1);
+				if ($usercancreadprice) {
+					print price(price2num($object->price * $obj->reel, 'MT'), 1);
+				}
 			}
 			print '</td>';
 			print '<td></td>';
@@ -1189,11 +1217,15 @@ if (!$variants) {
 	print '<tr class="liste_total"><td class="right liste_total" colspan="4">'.$langs->trans("Total").':</td>';
 	print '<td class="liste_total right">'.price2num($total, 'MS').'</td>';
 	print '<td class="liste_total right">';
-	print ($totalwithpmp ? price(price2num($totalvalue / $totalwithpmp, 'MU')) : '&nbsp;'); // This value may have rounding errors
+	if ($usercancreadprice) {
+		print ($totalwithpmp ? price(price2num($totalvalue / $totalwithpmp, 'MU')) : '&nbsp;'); // This value may have rounding errors
+	}
 	print '</td>';
 	// Value purchase
 	print '<td class="liste_total right">';
-	print $totalvalue ? price(price2num($totalvalue, 'MT'), 1) : '&nbsp;';
+	if ($usercancreadprice) {
+		print $totalvalue ? price(price2num($totalvalue, 'MT'), 1) : '&nbsp;';
+	}
 	print '</td>';
 	print '<td class="liste_total right">';
 	if ($num) {
@@ -1201,7 +1233,7 @@ if (!$variants) {
 			print '<span class="valignmiddle">';
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 				print $form->textwithpicto('', $langs->trans("Variable"));
-			} else {
+			} elseif ($usercancreadprice) {
 				print price($totalvaluesell / $total, 1);
 			}
 			print '</span>';
@@ -1212,7 +1244,7 @@ if (!$variants) {
 	print '<td class="liste_total right amount">';
 	if ($num) {
 		print '<span class="valignmiddle">';
-		if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (empty($conf->global->PRODUIT_MULTIPRICES) && $usercancreadprice) {
 			print price(price2num($totalvaluesell, 'MT'), 1);
 		} else {
 			print $form->textwithpicto('', $langs->trans("Variable"));

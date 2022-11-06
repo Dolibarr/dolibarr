@@ -459,7 +459,7 @@ if ($id > 0) {
 
 // Create
 if ($action == 'create') {
-	$year_current = strftime("%Y", dol_now());
+	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$pastmonth = strftime("%m", dol_now()) - 1;
 	$pastmonthyear = $year_current;
 	if ($pastmonth == 0) {

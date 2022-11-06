@@ -2330,3 +2330,4 @@ HelpCssOnViewDesc=Le CSS utilisé lors de l'affichage du champ.
 HelpCssOnListDesc=Le CSS utilisé lorsque le champ est à l'intérieur du tableau d'une liste. <br> Exemple : "tdoverflowmax200"
 RECEPTION_PDF_HIDE_ORDERED=Masquer la quantité commandée sur les documents générés pour les réceptions
 MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT=Afficher le prix sur les documents générés pour les réceptions
+AllowExternalDownload=Autoriser le téléchargement externe

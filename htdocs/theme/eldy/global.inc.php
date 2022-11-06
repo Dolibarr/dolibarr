@@ -5163,6 +5163,10 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
+.previewnotyetavailable {
+	opacity: 0.5;
+}
+
 .websiteformtoolbar {
 	position: sticky;
 	top: <?php echo empty($dol_hide_topmenu) ? ($disableimages ? '32px' : '52px') : '0'; ?>;
