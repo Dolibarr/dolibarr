@@ -2349,14 +2349,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<td colspan="3">';
 			print img_picto('', 'object_email');
 			print '<input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td>';
-			if (!empty($conf->mailing->enabled)) {
-				$langs->load("mails");
-				print '<td class="nowrap">'.$langs->trans("NbOfEMailingsSend").'</td>';
-				print '<td>'.$object->getNbOfEMailings().'</td>';
-			} else {
-				print '<td colspan="2"></td>';
-			}
 			print '</tr>';
+			if (!empty($conf->mailing->enabled)) {
+				print '<tr>';
+				$langs->load("mails");
+				print '<td>'.$langs->trans("NbOfEMailingsSend").'</td><td colspan=3>'.$object->getNbOfEMailings().'</td>(;
+				print '</tr>';
+			}
 
 			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
