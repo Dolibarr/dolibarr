@@ -805,24 +805,6 @@ if ($resql) {
 	$arrayofmassactions = array(
 		'GenerateOrdersSuppliers'=>img_picto('', 'doc', 'class="pictofixedwidth"').$langs->trans("GenerateOrdersSupplie"),
 	);
-	// if ($permissiontovalidate) {
-	// 	$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
-	// }
-	// if ($permissiontosendbymail) {
-	// 	$arrayofmassactions['presend'] = img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail");
-	// }
-	// if ($permissiontoclose) {
-	// 	$arrayofmassactions['preshipped'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').$langs->trans("ClassifyShipped");
-	// }
-	// if ($permissiontocancel) {
-	// 	$arrayofmassactions['cancelorders'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Cancel");
-	// }
-	// if ($permissiontodelete) {
-	// 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
-	// }
-	// if (in_array($massaction, array('presend', 'predelete', 'createbills'))) {
-	// 	$arrayofmassactions = array();
-	// }
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$url = DOL_URL_ROOT.'/commande/card.php?action=create';
@@ -2118,7 +2100,7 @@ if ($resql) {
 		$subtotal += $obj->total_ht;
 		$i++;
 	}
-	var_dump($totalarray['nbfield']);
+
 	// Show total line
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
