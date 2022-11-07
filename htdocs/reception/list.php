@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2016	   Ferran Marcet        <fmarcet@2byte.es>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2016	    Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2022       Alexandre Spangaro		<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +53,14 @@ $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
+$search_date_reception_startday = GETPOST('search_date_reception_startday', 'int');
+$search_date_reception_startmonth = GETPOST('search_date_reception_startmonth', 'int');
+$search_date_reception_startyear = GETPOST('search_date_reception_startyear', 'int');
+$search_date_reception_endday = GETPOST('search_date_reception_endday', 'int');
+$search_date_reception_endmonth = GETPOST('search_date_reception_endmonth', 'int');
+$search_date_reception_endyear = GETPOST('search_date_reception_endyear', 'int');
+$search_date_reception_start = dol_mktime(0, 0, 0, $search_date_reception_startmonth, $search_date_reception_startday, $search_date_reception_startyear);	// Use tzserver
+$search_date_reception_end = dol_mktime(23, 59, 59, $search_date_reception_endmonth, $search_date_reception_endday, $search_date_reception_endyear);
 $search_date_delivery_startday = GETPOST('search_date_delivery_startday', 'int');
 $search_date_delivery_startmonth = GETPOST('search_date_delivery_startmonth', 'int');
 $search_date_delivery_startyear = GETPOST('search_date_delivery_startyear', 'int');
@@ -124,6 +133,7 @@ $arrayfields = array(
 	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
 	'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
+	'e.date_reception'=>array('label'=>$langs->trans("DateReception"), 'checked'=>1),
 	'e.date_delivery'=>array('label'=>$langs->trans("DateDeliveryPlanned"), 'checked'=>1),
 	'e.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'e.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
@@ -177,6 +187,14 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_state = "";
 	$search_country = '';
 	$search_type_thirdparty = '';
+	$search_date_reception_startday = '';
+	$search_date_reception_startmonth = '';
+	$search_date_reception_startyear = '';
+	$search_date_reception_endday = '';
+	$search_date_reception_endmonth = '';
+	$search_date_reception_endyear = '';
+	$search_date_reception_start = '';
+	$search_date_reception_end = '';
 	$search_date_delivery_startday = '';
 	$search_date_delivery_startmonth = '';
 	$search_date_delivery_startyear = '';
@@ -577,6 +595,12 @@ if ($search_country) {
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
+if ($search_date_reception_start) {
+	$sql .= " AND e.date_reception >= '".$db->idate($search_date_reception_start)."'";
+}
+if ($search_date_reception_end) {
+	$sql .= " AND e.date_reception <= '".$db->idate($search_date_reception_end)."'";
+}
 if ($search_date_delivery_start) {
 	$sql .= " AND e.date_delivery >= '".$db->idate($search_date_delivery_start)."'";
 }
@@ -676,6 +700,24 @@ if ($search_country) {
 }
 if ($search_type_thirdparty) {
 	$param .= "&search_type_thirdparty=".urlencode($search_type_thirdparty);
+}
+if ($search_date_reception_startday) {
+	$param .= '&search_date_reception_startday='.urlencode($search_date_reception_startday);
+}
+if ($search_date_reception_startmonth) {
+	$param .= '&search_date_reception_startmonth='.urlencode($search_date_reception_startmonth);
+}
+if ($search_date_reception_startyear) {
+	$param .= '&search_date_reception_startyear='.urlencode($search_date_reception_startyear);
+}
+if ($search_date_reception_endday) {
+	$param .= '&search_date_reception_endday='.urlencode($search_date_reception_endday);
+}
+if ($search_date_reception_endmonth) {
+	$param .= '&search_date_reception_endmonth='.urlencode($search_date_reception_endmonth);
+}
+if ($search_date_reception_endyear) {
+	$param .= '&search_date_reception_endyear='.urlencode($search_date_reception_endyear);
 }
 if ($search_date_delivery_startday) {
 	$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
@@ -893,6 +935,17 @@ if (!empty($arrayfields['typent.code']['checked'])) {
 	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 	print '</td>';
 }
+// Date reception
+if (!empty($arrayfields['e.date_reception']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_reception_start ? $search_date_reception_start : -1, 'search_date_reception_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_reception_end ? $search_date_reception_end : -1, 'search_date_reception_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	print '</td>';
+}
 // Date delivery planned
 if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print '<td class="liste_titre center">';
@@ -985,6 +1038,9 @@ if (!empty($arrayfields['country.code_iso']['checked'])) {
 }
 if (!empty($arrayfields['typent.code']['checked'])) {
 	print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, '', $sortfield, $sortorder, 'center ');
+}
+if (!empty($arrayfields['e.date_reception']['checked'])) {
+	print_liste_field_titre($arrayfields['e.date_reception']['label'], $_SERVER["PHP_SELF"], "e.date_reception", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['e.date_delivery']['checked'])) {
 	print_liste_field_titre($arrayfields['e.date_delivery']['label'], $_SERVER["PHP_SELF"], "e.date_delivery", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1124,6 +1180,16 @@ while ($i < min($num, $limit)) {
 		}
 		print $typenArray[$obj->typent_code];
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	// Date reception
+	if (!empty($arrayfields['e.date_reception']['checked'])) {
+		print '<td class="center">';
+		print dol_print_date($db->jdate($obj->date_reception), "day");
+		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

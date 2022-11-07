@@ -11,6 +11,7 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2022       Alexandre Spangaro		<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -404,10 +405,9 @@ class Reception extends CommonObject
 				$this->statut               = $obj->fk_statut;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
-				$this->date                 = $this->db->jdate($obj->date_reception); // TODO deprecated
-				$this->date_reception = $this->db->jdate($obj->date_reception); // TODO deprecated
-				$this->date_reception = $this->db->jdate($obj->date_reception); // Date real
-				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
+				$this->date                 = $this->db->jdate($obj->date_reception); // deprecated
+				$this->date_reception 		= $this->db->jdate($obj->date_reception); // Date real
+				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planned
 				$this->model_pdf            = $obj->model_pdf;
 				$this->modelpdf             = $obj->model_pdf; // deprecated
 				$this->shipping_method_id = $obj->fk_shipping_method;
@@ -1385,6 +1385,35 @@ class Reception extends CommonObject
 
 			$this->lines[] = $line;
 			$xnbp++;
+		}
+	}
+
+	/**
+	 *	Set the reception date
+	 *
+	 *	@param      User			$user        		Objet user that modify
+	 *	@param      integer 		$reception_date     Reception date
+	 *	@return     int         						<0 if KO, >0 if OK
+	 */
+	public function setReceptionDate($user, $reception_date)
+	{
+		// phpcs:enable
+		if ($user->rights->reception->creer) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."reception";
+			$sql .= " SET date_reception = ".($reception_date ? "'".$this->db->idate($reception_date)."'" : 'null');
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			dol_syslog(get_class($this)."::setReceptionDate", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$this->date_reception = $reception_date;
+				return 1;
+			} else {
+				$this->error = $this->db->error();
+				return -1;
+			}
+		} else {
+			return -2;
 		}
 	}
 

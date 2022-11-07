@@ -51,3 +51,4 @@ ReceptionExist=A reception exists
 ReceptionBackToDraftInDolibarr=Reception %s back to draft
 ReceptionClassifyClosedInDolibarr=Reception %s classified Closed
 ReceptionUnClassifyCloseddInDolibarr=Reception %s re-open
+DateReception=Date reception
