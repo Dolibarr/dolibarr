@@ -347,7 +347,7 @@ class Conf
 				$db->free($resql);
 			}
 
-			// Include other local consts.php files and fetch their values to the corresponding database constants.
+			// Include other local file xxx/zzz_consts.php to overwrite some variables
 			if (!empty($this->global->LOCAL_CONSTS_FILES)) {
 				$filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
 				foreach ($filesList as $file) {
@@ -674,6 +674,9 @@ class Conf
 				$this->global->PRODUIT_LIMIT_SIZE = 1000;
 			}
 			$this->product->limit_size = $this->global->PRODUIT_LIMIT_SIZE;
+
+			// Set PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE, may be modified later according to browser
+			$this->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = (isset($this->global->PRODUIT_DESC_IN_FORM) ? $this->global->PRODUIT_DESC_IN_FORM : 0);
 
 			// conf->theme et $this->css
 			if (empty($this->global->MAIN_THEME)) {

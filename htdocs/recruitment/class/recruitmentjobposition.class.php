@@ -254,7 +254,7 @@ class RecruitmentJobPosition extends CommonObject
 		// Reset some properties
 		unset($object->id);
 		unset($object->fk_user_creat);
-		unset($object->import_key);
+		$object->import_key = null;
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {

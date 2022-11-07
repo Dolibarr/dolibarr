@@ -341,14 +341,14 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					$product_static->status_batch = $objp->product_tobatch;
 					$text = $product_static->getNomUrl(1);
 					$text .= ' - '.$label;
-					$description = (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($objp->description));
+					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description));
 					print $form->textwithtooltip($text, $description, 3, '', '', $i);
 
 					// Show range
 					print_date_range($objp->date_start, $objp->date_end);
 
 					// Add description in form
-					if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+					if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 						print (!empty($objp->description) && $objp->description != $objp->product) ? '<br>'.dol_htmlentitiesbr($objp->description) : '';
 					}
 

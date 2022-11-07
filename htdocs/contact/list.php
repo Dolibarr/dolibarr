@@ -438,7 +438,11 @@ if (!empty($searchCategoryContactList)) {
 		if (intval($searchCategoryContact) == -2) {
 			$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE s.rowid = ck.fk_socpeople)";
 		} elseif (intval($searchCategoryContact) > 0) {
-			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
+			if ($searchCategoryContactOperator == 0) {
+				$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE s.rowid = ck.fk_socpeople AND ck.fk_categorie = ".((int) $searchCategoryContact).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
+			}
 		}
 	}
 	if ($listofcategoryid) {
@@ -464,7 +468,11 @@ if (!empty($searchCategoryCustomerList)) {
 		if (intval($searchCategoryCustomer) == -2) {
 			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc)";
 		} elseif (intval($searchCategoryCustomer) > 0) {
-			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+			if ($searchCategoryCustomerOperator == 0) {
+				$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie = ".((int) $searchCategoryCustomer).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+			}
 		}
 	}
 	if ($listofcategoryid) {
@@ -490,7 +498,11 @@ if (!empty($searchCategorySupplierList)) {
 		if (intval($searchCategorySupplier) == -2) {
 			$searchCategorySupplierSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc)";
 		} elseif (intval($searchCategorySupplier) > 0) {
-			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplier);
+			if ($searchCategorySupplierOperator == 0) {
+				$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie = ".((int) $searchCategorySupplier).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplier);
+			}
 		}
 	}
 	if ($listofcategoryid) {
@@ -553,7 +565,15 @@ if (strlen($search_fax)) {
 if (isModEnabled('socialnetworks')) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && strlen($search_[$key])) {
-			$sql .= " AND p.socialnetworks LIKE '%\"".$key."\":\"".$search_[$key]."%'";
+			$searchkeyinjsonformat = preg_replace('/"$/', '', preg_replace('/^"/', '', json_encode($search_[$key])));
+			if (in_array($db->type, array('mysql', 'mysqli'))) {
+				$sql .= " AND p.socialnetworks REGEXP '\"".$db->escapeforlike($db->escape($key))."\":\"[^\"]*".$db->escapeforlike($db->escape($searchkeyinjsonformat))."'";
+			} elseif ($db->type == 'pgsql') {
+				$sql .= " AND p.socialnetworks ~ '\"".$db->escapeforlike($db->escape($key))."\":\"[^\"]*".$db->escapeforlike($db->escape($searchkeyinjsonformat))."'";
+			} else {
+				// Works with all database but not reliable because search only for social network code starting with earched value
+				$sql .= " AND p.socialnetworks LIKE '%\"".$db->escapeforlike($db->escape($key))."\":\"".$db->escapeforlike($db->escape($searchkeyinjsonformat))."%'";
+			}
 		}
 	}
 }
@@ -608,6 +628,7 @@ if ($view == "recent") {
 } else {
 	$sql .= $db->order($sortfield, $sortorder);
 }
+//print $sql;
 
 // Count total nb of records
 $nbtotalofrecords = '';

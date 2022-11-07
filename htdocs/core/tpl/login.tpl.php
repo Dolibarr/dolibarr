@@ -372,9 +372,19 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 // Show error message if defined
 if (!empty($_SESSION['dol_loginmesg'])) {
 	?>
-	<div class="center login_main_message"><div class="error">
-	<?php echo dol_escape_htmltag($_SESSION['dol_loginmesg']); ?>
-	</div></div>
+	<div class="center login_main_message">
+	<?php
+	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
+	if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
+		$message = str_replace('<!-- warning -->', '', $message);
+		print '<div class="warning">';
+	} else {
+		print '<div class="error">';
+	}
+	print dol_escape_htmltag($message);
+	print '</div>';
+	?>
+	</div>
 	<?php
 }
 

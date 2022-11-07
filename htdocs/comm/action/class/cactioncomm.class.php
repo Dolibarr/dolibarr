@@ -204,7 +204,7 @@ class CActionComm
 						if ($obj->module == 'order' && isModEnabled('commande') && empty($user->rights->commande->lire)) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'propal' && isModEnabled("propal") && !empty($user->rights->propale->lire)) {
+						if ($obj->module == 'propal' && isModEnabled("propal") && !empty($user->rights->propal->lire)) {
 							$qualified = 1;
 						}
 						if ($obj->module == 'invoice_supplier' && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->facture->lire)) || (isModEnabled('supplier_invoice') && !empty($user->rights->supplier_invoice->lire)))) {

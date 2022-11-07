@@ -50,6 +50,7 @@ create table llx_user
   fk_state            integer        DEFAULT 0,
   fk_country          integer        DEFAULT 0,
   birth               date,                                   -- birthday
+  birth_place         varchar(64),                            -- birth place (town)
   job                 varchar(128),
   office_phone        varchar(20),
   office_fax          varchar(20),
