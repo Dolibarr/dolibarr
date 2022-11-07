@@ -200,6 +200,7 @@ $arrayfields = array(
 	'c.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>100),
 	'c.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>105),
 	'c.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>110),
+	'c.fk_warehouse'=>array('label'=>'Warehouse', 'checked'=>0, 'enabled'=>(empty($conf->stock->enabled) && empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER) ? 0 : 1), 'position'=>110),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>115),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>0, 'position'=>116),
 	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (empty($conf->margin->enabled) || !$user->rights->margins->liretous ? 0 : 1)),
@@ -358,7 +359,7 @@ $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
 $sql .= ' c.rowid as c_rowid, c.ref, c.ref_client, c.fk_user_author,';
 $sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva as multicurrency_total_vat, c.multicurrency_total_ttc,';
-$sql .= ' c.total_ht as c_total_ht, c.total_tva as c_total_tva, c.total_ttc as c_total_ttc,';
+$sql .= ' c.total_ht as c_total_ht, c.total_tva as c_total_tva, c.total_ttc as c_total_ttc, c.fk_warehouse as warehouse,';
 $sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as date_delivery, c.fk_statut, c.facture as billed,';
 $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture as date_cloture,';
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
@@ -1066,6 +1067,10 @@ if ($resql) {
 		print '<input class="flat" type="text" size="5" name="search_total_ttc" value="'.$search_total_ttc.'">';
 		print '</td>';
 	}
+	if (!empty($arrayfields['c.fk_warehouse']['checked'])) {
+		// Warehouse
+		print '<td class="liste_titre right"></td>';
+	}
 	if (!empty($arrayfields['c.multicurrency_code']['checked'])) {
 		// Currency
 		print '<td class="liste_titre">';
@@ -1282,6 +1287,9 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['cdet.total_ttc']['checked'])) {
 		print_liste_field_titre($arrayfields['cdet.total_ttc']['label'], $_SERVER["PHP_SELF"], 'cdet.total_ttc', '', $param, '', $sortfield, $sortorder, 'right ');
+	}
+	if (!empty($arrayfields['c.fk_warehouse']['checked'])) {
+		print_liste_field_titre($arrayfields['c.fk_warehouse']['label'], "", '', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['c.multicurrency_code']['checked'])) {
 		print_liste_field_titre($arrayfields['c.multicurrency_code']['label'], $_SERVER['PHP_SELF'], 'c.multicurrency_code', '', $param, '', $sortfield, $sortorder);
@@ -1734,7 +1742,18 @@ if ($resql) {
 			}
 			$totalarray['val']['cdet.total_ttc'] += $obj->total_ttc;
 		}
-
+		// Warehouse
+		if (!empty($arrayfields['c.fk_warehouse']['checked'])) {
+			print '<td class="nowrap">';
+			if ($obj->warehouse > 0) {
+				print img_picto('', 'stock', 'class="paddingrightonly"');
+			}
+			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'], $obj->warehouse, 'none');
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Currency
 		if (!empty($arrayfields['c.multicurrency_code']['checked'])) {
 			  print '<td class="nowrap">'.$obj->multicurrency_code.' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
