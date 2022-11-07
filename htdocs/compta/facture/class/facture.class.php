@@ -136,7 +136,7 @@ class Facture extends CommonInvoice
 	/**
 	 * @var int	Date expected for delivery
 	 * @deprecated
-	 * @see delivery_date
+	 * @see $delivery_date
 	 */
 	public $date_livraison;
 
@@ -148,7 +148,7 @@ class Facture extends CommonInvoice
 	/**
 	 * @var string customer ref
 	 * @deprecated
-	 * @see ref_customer
+	 * @see $ref_customer
 	 */
 	public $ref_client;
 
@@ -5470,11 +5470,11 @@ class Facture extends CommonInvoice
 		$sql .= " WHERE f.paye = 0";
 		$sql .= " AND f.fk_statut = ".self::STATUS_VALIDATED;
 		$sql .= " AND f.date_lim_reglement = '".$this->db->idate($tmpidate, 'gmt')."'";
-		$sql .= " AND f.entity IN (".getEntity('facture').")";
+		$sql .= " AND f.entity IN (".getEntity('facture', 0).")";	// One batch process only one company (no sharing)
 		if (!empty($paymentmode) && $paymentmode != 'all') {
 			$sql .= " AND f.fk_mode_reglement = cp.id AND cp.code = '".$this->db->escape($paymentmode)."'";
 		}
-		// TODO Add filter to check there is no payment started
+		// TODO Add a filter to check there is no payment started yet
 		$sql .= $this->db->order("date_lim_reglement", "ASC");
 
 		$resql = $this->db->query($sql);
