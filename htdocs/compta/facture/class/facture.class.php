@@ -5421,12 +5421,13 @@ class Facture extends CommonInvoice
 	 *  Send reminders by emails for ivoices that are due
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	int			$nbdays			Delay after due date (or before if delay is negative)
-	 *  @param	string		$paymentmode	'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
-	 *  @param	int|string	$template		Name (or id) of email template (Must be a template of type 'facture_send')
-	 *  @return int         				0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 *  @param	int			$nbdays				Delay after due date (or before if delay is negative)
+	 *  @param	string		$paymentmode		'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
+	 *  @param	int|string	$template			Name (or id) of email template (Must be a template of type 'facture_send')
+	 *  @param	string		$forcerecipient		Force email of recipient (for example to send the email to an accountant supervisor instead of the customer)
+	 *  @return int         					0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendEmailsRemindersOnInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '')
+	public function sendEmailsRemindersOnInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '', $forcerecipient = '')
 	{
 		global $conf, $langs, $user;
 
@@ -5527,26 +5528,30 @@ class Facture extends CommonInvoice
 
 						// Recipient
 						$to = array();
-						$res = $tmpinvoice->fetch_thirdparty();
-						$recipient = $tmpinvoice->thirdparty;
-						if ($res > 0) {
-							$tmparraycontact = $tmpinvoice->liste_contact(-1, 'external', 0, 'BILLING');
-							if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
-								foreach ($tmparraycontact as $data_email) {
-									if (!empty($data_email['email'])) {
-										$to[] = $tmpinvoice->thirdparty->contact_get_property($data_email['id'], 'email');
+						if ($forcerecipient) {	// If a recipient was forced
+							$to = array($forcerecipient);
+						} else {
+							$res = $tmpinvoice->fetch_thirdparty();
+							$recipient = $tmpinvoice->thirdparty;
+							if ($res > 0) {
+								$tmparraycontact = $tmpinvoice->liste_contact(-1, 'external', 0, 'BILLING');
+								if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
+									foreach ($tmparraycontact as $data_email) {
+										if (!empty($data_email['email'])) {
+											$to[] = $tmpinvoice->thirdparty->contact_get_property($data_email['id'], 'email');
+										}
 									}
 								}
-							}
-							if (empty($to) && !empty($recipient->email)) {
-								$to[] = $recipient->email;
+								if (empty($to) && !empty($recipient->email)) {
+									$to[] = $recipient->email;
+								} else {
+									$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for user.";
+									$error++;
+								}
 							} else {
-								$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for user.";
+								$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->socid;
 								$error++;
 							}
-						} else {
-							$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->socid;
-							$error++;
 						}
 
 						// Sender
