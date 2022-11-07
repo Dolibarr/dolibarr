@@ -143,6 +143,13 @@ if (empty($reshook)) {
 		$result = $object->makeStripeSepaRequest($user, GETPOST('did', 'int'), 'direct-debit', 'facture');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			// We refresh object data
+			$ret = $object->fetch($id, $ref);
+			$isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
+			if ($ret > 0) {
+				$object->fetch_thirdparty();
+			}
 		}
 	}
 
