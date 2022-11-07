@@ -2006,7 +2006,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 									$hour = empty(GETPOST('timespent_duration-'. $line->id . '-' . $i .'-hour', "int")) ? 0 : GETPOST('timespent_duration-'. $line->id . '-' . $i .'-hour',  "int");
 									$min =  empty(GETPOST('timespent_duration-'.$line->id . '-' . $i.'-min', "int")) ? 0 : GETPOST('timespent_duration-'.$line->id . '-' . $i.'-min', "int");
 									$durationtouse = convertTime2Seconds($hour, $min);
-
 								}
 								// consumeandproduceall : we want to calculate the maximum time remaining with regard to the time already consumed
 								if ($action == 'consumeandproduceall') {
@@ -2037,8 +2036,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (in_array($action, array('consumeorproduce', 'consumeandproduceall', 'addconsumeline'))) {
 		print "</form>\n";
 	}
-?>
-
+	?>
 	<script  type="text/javascript" language="javascript">
 
 			$(document).ready(function() {
