@@ -554,6 +554,7 @@ div.description_content {
 	padding: 7px 4px 7px 4px;
 	margin: 8px;
 	margin-left: 4px;
+	border-radius: 3px;
 }
 .topnav-left a:hover, .topnav .login_block_other a:hover {
 	background-color: #ddd;
@@ -578,6 +579,14 @@ div.description_content {
 div#moreinfo, div#infowarehouse {
 	color: #aaa;
 	padding: 0 8px 0 8px;
+}
+
+.basketselected {
+	font-weight: bold;
+	/* text-decoration: underline; */
+}
+.basketnotselected {
+	opacity: 0.8;
 }
 
 .productprice {
