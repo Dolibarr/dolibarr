@@ -161,6 +161,7 @@ class Utils
 		}
 
 		if ($count > 0) {
+			$langs->load("admin");
 			$this->output = $langs->trans("PurgeNDirectoriesDeleted", $countdeleted);
 			if ($count > $countdeleted) {
 				$this->output .= '<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
