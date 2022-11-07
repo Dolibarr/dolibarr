@@ -2118,7 +2118,7 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
-	z-index: 1001;
+	z-index: 1005;
 }
 <?php } ?>
 
@@ -5188,10 +5188,14 @@ td.cal_other_month {
 
 
 /* ============================================================================== */
-/*  Ajax - Liste deroulante de l'autocompletion                                   */
+/*  Ajax - Combo list for autocompletion                                          */
 /* ============================================================================== */
 
-.ui-widget-content { border: solid 1px rgba(0,0,0,.3); background: #fff !important; }
+.ui-widget-content {
+	border: solid 1px rgba(0,0,0,.3);
+	background: var(--colorbackbody) !important;
+	color: var(--colortext) !important;
+}
 
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif', 1) ?>) right center no-repeat; }
 .ui-autocomplete {
