@@ -1586,7 +1586,8 @@ if ($placeid > 0) {
 				$moreinfo .= '<br>'.$langs->transcountry("TotalVAT", $mysoc->country_code).': '.price($line->total_tva);
 				$moreinfo .= '<br>'.$langs->transcountry("TotalLT1", $mysoc->country_code).': '.price($line->total_localtax1);
 				$moreinfo .= '<br>'.$langs->transcountry("TotalLT2", $mysoc->country_code).': '.price($line->total_localtax2);
-				$moreinfo .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).': '.price($line->total_ttc);
+				$moreinfo .= '<hr>';
+				$moreinfo .= $langs->transcountry("TotalTTC", $mysoc->country_code).': '.price($line->total_ttc);
 				//$moreinfo .= $langs->trans("TotalHT").': '.$line->total_ht;
 				if ($line->date_start || $line->date_end) {
 					$htmlforlines .= '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end).'</div>';
