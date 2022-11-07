@@ -5550,7 +5550,10 @@ class Facture extends CommonInvoice
 						}
 
 						// Sender
-						$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+						if (!empty($arraymessage->email_from)) {	// If a sender is defined into template, we use it in priority
+							$from = $arraymessage->email_from;
+						}
 						if (empty($from)) {
 							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
 							$error++;
@@ -5560,6 +5563,9 @@ class Facture extends CommonInvoice
 							$this->db->begin();
 
 							$to = implode(',', $to);
+							if (!empty($arraymessage->email_to)) {	// If a recipient is defined into template, we add it
+								$to = $to.','.$arraymessage->email_to;
+							}
 
 							// Errors Recipient
 							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
@@ -5567,8 +5573,18 @@ class Facture extends CommonInvoice
 							$trackid = 'inv'.$tmpinvoice->id;
 							$sendcontext = 'standard';
 
+							$email_tocc = '';
+							if (!empty($arraymessage->email_tocc)) {	// If a CC is defined into template, we use it
+								$email_tocc = $arraymessage->email_tocc;
+							}
+
+							$email_tobcc = '';
+							if (!empty($arraymessage->email_tobcc)) {	// If a BCC is defined into template, we use it
+								$email_tobcc = $arraymessage->email_tobcc;
+							}
+
 							// Mail Creation
-							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
+							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
 
 							// Sending Mail
 							if ($cMailFile->sendfile()) {
