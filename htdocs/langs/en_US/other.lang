@@ -181,6 +181,7 @@ SizeUnitfoot=foot
 SizeUnitpoint=point
 BugTracker=Bug tracker
 SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox.
+EnterNewPasswordHere=Enter your new password here 
 BackToLoginPage=Back to login page
 AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br>Contact your system administrator if you want to change your password.
 EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option.

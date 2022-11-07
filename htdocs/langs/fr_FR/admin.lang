@@ -1747,7 +1747,8 @@ FCKeditorForNotePublic=Création/édition WYSIWIG du champ notes publiques des �
 FCKeditorForNotePrivate=Création/édition WYSIWIG du champ notes privées des éléments
 FCKeditorForCompany=Création/édition WYSIWIG de la description des éléments (autre que produits/services)
 FCKeditorForProduct=Création/édition WYSIWIG du champ description des produits/services
-FCKeditorForProductDetails=Création/édition WYSIWYG des lignes de détails produits sur tous les éléments (commandes, propales, factures, etc...). <span class="warning">Attention: L'utilisation pour ce cas est fortement déconseillée car peut créer des problèmes dans la gestion de caractères et mise en page des fichiers PDF générés.</span>
+FCKeditorForProductDetails=Création/édition WYSIWYG des lignes de détails produits sur tous les éléments (commandes, propales, factures, etc...).
+FCKeditorForProductDetails2=Attention: L'utilisation pour ce cas est fortement déconseillée car peut créer des problèmes dans la gestion de caractères et mise en page des fichiers PDF générés.
 FCKeditorForMailing= Création/édition WYSIWIG des emailings (Outils->Emailings)
 FCKeditorForUserSignature=Création/édition WYSIWIG de la signature des utilisateurs
 FCKeditorForMail=Création/édition WYSIWIG tous les emails (sauf Outils->Emailings)
@@ -2329,3 +2330,4 @@ HelpCssOnViewDesc=Le CSS utilisé lors de l'affichage du champ.
 HelpCssOnListDesc=Le CSS utilisé lorsque le champ est à l'intérieur du tableau d'une liste. <br> Exemple : "tdoverflowmax200"
 RECEPTION_PDF_HIDE_ORDERED=Masquer la quantité commandée sur les documents générés pour les réceptions
 MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT=Afficher le prix sur les documents générés pour les réceptions
+AllowExternalDownload=Autoriser le téléchargement externe

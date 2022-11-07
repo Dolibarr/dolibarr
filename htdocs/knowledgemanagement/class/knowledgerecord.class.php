@@ -105,7 +105,6 @@ class KnowledgeRecord extends CommonObject
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>20, 'index'=>1),
 		'question' => array('type'=>'text', 'label'=>'Question', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'csslist'=>'tdoverflowmax300', 'copytoclipboard'=>1, 'tdcss'=>'titlefieldcreate nowraponall'),
 		'lang' => array('type'=>'varchar(6)', 'label'=>'Language', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1, 'tdcss'=>'titlefieldcreate nowraponall', "csslist"=>"tdoverflowmax100"),
-		'answer' => array('type'=>'html', 'label'=>'Solution', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>3, 'csslist'=>'tdoverflowmax300', 'copytoclipboard'=>1, 'tdcss'=>'titlefieldcreate nowraponall'),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>2,),
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
@@ -115,7 +114,8 @@ class KnowledgeRecord extends CommonObject
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
 		//'url' => array('type'=>'varchar(255)', 'label'=>'URL', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'csslist'=>'tdoverflow200', 'help'=>'UrlForInfoPage'),
-		'fk_c_ticket_category' => array('type'=>'integer:CTicketCategory:ticket/class/cticketcategory.class.php:0:(t.active:=:1):pos', 'label'=>'SuggestedForTicketsInGroup', 'enabled'=>'$conf->ticket->enabled', 'position'=>512, 'notnull'=>0, 'visible'=>-1, 'help'=>'YouCanLinkArticleToATicketCategory', 'csslist'=>'minwidth200 tdoverflowmax250'),
+		'fk_c_ticket_category' => array('type'=>'integer:CTicketCategory:ticket/class/cticketcategory.class.php:0:(t.active:=:1):pos', 'label'=>'SuggestedForTicketsInGroup', 'enabled'=>'isModEnabled("ticket")', 'position'=>520, 'notnull'=>0, 'visible'=>-1, 'help'=>'YouCanLinkArticleToATicketCategory', 'csslist'=>'minwidth200 tdoverflowmax250'),
+		'answer' => array('type'=>'html', 'label'=>'Solution', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>3, 'csslist'=>'tdoverflowmax300', 'copytoclipboard'=>1, 'tdcss'=>'titlefieldcreate nowraponall'),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>5, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Obsolete'),),
 	);
 	public $rowid;

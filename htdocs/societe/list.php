@@ -536,7 +536,11 @@ if (!empty($searchCategoryCustomerList)) {
 		if (intval($searchCategoryCustomer) == -2) {
 			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc)";
 		} elseif (intval($searchCategoryCustomer) > 0) {
-			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+			if ($searchCategoryCustomerOperator == 0) {
+				$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie = ".((int) $searchCategoryCustomer).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+			}
 		}
 	}
 	if ($listofcategoryid) {
@@ -562,7 +566,11 @@ if (!empty($searchCategorySupplierList)) {
 		if (intval($searchCategorySupplier) == -2) {
 			$searchCategorySupplierSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc)";
 		} elseif (intval($searchCategorySupplier) > 0) {
-			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplier);
+			if ($searchCategorySupplierOperator == 0) {
+				$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie = ".((int) $searchCategorySupplier).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplier);
+			}
 		}
 	}
 	if ($listofcategoryid) {
@@ -1478,6 +1486,9 @@ while ($i < min($num, $limit)) {
 			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 	if (!empty($arrayfields['s.rowid']['checked'])) {
 		print '<td class="tdoverflowmax50" data-key="id">';
@@ -1714,7 +1725,7 @@ while ($i < min($num, $limit)) {
 
 	if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 		// Prospect status
-		print '<td class="center nowrap"><div class="nowrap">';
+		print '<td class="center nowrap"><div class="nowraponall">';
 		print '<div class="inline-block">';
 		print $companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
 		print '</div> - <div class="inline-block">';
@@ -1795,9 +1806,9 @@ while ($i < min($num, $limit)) {
 			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
-	}
-	if (!$i) {
-		$totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	print '</tr>'."\n";

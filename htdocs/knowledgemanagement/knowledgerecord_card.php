@@ -182,12 +182,14 @@ if ($action == 'create') {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 
-	print dol_get_fiche_head(array(), '');
+	print dol_get_fiche_head(array(), '', '', -3);
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Common attributes
+	$object->fields['answer']['enabled'] = 0;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
+	$object->fields['answer']['enabled'] = 1;
 
 	if (isModEnabled('categorie')) {
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
@@ -204,6 +206,14 @@ if ($action == 'create') {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 	print '</table>'."\n";
+
+	// Add field answer
+	print '<br>';
+	print $langs->trans($object->fields['answer']['label']).'<br>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%');
+	$out = $doleditor->Create(1);
+	print $out;
 
 	print dol_get_fiche_end();
 
@@ -229,12 +239,14 @@ if (($id || $ref) && $action == 'edit') {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 
-	print dol_get_fiche_head();
+	print dol_get_fiche_head(array(), '', '', -3);
 
 	print '<table class="border centpercent tableforfieldedit">'."\n";
 
 	// Common attributes
+	$object->fields['answer']['enabled'] = 0;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
+	$object->fields['answer']['enabled'] = 1;
 
 	if (isModEnabled('categorie')) {
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
@@ -259,6 +271,14 @@ if (($id || $ref) && $action == 'edit') {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 	print '</table>';
+
+	// Add field answer
+	print '<br>';
+	print $langs->trans($object->fields['answer']['label']).'<br>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%');
+	$out = $doleditor->Create(1);
+	print $out;
 
 	print dol_get_fiche_end();
 
@@ -408,11 +428,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$keyforbreak='fk_c_ticket_category';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
+	$object->fields['answer']['enabled'] = 0;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+	$object->fields['answer']['enabled'] = 1;
 
 	// Categories
 	if (isModEnabled('categorie')) {
-		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
+		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_KNOWLEDGEMANAGEMENT, 1);
 		print "</td></tr>";
 	}
@@ -421,10 +443,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
+
 	print '</div>';
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
+
+	// Add field answer
+	print '<br>';
+	print $langs->trans($object->fields['answer']['label']).'<br>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%', 1);
+	$out = $doleditor->Create(1);
+	print $out;
 
 	print dol_get_fiche_end();
 

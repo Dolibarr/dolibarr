@@ -841,7 +841,7 @@ class FormFile
 
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
 					if ($imgpreview) {
-						$out .= '<span class="spanoverflow widthcentpercentminusx">';
+						$out .= '<span class="spanoverflow widthcentpercentminusx valignmiddle">';
 					} else {
 						$out .= '<span class="spanoverflow">';
 					}

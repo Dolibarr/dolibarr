@@ -444,7 +444,11 @@ if (!empty($searchCategoryProjectList)) {
 		if (intval($searchCategoryProject) == -2) {
 			$searchCategoryProjectSqlList[] = "NOT EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project)";
 		} elseif (intval($searchCategoryProject) > 0) {
-			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProject);
+			if ($searchCategoryProjectOperator == 0) {
+				$searchCategoryProjectSqlList[] = " EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project AND ck.fk_categorie = ".((int) $searchCategoryProject).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProject);
+			}
 		}
 	}
 	if ($listofcategoryid) {
@@ -1117,7 +1121,8 @@ while ($i < $imaxinloop) {
 					$totalarray['nbfield']++;
 				}
 			}
-			// Date start
+
+			// Date start project
 			if (!empty($arrayfields['t.dateo']['checked'])) {
 				print '<td class="center">';
 				print dol_print_date($db->jdate($obj->date_start), 'day');
@@ -1126,7 +1131,7 @@ while ($i < $imaxinloop) {
 					$totalarray['nbfield']++;
 				}
 			}
-			// Date end
+			// Date end project
 			if (!empty($arrayfields['t.datee']['checked'])) {
 				print '<td class="center">';
 				print dol_print_date($db->jdate($obj->date_end), 'day');

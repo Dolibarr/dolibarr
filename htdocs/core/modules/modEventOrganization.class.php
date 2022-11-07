@@ -327,7 +327,7 @@ class modEventOrganization extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		// Permissions
 		$this->remove($options);

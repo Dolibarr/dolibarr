@@ -111,7 +111,7 @@ if ($id > 0 || $ref) {
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($object->date_trans, 'day');
-			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
+			print ' &nbsp; <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
@@ -177,7 +177,7 @@ $sql .= " f.rowid as facid, f.ref as ref, f.total_ttc,";
 $sql .= " s.rowid as socid, s.nom as name, pl.statut, pl.amount as amount_requested";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= ", ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= ", ".MAIN_DB_PREFIX."prelevement_facture as pf";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement as pf";
 if ($object->type != 'bank-transfer') {
 	$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 } else {
