@@ -185,9 +185,11 @@ if ($object->nature == 2) {
 	$account_accounting_not_defined = false;
 }
 
-llxHeader('', $langs->trans("GenerationOfAccountingEntries").' - '.$langs->trans("AccountingJournalType1"));
+$title = $langs->trans("GenerationOfAccountingEntries") . ' - ' . $object->getNomUrl(0, 2, 1, '', 1);
 
-$nom = $langs->trans("GenerationOfAccountingEntries") . ' - ' . $object->getNomUrl(0, 1, 1, '', 1);
+llxHeader('', $title);
+
+$nom = $title;
 $nomlink = '';
 $periodlink = '';
 $exportlink = '';

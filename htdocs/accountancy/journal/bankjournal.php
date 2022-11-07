@@ -1032,9 +1032,11 @@ if (empty($action) || $action == 'view') {
 	$salarystatic = new Salary($db);
 	$variousstatic = new PaymentVarious($db);
 
-	llxHeader('', $langs->trans("GenerationOfAccountingEntries").' - '.$langs->trans("AccountingJournalType4"));
+	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
 
-	$nom = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
+	llxHeader('', $title);
+
+	$nom = $title;
 	$builddate = dol_now();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
@@ -1052,6 +1054,7 @@ if (empty($action) || $action == 'view') {
 
 	journalHead($nom, '', $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
+	$desc = '';
 
 	// Test that setup is complete (we are in accounting, so test on entity is always on $conf->entity only, no sharing allowed)
 	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."bank_account WHERE entity = ".((int) $conf->entity)." AND fk_accountancy_journal IS NULL AND clos=0";
@@ -1074,7 +1077,7 @@ if (empty($action) || $action == 'view') {
 	if (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "") || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
 		|| ($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1'
 		|| empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
-		print '<br><div class="warning">'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
+		print ($desc ? '' : '<br>').'<div class="warning">'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
 		$desc = ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '{link}');
 		$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>', $desc);
 		print $desc;
@@ -1125,8 +1128,8 @@ if (empty($action) || $action == 'view') {
 
 	$i = 0;
 	print '<div class="div-table-responsive">';
-	print "<table class=\"noborder\" width=\"100%\">";
-	print "<tr class=\"liste_titre\">";
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
 	print "<td>".$langs->trans("Date")."</td>";
 	print "<td>".$langs->trans("Piece").' ('.$langs->trans("ObjectsRef").")</td>";
 	print "<td>".$langs->trans("AccountAccounting")."</td>";
