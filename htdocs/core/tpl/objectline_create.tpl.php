@@ -107,7 +107,7 @@ if ($nolinesbefore) {
 		<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 			<td class="linecolnum center"></td>
 		<?php } ?>
-		<td class="linecoldescription minwidth500imp">
+		<td class="linecoldescription minwidth400imp">
 			<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span>
 		</td>
 		<?php
@@ -176,8 +176,7 @@ if ($nolinesbefore) {
 	}
 	$coldisplay++;
 	?>
-	<td class="nobottom linecoldescription minwidth500imp">
-
+	<td class="nobottom linecoldescription minwidth400imp">
 		<?php
 		$freelines = false;
 		if (empty($conf->global->MAIN_DISABLE_FREE_LINES)) {
@@ -258,9 +257,11 @@ if ($nolinesbefore) {
 			}
 			if (empty($senderissupplier)) {
 				$statustoshow = 1;
+				$statuswarehouse = 'warehouseopen,warehouseinternal';
+				if (!empty($conf->global->ENTREPOT_WAREHOUSEINTERNAL_NOT_SELL)) $statuswarehouse = 'warehouseopen';
 				if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
 					// hide products in closed warehouse, but show products for internal transfer
-					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
+					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, $statuswarehouse, GETPOST('combinations', 'array'));
 				} else {
 					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'));
 				}

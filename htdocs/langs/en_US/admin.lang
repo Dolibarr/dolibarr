@@ -2334,3 +2334,5 @@ WarningDisabled=Warning disabled
 LimitsAndMitigation=Access limits and mitigation
 DesktopsOnly=Desktops only
 DesktopsAndSmartphones=Desktops et smartphones
+AllowOnlineSign=Allow online signing
+AllowExternalDownload=Allow external download (without login, using a shared link)

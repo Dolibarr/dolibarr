@@ -689,10 +689,10 @@ class FormProjets
 					$sellist .= '<option value="-1">&nbsp;</option>';
 				}
 				if ($showallnone) {
-					$sellist .= '<option value="all"'.($preselected == 'all' ? ' selected="selected"' : '').'>-- '.$langs->trans("OnlyOpportunitiesShort").' --</option>';
-					$sellist .= '<option value="openedopp"'.($preselected == 'openedopp' ? ' selected="selected"' : '').'>-- '.$langs->trans("OpenedOpportunitiesShort").' --</option>';
-					$sellist .= '<option value="notopenedopp"'.($preselected == 'notopenedopp' ? ' selected="selected"' : '').'>-- '.$langs->trans("NotOpenedOpportunitiesShort").' --</option>';
-					$sellist .= '<option value="none"'.($preselected == 'none' ? ' selected="selected"' : '').'>-- '.$langs->trans("NotAnOpportunityShort").' --</option>';
+					$sellist .= '<option value="all"'.($preselected == 'all' ? ' selected="selected"' : '').'>-- '.$langs->trans("OnlyOpportunitiesShort").'</option>';
+					$sellist .= '<option value="openedopp"'.($preselected == 'openedopp' ? ' selected="selected"' : '').'>-- '.$langs->trans("OpenedOpportunitiesShort").'</option>';
+					$sellist .= '<option value="notopenedopp"'.($preselected == 'notopenedopp' ? ' selected="selected"' : '').'>-- '.$langs->trans("NotOpenedOpportunitiesShort").'</option>';
+					$sellist .= '<option value="none"'.($preselected == 'none' ? ' selected="selected"' : '').'>-- '.$langs->trans("NotAnOpportunityShort").'</option>';
 				}
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
