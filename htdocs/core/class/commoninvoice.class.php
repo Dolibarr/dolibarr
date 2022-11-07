@@ -1572,7 +1572,7 @@ abstract class CommonInvoice extends CommonObject
 						$this->errors[] = "Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?";
 					}
 
-					$sql = "INSERT INTO '.MAIN_DB_PREFIX.'prelevement_demande(";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_demande(";
 					$sql .= "fk_facture, ";
 					$sql .= " amount, date_demande, fk_user_demande, ext_payment_id, ext_payment_site, sourcetype, entity)";
 					$sql .= " VALUES (".$this->id;
