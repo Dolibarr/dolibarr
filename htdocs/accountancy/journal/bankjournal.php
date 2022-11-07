@@ -1032,9 +1032,9 @@ if (empty($action) || $action == 'view') {
 	$salarystatic = new Salary($db);
 	$variousstatic = new PaymentVarious($db);
 
-	llxHeader('', $langs->trans("GenerationOfAccountingEntries").' | '.$langs->trans("AccountingJournalType4"));
+	llxHeader('', $langs->trans("GenerationOfAccountingEntries").' - '.$langs->trans("AccountingJournalType4"));
 
-	$nom = $langs->trans("GenerationOfAccountingEntries").' | '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
+	$nom = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
 	$builddate = dol_now();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';

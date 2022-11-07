@@ -756,9 +756,9 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 }
 
 if (empty($action) || $action == 'view') {
-	llxHeader('', $langs->trans("GenerationOfAccountingEntries").' | '.$langs->trans("AccountingJournalType3"));
+	llxHeader('', $langs->trans("GenerationOfAccountingEntries").' - '.$langs->trans("AccountingJournalType3"));
 
-	$nom = $langs->trans("GenerationOfAccountingEntries").' | '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
+	$nom = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
