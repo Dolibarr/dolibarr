@@ -381,20 +381,18 @@ if (empty($reshook)) {
 
 		if (!$error) {    // Update list of contacts
 			// Si déjà un user assigné on le supprime des contacts
-			if ($useroriginassign > 0) {
+			if ($useroriginassign > 0 && empty($conf->global->TICKET_DONOT_DELETE_UNASSIGNED_CONTACT)) {
 				$internal_contacts = $object->listeContact(-1, 'internal');
 
 				foreach ($internal_contacts as $key => $contact) {
 					if ($contact['code'] == "SUPPORTTEC" && $contact['id'] == $useroriginassign) {
-					}
-					{
 						//print "user à effacer : ".$useroriginassign;
 						$object->delete_contact($contact['rowid']);
 					}
 				}
 			}
 
-			if ($usertoassign > 0) {
+			if ($usertoassign > 0 && $usertoassign != $useroriginassign) {
 				$object->add_contact($usertoassign, "SUPPORTTEC", 'internal', $notrigger = 0);
 			}
 		}
