@@ -358,6 +358,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
+
 $companystatic = new Societe($db);
 $taskstatic = new Task($db);
 $formother = new FormOther($db);
@@ -813,7 +814,7 @@ if ($user->rights->projet->supprimer) {
 if (isModEnabled('category') && $user->rights->projet->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if (in_array($massaction, array('presend', 'predelete', 'preaffecttag', "preaffectuser"))) {
+if (in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preaffectuser'))) {
 	$arrayofmassactions = array();
 }
 
