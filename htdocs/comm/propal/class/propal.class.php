@@ -3273,15 +3273,15 @@ class Propal extends CommonObject
 		} elseif ($status == self::STATUS_BILLED) {
 			$statusType = 'status6';
 		}
-        
 
-        $parameters = array('status' => $status, 'mode' => $mode);
+
+		$parameters = array('status' => $status, 'mode' => $mode);
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
 
-        if ($reshook > 0) {
+		if ($reshook > 0) {
 			return $hookmanager->resPrint;
 		}
-        
+
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 

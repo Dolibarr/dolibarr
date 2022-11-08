@@ -576,18 +576,18 @@ abstract class CommonInvoice extends CommonObject
 				$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusPaid');
 			}
 		}
-        
-        $parameters = array(
-            'status'      => $status,
-            'mode'        => $mode,
-            'paye'        => $paye,
-            'alreadypaid' => $alreadypaid,
-            'type'        => $type
-        );
 
-        $reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
+		$parameters = array(
+			'status'      => $status,
+			'mode'        => $mode,
+			'paye'        => $paye,
+			'alreadypaid' => $alreadypaid,
+			'type'        => $type
+		);
 
-        if ($reshook > 0) {
+		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
+
+		if ($reshook > 0) {
 			return $hookmanager->resPrint;
 		}
 
