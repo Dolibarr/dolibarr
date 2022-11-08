@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PhpIncludePathManager">
+    <include_path>
+      <path value="$PROJECT_DIR$/htdocs/includes/nusoap/lib" />
+      <path value="$PROJECT_DIR$/htdocs/includes/Psr/Log" />
+      <path value="$PROJECT_DIR$/htdocs/includes/jquery/css" />
+      <path value="$PROJECT_DIR$/htdocs/includes/ckeditor/ckeditor" />
+      <path value="$PROJECT_DIR$/htdocs/includes/Psr/simple-cache" />
+      <path value="$PROJECT_DIR$/htdocs/includes/jquery/plugins" />
+      <path value="$PROJECT_DIR$/htdocs/includes/jquery/js" />
+      <path value="$PROJECT_DIR$/htdocs/includes/odtphp/zip" />
+      <path value="$PROJECT_DIR$/htdocs/includes/phpoffice/phpspreadsheet" />
+      <path value="$PROJECT_DIR$/htdocs/includes/tecnickcom/tcpdf" />
+      <path value="$PROJECT_DIR$/htdocs/includes/stripe/stripe-php" />
+      <path value="$PROJECT_DIR$/htdocs/includes/ace/src" />
+      <path value="$PROJECT_DIR$/htdocs/includes/sabre/sabre" />
+      <path value="$PROJECT_DIR$/htdocs/includes/sabre/composer" />
+      <path value="$PROJECT_DIR$/htdocs/includes/nnnick/chartjs" />
+      <path value="$PROJECT_DIR$/htdocs/includes/sabre/psr" />
+      <path value="$PROJECT_DIR$/htdocs/includes/swiftmailer/egulias" />
+      <path value="$PROJECT_DIR$/htdocs/includes/swiftmailer/lexer" />
+      <path value="$PROJECT_DIR$/htdocs/includes/swiftmailer/lib" />
+      <path value="$PROJECT_DIR$/htdocs/includes/mike42/escpos-php" />
+      <path value="$PROJECT_DIR$/htdocs/includes/OAuth/OAuth1" />
+      <path value="$PROJECT_DIR$/htdocs/includes/OAuth/OAuth2" />
+      <path value="$PROJECT_DIR$/htdocs/includes/OAuth/Common" />
+      <path value="$PROJECT_DIR$/htdocs/includes/restler/framework" />
+      <path value="$PROJECT_DIR$/htdocs/includes/maximebf/debugbar" />
+      <path value="$PROJECT_DIR$/htdocs/includes/mobiledetect/mobiledetectlib" />
+      <path value="$PROJECT_DIR$/htdocs/includes/symfony/var-dumper" />
+    </include_path>
+  </component>
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/htdocs/includes/autoload.php" />
+    </phpunit_settings>
+  </component>
+</project>

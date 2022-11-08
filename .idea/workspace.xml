@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="7094390b-b2cc-4ce7-b674-b0191a1905e0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/class/vehicle.class.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/class/vehicledriver.class.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/vehiclerequest_card_actions.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/class/vehiclerequest.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/class/vehiclerequest.class.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/core/modules/modVehicleRequest.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/core/modules/modVehicleRequest.class.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/sql/llx_vehiclerequest_vehicle.sql" beforeDir="false" afterPath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/sql/llx_vehiclerequest_vehicle.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/sql/llx_vehiclerequest_vehiclerequest.sql" beforeDir="false" afterPath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/sql/llx_vehiclerequest_vehiclerequest.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/vehiclerequest_card.php" beforeDir="false" afterPath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/vehiclerequest_card.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/vehiclerequest_list.php" beforeDir="false" afterPath="$PROJECT_DIR$/htdocs/custom/vehiclerequest/vehiclerequest_list.php" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration">
+    <include_path>
+      <path value="$PROJECT_DIR$/htdocs/includes/nusoap/lib" />
+      <path value="$PROJECT_DIR$/htdocs/includes/Psr/Log" />
+      <path value="$PROJECT_DIR$/htdocs/includes/jquery/css" />
+      <path value="$PROJECT_DIR$/htdocs/includes/ckeditor/ckeditor" />
+      <path value="$PROJECT_DIR$/htdocs/includes/Psr/simple-cache" />
+      <path value="$PROJECT_DIR$/htdocs/includes/jquery/plugins" />
+      <path value="$PROJECT_DIR$/htdocs/includes/jquery/js" />
+      <path value="$PROJECT_DIR$/htdocs/includes/odtphp/zip" />
+      <path value="$PROJECT_DIR$/htdocs/includes/phpoffice/phpspreadsheet" />
+      <path value="$PROJECT_DIR$/htdocs/includes/tecnickcom/tcpdf" />
+      <path value="$PROJECT_DIR$/htdocs/includes/stripe/stripe-php" />
+      <path value="$PROJECT_DIR$/htdocs/includes/ace/src" />
+      <path value="$PROJECT_DIR$/htdocs/includes/sabre/sabre" />
+      <path value="$PROJECT_DIR$/htdocs/includes/sabre/composer" />
+      <path value="$PROJECT_DIR$/htdocs/includes/nnnick/chartjs" />
+      <path value="$PROJECT_DIR$/htdocs/includes/sabre/psr" />
+      <path value="$PROJECT_DIR$/htdocs/includes/swiftmailer/egulias" />
+      <path value="$PROJECT_DIR$/htdocs/includes/swiftmailer/lexer" />
+      <path value="$PROJECT_DIR$/htdocs/includes/swiftmailer/lib" />
+      <path value="$PROJECT_DIR$/htdocs/includes/mike42/escpos-php" />
+      <path value="$PROJECT_DIR$/htdocs/includes/OAuth/OAuth1" />
+      <path value="$PROJECT_DIR$/htdocs/includes/OAuth/OAuth2" />
+      <path value="$PROJECT_DIR$/htdocs/includes/OAuth/Common" />
+      <path value="$PROJECT_DIR$/htdocs/includes/restler/framework" />
+      <path value="$PROJECT_DIR$/htdocs/includes/maximebf/debugbar" />
+      <path value="$PROJECT_DIR$/htdocs/includes/mobiledetect/mobiledetectlib" />
+      <path value="$PROJECT_DIR$/htdocs/includes/symfony/var-dumper" />
+    </include_path>
+  </component>
+  <component name="ProjectId" id="2DFb6yxLUla9wEEM9HDml0AdYp0" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/projects/dolibarr&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration default="true" type="ReactNative" factoryName="React Native">
+      <node-interpreter value="project" />
+      <react-native value="" />
+      <platform value="ANDROID" />
+      <envs />
+      <only-packager />
+      <browser value="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" />
+      <method v="2">
+        <option name="ReactNativePackager" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7094390b-b2cc-4ce7-b674-b0191a1905e0" name="Changes" comment="" />
+      <created>1660297608515</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1660297608515</updated>
+      <workItem from="1660297609794" duration="5990000" />
+      <workItem from="1662546589994" duration="4272000" />
+      <workItem from="1662634035530" duration="43101000" />
+      <workItem from="1667903542235" duration="800000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

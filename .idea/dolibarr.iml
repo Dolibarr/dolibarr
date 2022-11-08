@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/nusoap/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/Psr/Log" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/jquery/css" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/ckeditor/ckeditor" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/Psr/simple-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/jquery/plugins" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/jquery/js" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/odtphp/zip" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/phpoffice/phpspreadsheet" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/tecnickcom/tcpdf" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/stripe/stripe-php" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/ace/src" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/sabre/sabre" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/sabre/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/nnnick/chartjs" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/sabre/psr" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/swiftmailer/egulias" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/swiftmailer/lexer" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/swiftmailer/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/mike42/escpos-php" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/OAuth/OAuth1" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/OAuth/OAuth2" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/OAuth/Common" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/restler/framework" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/maximebf/debugbar" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/mobiledetect/mobiledetectlib" />
+      <excludeFolder url="file://$MODULE_DIR$/htdocs/includes/symfony/var-dumper" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
