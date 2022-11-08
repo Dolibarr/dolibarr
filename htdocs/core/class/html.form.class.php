@@ -7770,7 +7770,7 @@ class Form
 		}
 		$sql .= $this->db->order($sortfield ? $sortfield : $fieldstoshow, "ASC");
 		//$sql.=$this->db->plimit($limit, 0);
-//		print $sql;
+		//print $sql;
 
 		// Build output string
 		$resql = $this->db->query($sql);
@@ -8622,7 +8622,6 @@ class Form
 
 				// Output template part (modules that overwrite templates must declare this into descriptor)
 				$dirtpls = array_merge($conf->modules_parts['tpl'], array('/'.$tplpath.'/tpl'));
-
 				foreach ($dirtpls as $reldir) {
 					if ($nboftypesoutput == ($nbofdifferenttypes - 1)) {    // No more type to show after
 						global $noMoreLinkedObjectBlockAfter;
