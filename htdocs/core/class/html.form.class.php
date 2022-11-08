@@ -7544,6 +7544,7 @@ class Form
 	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '')
 	{
 		global $conf, $user;
+
 		$objecttmp = null;
 
 		// Example of value for $objectdec:
@@ -8508,6 +8509,7 @@ class Form
 	{
 		global $conf, $langs, $hookmanager;
 		global $bc, $action;
+
 		$object->fetchObjectLinked();
 
 		// Bypass the default method
