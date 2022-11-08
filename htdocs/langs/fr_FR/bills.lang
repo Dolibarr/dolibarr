@@ -622,4 +622,3 @@ PaymentRegisteredAndInvoiceSetToPaid=Paiement enregistré et facture %s passée 
 SendEmailsRemindersOnInvoiceDueDate=Envoyer un rappel par e-mail pour les factures impayées
 MakePaymentAndClassifyPayed=Enregistrer un paiement
 BulkPaymentNotPossibleForInvoice=L'enregistrement  de paiements en masse n'est pas possible pour la facture %s (mauvais type de facture ou statut)
-MentionVATDebitOptionIsOn=Option pour le paiement de la taxe d'après les débits
