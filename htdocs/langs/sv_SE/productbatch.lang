@@ -30,7 +30,7 @@ ManageLotMask=Anpassad mask
 CustomMasks=Möjlighet att definiera en annan numreringsmask för varje produkt
 BatchLotNumberingModules=Numreringsregel för automatisk generering av partinummer
 BatchSerialNumberingModules=Numreringsregel för automatisk generering av serienummer (för produkter med egendom 1 unikt parti / serienummer för varje produkt)
-QtyToAddAfterBarcodeScan=Antal att lägga till för varje streckkod/parti/serienummer skannat
+QtyToAddAfterBarcodeScan=Qty to %s for each barcode/lot/serial scanned
 LifeTime=Livslängd (i dagar)
 EndOfLife=Livslängd
 ManufacturingDate=Tillverkningsdatum
@@ -42,3 +42,4 @@ HideLots=Hide lots
 #Traceability - qc status
 OutOfOrder=Ej tillgänglig
 InWorkingOrder=I fungerande skick
+ToReplace=Replace

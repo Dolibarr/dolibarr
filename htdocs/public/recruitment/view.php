@@ -121,7 +121,7 @@ if ($action == "view" || $action == "presend" || $action == "close" || $action =
 	if (!$error && $action == "add_message" && $display_ticket && GETPOSTISSET('btn_add_message'))
 	{
 		// TODO Add message...
-		$ret = $object->dao->newMessage($user, $action, 0, 1);
+		$ret = $object->newMessage($user, $action, 0, 1);
 
 
 
@@ -177,7 +177,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
+llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1, 1);
 
 
 print '<span id="dolpaymentspan"></span>'."\n";
@@ -191,8 +191,6 @@ print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
 print '<!-- Form to view job -->'."\n";
-
-print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
 // Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
 // Define logo and logosmall
@@ -219,8 +217,13 @@ if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumb
 if ($urllogo) {
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
-	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-	print '>';
+	if (!empty($mysoc->url)) {
+		print '<a href="'.$mysoc->url.'" target="_blank" rel="noopener">';
+	}
+	print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
+	if (!empty($mysoc->url)) {
+		print '</a>';
+	}
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
 		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
@@ -234,10 +237,13 @@ if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
 	print '</div>';
 }
 
+
+print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
+
 // Output introduction text
 $text = '';
 if (!empty($conf->global->RECRUITMENT_NEWFORM_TEXT)) {
-	$langs->load("recruitment");
+	$reg = array();
 	if (preg_match('/^\((.*)\)$/', $conf->global->RECRUITMENT_NEWFORM_TEXT, $reg)) {
 		$text .= $langs->trans($reg[1])."<br>\n";
 	} else {
@@ -248,9 +254,9 @@ if (!empty($conf->global->RECRUITMENT_NEWFORM_TEXT)) {
 if (empty($text)) {
 	$text .= '<tr><td class="textpublicpayment"><br>'.$langs->trans("JobOfferToBeFilled", $mysoc->name);
 	$text .= ' &nbsp; - &nbsp; <strong>'.$mysoc->name.'</strong>';
-	$text .= ' &nbsp; - &nbsp; <span class="fa fa-calendar secondary"></span> '.dol_print_date($object->date_creation);
+	$text .= ' &nbsp; - &nbsp; <span class="nowraponall"><span class="fa fa-calendar secondary"></span> '.dol_print_date($object->date_creation).'</span>';
 	$text .= '</td></tr>'."\n";
-	$text .= '<tr><td class="textpublicpayment"><h1>'.$object->label.'</h1><br></td></tr>'."\n";
+	$text .= '<tr><td class="textpublicpayment"><h1 class="paddingleft paddingright">'.$object->label.'</h1><br></td></tr>'."\n";
 }
 print $text;
 
@@ -299,7 +305,7 @@ if (empty($emailforcontact)) {
 }
 print '<b class="wordbreak">';
 print $tmpuser->getFullName(-1);
-print ' - '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 1);
+print ' &nbsp; '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 'envelope');
 print '</b>';
 print '</b><br>';
 
@@ -323,9 +329,10 @@ print "\n";
 
 
 if ($action != 'dosubmit') {
-	if ($found && !$error) {	// We are in a management option and no error
+	if ($found && !$error) {
+		// We are in a management option and no error
 	} else {
-		dol_print_error_email('ERRORNEWONLINESIGN');
+		dol_print_error_email('ERRORSUBMITAPPLICATION');
 	}
 } else {
 	// Print
@@ -334,6 +341,7 @@ if ($action != 'dosubmit') {
 print '</td></tr>'."\n";
 
 print '</table>'."\n";
+
 print '</form>'."\n";
 print '</div>'."\n";
 print '<br>';

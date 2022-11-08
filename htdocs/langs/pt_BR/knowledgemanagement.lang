@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - knowledgemanagement
+ModuleKnowledgeManagementName =Sistema de Gestão do Conhecimento
+ModuleKnowledgeManagementDesc=Gerenciar uma base de Gerenciamento de Conhecimento (KM) ou Help-Desk
+KnowledgeManagementSetup =Configuração do Sistema de Gestão do Conhecimento
+KnowledgeManagementSetupPage =Página de configuração do Sistema de Gerenciamento do Conhecimento
+KnowledgeManagementAbout =Sobre a Gestão do Conhecimento
+KnowledgeManagementAboutPage =Gestão do Conhecimento sobre a página
+KnowledgeManagementArea =Gestão do conhecimento
+MenuKnowledgeRecord =Base do conhecimento
+KnowledgeRecordExtraFields =Extracampos para o artigo
+GroupOfTicket=Grupo de Tickets
+SuggestedForTicketsInGroup=Sugerido para ingressos quando o grupo é
+SetObsolete=Definir como obsoleto
+ConfirmCloseKM=Você confirma o fechamento deste artigo como obsoleto?
+ConfirmReopenKM=Deseja restaurar este artigo para o status "Validado"?

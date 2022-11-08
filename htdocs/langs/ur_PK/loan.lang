@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=قرض
+Loans=قرضے
+NewLoan=نیا قرض
+ShowLoan=قرض دکھائیں۔
+PaymentLoan=قرض کی ادائیگی
+LoanPayment=قرض کی ادائیگی
+ShowLoanPayment=قرض کی ادائیگی دکھائیں۔
+LoanCapital=سرمایہ
+Insurance=انشورنس
+Interest=دلچسپی
+Nbterms=شرائط کی تعداد
+Term=مدت
+LoanAccountancyCapitalCode=اکاؤنٹنگ اکاؤنٹ کیپٹل
+LoanAccountancyInsuranceCode=اکاؤنٹنگ اکاؤنٹ انشورنس
+LoanAccountancyInterestCode=اکاؤنٹنگ اکاؤنٹنگ سود
+ConfirmDeleteLoan=اس قرض کو حذف کرنے کی تصدیق کریں۔
+LoanDeleted=قرض کامیابی سے حذف ہو گیا۔
+ConfirmPayLoan=اس قرض کی ادائیگی کی درجہ بندی کی تصدیق کریں۔
+LoanPaid=ادا شدہ قرض
+ListLoanAssociatedProject=منصوبے سے وابستہ قرض کی فہرست
+AddLoan=قرض بنائیں
+FinancialCommitment=مالی وابستگی
+InterestAmount=دلچسپی
+CapitalRemain=سرمایہ باقی ہے۔
+TermPaidAllreadyPaid = یہ اصطلاح پہلے سے ادا کی جاتی ہے۔
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantModifyInterestIfScheduleIsUsed = اگر آپ شیڈول استعمال کرتے ہیں تو آپ دلچسپی میں ترمیم نہیں کر سکتے
+# Admin
+ConfigLoan=ماڈیول قرض کی ترتیب
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=ڈیفالٹ کے حساب سے اکاؤنٹنگ کا سرمایہ
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=ڈیفالٹ کے حساب سے اکاؤنٹنگ سود
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=اکاؤنٹنگ اکاؤنٹ انشورنس بطور ڈیفالٹ
+CreateCalcSchedule=مالی وابستگی میں ترمیم کریں۔

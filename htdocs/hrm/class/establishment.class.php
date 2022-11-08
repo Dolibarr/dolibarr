@@ -204,12 +204,12 @@ class Establishment extends CommonObject
 		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", '".$this->db->escape($this->zip)."'";
 		$sql .= ", '".$this->db->escape($this->town)."'";
-		$sql .= ", ".$this->country_id;
-		$sql .= ", ".$this->status;
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $this->country_id);
+		$sql .= ", ".((int) $this->status);
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".$user->id;
-		$sql .= ", ".$user->id;
+		$sql .= ", ".((int) $user->id);
+		$sql .= ", ".((int) $user->id);
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -231,7 +231,7 @@ class Establishment extends CommonObject
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'establishment');
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."establishment SET ref = '".$this->db->escape($this->id)."'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 			$this->db->query($sql);
 
 			$this->db->commit();
@@ -269,7 +269,7 @@ class Establishment extends CommonObject
 		$sql .= ", entity = ".((int) $this->entity);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();
@@ -369,10 +369,10 @@ class Establishment extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_OPEN] = $langs->trans('Open');
-			$this->labelStatus[self::STATUS_CLOSED] = $langs->trans('Closed');
-			$this->labelStatusShort[self::STATUS_OPEN] = $langs->trans('Open');
-			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->trans('Closed');
+			$this->labelStatus[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Open');
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
+			$this->labelStatusShort[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Open');
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
 		}
 
 		$statusType = 'status'.$status;
@@ -395,7 +395,7 @@ class Establishment extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT e.rowid, e.ref, e.datec, e.fk_user_author, e.tms, e.fk_user_mod, e.entity';
+		$sql = 'SELECT e.rowid, e.ref, e.datec, e.fk_user_author, e.tms as datem, e.fk_user_mod, e.entity';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'establishment as e';
 		$sql .= ' WHERE e.rowid = '.((int) $id);
 
@@ -407,19 +407,10 @@ class Establishment extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
 
-				$this->date_creation = $this->db->jdate($obj->datec);
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_mod) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_mod);
-					$this->user_modification = $muser;
-
-					$this->date_modification = $this->db->jdate($obj->tms);
-				}
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_mod;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 			$this->db->free($result);
 		} else {
@@ -506,7 +497,7 @@ class Establishment extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('establishmentdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

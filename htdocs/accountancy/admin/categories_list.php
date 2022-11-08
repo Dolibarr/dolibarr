@@ -111,7 +111,7 @@ $tabrowid[32] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[32] = !empty($conf->accounting->enabled);
+$tabcond[32] = isModEnabled('accounting');
 
 // List of help for fields
 $tabhelp = array();
@@ -148,10 +148,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		if ($value == 'formula' && !GETPOST('formula')) {
 			continue;
 		}
-		if ($value == 'range_account' && empty($_POST['range_account'])) {
+		if ($value == 'range_account' && !GETPOST('range_account')) {
 			continue;
 		}
-		if (($value == 'country' || $value == 'country_id') && (!empty($_POST['country_id']))) {
+		if (($value == 'country' || $value == 'country_id') && GETPOST('country_id')) {
 			continue;
 		}
 		if (!GETPOSTISSET($value) || GETPOST($value) == '') {
@@ -195,17 +195,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		setEventMessages($langs->transnoentities('ErrorFieldMustBeANumeric', $langs->transnoentities("Position")), null, 'errors');
 	}
 
-	// Clean some parameters
-	if ($_POST["accountancy_code"] <= 0) {
-		$_POST["accountancy_code"] = ''; // If empty, we force to null
-	}
-	if ($_POST["accountancy_code_sell"] <= 0) {
-		$_POST["accountancy_code_sell"] = ''; // If empty, we force to null
-	}
-	if ($_POST["accountancy_code_buy"] <= 0) {
-		$_POST["accountancy_code_buy"] = ''; // If empty, we force to null
-	}
-
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
@@ -243,7 +232,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			if ($i) {
 				$sql .= ",";
 			}
-			if ($_POST[$listfieldvalue[$i]] == '' && !$listfieldvalue[$i] == 'formula') {
+			if (GETPOST($listfieldvalue[$i]) == '' && !$listfieldvalue[$i] == 'formula') {
 				$sql .= "null"; // For vat, we want/accept code = ''
 			} else {
 				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
@@ -283,8 +272,8 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		}
 		$i = 0;
 		foreach ($listfieldmodify as $field) {
-			if ($field == 'fk_country' && $_POST['country'] > 0) {
-				$_POST[$listfieldvalue[$i]] = $_POST['country'];
+			if ($field == 'fk_country' && GETPOST('country') > 0) {
+				$_POST[$listfieldvalue[$i]] = GETPOST('country');
 			} elseif ($field == 'entity') {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
@@ -292,10 +281,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 				$sql .= ",";
 			}
 			$sql .= $field."=";
-			if ($_POST[$listfieldvalue[$i]] == '' && !$listfieldvalue[$i] == 'range_account') {
+			if (GETPOST($listfieldvalue[$i]) == '' && !$listfieldvalue[$i] == 'range_account') {
 				$sql .= "null"; // For range_account, we want/accept code = ''
 			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
 			$i++;
 		}
@@ -520,7 +509,7 @@ if ($tabname[$id]) {
 		if ($valuetoshow != '') {
 			print '<td class="'.$class.'">';
 			if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-				print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+				print '<a href="'.$tabhelp[$id][$value].'">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
 			} elseif (!empty($tabhelp[$id][$value])) {
 				print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
 			} else {
@@ -561,7 +550,7 @@ if ($tabname[$id]) {
 	}
 
 	print '<td colspan="4" class="right">';
-	print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
+	print '<input type="submit" class="button button-add" name="actionadd" value="'.$langs->trans("Add").'">';
 	print '</td>';
 	print "</tr>";
 
@@ -583,7 +572,7 @@ if ($resql) {
 
 	$param = '&id='.$id;
 	if ($search_country_id > 0) {
-		$param .= '&search_country_id='.$search_country_id;
+		$param .= '&search_country_id='.urlencode($search_country_id);
 	}
 	$paramwithsearch = $param;
 	if ($sortorder) {
@@ -737,14 +726,14 @@ if ($resql) {
 				print '<td class="center">';
 				print '<input type="hidden" name="page" value="'.$page.'">';
 				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-				print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+				print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
 				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 				print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 				print '<td></td>';
 			} else {
 				$tmpaction = 'view';
-				$parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
+				$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 				$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 				$error = $hookmanager->error; $errors = $hookmanager->errors;
@@ -814,7 +803,7 @@ if ($resql) {
 
 				// Modify link
 				if ($canbemodified) {
-					print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+					print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
 				} else {
 					print '<td>&nbsp;</td>';
 				}
@@ -823,7 +812,7 @@ if ($resql) {
 				if ($iserasable) {
 					print '<td class="center">';
 					if ($user->admin) {
-						print '<a href="'.$url.'action=delete">'.img_delete().'</a>';
+						print '<a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a>';
 					}
 					//else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
 					print '</td>';
@@ -886,7 +875,7 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		$formaccounting = new FormAccounting($db);
 	}
 
@@ -896,9 +885,11 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 			$fieldname = 'country';
 			if ($context == 'add') {
 				$fieldname = 'country_id';
-				print $form->select_country(GETPOST('country_id', 'int'), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
+				$preselectcountrycode = GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : $mysoc->country_code;
+				print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
 			} else {
-				print $form->select_country((!empty($obj->country_code) ? $obj->country_code : (!empty($obj->country) ? $obj->country : $mysoc->country_code)), $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
+				$preselectcountrycode = (empty($obj->country_code) ? (empty($obj->country) ? $mysoc->country_code : $obj->country) : $obj->country_code);
+				print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
 			}
 			print '</td>';
 		} elseif ($fieldlist[$field] == 'country_id') {

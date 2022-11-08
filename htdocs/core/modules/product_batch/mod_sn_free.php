@@ -18,7 +18,7 @@
  */
 
 /**
- *       \file       htdocs/core/modules/product/mod_sn_free.php
+ *       \file       htdocs/core/modules/product_batch/mod_sn_free.php
  *       \ingroup    productbatch
  *       \brief      File containing class for numbering model of SN free
  */
@@ -92,11 +92,11 @@ class mod_sn_free extends ModeleNumRefBatch
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	product		$objproduct		Object product
-	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @param	Societe		$objsoc	    Object thirdparty
+	 * @param   Object		$object		Object we need next value for
 	 * @return	string					Return next value
 	 */
-	public function getNextValue($objproduct = 0, $type = -1)
+	public function getNextValue($objsoc, $object)
 	{
 		global $langs;
 		return '';

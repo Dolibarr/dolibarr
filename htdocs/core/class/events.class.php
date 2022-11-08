@@ -152,7 +152,7 @@ class Events // extends CommonObject
 		}
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
+		$sql = "INSERT INTO ".$this->db->prefix()."events(";
 		$sql .= "type,";
 		$sql .= "entity,";
 		$sql .= "ip,";
@@ -167,7 +167,7 @@ class Events // extends CommonObject
 		$sql .= " '".$this->db->escape(getUserRemoteIP())."',";
 		$sql .= " ".($this->user_agent ? "'".$this->db->escape(dol_trunc($this->user_agent, 250))."'" : 'NULL').",";
 		$sql .= " '".$this->db->idate($this->dateevent)."',";
-		$sql .= " ".($user->id ? "'".$this->db->escape($user->id)."'" : 'NULL').",";
+		$sql .= " ".($user->id > 0 ? ((int) $user->id) : 'NULL').",";
 		$sql .= " '".$this->db->escape(dol_trunc($this->description, 250))."',";
 		$sql .= " '".$this->db->escape(dol_getprefix())."'";
 		$sql .= ")";
@@ -175,7 +175,7 @@ class Events // extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."events");
+			$this->id = $this->db->last_insert_id($this->db->prefix()."events");
 			return $this->id;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
@@ -202,7 +202,7 @@ class Events // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."events SET";
+		$sql = "UPDATE ".$this->db->prefix()."events SET";
 		$sql .= " type='".$this->db->escape($this->type)."',";
 		$sql .= " dateevent='".$this->db->idate($this->dateevent)."',";
 		$sql .= " description='".$this->db->escape($this->description)."'";
@@ -237,7 +237,7 @@ class Events // extends CommonObject
 		$sql .= " t.ip,";
 		$sql .= " t.user_agent,";
 		$sql .= " t.prefix_session";
-		$sql .= " FROM ".MAIN_DB_PREFIX."events as t";
+		$sql .= " FROM ".$this->db->prefix()."events as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -274,7 +274,7 @@ class Events // extends CommonObject
 	 */
 	public function delete($user)
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
+		$sql = "DELETE FROM ".$this->db->prefix()."events";
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);

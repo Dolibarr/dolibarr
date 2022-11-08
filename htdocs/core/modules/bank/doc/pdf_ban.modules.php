@@ -74,7 +74,6 @@ class pdf_ban extends ModeleBankAccountDoc
 
 		$this->option_logo = 1; // Display logo FAC_PDF_LOGO
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
-		$this->option_codeproduitservice = 1; // Display product-service code
 
 		// Retrieves transmitter
 		$this->emetteur = $mysoc;
@@ -186,9 +185,9 @@ class pdf_ban extends ModeleBankAccountDoc
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 50;
-				$tab_height = 200;
 				$tab_top_newpage = 40;
-				$tab_height_newpage = 210;
+
+				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
 				// Affiche notes
 				if (!empty($object->note_public)) {
@@ -356,7 +355,7 @@ class pdf_ban extends ModeleBankAccountDoc
 
 		foreach($object->linkedObjects as $objecttype => $objects)
 		{
-			var_dump($objects);exit;
+			//var_dump($objects);exit;
 			if ($objecttype == 'commande')
 			{
 				$outputlangs->load('orders');

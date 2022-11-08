@@ -122,7 +122,7 @@ if (empty($pageid))
 // Security: Delete string ../ into $original_file
 global $dolibarr_main_data_root;
 
-$original_file = $dolibarr_main_data_root.'/website/'.$website.'/styles.css.php';
+$original_file = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$website.'/styles.css.php';
 
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");

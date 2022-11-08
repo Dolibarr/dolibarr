@@ -90,10 +90,10 @@ TicketPublicAccess=Veřejné rozhraní nevyžadující identifikaci je k dispozi
 TicketSetupDictionaries=Typ vstupenky, závažnosti a analytické kódy lze konfigurovat ze slovníků
 TicketParamModule=Nastavení proměnné modulu
 TicketParamMail=Nastavení e-mailu
-TicketEmailNotificationFrom=E-mailová zpráva od uživatele
-TicketEmailNotificationFromHelp=Použije se jako odpověď na lístek
-TicketEmailNotificationTo=E-mailová upozornění na
-TicketEmailNotificationToHelp=Odeslat e-mailová upozornění na tuto adresu.
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Textová zpráva odeslaná po vytvoření vstupenky
 TicketNewEmailBodyHelp=Zde zadaný text bude vložen do e-mailu s potvrzením vytvoření nové vstupenky z veřejného rozhraní. Informace o konzultaci s letenkou jsou automaticky přidány.
 TicketParamPublicInterface=Nastavení veřejného rozhraní
@@ -136,6 +136,18 @@ TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is 
 TicketsPublicNotificationNewMessageHelp=Odeslat e-mail(y) při přidání nové zprávy z veřejného rozhraní (přiřazenému uživateli nebo e-mailu s oznámením do (aktualizace) a/nebo e-mailu s oznámením do)
 TicketPublicNotificationNewMessageDefaultEmail=E-mail s oznámeními (aktualizace)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -151,6 +163,8 @@ OrderByDateAsc=Seřadit podle vzestupného data
 OrderByDateDesc=Seřadit podle sestupného data
 ShowAsConversation=Zobrazit jako seznam konverzací
 MessageListViewType=Zobrazit jako seznam tabulek
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -205,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=Příjemce je prázdný. Neposíla
 TicketGoIntoContactTab=Přejděte na kartu Kontakty a vyberte je
 TicketMessageMailIntro=Úvod
 TicketMessageMailIntroHelp=Tento text bude přidán pouze na začátek e-mailu a nebude uložen.
-TicketMessageMailIntroLabelAdmin=Úvod do zprávy při odesílání e-mailu
-TicketMessageMailIntroText=Ahoj, <br> Na lístek, který kontaktujete, byla odeslána nová odpověď. Zde je zpráva: <br>
-TicketMessageMailIntroHelpAdmin=Tento text bude vložen před text odpovědi na lístek
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=Podpis
 TicketMessageMailSignatureHelp=Tento text je přidán pouze na konci e-mailu a nebude uložen.
-TicketMessageMailSignatureText=<p> S pozdravem, </p><p> - </p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=Podpis e-mailu s odpovědí
 TicketMessageMailSignatureHelpAdmin=Tento text bude vložen za zprávu s odpovědí.
 TicketMessageHelp=Pouze tento text bude uložen do seznamu zpráv na kartě lístků.
@@ -238,9 +252,16 @@ TicketChangeStatus=Změnit stav
 TicketConfirmChangeStatus=Potvrďte změnu stavu: %s?
 TicketLogStatusChanged=Stav změněn: %s až %s
 TicketNotNotifyTiersAtCreate=Neinformovat společnost na vytvoření
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=Nepřečtený
 TicketNotCreatedFromPublicInterface=Není dostupný. Vstupenka nebyla vytvořena z veřejného rozhraní.
 ErrorTicketRefRequired=Je vyžadován referenční název vstupenky
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -268,8 +289,9 @@ TicketNewEmailBody=Jedná se o automatický e-mail, který potvrzuje, že jste z
 TicketNewEmailBodyCustomer=Jedná se o automatický e-mail, který potvrzuje, že byl do vašeho účtu právě vytvořen nový lístek.
 TicketNewEmailBodyInfosTicket=Informace pro sledování lístku
 TicketNewEmailBodyInfosTrackId=Číslo sledování jízdenek: %s
-TicketNewEmailBodyInfosTrackUrl=Průběh lístku si můžete prohlédnout kliknutím na výše uvedený odkaz.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=Průběh vstupenky můžete zobrazit v konkrétním rozhraní klepnutím na následující odkaz
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Neodpovídejte prosím přímo na tento e-mail! Pomocí odkazu odpovíte do rozhraní.
 TicketPublicInfoCreateTicket=Tento formulář vám umožňuje zaznamenat si lístek podpory v našem systému řízení.
 TicketPublicPleaseBeAccuratelyDescribe=Popište prosím problém přesně. Poskytněte co nejvíce informací, abychom mohli správně identifikovat váš požadavek.
@@ -291,6 +313,10 @@ NewUser=Nový uživatel
 NumberOfTicketsByMonth=Počet vstupenek za měsíc
 NbOfTickets=Počet vstupenek
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=Vstupenka %s aktualizována
 TicketNotificationEmailBody=Toto je automatická zpráva, která vás upozorní, že právě byla aktualizována vstupenka %s
 TicketNotificationRecipient=Příjemce oznámení

@@ -1,14 +1,17 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Công cụ này phải chỉ được sử dụng bởi người dùng hoặc nhà phát triển có kinh nghiệm. Nó cung cấp các tiện ích để xây dựng hoặc chỉnh sửa mô-đun của riêng bạn. Tài liệu cho <a href="%s" target="_blank">phát triển thủ công ở đây </a>.
-EnterNameOfModuleDesc=Nhập tên của mô-đun / ứng dụng để tạo không có khoảng trắng. Sử dụng chữ hoa để phân tách các từ (Ví dụ: MyModule, ECommerceForShop, SyncWithMySystem ...)
-EnterNameOfObjectDesc=Nhập tên của đối tượng để tạo không có khoảng trắng. Sử dụng chữ hoa để phân tách các từ (Ví dụ: MyObject, Student, Teacher ...). Tệp lớp CRUD, nhưng cũng là tệp API, các trang để liệt kê/thêm/chỉnh sửa/xóa đối tượng và các tệp SQL sẽ được tạo.
+ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank" rel="noopener noreferrer">manual development is here</a>.
+EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
+EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
 ModuleBuilderDesc2=Đường dẫn nơi các mô-đun được tạo/chỉnh sửa (thư mục đầu tiên cho các mô-đun bên ngoài được xác định vào %s): <strong>%s</strong>
 ModuleBuilderDesc3=Các mô-đun được tạo / chỉnh sửa được tìm thấy: <strong>%s</strong>
 ModuleBuilderDesc4=Một mô-đun được phát hiện là 'có thể chỉnh sửa' khi tệp <strong>%s</strong> tồn tại trong thư mục gốc của mô-đun
 NewModule=Mô-đun mới
 NewObjectInModulebuilder=Đối tượng mới
+NewDictionary=New dictionary
 ModuleKey=Khóa mô-đun
 ObjectKey=Khóa đối tượng
+DicKey=Dictionary key
 ModuleInitialized=Mô-đun được khởi tạo
 FilesForObjectInitialized=Các tệp cho đối tượng mới '%s' được khởi tạo
 FilesForObjectUpdated=Các tệp cho đối tượng '%s' được cập nhật (tệp .sql và tệp .class.php)
@@ -52,7 +55,7 @@ LanguageFile=Tập tin cho ngôn ngữ
 ObjectProperties=Thuộc tính đối tượng
 ConfirmDeleteProperty=Bạn có chắc chắn muốn xóa thuộc tính <strong>%s</strong> ? Điều này sẽ thay đổi mã trong lớp PHP nhưng cũng loại bỏ cột khỏi bảng định nghĩa của đối tượng.
 NotNull=Không NULL
-NotNullDesc=1 = Đặt cơ sở dữ liệu thành NOT NULL. -1 = Cho phép giá trị null và ép buộc giá trị thành NULL nếu trống ('' hoặc 0).
+NotNullDesc=1=Set database to NOT NULL, 0=Allow null values, -1=Allow null values by forcing value to NULL if empty ('' or 0)
 SearchAll=Được sử dụng cho 'tìm kiếm tất cả'
 DatabaseIndex=Chỉ mục cơ sở dữ liệu
 FileAlreadyExists=Tệp %s đã tồn tại
@@ -94,11 +97,11 @@ LanguageDefDesc=Nhập vào tệp này, tất cả khóa và bản dịch cho t�
 MenusDefDesc=Định nghĩa ở đây các menu được cung cấp bởi mô-đun của bạn
 DictionariesDefDesc=Định nghĩa ở đây các từ điển được cung cấp bởi mô-đun của bạn
 PermissionsDefDesc=Định nghĩa ở đây các quyền mới được cung cấp bởi mô-đun của bạn
-MenusDefDescTooltip=Các menu được cung cấp bởi mô-đun / ứng dụng của bạn được định nghĩa trong mảng <strong>$this->menu</strong> vào tệp mô tả mô-đun. Bạn có thể chỉnh sửa thủ công tệp này hoặc sử dụng trình chỉnh sửa được nhúng. <br><br> Lưu ý: Sau khi được định nghĩa (và kích hoạt lại mô-đun), các menu cũng sẽ hiển thị trong trình chỉnh sửa menu có sẵn cho người dùng quản trị viên trên %s.
+MenusDefDescTooltip=The menus provided by your module/application are defined into the array <strong>$this->menus</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and the module re-activated), the menus are also visible into the menu editor available to administrator users on %s.
 DictionariesDefDescTooltip=Các từ điển được cung cấp bởi mô-đun / ứng dụng của bạn được định nghĩa trong mảng <strong>$this->dictionaries</strong> vào tệp mô tả mô-đun. Bạn có thể chỉnh sửa thủ công tệp này hoặc sử dụng trình chỉnh sửa được nhúng. <br><br> Lưu ý: Sau khi được định nghĩa (và kích hoạt lại mô-đun), từ điển cũng được hiển thị trong khu vực thiết lập cho người dùng quản trị viên trên %s.
 PermissionsDefDescTooltip=Các quyền được cung cấp bởi mô-đun / ứng dụng của bạn được định nghĩa trong mảng <strong>$this->rights</strong> vào tệp mô tả mô-đun. Bạn có thể chỉnh sửa thủ công tệp này hoặc sử dụng trình chỉnh sửa được nhúng. <br><br> Lưu ý: Sau khi được định nghĩa (và kích hoạt lại mô-đun), các quyền được hiển thị trong thiết lập quyền mặc định %s.
 HooksDefDesc=Định nghĩa trong thuộc tính <b>module_parts ['hook']</b> , trong mô tả mô-đun, ngữ cảnh của các hook bạn muốn quản lý (có thể tìm thấy danh sách các ngữ cảnh bằng cách tìm kiếm trên ' <b>initHooks (</b> ' trong mã lõi). <br> Chỉnh sửa tệp hook để thêm mã của các hàm hooked của bạn (có thể tìm thấy các hàm hookable bằng cách tìm kiếm trên ' <b>execHooks</b> ' trong mã lõi).
-TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events recorded by other modules).
+TriggerDefDesc=Define in the trigger file the code that you want to execute when a business event external to your module is executed (events triggered by other modules).
 SeeIDsInUse=Xem ID được sử dụng trong cài đặt của bạn
 SeeReservedIDsRangeHere=Xem phạm vi ID dành riêng
 ToolkitForDevelopers=Bộ công cụ dành cho nhà phát triển Dolibarr
@@ -110,7 +113,7 @@ DropTableIfEmpty=(Destroy table if empty)
 TableDoesNotExists=Bảng %s không tồn tại
 TableDropped=Bảng %s đã bị xóa
 InitStructureFromExistingTable=Xây dựng cấu trúc mảng chuỗi của một bảng hiện có
-UseAboutPage=Vô hiệu hóa trang giới thiệu
+UseAboutPage=Do not generate the About page
 UseDocFolder=Vô hiệu hóa thư mục tài liệu
 UseSpecificReadme=Sử dụng một ReadMe cụ thể
 ContentOfREADMECustomized=Lưu ý: Nội dung của tệp README.md đã được thay thế bằng giá trị cụ thể được định nghĩa trong thiết lập ModuleBuilder.
@@ -127,9 +130,9 @@ UseSpecificEditorURL = Sử dụng một URL biên tập cụ thể
 UseSpecificFamily = Sử dụng một họ cụ thể
 UseSpecificAuthor = Sử dụng một tác giả cụ thể
 UseSpecificVersion = Sử dụng một phiên bản mở đầu cụ thể
-IncludeRefGeneration=Tham chiếu của đối tượng phải được tạo tự động
-IncludeRefGenerationHelp=Kiểm tra điều này nếu bạn muốn bao gồm mã để quản lý việc tạo tự động của tham chiếu
-IncludeDocGeneration=Tôi muốn tạo một số tài liệu từ đối tượng
+IncludeRefGeneration=The reference of object must be generated automatically by custom numbering rules
+IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
+IncludeDocGeneration=I want to generate some documents from templates for the object
 IncludeDocGenerationHelp=Nếu bạn kiểm tra điều này, một số mã sẽ được tạo để thêm hộp "Tạo tài liệu" trong hồ sơ.
 ShowOnCombobox=Hiển thị giá trị vào combobox
 KeyForTooltip=Khóa cho tooltip
@@ -138,10 +141,15 @@ CSSViewClass=CSS for read form
 CSSListClass=CSS for list
 NotEditable=Không thể chỉnh sửa
 ForeignKey=Khóa ngoại
-TypeOfFieldsHelp=Kiểu trường: <br> varchar (99), double (24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' có nghĩa là chúng ta thêm nút + sau khi kết hợp để tạo bản ghi, ví dụ 'bộ lọc' có thể là 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTEER__)')
+TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
 AsciiToHtmlConverter=Chuyển mã ASCII sang HTML
 AsciiToPdfConverter=Chuyển ASCII sang PDF
 TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
 ModuleBuilderNotAllowed=The module builder is available but not allowed to your user.
 ImportExportProfiles=Import and export profiles
-ValidateModBuilderDesc=Put 1 if this field need to be validated with $this->validateField() or 0 if validation required
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or upadate. Set 0 if there is no validation required.
+WarningDatabaseIsNotUpdated=Warning: The database is not updated automatically, you must destroy tables and disable-enable the module to have tables recreated
+LinkToParentMenu=Parent menu (fk_xxxxmenu)
+ListOfTabsEntries=List of tab entries
+TabsDefDesc=Define here the tabs provided by your module
+TabsDefDescTooltip=The tabs provided by your module/application are defined into the array <strong>$this->tabs</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.

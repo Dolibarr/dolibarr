@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 $id = GETPOST('id', 'int');
 $block = new BlockedLog($db);
 
-if ((!$user->admin && !$user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) {
+if ((!$user->admin && empty($user->rights->blockedlog->read)) || empty($conf->blockedlog->enabled)) {
 	accessforbidden();
 }
 
@@ -92,11 +92,11 @@ function formatObject($objtoshow, $prefix)
 				$s .= '<tr><td>'.($prefix ? $prefix.' > ' : '').$key.'</td>';
 				$s .= '<td>';
 				if (in_array($key, array('date', 'datef', 'dateh', 'datec', 'datem', 'datep'))) {
-					/*var_dump(is_object($val));
-					var_dump(is_array($val));
-					var_dump(is_array($val));
-					var_dump(@get_class($val));
-					var_dump($val);*/
+					//var_dump(is_object($val));
+					//var_dump(is_array($val));
+					//var_dump(is_array($val));
+					//var_dump(@get_class($val));
+					//var_dump($val);
 					$s .= dol_print_date($val, 'dayhour');
 				} else {
 					$s .= $val;

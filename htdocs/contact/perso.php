@@ -159,7 +159,14 @@ if ($action == 'edit') {
 		print '<tr><td class="center"><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
 	}
 	print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
-	print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+	print '<tr><td>';
+	$maxfilesizearray = getMaxFileSizeArray();
+	$maxmin = $maxfilesizearray['maxmin'];
+	if ($maxmin > 0) {
+		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+	}
+	print '<input type="file" class="flat" name="photo" id="photoinput">';
+	print '</td></tr>';
 	print '</table>';
 
 	print '</td></tr>';
@@ -205,11 +212,7 @@ if ($action == 'edit') {
 
 	print dol_get_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
+	print $form->buttonsSaveCancel();
 
 	print "</form>";
 } else {
@@ -219,7 +222,11 @@ if ($action == 'edit') {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<div class="refidno">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= '</a>';
+
+	$morehtmlref .= '<div class="refidno">';
 	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);
@@ -315,7 +322,7 @@ if ($action != 'edit') {
 		print '<div class="tabsAction">';
 
 		if ($user->rights->societe->contact->creer) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
 		}
 
 		print "</div>";

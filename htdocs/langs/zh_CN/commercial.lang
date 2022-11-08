@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Commerce
-CommercialArea=Commerce area
+Commercial=商务
+CommercialArea=商务部分
 Customer=客户
 Customers=客户
 Prospect=准客户
@@ -64,10 +64,11 @@ ActionAC_SHIP=发送发货单
 ActionAC_SUP_ORD=通过邮件发送采购订单
 ActionAC_SUP_INV=通过邮件发送供应商发票
 ActionAC_OTH=其他
-ActionAC_OTH_AUTO=自动插入事件
+ActionAC_OTH_AUTO=Other auto
 ActionAC_MANUAL=手动插入事件
 ActionAC_AUTO=自动插入事件
-ActionAC_OTH_AUTOShort=自动
+ActionAC_OTH_AUTOShort=其他
+ActionAC_EVENTORGANIZATION=Event organization events
 Stats=销售统计
 StatusProsp=准客户状态
 DraftPropals=起草商业报价

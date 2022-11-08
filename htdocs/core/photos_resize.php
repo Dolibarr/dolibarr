@@ -56,37 +56,37 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'project') {
 	$result = restrictedArea($user, 'projet', $id);
-	if (!$user->rights->projet->lire) {
+	if (empty($user->rights->projet->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'bom') {
 	$result = restrictedArea($user, $modulepart, $id, 'bom_bom');
-	if (!$user->rights->bom->read) {
+	if (empty($user->rights->bom->read)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'member') {
 	$result = restrictedArea($user, 'adherent', $id, '', '', 'fk_soc', 'rowid');
-	if (!$user->rights->adherent->lire) {
+	if (empty($user->rights->adherent->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'user') {
-	$result = restrictedArea($user, $modulepart, $id, $modulepart);
-	if (!$user->rights->user->user->lire) {
+	$result = restrictedArea($user, $modulepart, $id, $modulepart, $modulepart);
+	if (empty($user->rights->user->user->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'tax') {
 	$result = restrictedArea($user, $modulepart, $id, 'chargesociales', 'charges');
-	if (!$user->rights->tax->charges->lire) {
+	if (empty($user->rights->tax->charges->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'bank') {
 	$result = restrictedArea($user, 'banque', $id, 'bank_account');
-	if (!$user->rights->banque->lire) {
+	if (empty($user->rights->banque->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -98,7 +98,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'facture_fourn' || $modulepart == 'facture_fournisseur') {
 	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
-	if (!$user->rights->fournisseur->facture->lire) {
+	if (empty($user->rights->fournisseur->facture->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -413,7 +413,6 @@ if ($action == 'confirm_crop') {
 
 	$fullpath = $dir."/".$original_file;
 
-	//var_dump($fullpath.' '.$_POST['w'].'x'.$_POST['h'].'-'.$_POST['x'].'x'.$_POST['y']);exit;
 	$result = dol_imageResizeOrCrop($fullpath, 1, GETPOST('w', 'int'), GETPOST('h', 'int'), GETPOST('x', 'int'), GETPOST('y', 'int'));
 
 	if ($result == $fullpath) {
@@ -475,7 +474,8 @@ if ($action == 'confirm_crop') {
  * View
  */
 
-$title= $langs->trans("ImageEditor");
+$head = '';
+$title = $langs->trans("ImageEditor");
 $morejs = array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js');
 $morecss = array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css');
 
@@ -506,8 +506,8 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<fieldset id="redim_file">';
 print '<legend>'.$langs->trans("Resize").'</legend>';
 print $langs->trans("ResizeDesc").'<br>';
-print $langs->trans("NewLength").': <input name="sizex" type="number" class="flat maxwidth50"> px  &nbsp; '.$langs->trans("or").' &nbsp; ';
-print $langs->trans("NewHeight").': <input name="sizey" type="number" class="flat maxwidth50"> px &nbsp; <br>';
+print $langs->trans("NewLength").': <input name="sizex" type="number" class="flat maxwidth50 right"> px  &nbsp; <span class="opacitymedium">'.$langs->trans("or").'</span> &nbsp; ';
+print $langs->trans("NewHeight").': <input name="sizey" type="number" class="flat maxwidth50 right"> px &nbsp; <br>';
 
 print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
@@ -536,11 +536,16 @@ if (!empty($conf->use_javascript_ajax)) {
 	$widthforcrop = $width;
 	$refsizeforcrop = 'orig';
 	$ratioforcrop = 1;
+
 	// If image is too large, we use another scale.
-	if (!empty($_SESSION['dol_screenwidth']) && ($widthforcrop > round($_SESSION['dol_screenwidth'] / 2))) {
-		$ratioforcrop = 2;
-		$widthforcrop = round($_SESSION['dol_screenwidth'] / $ratioforcrop);
-		$refsizeforcrop = 'screenwidth';
+	if (!empty($_SESSION['dol_screenwidth'])) {
+		$widthforcroporigin = $widthforcrop;
+		while ($widthforcrop > round($_SESSION['dol_screenwidth'] / 1.5)) {
+			//var_dump($widthforcrop.' '.round($_SESSION['dol_screenwidth'] / 1.5));
+			$ratioforcrop = 2 * $ratioforcrop;
+			$widthforcrop = floor($widthforcroporigin / $ratioforcrop);
+			$refsizeforcrop = 'screenwidth';
+		}
 	}
 
 	print '<!-- Form to crop -->'."\n";
@@ -560,19 +565,22 @@ if (!empty($conf->use_javascript_ajax)) {
 		print '
 		      <div class="jc_coords">
 		         '.$langs->trans("NewSizeAfterCropping").':
-		         <label>X1 <input type="number" class="flat maxwidth50" id="x" name="x" /></label>
-		         <label>Y1 <input type="number" class="flat maxwidth50" id="y" name="y" /></label>
-		         <label>X2 <input type="number" class="flat maxwidth50" id="x2" name="x2" /></label>
-		         <label>Y2 <input type="number" class="flat maxwidth50" id="y2" name="y2" /></label>
-		         <label>W  <input type="number" class="flat maxwidth50" id="w" name="w" /></label>
-		         <label>H  <input type="number" class="flat maxwidth50" id="h" name="h" /></label>
+		         &nbsp; <label>X1=<input type="number" class="flat maxwidth50" id="x" name="x" /></label>
+		         &nbsp; <label>Y1=<input type="number" class="flat maxwidth50" id="y" name="y" /></label>
+		         &nbsp; <label>X2=<input type="number" class="flat maxwidth50" id="x2" name="x2" /></label>
+		         &nbsp; <label>Y2=<input type="number" class="flat maxwidth50" id="y2" name="y2" /></label>
+		         &nbsp; <label>W=<input type="number" class="flat maxwidth50" id="w" name="w" /></label>
+		         &nbsp; <label>H=<input type="number" class="flat maxwidth50" id="h" name="h" /></label>
 		      </div>
 
 		      <input type="hidden" id="file" name="file" value="'.dol_escape_htmltag($original_file).'" />
 		      <input type="hidden" id="action" name="action" value="confirm_crop" />
 		      <input type="hidden" id="product" name="product" value="'.dol_escape_htmltag($id).'" />
+		      <input type="hidden" id="dol_screenwidth" name="dol_screenwidth" value="'.$_SESSION['dol_screenwidth'].'" />
 		      <input type="hidden" id="refsizeforcrop" name="refsizeforcrop" value="'.$refsizeforcrop.'" />
-		      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" /><!-- field used by core/lib/lib_photoresize.js -->
+		      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
+		      <input type="hidden" id="imagewidth" name="imagewidth" value="'.$width.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
+		      <input type="hidden" id="imageheight" name="imageheight" value="'.$height.'" /><!-- value in field used by js/lib/lib_photoresize.js -->
 	          <input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'" />
 		      <input type="hidden" name="id" value="'.dol_escape_htmltag($id).'" />
 		      <br>
@@ -589,7 +597,7 @@ if (!empty($conf->use_javascript_ajax)) {
 }
 
 /* Check that mandatory fields are filled */
-print '<script type="text/javascript" language="javascript">
+print '<script type="text/javascript">
 jQuery(document).ready(function() {
 	$("#submitcrop").click(function(e) {
         console.log("We click on submitcrop");

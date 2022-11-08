@@ -38,7 +38,7 @@ $element        = GETPOST('element', 'alpha');
 $element_id     = GETPOST('element_id', 'int');
 $resource_id    = GETPOST('resource_id', 'int');
 
-$sortorder      = GETPOST('sortorder', 'alpha');
+$sortorder      = GETPOST('sortorder', 'aZ09comma');
 $sortfield      = GETPOST('sortfield', 'aZ09comma');
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -60,7 +60,6 @@ $search_type = GETPOST("search_type", 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-
 
 $filter = array();
 
@@ -85,9 +84,6 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (!$user->rights->resource->read) {
-		accessforbidden();
-}
 $arrayfields = array(
 		't.ref' => array(
 				'label' => $langs->trans("Ref"),
@@ -113,6 +109,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type = "";
 	$search_array_options = array();
 	$filter = array();
+}
+
+if (empty($user->rights->resource->read)) {
+	accessforbidden();
 }
 
 
@@ -143,8 +143,8 @@ $form = new Form($db);
 
 //$help_url="EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
 $help_url = '';
-$pagetitle = $langs->trans('ResourcePageIndex');
-llxHeader('', $pagetitle, $help_url);
+$title = $langs->trans('Resources');
+llxHeader('', $title, $help_url);
 
 
 $sql = '';
@@ -199,7 +199,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$ret = $object->fetch_all('', '', 0, 0, $filter);
+	$ret = $object->fetchAll('', '', 0, 0, $filter);
 	if ($ret == -1) {
 		dol_print_error($db, $object->error);
 		exit;
@@ -209,7 +209,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 }
 
 // Load object list
-$ret = $object->fetch_all($sortorder, $sortfield, $limit, $offset, $filter);
+$ret = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
 if ($ret == -1) {
 	dol_print_error($db, $object->error);
 	exit;
@@ -219,7 +219,7 @@ if ($ret == -1) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('MenuResourceAdd'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/resource/card.php?action=create');
 	}
 
-	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret + 1, $nbtotalofrecords, 'object_resource', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret + 1, $nbtotalofrecords, 'object_resource', 0, $newcardbutton, '', $limit, 0, 0, 1);
 }
 
 $moreforfilter = '';

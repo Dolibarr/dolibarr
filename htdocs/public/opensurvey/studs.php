@@ -39,7 +39,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 
 // Init vars
@@ -79,8 +79,8 @@ if (GETPOST('ajoutcomment', 'alpha')) {
 
 	$error = 0;
 
-	$comment = GETPOST("comment", 'restricthtml');
-	$comment_user = GETPOST('commentuser', 'nohtml');
+	$comment = GETPOST("comment", 'alphanohtml');
+	$comment_user = GETPOST('commentuser', 'alphanohtml');
 
 	if (!$comment) {
 		$error++;
@@ -112,7 +112,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 	}
 
 	//Si le nom est bien entré
-	if (GETPOST('nom', 'nohtml')) {
+	if (GETPOST('nom', 'alphanohtml')) {
 		$nouveauchoix = '';
 		for ($i = 0; $i < $nbcolonnes; $i++) {
 			if (GETPOSTISSET("choix$i") && GETPOST("choix$i") == '1') {
@@ -124,7 +124,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			}
 		}
 
-		$nom = substr(GETPOST("nom", 'nohtml'), 0, 64);
+		$nom = substr(GETPOST("nom", 'alphanohtml'), 0, 64);
 
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';
@@ -165,7 +165,9 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 
 						$application = ($conf->global->MAIN_APPLICATION_TITLE ? $conf->global->MAIN_APPLICATION_TITLE : 'Dolibarr ERP/CRM');
 
-						$body = str_replace('\n', '<br>', $langs->transnoentities('EmailSomeoneVoted', $nom, getUrlSondage($numsondage, true)));
+						$link = getUrlSondage($numsondage, true);
+						$link = '<a href="'.$link.'">'.$link.'</a>';
+						$body = str_replace('\n', '<br>', $langs->transnoentities('EmailSomeoneVoted', $nom, $link));
 						//var_dump($body);exit;
 
 						$cmailfile = new CMailFile("[".$application."] ".$langs->trans("Poll").': '.$object->title, $email, $conf->global->MAIN_MAIL_EMAIL_FROM, $body, null, null, null, '', '', 0, -1);
@@ -200,7 +202,6 @@ for ($i = 0; $i < $nblines; $i++) {
 }
 
 if ($testmodifier) {
-	//var_dump($_POST);exit;
 	$nouveauchoix = '';
 	for ($i = 0; $i < $nbcolonnes; $i++) {
 		if (GETPOSTISSET("choix".$i) && GETPOST("choix".$i) == '1') {
@@ -272,16 +273,23 @@ $toutsujet = str_replace("°", "'", $toutsujet);
 
 
 print '<div class="survey_invitation">'.$langs->trans("YouAreInivitedToVote").'</div>';
-print $langs->trans("OpenSurveyHowTo").'<br><br>';
+print $langs->trans("OpenSurveyHowTo").'<br>';
+if (empty($object->allow_spy)) {
+	print '<span class="opacitymedium">'.$langs->trans("YourVoteIsPrivate").'</span><br>';
+} else {
+	print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("YourVoteIsPublic").'</span>', $langs->trans("CanSeeOthersVote")).'<br>';
+}
+print '<br>';
 
 print '<div class="corps"> '."\n";
 
 // show title of survey
 $titre = str_replace("\\", "", $object->title);
-print '<strong>'.dol_htmlentities($titre).'</strong><br><br>'."\n";
+print '<strong>'.dol_htmlentities($titre).'</strong>';
 
 // show description of survey
 if ($object->description) {
+	print '<br><br>'."\n";
 	print dol_htmlentitiesbr($object->description);
 	print '<br>'."\n";
 }
@@ -290,7 +298,7 @@ print '</div>'."\n";
 
 //The survey has expired, users can't vote or do any action
 if (!$canbemodified) {
-	print '<div style="text-align: center"><p>'.$langs->trans('SurveyExpiredInfo').'</p></div>';
+	print '<br><center><div class="quatrevingtpercent center warning">'.$langs->trans('SurveyExpiredInfo').'</div></center>';
 	llxFooterSurvey();
 
 	$db->close();
@@ -709,15 +717,14 @@ if ($object->allow_spy) {
 
 	for ($i = 0; $i < $nbcolonnes; $i++) {
 		if (isset($sumfor[$i]) && isset($meilleurecolonne) && $sumfor[$i] == $meilleurecolonne) {
-			$meilleursujet .= ", ";
+			$meilleursujet .= ($meilleursujet ? ", " : "");
 			if ($object->format == "D") {
 				$meilleursujetexport = $toutsujet[$i];
-
 				if (strpos($toutsujet[$i], '@') !== false) {
 					$toutsujetdate = explode("@", $toutsujet[$i]);
 					$meilleursujet .= dol_print_date($toutsujetdate[0], 'daytext').' ('.dol_print_date($toutsujetdate[0], '%A').') - '.$toutsujetdate[1];
 				} else {
-					$meilleursujet .= dol_print_date($toutsujet[$i], 'daytext').' ('.dol_print_date($toutsujet[$i], '%A').')';
+					$meilleursujet .= dol_print_date((empty($toutsujet[$i]) ? 0 : $toutsujet[$i]), 'daytext').' ('.dol_print_date((empty($toutsujet[$i]) ? 0 : $toutsujet[$i]), '%A').')';
 				}
 			} else {
 				$tmps = explode('@', $toutsujet[$i]);
@@ -731,16 +738,15 @@ if ($object->allow_spy) {
 	$meilleursujet = substr("$meilleursujet", 1);
 	$meilleursujet = str_replace("°", "'", $meilleursujet);
 
-
 	// Show best choice
 	if ($nbofcheckbox >= 2) {
 		$vote_str = $langs->trans('votes');
 		print '<p class="affichageresultats">'."\n";
 
 		if (isset($meilleurecolonne) && $compteursujet == "1") {
-			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoice').": <b>".$meilleursujet."</b> ".$langs->trans('with')." <b>$meilleurecolonne </b>".$vote_str.".\n";
+			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoice').": <b>".$meilleursujet."</b> ".$langs->trans('with')." <b>".$meilleurecolonne."</b>".$vote_str.".\n";
 		} elseif (isset($meilleurecolonne)) {
-			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoices').": <b>".$meilleursujet."</b> ".$langs->trans('with')."  <b>$meilleurecolonne </b>".$vote_str.".\n";
+			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoices').": <b>".$meilleursujet."</b> ".$langs->trans('with')." <b>".$meilleurecolonne."</b>".$vote_str.".\n";
 		}
 
 		print '</p><br>'."\n";
@@ -773,9 +779,9 @@ if ($comments) {
 if ($object->allow_comments) {
 	print '<br><div class="addcomment"><span class="opacitymedium">'.$langs->trans("AddACommentForPoll")."</span><br>\n";
 
-	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'restricthtml'), 0, 1).'</textarea><br>'."\n";
+	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment', 'alphanohtml'), 0, 1).'</textarea><br>'."\n";
 	print $langs->trans("Name").': ';
-	print '<input type="text" name="commentuser" maxlength="64" value="'.GETPOST('commentuser', 'nohtml').'"> &nbsp; '."\n";
+	print '<input type="text" name="commentuser" maxlength="64" value="'.dol_escape_htmltag(GETPOST('commentuser', 'alphanohtml')).'"> &nbsp; '."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 	print '</form>'."\n";
 

@@ -39,14 +39,14 @@ if ($user->socid > 0) {
 	accessforbidden();
 }
 /*
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if (empty($user->rights->accounting->mouvements->lire)) {
 	accessforbidden();
 }
 */
-if (empty($conf->comptabilite->enabled) && empty($conf->accounting->enabled) && empty($conf->asset->enabled) && empty($conf->intracommreport->enabled)) {
+if (!isModEnabled('comptabilite') && !isModEnabled('accounting') && !isModEnabled('asset') && !isModEnabled('intracommreport')) {
 	accessforbidden();
 }
 if (empty($user->rights->compta->resultat->lire) && empty($user->rights->accounting->comptarapport->lire) && empty($user->rights->accounting->mouvements->lire) && empty($user->rights->asset->read) && empty($user->rights->intracommreport->read)) {
@@ -81,7 +81,12 @@ $help_url = '';
 
 llxHeader('', $langs->trans("AccountancyArea"), $help_url);
 
-if ($conf->accounting->enabled) {
+if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_SITUATION == 1) {
+	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
+
+	print '<span class="opacitymedium">'.$langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices")."</span>\n";
+	print "<br>";
+} elseif (isModEnabled('accounting')) {
 	$step = 0;
 
 	$resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
@@ -95,7 +100,7 @@ if ($conf->accounting->enabled) {
 		$showtutorial .= ' '.$langs->trans("ShowTutorial");
 		$showtutorial .= '</a></div>';
 
-		$showtutorial .= '<script type="text/javascript" language="javascript">
+		$showtutorial .= '<script type="text/javascript">
 	    jQuery(document).ready(function() {
 	        jQuery("#show_hide").click(function () {
 	            jQuery( "#idfaq" ).toggle({
@@ -159,7 +164,8 @@ if ($conf->accounting->enabled) {
 		$s = str_replace('{s}', $textlink, $s);
 		print $s;
 		print "<br>\n";
-		if (!empty($conf->tax->enabled)) {
+
+		if (isModEnabled('tax')) {
 			$textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=7&from=accountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuTaxAccounts").'</strong></a>';
 			$step++;
 			$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescContrib", $step, '{s}');
@@ -167,7 +173,7 @@ if ($conf->accounting->enabled) {
 			print $s;
 			print "<br>\n";
 		}
-		if (!empty($conf->expensereport->enabled)) {  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
+		if (isModEnabled('expensereport')) {  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
 			$step++;
 			$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescExpenseReport", $step, '{s}');
 			$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=17&from=accountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuExpenseReportAccounts").'</strong></a>', $s);
@@ -206,7 +212,7 @@ if ($conf->accounting->enabled) {
 	print $s;
 	print "<br>\n";
 
-	if (!empty($conf->expensereport->enabled) || !empty($conf->deplacement->enabled)) {
+	if (isModEnabled('expensereport') || isModEnabled('deplacement')) {
 		$step++;
 		$s = img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("ExpenseReports"), '{s}')."\n";
 		$s = str_replace('{s}', '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/index.php"><strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("ExpenseReportsVentilation").'</strong></a>', $s);
@@ -259,7 +265,8 @@ if ($conf->accounting->enabled) {
 } else {
 	print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 
-	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span><br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span>\n";
+	print "<br>";
 }
 
 // End of page
