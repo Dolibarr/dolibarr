@@ -39,8 +39,7 @@ $langs->load("bom");
 $total = 0;
 $ilink = 0;
 
-if($object->element == 'mo') {
-
+if ($object->element == 'mo') {
 	$mo_static = new Mo($db);
 	$res = $mo_static->fetch($object->id);
 	$TMoChilds = $mo_static->getMoChilds();
@@ -69,7 +68,7 @@ if($object->element == 'mo') {
 
 		// we want to make the link via element_element for delete action
 		$sql = " Select rowid from " . MAIN_DB_PREFIX . "element_element";
-		$sql .= " WHERE  fk_source = " . (int)$object->id . " and fk_target = '" . dol_escape_htmltag($key) . "'";
+		$sql .= " WHERE  fk_source = " . (int) $object->id . " and fk_target = '" . dol_escape_htmltag($key) . "'";
 
 		$resql = $db->query($sql);
 		$k = 0;
