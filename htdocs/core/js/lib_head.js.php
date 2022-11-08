@@ -1128,6 +1128,7 @@ function price2numjs(amount) {
 	amount = amount.replace(dec, '.');
 	//console.log("amount before="+amount+" rouding="+rounding)
 	var res = Math.round10(amount, - rounding);
+	if (res == 0 && amount > 0)	res = amount;	// in case of very small amount
 	// Other solution is
 	// var res = dolroundjs(amount, rounding)
 	console.log("price2numjs text="+amount+" return="+res);
