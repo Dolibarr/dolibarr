@@ -422,7 +422,7 @@ $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_u
 if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 	$sql .= ' p.fk_unit, cu.label as cu_label,';
 }
-$sql .= ' MIN(pfp.unitprice) as minsellprice';
+$sql .= ' MIN(pfp.unitprice) as bestpurchaseprice';
 if (isModEnabled('variants') && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
 	$sql .= ', pac.rowid as prod_comb_id';
 }
@@ -1727,8 +1727,7 @@ while ($i < min($num, $limit)) {
 	// Better buy price
 	if (!empty($arrayfields['p.minbuyprice']['checked'])) {
 		print  '<td class="right nowraponall">';
-		if ($obj->tobuy && $obj->minsellprice != '' && $usercancreadprice) {
-			//print price($obj->minsellprice).' '.$langs->trans("HT");
+		if ($obj->tobuy && $obj->bestpurchaseprice != '' && $usercancreadprice) {
 			if ($product_fourn->find_min_price_product_fournisseur($obj->rowid) > 0) {
 				if ($product_fourn->product_fourn_price_id > 0) {
 					if ((isModEnabled("fournisseur") && !empty($user->rights->fournisseur->lire) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && !empty($user->rights->supplier_order->lire)) || (isModEnabled("supplier_invoice") && !empty($user->rights->supplier_invoice->lire))) {
