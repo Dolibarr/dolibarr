@@ -3591,7 +3591,7 @@ class Commande extends CommonOrder
 	public function LibStatut($status, $billed, $mode, $donotshowbilled = 0)
 	{
 		// phpcs:enable
-		global $langs, $conf;
+		global $langs, $conf, $hookmanager;
 
 		$billedtext = '';
 		if (empty($donotshowbilled)) {
@@ -3636,6 +3636,19 @@ class Commande extends CommonOrder
 			$mode = 0;
 		}
 
+        $parameters = array(
+            'status'          => $status,
+            'mode'            => $mode,
+            'billed'          => $billed,
+            'donotshowbilled' => $donotshowbilled
+        );
+
+        $reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
+
+        if ($reshook > 0) {
+			return $hookmanager->resPrint;
+		}
+        
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', array('tooltip' => $labelTooltip));
 	}
 
