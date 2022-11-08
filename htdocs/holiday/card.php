@@ -668,7 +668,7 @@ if (empty($reshook)) {
 
 			// If status pending validation and validator = user
 			if ($object->statut == Holiday::STATUS_VALIDATED && $user->id == $object->fk_validator) {
-				$object->date_refuse = dol_print_date('dayhour', dol_now());
+				$object->date_refuse = dol_now();
 				$object->fk_user_refuse = $user->id;
 				$object->statut = Holiday::STATUS_REFUSED;
 				$object->status = Holiday::STATUS_REFUSED;

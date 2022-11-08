@@ -611,12 +611,6 @@ if ($id) {
 						if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
 							$iserasable = 0;
 							$canbedisabled = 0;
-						} elseif ($obj->code == 'RECEP') {
-							$iserasable = 0;
-							$canbedisabled = 0;
-						} elseif ($obj->code == 'EF0') {
-							$iserasable = 0;
-							$canbedisabled = 0;
 						}
 					}
 

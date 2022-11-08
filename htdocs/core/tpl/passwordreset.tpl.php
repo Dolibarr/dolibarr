@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2009-2010 Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2013 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2022 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
+// To show this page, we need parameters: setnewpassword=1&username=...&passworduidhash=...
 
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', 1);
@@ -63,7 +64,7 @@ $php_self = $_SERVER['PHP_SELF'];
 $php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '';
 $php_self = str_replace('action=validatenewpassword', '', $php_self);
 
-$titleofpage = $langs->trans('SendNewPassword');
+$titleofpage = $langs->trans('ResetPassword');
 
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs = array();
@@ -85,6 +86,35 @@ if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
 }
 $colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $conf->global->THEME_ELDY_TOPMENU_BACK1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
 $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
+
+
+$edituser = new User($db);
+
+
+// Validate parameters
+if ($setnewpassword && $username && $passworduidhash) {
+	$result = $edituser->fetch('', $username);
+	if ($result < 0) {
+		$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
+	} else {
+		global $dolibarr_main_instance_unique_id;
+
+		//print $edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id.' '.$passworduidhash;
+		if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id, $passworduidhash)) {
+			// Clear session
+			unset($_SESSION['dol_login']);
+
+			// Parameters to reset the user are validated
+		} else {
+			$langs->load("errors");
+			$message = '<div class="error">'.$langs->trans("ErrorFailedToValidatePasswordReset").'</div>';
+		}
+	}
+} else {
+	$langs->load("errors");
+	$message = '<div class="error">'.$langs->trans("ErrorFailedToValidatePasswordReset").'</div>';
+}
+
 
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->
@@ -140,16 +170,25 @@ if (!empty($disablenofollow)) {
 
 <div class="tagtable centpercent" title="Login pass" >
 
-<!-- Login -->
+<!-- New pass 1 -->
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user"></span>
-<input type="text" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" <?php echo $disabled; ?> id="username" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($username); ?>" tabindex="1" />
+<input type="text" maxlength="255" placeholder="<?php echo $langs->trans("NewPassword"); ?>" <?php echo $disabled; ?> id="newpass1" name="newpass1" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($newpass1); ?>" tabindex="1" autofocus />
+</div>
+</div>
+<div class="trinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin">
+<!-- <span class="span-icon-user">-->
+<span class="fa fa-user"></span>
+<input type="text" maxlength="255" placeholder="<?php echo $langs->trans("PasswordRetype"); ?>" <?php echo $disabled; ?> id="newpass2" name="newpass2" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($newpass2); ?>" tabindex="1" />
 </div>
 </div>
 
+
 <?php
+$captcha = 0;
 if (!empty($captcha)) {
 	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
@@ -202,7 +241,7 @@ if (!empty($morelogincontent)) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button "Regenerate and Send password" -->
-<br><input type="submit" <?php echo $disabled; ?> class="button small" name="button_password" value="<?php echo $langs->trans('SendNewPassword'); ?>" tabindex="4" />
+<br><input type="submit" <?php echo $disabled; ?> class="button small" name="button_password" value="<?php echo $langs->trans('Save'); ?>" tabindex="4" />
 
 <br>
 <div class="center" style="margin-top: 15px;">
@@ -235,9 +274,9 @@ if (!empty($morelogincontent)) {
 <div class="center login_main_home divpasswordmessagedesc paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow'; ?>" style="max-width: 70%">
 <?php
 if ($mode == 'dolibarr' || !$disabled) {
-	if ($action != 'validatenewpassword' && empty($message)) {
+	if (empty($message)) {
 		print '<span class="passwordmessagedesc opacitymedium">';
-		print $langs->trans('SendNewPasswordDesc');
+		print $langs->trans('EnterNewPasswordHere');
 		print '</span>';
 	}
 } else {

@@ -1486,6 +1486,9 @@ while ($i < min($num, $limit)) {
 			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 	if (!empty($arrayfields['s.rowid']['checked'])) {
 		print '<td class="tdoverflowmax50" data-key="id">';
@@ -1722,7 +1725,7 @@ while ($i < min($num, $limit)) {
 
 	if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 		// Prospect status
-		print '<td class="center nowrap"><div class="nowrap">';
+		print '<td class="center nowrap"><div class="nowraponall">';
 		print '<div class="inline-block">';
 		print $companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
 		print '</div> - <div class="inline-block">';
@@ -1803,9 +1806,9 @@ while ($i < min($num, $limit)) {
 			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
-	}
-	if (!$i) {
-		$totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	print '</tr>'."\n";

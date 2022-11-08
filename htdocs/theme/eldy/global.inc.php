@@ -5163,6 +5163,10 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
+.previewnotyetavailable {
+	opacity: 0.5;
+}
+
 .websiteformtoolbar {
 	position: sticky;
 	top: <?php echo empty($dol_hide_topmenu) ? ($disableimages ? '32px' : '52px') : '0'; ?>;
@@ -6448,6 +6452,9 @@ ul.select2-results__options li {
 	}
 	.select2-container.select2-container--open .select2-dropdown--below {
 		min-width: 220px !important;
+	}
+	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below {
+    	min-width: 140px !important;
 	}
 
 	.select2-container--open .select2-dropdown--below {
