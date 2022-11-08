@@ -35,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
@@ -355,8 +357,9 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
-
+$formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
+$taskstatic = new Task($db);
 $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 
@@ -802,6 +805,7 @@ $arrayofmassactions = array(
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->projet->creer) {
 	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Close");
+	$arrayofmassactions['preaffectuser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AffectUser");
 }
 if ($user->rights->projet->supprimer) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -809,7 +813,7 @@ if ($user->rights->projet->supprimer) {
 if (isModEnabled('category') && $user->rights->projet->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if (in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
+if (in_array($massaction, array('presend', 'predelete', 'preaffecttag', "preaffectuser"))) {
 	$arrayofmassactions = array();
 }
 
