@@ -622,10 +622,12 @@ if (!$error && $action == 'writebookkeeping') {
 					$account_label = $accountingaccount->label;
 
 					$reflabel = '';
-					if (!empty($val['lib'])) {
-						$reflabel .= dol_string_nohtmltag($val['lib'])." - ";
+					if (empty($conf->global->TEST_NEW_ACCOUNTANCY_EXPORT)) {
+						if (!empty($val['lib'])) {
+							$reflabel .= dol_string_nohtmltag($val['lib']) . " - ";
+						}
+						$reflabel .= $langs->trans("Bank") . ' ' . dol_string_nohtmltag($val['bank_account_ref']);
 					}
-					$reflabel .= $langs->trans("Bank").' '.dol_string_nohtmltag($val['bank_account_ref']);
 					if (!empty($val['soclib'])) {
 						$reflabel .= " - ".dol_string_nohtmltag($val['soclib']);
 					}
@@ -684,7 +686,11 @@ if (!$error && $action == 'writebookkeeping') {
 
 						$reflabel = '';
 						if (!empty($val['lib'])) {
-							$reflabel .= dol_string_nohtmltag($val['lib']).($val['soclib'] ? " - " : "");
+							if(empty($conf->global->TEST_NEW_ACCOUNTANCY_EXPORT)) {
+								$reflabel .= dol_string_nohtmltag($val['lib']) . ($val['soclib'] ? " - " : "");
+							} else {
+								$reflabel .= dol_string_nohtmltag($val['soclib']);
+							}
 						}
 						if ($tabtype[$key] == 'banktransfert') {
 							$reflabel .= dol_string_nohtmltag($langs->transnoentitiesnoconv('TransitionalAccount').' '.$account_transfer);
@@ -1469,6 +1475,10 @@ function getSourceDocRef($val, $typerecord)
 		}
 	}
 
-	$ref = dol_trunc($langs->transnoentitiesnoconv("BankId").' '.$val['fk_bank'].' - '.$ref, 295); // 295 + 3 dots (...) is < than max size of 300
+	if (empty($conf->global->TEST_NEW_ACCOUNTANCY_EXPORT)) {
+		$ref = dol_trunc($langs->transnoentitiesnoconv("BankId") . ' ' . $val['fk_bank'] . ' - ' . $ref, 295); // 295 + 3 dots (...) is < than max size of 300
+	} else {
+		$ref = ''; // 295 + 3 dots (...) is < than max size of 300
+	}
 	return $ref;
 }
