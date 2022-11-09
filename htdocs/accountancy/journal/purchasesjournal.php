@@ -133,7 +133,7 @@ if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 $sql .= " WHERE f.fk_statut > 0";
 $sql .= " AND fd.fk_code_ventilation > 0";
 $sql .= " AND f.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$sql .= " AND f.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.",".FactureFournisseur::TYPE_SITUATION.")";
 } else {
 	$sql .= " AND f.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.",".FactureFournisseur::TYPE_DEPOSIT.",".FactureFournisseur::TYPE_SITUATION.")";
@@ -294,9 +294,7 @@ if ($action == 'writebookkeeping') {
 
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
-		$companystatic->code_client = $tabcompany[$key]['code_client'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
 
@@ -381,7 +379,7 @@ if ($action == 'writebookkeeping') {
 					if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
 						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 						$lettering_static = new Lettering($db);
-						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id), 'supplier_invoice');
+						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id));
 					}
 				}
 			}
@@ -636,9 +634,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
-		$companystatic->code_client = $tabcompany[$key]['code_client'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
 
@@ -760,15 +756,17 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 }
 
 if (empty($action) || $action == 'view') {
-	llxHeader('', $langs->trans("PurchasesJournal"));
+	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
 
-	$nom = $langs->trans("PurchasesJournal").' | '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
+	llxHeader('', $title);
+
+	$nom = $title;
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
 	$builddate = dol_now();
-	$description .= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
+	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
@@ -847,9 +845,7 @@ if (empty($action) || $action == 'view') {
 	foreach ($tabfac as $key => $val) {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
-		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
 		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
-		$companystatic->code_client = $tabcompany[$key]['code_client'];
 		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->fournisseur = 1;
 

@@ -50,6 +50,7 @@ create table llx_user
   fk_state            integer        DEFAULT 0,
   fk_country          integer        DEFAULT 0,
   birth               date,                                   -- birthday
+  birth_place         varchar(64),                            -- birth place (town)
   job                 varchar(128),
   office_phone        varchar(20),
   office_fax          varchar(20),
@@ -75,8 +76,8 @@ create table llx_user
   idpers2			   varchar(128),
   idpers3			   varchar(128),
   
-  note_public		          text,
-  note_private                    text          DEFAULT NULL,
+  note_public		      text,
+  note_private            text          DEFAULT NULL,
   model_pdf               varchar(255)  DEFAULT NULL,
   datelastlogin           datetime,
   datepreviouslogin       datetime,

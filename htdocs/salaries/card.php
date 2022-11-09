@@ -459,7 +459,7 @@ if ($id > 0) {
 
 // Create
 if ($action == 'create') {
-	$year_current = strftime("%Y", dol_now());
+	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$pastmonth = strftime("%m", dol_now()) - 1;
 	$pastmonthyear = $year_current;
 	if ($pastmonth == 0) {
@@ -711,7 +711,7 @@ if ($id) {
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
 	}
 
 	if ($action == 'paid') {

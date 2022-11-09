@@ -137,7 +137,7 @@ $permissiontoadd = $user->rights->variants->write;
 $permissiontodelete = $user->rights->variants->delete;
 
 // Security check
-if (empty($conf->variants->enabled)) {
+if (!isModEnabled('variants')) {
 	accessforbidden('Module not enabled');
 }
 $socid = 0;

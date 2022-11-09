@@ -357,7 +357,7 @@ print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
 print empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? img_warning().' ' : img_picto('', 'tick').' ';
 print yn(empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ? 0 : 1);
 if (empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
-	print ' - <span class="opacitymedium">'.$langs->trans("Recommended").': '.$langs->trans("DefinedAPathForAntivirusCommandIntoSetup", $langs->transnoentitiesnoconv("Home")." - ".$langs->transcountrynoentities("Setup")." - ".$langs->transnoentitiesnoconv("Security")).'</span>';
+	print ' - <span class="opacitymedium">'.$langs->trans("Recommended").': '.$langs->trans("DefinedAPathForAntivirusCommandIntoSetup", $langs->transnoentitiesnoconv("Home")." - ".$langs->transnoentitiesnoconv("Setup")." - ".$langs->transnoentitiesnoconv("Security")).'</span>';
 } else {
 	print ' &nbsp; - '.$conf->global->MAIN_ANTIVIRUS_COMMAND;
 	if (defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
@@ -570,9 +570,10 @@ print 'For a higher security, we also recommend to implement limits and mitigati
 print '</span>';
 
 print '<br>';
-print 'Login process -> This can be done using a fail2ban rule (see example into dev/setup)'."<br>";
-print DOL_URL_ROOT.'/passwordforgotten.php (see example into dev/setup)'."<br>";
-print DOL_URL_ROOT.'/public/* (see example into dev/setup)'."<br>";
+$urlexamplebase = 'https://github.com/Dolibarr/dolibarr/blob/develop/dev/setup/fail2ban/filter.d/';
+print '- Login process (see fail2ban example on <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-rulesbruteforce.conf">GitHub</a>)<br>';
+print '- '.DOL_URL_ROOT.'/passwordforgotten.php (see fail2ban example on <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-rulespassgorgotten.conf">GitHub</a>)<br>';
+print '- '.DOL_URL_ROOT.'/public/* (see fail2ban example on <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-limitpublic.conf">GitHub</a>)<br>';
 
 
 

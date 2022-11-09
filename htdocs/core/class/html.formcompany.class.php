@@ -1026,7 +1026,7 @@ class FormCompany extends Form
 	public function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname = 'customerprospect', $typeinput = 'form', $morecss = '', $allowempty = '')
 	{
 		global $conf, $langs;
-		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->fournisseur->enabled)) {
+		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && !isModEnabled('fournisseur')) {
 			return '' ;
 		}
 

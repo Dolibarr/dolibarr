@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 
@@ -104,7 +104,7 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 	$supplierorderstatic = new CommandeFournisseur($db);
 }
 
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	$fichinterstatic = new Fichinter($db);
 }
 
@@ -321,7 +321,7 @@ if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire)
 
 
 /*
- * Draft customer orders
+ * Draft sales orders
  */
 
 if (isModEnabled('commande') && $user->rights->commande->lire) {
@@ -519,7 +519,7 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 /*
  * Draft interventionals
  */
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, f.fk_statut";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -594,7 +594,7 @@ print '</div><div class="fichetwothirdright">';
 /*
  * Last modified customers or prospects
  */
-if (isModEnabled("societe") && $user->rights->societe->lire) {
+if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
@@ -700,7 +700,7 @@ if (isModEnabled("societe") && $user->rights->societe->lire) {
 /*
  * Last suppliers
  */
-if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $user->rights->societe->lire) {
+if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && $user->hasRight('societe', 'lire')) {
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
 	$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";

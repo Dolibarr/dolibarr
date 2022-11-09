@@ -124,10 +124,10 @@ $result = $db->query($sql);
 if ($result) {
 	while ($objp = $db->fetch_object($result)) {
 		$found = 0;
-		if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && ($objp->client == 2 || $objp->client == 3)) {
+		if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && ($objp->client == 2 || $objp->client == 3)) {
 			$found = 1; $third['prospect']++;
 		}
-		if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && ($objp->client == 1 || $objp->client == 3)) {
+		if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && ($objp->client == 1 || $objp->client == 3)) {
 			$found = 1; $third['customer']++;
 		}
 		if (((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->rights->supplier_order->lire) || (isModEnabled('supplier_invoice') && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $objp->fournisseur) {
@@ -150,10 +150,10 @@ $thirdpartygraph .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("St
 if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) + (round($third['customer']) ? 1 : 0) + (round($third['supplier']) ? 1 : 0) + (round($third['other']) ? 1 : 0) >= 2)) {
 	$thirdpartygraph .= '<tr><td class="center" colspan="2">';
 	$dataseries = array();
-	if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
 		$dataseries[] = array($langs->trans("Prospects"), round($third['prospect']));
 	}
-	if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
 		$dataseries[] = array($langs->trans("Customers"), round($third['customer']));
 	}
 	if (((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->rights->supplier_order->lire) || (isModEnabled('supplier_invoice') && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
@@ -173,12 +173,12 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
 	$thirdpartygraph .= $dolgraph->show();
 	$thirdpartygraph .= '</td></tr>'."\n";
 } else {
-	if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
 		$statstring = "<tr>";
 		$statstring .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=p">'.$langs->trans("Prospects").'</a></td><td class="right">'.round($third['prospect']).'</td>';
 		$statstring .= "</tr>";
 	}
-	if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
 		$statstring .= "<tr>";
 		$statstring .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=c">'.$langs->trans("Customers").'</a></td><td class="right">'.round($third['customer']).'</td>';
 		$statstring .= "</tr>";

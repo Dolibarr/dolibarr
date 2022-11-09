@@ -203,7 +203,7 @@ class InterfaceZapierTriggers extends DolibarrTriggers
 			// case 'MYECMDIR_CREATE':
 			// case 'MYECMDIR_MODIFY':
 
-			// Customer orders
+			// Sales orders
 			case 'ORDER_CREATE':
 				$resql = $this->db->query($sql);
 				while ($resql && $obj = $this->db->fetch_array($resql)) {
@@ -457,7 +457,6 @@ function cleanObjectDatas($toclean)
 
 	unset($toclean->ref_previous);
 	unset($toclean->ref_next);
-	unset($toclean->ref_int);
 
 	unset($toclean->projet); // Should be fk_project
 	unset($toclean->project); // Should be fk_project

@@ -657,13 +657,13 @@ if ($result) {
 			if ($user->rights->banque->consolidate) {
 				print '<td>';
 				if ($objp->rappro) {
-					print '<input name="num_rel_bis" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
-					print '<input name="num_rel" type="hidden" value="'.$objp->num_releve.'">';
+					print '<input name="num_rel_bis" id="num_rel_bis" class="flat" type="text" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
+					print '<input name="num_rel" id="num_rel" class="flat" type="hidden" value="'.$objp->num_releve.'">';
 				} else {
-					print '<input name="num_rel" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
+					print '<input name="num_rel" id="num_rel" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
 				}
 				if ($objp->num_releve) {
-					print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?num='.$objp->num_releve.'&account='.$acct->id.'">'.$langs->trans("AccountStatement").' '.$objp->num_releve.')</a>';
+					print ' &nbsp; <a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?num='.$objp->num_releve.'&account='.$acct->id.'">('.$langs->trans("AccountStatement").' '.$objp->num_releve.')</a>';
 				}
 				print '</td>';
 			} else {
@@ -675,6 +675,28 @@ if ($result) {
 			if ($user->rights->banque->consolidate) {
 				print '<td>';
 				print '<input type="checkbox" id="reconciled" name="reconciled" class="flat" '.(GETPOSTISSET("reconciled") ? (GETPOST("reconciled") ? ' checked="checked"' : '') : ($objp->rappro ? ' checked="checked"' : '')).'">';
+
+				print '
+					<script type="text/javascript">
+					jQuery(document).ready(function() {
+						$("#reconciled").click(function(){
+							console.log("We click on checkbox reconciled "+$("#reconciled").prop("checked"));
+							if ($("#reconciled").prop("checked") == false) {
+								console.log("we remove disabled");
+								jQuery("#num_rel_bis").removeAttr("disabled");
+								jQuery("#num_rel").removeAttr("disabled");
+								jQuery("#num_rel_bis").attr("type", "hidden");
+								jQuery("#num_rel").attr("type", "text");
+								jQuery("#num_rel_bis").hide();
+								jQuery("#num_rel").show();
+							} else {
+
+							}
+						});
+					});
+					</script>
+					';
+
 				print '</td>';
 			} else {
 				print '<td>'.yn($objp->rappro).'</td>';

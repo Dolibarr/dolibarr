@@ -345,8 +345,8 @@ class Tva extends CommonObject
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->fk_account = $obj->fk_account;
-				$this->fk_type = $obj->fk_type;
-				$this->rappro  = $obj->rappro;
+				$this->fk_type = empty($obj->fk_type) ? "" : $obj->fk_type;
+				$this->rappro  = empty($obj->rappro) ? "" : $obj->rappro;
 			}
 			$this->db->free($resql);
 

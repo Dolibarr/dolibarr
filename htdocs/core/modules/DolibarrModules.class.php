@@ -333,7 +333,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
 	public $phpmin;
 
@@ -1881,7 +1881,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							$i = 0;
 							while ($i < $num) {
 								$obj2 = $this->db->fetch_object($resqlseladmin);
-								dol_syslog(get_class($this)."::insert_permissions Add permission id '.$r_id.' to user id=".$obj2->rowid);
+								dol_syslog(get_class($this)."::insert_permissions Add permission id ".$r_id." to user id=".$obj2->rowid);
 
 								$tmpuser = new User($this->db);
 								$result = $tmpuser->fetch($obj2->rowid);
@@ -1968,13 +1968,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$menu->menu_handler = 'all';
 
 			//$menu->module=strtolower($this->name);    TODO When right_class will be same than module name
-			$menu->module = empty($this->rights_class) ?strtolower($this->name) : $this->rights_class;
+			$menu->module = (empty($this->rights_class) ? strtolower($this->name) : $this->rights_class);
 
 			if (!$this->menu[$key]['fk_menu']) {
 				$menu->fk_menu = 0;
 			} else {
 				$foundparent = 0;
 				$fk_parent = $this->menu[$key]['fk_menu'];
+				$reg = array();
 				if (preg_match('/^r=/', $fk_parent)) {    // old deprecated method
 					$fk_parent = str_replace('r=', '', $fk_parent);
 					if (isset($this->menu[$fk_parent]['rowid'])) {

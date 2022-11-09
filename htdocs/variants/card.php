@@ -43,7 +43,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $lineid = GETPOST('lineid', 'alpha');
 
 // Security check
-if (empty($conf->variants->enabled)) {
+if (!isModEnabled('variants')) {
 	accessforbidden('Module not enabled');
 }
 if ($user->socid > 0) { // Protection if external user
@@ -213,6 +213,9 @@ if ($action == 'create') {
 
 	// Common attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_edit.tpl.php';
+
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '</table>';
 

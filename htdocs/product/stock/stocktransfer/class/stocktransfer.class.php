@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2022       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +56,19 @@ class StockTransfer extends CommonObject
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
+
+	/**
+	* @var string Customer ref
+	* @deprecated
+	* @see $ref_customer
+	*/
+	public $ref_client;
+
+	/**
+	 * @var string Customer ref
+	 */
+	public $ref_customer;
+
 
 	/**
 	 * @var string String with name of icon for stocktransfer. Must be the part after the 'object_' into object_stocktransfer.png
@@ -140,6 +153,7 @@ class StockTransfer extends CommonObject
 	public $note_private;
 	public $date_creation;
 	public $tms;
+	public $lead_time_for_warning;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -215,7 +229,7 @@ class StockTransfer extends CommonObject
 		// Translate some data of arrayofkeyval
 		if (is_object($langs)) {
 			foreach ($this->fields as $key => $val) {
-				if (is_array($val['arrayofkeyval'])) {
+				if (isset($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
 						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
 					}

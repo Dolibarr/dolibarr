@@ -20,11 +20,10 @@
  */
 
 /**
- *    \file       skill_tab.php
- *        \ingroup    hrm
- *        \brief      Page to add/delete/view skill to jobs/users
+ *    \file       htdocs/hrm/skill_tab.php
+ *    \ingroup    hrm
+ *    \brief      Page to add/delete/view skill to jobs/users
  */
-
 
 
 // Load Dolibarr environment
@@ -39,8 +38,9 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "other"));
+$langs->loadLangs(array('hrm', 'other'));
 
+// Get Parameters
 $id = GETPOST('id', 'int');
 $TSkillsToAdd = GETPOST('fk_skill', 'array');
 $objecttype = GETPOST('objecttype', 'alpha');
@@ -73,8 +73,9 @@ $hookmanager->initHooks(array('skilltab', 'globalcard')); // Note that conf->hoo
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+// Permissions
 $permissiontoread = $user->rights->hrm->all->read;
-$permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoadd  = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) accessforbidden();

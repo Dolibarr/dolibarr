@@ -395,7 +395,7 @@ $arrayofmassactions = array(
 if ($user->rights->agenda->allactions->delete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if ($user->rights->agenda->myactions->create) {
+if (isModEnabled('category') && $user->rights->agenda->myactions->create) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
@@ -573,7 +573,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$nbtotalofrecords++;
 	}*/
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),]+FROM/i', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	$resql = $db->query($sqlforcount);
 	$objforcount = $db->fetch_object($resql);
 	$nbtotalofrecords = $objforcount->nbtotalofrecords;

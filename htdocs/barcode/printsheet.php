@@ -397,7 +397,7 @@ if (!empty($user->rights->produit->lire) || !empty($user->rights->service->lire)
 	print '</div>';
 }
 
-if (!empty($user->rights->societe->lire)) {
+if ($user->hasRight('societe', 'lire')) {
 	print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromthirdparty') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"><label for="fillfromthirdparty"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").'</label>';
 	print '<br>';
 	print '<div class="showforthirdpartyselector">';

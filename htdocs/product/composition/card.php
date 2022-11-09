@@ -157,12 +157,12 @@ if ($action == 'search') {
 	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type as type, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 	$sql .= ' p.fk_product_type, p.tms as datem, p.tobatch';
 	$sql .= ', p.tosell as status, p.tobuy as status_buy';
-	if (!empty($conf->global->MAIN_MULTILANGS)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$sql .= ', pl.label as labelm, pl.description as descriptionm';
 	}
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
-	if (!empty($conf->global->MAIN_MULTILANGS)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
 	}
 	$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
@@ -170,7 +170,7 @@ if ($action == 'search') {
 		// For natural search
 		$params = array('p.ref', 'p.label', 'p.description', 'p.note');
 		// multilang
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$params[] = 'pl.label';
 			$params[] = 'pl.description';
 			$params[] = 'pl.note';
@@ -330,13 +330,13 @@ if ($id > 0 || !empty($ref)) {
 
 				print '<tr class="oddeven">';
 				print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
-				print '<td>'.$productstatic->label.'</td>';
-				print '<td>'.$value['qty'].'</td>';
+				print '<td>'.dol_escape_htmltag($productstatic->label).'</td>';
+				print '<td>'.dol_escape_htmltag($value['qty']).'</td>';
 				print '</tr>';
 			}
 		} else {
 			print '<tr class="oddeven">';
-			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
+			print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 			print '</tr>';
 		}
 		print '</table>';
@@ -369,7 +369,7 @@ if ($id > 0 || !empty($ref)) {
 		// Min customer price
 		print '<td class="right" colspan="2">'.$langs->trans('MinCustomerPrice').'</td>';
 		// Stock
-		if (!empty($conf->stock->enabled)) {
+		if (isModEnabled('stock')) {
 			print '<td class="right">'.$langs->trans('Stock').'</td>';
 		}
 		// Qty in kit
@@ -444,7 +444,7 @@ if ($id > 0 || !empty($ref)) {
 					print '</td>';
 
 					// Stock
-					if (!empty($conf->stock->enabled)) {
+					if (isModEnabled('stock')) {
 						print '<td class="right">'.$value['stock'].'</td>'; // Real stock
 					}
 
@@ -493,7 +493,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<td>&nbsp;</td>';
 
 					// Stock
-					if (!empty($conf->stock->enabled)) {
+					if (isModEnabled('stock')) {
 						print '<td></td>'; // Real stock
 					}
 
@@ -549,7 +549,7 @@ if ($id > 0 || !empty($ref)) {
 			print '</td>';
 
 			// Stock
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				print '<td class="liste_total right">&nbsp;</td>';
 			}
 
@@ -566,12 +566,12 @@ if ($id > 0 || !empty($ref)) {
 			print '</tr>'."\n";
 		} else {
 			$colspan = 10;
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				$colspan++;
 			}
 
 			print '<tr class="oddeven">';
-			print '<td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td>';
+			print '<td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 			print '</tr>';
 		}
 
@@ -682,7 +682,7 @@ if ($id > 0 || !empty($ref)) {
 
 						print '<td>'.$productstatic->getNomUrl(1, '', 24).'</td>';
 						$labeltoshow = $objp->label;
-						if (!empty($conf->global->MAIN_MULTILANGS) && !empty($objp->labelm)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($objp->labelm)) {
 							$labeltoshow = $objp->labelm;
 						}
 

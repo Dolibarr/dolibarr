@@ -520,21 +520,51 @@ class Adherent extends CommonObject
 	 *	Return translated label by the nature of a adherent (physical or moral)
 	 *
 	 *	@param	string		$morphy		Nature of the adherent (physical or moral)
+	 *  @param	int			$addbadge	Add badge (1=Full label, 2=First letters only)
 	 *	@return	string					Label
 	 */
-	public function getmorphylib($morphy = '')
+	public function getmorphylib($morphy = '', $addbadge = 0)
 	{
 		global $langs;
+
+		// Clean var
 		if (!$morphy) {
 			$morphy = $this->morphy;
 		}
-		if ($morphy == 'phy') {
-			return $langs->trans("Physical");
+
+		if ($addbadge) {
+			$s = '';
+			$labeltoshowm = $langs->trans("Moral");
+			$labeltoshowp = $langs->trans("Physical");
+			if ($morphy == 'phy') {
+				$labeltoshow = $labeltoshowp;
+				if ($addbadge == 2) {
+					$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshowp));
+					if ($labeltoshow == dol_strtoupper(dolGetFirstLetters($labeltoshowm))) {
+						$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshowp, 2));
+					}
+				}
+				$s .= '<span class="member-individual-back paddingleftimp paddingrightimp" title="'.$langs->trans("Physical").'">'.$labeltoshow.'</span>';
+			}
+			if ($morphy == 'mor') {
+				$labeltoshow = $labeltoshowm;
+				if ($addbadge == 2) {
+					$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshowm));
+					if ($labeltoshow == dol_strtoupper(dolGetFirstLetters($labeltoshowp))) {
+						$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshowm, 2));
+					}
+				}
+				$s .= '<span class="member-company-back paddingleftimp paddingrightimp" title="'.$langs->trans("Moral").'">'.$labeltoshow.'</span>';
+			}
+		} else {
+			if ($morphy == 'phy') {
+				$s = $langs->trans("Physical");
+			} elseif ($morphy == 'mor') {
+				$s = $langs->trans("Moral");
+			}
 		}
-		if ($morphy == 'mor') {
-			return $langs->trans("Moral");
-		}
-		return $morphy;
+
+		return $s;
 	}
 
 	/**
@@ -1405,7 +1435,7 @@ class Adherent extends CommonObject
 				$this->email = $obj->email;
 				$this->url = $obj->url;
 
-				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
+				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 
 				$this->photo = $obj->photo;
 				$this->statut = $obj->statut;
@@ -1867,10 +1897,10 @@ class Adherent extends CommonObject
 				$outputlangs = $langs;
 				$newlang = '';
 				$lang_id = GETPOST('lang_id');
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && !empty($lang_id)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && !empty($lang_id)) {
 					$newlang = $lang_id;
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $customer->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -2352,8 +2382,8 @@ class Adherent extends CommonObject
 				$statusType = 'status1';
 				$labelStatus = $langs->trans("MemberStatusActive");
 				$labelStatusShort = $langs->trans("MemberStatusActiveShort");
-			} elseif ($date_end_subscription < dol_now()) {
-				$statusType = 'status3';
+			} elseif ($date_end_subscription < dol_now()) {	// expired
+				$statusType = 'status8';
 				$labelStatus = $langs->trans("MemberStatusActiveLate");
 				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
 			} else {

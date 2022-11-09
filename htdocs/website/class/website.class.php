@@ -875,10 +875,10 @@ class Website extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Offline');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Online');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Offline');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Online');
 		}
 
 		$statusType = 'status5';
@@ -1003,10 +1003,14 @@ class Website extends CommonObject
 
 		// Make some replacement into some files
 		$cssindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/styles.css.php';
-		dolReplaceInFile($cssindestdir, $arrayreplacementincss);
+		if (dol_is_file($cssindestdir)) {
+			dolReplaceInFile($cssindestdir, $arrayreplacementincss);
+		}
 
 		$htmldeaderindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/htmlheader.html';
-		dolReplaceInFile($htmldeaderindestdir, $arrayreplacementincss);
+		if (dol_is_file($htmldeaderindestdir)) {
+			dolReplaceInFile($htmldeaderindestdir, $arrayreplacementincss);
+		}
 
 		// Build sql file
 		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';

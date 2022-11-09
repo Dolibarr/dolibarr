@@ -120,7 +120,7 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 {
 	global $dolibarr_main_instance_unique_id;
 
-	if ($chain === '') {
+	if ($chain === '' || is_null($chain)) {
 		return '';
 	}
 
@@ -146,7 +146,7 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 		}
 		$ivseed = dolGetRandomBytes($ivlen);
 
-		$newchain = openssl_encrypt($chain, $ciphering, $key, null, $ivseed);
+		$newchain = openssl_encrypt($chain, $ciphering, $key, 0, $ivseed);
 		return 'dolcrypt:'.$ciphering.':'.$ivseed.':'.$newchain;
 	} else {
 		return $chain;
@@ -166,7 +166,7 @@ function dolDecrypt($chain, $key = '')
 {
 	global $dolibarr_main_instance_unique_id;
 
-	if ($chain === '') {
+	if ($chain === '' || is_null($chain)) {
 		return '';
 	}
 
@@ -180,9 +180,9 @@ function dolDecrypt($chain, $key = '')
 		if (function_exists('openssl_decrypt')) {
 			$tmpexplode = explode(':', $reg[2]);
 			if (!empty($tmpexplode[1]) && is_string($tmpexplode[0])) {
-				$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $key, null, $tmpexplode[0]);
+				$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $key, 0, $tmpexplode[0]);
 			} else {
-				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, null, null);
+				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, 0, null);
 			}
 		} else {
 			$newchain = 'Error function openssl_decrypt() not available';
@@ -391,6 +391,11 @@ function restrictedArea(User $user, $features, $objectid = 0, $tableandshare = '
 		return 1;
 	}
 
+	// To avoid access forbidden with numeric ref
+	if ($dbt_select != 'rowid' && $dbt_select != 'id') {
+		$objectid = "'".$objectid."'";
+	}
+
 	// Features/modules to check
 	$featuresarray = array($features);
 	if (preg_match('/&/', $features)) {
@@ -421,7 +426,7 @@ function restrictedArea(User $user, $features, $objectid = 0, $tableandshare = '
 		}
 
 		if ($feature == 'societe') {
-			if (empty($user->rights->societe->lire) && empty($user->rights->fournisseur->lire)) {
+			if (!$user->hasRight('societe', 'lire') && empty($user->rights->fournisseur->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -831,7 +836,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				if ($user->socid != $objectid) {
 					return false;
 				}
-			} elseif (isModEnabled("societe") && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -857,7 +862,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
-			} elseif (isModEnabled("societe") && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";

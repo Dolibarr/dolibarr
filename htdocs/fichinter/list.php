@@ -126,8 +126,8 @@ $arrayfields = array(
 	'f.description'=>array('label'=>'Description', 'checked'=>1),
 	'f.datec'=>array('label'=>'DateCreation', 'checked'=>0, 'position'=>500),
 	'f.tms'=>array('label'=>'DateModificationShort', 'checked'=>0, 'position'=>500),
-	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES))),
-	'f.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES))),
+	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
+	'f.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	'f.fk_statut'=>array('label'=>'Status', 'checked'=>1, 'position'=>1000),
 	'fd.description'=>array('label'=>"DescriptionOfLine", 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS) ? 1 : 0),
 	'fd.date'=>array('label'=>'DateOfLine', 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS) ? 1 : 0),
@@ -328,7 +328,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	/*$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	/*$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);

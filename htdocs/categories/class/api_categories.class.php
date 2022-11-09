@@ -315,7 +315,7 @@ class Categories extends DolibarrApi
 			throw new RestException(401);
 		} elseif ($type == Categorie::TYPE_CONTACT && !DolibarrApiAccess::$user->rights->contact->lire) {
 			throw new RestException(401);
-		} elseif ($type == Categorie::TYPE_CUSTOMER && !DolibarrApiAccess::$user->rights->societe->lire) {
+		} elseif ($type == Categorie::TYPE_CUSTOMER && !DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		} elseif ($type == Categorie::TYPE_SUPPLIER && !DolibarrApiAccess::$user->rights->fournisseur->lire) {
 			throw new RestException(401);

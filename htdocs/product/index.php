@@ -126,7 +126,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be 
 /*
  * Number of products and/or services
  */
-if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	$prodser = array();
 	$prodser[0][0] = $prodser[0][1] = $prodser[0][2] = $prodser[0][3] = 0;
 	$prodser[0]['sell'] = 0;
@@ -284,7 +284,7 @@ print '</div><div class="fichetwothirdright">';
 /*
  * Latest modified products
  */
-if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	$max = 15;
 	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 	$sql .= " p.entity,";
@@ -347,7 +347,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->prod
 				}
 
 				// Multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$sql = "SELECT label";
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 					$sql .= " WHERE fk_product = ".((int) $objp->rowid);

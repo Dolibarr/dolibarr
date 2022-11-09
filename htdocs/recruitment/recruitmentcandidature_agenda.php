@@ -40,6 +40,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$socid = GETPOST('socid', 'int');
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
@@ -79,7 +80,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->recruitment->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = $conf->recruitment->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
 $permissiontoadd = $user->rights->recruitment->recruitmentjobposition->write; // Used by the include of actions_addupdatedelete.inc.php
@@ -129,7 +130,7 @@ if ($object->id > 0) {
 	$help_url = 'Module_Agenda_En';
 	llxHeader('', $title, $help_url);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = recruitmentCandidaturePrepareHead($object);
@@ -209,7 +210,8 @@ if ($object->id > 0) {
 		if (get_class($objthirdparty) == 'Societe') {
 			$out .= '&amp;socid='.$objthirdparty->id;
 		}
-		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage=1&amp;percentage=-1';
+		$backtopageurl = urlencode($_SERVER['PHP_SELF'].'?id='.$objthirdparty->id);
+		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage='.$backtopageurl.'&amp;percentage=-1';
 		//$out.=$langs->trans("AddAnAction").' ';
 		//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
 		//$out.="</a>";

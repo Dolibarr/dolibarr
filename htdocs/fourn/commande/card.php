@@ -28,22 +28,24 @@
  */
 
 /**
- *	\file		htdocs/fourn/commande/card.php
- *	\ingroup	supplier, order
- *	\brief		Card supplier order
+ *    \file       htdocs/fourn/commande/card.php
+ *    \ingroup    supplier, order
+ *    \brief      Card supplier order
  */
+
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+
 if (isModEnabled('supplier_proposal')) {
 	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 }
@@ -56,33 +58,37 @@ if (isModEnabled('project')) {
 }
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 
-if (!empty($conf->variants->enabled)) {
+if (isModEnabled('variants')) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
+
+// Load translation files required by the page
 $langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'deliveries', 'products', 'stocks', 'productbatch'));
-if (!empty($conf->incoterm->enabled)) {
+if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
 
+
+// Get Parameters
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action 		= GETPOST('action', 'alpha');
-$confirm		= GETPOST('confirm', 'alpha');
+$action      = GETPOST('action', 'alpha');
+$confirm     = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'purchaseordercard'; // To manage different context of search
 
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$socid = GETPOST('socid', 'int');
+$socid     = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
-$cancel         = GETPOST('cancel', 'alpha');
-$lineid         = GETPOST('lineid', 'int');
-$origin = GETPOST('origin', 'alpha');
-$originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
-$rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
+$cancel    = GETPOST('cancel', 'alpha');
+$lineid    = GETPOST('lineid', 'int');
+$origin    = GETPOST('origin', 'alpha');
+$originid  = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
+$rank      = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 
-//PDF
+// PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
@@ -479,7 +485,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (!$error && !empty($conf->variants->enabled) && $prod_entry_mode != 'free') {
+		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
 			if ($combinations = GETPOST('combinations', 'array')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
@@ -528,7 +534,7 @@ if (empty($reshook)) {
 				$label = $productsupplier->label;
 
 				// Define output language
-				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -679,7 +685,7 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 					if (GETPOST('lang_id', 'aZ09'))
 						$newlang = GETPOST('lang_id', 'aZ09');
@@ -855,10 +861,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -893,10 +899,10 @@ if (empty($reshook)) {
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
-			if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
 			if (!empty($newlang)) {
@@ -935,10 +941,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -984,7 +990,7 @@ if (empty($reshook)) {
 		}
 
 		// Check parameters
-		if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $qualified_for_stock_change) {	// warning name of option should be STOCK_CALCULATE_ON_SUPPLIER_APPROVE_ORDER
+		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $qualified_for_stock_change) {	// warning name of option should be STOCK_CALCULATE_ON_SUPPLIER_APPROVE_ORDER
 			if (!$idwarehouse || $idwarehouse == -1) {
 				$error++;
 				setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -998,10 +1004,10 @@ if (empty($reshook)) {
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
-					if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 						$newlang = $object->thirdparty->default_lang;
 					}
 					if (!empty($newlang)) {
@@ -1059,10 +1065,10 @@ if (empty($reshook)) {
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
-				if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $object->thirdparty->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -1235,7 +1241,7 @@ if (empty($reshook)) {
 			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-			$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
+			$object->multicurrency_tx = price2num(GETPOST('originmulticurrency_tx', 'alpha'));
 			$object->fk_project       = GETPOST('projectid', 'int');
 
 			// Fill array 'array_options' with data from add form
@@ -1692,7 +1698,7 @@ if ($action == 'create') {
 		print $societe->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
-		print img_picto('', 'company').$form->select_company((empty($socid) ? '' : $socid), 'socid', 's.fournisseur=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
+		print img_picto('', 'company').$form->select_company((empty($socid) ? '' : $socid), 'socid', 's.fournisseur=1', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script>
@@ -1771,7 +1777,7 @@ if ($action == 'create') {
 	}
 
 	// Incoterms
-	if (!empty($conf->incoterm->enabled)) {
+	if (isModEnabled('incoterm')) {
 		$fkincoterms = (!empty($object->fk_incoterms) ? $object->fk_incoterms : ($socid > 0 ? $societe->fk_incoterms : ''));
 		$locincoterms = (!empty($object->location_incoterms) ? $object->location_incoterms : ($socid > 0 ? $societe->location_incoterms : ''));
 		print '<tr>';
@@ -1920,7 +1926,7 @@ if ($action == 'create') {
 			$action = '';
 		} else {
 			$text = $langs->trans('ConfirmValidateOrder', $newref);
-			if (!empty($conf->notification->enabled)) {
+			if (isModEnabled('notification')) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 				$notify = new	Notify($db);
 				$text .= '<br>';
@@ -1941,7 +1947,7 @@ if ($action == 'create') {
 		}
 
 		$formquestion = array();
-		if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $qualified_for_stock_change) {
+		if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $qualified_for_stock_change) {
 			$langs->load("stocks");
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
@@ -1957,7 +1963,7 @@ if ($action == 'create') {
 			);
 		}
 		$text = $langs->trans("ConfirmApproveThisOrder", $object->ref);
-		if (!empty($conf->notification->enabled)) {
+		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new	Notify($db);
 			$text .= '<br>';
@@ -2025,11 +2031,10 @@ if ($action == 'create') {
 	$morehtmlref = '<div class="refidno">';
 	// Ref supplier
 	$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
+	$morehtmlref .= '<br>';
 	if (!empty($conf->global->MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER) && !empty($usercancreate) && $action == 'edit_thirdparty') {
-		$morehtmlref .= ' : ';
 		$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 		$morehtmlref .= '<input type="hidden" name="action" value="set_thirdparty">';
 		$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -2041,7 +2046,7 @@ if ($action == 'create') {
 		if (!empty($conf->global->MAIN_CAN_EDIT_SUPPLIER_ON_SUPPLIER_ORDER) && $object->statut == CommandeFournisseur::STATUS_DRAFT) {
 			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_thirdparty&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty')).'</a>';
 		}
-		$morehtmlref .= ' : '.$object->thirdparty->getNomUrl(1, 'supplier');
+		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'supplier');
 		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		}
@@ -2050,32 +2055,21 @@ if ($action == 'create') {
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
-		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($usercancreate) {
+		$morehtmlref .= '<br>';
+		if ($permissiontoadd) {
+			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify' && $caneditproject) {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			if ($action == 'classify') {
-				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 1, 1, 0, 0, '', 1, 0, 'maxwidth500');
-				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-				$morehtmlref .= '</form>';
-			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-			}
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
-					$morehtmlref .= ' - '.$proj->title;
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 				}
-			} else {
-				$morehtmlref .= '';
 			}
 		}
 	}
@@ -2115,7 +2109,7 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Relative and absolute discounts
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 	} else {
@@ -2284,7 +2278,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Incoterms
-	if (!empty($conf->incoterm->enabled)) {
+	if (isModEnabled('incoterm')) {
 		print '<tr><td>';
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('IncotermLabel');
@@ -2367,7 +2361,7 @@ if ($action == 'create') {
 	print '</table>';
 
 	// Margin Infos
-	/*if (!empty($conf->margin->enabled)) {
+	/*if (isModEnabled('margin')) {
 		$formmargin->displayMarginInfos($object);
 	}*/
 
@@ -2555,7 +2549,7 @@ if ($action == 'create') {
 
 				// Ship
 				$hasreception = 0;
-				if (!empty($conf->stock->enabled) && (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))) {
+				if (isModEnabled('stock') && (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))) {
 					$labelofbutton = $langs->trans('ReceiveProducts');
 					if ($conf->reception->enabled) {
 						$labelofbutton = $langs->trans("CreateReception");

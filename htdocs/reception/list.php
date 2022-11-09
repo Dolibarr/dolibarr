@@ -52,6 +52,22 @@ $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
+$search_date_delivery_startday = GETPOST('search_date_delivery_startday', 'int');
+$search_date_delivery_startmonth = GETPOST('search_date_delivery_startmonth', 'int');
+$search_date_delivery_startyear = GETPOST('search_date_delivery_startyear', 'int');
+$search_date_delivery_endday = GETPOST('search_date_delivery_endday', 'int');
+$search_date_delivery_endmonth = GETPOST('search_date_delivery_endmonth', 'int');
+$search_date_delivery_endyear = GETPOST('search_date_delivery_endyear', 'int');
+$search_date_delivery_start = dol_mktime(0, 0, 0, $search_date_delivery_startmonth, $search_date_delivery_startday, $search_date_delivery_startyear);	// Use tzserver
+$search_date_delivery_end = dol_mktime(23, 59, 59, $search_date_delivery_endmonth, $search_date_delivery_endday, $search_date_delivery_endyear);
+$search_date_create_startday = GETPOST('search_date_create_startday', 'int');
+$search_date_create_startmonth = GETPOST('search_date_create_startmonth', 'int');
+$search_date_create_startyear = GETPOST('search_date_create_startyear', 'int');
+$search_date_create_endday = GETPOST('search_date_create_endday', 'int');
+$search_date_create_endmonth = GETPOST('search_date_create_endmonth', 'int');
+$search_date_create_endyear = GETPOST('search_date_create_endyear', 'int');
+$search_date_create_start = dol_mktime(0, 0, 0, $search_date_create_startmonth, $search_date_create_startday, $search_date_create_startyear);	// Use tzserver
+$search_date_create_end = dol_mktime(23, 59, 59, $search_date_create_endmonth, $search_date_create_endday, $search_date_create_endyear);
 $search_billed = GETPOST("search_billed", 'int');
 $sall = GETPOST('sall', 'alphanohtml');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -161,6 +177,22 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_state = "";
 	$search_country = '';
 	$search_type_thirdparty = '';
+	$search_date_delivery_startday = '';
+	$search_date_delivery_startmonth = '';
+	$search_date_delivery_startyear = '';
+	$search_date_delivery_endday = '';
+	$search_date_delivery_endmonth = '';
+	$search_date_delivery_endyear = '';
+	$search_date_delivery_start = '';
+	$search_date_delivery_end = '';
+	$search_date_create_startday = '';
+	$search_date_create_startmonth = '';
+	$search_date_create_startyear = '';
+	$search_date_create_endday = '';
+	$search_date_create_endmonth = '';
+	$search_date_create_endyear = '';
+	$search_date_create_start = '';
+	$search_date_create_end = '';
 	$search_billed = '';
 	$search_status = '';
 	$search_array_options = array();
@@ -545,6 +577,18 @@ if ($search_country) {
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
+if ($search_date_delivery_start) {
+	$sql .= " AND e.date_delivery >= '".$db->idate($search_date_delivery_start)."'";
+}
+if ($search_date_delivery_end) {
+	$sql .= " AND e.date_delivery <= '".$db->idate($search_date_delivery_end)."'";
+}
+if ($search_date_create_start) {
+	$sql .= " AND e.date_creation >= '".$db->idate($search_date_create_start)."'";
+}
+if ($search_date_create_end) {
+	$sql .= " AND e.date_creation <= '".$db->idate($search_date_create_end)."'";
+}
 if ($search_ref_rcp) {
 	$sql .= natural_search('e.ref', $search_ref_rcp);
 }
@@ -633,6 +677,42 @@ if ($search_country) {
 if ($search_type_thirdparty) {
 	$param .= "&search_type_thirdparty=".urlencode($search_type_thirdparty);
 }
+if ($search_date_delivery_startday) {
+	$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+}
+if ($search_date_delivery_startmonth) {
+	$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+}
+if ($search_date_delivery_startyear) {
+	$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+}
+if ($search_date_delivery_endday) {
+	$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+}
+if ($search_date_delivery_endmonth) {
+	$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+}
+if ($search_date_delivery_endyear) {
+	$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+}
+if ($search_date_create_startday) {
+	$param .= '&search_date_create_startday='.urlencode($search_date_create_startday);
+}
+if ($search_date_create_startmonth) {
+	$param .= '&search_date_create_startmonth='.urlencode($search_date_create_startmonth);
+}
+if ($search_date_create_startyear) {
+	$param .= '&search_date_create_startyear='.urlencode($search_date_create_startyear);
+}
+if ($search_date_create_endday) {
+	$param .= '&search_date_create_endday='.urlencode($search_date_create_endday);
+}
+if ($search_date_create_endmonth) {
+	$param .= '&search_date_create_endmonth='.urlencode($search_date_create_endmonth);
+}
+if ($search_date_create_endyear) {
+	$param .= '&search_date_create_endyear='.urlencode($search_date_create_endyear);
+}
 if ($search_ref_supplier) {
 	$param .= "&search_ref_supplier=".urlencode($search_ref_supplier);
 }
@@ -716,7 +796,7 @@ if ($massaction == 'createbills') {
 	print $langs->trans('ValidateInvoices');
 	print '</td>';
 	print '<td>';
-	if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+	if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
 		print $form->selectyesno('validate_invoices', 0, 1, 1);
 		print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
 	} else {
@@ -815,7 +895,14 @@ if (!empty($arrayfields['typent.code']['checked'])) {
 }
 // Date delivery planned
 if (!empty($arrayfields['e.date_delivery']['checked'])) {
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_delivery_start ? $search_date_delivery_start : -1, 'search_date_delivery_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_delivery_end ? $search_date_delivery_end : -1, 'search_date_delivery_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	print '</td>';
 }
 if (!empty($arrayfields['l.ref']['checked'])) {
 	// Delivery ref
@@ -836,7 +923,13 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // N
 print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['e.datec']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_create_start ? $search_date_create_start : -1, 'search_date_create_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_create_end ? $search_date_create_end : -1, 'search_date_create_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 // Date modification

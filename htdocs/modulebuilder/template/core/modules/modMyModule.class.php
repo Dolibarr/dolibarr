@@ -71,7 +71,7 @@ class modMyModule extends DolibarrModules
 		$this->editor_name = 'Editor name';
 		$this->editor_url = 'https://www.example.com';
 
-		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
+		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated', 'experimental_deprecated' or a version string like 'x.y.z'
 		$this->version = '1.0';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
@@ -144,7 +144,7 @@ class modMyModule extends DolibarrModules
 		$this->langfiles = array("mymodule@mymodule");
 
 		// Prerequisites
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
@@ -188,7 +188,7 @@ class modMyModule extends DolibarrModules
 		// 'invoice_supplier' to add a tab in supplier invoice view
 		// 'member'           to add a tab in fundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sale order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view

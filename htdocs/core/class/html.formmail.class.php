@@ -401,7 +401,7 @@ class FormMail extends Form
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($this->param['langsmodels'])) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($this->param['langsmodels'])) {
 				$newlang = $this->param['langsmodels'];
 			}
 			if (!empty($newlang)) {
@@ -521,7 +521,8 @@ class FormMail extends Form
 				))) {
 				// If list of template is empty
 				$out .= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
-				$out .= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>'; // Do not put 'disabled' on 'option' tag, it is already on 'select' and it makes chrome crazy.
+				$out .= '<span class="opacitymedium">'.$langs->trans('SelectMailModel').':</span> ';
+				$out .= '<select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>'; // Do not put 'disabled' on 'option' tag, it is already on 'select' and it makes chrome crazy.
 				if ($user->admin) {
 					$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv('Setup').' - '.$langs->transnoentitiesnoconv('EMails')), 1);
 				}
@@ -750,7 +751,7 @@ class FormMail extends Form
 			}
 
 			// Ask delivery receipt
-			if (!empty($this->withdeliveryreceipt)) {
+			if (!empty($this->withdeliveryreceipt) && getDolGlobalInt('MAIN_EMAIL_SUPPORT_ACK')) {
 				$out .= $this->getHtmlForDeliveryReceipt();
 			}
 
@@ -822,7 +823,7 @@ class FormMail extends Form
 							$out .= '<br></div>';
 						}
 					} elseif (empty($this->withmaindocfile)) {
-						$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
+						//$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
 					}
 					if ($this->withfile == 2) {
 						$maxfilesizearray = getMaxFileSizeArray();
@@ -831,13 +832,13 @@ class FormMail extends Form
 							$out .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 						}
 						// Can add other files
-						if (!empty($conf->global->FROM_MAIL_USE_INPUT_FILE_MULTIPLE)) {
+						if (empty($conf->global->FROM_MAIL_DONT_USE_INPUT_FILE_MULTIPLE)) {
 							$out .= '<input type="file" class="flat" id="addedfile" name="addedfile[]" value="'.$langs->trans("Upload").'" multiple />';
 						} else {
 							$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 						}
 						$out .= ' ';
-						$out .= '<input type="submit" class="button small" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+						$out .= '<input type="submit" class="button smallpaddingimp" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 					}
 				} else {
 					$out .= $this->withfile;
@@ -947,10 +948,13 @@ class FormMail extends Form
 				}
 
 				$out .= '<tr>';
-				$out .= '<td class="tdtop">';
+				$out .= '<td colspan="2">';
 				$out .= $form->textwithpicto($langs->trans('MailText'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfrombody');
 				$out .= '</td>';
-				$out .= '<td>';
+				$out .= '</tr>';
+
+				$out .= '<tr>';
+				$out .= '<td colspan="2">';
 				if ($this->withbodyreadonly) {
 					$out .= nl2br($defaultmessage);
 					$out .= '<input type="hidden" id="message" name="message" value="'.$defaultmessage.'" />';
@@ -1189,7 +1193,7 @@ class FormMail extends Form
 			$out .= "</td></tr>\n";
 		} else {
 			$out = '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-			$out .= '<input size="30" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
+			$out .= '<input class="minwidth200" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
 			$out .= "</td></tr>\n";
 		}
 		return $out;
@@ -1202,8 +1206,8 @@ class FormMail extends Form
 	 */
 	public function getHtmlForDeliveryreceipt()
 	{
-		global $conf, $langs, $form;
-		$out = '<tr><td>'.$langs->trans("DeliveryReceipt").'</td><td>';
+		global $conf, $langs;
+		$out = '<tr><td><label for="deliveryreceipt">'.$langs->trans("DeliveryReceipt").'</label></td><td>';
 
 		if (!empty($this->withdeliveryreceiptreadonly)) {
 			$out .= yn($this->withdeliveryreceipt);
@@ -1224,7 +1228,8 @@ class FormMail extends Form
 			if (!empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_ORDER) && !empty($this->param['models']) && $this->param['models'] == 'order_supplier_send') {
 				$defaultvaluefordeliveryreceipt = 1;
 			}
-			$out .= $form->selectyesno('deliveryreceipt', (GETPOSTISSET("deliveryreceipt") ? GETPOST("deliveryreceipt") : $defaultvaluefordeliveryreceipt), 1);
+			//$out .= $form->selectyesno('deliveryreceipt', (GETPOSTISSET("deliveryreceipt") ? GETPOST("deliveryreceipt") : $defaultvaluefordeliveryreceipt), 1);
+			$out .= '<input type="checkbox" id="deliveryreceipt" name="deliveryreceipt" value="1"'.((GETPOSTISSET("deliveryreceipt") ? GETPOST("deliveryreceipt") : $defaultvaluefordeliveryreceipt) ? ' checked="checked"' : '').'>';
 		}
 		$out .= "</td></tr>\n";
 		return $out;
@@ -1279,7 +1284,7 @@ class FormMail extends Form
 	 *  @param	int			$id				Id of template to get, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
 	 *  @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *  @param	string		$label			Label of template to get
-	 *  @return ModelMail|integer			One instance of ModelMail or -1 if error
+	 *  @return ModelMail|integer			One instance of ModelMail or < 0 if error
 	 */
 	public function getEMailTemplate($dbs, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
 	{
@@ -1300,9 +1305,9 @@ class FormMail extends Form
 			$languagetosearchmain = '';
 		}
 
-		$sql = "SELECT rowid, module, label, type_template, topic, joinfiles, content, content_lines, lang";
+		$sql = "SELECT rowid, module, label, type_template, topic, joinfiles, content, content_lines, lang, email_from, email_to, email_tocc, email_tobcc";
 		$sql .= " FROM ".$dbs->prefix().'c_email_templates';
-		$sql .= " WHERE (type_template='".$dbs->escape($type_template)."' OR type_template='all')";
+		$sql .= " WHERE (type_template = '".$dbs->escape($type_template)."' OR type_template = 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // Get all public or private owned
 		if ($active >= 0) {
@@ -1390,8 +1395,6 @@ class FormMail extends Form
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
 					} elseif ($type_template == 'actioncomm_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm");
-					} elseif ($type_template == 'thirdparty') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentThirdparty");
 					} elseif (!empty($type_template)) {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");
 					}
@@ -1615,13 +1618,13 @@ class FormMail extends Form
 			//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet in mass emailing
 
 			$onlinepaymentenabled = 0;
-			if (!empty($conf->paypal->enabled)) {
+			if (isModEnabled('paypal')) {
 				$onlinepaymentenabled++;
 			}
-			if (!empty($conf->paybox->enabled)) {
+			if (isModEnabled('paybox')) {
 				$onlinepaymentenabled++;
 			}
-			if (!empty($conf->stripe->enabled)) {
+			if (isModEnabled('stripe')) {
 				$onlinepaymentenabled++;
 			}
 			if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
@@ -1630,7 +1633,7 @@ class FormMail extends Form
 					if (isModEnabled('adherent')) {
 						$tmparray['__SECUREKEYPAYMENT_MEMBER__'] = 'SecureKeyPAYMENTUniquePerMember';
 					}
-					if (!empty($conf->don->enabled)) {
+					if (isModEnabled('don')) {
 						$tmparray['__SECUREKEYPAYMENT_DONATION__'] = 'SecureKeyPAYMENTUniquePerDonation';
 					}
 					if (isModEnabled('facture')) {
@@ -1647,7 +1650,7 @@ class FormMail extends Form
 					if (isModEnabled('adherent')) {
 						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
 					}
-					if (!empty($conf->don->enabled)) {
+					if (isModEnabled('don')) {
 						$tmparray['__ONLINEPAYMENTLINK_DONATION__'] = 'OnlinePaymentLinkUniquePerDonation';
 					}
 					if (isModEnabled('facture')) {
@@ -1724,6 +1727,11 @@ class ModelMail
 	public $content_lines;
 	public $lang;
 	public $joinfiles;
+
+	public $email_from;
+	public $email_to;
+	public $email_tocc;
+	public $email_tobcc;
 
 	/**
 	 * @var string Module the template is dedicated for
