@@ -754,7 +754,7 @@ class EcmFiles extends CommonObject
 		if (!$error) {
 			$result = $this->deleteExtraFields();
 			if (!$result) {
-				$this->errors[] = $this->db->lasterror();
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
 				$error++;
 			}
 		}
