@@ -751,7 +751,16 @@ class EcmFiles extends CommonObject
 		}
 
 		// If you need to delete child tables to, you can insert them here
+		if (!$error) {
+			$sql = "DELETE FROM " . $this->db->prefix() . $this->table_element. "_extrafields";
+			$sql .= " WHERE fk_object = ".((int) $this->id);
 
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = $this->db->lasterror();
+				$error++;
+			}
+		}
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' WHERE rowid='.((int) $this->id);
