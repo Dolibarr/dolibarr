@@ -126,7 +126,7 @@ class FormTicket
 		$this->withcompany = isModEnabled("societe");
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
-		//$this->withreadid=0;
+		$this->withreadid=0;
 		//$this->withtitletopic='';
 		$this->withnotifytiersatcreate = 0;
 		$this->withusercreate = 1;
@@ -1394,7 +1394,7 @@ class FormTicket
 
 		$result = $formmail->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
 		if ($result < 0) {
-			setEventMessages($this->error, $this->errors, 'errors');
+			setEventMessage($this->error, 'errors');
 		}
 		$modelmail_array = array();
 		foreach ($formmail->lines_model as $line) {
