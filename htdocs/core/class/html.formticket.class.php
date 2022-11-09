@@ -81,6 +81,7 @@ class FormTicket
 	public $withtitletopic;
 	public $withtopicreadonly;
 	public $withreadid;
+
 	public $withcompany;  // to show company drop-down list
 	public $withfromsocid;
 	public $withfromcontactid;
@@ -108,6 +109,7 @@ class FormTicket
 	 * @var string Error code (or message)
 	 */
 	public $error;
+	public $errors = array();
 
 
 	/**
@@ -1394,7 +1396,7 @@ class FormTicket
 
 		$result = $formmail->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
 		if ($result < 0) {
-			setEventMessage($this->error, 'errors');
+			setEventMessages($this->error, $this->errors, 'errors');
 		}
 		$modelmail_array = array();
 		foreach ($formmail->lines_model as $line) {
