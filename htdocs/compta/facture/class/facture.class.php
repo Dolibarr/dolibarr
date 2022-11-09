@@ -1,4 +1,4 @@
-<?php
+1<?php
 /* Copyright (C) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
@@ -1520,8 +1520,12 @@ class Facture extends CommonInvoice
 			if ($this->type == self::TYPE_SITUATION) {
 				$label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
 			}
-			if (isset($this->statut) && isset($this->alreadypaid)) {
-				$label .= ' '.$this->getLibStatut(5, $this->alreadypaid);
+			if (isset($this->statut)) {
+                if (!isset($this->alreadypaid)) {
+                    $this->alreadypaid = $this->getSommePaiement();
+                }
+
+				$label .= ' '.$this->getLibStatut(5, $this->alreadypaid ? : 0);
 			}
 			if (!empty($this->ref)) {
 				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
