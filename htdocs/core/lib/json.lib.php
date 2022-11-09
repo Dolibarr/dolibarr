@@ -61,7 +61,7 @@ function dol_json_encode($elements)
 	//var_dump($num);
 
 	// determine type
-	if (is_numeric(key($elements)) && key($elements) == 0) {
+	if (is_numeric(key($elements)) && key($elements) === 0) {
 		// indexed (list)
 		$keysofelements = array_keys($elements); // Elements array mus have key that does not start with 0 and end with num-1, so we will use this later.
 		$output = '[';
