@@ -1034,7 +1034,7 @@ if (empty($action) || $action == 'view') {
 
 	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
 
-	llxHeader('', $title);
+	llxHeader('', dol_string_nohtmltag($title));
 
 	$nom = $title;
 	$builddate = dol_now();
