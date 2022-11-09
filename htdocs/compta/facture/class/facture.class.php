@@ -1521,9 +1521,9 @@ class Facture extends CommonInvoice
 				$label = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
 			}
 			if (isset($this->statut)) {
-                if (!isset($this->alreadypaid)) {
-                    $this->alreadypaid = $this->getSommePaiement();
-                }
+				if (!isset($this->alreadypaid)) {
+					$this->alreadypaid = $this->getSommePaiement();
+				}
 
 				$label .= ' '.$this->getLibStatut(5, $this->alreadypaid ? : 0);
 			}
