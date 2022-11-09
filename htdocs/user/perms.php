@@ -44,6 +44,7 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $module = GETPOST('module', 'alpha');
 $rights = GETPOST('rights', 'int');
+$updatedmodulename = GETPOST('updatedmodulename', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userperms'; // To manage different context of search
 
 if (!isset($id) || empty($id)) {
@@ -308,6 +309,13 @@ if ($reshook < 0) {
 
 
 print "\n";
+print '<div class="center liste_titre">';
+print '<a class="showallperms" title="'.dol_escape_htmltag($langs->trans("ShowAllPerms")).'" alt="'.dol_escape_htmltag($langs->trans("ShowAllPerms")).'" href="#">'.$langs->trans("ShowAllPerms")."</a>";
+print ' / ';
+print '<a class="hideallperms" title="'.dol_escape_htmltag($langs->trans("HideAllPerms")).'" alt="'.dol_escape_htmltag($langs->trans("HideAllPerms")).'" href="#">'.$langs->trans("HideAllPerms")."</a>";
+print '</div>';
+
+print "\n";
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
@@ -469,17 +477,17 @@ if ($result) {
 			$picto = ($objMod->picto ? $objMod->picto : 'generic');
 
 			// Show break line
-			print '<tr class="oddeven trforbreak">';
+			print '<tr class="oddeven trforbreak" data-hide-perms="'.$obj->module.'" data-hidden-perms="'.($updatedmodulename == $obj->module ? '0' : "1").'">';
 			print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
 			print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
 			print '<a name="'.$objMod->getName().'"></a>';
 			print '</td>';
 			if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin)) {
 				if ($caneditperms) {
-					print '<td class="center nowrap">';
-					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes">'.$langs->trans("All")."</a>";
+					print '<td class="center nowrap permtohide_'.$obj->module.'"'.($updatedmodulename != $obj->module && $module != "allmodules" ? ' style="display:none"' : '').'>';
+					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("All")."</a>";
 					print ' / ';
-					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes">'.$langs->trans("None")."</a>";
+					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("None")."</a>";
 					print '</td>';
 				}
 				print '<td>&nbsp;</td>';
@@ -495,12 +503,14 @@ if ($result) {
 			if ($user->admin) {
 				print '<td class="right"></td>';
 			}
-
+			print '<td class="permtoshow_'.$obj->module.'"'.($updatedmodulename == $obj->module  || $module == "allmodules" ? ' style="display:none"' : '').'>';
+			print '&nbsp;';
+			print '</td>';
 			print '</tr>'."\n";
 		}
 
 		print '<!-- '.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '').' -->'."\n";
-		print '<tr class="oddeven">';
+		print '<tr class="oddeven trtohide_'.$obj->module.'"'.($updatedmodulename != $obj->module && $module != "allmodules" ? ' style="display:none"' : '').'>';
 
 		// Picto and label of module
 		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
@@ -517,7 +527,7 @@ if ($result) {
 			print '</td>';
 		} elseif (in_array($obj->id, $permsuser)) {					// Permission granted by user
 			if ($caneditperms) {
-				print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes">';
+				print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
 				//print img_edit_remove($langs->trans("Remove"));
 				print img_picto($langs->trans("Remove"), 'switch_on');
 				print '</a></td>';
@@ -538,7 +548,7 @@ if ($result) {
 			} else {
 				// Do not own permission
 				if ($caneditperms) {
-					print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&token='.newToken().'">';
+					print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&token='.newToken().'&updatedmodulename='.$obj->module.'">';
 					//print img_edit_add($langs->trans("Add"));
 					print img_picto($langs->trans("Add"), 'switch_off');
 					print '</a></td>';
@@ -548,7 +558,7 @@ if ($result) {
 		} else {
 			// Do not own permission
 			if ($caneditperms) {
-				print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&token='.newToken().'">';
+				print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&token='.newToken().'&updatedmodulename='.$obj->module.'">';
 				//print img_edit_add($langs->trans("Add"));
 				print img_picto($langs->trans("Add"), 'switch_off');
 				print '</a></td>';
@@ -586,6 +596,41 @@ if ($result) {
 }
 print '</table>';
 print '</div>';
+
+print '<script>';
+print '$(".trforbreak").on("click", function(){
+	moduletohide = $(this).data("hide-perms");
+	if ($(this).data("hidden-perms") == 1){
+		$(".trtohide_"+moduletohide).show();
+		$(".permtoshow_"+moduletohide).hide();
+		$(".permtohide_"+moduletohide).show();
+		$(this).data("hidden-perms", 0);
+	} else {
+		$(".trtohide_"+moduletohide).hide();
+		$(".permtoshow_"+moduletohide).show();
+		$(".permtohide_"+moduletohide).hide();
+		$(this).data("hidden-perms", 1);
+	}
+})';
+print "\n";
+
+print '$(".showallperms").on("click", function(){
+	$(".trforbreak").each( function(){
+		if($(this).data("hidden-perms") != 0){
+			$(this).trigger("click");
+		}
+	})
+})';
+print "\n";
+
+print '$(".hideallperms").on("click", function(){
+	$(".trforbreak").each( function(){
+		if($(this).data("hidden-perms") != 1){
+			$(this).trigger("click");
+		}
+	})
+})';
+print '</script>';
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('insertExtraFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
