@@ -310,11 +310,11 @@ if (empty($reshook)) {
 				}
 			}
 
-			if (is_array($searched_companies)) {
+			if (!empty($searched_companies) && is_array($searched_companies)) {
 				$object->fk_soc = $searched_companies[0]->id;
 			}
 
-			if (is_array($contacts) and count($contacts) > 0) {
+			if (is_array($contacts) && count($contacts) > 0) {
 				$object->fk_soc = $contacts[0]->socid;
 				$usertoassign = $contacts[0]->id;
 			}
@@ -329,7 +329,7 @@ if (empty($reshook)) {
 			if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
 				$error++;
 				$errors = array($langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
-				array_push($object->errors, array($langs->trans("AlreadyTooMuchPostOnThisIPAdress")));
+				array_push($object->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
 				$action = 'create_ticket';
 			}
 
