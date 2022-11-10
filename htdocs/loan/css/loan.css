@@ -61,6 +61,10 @@ table.loanschedule input.number {
 	width: 5em;
 }
 
+table.loanschedule td.p span.number {
+	padding: 2px 1px;
+}
+
 table.loanschedule input.number:read-only {
 	background-color: unset;
 	border: unset;

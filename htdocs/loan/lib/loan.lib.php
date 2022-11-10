@@ -19,6 +19,8 @@
  * Data class for holding installment values (helps with static analysis + IDE can help the developer with context).
  * Since it is just a data class with no specific methods, I didn't put it in a separate class file.
  * There is no CRUD (the CRUD part is handled by loanschedule.class.php which is analog but more complex)
+ * TODO: merge this class with loanschedule.class.php or at least create bridges between the two since they represent
+ *       the same data basically
  */
 class Installment {
 	/**
@@ -128,11 +130,28 @@ function computeAmortizationSchedule($rate, $periods, $present_value, $future_va
 }
 
 /**
- * @param $lines
- * @return void
+ * @param Loan $loan
+ * @param LoanSchedule[] $lines
+ * @return Installment[]
  */
-function loadScheduleLinesToInstallmentObjs($lines) {
-
+function loadScheduleLinesToInstallments($loan, $lines) {
+	$installments = array();
+	$pv = $loan->capital;
+	foreach ($lines as $i => $line) {
+		$p = $i + 1;
+		$pmt = $line->amount_capital + $line->amount_interest;
+		$fv = $pv - $pmt;
+		$installments[] = new Installment(
+			$p,
+			$pmt,
+			$line->amount_capital,
+			$line->amount_interest,
+			$pv,
+			$fv
+		);
+		$pv = $fv;
+	}
+	return $installments;
 }
 
 /**
@@ -162,9 +181,10 @@ function getNumberSpan($val, $name = '', $editable = false, $format = 'amount') 
 /**
  * @param Loan $loan
  * @param Installment $installment
+ * @param bool $isPaid
  * @return string
  */
-function getInstallmentTableRow($loan, $installment) {
+function getInstallmentTableRow($loan, $installment, $isPaid = false) {
 	$installmentDate = $loan->getDateOfPeriod($installment->p-1); // TODO: why -1?
 	$dataAttrs = '';
 	$tdArray = [];
@@ -174,7 +194,7 @@ function getInstallmentTableRow($loan, $installment) {
 		$editable = false;
 		$name = 'installment[' . $installment->p . '][' . $attrName . ']';
 		if ($attrName === 'p') { $format = 'int'; $name = ''; }
-		if ($attrName === 'pmt') $editable = true;
+		if ($attrName === 'pmt' && !$isPaid) $editable = true;
 		$tdArray[$attrName] = '<td class="' . $attrName . '">' . getNumberSpan($value, $name, $editable, $format) . '</td>';
 	}
 	$tdArray['date'] = '<td class="date">' . dol_print_date($installmentDate, 'day') . '</td>';
@@ -187,7 +207,7 @@ function getInstallmentTableRow($loan, $installment) {
 		. $tdArray['ipmt']
 		. $tdArray['pmt']
 		. $tdArray['fv']
-		. '<td class="payment"></td>'
+		. '<td class="payment">__PAYMENT__</td>' // FIXME: pas bien mais plus le temps de faire proprement
 		. '</tr>';
 	return $tr;
 }
