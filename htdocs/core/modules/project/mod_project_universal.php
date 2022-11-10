@@ -34,7 +34,7 @@ class mod_project_universal extends ModeleNumRefProjects
 	 * @var DoliDB $db
 	 */
 	public $db;
-	
+
 	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
