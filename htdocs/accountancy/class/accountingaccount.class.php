@@ -868,42 +868,43 @@ class AccountingAccount extends CommonObject
 			}
 
 			// Manage Deposit
-			if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
-				$accountdeposittoventilated = new self($this->db);
-				if ($type == 'customer') {
-					$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
-				} elseif ($type == 'supplier') {
-					$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
-				}
-				if (isset($result) && $result < 0) {
-					return -1;
-				}
-
-				$code_l = $accountdeposittoventilated->ref;
-				$code_p = '';
-				$code_t = '';
-				$suggestedid = $accountdeposittoventilated->rowid;
-				$suggestedaccountingaccountfor = 'deposit';
-			}
-
-			// For credit note invoice, if origin invoice is a deposit invoice, force also on specific customer/supplier deposit account
-			dol_syslog("fk_facture_source::".$facture->fk_facture_source, LOG_DEBUG);
-			if (!empty($facture->fk_facture_source)) {
-				$invoiceSource = new Facture($this->db);
-				$invoiceSource->fetch($facture->fk_facture_source);
-
-				if ($facture->type == $facture::TYPE_CREDIT_NOTE && $invoiceSource->type == $facture::TYPE_DEPOSIT) {
-					$accountdeposittoventilated = new AccountingAccount($this->db);
+			if (!empty($conf->global->{'ACCOUNTING_ACCOUNT_' . strtoupper($type) . '_DEPOSIT'})) {
+				if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
+					$accountdeposittoventilated = new self($this->db);
 					if ($type == 'customer') {
-						$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+						$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
 					} elseif ($type == 'supplier') {
-						$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+						$result = $accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
 					}
+					if (isset($result) && $result < 0) {
+						return -1;
+					}
+
 					$code_l = $accountdeposittoventilated->ref;
 					$code_p = '';
 					$code_t = '';
 					$suggestedid = $accountdeposittoventilated->rowid;
 					$suggestedaccountingaccountfor = 'deposit';
+				}
+
+				// For credit note invoice, if origin invoice is a deposit invoice, force also on specific customer/supplier deposit account
+				if (!empty($facture->fk_facture_source)) {
+					$invoiceSource = new $facture($this->db);
+					$invoiceSource->fetch($facture->fk_facture_source);
+
+					if ($facture->type == $facture::TYPE_CREDIT_NOTE && $invoiceSource->type == $facture::TYPE_DEPOSIT) {
+						$accountdeposittoventilated = new self($this->db);
+						if ($type == 'customer') {
+							$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+						} elseif ($type == 'supplier') {
+							$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+						}
+						$code_l = $accountdeposittoventilated->ref;
+						$code_p = '';
+						$code_t = '';
+						$suggestedid = $accountdeposittoventilated->rowid;
+						$suggestedaccountingaccountfor = 'deposit';
+					}
 				}
 			}
 
