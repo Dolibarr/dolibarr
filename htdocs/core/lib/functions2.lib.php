@@ -1282,11 +1282,11 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
 	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
-    
-    // To ensure that all variables within the MAX() brackets are integers
-  	$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', true);
 
-    
+	// To ensure that all variables within the MAX() brackets are integers
+	$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', true);
+
+
 	if ($bentityon) { // only if entity enable
 		$sql .= " AND entity IN (".getEntity($sharetable).")";
 	} elseif (!empty($forceentity)) {
@@ -1298,7 +1298,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if ($sqlwhere) {
 		$sql .= ' AND '.$sqlwhere;
 	}
-    
+
 	//print $sql.'<br>';
 	dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
 	$resql = $db->query($sql);
