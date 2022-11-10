@@ -730,7 +730,7 @@ class AccountingAccount extends CommonObject
 	 * @param 	Product 							$product 			Product object sell or buy
 	 * @param 	Facture|FactureFournisseur 			$facture 			Facture
 	 * @param 	FactureLigne|SupplierInvoiceLine	$factureDet 		Facture Det
-	 * @param 	array 								$accountingAccount 	Array of Account account
+	 * @param 	array 								$accountingAccount 	Array of Accounting account
 	 * @param 	string 								$type 				Customer / Supplier
 	 * @return	array|int      											Accounting accounts suggested or < 0 if technical error.
 	 */
@@ -880,8 +880,31 @@ class AccountingAccount extends CommonObject
 				}
 
 				$code_l = $accountdeposittoventilated->ref;
+				$code_p = '';
+				$code_t = '';
 				$suggestedid = $accountdeposittoventilated->rowid;
 				$suggestedaccountingaccountfor = 'deposit';
+			}
+
+			// For credit note invoice, if origin invoice is a deposit invoice, force also on specific customer/supplier deposit account
+			dol_syslog("fk_facture_source::".$facture->fk_facture_source, LOG_DEBUG);
+			if (!empty($facture->fk_facture_source)) {
+				$invoiceSource = new Facture($this->db);
+				$invoiceSource->fetch($facture->fk_facture_source);
+
+				if ($facture->type == $facture::TYPE_CREDIT_NOTE && $invoiceSource->type == $facture::TYPE_DEPOSIT) {
+					$accountdeposittoventilated = new AccountingAccount($this->db);
+					if ($type == 'customer') {
+						$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT, 1);
+					} elseif ($type == 'supplier') {
+						$accountdeposittoventilated->fetch('', $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT, 1);
+					}
+					$code_l = $accountdeposittoventilated->ref;
+					$code_p = '';
+					$code_t = '';
+					$suggestedid = $accountdeposittoventilated->rowid;
+					$suggestedaccountingaccountfor = 'deposit';
+				}
 			}
 
 			// If $suggestedid could not be guessed yet, we set it from the generic default accounting code $code_l
