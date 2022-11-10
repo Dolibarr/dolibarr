@@ -244,7 +244,7 @@ if ($object->ismultientitymanaged == 1) {
 
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
-		if ($key == 'status' && ($search[$key] == -1) || ($search[$key] == "")) {
+		if ($key == 'status' && ($search[$key] == -1 || $search[$key] == "")) {
 			continue;
 		}
 		if ($key == 'fk_parent_line') {
