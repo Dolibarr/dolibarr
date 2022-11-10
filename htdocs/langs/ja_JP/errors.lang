@@ -92,6 +92,7 @@ ErrorModuleRequireJavascript=Javascriptがこの機能が動作しているた�
 ErrorPasswordsMustMatch=両方入力したパスワードは、互いに一致している必要がある
 ErrorContactEMail=技術的なエラーが発生した。次の電子メール<b>%s </b>に管理者に連絡し、メッセージにエラーコード<b> %s </b>を入力するか、このページの画面コピーを追加すること。
 ErrorWrongValueForField=フィールド<b>%s </b>： '<b> %s </b>' は、正規表現ルール<b>%s</b> に不適合
+ErrorHtmlInjectionForField=フィールド<b>%s</b>: 値 '<b> %s </b>'には、許可されない悪意あるデータが含まれる
 ErrorFieldValueNotIn=フィールド<b>%s</b>:'<b>%s</b>' はフィールド<b> %s </b>である <b> %s </b>にあるものの値とは異なる
 ErrorFieldRefNotIn=フィールド<b>%s </b>： '<b> %s</b>' は存在する <b>%s</b> 参照ではない
 ErrorsOnXLines=%sエラーが見つかった
@@ -270,7 +271,7 @@ ErrorYouMustFirstSetupYourChartOfAccount=最初に勘定科目表を設定する
 ErrorFailedToFindEmailTemplate=コードネーム%sのテンプレートが見つからない
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=サービスで期間が定義されていない。時給計算する方法がない。
 ErrorActionCommPropertyUserowneridNotDefined=ユーザの所有者が必要
-ErrorActionCommBadType=選択したイベント種別 (id: %n, code: %s) がイベント種別辞書に存在しない
+ErrorActionCommBadType=選択したイベント タイプ (ID: %s、コード: %s) がイベント タイプ ディクショナリに存在しない
 CheckVersionFail=バージョンチェックに失敗する
 ErrorWrongFileName=ファイル名に__SOMETHING__を含めることはできない
 ErrorNotInDictionaryPaymentConditions=支払条件辞書にないので、変更すること。
@@ -285,13 +286,16 @@ ErrorPaymentInBothCurrency=エラー、全金額を同じ列に入力する必�
 ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=通貨%sのアカウントから通貨%sで請求書を支払おうとした
 ErrorInvoiceLoadThirdParty=請求書「%s」の取引先オブジェクトを読み込めない
 ErrorInvoiceLoadThirdPartyKey=取引先のキー「%s」が請求書「%s」に設定されていない
-ErrorDeleteLineNotAllowedByObjectStatus=実際のオブジェクトステータスでは行の削除は許可されていません
+ErrorDeleteLineNotAllowedByObjectStatus=現在のオブジェクトステータスでは行の削除は許可されていない
 ErrorAjaxRequestFailed=申請が失敗
+ErrorThirpdartyOrMemberidIsMandatory=取引先またはパートナーシップのメンバーは必須
+ErrorFailedToWriteInTempDirectory=一時ディレクトリへの書き込みに失敗
+ErrorQuantityIsLimitedTo=数量限定 %s
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHPパラメータ upload_max_filesize(%s)は、PHPパラメータ post_max_size(%s)よりも大きくなっている。これは一貫した設定ではない。
 WarningPasswordSetWithNoAccount=この構成員にパスワードが設定された。ただし、ユーザアカウントは作成されなかった。したがって、このパスワードは保存されるが、Dolibarrへのログインには使用できない。外部モジュール/インターフェースで使用できるが、構成員のログインやパスワードを定義する必要がない場合は、構成員モジュールの設定から "各構成員のログインを管理する" オプションを無効にすることができる。ログインを管理する必要があるがパスワードは必要ない場合は、このフィールドを空のままにして、この警告を回避できる。注：構成員がユーザにリンクされている場合は、電子メールをログインとして使用することもできる。
-WarningMandatorySetupNotComplete=必須パラメータ を設定するには、ここをクリックすること
+WarningMandatorySetupNotComplete=主なパラメータの設定はこちら
 WarningEnableYourModulesApplications=モジュールとアプリケーションを有効にするには、ここをクリックすること
 WarningSafeModeOnCheckExecDir=警告、PHPのオプション<b>セーフモードは、PHP</b>のパラメータ <b>safe_mode_exec_dirの</b>宣言されたディレクトリ内に格納する必要があるので、コマンドにある。
 WarningBookmarkAlreadyExists=この職種またはこのターゲットを使用して、ブックマーク(URL)が既に存在している。
@@ -321,12 +325,8 @@ WarningCreateSubAccounts=警告、補助勘定科目を直接作成すること�
 WarningAvailableOnlyForHTTPSServers=HTTPSで保護された接続を使用している場合にのみ使用できる。
 WarningModuleXDisabledSoYouMayMissEventHere=モジュール%sが有効になっていない。そのため、ここでは多くのイベントを見逃す可能性がある。
 WarningPaypalPaymentNotCompatibleWithStrict=値「Strict」では、現在はオンライン支払機能が正常動作せず。代わりに「Lax」を使用すること。
+WarningThemeForcedTo=警告、テーマは隠し定数 MAIN_FORCETHEME によって<b>%s</b>に強制された
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> git@github.com:Dolibarr/dolibarr.gitのブランチ「15.0」
 # Validate
 RequireValidValue = 値が無効.
 RequireAtLeastXString = 少なくとも%s文字(s)が必要
@@ -347,12 +347,3 @@ BadSetupOfField = フィールドの設定エラー
 BadSetupOfFieldClassNotFoundForValidation = フィールドの設定エラー：検証用のクラスが見つからない
 BadSetupOfFieldFileNotFound = フィールドの設定が正しくない：含めるファイルが見つからない
 BadSetupOfFieldFetchNotCallable = フィールドの設定不正エラー：クラスでフェッチを呼び出せない
-<<<<<<< HEAD
-=======
-=======
-=======
->>>>>>> git@github.com:Dolibarr/dolibarr.gitのブランチ「15.0」
->>>>>>> git@github.com:Dolibarr/dolibarr.gitのブランチ「15.0」
-=======
->>>>>>> git@github.com:Dolibarr/dolibarr.gitのブランチ「15.0」
->>>>>>> git@github.com:Dolibarr/dolibarr.gitのブランチ「15.0」

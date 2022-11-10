@@ -23,6 +23,7 @@
  *	\brief      Page graph des transactions bancaires
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -55,11 +56,6 @@ $error = 0;
 /*
  * View
  */
-
-$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Graph");
-$helpurl = "";
-llxHeader('', $title, $helpurl);
-
 $form = new Form($db);
 
 $datetime = dol_now();
@@ -82,6 +78,10 @@ if (GETPOST("ref")) {
 	$result = $object->fetch(0, GETPOST("ref"));
 	$account = $object->id;
 }
+
+$title = $object->ref.' - '.$langs->trans("Graph");
+$helpurl = "";
+llxHeader('', $title, $helpurl);
 
 $result = dol_mkdir($conf->bank->dir_temp);
 if ($result < 0) {

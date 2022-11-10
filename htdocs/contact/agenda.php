@@ -29,6 +29,8 @@
  *       \brief      Card of a contact
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -49,12 +51,14 @@ $langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
 
 $mesg = ''; $error = 0; $errors = array();
 
+// Get parameters
 $action		= (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm	= GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $id = GETPOST('id', 'int');
 $socid		= GETPOST('socid', 'int');
 
+// Initialize objects
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 

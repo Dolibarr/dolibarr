@@ -612,6 +612,8 @@ class WebsitePage extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
+		global $conf;
+
 		$error = 0;
 
 		// Delete all child tables
@@ -630,7 +632,7 @@ class WebsitePage extends CommonObject
 		}
 
 		if (!$error) {
-			$result = $this->deleteCommon($user, $trigger);
+			$result = $this->deleteCommon($user, $notrigger);
 			if ($result <= 0) {
 				$error++;
 			}
@@ -836,10 +838,10 @@ class WebsitePage extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Offline');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Online');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Offline');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Online');
 		}
 
 		$statusType = 'status5';

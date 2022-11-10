@@ -30,13 +30,14 @@
  *  \brief      Home page of calendar events
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
@@ -111,7 +112,7 @@ $month = GETPOST("month", "int") ?GETPOST("month", "int") : date("m");
 $week = GETPOST("week", "int") ?GETPOST("week", "int") : date("W");
 $day = GETPOST("day", "int") ?GETPOST("day", "int") : date("d");
 $pid = GETPOST("search_projectid", "int", 3) ? GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
-$status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo'
+$status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo', 'na' or -1
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'aZ09') : GETPOST("type", 'aZ09');
 $maxprint = GETPOSTISSET("maxprint") ? GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW;
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
@@ -212,7 +213,7 @@ if (GETPOST("viewperuser", 'alpha') || $mode == 'show_peruser') {
  $event->fetch($actionid);
  $event->fetch_optionals();
  $event->fetch_userassigned();
- $event->oldcopy = clone $event;
+ $event->oldcopy = dol_clone($event);
 
  $result = $event->delete();
  }
@@ -757,14 +758,17 @@ if ($type) {
 	$sql .= " AND ca.id = ".((int) $type);
 }
 if ($status == '0') {
+	// To do (not started)
 	$sql .= " AND a.percent = 0";
 }
-if ($status == '-1') {
+if ($status == 'na') {
+	// Not applicable
 	$sql .= " AND a.percent = -1";
-}	// Not applicable
+}
 if ($status == '50') {
+	// Running already started
 	$sql .= " AND (a.percent > 0 AND a.percent < 100)";
-}	// Running already started
+}
 if ($status == 'done' || $status == '100') {
 	$sql .= " AND (a.percent = 100)";
 }
@@ -1268,9 +1272,9 @@ if (count($listofextcals)) {
 					$event->datef = $dateend + $usertime;
 
 					if ($icalevent['SUMMARY']) {
-						$event->label = $icalevent['SUMMARY'];
+						$event->label = dol_string_nohtmltag($icalevent['SUMMARY']);
 					} elseif ($icalevent['DESCRIPTION']) {
-						$event->label = dol_nl2br($icalevent['DESCRIPTION'], 1);
+						$event->label = dol_nl2br(dol_string_nohtmltag($icalevent['DESCRIPTION']), 1);
 					} else {
 						$event->label = $langs->trans("ExtSiteNoLabel");
 					}
@@ -1908,7 +1912,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					}
 					//print 'background: #'.$colortouse.';';
 					//print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -3).'), to(#'.dol_color_minus($color, -1).'));';
-					//if (! empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
+					//if (!empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
 					//else print 'background-color: transparent !important; background: none; border: 1px solid #bbb;';
 					//print ' -moz-border-radius:4px;"';
 					//print 'border: 1px solid #ccc" width="100%"';
@@ -1981,7 +1985,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 						// Show title
 						$titletoshow = $daterange;
-						$titletoshow .= ($titletoshow ? ' ' : '').($event->label ? $event->label : $event->libelle);
+						$titletoshow .= ($titletoshow ? ' ' : '').dol_escape_htmltag($event->label ? $event->label : $event->libelle);
 
 						if ($event->type_code != 'ICALEVENT') {
 							$savlabel = $event->label ? $event->label : $event->libelle;

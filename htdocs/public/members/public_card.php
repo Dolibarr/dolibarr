@@ -46,6 +46,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
@@ -53,7 +54,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Security check
 if (empty($conf->adherent->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Memebership no enabled');
 }
 
 
@@ -147,16 +148,8 @@ $db->close();
  */
 function llxHeaderVierge($title, $head = "")
 {
-	global $user, $conf, $langs;
+	top_htmlhead($head, $title);
 
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-	print "<html>\n";
-	print "<head>\n";
-	print "<title>".$title."</title>\n";
-	if ($head) {
-		print $head."\n";
-	}
-	print "</head>\n";
 	print '<body class="public_body">'."\n";
 }
 

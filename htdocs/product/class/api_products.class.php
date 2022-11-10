@@ -253,7 +253,7 @@ class Products extends DolibarrApi
 				if (!$ids_only) {
 					$product_static = new Product($this->db);
 					if ($product_static->fetch($obj->rowid)) {
-						if ($includestockdata && DolibarrApiAccess::$user->rights->stock->lire) {
+						if (!empty($includestockdata) && DolibarrApiAccess::$user->rights->stock->lire) {
 							$product_static->load_stock();
 
 							if (is_array($product_static->stock_warehouse)) {
@@ -354,7 +354,7 @@ class Products extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$oldproduct = dol_clone($this->product, 0);
+		$oldproduct = dol_clone($this->product);
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -670,7 +670,7 @@ class Products extends DolibarrApi
 			if ($thirdparty_id) {
 				$filter['t.fk_soc'] .= $thirdparty_id;
 			}
-			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 		}
 
 		if (empty($prodcustprice->lines)) {
@@ -1014,7 +1014,7 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		$sql = "SELECT t.rowid, t.ref, t.ref_ext, t.label, t.rang, t.entity";
+		$sql = "SELECT t.rowid, t.ref, t.ref_ext, t.label, t.position, t.entity";
 		$sql .= " FROM ".$this->db->prefix()."product_attribute as t";
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
@@ -1051,7 +1051,7 @@ class Products extends DolibarrApi
 			$tmp->ref = $result->ref;
 			$tmp->ref_ext = $result->ref_ext;
 			$tmp->label = $result->label;
-			$tmp->rang = $result->rang;
+			$tmp->position = $result->position;
 			$tmp->entity = $result->entity;
 
 			$return[] = $this->_cleanObjectDatas($tmp);
@@ -1088,7 +1088,7 @@ class Products extends DolibarrApi
 			throw new RestException(404, "Product attribute not found");
 		}
 
-		$fields = ["id", "ref", "ref_ext", "label", "rang", "entity"];
+		$fields = ["id", "ref", "ref_ext", "label", "position", "entity"];
 
 		foreach ($prodattr as $field => $value) {
 			if (!in_array($field, $fields)) {
@@ -1644,10 +1644,10 @@ class Products extends DolibarrApi
 			$combinations[$key]->attributes = $prodc2vp->fetchByFkCombination((int) $combination->id);
 			$combinations[$key] = $this->_cleanObjectDatas($combinations[$key]);
 
-			if ($includestock==1 && DolibarrApiAccess::$user->rights->stock->lire) {
+			if (!empty($includestock) && DolibarrApiAccess::$user->rights->stock->lire) {
 				$productModel = new Product($this->db);
 				$productModel->fetch((int) $combination->fk_product_child);
-				$productModel->load_stock();
+				$productModel->load_stock($includestock);
 				$combinations[$key]->stock_warehouse = $this->_cleanObjectDatas($productModel)->stock_warehouse;
 			}
 		}
@@ -2040,8 +2040,8 @@ class Products extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if ($includestockdata && DolibarrApiAccess::$user->rights->stock->lire) {
-			$this->product->load_stock();
+		if (!empty($includestockdata) && DolibarrApiAccess::$user->rights->stock->lire) {
+			$this->product->load_stock($includestockdata);
 
 			if (is_array($this->product->stock_warehouse)) {
 				foreach ($this->product->stock_warehouse as $keytmp => $valtmp) {

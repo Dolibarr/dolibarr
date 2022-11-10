@@ -105,9 +105,9 @@ class RecruitmentJobPosition extends CommonObject
 		'label' => array('type'=>'varchar(255)', 'label'=>'JobLabel', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth500', 'csslist'=>'tdoverflowmax300', 'showoncombobox'=>'2', 'autofocusoncreate'=>1),
 		'qty' => array('type'=>'integer', 'label'=>'NbOfEmployeesExpected', 'enabled'=>'1', 'position'=>45, 'notnull'=>1, 'visible'=>1, 'default'=>'1', 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'css'=>'maxwidth500', 'picto'=>'project'),
-		'fk_user_recruiter' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'ResponsibleOfRecruitement', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>1, 'foreignkey'=>'user.rowid', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150', 'picto'=>'user'),
+		'fk_user_recruiter' => array('type'=>'integer:User:user/class/user.class.php:status=1', 'label'=>'ResponsibleOfRecruitement', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>1, 'foreignkey'=>'user.rowid', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150', 'picto'=>'user'),
 		'email_recruiter' => array('type'=>'varchar(255)', 'label'=>'EmailRecruiter', 'enabled'=>'1', 'position'=>54, 'notnull'=>0, 'visible'=>-1, 'help'=>'ToUseAGenericEmail', 'picto'=>'email'),
-		'fk_user_supervisor' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'FutureManager', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'user.rowid', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150', 'picto'=>'user'),
+		'fk_user_supervisor' => array('type'=>'integer:User:user/class/user.class.php:t.statut = 1', 'label'=>'FutureManager', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'user.rowid', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150', 'picto'=>'user'),
 		'fk_establishment' => array('type'=>'integer:Establishment:hrm/class/establishment.class.php', 'label'=>'Establishment', 'enabled'=>'$conf->hrm->enabled', 'position'=>56, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'establishment.rowid',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'WorkPlace', 'enabled'=>'$conf->societe->enabled', 'position'=>57, 'notnull'=>-1, 'visible'=>-1, 'css'=>'maxwidth500', 'index'=>1, 'help'=>"IfJobIsLocatedAtAPartner", 'picto'=>'company'),
 		'date_planned' => array('type'=>'date', 'label'=>'DateExpected', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1,),
@@ -115,7 +115,7 @@ class RecruitmentJobPosition extends CommonObject
 		'description' => array('type'=>'html', 'label'=>'Description', 'enabled'=>'1', 'position'=>65, 'notnull'=>0, 'visible'=>3,),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>101, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>102, 'notnull'=>0, 'visible'=>0,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
+		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-4,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
@@ -182,7 +182,7 @@ class RecruitmentJobPosition extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -254,7 +254,7 @@ class RecruitmentJobPosition extends CommonObject
 		// Reset some properties
 		unset($object->id);
 		unset($object->fk_user_creat);
-		unset($object->import_key);
+		$object->import_key = null;
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
@@ -498,8 +498,8 @@ class RecruitmentJobPosition extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitmentjobposition->create))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitmentjobposition->recruitmentjobposition_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitmentjobposition->create))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitmentjobposition->recruitmentjobposition_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -616,8 +616,8 @@ class RecruitmentJobPosition extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->recruitment_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->recruitment_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -640,8 +640,8 @@ class RecruitmentJobPosition extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->recruitment_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->recruitment_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -694,7 +694,7 @@ class RecruitmentJobPosition extends CommonObject
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 				// Define output language
 				$outputlangs = $langs;
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$outputlangs = new Translate("", $conf);
 					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);
@@ -757,8 +757,8 @@ class RecruitmentJobPosition extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->recruitment_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->recruitment->recruitment_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;

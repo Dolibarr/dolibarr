@@ -30,6 +30,7 @@
  * \brief		Page with sells journal
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -63,7 +64,7 @@ $hookmanager->initHooks(array('sellsjournal'));
 $parameters = array();
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
@@ -321,9 +322,7 @@ if ($action == 'writebookkeeping') {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
 		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
-		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
-		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->client = 3;
 
 		$invoicestatic->id = $key;
@@ -454,7 +453,7 @@ if ($action == 'writebookkeeping') {
 					if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
 						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 						$lettering_static = new Lettering($db);
-						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id), 'customer_invoice');
+						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id));
 					}
 				}
 			}
@@ -539,7 +538,7 @@ if ($action == 'writebookkeeping') {
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
-						$accountingaccount->fetch($k, null, true);	// TODO Use a cache for label
+						$accountingaccount->fetch(null, $k, true);	// TODO Use a cache for label
 						$label_account = $accountingaccount->label;
 
 						$bookkeeping = new BookKeeping($db);
@@ -660,9 +659,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
 		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
-		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
-		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->client = 3;
 
 		$invoicestatic->id = $key;
@@ -781,9 +778,11 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 
 
 if (empty($action) || $action == 'view') {
-	llxHeader('', $langs->trans("SellsJournal"));
+	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
 
-	$nom = $langs->trans("SellsJournal").' | '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
+	llxHeader('', dol_string_nohtmltag($title));
+
+	$nom = $title;
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
@@ -869,9 +868,7 @@ if (empty($action) || $action == 'view') {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
 		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
-		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
-		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->client = 3;
 
 		$invoicestatic->id = $key;

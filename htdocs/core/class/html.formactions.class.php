@@ -165,9 +165,10 @@ class FormActions
 	 *  @param	int		$max					Max number of record
 	 *  @param	string	$moreparambacktopage	More param for the backtopage
 	 *  @param	string	$morehtmlcenter			More html text on center of title line
+	 *  @param	int		$assignedtouser			Assign event by default to this user id (will be ignored if not enough permissions)
 	 *	@return	int								<0 if KO, >=0 if OK
 	 */
-	public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '')
+	public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '', $assignedtouser = 0)
 	{
 		global $langs, $conf, $user;
 
@@ -225,9 +226,21 @@ class FormActions
 				$taskid = $object->id;
 			}
 
+			$usercanaddaction = 0;
+			if (empty($assignedtouser) || $assignedtouser == $user->id) {
+				$usercanaddaction = $user->hasRight('agenda', 'myactions', 'create');
+				$assignedtouser = 0;
+			} else {
+				$usercanaddaction = $user->hasRight('agenda', 'allactions', 'create');
+			}
+
 			$newcardbutton = '';
-			if (isModEnabled('agenda') && !empty($user->rights->agenda->myactions->create)) {
-				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser')).'&origin='.urlencode($typeelement).'&originid='.((int) $object->id).((!empty($object->socid) && $object->socid > 0) ? '&socid='.((int) $object->socid) : ((!empty($socid) && $socid > 0) ? '&socid='.((int) $socid) : '')).($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '').'&backtopage='.urlencode($urlbacktopage);
+			if (isModEnabled('agenda') && $usercanaddaction) {
+				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser'));
+				$url .= '&origin='.urlencode($typeelement).'&originid='.((int) $object->id).((!empty($object->socid) && $object->socid > 0) ? '&socid='.((int) $object->socid) : ((!empty($socid) && $socid > 0) ? '&socid='.((int) $socid) : ''));
+				$url .= ($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '');
+				$url .= ($assignedtouser > 0 ? '&assignedtouser='.$assignedtouser : '');
+				$url .= '&backtopage='.urlencode($urlbacktopage);
 				$newcardbutton .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
 
@@ -327,11 +340,11 @@ class FormActions
 					$cursorevent++;
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 
 			if ($max && $num > $max) {
-				print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("More").'...</td></tr>';
+				print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("More").'...</span></td></tr>';
 			}
 
 			print '</table>';

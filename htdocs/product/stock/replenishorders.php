@@ -25,6 +25,7 @@
  *  \brief      Page to list replenishment orders
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -50,6 +51,7 @@ $search_dateyear = GETPOST('search_dateyear', 'int');
 $search_datemonth = GETPOST('search_datemonth', 'int');
 $search_dateday = GETPOST('search_dateday', 'int');
 $search_date = dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear);
+$optioncss = GETPOST('optioncss', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -129,9 +131,9 @@ if (empty($user->rights->societe->client->voir) && !$socid) {
 }
 $sql .= ' WHERE cf.fk_soc = s.rowid ';
 $sql .= ' AND cf.entity = '.$conf->entity;
-if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
+if (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
 	$sql .= ' AND cf.fk_statut < 3';
-} elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+} elseif (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
 	$sql .= ' AND cf.fk_statut < 6'; // We want also status 5, we will keep them visible if dispatching is not yet finished (tested with function dolDispatchToDo).
 } else {
 	$sql .= ' AND cf.fk_statut < 5';
@@ -217,13 +219,13 @@ if ($resql) {
 
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ref" value="'.dol_escape_htmltag($sref).'">';
+	print '<input type="text" class="flat maxwidth100" name="search_ref" value="'.dol_escape_htmltag($sref).'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_nom" value="'.dol_escape_htmltag($snom).'">';
+	print '<input type="text" class="flat maxwidth100" name="search_nom" value="'.dol_escape_htmltag($snom).'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_user" value="'.dol_escape_htmltag($suser).'">';
+	print '<input type="text" class="flat maxwidth100" name="search_user" value="'.dol_escape_htmltag($suser).'">';
 	print '</td>';
 	print '<td class="liste_titre right">';
 	print '<input type="text" class="flat width75" name="search_ttc" value="'.dol_escape_htmltag($sttc).'">';
@@ -322,7 +324,7 @@ if ($resql) {
 
 			// Company
 			$href = DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid;
-			print '<td><a href="'.$href.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.$obj->name.'</a></td>';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->name).'"><a href="'.$href.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.$obj->name.'</a></td>';
 
 			// Author
 			$userstatic->id = $obj->fk_user_author;

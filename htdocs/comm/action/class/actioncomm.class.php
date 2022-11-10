@@ -269,6 +269,7 @@ class ActionComm extends CommonObject
 	 */
 	public $contact_id;
 
+
 	/**
 	 * @var Societe|null Company linked to action (optional)
 	 * @deprecated
@@ -285,17 +286,17 @@ class ActionComm extends CommonObject
 
 	// Properties for links to other objects
 	/**
-	 * @var int Id of linked object
+	 * @var int 		Id of linked object
 	 */
 	public $fk_element; // Id of record
 
 	/**
-	 * @var int Id of record alternative for API
+	 * @var int 		Id of record alternative for API
 	 */
 	public $elementid;
 
 	/**
-	 * @var string Type of record. This if property ->element of object linked to.
+	 * @var string 		Type of record. This if property ->element of object linked to.
 	 */
 	public $elementtype;
 
@@ -374,6 +375,16 @@ class ActionComm extends CommonObject
 	public $status;
 
 	/**
+	 * Properties to manage the recurring events
+	 */
+	public $recurid;		/* A string YYYYMMDDHHMMSS shared by allevent of same serie */
+	public $recurrule;		/* Rule of recurring */
+	public $recurdateend;	/* Repeat until this date */
+
+	public $calling_duration;
+
+
+	/**
 	 * Typical value for a event that is in a todo state
 	 */
 	const EVENT_TODO = 0;
@@ -447,11 +458,11 @@ class ActionComm extends CommonObject
 		if (!empty($this->datep) && !empty($this->datef)) {
 			$this->durationp = ($this->datef - $this->datep); // deprecated
 		}
-		//if (! empty($this->date)  && ! empty($this->dateend)) $this->durationa=($this->dateend - $this->date);
+		//if (!empty($this->date)  && !empty($this->dateend)) $this->durationa=($this->dateend - $this->date);
 		if (!empty($this->datep) && !empty($this->datef) && $this->datep > $this->datef) {
 			$this->datef = $this->datep;
 		}
-		//if (! empty($this->date)  && ! empty($this->dateend) && $this->date > $this->dateend) $this->dateend=$this->date;
+		//if (!empty($this->date)  && !empty($this->dateend) && $this->date > $this->dateend) $this->dateend=$this->date;
 		if (!isset($this->fk_project) || $this->fk_project < 0) {
 			$this->fk_project = 0;
 		}
@@ -539,6 +550,9 @@ class ActionComm extends CommonObject
 		$sql .= "email_tobcc,";
 		$sql .= "email_subject,";
 		$sql .= "errors_to,";
+		$sql .= "recurid,";
+		$sql .= "recurrule,";
+		$sql .= "recurdateend,";
 		$sql .= "num_vote,";
 		$sql .= "event_paid,";
 		$sql .= "status";
@@ -577,6 +591,9 @@ class ActionComm extends CommonObject
 		$sql .= (!empty($this->email_tobcc) ? "'".$this->db->escape($this->email_tobcc)."'" : "null").", ";
 		$sql .= (!empty($this->email_subject) ? "'".$this->db->escape($this->email_subject)."'" : "null").", ";
 		$sql .= (!empty($this->errors_to) ? "'".$this->db->escape($this->errors_to)."'" : "null").", ";
+		$sql .= (!empty($this->recurid) ? "'".$this->db->escape($this->recurid)."'" : "null").", ";
+		$sql .= (!empty($this->recurrule) ? "'".$this->db->escape($this->recurrule)."'" : "null").", ";
+		$sql .= (!empty($this->recurdateend) ? "'".$this->db->idate($this->recurdateend)."'" : "null").", ";
 		$sql .= (!empty($this->num_vote) ? (int) $this->num_vote : "null").", ";
 		$sql .= (!empty($this->event_paid) ? (int) $this->event_paid : 0).", ";
 		$sql .= (!empty($this->status) ? (int) $this->status : "0");
@@ -706,6 +723,9 @@ class ActionComm extends CommonObject
 		$this->fetchResources();
 
 		$this->id = 0;
+		$this->recurid = '';
+		$this->recurrule = '';
+		$this->recurdateend = '';
 
 		// Create clone
 		$this->context['createfromclone'] = 'createfromclone';
@@ -1296,8 +1316,17 @@ class ActionComm extends CommonObject
 
 		dol_syslog(get_class()."::getActions", LOG_DEBUG);
 
+		require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($this->db);
+		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		$hookmanager->initHooks(array('agendadao'));
+
 		$sql = "SELECT a.id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		// Fields from hook
+		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
+		$reshook = $hookmanager->executeHooks('getActionsListFrom', $parameters);    // Note that $action and $object may have been modified by hook
+		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 		if (!empty($socid)) {
 			$sql .= " AND a.fk_soc = ".((int) $socid);
@@ -1316,6 +1345,10 @@ class ActionComm extends CommonObject
 		if (!empty($filter)) {
 			$sql .= $filter;
 		}
+		// Fields where hook
+		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
+		$reshook = $hookmanager->executeHooks('getActionsListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
 		if ($sortorder && $sortfield) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
@@ -1548,13 +1581,13 @@ class ActionComm extends CommonObject
 		}
 
 		$canread = 0;
-		if ($user->rights->agenda->myactions->read && $this->authorid == $user->id) {
+		if (!empty($user->rights->agenda->myactions->read) && $this->authorid == $user->id) {
 			$canread = 1; // Can read my event
 		}
-		if ($user->rights->agenda->myactions->read && array_key_exists($user->id, $this->userassigned)) {
+		if (!empty($user->rights->agenda->myactions->read) && array_key_exists($user->id, $this->userassigned)) {
 			$canread = 1; // Can read my event i am assigned
 		}
-		if ($user->rights->agenda->allactions->read) {
+		if (!empty($user->rights->agenda->allactions->read)) {
 			$canread = 1; // Can read all event of other
 		}
 		if (!$canread) {
@@ -1581,16 +1614,16 @@ class ActionComm extends CommonObject
 
 		$tooltip = img_picto('', $this->picto).' <u>'.$langs->trans('Action').'</u>';
 		if (!empty($this->ref)) {
-			$tooltip .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+			$tooltip .= '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
 		}
 		if (!empty($label)) {
-			$tooltip .= '<br><b>'.$langs->trans('Title').':</b> '.$label;
+			$tooltip .= '<br><b>'.$langs->trans('Title').':</b> '.dol_escape_htmltag($label);
 		}
 		if (!empty($labeltype)) {
-			$tooltip .= '<br><b>'.$langs->trans('Type').':</b> '.$labeltype;
+			$tooltip .= '<br><b>'.$langs->trans('Type').':</b> '.dol_escape_htmltag($labeltype);
 		}
 		if (!empty($this->location)) {
-			$tooltip .= '<br><b>'.$langs->trans('Location').':</b> '.$this->location;
+			$tooltip .= '<br><b>'.$langs->trans('Location').':</b> '.dol_escape_htmltag($this->location);
 		}
 		if (isset($this->transparency)) {
 			$tooltip .= '<br><b>'.$langs->trans('Busy').':</b> '.yn($this->transparency);
@@ -1599,7 +1632,7 @@ class ActionComm extends CommonObject
 			$langs->load("mails");
 			$tooltip .= '<br>';
 			//$tooltip .= '<br><b>'.img_picto('', 'email').' '.$langs->trans("Email").'</b>';
-			$tooltip .= '<br><b>'.$langs->trans('MailTopic').':</b> '.$this->email_subject;
+			$tooltip .= '<br><b>'.$langs->trans('MailTopic').':</b> '.dol_escape_htmltag($this->email_subject);
 			$tooltip .= '<br><b>'.$langs->trans('MailFrom').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_from);
 			$tooltip .= '<br><b>'.$langs->trans('MailTo').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_to);
 			if (!empty($this->email_tocc)) {
@@ -1687,7 +1720,7 @@ class ActionComm extends CommonObject
 		if ($withpicto) {
 			$result .= img_object(($notooltip ? '' : $langs->trans("ShowAction").': '.$label), ($overwritepicto ? $overwritepicto : 'action'), (($this->type_color && $overwritepicto) ? 'style="color: #'.$this->type_color.' !important;" ' : '').($notooltip ? 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"' : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
-		$result .= $labelshort;
+		$result .= dol_escape_htmltag($labelshort);
 		$result .= $linkend;
 
 		global $action;
@@ -2083,8 +2116,8 @@ class ActionComm extends CommonObject
 						}
 
 						if (!empty($conf->global->AGENDA_EXPORT_FIX_TZ)) {
-							$timestampStart = - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
-							$timestampEnd   = - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+							$timestampStart = $timestampStart - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+							$timestampEnd   = $timestampEnd - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
 						}
 
 						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -2345,7 +2378,7 @@ class ActionComm extends CommonObject
 		$nbMailSend = 0;
 		$errorsMsg = array();
 
-		if (empty($conf->agenda->enabled)) {	// Should not happen. If module disabled, cron job should not be visible.
+		if (!isModEnabled('agenda')) {	// Should not happen. If module disabled, cron job should not be visible.
 			$langs->load("agenda");
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
 			return 0;

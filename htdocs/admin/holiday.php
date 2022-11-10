@@ -24,6 +24,7 @@
  *	\brief      Setup page of module Contracts
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -141,7 +142,7 @@ if ($action == 'updateMask') {
 	$draft = GETPOST('HOLIDAY_DRAFT_WATERMARK', 'alpha');
 	$res2 = dolibarr_set_const($db, "HOLIDAY_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!$res1 > 0 || !$res2 > 0) {
+	if (!($res1 > 0) || !($res2 > 0)) {
 		$error++;
 	}
 
@@ -551,7 +552,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("WatermarkOnDraftHolidayCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 	print '</td><td>';
-	print '<input class="flat minwidth200" type="text" name="HOLIDAY_DRAFT_WATERMARK" value="'.$conf->global->HOLIDAY_DRAFT_WATERMARK.'">';
+	print '<input class="flat minwidth200" type="text" name="HOLIDAY_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('HOLIDAY_DRAFT_WATERMARK')).'">';
 	print '</td></tr>'."\n";
 }
 

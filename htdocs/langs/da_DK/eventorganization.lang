@@ -60,6 +60,8 @@ ConferenceOrBoothTab = Konference eller stand
 AmountPaid = Betalt beløb
 DateOfRegistration = Dato for registrering
 ConferenceOrBoothAttendee = Konference eller messedeltager
+ApplicantOrVisitor=Ansøger eller besøgende
+Speaker=Højttaler
 
 #
 # Template Mail
@@ -139,6 +141,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=Din betaling for din begivenhe
 OrganizationEventBulkMailToAttendees=Dette er en påmindelse om din deltagelse i begivenheden som deltager
 OrganizationEventBulkMailToSpeakers=Dette er en påmindelse om din deltagelse i arrangementet som foredragsholder
 OrganizationEventLinkToThirdParty=Link til tredjepart (kunde, leverandør eller partner)
+OrganizationEvenLabelName=Offentligt navn på konferencen eller standen
 
 NewSuggestionOfBooth=Ansøgning om bod
 NewSuggestionOfConference=Ansøgning om en konference

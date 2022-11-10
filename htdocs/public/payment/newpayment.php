@@ -56,6 +56,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -246,7 +247,7 @@ $urlko = preg_replace('/&$/', '', $urlko); // Remove last &
 
 // Make special controls
 
-if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled)) {
+if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 
@@ -272,10 +273,10 @@ if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypa
 		return -1;
 	}
 }
-if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled)) {
+if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
 	// No specific test for the moment
 }
-if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled)) {
+if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This include also /stripe/lib/stripe.lib.php, /includes/stripe/stripe-php/init.php, ...
 }
 
@@ -341,9 +342,9 @@ $creditor = $mysoc->name;
 $paramcreditor = 'ONLINE_PAYMENT_CREDITOR';
 $paramcreditorlong = 'ONLINE_PAYMENT_CREDITOR_'.$suffix;
 if (!empty($conf->global->$paramcreditorlong)) {
-	$creditor = $conf->global->$paramcreditorlong;
+	$creditor = $conf->global->$paramcreditorlong;	// use label long of the seller to show
 } elseif (!empty($conf->global->$paramcreditor)) {
-	$creditor = $conf->global->$paramcreditor;
+	$creditor = $conf->global->$paramcreditor;		// use label short of the seller to show
 }
 
 $mesg = '';
@@ -355,6 +356,8 @@ $mesg = '';
 
 // Action dopayment is called after clicking/choosing the payment mode
 if ($action == 'dopayment') {
+	dol_syslog("--- newpayment.php Execute action = ".$action." paymentmethod=".$paymentmethod.' amount='.$amount.' newamount='.GETPOST("newamount", 'alpha'), LOG_DEBUG, 0, '_payment');
+
 	if ($paymentmethod == 'paypal') {
 		$PAYPAL_API_PRICE = price2num(GETPOST("newamount", 'alpha'), 'MT');
 		$PAYPAL_PAYMENT_TYPE = 'Sale';
@@ -480,7 +483,7 @@ if ($action == 'dopayment') {
 // Called when choosing Stripe mode.
 // When using the old Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
 // When using the PaymentIntent API architecture, the Stripe customer was already created when creating PaymentIntent when showing payment page, and the payment is already ok when action=charge.
-if ($action == 'charge' && !empty($conf->stripe->enabled)) {
+if ($action == 'charge' && isModEnabled('stripe')) {
 	$amountstripe = $amount;
 
 	// Correct the amount according to unit of currency
@@ -490,9 +493,9 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 		$amountstripe = $amountstripe * 100;
 	}
 
-	dol_syslog("--- newpayment.php Execute action = ".$action." STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION'), LOG_DEBUG, 0, '_stripe');
-	dol_syslog("GET=".var_export($_GET, true), LOG_DEBUG, 0, '_stripe');
-	dol_syslog("POST=".var_export($_POST, true), LOG_DEBUG, 0, '_stripe');
+	dol_syslog("--- newpayment.php Execute action = ".$action." STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION'), LOG_DEBUG, 0, '_payment');
+	dol_syslog("GET=".var_export($_GET, true), LOG_DEBUG, 0, '_payment');
+	dol_syslog("POST=".var_export($_POST, true), LOG_DEBUG, 0, '_payment');
 
 	$stripeToken = GETPOST("stripeToken", 'alpha');
 	$email = GETPOST("email", 'alpha');
@@ -502,10 +505,10 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 	$vatnumber = GETPOST('vatnumber', 'alpha');
 	$savesource = GETPOSTISSET('savesource') ? GETPOST('savesource', 'int') : 1;
 
-	dol_syslog("POST stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("POST email = ".$email, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("POST thirdparty_id = ".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("POST vatnumber = ".$vatnumber, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("POST stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_payment');
+	dol_syslog("POST email = ".$email, LOG_DEBUG, 0, '_payment');
+	dol_syslog("POST thirdparty_id = ".$thirdparty_id, LOG_DEBUG, 0, '_payment');
+	dol_syslog("POST vatnumber = ".$vatnumber, LOG_DEBUG, 0, '_payment');
 
 	$error = 0;
 	$errormessage = '';
@@ -526,7 +529,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 			}
 
 			if ($thirdparty_id > 0) {
-				dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
+				dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_payment');
 
 				$service = 'StripeTest';
 				$servicestatus = 0;
@@ -545,7 +548,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 				$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
 				if (empty($customer)) {
 					$error++;
-					dol_syslog('Failed to get/create stripe customer for thirdparty id = '.$thirdparty_id.' and servicestatus = '.$servicestatus.': '.$stripe->error, LOG_ERR, 0, '_stripe');
+					dol_syslog('Failed to get/create stripe customer for thirdparty id = '.$thirdparty_id.' and servicestatus = '.$servicestatus.': '.$stripe->error, LOG_ERR, 0, '_payment');
 					setEventMessages('Failed to get/create stripe customer for thirdparty id = '.$thirdparty_id.' and servicestatus = '.$servicestatus.': '.$stripe->error, null, 'errors');
 					$action = '';
 				}
@@ -560,7 +563,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 
 					if (empty($card)) {
 						$error++;
-						dol_syslog('Failed to create card record', LOG_WARNING, 0, '_stripe');
+						dol_syslog('Failed to create card record', LOG_WARNING, 0, '_payment');
 						setEventMessages('Failed to create card record', null, 'errors');
 						$action = '';
 					} else {
@@ -574,7 +577,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 							$metadata["dol_type"] = $dol_type;
 						}
 
-						dol_syslog("Create charge on card ".$card->id, LOG_DEBUG, 0, '_stripe');
+						dol_syslog("Create charge on card ".$card->id, LOG_DEBUG, 0, '_payment');
 						$charge = \Stripe\Charge::create(array(
 							'amount'   => price2num($amountstripe, 'MU'),
 							'currency' => $currency,
@@ -588,7 +591,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 						// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 						if (empty($charge)) {
 							$error++;
-							dol_syslog('Failed to charge card', LOG_WARNING, 0, '_stripe');
+							dol_syslog('Failed to charge card', LOG_WARNING, 0, '_payment');
 							setEventMessages('Failed to charge card', null, 'errors');
 							$action = '';
 						}
@@ -606,7 +609,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 				if (empty($vatcleaned)) $taxinfo=null;
 				*/
 
-				dol_syslog("Create anonymous customer card profile", LOG_DEBUG, 0, '_stripe');
+				dol_syslog("Create anonymous customer card profile", LOG_DEBUG, 0, '_payment');
 
 				$customer = \Stripe\Customer::create(array(
 					'email' => $email,
@@ -618,9 +621,9 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 
 				// Create the VAT record in Stripe
 				/* We don't know country of customer, so we can't create tax
-				if (! empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
+				if (!empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
 				{
-					if (! empty($vatcleaned))
+					if (!empty($vatcleaned))
 					{
 						$isineec=isInEEC($object);
 						if ($object->country_code && $isineec)
@@ -643,7 +646,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 
 				// The customer was just created with a source, so we can make a charge
 				// with no card defined, the source just used for customer creation will be used.
-				dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
+				dol_syslog("Create charge", LOG_DEBUG, 0, '_payment');
 				$charge = \Stripe\Charge::create(array(
 					'customer' => $customer->id,
 					'amount'   => price2num($amountstripe, 'MU'),
@@ -656,7 +659,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 				if (empty($charge)) {
 					$error++;
-					dol_syslog('Failed to charge card', LOG_WARNING, 0, '_stripe');
+					dol_syslog('Failed to charge card', LOG_WARNING, 0, '_payment');
 					setEventMessages('Failed to charge card', null, 'errors');
 					$action = '';
 				}
@@ -675,21 +678,21 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 
 			$error++;
 			$errormessage = "ErrorCard ".$e->getMessage()." err=".var_export($err, true);
-			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			dol_syslog($errormessage, LOG_WARNING, 0, '_payment');
 			setEventMessages($e->getMessage(), null, 'errors');
 			$action = '';
 		} catch (\Stripe\Error\RateLimit $e) {
 			// Too many requests made to the API too quickly
 			$error++;
 			$errormessage = "ErrorRateLimit ".$e->getMessage();
-			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			dol_syslog($errormessage, LOG_WARNING, 0, '_payment');
 			setEventMessages($e->getMessage(), null, 'errors');
 			$action = '';
 		} catch (\Stripe\Error\InvalidRequest $e) {
 			// Invalid parameters were supplied to Stripe's API
 			$error++;
 			$errormessage = "ErrorInvalidRequest ".$e->getMessage();
-			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			dol_syslog($errormessage, LOG_WARNING, 0, '_payment');
 			setEventMessages($e->getMessage(), null, 'errors');
 			$action = '';
 		} catch (\Stripe\Error\Authentication $e) {
@@ -697,14 +700,14 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 			// (maybe you changed API keys recently)
 			$error++;
 			$errormessage = "ErrorAuthentication ".$e->getMessage();
-			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			dol_syslog($errormessage, LOG_WARNING, 0, '_payment');
 			setEventMessages($e->getMessage(), null, 'errors');
 			$action = '';
 		} catch (\Stripe\Error\ApiConnection $e) {
 			// Network communication with Stripe failed
 			$error++;
 			$errormessage = "ErrorApiConnection ".$e->getMessage();
-			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			dol_syslog($errormessage, LOG_WARNING, 0, '_payment');
 			setEventMessages($e->getMessage(), null, 'errors');
 			$action = '';
 		} catch (\Stripe\Error\Base $e) {
@@ -712,14 +715,14 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 			// yourself an email
 			$error++;
 			$errormessage = "ErrorBase ".$e->getMessage();
-			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			dol_syslog($errormessage, LOG_WARNING, 0, '_payment');
 			setEventMessages($e->getMessage(), null, 'errors');
 			$action = '';
 		} catch (Exception $e) {
 			// Something else happened, completely unrelated to Stripe
 			$error++;
 			$errormessage = "ErrorException ".$e->getMessage();
-			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			dol_syslog($errormessage, LOG_WARNING, 0, '_payment');
 			setEventMessages($e->getMessage(), null, 'errors');
 			$action = '';
 		}
@@ -754,7 +757,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 		} catch (Exception $e) {
 			$error++;
 			$errormessage = "CantRetrievePaymentIntent ".$e->getMessage();
-			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			dol_syslog($errormessage, LOG_WARNING, 0, '_payment');
 			setEventMessages($e->getMessage(), null, 'errors');
 			$action = '';
 		}
@@ -762,13 +765,13 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 		if ($paymentintent->status != 'succeeded') {
 			$error++;
 			$errormessage = "StatusOfRetrievedIntent is not succeeded: ".$paymentintent->status;
-			dol_syslog($errormessage, LOG_WARNING, 0, '_stripe');
+			dol_syslog($errormessage, LOG_WARNING, 0, '_payment');
 			setEventMessages($paymentintent->status, null, 'errors');
 			$action = '';
 		} else {
 			// TODO We can also record the payment mode into llx_societe_rib with stripe $paymentintent->payment_method
 			// Note that with other old Stripe architecture (using Charge API), the payment mode was not recorded, so it is not mandatory to do it here.
-			//dol_syslog("Create payment_method for ".$paymentintent->payment_method, LOG_DEBUG, 0, '_stripe');
+			//dol_syslog("Create payment_method for ".$paymentintent->payment_method, LOG_DEBUG, 0, '_payment');
 
 			// Get here amount and currency used for payment and force value into $amount and $currency so the real amount is saved into session instead
 			// of the amount and currency retreived from the POST.
@@ -798,11 +801,13 @@ if ($action == 'charge' && !empty($conf->stripe->enabled)) {
 	$_SESSION['TRANSACTIONID'] = (is_object($charge) ? $charge->id : (is_object($paymentintent) ? $paymentintent->id : ''));
 	$_SESSION['errormessage'] = $errormessage;
 
-	dol_syslog("Action charge stripe STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')." ip=".$remoteip, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("onlinetoken=".$_SESSION["onlinetoken"]." FinalPaymentAmt=".$_SESSION["FinalPaymentAmt"]." currencyCodeType=".$_SESSION["currencyCodeType"]." payerID=".$_SESSION['payerID']." TRANSACTIONID=".$_SESSION['TRANSACTIONID'], LOG_DEBUG, 0, '_stripe');
-	dol_syslog("FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("error=".$error." errormessage=".$errormessage, LOG_DEBUG, 0, '_stripe');
-	dol_syslog("Now call the redirect to paymentok or paymentko, URL = ".($error ? $urlko : $urlok), LOG_DEBUG, 0, '_stripe');
+	dol_syslog("Action charge stripe STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')." ip=".$remoteip, LOG_DEBUG, 0, '_payment');
+	dol_syslog("onlinetoken=".$_SESSION["onlinetoken"]." FinalPaymentAmt=".$_SESSION["FinalPaymentAmt"]." currencyCodeType=".$_SESSION["currencyCodeType"]." payerID=".$_SESSION['payerID']." TRANSACTIONID=".$_SESSION['TRANSACTIONID'], LOG_DEBUG, 0, '_payment');
+	dol_syslog("FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_payment');
+	dol_syslog("error=".$error." errormessage=".$errormessage, LOG_DEBUG, 0, '_payment');
+	dol_syslog("_SERVER[SERVER_NAME] = ".(empty($_SERVER["SERVER_NAME"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_NAME"])), LOG_DEBUG, 0, '_payment');
+	dol_syslog("_SERVER[SERVER_ADDR] = ".(empty($_SERVER["SERVER_ADDR"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_ADDR"])), LOG_DEBUG, 0, '_payment');
+	dol_syslog("Now call the redirect to paymentok or paymentko, URL = ".($error ? $urlko : $urlok), LOG_DEBUG, 0, '_payment');
 
 	if ($error) {
 		header("Location: ".$urlko);
@@ -831,6 +836,11 @@ $conf->dol_hide_leftmenu = 1;
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
+dol_syslog("--- newpayment.php action = ".$action, LOG_DEBUG, 0, '_payment');
+dol_syslog("newpayment.php show page source=".$source." paymentmethod=".$paymentmethod.' amount='.$amount.' newamount='.GETPOST("newamount", 'alpha')." ref=".$ref, LOG_DEBUG, 0, '_payment');
+dol_syslog("_SERVER[SERVER_NAME] = ".(empty($_SERVER["SERVER_NAME"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_NAME"])), LOG_DEBUG, 0, '_payment');
+dol_syslog("_SERVER[SERVER_ADDR] = ".(empty($_SERVER["SERVER_ADDR"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_ADDR"])), LOG_DEBUG, 0, '_payment');
+
 // Check link validity
 if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', 'donation_ref', ''))) {
 	$langs->load("errors");
@@ -843,10 +853,10 @@ if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_r
 
 
 // Show sandbox warning
-if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled) && (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'int'))) {		// We can force sand box with param 'forcesandbox'
+if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal') && (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox', 'int'))) {		// We can force sand box with param 'forcesandbox'
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Paypal'), '', 'warning');
 }
-if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'int'))) {
+if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'int'))) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
 }
 
@@ -910,15 +920,15 @@ if (!empty($conf->global->MAIN_IMAGE_PUBLIC_PAYMENT)) {
 print '<!-- Form to send a payment -->'."\n";
 print '<!-- creditor = '.dol_escape_htmltag($creditor).' -->'."\n";
 // Additionnal information for each payment system
-if (!empty($conf->paypal->enabled)) {
-	print '<!-- PAYPAL_API_SANDBOX = '.$conf->global->PAYPAL_API_SANDBOX.' -->'."\n";
-	print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY.' -->'."\n";
+if (isModEnabled('paypal')) {
+	print '<!-- PAYPAL_API_SANDBOX = '.getDolGlobalString('PAYPAL_API_SANDBOX').' -->'."\n";
+	print '<!-- PAYPAL_API_INTEGRAL_OR_PAYPALONLY = '.getDolGlobalString('PAYPAL_API_INTEGRAL_OR_PAYPALONLY').' -->'."\n";
 }
-if (!empty($conf->paybox->enabled)) {
-	print '<!-- PAYBOX_CGI_URL = '.$conf->global->PAYBOX_CGI_URL_V2.' -->'."\n";
+if (isModEnabled('paybox')) {
+	print '<!-- PAYBOX_CGI_URL = '.getDolGlobalString('PAYBOX_CGI_URL_V2').' -->'."\n";
 }
-if (!empty($conf->stripe->enabled)) {
-	print '<!-- STRIPE_LIVE = '.$conf->global->STRIPE_LIVE.' -->'."\n";
+if (isModEnabled('stripe')) {
+	print '<!-- STRIPE_LIVE = '.getDolGlobalString('STRIPE_LIVE').' -->'."\n";
 }
 print '<!-- urlok = '.$urlok.' -->'."\n";
 print '<!-- urlko = '.$urlko.' -->'."\n";
@@ -1004,7 +1014,7 @@ if (!$source) {
 }
 
 
-// Payment on customer order
+// Payment on sales order
 if ($source == 'order') {
 	$found = true;
 	$langs->load("orders");
@@ -1353,19 +1363,15 @@ if ($source == 'contractline') {
 
 	// Object
 	$text = '<b>'.$langs->trans("PaymentRenewContractId", $contract->ref, $contractline->ref).'</b>';
-	if ($contractline->fk_product) {
+	if ($contractline->fk_product > 0) {
 		$contractline->fetch_product();
 		$text .= '<br>'.$contractline->product->ref.($contractline->product->label ? ' - '.$contractline->product->label : '');
 	}
 	if ($contractline->description) {
 		$text .= '<br>'.dol_htmlentitiesbr($contractline->description);
 	}
-	//if ($contractline->date_fin_validite) {
-	//	$text.='<br>'.$langs->trans("DateEndPlanned").': ';
-	//	$text.=dol_print_date($contractline->date_fin_validite);
-	//}
-	if ($contractline->date_fin_validite) {
-		$text .= '<br>'.$langs->trans("ExpiredSince").': '.dol_print_date($contractline->date_fin_validite);
+	if ($contractline->date_end) {
+		$text .= '<br>'.$langs->trans("ExpiredSince").': '.dol_print_date($contractline->date_end);
 	}
 	if (GETPOST('desc', 'alpha')) {
 		$text = '<b>'.$langs->trans(GETPOST('desc', 'alpha')).'</b>';
@@ -1468,6 +1474,7 @@ if ($source == 'contractline') {
 if ($source == 'member' || $source == 'membersubscription') {
 	$newsource = 'member';
 
+	$tag="";
 	$found = true;
 	$langs->load("members");
 
@@ -1500,7 +1507,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 			$amount = $adht->amount;
 		}
 
-		$amount = price2num($amount, 'MT');
+		$amount = max(0, price2num($amount, 'MT'));
 	}
 
 	if (GETPOST('fulltag', 'alpha')) {
@@ -1596,7 +1603,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 				print '</td><td class="CTableRow2">';
 				print $form->selectarray("typeid", $adht->liste_array(1), $member->typeid, 0, 0, 0, 'onchange="window.location.replace(\''.$urlwithroot.'/public/payment/newpayment.php?source='.urlencode($source).'&ref='.urlencode($ref).'&amount='.urlencode($amount).'&typeid=\' + this.value + \'&securekey='.urlencode($SECUREKEY).'\');"', 0, 0, 0, '', '', 1);
 				print "</td></tr>\n";
-			} elseif ($action == dopayment) {
+			} elseif ($action == 'dopayment') {
 				print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("NewMemberType");
 				print '</td><td class="CTableRow2">'.dol_escape_htmltag($member->type);
 				print '<input type="hidden" name="membertypeid" value="'.$member->typeid.'">';
@@ -1611,57 +1618,23 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 	// Amount
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
-	if (empty($amount)) {
-		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-			print ' ('.$langs->trans("ToComplete");
-		}
-		if (!empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) {
-			print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
-		}
-		if (empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-			print ')';
-		}
+	// This place no longer allows amount edition
+	if (!empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) {
+		print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 	}
 	print '</td><td class="CTableRow2">';
-	$valtoshow = '';
-	if (empty($amount) || !is_numeric($amount)) {
-		$valtoshow = price2num(GETPOST("newamount", 'alpha'), 'MT');
-		// force default subscription amount to value defined into constant...
-		if (empty($valtoshow)) {
-			if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
-				if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-					$valtoshow = $conf->global->MEMBER_NEWFORM_AMOUNT;
-				}
-			} else {
-				if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
-					$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
-				}
-			}
-		}
+	if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $amount) {
+		$amount = max(0, $conf->global->MEMBER_MIN_AMOUNT, $amount);
 	}
-	if (empty($amount) || !is_numeric($amount)) {
-		//$valtoshow=price2num(GETPOST("newamount",'alpha'),'MT');
-		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
-			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
-		}
-		print '<input type="hidden" name="amount" value="'.price2num(GETPOST("amount", 'alpha'), 'MT').'">';
-		if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {
-			print '<input class="flat maxwidth75" type="text" name="newamountbis" value="'.$valtoshow.'" disabled="disabled">';
-			print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
-		} else {
-			print '<input class="flat maxwidth75" type="text" name="newamount" value="'.$valtoshow.'">';
-		}
-		print ' <b>'.$langs->trans("Currency".$currency).'</b>';
-	} else {
-		$valtoshow = $amount;
-		if (!empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) {
-			$valtoshow = max($conf->global->MEMBER_MIN_AMOUNT, $valtoshow);
-			$amount = $valtoshow;
-		}
-		print '<b class="amount">'.price($valtoshow, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
-		print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
-		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
+	print '<b class="amount">'.price($amount, 1, $langs, 1, -1, -1, $currency).'</b>';	// Price with currency
+	$caneditamount = !empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $adht->caneditamount;
+	$minimumamount = empty($conf->global->MEMBER_MIN_AMOUNT)? $adht->amount : max($conf->global->MEMBER_MIN_AMOUNT, $adht->amount > $amount);
+	if (!$caneditamount && $minimumamount > $amount) {
+		print ' '. $langs->trans("AmountIsLowerToMinimumNotice", price($adht->amount, 1, $langs, 1, -1, -1, $currency));
 	}
+
+	print '<input type="hidden" name="amount" value="'.$amount.'">';
+	print '<input type="hidden" name="newamount" value="'.$amount.'">';
 	print '<input type="hidden" name="currency" value="'.$currency.'">';
 	print '</td></tr>'."\n";
 
@@ -2075,7 +2048,7 @@ if ($action != 'dopayment') {
 				'paymentmethod' => $paymentmethod
 			];
 			$reshook = $hookmanager->executeHooks('doAddButton', $parameters, $object, $action);
-			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled)) {
+			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
 				print '<div class="button buttonpayment" id="div_dopayment_paybox"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_paybox" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
 				print '<br>';
 				print '<span class="buttonpaymentsmall">'.$langs->trans("CreditOrDebitCard").'</span>';
@@ -2094,7 +2067,7 @@ if ($action != 'dopayment') {
 				';
 			}
 
-			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled)) {
+			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 				print '<div class="button buttonpayment" id="div_dopayment_stripe"><span class="fa fa-credit-card"></span> <input class="" type="submit" id="dopayment_stripe" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
 				print '<input type="hidden" name="noidempotency" value="'.GETPOST('noidempotency', 'int').'">';
 				print '<br>';
@@ -2115,7 +2088,7 @@ if ($action != 'dopayment') {
 				';
 			}
 
-			if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled)) {
+			if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal')) {
 				if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) {
 					$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY = 'integral';
 				}
@@ -2261,7 +2234,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 		// $conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1 = use intent (default value)
 		// $conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2 = use payment
 
-		//if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || ! empty($paymentintent))
+		//if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) || !empty($paymentintent))
 		//{
 		print '
         <table id="dolpaymenttable" summary="Payment form" class="center centpercent">
@@ -2390,7 +2363,17 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			   // Code for payment with option STRIPE_USE_NEW_CHECKOUT set
 
 			// Create a Stripe client.
+				<?php
+				if (empty($stripeacc)) {
+					?>
 			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
+					<?php
+				} else {
+					?>
+			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>', { stripeAccount: '<?php echo $stripeacc; ?>' });
+					<?php
+				}
+				?>
 
 			// Create an instance of Elements
 			var elements = stripe.elements();
@@ -2435,7 +2418,17 @@ if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payme
 			// Code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION set to 1 or 2
 
 			// Create a Stripe client.
+				<?php
+				if (empty($stripeacc)) {
+					?>
 			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
+					<?php
+				} else {
+					?>
+			var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>', { stripeAccount: '<?php echo $stripeacc; ?>' });
+					<?php
+				}
+				?>
 
 				<?php
 				if (getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') == 2) {

@@ -46,7 +46,7 @@ KnowledgeRecords = Erthyglau
 KnowledgeRecord = Erthygl
 KnowledgeRecordExtraFields = Extrafields ar gyfer Erthygl
 GroupOfTicket=Grŵp o docynnau
-YouCanLinkArticleToATicketCategory=Gallwch gysylltu erthygl â grŵp tocynnau (felly bydd yr erthygl yn cael ei hawgrymu yn ystod cyfnod cymhwyso tocynnau newydd)
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
 SuggestedForTicketsInGroup=Argymhellir ar gyfer tocynnau pan fydd grŵp
 
 SetObsolete=Gosod fel darfodedig

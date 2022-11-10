@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018       Thibault FOUCART        <support@ptibogxiv.net>
+/* Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,6 +18,7 @@
 
 // Put here all includes required by your class file
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -26,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
@@ -67,7 +68,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeChargeList"));
 
-if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -175,7 +176,7 @@ if (!$rowid) {
 		}
 
 		// Why this ?
-		/*if (! empty($charge->payment_intent)) {
+		/*if (!empty($charge->payment_intent)) {
 		 if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 		 $charge = \Stripe\PaymentIntent::retrieve($charge->payment_intent);
 		 } else {
@@ -224,7 +225,7 @@ if (!$rowid) {
 
 		// Stripe customer
 		print "<td>";
-		if (!empty($conf->stripe->enabled) && !empty($stripeacc)) {
+		if (isModEnabled('stripe') && !empty($stripeacc)) {
 			$connect = $stripeacc.'/';
 		}
 		$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$charge->customer;
@@ -251,16 +252,15 @@ if (!$rowid) {
 			$object = new Commande($db);
 			$object->fetch($charge->metadata->dol_id);
 			if ($object->id > 0) {
-				print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'object_order')." ".$object->ref."</a>";
+				print "<a href='".DOL_URL_ROOT."/commande/card.php?id=".$object->id."'>".img_picto('', 'order')." ".$object->ref."</a>";
 			} else {
 				print $FULLTAG;
 			}
 		} elseif ($charge->metadata->dol_type == "invoice" || $charge->metadata->dol_type == "facture") {
-			print $charge->metadata->dol_type.' '.$charge->metadata->dol_id.' - ';
 			$object = new Facture($db);
 			$object->fetch($charge->metadata->dol_id);
 			if ($object->id > 0) {
-				print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'object_invoice')." ".$object->ref."</a>";
+				print "<a href='".DOL_URL_ROOT."/compta/facture/card.php?facid=".$charge->metadata->dol_id."'>".img_picto('', 'bill')." ".$object->ref."</a>";
 			} else {
 				print $FULLTAG;
 			}
