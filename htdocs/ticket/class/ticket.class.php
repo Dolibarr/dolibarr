@@ -1666,7 +1666,7 @@ class Ticket extends CommonObject
 	 */
 	public function loadCacheMsgsTicket()
 	{
-		if (is_array($this->cache_msgs_ticket) && count($this->cache_msgs_ticket)) {
+		if (!empty($this->cache_msgs_ticket) && is_array($this->cache_msgs_ticket) && count($this->cache_msgs_ticket)) {
 			return 0;
 		}
 

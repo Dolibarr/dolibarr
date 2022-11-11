@@ -1317,7 +1317,7 @@ class ActionComm extends CommonObject
 		dol_syslog(get_class()."::getActions", LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-		$hookmanager = new HookManager($db);
+		$hookmanager = new HookManager($this->db);
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		$hookmanager->initHooks(array('agendadao'));
 

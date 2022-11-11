@@ -187,7 +187,7 @@ if ($object->nature == 2) {
 
 $title = $langs->trans("GenerationOfAccountingEntries") . ' - ' . $object->getNomUrl(0, 2, 1, '', 1);
 
-llxHeader('', $title);
+llxHeader('', dol_string_nohtmltag($title));
 
 $nom = $title;
 $nomlink = '';
