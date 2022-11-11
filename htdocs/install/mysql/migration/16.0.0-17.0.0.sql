@@ -374,3 +374,5 @@ ALTER TABLE llx_prelevement_demande ADD COLUMN fk_salary INTEGER NULL AFTER fk_f
 
 
 ALTER TABLE llx_user ADD COLUMN birth_place varchar(64);
+
+ALTER TABLE llx_c_tva ADD COLUMN type_vat smallint NOT NULL DEFAULT '0' AFTER fk_pays;
