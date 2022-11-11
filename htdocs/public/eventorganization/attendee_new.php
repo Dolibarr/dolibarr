@@ -103,14 +103,16 @@ if ($type == 'global') {
 		$errmsg .= $project->error;
 		$errors = array_merge($errors, $project->errors);
 	} else {
-		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."projet";
-		$sql .= " WHERE ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee = ".((int) $project->id);
+		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
+		$sql .= " WHERE fk_project = ".((int) $project->id);
 
-		$resql = $db->query($resql);
+		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
 				$currentnbofattendees = $obj->nb;
+			} else {
+				dol_print_error($db);
 			}
 		}
 	}
