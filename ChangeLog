@@ -3,6 +3,47 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 16.0.2 compared to 16.0.1 *****
+
+FIX: 16.0 - computed extrafields are not displayed if the object has no other extrafields
+FIX: #22538
+FIX: Accountancy - Review of Winfic - eWinfic - Winsis compta export format
+FIX: add loadRoleMode on getlinearray
+FIX: Autosearch on takepos was broken
+FIX: avoid access forbidden with numeric ref
+FIX: avoid error, check of product fetch is already check before
+FIX: avoid error, fetch of product is mandatory (by id or by ref)
+FIX: avoid unnecessary multiple calculation (#22637)
+FIX: bug on selected value for select_bom() function
+FIX: can not set prospect status "Do not contact"
+FIX: change in the communication status of the prospect
+FIX: check $id, already checked before
+FIX: closed warehouse for shipping
+FIX: extrafields_add tpl for stock movement
+FIX: the request SQL for transversal user, the join on usergroup table must be with getEntity('usergroup')
+FIX: Import of contact when there is duplicate thirdparties
+FIX: Import of socialnetwork field
+FIX: input selector is wrong with PRODUCT_LOAD_EXTRAFIELD_INTO_OBJECTLINES usage
+FIX: install wizard error management
+FIX: just add integer
+FIX: Missing $object for online signature link build
+FIX: missing quote
+FIX: only modify hidden checkbox/multislected extrafields on update if they are provided in request
+FIX: php doc
+FIX: private message ticket become public if edit action
+FIX: remove > 0 and -1
+FIX: remove db object to avoid error with postgresql
+FIX: Search ambigous field on MO list
+FIX: Search on social networks
+FIX: Subscription must be stopped when max of attendees reached.
+FIX: supplier price update: missing error reporting
+FIX: travis & stickler feedbacks
+FIX: we must be able to select only bom of a specific product + several fixes on select_bom() function
+FIX: wrong perm check
+FIX: wrong typo, remove quote
+FIX: wrong var typo
+
+
 ***** ChangeLog for 16.0.1 compared to 16.0.0 *****
 
 FIX: #16476 on massaction the pdf generation is not using the t…
