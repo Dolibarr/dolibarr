@@ -700,6 +700,17 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 		// Export files then exit
 		$accountancyexport = new AccountancyExport($db);
 
+		$notexportlettering = GETPOST('notexportlettering', 'alpha');
+
+		if (!empty($notexportlettering)) {
+			if (is_array($object->lines)) {
+				foreach ($object->lines as $k => $movement) {
+					unset($object->lines[$k]->lettering_code);
+					unset($object->lines[$k]->date_lettering);
+				}
+			}
+		}
+
 		$mimetype = $accountancyexport->getMimeType($formatexportset);
 
 		top_httphead($mimetype, 1);
@@ -802,6 +813,19 @@ $formconfirm = '';
 if ($action == 'export_file') {
 	$form_question = array();
 
+	if (getDolGlobalInt("ACCOUNTING_ENABLE_LETTERING")) {
+		// If 1, we check by default.
+		$checked = !empty($conf->global->ACCOUNTING_DEFAULT_NOT_EXPORT_LETTERING) ? 'true' : 'false';
+		$form_question['notexportlettering'] = array(
+			'name' => 'notexportlettering',
+			'type' => 'checkbox',
+			'label' => $langs->trans('NotExportLettering'),
+			'value' => $checked,
+		);
+
+		$form_question['separator'] = array('name'=>'separator', 'type'=>'separator');
+	}
+
 	// If 1 or not set, we check by default.
 	$checked = (!isset($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) || !empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE));
 	$form_question['notifiedexportdate'] = array(
@@ -811,7 +835,7 @@ if ($action == 'export_file') {
 		'value' => (!empty($conf->global->ACCOUNTING_DEFAULT_NOT_NOTIFIED_EXPORT_DATE) ? 'false' : 'true'),
 	);
 
-	$form_question['separator'] = array('name'=>'separator', 'type'=>'separator');
+	$form_question['separator2'] = array('name'=>'separator2', 'type'=>'separator');
 
 	if (!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
 		// If 0 or not set, we NOT check by default.
@@ -823,10 +847,10 @@ if ($action == 'export_file') {
 			'value' => $checked,
 		);
 
-		$form_question['separator2'] = array('name'=>'separator2', 'type'=>'separator');
+		$form_question['separator3'] = array('name'=>'separator3', 'type'=>'separator');
 	}
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 300, 600);
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 350, 600);
 }
 
 //if ($action == 'delbookkeepingyear') {

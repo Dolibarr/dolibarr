@@ -625,3 +625,4 @@ PaymentRegisteredAndInvoiceSetToPaid=Payment registered and invoice %s set to pa
 SendEmailsRemindersOnInvoiceDueDate=Send reminder by email for unpaid invoices
 MakePaymentAndClassifyPayed=Record payment
 BulkPaymentNotPossibleForInvoice=Bulk payment is not possible for invoice %s (bad type or status)
+MentionVATDebitOptionIsOn=Option to pay tax based on debits

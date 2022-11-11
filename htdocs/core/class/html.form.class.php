@@ -8097,7 +8097,7 @@ class Form
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', $show_empty < 0 ? (string) $show_empty : '-1');
+			$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($show_empty < 0 ? (string) $show_empty : '-1'), $morecss);
 		}
 
 		return $out;

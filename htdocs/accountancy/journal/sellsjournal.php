@@ -699,9 +699,11 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 
 
 if (empty($action) || $action == 'view') {
-	llxHeader('', $langs->trans("SellsJournal"));
+	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
 
-	$nom = $langs->trans("SellsJournal").' | '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
+	llxHeader('', dol_string_nohtmltag($title));
+
+	$nom = $title;
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';

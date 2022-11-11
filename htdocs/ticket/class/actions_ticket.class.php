@@ -199,7 +199,7 @@ class ActionsTicket
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
-		if ($user->rights->ticket->manage) {
+		if ($user->hasRight("ticket", "manage")) {
 			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
 		}
 		print '</td></tr>';
