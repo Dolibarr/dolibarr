@@ -1119,7 +1119,7 @@ while ($i < min($num, $limit)) {
 	// Type ent
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="center">';
-		if (!isset($typenArray)) {
+		if (!isset($typenArray) || empty($typenArray)) {
 			$typenArray = $formcompany->typent_array(1);
 		}
 		if (isset($typenArray[$obj->typent_code])) {
