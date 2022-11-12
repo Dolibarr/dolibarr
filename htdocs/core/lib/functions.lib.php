@@ -1934,7 +1934,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				$out .= '<div class="tab tab'.($isactive?'active':'unactive').'" style="margin: 0 !important">';
 				if (!empty($links[$i][0])) {
 					$titletoshow = preg_replace('/<.*$/', '', $links[$i][1]);
-					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tab inline-block valignmiddle'.($morecss ? ' '.$morecss : '').($links[$i][5] ? ' '.$links[$i][5] : '').'" href="'.$links[$i][0].'" title="'.dol_escape_htmltag($titletoshow).'">';
+					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tab inline-block valignmiddle'.($morecss ? ' '.$morecss : '').(!empty($links[$i][5]) ? ' '.$links[$i][5] : '').'" href="'.$links[$i][0].'" title="'.dol_escape_htmltag($titletoshow).'">';
 				}
 				$out .= $links[$i][1];
 				if (!empty($links[$i][0])) {
