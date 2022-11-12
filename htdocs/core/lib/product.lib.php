@@ -53,11 +53,19 @@ function product_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (!empty($object->status) && $usercancreadprice) {
-		$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
-		$head[$h][1] = $langs->trans("SellingPrices");
-		$head[$h][2] = 'price';
-		$h++;
+	if (!empty($object->status)) {
+		if ($usercancreadprice) {
+			$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
+			$head[$h][1] = $langs->trans("SellingPrices");
+			$head[$h][2] = 'price';
+			$h++;
+		} else {
+			$head[$h][0] = '#';
+			$head[$h][1] = $langs->trans("SellingPrices");
+			$head[$h][2] = 'price';
+			$head[$h][5] = 'disabled';
+			$h++;
+		}
 	}
 
 	if (!empty($object->status_buy) || (isModEnabled('margin') && !empty($object->status))) {   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
@@ -68,6 +76,12 @@ function product_prepare_head($object)
 				$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
 				$head[$h][1] = $langs->trans("BuyingPrices");
 				$head[$h][2] = 'suppliers';
+				$h++;
+			} else {
+				$head[$h][0] = '#';
+				$head[$h][1] = $langs->trans("BuyingPrices");
+				$head[$h][2] = 'suppliers';
+				$head[$h][5] = 'disabled';
 				$h++;
 			}
 		}

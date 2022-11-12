@@ -1325,7 +1325,7 @@ while ($i < $imaxinloop) {
 		}
 		// Sales Representatives
 		if (!empty($arrayfields['commercial']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->socid) {
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
