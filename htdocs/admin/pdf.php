@@ -314,7 +314,7 @@ print load_fiche_titre($langs->trans("PDFAddressForging"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 // Show sender name
 
@@ -378,6 +378,7 @@ if ($conf->use_javascript_ajax) {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("MAIN_PDF_NO_RECIPENT_FRAME", $arrval, $conf->global->MAIN_PDF_NO_RECIPENT_FRAME);
 }
+print '</td></tr>';
 
 //Invert sender and recipient
 

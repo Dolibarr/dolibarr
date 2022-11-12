@@ -2060,7 +2060,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			$newmenu->add("/product/stock/list.php", $langs->trans("List"), 1, $user->hasRight('stock',  'lire'));
 			$newmenu->add("/product/stock/movement_list.php", $langs->trans("Movements"), 1, $user->hasRight('stock', 'mouvement', 'lire'));
 
-			$newmenu->add("/product/stock/massstockmove.php", $langs->trans("MassStockTransferShort"), 1, $user->hasRight('stock', 'mouvement', 'creer'));
+			$newmenu->add("/product/stock/massstockmove.php?init=1", $langs->trans("MassStockTransferShort"), 1, $user->hasRight('stock', 'mouvement', 'creer'));
 			if (isModEnabled('supplier_order')) {
 				$newmenu->add("/product/stock/replenish.php", $langs->trans("Replenishment"), 1, $user->hasRight('stock', 'mouvement', 'creer') && $user->hasRight('fournisseur',  'lire'));
 			}
