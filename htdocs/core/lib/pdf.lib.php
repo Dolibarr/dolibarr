@@ -641,7 +641,11 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 			}
 
 			// Professionnal Ids
-			if (!empty($conf->global->MAIN_PROFID1_IN_ADDRESS) && !empty($targetcompany->idprof1)) {
+
+			// Force display idprof1 (SIREN) if it's not empty (Mandatory for professionals) and if receiver is french
+			// Decret n°2099-1299 2022-10-07
+			if (($targetcompany->country_code == 'FR' && !empty($targetcompany->idprof1))
+				|| (!empty($conf->global->MAIN_PROFID1_IN_ADDRESS) && !empty($targetcompany->idprof1))) {
 				$tmp = $outputlangs->transcountrynoentities("ProfId1", $targetcompany->country_code);
 				if (preg_match('/\((.+)\)/', $tmp, $reg)) {
 					$tmp = $reg[1];
