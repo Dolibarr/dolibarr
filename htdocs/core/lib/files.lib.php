@@ -641,6 +641,12 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 		return 0;
 	}
 
+	$srcexists = dol_is_file($srcfile);
+	if (!$srcexists) {
+		dol_syslog("files.lib.php::dolReplaceInFile failed to read src file", LOG_WARNING);
+		return -3;
+	}
+
 	$tmpdestfile = $destfile.'.tmp';
 
 	$newpathofsrcfile = dol_osencode($srcfile);

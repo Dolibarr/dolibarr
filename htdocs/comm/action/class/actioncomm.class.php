@@ -269,6 +269,7 @@ class ActionComm extends CommonObject
 	 */
 	public $contact_id;
 
+
 	/**
 	 * @var Societe|null Company linked to action (optional)
 	 * @deprecated
@@ -376,9 +377,9 @@ class ActionComm extends CommonObject
 	/**
 	 * Properties to manage the recurring events
 	 */
-	public $recurid;
-	public $recurrule;
-	public $recurdateend;
+	public $recurid;		/* A string YYYYMMDDHHMMSS shared by allevent of same serie */
+	public $recurrule;		/* Rule of recurring */
+	public $recurdateend;	/* Repeat until this date */
 
 	public $calling_duration;
 
@@ -549,6 +550,9 @@ class ActionComm extends CommonObject
 		$sql .= "email_tobcc,";
 		$sql .= "email_subject,";
 		$sql .= "errors_to,";
+		$sql .= "recurid,";
+		$sql .= "recurrule,";
+		$sql .= "recurdateend,";
 		$sql .= "num_vote,";
 		$sql .= "event_paid,";
 		$sql .= "status";
@@ -587,6 +591,9 @@ class ActionComm extends CommonObject
 		$sql .= (!empty($this->email_tobcc) ? "'".$this->db->escape($this->email_tobcc)."'" : "null").", ";
 		$sql .= (!empty($this->email_subject) ? "'".$this->db->escape($this->email_subject)."'" : "null").", ";
 		$sql .= (!empty($this->errors_to) ? "'".$this->db->escape($this->errors_to)."'" : "null").", ";
+		$sql .= (!empty($this->recurid) ? "'".$this->db->escape($this->recurid)."'" : "null").", ";
+		$sql .= (!empty($this->recurrule) ? "'".$this->db->escape($this->recurrule)."'" : "null").", ";
+		$sql .= (!empty($this->recurdateend) ? "'".$this->db->idate($this->recurdateend)."'" : "null").", ";
 		$sql .= (!empty($this->num_vote) ? (int) $this->num_vote : "null").", ";
 		$sql .= (!empty($this->event_paid) ? (int) $this->event_paid : 0).", ";
 		$sql .= (!empty($this->status) ? (int) $this->status : "0");
@@ -716,6 +723,9 @@ class ActionComm extends CommonObject
 		$this->fetchResources();
 
 		$this->id = 0;
+		$this->recurid = '';
+		$this->recurrule = '';
+		$this->recurdateend = '';
 
 		// Create clone
 		$this->context['createfromclone'] = 'createfromclone';
@@ -1307,7 +1317,7 @@ class ActionComm extends CommonObject
 		dol_syslog(get_class()."::getActions", LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-		$hookmanager = new HookManager($db);
+		$hookmanager = new HookManager($this->db);
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		$hookmanager->initHooks(array('agendadao'));
 
