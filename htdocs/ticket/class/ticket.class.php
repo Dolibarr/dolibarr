@@ -1629,6 +1629,7 @@ class Ticket extends CommonObject
 		$actioncomm->percentage = -1; // percentage is not relevant for punctual events
 		$actioncomm->elementtype = 'ticket';
 		$actioncomm->fk_element = $this->id;
+		$actioncomm->fk_project = $this->fk_project;
 
 		$attachedfiles = array();
 		$attachedfiles['paths'] = $filename_list;
@@ -2378,6 +2379,7 @@ class Ticket extends CommonObject
 
 		$object->socid = $object->fk_soc;
 		$object->fetch_thirdparty();
+		$object->fetch_project();
 
 		if ($ret < 0) {
 			$error++;
