@@ -2536,6 +2536,12 @@ span.mainmenuaspan.tmenudisabled {
 	cursor: not-allowed;
 }
 
+a.disabled {
+    color: #aaa;
+    text-decoration: none !important;
+    cursor: default;
+}
+
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 	padding: 0px 2px 0px 2px;
 	margin: 0px 0px 0px 0px;

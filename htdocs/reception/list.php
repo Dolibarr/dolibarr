@@ -1119,10 +1119,12 @@ while ($i < min($num, $limit)) {
 	// Type ent
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="center">';
-		if (count($typenArray) == 0) {
+		if (!isset($typenArray) || empty($typenArray)) {
 			$typenArray = $formcompany->typent_array(1);
 		}
-		print $typenArray[$obj->typent_code];
+		if (isset($typenArray[$obj->typent_code])) {
+			print $typenArray[$obj->typent_code];
+		}
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
