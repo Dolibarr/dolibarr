@@ -1180,7 +1180,7 @@ class pdf_crabe extends ModelePDFFactures
 			// Decret n°2099-1299 2022-10-07
 			// French mention : "Option pour le paiement de la taxe d'après les débits"
 			if ($this->emetteur->country_code == 'FR') {
-				if ($conf->global->TAX_MODE == 1) {
+				if (isset($conf->global->TAX_MODE) && $conf->global->TAX_MODE == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->writeHTMLCell(80, 5, '', '', $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
 
