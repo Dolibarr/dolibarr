@@ -200,6 +200,16 @@ if ($action == "importSignature") {
 
 				dol_syslog(__METHOD__, LOG_DEBUG);
 				$resql = $db->query($sql);
+				//Trigger propal signe en ligne
+				if (method_exists($object, 'call_trigger')) {
+					$user = new User($db);
+					$user->fetch($object->user_valid_id);
+					$result = $object->call_trigger('PROPAL_CLOSE_SIGNED_ONLINE', $user);
+					if ($result < 0) {
+						$error++;
+					}}
+					//End of modification
+	
 				if (!$resql) {
 					$error++;
 				} else {
