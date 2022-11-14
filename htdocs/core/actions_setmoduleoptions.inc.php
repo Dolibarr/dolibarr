@@ -90,6 +90,7 @@ if ($action == 'setModuleOptions') {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$keyforuploaddir = GETPOST('keyforuploaddir', 'aZ09');
 		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->$keyforuploaddir)));
+
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
 			$tmpdir = preg_replace('/DOL_DATA_ROOT/', DOL_DATA_ROOT, $tmpdir);
@@ -105,7 +106,10 @@ if ($action == 'setModuleOptions') {
 				$upload_dir = $tmpdir;
 			}
 		}
+
+
 		if ($upload_dir) {
+
 			$result = dol_add_file_process($upload_dir, 1, 1, 'uploadfile', '');
 			if ($result <= 0) {
 				$error++;

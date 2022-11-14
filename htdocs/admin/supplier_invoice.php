@@ -56,6 +56,8 @@ $specimenthirdparty->initAsSpecimen();
  * Actions
  */
 
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+
 if ($action == 'updateMask') {
 	$maskconstinvoice = GETPOST('maskconstinvoice', 'alpha');
 	$maskconstcredit = GETPOST('maskconstcredit', 'alpha');
