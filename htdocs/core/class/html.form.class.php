@@ -6142,7 +6142,9 @@ class Form
 		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
-		$sql .= " AND t.type_vat IN (0, ".((int) $type_vat).")";
+		if ($type_vat > 0) {
+			$sql .= " AND t.type_vat IN (0, ".((int) $type_vat).")";
+		}
 		$sql .= " AND c.code IN (".$this->db->sanitize($country_code, 1).")";
 		$sql .= " ORDER BY t.code ASC, t.taux ASC, t.recuperableonly ASC";
 
