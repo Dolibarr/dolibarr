@@ -2504,7 +2504,7 @@ class FactureFournisseur extends CommonInvoice
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
-
+        
 		$picto = $this->picto;
 		if ($this->type == self::TYPE_REPLACEMENT) {
 			$picto .= 'r'; // Replacement invoice
@@ -2524,7 +2524,7 @@ class FactureFournisseur extends CommonInvoice
 		} elseif ($this->type == self::TYPE_DEPOSIT) {
 			$label = '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
 		}
-		if (isset($this->status)) {
+		if (isset($this->statut)) {
 			$alreadypaid = -1;
 			if (isset($this->alreadypaid)) {
 				$alreadypaid = $this->alreadypaid;
