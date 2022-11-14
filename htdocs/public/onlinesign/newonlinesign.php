@@ -202,7 +202,7 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 			$error++;
 		}}
 		//End of modification
-	}
+}
 
 
 /*

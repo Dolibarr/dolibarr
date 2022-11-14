@@ -209,7 +209,7 @@ if ($action == "importSignature") {
 						$error++;
 					}}
 					//End of modification
-	
+
 				if (!$resql) {
 					$error++;
 				} else {

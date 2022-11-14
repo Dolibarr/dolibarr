@@ -18,7 +18,7 @@
 /**
  *  \file       htdocs/core/triggers/interface_70_modpropale.MailPropalSigne.class.php
  *  \ingroup    core
- *  \brief      Trigger pour notif lors de changement d'état par signature en ligne d'une proposition commercial 
+ *  \brief      Trigger pour notif lors de changement d'état par signature en ligne d'une proposition commercial
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
@@ -72,89 +72,83 @@ class InterfaceMailPropalSigne extends DolibarrTriggers
 			*fk_c_type_contact`=31 indique que nous rechercher le "Commercial suivi proposition" indiqué dans "Contacts/Adresses" de la fiche du devis.
 			*/
 
-			if ($action == 'PROPAL_CLOSE_SIGNED_ONLINE')
-			{
-				$sql="SELECT `lastname`,`firstname`,`email` FROM ".MAIN_DB_PREFIX."user WHERE `rowid` IN (SELECT `fk_socpeople` FROM ".MAIN_DB_PREFIX."element_contact WHERE `element_id`=$idPropal AND `fk_c_type_contact`=31)";
-				$resql = $this->db->query($sql);
-				$obj = $this->db->fetch_object($resql);
-				$liste_commercial_lastname = array($obj->lastname);
-				$liste_commercial_firstname = array($obj->firstname);
-				$liste_commercial_email = array($obj->email);
-				if ($resql)
-				{
-					$num = $this->db->num_rows($resql);
-					$i = 1;
-					//Création de la liste du ou des commercial/commerciaux.
-					while ($i < $num) {
-						$row = $this->db->fetch_row($resql);
-						array_push($liste_commercial_lastname, $row['0']);
-						array_push($liste_commercial_firstname, $row['1']);
-						array_push($liste_commercial_email, $row['2']);
-						$i++;
-					}
-					//Boucle d'envoie des emails a chaque commercial définie plus haut.
-					$c=0;
-					foreach($liste_commercial_email as $emailcommercial)
-					{
-						$subject = $conf->global->MAIN_INFO_SOCIETE_NOM." - Devis " .$object->ref;
-						$filepath = array(DOL_DATA_ROOT."/".$object->last_main_doc);
-						$mimetype = array("application/pdf");
-						$filename = array($object->ref.'_Signe.pdf');
-						$messagecommercial = "Bonjour ".$liste_commercial_firstname[$c].",<br><br>Le devis ".$object->ref." (ci-joint) vient d'être signé en ligne.<br><br>Cordialement<br>".$conf->global->MAIN_INFO_SOCIETE_NOM;
-						$sendto = $liste_commercial_email[$c];
-						$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM.' ').'<'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-						$mailfile = new CMailFile($subject,$sendto,$from,$messagecommercial,$filepath,$mimetype,$filename,'','',0,-1,'','','','','test');
-						$mailfile->sendfile();
-						$c++;
-					}
+		if ($action == 'PROPAL_CLOSE_SIGNED_ONLINE') {
+			$sql="SELECT `lastname`,`firstname`,`email` FROM ".MAIN_DB_PREFIX."user WHERE `rowid` IN (SELECT `fk_socpeople` FROM ".MAIN_DB_PREFIX."element_contact WHERE `element_id`=$idPropal AND `fk_c_type_contact`=31)";
+			$resql = $this->db->query($sql);
+			$obj = $this->db->fetch_object($resql);
+			$liste_commercial_lastname = array($obj->lastname);
+			$liste_commercial_firstname = array($obj->firstname);
+			$liste_commercial_email = array($obj->email);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				$i = 1;
+				//Création de la liste du ou des commercial/commerciaux.
+				while ($i < $num) {
+					$row = $this->db->fetch_row($resql);
+					array_push($liste_commercial_lastname, $row['0']);
+					array_push($liste_commercial_firstname, $row['1']);
+					array_push($liste_commercial_email, $row['2']);
+					$i++;
+				}
+				//Boucle d'envoie des emails a chaque commercial définie plus haut.
+				$c=0;
+				foreach ($liste_commercial_email as $emailcommercial) {
+					$subject = $conf->global->MAIN_INFO_SOCIETE_NOM." - Devis " .$object->ref;
+					$filepath = array(DOL_DATA_ROOT."/".$object->last_main_doc);
+					$mimetype = array("application/pdf");
+					$filename = array($object->ref.'_Signe.pdf');
+					$messagecommercial = "Bonjour ".$liste_commercial_firstname[$c].",<br><br>Le devis ".$object->ref." (ci-joint) vient d'être signé en ligne.<br><br>Cordialement<br>".$conf->global->MAIN_INFO_SOCIETE_NOM;
+					$sendto = $liste_commercial_email[$c];
+					$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM.' ').'<'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+					$mailfile = new CMailFile($subject, $sendto, $from, $messagecommercial, $filepath, $mimetype, $filename, '', '', 0, -1, '', '', '', '', 'test');
+					$mailfile->sendfile();
+					$c++;
 				}
 			}
+		}
 
 			//Mail au client
 			/*
 			*Definition de l'adresse du client affecté devis
 			*fk_c_type_contact`=41 indique que nous rechercher le "Contact client suivi propale"
 			*/
-			
-			if ($action == 'PROPAL_CLOSE_SIGNED_ONLINE')
-			{
-				$sql="SELECT `civility`,`lastname`,`firstname`,`email` FROM ".MAIN_DB_PREFIX."socpeople WHERE `rowid` IN (SELECT `fk_socpeople` FROM ".MAIN_DB_PREFIX."element_contact WHERE `element_id`=$idPropal AND `fk_c_type_contact`=41)";
-				$resql = $this->db->query($sql);
-				$obj = $this->db->fetch_object($resql);
-				$liste_client_civility = array($obj->civility);
-				$liste_client_lastname = array($obj->lastname);
-				$liste_client_firstname = array($obj->firstname);
-				$liste_client_email = array($obj->email);
-				if ($resql)
-				{
-					$num = $this->db->num_rows($resql);
-					$j = 1;
-					//Création de la liste du ou des client(s).
-					while ($j < $num) {
-						$row = $this->db->fetch_row($resql);
-						array_push($liste_client_civility, $row['0']);
-						array_push($liste_client_lastname, $row['1']);
-						array_push($liste_client_firstname, $row['2']);
-						array_push($liste_client_email, $row['3']);
-						$j++;
-					}
-					//Boucle d'envoie des emails a chaque client définie plus haut.
-					$h=0;
-					foreach($liste_client_email as $emailclient)
-					{
-						$subject = $conf->global->MAIN_INFO_SOCIETE_NOM." - Devis " .$object->ref;
-						$filepath = array(DOL_DATA_ROOT."/".$object->last_main_doc);
-						$mimetype = array("application/pdf");
-						$filename = array($object->ref.'_Signe.pdf');
-						$messageclient = "Bonjour ".$liste_client_civility[$h]." ".$liste_client_lastname[$h].",<br><br>Nous avons réceptionné votre devis signé (ci-joint). Le technicien en charge de votre projet vous recontactera dans les plus bref délais.<br><br>Cordialement<br>".$conf->global->MAIN_INFO_SOCIETE_NOM;
-						$sendto = $liste_client_email[$h];
-						$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM.' ').'<'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-						$mailfile = new CMailFile($subject,$sendto,$from,$messageclient,$filepath,$mimetype,$filename,'','',0,-1,'','','','','test');
-						$mailfile->sendfile();
-						$h++;
-					}
+
+		if ($action == 'PROPAL_CLOSE_SIGNED_ONLINE') {
+			$sql="SELECT `civility`,`lastname`,`firstname`,`email` FROM ".MAIN_DB_PREFIX."socpeople WHERE `rowid` IN (SELECT `fk_socpeople` FROM ".MAIN_DB_PREFIX."element_contact WHERE `element_id`=$idPropal AND `fk_c_type_contact`=41)";
+			$resql = $this->db->query($sql);
+			$obj = $this->db->fetch_object($resql);
+			$liste_client_civility = array($obj->civility);
+			$liste_client_lastname = array($obj->lastname);
+			$liste_client_firstname = array($obj->firstname);
+			$liste_client_email = array($obj->email);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				$j = 1;
+				//Création de la liste du ou des client(s).
+				while ($j < $num) {
+					$row = $this->db->fetch_row($resql);
+					array_push($liste_client_civility, $row['0']);
+					array_push($liste_client_lastname, $row['1']);
+					array_push($liste_client_firstname, $row['2']);
+					array_push($liste_client_email, $row['3']);
+					$j++;
+				}
+				//Boucle d'envoie des emails a chaque client définie plus haut.
+				$h=0;
+				foreach ($liste_client_email as $emailclient) {
+					$subject = $conf->global->MAIN_INFO_SOCIETE_NOM." - Devis " .$object->ref;
+					$filepath = array(DOL_DATA_ROOT."/".$object->last_main_doc);
+					$mimetype = array("application/pdf");
+					$filename = array($object->ref.'_Signe.pdf');
+					$messageclient = "Bonjour ".$liste_client_civility[$h]." ".$liste_client_lastname[$h].",<br><br>Nous avons réceptionné votre devis signé (ci-joint). Le technicien en charge de votre projet vous recontactera dans les plus bref délais.<br><br>Cordialement<br>".$conf->global->MAIN_INFO_SOCIETE_NOM;
+					$sendto = $liste_client_email[$h];
+					$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM.' ').'<'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+					$mailfile = new CMailFile($subject, $sendto, $from, $messageclient, $filepath, $mimetype, $filename, '', '', 0, -1, '', '', '', '', 'test');
+					$mailfile->sendfile();
+					$h++;
 				}
 			}
+		}
 
 		//Le devis est refuse.
 			//Mail au commercial
@@ -162,88 +156,81 @@ class InterfaceMailPropalSigne extends DolibarrTriggers
 			*Definition de l'adresse du commercial en charge du devis
 			*fk_c_type_contact`=31 indique que nous rechercher le "Commercial suivi proposition"
 			*/
-			if ($action == 'PROPAL_CLOSE_REFUSED_ONLINE')
-			{
-				$sql="SELECT `lastname`,`firstname`,`email` FROM ".MAIN_DB_PREFIX."user WHERE `rowid` IN (SELECT `fk_socpeople` FROM ".MAIN_DB_PREFIX."element_contact WHERE `element_id`=$idPropal AND `fk_c_type_contact`=31)";
-				$resql = $this->db->query($sql);
-				$obj = $this->db->fetch_object($resql);
-				$liste_commercial_lastname = array($obj->lastname);
-				$liste_commercial_firstname = array($obj->firstname);
-				$liste_commercial_email = array($obj->email);
-				if ($resql)
-				{
-					$num = $this->db->num_rows($resql);
-					$i = 1;
-					//Création de la liste du ou des commercial/commerciaux.
-					while ($i < $num) {
-						$row = $this->db->fetch_row($resql);
-						array_push($liste_commercial_lastname, $row['0']);
-						array_push($liste_commercial_firstname, $row['1']);
-						array_push($liste_commercial_email, $row['2']);
-						$i++;
-					}
-					//Boucle d'envoie des emails a chaque commercial définie plus haut.
-					$c=0;
-					foreach($liste_commercial_email as $emailcommercial)
-					{
-						$subject = $conf->global->MAIN_INFO_SOCIETE_NOM." - Devis " .$object->ref;
-						$filepath = array(DOL_DATA_ROOT."/".$object->last_main_doc);
-						$mimetype = array("application/pdf");
-						$filename = array($object->ref.'.pdf');
-						$messagecommercial = "Bonjour ".$liste_commercial_firstname[$c].",<br><br>Le devis ".$object->ref."(ci-joint) a été refusé par le client.<br><br>Cordialement<br>".$conf->global->MAIN_INFO_SOCIETE_NOM;
-						$sendto = $liste_commercial_email[$c];
-						$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM.' ').'<'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-						$mailfile = new CMailFile($subject,$sendto,$from,$messagecommercial,$filepath,$mimetype,$filename,'','',0,-1,'','','','','test');
-						$mailfile->sendfile();
-						$c++;
-					}
+		if ($action == 'PROPAL_CLOSE_REFUSED_ONLINE') {
+			$sql="SELECT `lastname`,`firstname`,`email` FROM ".MAIN_DB_PREFIX."user WHERE `rowid` IN (SELECT `fk_socpeople` FROM ".MAIN_DB_PREFIX."element_contact WHERE `element_id`=$idPropal AND `fk_c_type_contact`=31)";
+			$resql = $this->db->query($sql);
+			$obj = $this->db->fetch_object($resql);
+			$liste_commercial_lastname = array($obj->lastname);
+			$liste_commercial_firstname = array($obj->firstname);
+			$liste_commercial_email = array($obj->email);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				$i = 1;
+				//Création de la liste du ou des commercial/commerciaux.
+				while ($i < $num) {
+					$row = $this->db->fetch_row($resql);
+					array_push($liste_commercial_lastname, $row['0']);
+					array_push($liste_commercial_firstname, $row['1']);
+					array_push($liste_commercial_email, $row['2']);
+					$i++;
+				}
+				//Boucle d'envoie des emails a chaque commercial définie plus haut.
+				$c=0;
+				foreach ($liste_commercial_email as $emailcommercial) {
+					$subject = $conf->global->MAIN_INFO_SOCIETE_NOM." - Devis " .$object->ref;
+					$filepath = array(DOL_DATA_ROOT."/".$object->last_main_doc);
+					$mimetype = array("application/pdf");
+					$filename = array($object->ref.'.pdf');
+					$messagecommercial = "Bonjour ".$liste_commercial_firstname[$c].",<br><br>Le devis ".$object->ref."(ci-joint) a été refusé par le client.<br><br>Cordialement<br>".$conf->global->MAIN_INFO_SOCIETE_NOM;
+					$sendto = $liste_commercial_email[$c];
+					$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM.' ').'<'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+					$mailfile = new CMailFile($subject, $sendto, $from, $messagecommercial, $filepath, $mimetype, $filename, '', '', 0, -1, '', '', '', '', 'test');
+					$mailfile->sendfile();
+					$c++;
 				}
 			}
+		}
 			//Mail au client
 			/*
 			*Definition de l'adresse du client affecté devis
 			*fk_c_type_contact`=41 indique que nous rechercher le "Contact client suivi propale"
 			*/
-			
-			if ($action == 'PROPAL_CLOSE_REFUSED_ONLINE')
-			{
-				$sql="SELECT `civility`,`lastname`,`firstname`,`email` FROM ".MAIN_DB_PREFIX."socpeople WHERE `rowid` IN (SELECT `fk_socpeople` FROM ".MAIN_DB_PREFIX."element_contact WHERE `element_id`=$idPropal AND `fk_c_type_contact`=41)";
-				$resql = $this->db->query($sql);
-				$obj = $this->db->fetch_object($resql);
-				$liste_client_civility = array($obj->civility);
-				$liste_client_lastname = array($obj->lastname);
-				$liste_client_firstname = array($obj->firstname);
-				$liste_client_email = array($obj->email);
-				if ($resql)
-				{
-					$num = $this->db->num_rows($resql);
-					$j = 1;
-					//Création de la liste du ou des client(s).
-					while ($j < $num) {
-						$row = $this->db->fetch_row($resql);
-						array_push($liste_client_civility, $row['0']);
-						array_push($liste_client_lastname, $row['1']);
-						array_push($liste_client_firstname, $row['2']);
-						array_push($liste_client_email, $row['3']);
-						$j++;
-					}
-					//Boucle d'envoie des emails a chaque client définie plus haut.
-					$h=0;
-					foreach($liste_client_email as $emailclient)
-					{
-						$subject = $conf->global->MAIN_INFO_SOCIETE_NOM." - Devis " .$object->ref;
-						$filepath = array(DOL_DATA_ROOT."/".$object->last_main_doc);
-						$mimetype = array("application/pdf");
-						$filename = array($object->ref.'.pdf');
-						$messageclient = "Bonjour ".$liste_client_civility[$h]." ".$liste_client_lastname[$h].",<br><br>Nous sommes désolé que le devis $object->ref (ci-joint) ne vous convienne pas. Le technicien en charge de votre projet vous recontactera dans les plus bref délais.<br><br>Cordialement<br>".$conf->global->MAIN_INFO_SOCIETE_NOM;
-						$sendto = $liste_client_email[$h];
-						$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM.' ').'<'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-						$mailfile = new CMailFile($subject,$sendto,$from,$messageclient,$filepath,$mimetype,$filename,'','',0,-1,'','','','','test');
-						$mailfile->sendfile();
-						$h++;
-					}
+
+		if ($action == 'PROPAL_CLOSE_REFUSED_ONLINE') {
+			$sql="SELECT `civility`,`lastname`,`firstname`,`email` FROM ".MAIN_DB_PREFIX."socpeople WHERE `rowid` IN (SELECT `fk_socpeople` FROM ".MAIN_DB_PREFIX."element_contact WHERE `element_id`=$idPropal AND `fk_c_type_contact`=41)";
+			$resql = $this->db->query($sql);
+			$obj = $this->db->fetch_object($resql);
+			$liste_client_civility = array($obj->civility);
+			$liste_client_lastname = array($obj->lastname);
+			$liste_client_firstname = array($obj->firstname);
+			$liste_client_email = array($obj->email);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				$j = 1;
+				//Création de la liste du ou des client(s).
+				while ($j < $num) {
+					$row = $this->db->fetch_row($resql);
+					array_push($liste_client_civility, $row['0']);
+					array_push($liste_client_lastname, $row['1']);
+					array_push($liste_client_firstname, $row['2']);
+					array_push($liste_client_email, $row['3']);
+					$j++;
+				}
+				//Boucle d'envoie des emails a chaque client définie plus haut.
+				$h=0;
+				foreach ($liste_client_email as $emailclient) {
+					$subject = $conf->global->MAIN_INFO_SOCIETE_NOM." - Devis " .$object->ref;
+					$filepath = array(DOL_DATA_ROOT."/".$object->last_main_doc);
+					$mimetype = array("application/pdf");
+					$filename = array($object->ref.'.pdf');
+					$messageclient = "Bonjour ".$liste_client_civility[$h]." ".$liste_client_lastname[$h].",<br><br>Nous sommes désolé que le devis $object->ref (ci-joint) ne vous convienne pas. Le technicien en charge de votre projet vous recontactera dans les plus bref délais.<br><br>Cordialement<br>".$conf->global->MAIN_INFO_SOCIETE_NOM;
+					$sendto = $liste_client_email[$h];
+					$from = (empty($conf->global->MAIN_INFO_SOCIETE_NOM) ? '' : $conf->global->MAIN_INFO_SOCIETE_NOM.' ').'<'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+					$mailfile = new CMailFile($subject, $sendto, $from, $messageclient, $filepath, $mimetype, $filename, '', '', 0, -1, '', '', '', '', 'test');
+					$mailfile->sendfile();
+					$h++;
 				}
 			}
-
+		}
 	}
 }
