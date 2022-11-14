@@ -1294,8 +1294,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
  * @param   int			$level					Level (start to 0, then increased/decrease by recursive call)
  * @param   string		$projectsrole			Array of roles user has on project
  * @param   string		$tasksrole				Array of roles user has on task
- * @param	string		$mine					Show only task lines I am assigned to                                              =======                                              >>>>>>> upstream/develop
->>>>>>> ecbb6d1dc9ac8aa709572cab38bf457e39453176
+ * @param	string		$mine					Show only task lines I am assigned to                                              =======                                              >>>>>>> upstream/develop                                              >>>>>>> ecbb6d1dc9ac8aa709572cab38bf457e39453176
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is assigned to me, 2=Enable add time only if tasks is assigned to me and hide others
  * @param	int			$preselectedday			Preselected day
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
