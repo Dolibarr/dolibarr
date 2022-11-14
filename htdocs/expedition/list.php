@@ -149,7 +149,7 @@ $arrayfields = array(
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
-$object->fields = dol_sort_array($object->fields, 'position');
+$object->array_options = dol_sort_array($object->array_options, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
