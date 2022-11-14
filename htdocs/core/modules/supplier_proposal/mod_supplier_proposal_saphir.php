@@ -138,7 +138,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 			return 0;
 		}
 
-		$date = $supplier_proposal->datep;
+		$date = $supplier_proposal->date;
 		$customercode = $objsoc->code_client;
 		$numFinal = get_next_value($db, $mask, 'supplier_proposal', 'ref', '', $customercode, $date);
 
