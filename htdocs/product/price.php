@@ -140,11 +140,12 @@ if (empty($reshook)) {
 			// We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in create product.
 			$vatratecode = $reg[1];
 			// Get record from code
-			$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+			$sql = "SELECT t.rowid, t.type_vat, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 			$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$db->escape($mysoc->country_code)."'";
 			$sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
 			$sql .= " AND t.code = '".$db->escape($vatratecode)."'";
+			$sql .= " AND t.type_vat = 1";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);

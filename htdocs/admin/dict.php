@@ -837,9 +837,6 @@ if (empty($reshook)) {
 		}
 
 		// Clean some parameters
-		if (GETPOST("type_vat") || GETPOST('type_vat') == '0') {
-			$_POST["type_vat"] = '0'; // If empty, we force to 0
-		}
 		if ((GETPOST("localtax1_type") || (GETPOST('localtax1_type') == '0')) && !GETPOST("localtax1")) {
 			$_POST["localtax1"] = '0'; // If empty, we force to 0
 		}
@@ -2080,7 +2077,7 @@ if ($id > 0) {
 								if ($obj->type_vat != 0) {
 									$valuetoshow = $type_vatList[$valuetoshow];
 								} else {
-									$valuetoshow = '';
+									$valuetoshow = $langs->transnoentitiesnoconv("All");
 								}
 								$class = "center";
 							} elseif ($value == 'localtax1_type') {

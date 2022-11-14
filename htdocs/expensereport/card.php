@@ -2519,7 +2519,7 @@ if ($action == 'create') {
 				if (!empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) {
 					$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 				}
-				print $form->load_tva('vatrate', (!empty($vatrate) ? $vatrate : $defaultvat), $mysoc, '', 0, 0, '', false, 1);
+				print $form->load_tva('vatrate', (!empty($vatrate) ? $vatrate : $defaultvat), $mysoc, '', 0, 0, '', false, 1, 2);
 				print '</td>';
 
 				// Unit price net
