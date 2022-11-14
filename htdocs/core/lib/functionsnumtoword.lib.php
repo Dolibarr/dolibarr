@@ -16,12 +16,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  * or see https://www.gnu.org/
  */
+
 /**
  *  \file			htdocs/core/lib/functionsnumtoword.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
  */
-
 
 /**
  * Function to return a number into a text.

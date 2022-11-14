@@ -556,7 +556,7 @@ if (empty($reshook)) {
 			// Ajout / mise à jour
 			if ($rowid > 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product_price_by_qty SET";
-				$sql .= " price=".((float) $price)."',";
+				$sql .= " price=".((float) $price).",";
 				$sql .= " unitprice=".((float) $unitPrice).",";
 				$sql .= " quantity=".((float) $quantity).",";
 				$sql .= " remise_percent=".((float) $remise_percent).",";
