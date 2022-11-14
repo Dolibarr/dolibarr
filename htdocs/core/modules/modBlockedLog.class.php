@@ -79,7 +79,7 @@ class modBlockedLog extends DolibarrModules
 
 		// Currently, activation is not automatic because only companies (in France) making invoices to non business customers must
 		// enable this module.
-		/*if (! empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
+		/*if (!empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
 		{
 			$tmp=explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY);
 			$this->automatic_activation = array();
@@ -170,9 +170,9 @@ class modBlockedLog extends DolibarrModules
 		$sql = array();
 
 		// If already used, we add an entry to show we enable module
-		   require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
 
-		   $object = new stdClass();
+		$object = new stdClass();
 		$object->id = 1;
 		$object->element = 'module';
 		$object->ref = 'systemevent';

@@ -99,7 +99,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		global $conf,$user,$langs,$db;
 
@@ -151,7 +151,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return void
 	 */
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		global $conf,$user,$langs,$db;
 		$db->rollback();
@@ -164,7 +164,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function setUp()
+	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -180,7 +180,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 	 *
 	 * @return	void
 	 */
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		print __METHOD__."\n";
 	}
@@ -261,7 +261,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring'])) {
+		if (! $result || !empty($result['faultstring'])) {
 			//var_dump($soapclient);
 			print $this->soapclient->error_str;
 			print "\n<br>\n";
@@ -316,7 +316,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring'])) {
+		if (! $result || !empty($result['faultstring'])) {
 			print $this->soapclient->error_str;
 			print "\n<br>\n";
 			print $this->soapclient->request;
@@ -413,8 +413,8 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 			echo $exception;
 			$result=0;
 		}
-		if (! $result || ! empty($result['faultstring'])) {
-			print $this->soapclient->error_str;
+		if (! $result || !empty($result['faultstring'])) {
+			print 'Error: '.$this->soapclient->error_str;
 			print "\n<br>\n";
 			print $this->soapclient->request;
 			print "\n<br>\n";
@@ -422,6 +422,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 			print "\n";
 		}
 
+		print __METHOD__." count(result)=".(is_array($result) ? count($result) : 0)."\n";
 		print __METHOD__." result=".$result['result']['result_code'].$result['result']['result_label']."\n";
 		$this->assertEquals('OK', $result['result']['result_code']);
 		$this->assertEquals('ref-phpunit-2', $result['ref_ext']);

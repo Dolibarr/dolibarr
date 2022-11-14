@@ -25,6 +25,7 @@
  *		\brief      List of holiday
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -59,29 +60,6 @@ $id = GETPOST('id', 'int');
 
 $childids = $user->getAllChildIds(1);
 
-// Security check
-$socid = 0;
-if ($user->socid > 0) {	// Protection if external user
-	//$socid = $user->socid;
-	accessforbidden();
-}
-$result = restrictedArea($user, 'holiday', '', '');
-// If we are on the view of a specific user
-if ($id > 0) {
-	$canread = 0;
-	if ($id == $user->id) {
-		$canread = 1;
-	}
-	if (!empty($user->rights->holiday->readall)) {
-		$canread = 1;
-	}
-	if (!empty($user->rights->holiday->read) && in_array($id, $childids)) {
-		$canread = 1;
-	}
-	if (!$canread) {
-		accessforbidden();
-	}
-}
 
 $diroutputmassaction = $conf->holiday->dir_output.'/temp/massgeneration/'.$user->id;
 
@@ -101,7 +79,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 if (!$sortfield) {
-	$sortfield = "cp.rowid";
+	$sortfield = "cp.ref";
 }
 
 $sall                = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -148,7 +126,7 @@ $arrayfields = array(
 	'cp.date_debut'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>40),
 	'cp.date_fin'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>42),
 	'cp.date_valid'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1, 'position'=>60),
-	'cp.date_approve'=>array('label'=>$langs->trans("DateApprove"), 'checked'=>1, 'position'=>70),
+	'cp.date_approval'=>array('label'=>$langs->trans("DateApprove"), 'checked'=>1, 'position'=>70),
 	'cp.date_create'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'cp.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>501),
 	'cp.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -156,14 +134,35 @@ $arrayfields = array(
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
-if (empty($conf->holiday->enabled)) {
-	llxHeader('', $langs->trans('CPTitreMenu'));
-	print '<div class="tabBar">';
-	print '<span style="color: #FF0000;">'.$langs->trans('NotActiveModCP').'</span>';
-	print '</div>';
-	llxFooter();
-	exit();
+
+// Security check
+$socid = 0;
+if ($user->socid > 0) {	// Protection if external user
+	//$socid = $user->socid;
+	accessforbidden();
 }
+
+if (empty($conf->holiday->enabled)) accessforbidden('Module not enabled');
+
+$result = restrictedArea($user, 'holiday', '', '');
+// If we are on the view of a specific user
+if ($id > 0) {
+	$canread = 0;
+	if ($id == $user->id) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->holiday->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->holiday->read) && in_array($id, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
+
+
 
 
 /*
@@ -200,7 +199,7 @@ if (empty($reshook)) {
 		$search_valideur = "";
 		$search_status = "";
 		$search_type = '';
-		$toselect = '';
+		$toselect = array();
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -211,8 +210,9 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Holiday';
 	$objectlabel = 'Holiday';
-	$permissiontoread = $user->rights->holiday->read;
-	$permissiontodelete = $user->rights->holiday->delete;
+	$permissiontoread = $user->hasRight('holiday', 'read');
+	$permissiontodelete = $user->hasRight('holiday', 'delete');
+	$permissiontoapprove = $user->hasRight('holiday', 'approve');
 	$uploaddir = $conf->holiday->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -271,6 +271,8 @@ $sql .= " cp.statut as status,";
 $sql .= " cp.fk_validator,";
 $sql .= " cp.date_valid,";
 $sql .= " cp.fk_user_valid,";
+$sql .= " cp.date_approval,";
+$sql .= " cp.fk_user_approve,";
 $sql .= " cp.date_refuse,";
 $sql .= " cp.fk_user_refuse,";
 $sql .= " cp.date_cancel,";
@@ -295,7 +297,7 @@ $sql .= " ua.photo as validator_photo";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -303,7 +305,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."holiday as cp";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (cp.rowid = ef.fk_object)";
 }
 $sql .= ", ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
@@ -441,6 +443,9 @@ if ($resql) {
 	if (!empty($user->rights->holiday->delete)) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
+	if (!empty($user->rights->holiday->approve)) {
+		$arrayofmassactions['preapproveleave'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Approve");
+	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
 		$arrayofmassactions = array();
 	}
@@ -485,9 +490,8 @@ if ($resql) {
 		print '<div class="tabsAction">';
 
 		$cancreate = 0;
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))) {
-				$cancreate = 1;
+		if (!empty($user->rights->holiday->writeall)) {
+			$cancreate = 1;
 		}
 		if (!empty($user->rights->holiday->write) && in_array($user_id, $childids)) {
 			$cancreate = 1;
@@ -579,7 +583,7 @@ if ($resql) {
 
 	// Approver
 	if (!empty($arrayfields['cp.fk_validator']['checked'])) {
-		if ($user->rights->holiday->readall) {
+		if ($user->hasRight('holiday', 'readall')) {
 			print '<td class="liste_titre maxwidthonsmartphone left">';
 			$validator = new UserGroup($db);
 			$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
@@ -622,7 +626,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.date_debut']['checked'])) {
 		print '<td class="liste_titre center nowraponall">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_start" value="'.dol_escape_htmltag($search_month_start).'">';
-		$formother->select_year($search_year_start, 'search_year_start', 1, $min_year, $max_year);
+		print $formother->selectyear($search_year_start, 'search_year_start', 1, $min_year, $max_year);
 		print '</td>';
 	}
 
@@ -630,12 +634,18 @@ if ($resql) {
 	if (!empty($arrayfields['cp.date_fin']['checked'])) {
 		print '<td class="liste_titre center nowraponall">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_end" value="'.dol_escape_htmltag($search_month_end).'">';
-		$formother->select_year($search_year_end, 'search_year_end', 1, $min_year, $max_year);
+		print $formother->selectyear($search_year_end, 'search_year_end', 1, $min_year, $max_year);
 		print '</td>';
 	}
 
-	// End date
+	// Date validation
 	if (!empty($arrayfields['cp.date_valid']['checked'])) {
+		print '<td class="liste_titre center nowraponall">';
+		print '</td>';
+	}
+
+	// Date appoval
+	if (!empty($arrayfields['cp.date_approval']['checked'])) {
 		print '<td class="liste_titre center nowraponall">';
 		print '</td>';
 	}
@@ -651,7 +661,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.date_create']['checked'])) {
 		print '<td class="liste_titre center width200">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_create" value="'.dol_escape_htmltag($search_month_create).'">';
-		$formother->select_year($search_year_create, 'search_year_create', 1, $min_year, 0);
+		print $formother->selectyear($search_year_create, 'search_year_create', 1, $min_year, 0);
 		print '</td>';
 	}
 
@@ -659,7 +669,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.tms']['checked'])) {
 		print '<td class="liste_titre center width200">';
 		print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month_update" value="'.dol_escape_htmltag($search_month_update).'">';
-		$formother->select_year($search_year_update, 'search_year_update', 1, $min_year, 0);
+		print $formother->selectyear($search_year_update, 'search_year_update', 1, $min_year, 0);
 		print '</td>';
 	}
 
@@ -703,6 +713,9 @@ if ($resql) {
 	if (!empty($arrayfields['cp.date_valid']['checked'])) {
 		print_liste_field_titre($arrayfields['cp.date_valid']['label'], $_SERVER["PHP_SELF"], "cp.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
+	if (!empty($arrayfields['cp.date_approval']['checked'])) {
+		print_liste_field_titre($arrayfields['cp.date_approval']['label'], $_SERVER["PHP_SELF"], "cp.date_approval", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
@@ -718,7 +731,7 @@ if ($resql) {
 	if (!empty($arrayfields['cp.statut']['checked'])) {
 		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "cp.statut", "", $param, '', $sortfield, $sortorder, 'right ');
 	}
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	print "</tr>\n";
 
 	$listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
@@ -739,6 +752,7 @@ if ($resql) {
 		$i = 0;
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
+		$totalduration = 0;
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
 
@@ -785,21 +799,23 @@ if ($resql) {
 				}
 			}
 			if (!empty($arrayfields['cp.fk_user']['checked'])) {
-				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+				print '<td class="tdoverflowmax125">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			if (!empty($arrayfields['cp.fk_validator']['checked'])) {
-				print '<td class="tdoverflowmax150">'.$approbatorstatic->getNomUrl(-1).'</td>';
+				print '<td class="tdoverflowmax125">'.$approbatorstatic->getNomUrl(-1).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
 			if (!empty($arrayfields['cp.fk_type']['checked'])) {
-				print '<td class="minwidth100">';
 				$labeltypeleavetoshow = ($langs->trans($typeleaves[$obj->fk_type]['code']) != $typeleaves[$obj->fk_type]['code'] ? $langs->trans($typeleaves[$obj->fk_type]['code']) : $typeleaves[$obj->fk_type]['label']);
-				print empty($typeleaves[$obj->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved", $obj->fk_type) : $labeltypeleavetoshow;
+				$labeltypeleavetoshow = empty($typeleaves[$obj->fk_type]['label']) ? $langs->trans("TypeWasDisabledOrRemoved", $obj->fk_type) : $labeltypeleavetoshow;
+
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltypeleavetoshow).'">';
+				print $labeltypeleavetoshow;
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -808,7 +824,9 @@ if ($resql) {
 			if (!empty($arrayfields['duration']['checked'])) {
 				print '<td class="right">';
 				$nbopenedday = num_open_day($db->jdate($obj->date_debut, 1), $db->jdate($obj->date_fin, 1), 0, 1, $obj->halfday);	// user jdate(..., 1) because num_open_day need UTC dates
-				print $nbopenedday.' '.$langs->trans('DurationDays');
+				$totalduration += $nbopenedday;
+				print $nbopenedday;
+				//print ' '.$langs->trans('DurationDays');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -832,18 +850,20 @@ if ($resql) {
 					$totalarray['nbfield']++;
 				}
 			}
+			// Date validation
 			if (!empty($arrayfields['cp.date_valid']['checked'])) {		// date_valid is both date_valid but also date_approval
-				print '<td class="center">';
+				print '<td class="center" title="'.dol_print_date($db->jdate($obj->date_valid), 'dayhour').'">';
 				print dol_print_date($db->jdate($obj->date_valid), 'day');
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
-			/*if (!empty($arrayfields['cp.date_approve']['checked'])) {
-				 print '<td class="center">';
-				 print dol_print_date($db->jdate($obj->date_approve), 'day');
-				 print '</td>';
-				 if (!$i) $totalarray['nbfield']++;
-			 }*/
+			// Date approval
+			if (!empty($arrayfields['cp.date_approval']['checked'])) {
+				print '<td class="center" title="'.dol_print_date($db->jdate($obj->date_approval), 'dayhour').'">';
+				print dol_print_date($db->jdate($obj->date_approval), 'day');
+				print '</td>';
+				if (!$i) $totalarray['nbfield']++;
+			}
 
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
@@ -889,6 +909,21 @@ if ($resql) {
 			print '</tr>'."\n";
 
 			$i++;
+		}
+
+		// Add a line for total if there is a total to show
+		if (!empty($arrayfields['duration']['checked'])) {
+			print '<tr class="total">';
+			foreach ($arrayfields as $key => $val) {
+				if (!empty($val['checked'])) {
+					if ($key == 'duration') {
+						print '<td class="right">'.$totalduration.' '.$langs->trans('DurationDays').'</td>';
+					} else {
+						print '<td></td>';
+					}
+				}
+			}
+			print '</tr>';
 		}
 	}
 

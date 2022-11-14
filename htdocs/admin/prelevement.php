@@ -25,6 +25,7 @@
  *	\brief      Page to setup Withdrawals
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -102,11 +103,11 @@ if ($action == "set") {
 	}
 
 	$res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
-	if (! ($res > 0)) {
+	if (!($res > 0)) {
 		$error++;
 	}
 
-	if (! $error) {
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -117,7 +118,7 @@ if ($action == "set") {
 
 if ($action == "addnotif") {
 	$bon = new BonPrelevement($db);
-	$bon->AddNotification($db, GETPOST('user', 'int'), $action);
+	$bon->addNotification($db, GETPOST('user', 'int'), $action);
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
@@ -125,7 +126,7 @@ if ($action == "addnotif") {
 
 if ($action == "deletenotif") {
 	$bon = new BonPrelevement($db);
-	$bon->DeleteNotificationById(GETPOST('notif', 'int'));
+	$bon->deleteNotificationById(GETPOST('notif', 'int'));
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
@@ -214,9 +215,8 @@ print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.$conf->global->PRE
 print '</td></tr>';
 
 print '</table>';
-print '<br>';
 
-print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
@@ -298,7 +298,7 @@ foreach ($dirmodels as $reldir)
 							$module = new $classname($db);
 
 							$modulequalified=1;
-							if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
 							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
 
 							if ($modulequalified) {
@@ -313,7 +313,7 @@ foreach ($dirmodels as $reldir)
 								if (in_array($name, $def))
 								{
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
 									print img_picto($langs->trans("Enabled"),'switch_on');
 									print '</a>';
 									print '</td>';
@@ -321,7 +321,7 @@ foreach ($dirmodels as $reldir)
 								else
 								{
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -333,7 +333,7 @@ foreach ($dirmodels as $reldir)
 								}
 								else
 								{
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;token='.newToken().'&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
 								}
 								print '</td>';
 
@@ -393,7 +393,7 @@ print '<br>';
  */
 
 /* Disable this, there is no trigger with elementtype 'withdraw'
-if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
+if (!empty($conf->global->MAIN_MODULE_NOTIFICATION))
 {
 	$langs->load("mails");
 	print load_fiche_titre($langs->trans("Notifications"));
@@ -444,7 +444,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	}
 
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif&token='.newToken().'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -461,7 +461,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	print $form->selectarray('action',$actions);//  select_dolusers(0,'user',0);
 	print '</td>';
 
-	print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+	print '<td class="right"><input type="submit" class="button button-add" value="'.$langs->trans("Add").'"></td></tr>';
 
 	// List of current notifications for objet_type='withdraw'
 	$sql = "SELECT u.lastname, u.firstname,";

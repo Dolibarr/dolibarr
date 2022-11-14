@@ -24,7 +24,7 @@ FinancialCommitment=Finansiell forpliktelse
 InterestAmount=Rente
 CapitalRemain=Gjenstående kapital
 TermPaidAllreadyPaid = Denne terminen er allerede betalt
-CantUseScheduleWithLoanStartedToPaid = Kan ikke bruke planlegger for et lån med startet betaling 
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = Du kan ikke endre rente hvis du bruker tidsplan
 # Admin
 ConfigLoan=Oppset av lån-modulen

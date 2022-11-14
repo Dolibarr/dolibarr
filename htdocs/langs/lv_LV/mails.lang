@@ -178,3 +178,4 @@ IsAnAnswer=Vai ir atbilde uz sākotnējo e-pastu
 RecordCreatedByEmailCollector=Ierakstu izveidojis e-pasta savācējs %s no e-pasta %s
 DefaultBlacklistMailingStatus=Lauka %s noklusējuma vērtība, veidojot jaunu kontaktpersonu
 DefaultStatusEmptyMandatory=Tukšs, bet obligāts
+WarningLimitSendByDay=BRĪDINĀJUMS. Jūsu instances iestatīšana vai līgums ierobežo jūsu e-pasta ziņojumu skaitu dienā līdz <b> %s </b> . Mēģinot sūtīt vairāk, jūsu instance var tikt palēnināta vai apturēta. Lūdzu, sazinieties ar atbalsta dienestu, ja jums nepieciešama lielāka kvota.

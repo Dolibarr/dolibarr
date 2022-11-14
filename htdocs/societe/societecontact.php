@@ -26,22 +26,26 @@
  *     \brief      Onglet de gestion des contacts additionnel d'une société
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
-$langs->loadLangs(array("orders", "companies"));
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'orders'));
 
+// Get parameters
 $id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -62,6 +66,8 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'societe', $id, '');
 
+
+// Initialize objects
 $object = new Societe($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -111,13 +117,6 @@ if ($action == 'addcontact' && $user->rights->societe->creer) {
 		dol_print_error($db);
 	}
 }
-/*
-elseif ($action == 'setaddress' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}*/
 
 
 /*
@@ -135,17 +134,10 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
+// View and edit
 
 if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
-		$soc = new Societe($db);
-		$soc->fetch($object->socid);
-
 		$head = societe_prepare_head($object);
 		print dol_get_fiche_head($head, 'contact', $langs->trans("ThirdParty"), -1, 'company');
 
@@ -181,7 +173,7 @@ if ($id > 0 || !empty($ref)) {
 			print $object->code_client;
 			$tmpcheck = $object->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+				print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 			}
 			print '</td></tr>';
 		}
@@ -192,7 +184,7 @@ if ($id > 0 || !empty($ref)) {
 			print $object->code_fournisseur;
 			$tmpcheck = $object->check_codefournisseur();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+				print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 			}
 			print '</td></tr>';
 		}
@@ -213,7 +205,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 		// additionnal list with adherents of company
-		if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire) {
+		if (isModEnabled('adherent') && $user->rights->adherent->lire) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 

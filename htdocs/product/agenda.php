@@ -27,6 +27,7 @@
  *  \brief      Page of product events
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -54,8 +55,8 @@ if ($user->socid) {
 }
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -143,7 +144,7 @@ if ($id > 0 || $ref) {
 	}
 	llxHeader('', $title, $help_url);
 
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$type = $langs->trans('Product');
@@ -186,30 +187,21 @@ if ($id > 0 || $ref) {
 	$objcon = new stdClass();
 
 	$out = '';
-	$permok = $user->rights->agenda->myactions->create;
-	if ((!empty($objproduct->id) || !empty($objcon->id)) && $permok) {
-		//$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
-		if (get_class($objproduct) == 'Product') {
-			$out .= '&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;
-		}
-		$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage=1&amp;percentage=-1';
-		//$out.=$langs->trans("AddAnAction").' ';
-		//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
-		//$out.="</a>";
-	}
-
-
-	//print '<div class="tabsAction">';
-	//print '</div>';
-
-
 	$morehtmlcenter = '';
-	if (!empty($conf->agenda->enabled)) {
+	if (isModEnabled('agenda')) {
+		$permok = $user->rights->agenda->myactions->create;
+		if ((!empty($objproduct->id) || !empty($objcon->id)) && $permok) {
+			if (get_class($objproduct) == 'Product') {
+				$out .= '&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;
+			}
+			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage='.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;percentage=-1';
+		}
+
 		$linktocreatetimeBtnStatus = !empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create);
 		$morehtmlcenter = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', $linktocreatetimeBtnStatus);
 	}
 
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		print '<br>';
 
 		$param = '&id='.$id;

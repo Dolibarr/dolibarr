@@ -25,6 +25,7 @@
  *      \brief      Page list of direct debit orders or credit transfers orders
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
@@ -113,7 +114,7 @@ $sql .= " , s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, 
 $sql .= " , pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
 if ($type == 'bank-transfer') {
 	$sql .= " , ".MAIN_DB_PREFIX."facture_fourn as f";
 } else {
@@ -302,7 +303,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr><td class="opacitymedium" colspan="8">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print "</table>";
 	print '</div>';

@@ -49,7 +49,7 @@ $vatNumber = GETPOST("vatNumber", 'alpha');
 
 if (!$vatNumber) {
 	print '<br>';
-	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired", $langs->trans("VATIntraShort")).'</font><br>';
+	print '<span class="error">'.$langs->transnoentities("ErrorFieldRequired", $langs->trans("VATIntraShort")).'</span><br>';
 } else {
 	$vatNumber = preg_replace('/\^\w/', '', $vatNumber);
 	$vatNumber = str_replace(array(' ', '.'), '', $vatNumber);
@@ -97,16 +97,16 @@ if (!$vatNumber) {
 
 	// Service indisponible
 	if (!is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i', $result['faultstring'])) {
-		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
+		print '<span class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</span><br>';
 		$messagetoshow = $soapclient->response;
 	} elseif (preg_match('/TIMEOUT/i', $result['faultstring'])) {
-		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
+		print '<span class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</span><br>';
 		$messagetoshow = $soapclient->response;
 	} elseif (preg_match('/SERVER_BUSY/i', $result['faultstring'])) {
-		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
+		print '<span class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</span><br>';
 		$messagetoshow = $soapclient->response;
 	} elseif ($result['faultstring']) {
-		print '<font class="error">'.$langs->trans("Error").'</font><br>';
+		print '<span class="error">'.$langs->trans("Error").'</span><br>';
 		$messagetoshow = $result['faultstring'];
 	} elseif (preg_match('/INVALID_INPUT/i', $result['faultstring'])
 	|| ($result['requestDate'] && !$result['valid'])) {
@@ -114,26 +114,26 @@ if (!$vatNumber) {
 		if ($result['requestDate']) {
 			print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		}
-		print $langs->trans("VATIntraSyntaxIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
-		print $langs->trans("ValueIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
+		print $langs->trans("VATIntraSyntaxIsValid").': <span class="error">'.$langs->trans("No").'</span> (Might be a non europeen VAT)<br>';
+		print $langs->trans("ValueIsValid").': <span class="error">'.$langs->trans("No").'</span> (Might be a non europeen VAT)<br>';
 		//$messagetoshow=$soapclient->response;
 	} else {
 		// Syntaxe ok
 		if ($result['requestDate']) {
 			print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		}
-		print $langs->trans("VATIntraSyntaxIsValid").': <font class="ok">'.$langs->trans("Yes").'</font><br>';
+		print $langs->trans("VATIntraSyntaxIsValid").': <span class="ok">'.$langs->trans("Yes").'</span><br>';
 		print $langs->trans("ValueIsValid").': ';
 		if (preg_match('/MS_UNAVAILABLE/i', $result['faultstring'])) {
-			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE", $countryCode).'</font><br>';
+			print '<span class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE", $countryCode).'</span><br>';
 		} else {
 			if (!empty($result['valid']) && ($result['valid'] == 1 || $result['valid'] == 'true')) {
-				print '<font class="ok">'.$langs->trans("Yes").'</font>';
+				print '<span	 class="ok">'.$langs->trans("Yes").'</span>';
 				print '<br>';
 				print $langs->trans("Name").': '.$result['name'].'<br>';
 				print $langs->trans("Address").': '.$result['address'].'<br>';
 			} else {
-				print '<font class="error">'.$langs->trans("No").'</font>';
+				print '<span	 class="error">'.$langs->trans("No").'</span>';
 				print '<br>'."\n";
 			}
 		}

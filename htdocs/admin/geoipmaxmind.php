@@ -22,6 +22,7 @@
  *	\brief      Setup page for geoipmaxmind module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -59,12 +60,12 @@ if ($action == 'set') {
 
 	if (!$error) {
 		$res1 = dolibarr_set_const($db, "GEOIP_VERSION", GETPOST('geoipversion', 'aZ09'), 'chaine', 0, '', $conf->entity);
-		if (!$res1 > 0) {
+		if (!($res1 > 0)) {
 			$error++;
 		}
 
 		$res2 = dolibarr_set_const($db, "GEOIPMAXMIND_COUNTRY_DATAFILE", $gimcdf, 'chaine', 0, '', $conf->entity);
-		if (!$res2 > 0) {
+		if (!($res2 > 0)) {
 			$error++;
 		}
 
@@ -107,7 +108,7 @@ print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
-print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
 // Lib version
@@ -144,12 +145,12 @@ print '<br>';
 print $langs->trans("NoteOnPathLocation").'<br>';
 
 $url1 = 'http://www.maxmind.com/en/city?rId=awstats';
-print $langs->trans("YouCanDownloadFreeDatFileTo", '<a href="'.$url1.'" target="_blank">'.$url1.'</a>');
+print $langs->trans("YouCanDownloadFreeDatFileTo", '<a href="'.$url1.'" target="_blank" rel="noopener noreferrer external">'.$url1.'</a>');
 
 print '<br>';
 
 $url2 = 'http://www.maxmind.com/en/city?rId=awstats';
-print $langs->trans("YouCanDownloadAdvancedDatFileTo", '<a href="'.$url2.'" target="_blank">'.$url2.'</a>');
+print $langs->trans("YouCanDownloadAdvancedDatFileTo", '<a href="'.$url2.'" target="_blank" rel="noopener noreferrer external">'.$url2.'</a>');
 
 if ($geoip) {
 	print '<br><br>';

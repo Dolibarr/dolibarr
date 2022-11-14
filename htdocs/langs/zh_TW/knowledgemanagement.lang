@@ -18,33 +18,37 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = 知識管理系統
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=管理知識管理 (KM) 或HelpDesk
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
+KnowledgeManagementSetup = 知識管理系統設定
 Settings = 設定
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetupPage = 知識管理系統設定頁面
 
 
 #
 # About page
 #
 About = 關於
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+KnowledgeManagementAbout = 關於知識管理
+KnowledgeManagementAboutPage = 知識管理的關於頁面
 
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = 物品
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+KnowledgeManagementArea = 知識管理
+MenuKnowledgeRecord = 知識庫
+ListKnowledgeRecord = 文章清單
+NewKnowledgeRecord = 新文章
+ValidateReply = 驗證解決方案
+KnowledgeRecords = 文章
+KnowledgeRecord = 文章
+KnowledgeRecordExtraFields = 文章的補充屬性
+GroupOfTicket=服務單群組
+YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
+SuggestedForTicketsInGroup=建議的服務單群組
+
+SetObsolete=設定為已過時
+ConfirmCloseKM=您確定要將此文章關閉並設定為已過時嗎？
+ConfirmReopenKM=您想將此文章恢復到“已驗證”狀態嗎？
