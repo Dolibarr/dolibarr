@@ -1323,6 +1323,60 @@ if (!$error && ($action == 'setsupervisor' && $confirm == 'yes') && $permissiont
 	}
 }
 
+if (!$error && ($action == 'affectuser' && $confirm == 'yes') && $permissiontoadd) {
+	$db->begin();
+
+	$usertoaffect=GETPOST('usertoaffect');
+	$projectrole=GETPOST('projectrole');
+	$tasksrole=GETPOST('tasksrole');
+	if (!empty($usertoaffect)) {
+		foreach ($toselect as $toselectid) {
+			$result = $object->fetch($toselectid);
+			//var_dump($contcats);exit;
+			if ($result > 0) {
+				$res = $object->add_contact($usertoaffect, $projectrole, 'internal');
+				if ($res >= 0) {
+					$taskstatic = new Task($db);
+					$task_array = $taskstatic->getTasksArray(0, 0, $object->id, 0, 0);
+
+					foreach ($task_array as $task) {
+						$tasksToAffect = new Task($db);
+						$result = $tasksToAffect->fetch($task->id);
+						if ($result > 0) {
+							$res = $tasksToAffect->add_contact($usertoaffect, $tasksrole, 'internal');
+							if ($res < 0) {
+								setEventMessages($tasksToAffect->error, $tasksToAffect->errors, 'errors');
+							}
+						}
+					}
+					$nbok++;
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+	} else {
+		setEventMessage('UserNotFound', 'errors');
+		$error++;
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		} else {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		}
+		$db->commit();
+		$toselect=array();
+	} else {
+		$db->rollback();
+	}
+}
+
 if (!$error && ($massaction == 'enable' || ($action == 'enable' && $confirm == 'yes')) && $permissiontoadd) {
 	$db->begin();
 
