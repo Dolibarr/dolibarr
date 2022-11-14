@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/ecm/index.php
+ *	\file       htdocs/ecm/index_medias.php
  *	\ingroup    ecm
- *	\brief      Main page for ECM section area
+ *	\brief      Main page for ECM section of public media directories area
  */
 
 // Load Dolibarr environment
@@ -36,14 +36,20 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts'));
 
 // Get parameters
-$socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
-$section = GETPOST('section', 'int') ?GETPOST('section', 'int') : GETPOST('section_id', 'int');
+
+$socid = GETPOST('socid', 'int');
+$file_manager = GETPOST('file_manager', 'alpha');
+$section = GETPOST('section', 'int') ? GETPOST('section', 'int') : GETPOST('section_id', 'int');
 if (!$section) {
 	$section = 0;
 }
 $section_dir = GETPOST('section_dir', 'alpha');
 $overwritefile = GETPOST('overwritefile', 'int');
+
+if (empty($action) && $file_manager) {
+	$action = 'file_manager';
+}
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -61,6 +67,7 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "name";
 }
+
 
 $ecmdir = new EcmDirectory($db);
 if ($section > 0) {
@@ -83,76 +90,40 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'ecm', 0);
 
+$permtouploadfile = ($user->hasRight('ecm', 'setup') || $user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
+$diroutput = $conf->medias->multidir_output[$conf->entity];
+
+$relativepath = $section_dir;
+$upload_dir = preg_replace('/\/$/', '', $diroutput).'/'.preg_replace('/^\//', '', $relativepath);
+
+$websitekey = '';
+
+$permissiontoadd = $permtouploadfile;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+
 
 /*
  *	Actions
  */
 
-// TODO Replace sendit and confirm_deletefile with
-//$backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid;	// used after a confirm_deletefile into actions_linkedfiles.inc.php
-//include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
-
-// Upload file (code similar but different than actions_linkedfiles.inc.php)
-if (GETPOST("sendit", 'alphanohtml') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
-	// Define relativepath and upload_dir
-	$relativepath = '';
-	if ($ecmdir->id) {
-		$relativepath = $ecmdir->getRelativePath();
-	} else {
-		$relativepath = $section_dir;
-	}
-	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-
-	if (is_array($_FILES['userfile']['tmp_name'])) {
-		$userfiles = $_FILES['userfile']['tmp_name'];
-	} else {
-		$userfiles = array($_FILES['userfile']['tmp_name']);
-	}
-
-	foreach ($userfiles as $key => $userfile) {
-		if (empty($_FILES['userfile']['tmp_name'][$key])) {
-			$error++;
-			if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2) {
-				setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
-			} else {
-				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
-			}
-		}
-	}
-
-	if (!$error) {
-		$generatethumbs = 0;
-		$res = dol_add_file_process($upload_dir, $overwritefile, 1, 'userfile', '', null, '', $generatethumbs);
-		if ($res > 0) {
-			$result = $ecmdir->changeNbOfFiles('+');
-		}
-	}
+$savbacktopage = $backtopage;
+$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.urlencode($websitekey).'&pageid='.urlencode($pageid).(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
+if ($sortfield) {
+	$backtopage .= '&sortfield='.urlencode($sortfield);
 }
+if ($sortorder) {
+	$backtopage .= '&sortorder='.urlencode($sortorder);
+}
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';	// This manage 'sendit', 'confirm_deletefile', 'renamefile' action when submitting new file.
 
-// Remove file (code similar but different than actions_linkedfiles.inc.php)
-if ($action == 'confirm_deletefile') {
-	if (GETPOST('confirm') == 'yes') {
-		// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
+$backtopage = $savbacktopage;
 
-		$upload_dir = $conf->ecm->dir_output.($relativepath ? '/'.$relativepath : '');
-		$file = $upload_dir."/".GETPOST('urlfile', 'alpha');
-		$ret = dol_delete_file($file); // This include also the delete from file index in database.
-		if ($ret) {
-			$urlfiletoshow = GETPOST('urlfile', 'alpha');
-			$urlfiletoshow = preg_replace('/\.noexe$/', '', $urlfiletoshow);
-			setEventMessages($langs->trans("FileWasRemoved", $urlfiletoshow), null, 'mesgs');
-			$result = $ecmdir->changeNbOfFiles('-');
-		} else {
-			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile', 'alpha')), null, 'errors');
-		}
-
-		clearstatcache();
-	}
+if ($action == 'renamefile') {	// Must be after include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php'; If action were renamefile, we set it to 'file_manager'
 	$action = 'file_manager';
 }
 
+
 // Add directory
-if ($action == 'add' && $user->rights->ecm->setup) {
+if ($action == 'add' && $permtouploadfile) {
 	$ecmdir->ref                = 'NOTUSEDYET';
 	$ecmdir->label              = GETPOST("label");
 	$ecmdir->description        = GETPOST("desc");
@@ -323,13 +294,13 @@ $moreheadjs .= '</script>'."\n";
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $morejs, '', 0, 0);
 
 $head = ecm_prepare_dasboard_head('');
-print dol_get_fiche_head($head, 'index', '', -1, '');
+print dol_get_fiche_head($head, 'index_medias', '', -1, '');
 
 
 // Add filemanager component
-$module = 'ecm';
+$module = 'medias';
 if (empty($url)) {
-	$url = DOL_URL_ROOT.'/ecm/index.php'; // Must be an url without param
+	$url = DOL_URL_ROOT.'/ecm/index_medias.php'; // Must be an url without param
 }
 include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 

@@ -172,9 +172,6 @@ if (isModEnabled('recruitment')) {
 //***********************
 print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("Search"));
 
-//print $langs->trans("ECMAreaDesc")."<br>";
-//print $langs->trans("ECMAreaDesc2")."<br>";
-//print "<br>\n";
 print $langs->trans("FeatureNotYetAvailable").'.<br><br>';
 
 // Tool bar
