@@ -133,7 +133,7 @@ class FormTicket
 		$this->withnotifytiersatcreate = 0;
 		$this->withusercreate = 1;
 		$this->withcreatereadonly = 1;
-		//$this->withemail = 0;
+		$this->withemail = 0;
 		$this->withref = 0;
 		$this->withextrafields = 0;  // to show extrafields or not
 		//$this->withtopicreadonly=0;
