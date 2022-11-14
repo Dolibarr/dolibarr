@@ -2537,9 +2537,9 @@ span.mainmenuaspan.tmenudisabled {
 }
 
 a.disabled {
-    color: #aaa;
-    text-decoration: none !important;
-    cursor: default;
+	color: #aaa;
+	text-decoration: none !important;
+	cursor: default;
 }
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
