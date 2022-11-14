@@ -1942,7 +1942,7 @@ class ExtraFields
 	 * Return HTML string to print separator extrafield
 	 *
 	 * @param   string	$key            Key of attribute
-	 * @param	string	$object			Object
+	 * @param	object	$object			Object
 	 * @param	int		$colspan		Value of colspan to use (it must includes the first column with title)
 	 * @param	string	$display_type	"card" for form display, "line" for document line display (extrafields on propal line, order line, etc...)
 	 * @param 	string  $mode           Show output ('view') or input ('create' or 'edit') for extrafield

@@ -33,12 +33,21 @@
 function ecm_prepare_dasboard_head($object)
 {
 	global $langs, $conf, $user, $form;
-	global $helptext1, $helptext2;
 
 	$h = 0;
 	$head = array();
+
+	$showmediasection = 0;
+	if (isModEnabled('mailing') || isModEnabled('website')) {
+		$showmediasection = 1;
+	}
+
 	$helptext = $langs->trans("ECMAreaDesc").'<br>';
-	$helptext .= $langs->trans("ECMAreaDesc2");
+	$helptext .= $langs->trans("ECMAreaDesc2a").'<br>';
+	$helptext .= $langs->trans("ECMAreaDesc2b");
+	if ($showmediasection) {
+		$helptext .= '<br>'.$langs->trans("ECMAreaDesc3");
+	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/ecm/index.php';
 	$head[$h][1] = $langs->trans("ECMSectionsManual").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
@@ -49,6 +58,13 @@ function ecm_prepare_dasboard_head($object)
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_auto.php';
 		$head[$h][1] = $langs->trans("ECMSectionsAuto").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 		$head[$h][2] = 'index_auto';
+		$h++;
+	}
+
+	if ($showmediasection && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_medias.php?file_manager=1';
+		$head[$h][1] = $langs->trans("ECMSectionsMedias").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
+		$head[$h][2] = 'index_medias';
 		$h++;
 	}
 
