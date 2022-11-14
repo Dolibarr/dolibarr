@@ -133,13 +133,12 @@ if ($id) {
 	}
 
 	// Type
-	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("Type").'</td>';
+	print '<td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 	// Morphy
-	print '<tr><td class="titlefield">'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
-	/*print '<td rowspan="'.$rowspan.'" class="center" valign="middle" width="25%">';
-	print $form->showphoto('memberphoto',$member);
-	print '</td>';*/
+	print '<tr><td class="titlefield">'.$langs->trans("MemberNature").'</td>';
+	print '<td class="valeur" >'.$object->getmorphylib('', 1).'</td>';
 	print '</tr>';
 
 	// Company

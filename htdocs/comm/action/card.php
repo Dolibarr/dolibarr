@@ -430,7 +430,36 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		$db->begin();
 
+		$selectedrecurrulefreq = 'no';
+		$selectedrecurrulebymonthday = '';
+		$selectedrecurrulebyday = '';
+		$object->recurrule = GETPOSTISSET('recurrulefreq') ? "FREQ=".GETPOST('recurrulefreq', 'alpha') : "";
+		$object->recurrule .= (GETPOST('recurrulefreq', 'alpha') == 'MONTHLY' && GETPOSTISSET('BYMONTHDAY')) ? "_BYMONTHDAY".GETPOST('BYMONTHDAY', 'alpha') : "";
+		$object->recurrule .= (GETPOST('recurrulefreq', 'alpha') == 'WEEKLY' && GETPOSTISSET('BYDAY')) ? "_BYDAY".GETPOST('BYDAY', 'alpha') : "";
 
+		$reg1 = array(); $reg2 = array(); $reg3 = array();
+		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg1)) {
+			$selectedrecurrulefreq = $reg1[1];
+		}
+		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg2)) {
+			$selectedrecurrulebymonthday = $reg2[1];
+		}
+		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg3)) {
+			$selectedrecurrulebyday = $reg3[1];
+		}
+
+		// Is event recurrent ?
+		$eventisrecurring = 0;
+		$userepeatevent = (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 2 ? 1 : 0);
+		if ($userepeatevent && !empty($selectedrecurrulefreq) && $selectedrecurrulefreq != 'no') {
+			$eventisrecurring = 1;
+			$object->recurid = dol_print_date(dol_now('gmt'), 'dayhourlog', 'gmt');
+			$object->recurdateend = dol_mktime(0, 0, 0, GETPOST('limitmonth', 'int'), GETPOST('limitday', 'int'), GETPOST('limityear', 'int'));
+		} else {
+			unset($object->recurid);
+			unset($object->recurrule);
+			unset($object->recurdateend);
+		}
 
 		// Creation of action/event
 		$idaction = $object->create($user);
@@ -517,26 +546,7 @@ if (empty($reshook) && $action == 'add') {
 			$action = 'create'; $donotclearsession = 1;
 		}
 
-		$selectedrecurrulefreq = 'no';
-		$selectedrecurrulebymonthday = '';
-		$selectedrecurrulebyday = '';
-		$object->recurrule = GETPOSTISSET('recurrulefreq') ? "FREQ=".GETPOST('recurrulefreq', 'alpha') : "";
-		$object->recurrule .= GETPOSTISSET('BYMONTHDAY') ? "_BYMONTHDAY".GETPOST('BYMONTHDAY', 'alpha') : "";
-		$object->recurrule .= GETPOSTISSET('BYDAY') ? "_BYDAY".GETPOST('BYDAY', 'alpha') : "";
-
-		if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i', $object->recurrule, $reg1)) {
-			$selectedrecurrulefreq = $reg1[1];
-		}
-		if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY(\d+)/i', $object->recurrule, $reg2)) {
-			$selectedrecurrulebymonthday = $reg2[1];
-		}
-		if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i', $object->recurrule, $reg3)) {
-			$selectedrecurrulebyday = $reg3[1];
-		}
-
-		// If event is recurrent
-		$userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
-		if ($userepeatevent && !empty($selectedrecurrulefreq) && $selectedrecurrulefreq != 'no') {
+		if ($eventisrecurring) {
 			// We set first date of recurrence and offsets
 			if ($selectedrecurrulefreq == 'WEEKLY' && !empty($selectedrecurrulebyday)) {
 				$firstdatearray = dol_get_first_day_week(GETPOST("apday", 'int'), GETPOST("apmonth", 'int'), GETPOST("apyear", 'int'));
@@ -944,9 +954,7 @@ if (empty($reshook) && $action == 'update') {
 	}
 }
 
-/*
- * delete event
- */
+// Delete event
 if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes') {
 	$object->fetch($id);
 	$object->fetch_optionals();
@@ -2205,10 +2213,17 @@ if ($id > 0) {
 		}
 
 		// Private
-		if ($object->elementtype == 'ticket')  print '<tr><td class="titlefield">'.$langs->trans("PrivateEventMessage").'</td><td>'.yn(($object->code == 'TICKET_MSG_PRIVATE') ? 1 : 0, 3).'</td></tr>';
+		if ($object->elementtype == 'ticket') {
+			print '<tr><td class="titlefield">'.$langs->trans("PrivateEventMessage").'</td><td>'.yn(($object->code == 'TICKET_MSG_PRIVATE') ? 1 : 0, 3).'</td></tr>';
+		}
 
 		// Full day event
 		print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent ? 1 : 0, 3).'</td></tr>';
+
+		// Event into a serie
+		if ($object->recurid) {
+			print '<tr><td class="titlefield">'.$langs->trans("EventIntoASerie").'</td><td>'.dol_escape_htmltag($object->recurid).'</td></tr>';
+		}
 
 		$rowspan = 4;
 		if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
