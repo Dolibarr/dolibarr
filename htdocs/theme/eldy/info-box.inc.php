@@ -295,7 +295,20 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin: 2px;
 	border-radius: 3px;
 }
-
+.member-company-back {
+	padding: 2px 7px 2px 7px;
+	background-color: #e4e4e4;
+	color: #666;
+	border-radius: 10px;
+	white-space: nowrap;
+}
+.member-individual-back {
+	padding: 2px 7px 2px 7px;
+	background-color: #e4e4e4;
+	color: #666;
+	border-radius: 10px;
+	white-space: nowrap;
+}
 
 
 .bg-infobox-project{
