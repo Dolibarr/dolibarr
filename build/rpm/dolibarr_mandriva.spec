@@ -162,6 +162,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/barcode
 %_datadir/dolibarr/htdocs/blockedlog
 %_datadir/dolibarr/htdocs/bookmarks
+%_datadir/dolibarr/htdocs/bookcal
 %_datadir/dolibarr/htdocs/bom
 %_datadir/dolibarr/htdocs/categories
 %_datadir/dolibarr/htdocs/collab

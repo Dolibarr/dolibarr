@@ -63,6 +63,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 
 $track_id = GETPOST('track_id', 'alpha');
 $email    = GETPOST('email', 'email');
+$suffix = "";
 
 if (GETPOST('btn_view_ticket')) {
 	unset($_SESSION['email_customer']);
@@ -205,7 +206,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 $triggersendname = 'TICKET_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_TICKET_TO'; // used to know the automatic BCC to add
-$trackid = 'tic'.$object->id;
+if (!empty($object->id)) $trackid = 'tic'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -401,7 +402,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	print '</p>';
 
 	print '<p><label for="email" style="display: inline-block; width: 30%; "><span class="fieldrequired">'.$langs->trans('Email').'</span></label>';
-	print '<input size="30" id="email" name="email" value="'.(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $_SESSION['customer_email']).'" />';
+	print '<input size="30" id="email" name="email" value="'.(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : (!empty($_SESSION['customer_email']) ? $_SESSION['customer_email'] : "")).'" />';
 	print '</p>';
 
 	print '<p style="text-align: center; margin-top: 1.5em;">';
