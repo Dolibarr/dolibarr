@@ -1522,7 +1522,7 @@ class Facture extends CommonInvoice
 			}
 			if (isset($this->statut) && isset($this->alreadypaid)) {
 				$label .= ' '.$this->getLibStatut(5, $this->alreadypaid);
-            }
+			}
 			if (!empty($this->ref)) {
 				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 			}
@@ -1757,14 +1757,14 @@ class Facture extends CommonInvoice
 				if ($this->status == self::STATUS_DRAFT) {
 					$this->brouillon = 1;
 				}
-                                
+
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 
-                // Needed to display LibStatut
-                $this->alreadypaid = $this->getSommePaiement(empty($this->fk_multicurrency) ? 0 : 1);
-                
+				// Needed to display LibStatut
+				$this->alreadypaid = $this->getSommePaiement(empty($this->fk_multicurrency) ? 0 : 1);
+
 				// Lines
 				$this->lines = array();
 

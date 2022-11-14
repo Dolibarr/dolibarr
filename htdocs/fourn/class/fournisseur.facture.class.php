@@ -2504,7 +2504,7 @@ class FactureFournisseur extends CommonInvoice
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
-        
+
 		$picto = $this->picto;
 		if ($this->type == self::TYPE_REPLACEMENT) {
 			$picto .= 'r'; // Replacement invoice
