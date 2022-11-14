@@ -168,6 +168,8 @@ NEW: Table of membership types
 NEW: The purge of files can purge only if older than a number of seconds
 NEW: Update ActionComm type_code on email message ticket
 NEW: VAT - Admin - Add information on deadline day for submission of VAT declaration
+NEW: expand/collapse permissions on user permission page
+
 
 For developers or integrators:
 ------------------------------
