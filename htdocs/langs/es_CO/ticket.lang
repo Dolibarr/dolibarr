@@ -77,7 +77,6 @@ TicketChangeType=Tipo de cambio
 TicketChangeCategory=Cambiar el código analítico
 TicketChangeSeverity=Cambiar la gravedad
 TicketAddMessage=Añade un mensaje
-AddMessage=Añade un mensaje
 MessageSuccessfullyAdded=Ticket agregado
 TicketMessageSuccessfullyAdded=Mensaje agregado exitosamente
 TicketMessagesList=Lista de mensajes

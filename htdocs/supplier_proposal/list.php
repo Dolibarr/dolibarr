@@ -177,7 +177,7 @@ $arrayfields = array(
 	'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
 	'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
-	'sp.date_valid'=>array('label'=>$langs->trans("Date"), 'checked'=>1),
+	'sp.date_valid'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1),
 	'sp.date_livraison'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1),
 	'sp.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
 	'sp.total_tva'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),

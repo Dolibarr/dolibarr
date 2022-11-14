@@ -1892,14 +1892,16 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Thirdparty
 			if (!empty($arrayfields['p.fk_soc']['checked'])) {
 				print '<td class="nowrap">';
-				if (empty($conf->cache['thridparty'][$task_time->fk_soc])) {
-					$tmpsociete = new Societe($db);
-					$tmpsociete->fetch($task_time->fk_soc);
-					$conf->cache['thridparty'][$task_time->fk_soc] = $tmpsociete;
-				} else {
-					$tmpsociete = $conf->cache['thridparty'][$task_time->fk_soc];
+				if ($task_time->fk_soc > 0) {
+					if (empty($conf->cache['thridparty'][$task_time->fk_soc])) {
+						$tmpsociete = new Societe($db);
+						$tmpsociete->fetch($task_time->fk_soc);
+						$conf->cache['thridparty'][$task_time->fk_soc] = $tmpsociete;
+					} else {
+						$tmpsociete = $conf->cache['thridparty'][$task_time->fk_soc];
+					}
+					print $tmpsociete->getNomUrl(1);
 				}
-				print $tmpsociete->getNomUrl(1);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
