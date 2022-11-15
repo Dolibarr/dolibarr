@@ -106,18 +106,18 @@ if (!empty($conf->global->MAIN_MOTD)) {
  * Show security warnings
  */
 
+$message = '';
+
+// Check if install lock file is present
+$lockfile = DOL_DATA_ROOT.'/install.lock';
+if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
+	$langs->load("errors");
+	//if (! empty($message)) $message.='<br>';
+	$message .= info_admin($langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+}
+
 // Security warning repertoire install existe (si utilisateur admin)
 if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
-	$message = '';
-
-	// Check if install lock file is present
-	$lockfile = DOL_DATA_ROOT.'/install.lock';
-	if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/install")) {
-		$langs->load("errors");
-		//if (! empty($message)) $message.='<br>';
-		$message .= info_admin($langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
-	}
-
 	// Conf files must be in read only mode
 	if (is_writable($conffile)) {
 		$langs->load("errors");
