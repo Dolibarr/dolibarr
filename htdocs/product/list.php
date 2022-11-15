@@ -1528,7 +1528,7 @@ while ($i < min($num, $limit)) {
 	// Weight
 	if (!empty($arrayfields['p.weight']['checked'])) {
 		print '<td class="center">';
-		print $obj->weight;
+		print $product_static->weight;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1548,7 +1548,7 @@ while ($i < min($num, $limit)) {
 	// Length
 	if (!empty($arrayfields['p.length']['checked'])) {
 		print '<td class="center">';
-		print $obj->length;
+		print $product_static->length;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1568,7 +1568,7 @@ while ($i < min($num, $limit)) {
 	// Width
 	if (!empty($arrayfields['p.width']['checked'])) {
 		print '<td align="center">';
-		print $obj->width;
+		print $product_static->width;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1588,7 +1588,7 @@ while ($i < min($num, $limit)) {
 	// Height
 	if (!empty($arrayfields['p.height']['checked'])) {
 		print '<td align="center">';
-		print $obj->height;
+		print $product_static->height;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1608,7 +1608,7 @@ while ($i < min($num, $limit)) {
 	// Surface
 	if (!empty($arrayfields['p.surface']['checked'])) {
 		print '<td class="center">';
-		print $obj->surface;
+		print $product_static->surface;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1628,7 +1628,7 @@ while ($i < min($num, $limit)) {
 	// Volume
 	if (!empty($arrayfields['p.volume']['checked'])) {
 		print '<td class="center">';
-		print $obj->volume;
+		print $product_static->volume;
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1660,7 +1660,7 @@ while ($i < min($num, $limit)) {
 	// Sell price
 	if (!empty($arrayfields['p.sellprice']['checked'])) {
 		print '<td class="right nowraponall">';
-		if ($obj->tosell && $usercancreadprice) {
+		if ($product_static->status && $usercancreadprice) {
 			if ($obj->price_base_type == 'TTC') {
 				print '<span class="amount">'.price($obj->price_ttc).' '.$langs->trans("TTC").'</span>';
 			} else {
@@ -1683,7 +1683,7 @@ while ($i < min($num, $limit)) {
 			$productpricescache[$obj->rowid] = array();
 		}
 
-		if ($obj->tosell && $usercancreadprice) {
+		if ($product_static->status && $usercancreadprice) {
 			// Make 1 request for all price levels (without filter on price_level) and saved result into an cache array
 			// then reuse the cache array if we need prices for other price levels
 			$sqlp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price, p.price_base_type";
@@ -1941,7 +1941,7 @@ while ($i < min($num, $limit)) {
 		if (!empty($conf->use_javascript_ajax) && $user->hasRight("produit", "creer") && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 			print ajax_object_onoff($product_static, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
 		} else {
-			print $product_static->LibStatut($obj->tosell, 5, 0);
+			print $product_static->LibStatut($product_static->status, 5, 0);
 		}
 		print '</td>';
 		if (!$i) {
