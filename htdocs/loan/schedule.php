@@ -97,14 +97,6 @@ $morehtmlright = '';
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 if ($action == 'save') {
-	/*
-	TODO:
-	Plutôt que 'create' ou 'update' sur des lignes individuelles, je trouve plus pertinent (même si un peu plus coûteux
-	en ressources) de remplacer à chaque fois l'échéancier complet.
-
-	En effet, les lignes sont codépendantes (une ligne qu'on mettrait à jour individuellement pourrait être incompatible
-	avec une autre ligne existante).
-	 */
     $i=1;
 	$installmentsFromPost = GETPOST('installment', 'array');
 	$nbEcheancierCreated = 0;
@@ -113,11 +105,9 @@ if ($action == 'save') {
 		if ($object->nbPeriods === 0) break; // should never be the case
 		// make sure all values are properly typed
 		$p = (int) $p;
-		$installmentFromPost['ppmt'] = (double) price2num($installmentFromPost['ppmt']);
-		$installmentFromPost['ipmt'] = (double) price2num($installmentFromPost['ipmt']);
-//		$installment['pmt']  = (double) $installment['pmt'];
-		$installmentFromPost['pv']   = (double) price2num($installmentFromPost['pv']);
-		$installmentFromPost['fv']   = (double) price2num($installmentFromPost['fv']);
+		$installmentFromPost['ppmt'] = parseLocalizedNumberStr($installmentFromPost['ppmt']);
+		$installmentFromPost['ipmt'] = parseLocalizedNumberStr($installmentFromPost['ipmt']);
+		$installmentFromPost['fv']   = parseLocalizedNumberStr($installmentFromPost['fv']);
 
 		$echeancier = new LoanSchedule($db);
         $echeancier->fk_loan = $object->id;

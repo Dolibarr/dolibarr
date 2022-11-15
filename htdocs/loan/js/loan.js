@@ -92,7 +92,7 @@ const LoanModule = {
 		 */
 		const recomputeForManualPayment = function () {
 			// TODO: vérifier que price2numjs fonctionne bien en 10.0
-			const manualPmt = parseFloat(price2numjs($(this).val()));
+			const manualPmt = parseFloat(price2numjs($(this).val().replace(/[  ]/, '')));
 			const $tr = $(this).closest('tr');
 			const installment = {};
 			// récupère data-p, data-pmt, data-ipmt etc. depuis le <tr>

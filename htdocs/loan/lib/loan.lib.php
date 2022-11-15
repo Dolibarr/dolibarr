@@ -28,7 +28,7 @@ class Installment {
 	 */
 	public $p;
 	/**
-	 * @var double $pmt payment (= $ipmt + $ppmt)
+	 * @var double $pmt payment amount (= $ipmt + $ppmt)
 	 */
 	public $pmt;
 	/**
@@ -140,7 +140,7 @@ function loadScheduleLinesToInstallments($loan, $lines) {
 	foreach ($lines as $i => $line) {
 		$p = $i + 1;
 		$pmt = $line->amount_capital + $line->amount_interest;
-		$fv = $pv - $pmt;
+		$fv = $pv - $line->amount_capital;
 		$installments[] = new Installment(
 			$p,
 			$pmt,
@@ -212,6 +212,19 @@ function getInstallmentTableRow($loan, $installment, $isPaid = false) {
 	return $tr;
 }
 
+/**
+ * Wrapper around price2num to remove narrow or wide unbreakable spaces first (which come from Intl.NumberFormat in
+ * javascript).
+ *
+ * @param string $numberStr
+ * @return double
+ */
+function parseLocalizedNumberStr($numberStr) {
+	$parseable = $numberStr;
+	$parseable = preg_replace('/[  ]/u', '', $parseable);
+	$ret = (double) price2num($parseable);
+	return $ret;
+}
 
 /// ————————————————————————— functions taken from MathPHP —————————————————————————
 ///  ##############################  MathPHP license: ##############################
