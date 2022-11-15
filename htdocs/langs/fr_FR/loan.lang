@@ -39,6 +39,7 @@ InterestRate=Taux
 InterestRateHelp=Taux d'intérêt proportionnel annuel
 YearlyRate=Taux d'intérêt proportionnel annuel
 PeriodicRate=Taux d'intérêt périodique
+FutureValue=Valeur résiduelle
 TermPaidAllreadyPaid = Ce terme est déjà payé
 CantUseScheduleWithLoanStartedToPaid = Impossible de générer un échéancier pour un prêt avec un paiement commencé
 CantModifyInterestIfScheduleIsUsed = Vous ne pouvez pas modifier l'intérêt si vous utilisez le calendrier

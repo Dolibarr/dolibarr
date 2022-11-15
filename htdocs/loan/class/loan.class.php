@@ -187,6 +187,36 @@ class Loan extends CommonObject implements \JsonSerializable
 		'currency',
 	);
 
+	// TODO: complete this fields definition to make the module compatible with the helpers shipped with ModuleBuilder
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'css' => 'left', 'comment' => 'Id'),
+		'entity' => array(),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2,),
+		'label' => array('type' => 'text', 'label' => 'Label', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 3,),
+		'fk_bank' => array('type' => 'integer:Account:compta/bank/class/account.class.php', 'label' => 'Account', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 3,),
+		'capital' => array('type' => 'price', 'label' => 'Capital', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 3,),
+		'insurance_amount' => array('type' => 'price', 'label' => 'Insurance', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 3,),
+		'nbPeriods' => array('type' => 'integer', 'label' => 'nbPeriods', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 3,),
+		'rate' => array('type' => 'double', 'label' => 'rate', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 3,),
+		'note_private' => array('type' => 'double', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 3,),
+		'note_public' => array('type' => 'double', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 3,),
+
+		'capital_position' => array('type' => 'double', 'label' => 'CapitalPosition', 'enabled' => 0, 'position' => 60, 'notnull' => 1, 'visible' => 3,),
+		'date_position' => array('type' => 'datetime', 'label' => 'DatePosition', 'enabled' => 0, 'position' => 60, 'notnull' => 1, 'visible' => 3,),
+
+		'accountancy_account_capital' => array('type' => 'double', 'label' => 'accountancy_account_capital', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 3,),
+		'accountancy_account_insurance' => array('type' => 'double', 'label' => 'accountancy_account_insurance', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 3,),
+		'accountancy_account_interest' => array('type' => 'double', 'label' => 'accountancy_account_interest', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 3,),
+
+		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php', 'label' => 'Account', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 3,),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => '1', 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => '1', 'position' => 511, 'notnull' => -1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
+
+		'fk_periodicity' => array('type' => 'integer', 'label' => 'Periodicity', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 3,),
+		'calc_mode' => array('type' => 'integer', 'label' => 'CalcMode', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 3,),
+		'future_value' => array('type' => 'price', 'label' => 'FutureValue', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 3,),
+	);
+
 
 	/**
 	 * Constructor
@@ -918,6 +948,46 @@ class Loan extends CommonObject implements \JsonSerializable
 		}
 		$hasEcheancier = (bool) $this->db->fetch_object($resql)->has_echeancier;
 		return $hasEcheancier;
+	}
+
+	/**
+	 * @param array $fieldDefArray
+	 * @param string $key
+	 * @param mixed $value Current value (preselected / pre-entered)
+	 * @param string $moreparam Additional html attributes
+	 * @param string $keysuffix
+	 * @param string $keyprefix
+	 * @param string $morecss Additional classes (for the class attribute of the main HTML input element)
+	 * @return string|void
+	 */
+	public function showInputField($fieldDefArray, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0) {
+		global $conf, $langs, $form;
+		/*
+				date_creation
+				label
+				fk_bank
+				capital
+				insurance_amount
+				nbPeriods
+				rate
+				capital_position
+				date_position
+				accountancy_account_capital
+				accountancy_account_insurance
+				accountancy_account_interest
+				fk_project
+				fk_user_author
+				fk_user_modif
+				fk_periodicity
+				calc_mode
+				future_value
+		 */
+		if ($key === '') {
+
+		}
+		elseif (array_key_exists($key, $this->fields)) {
+			return parent::showInputField($fieldDefArray, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0);
+		}
 	}
 
 	/**

@@ -39,9 +39,11 @@ InterestRate=Interest rate
 InterestRateHelp=Yearly proportional interest rate
 YearlyRate=Yearly proportional interest rate
 PeriodicRate=Periodic interest rate
+FutureValue=Future value
 TermPaidAllreadyPaid = This term is allready paid
 CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = You can't modify interest if you use schedule
+
 # Admin
 ConfigLoan=Configuration of the module loan
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
