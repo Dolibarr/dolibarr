@@ -81,6 +81,7 @@ class FormTicket
 	public $withtitletopic;
 	public $withtopicreadonly;
 	public $withreadid;
+
 	public $withcompany;  // to show company drop-down list
 	public $withfromsocid;
 	public $withfromcontactid;
@@ -108,6 +109,7 @@ class FormTicket
 	 * @var string Error code (or message)
 	 */
 	public $error;
+	public $errors = array();
 
 
 	/**
@@ -126,7 +128,7 @@ class FormTicket
 		$this->withcompany = isModEnabled("societe");
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
-		//$this->withreadid=0;
+		$this->withreadid=0;
 		//$this->withtitletopic='';
 		$this->withnotifytiersatcreate = 0;
 		$this->withusercreate = 1;
