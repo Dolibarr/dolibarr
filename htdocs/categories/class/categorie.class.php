@@ -62,6 +62,7 @@ class Categorie extends CommonObject
 	const TYPE_KNOWLEDGEMANAGEMENT = 'knowledgemanagement';
 	const TYPE_INVOICE             = 'invoice';
 	const TYPE_SUPPLIER_INVOICE    = 'supplier_invoice';
+	const TYPE_ORDER               = 'order';
 	const TYPE_SUPPLIER_ORDER      = 'supplier_order';
 
 	/**
@@ -90,7 +91,8 @@ class Categorie extends CommonObject
 		'knowledgemanagement' => 13,
 		'invoice'             => 14,
 		'supplier_invoice'    => 15,
-		'supplier_order'      => 16
+		'order'               => 16,
+		'supplier_order'      => 17
 	);
 
 	/**
@@ -115,7 +117,8 @@ class Categorie extends CommonObject
 		13 => 'knowledgemanagement',
 		14 => 'invoice',
 		15 => 'supplier_invoice',
-		16 => 'supplier_order'
+		16 => 'order',
+		17 => 'supplier_order'
 	);
 
 	/**
@@ -163,6 +166,7 @@ class Categorie extends CommonObject
 		'knowledgemanagement' => 'KnowledgeRecord',
 		'invoice'             => 'Facture',
 		'supplier_invoice'    => 'FactureFournisseur',
+		'order'               => 'Commande',
 		'supplier_order'      => 'CommandeFournisseur'
 	);
 
@@ -172,21 +176,20 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
-		'product'          => 'ProductsCategoriesArea',
-		'customer'         => 'CustomersCategoriesArea',
-		'supplier'         => 'SuppliersCategoriesArea',
-		'member'           => 'MembersCategoriesArea',
-		'contact'          => 'ContactsCategoriesArea',
-		'user'             => 'UsersCategoriesArea',
-		'account'          => 'AccountsCategoriesArea', // old for bank account
-		'bank_account'     => 'AccountsCategoriesArea',
-		'project'          => 'ProjectsCategoriesArea',
-		'warehouse'        => 'StocksCategoriesArea',
-		'actioncomm'       => 'ActioncommCategoriesArea',
-		'website_page'     => 'WebsitePageCategoriesArea',
-		'invoice'          => 'InvoiceCategoriesArea',
-		'supplier_invoice' => 'SupplierInvoiceCategoriesArea',
-		'supplier_order'   => 'SupplierOrderCategoriesArea'
+		'product'        => 'ProductsCategoriesArea',
+		'customer'       => 'CustomersCategoriesArea',
+		'supplier'       => 'SuppliersCategoriesArea',
+		'member'         => 'MembersCategoriesArea',
+		'contact'        => 'ContactsCategoriesArea',
+		'user'           => 'UsersCategoriesArea',
+		'account'        => 'AccountsCategoriesArea', // old for bank account
+		'bank_account'   => 'AccountsCategoriesArea',
+		'project'        => 'ProjectsCategoriesArea',
+		'warehouse'      => 'StocksCategoriesArea',
+		'actioncomm'     => 'ActioncommCategoriesArea',
+		'website_page'   => 'WebsitePageCategoriesArea',
+		'order'          => 'OrderCategoriesArea',
+		'supplier_order' => 'SupplierOrderCategoriesArea'
 	);
 
 	/**
@@ -204,6 +207,7 @@ class Categorie extends CommonObject
 		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord',
 		'invoice'             => 'facture',
 		'supplier_invoice'    => 'facture_fourn',
+		'order'               => 'commande',
 		'supplier_order'      => 'commande_fournisseur'
 	);
 
@@ -265,6 +269,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_TICKET
 	 * @see Categorie::TYPE_INVOICE
 	 * @see Categorie::TYPE_SUPPLIER_INVOICE
+	 * @see Categorie::TYPE_ORDER
 	 * @see Categorie::TYPE_SUPPLIER_ORDER
 	 */
 	public $type;

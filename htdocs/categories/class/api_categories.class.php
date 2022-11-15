@@ -60,7 +60,8 @@ class Categories extends DolibarrApi
 		13 => 'knowledgemanagement',
 		14 => 'invoice',
 		15 => 'supplier_invoice',
-		16 => 'supplier_order'
+		16 => 'order',
+		17 => 'supplier_order'
 	);
 
 	/**
