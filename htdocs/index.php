@@ -116,22 +116,20 @@ if (!empty($lockfile) && !file_exists($lockfile) && is_dir(DOL_DOCUMENT_ROOT."/i
 	$message .= info_admin($langs->trans("WarningLockFileDoesNotExists", DOL_DATA_ROOT).' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 }
 
-// Security warning repertoire install existe (si utilisateur admin)
-if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
-	// Conf files must be in read only mode
-	if (is_writable($conffile)) {
-		$langs->load("errors");
-		//$langs->load("other");
-		//if (! empty($message)) $message.='<br>';
-		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
-	}
-
-	if ($message) {
-		print $message;
-		//$message.='<br>';
-		//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
-	}
+// Conf files must be in read only mode
+if (is_writable($conffile)) {
+	$langs->load("errors");
+	//$langs->load("other");
+	//if (! empty($message)) $message.='<br>';
+	$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->trans("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
 }
+
+if ($message) {
+	print $message;
+	//$message.='<br>';
+	//print info_admin($langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install"));
+}
+
 
 /*
  * Dashboard Dolibarr states (statistics)
