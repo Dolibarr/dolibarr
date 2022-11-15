@@ -282,7 +282,7 @@ if ($action == 'add')
         if (empty($error)) {
 			$result = $adh->create($user);
 		}
-		
+
         if ($result > 0)
         {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
