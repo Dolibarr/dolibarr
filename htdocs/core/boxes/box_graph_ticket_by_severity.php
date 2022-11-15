@@ -99,7 +99,7 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 		$listofopplabel = array();
 		$listofoppcode = array();
 		$colorseriesstat = array();
-		if ($user->rights->ticket->read) {
+		if ($user->hasRight('ticket', 'read')) {
 			$sql = "SELECT cts.rowid, cts.label, cts.code";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_ticket_severity as cts";
 			$sql .= " WHERE cts.active = 1";

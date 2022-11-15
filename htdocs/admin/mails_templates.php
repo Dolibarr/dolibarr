@@ -366,7 +366,7 @@ if (empty($reshook)) {
 			// List of values
 			$i = 0;
 			foreach ($listfieldinsert as $f => $value) {
-				$keycode = $listfieldvalue[$i];
+				$keycode = isset($listfieldvalue[$i]) ? $listfieldvalue[$i] : "";
 				if ($value == 'lang') {
 					$keycode = 'langcode';
 				}

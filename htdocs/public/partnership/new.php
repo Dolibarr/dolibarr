@@ -502,7 +502,7 @@ if (empty($reshook) && $action == 'added') {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-$extrafields->fetch_name_optionals_label($partnership->table_element); // fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
 
 
 llxHeaderVierge($langs->trans("NewPartnershipRequest"));
@@ -518,7 +518,7 @@ print '<div class="center subscriptionformhelptext justify">';
 if (!empty($conf->global->PARTNERSHIP_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PARTNERSHIP_NEWFORM_TEXT)."<br>\n";
 } else {
-	print $langs->trans("NewPartnershipRequestDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
+	print $langs->trans("NewPartnershipRequestDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }
 print '</div>';
 
