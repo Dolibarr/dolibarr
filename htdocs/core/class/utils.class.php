@@ -360,23 +360,23 @@ class Utils
 				}
 			} else {
 				if ($compression == 'none') {
-					$fullcommandclear .= " > ".$outputfile;
-					$fullcommandcrypted .= " > ".$outputfile;
+					$fullcommandclear .= " | grep -v 'Warning: Using a password on the command line interface can be insecure.' > ".$outputfile;
+					$fullcommandcrypted .= " | grep -v 'Warning: Using a password on the command line interface can be insecure.' > ".$outputfile;
 					$handle = 1;
 				} elseif ($compression == 'gz') {
-					$fullcommandclear .= " | gzip > ".$outputfile;
-					$fullcommandcrypted .= " | gzip > ".$outputfile;
-					$paramcrypted.=" | gzip";
+					$fullcommandclear .= " | grep -v 'Warning: Using a password on the command line interface can be insecure.' | gzip > ".$outputfile;
+					$fullcommandcrypted .= " | grep -v 'Warning: Using a password on the command line interface can be insecure.' | gzip > ".$outputfile;
+					$paramcrypted.=" | grep -v 'Warning: Using a password on the command line interface can be insecure.' | gzip";
 					$handle = 1;
 				} elseif ($compression == 'bz') {
-					$fullcommandclear .= " | bzip2 > ".$outputfile;
-					$fullcommandcrypted .= " | bzip2 > ".$outputfile;
-					$paramcrypted.=" | bzip2";
+					$fullcommandclear .= " | grep -v 'Warning: Using a password on the command line interface can be insecure.' | bzip2 > ".$outputfile;
+					$fullcommandcrypted .= " | grep -v 'Warning: Using a password on the command line interface can be insecure.' | bzip2 > ".$outputfile;
+					$paramcrypted.=" | grep -v 'Warning: Using a password on the command line interface can be insecure.' | bzip2";
 					$handle = 1;
 				} elseif ($compression == 'zstd') {
-					$fullcommandclear .= " | zstd > ".$outputfile;
-					$fullcommandcrypted .= " | zstd > ".$outputfile;
-					$paramcrypted.=" | zstd";
+					$fullcommandclear .= " | grep -v 'Warning: Using a password on the command line interface can be insecure.' | zstd > ".$outputfile;
+					$fullcommandcrypted .= " | grep -v 'Warning: Using a password on the command line interface can be insecure.' | zstd > ".$outputfile;
+					$paramcrypted.=" | grep -v 'Warning: Using a password on the command line interface can be insecure.' | zstd";
 					$handle = 1;
 				}
 			}
@@ -460,15 +460,16 @@ class Utils
 					}
 				}
 
-
-				if ($compression == 'none') {
-					fclose($handle);
-				} elseif ($compression == 'gz') {
-					gzclose($handle);
-				} elseif ($compression == 'bz') {
-					bzclose($handle);
-				} elseif ($compression == 'zstd') {
-					fclose($handle);
+				if (!$lowmemorydump) {
+					if ($compression == 'none') {
+						fclose($handle);
+					} elseif ($compression == 'gz') {
+						gzclose($handle);
+					} elseif ($compression == 'bz') {
+						bzclose($handle);
+					} elseif ($compression == 'zstd') {
+						fclose($handle);
+					}
 				}
 
 				if (!empty($conf->global->MAIN_UMASK)) {
