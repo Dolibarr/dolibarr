@@ -1449,10 +1449,9 @@ while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 	$parameters = array('staticdata' => $obj);
 	// Note that $action and $object may have been modified by hook
+	// do companystatic fetch in hook if wanted or anything else
 	$reshook = $hookmanager->executeHooks('loadStaticObject', $parameters, $companystatic, $action);
-	if ($reshook < 0) {
-		$companystatic->fetch($obj->rowid);
-	} else {
+	if (empty($reshook)) {
 		$companystatic->id = $obj->rowid;
 		$companystatic->name = $obj->name;
 		$companystatic->name_alias = $obj->name_alias;
