@@ -392,8 +392,8 @@ class Loan extends CommonObject implements \JsonSerializable
 			. ' ' . (int) $this->fk_periodicity . ','
 			. ' ' . (double) $this->future_value . ','
 			. ' ' . (int) $user->id . ','
-			. " '" . price2num($newinsuranceamount) . "'"
-			. ' ' . (int) $this->calc_mode . ','
+			. " '" . price2num($newinsuranceamount) . "',"
+			. ' ' . (int) $this->calc_mode . ''
 			. ')';
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
