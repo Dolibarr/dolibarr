@@ -190,7 +190,7 @@ print dol_get_fiche_end();
 print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {
-	if ($user->rights->produit->creer || $user->rights->service->creer) {
+	if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=create&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Add").'</a>';
 		if ($cnt_trans > 0) {
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type_translation.php?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Update").'</a>';
@@ -271,7 +271,7 @@ if ($action == 'edit') {
  * Form to add a new translation
  */
 
-if ($action == 'create' && $user->rights->adherent->configurer) {
+if ($action == 'create' && $user->hasRight('adherent', 'configurer')) {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
