@@ -101,7 +101,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'd.rowid'=>'Ref',
+	'd.ref'=>'Ref',
 	'd.login'=>'Login',
 	'd.lastname'=>'Lastname',
 	'd.firstname'=>'Firstname',
@@ -117,7 +117,7 @@ $fieldstosearchall = array(
 	'd.note_public'=>'NotePublic',
 	'd.note_private'=>'NotePrivate',
 );
-if ($db->type == 'pgsql') unset($fieldstosearchall['d.rowid']);
+if ($db->type == 'pgsql') unset($fieldstosearchall['d.ref']); // TODO check if in pgsql d.ref is ok
 $arrayfields = array(
 	'd.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
 	'd.civility'=>array('label'=>$langs->trans("Civility"), 'checked'=>0),
@@ -246,7 +246,7 @@ $memberstatic = new Adherent($db);
 
 $now = dol_now();
 
-$sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
+$sql = "SELECT d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.skype, d.birth, d.public, d.photo,";
 $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_creation, d.tms as date_update,";
@@ -283,6 +283,7 @@ if ($search_filter == 'outofdate') $sql .= " AND (datefin < '".$db->idate($now).
 if ($search_status != '') $sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")"; // Peut valoir un nombre ou liste de nombre separes par virgules
 if ($search_ref) {
 	if (is_numeric($search_ref)) $sql .= " AND (d.rowid = ".$db->escape($search_ref).")";
+	if (!empty($search_ref)) $sql .= " AND (d.ref = '".$db->escape($search_ref)."')";
 	else $sql .= " AND 1 = 2"; // Always wrong
 }
 if ($search_civility) $sql .= natural_search("d.civility", $search_civility);
@@ -602,7 +603,7 @@ print "</tr>\n";
 
 print '<tr class="liste_titre">';
 if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID))       print_liste_field_titre("ID", $_SERVER["PHP_SELF"], '', '', $param, 'align="center"', $sortfield, $sortorder);
-if (!empty($arrayfields['d.ref']['checked']))            print_liste_field_titre($arrayfields['d.ref']['label'], $_SERVER["PHP_SELF"], 'd.rowid', '', $param, '', $sortfield, $sortorder);
+if (!empty($arrayfields['d.ref']['checked']))            print_liste_field_titre($arrayfields['d.ref']['label'], $_SERVER["PHP_SELF"], 'd.ref', '', $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['d.civility']['checked']))       print_liste_field_titre($arrayfields['d.civility']['label'], $_SERVER["PHP_SELF"], 'd.civility', '', $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['d.firstname']['checked']))      print_liste_field_titre($arrayfields['d.firstname']['label'], $_SERVER["PHP_SELF"], 'd.firstname', '', $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['d.lastname']['checked']))       print_liste_field_titre($arrayfields['d.lastname']['label'], $_SERVER["PHP_SELF"], 'd.lastname', '', $param, '', $sortfield, $sortorder);
