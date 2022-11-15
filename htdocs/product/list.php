@@ -1340,10 +1340,9 @@ while ($i < min($num, $limit)) {
 	}
 	$parameters = array('staticdata' => $obj);
 	// Note that $action and $object may have been modified by hook
+	// do product_static fetch in hook if wanted or anything else
 	$reshook = $hookmanager->executeHooks('loadStaticObject', $parameters, $product_static, $action);
-	if ($reshook < 0) {
-		$product_static->fetch($obj->rowid);
-	} else {
+	if (empty($reshook)) {
 		$product_static->id = $obj->rowid;
 		$product_static->ref = $obj->ref;
 		$product_static->ref_fourn = empty($obj->ref_supplier) ? '' : $obj->ref_supplier; // deprecated
