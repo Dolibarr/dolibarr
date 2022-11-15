@@ -32,6 +32,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -105,7 +106,8 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 
 $sql = "SELECT f.rowid, f.ref as ref, f.type, f.datef as df, f.libelle,f.ref_supplier, f.date_lim_reglement as dlr, f.close_code,";
 $sql .= " fd.rowid as fdid, fd.description, fd.product_type, fd.total_ht, fd.tva as total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.vat_src_code,";
-$sql .= " s.rowid as socid, s.nom as name, s.fournisseur, s.code_client, s.code_fournisseur,";
+$sql .= " p.default_vat_code AS product_buy_default_vat_code, p.tva_tx as product_buy_vat, p.localtax1_tx as product_buy_localvat1, p.localtax2_tx as product_buy_localvat2,";
+$sql .= " s.rowid as socid, s.nom as name, s.fournisseur, s.code_client, s.code_fournisseur, s.country_code,";
 if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
 	$sql .= " spe.accountancy_code_customer_general,";
 	$sql .= " spe.accountancy_code_customer as code_compta,";
@@ -170,12 +172,18 @@ if ($result) {
 	$tablocaltax2 = array();
 	$tabcompany = array();
 	$tabother = array();
+	$tabrctva = array();
+	$tabrclocaltax1 = array();
+	$tabrclocaltax2 = array();
 
 	$num = $db->num_rows($result);
 
 	// Variables
 	$cptfour = ($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER != "") ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : 'NotDefined';
 	$cpttva = (!empty($conf->global->ACCOUNTING_VAT_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_BUY_ACCOUNT : 'NotDefined';
+	$rcctva = (!empty($conf->global->ACCOUNTING_ACCOUNT_VAT_BUY_REVERSE_CHARGES_CREDIT)) ? $conf->global->ACCOUNTING_ACCOUNT_VAT_BUY_REVERSE_CHARGES_CREDIT : 'NotDefined';
+	$rcdtva = (!empty($conf->global->ACCOUNTING_ACCOUNT_VAT_BUY_REVERSE_CHARGES_DEBIT)) ? $conf->global->ACCOUNTING_ACCOUNT_VAT_BUY_REVERSE_CHARGES_DEBIT : 'NotDefined';
+	$country_code_in_EEC = getCountriesInEEC();		// This make a database call but there is a cache done into $conf->cache['country_code_in_EEC']
 
 	$i = 0;
 	while ($i < $num) {
@@ -233,6 +241,53 @@ if ($result) {
 		}
 		if (!isset($tablocaltax2[$obj->rowid][$compta_localtax2])) {
 			$tablocaltax2[$obj->rowid][$compta_localtax2] = 0;
+		}
+
+		// VAT Reverse charge
+		if (($mysoc->country_code == 'fr' || !empty($conf->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) && in_array($obj->country_code, $country_code_in_EEC)) {
+			$rcvatdata = getTaxesFromId($obj->product_buy_vat . ($obj->product_buy_default_vat_code ? ' (' . $obj->product_buy_default_vat_code . ')' : ''), $mysoc, $mysoc, 0);
+			$rcc_compta_tva = (!empty($vatdata['accountancy_code_vat_reverse_charge_credit']) ? $vatdata['accountancy_code_vat_reverse_charge_credit'] : $rcctva);
+			$rcd_compta_tva = (!empty($vatdata['accountancy_code_vat_reverse_charge_debit']) ? $vatdata['accountancy_code_vat_reverse_charge_debit'] : $rcdtva);
+			$rcc_compta_localtax1 = (!empty($vatdata['accountancy_code_vat_reverse_charge_credit']) ? $vatdata['accountancy_code_vat_reverse_charge_credit'] : $rcctva);
+			$rcd_compta_localtax1 = (!empty($vatdata['accountancy_code_vat_reverse_charge_debit']) ? $vatdata['accountancy_code_vat_reverse_charge_debit'] : $rcdtva);
+			$rcc_compta_localtax2 = (!empty($vatdata['accountancy_code_vat_reverse_charge_credit']) ? $vatdata['accountancy_code_vat_reverse_charge_credit'] : $rcctva);
+			$rcd_compta_localtax2 = (!empty($vatdata['accountancy_code_vat_reverse_charge_debit']) ? $vatdata['accountancy_code_vat_reverse_charge_debit'] : $rcdtva);
+			if (price2num($obj->product_buy_vat) || !empty($obj->product_buy_default_vat_code)) {
+				$vat_key = vatrate($obj->product_buy_vat) . ($obj->product_buy_default_vat_code ? ' (' . $obj->product_buy_default_vat_code . ')' : '');
+				$val_value = $vat_key;
+				$def_tva[$obj->rowid][$rcc_compta_tva][$vat_key] = $val_value;
+				$def_tva[$obj->rowid][$rcd_compta_tva][$vat_key] = $val_value;
+			}
+
+			if (!isset($tabrctva[$obj->rowid][$rcc_compta_tva])) {
+				$tabrctva[$obj->rowid][$rcc_compta_tva] = 0;
+			}
+			if (!isset($tabrctva[$obj->rowid][$rcd_compta_tva])) {
+				$tabrctva[$obj->rowid][$rcd_compta_tva] = 0;
+			}
+			if (!isset($tabrclocaltax1[$obj->rowid][$rcc_compta_localtax1])) {
+				$tabrclocaltax1[$obj->rowid][$rcc_compta_localtax1] = 0;
+			}
+			if (!isset($tabrclocaltax1[$obj->rowid][$rcd_compta_localtax1])) {
+				$tabrclocaltax1[$obj->rowid][$rcd_compta_localtax1] = 0;
+			}
+			if (!isset($tabrclocaltax2[$obj->rowid][$rcc_compta_localtax2])) {
+				$tabrclocaltax2[$obj->rowid][$rcc_compta_localtax2] = 0;
+			}
+			if (!isset($tabrclocaltax2[$obj->rowid][$rcd_compta_localtax2])) {
+				$tabrclocaltax2[$obj->rowid][$rcd_compta_localtax2] = 0;
+			}
+
+			$rcvat = $obj->total_ttc * $obj->product_buy_vat;
+			$rclocalvat1 = $obj->total_ttc * $obj->product_buy_localvat1;
+			$rclocalvat2 = $obj->total_ttc * $obj->product_buy_localvat2;
+
+			$tabrctva[$obj->rowid][$rcc_compta_tva] += $rcvat;
+			$tabrctva[$obj->rowid][$rcd_compta_tva] -= $rcvat;
+			$tabrclocaltax1[$obj->rowid][$rcc_compta_localtax1] += $rclocalvat1;
+			$tabrclocaltax1[$obj->rowid][$rcd_compta_localtax1] -= $rclocalvat1;
+			$tabrclocaltax2[$obj->rowid][$rcc_compta_localtax2] += $rclocalvat2;
+			$tabrclocaltax2[$obj->rowid][$rcd_compta_localtax2] -= $rclocalvat2;
 		}
 
 		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
@@ -469,6 +524,29 @@ if ($action == 'writebookkeeping') {
 				}
 				if ($numtax == 2) {
 					$arrayofvat = $tablocaltax2;
+				}
+
+				// VAT Reverse charge
+				if ($mysoc->country_code == 'fr' || !empty($conf->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+					$has_vat = false;
+					foreach ($arrayofvat[$key] as $k => $mt) {
+						if ($mt) {
+							$has_vat = true;
+						}
+					}
+
+					if (!$has_vat) {
+						$arrayofvat = $tabrctva;
+						if ($numtax == 1) {
+							$arrayofvat = $tabrclocaltax1;
+						}
+						if ($numtax == 2) {
+							$arrayofvat = $tabrclocaltax2;
+						}
+						if (!is_array($arrayofvat[$key])) {
+							$arrayofvat[$key] = array();
+						}
+					}
 				}
 
 				foreach ($arrayofvat[$key] as $k => $mt) {
@@ -720,6 +798,29 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 			}
 			if ($numtax == 2) {
 				$arrayofvat = $tablocaltax2;
+			}
+
+			// VAT Reverse charge
+			if ($mysoc->country_code == 'fr' || !empty($conf->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+				$has_vat = false;
+				foreach ($arrayofvat[$key] as $k => $mt) {
+					if ($mt) {
+						$has_vat = true;
+					}
+				}
+
+				if (!$has_vat) {
+					$arrayofvat = $tabrctva;
+					if ($numtax == 1) {
+						$arrayofvat = $tabrclocaltax1;
+					}
+					if ($numtax == 2) {
+						$arrayofvat = $tabrclocaltax2;
+					}
+					if (!is_array($arrayofvat[$key])) {
+						$arrayofvat[$key] = array();
+					}
+				}
 			}
 
 			foreach ($arrayofvat[$key] as $k => $mt) {
@@ -991,6 +1092,29 @@ if (empty($action) || $action == 'view') {
 			}
 			if ($numtax == 2) {
 				$arrayofvat = $tablocaltax2;
+			}
+
+			// VAT Reverse charge
+			if ($mysoc->country_code == 'fr' || !empty($conf->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+				$has_vat = false;
+				foreach ($arrayofvat[$key] as $k => $mt) {
+					if ($mt) {
+						$has_vat = true;
+					}
+				}
+
+				if (!$has_vat) {
+					$arrayofvat = $tabrctva;
+					if ($numtax == 1) {
+						$arrayofvat = $tabrclocaltax1;
+					}
+					if ($numtax == 2) {
+						$arrayofvat = $tabrclocaltax2;
+					}
+					if (!is_array($arrayofvat[$key])) {
+						$arrayofvat[$key] = array();
+					}
+				}
 			}
 
 			foreach ($arrayofvat[$key] as $k => $mt) {
