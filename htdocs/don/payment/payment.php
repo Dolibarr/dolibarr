@@ -199,7 +199,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToCredit').'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid") : $object->fk_account, "accountid", 0, '', 2); // Show open bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid") : "0", "accountid", 0, '', 2); // Show open bank account list
 	print '</td></tr>';
 
 	// Number
