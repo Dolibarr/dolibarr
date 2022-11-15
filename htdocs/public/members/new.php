@@ -277,11 +277,11 @@ if (empty($reshook) && $action == 'add') {
 			$adh->pass        = GETPOST('pass1');
 		}
 		$adh->photo       = GETPOST('photo');
-		$adh->country_id  = $conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE ? $conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE : GETPOST('country_id', 'int');
+		$adh->country_id  = getDolGlobalString("MEMBER_NEWFORM_FORCECOUNTRYCODE", GETPOST('country_id', 'int'));
 		$adh->state_id    = GETPOST('state_id', 'int');
-		$adh->typeid      = $conf->global->MEMBER_NEWFORM_FORCETYPE ? $conf->global->MEMBER_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
+		$adh->typeid      = getDolGlobalString("MEMBER_NEWFORM_FORCETYPE", GETPOST('typeid', 'int'));
 		$adh->note_private = GETPOST('note_private');
-		$adh->morphy      = $conf->global->MEMBER_NEWFORM_FORCEMORPHY ? $conf->global->MEMBER_NEWFORM_FORCEMORPHY : GETPOST('morphy');
+		$adh->morphy      = getDolGlobalString("MEMBER_NEWFORM_FORCEMORPHY", GETPOST('morphy'));
 		$adh->birth       = $birthday;
 
 
@@ -433,6 +433,7 @@ if (empty($reshook) && $action == 'add') {
 		exit;
 	} else {
 		$db->rollback();
+		$action = "create";
 	}
 }
 
@@ -770,7 +771,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 	foreach ($measuringUnits->records as $lines)
 		$units[$lines->short_label] = $langs->trans(ucfirst($lines->label));
 
-	$publiccounters = $conf->global->MEMBER_COUNTERS_ARE_PUBLIC;
+	$publiccounters = getDolGlobalString("MEMBER_COUNTERS_ARE_PUBLIC");
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut as status, d.morphy, COUNT(a.rowid) AS membercount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";

@@ -57,7 +57,6 @@ MarkAsRead=Markeer ticket als gelezen
 TicketHistory=Ticket geschiedenis
 TicketChangeType=Van type veranderen
 TicketAddMessage=Voeg een bericht toe
-AddMessage=Voeg een bericht toe
 TicketMessageSuccessfullyAdded=Bericht is succesvol toegevoegd
 NoMsgForThisTicket=Geen bericht voor dit ticket
 TicketSeverity=Strengheid
