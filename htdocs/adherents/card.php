@@ -156,7 +156,7 @@ if (empty($reshook)) {
 
 	if ($action == 'setuserid' && ($user->hasRight('user', 'self', 'creer') || $user->hasRight('user', 'user', 'creer'))) {
 		$error = 0;
-		if (empty($user->hasRight('user', 'user', 'creer'))) {	// If can edit only itself user, we can link to itself only
+		if (!$user->hasRight('user', 'user', 'creer')) {	// If can edit only itself user, we can link to itself only
 			if ($userid != $user->id && $userid != $object->user_id) {
 				$error++;
 				setEventMessages($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"), null, 'errors');
