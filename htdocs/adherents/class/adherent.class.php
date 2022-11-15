@@ -536,7 +536,7 @@ class Adherent extends CommonObject
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
 			if ($id > 0) {
 				$this->id = $id;
-				$this->ref = (string) $id;
+				$this->ref = str_pad((string) $id, 30, "0", STR_PAD_LEFT); // for sort purpose we must complete the field with left zero
 
 				// Update minor fields
 				$result = $this->update($user, 1, 1, 0, 0, 'add'); // nosync is 1 to avoid update data of user
@@ -1283,7 +1283,7 @@ class Adherent extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->entity = $obj->entity;
-				$this->ref = $obj->rowid;
+				$this->ref = (!empty($obj->ref) && $obj->ref !=== (string) $obj->rowid) ? $obj->ref : str_pad((string) $obj->rowid, 30, "0", STR_PAD_LEFT);
 				$this->id = $obj->rowid;
 				$this->ref_ext = $obj->ref_ext;
 
