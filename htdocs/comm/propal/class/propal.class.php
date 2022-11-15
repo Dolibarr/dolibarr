@@ -54,6 +54,11 @@ class Propal extends CommonObject
 	use CommonIncoterm;
 
 	/**
+	 * @var string code
+	 */
+	public $code = "";
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'propal';

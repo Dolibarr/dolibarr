@@ -51,6 +51,11 @@ class Reception extends CommonObject
 	use CommonIncoterm;
 
 	/**
+	 * @var string code
+	 */
+	public $code = "";
+
+	/**
 	 * @var string element name
 	 */
 	public $element = "reception";
