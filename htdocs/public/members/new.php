@@ -288,127 +288,129 @@ if (empty($reshook) && $action == 'add') {
 			$error++;
 		}
 
-		$result = $adh->create($user);
-		if ($result > 0) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$object = $adh;
+		if (!$error) {
+			$result = $adh->create($user);
+			if ($result > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+				$object = $adh;
 
-			$adht = new AdherentType($db);
-			$adht->fetch($object->typeid);
+				$adht = new AdherentType($db);
+				$adht->fetch($object->typeid);
 
-			if ($object->email) {
-				$subject = '';
-				$msg = '';
+				if ($object->email) {
+					$subject = '';
+					$msg = '';
 
-				// Send subscription email
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-				// Set output language
-				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-				// Load traductions files required by page
-				$outputlangs->loadLangs(array("main", "members"));
-				// Get email content from template
-				$arraydefaultmessage = null;
-				$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
+					// Send subscription email
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+					$formmail = new FormMail($db);
+					// Set output language
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					// Load traductions files required by page
+					$outputlangs->loadLangs(array("main", "members"));
+					// Get email content from template
+					$arraydefaultmessage = null;
+					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
 
-				if (!empty($labeltouse)) {
-					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+					if (!empty($labeltouse)) {
+						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+					}
+
+					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+						$subject = $arraydefaultmessage->topic;
+						$msg     = $arraydefaultmessage->content;
+					}
+
+					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+					$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
+
+					if ($subjecttosend && $texttosend) {
+						$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
+
+						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+					}
+					/*if ($result < 0) {
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}*/
 				}
 
-				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-					$subject = $arraydefaultmessage->topic;
-					$msg     = $arraydefaultmessage->content;
-				}
-
-				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-				complete_substitutions_array($substitutionarray, $outputlangs, $object);
-				$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-				$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
-
-				if ($subjecttosend && $texttosend) {
-					$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
-
-					$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
-				}
-				/*if ($result < 0) {
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
-				}*/
-			}
-
-			// Send email to the foundation to say a new member subscribed with autosubscribe form
-			if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL) && !empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
-				  !empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL)) {
-				// Define link to login card
-				$appli = constant('DOL_APPLICATION_TITLE');
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-					$appli = $conf->global->MAIN_APPLICATION_TITLE;
-					if (preg_match('/\d\.\d/', $appli)) {
-						if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
-							$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
+				// Send email to the foundation to say a new member subscribed with autosubscribe form
+				if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL) && !empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
+					!empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL)) {
+					// Define link to login card
+					$appli = constant('DOL_APPLICATION_TITLE');
+					if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+						$appli = $conf->global->MAIN_APPLICATION_TITLE;
+						if (preg_match('/\d\.\d/', $appli)) {
+							if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
+								$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
+							}
+						} else {
+							$appli .= " ".DOL_VERSION;
 						}
 					} else {
 						$appli .= " ".DOL_VERSION;
 					}
+
+					$to = $adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
+					$from = $conf->global->ADHERENT_MAIL_FROM;
+					$mailfile = new CMailFile(
+						'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
+						$to,
+						$from,
+						$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
+						array(),
+						array(),
+						array(),
+						"",
+						"",
+						0,
+						-1
+					);
+
+					if (!$mailfile->sendfile()) {
+						dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
+					}
+				}
+
+				if (!empty($backtopage)) {
+					$urlback = $backtopage;
+				} elseif (!empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)) {
+					$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
+					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
-					$appli .= " ".DOL_VERSION;
+					$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
 				}
 
-				$to = $adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
-				$from = $conf->global->ADHERENT_MAIL_FROM;
-				$mailfile = new CMailFile(
-					'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
-					$to,
-					$from,
-					$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
-					array(),
-					array(),
-					array(),
-					"",
-					"",
-					0,
-					-1
-				);
+				if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
+					if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {			// If edition of amount not allowed
+						// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
+						// It is not so important because a test is done on return of payment validation.
+					}
 
-				if (!$mailfile->sendfile()) {
-					dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
+					$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, price2num(GETPOST('amount', 'alpha'), 'MT'), '', 0);
+
+					if (GETPOST('email')) {
+						$urlback .= '&email='.urlencode(GETPOST('email'));
+					}
+					if ($conf->global->MEMBER_NEWFORM_PAYONLINE != '-1' && $conf->global->MEMBER_NEWFORM_PAYONLINE != 'all') {
+						$urlback .= '&paymentmethod='.urlencode($conf->global->MEMBER_NEWFORM_PAYONLINE);
+					}
+				} else {
+					if (!empty($entity)) {
+						$urlback .= '&entity='.((int) $entity);
+					}
 				}
-			}
 
-			if (!empty($backtopage)) {
-				$urlback = $backtopage;
-			} elseif (!empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)) {
-				$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
-				// TODO Make replacement of __AMOUNT__, etc...
+				dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
 			} else {
-				$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
+				$error++;
+				$errmsg .= join('<br>', $adh->errors);
 			}
-
-			if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
-				if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {			// If edition of amount not allowed
-					// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
-					// It is not so important because a test is done on return of payment validation.
-				}
-
-				$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, price2num(GETPOST('amount', 'alpha'), 'MT'), '', 0);
-
-				if (GETPOST('email')) {
-					$urlback .= '&email='.urlencode(GETPOST('email'));
-				}
-				if ($conf->global->MEMBER_NEWFORM_PAYONLINE != '-1' && $conf->global->MEMBER_NEWFORM_PAYONLINE != 'all') {
-					$urlback .= '&paymentmethod='.urlencode($conf->global->MEMBER_NEWFORM_PAYONLINE);
-				}
-			} else {
-				if (!empty($entity)) {
-					$urlback .= '&entity='.((int) $entity);
-				}
-			}
-
-			dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
-		} else {
-			$error++;
-			$errmsg .= join('<br>', $adh->errors);
 		}
 	}
 
@@ -468,6 +470,7 @@ if (!empty($conf->global->MEMBER_NEWFORM_TEXT)) {
 print '</div>';
 
 dol_htmloutput_errors($errmsg);
+dol_htmloutput_events();
 
 // Print form
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
