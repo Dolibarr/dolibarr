@@ -191,9 +191,10 @@ class Utils
 	 *  @param  string      $file              'auto' or filename to build
 	 *  @param  int         $keeplastnfiles    Keep only last n files (not used yet)
 	 *  @param	int		    $execmethod		   0=Use default method (that is 1 by default), 1=Use the PHP 'exec' - need size of dump in memory, but low memory method is used if GETPOST('lowmemorydump') is set, 2=Use the 'popen' method (low memory method)
+	 *  @param	int			$lowmemorydump	   1=Use the low memory method
 	 *  @return	int						       0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0)
+	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0, $lowmemorydump = 0)
 	{
 		global $db, $conf, $langs, $dolibarr_main_data_root;
 		global $dolibarr_main_db_name, $dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_port, $dolibarr_main_db_pass;
@@ -342,8 +343,6 @@ class Utils
 			}
 
 			$handle = '';
-
-			$lowmemorydump = GETPOSTISSET("lowmemorydump") ? GETPOST("lowmemorydump") : getDolGlobalString('MAIN_LOW_MEMORY_DUMP');
 
 			// Start call method to execute dump
 			$fullcommandcrypted = $command." ".$paramcrypted." 2>&1";

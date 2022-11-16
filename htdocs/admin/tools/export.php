@@ -124,6 +124,7 @@ $result = dol_mkdir($outputdir);
 
 $utils = new Utils($db);
 
+$lowmemorydump = GETPOSTISSET("lowmemorydump") ? GETPOST("lowmemorydump") : getDolGlobalString('MAIN_LOW_MEMORY_DUMP');
 
 // MYSQL
 if ($what == 'mysql') {
@@ -144,7 +145,7 @@ if ($what == 'mysql') {
 	}
 
 	if (!$errormsg) {
-		$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
+		$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
 		$errormsg = $utils->error;
 		$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
 		$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
@@ -153,7 +154,7 @@ if ($what == 'mysql') {
 
 // MYSQL NO BIN
 if ($what == 'mysqlnobin') {
-	$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
+	$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
 
 	$errormsg = $utils->error;
 	$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
@@ -182,7 +183,7 @@ if ($what == 'postgresql') {
 	}
 
 	if (!$errormsg) {
-		$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file);
+		$utils->dumpDatabase(GETPOST('compression', 'alpha'), $what, 0, $file, 0, 0, $lowmemorydump);
 		$errormsg = $utils->error;
 		$_SESSION["commandbackuplastdone"] = $utils->result['commandbackuplastdone'];
 		$_SESSION["commandbackuptorun"] = $utils->result['commandbackuptorun'];
