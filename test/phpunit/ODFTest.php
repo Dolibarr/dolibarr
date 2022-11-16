@@ -342,6 +342,14 @@ class ODFTest extends PHPUnit\Framework\TestCase
 				'charset' => null,
 				'expected' => "123 trucmachin &gt; truc &lt; troc &gt; tracbla bla",
 			],
+
+			// HTML should not take \n into account, but only <br />.
+			30 => [
+				'to_convert' => "text with <strong>strong text </strong>, a line\nbreak and <u>underlined</u> words with <i>it@lic sp&ciàlchärs éè l'</i>",
+				'encode' => false,
+				'charset' => 'UTF-8',
+				'expected' => 'text with <text:span text:style-name="boldText">strong text </text:span>, a line'."\n".'break and <text:span text:style-name="underlineText">underlined</text:span> words with <text:span text:style-name="italicText">it@lic sp&ciàlchärs éè l\'</text:span>',
+			],
 		];
 
 		$odf=new Odf($filename, array());

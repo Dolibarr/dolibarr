@@ -206,9 +206,9 @@ class Odf
 		} 
 		else {
 			$convertedValue = $this->encode_chars($convertedValue, $encode, $charset);
+			$convertedValue = preg_replace('/(\r\n|\r|\n)/i', "<text:line-break/>", $convertedValue);
 		}
 
-		$convertedValue = preg_replace('/(\r\n|\r|\n)/i', "<text:line-break/>", $convertedValue);
 
 		return $convertedValue;
 	}
