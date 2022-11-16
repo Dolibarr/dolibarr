@@ -180,8 +180,10 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 			// Create admin user
 			include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
+			$adminaleadyexists = 0;
+
 			// Set default encryption to yes, generate a salt and set default encryption algorythm (but only if there is no user yet into database)
-			$sql = "SELECT u.rowid, u.pass, u.pass_crypted";
+			$sql = "SELECT u.rowid, u.pass, u.pass_crypted, u.admin";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -195,39 +197,57 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					} else {
 						dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'sha1md5', 'chaine', 0, '', 0); // All entities
 					}
+				// Check if an admin already exists
+				} else {
+					$i = 0;
+					while ($i < $numrows) {
+						$obj = $db->fetch_object($resql);
+						if ($obj) {
+							if (!empty($obj->admin)) {
+								$adminaleadyexists++;
+							}
+						}
+						$i++;
+					}
+					$db->free($resql);
 				}
 
 				dolibarr_install_syslog('step5: DATABASE_PWD_ENCRYPTED = '.$conf->global->DATABASE_PWD_ENCRYPTED.' MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO, LOG_INFO);
 			}
 
-			// Create user used to create the admin user
-			$createuser = new User($db);
-			$createuser->id = 0;
-			$createuser->admin = 1;
+			if (empty($adminaleadyexists)) {
+				// Create user used to create the admin user
+				$createuser = new User($db);
+				$createuser->id = 0;
+				$createuser->admin = 1;
 
-			// Set admin user
-			$newuser = new User($db);
-			$newuser->lastname = 'SuperAdmin';
-			$newuser->firstname = '';
-			$newuser->login = $login;
-			$newuser->pass = $pass;
-			$newuser->admin = 1;
-			$newuser->entity = 0;
+				// Set admin user
+				$newuser = new User($db);
+				$newuser->lastname = 'SuperAdmin';
+				$newuser->firstname = '';
+				$newuser->login = $login;
+				$newuser->pass = $pass;
+				$newuser->admin = 1;
+				$newuser->entity = 0;
 
-			$conf->global->USER_MAIL_REQUIRED = 0; // Force global option to be sure to create a new user with no email
-			$result = $newuser->create($createuser, 1);
-			if ($result > 0) {
-				print $langs->trans("AdminLoginCreatedSuccessfuly", $login)."<br>";
-				$success = 1;
-			} else {
-				if ($result == -6) {	//login or email already exists
-					dolibarr_install_syslog('step5: AdminLoginAlreadyExists', LOG_WARNING);
-					print '<br><div class="warning">'.$newuser->error."</div><br>";
+				$conf->global->USER_MAIL_REQUIRED = 0; // Force global option to be sure to create a new user with no email
+				$result = $newuser->create($createuser, 1);
+				if ($result > 0) {
+					print $langs->trans("AdminLoginCreatedSuccessfuly", $login)."<br>";
 					$success = 1;
 				} else {
-					dolibarr_install_syslog('step5: FailedToCreateAdminLogin '.$newuser->error, LOG_ERR);
-					print '<br><div class="error">'.$langs->trans("FailedToCreateAdminLogin").' '.$newuser->error.'</div><br><br>';
+					if ($result == -6) {	//login or email already exists
+						dolibarr_install_syslog('step5: AdminLoginAlreadyExists', LOG_WARNING);
+						print '<br><div class="warning">'.$newuser->error."</div><br>";
+						$success = 1;
+					} else {
+						dolibarr_install_syslog('step5: FailedToCreateAdminLogin '.$newuser->error, LOG_ERR);
+						print '<br><div class="error">'.$langs->trans("FailedToCreateAdminLogin").' '.$newuser->error.'</div><br><br>';
+					}
 				}
+			} else {
+				dolibarr_install_syslog('step5: AdminLoginAlreadyExists', LOG_WARNING);
+				print '<br><div class="warning">'.$langs->trans("AdminLoginAlreadyExists")."</div><br>";
 			}
 
 			if ($success) {

@@ -1318,8 +1318,10 @@ class User extends CommonObject
 				$this->db->free($resqltochecklogin);
 			}
 		}
-		if ($this->email !== '') {
+
+		if (!empty($this->email)) {
 			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
+			echo $sqltochecklogin;
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
 				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
