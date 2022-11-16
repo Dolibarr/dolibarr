@@ -197,7 +197,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					} else {
 						dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'sha1md5', 'chaine', 0, '', 0); // All entities
 					}
-				// Check if an admin already exists
+					// Check if an admin already exists
 				} else {
 					$i = 0;
 					while ($i < $numrows) {
