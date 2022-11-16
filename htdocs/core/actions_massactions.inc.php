@@ -519,7 +519,7 @@ if (!$error && $massaction == 'confirm_presend') {
 						}
 					} else {
 						$trackid = strtolower(get_class($objecttmp));
-						if (get_class($objecttmp) == 'Contact')  {
+						if (get_class($objecttmp) == 'Contact') {
 							$trackid = 'ctc';
 						} elseif (get_class($objecttmp) == 'Contrat') {
 							$trackid = 'con';
