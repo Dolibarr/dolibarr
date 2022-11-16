@@ -64,7 +64,8 @@
  * <dol_value_month>                                Replaced by month number
  * <dol_value_day>                                  Replaced by day number
  * <dol_value_day_letters>                          Replaced by day number
- * <dol_value_currentdate>                          Replaced by current date
+ * <dol_value_currentdate>                          Replaced by current date and time
+ * <dol_value_currentdate_notime>                   Replaced by current date without time
  * <dol_object_id>                                  Replaced by object id
  * <dol_object_ref>                                 Replaced by object ref
  * <dol_value_customer_firstname>                   Replaced by customer firstname
@@ -192,7 +193,8 @@ class dolReceiptPrinter extends Printer
 			'dol_value_day' => 'DOL_VALUE_DAY',
 			'dol_value_day_letters' => 'DOL_VALUE_DAY',
 			'dol_value_currentdate' => 'DOL_VALUE_CURRENTDATE',
-			'dol_value_currentdate_time' => 'CurrentDateWithTime',
+			'dol_value_currentdate_notime' => 'CurrentDateWithTime',
+			'dol_value_currentdate_letters' => 'DOL_VALUE_CURRENTDATE_LETTERS',
 			'dol_value_currentyear' => 'CurrentYear',
 			'dol_value_currentmonth_letters' => 'DOL_VALUE_CURRENT_MONTH_LETTERS',
 			'dol_value_currentmonth' => 'DOL_VALUE_CURRENT_MONTH',
@@ -603,9 +605,9 @@ class dolReceiptPrinter extends Printer
 		$this->template = str_replace('{dol_value_day}', dol_print_date($object->date, '%d'), $this->template);
 		$this->template = str_replace('{dol_value_day_letters}', $langs->trans("Day".dol_print_date($object->date, '%m')[1]), $this->template);
 
-		$this->template = str_replace('{dol_value_currentdate}', dol_print_date($now, 'day'), $this->template);
-		$this->template = str_replace('{dol_value_currentdate_time}', dol_print_date($now, 'dayhour'), $this->template);
-		$this->template = str_replace('{dol_value_currentdate_time_letters}', dol_print_date($now, 'dayhourtext'), $this->template);
+		$this->template = str_replace('{dol_value_currentdate}', dol_print_date($now, 'dayhour'), $this->template);
+		$this->template = str_replace('{dol_value_currentdate_notime}', dol_print_date($now, 'day'), $this->template);
+		$this->template = str_replace('{dol_value_currentdate_letters}', dol_print_date($now, 'dayhourtext'), $this->template);
 		$this->template = str_replace('{dol_value_currentyear}', dol_print_date($now, '%Y'), $this->template);
 		$this->template = str_replace('{dol_value_currentmonth_letters}', $langs->trans("Month".dol_print_date($now, '%m')), $this->template);
 		$this->template = str_replace('{dol_value_currentmonth}', dol_print_date($now, '%m'), $this->template);
