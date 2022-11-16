@@ -559,7 +559,7 @@ class Mailing extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "mailing";
-			$sql .= " WHERE rowid = " . ((int)$rowid);
+			$sql .= " WHERE rowid = " . ((int) $rowid);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
