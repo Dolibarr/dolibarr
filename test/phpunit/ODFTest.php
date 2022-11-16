@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C)  2022 - Open-DSI <contact@open-dsi.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  */
 
 /**
- * \file    test/unit/BillOfMaterialsTest.php
- * \ingroup billofmaterials
- * \brief   PHPUnit test for BillOfMaterials class.
+ * \file    test/unit/ODFTest.php
+ * \ingroup odf
+ * \brief   PHPUnit test for odf class.
  */
 
 global $conf,$user,$langs,$db;

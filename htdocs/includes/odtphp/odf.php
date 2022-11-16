@@ -15,7 +15,7 @@ class OdfException extends Exception
  * @copyright  2010-2015 - Laurent Destailleur - eldy@users.sourceforge.net
  * @copyright  2010 - Vikas Mahajan - http://vikasmahajan.wordpress.com
  * @copyright  2012 - Stephen Larroque - lrq3000@gmail.com
- * @copyright  2020 - Open-DSI - contact@open-dsi.fr
+ * @copyright  2022 - Open-DSI - contact@open-dsi.fr
  * @license    https://www.gnu.org/copyleft/gpl.html  GPL License
  * @version 1.5.0
  */
