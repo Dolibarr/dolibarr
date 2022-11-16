@@ -197,8 +197,8 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					} else {
 						dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'sha1md5', 'chaine', 0, '', 0); // All entities
 					}
-				// Check if an admin already exists
 				} else {
+					// Check if an admin already exists
 					$i = 0;
 					while ($i < $numrows) {
 						$obj = $db->fetch_object($resql);
@@ -215,7 +215,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				dolibarr_install_syslog('step5: DATABASE_PWD_ENCRYPTED = '.$conf->global->DATABASE_PWD_ENCRYPTED.' MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO, LOG_INFO);
 			}
 
+			// Check if an admin already exists
 			if (empty($adminaleadyexists)) {
+
 				// Create user used to create the admin user
 				$createuser = new User($db);
 				$createuser->id = 0;
