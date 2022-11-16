@@ -217,9 +217,10 @@ class Mailing extends CommonObject
 	 *  Create an EMailing
 	 *
 	 *  @param	User	$user 		Object of user making creation
-	 *  @return int	   				-1 if error, Id of created object if OK
+	 * 	@param	int		$notrigger	Disable triggers
+	 *  @return int				    <0 if KO, Id of created object if OK
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -229,8 +230,6 @@ class Mailing extends CommonObject
 			return -1;
 		}
 
-		$this->db->begin();
-
 		$this->title = trim($this->title);
 		$this->email_from = trim($this->email_from);
 
@@ -239,7 +238,9 @@ class Mailing extends CommonObject
 			return -1;
 		}
 
+		$error = 0;
 		$now = dol_now();
+		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing";
 		$sql .= " (date_creat, fk_user_creat, entity)";
@@ -250,19 +251,32 @@ class Mailing extends CommonObject
 		}
 
 		dol_syslog("Mailing::Create", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
+		$resql = $this->db->query($sql);
+		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mailing");
 
-			if ($this->update($user) > 0) {
-				$this->db->commit();
-			} else {
-				$this->error = $this->db->lasterror();
-				$this->db->rollback();
-				return -1;
+			$result = $this->update($user, 1);
+			if ($result < 0) {
+				$error++;
 			}
 
-			return $this->id;
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('MAILING_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return $this->id;
+			} else {
+				$this->db->rollback();
+				dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
+				return -2;
+			}
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
@@ -274,15 +288,19 @@ class Mailing extends CommonObject
 	 *  Update emailing record
 	 *
 	 *  @param  User	$user 		Object of user making change
+	 * 	@param	int		$notrigger	Disable triggers
 	 *  @return int				    < 0 if KO, > 0 if OK
 	 */
-	public function update($user)
+	public function update($user, $notrigger = 0)
 	{
 		// Check properties
 		if ($this->body === 'InvalidHTMLString') {
 			$this->error = 'InvalidHTMLString';
 			return -1;
 		}
+
+		$error = 0;
+		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
 		$sql .= " SET titre = '".$this->db->escape($this->title)."'";
@@ -295,12 +313,30 @@ class Mailing extends CommonObject
 		$sql .= ", bgimage = '".($this->bgimage ? $this->db->escape($this->bgimage) : null)."'";
 		$sql .= " WHERE rowid = ".(int) $this->id;
 
-		dol_syslog("Mailing::Update", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-			return 1;
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('MAILING_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				dol_syslog(__METHOD__ . ' success');
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
+				return -2;
+			}
 		} else {
 			$this->error = $this->db->lasterror();
+			$this->db->rollback();
 			return -1;
 		}
 	}
@@ -528,36 +564,46 @@ class Mailing extends CommonObject
 	{
 		global $user;
 
+		$error = 0;
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing";
-		$sql .= " WHERE rowid = ".((int) $rowid);
+		if (!$notrigger) {
+			$result = $this->call_trigger('MAILING_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+		}
 
-		dol_syslog("Mailing::delete", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$res = $this->delete_targets();
-			if ($res <= 0) {
+		if (!$error) {
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "mailing";
+			$sql .= " WHERE rowid = " . ((int)$rowid);
+
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$res = $this->delete_targets();
+				if ($res <= 0) {
+					$error++;
+				}
+
+				if (!$error) {
+					dol_syslog(__METHOD__ . ' success');
+					$this->db->commit();
+					return 1;
+				} else {
+					$this->db->rollback();
+					dol_syslog(__METHOD__ . ' ' . $this->error, LOG_ERR);
+					return -2;
+				}
+			} else {
 				$this->db->rollback();
 				$this->error = $this->db->lasterror();
 				return -1;
 			}
 		} else {
 			$this->db->rollback();
-			$this->error = $this->db->lasterror();
 			return -1;
 		}
-
-		if (!$notrigger) {
-			$result = $this->call_trigger('MAILING_DELETE', $user);
-			if ($result < 0) {
-				$this->db->rollback();
-				return -1;
-			}
-		}
-
-		$this->db->commit();
-		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
