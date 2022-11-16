@@ -250,7 +250,7 @@ class Mailing extends CommonObject
 			$this->title = $langs->trans("NoTitle");
 		}
 
-		dol_syslog("Mailing::Create", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mailing");
@@ -576,7 +576,7 @@ class Mailing extends CommonObject
 
 		if (!$error) {
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "mailing";
-			$sql .= " WHERE rowid = " . ((int)$rowid);
+			$sql .= " WHERE rowid = " . ((int) $rowid);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
