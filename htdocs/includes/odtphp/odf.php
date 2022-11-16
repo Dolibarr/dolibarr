@@ -167,6 +167,7 @@ class Odf
 
 		// Check if the value includes html tags
 		if ($this->_hasHtmlTag($value) === true) {
+			// Note: allowing many tags is supported on PHP >7.4 . For older versions, this will strip all HTML tags.
 			$value = strip_tags($value, ['<br>', '<strong>', '<b>', '<i>', '<em>', '<u>', '<s>', '<sub>', '<sup>', '<span>']);
 
 			// Default styles for strong/b, i/em, u, s, sub & sup
