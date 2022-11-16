@@ -508,6 +508,7 @@ if (empty($reshook)) {
 				exit;
 			}
 			$mesgs[] = $object->error;
+			$mesgs = array_merge($mesgs, $object->errors);
 		}
 
 		setEventMessages(null, $mesgs, 'errors');
@@ -595,6 +596,7 @@ if (empty($reshook)) {
 					exit;
 				}
 				$mesgs[] = $object->error;
+				$mesgs = array_merge($mesgs, $object->errors);
 			}
 
 			setEventMessages($mesg, $mesgs, 'errors');
