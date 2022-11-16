@@ -60,7 +60,7 @@ class box_birthdays_members extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->adherent->lire && empty($user->socid));
+		$this->hidden = !($user->hasRight("adherent", "lire") && empty($user->socid));
 	}
 
 	/**
