@@ -217,7 +217,6 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 
 			// Check if an admin already exists
 			if (empty($adminaleadyexists)) {
-
 				// Create user used to create the admin user
 				$createuser = new User($db);
 				$createuser->id = 0;
