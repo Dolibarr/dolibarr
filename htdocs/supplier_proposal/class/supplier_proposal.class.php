@@ -1261,8 +1261,9 @@ class SupplierProposal extends CommonObject
 				$this->statut_libelle       = $obj->statut_label;
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
-				$this->date_creation = $this->db->jdate($obj->datec); //Creation date
-				$this->date_validation = $this->db->jdate($obj->datev); //Validation date
+				$this->date_creation = $this->db->jdate($obj->datec);	// Creation date
+				$this->date                 = $this->date_creation;
+				$this->date_validation = $this->db->jdate($obj->datev); // Validation date
 				$this->date_livraison       = $this->db->jdate($obj->delivery_date); // deprecated
 				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;

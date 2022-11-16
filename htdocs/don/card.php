@@ -487,7 +487,8 @@ if ($action == 'create') {
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
 	$selected = GETPOST('modepayment', 'int');
-	$form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1);
+	print img_picto('', 'payment', 'class="pictofixedwidth"');
+	print $form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print "</td></tr>\n";
 
 	// Public note
@@ -516,7 +517,8 @@ if ($action == 'create') {
 
 	if (isModEnabled('project')) {
 		print "<tr><td>".$langs->trans("Project")."</td><td>";
-		$formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
+		print img_picto('', 'project', 'class="pictofixedwidth"');
+		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 		print "</td></tr>\n";
 	}
 
