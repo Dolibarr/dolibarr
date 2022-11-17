@@ -45,7 +45,7 @@ $allow_disable_encryption = true;
  */
 
 if ($action == 'setgeneraterule') {
-	if (!dolibarr_set_const($db, 'USER_PASSWORD_GENERATED', $_GET["value"], 'chaine', 0, '', $conf->entity)) {
+	if (!dolibarr_set_const($db, 'USER_PASSWORD_GENERATED', GETPOST("value", "none"), 'chaine', 0, '', $conf->entity)) {
 		dol_print_error($db);
 	} else {
 		header("Location: ".$_SERVER["PHP_SELF"]);
@@ -58,7 +58,11 @@ if ($action == 'activate_encrypt') {
 
 	$db->begin();
 
-	dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
+	// On old version a bug created the constant into user entity, so we delete it to be sure, such entry won't exists. We want it in entity 0 or nowhere.
+	dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
+	// We set entity=0 (all) because DATABASE_PWD_ENCRYPTED is a setup into conf file, so always shared for everybody
+	$entityforall = 0;
+	dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $entityforall);
 
 	$sql = "SELECT u.rowid, u.pass, u.pass_crypted";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -385,7 +389,8 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 }
 
 
-// Cryptage mot de passe
+// Crypt passwords in database
+
 print '<br>';
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -401,20 +406,20 @@ print '</tr>';
 // Disable clear password in database
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
-print '<td align="center" width="60">';
+print '<td class="center" width="60">';
 if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 	print img_picto($langs->trans("Active"), 'tick');
 }
 print '</td>';
 if (!getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
-	print '<td align="center" width="100">';
+	print '<td class="center" width="100">';
 	print '<a href="security.php?action=activate_encrypt">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
 
 // Database conf file encryption
 if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
-	print '<td align="center" width="100">';
+	print '<td class="center" width="100">';
 	if ($allow_disable_encryption) {
 		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
 		//Do not allow "disable encryption" as passwords cannot be decrypted
@@ -427,7 +432,8 @@ if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 print "</td>";
 print '</tr>';
 
-// Cryptage du mot de base de la base dans conf.php
+
+// Crypt password into config file conf.php
 
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
@@ -438,7 +444,7 @@ if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_d
 
 print '</td>';
 
-print '<td align="center" width="100">';
+print '<td class="center" width="100">';
 if (empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) {
 	$langs->load("errors");
 	print img_warning($langs->trans("WarningPassIsEmpty"));
@@ -460,18 +466,18 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("DisableForgetPasswordLinkOnLogonPage").'</td>';
-print '<td align="center" width="60">';
+print '<td class="center" width="60">';
 if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	print img_picto($langs->trans("Active"), 'tick');
 }
 print '</td>';
 if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
-	print '<td align="center" width="100">';
+	print '<td class="center" width="100">';
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=activate_MAIN_SECURITY_DISABLEFORGETPASSLINK&token='.newToken().'">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
 if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
-	print '<td align="center" width="100">';
+	print '<td class="center" width="100">';
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=disable_MAIN_SECURITY_DISABLEFORGETPASSLINK&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	print "</td>";
 }
