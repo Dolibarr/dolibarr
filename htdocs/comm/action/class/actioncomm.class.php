@@ -1264,8 +1264,17 @@ class ActionComm extends CommonObject
 
 		dol_syslog(get_class()."::getActions", LOG_DEBUG);
 
+		require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		$hookmanager->initHooks(array('agendadao'));
+
 		$sql = "SELECT a.id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		// Fields from hook
+		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
+		$reshook = $hookmanager->executeHooks('getActionsListFrom', $parameters);    // Note that $action and $object may have been modified by hook
+		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 		if (!empty($socid)) {
 			$sql .= " AND a.fk_soc = ".((int) $socid);
@@ -1284,6 +1293,10 @@ class ActionComm extends CommonObject
 		if (!empty($filter)) {
 			$sql .= $filter;
 		}
+		// Fields where hook
+		$parameters = array('sql' => &$sql, 'socid' => $socid, 'fk_element' => $fk_element, 'elementtype' => $elementtype);
+		$reshook = $hookmanager->executeHooks('getActionsListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
 		if ($sortorder && $sortfield) {
 			$sql .= $db->order($sortfield, $sortorder);
 		}
