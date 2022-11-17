@@ -1372,6 +1372,14 @@ if ($resql) {
 
 	print "</tr>\n";
 
+	$totalarray = array(
+		'nbfield' => 0,
+		'val' => array(
+			'p.total_ht' => 0,
+			'p.total_tva' => 0,
+			'p.total_ttc' => 0,
+		),
+	);
 
 	// Fields title
 	print '<tr class="liste_titre">';
@@ -1489,14 +1497,6 @@ if ($resql) {
 	if (!empty($arrayfields['total_mark_rate']['checked'])) {
 		print_liste_field_titre($arrayfields['total_mark_rate']['label'], $_SERVER['PHP_SELF'], '', '', $param, 'class="right"', $sortfield, $sortorder);
 	}
-	$totalarray = array(
-		'nbfield' => 0,
-		'val' => array(
-			'p.total_ht' => 0,
-			'p.total_tva' => 0,
-			'p.total_ttc' => 0,
-		),
-	);
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
@@ -1508,6 +1508,7 @@ if ($resql) {
 		'totalarray' => &$totalarray,
 	);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['p.datec']['checked'])) {
 		print_liste_field_titre($arrayfields['p.datec']['label'], $_SERVER["PHP_SELF"], "p.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
@@ -1547,6 +1548,9 @@ if ($resql) {
 	$total_ht = 0;
 	$total_margin = 0;
 
+	$savnbfield = $totalarray['nbfield'];
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
 	$last_num = min($num, $limit);
 	while ($i < $last_num) {
 		$obj = $db->fetch_object($resql);
