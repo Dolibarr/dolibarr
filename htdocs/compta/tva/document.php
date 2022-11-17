@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (isModEnabled('project')) {
+if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -48,8 +48,8 @@ $confirm = GETPOST('confirm', 'alpha');
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -79,8 +79,6 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
-$permissiontoadd = $user->rights->tax->charges->creer;	// Used by the include of actions_dellink.inc.php
-
 
 /*
  * Actions
@@ -88,7 +86,7 @@ $permissiontoadd = $user->rights->tax->charges->creer;	// Used by the include of
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
-if ($action == 'setlib' && $permissiontoadd) {
+if ($action == 'setlib' && $user->rights->tax->charges->creer) {
 	$object->fetch($id);
 	$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
 	if ($result < 0) {
@@ -102,7 +100,7 @@ if ($action == 'setlib' && $permissiontoadd) {
  */
 
 $form = new Form($db);
-if (isModEnabled('project')) {
+if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -125,9 +123,8 @@ if ($object->id) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+	$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-	$morehtmlright = '';
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 	print '<div class="fichecenter">';

@@ -67,7 +67,7 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 
 
 /**
- *	Parent class for numbering rules of proposals
+ *	Classe mere des modeles de numerotation des references de propales
  */
 abstract class ModeleNumRefPropales
 {

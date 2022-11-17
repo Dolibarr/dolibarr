@@ -3,7 +3,6 @@
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +39,10 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-if (isModEnabled('comptabilite')) {
+if (!empty($conf->comptabilite->enabled)) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
-if (isModEnabled('accounting')) {
+if (!empty($conf->accounting->enabled)) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
@@ -187,9 +186,7 @@ if (!empty($year)) {
 if (!empty($month)) {
 	$headerparams['month'] = $month;
 }
-if (!empty($q)) {
-	$headerparams['q'] = $q;
-}
+$headerparams['q'] = $q;
 
 $tableparams = array();
 if (!empty($selected_cat)) {
@@ -208,7 +205,6 @@ $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
-$paramslink="";
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
@@ -231,9 +227,6 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
 
-$exportlink="";
-$namelink="";
-
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
 	$name = $langs->trans("Turnover").', '.$langs->trans("ByProductsAndServices");
@@ -246,6 +239,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
+
 	$builddate = dol_now();
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByProductsAndServices");
@@ -271,7 +265,7 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
-if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
+if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 

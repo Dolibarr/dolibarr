@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // Load translation files required by the page
 $langs->load("companies");
-if (isModEnabled('facture')) {
+if (!empty($conf->facture->enabled)) {
 	$langs->load("bills");
 }
 

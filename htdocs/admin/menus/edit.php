@@ -152,32 +152,32 @@ if ($action == 'add') {
 	$langs->load("errors");
 
 	$error = 0;
-	if (!$error && !GETPOST('menu_handler')) {
+	if (!$error && !$_POST['menu_handler']) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MenuHandler")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !GETPOST('type')) {
+	if (!$error && !$_POST['type']) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !GETPOST('url')) {
+	if (!$error && !$_POST['url']) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("URL")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !GETPOST('titre')) {
+	if (!$error && !$_POST['titre']) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Title")), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && GETPOST('menuId') && GETPOST('type') == 'top') {
+	if (!$error && $_POST['menuId'] && $_POST['type'] == 'top') {
 		setEventMessages($langs->trans("ErrorTopMenuMustHaveAParentWithId0"), null, 'errors');
 		$action = 'create';
 		$error++;
 	}
-	if (!$error && !GETPOST('menuId') && GETPOST('type') == 'left') {
+	if (!$error && !$_POST['menuId'] && $_POST['type'] == 'left') {
 		setEventMessages($langs->trans("ErrorLeftMenuMustHaveAParentId"), null, 'errors');
 		$action = 'create';
 		$error++;
@@ -255,7 +255,7 @@ llxHeader('', $langs->trans("Menu"));
 
 
 if ($action == 'create') {
-	print '<script type="text/javascript">
+	print '<script type="text/javascript" language="javascript">
     jQuery(document).ready(function() {
     	function init_topleft()
     	{
@@ -281,7 +281,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewMenu"), '', 'title_setup');
 
-	print '<form action="'.DOL_URL_ROOT.'/admin/menus/edit.php?action=add&token='.newToken().'&menuId='.GETPOST('menuId', 'int').'" method="post" name="formmenucreate">';
+	print '<form action="./edit.php?action=add&menuId='.GETPOST('menuId', 'int').'" method="post" name="formmenucreate">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
 	print dol_get_fiche_head();
@@ -391,7 +391,11 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel();
+	print '<div class="center">';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 } elseif ($action == 'edit') {
@@ -464,7 +468,7 @@ if ($action == 'create') {
 	}
 	print '<td><input type="text" name="menuIdParent" value="'.$valtouse.'" class="minwidth300"></td>';
 	print '<td>'.$langs->trans('DetailMenuIdParent');
-	print ', <span class="opacitymedium">'.$langs->trans("Example").': fk_mainmenu=abc&fk_leftmenu=def</span>';
+	print ', '.$langs->trans("Example").': fk_mainmenu=abc&fk_leftmenu=def';
 	print '</td></tr>';
 
 	// Niveau
@@ -496,7 +500,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('Enabled').'</td>';
 	print '<td><input type="text" class="minwidth500" name="enabled" value="'.dol_escape_htmltag($menu->enabled).'"></td><td>'.$langs->trans('DetailEnabled');
 	if (!empty($menu->enabled)) {
-		print ' <span class="opacitymedium">('.$langs->trans("ConditionIsCurrently").':</span> '.yn(dol_eval($menu->enabled, 1, 1, '1')).')';
+		print ' ('.$langs->trans("ConditionIsCurrently").': '.yn(dol_eval($menu->enabled, 1)).')';
 	}
 	print '</td></tr>';
 
@@ -504,7 +508,7 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('Rights').'</td>';
 	print '<td><input type="text" class="minwidth500" name="perms" value="'.dol_escape_htmltag($menu->perms).'"></td><td>'.$langs->trans('DetailRight');
 	if (!empty($menu->perms)) {
-		print ' <span class="opacitymedium">('.$langs->trans("ConditionIsCurrently").':</span> '.yn(dol_eval($menu->perms, 1, 1, '1')).')';
+		print ' ('.$langs->trans("ConditionIsCurrently").': '.yn(dol_eval($menu->perms, 1)).')';
 	}
 	print '</td></tr>';
 
@@ -512,7 +516,12 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel();
+	// Bouton
+	print '<div class="center">';
+	print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 

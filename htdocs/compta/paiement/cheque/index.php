@@ -83,7 +83,7 @@ if ($resql) {
 }
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 $max = 10;
 
@@ -145,7 +145,7 @@ if ($resql) {
 }
 
 
-print '</div></div>';
+print '</div></div></div>';
 
 // End of page
 llxFooter();

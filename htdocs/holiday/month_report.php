@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -36,8 +36,6 @@ $langs->loadLangs(array('holiday', 'hrm'));
 
 // Security check
 $socid = 0;
-$id = GETPOST('id', 'int');
-
 if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
@@ -56,18 +54,13 @@ $search_description = GETPOST('search_description', 'alphanohtml');
 
 $limit       = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield   = GETPOST('sortfield', 'aZ09comma');
-$sortorder   = GETPOST('sortorder', 'aZ09comma');
+$sortorder   = GETPOST('sortorder', 'alpha');
 
 if (!$sortfield) {
 	$sortfield = "cp.rowid";
 }
 if (!$sortorder) {
 	$sortorder = "ASC";
-}
-
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
-	$page = 0;
 }
 
 $hookmanager->initHooks(array('leavemovementlist'));
@@ -102,7 +95,7 @@ if (empty($reshook)) {
 		$search_employee = '';
 		$search_type = '';
 		$search_description = '';
-		$toselect = array();
+		$toselect = '';
 		$search_array_options = array();
 	}
 

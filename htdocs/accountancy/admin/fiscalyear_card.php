@@ -242,7 +242,11 @@ if ($action == 'create') {
 
 			print '</table>';
 
-			print $form->buttonsSaveCancel();
+			print '<br><div class="center">';
+			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
+			print '</div>';
 
 			print '</form>';
 

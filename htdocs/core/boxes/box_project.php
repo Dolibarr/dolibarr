@@ -62,7 +62,7 @@ class box_project extends ModeleBoxes
 		$this->db = $db;
 		$this->boxlabel = "OpenedProjects";
 
-		$this->hidden = empty($user->rights->projet->lire);
+		$this->hidden = !($user->rights->projet->lire);
 	}
 
 	/**
@@ -84,7 +84,6 @@ class box_project extends ModeleBoxes
 		$textHead = $langs->trans("OpenedProjects");
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
-		$i = 0;
 		// list the summary of the orders
 		if ($user->rights->projet->lire) {
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -95,7 +94,7 @@ class box_project extends ModeleBoxes
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->rights->projet->all->lire) {
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 			}
 
@@ -103,7 +102,7 @@ class box_project extends ModeleBoxes
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 			$sql .= " WHERE p.entity IN (".getEntity('project').")"; // Only current entity or severals if permission ok
 			$sql .= " AND p.fk_statut = 1"; // Only open projects
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->rights->projet->all->lire) {
 				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 			}
 
@@ -114,6 +113,7 @@ class box_project extends ModeleBoxes
 
 			if ($result) {
 				$num = $this->db->num_rows($result);
+				$i = 0;
 				while ($i < min($num, $max)) {
 					$objp = $this->db->fetch_object($result);
 

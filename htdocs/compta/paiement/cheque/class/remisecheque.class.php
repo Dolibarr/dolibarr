@@ -170,12 +170,12 @@ class RemiseCheque extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
-		$sql .= ", ".((int) $user->id);
+		$sql .= ", ".$user->id;
 		$sql .= ", ".((int) $account_id);
 		$sql .= ", 0";
 		$sql .= ", 0";
 		$sql .= ", 0";
-		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".$conf->entity;
 		$sql .= ", 0";
 		$sql .= ", ''";
 		$sql .= ")";
@@ -200,9 +200,8 @@ class RemiseCheque extends CommonObject
 				}
 			}
 
-			$lines = array();
-
 			if ($this->id > 0 && $this->errno == 0) {
+				$lines = array();
 				$sql = "SELECT b.rowid";
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql .= " WHERE b.fk_type = 'CHQ'";
@@ -306,7 +305,7 @@ class RemiseCheque extends CommonObject
 			if ($this->errno === 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 				$sql .= " SET fk_bordereau = 0";
-				$sql .= " WHERE fk_bordereau = ".((int) $this->id);
+				$sql .= " WHERE fk_bordereau = ".$this->id;
 
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -649,7 +648,7 @@ class RemiseCheque extends CommonObject
 		$nb = 0;
 		$sql = "SELECT amount ";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql .= " WHERE fk_bordereau = ".((int) $this->id);
+		$sql .= " WHERE fk_bordereau = ".$this->id;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -731,7 +730,7 @@ class RemiseCheque extends CommonObject
 		$bankline = new AccountLine($db);
 		$bankline->fetch($bank_id);
 
-		/* Reconciliation is allowed because when check is returned, a new line is created onto bank transaction log.
+		/* Conciliation is allowed because when check is returned, a new line is created onto bank transaction log.
 		if ($bankline->rappro)
 		{
 			$this->error='ActionRefusedLineAlreadyConciliated';
@@ -740,7 +739,7 @@ class RemiseCheque extends CommonObject
 
 		$this->db->begin();
 
-		// Not reconciled, we can delete it
+		// Not conciliated, we can delete it
 		//$bankline->delete($user);    // We delete
 
 		$bankaccount = $payment->fk_account;
@@ -1007,10 +1006,10 @@ class RemiseCheque extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			$langs->load('compta');
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('ToValidate');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('ToValidate');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('ToValidate');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('ToValidate');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
 		}
 
 		$statusType = 'status'.$status;

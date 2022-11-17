@@ -11,171 +11,170 @@
 
 namespace Symfony\Component\VarDumper\Tests\Caster;
 
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\VarDumper\Caster\Caster;
 use Symfony\Component\VarDumper\Test\VarDumperTestTrait;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
  */
-class CasterTest extends TestCase
+class CasterTest extends \PHPUnit_Framework_TestCase
 {
-	use VarDumperTestTrait;
+    use VarDumperTestTrait;
 
-	private $referenceArray = array(
-		'null' => null,
-		'empty' => false,
-		'public' => 'pub',
-		"\0~\0virtual" => 'virt',
-		"\0+\0dynamic" => 'dyn',
-		"\0*\0protected" => 'prot',
-		"\0Foo\0private" => 'priv',
-	);
+    private $referenceArray = array(
+        'null' => null,
+        'empty' => false,
+        'public' => 'pub',
+        "\0~\0virtual" => 'virt',
+        "\0+\0dynamic" => 'dyn',
+        "\0*\0protected" => 'prot',
+        "\0Foo\0private" => 'priv',
+    );
 
-	/**
-	 * @dataProvider provideFilter
-	 */
-	public function testFilter($filter, $expectedDiff, $listedProperties = null)
-	{
-		if (null === $listedProperties) {
-			$filteredArray = Caster::filter($this->referenceArray, $filter);
-		} else {
-			$filteredArray = Caster::filter($this->referenceArray, $filter, $listedProperties);
-		}
+    /**
+     * @dataProvider provideFilter
+     */
+    public function testFilter($filter, $expectedDiff, $listedProperties = null)
+    {
+        if (null === $listedProperties) {
+            $filteredArray = Caster::filter($this->referenceArray, $filter);
+        } else {
+            $filteredArray = Caster::filter($this->referenceArray, $filter, $listedProperties);
+        }
 
-		$this->assertSame($expectedDiff, array_diff_assoc($this->referenceArray, $filteredArray));
-	}
+        $this->assertSame($expectedDiff, array_diff_assoc($this->referenceArray, $filteredArray));
+    }
 
-	public function provideFilter()
-	{
-		return array(
-			array(
-				0,
-				array(),
-			),
-			array(
-				Caster::EXCLUDE_PUBLIC,
-				array(
-					'null' => null,
-					'empty' => false,
-					'public' => 'pub',
-				),
-			),
-			array(
-				Caster::EXCLUDE_NULL,
-				array(
-					'null' => null,
-				),
-			),
-			array(
-				Caster::EXCLUDE_EMPTY,
-				array(
-					'null' => null,
-					'empty' => false,
-				),
-			),
-			array(
-				Caster::EXCLUDE_VIRTUAL,
-				array(
-					"\0~\0virtual" => 'virt',
-				),
-			),
-			array(
-				Caster::EXCLUDE_DYNAMIC,
-				array(
-					"\0+\0dynamic" => 'dyn',
-				),
-			),
-			array(
-				Caster::EXCLUDE_PROTECTED,
-				array(
-					"\0*\0protected" => 'prot',
-				),
-			),
-			array(
-				Caster::EXCLUDE_PRIVATE,
-				array(
-					"\0Foo\0private" => 'priv',
-				),
-			),
-			array(
-				Caster::EXCLUDE_VERBOSE,
-				array(
-					'public' => 'pub',
-					"\0*\0protected" => 'prot',
-				),
-				array('public', "\0*\0protected"),
-			),
-			array(
-				Caster::EXCLUDE_NOT_IMPORTANT,
-				array(
-					'null' => null,
-					'empty' => false,
-					"\0~\0virtual" => 'virt',
-					"\0+\0dynamic" => 'dyn',
-					"\0Foo\0private" => 'priv',
-				),
-				array('public', "\0*\0protected"),
-			),
-			array(
-				Caster::EXCLUDE_VIRTUAL | Caster::EXCLUDE_DYNAMIC,
-				array(
-					"\0~\0virtual" => 'virt',
-					"\0+\0dynamic" => 'dyn',
-				),
-			),
-			array(
-				Caster::EXCLUDE_NOT_IMPORTANT | Caster::EXCLUDE_VERBOSE,
-				$this->referenceArray,
-				array('public', "\0*\0protected"),
-			),
-			array(
-				Caster::EXCLUDE_NOT_IMPORTANT | Caster::EXCLUDE_EMPTY,
-				array(
-					'null' => null,
-					'empty' => false,
-					"\0~\0virtual" => 'virt',
-					"\0+\0dynamic" => 'dyn',
-					"\0*\0protected" => 'prot',
-					"\0Foo\0private" => 'priv',
-				),
-				array('public', 'empty'),
-			),
-			array(
-				Caster::EXCLUDE_VERBOSE | Caster::EXCLUDE_EMPTY | Caster::EXCLUDE_STRICT,
-				array(
-					'empty' => false,
-				),
-				array('public', 'empty'),
-			),
-		);
-	}
+    public function provideFilter()
+    {
+        return array(
+            array(
+                0,
+                array(),
+            ),
+            array(
+                Caster::EXCLUDE_PUBLIC,
+                array(
+                    'null' => null,
+                    'empty' => false,
+                    'public' => 'pub',
+                ),
+            ),
+            array(
+                Caster::EXCLUDE_NULL,
+                array(
+                    'null' => null,
+                ),
+            ),
+            array(
+                Caster::EXCLUDE_EMPTY,
+                array(
+                    'null' => null,
+                    'empty' => false,
+                ),
+            ),
+            array(
+                Caster::EXCLUDE_VIRTUAL,
+                array(
+                    "\0~\0virtual" => 'virt',
+                ),
+            ),
+            array(
+                Caster::EXCLUDE_DYNAMIC,
+                array(
+                    "\0+\0dynamic" => 'dyn',
+                ),
+            ),
+            array(
+                Caster::EXCLUDE_PROTECTED,
+                array(
+                    "\0*\0protected" => 'prot',
+                ),
+            ),
+            array(
+                Caster::EXCLUDE_PRIVATE,
+                array(
+                    "\0Foo\0private" => 'priv',
+                ),
+            ),
+            array(
+                Caster::EXCLUDE_VERBOSE,
+                array(
+                    'public' => 'pub',
+                    "\0*\0protected" => 'prot',
+                ),
+                array('public', "\0*\0protected"),
+            ),
+            array(
+                Caster::EXCLUDE_NOT_IMPORTANT,
+                array(
+                    'null' => null,
+                    'empty' => false,
+                    "\0~\0virtual" => 'virt',
+                    "\0+\0dynamic" => 'dyn',
+                    "\0Foo\0private" => 'priv',
+                ),
+                array('public', "\0*\0protected"),
+            ),
+            array(
+                Caster::EXCLUDE_VIRTUAL | Caster::EXCLUDE_DYNAMIC,
+                array(
+                    "\0~\0virtual" => 'virt',
+                    "\0+\0dynamic" => 'dyn',
+                ),
+            ),
+            array(
+                Caster::EXCLUDE_NOT_IMPORTANT | Caster::EXCLUDE_VERBOSE,
+                $this->referenceArray,
+                array('public', "\0*\0protected"),
+            ),
+            array(
+                Caster::EXCLUDE_NOT_IMPORTANT | Caster::EXCLUDE_EMPTY,
+                array(
+                    'null' => null,
+                    'empty' => false,
+                    "\0~\0virtual" => 'virt',
+                    "\0+\0dynamic" => 'dyn',
+                    "\0*\0protected" => 'prot',
+                    "\0Foo\0private" => 'priv',
+                ),
+                array('public', 'empty'),
+            ),
+            array(
+                Caster::EXCLUDE_VERBOSE | Caster::EXCLUDE_EMPTY | Caster::EXCLUDE_STRICT,
+                array(
+                    'empty' => false,
+                ),
+                array('public', 'empty'),
+            ),
+        );
+    }
 
-	/**
-	 * @requires PHP 7.0
-	 */
-	public function testAnonymousClass()
-	{
-		$c = eval('return new class extends stdClass { private $foo = "foo"; };');
+    /**
+     * @requires PHP 7.0
+     */
+    public function testAnonymousClass()
+    {
+        $c = eval('return new class extends stdClass { private $foo = "foo"; };');
 
-		$this->assertDumpMatchesFormat(
-			<<<'EOTXT'
+        $this->assertDumpMatchesFormat(
+            <<<'EOTXT'
 stdClass@anonymous {
   -foo: "foo"
 }
 EOTXT
-			, $c
-		);
+            , $c
+        );
 
-		$c = eval('return new class { private $foo = "foo"; };');
+        $c = eval('return new class { private $foo = "foo"; };');
 
-		$this->assertDumpMatchesFormat(
-			<<<'EOTXT'
+        $this->assertDumpMatchesFormat(
+            <<<'EOTXT'
 @anonymous {
   -foo: "foo"
 }
 EOTXT
-			, $c
-		);
-	}
+            , $c
+        );
+    }
 }

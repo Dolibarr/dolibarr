@@ -2,6 +2,8 @@
 
 namespace Egulias\EmailValidator\Exception;
 
+use Egulias\EmailValidator\Exception\InvalidEmail;
+
 class NoDNSRecord extends InvalidEmail
 {
     const CODE = 5;

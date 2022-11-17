@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2021	Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2006-2021	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,11 +47,6 @@ class Ldap
 	 * Tableau des serveurs (IP addresses ou nom d'hotes)
 	 */
 	public $server = array();
-
-	/**
-	 * Current connected server
-	 */
-	public $connectedServer;
 
 	/**
 	 * Base DN (e.g. "dc=foo,dc=com")
@@ -122,21 +117,6 @@ class Ldap
 	 */
 	public $result;
 
-	/**
-	 * No Ldap synchronization
-	 */
-	const SYNCHRO_NONE = 0;
-
-	/**
-	 * Dolibarr to Ldap synchronization
-	 */
-	const SYNCHRO_DOLIBARR_TO_LDAP = 1;
-
-	/**
-	 * Ldap to Dolibarr synchronization
-	 */
-	const SYNCHRO_LDAP_TO_DOLIBARR = 2;
-
 
 	/**
 	 *  Constructor
@@ -152,32 +132,34 @@ class Ldap
 		if (!empty($conf->global->LDAP_SERVER_HOST_SLAVE)) {
 			$this->server[] = $conf->global->LDAP_SERVER_HOST_SLAVE;
 		}
-		$this->serverPort          = getDolGlobalInt('LDAP_SERVER_PORT', 389);
-		$this->ldapProtocolVersion = getDolGlobalString('LDAP_SERVER_PROTOCOLVERSION');
-		$this->dn                  = getDolGlobalString('LDAP_SERVER_DN');
-		$this->serverType          = getDolGlobalString('LDAP_SERVER_TYPE');
+		$this->serverPort          = $conf->global->LDAP_SERVER_PORT;
+		$this->ldapProtocolVersion = $conf->global->LDAP_SERVER_PROTOCOLVERSION;
+		$this->dn                  = $conf->global->LDAP_SERVER_DN;
+		$this->serverType          = $conf->global->LDAP_SERVER_TYPE;
 
-		$this->domain              = getDolGlobalString('LDAP_SERVER_DN');
-		$this->searchUser          = getDolGlobalString('LDAP_ADMIN_DN');
-		$this->searchPassword      = getDolGlobalString('LDAP_ADMIN_PASS');
-		$this->people              = getDolGlobalString('LDAP_USER_DN');
-		$this->groups              = getDolGlobalString('LDAP_GROUP_DN');
+		$this->domain              = $conf->global->LDAP_SERVER_DN;
+		$this->searchUser          = $conf->global->LDAP_ADMIN_DN;
+		$this->searchPassword      = $conf->global->LDAP_ADMIN_PASS;
+		$this->people              = $conf->global->LDAP_USER_DN;
+		$this->groups              = $conf->global->LDAP_GROUP_DN;
 
-		$this->filter              = getDolGlobalString('LDAP_FILTER_CONNECTION'); // Filter on user
-		$this->filtergroup         = getDolGlobalString('LDAP_GROUP_FILTER'); // Filter on groups
-		$this->filtermember        = getDolGlobalString('LDAP_MEMBER_FILTER'); // Filter on member
+		$this->filter              = $conf->global->LDAP_FILTER_CONNECTION; // Filter on user
+		$this->filtergroup         = $conf->global->LDAP_GROUP_FILTER; // Filter on groups
+		$this->filtermember        = $conf->global->LDAP_MEMBER_FILTER; // Filter on member
 
 		// Users
-		$this->attr_login      = getDolGlobalString('LDAP_FIELD_LOGIN'); //unix
-		$this->attr_sambalogin = getDolGlobalString('LDAP_FIELD_LOGIN_SAMBA'); //samba, activedirectory
-		$this->attr_name       = getDolGlobalString('LDAP_FIELD_NAME');
-		$this->attr_firstname  = getDolGlobalString('LDAP_FIELD_FIRSTNAME');
-		$this->attr_mail       = getDolGlobalString('LDAP_FIELD_MAIL');
-		$this->attr_phone      = getDolGlobalString('LDAP_FIELD_PHONE');
-		$this->attr_skype      = getDolGlobalString('LDAP_FIELD_SKYPE');
-		$this->attr_fax        = getDolGlobalString('LDAP_FIELD_FAX');
-		$this->attr_mobile     = getDolGlobalString('LDAP_FIELD_MOBILE');
+		$this->attr_login      = $conf->global->LDAP_FIELD_LOGIN; //unix
+		$this->attr_sambalogin = $conf->global->LDAP_FIELD_LOGIN_SAMBA; //samba, activedirectory
+		$this->attr_name       = $conf->global->LDAP_FIELD_NAME;
+		$this->attr_firstname  = $conf->global->LDAP_FIELD_FIRSTNAME;
+		$this->attr_mail       = $conf->global->LDAP_FIELD_MAIL;
+		$this->attr_phone      = $conf->global->LDAP_FIELD_PHONE;
+		$this->attr_skype      = $conf->global->LDAP_FIELD_SKYPE;
+		$this->attr_fax        = $conf->global->LDAP_FIELD_FAX;
+		$this->attr_mobile     = $conf->global->LDAP_FIELD_MOBILE;
 	}
+
+
 
 	// Connection handling methods -------------------------------------------
 
@@ -193,19 +175,9 @@ class Ldap
 	{
 		// phpcs:enable
 		global $conf;
-		global $dolibarr_main_auth_ldap_debug;
 
 		$connected = 0;
 		$this->bind = 0;
-		$this->error = 0;
-		$this->connectedServer = '';
-
-		$ldapdebug = ((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false") ? false : true);
-
-		if ($ldapdebug) {
-			dol_syslog(get_class($this)."::connect_bind");
-			print "DEBUG: connect_bind<br>\n";
-		}
 
 		// Check parameters
 		if (count($this->server) == 0 || empty($this->server[0])) {
@@ -231,41 +203,30 @@ class Ldap
 				}
 
 				if ($this->serverPing($host, $this->serverPort) === true) {
-					if ($ldapdebug) {
-						dol_syslog(get_class($this)."::connect_bind serverPing true, we try ldap_connect to ".$host);
-					}
 					$this->connection = ldap_connect($host, $this->serverPort);
 				} else {
 					if (preg_match('/^ldaps/i', $host)) {
 						// With host = ldaps://server, the serverPing to ssl://server sometimes fails, even if the ldap_connect succeed, so
-						// we test this case and continue in such a case even if serverPing fails.
-						if ($ldapdebug) {
-							dol_syslog(get_class($this)."::connect_bind serverPing false, we try ldap_connect to ".$host);
-						}
+						// we test this case and continue in suche a case even if serverPing fails.
 						$this->connection = ldap_connect($host, $this->serverPort);
 					} else {
 						continue;
 					}
 				}
 
-				if (is_resource($this->connection) || is_object($this->connection)) {
-					if ($ldapdebug) {
-						dol_syslog(get_class($this)."::connect_bind this->connection is ok", LOG_DEBUG);
-					}
-
+				if (is_resource($this->connection)) {
 					// Upgrade connexion to TLS, if requested by the configuration
 					if (!empty($conf->global->LDAP_SERVER_USE_TLS)) {
 						// For test/debug
 						//ldap_set_option($this->connection, LDAP_OPT_DEBUG_LEVEL, 7);
 						//ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, 3);
-						//ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
 
 						$resulttls = ldap_start_tls($this->connection);
 						if (!$resulttls) {
 							dol_syslog(get_class($this)."::connect_bind failed to start tls", LOG_WARNING);
 							$this->error = 'ldap_start_tls Failed to start TLS '.ldap_errno($this->connection).' '.ldap_error($this->connection);
 							$connected = 0;
-							$this->unbind();
+							$this->close();
 						}
 					}
 
@@ -281,7 +242,6 @@ class Ldap
 						if ($this->result) {
 							$this->bind = $this->result;
 							$connected = 2;
-							$this->connectedServer = $host;
 							break;
 						} else {
 							$this->error = ldap_errno($this->connection).' '.ldap_error($this->connection);
@@ -294,7 +254,6 @@ class Ldap
 							if ($this->result) {
 								$this->bind = $this->result;
 								$connected = 2;
-								$this->connectedServer = $host;
 								break;
 							} else {
 								$this->error = ldap_errno($this->connection).' '.ldap_error($this->connection);
@@ -307,7 +266,6 @@ class Ldap
 							if ($result) {
 								$this->bind = $this->result;
 								$connected = 1;
-								$this->connectedServer = $host;
 								break;
 							} else {
 								$this->error = ldap_errno($this->connection).' '.ldap_error($this->connection);
@@ -317,9 +275,9 @@ class Ldap
 				}
 
 				if (!$connected) {
-					$this->unbind();
+					$this->close();
 				}
-			}	// End loop on each server
+			}
 		}
 
 		if ($connected) {
@@ -330,17 +288,16 @@ class Ldap
 			$return = -1;
 			dol_syslog(get_class($this)."::connect_bind return=".$return.' - '.$this->error, LOG_WARNING);
 		}
-
 		return $return;
 	}
 
+
+
 	/**
-	 * Simply closes the connection set up earlier. Returns true if OK, false if there was an error.
-	 * This method seems a duplicate/alias of unbind().
+	 * Simply closes the connection set up earlier.
+	 * Returns true if OK, false if there was an error.
 	 *
 	 * @return	boolean			true or false
-	 * @deprecated ldap_close is an alias of ldap_unbind
-	 * @see unbind()
 	 */
 	public function close()
 	{
@@ -393,21 +350,16 @@ class Ldap
 	}
 
 	/**
-	 * Unbind of LDAP server (close connection).
+	 * Unbind du serveur ldap.
 	 *
 	 * @return	boolean					true or false
-	 * @see close()
 	 */
 	public function unbind()
 	{
-		$this->result = true;
-		if ($this->connection) {
-			$this->result = @ldap_unbind($this->connection);
-		}
-		if ($this->result) {
-			return true;
-		} else {
+		if (!$this->result = @ldap_unbind($this->connection)) {
 			return false;
+		} else {
+			return true;
 		}
 	}
 
@@ -460,7 +412,7 @@ class Ldap
 	 */
 	public function add($dn, $info, $user)
 	{
-		dol_syslog(get_class($this)."::add dn=".$dn." info=".json_encode($info));
+		dol_syslog(get_class($this)."::add dn=".$dn." info=".join(',', $info));
 
 		// Check parameters
 		if (!$this->connection) {
@@ -955,10 +907,10 @@ class Ldap
 			return -3;
 		}
 
-		$search = @ldap_search($this->connection, $dn, $filter);
+		$search = ldap_search($this->connection, $dn, $filter);
 
 		// Only one entry should ever be returned
-		$entry = @ldap_first_entry($this->connection, $search);
+		$entry = ldap_first_entry($this->connection, $search);
 
 		if (!$entry) {
 			$this->ldapErrorCode = -1;
@@ -1078,7 +1030,7 @@ class Ldap
 		//print_r($info);
 
 		for ($i = 0; $i < $info["count"]; $i++) {
-			$recordid = $this->convToOutputCharset($info[$i][strtolower($useridentifier)][0], $this->ldapcharset);
+			$recordid = $this->convToOutputCharset($info[$i][$useridentifier][0], $this->ldapcharset);
 			if ($recordid) {
 				//print "Found record with key $useridentifier=".$recordid."<br>\n";
 				$fulllist[$recordid][$useridentifier] = $recordid;

@@ -42,12 +42,8 @@ function printDropdownBookmarksList()
 	if (!empty($_SERVER["QUERY_STRING"])) {
 		if (is_array($_GET)) {
 			foreach ($_GET as $key => $val) {
-				if (is_array($val)) {
-					foreach ($val as $tmpsubval) {
-						$url_param[] = http_build_query(array(dol_escape_htmltag($key).'[]' => dol_escape_htmltag($tmpsubval)));
-					}
-				} elseif ($val != '') {
-					$url_param[$key] = http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
+				if ($val != '') {
+					$url_param[$key]=http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
 				}
 			}
 		}
@@ -65,11 +61,10 @@ function printDropdownBookmarksList()
 			if ((preg_match('/^search_/', $key) || in_array($key, $authorized_var))
 				&& $val != ''
 				&& !array_key_exists($key, $url_param)) {
-				$url_param[$key] = http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
+				$url_param[$key]=http_build_query(array(dol_escape_htmltag($key) => dol_escape_htmltag($val)));
 			}
 		}
 	}
-
 	$url .= ($tmpurl ? '?'.$tmpurl : '');
 	if (!empty($url_param)) {
 		$url .= '&'.implode('&', $url_param);
@@ -81,7 +76,7 @@ function printDropdownBookmarksList()
 
 
 	// Url to list bookmark
-	$listbtn = '<a class="top-menu-dropdown-link" title="'.dol_escape_htmltag($langs->trans('Bookmarks')).'" href="'.DOL_URL_ROOT.'/bookmarks/list.php">';
+	$listbtn = '<a class="top-menu-dropdown-link" title="'.$langs->trans('ListOfBookmarks').'" href="'.DOL_URL_ROOT.'/bookmarks/list.php" >';
 	$listbtn .= img_picto('', 'bookmark', 'class="paddingright"').$langs->trans('Bookmarks').'</a>';
 
 	// Url to go on create new bookmark page
@@ -105,7 +100,7 @@ function printDropdownBookmarksList()
 			$bookmarkList = '<div id="dropdown-bookmarks-list" >';
 			$i = 0;
 			while ((empty($conf->global->BOOKMARKS_SHOW_IN_MENU) || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql)) {
-				$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"  rel="noopener noreferrer"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
+				$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
 				$bookmarkList .= dol_escape_htmltag($obj->title);
 				$bookmarkList .= '</a>';
 				$i++;
@@ -130,7 +125,7 @@ function printDropdownBookmarksList()
 			}
 			$i = 0;
 			while ((empty($conf->global->BOOKMARKS_SHOW_IN_MENU) || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql)) {
-				$searchForm .= '<option name="bookmark'.$obj->rowid.'" value="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank" rel="noopener noreferrer"' : '').' rel="'.dol_escape_htmltag($obj->url).'" >';
+				$searchForm .= '<option name="bookmark'.$obj->rowid.'" value="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"' : '').' rel="'.dol_escape_htmltag($obj->url).'" >';
 				$searchForm .= dol_escape_htmltag($obj->title);
 				$searchForm .= '</option>';
 				$i++;

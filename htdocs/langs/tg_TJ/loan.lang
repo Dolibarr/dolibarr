@@ -24,7 +24,7 @@ FinancialCommitment=Ӯҳдадории молиявӣ
 InterestAmount=Фоиз
 CapitalRemain=Сармоя боқӣ мемонад
 TermPaidAllreadyPaid = Ин мӯҳлат аллакай пардохта шудааст
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantUseScheduleWithLoanStartedToPaid = Ман наметавонам банақшагирро барои қарз бо оғози пардохт истифода барам
 CantModifyInterestIfScheduleIsUsed = Агар шумо ҷадвалро истифода баред, шумо наметавонед фоизҳоро тағир диҳед
 # Admin
 ConfigLoan=Танзимоти қарзи модул

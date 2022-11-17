@@ -37,9 +37,9 @@ create table llx_societe
   status            	   tinyint 		  DEFAULT 1,			        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)
 
   code_client              varchar(24),                         		-- code client
-  code_fournisseur         varchar(24),                         		-- code fournisseur
-  code_compta              varchar(24),                         		-- customer accountancy auxiliary account
-  code_compta_fournisseur  varchar(24),                         		-- supplier accountancy auxiliary account
+  code_fournisseur         varchar(24),                         		-- code founisseur
+  code_compta              varchar(24),                         		-- code compta client
+  code_compta_fournisseur  varchar(24),                         		-- code compta founisseur
   address                  varchar(255),                        		-- company address
   zip                      varchar(25),                         		-- zipcode
   town                     varchar(50),                         		-- town
@@ -52,6 +52,15 @@ create table llx_societe
   email                    varchar(128),                        		--
 
   socialnetworks           text DEFAULT NULL,                           -- json with socialnetworks
+  skype                    varchar(255),                        		-- deprecated
+  twitter                  varchar(255),                        		-- deprecated
+  facebook                 varchar(255),                        		-- deprecated
+  linkedin                 varchar(255),                        		-- deprecated
+  instagram                varchar(255),                        		-- deprecated
+  snapchat                 varchar(255),                        		-- deprecated
+  googleplus               varchar(255),                        		-- deprecated
+  youtube                  varchar(255),                        		-- deprecated
+  whatsapp                 varchar(255),                        		-- deprecated
 
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT NULL,                 -- type ent
@@ -68,8 +77,7 @@ create table llx_societe
   fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial status
   note_private             text,                                		--
   note_public              text,                                        --
-  model_pdf				         varchar(255),
-  last_main_doc			       varchar(255),					-- relative filepath+filename of last main generated document
+  model_pdf				   varchar(255),
   prefix_comm              varchar(5),                          		-- prefix commercial (deprecated)
   client                   tinyint        DEFAULT 0,            		-- client 0/1/2
   fournisseur              tinyint        DEFAULT 0,            		-- fournisseur 0/1
@@ -84,7 +92,6 @@ create table llx_societe
   remise_supplier          real           DEFAULT 0,            		-- discount by default granted by this supplier
   mode_reglement           tinyint,                             		-- payment mode customer
   cond_reglement           tinyint,                             		-- payment term customer
-  deposit_percent          varchar(63) DEFAULT NULL,                    -- default deposit % if payment term needs it
   transport_mode           tinyint,                             		-- transport mode customer (Intracomm report)
   mode_reglement_supplier  tinyint,                             		-- payment mode supplier
   cond_reglement_supplier  tinyint,                             		-- payment term supplier
@@ -92,9 +99,9 @@ create table llx_societe
   fk_shipping_method       integer,                                     -- preferred shipping method id
   tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
-  localtax1_value 		   double(7,4),
+  localtax1_value 		   double(6,3),
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2
-  localtax2_value 		   double(7,4),
+  localtax2_value 		   double(6,3),
   barcode                  varchar(180),                        		-- barcode
   fk_barcode_type          integer NULL   DEFAULT 0,                    -- barcode type
   price_level              integer NULL,                        		-- level of price for multiprices
@@ -118,7 +125,7 @@ create table llx_societe
   fk_user_modif            integer,                             		-- utilisateur qui a modifie l'info
 
   fk_multicurrency		   integer,
-  multicurrency_code	   varchar(3),
+  multicurrency_code	   varchar(255),
 
   import_key               varchar(14)                          		-- import key
 )ENGINE=innodb;

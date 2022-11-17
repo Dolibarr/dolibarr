@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=Configuració del mòdul client FTP
+NewFTPClient=Nova connexió client FTP
+FTPArea=Àrea FTP
+FTPAreaDesc=Aquesta pantalla presenta una vista de servidor FTP
+SetupOfFTPClientModuleNotComplete=La configuració del mòdul de client FTP sembla incompleta
+FTPFeatureNotSupportedByYourPHP=El seu PHP no suporta les funcions FTP
+FailedToConnectToFTPServer=No s'ha pogut connectar amb el servidor FTP (servidor: %s, port %s)
+FailedToConnectToFTPServerWithCredentials=No s'ha pogut connectar amb el login/contrasenya FTP configurats
+FTPFailedToRemoveFile=No s'ha pogut suprimir el fitxer <b>%s</b>.
+FTPFailedToRemoveDir=No s'ha pogut suprimir la carpeta <b>%s</b> (Comproveu els permisos i que el directori està buit).
+FTPPassiveMode=Mode passiu
+ChooseAFTPEntryIntoMenu=Tria una entrada FTP en el menú...
+FailedToGetFile=Error obtenint els fitxers %s

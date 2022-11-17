@@ -144,10 +144,6 @@ class EvalMath
 	 */
 	public function evaluate($expr)
 	{
-		if (empty($expr)) {
-			return false;
-		}
-
 		$this->last_error = null;
 		$this->last_error_code = null;
 		$expr = trim($expr);
@@ -370,14 +366,18 @@ class EvalMath
 	}
 
 	/**
-	 * Evaluate postfix notation
+	 * evaluate postfix notation
 	 *
-	 * @param array $tokens      	Expression
+	 * @param string $tokens      	Expression
 	 * @param array $vars       	Array
 	 * @return string 				Output
 	 */
 	private function pfx($tokens, $vars = array())
 	{
+		if ($tokens == false) {
+			return false;
+		}
+
 		$stack = new EvalMathStack();
 
 		foreach ($tokens as $token) { // nice and easy

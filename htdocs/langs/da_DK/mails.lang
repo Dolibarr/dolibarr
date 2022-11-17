@@ -178,4 +178,3 @@ IsAnAnswer=Er et svar på en indledende e-mail
 RecordCreatedByEmailCollector=Post oprettet af Email Collector %s fra e-mail %s
 DefaultBlacklistMailingStatus=Standardværdi for feltet '%s' ved oprettelse af en ny kontaktperson
 DefaultStatusEmptyMandatory=Tom men obligatorisk
-WarningLimitSendByDay=ADVARSEL: Opsætningen eller kontrakten for din instans begrænser dit antal e-mails pr. dag til <b>%s</b>. Forsøg på at sende mere kan resultere i, at din instans bliver langsommere eller suspenderet. Kontakt venligst din support, hvis du har brug for en højere kvote.

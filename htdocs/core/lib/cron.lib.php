@@ -100,21 +100,12 @@ function dol_print_cron_urls()
 	print '<div class="div-table-responsive-no-min">';
 	print $langs->trans("URLToLaunchCronJobs").':<br>';
 	$url = $urlwithroot.'/public/cron/cron_run_jobs_by_url.php?'.(empty($conf->global->CRON_KEY) ? '' : 'securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login;
-	print '<div class="urllink">';
-	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$url.'">';
-	print ' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe')."</a>\n";
-	print '</div>';
-	print '<br> '.$langs->trans("OrToLaunchASpecificJob").'<br>';
+	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+	print ' '.$langs->trans("OrToLaunchASpecificJob").'<br>';
 	$url = $urlwithroot.'/public/cron/cron_run_jobs_by_url.php?'.(empty($conf->global->CRON_KEY) ? '' : 'securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login.'&id=cronjobid';
-	print '<div class="urllink">';
-	print '<input type="text" id="publicurlmemberall" class="quatrevingtpercentminusx" value="'.$url.'">';
-	print ' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe')."</a>\n";
-	print '</div>';
+	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 	print '</div>';
 	print '<br>';
-
-	print ajax_autoselect("publicurlmember");
-	print ajax_autoselect("publicurlmemberall");
 
 	$logintouse = 'firstadmin';
 	if ($user->admin) {

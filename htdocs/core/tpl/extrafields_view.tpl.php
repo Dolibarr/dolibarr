@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014	Maxime Kohlhaas		<support@atm-consulting.fr>
  * Copyright (C) 2014	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2021	Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ if (!is_object($form)) {
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_view.tpl.php -->
 <?php
-if (!isset($parameters) || !is_array($parameters)) {
+if (!is_array($parameters)) {
 	$parameters = array();
 }
 if (!empty($cols)) {
@@ -101,31 +101,38 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 		if ($action == 'edit_extras') {
 			$value = (GETPOSTISSET("options_".$tmpkeyextra) ? GETPOST("options_".$tmpkeyextra) : $object->array_options["options_".$tmpkeyextra]);
 		} else {
-			$value = (isset($object->array_options["options_".$tmpkeyextra]) ? $object->array_options["options_".$tmpkeyextra] : '');
+			$value = (!empty($object->array_options["options_".$tmpkeyextra]) ? $object->array_options["options_".$tmpkeyextra] : '');
 			//var_dump($tmpkeyextra.' - '.$value);
 		}
 
 		// Print line tr of extra field
 		if ($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra] == 'separate') {
-			$extrafields_collapse_num = $tmpkeyextra;
+			$extrafields_collapse_num = '';
+			$extrafield_param = $extrafields->attributes[$object->table_element]['param'][$tmpkeyextra];
+			if (!empty($extrafield_param) && is_array($extrafield_param)) {
+				$extrafield_param_list = array_keys($extrafield_param['options']);
+
+				if (count($extrafield_param_list) > 0) {
+					$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+
+					if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
+						$extrafields_collapse_num = $extrafields->attributes[$object->table_element]['pos'][$tmpkeyextra];
+					}
+				}
+			}
 
 			print $extrafields->showSeparator($tmpkeyextra, $object);
 
 			$lastseparatorkeyfound = $tmpkeyextra;
 		} else {
-			$collapse_group = $extrafields_collapse_num.(!empty($object->id) ? '_'.$object->id : '');
-			print '<tr class="trextrafields_collapse'.$collapse_group;
+			print '<tr class="trextrafields_collapse'.$extrafields_collapse_num.(!empty($object->id)?'_'.$object->id:'');
 			/*if ($extrafields_collapse_num && $extrafields_collapse_num_old && $extrafields_collapse_num != $extrafields_collapse_num_old) {
 				print ' trextrafields_collapse_new';
 			}*/
 			if ($extrafields_collapse_num && $i == count($extrafields->attributes[$object->table_element]['label'])) {
 				print ' trextrafields_collapse_last';
 			}
-			print '"';
-			if (isset($extrafields->expand_display) && empty($extrafields->expand_display[$collapse_group])) {
-				print ' style="display: none;"';
-			}
-			print '>';
+			print '">';
 			$extrafields_collapse_num_old = $extrafields_collapse_num;
 			print '<td class="titlefield">';
 			print '<table class="nobordernopadding centpercent">';
@@ -202,7 +209,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 					$fieldid = 'socid';
 				}
 
-				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
+				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
 			}
 			print '</tr></table>';
 			print '</td>';
@@ -213,18 +220,18 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 
 			// Convert date into timestamp format
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('date'))) {
-				$datenotinstring = empty($object->array_options['options_'.$tmpkeyextra]) ? '' : $object->array_options['options_'.$tmpkeyextra];
+				$datenotinstring = $object->array_options['options_'.$tmpkeyextra];
 				// print 'X'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.'x';
-				if (!empty($object->array_options['options_'.$tmpkeyextra]) && !is_numeric($object->array_options['options_'.$tmpkeyextra])) {	// For backward compatibility
+				if (!is_numeric($object->array_options['options_'.$tmpkeyextra])) {	// For backward compatibility
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
 				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(12, 0, 0, GETPOST("options_".$tmpkeyextra."month", 'int'), GETPOST("options_".$tmpkeyextra."day", 'int'), GETPOST("options_".$tmpkeyextra."year", 'int')) : $datenotinstring;
 			}
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('datetime'))) {
-				$datenotinstring = empty($object->array_options['options_'.$tmpkeyextra]) ? '' : $object->array_options['options_'.$tmpkeyextra];
+				$datenotinstring = $object->array_options['options_'.$tmpkeyextra];
 				// print 'X'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.'x';
-				if (!empty($object->array_options['options_'.$tmpkeyextra]) && !is_numeric($object->array_options['options_'.$tmpkeyextra])) {	// For backward compatibility
+				if (!is_numeric($object->array_options['options_'.$tmpkeyextra])) {	// For backward compatibility
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');

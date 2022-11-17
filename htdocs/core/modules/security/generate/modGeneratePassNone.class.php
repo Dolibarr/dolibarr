@@ -26,7 +26,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassw
 
 
 /**
- *	Class to generate a password according to rule 'no password'
+ *	    \class      modGeneratePassNone
+ *		\brief      Class to generate a password according to rule 'no password'
  */
 class modGeneratePassNone extends ModeleGenPassword
 {
@@ -35,19 +36,7 @@ class modGeneratePassNone extends ModeleGenPassword
 	 */
 	public $id;
 
-	/**
-	 * Minimum length (text visible by end user)
-	 *
-	 * @var string
-	 */
 	public $length;
-
-	/**
-	 * Minimum length in number of characters
-	 *
-	 * @var integer
-	 */
-	public $length2;
 
 	/**
 	 * @var DoliDB Database handler.
@@ -71,7 +60,6 @@ class modGeneratePassNone extends ModeleGenPassword
 	{
 		$this->id = "none";
 		$this->length = 0;
-		$this->length2 = 0;
 
 		$this->db = $db;
 		$this->conf = $conf;
@@ -111,11 +99,10 @@ class modGeneratePassNone extends ModeleGenPassword
 	}
 
 	/**
-	 * 	Validate a password.
-	 * 	This function is called by User->setPassword() and internally to validate that the password matches the constraints.
+	 * 		Validate a password
 	 *
-	 *	@param		string	$password	Password to check
-	 *  @return     int					0 if KO, >0 if OK
+	 *		@param		string	$password	Password to check
+	 *      @return     int					0 if KO, >0 if OK
 	 */
 	public function validatePassword($password)
 	{

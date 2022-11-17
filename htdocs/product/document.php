@@ -58,8 +58,8 @@ $hookmanager->initHooks(array('productdocuments'));
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -96,6 +96,8 @@ if ($id > 0 || !empty($ref)) {
 $modulepart = 'produit';
 
 
+$permissiontoadd = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
 		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
@@ -106,8 +108,6 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-
-$permissiontoadd = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
 
 
 /*

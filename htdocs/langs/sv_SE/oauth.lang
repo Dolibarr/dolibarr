@@ -9,13 +9,12 @@ HasAccessToken=En token genererades och sparades i den lokala databasen
 NewTokenStored=Token mottagen och sparad
 ToCheckDeleteTokenOnProvider=Klicka här för att kontrollera / radera behörighet som sparats av %s OAuth-leverantören
 TokenDeleted=Token raderad
-RequestAccess=Click here to request/renew access and receive a new token
-DeleteAccess=Click here to delete token
+RequestAccess=Klicka här för att begära / förnya åtkomst och få en ny token att spara
+DeleteAccess=Klicka här för att radera token
 UseTheFollowingUrlAsRedirectURI=Använd följande URL-adress som omdirigerings-URI när du skapar dina uppgifter med din OAuth-leverantör:
-ListOfSupportedOauthProviders=Add your OAuth2 token providers. Then, go on your OAuth provider admin page to create/get an OAuth ID and Secret and save them here. Once done, switch on the other tab to generate your token.
-OAuthSetupForLogin=Page to manage (generate/delete) OAuth tokens
+ListOfSupportedOauthProviders=Ange inloggningsuppgifterna från din OAuth2-leverantör. Endast stödda OAuth2-leverantörer listas här. Dessa tjänster kan användas av andra moduler som behöver OAuth2-autentisering.
+OAuthSetupForLogin=Sida för att skapa en OAuth-token
 SeePreviousTab=Se föregående flik
-OAuthProvider=OAuth provider
 OAuthIDSecret=OAuth ID och Secret
 TOKEN_REFRESH=Token Refresh Present
 TOKEN_EXPIRED=Token utgått
@@ -24,13 +23,10 @@ TOKEN_DELETE=Radera sparade token
 OAUTH_GOOGLE_NAME=OAuth Google-tjänst
 OAUTH_GOOGLE_ID=OAuth Google Id
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
+OAUTH_GOOGLE_DESC=Gå till <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> den här sidan </a> och sedan "Credentials" för att skapa OAuth-uppgifter
 OAUTH_GITHUB_NAME=OAuth GitHub service
 OAUTH_GITHUB_ID=OAuth GitHub Id
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
+OAUTH_GITHUB_DESC=Gå till <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> den här sidan </a> sedan "Registrera en ny applikation" för att skapa OAuth-uppgifter
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
 OAUTH_STRIPE_LIVE_NAME=OAuth Strip Live
-OAUTH_ID=OAuth ID
-OAUTH_SECRET=OAuth secret
-OAuthProviderAdded=OAuth provider added
-AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=An OAuth entry for this provider and label already exists

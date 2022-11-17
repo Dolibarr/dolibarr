@@ -89,8 +89,8 @@ class mailing_pomme extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *	@param		string			$sql		SQL request to use to count
-	 *  @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
+	 *	@param	string	$sql		SQL request to use to count
+	 *	@return	int					Number of recipients
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
@@ -101,7 +101,8 @@ class mailing_pomme extends MailingTargets
 		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql .= " AND u.entity IN (0,".$conf->entity.")";
 
-		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
+		// La requete doit retourner un champ "nb" pour etre comprise
+		// par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 
@@ -118,20 +119,20 @@ class mailing_pomme extends MailingTargets
 		$langs->load("users");
 
 		$s = '';
-		$s .= '<select id="filter_pomme"" name="filter" class="flat">';
-		$s .= '<option value="-1">'.$langs->trans("Status").'</option>';
+		$s .= $langs->trans("Status").' ';
+		$s .= '<select name="filter" class="flat marginrightonly">';
+		$s .= '<option value="-1">&nbsp;</option>';
 		$s .= '<option value="1">'.$langs->trans("Enabled").'</option>';
 		$s .= '<option value="0">'.$langs->trans("Disabled").'</option>';
 		$s .= '</select>';
-		$s .= ajax_combobox("filter_pomme");
 
 		$s .= ' ';
-		$s .= '<select id="filteremployee_pomme" name="filteremployee" class="flat">';
-		$s .= '<option value="-1">'.$langs->trans("Employee").'</option>';
+		$s .= $langs->trans("Employee").' ';
+		$s .= '<select name="filteremployee" class="flat marginrightonly">';
+		$s .= '<option value="-1">&nbsp;</option>';
 		$s .= '<option value="1">'.$langs->trans("Yes").'</option>';
 		$s .= '<option value="0">'.$langs->trans("No").'</option>';
 		$s .= '</select>';
-		$s .= ajax_combobox("filteremployee_pomme");
 
 		return $s;
 	}

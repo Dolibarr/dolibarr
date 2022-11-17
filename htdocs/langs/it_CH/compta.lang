@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - compta
+InvoiceNotLate =To be collected (< 15 days)
+InvoiceNotLate15Days =To be collected (15 to 30 days)
+InvoiceNotLate30Days =To be collected (> 30 days)

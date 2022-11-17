@@ -73,49 +73,42 @@ $optioncss = GETPOST("optioncss", "aZ"); // Option for the css output (always ''
 $now = dol_now();
 $nowarray = dol_getdate($now);
 
-if (GETPOST("date_startmonth", 'int') > 0) {
+if (!GETPOSTISSET("date_startmonth")) {
+	$date_start = dol_get_first_day($nowarray['year'], $nowarray['mon'], 'tzuserrel');
+} elseif (GETPOST("date_startmonth") > 0) {
 	$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth", 'int'), GETPOST("date_startday", 'int'), GETPOST("date_startyear", 'int'), 'tzuserrel');
 } else {
-	$date_start = '';
+	$date_start = -1;
 }
-if (GETPOST("date_endmonth", 'int') > 0) {
+if (!GETPOSTISSET("date_endmonth")) {
+	$date_end = dol_get_last_hour(dol_now('gmt'), 'tzuserrel');
+} elseif (GETPOST("date_endmonth") > 0) {
 	$date_end = dol_get_last_hour(dol_mktime(23, 59, 59, GETPOST("date_endmonth", 'int'), GETPOST("date_endday", 'int'), GETPOST("date_endyear", 'int'), 'tzuserrel'), 'tzuserrel');
 } else {
-	$date_end = '';
+	$date_end = -1;
 }
 
 // checks:if date_start>date_end  then date_end=date_start + 24 hours
-if ($date_start !== '' && $date_end !== '' && $date_start > $date_end) {
+if ($date_start > 0 && $date_end > 0 && $date_start > $date_end) {
 	$date_end = $date_start + 86400;
 }
 
 
-if (!GETPOSTISSET('pageplusoneold') && !GETPOSTISSET('page') && $date_start === '') { // We define date_start and date_end
-	$date_start = dol_get_first_day($nowarray['year'], $nowarray['mon'], 'tzuserrel');
+if (empty($date_start)) { // We define date_start and date_end
+	$date_start = dol_get_first_day($nowarray['year'], $nowarray['mon'], false);
 }
-if (!GETPOSTISSET('pageplusoneold') && !GETPOSTISSET('page') && $date_end === '') {
-	$date_end = dol_get_last_day($nowarray['year'], $nowarray['mon'], 'tzuserrel');
+if (empty($date_end)) {
+	$date_end = dol_mktime(23, 59, 59, $nowarray['mon'], $nowarray['mday'], $nowarray['year']);
 }
-
 // Set $date_startmonth...
-$date_startday = '';
-$date_startmonth = '';
-$date_startyear = '';
-$date_endday = '';
-$date_endmonth = '';
-$date_endyear = '';
-if ($date_start !== '') {
-	$tmp = dol_getdate($date_start);
-	$date_startday = $tmp['mday'];
-	$date_startmonth = $tmp['mon'];
-	$date_startyear = $tmp['year'];
-}
-if ($date_end !== '') {
-	$tmp = dol_getdate($date_end);
-	$date_endday = $tmp['mday'];
-	$date_endmonth = $tmp['mon'];
-	$date_endyear = $tmp['year'];
-}
+$tmp = dol_getdate($date_start);
+$date_startday = $tmp['mday'];
+$date_startmonth = $tmp['mon'];
+$date_startyear = $tmp['year'];
+$tmp = dol_getdate($date_end);
+$date_endday = $tmp['mday'];
+$date_endmonth = $tmp['mon'];
+$date_endyear = $tmp['year'];
 
 // Add prefix session
 $arrayfields = array(
@@ -127,7 +120,6 @@ $arrayfields = array(
 	)
 );
 
-
 /*
  * Actions
  */
@@ -136,14 +128,8 @@ $now = dol_now();
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-	$date_start = '';
-	$date_end = '';
-	$date_startday = '';
-	$date_endday = '';
-	$date_startmonth = '';
-	$date_endmonth = '';
-	$date_startyear = '';
-	$date_endyear = '';
+	$date_start = -1;
+	$date_end = -1;
 	$search_code = '';
 	$search_ip = '';
 	$search_user = '';
@@ -207,10 +193,10 @@ $sql .= " u.login, u.admin, u.entity, u.firstname, u.lastname, u.statut as statu
 $sql .= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
 $sql .= " WHERE e.entity IN (".getEntity('event').")";
-if ($date_start !== '') {
+if ($date_start > 0) {
 	$sql .= " AND e.dateevent >= '".$db->idate($date_start)."'";
 }
-if ($date_end !== '' ) {
+if ($date_end > 0) {
 	$sql .= " AND e.dateevent <= '".$db->idate($date_end)."'";
 }
 if ($search_code) {
@@ -246,8 +232,8 @@ $nbtotalofrecords = '';
 	}
 }*/
 
-$sql .= $db->plimit($limit + 1, $offset);
-
+$sql .= $db->plimit($conf->liste_limit + 1, $offset);
+//print $sql;
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
@@ -336,8 +322,8 @@ if ($result) {
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre" width="15%">';
-	print $form->selectDate($date_start === '' ? -1 : $date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
-	print $form->selectDate($date_end === '' ? -1 : $date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
+	print $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
+	print $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
 	print '</td>';
 
 	print '<td class="liste_titre left">';
@@ -469,9 +455,9 @@ if ($result) {
 
 	if ($num == 0) {
 		if ($usefilter) {
-			print '<tr><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoEventFoundWithCriteria").'</span></td></tr>';
+			print '<tr><td colspan="6">'.$langs->trans("NoEventFoundWithCriteria").'</td></tr>';
 		} else {
-			print '<tr><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoEventOrNoAuditSetup").'</span></td></tr>';
+			print '<tr><td colspan="6">'.$langs->trans("NoEventOrNoAuditSetup").'</td></tr>';
 		}
 	}
 	print "</table>";

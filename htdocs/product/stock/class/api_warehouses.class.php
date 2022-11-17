@@ -104,9 +104,9 @@ class Warehouses extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".$this->db->prefix()."entrepot as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as t";
 		if ($category > 0) {
-			$sql .= ", ".$this->db->prefix()."categorie_societe as c";
+			$sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c";
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('stock').')';
 		// Select warehouses of given category
@@ -116,9 +116,8 @@ class Warehouses extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			if (!DolibarrApi::_checkFilters($sqlfilters)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";

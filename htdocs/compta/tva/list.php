@@ -56,8 +56,8 @@ $search_amount 				= GETPOST('search_amount', 'alpha');
 $search_status = GETPOST('search_status', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield					= GETPOST('sortfield', 'aZ09comma');
-$sortorder					= GETPOST('sortorder', 'aZ09comma');
+$sortfield					= GETPOST('sortfield', 'alpha');
+$sortorder					= GETPOST('sortorder', 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST('page', 'int');
 
 if (empty($page) || $page == -1) {
@@ -83,7 +83,7 @@ $arrayfields = array(
 	't.status'			=>array('checked'=>1, 'position'=>90, 'label'=>"Status"),
 );
 
-if (isModEnabled('banque')) {
+if (!empty($conf->banque->enabled)) {
 	$arrayfields['t.fk_account'] = array('checked'=>1, 'position'=>60, 'label'=>"DefaultBankAccount");
 }
 
@@ -161,16 +161,16 @@ if (!empty($search_label)) {
 	$sql .= natural_search('t.label', $search_label);
 }
 if (!empty($search_dateend_start)) {
-	$sql .= " AND t.datev >= '".$db->idate($search_dateend_start)."'";
+	$sql .= ' AND t.datev >= "'.$db->idate($search_dateend_start).'"';
 }
 if (!empty($search_dateend_end)) {
-	$sql .= " AND t.datev <= '".$db->idate($search_dateend_end)."'";
+	$sql .= ' AND t.datev <= "'.$db->idate($search_dateend_end).'"';
 }
 if (!empty($search_datepayment_start)) {
-	$sql .= " AND t.datep >= '".$db->idate($search_datepayment_start)."'";
+	$sql .= ' AND t.datep >= "'.$db->idate($search_datepayment_start).'"';
 }
 if (!empty($search_datepayment_end)) {
-	$sql .= " AND t.datep <= '".$db->idate($search_datepayment_end)."'";
+	$sql .= ' AND t.datep <= "'.$db->idate($search_datepayment_end).'"';
 }
 if (!empty($search_type) && $search_type > 0) {
 	$sql .= ' AND t.fk_typepayment = '.((int) $search_type);
@@ -190,8 +190,8 @@ $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$resql = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($resql);
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
 
 	// if total resultset is smaller then paging size (filtering), goto and load page 0
 	if (($page * $limit) > $nbtotalofrecords) {
@@ -202,15 +202,15 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 
 $sql .= $db->plimit($limit + 1, $offset);
 
-$resql = $db->query($sql);
-if (!$resql) {
+$result = $db->query($sql);
+if (!$result) {
 	dol_print_error($db);
 	llxFooter();
 	$db->close();
 	exit;
 }
 
-$num = $db->num_rows($resql);
+$num = $db->num_rows($result);
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER['PHP_SELF']) {
@@ -429,7 +429,7 @@ print '</tr>';
 $i = 0;
 $totalarray = array();
 while ($i < min($num, $limit)) {
-	$obj = $db->fetch_object($resql);
+	$obj = $db->fetch_object($result);
 
 	$tva_static->id = $obj->rowid;
 	$tva_static->ref = $obj->rowid;
@@ -549,27 +549,11 @@ $totalarray['nbfield']++;
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-// If no record found
-if ($num == 0) {
-	$colspan = 1;
-	foreach ($arrayfields as $key => $val) {
-		if (!empty($val['checked'])) {
-			$colspan++;
-		}
-	}
-	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
-}
+print '</table>';
+print '</div>';
+print '</form>';
 
-$db->free($resql);
-
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
-print $hookmanager->resPrint;
-
-print '</table>'."\n";
-print '</div>'."\n";
-
-print '</form>'."\n";
+$db->free($result);
 
 // End of page
 llxFooter();

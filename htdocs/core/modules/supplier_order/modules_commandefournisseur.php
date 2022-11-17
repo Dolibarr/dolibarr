@@ -120,11 +120,9 @@ abstract class ModeleNumRefSuppliersOrders
 
 	/**  Returns next value assigned
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Object	    $object		Object
-	 *  @return string      			Valeur
+	 *   @return     string      Valeur
 	 */
-	public function getNextValue($objsoc = 0, $object = '')
+	public function getNextValue()
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

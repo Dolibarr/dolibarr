@@ -25,10 +25,8 @@ CREATE TABLE llx_product_lot (
   eatby           date DEFAULT NULL,			-- Eatby date
   sellby          date DEFAULT NULL, 			-- Sellby date
   eol_date      datetime NULL,
-  manufacturing_date datetime NULL,                -- date when first manufacturing of this lot has started 
-  scrapping_date datetime NULL,                    -- date when we decided to scrap all products of this lot
-  barcode       varchar(180) DEFAULT NULL,         -- barcode
-  fk_barcode_type   integer DEFAULT NULL,          -- barcode type
+  manufacturing_date datetime NULL,
+  scrapping_date datetime NULL,
   datec         datetime,
   tms           timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   fk_user_creat integer,

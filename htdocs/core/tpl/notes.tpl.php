@@ -29,9 +29,6 @@ $module       = $object->element;
 $note_public  = 'note_public';
 $note_private = 'note_private';
 
-if ($module == "product") {
-	$module = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
-}
 $colwidth = (isset($colwidth) ? $colwidth : (empty($cssclass) ? '25' : ''));
 // Set $permission from the $permissionnote var defined on calling page
 $permission = (isset($permissionnote) ? $permissionnote : (isset($permission) ? $permission : (isset($user->rights->$module->create) ? $user->rights->$module->create : (isset($user->rights->$module->creer) ? $user->rights->$module->creer : 0))));
@@ -63,39 +60,37 @@ if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES)) {
 
 // Special cases
 if ($module == 'propal') {
-	$permission = $user->hasRight("propale", "creer");
+	$permission = $user->rights->propale->creer;
 } elseif ($module == 'supplier_proposal') {
-	$permission = $user->hasRight("supplier_proposal", "creer");
+	$permission = $user->rights->supplier_proposal->creer;
 } elseif ($module == 'fichinter') {
-	$permission = $user->hasRight("ficheinter", "creer");
+	$permission = $user->rights->ficheinter->creer;
 } elseif ($module == 'project') {
-	$permission = $user->hasRight("projet", "creer");
+	$permission = $user->rights->projet->creer;
 } elseif ($module == 'project_task') {
-	$permission = $user->hasRight("projet", "creer");
+	$permission = $user->rights->projet->creer;
 } elseif ($module == 'invoice_supplier') {
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-		$permission = $user->hasRight("fournisseur", "facture", "creer");
+		$permission = $user->rights->fournisseur->facture->creer;
 	} else {
-		$permission = $user->hasRight("supplier_invoice", "creer");
+		$permission = $user->rights->supplier_invoice->creer;
 	}
 } elseif ($module == 'order_supplier') {
 	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-		$permission = $user->hasRight("fournisseur", "commande", "creer");
+		$permission = $user->rights->fournisseur->commande->creer;
 	} else {
-		$permission = $user->hasRight("supplier_order", "creer");
+		$permission = $user->rights->supplier_order->creer;
 	}
 } elseif ($module == 'societe') {
-	$permission = $user->hasRight("societe", "creer");
+	$permission = $user->rights->societe->creer;
 } elseif ($module == 'contact') {
-	$permission = $user->hasRight("societe", "creer");
+	$permission = $user->rights->societe->creer;
 } elseif ($module == 'shipping') {
-	$permission = $user->hasRight("expedition", "creer");
+	$permission = $user->rights->expedition->creer;
 } elseif ($module == 'product') {
-	$permission = $user->hasRight("produit", "creer");
-} elseif ($module == 'service') {
-	$permission = $user->hasRight("service", "creer");
+	$permission = $user->rights->produit->creer;
 } elseif ($module == 'ecmfiles') {
-	$permission = $user->hasRight("ecm", "setup");
+	$permission = $user->rights->ecm->setup;
 }
 //else dol_print_error('','Bad value '.$module.' for param module');
 
@@ -104,26 +99,16 @@ if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_
 } else {
 	$typeofdata = 'textarea:12:95%';
 }
-if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC)) {
-	$typeofdatapub = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
-} else {
-	$typeofdatapub = 'textarea:12:95%';
-}
-if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE)) {
-	$typeofdatapriv = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
-} else {
-	$typeofdatapriv = 'textarea:12:95%';
-}
 
 print '<!-- BEGIN PHP TEMPLATE NOTES -->'."\n";
 print '<div class="tagtable border table-border tableforfield centpercent">'."\n";
 print '<div class="tagtr table-border-row">'."\n";
 $editmode = (GETPOST('action', 'aZ09') == 'edit'.$note_public);
 print '<div class="tagtd tagtdnote tdtop'.($editmode ? '' : ' sensiblehtmlcontent').' table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
-print $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdatapub, $moreparam, '', 0);
+print $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam, '', 0);
 print '</div>'."\n";
 print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sensiblehtmlcontent').'">'."\n";
-print $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdatapub, '', null, null, $moreparam, 1)."\n";
+print $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam, 1)."\n";
 print '</div>'."\n";
 print '</div>'."\n";
 if (empty($user->socid)) {
@@ -131,10 +116,10 @@ if (empty($user->socid)) {
 	print '<div class="tagtr table-border-row">'."\n";
 	$editmode = (GETPOST('action', 'aZ09') == 'edit'.$note_private);
 	print '<div class="tagtd tagtdnote tdtop'.($editmode ? '' : ' sensiblehtmlcontent').' table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
-	print $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdatapriv, $moreparam, '', 0);
+	print $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam, '', 0);
 	print '</div>'."\n";
 	print '<div class="tagtd wordbreak table-val-border-col'.($editmode ? '' : ' sensiblehtmlcontent').'">'."\n";
-	print $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdatapriv, '', null, null, $moreparam, 1);
+	print $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam, 1);
 	print '</div>'."\n";
 	print '</div>'."\n";
 }

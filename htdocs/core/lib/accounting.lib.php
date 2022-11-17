@@ -274,9 +274,6 @@ function getDefaultDatesForTransfer()
 {
 	global $db, $conf;
 
-	$pastmonth = 0;
-	$pastmonthyear = 0;
-
 	// Period by default on transfer (0: previous month | 1: current month | 2: fiscal year)
 	$periodbydefaultontransfer = (empty($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER) ? 0 : $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER);
 	if ($periodbydefaultontransfer == 2) {

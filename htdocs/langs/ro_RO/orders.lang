@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-OrderExists=O comandă era deja deschisă legată de această ofertă comercială, așa că nicio altă comandă nu a fost creată automat
 OrdersArea=Comenzi clienţi
 SuppliersOrdersArea=Comenzi de achiziție
 OrderCard=Fişă Comandă
@@ -69,8 +68,6 @@ CreateOrder=Creare comandă
 RefuseOrder=Refuz comandă
 ApproveOrder=Aprobare comandă
 Approve2Order=Aprobă comanda (nivel doi)
-UserApproval=Utilizator pentru aprobare
-UserApproval2=Utilizator pentru aprobare (nivel 2)
 ValidateOrder=Validare comandă
 UnvalidateOrder=Devalidare comandă
 DeleteOrder=Ştergere comadă
@@ -105,8 +102,6 @@ ConfirmCancelOrder=Sigur doriți să anulați această comandă?
 ConfirmMakeOrder=Sigur doriți să confirmați că ați făcut această comandă pe <b>%s</b>?
 GenerateBill=Generare Factură
 ClassifyShipped=Clasează livrată
-PassedInShippedStatus=clasificat ca livrat
-YouCantShipThis=Nu se poate clasifica. Verifică permisiunile utilizatorului
 DraftOrders=Comenzi schiţă
 DraftSuppliersOrders=Comenzi de achiziţie schiţă
 OnProcessOrders=Comenzi în curs de procesare

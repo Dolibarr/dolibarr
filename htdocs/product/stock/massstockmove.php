@@ -232,11 +232,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 						$firstrecord = array_shift($arraybatchinfo);
 						$dlc = $firstrecord['eatby'];
 						$dluo = $firstrecord['sellby'];
-						//var_dump($batch);
-						//var_dump($arraybatchinfo);
-						//var_dump($firstrecord);
-						//var_dump($dlc);
-						//var_dump($dluo); exit;
+						//var_dump($batch); var_dump($arraybatchinfo); var_dump($firstrecord); var_dump($dlc); var_dump($dluo); exit;
 					} else {
 						$dlc = '';
 						$dluo = '';
@@ -475,55 +471,43 @@ print '<br>';
 print '<form name="userfile" action="'.$_SERVER["PHP_SELF"].'" enctype="multipart/form-data" METHOD="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="importCSV">';
+print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 print '<span class="opacitymedium">';
 print $langs->trans("or").' ';
 $importcsv = new ImportCsv($db, 'massstocklist');
 print $form->textwithpicto($langs->trans('SelectAStockMovementFileToImport'), $langs->transnoentitiesnoconv("InfoTemplateImport", $importcsv->separator));
 print '</span>';
 
-$maxfilesizearray = getMaxFileSizeArray();
-$maxmin = $maxfilesizearray['maxmin'];
-if ($maxmin > 0) {
-	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
-}
 print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 $out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
-print '<input type="submit" class="button small" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
+print '<input type="submit" class="button" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
 $out = '';
 if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
 	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
-		$maxphp = preg_replace('/k$/i', '', $maxphp);
 		$maxphp = $maxphp * 1;
 	}
 	if (preg_match('/m$/i', $maxphp)) {
-		$maxphp = preg_replace('/m$/i', '', $maxphp);
 		$maxphp = $maxphp * 1024;
 	}
 	if (preg_match('/g$/i', $maxphp)) {
-		$maxphp = preg_replace('/g$/i', '', $maxphp);
 		$maxphp = $maxphp * 1024 * 1024;
 	}
 	if (preg_match('/t$/i', $maxphp)) {
-		$maxphp = preg_replace('/t$/i', '', $maxphp);
 		$maxphp = $maxphp * 1024 * 1024 * 1024;
 	}
 	$maxphp2 = @ini_get('post_max_size'); // In unknown
 	if (preg_match('/k$/i', $maxphp2)) {
-		$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
 		$maxphp2 = $maxphp2 * 1;
 	}
 	if (preg_match('/m$/i', $maxphp2)) {
-		$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
 		$maxphp2 = $maxphp2 * 1024;
 	}
 	if (preg_match('/g$/i', $maxphp2)) {
-		$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
 		$maxphp2 = $maxphp2 * 1024 * 1024;
 	}
 	if (preg_match('/t$/i', $maxphp2)) {
-		$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
 		$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
 	}
 	// Now $max and $maxphp and $maxphp2 are in Kb
@@ -569,7 +553,7 @@ print '<tr class="liste_titre">';
 print getTitleFieldOfList($langs->trans('WarehouseSource'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 print getTitleFieldOfList($langs->trans('WarehouseTarget'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 print getTitleFieldOfList($langs->trans('ProductRef'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
-if (isModEnabled('productbatch')) {
+if ($conf->productbatch->enabled) {
 	print getTitleFieldOfList($langs->trans('Batch'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'tagtd maxwidthonsmartphone ');
 }
 print getTitleFieldOfList($langs->trans('Qty'), 0, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'center tagtd maxwidthonsmartphone ');
@@ -601,7 +585,7 @@ print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');
 print $form->select_produits($id_product, 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1, '', null, 1);
 print '</td>';
 // Batch number
-if (isModEnabled('productbatch')) {
+if ($conf->productbatch->enabled) {
 	print '<td>';
 	print img_picto($langs->trans("LotSerial"), 'lot', 'class="paddingright"');
 	print '<input type="text" name="batch" class="flat maxwidth50" value="'.$batch.'">';
@@ -643,13 +627,13 @@ foreach ($listofdata as $key => $val) {
 		print '<td>';
 		print $productstatic->getNomUrl(1).' - '.$productstatic->label;
 		print '</td>';
-		if (isModEnabled('productbatch')) {
+		if ($conf->productbatch->enabled) {
 			print '<td>';
 			print $val['batch'];
 			print '</td>';
 		}
 		print '<td class="center">'.$val['qty'].'</td>';
-		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&token='.newToken().'&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
+		print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=delline&idline='.$val['id'].'">'.img_delete($langs->trans("Remove")).'</a></td>';
 		print '</tr>';
 	}
 }
@@ -679,7 +663,7 @@ if (count($listofdata)) {
 	print '<input type="text" name="label" class="minwidth300" value="'.dol_escape_htmltag($labelmovement).'"><br>';
 	print '<br>';
 
-	print '<div class="center"><input type="submit" class="button" name="valid" value="'.dol_escape_htmltag($buttonrecord).'"></div>';
+	print '<div class="center"><input class="button" type="submit" name="valid" value="'.dol_escape_htmltag($buttonrecord).'"></div>';
 
 	print '<br>';
 	print '</div>';

@@ -36,7 +36,7 @@ $sortorder = GETPOST('sortorder', 'aZ09');
 if (empty($conf->adherent->enabled)) {
 	accessforbidden();
 }
-if (empty($user->rights->adherent->export)) {
+if (!$user->rights->adherent->export) {
 	accessforbidden();
 }
 

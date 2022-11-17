@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - accountancy
+Accountancy=Boekhouding
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolom scheidingsteken voor exporteren naar bestand
 ACCOUNTING_EXPORT_DATE=Datum formaat voor exporteren naar bestand
 ACCOUNTING_EXPORT_PIECE=Exporteren van het aantal stukken
@@ -6,6 +7,7 @@ ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exporteren met globaal account
 Selectformat=Selecteer het formaat voor het bestand
 ACCOUNTING_EXPORT_FORMAT=Selecteer het formaat voor het bestand
 ACCOUNTING_EXPORT_PREFIX_SPEC=Geef de prefix voor het bestand
+Journals=Dagboeken
 JournalFinancial=Financiële dagboeken
 BackToChartofaccounts=Geef kaart van accounts terug
 Selectchartofaccounts=Selecteer actieve grafieken van accounts

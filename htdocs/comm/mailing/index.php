@@ -141,7 +141,8 @@ if (is_resource($handle)) {
 print "</table><br>";
 
 
-print '</div><div class="fichetwothirdright">';
+//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
@@ -183,7 +184,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr><td><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+		print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	}
 	print "</table></div><br>";
 	$db->free($result);
@@ -192,7 +193,7 @@ if ($result) {
 }
 
 
-print '</div></div>';
+print '</div></div></div>';
 
 
 $parameters = array('user' => $user);

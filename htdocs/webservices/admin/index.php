@@ -91,7 +91,9 @@ print '</tr>';
 
 print '</table>';
 
-print $form->buttonsSaveCancel("Save", '');
+print '<br><div class="center">';
+print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
+print '</div>';
 
 print '</form>';
 
@@ -108,7 +110,7 @@ $webservices = array(
 		'supplier_invoice'	=> '!empty($conf->fournisseur->enabled)',
 		'actioncomm'		=> '!empty($conf->agenda->enabled)',
 		'category'			=> '!empty($conf->categorie->enabled)',
-		'project'			=> '!empty($conf->project->enabled)',
+		'project'			=> '!empty($conf->projet->enabled)',
 		'other'				=> ''
 );
 
@@ -120,7 +122,7 @@ foreach ($webservices as $name => $right) {
 		continue;
 	}
 	$url = DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php?wsdl';
-	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$url."</a><br>\n";
+	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 print '<br>';
 
@@ -132,7 +134,7 @@ foreach ($webservices as $name => $right) {
 		continue;
 	}
 	$url = DOL_MAIN_URL_ROOT.'/webservices/server_'.$name.'.php';
-	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$url."</a><br>\n";
+	print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 }
 print '<br>';
 

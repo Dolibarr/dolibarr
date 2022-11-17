@@ -100,7 +100,6 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 			$created       = $event["created"];
 			$modified      = $event["modified"];
 			$assignedUsers = $event["assignedUsers"];
-			//print $fulldayevent.' '.dol_print_date($startdate, 'dayhour', 'gmt');
 
 			// Format
 			$summary     = format_cal($format, $summary);
@@ -192,16 +191,16 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 
 				// Date must be GMT dates
 				// Current date
-				fwrite($calfileh, "DTSTAMP:".dol_print_date($now, "dayhourxcard", 'gmt')."\n");
+				fwrite($calfileh, "DTSTAMP:".dol_print_date($now, "dayhourxcard", true)."\n");
 
 				// Start date
 				$prefix     = "";
-				$startdatef = dol_print_date($startdate, "dayhourxcard", 'gmt');
+				$startdatef = dol_print_date($startdate, "dayhourxcard", true);
 
 				if ($fulldayevent) {
 					// Local time
 					$prefix     = ";VALUE=DATE";
-					$startdatef = dol_print_date($startdate, "dayxcard", 'gmt');
+					$startdatef = dol_print_date($startdate, "dayxcard", false);
 				}
 
 				fwrite($calfileh, "DTSTART".$prefix.":".$startdatef."\n");
@@ -209,9 +208,6 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 				// End date
 				if ($fulldayevent) {
 					if (empty($enddate)) {
-						// We add 1 day needed for full day event (DTEND must be next day after event).
-						// This is mention in https://datatracker.ietf.org/doc/html/rfc5545:
-						// "The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event."
 						$enddate = dol_time_plus_duree($startdate, 1, "d");
 					}
 				} else {
@@ -221,14 +217,14 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 				}
 
 				$prefix   = "";
-				$enddatef = dol_print_date($enddate, "dayhourxcard", 'gmt');
+				$enddatef = dol_print_date($enddate, "dayhourxcard", true);
 
 				if ($fulldayevent) {
 					$prefix   = ";VALUE=DATE";
-					// We add 1 second so we reach the +1 day needed for full day event (DTEND must be next day after event)
-					// This is mention in https://datatracker.ietf.org/doc/html/rfc5545:
-					// "The "DTEND" property for a "VEVENT" calendar component specifies the non-inclusive end of the event."
-					$enddatef = dol_print_date($enddate + 1, "dayxcard", 'gmt');
+					$enddatef = dol_print_date($enddate + 1, "dayxcard", false);
+
+					// Local time
+					//$enddatef .= dol_print_date($enddate+1,"dayhourxcard",false);
 				}
 
 				fwrite($calfileh, "DTEND".$prefix.":".$enddatef."\n");
@@ -260,11 +256,11 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 				}
 
 				if ($created) {
-					fwrite($calfileh, "CREATED:".dol_print_date($created, "dayhourxcard", 'gmt')."\n");
+					fwrite($calfileh, "CREATED:".dol_print_date($created, "dayhourxcard", true)."\n");
 				}
 
 				if ($modified) {
-					fwrite($calfileh, "LAST-MODIFIED:".dol_print_date($modified, "dayhourxcard", 'gmt')."\n");
+					fwrite($calfileh, "LAST-MODIFIED:".dol_print_date($modified, "dayhourxcard", true)."\n");
 				}
 
 				fwrite($calfileh, "SUMMARY:".$encoding.$summary."\n");
@@ -274,7 +270,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 				fwrite($calfileh, "LOCATION:".$location."\n");
 				fwrite($calfileh, "TRANSP:OPAQUE\n");
 				fwrite($calfileh, "CLASS:CONFIDENTIAL\n");
-				fwrite($calfileh, "DTSTAMP:".dol_print_date($startdatef, "dayhourxcard", 'gmt')."\n");
+				fwrite($calfileh, "DTSTAMP:".dol_print_date($startdatef, "dayhourxcard", true)."\n");
 
 				fwrite($calfileh, "END:VJOURNAL\n");
 			}

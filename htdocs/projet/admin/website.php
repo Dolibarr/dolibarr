@@ -28,7 +28,6 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
@@ -36,13 +35,9 @@ $langs->loadLangs(array("admin", "members"));
 
 $action = GETPOST('action', 'aZ09');
 
-$defaultoppstatus = getDolGlobalInt('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD');
-
 if (!$user->admin) {
 	accessforbidden();
 }
-
-$error = 0;
 
 
 /*
@@ -59,10 +54,8 @@ if ($action == 'setPROJECT_ENABLE_PUBLIC') {
 
 if ($action == 'update') {
 	$public = GETPOST('PROJECT_ENABLE_PUBLIC');
-	$defaultoppstatus = GETPOST('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', 'int');
 
 	$res = dolibarr_set_const($db, "PROJECT_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD", $defaultoppstatus, 'chaine', 0, '', $conf->entity);
 
 	if (!($res > 0)) {
 		$error++;
@@ -81,15 +74,13 @@ if ($action == 'update') {
  */
 
 $form = new Form($db);
-$formproject = new FormProjets($db);
 
-$title = $langs->trans("ProjectsSetup");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $langs->trans("ProjectsSetup"), $help_url);
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($title, $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("ProjectsSetup"), $linkback, 'title_setup');
 
 $head = project_admin_prepare_head();
 
@@ -99,12 +90,11 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
-print dol_get_fiche_head($head, 'website', $langs->trans("Projects"), -1, 'project');
+print dol_get_fiche_head($head, 'website', $langs->trans("Projects"), -1, 'user');
 
 
 print '<span class="opacitymedium">'.$langs->trans("LeadPublicFormDesc").'</span><br><br>';
 
-$param = '';
 
 $enabledisablehtml = $langs->trans("EnablePublicLeadForm").' ';
 if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
@@ -121,12 +111,12 @@ if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 print $enabledisablehtml;
 print '<input type="hidden" id="PROJECT_ENABLE_PUBLIC" name="PROJECT_ENABLE_PUBLIC" value="'.(empty($conf->global->PROJECT_ENABLE_PUBLIC) ? 0 : 1).'">';
 
+/*
 print '<br>';
 
 if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	print '<br>';
 
-	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';
@@ -134,20 +124,20 @@ if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	print '<td class="right">'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
 
-	// Default opportunity status
-	print '<tr class="oddeven drag" id="trforcetype"><td>';
-	print $langs->trans("DefaultOpportunityStatus");
+	// param
+	print '<tr class="oddeven" id="tredit"><td>';
+	print $langs->trans("CanEditAmount");
 	print '</td><td class="right">';
-	print $formproject->selectOpportunityStatus('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', GETPOSTISSET('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD') ? GETPOST('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD', 'int') : $defaultoppstatus, 1, 0, 0, 0, '', 0, 1);
+	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) ? $conf->global->MEMBER_NEWFORM_EDITAMOUNT : 0), 1);
 	print "</td></tr>\n";
 
 	print '</table>';
-	print '</div>';
 
 	print '<div class="center">';
-	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</div>';
 }
+*/
 
 print dol_get_fiche_end();
 
@@ -157,8 +147,8 @@ print '</form>';
 if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
-	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
-	if (!empty($conf->multicompany->enabled)) {
+	print img_picto('', 'globe').' '.$langs->trans('BlankSubscriptionForm').':<br>';
+	if ($conf->multicompany->enabled) {
 		$entity_qr = '?entity='.$conf->entity;
 	} else {
 		$entity_qr = '';
@@ -169,11 +159,7 @@ if (!empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	print '<div class="urllink">';
-	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/project/new.php'.$entity_qr.'">';
-	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/project/new.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
-	print '</div>';
-	print ajax_autoselect('publicurlmember');
+	print '<a target="_blank" href="'.$urlwithroot.'/public/project/new.php'.$entity_qr.'">'.$urlwithroot.'/public/project/new.php'.$entity_qr.'</a>';
 }
 
 // End of page

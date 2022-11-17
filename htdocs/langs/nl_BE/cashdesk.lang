@@ -8,4 +8,5 @@ BankToPay=Betalingsaccount
 ShowCompany=Toon bedrijf
 ShowStock=Toon magazijn
 DolibarrReceiptPrinter=Dolibarr Ontvangsten Printer
+NotAvailableWithBrowserPrinter=Not available when printer for receipt is set to browser
 Receipt=Ontvangst

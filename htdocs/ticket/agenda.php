@@ -80,15 +80,16 @@ if (!$action) {
 
 // Security check
 $id = GETPOST("id", 'int');
+$socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
-$result = restrictedArea($user, 'ticket', $object->id, '');
+$result = restrictedArea($user, 'ticket', $id, '');
 
 // restrict access for externals users
 if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();
 }
 // or for unauthorized internals users
-if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+if (!$user->socid && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
 	accessforbidden();
 }
 
@@ -144,7 +145,7 @@ if ($socid > 0) {
 	print dol_get_fiche_end();
 }
 
-if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
+if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
 	$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
 } elseif ($user->socid > 0) {
 	$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
@@ -162,22 +163,18 @@ if ($object->fk_user_create > 0) {
 	$langs->load("users");
 	$fuser = new User($db);
 	$fuser->fetch($object->fk_user_create);
-	$morehtmlref .= $fuser->getNomUrl(-1);
-} elseif (!empty($object->email_msgid)) {
+	$morehtmlref .= $fuser->getNomUrl(0);
+}
+if (!empty($object->origin_email)) {
 	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
-	$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
-	$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
-} elseif (!empty($object->origin_email)) {
-	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
-	$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
-	$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
+	$morehtmlref .= $object->origin_email.' <small>('.$langs->trans("TicketEmailOriginIssuer").')</small>';
 }
 
 // Thirdparty
-if (isModEnabled('societe')) {
+if (!empty($conf->societe->enabled)) {
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
 	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
-		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&token='.newToken().'&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
+		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
 	}*/
 	$morehtmlref .= ' : ';
 	if ($action == 'editcustomer') {
@@ -188,12 +185,12 @@ if (isModEnabled('societe')) {
 }
 
 // Project
-if (isModEnabled('project')) {
+if (!empty($conf->projet->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project');
 	if ($user->rights->ticket->write) {
 		if ($action != 'classify') {
-			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
 			$morehtmlref .= ' : ';
 		}
 		if ($action == 'classify') {
@@ -220,7 +217,7 @@ if (isModEnabled('project')) {
 
 $morehtmlref .= '</div>';
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/ticket/list.php"><strong>'.$langs->trans("BackToList").'</strong></a> ';
+$linkback = '<a href="'.dol_buildpath('/ticket/list.php', 1).'"><strong>'.$langs->trans("BackToList").'</strong></a> ';
 
 dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
@@ -243,7 +240,7 @@ if (!empty($object->id)) {
 	$messagingUrl = DOL_URL_ROOT.'/ticket/messaging.php?track_id='.$object->track_id;
 	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
 	$messagingUrl = DOL_URL_ROOT.'/ticket/agenda.php?track_id='.$object->track_id;
-	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1, array('morecss'=>'btnTitleSelected'));
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-list-alt imgforviewmode', $messagingUrl, '', 1, array('morecss'=>'btnTitleSelected'));
 
 	// Show link to add a message (if read and not closed)
 	$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
@@ -252,7 +249,7 @@ if (!empty($object->id)) {
 
 	// Show link to add event (if read and not closed)
 	$btnstatus = $object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
-	$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
+	$url = dol_buildpath('/comm/action/card.php', 1).'?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"]);
 	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, 'add-new-ticket-even-button', $btnstatus);
 
 	print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);

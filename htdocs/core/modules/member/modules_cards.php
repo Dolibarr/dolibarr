@@ -74,10 +74,9 @@ class ModelePDFCards
  *	@param	Translate	$outputlangs	Object langs to use for translation
  *	@param	string		$outputdir		Output directory
  *	@param	string		$template		pdf generenate document class to use default 'standard'
- *  @param	string		$filename		Name of output file (without extension)
  *	@return int							<0 if KO, >0 if OK
  */
-function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir = '', $template = 'standard', $filename = 'tmp_cards')
+function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir = '', $template = 'standard')
 {
 	// phpcs:enable
 	global $conf, $langs;
@@ -126,7 +125,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		foreach (array('doc', 'pdf') as $prefix) {
 			$file = $prefix."_".$template.".class.php";
 
-			// We check that file of doc generaotr exists
+			// On verifie l'emplacement du modele
 			$file = dol_buildpath($reldir."core/modules/member/doc/".$file, 0);
 			if (file_exists($file)) {
 				$filefound = 1;
@@ -149,7 +148,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output = $outputlangs->charset_output;
-		if ($obj->write_file($arrayofmembers, $outputlangs, $srctemplatepath, 'member', 0, $filename) > 0) {
+		if ($obj->write_file($arrayofmembers, $outputlangs, $srctemplatepath) > 0) {
 			$outputlangs->charset_output = $sav_charset_output;
 			return 1;
 		} else {

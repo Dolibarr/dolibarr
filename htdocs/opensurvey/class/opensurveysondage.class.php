@@ -492,12 +492,10 @@ class Opensurveysondage extends CommonObject
 	public function fetch_lines()
 	{
 		// phpcs:enable
-		$this->lines = array();
+		$ret = array();
 
-		$sql = "SELECT id_users, nom as name, reponses";
-		$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+		$sql = "SELECT id_users, nom as name, reponses FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql .= " WHERE id_sondage = '".$this->db->escape($this->id_sondage)."'";
-
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -507,12 +505,14 @@ class Opensurveysondage extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$tmp = array('id_users'=>$obj->id_users, 'nom'=>$obj->name, 'reponses'=>$obj->reponses);
 
-				$this->lines[] = $tmp;
+				$ret[] = $tmp;
 				$i++;
 			}
 		} else {
 			dol_print_error($this->db);
 		}
+
+		$this->lines = $ret;
 
 		return count($this->lines);
 	}
@@ -652,12 +652,12 @@ class Opensurveysondage extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Opened');
-			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Opened');
-			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Opened');
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->trans('Closed');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Opened');
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->trans('Closed');
 		}
 
 		$statusType = 'status'.$status;
@@ -673,32 +673,5 @@ class Opensurveysondage extends CommonObject
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
-	}
-
-
-	/**
-	 *	Return number of votes done for this survey.
-	 *
-	 *	@return     int			Number of votes
-	 */
-	public function countVotes()
-	{
-		$result = 0;
-
-		$sql .= " SELECT COUNT(id_users) as nb FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
-		$sql .= " WHERE id_sondage = '".$this->db->escape($this->ref)."'";
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$obj = $this->db->fetch_object($resql);
-			if ($obj) {
-				$result = $obj->nb;
-			}
-		} else {
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->error;
-		}
-
-		return $result;
 	}
 }

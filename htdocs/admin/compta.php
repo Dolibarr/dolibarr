@@ -179,7 +179,7 @@ foreach ($list as $key) {
 
 	// Value
 	print '<td>';
-	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
+	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	print '</td></tr>';
 }
 
@@ -199,7 +199,7 @@ print '</td></tr>';
 
 print "</table>\n";
 
-print '<br><br><div style="text-align:center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
+print '<br><br><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 print '</form>';
 
 // End of page

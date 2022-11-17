@@ -34,7 +34,7 @@
  * @param string	$url 				Ajax Url to call for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
  * @param string	$urloption			More parameters on URL request
  * @param int		$minLength			Minimum number of chars to trigger that Ajax search
- * @param int		$autoselect			Automatic selection if just one value (trigger("change") on field is done if search return only 1 result)
+ * @param int		$autoselect			Automatic selection if just one value (trigger("change") on field is done is search return only 1 result)
  * @param array		$ajaxoptions		Multiple options array
  *                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
  *                                      - Ex: array('disabled'=> )
@@ -46,8 +46,6 @@
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLength = 2, $autoselect = 0, $ajaxoptions = array(), $moreparams = '')
 {
-	global $conf;
-
 	if (empty($minLength)) {
 		$minLength = 1;
 	}
@@ -62,8 +60,6 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 		$dataforitem = constant('JS_QUERY_AUTOCOMPLETE_ITEM');
 	}
 
-	$htmlnamejquery = str_replace('.', '\\\\.', $htmlname);
-
 	// Input search_htmlname is original field
 	// Input htmlname is a second input field used when using ajax autocomplete.
 	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" '.($moreparams ? $moreparams : '').' />';
@@ -71,25 +67,25 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 	$script .= '<!-- Javascript code for autocomplete of field '.$htmlname.' -->'."\n";
 	$script .= '<script>'."\n";
 	$script .= '$(document).ready(function() {
-					var autoselect = '.((int) $autoselect).';
+					var autoselect = '.$autoselect.';
 					var options = '.json_encode($ajaxoptions).'; /* Option of actions to do after keyup, or after select */
 
 					/* Remove selected id as soon as we type or delete a char (it means old selection is wrong). Use keyup/down instead of change to avoid loosing the product id. This is needed only for select of predefined product */
-					$("input#search_'.$htmlnamejquery.'").keydown(function(e) {
+					$("input#search_'.$htmlname.'").keydown(function(e) {
 						if (e.keyCode != 9)		/* If not "Tab" key */
 						{
 							if (e.keyCode == 13) { return false; } /* disable "ENTER" key useful for barcode readers */
 							console.log("Clear id previously selected for field '.$htmlname.'");
-							$("#'.$htmlnamejquery.'").val("");
+							$("#'.$htmlname.'").val("");
 						}
 					});
 
 					// Check options for secondary actions when keyup
-					$("input#search_'.$htmlnamejquery.'").keyup(function() {
+					$("input#search_'.$htmlname.'").keyup(function() {
 						    if ($(this).val().length == 0)
 						    {
-	                            $("#search_'.$htmlnamejquery.'").val("");
-	                            $("#'.$htmlnamejquery.'").val("").trigger("change");
+	                            $("#search_'.$htmlname.'").val("");
+	                            $("#'.$htmlname.'").val("").trigger("change");
 	                            if (options.option_disabled) {
 	    							$("#" + options.option_disabled).removeAttr("disabled");
 	    						}
@@ -120,15 +116,15 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 						    }
                     });
 
-    				$("input#search_'.$htmlnamejquery.'").autocomplete({
+    				$("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
-    						$.get("'.$url.($urloption ? '?'.$urloption : '').'", { "'.str_replace('.', '_', $htmlname).'": request.term }, function(data){
+    						$.get("'.$url.($urloption ? '?'.$urloption : '').'", { '.$htmlname.': request.term }, function(data){
 								if (data != null)
 								{
 									response($.map( data, function(item) {
 										if (autoselect == 1 && data.length == 1) {
-											$("#search_'.$htmlnamejquery.'").val(item.value);
-											$("#'.$htmlnamejquery.'").val(item.key).trigger("change");
+											$("#search_'.$htmlname.'").val(item.value);
+											$("#'.$htmlname.'").val(item.key).trigger("change");
 										}
 										var label = item.label.toString();
 										var update = {};
@@ -143,34 +139,22 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												textarea[key] = item[value];
 											});
 										}
-
-										console.log("Return value from GET to the rest of code");
-										return { label: label,
-												 value: item.value,
-												 id: item.key,
-												 disabled: item.disabled,
-												 update: update,
-												 textarea: textarea,
+										return { label: label, value: item.value, id: item.key, disabled: item.disabled,
+												 update: update, textarea: textarea,
 												 pbq: item.pbq,
-												 type: item.type,
-												 qty: item.qty,
-												 discount: item.discount,
+												 type: item.type, qty: item.qty, discount: item.discount,
 												 pricebasetype: item.pricebasetype,
 												 price_ht: item.price_ht,
 												 price_ttc: item.price_ttc,
-												 price_unit_ht: item.price_unit_ht,
-												 price_unit_ht_locale: item.price_unit_ht_locale,
 												 description : item.description,
-												 ref_customer: item.ref_customer,
-												 tva_tx: item.tva_tx }
+												 ref_customer: item.ref_customer }
 									}));
-								} else {
-									console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
 								}
+								else console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
 							}, "json");
 						},
 						dataType: "json",
-    					minLength: '.((int) $minLength).',
+    					minLength: '.$minLength.',
     					select: function( event, ui ) {		// Function ran once new value has been selected into javascript combo
     						console.log("We will trigger change on input '.$htmlname.' because of the select definition of autocomplete code for input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
@@ -178,29 +162,25 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							console.log("Propagate before some properties retrieved by ajax into data-xxx properties");
 
 							// For supplier price and customer when price by quantity is off
-							$("#'.$htmlnamejquery.'").attr("data-up", ui.item.price_ht);
-							$("#'.$htmlnamejquery.'").attr("data-up-locale", ui.item.price_unit_ht_locale);
-							$("#'.$htmlnamejquery.'").attr("data-base", ui.item.pricebasetype);
-							$("#'.$htmlnamejquery.'").attr("data-qty", ui.item.qty);
-							$("#'.$htmlnamejquery.'").attr("data-discount", ui.item.discount);
-							$("#'.$htmlnamejquery.'").attr("data-description", ui.item.description);
-							$("#'.$htmlnamejquery.'").attr("data-ref-customer", ui.item.ref_customer);
-							$("#'.$htmlnamejquery.'").attr("data-tvatx", ui.item.tva_tx);
+							$("#'.$htmlname.'").attr("data-up", ui.item.price_ht);
+							$("#'.$htmlname.'").attr("data-base", ui.item.pricebasetype);
+							$("#'.$htmlname.'").attr("data-qty", ui.item.qty);
+							$("#'.$htmlname.'").attr("data-discount", ui.item.discount);
+							$("#'.$htmlname.'").attr("data-description", ui.item.description);
+							$("#'.$htmlname.'").attr("data-ref-customer", ui.item.ref_customer);
 	';
 	if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
 		$script .= '
 							// For customer price when PRODUIT_CUSTOMER_PRICES_BY_QTY is on
-							$("#'.$htmlnamejquery.'").attr("data-pbq", ui.item.pbq);
-							$("#'.$htmlnamejquery.'").attr("data-pbqup", ui.item.price_ht);
-							$("#'.$htmlnamejquery.'").attr("data-pbqbase", ui.item.pricebasetype);
-							$("#'.$htmlnamejquery.'").attr("data-pbqqty", ui.item.qty);
-							$("#'.$htmlnamejquery.'").attr("data-pbqpercent", ui.item.discount);
+							$("#'.$htmlname.'").attr("data-pbq", ui.item.pbq);
+							$("#'.$htmlname.'").attr("data-pbqup", ui.item.price_ht);
+							$("#'.$htmlname.'").attr("data-pbqbase", ui.item.pricebasetype);
+							$("#'.$htmlname.'").attr("data-pbqqty", ui.item.qty);
+							$("#'.$htmlname.'").attr("data-pbqpercent", ui.item.discount);
 		';
 	}
 	$script .= '
-							// A new value has been selected, we trigger the handlers on #htmlnamejquery
-							console.log("Trigger changes on #'.$htmlnamejquery.'");
-							$("#'.$htmlnamejquery.'").val(ui.item.id).trigger("change");	// Select new value
+							$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
 
     						// Disable an element
     						if (options.option_disabled) {
@@ -254,7 +234,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						}
     						console.log("ajax_autocompleter new value selected, we trigger change also on original component so on field #search_'.$htmlname.'");
 
-    						$("#search_'.$htmlnamejquery.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
+    						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
 					}).data("'.$dataforrenderITem.'")._renderItem = function( ul, item ) {
@@ -560,17 +540,14 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
  * 	@param	string	$code					Name of constant
  * 	@param	array	$input					Array of complementary actions to do if success ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
  * 	@param	int		$entity					Entity. Current entity is used if null.
- *  @param	int		$revertonoff			1=Revert on/off
+ *  @param	int		$revertonoff			Revert on/off
  *  @param	int		$strict					Use only "disabled" with delConstant and "enabled" with setConstant
  *  @param	int		$forcereload			Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
- *  @param	string	$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
+ *  @param	string	$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin. Works for fontawesome picto only.
  *  @param	int		$forcenoajax			1 = Force to use a ahref link instead of ajax code.
- *  @param	int		$setzeroinsteadofdel	1 = Set constantto '0' instead of deleting it
- *  @param	string	$suffix					Suffix to use on the name of the switch_on picto. Example: '', '_red'
- *  @param	string	$mode					Add parameter &mode= to the href link (Used for href link)
  * 	@return	string
  */
-function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '')
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0)
 {
 	global $conf, $langs, $user;
 
@@ -581,9 +558,9 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 
 	if (empty($conf->use_javascript_ajax) || $forcenoajax) {
 		if (empty($conf->global->$code)) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	} else {
 		$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
@@ -591,10 +568,10 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 			$(document).ready(function() {
 				var input = '.json_encode($input).';
 				var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
-				var code = \''.dol_escape_js($code).'\';
-				var entity = \''.dol_escape_js($entity).'\';
-				var strict = \''.dol_escape_js($strict).'\';
-				var userid = \''.dol_escape_js($user->id).'\';
+				var code = \''.$code.'\';
+				var entity = \''.$entity.'\';
+				var strict = \''.$strict.'\';
+				var userid = \''.$user->id.'\';
 				var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
 				var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
 				var token = \''.currentToken().'\';
@@ -606,7 +583,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
 						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict, userid, token);
 					} else {
-						setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token);
+						setConstant(url, code, input, entity, 0, '.$forcereload.', userid, token);
 					}
 				});
 
@@ -616,20 +593,16 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 						if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
 						if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
 						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict, userid, token);
-					} else {';
-		if (empty($setzeroinsteadofdel)) {
-			$out .=' 	delConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token);';
-		} else {
-			$out .=' 	setConstant(url, code, input, entity, 0, '.((int) $forcereload).', userid, token, 0);';
-		}
-		$out .= '	}
+					} else {
+						delConstant(url, code, input, entity, 0, '.$forcereload.', userid, token);
+					}
 				});
 			});
 		</script>'."\n";
 
 		$out .= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
 		$out .= '<span id="set_'.$code.'" class="valignmiddle linkobject '.(!empty($conf->global->$code) ? 'hideobject' : '').'">'.($revertonoff ?img_picto($langs->trans("Enabled"), 'switch_on', '', false, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', '', $marginleftonlyshort)).'</span>';
-		$out .= '<span id="del_'.$code.'" class="valignmiddle linkobject '.(!empty($conf->global->$code) ? '' : 'hideobject').'">'.($revertonoff ?img_picto($langs->trans("Disabled"), 'switch_off'.$suffix, '', false, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Enabled"), 'switch_on'.$suffix, '', false, 0, 0, '', '', $marginleftonlyshort)).'</span>';
+		$out .= '<span id="del_'.$code.'" class="valignmiddle linkobject '.(!empty($conf->global->$code) ? '' : 'hideobject').'">'.($revertonoff ?img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Enabled"), 'switch_on', '', false, 0, 0, '', '', $marginleftonlyshort)).'</span>';
 		$out .= "\n";
 	}
 
@@ -646,10 +619,9 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
  *  @param  string  $text_on    Text if on
  *  @param  string  $text_off   Text if off
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
- *  @param	string	$morecss	More CSS
  *  @return string              html for button on/off
  */
-function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array(), $morecss = '')
+function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array())
 {
 	global $langs;
 
@@ -720,8 +692,8 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
             });
         });
     </script>';
-	$out .= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_off), 'switch_off').'</span>';
-	$out .= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').($morecss ? ' '.$morecss : '').'">'.img_picto($langs->trans($text_on), 'switch_on').'</span>';
+	$out .= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').'">'.img_picto($langs->trans($text_off), 'switch_off').'</span>';
+	$out .= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').'">'.img_picto($langs->trans($text_on), 'switch_on').'</span>';
 
 	return $out;
 }

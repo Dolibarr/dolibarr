@@ -24,7 +24,7 @@ FinancialCommitment=Komitmen keuangan
 InterestAmount=Bunga
 CapitalRemain=Modal tersisa
 TermPaidAllreadyPaid = Istilah ini sudah dibayar
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantUseScheduleWithLoanStartedToPaid = Tidak dapat menggunakan penjadwalan untuk pinjaman ketika pembayaran telah dimulai
 CantModifyInterestIfScheduleIsUsed = Anda tidak dapat mengubah minat jika Anda menggunakan jadwal
 # Admin
 ConfigLoan=Konfigurasi pinjaman modul

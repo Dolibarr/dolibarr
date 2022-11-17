@@ -132,7 +132,6 @@ oop.inherits(Mode, TextMode);
 (function() {
 
     this.$id = "ace/mode/diff";
-    this.snippetFileId = "ace/snippets/diff";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

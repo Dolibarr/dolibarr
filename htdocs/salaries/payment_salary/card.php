@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if (isModEnabled('banque')) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies', 'salaries'));
@@ -111,7 +111,7 @@ if ($action == 'delete') {
 /*
 if ($action == 'valide')
 {
-	$facid = GETPOST('facid', 'int');
+	$facid = $_GET['facid'];
 	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 
 }
@@ -138,9 +138,7 @@ print '</td></tr>';*/
 print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($object->datep, 'day').'</td></tr>';
 
 // Mode
-print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">';
-print $langs->trans("PaymentType".$object->type_code);
-print '</td></tr>';
+print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
 
 // Numero
 print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$object->num_payment.'</td></tr>';
@@ -152,7 +150,7 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->
 print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->note).'</td></tr>';
 
 // Bank account
-if (isModEnabled('banque')) {
+if (!empty($conf->banque->enabled)) {
 	if ($object->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);
@@ -182,7 +180,7 @@ $sql = 'SELECT f.rowid as scid, f.label, f.paye, f.amount as sc_amount, ps.amoun
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_salary as ps,'.MAIN_DB_PREFIX.'salary as f';
 $sql .= ' WHERE ps.fk_salary = f.rowid';
 $sql .= ' AND f.entity = '.$conf->entity;
-$sql .= ' AND ps.rowid = '.((int) $object->id);
+$sql .= ' AND ps.rowid = '.$object->id;
 
 dol_syslog("payment_salary/card.php", LOG_DEBUG);
 $resql = $db->query($sql);
@@ -250,7 +248,7 @@ print '<div class="tabsAction">';
 if ($action == '') {
 	if ($user->rights->salaries->delete) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="card.php?id='.GETPOST('id', 'int').'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="card.php?id='.GETPOST('id', 'int').'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentSalaryPaid")).'">'.$langs->trans('Delete').'</a>';
 		}

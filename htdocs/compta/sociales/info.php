@@ -25,7 +25,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (isModEnabled('project')) {
+if (!empty($conf->projet->enabled)) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -68,7 +68,7 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer) {
 
 $form = new Form($db);
 
-if (isModEnabled('project')) {
+if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -81,25 +81,22 @@ $object->info($id);
 
 $head = tax_prepare_head($object);
 
-$alreadypayed = $object->getSommePaiement();
-
-print dol_get_fiche_head($head, 'info', $langs->trans("SocialContribution"), -1, $object->picto);
+print dol_get_fiche_head($head, 'info', $langs->trans("SocialContribution"), -1, 'bill');
 
 $morehtmlref = '<div class="refidno">';
 // Label of social contribution
 $morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
 $morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
 // Project
-if (isModEnabled('project')) {
+if (!empty($conf->projet->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
 	if (!empty($object->fk_project)) {
 		$proj = new Project($db);
 		$proj->fetch($object->fk_project);
-		$morehtmlref .= ' : '.$proj->getNomUrl(1);
-		if ($proj->title) {
-			$morehtmlref .= ' - '.$proj->title;
-		}
+		$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+		$morehtmlref .= $proj->ref;
+		$morehtmlref .= '</a>';
 	} else {
 		$morehtmlref .= '';
 	}
@@ -108,9 +105,8 @@ $morehtmlref .= '</div>';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-$object->totalpaid = $alreadypayed; // To give a chance to dol_banner_tab to use already paid amount to show correct status
+$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-$morehtmlright = '';
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 print '<div class="fichecenter">';
@@ -118,7 +114,7 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<br>';
 
-print '<table class="centpercent"><tr><td>';
+print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 

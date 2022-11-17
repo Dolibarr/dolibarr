@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
-if (isModEnabled('categorie')) {
+if ($conf->categorie->enabled) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -59,7 +59,6 @@ $conf_or_booth_id = GETPOST('conforboothid', 'int');
 
 $withproject = GETPOST('withproject', 'int');
 $fk_project = GETPOST('fk_project', 'int') ? GETPOST('fk_project', 'int') : GETPOST('projectid', 'int');
-$projectid = $fk_project;
 
 $withProjectUrl='';
 
@@ -123,11 +122,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+		$visible = (int) dol_eval($val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -182,9 +181,7 @@ if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend'
-&& $massaction != 'presend'
-&& $massaction != 'confirm_presend') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -207,7 +204,7 @@ if (empty($reshook)) {
 				$search[$key.'_dtend'] = '';
 			}
 		}
-		$toselect = array();
+		$toselect = '';
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -219,7 +216,6 @@ if (empty($reshook)) {
 	$objectclass = 'ConferenceOrBoothAttendee';
 	$objectlabel = 'ConferenceOrBoothAttendee';
 	$uploaddir = $conf->eventorganization->dir_output;
-	include DOL_DOCUMENT_ROOT.'/eventorganization/core/actions_massactions_mail.inc.php';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -267,7 +263,7 @@ $sql .= $object->getFieldList('t');
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key.', ' : '');
 	}
 }
 // Add fields from hooks
@@ -279,7 +275,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
 if (!empty($confOrBooth->id)) {
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm as a on a.id=t.fk_actioncomm AND a.id=".((int) $confOrBooth->id);
 }
-if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
 // Add table from hooks
@@ -413,7 +409,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->rights->projet->all->lire) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 			$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -460,12 +456,10 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 
 		// Visibility
 		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-		if ($projectstatic->public == 0) {
-			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-			print $langs->trans("PrivateProject");
+		if ($projectstatic->public) {
+			print $langs->trans('SharedProject');
 		} else {
-			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-			print $langs->trans("SharedProject");
+			print $langs->trans('PrivateProject');
 		}
 		print '</td></tr>';
 
@@ -500,6 +494,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		print '</div>';
 
 		print '<div class="fichehalfright">';
+		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border tableforfield centpercent">';
@@ -510,7 +505,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		print '</td></tr>';
 
 		// Categories
-		if (isModEnabled('categorie')) {
+		if ($conf->categorie->enabled) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($projectstatic->id, 'project', 1);
 			print "</td></tr>";
@@ -544,19 +539,13 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $projectstatic->price_registration, $projectstatic, 0, 'amount', '', 0, 0, '', 0, '', 'projectid');
 		print "</td></tr>";
 
-		print '<tr><td class="titlefield">';
-		print $form->editfieldkey($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', '', $projectstatic, $permissiontoadd, 'integer:3', '&withproject=1', 0, 0, 'projectid');
-		print '</td><td class="valuefield">';
-		print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $projectstatic->max_attendees, $projectstatic, $permissiontoadd, 'integer:3', '', 0, 0, '&withproject=1', 0, '', 'projectid');
-		print "</td></tr>";
-
 		print '<tr><td valign="middle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
 		// Define $urlwithroot
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
 
 		// Show message
-		$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
+		$message = '<a target="_blank" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 		$message .= '&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY ?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) : '...');
 		$message .= "&project=".$projectstatic->id.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 		print $message;
@@ -573,8 +562,8 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		$linksuggest .= '&securekey='.urlencode($encodedsecurekey);
 		//print '<div class="urllink">';
 		//print '<input type="text" value="'.$linksuggest.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
-		print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
-		print '<a target="_blank" rel="noopener noreferrer" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
+		print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$linksuggest.'" class="quatrevingtpercent">'.$linksuggest.'</a></div>';
+		print '<a target="_blank" href="'.$linksuggest.'">'.img_picto('', 'globe').'</a>';
 		//print '</div>';
 		//print ajax_autoselect("linkregister");
 		print '</td></tr>';
@@ -585,19 +574,20 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 		//print '</span>';
 		print '</td><td>';
-		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.$projectstatic->id.'&type=global';
+		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_register.php?id='.$projectstatic->id.'&type=global';
 		$encodedsecurekey = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$projectstatic->id, 'md5');
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 		//print '<div class="urllink">';
 		//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
 		print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$link_subscription.'" class="quatrevingtpercent">'.$link_subscription.'</a></div>';
-		print '<a target="_blank" rel="noopener noreferrer" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
+		print '<a target="_blank" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
 		//print '</div>';
 		//print ajax_autoselect("linkregister");
 		print '</td></tr>';
 
 		print '</table>';
 
+		print '</div>';
 		print '</div>';
 		print '</div>';
 
@@ -608,7 +598,7 @@ if ($projectstatic->id > 0 || $confOrBooth > 0) {
 		if (empty($confOrBooth->id)) {
 			$head = conferenceorboothProjectPrepareHead($projectstatic);
 			$tab = 'attendees';
-			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($project->public ? 'projectpub' : 'project'), 0, '', 'reposition');
+			print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($project->public ? 'projectpub' : 'project'), 0, '', '');
 		}
 	}
 
@@ -685,7 +675,7 @@ $arrayofmassactions = array(
 	//'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
 	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
-	'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
+	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if ($permissiontodelete) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -714,15 +704,12 @@ $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle'
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-
 // Add code for pre mass action (confirmation or email presend form)
-$topicmail = $projectstatic->title;
-$modelmail = "conferenceorbooth";
+$topicmail = "SendConferenceOrBoothAttendeeRef";
+$modelmail = "conferenceorboothattendee";
 $objecttmp = new ConferenceOrBoothAttendee($db);
-$trackid = 'conferenceorbooth_'.$object->id;
-$withmaindocfilemail = 0;
+$trackid = 'xxxx'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
-
 
 if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
@@ -837,7 +824,7 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
-if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
 		if (preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++; // There is at least one compute field that use $object
@@ -897,7 +884,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
-			if (!empty($val['isameasure']) && $val['isameasure'] == 1) {
+			if (!empty($val['isameasure'])) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
 				}
@@ -947,7 +934,7 @@ if ($num == 0) {
 			$colspan++;
 		}
 	}
-	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 
 

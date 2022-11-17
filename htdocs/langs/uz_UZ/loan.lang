@@ -24,7 +24,7 @@ FinancialCommitment=Moliyaviy majburiyat
 InterestAmount=Qiziqish
 CapitalRemain=Kapital qoladi
 TermPaidAllreadyPaid = Ushbu muddat allaqachon to'langan
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantUseScheduleWithLoanStartedToPaid = To'lov boshlangan kredit uchun rejalashtiruvchidan foydalanib bo'lmaydi
 CantModifyInterestIfScheduleIsUsed = Agar jadvaldan foydalansangiz, foizlarni o'zgartira olmaysiz
 # Admin
 ConfigLoan=Modulli kreditni sozlash

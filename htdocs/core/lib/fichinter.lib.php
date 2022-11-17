@@ -64,7 +64,7 @@ function fichinter_prepare_head($object)
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention');
 
 	// Tab to link resources
-	if (isModEnabled('resource')) {
+	if ($conf->resource->enabled) {
 		require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 		$objectres = new Dolresource($db);
 		$linked_resources = $objectres->getElementResources('fichinter', $object->id);

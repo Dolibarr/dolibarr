@@ -13,8 +13,6 @@ class EmailLexer extends AbstractLexer
     const S_BACKSLASH        = 92;
     const S_DOT              = 46;
     const S_DQUOTE           = 34;
-    const S_SQUOTE           = 39;
-    const S_BACKTICK         = 96;
     const S_OPENPARENTHESIS  = 49;
     const S_CLOSEPARENTHESIS = 261;
     const S_OPENBRACKET      = 262;
@@ -60,8 +58,6 @@ class EmailLexer extends AbstractLexer
         '/'    => self::S_SLASH,
         ','    => self::S_COMMA,
         '.'    => self::S_DOT,
-        "'"    => self::S_SQUOTE,
-        "`"    => self::S_BACKTICK,
         '"'    => self::S_DQUOTE,
         '-'    => self::S_HYPHEN,
         '::'   => self::S_DOUBLECOLON,
@@ -77,73 +73,25 @@ class EmailLexer extends AbstractLexer
         '\0'   => self::C_NUL,
     );
 
-    /**
-     * @var bool
-     */
     protected $hasInvalidTokens = false;
 
-    /**
-     * @var array
-     *
-     * @psalm-var array{value:string, type:null|int, position:int}|array<empty, empty>
-     */
-    protected $previous = [];
+    protected $previous;
 
-    /**
-     * The last matched/seen token.
-     *
-     * @var array
-     *
-     * @psalm-var array{value:string, type:null|int, position:int}
-     */
-    public $token;
-
-    /**
-     * The next token in the input.
-     *
-     * @var array|null
-     */
-    public $lookahead;
-
-    /**
-     * @psalm-var array{value:'', type:null, position:0}
-     */
-    private static $nullToken = [
-        'value' => '',
-        'type' => null,
-        'position' => 0,
-    ];
-
-    public function __construct()
-    {
-        $this->previous = $this->token = self::$nullToken;
-        $this->lookahead = null;
-    }
-
-    /**
-     * @return void
-     */
     public function reset()
     {
         $this->hasInvalidTokens = false;
         parent::reset();
-        $this->previous = $this->token = self::$nullToken;
     }
 
-    /**
-     * @return bool
-     */
     public function hasInvalidTokens()
     {
         return $this->hasInvalidTokens;
     }
 
     /**
-     * @param int $type
+     * @param $type
      * @throws \UnexpectedValueException
      * @return boolean
-     *
-     * @psalm-suppress InvalidScalarArgument
      */
     public function find($type)
     {
@@ -159,7 +107,7 @@ class EmailLexer extends AbstractLexer
     /**
      * getPrevious
      *
-     * @return array
+     * @return array token
      */
     public function getPrevious()
     {
@@ -174,10 +122,8 @@ class EmailLexer extends AbstractLexer
     public function moveNext()
     {
         $this->previous = $this->token;
-        $hasNext = parent::moveNext();
-        $this->token = $this->token ?: self::$nullToken;
 
-        return $hasNext;
+        return parent::moveNext();
     }
 
     /**
@@ -233,11 +179,6 @@ class EmailLexer extends AbstractLexer
         return  self::GENERIC;
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
     protected function isValid($value)
     {
         if (isset($this->charValue[$value])) {
@@ -248,7 +189,7 @@ class EmailLexer extends AbstractLexer
     }
 
     /**
-     * @param string $value
+     * @param $value
      * @return bool
      */
     protected function isNullType($value)
@@ -261,7 +202,7 @@ class EmailLexer extends AbstractLexer
     }
 
     /**
-     * @param string $value
+     * @param $value
      * @return bool
      */
     protected function isUTF8Invalid($value)
@@ -273,9 +214,6 @@ class EmailLexer extends AbstractLexer
         return false;
     }
 
-    /**
-     * @return string
-     */
     protected function getModifiers()
     {
         return 'iu';

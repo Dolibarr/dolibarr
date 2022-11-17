@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2022	Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,7 +72,7 @@ class FileUpload
 		} elseif ($element == 'project_task') {
 			$pathname = 'projet';
 			$filename = 'task';
-			$dir_output = $conf->project->dir_output;
+			$dir_output = $conf->projet->dir_output;
 			$parentForeignKey = 'fk_project';
 			$parentClass = 'Project';
 			$parentElement = 'projet';
@@ -216,13 +216,13 @@ class FileUpload
 	/**
 	 * Set delete url
 	 *
-	 * @param 	object	$file		Filename
+	 * @param 	string	$file		Filename
 	 * @return	void
 	 */
 	protected function setFileDeleteUrl($file)
 	{
 		$file->delete_url = $this->options['script_url']
-		.'?file='.urlencode($file->name).'&fk_element='.urlencode($this->fk_element).'&element='.urlencode($this->element);
+		.'?file='.rawurlencode($file->name).'&fk_element='.$this->fk_element.'&element='.$this->element;
 		$file->delete_type = $this->options['delete_type'];
 		if ($file->delete_type !== 'DELETE') {
 			$file->delete_url .= '&_method=DELETE';
@@ -301,7 +301,7 @@ class FileUpload
 	 * Enter description here ...
 	 *
 	 * @param 	string	$uploaded_file		Uploade file
-	 * @param 	object	$file				File
+	 * @param 	string	$file				File
 	 * @param 	string	$error				Error
 	 * @param	string	$index				Index
 	 * @return  boolean                     True if OK, False if KO
@@ -538,7 +538,7 @@ class FileUpload
 	/**
 	 * Delete uploaded file
 	 *
-	 * @return	string
+	 * @return	void
 	 */
 	public function delete()
 	{

@@ -88,9 +88,9 @@ class DolibarrApi
 		// phpcs:enable
 		// TODO Use type detected in $object->fields
 		if (in_array($field, array('note', 'note_private', 'note_public', 'desc', 'description'))) {
-			return sanitizeVal($value, 'restricthtml');
+			return checkVal($value, 'restricthtml');
 		} else {
-			return sanitizeVal($value, 'alphanohtml');
+			return checkVal($value, 'alphanohtml');
 		}
 	}
 
@@ -110,8 +110,6 @@ class DolibarrApi
 		unset($object->ismultientitymanaged);
 		unset($object->restrictiononfksoc);
 		unset($object->table_rowid);
-		unset($object->pass);
-		unset($object->pass_indatabase);
 
 		// Remove linkedObjects. We should already have linkedObjectsIds that avoid huge responses
 		unset($object->linkedObjects);
@@ -160,8 +158,6 @@ class DolibarrApi
 		unset($object->statuts_short);
 		unset($object->statuts_logo);
 		unset($object->statuts_long);
-		unset($object->statutshorts);
-		unset($object->statutshort);
 		unset($object->labelStatus);
 		unset($object->labelStatusShort);
 
@@ -175,7 +171,6 @@ class DolibarrApi
 		unset($object->stats_mrptoproduce);
 
 		unset($object->element);
-		unset($object->element_for_permission);
 		unset($object->fk_element);
 		unset($object->table_element);
 		unset($object->table_element_line);
@@ -183,7 +178,6 @@ class DolibarrApi
 		unset($object->picto);
 
 		unset($object->fieldsforcombobox);
-		unset($object->regeximgext);
 
 		unset($object->skip_update_total);
 		unset($object->context);
@@ -259,11 +253,6 @@ class DolibarrApi
 		if (!empty($object->thirdparty) && is_object($object->thirdparty)) {
 			$this->_cleanObjectDatas($object->thirdparty);
 		}
-
-		if (!empty($object->product) && is_object($object->product)) {
-			$this->_cleanObjectDatas($object->product);
-		}
-
 		return $object;
 	}
 
@@ -303,29 +292,76 @@ class DolibarrApi
 	/**
 	 * Return if a $sqlfilters parameter is valid
 	 *
-	 * @param  	string   		$sqlfilters     sqlfilter string
-	 * @param	string			$error			Error message
-	 * @return 	boolean|string   				True if valid, False if not valid
+	 * @param  string   $sqlfilters     sqlfilter string
+	 * @return boolean                  True if valid, False if not valid
 	 */
-	protected function _checkFilters($sqlfilters, &$error = '')
+	protected function _checkFilters($sqlfilters)
 	{
 		// phpcs:enable
-
-		return dolCheckFilters($sqlfilters, $error);
+		//$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+		//$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
+		$tmp = $sqlfilters;
+		$ok = 0;
+		$i = 0; $nb = strlen($tmp);
+		$counter = 0;
+		while ($i < $nb) {
+			if ($tmp[$i] == '(') {
+				$counter++;
+			}
+			if ($tmp[$i] == ')') {
+				$counter--;
+			}
+			if ($counter < 0) {
+				$error = "Bad sqlfilters=".$sqlfilters;
+				dol_syslog($error, LOG_WARNING);
+				return false;
+			}
+			$i++;
+		}
+		return true;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Function to forge a SQL criteria from a Generic filter string
+	 * Function to forge a SQL criteria
 	 *
 	 * @param  array    $matches    Array of found string by regex search.
-	 * 								Each entry is 1 and only 1 criteria.
-	 * 								Example: "t.ref:like:'SO-%'", "t.date_creation:<:'20160101'", "t.date_creation:<:'2016-01-01 12:30:00'", "t.nature:is:NULL", "t.field2:isnot:NULL"
+	 * 								Example: "t.ref:like:'SO-%'" or "t.date_creation:<:'20160101'" or "t.date_creation:<:'2016-01-01 12:30:00'" or "t.nature:is:NULL"
 	 * @return string               Forged criteria. Example: "t.field like 'abc%'"
 	 */
 	protected static function _forge_criteria_callback($matches)
 	{
-		return dolForgeCriteriaCallback($matches);
+		// phpcs:enable
+		global $db;
+
+		//dol_syslog("Convert matches ".$matches[1]);
+		if (empty($matches[1])) {
+			return '';
+		}
+		$tmp = explode(':', $matches[1], 3);
+
+		if (count($tmp) < 3) {
+			return '';
+		}
+
+		$operand = preg_replace('/[^a-z0-9\._]/i', '', trim($tmp[0]));
+
+		$operator = strtoupper(preg_replace('/[^a-z<>=]/i', '', trim($tmp[1])));
+		if ($operator == 'NOTLIKE') {
+			$operator = 'NOT LIKE';
+		}
+
+		$tmpescaped = trim($tmp[2]);
+		$regbis = array();
+		if ($operator == 'IN') {
+			$tmpescaped = "(".$db->sanitize($tmpescaped, 1).")";
+		} elseif (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis)) {
+			$tmpescaped = "'".$db->escape($regbis[1])."'";
+		} else {
+			$tmpescaped = $db->sanitize($db->escape($tmpescaped));
+		}
+
+		return $db->escape($operand).' '.$db->escape($operator)." ".$tmpescaped;
 	}
 }

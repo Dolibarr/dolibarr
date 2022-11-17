@@ -44,14 +44,13 @@ if (!defined('NOCSRFCHECK')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-$htmlname = GETPOST('htmlname', 'aZ09');
+$htmlname = GETPOST('htmlname', 'alpha');
 $filter = GETPOST('filter', 'alpha');
 $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $excludeids = GETPOST('excludeids', 'intcomma');
-$showtype = GETPOSTINT('showtype');
-$showcode = GETPOSTINT('showcode');
+$showtype = GETPOST('showtype', 'int');
 
 $object = new Societe($db);
 if ($id > 0) {
@@ -103,18 +102,19 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	// Filter on the company to search can be:
 	// Into an array with key $htmlname123 (we take first one found). Which page use this ?
 	// Into a var with name $htmlname can be 'prodid', 'productid', ...
-	$match = preg_grep('/('.preg_quote($htmlname, '/').'[0-9]+)/', array_keys($_GET));
+	$match = preg_grep('/('.$htmlname.'[0-9]+)/', array_keys($_GET));
 	sort($match);
 
 	$id = (!empty($match[0]) ? $match[0] : '');		// Take first key found into GET array with matching $htmlname123
 
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ?GETPOST($htmlname, 'alpha') : ''));
+
 	if (!$searchkey) {
 		return;
 	}
 
-	if (empty($form) || !is_object($form)) {
+	if (!is_object($form)) {
 		$form = new Form($db);
 	}
 
@@ -124,7 +124,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		$excludeids = array();
 	}
 
-	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson, 0, 'minwidth100', '', false, $excludeids, $showcode);
+	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson, 0, 'minwidth100', '', false, $excludeids);
 
 	$db->close();
 

@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=Танзими модули мизоҷи FTP ё SFTP
+NewFTPClient=Танзимоти нави пайвастшавии FTP/FTPS
+FTPArea=Минтақаи FTP/FTPS
+FTPAreaDesc=Ин экран намуди сервери FTP ва SFTP -ро нишон медиҳад.
+SetupOfFTPClientModuleNotComplete=Танзимоти модули муштарии FTP ё SFTP ба назар мерасад
+FTPFeatureNotSupportedByYourPHP=PHP -и шумо вазифаҳои FTP ё SFTP -ро пуштибонӣ намекунад
+FailedToConnectToFTPServer=Ба сервер пайваст нашуд (сервер %s, порти %s)
+FailedToConnectToFTPServerWithCredentials=Воридшавӣ ба сервер бо логин/пароли муайяншуда ноком шуд
+FTPFailedToRemoveFile=Файли <b> %s </b> нест карда нашуд.
+FTPFailedToRemoveDir=Феҳристи <b> %s </b> нест карда нашуд: иҷозатҳоро тафтиш кунед ва феҳрист холӣ аст.
+FTPPassiveMode=Ҳолати ғайрифаъол
+ChooseAFTPEntryIntoMenu=Аз меню сайти FTP/SFTP -ро интихоб кунед ...
+FailedToGetFile=Файлҳои %s гирифта нашуданд

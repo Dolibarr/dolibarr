@@ -137,17 +137,14 @@ class PaymentExpenseReport extends CommonObject
 		if (isset($this->note_public)) {
 			$this->note_public = trim($this->note_public);
 		}
-		if (isset($this->note_private)) {
-			$this->note_private = trim($this->note_private);
-		}
 		if (isset($this->fk_bank)) {
-			$this->fk_bank = ((int) $this->fk_bank);
+			$this->fk_bank = trim($this->fk_bank);
 		}
 		if (isset($this->fk_user_creat)) {
-			$this->fk_user_creat = ((int) $this->fk_user_creat);
+			$this->fk_user_creat = trim($this->fk_user_creat);
 		}
 		if (isset($this->fk_user_modif)) {
-			$this->fk_user_modif = ((int) $this->fk_user_modif);
+			$this->fk_user_modif = trim($this->fk_user_modif);
 		}
 
 		$totalamount = 0;
@@ -173,7 +170,7 @@ class PaymentExpenseReport extends CommonObject
 			$sql .= " '".$this->db->idate($this->datepaid)."',";
 			$sql .= " ".price2num($totalamount).",";
 			$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".((int) $user->id).",";
-			$sql .= " 0)";	// fk_bank is ID of transaction into ll_bank
+			$sql .= " 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -543,7 +540,7 @@ class PaymentExpenseReport extends CommonObject
 			);
 
 			// Update fk_bank in llx_paiement.
-			// So we wil know the payment that have generated the bank transaction
+			// On connait ainsi le paiement qui a genere l'ecriture bancaire
 			if ($bank_line_id > 0) {
 				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0) {
@@ -588,7 +585,6 @@ class PaymentExpenseReport extends CommonObject
 				}
 			} else {
 				$this->error = $acc->error;
-				$this->errors = $acc->errors;
 				$error++;
 			}
 		}
@@ -632,23 +628,14 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0)
 	{
-		global $langs, $hookmanager;
+		global $langs;
 
 		$result = '';
 
 		if (empty($this->ref)) {
 			$this->ref = $this->label;
 		}
-		$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Payment").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
-		}
-		if (!empty($this->ref)) {
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		}
-		if (!empty($this->datep)) {
-			$label .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'dayhour');
-		}
+		$label = $langs->trans("ShowPayment").': '.$this->ref;
 
 		if (!empty($this->id)) {
 			$link = '<a href="'.DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
@@ -664,15 +651,7 @@ class PaymentExpenseReport extends CommonObject
 				$result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 			}
 		}
-		global $action;
-		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
-		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) {
-			$result = $hookmanager->resPrint;
-		} else {
-			$result .= $hookmanager->resPrint;
-		}
+
 		return $result;
 	}
 

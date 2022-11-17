@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=ການຕັ້ງຄ່າໂມດູນລູກຄ້າ FTP ຫຼື SFTP
+NewFTPClient=ການຕັ້ງຄ່າການເຊື່ອມຕໍ່ FTP/FTPS ໃ່
+FTPArea=ພື້ນທີ່ FTP/FTPS
+FTPAreaDesc=ໜ້າ ຈໍນີ້ສະແດງໃຫ້ເຫັນມຸມມອງຂອງເຊີບເວີ FTP ແລະ SFTP.
+SetupOfFTPClientModuleNotComplete=ການຕັ້ງຄ່າໂມດູນລູກຄ້າ FTP ຫຼື SFTP ເບິ່ງຄືວ່າບໍ່ສົມບູນ
+FTPFeatureNotSupportedByYourPHP=PHP ຂອງເຈົ້າບໍ່ຮອງຮັບຟັງຊັນ FTP ຫຼື SFTP
+FailedToConnectToFTPServer=ເຊື່ອມຕໍ່ກັບເຊີບເວີບໍ່ໄດ້ (ເຊີບເວີ %s, ຜອດ %s)
+FailedToConnectToFTPServerWithCredentials=ເຂົ້າສູ່ລະບົບເຊີບເວີບໍ່ສໍາເລັດດ້ວຍການເຂົ້າສູ່ລະບົບ/ລະຫັດຜ່ານທີ່ກໍານົດໄວ້
+FTPFailedToRemoveFile=ລຶບໄຟລ a <b> %s </b> ບໍ່ ສຳ ເລັດ.
+FTPFailedToRemoveDir=ການລຶບບັນຊີລາຍຊື່ <b> %s </b> ລົ້ມເຫລວ: ກວດເບິ່ງການອະນຸຍາດແລະວ່າບັນຊີລາຍການຫວ່າງເປົ່າ.
+FTPPassiveMode=ໂiveດຕົວຕັ້ງຕົວຕີ
+ChooseAFTPEntryIntoMenu=ເລືອກເວັບໄຊ FTP/SFTP ຈາກເມນູ ...
+FailedToGetFile=ຮັບເອົາໄຟລ a %s ບໍ່ ສຳ ເລັດ

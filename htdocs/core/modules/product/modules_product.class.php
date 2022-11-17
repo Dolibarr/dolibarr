@@ -38,58 +38,25 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 	 */
 	public $error = '';
 
-	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$dbs     			Database handler
+	 *  @param	DoliDB	$db     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array						List of templates
 	 */
-	public static function liste_modeles($dbs, $maxfilenamelength = 0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
+		global $conf;
+
 		$type = 'product';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$list = getListOfModels($dbs, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 		return $list;
 	}
 }
@@ -189,22 +156,22 @@ abstract class ModeleProductCode
 	/**
 	 *  Renvoi la liste des modeles de numérotation
 	 *
-	 *  @param	DoliDB	$dbs     			Database handler
+	 *  @param	DoliDB	$db     			Database handler
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array						List of numbers
 	 */
-	public static function liste_modeles($dbs, $maxfilenamelength = 0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
 		$list = array();
 		$sql = "";
 
-		$resql = $dbs->query($sql);
+		$resql = $db->query($sql);
 		if ($resql) {
-			$num = $dbs->num_rows($resql);
+			$num = $db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				$row = $dbs->fetch_row($resql);
+				$row = $db->fetch_row($resql);
 				$list[$row[0]] = $row[1];
 				$i++;
 			}

@@ -135,10 +135,6 @@ foreach ($_POST as $k => $v) {
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 
 
-// Set $appli for emails title
-$appli = $mysoc->name;
-
-
 if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	// Get on url call
 	$fulltag            = $FULLTAG;
@@ -176,10 +172,25 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 		$from = $conf->global->MAILING_EMAIL_FROM;
 		$sendto = $sendemail;
 
+		// Define link to login card
+		$appli = constant('DOL_APPLICATION_TITLE');
+		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+			$appli = $conf->global->MAIN_APPLICATION_TITLE;
+			if (preg_match('/\d\.\d/', $appli)) {
+				if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
+					$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
+				}
+			} else {
+				$appli .= " ".DOL_VERSION;
+			}
+		} else {
+			$appli .= " ".DOL_VERSION;
+		}
+
 		$urlback = $_SERVER["REQUEST_URI"];
 		$topic = '['.$appli.'] '.$companylangs->transnoentitiesnoconv("NewOnlinePaymentFailed");
 		$content = "";
-		$content .= '<span style="color: orange">'.$companylangs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."</span>\n";
+		$content .= '<font color="orange">'.$companylangs->transnoentitiesnoconv("ValidationOfOnlinePaymentFailed")."</font>\n";
 
 		$content .= "<br><br>\n";
 		$content .= '<u>'.$companylangs->transnoentitiesnoconv("TechnicalInformation").":</u><br>\n";

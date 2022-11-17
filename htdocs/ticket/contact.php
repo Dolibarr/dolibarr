@@ -52,7 +52,7 @@ $lineid = GETPOST('lineid', 'int');
 
 
 // Store current page url
-$url_page_current = DOL_URL_ROOT.'/ticket/contact.php';
+$url_page_current = dol_buildpath('/ticket/contact.php', 1);
 
 $object = new Ticket($db);
 
@@ -61,6 +61,7 @@ $permissiontoadd = $user->rights->ticket->write;
 
 // Security check
 $id = GETPOST("id", 'int');
+$socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
 $result = restrictedArea($user, 'ticket', $object->id, '');
 
@@ -84,32 +85,7 @@ if ($action == 'addcontact' && $user->rights->ticket->write) {
 	if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-
-		$error = 0;
-
-		$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
-		if ($codecontact=='SUPPORTTEC') {
-			$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
-			foreach ($internal_contacts as $key => $contact) {
-				if ($contact['id'] !== $contactid) {
-					//print "user à effacer : ".$useroriginassign;
-					$result = $object->delete_contact($contact['rowid']);
-					if ($result<0) {
-						$error ++;
-						setEventMessages($object->error, $object->errors, 'errors');
-					}
-				}
-			}
-			$ret = $object->assignUser($user, $contactid);
-			if ($ret < 0) {
-				$error ++;
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
-		}
-
-		if (empty($error)) {
-			$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
-		}
+		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 	}
 
 	if ($result >= 0) {
@@ -137,16 +113,6 @@ if ($action == 'swapstatut' && $user->rights->ticket->write) {
 // Efface un contact
 if ($action == 'deletecontact' && $user->rights->ticket->write) {
 	if ($object->fetch($id, '', $track_id)) {
-		$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
-		foreach ($internal_contacts as $key => $contact) {
-			if ($contact['rowid'] == $lineid && $object->fk_user_assign==$contact['id']) {
-				$ret = $object->assignUser($user, null);
-				if ($ret < 0) {
-					$error ++;
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
-			}
-		}
 		$result = $object->delete_contact($lineid);
 
 		if ($result >= 0) {
@@ -180,7 +146,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 			print dol_get_fiche_end();
 		}
 
-		if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
+		if (!$user->socid && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
 			$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
 		} elseif ($user->socid > 0) {
 			$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
@@ -196,24 +162,21 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		if ($object->fk_user_create > 0) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
 
+			$langs->load("users");
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_create);
-			$morehtmlref .= $fuser->getNomUrl(-1);
-		} elseif (!empty($object->email_msgid)) {
+			$morehtmlref .= $fuser->getNomUrl(0);
+		}
+		if (!empty($object->origin_email)) {
 			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
-			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
-			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
-		} elseif (!empty($object->origin_email)) {
-			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
-			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
-			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
+			$morehtmlref .= $object->origin_email.' <small>('.$langs->trans("TicketEmailOriginIssuer").')</small>';
 		}
 
 		// Thirdparty
-		if (isModEnabled('societe')) {
+		if (!empty($conf->societe->enabled)) {
 			$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
 			/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
-				$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&token='.newToken().'&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
+				$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
 			}*/
 			$morehtmlref .= ' : ';
 			if ($action == 'editcustomer') {
@@ -224,12 +187,12 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		}
 
 		// Project
-		if (isModEnabled('project')) {
+		if (!empty($conf->projet->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->ticket->write) {
 				if ($action != 'classify') {
-					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
 					$morehtmlref .= ' : ';
 				}
 				if ($action == 'classify') {

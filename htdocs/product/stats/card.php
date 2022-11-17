@@ -46,33 +46,25 @@ $mode = (GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'byunit');
 $search_year   = GETPOST('search_year', 'int');
 $search_categ  = GETPOST('search_categ', 'int');
 $notab = GETPOST('notab', 'int');
-$type = GETPOST('type', 'alpha');
 
 $error = 0;
 $mesg = '';
 $graphfiles = array();
 
-$socid = GETPOST('socid', 'int');
+$socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
-}
-if ($socid < 0) {
-	$socid = 0;
 }
 
 // Security check
 $fieldvalue = ($id > 0 ? $id : $ref);
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productstatscard', 'globalcard'));
-
 $tmp = dol_getdate(dol_now());
 $currentyear = $tmp['year'];
 if (empty($search_year)) {
 	$search_year = $currentyear;
 }
-$moreforfilter = "";
 
 $object = new Product($db);
 if ($id > 0 || !empty($ref)) {
@@ -178,7 +170,7 @@ if ((!($id > 0) && empty($ref)) || $notab) {
 	$head[$h][2] = 'popularity';
 	$h++;
 
-	print dol_get_fiche_head($head, 'chart', '', -1);
+	print dol_get_fiche_head($head, 'chart', $langs->trans("Statistics"), -1);
 }
 
 
@@ -196,20 +188,20 @@ if ($result || !($id > 0)) {
 		// Type
 		print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 		$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
-		print $form->selectarray('type', $array, $type, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+		print $form->selectarray('type', $array, $type);
 		print '</td></tr>';
 
 		// Product
 		print '<tr><td class="titlefield">'.$langs->trans("ProductOrService").'</td><td>';
 		print img_picto('', 'product', 'class="pictofixedwidth"');
-		print $form->select_produits($id, 'id', '', 0, 0, 1, 2, '', ($conf->dol_optimize_smallscreen ? 1 : 0), array(), 0, '1', 0, 'widthcentpercentminusx maxwidth400');
+		print $form->select_produits($id, 'id', '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, 'maxwidth500');
 		print '</td></tr>';
 
 		// Tag
-		if (isModEnabled('categorie')) {
+		if ($conf->categorie->enabled) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
 			$moreforfilter .= img_picto($langs->trans("Categories"), 'category', 'class="pictofixedwidth"');
-			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, 1, 'widthcentpercentminusx maxwidth400');
+			$moreforfilter .= $htmlother->select_categories(Categorie::TYPE_PRODUCT, $search_categ, 'search_categ', 1, 1, 'widthcentpercentminusx maxwidth300');
 			print $moreforfilter;
 			print '</td></tr>';
 		}
@@ -232,13 +224,6 @@ if ($result || !($id > 0)) {
 	arsort($arrayyears);
 	print $form->selectarray('search_year', $arrayyears, $search_year, 1, 0, 0, '', 0, 0, 0, '', 'width75');
 	print '</td></tr>';
-
-	// thirdparty
-	print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
-	print img_picto('', 'company', 'class="pictofixedwidth"');
-	print $form->select_company($socid, 'socid', '', 1, 0, 0, array(), 0, 'widthcentpercentminusx maxwidth400');
-	print '</td></tr>';
-
 	print '</table>';
 	print '<div class="center"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></div>';
 	print '</form><br>';
@@ -246,21 +231,15 @@ if ($result || !($id > 0)) {
 	print '<br>';
 
 
-	$param = '';
-	$param .= (GETPOSTISSET('id') ? '&id='.GETPOST('id', 'int') : '&id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '');
-	if ($socid > 0) {
-		$param .= '&socid='.((int) $socid);
-	}
-
 	// Choice of stats mode (byunit or bynumber)
 	if (!empty($conf->dol_use_jmobile)) {
 		print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
 	}
 
 	if ($mode == 'bynumber') {
-		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=byunit'.$param.'">';
+		print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOST('id', 'int') : 'id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&mode=byunit&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '').'">';
 	} else {
-		print '<span class="a-mesure marginleftonly marginrightonly">';
+		print '<span class="a-mesure">';
 	}
 	print $langs->trans("StatsByNumberOfUnits");
 	if ($mode == 'bynumber') {
@@ -271,12 +250,14 @@ if ($result || !($id > 0)) {
 
 	if (!empty($conf->dol_use_jmobile)) {
 		print '</div>'."\n".'<div class="nowrap">'."\n";
+	} else {
+		print ' &nbsp; ';
 	}
 
 	if ($mode == 'byunit') {
-		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=bynumber'.$param.'">';
+		print '<a class="a-mesure-disabled" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOST('id', 'int') : 'id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&mode=bynumber&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '').'">';
 	} else {
-		print '<span class="a-mesure marginleftonly marginrightonly">';
+		print '<span class="a-mesure">';
 	}
 	print $langs->trans("StatsByNumberOfEntities");
 	if ($mode == 'byunit') {
@@ -293,7 +274,7 @@ if ($result || !($id > 0)) {
 	print '<br>';
 
 	// Generation of graphs
-	$dir = (!empty($conf->product->multidir_temp[$conf->entity]) ? $conf->product->multidir_temp[$conf->entity] : $conf->service->multidir_temp[$conf->entity]);
+	$dir = (!empty($conf->product->multidir_temp[$object->entity]) ? $conf->product->multidir_temp[$object->entity] : $conf->service->multidir_temp[$object->entity]);
 	if ($object->id > 0) {  // We are on statistics for a dedicated product
 		if (!file_exists($dir.'/'.$object->id)) {
 			if (dol_mkdir($dir.'/'.$object->id) < 0) {
@@ -303,49 +284,49 @@ if ($result || !($id > 0)) {
 		}
 	}
 
-	if (isModEnabled('propal')) {
+	if ($conf->propal->enabled) {
 		$graphfiles['propal'] = array('modulepart'=>'productstats_proposals',
 		'file' => $object->id.'/propal12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsProposals") : $langs->transnoentitiesnoconv("NumberOfProposals")));
 	}
 
-	if (isModEnabled('supplier_proposal')) {
+	if ($conf->supplier_proposal->enabled) {
 		$graphfiles['proposalssuppliers'] = array('modulepart'=>'productstats_proposalssuppliers',
 		'file' => $object->id.'/proposalssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsSupplierProposals") : $langs->transnoentitiesnoconv("NumberOfSupplierProposals")));
 	}
 
-	if (isModEnabled('order')) {
+	if ($conf->order->enabled) {
 		$graphfiles['orders'] = array('modulepart'=>'productstats_orders',
 		'file' => $object->id.'/orders12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsCustomerOrders") : $langs->transnoentitiesnoconv("NumberOfCustomerOrders")));
 	}
 
-	if (isModEnabled('supplier_order')) {
+	if ($conf->supplier_order->enabled) {
 		$graphfiles['orderssuppliers'] = array('modulepart'=>'productstats_orderssuppliers',
 		'file' => $object->id.'/orderssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsSupplierOrders") : $langs->transnoentitiesnoconv("NumberOfSupplierOrders")));
 	}
 
-	if (isModEnabled('facture')) {
+	if ($conf->facture->enabled) {
 		$graphfiles['invoices'] = array('modulepart'=>'productstats_invoices',
 		'file' => $object->id.'/invoices12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsCustomerInvoices") : $langs->transnoentitiesnoconv("NumberOfCustomerInvoices")));
 	}
 
-	if (isModEnabled('supplier_invoice')) {
+	if ($conf->supplier_invoice->enabled) {
 		$graphfiles['invoicessuppliers'] = array('modulepart'=>'productstats_invoicessuppliers',
 		'file' => $object->id.'/invoicessuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 		'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsSupplierInvoices") : $langs->transnoentitiesnoconv("NumberOfSupplierInvoices")));
 	}
 
-	if (isModEnabled('contrat')) {
+	if ($conf->contrat->enabled) {
 		$graphfiles['contracts'] = array('modulepart'=>'productstats_contracts',
 			'file' => $object->id.'/contracts12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 			'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsContracts") : $langs->transnoentitiesnoconv("NumberOfContracts")));
 	}
 
-	if (isModEnabled('mrp')) {
+	if ($conf->mrp->enabled) {
 		$graphfiles['mrp'] = array('modulepart'=>'productstats_mrp',
 			'file' => $object->id.'/mos12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 			'label' => ($mode == 'byunit' ? $langs->transnoentitiesnoconv("NumberOfUnitsMos") : $langs->transnoentitiesnoconv("NumberOfMos")));
@@ -451,10 +432,10 @@ if ($result || !($id > 0)) {
 			if ($graphfiles == 'proposals_suppliers' && !$user->rights->supplier_proposal->lire) {
 				continue;
 			}
-			if ($graphfiles == 'invoices_suppliers' && empty($user->rights->fournisseur->facture->lire)) {
+			if ($graphfiles == 'invoices_suppliers' && !$user->rights->fournisseur->facture->lire) {
 				continue;
 			}
-			if ($graphfiles == 'orders_suppliers' && empty($user->rights->fournisseur->commande->lire)) {
+			if ($graphfiles == 'orders_suppliers' && !$user->rights->fournisseur->commande->lire) {
 				continue;
 			}
 			if ($graphfiles == 'mrp' && empty($user->rights->mrp->mo->read)) {
@@ -465,7 +446,7 @@ if ($result || !($id > 0)) {
 			if ($i % 2 == 0) {
 				print "\n".'<div class="fichecenter"><div class="fichehalfleft">'."\n";
 			} else {
-				print "\n".'<div class="fichehalfright">'."\n";
+				print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
 			}
 
 			// Date generation
@@ -476,15 +457,13 @@ if ($result || !($id > 0)) {
 					$dategenerated = $langs->trans("GeneratedOn", dol_print_date(dol_now(), "dayhour"));
 				}
 			} else {
-				$dategenerated = ($mesg ? '<span class="error">'.$mesg.'</span>' : $langs->trans("ChartNotGenerated"));
+				$dategenerated = ($mesg ? '<font class="error">'.$mesg.'</font>' : $langs->trans("ChartNotGenerated"));
 			}
 			$linktoregenerate = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?'.(GETPOSTISSET('id') ? 'id='.GETPOST('id', 'int') : 'id='.$object->id).(((string) $type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&action=recalcul&mode='.urlencode($mode).'&search_year='.((int) $search_year).($search_categ > 0 ? '&search_categ='.((int) $search_categ) : '').'">';
 			$linktoregenerate .= img_picto($langs->trans("ReCalculate").' ('.$dategenerated.')', 'refresh');
 			$linktoregenerate .= '</a>';
 
-
 			// Show graph
-			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			// Label
 			print '<tr class="liste_titre"><td>';
@@ -497,12 +476,11 @@ if ($result || !($id > 0)) {
 			print $graphfiles[$key]['output'];
 			print '</td></tr>';
 			print '</table>';
-			print '</div>';
 
 			if ($i % 2 == 0) {
 				print "\n".'</div>'."\n";
 			} else {
-				print "\n".'</div></div>';
+				print "\n".'</div></div></div>';
 				print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 			}
 
@@ -511,8 +489,8 @@ if ($result || !($id > 0)) {
 	}
 	// div not closed
 	if ($i % 2 == 1) {
-		print "\n".'<div class="fichehalfright">'."\n";
-		print "\n".'</div></div>';
+		print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
+		print "\n".'</div></div></div>';
 		print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
 	}
 }

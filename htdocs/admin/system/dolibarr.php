@@ -93,7 +93,7 @@ $version = DOL_VERSION;
 if (preg_match('/[a-z]+/i', $version)) {
 	$version = 'develop'; // If version contains text, it is not an official tagged version, so we use the full change log.
 }
-print ' &nbsp; <a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$version.'/ChangeLog" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeChangeLog").'</a>';
+print ' &nbsp; <a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$version.'/ChangeLog" target="_blank">'.$langs->trans("SeeChangeLog").'</a>';
 
 $newversion = '';
 if (function_exists('curl_init')) {
@@ -120,7 +120,7 @@ if (function_exists('curl_init')) {
 			// Show version
 			print $langs->trans("LastStableVersion").' : <b>'.(($version != '0.0') ? $version : $langs->trans("Unknown")).'</b>';
 			if ($version != '0.0') {
-				print ' &nbsp; <a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$version.'/ChangeLog" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeChangeLog").'</a>';
+				print ' &nbsp; <a href="https://raw.githubusercontent.com/Dolibarr/dolibarr/'.$version.'/ChangeLog" target="_blank">'.$langs->trans("SeeChangeLog").'</a>';
 			}
 		} else {
 			print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("UpdateServerOffline").'</b>';
@@ -327,7 +327,6 @@ $configfileparameters = array(
 	'dolibarr_main_db_character_set' => $langs->trans("DBStoringCharset"),
 	'dolibarr_main_db_collation' => $langs->trans("DBSortingCollation"),
 	'?dolibarr_main_db_prefix' => $langs->trans("DatabasePrefix"),
-	'dolibarr_main_db_readonly' => $langs->trans("ReadOnlyMode"),
 	'separator2' => '',
 	'dolibarr_main_authentication' => $langs->trans("AuthenticationMode"),
 	'?multicompany_transverse_mode'=>  $langs->trans("MultiCompanyMode"),
@@ -360,7 +359,6 @@ $configfileparameters = array(
 	'dolibarr_main_restrict_ip' => 'Restrict access to some IPs only',
 	'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
 	'?dolibarr_mailing_limit_sendbycli' => 'Limit nb of email sent by cli',
-	'?dolibarr_mailing_limit_sendbyday' => 'Limit nb of email sent per day',
 	'?dolibarr_strict_mode' => 'Strict mode is on/off',
 	'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks'
 );
@@ -436,8 +434,7 @@ foreach ($configfileparameters as $key => $value) {
 				if (empty($valuetoshow)) {
 					print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
 				}
-				print '</td></tr>';
-				print '<tr class="oddeven"><td></td><td>&nbsp; => '.$langs->trans("HashForPing").'</td><td>'.md5('dolibarr'.$valuetoshow).'</td></tr>'."\n";
+				print ' &nbsp; <span class="opacitymedium">('.$langs->trans("HashForPing").'='.md5('dolibarr'.$valuetoshow).')</span>';
 			} elseif ($newkey == 'dolibarr_main_prod') {
 				print ${$newkey};
 
@@ -451,13 +448,6 @@ foreach ($configfileparameters as $key => $value) {
 				$valuetoshow = ${$newkey};
 				if (!empty($valuetoshow)) {
 					print img_warning($langs->trans('SwitchThisForABetterSecurity', 0));
-				}
-			} elseif ($newkey == 'dolibarr_main_db_readonly') {
-				print ${$newkey};
-
-				$valuetoshow = ${$newkey};
-				if (!empty($valuetoshow)) {
-					print img_warning($langs->trans('ReadOnlyMode', 1));
 				}
 			} else {
 				print (empty(${$newkey}) ? '' : ${$newkey});

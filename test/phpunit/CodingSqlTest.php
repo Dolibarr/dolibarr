@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/CodingSqlTest.php
+ *      \file       test/phpunit/SqlTest.php
  *      \ingroup    test
  *      \brief      PHPUnit test
  *      \remarks    To run this script as CLI:  phpunit filename.php
@@ -193,10 +193,10 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 
 				$result=strpos($filecontent, '"');
 				if ($result) {
-					$result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"') && ! strpos($filecontent, '("'));
+					$result=(! strpos($filecontent, '["') && ! strpos($filecontent, '{"'));
 				}
 				//print __METHOD__." Result for checking we don't have double quote = ".$result."\n";
-				$this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) neither (" (used for content with string like isModEnabled("")) into '.$file.'. Bad.');
+				$this->assertTrue($result===false, 'Found double quote that is not [" neither {" (used for json content) into '.$file.'. Bad.');
 
 				$result=strpos($filecontent, 'int(');
 				//print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
@@ -217,10 +217,6 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
 				$result=strpos($filecontent, 'integer(');
 				//print __METHOD__." Result for checking we don't have 'integer(' = ".$result."\n";
 				$this->assertTrue($result===false, 'Found value in parenthesis after the integer. It must be integer not integer(x) into '.$file.'. Bad.');
-
-				$result=strpos($filecontent, 'timestamp,');
-				//print __METHOD__." Result for checking we don't have 'NUMERIC(' = ".$result."\n";
-				$this->assertTrue($result===false, 'Found type timestamp with option DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP after into '.$file.'. Bad.');
 
 				if ($dir == DOL_DOCUMENT_ROOT.'/install/mysql/migration') {
 					// Test for migration files only

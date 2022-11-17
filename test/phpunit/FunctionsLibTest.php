@@ -166,27 +166,6 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
-
-	/**
-	 * testNum2Alpha
-	 *
-	 * @return void
-	 */
-	public function testNum2Alpha()
-	{
-		$result = num2Alpha(0);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'A', 'Check num2Alpha 0');
-
-		$result = num2Alpha(5);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'F', 'Check num2Alpha 5');
-
-		$result = num2Alpha(26);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'AA', 'Check num2Alpha 26');
-	}
-
 	/**
 	 * testIsValidEmail
 	 *
@@ -534,10 +513,6 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$after=dol_textishtml($input);
 		$this->assertFalse($after);
 		$input='This is a text with html comments <!-- comment -->';	// we suppose this is not enough to be html content
-		$after=dol_textishtml($input);
-		$this->assertFalse($after);
-
-		$input="A text\nwith a link https://aaa?param=abc&amp;param2=def";
 		$after=dol_textishtml($input);
 		$this->assertFalse($after);
 	}

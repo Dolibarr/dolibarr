@@ -36,7 +36,6 @@ $cancel = GETPOST('cancel', 'alpha');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $massaction = GETPOST('massaction', 'aZ09');
-$optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'accountingsubaccountlist'; // To manage different context of search
 
 $search_subaccount = GETPOST('search_subaccount', 'alpha');
@@ -47,7 +46,7 @@ $search_type = GETPOST('search_type', 'int');
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->rights->accounting->chartofaccount) {
 	accessforbidden();
 }
 
@@ -368,7 +367,6 @@ if ($resql) {
 	print "</tr>\n";
 
 	$totalarray = array();
-	$totalarray['nbfield'] = 0;
 	$i = 0;
 	while ($i < min($num, $limit)) {
 		$obj = $db->fetch_object($resql);
@@ -441,13 +439,13 @@ if ($resql) {
 		$e = '';
 		// Customer
 		if ($obj->type == 1) {
-			$e .= '<a class="editfielda" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&token='.newToken().'&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
+			$e .= '<a class="editfielda" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		} elseif ($obj->type == 2) {
 			// Supplier
-			$e .= '<a class="editfielda" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&token='.newToken().'&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
+			$e .= '<a class="editfielda" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		} elseif ($obj->type == 3) {
 			// User
-			$e .= '<a class="editfielda" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
+			$e .= '<a class="editfielda" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?action=edit&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		}
 		print $e;
 		print '</td>'."\n";

@@ -44,8 +44,6 @@ $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$hookmanager->initHooks(array('expensereportnote'));
-
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
@@ -70,17 +68,12 @@ if ($object->id > 0) {
 	}
 }
 
+
 /*
  * Actions
  */
 
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
-if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 
 
 /*

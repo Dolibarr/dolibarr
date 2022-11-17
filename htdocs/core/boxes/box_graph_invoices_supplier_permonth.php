@@ -56,7 +56,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->fournisseur->facture->lire);
+		$this->hidden = !($user->rights->fournisseur->facture->lire);
 	}
 
 	/**
@@ -98,7 +98,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		if (empty($user->rights->societe->client->voir) || $socid) {
+		if (!$user->rights->societe->client->voir || $socid) {
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 
@@ -125,6 +125,9 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 				$showtot = 1;
 			}
 			$nowarray = dol_getdate(dol_now(), true);
+			if (empty($year)) {
+				$year = $nowarray['year'];
+			}
 			if (empty($endyear)) {
 				$endyear = $nowarray['year'];
 			}
@@ -140,9 +143,12 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			if ($shownb) {
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
 
-				$filenamenb = $dir."/".$prefix."invoicessuppliernbinyear-".$endyear.".png";
+				$filenamenb = $dir."/".$prefix."invoicessuppliernbinyear-".$year.".png";
 				// default value for customer mode
-				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&file=invoicessuppliernbinyear-'.$endyear.'.png';
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
+				if ($mode == 'supplier') {
+					$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessuppliernbinyear-'.$year.'.png';
+				}
 
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
@@ -180,9 +186,12 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			if ($showtot) {
 				$data2 = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), ($WIDTH < 300 ? 2 : 0), $startmonth);
 
-				$filenamenb = $dir."/".$prefix."invoicessupplieramountinyear-".$endyear.".png";
+				$filenamenb = $dir."/".$prefix."invoicessupplieramountinyear-".$year.".png";
 				// default value for customer mode
-				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&file=invoicessupplieramountinyear-'.$endyear.'.png';
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
+				if ($mode == 'supplier') {
+					$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessupplieramountinyear-'.$year.'.png';
+				}
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();
@@ -223,7 +232,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 
 			if (!$mesg) {
 				$stringtoshow = '';
-				$stringtoshow .= '<script type="text/javascript">
+				$stringtoshow .= '<script type="text/javascript" language="javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 							jQuery("#idfilter'.$this->boxcode.'").toggle();
@@ -264,12 +273,17 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 				}
 				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'class="nohover center"', 'textnoformat'=>$stringtoshow);
 			} else {
-				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'class="nohover left"', 'maxlength'=>500, 'text' => $mesg);
+				$this->info_box_contents[0][0] = array(
+					'tr'=>'class="oddeven nohover"',
+					'td' => 'class="nohover left"',
+					'maxlength'=>500,
+					'text' => $mesg,
+				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover left"',
-				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
+				'td' => 'class="nohover opacitymedium left"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
 			);
 		}
 	}

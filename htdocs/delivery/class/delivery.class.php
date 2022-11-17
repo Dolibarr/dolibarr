@@ -106,8 +106,6 @@ class Delivery extends CommonObject
 	 */
 	public $model_pdf;
 
-	public $commande_id;
-
 	public $lines = array();
 
 
@@ -530,8 +528,6 @@ class Delivery extends CommonObject
 	public function create_from_sending($user, $sending_id)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$expedition = new Expedition($this->db);
 		$result = $expedition->fetch($sending_id);
 
@@ -729,7 +725,7 @@ class Delivery extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $save_lastsearch_value = -1)
 	{
-		global $langs, $hookmanager;
+		global $langs;
 
 		$result = '';
 
@@ -761,24 +757,14 @@ class Delivery extends CommonObject
 			$result .= ' ';
 		}
 		$result .= $linkstart.$this->ref.$linkend;
-
-		global $action;
-		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
-		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) {
-			$result = $hookmanager->resPrint;
-		} else {
-			$result .= $hookmanager->resPrint;
-		}
 		return $result;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Load lines insto $this->lines.
+	 *	Load lines
 	 *
-	 *	@return		int								<0 if KO, >0 if OK
+	 *	@return	void
 	 */
 	public function fetch_lines()
 	{
@@ -800,9 +786,9 @@ class Delivery extends CommonObject
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
-				$obj = $this->db->fetch_object($resql);
-
 				$line = new DeliveryLine($this->db);
+
+				$obj = $this->db->fetch_object($resql);
 
 				$line->id = $obj->rowid;
 				$line->label = $obj->custom_label;
@@ -844,11 +830,9 @@ class Delivery extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
-
-			return 1;
-		} else {
-			return -1;
 		}
+
+		return $this->lines;
 	}
 
 
@@ -979,7 +963,7 @@ class Delivery extends CommonObject
 		if ($resultSourceLine) {
 			$num_lines = $this->db->num_rows($resultSourceLine);
 			$i = 0;
-			$array = array();
+			$resultArray = array();
 			while ($i < $num_lines) {
 				$objSourceLine = $this->db->fetch_object($resultSourceLine);
 
@@ -1098,23 +1082,6 @@ class Delivery extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
-
-	/**
-	 * Function used to replace a product id with another one.
-	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old product id
-	 * @param int $dest_id New product id
-	 * @return bool
-	 */
-	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
-	{
-		$tables = array(
-			'deliverydet'
-		);
-
-		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
-	}
 }
 
 
@@ -1139,6 +1106,14 @@ class DeliveryLine extends CommonObjectLine
 	 */
 	public $table_element = 'deliverydet';
 
+	// From llx_expeditiondet
+	public $qty;
+	public $qty_asked;
+	public $qty_shipped;
+	public $price;
+	public $fk_product;
+	public $origin_id;
+
 	/**
 	 * @var string delivery note lines label
 	 */
@@ -1160,24 +1135,10 @@ class DeliveryLine extends CommonObjectLine
 	 */
 	public $libelle;
 
-	// From llx_expeditiondet
-	public $qty;
-	public $qty_asked;
-	public $qty_shipped;
-
-	public $fk_product;
-	public $product_desc;
-	public $product_type;
-	public $product_ref;
-	public $product_label;
-
-	public $fk_origin_line;
-	public $origin_id;
-
-	public $price;
-
 	public $origin_line_id;
 
+	public $product_ref;
+	public $product_label;
 
 	/**
 	 *	Constructor

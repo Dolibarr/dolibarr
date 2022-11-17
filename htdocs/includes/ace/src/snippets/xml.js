@@ -1,5 +1,10 @@
+define("ace/snippets/xml",["require","exports","module"], function(require, exports, module) {
+"use strict";
 
-;                (function() {
+exports.snippetText =undefined;
+exports.scope = "xml";
+
+});                (function() {
                     window.require(["ace/snippets/xml"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - orders
-OrderExists=Ar šo piedāvājumu saistīts pasūtījums jau bija atvērts, tāpēc neviens cits pasūtījums netika izveidots automātiski
 OrdersArea=Klienti pasūtījumu sadaļa
 SuppliersOrdersArea=Pirkumu pasūtījumu apgabals
 OrderCard=Pasūtījumu kartiņa
@@ -69,8 +68,6 @@ CreateOrder=Izveidot pasūtījumu
 RefuseOrder=Atteikt pasūtījumu
 ApproveOrder=Apstiprināt pasūtījumu
 Approve2Order=Approve order (second level)
-UserApproval=Lietotājs apstiprināšanai
-UserApproval2=Lietotājs apstiprināšanai (otrais līmenis)
 ValidateOrder=Apstiprināt pasūtījumu
 UnvalidateOrder=Neapstiprināts pasūtījums
 DeleteOrder=Dzēst pasūtījumu
@@ -105,8 +102,6 @@ ConfirmCancelOrder=Vai esat pārliecināts, ka vēlaties atcelt šo pasūtījumu
 ConfirmMakeOrder=Vai tiešām vēlaties apstiprināt, ka esat veicis šo pasūtījumu <b> %s </b>?
 GenerateBill=Izveidot rēķinu
 ClassifyShipped=Klasificēt piegādāts
-PassedInShippedStatus=klasificēts piegādāts
-YouCantShipThis=Es nevaru šo klasificēt. Lūdzu, pārbaudiet lietotāja atļaujas
 DraftOrders=Pasūtījumu projekti
 DraftSuppliersOrders=Pirkuma pasūtījumu projekts
 OnProcessOrders=Pasūtījumi procesā

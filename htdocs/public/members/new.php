@@ -30,7 +30,6 @@
  *  Note that you can add following constant to change behaviour of page
  *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
  *  MEMBER_NEWFORM_EDITAMOUNT           0 or 1 = Amount can be edited
- *  MEMBER_MIN_AMOUNT                   Minimum amount
  *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal, paybox or stripe
  *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
  *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once subscribe submitted
@@ -57,6 +56,7 @@ if (!defined('NOIPCHECK')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -174,7 +174,6 @@ function llxFooterVierge()
 /*
  * Actions
  */
-
 $parameters = array();
 // Note that $action and $object may have been modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
@@ -377,7 +376,6 @@ if (empty($reshook) && $action == 'add') {
 					}
 				}
 
-<<<<<<< HEAD
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
 				} elseif (!empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)) {
@@ -462,41 +460,6 @@ if (empty($reshook) && $action == 'add') {
 				$error++;
 				$errmsg .= join('<br>', $adh->errors);
 			}
-=======
-			if (!empty($backtopage)) {
-				$urlback = $backtopage;
-			} elseif (!empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)) {
-				$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
-				// TODO Make replacement of __AMOUNT__, etc...
-			} else {
-				$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
-			}
-
-			if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
-				if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {			// If edition of amount not allowed
-					// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
-					// It is not so important because a test is done on return of payment validation.
-				}
-
-				$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, price2num(GETPOST('amount', 'alpha'), 'MT'), '', 0);
-
-				if (GETPOST('email')) {
-					$urlback .= '&email='.urlencode(GETPOST('email'));
-				}
-				if ($conf->global->MEMBER_NEWFORM_PAYONLINE != '-1' && $conf->global->MEMBER_NEWFORM_PAYONLINE != 'all') {
-					$urlback .= '&paymentmethod='.urlencode($conf->global->MEMBER_NEWFORM_PAYONLINE);
-				}
-			} else {
-				if (!empty($entity)) {
-					$urlback .= '&entity='.((int) $entity);
-				}
-			}
-
-			dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
-		} else {
-			$error++;
-			$errmsg .= join('<br>', $adh->errors);
->>>>>>> 99d881e7a7546312b81f89fc6eee7a0d9ec9d4b3
 		}
 	}
 
@@ -517,7 +480,7 @@ if (empty($reshook) && $action == 'added') {
 	llxHeaderVierge($langs->trans("NewMemberForm"));
 
 	// Si on a pas ete redirige
-	print '<br><br>';
+	print '<br>';
 	print '<div class="center">';
 	print $langs->trans("NewMemberbyWeb");
 	print '</div>';
@@ -535,7 +498,7 @@ if (empty($reshook) && $action == 'added') {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $adht = new AdherentType($db);
-$extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label('adherent'); // fetch optionals attributes and labels
 
 
 llxHeaderVierge($langs->trans("NewSubscription"));
@@ -613,7 +576,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE)) {
 		$defaulttype = $tmp[0];
 		$isempty = 0;
 	}
-	print '<tr><td class="titlefield">'.$langs->trans("Type").' <span style="color: red">*</span></td><td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td>';
 	print $form->selectarray("typeid", $adht->liste_array(1), GETPOST('typeid') ? GETPOST('typeid') : $defaulttype, $isempty);
 	print '</td></tr>'."\n";
 } else {
@@ -625,7 +588,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE)) {
 $morphys["phy"] = $langs->trans("Physical");
 $morphys["mor"] = $langs->trans("Moral");
 if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY)) {
-	print '<tr class="morphy"><td class="titlefield">'.$langs->trans('MemberNature').' <span style="color: red">*</span></td><td>'."\n";
+	print '<tr class="morphy"><td class="titlefield">'.$langs->trans('MemberNature').' <FONT COLOR="red">*</FONT></td><td>'."\n";
 	print $form->selectarray("morphy", $morphys, GETPOST('morphy'), 1);
 	print '</td></tr>'."\n";
 } else {
@@ -641,18 +604,18 @@ print '<input type="text" name="societe" class="minwidth150 widthcentpercentminu
 print '<tr><td class="titlefield">'.$langs->trans('UserTitle').'</td><td>';
 print $formcompany->select_civility(GETPOST('civility_id'), 'civility_id').'</td></tr>'."\n";
 // Lastname
-print '<tr><td>'.$langs->trans("Lastname").' <span style="color: red">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Lastname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
 // Firstname
-print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Firstname").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
 // EMail
 print '<tr><td>'.$langs->trans("Email").($conf->global->ADHERENT_MAIL_REQUIRED ? ' <span style="color:red;">*</span>' : '').'</td><td>';
 //print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Login
 if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-	print '<tr><td>'.$langs->trans("Login").' <span style="color: red">*</span></td><td><input type="text" name="login" maxlength="50" class="minwidth100"value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
-	print '<tr><td>'.$langs->trans("Password").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass1" class="minwidth100" value="'.dol_escape_htmltag(GETPOST("pass1", "none", 2)).'"></td></tr>'."\n";
-	print '<tr><td>'.$langs->trans("PasswordRetype").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.dol_escape_htmltag(GETPOST("pass2", "none", 2)).'"></td></tr>'."\n";
+	print '<tr><td>'.$langs->trans("Login").' <FONT COLOR="red">*</FONT></td><td><input type="text" name="login" maxlength="50" class="minwidth100"value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
+	print '<tr><td>'.$langs->trans("Password").' <FONT COLOR="red">*</FONT></td><td><input type="password" maxlength="128" name="pass1" class="minwidth100" value="'.GETPOST("pass1", "nohtml").'"></td></tr>'."\n";
+	print '<tr><td>'.$langs->trans("PasswordAgain").' <FONT COLOR="red">*</FONT></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.GETPOST("pass2", "nohtml").'"></td></tr>'."\n";
 }
 // Gender
 print '<tr><td>'.$langs->trans("Gender").'</td>';
@@ -719,7 +682,7 @@ print '</tr>'."\n";
 // TODO Move this into generic feature.
 if (!empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER)) {
 	$arraybudget = array('50'=>'<= 100 000', '100'=>'<= 200 000', '200'=>'<= 500 000', '300'=>'<= 1 500 000', '600'=>'<= 3 000 000', '1000'=>'<= 5 000 000', '2000'=>'5 000 000+');
-	print '<tr id="trbudget" class="trcompany"><td>'.$langs->trans("TurnoverOrBudget").' <span style="color: red">*</span></td><td>';
+	print '<tr id="trbudget" class="trcompany"><td>'.$langs->trans("TurnoverOrBudget").' <FONT COLOR="red">*</FONT></td><td>';
 	print $form->selectarray('budget', $arraybudget, GETPOST('budget'), 1);
 	print ' € or $';
 
@@ -760,24 +723,21 @@ if (!empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER)) {
 	print '</td></tr>'."\n";
 }
 
-if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
-	$amount = 0;
-	$typeid = $conf->global->MEMBER_NEWFORM_FORCETYPE ? $conf->global->MEMBER_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
+if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT) || !empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
+	// $conf->global->MEMBER_NEWFORM_SHOWAMOUNT is an amount
 
-	// Set amount for the subscription:
-	// - First check the amount of the member type.
-	$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
-	$amount = empty($amountbytype[$typeid]) ? (isset($amount) ? $amount : 0) : $amountbytype[$typeid];
-	// - If not found, take the default amount
-	if (empty($amount) && !empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
+	// Set amount for the subscription
+	$amountbytype = $adht->amountByType(1);
+	$amount = !empty($amountbytype[GETPOST('typeid', 'int')]) ? $amountbytype[GETPOST('typeid', 'int')] : (isset($amount) ? $amount : 0);
+
+	if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)) {
 		$amount = $conf->global->MEMBER_NEWFORM_AMOUNT;
 	}
-	// - If not set, we accept ot have amount defined as parameter (for backward compatibility).
-	if (empty($amount)) {
-		$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
+
+	if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
+		$amount = $amount ? $amount : (GETPOST('amount') ? price2num(GETPOST('amount'), 'MT', 2) : $conf->global->MEMBER_NEWFORM_AMOUNT);
 	}
 
-	// Clean the amount
 	$amount = price2num($amount);
 
 	// $conf->global->MEMBER_NEWFORM_PAYONLINE is 'paypal', 'paybox' or 'stripe'
@@ -791,7 +751,6 @@ if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE)) {
 	print ' '.$langs->trans("Currency".$conf->currency);
 	print '</td></tr>';
 }
-
 print "</table>\n";
 
 print dol_get_fiche_end();

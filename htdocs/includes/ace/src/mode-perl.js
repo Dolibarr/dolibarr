@@ -367,7 +367,6 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/perl";
-    this.snippetFileId = "ace/snippets/perl";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

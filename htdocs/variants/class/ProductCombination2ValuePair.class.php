@@ -1,7 +1,6 @@
 <?php
 
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
- * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,8 +69,8 @@ class ProductCombination2ValuePair
 	 */
 	public function __toString()
 	{
-		require_once DOL_DOCUMENT_ROOT . '/variants/class/ProductAttributeValue.class.php';
-		require_once DOL_DOCUMENT_ROOT . '/variants/class/ProductAttribute.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
 		$prodattr = new ProductAttribute($this->db);
 		$prodattrval = new ProductAttributeValue($this->db);
@@ -79,7 +78,7 @@ class ProductCombination2ValuePair
 		$prodattr->fetch($this->fk_prod_attr);
 		$prodattrval->fetch($this->fk_prod_attr_val);
 
-		return $prodattr->label . ': ' . $prodattrval->value;
+		return $prodattr->label.': '.$prodattrval->value;
 	}
 
 	/**
@@ -88,14 +87,14 @@ class ProductCombination2ValuePair
 	 */
 	public function create()
 	{
-		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_attribute_combination2val
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute_combination2val
 		(fk_prod_combination, fk_prod_attr, fk_prod_attr_val)
-		VALUES(" . (int) $this->fk_prod_combination . ", " . (int) $this->fk_prod_attr . ", " . (int) $this->fk_prod_attr_val . ")";
+		VALUES(".(int) $this->fk_prod_combination.", ".(int) $this->fk_prod_attr.", ".(int) $this->fk_prod_attr_val.")";
 
 		$query = $this->db->query($sql);
 
 		if ($query) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . 'product_attribute_combination2val');
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'product_attribute_combination2val');
 
 			return 1;
 		}
@@ -116,10 +115,10 @@ class ProductCombination2ValuePair
         c2v.fk_prod_attr_val,
         c2v.fk_prod_attr,
         c2v.fk_prod_combination
-        FROM " . MAIN_DB_PREFIX . "product_attribute c LEFT JOIN " . MAIN_DB_PREFIX . "product_attribute_combination2val c2v ON c.rowid = c2v.fk_prod_attr
-        WHERE c2v.fk_prod_combination = " . (int) $fk_combination;
+        FROM ".MAIN_DB_PREFIX."product_attribute c LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination2val c2v ON c.rowid = c2v.fk_prod_attr
+        WHERE c2v.fk_prod_combination = ".(int) $fk_combination;
 
-		$sql .= $this->db->order('c.position', 'asc');
+		$sql .= $this->db->order('c.rang', 'asc');
 
 		$query = $this->db->query($sql);
 
@@ -150,7 +149,7 @@ class ProductCombination2ValuePair
 	 */
 	public function deleteByFkCombination($fk_combination)
 	{
-		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_attribute_combination2val WHERE fk_prod_combination = " . (int) $fk_combination;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute_combination2val WHERE fk_prod_combination = ".(int) $fk_combination;
 
 		if ($this->db->query($sql)) {
 			return 1;

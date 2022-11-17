@@ -16,9 +16,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// This page should make the process to login and get token as described here:
-// https://developers.google.com/identity/protocols/oauth2/openid-connect#server-flow
-
 /**
  *      \file       htdocs/core/modules/oauth/google_oauthcallback.php
  *      \ingroup    oauth
@@ -40,11 +37,6 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 $action = GETPOST('action', 'aZ09');
 $backtourl = GETPOST('backtourl', 'alpha');
-$keyforprovider = GETPOST('keyforprovider', 'aZ09');
-if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthjump"]) && (GETPOST('code') || $action == 'delete')) {
-	// If we are coming from the Oauth page
-	$keyforprovider = $_SESSION["oauthkeyforproviderbeforeoauthjump"];
-}
 
 
 /**
@@ -68,35 +60,25 @@ $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 //$httpClient->setCurlParameters($params);
 $serviceFactory->setHttpClient($httpClient);
 
+// Dolibarr storage
+$storage = new DoliStorage($db, $conf);
+
 // Setup the credentials for the requests
-$keyforparamid = 'OAUTH_GOOGLE'.($keyforprovider ? '-'.$keyforprovider : '').'_ID';
-$keyforparamsecret = 'OAUTH_GOOGLE'.($keyforprovider ? '-'.$keyforprovider : '').'_SECRET';
 $credentials = new Credentials(
-	getDolGlobalString($keyforparamid),
-	getDolGlobalString($keyforparamsecret),
+	$conf->global->OAUTH_GOOGLE_ID,
+	$conf->global->OAUTH_GOOGLE_SECRET,
 	$currentUri->getAbsoluteUri()
 );
 
-$state = GETPOST('state');
-$statewithscopeonly = '';
-$statewithanticsrfonly = '';
-
 $requestedpermissionsarray = array();
-if ($state) {
-	// 'state' parameter is standard to store a hash value and can be used to retrieve some parameters back
-	$statewithscopeonly = preg_replace('/\-.*$/', '', $state);
-	$requestedpermissionsarray = explode(',', $statewithscopeonly); // Example: 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print'.
-	$statewithanticsrfonly = preg_replace('/^.*\-/', '', $state);
+if (GETPOST('state')) {
+	$requestedpermissionsarray = explode(',', GETPOST('state')); // Example: 'userinfo_email,userinfo_profile,cloud_print'. 'state' parameter is standard to store a hash value and can be used to retrieve some parameters back
 }
 if ($action != 'delete' && empty($requestedpermissionsarray)) {
 	print 'Error, parameter state is not defined';
 	exit;
 }
 //var_dump($requestedpermissionsarray);exit;
-
-
-// Dolibarr storage
-$storage = new DoliStorage($db, $conf, $keyforprovider);
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 // $requestedpermissionsarray contains list of scopes.
@@ -107,15 +89,9 @@ $apiService = $serviceFactory->createService('Google', $credentials, $storage, $
 // also note that a refresh token is sent only after a prompt
 $apiService->setAccessType('offline');
 
+$apiService->setApprouvalPrompt('force');
 
 $langs->load("oauth");
-
-if (!getDolGlobalString($keyforparamid)) {
-	accessforbidden('Setup of service is not complete. Customer ID is missing');
-}
-if (!getDolGlobalString($keyforparamsecret)) {
-	accessforbidden('Setup of service is not complete. Secret key is missing');
-}
 
 
 /*
@@ -132,86 +108,46 @@ if ($action == 'delete') {
 	exit();
 }
 
-if (GETPOST('code')) {     // We are coming from oauth provider page.
-	dol_syslog("We are coming from the oauth provider page keyforprovider=".$keyforprovider);
+if (!empty($_GET['code'])) {     // We are coming from oauth provider page
+	dol_syslog("We are coming from the oauth provider page");
+	//llxHeader('',$langs->trans("OAuthSetup"));
 
-	// We must validate that the $state is the same than the one into $_SESSION['oauthstateanticsrf'], return error if not.
-	if (isset($_SESSION['oauthstateanticsrf']) && $state != $_SESSION['oauthstateanticsrf']) {
-		print 'Value for state = '.dol_escape_htmltag($state).' differs from value in $_SESSION["oauthstateanticsrf"]. Code is refused.';
-		unset($_SESSION['oauthstateanticsrf']);
-	} else {
-		// This was a callback request from service, get the token
-		try {
-			//var_dump($_GET['code']);
-			//var_dump($state);
-			//var_dump($apiService);      // OAuth\OAuth2\Service\Google
+	//$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+	//print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
 
-			// This request the token
-			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php, so into table llx_oauth_token
-			$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+	//print dol_get_fiche_head();
+	// retrieve the CSRF state parameter
+	$state = isset($_GET['state']) ? $_GET['state'] : null;
+	//print '<table>';
 
-			// Note: The extraparams has the 'id_token' than contains a lot of information about the user.
-			$extraparams = $token->getExtraParams();
-			$jwt = explode('.', $extraparams['id_token']);
+	// This was a callback request from service, get the token
+	try {
+		//var_dump($_GET['code']);
+		//var_dump($state);
+		//var_dump($apiService);      // OAuth\OAuth2\Service\Google
 
-			// Extract the middle part, base64 decode, then json_decode it
-			if (!empty($jwt[1])) {
-				$userinfo = json_decode(base64_decode($jwt[1]), true);
+		$token = $apiService->requestAccessToken($_GET['code'], $state);
 
-				// TODO
-				// We should make the 5 steps of validation of id_token
-				// Verify that the ID token is properly signed by the issuer. Google-issued tokens are signed using one of the certificates found at the URI specified in the jwks_uri metadata value of the Discovery document.
-				// Verify that the value of the iss claim in the ID token is equal to https://accounts.google.com or accounts.google.com.
-				// Verify that the value of the aud claim in the ID token is equal to your app's client ID.
-				// Verify that the expiry time (exp claim) of the ID token has not passed.
-				// If you specified a hd parameter value in the request, verify that the ID token has a hd claim that matches an accepted G Suite hosted domain.
+		setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs'); // Stored into object managed by class DoliStorage so into table oauth_token
 
-				/*
-				$useremailuniq = $userinfo['sub'];
-				$useremail = $userinfo['email'];
-				$useremailverified = $userinfo['email_verified'];
-				$username = $userinfo['name'];
-				$userfamilyname = $userinfo['family_name'];
-				$usergivenname = $userinfo['given_name'];
-				$hd = $userinfo['hd'];
-				*/
-			}
+		$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
+		unset($_SESSION["backtourlsavedbeforeoauthjump"]);
 
-			setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');
-
-			$backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
-			unset($_SESSION["backtourlsavedbeforeoauthjump"]);
-
-			header('Location: '.$backtourl);
-			exit();
-		} catch (Exception $e) {
-			print $e->getMessage();
-		}
+		header('Location: '.$backtourl);
+		exit();
+	} catch (Exception $e) {
+		print $e->getMessage();
 	}
-} else {
-	// If we enter this page without 'code' parameter, we arrive here. this is the case when we want to get the redirect
-	// to the OAuth provider login page.
+} else // If entry on page with no parameter, we arrive here
+{
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
-	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
-	$_SESSION['oauthstateanticsrf'] = $state;
-
-	if (!preg_match('/^forlogin/', $state)) {
-		$apiService->setApprouvalPrompt('force');
-	}
 
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state in this tables depend on the Provider used (see its constructor).
-	if ($state) {
-		$url = $apiService->getAuthorizationUri(array('state' => $state));
+	if (GETPOST('state')) {
+		$url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
 	} else {
 		$url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
-	}
-
-	// Add more param
-	$url .= '&nonce='.bin2hex(random_bytes(64/8));
-	// TODO Add param hd and/or login_hint
-	if (!preg_match('/^forlogin/', $state)) {
-		//$url .= 'hd=xxx';
 	}
 
 	// we go on oauth provider authorization page
@@ -224,6 +160,6 @@ if (GETPOST('code')) {     // We are coming from oauth provider page.
  * View
  */
 
-// No view at all, just actions, so we never reach this line.
+// No view at all, just actions
 
 $db->close();

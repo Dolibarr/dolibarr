@@ -119,7 +119,9 @@ print "</td></tr>\n";
 
 print '</table>';
 
-print $form->buttonsSaveCancel("Save", '');
+print '<br>';
+
+print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 
 print "</form>\n";
 

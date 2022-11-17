@@ -7,7 +7,6 @@
  * Copyright (C) 2014-2017  Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020-2021  Udo Tamm            <dev@dolibit.de>
- * Copyright (C) 2022		Anthony Berton      <anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +48,6 @@ $confirm = GETPOST('confirm', 'alpha');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $fuserid = (GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id);
-$socid = GETPOST('socid', 'int');
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "holiday", "mails", "trips"));
@@ -96,7 +94,9 @@ $cancreateall = 0;
 if (!empty($user->rights->holiday->write) && in_array($fuserid, $childids)) {
 	$cancreate = 1;
 }
-if (!empty($user->rights->holiday->writeall)) {
+// TODO Remove the writeall_advance and replace it with writeall
+if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall))
+	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->holiday->writeall_advance))) {
 	$cancreate = 1;
 	$cancreateall = 1;
 }
@@ -127,23 +127,8 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$backurlforlist = DOL_URL_ROOT.'/holiday/list.php';
-
-	if (empty($backtopage) || ($cancel && empty($id))) {
-		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
-				$backtopage = $backurlforlist;
-			} else {
-				$backtopage = DOL_URL_ROOT.'/holiday/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
-			}
-		}
-	}
-
 	if ($cancel) {
-		if (!empty($backtopageforcancel)) {
-			header("Location: ".$backtopageforcancel);
-			exit;
-		} elseif (!empty($backtopage)) {
+		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
 			exit;
 		}
@@ -351,25 +336,25 @@ if (empty($reshook)) {
 
 				// If no start date
 				if (!GETPOST('date_debut_')) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=nodatedebut');
+					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=nodatedebut');
 					exit;
 				}
 
 				// If no end date
 				if (!GETPOST('date_fin_')) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=nodatefin');
+					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=nodatefin');
 					exit;
 				}
 
 				// If start date after end date
 				if ($date_debut > $date_fin) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=datefin');
+					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=datefin');
 					exit;
 				}
 
 				// If no validator designated
 				if ($approverid < 1) {
-					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'&error=Valideur');
+					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=Valideur');
 					exit;
 				}
 
@@ -476,23 +461,21 @@ if (empty($reshook)) {
 
 				$message .= "<p>".$langs->transnoentities("HolidaysToValidateBody")."</p>\n";
 
+				$delayForRequest = $object->getConfCP('delayForRequest');
+				//$delayForRequest = $delayForRequest * (60*60*24);
+
+				$nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
 
 				// option to warn the validator in case of too short delay
-				if (empty($conf->global->HOLIDAY_HIDE_APPROVER_ABOUT_TOO_LOW_DELAY)) {
-					$delayForRequest = 0;		// TODO Set delay depending of holiday leave type
-					if ($delayForRequest) {
-						$nowplusdelay = dol_time_plus_duree($now, $delayForRequest, 'd');
-
-						if ($object->date_debut < $nowplusdelay) {
-							$message = "<p>".$langs->transnoentities("HolidaysToValidateDelay", $delayForRequest)."</p>\n";
-						}
+				if ($object->getConfCP('AlertValidatorDelay')) {
+					if ($object->date_debut < $nextMonth) {
+						$message .= "<p>".$langs->transnoentities("HolidaysToValidateDelay", $object->getConfCP('delayForRequest'))."</p>\n";
 					}
 				}
 
 				// option to notify the validator if the balance is less than the request
-				if (empty($conf->global->HOLIDAY_HIDE_APPROVER_ABOUT_NEGATIVE_BALANCE)) {
+				if ($object->getConfCP('AlertValidatorSolde')) {
 					$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
-
 					if ($nbopenedday > $object->getCPforUser($object->fk_user, $object->fk_type)) {
 						$message .= "<p>".$langs->transnoentities("HolidaysToValidateAlertSolde")."</p>\n";
 					}
@@ -655,7 +638,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_refuse' && GETPOST('confirm', 'alpha') == 'yes') {
-		if (GETPOST('detail_refuse')) {
+		if (!empty($_POST['detail_refuse'])) {
 			$object->fetch($id);
 
 			// If status pending validation and validator = user
@@ -787,12 +770,6 @@ if (empty($reshook)) {
 			$result = $object->update($user);
 
 			if ($result >= 0 && $oldstatus == Holiday::STATUS_APPROVED) {	// holiday was already validated, status 3, so we must increase back the balance
-				// Call trigger
-				$result = $object->call_trigger('HOLIDAY_CANCEL', $user);
-				if ($result < 0) {
-					$error++;
-				}
-
 				// Calculcate number of days consummed
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 
@@ -901,12 +878,10 @@ $object = new Holiday($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 
-$title = $langs->trans('Leave');
+$title = $langs->trans('CPTitreMenu');
 $help_url = 'EN:Module_Holiday';
 
 llxHeader('', $title, $help_url);
-
-$edit = false;
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave
@@ -923,7 +898,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					$errors[] = $langs->trans('ErrorEndDateCP');
 					break;
 				case 'SQL_Create':
-					$errors[] = $langs->trans('ErrorSQLCreateCP');
+					$errors[] = $langs->trans('ErrorSQLCreateCP').' <b>'.htmlentities($_GET['msg']).'</b>';
 					break;
 				case 'CantCreate':
 					$errors[] = $langs->trans('CantCreateCP');
@@ -949,40 +924,42 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		}
 
 
+		$delayForRequest = $object->getConfCP('delayForRequest');
+		//$delayForRequest = $delayForRequest * (60*60*24);
+
+		$nextMonth = dol_time_plus_duree($now, $delayForRequest, 'd');
+
 		print '<script type="text/javascript">
-		$( document ).ready(function() {
-			$("input.button-save").click("submit", function(e) {
-				console.log("Call valider()");
-	    	    if (document.demandeCP.date_debut_.value != "")
-	    	    {
-		           	if(document.demandeCP.date_fin_.value != "")
-		           	{
-		               if(document.demandeCP.valideur.value != "-1") {
-		                 return true;
-		               }
-		               else {
-		                 alert("'.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'");
-		                 return false;
-		               }
-		            }
-		            else
-		            {
-		              alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
-		              return false;
-		            }
-		        }
-		        else
-		        {
-		           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
-		           return false;
-		        }
-	       	});
-		});
+	    function valider()
+	    {
+    	    if(document.demandeCP.date_debut_.value != "")
+    	    {
+	           	if(document.demandeCP.date_fin_.value != "")
+	           	{
+	               if(document.demandeCP.valideur.value != "-1") {
+	                 return true;
+	               }
+	               else {
+	                 alert("'.dol_escape_js($langs->transnoentities('InvalidValidatorCP')).'");
+	                 return false;
+	               }
+	            }
+	            else
+	            {
+	              alert("'.dol_escape_js($langs->transnoentities('NoDateFin')).'");
+	              return false;
+	            }
+	        }
+	        else
+	        {
+	           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
+	           return false;
+	        }
+       	}
        </script>'."\n";
 
-
 		// Formulaire de demande
-		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" name="demandeCP">'."\n";
+		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" onsubmit="return valider()" name="demandeCP">'."\n";
 		print '<input type="hidden" name="token" value="'.newToken().'" />'."\n";
 		print '<input type="hidden" name="action" value="add" />'."\n";
 
@@ -990,7 +967,6 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print dol_get_fiche_head('', '', '', -1);
 
 			$out = '';
-			$nb_holiday = 0;
 			$typeleaves = $object->getTypes(1, 1);
 			foreach ($typeleaves as $key => $val) {
 				$nb_type = $object->getCPforUser($user->id, $val['rowid']);
@@ -1090,9 +1066,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		if (empty($include_users)) {
 			print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
 		} else {
-			// Defined default approver (the forced approved of user or the supervisor if no forced value defined)
-			// Note: This use will be set only if the deinfed approvr has permission to approve so is inside include_users
-			$defaultselectuser = (empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator);
+			$defaultselectuser = (empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator); // Will work only if supervisor has permission to approve so is inside include_users
 			if (!empty($conf->global->HOLIDAY_DEFAULT_VALIDATOR)) {
 				$defaultselectuser = $conf->global->HOLIDAY_DEFAULT_VALIDATOR; // Can force default approver
 			}
@@ -1111,7 +1085,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<tr>';
 		print '<td>'.$langs->trans("DescCP").'</td>';
 		print '<td class="tdtop">';
-		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, ROWS_3, '90%');
+		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 
@@ -1123,7 +1097,11 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 		print dol_get_fiche_end();
 
-		print $form->buttonsSaveCancel("SendRequestCP");
+		print '<div class="center">';
+		print '<input type="submit" value="'.$langs->trans("SendRequestCP").'" name="bouton" class="button">';
+		print '&nbsp; &nbsp; ';
+		print '<input type="button" value="'.$langs->trans("Cancel").'" class="button button-cancel" onclick="history.go(-1)">';
+		print '</div>';
 
 		print '</from>'."\n";
 	}
@@ -1153,7 +1131,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						$errors[] = $langs->transnoentitiesnoconv('ErrorEndDateCP');
 						break;
 					case 'SQL_Create':
-						$errors[] = $langs->transnoentitiesnoconv('ErrorSQLCreateCP');
+						$errors[] = $langs->transnoentitiesnoconv('ErrorSQLCreateCP').' '.$_GET['msg'];
 						break;
 					case 'CantCreate':
 						$errors[] = $langs->transnoentitiesnoconv('CantCreateCP');
@@ -1174,14 +1152,14 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						$errors[] = $langs->transnoentitiesnoconv('NoMotifRefuseCP');
 						break;
 					case 'mail':
-						$errors[] = $langs->transnoentitiesnoconv('ErrorMailNotSend');
+						$errors[] = $langs->transnoentitiesnoconv('ErrorMailNotSend')."\n".$_GET['error_content'];
 						break;
 				}
 
 				setEventMessages($errors, null, 'errors');
 			}
 
-			// check if the user has the right to read this request
+			// On vérifie si l'utilisateur à le droit de lire cette demande
 			if ($canread) {
 				$head = holiday_prepare_head($object);
 
@@ -1312,7 +1290,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<tr>';
 					print '<td>'.$langs->trans('DescCP').'</td>';
 					print '<td class="tdtop">';
-					$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, ROWS_3, '90%');
+					$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 					print $doleditor->Create(1);
 					print '</td></tr>';
 				}
@@ -1325,6 +1303,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 				print '</div>';
 				print '<div class="fichehalfright">';
+				print '<div class="ficheaddleft">';
 
 				print '<div class="underbanner clearboth"></div>';
 
@@ -1361,7 +1340,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					}
 					$include_users = $object->fetch_users_approver_holiday();
 					if (is_array($include_users) && in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED) {
-						print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator&token='.newToken().'">'.img_edit($langs->trans("Edit")).'</a>';
+						print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
 					}
 					print '</td>';
 					print '</tr>';
@@ -1415,6 +1394,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 				print '</div>';
 				print '</div>';
+				print '</div>';
 
 				print '<div class="clearboth"></div>';
 
@@ -1456,9 +1436,11 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 				if (($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) || ($action == 'editvalidator')) {
 					if ($action == 'edit' && $object->statut == Holiday::STATUS_DRAFT) {
+						print '<div class="center">';
 						if ($cancreate && $object->statut == Holiday::STATUS_DRAFT) {
-							print $form->buttonsSaveCancel();
+							print '<input type="submit" value="'.$langs->trans("Save").'" class="button button-save">';
 						}
+						print '</div>';
 					}
 
 					print '</form>';
@@ -1470,11 +1452,11 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<div class="tabsAction">';
 
 					if ($cancreate && $object->statut == Holiday::STATUS_DRAFT) {
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'" class="butAction">'.$langs->trans("EditCP").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit" class="butAction">'.$langs->trans("EditCP").'</a>';
 					}
 
 					if ($cancreate && $object->statut == Holiday::STATUS_DRAFT) {		// If draft
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sendToValidate&token='.newToken().'" class="butAction">'.$langs->trans("Validate").'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sendToValidate" class="butAction">'.$langs->trans("Validate").'</a>';
 					}
 
 					if ($object->statut == Holiday::STATUS_VALIDATED) {	// If validated
@@ -1540,7 +1522,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$action = 'presend';
 		}
 
-		if ($action != 'presend' && $action != 'edit') {
+		if ($action != 'presend') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 
@@ -1562,17 +1544,20 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
-			print '</div><div class="fichehalfright">';
+			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 			$MAXEVENT = 10;
-			$morehtmlright = '';
+
+			/*$morehtmlright = '<a href="'.dol_buildpath('/holiday/myobject_agenda.php', 1).'?id='.$object->id.'">';
+			$morehtmlright .= $langs->trans("SeeAll");
+			$morehtmlright .= '</a>';*/
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, $object->element, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlright);
 
-			print '</div></div>';
+			print '</div></div></div>';
 		}
 	}
 }

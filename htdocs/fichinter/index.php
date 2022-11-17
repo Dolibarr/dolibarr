@@ -74,21 +74,22 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 $sql = "SELECT count(f.rowid), f.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."fichinter as f";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE f.entity IN (".getEntity('intervention').")";
 $sql .= " AND f.fk_soc = s.rowid";
 if ($user->socid) {
-	$sql .= ' AND f.fk_soc = '.((int) $user->socid);
+	$sql .= ' AND f.fk_soc = '.$user->socid;
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " GROUP BY f.fk_statut";
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
+	$i = 0;
 
 	$total = 0;
 	$totalinprocess = 0;
@@ -96,28 +97,38 @@ if ($resql) {
 	$vals = array();
 	$bool = false;
 	// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
-	if ($num>0) {
-		while ($row = $db->fetch_row($resql)) {
-			if (!isset($vals[$row[1]])) {
-				$vals[$row[1]] = 0;
+	while ($i < $num) {
+		$row = $db->fetch_row($resql);
+		if ($row) {
+			//if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
+			{
+				$bool = (!empty($row[2]) ?true:false);
+			if (!isset($vals[$row[1].$bool])) {
+				$vals[$row[1].$bool] = 0;
 			}
-			$vals[$row[1]] += $row[0];
-			$totalinprocess += $row[0];
-
+				$vals[$row[1].$bool] += $row[0];
+				$totalinprocess += $row[0];
+			}
 			$total += $row[0];
 		}
+		$i++;
 	}
 	$db->free($resql);
+
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
-	$listofstatus = array(Fichinter::STATUS_DRAFT, Fichinter::STATUS_VALIDATED);
-	if (!empty($conf->global->FICHINTER_CLASSIFY_BILLED)) $listofstatus[] = Fichinter::STATUS_BILLED;
-
+	$listofstatus = array(0, 1, 3);
+	$bool = false;
 	foreach ($listofstatus as $status) {
-		$dataseries[] = array($fichinterstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+		$dataseries[] = array($fichinterstatic->LibStatut($status, $bool, 1), (isset($vals[$status.$bool]) ? (int) $vals[$status.$bool] : 0));
+		if ($status == 3 && !$bool) {
+			$bool = true;
+		} else {
+			$bool = false;
+		}
 
 		if ($status == Fichinter::STATUS_DRAFT) {
 			$colorseries[$status] = '-'.$badgeStatus0;
@@ -128,8 +139,10 @@ if ($resql) {
 		if ($status == Fichinter::STATUS_BILLED) {
 			$colorseries[$status] = $badgeStatus4;
 		}
+		if ($status == Fichinter::STATUS_CLOSED) {
+			$colorseries[$status] = $badgeStatus6;
+		}
 	}
-
 	if ($conf->use_javascript_ajax) {
 		print '<tr class="impair"><td class="center" colspan="2">';
 
@@ -146,15 +159,21 @@ if ($resql) {
 
 		print '</td></tr>';
 	}
+	$bool = false;
 	foreach ($listofstatus as $status) {
 		if (!$conf->use_javascript_ajax) {
 			print '<tr class="oddeven">';
-			print '<td>'.$fichinterstatic->LibStatut($status, 0).'</td>';
-			print '<td class="right"><a href="list.php?search_status='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).' ';
-			print $fichinterstatic->LibStatut($status, 3);
+			print '<td>'.$fichinterstatic->LibStatut($status, $bool, 0).'</td>';
+			print '<td class="right"><a href="list.php?search_status='.$status.'">'.(isset($vals[$status.$bool]) ? $vals[$status.$bool] : 0).' ';
+			print $fichinterstatic->LibStatut($status, $bool, 3);
 			print '</a>';
 			print '</td>';
 			print "</tr>\n";
+			if ($status == 3 && !$bool) {
+				$bool = true;
+			} else {
+				$bool = false;
+			}
 		}
 	}
 	//if ($totalinprocess != $total)
@@ -173,7 +192,7 @@ if (!empty($conf->ficheinter->enabled)) {
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -182,7 +201,7 @@ if (!empty($conf->ficheinter->enabled)) {
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
@@ -210,7 +229,7 @@ if (!empty($conf->ficheinter->enabled)) {
 }
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 $max = 5;
@@ -223,7 +242,7 @@ $sql = "SELECT f.rowid, f.ref, f.fk_statut, f.date_valid as datec, f.tms as date
 $sql .= " s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -232,7 +251,7 @@ $sql .= " AND f.fk_soc = s.rowid";
 if ($socid) {
 	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY f.tms DESC";
@@ -296,7 +315,7 @@ if (!empty($conf->ficheinter->enabled)) {
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -305,7 +324,7 @@ if (!empty($conf->ficheinter->enabled)) {
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->rights->societe->client->voir && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " ORDER BY f.rowid DESC";
@@ -362,7 +381,7 @@ if (!empty($conf->ficheinter->enabled)) {
 	}
 }
 
-print '</div></div>';
+print '</div></div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardInterventions', $parameters, $object); // Note that $action and $object may have been modified by hook

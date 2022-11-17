@@ -24,7 +24,7 @@ FinancialCommitment=ຄໍາຫມັ້ນສັນຍາທາງດ້ານ
 InterestAmount=ດອກເບ້ຍ
 CapitalRemain=ທຶນຍັງຄົງຢູ່
 TermPaidAllreadyPaid = ໄລຍະນີ້ແມ່ນໄດ້ຈ່າຍເງິນົດແລ້ວ
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantUseScheduleWithLoanStartedToPaid = ບໍ່ສາມາດໃຊ້ ກຳ ນົດເວລາ ສຳ ລັບເງິນກູ້ທີ່ມີການຈ່າຍເງິນເລີ່ມຕົ້ນແລ້ວ
 CantModifyInterestIfScheduleIsUsed = ເຈົ້າບໍ່ສາມາດແກ້ໄຂຄວາມສົນໃຈໄດ້ຖ້າເຈົ້າໃຊ້ ກຳ ນົດເວລາ
 # Admin
 ConfigLoan=ການ ກຳ ນົດຄ່າເງິນກູ້ຂອງໂມດູນ

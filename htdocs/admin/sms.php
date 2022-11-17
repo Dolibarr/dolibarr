@@ -62,7 +62,7 @@ if ($action == 'update' && !$cancel) {
 
 
 // Send sms
-if ($action == 'send' && !$cancel) {
+if ($action == 'send' && !$_POST['cancel']) {
 	$error = 0;
 
 	$smsfrom = '';
@@ -183,7 +183,7 @@ if ($action == 'edit') {
 	if (count($listofmethods)) {
 		print $form->selectarray('MAIN_SMS_SENDMODE', $listofmethods, $conf->global->MAIN_SMS_SENDMODE, 1);
 	} else {
-		print '<span class="error">'.$langs->trans("None").'</span>';
+		print '<font class="error">'.$langs->trans("None").'</font>';
 	}
 	print '</td></tr>';
 

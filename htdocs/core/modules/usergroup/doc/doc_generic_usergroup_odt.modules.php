@@ -88,6 +88,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$this->option_tva = 0; // Manage the vat option USERGROUP_TVAOPTION
 		$this->option_modereg = 0; // Display payment mode
 		$this->option_condreg = 0; // Display payment terms
+		$this->option_codeproduitservice = 0; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
@@ -120,10 +121,9 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="USERGROUP_ADDON_PDF_ODT_PATH">';
-		if (!empty($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT)) {
+		if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0) {
 			$texte .= '<input type="hidden" name="param2" value="USERGROUP_ADDON_PDF_ODT_DEFAULT">';
 			$texte .= '<input type="hidden" name="param3" value="USERGROUP_ADDON_PDF_ODT_TOBILL">';
 			$texte .= '<input type="hidden" name="param4" value="USERGROUP_ADDON_PDF_ODT_CLOSED">';
@@ -162,14 +162,14 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$texte .= $conf->global->USERGROUP_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
 		if (count($listofdir)) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
-			if (!empty($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT)) {
+			if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0) {
 				// Model for creation
 				$list = ModelePDFUserGroup::liste_modeles($this->db);
 				$texte .= '<table width="50%;">';
@@ -197,9 +197,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
-		$texte .= '<span class="opacitymedium">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
-		$texte .= '</span>';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 
@@ -260,7 +258,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 				}
 			}
 
-			$dir = $conf->user->dir_output.'/usergroups';
+			$dir = $conf->usergroup->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;

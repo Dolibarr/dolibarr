@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/salaries/paiement_salary.php
+ *      \file       htdocs/compta/paiement_salary.php
  *      \ingroup    salary
  *      \brief      Page to add payment of a salary
  */
@@ -77,7 +77,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$error++;
 		$action = 'create';
 	}
-	if (isModEnabled('banque') && !(GETPOST("accountid", 'int') > 0)) {
+	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
 		$error++;
 		$action = 'create';
@@ -87,7 +87,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 	foreach ($_POST as $key => $value) {
 		if (substr($key, 0, 7) == 'amount_') {
 			$other_chid = substr($key, 7);
-			$amounts[$other_chid] = price2num(GETPOST($key));
+			$amounts[$other_chid] = price2num($_POST[$key]);
 		}
 	}
 
@@ -110,8 +110,8 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 			$paiement->amounts      = $amounts; // Tableau de montant
 			$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
 			$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
-			$paiement->note         = GETPOST("note", 'restricthtml');
-			$paiement->note_private = GETPOST("note", 'restricthtml');
+			$paiement->note         = GETPOST("note", 'none');
+			$paiement->note_private = GETPOST("note", 'none');
 
 			if (!$error) {
 				$paymentid = $paiement->create($user, (GETPOST('closepaidsalary') == 'on' ? 1 : 0));
@@ -163,7 +163,7 @@ if ($action == 'create') {
 
 	$total = $salary->amount;
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript">';
+		print "\n".'<script type="text/javascript" language="javascript">';
 
 		//Add js for AutoFill
 		print ' $(document).ready(function () {';
@@ -314,14 +314,14 @@ if ($action == 'create') {
 
 	print "</table>";
 
-	print '<br>';
-
 	// Bouton Save payment
+	print '<br>';
 	print '<div class="center">';
 	print '<div class="paddingbottom"><input type="checkbox" checked name="closepaidsalary" id="closepaidsalary"><label for="closepaidsalary">'.$langs->trans("ClosePaidSalaryAutomatically").'</label></div>';
-	print $form->buttonsSaveCancel("ToMakePayment", "Cancel", '', true);
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
-
 
 	print "</form>\n";
 }

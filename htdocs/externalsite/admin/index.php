@@ -56,10 +56,9 @@ if ($action == 'update') {
 
 	$label  = GETPOST('EXTERNALSITE_LABEL', 'alphanohtml');
 
-	// exturl can be an url or a HTML string
-	$exturl = GETPOST('EXTERNALSITE_URL', 'restricthtml');
+	$exturl = GETPOST('EXTERNALSITE_URL', 'none');
 	$exturl = dol_string_onlythesehtmltags($exturl, 1, 1, 0, 1);
-	$exturl = dol_string_onlythesehtmlattributes($exturl);
+	$exturl = trim(dol_string_onlythesehtmlattributes($exturl));
 
 	$i += dolibarr_set_const($db, 'EXTERNALSITE_LABEL', trim($label), 'chaine', 0, '', $conf->entity);
 	$i += dolibarr_set_const($db, 'EXTERNALSITE_URL', trim($exturl), 'chaine', 0, '', $conf->entity);
@@ -110,9 +109,9 @@ print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("ExternalSiteURL")."</td>";
 print '<td><textarea class="flat minwidth500" name="EXTERNALSITE_URL">';
 
-$exturl = GETPOST('EXTERNALSITE_URL', 'restricthtml');
+$exturl = GETPOST('EXTERNALSITE_URL', 'none');
 $exturl = dol_string_onlythesehtmltags($exturl, 1, 1, 0, 1);
-$exturl = dol_string_onlythesehtmlattributes($exturl);
+$exturl = trim(dol_string_onlythesehtmlattributes($exturl));
 
 print (GETPOSTISSET('EXTERNALSITE_URL') ? $exturl : (empty($conf->global->EXTERNALSITE_URL) ? '' : $conf->global->EXTERNALSITE_URL));
 print '</textarea></td>';
@@ -125,7 +124,9 @@ print "</tr>";
 print "</table>";
 
 
-print $form->buttonsSaveCancel("Save", '');
+print '<br><div class="center">';
+print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
+print '</div>';
 
 print "</form>\n";
 

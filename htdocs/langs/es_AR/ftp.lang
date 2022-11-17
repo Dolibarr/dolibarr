@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=Configuración de módulo de cliente FTP
+NewFTPClient=Configuración de nueva conexión FTP
+FTPArea=Area FTP
+FTPAreaDesc=Esta pantalla muestra una vista de un servidor FTP.
+SetupOfFTPClientModuleNotComplete=La configuración del módulo de cliente FTP parece estar incompleta
+FTPFeatureNotSupportedByYourPHP=Tu versión de PHP no soporta funciones FTP
+FailedToConnectToFTPServer=Error al conectar al servidor FTP (servidor %s, puerto %s)
+FailedToConnectToFTPServerWithCredentials=Error al iniciar sesión en el servidor FTP con el usuario/contraseña definidos
+FTPFailedToRemoveFile=Error al remover archivo <b>%s</b>.
+FTPFailedToRemoveDir=Error al remover carpeta <b>%s</b>: revise los permisos y que la carpeta esté vacía.
+ChooseAFTPEntryIntoMenu=Elija un sitio FTP desde el menú...
+FailedToGetFile=Error al obtener archivos %s

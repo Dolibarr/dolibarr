@@ -51,8 +51,6 @@ $langs->loadlangs(array('errors', 'trips'));
 
 $fk_expense = GETPOST('fk_expense', 'int');
 $fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
-$vatrate = GETPOST('vatrate', 'int');
-$qty = GETPOST('qty', 'int');
 
 // Security check
 $result = restrictedArea($user, 'expensereport', $fk_expense, 'expensereport');
@@ -63,45 +61,29 @@ $result = restrictedArea($user, 'expensereport', $fk_expense, 'expensereport');
  */
 
 top_httphead();
-$rep = new stdClass();
-$rep->response_status = 0;
-$rep->data = null;
-$rep->error = '';//@todo deprecated use error_message instead
-$rep->errorMessage = '';
-
 
 if (empty($fk_expense) || $fk_expense < 0) {
-	$rep->errorMessage =   $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_expense, 'fk_expense');
+	echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_expense, 'fk_expense')));
 } elseif (empty($fk_c_exp_tax_cat) || $fk_c_exp_tax_cat < 0) {
-	$rep->errorMessage =  $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_c_exp_tax_cat, 'fk_c_exp_tax_cat');
-
-	$rep->response_status = 'error';
+	echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorBadValueForParameter', $fk_c_exp_tax_cat, 'fk_c_exp_tax_cat')));
 } else {
 	// @see ndfp.class.php:3576 (method: compute_total_km)
 	$expense = new ExpenseReport($db);
 	if ($expense->fetch($fk_expense) <= 0) {
-		$rep->errorMessage =  $langs->transnoentitiesnoconv('ErrorRecordNotFound');
-		$rep->response_status = 'error';
+		echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'fk_expense' => $fk_expense));
 	} else {
 		$userauthor = new User($db);
 		if ($userauthor->fetch($expense->fk_user_author) <= 0) {
-			$rep->errorMessage =  $langs->transnoentitiesnoconv('ErrorRecordNotFound');
-			$rep->response_status = 'error';
+			echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'fk_user_author' => $expense->fk_user_author));
 		} else {
-			$expense = new ExpenseReport($db);
-			$result = $expense->fetch($fk_expense);
-			if ($result) {
-				$result = $expense->computeTotalKm($fk_c_exp_tax_cat, $qty, $vatrate);
-				if ($result < 0) {
-					$rep->error = $result;
-					$rep->errorMessage = $langs->trans('errorComputeTtcOnMileageExpense');
-					$rep->response_status = 'error';
-				} else {
-					$rep->data = $result;
-					$rep->response_status = 'success';
-				}
+			$range = ExpenseReportIk::getRangeByUser($userauthor, $fk_c_exp_tax_cat);
+
+			if (empty($range)) {
+				echo json_encode(array('error' => $langs->transnoentitiesnoconv('ErrorRecordNotFound'), 'range' => $range));
+			} else {
+				$ikoffset = price($range->ikoffset, 0, $langs, 1, -1, -1, $conf->currency);
+				echo json_encode(array('up' => $range->coef, 'ikoffset' => $range->ikoffset, 'title' => $langs->transnoentitiesnoconv('ExpenseRangeOffset', $ikoffset), 'comment' => 'offset should be applied on addline or updateline'));
 			}
 		}
 	}
 }
-echo json_encode($rep);

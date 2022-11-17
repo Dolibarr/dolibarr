@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-if (isModEnabled('banque')) {
+if (!empty($conf->banque->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -63,8 +63,6 @@ if ($user->socid) {
 if ($socid && $socid != $object->thirdparty->id) {
 	accessforbidden();
 }
-
-$error = 0;
 
 
 /*
@@ -128,7 +126,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 			$sql .= ' WHERE pf.fk_facture = f.rowid';
 			$sql .= ' AND f.fk_soc = s.rowid';
 			$sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-			$sql .= ' AND pf.fk_paiement = '.((int) $object->id);
+			$sql .= ' AND pf.fk_paiement = '.$object->id;
 			$resql = $db->query($sql);
 			if ($resql) {
 				$i = 0;
@@ -175,8 +173,8 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 	}
 }
 
-if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
-	$res = $object->update_num(GETPOST('num_paiement'));
+if ($action == 'setnum_paiement' && !empty($_POST['num_paiement'])) {
+	$res = $object->update_num($_POST['num_paiement']);
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
 	} else {
@@ -184,46 +182,13 @@ if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
 	}
 }
 
-if ($action == 'setdatep' && GETPOST('datepday')) {
+if ($action == 'setdatep' && !empty($_POST['datepday'])) {
 	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
 	$res = $object->update_date($datepaye);
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
-	}
-}
-if ($action == 'createbankpayment' && !empty($user->rights->facture->paiement)) {
-	$db->begin();
-
-	// Create the record into bank for the amount of payment $object
-	if (!$error) {
-		$label = '(CustomerInvoicePayment)';
-		if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE) {
-			$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
-		}
-
-		$bankaccountid = GETPOST('accountid', 'int');
-		if ($bankaccountid > 0) {
-			$object->paiementcode = $object->type_code;
-			$object->amounts = $object->getAmountsArray();
-
-			$result = $object->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-				$error++;
-			}
-		} else {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
-			$error++;
-		}
-	}
-
-
-	if (!$error) {
-		$db->commit();
-	} else {
-		$db->rollback();
 	}
 }
 
@@ -271,7 +236,7 @@ print '<table class="border centpercent">'."\n";
 
 // Date payment
 print '<tr><td class="titlefield">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $user->rights->facture->paiement).'</td><td>';
-print $form->editfieldval("Date", 'datep', $object->date, $object, $user->rights->facture->paiement, 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'), '', 0, '', 'id', 'tzuser');
+print $form->editfieldval("Date", 'datep', $object->date, $object, $user->rights->facture->paiement, 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
 print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
@@ -285,7 +250,7 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, '', 
 
 $disable_delete = 0;
 // Bank account
-if (isModEnabled('banque')) {
+if (!empty($conf->banque->enabled)) {
 	$bankline = new AccountLine($db);
 
 	if ($object->fk_account > 0) {
@@ -327,10 +292,10 @@ print '</td></tr>';
 */
 
 // Bank account
-if (isModEnabled('banque')) {
+if (!empty($conf->banque->enabled)) {
 	if ($object->fk_account > 0) {
 		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0) {
-			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
+			dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
 			$bordereau = new RemiseCheque($db);
 			$bordereau->fetch($bankline->fk_bordereau);
 
@@ -350,37 +315,7 @@ if (isModEnabled('banque')) {
 		print $bankline->getNomUrl(1, 0, 'showconciliatedandaccounted');
 	} else {
 		$langs->load("admin");
-		print '<span class="opacitymedium">';
-		print $langs->trans("NoRecordFoundIBankcAccount", $langs->transnoentitiesnoconv("Module85Name"));
-		print '</span>';
-		if (!empty($user->rights->facture->paiement)) {
-			// Try to guess $bankaccountidofinvoices that is ID of bank account defined on invoice.
-			// Return null if not found, return 0 if it has different value for at least 2 invoices, return the value if same on all invoices where a bank is defined.
-			$amountofpayments = $object->getAmountsArray();
-			$bankaccountidofinvoices = null;
-			foreach ($amountofpayments as $idinvoice => $amountofpayment) {
-				$tmpinvoice = new Facture($db);
-				$tmpinvoice->fetch($idinvoice);
-				if ($tmpinvoice->fk_account > 0 && $bankaccountidofinvoices !== 0) {
-					if (is_null($bankaccountidofinvoices)) {
-						$bankaccountidofinvoices = $tmpinvoice->fk_account;
-					} elseif ($bankaccountidofinvoices != $tmpinvoice->fk_account) {
-						$bankaccountidofinvoices = 0;
-					}
-				}
-			}
-
-			print '<form method="POST" name="createbankpayment">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="action" value="createbankpayment">';
-			print '<input type="hidden" name="id" value="'.$object->id.'">';
-			print ' '.$langs->trans("ToCreateRelatedRecordIntoBank").': ';
-			print $form->select_comptes($bankaccountidofinvoices, 'accountid', 0, '', 2, '', 0, '', 1);
-			//print '<span class="opacitymedium">';
-			print '<input type="submit" class="button small smallpaddingimp" name="createbankpayment" value="'.$langs->trans("ClickHere").'">';
-			//print '</span>';
-			print '</form>';
-		}
+		print '<span class="opacitymedium">'.$langs->trans("NoRecordFoundIBankcAccount", $langs->transnoentitiesnoconv("Module85Name")).'</span>';
 	}
 	print '</td>';
 	print '</tr>';
@@ -407,7 +342,7 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'factur
 $sql .= ' WHERE pf.fk_facture = f.rowid';
 $sql .= ' AND f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-$sql .= ' AND pf.fk_paiement = '.((int) $object->id);
+$sql .= ' AND pf.fk_paiement = '.$object->id;
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -425,7 +360,7 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
-	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
+	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
 		print '<td>'.$langs->trans('Entity').'</td>';
 	}
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
@@ -462,7 +397,7 @@ if ($resql) {
 			print '</td>';
 
 			// Expected to pay
-			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
+			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
 				print '<td>';
 				$mc->getInfo($objp->entity);
 				print $mc->label;
@@ -513,7 +448,7 @@ print '<div class="tabsAction">';
 if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '') {
 		if ($user->rights->facture->paiement) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&facid='.$objp->facid.'&action=valide&token='.newToken().'">'.$langs->trans('Valid').'</a>';
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 		}
 	}
 }
@@ -521,7 +456,7 @@ if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 if ($user->socid == 0 && $action == '') {
 	if ($user->rights->facture->paiement) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
 		}

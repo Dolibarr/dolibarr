@@ -29,8 +29,6 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
 	public $require_module = array('contrat');
 
-	public $enabled = '$conf->societe->enabled';
-
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -184,8 +182,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *	@param		string			$sql		SQL request to use to count
-	 *  @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
+	 *	@param	string	$sql		SQL request to use to count
+	 *	@return	int					Number of recipients
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
@@ -217,9 +215,10 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	{
 		global $langs;
 
-		$s = '<select id="filter_services_expired" name="filter" class="flat">';
+		$s = $langs->trans("ProductOrService");
+		$s .= '<select name="filter" class="flat">';
 		if (count($this->arrayofproducts)) {
-			$s .= '<option value="-1">'.$langs->trans("ProductOrService").'</option>';
+			$s .= '<option value="0">&nbsp;</option>';
 		} else {
 			$s .= '<option value="0">'.$langs->trans("ContactsAllShort").'</option>';
 		}
@@ -227,8 +226,6 @@ class mailing_thirdparties_services_expired extends MailingTargets
 			$s .= '<option value="'.$key.'">'.$val.'</option>';
 		}
 		$s .= '</select>';
-		$s .= ajax_combobox("filter_services_expired");
-
 		return $s;
 	}
 

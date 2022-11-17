@@ -20,14 +20,14 @@ class Swift_CharacterReaderFactory_SimpleCharacterReaderFactory implements Swift
      *
      * @var array
      */
-    private static $map = [];
+    private static $map = array();
 
     /**
      * Factories which have already been loaded.
      *
      * @var Swift_CharacterReaderFactory[]
      */
-    private static $loaded = [];
+    private static $loaded = array();
 
     /**
      * Creates a new CharacterReaderFactory.
@@ -44,32 +44,32 @@ class Swift_CharacterReaderFactory_SimpleCharacterReaderFactory implements Swift
 
     public function init()
     {
-        if (\count(self::$map) > 0) {
+        if (count(self::$map) > 0) {
             return;
         }
 
         $prefix = 'Swift_CharacterReader_';
 
-        $singleByte = [
+        $singleByte = array(
             'class' => $prefix.'GenericFixedWidthReader',
-            'constructor' => [1],
-            ];
+            'constructor' => array(1),
+            );
 
-        $doubleByte = [
+        $doubleByte = array(
             'class' => $prefix.'GenericFixedWidthReader',
-            'constructor' => [2],
-            ];
+            'constructor' => array(2),
+            );
 
-        $fourBytes = [
+        $fourBytes = array(
             'class' => $prefix.'GenericFixedWidthReader',
-            'constructor' => [4],
-            ];
+            'constructor' => array(4),
+            );
 
         // Utf-8
-        self::$map['utf-?8'] = [
+        self::$map['utf-?8'] = array(
             'class' => $prefix.'Utf8Reader',
-            'constructor' => [],
-            ];
+            'constructor' => array(),
+            );
 
         //7-8 bit charsets
         self::$map['(us-)?ascii'] = $singleByte;
@@ -103,11 +103,11 @@ class Swift_CharacterReaderFactory_SimpleCharacterReaderFactory implements Swift
      */
     public function getReaderFor($charset)
     {
-        $charset = strtolower(trim($charset ?? ''));
+        $charset = strtolower(trim($charset));
         foreach (self::$map as $pattern => $spec) {
             $re = '/^'.$pattern.'$/D';
             if (preg_match($re, $charset)) {
-                if (!\array_key_exists($pattern, self::$loaded)) {
+                if (!array_key_exists($pattern, self::$loaded)) {
                     $reflector = new ReflectionClass($spec['class']);
                     if ($reflector->getConstructor()) {
                         $reader = $reflector->newInstanceArgs($spec['constructor']);

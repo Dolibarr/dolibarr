@@ -173,7 +173,7 @@ print '<br>';
 if ($action != 'presend') {
 	// Contacts list
 	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
-		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1);
+		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
 	}
 }
 

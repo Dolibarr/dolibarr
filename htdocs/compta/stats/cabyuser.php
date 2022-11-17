@@ -4,7 +4,6 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Antoine Iauch           <aiauch@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +38,10 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-if (isModEnabled('comptabilite')) {
+if (!empty($conf->comptabilite->enabled)) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
-if (isModEnabled('accounting')) {
+if (!empty($conf->accounting->enabled)) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
@@ -136,36 +135,23 @@ $commonparams['sortorder'] = $sortorder;
 $commonparams['sortfield'] = $sortfield;
 
 $headerparams = array();
-if (!empty($date_startyear)) {
-	$headerparams['date_startyear'] = $date_startyear;
-}
-if (!empty($date_startmonth)) {
-	$headerparams['date_startmonth'] = $date_startmonth;
-}
-if (!empty($date_startday)) {
-	$headerparams['date_startday'] = $date_startday;
-}
-if (!empty($date_endyear)) {
-	$headerparams['date_endyear'] = $date_endyear;
-}
-if (!empty($date_endmonth)) {
-	$headerparams['date_endmonth'] = $date_endmonth;
-}
-if (!empty($date_endday)) {
-	$headerparams['date_endday'] = $date_endday;
-}
-if (!empty($q)) {
-	$headerparams['q'] = $q;
-}
+$headerparams['date_startyear'] = $date_startyear;
+$headerparams['date_startmonth'] = $date_startmonth;
+$headerparams['date_startday'] = $date_startday;
+$headerparams['date_endyear'] = $date_endyear;
+$headerparams['date_endmonth'] = $date_endmonth;
+$headerparams['date_endday'] = $date_endday;
+$headerparams['q'] = $q;
 
 $tableparams = array();
+$tableparams['search_categ'] = $selected_cat;
+$tableparams['subcat'] = ($subcat === true) ? 'yes' : '';
 
 // Adding common parameters
 $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
-$paramslink="";
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
@@ -185,9 +171,6 @@ if ($modecompta == "BOOKKEEPING") {
 if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
-
-$exportlink="";
-$namelink="";
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -231,7 +214,7 @@ if (!empty($modecompta)) {
 
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam, $calcmode);
 
-if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
+if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
@@ -247,8 +230,6 @@ foreach ($headerparams as $key => $value) {
 }
 
 $catotal = 0;
-$catotal_ht = 0;
-
 if ($modecompta == 'CREANCES-DETTES') {
 	$sql = "SELECT u.rowid as rowid, u.lastname as name, u.firstname as firstname, sum(f.total_ht) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -264,8 +245,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	/*
-	 * List of payments (old payments are not seen by this query because on older versions,
-	 * they were not linked via the table llx_paiement_facture. They are added later)
+	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
+	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
 	 */
 	$sql = "SELECT u.rowid as rowid, u.lastname as name, u.firstname as firstname, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -306,7 +287,7 @@ if ($result) {
 	dol_print_error($db);
 }
 
-// Adding old-version payments, non-bound by table llx_paiement_facture then without User
+// Adding old-version payments, non-bound by "paiement_facture" then without User
 if ($modecompta == 'RECETTES-DEPENSES') {
 	$sql = "SELECT -1 as rowidx, '' as name, '' as firstname, sum(DISTINCT p.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -497,13 +478,13 @@ if (count($amount)) {
 
 		// Other stats
 		print '<td class="center">';
-		if (isModEnabled('propal') && $key > 0) {
+		if (!empty($conf->propal->enabled) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
 		}
-		if (isModEnabled('commande') && $key > 0) {
+		if (!empty($conf->commande->enabled) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
 		}
-		if (isModEnabled('facture') && $key > 0) {
+		if (!empty($conf->facture->enabled) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?userid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
 		}
 		print '</td>';

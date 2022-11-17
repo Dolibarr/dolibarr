@@ -367,11 +367,6 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('1970-01-01 00:00:00', $result);
 
-		// Same with T and Z
-		$result=dol_print_date(0, '%Y-%m-%dT%H:%M:%SZ', true);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals('1970-01-01T00:00:00Z', $result);
-
 		// Check %Y-%m-%d %H:%M:%S format
 		$result=dol_print_date(16725225600, '%Y-%m-%d %H:%M:%S', true);	// http://www.epochconverter.com/
 		print __METHOD__." result=".$result."\n";

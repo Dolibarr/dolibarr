@@ -35,9 +35,9 @@ OnlyOneFieldForXAxisIsPossible=Actualmente solo es posible 1 campo como X-Axis. 
 AtLeastOneMeasureIsRequired=Se requiere al menos 1 campo para medir
 AtLeastOneXAxisIsRequired=Se requiere al menos 1 campo para el eje X
 LatestBlogPosts=Últimas publicaciones de blog
-notiftouser=A los usuarios
-notiftofixedemail=Al correo fijo
-notiftouserandtofixedemail=Al usuario y correo fijo
+notiftouser=To users
+notiftofixedemail=To fixed mail
+notiftouserandtofixedemail=To user and fixed mail
 Notify_ORDER_VALIDATE=Validación pedido de cliente
 Notify_ORDER_SENTBYMAIL=Envío pedido de cliente por e-mail
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Envío pedido a proveedor por e-mail
@@ -110,7 +110,7 @@ ChooseYourDemoProfilMore=... o construya su perfil<br>(modo de selección manual
 DemoFundation=Gestión de miembros de una asociación
 DemoFundation2=Gestión de miembros y tesorería de una asociación
 DemoCompanyServiceOnly=Empresa o trabajador por cuenta propia realizando servicios
-DemoCompanyShopWithCashDesk=Administrar una tienda con una caja de efectivo
+DemoCompanyShopWithCashDesk=Gestión de una tienda con caja
 DemoCompanyProductAndStocks=Tienda de venta de productos con punto de venta
 DemoCompanyManufacturing=Empresa de fabricación de productos
 DemoCompanyAll=Empresa con actividades múltiples (todos los módulos principales)
@@ -258,10 +258,6 @@ PassEncoding=Cifrado de contraseña
 PermissionsAdd=Permisos añadidos
 PermissionsDelete=Permisos eliminados
 YourPasswordMustHaveAtLeastXChars=Su contraseña debe contener al menos <strong>%s</strong>  caracteres
-PasswordNeedAtLeastXUpperCaseChars=La contraseña necesita al menos <strong>%s</strong> caracteres en mayúsculas
-PasswordNeedAtLeastXDigitChars=La contraseña necesita al menos <strong>%s</strong> caracteres numéricos
-PasswordNeedAtLeastXSpecialChars=La contraseña necesita al menos <strong>%s</strong> caracteres especiales
-PasswordNeedNoXConsecutiveChars=La contraseña no debe tener <strong>%s</strong> caracteres similares consecutivos
 YourPasswordHasBeenReset=Su contraseña ha sido restablecida con éxito
 ApplicantIpAddress=Dirección IP del solicitante
 SMSSentTo=SMS enviado a %s
@@ -272,7 +268,6 @@ ProjectCreatedByEmailCollector=Proyecto creado por el recolector de e-mails del 
 TicketCreatedByEmailCollector=Ticket creado por el recolector de e-mails del MSGID de e-mail %s
 OpeningHoursFormatDesc=Use un - para separar las horas de apertura y cierre. <br> Use un espacio para ingresar diferentes rangos. <br> Ejemplo: 8-12 14-18
 SuffixSessionName=Sufijo para el nombre de la sesión
-LoginWith=Iniciar sesión con %s
 
 ##### Export #####
 ExportsArea=Área de exportaciones
@@ -303,25 +298,3 @@ SelectTheTypeOfObjectToAnalyze=Seleccione un objeto para ver sus estadísticas .
 ConfirmBtnCommonContent = ¿Está seguro de que desea "%s"?
 ConfirmBtnCommonTitle = Confirme su acción
 CloseDialog = Cerrar
-Autofill = Autorellenar
-
-# externalsite
-ExternalSiteSetup=Configuración del enlace al sitio web externo
-ExternalSiteURL=URL del sitio externo de contenido de iframe HTML
-ExternalSiteModuleNotComplete=El módulo Sitio web externo no ha sido configurado correctamente.
-ExampleMyMenuEntry=Mi entrada de menú
-
-# FTP
-FTPClientSetup=Configuración del módulo de cliente FTP o SFTP
-NewFTPClient=Nueva configuración de conexión FTP / FTPS
-FTPArea=Área FTP / FTPS
-FTPAreaDesc=Esta pantalla muestra una vista de un servidor FTP y SFTP.
-SetupOfFTPClientModuleNotComplete=La configuración del módulo de cliente FTP o SFTP parece estar incompleta
-FTPFeatureNotSupportedByYourPHP=Su PHP no admite funciones FTP o SFTP
-FailedToConnectToFTPServer=No se pudo conectar al servidor (servidor %s, puerto %s)
-FailedToConnectToFTPServerWithCredentials=Error al iniciar sesión en el servidor con inicio de sesión/contraseña definidos
-FTPFailedToRemoveFile=No se pudo eliminar el archivo <b>%s</b>.
-FTPFailedToRemoveDir=No se pudo eliminar el directorio <b>%s</b> (Compruebe los permisos y que el directorio está vacío).
-FTPPassiveMode=Modo pasivo
-ChooseAFTPEntryIntoMenu=Elija un sitio FTP / SFTP del menú ...
-FailedToGetFile=No se pudieron obtener los archivos %s

@@ -121,7 +121,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
         foreach (new DirectoryIterator($this->path) as $file) {
             $file = $file->getRealPath();
 
-            if ('.message.sending' == substr($file, -16)) {
+            if (substr($file, -16) == '.message.sending') {
                 $lockedtime = filectime($file);
                 if ((time() - $lockedtime) > $timeout) {
                     rename($file, substr($file, 0, -8));
@@ -145,7 +145,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
         /* Start the transport only if there are queued files to send */
         if (!$transport->isStarted()) {
             foreach ($directoryIterator as $file) {
-                if ('.message' == substr($file->getRealPath(), -8)) {
+                if (substr($file->getRealPath(), -8) == '.message') {
                     $transport->start();
                     break;
                 }
@@ -158,7 +158,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
         foreach ($directoryIterator as $file) {
             $file = $file->getRealPath();
 
-            if ('.message' != substr($file, -8)) {
+            if (substr($file, -8) != '.message') {
                 continue;
             }
 
@@ -198,7 +198,7 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
         // This string MUST stay FS safe, avoid special chars
         $base = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-';
         $ret = '';
-        $strlen = \strlen($base);
+        $strlen = strlen($base);
         for ($i = 0; $i < $count; ++$i) {
             $ret .= $base[random_int(0, $strlen - 1)];
         }

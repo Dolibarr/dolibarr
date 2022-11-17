@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2008-2011  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2017  Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
+/* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2017 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +67,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 	}
 }
 
-if (getDolGlobalInt('TAKEPOS_ORDER_NOTES') == 1) {
+if ($conf->global->TAKEPOS_ORDER_NOTES == 1) {
 	$extrafields = new ExtraFields($db);
 	$extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, 255, 'facturedet', 0, 0, '', '', 0, '', 0, 1);
 }
@@ -80,7 +79,6 @@ if (getDolGlobalInt('TAKEPOS_ORDER_NOTES') == 1) {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-$arrayofjs = array();
 $arrayofcss = array("/takepos/css/colorbox.css");
 
 llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss);
@@ -114,7 +112,7 @@ print '</center>';
 
 print '<br>';
 
-if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
+if ($conf->global->TAKEPOS_BAR_RESTAURANT) {
 	print '<br>';
 	print '<a href="" onclick="Floors(); return false;"><span class="fa fa-glass-cheers"></span> '.$langs->trans("DefineTablePlan").'</a><br>';
 	print '<br><br>';
@@ -173,12 +171,12 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 	print ajax_constantonoff("TAKEPOS_SUPPLEMENTS", array(), $conf->entity, 0, 0, 1, 0);
 	print '</td></tr>';
 
-	if (getDolGlobalInt('TAKEPOS_SUPPLEMENTS')) {
+	if ($conf->global->TAKEPOS_SUPPLEMENTS) {
 		print '<tr class="oddeven"><td>';
 		print $langs->trans("SupplementCategory");
 		print '</td>';
 		print '<td class="center">';
-		print $form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalString('TAKEPOS_SUPPLEMENTS_CATEGORY'), 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0);
+		print $form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY, 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0);
 		print ajax_combobox('TAKEPOS_SUPPLEMENTS_CATEGORY');
 		print "</td></tr>\n";
 	}
@@ -202,32 +200,32 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 
 	print '<br>';
 
-	print $form->buttonsSaveCancel("Save", '');
+	print '<div class="center"><input type="submit" class="button button-save" value="'.$langs->trans("Save").'"></div>';
 }
 
-if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
-	if (getDolGlobalInt('TAKEPOS_QR_MENU')) {
+if (!empty($conf->global->TAKEPOS_BAR_RESTAURANT)) {
+	if ($conf->global->TAKEPOS_QR_MENU) {
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 		print '<br>';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("URL").' - '.$langs->trans("CustomerMenu").'</td><td class="right">'.$langs->trans("QR").'</td>';
+		print '<td>'.$langs->trans("URL").'</td><td class="right">'.$langs->trans("QR").'</td>';
 		print "</tr>\n";
 		print '<tr class="oddeven value"><td>';
-		print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/takepos/public/menu.php">'.$urlwithroot.'/takepos/public/menu.php</a>';
+		print '<a target="_blank" href="'.$urlwithroot.'/takepos/public/menu.php">'.$urlwithroot.'/takepos/public/menu.php</a>';
 		print '</td>';
 		print '<td class="right">';
-		print '<a target="_blank" rel="noopener noreferrer" href="printqr.php"><img src="'.DOL_URL_ROOT.'/takepos/genimg/qr.php" height="42" width="42"></a>';
+		print '<a target="_blank" href="printqr.php"><img src="'.DOL_URL_ROOT.'/takepos/genimg/qr.php" height="42" width="42"></a>';
 		print '</td></tr>';
 		print '</table>';
 	}
 
-	if (getDolGlobalInt('TAKEPOS_AUTO_ORDER')) {
+	if ($conf->global->TAKEPOS_AUTO_ORDER) {
 		print '<br>';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Table").'</td><td>'.$langs->trans("URL").' - '.$langs->trans("AutoOrder").'</td><td class="right">'.$langs->trans("QR").'</td>';
+		print '<td>'.$langs->trans("Table").'</td><td>'.$langs->trans("URL").'</td><td class="right">'.$langs->trans("QR").'</td>';
 		print "</tr>\n";
 
 		//global $dolibarr_main_url_root;
@@ -241,10 +239,10 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 			print $langs->trans("Table")." ".$row['label'];
 			print '</td>';
 			print '<td>';
-			print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid']).'">'.$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid']).'</a>';
+			print "<a target='_blank' href='".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."'>".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."</a>";
 			print '</td>';
 			print '<td class="right">';
-			print '<a target="_blank" rel="noopener noreferrer" href="printqr.php?id='.$row['rowid'].'"><img src="'.DOL_URL_ROOT.'/takepos/genimg/qr.php?key='.dol_encode($row['rowid']).'" height="42" width="42"></a>';
+			print "<a target='_blank' href='printqr.php?id=".$row['rowid']."'><img src='".DOL_URL_ROOT."/takepos/genimg/qr.php?key=".dol_encode($row['rowid'])."' height='42' width='42'></a>";
 			print '</td></tr>';
 		}
 

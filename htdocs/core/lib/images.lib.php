@@ -233,20 +233,19 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	if ($filetowrite) {
 		$imgfonction = '';
 		switch ($newExt) {
-			case 'gif':		// IMG_GIF
+			case 'gif':	// IMG_GIF
 				$imgfonction = 'imagecreatefromgif';
 				break;
-			case 'jpg':		// IMG_JPG
-			case 'jpeg':	// IMG_JPEG
+			case 'jpg':	// IMG_JPG
 				$imgfonction = 'imagecreatefromjpeg';
 				break;
-			case 'png':		// IMG_PNG
+			case 'png':	// IMG_PNG
 				$imgfonction = 'imagecreatefrompng';
 				break;
-			case 'bmp':		// IMG_WBMP
+			case 'bmp':	// IMG_WBMP
 				$imgfonction = 'imagecreatefromwbmp';
 				break;
-			case 'webp': 	// IMG_WEBP
+			case 'webp': // IMG_WEBP
 				$imgfonction = 'imagecreatefromwebp';
 				break;
 		}
@@ -301,14 +300,12 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	}
 
 	// Set transparent color according to image extension
-	$trans_colour = -1;	// By default, undefined
 	switch ($newExt) {
 		case 'gif':	// Gif
 			$trans_colour = imagecolorallocate($imgTarget, 255, 255, 255); // On procede autrement pour le format GIF
 			imagecolortransparent($imgTarget, $trans_colour);
 			break;
 		case 'jpg':	// Jpg
-		case 'jpeg':	// Jpeg
 			$trans_colour = imagecolorallocatealpha($imgTarget, 255, 255, 255, 0);
 			break;
 		case 'png':	// Png
@@ -322,11 +319,11 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 			$trans_colour = imagecolorallocatealpha($imgTarget, 255, 255, 255, 127);
 			break;
 	}
-	if (function_exists("imagefill") && $trans_colour > 0) {
+	if (function_exists("imagefill")) {
 		imagefill($imgTarget, 0, 0, $trans_colour);
 	}
 
-	dol_syslog("dol_imageResizeOrCrop: convert image from ($imgWidth x $imgHeight) at position ($src_x x $src_y) to ($newWidth x $newHeight) as a $extImg");
+	dol_syslog("dol_imageResizeOrCrop: convert image from ($imgWidth x $imgHeight) at position ($src_x x $src_y) to ($newWidth x $newHeight) as $extImg");
 	//imagecopyresized($imgTarget, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insere l'image de base redimensionnee
 	imagecopyresampled($imgTarget, $img, 0, 0, $src_x, $src_y, $newWidth, $newHeight, ($mode == 0 ? $imgWidth : $newWidth), ($mode == 0 ? $imgHeight : $newHeight)); // Insere l'image de base redimensionnee
 
@@ -341,7 +338,6 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 			imagegif($imgTarget, $imgTargetName);
 			break;
 		case 'jpg':	// Jpg
-		case 'jpeg':	// Jpeg
 			$newquality = ($newquality ? $newquality : '100'); // % quality maximum
 			imagejpeg($imgTarget, $imgTargetName, $newquality);
 			break;
@@ -357,8 +353,6 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 			$newquality = ($newquality ? $newquality : '100'); // % quality maximum
 			imagewebp($imgTarget, $imgTargetName, $newquality);
 			break;
-		default:
-			dol_syslog("images.lib.php::imageResizeOrCrop() Format ".$newExt." is not supported", LOG_WARNING);
 	}
 
 	// Set permissions on file
@@ -394,7 +388,7 @@ function dolRotateImage($file_path)
  * Add exif orientation correction for image
  *
  * @param string $fileSource Full path to source image to rotate
- * @param string|bool $fileDest string : Full path to image to rotate | false return gd img  | null  the raw image stream will be outputted directly
+ * @param string $fileDest string : Full path to image to rotate | false return gd img  | null  the raw image stream will be outputted directly
  * @param int $quality output image quality
  * @return bool : true on success or false on failure or gd img if $fileDest is false.
  */
@@ -596,7 +590,6 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			break;
 	}
 
-	// Before PHP8, img was a resource, With PHP8, it is a GdImage
 	if (!is_resource($img) && !($img instanceof \GdImage)) {
 		dol_syslog('Failed to detect type of image. We found infoImg[2]='.$infoImg[2], LOG_WARNING);
 		return 0;
@@ -637,7 +630,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		}
 
 		// replace image with good orientation
-		if (!empty($rotated) && isset($trueImgWidth) && isset($trueImgHeight)) {
+		if (!empty($rotated)) {
 			$img = $rotated;
 			$imgWidth = $trueImgWidth;
 			$imgHeight = $trueImgHeight;

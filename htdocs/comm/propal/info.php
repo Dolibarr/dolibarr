@@ -28,7 +28,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
-if (!empty($conf->project->enabled)) {
+if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -83,12 +83,12 @@ $morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_cl
 // Thirdparty
 $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 // Project
-if (!empty($conf->project->enabled)) {
+if (!empty($conf->projet->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 	if ($user->rights->propal->creer) {
 		if ($action != 'classify') {
-			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
+			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
 			$morehtmlref .= ' : ';
 		}
 		if ($action == 'classify') {
@@ -106,10 +106,9 @@ if (!empty($conf->project->enabled)) {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
-			$morehtmlref .= ' : '.$proj->getNomUrl(1);
-			if ($proj->title) {
-				$morehtmlref .= ' - '.$proj->title;
-			}
+			$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+			$morehtmlref .= $proj->ref;
+			$morehtmlref .= '</a>';
 		} else {
 			$morehtmlref .= '';
 		}

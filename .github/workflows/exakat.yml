@@ -5,14 +5,11 @@ on:
   schedule:
   - cron: "0 20 * * *"
 
-permissions:
-  contents: read
-
 jobs:
   exakat:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
     - name: Exakat
       uses: docker://exakat/exakat-ga
       with:

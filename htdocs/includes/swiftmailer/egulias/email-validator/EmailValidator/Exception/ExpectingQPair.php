@@ -2,7 +2,7 @@
 
 namespace Egulias\EmailValidator\Exception;
 
-class ExpectingQPair extends InvalidEmail
+class ExpectedQPair extends InvalidEmail
 {
     const CODE = 136;
     const REASON = "Expecting QPAIR";

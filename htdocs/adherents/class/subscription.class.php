@@ -215,7 +215,7 @@ class Subscription extends CommonObject
 		$sql .= " tms,";
 		$sql .= " dateadh as dateh,";
 		$sql .= " datef,";
-		$sql .= " subscription, note as note_public, fk_bank";
+		$sql .= " subscription, note, fk_bank";
 		$sql .= " FROM ".MAIN_DB_PREFIX."subscription";
 		$sql .= "	WHERE rowid=".((int) $rowid);
 
@@ -235,8 +235,7 @@ class Subscription extends CommonObject
 				$this->dateh          = $this->db->jdate($obj->dateh);
 				$this->datef          = $this->db->jdate($obj->datef);
 				$this->amount         = $obj->subscription;
-				$this->note           = $obj->note_public;	// deprecated
-				$this->note_public    = $obj->note_public;
+				$this->note           = $obj->note;
 				$this->fk_bank        = $obj->fk_bank;
 				return 1;
 			} else {
@@ -267,20 +266,16 @@ class Subscription extends CommonObject
 			return -1;
 		}
 
-		if (empty($this->note_public) && !empty($this->note)) {	// For backward compatibility
-			$this->note_public = $this->note;
-		}
-
 		$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET ";
 		$sql .= " fk_type = ".((int) $this->fk_type).",";
 		$sql .= " fk_adherent = ".((int) $this->fk_adherent).",";
-		$sql .= " note=".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null').",";
+		$sql .= " note=".($this->note ? "'".$this->db->escape($this->note)."'" : 'null').",";
 		$sql .= " subscription = ".price2num($this->amount).",";
 		$sql .= " dateadh='".$this->db->idate($this->dateh)."',";
 		$sql .= " datef='".$this->db->idate($this->datef)."',";
 		$sql .= " datec='".$this->db->idate($this->datec)."',";
 		$sql .= " fk_bank = ".($this->fk_bank ? ((int) $this->fk_bank) : 'null');
-		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -358,7 +353,7 @@ class Subscription extends CommonObject
 					$result = $member->update_end_date($user);
 
 					if ($this->fk_bank > 0 && is_object($accountline) && $accountline->id > 0) {	// If we found bank account line (this means this->fk_bank defined)
-						$result = $accountline->delete($user); // Return false if refused because line is reconciled
+						$result = $accountline->delete($user); // Return false if refused because line is conciliated
 						if ($result > 0) {
 							$this->db->commit();
 							return 1;
@@ -490,17 +485,17 @@ class Subscription extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			if ($this->db->num_rows($resql)) {
-				$obj = $this->db->fetch_object($resql);
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
 
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
 			}
 
-			$this->db->free($resql);
+			$this->db->free($result);
 		} else {
 			dol_print_error($this->db);
 		}

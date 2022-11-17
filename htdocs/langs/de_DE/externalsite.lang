@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - externalsite
+ExternalSiteSetup=Konfigurations-Link auf externe Website
+ExternalSiteURL=URL der externen Seite zur Einbettung in einen HTML-iframe
+ExternalSiteModuleNotComplete=Modul ExternalSite wurde nicht richtig konfiguriert.
+ExampleMyMenuEntry=Mein Menü-Eintrag

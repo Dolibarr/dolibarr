@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("install", "other", "admin", "products"));
+$langs->loadLangs(array("install", "other", "admin"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -50,9 +50,6 @@ llxHeader();
 print load_fiche_titre($langs->trans("PerfDolibarr"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("YouMayFindPerfAdviceHere", 'https://wiki.dolibarr.org/index.php/FAQ_Increase_Performance').'</span> (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
-
-print '<br>';
-print '<hr>';
 
 // Recupere la version de PHP
 $phpversion = version_php();
@@ -168,7 +165,7 @@ if (ini_get('opcache.preload')) {
 print '<br>';
 
 // HTTPCacheStaticResources
-print '<script type="text/javascript">
+print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
   var getphpurl;
   var cachephpstring;

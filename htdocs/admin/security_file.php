@@ -36,14 +36,6 @@ if (!$user->admin) {
 }
 
 $action = GETPOST('action', 'aZ09');
-$sortfield = GETPOST('sortfield', 'aZ09');
-$sortorder = GETPOST('sortorder', 'aZ09');
-if (empty($sortfield)) {
-	$sortfield = 'date';
-}
-if (empty($sortorder)) {
-	$sortorder = 'desc';
-}
 
 $upload_dir = $conf->admin->dir_temp;
 
@@ -71,7 +63,7 @@ if ($action == 'updateform') {
 	if ($res3 && $res4 && $res5 && $res6) {
 		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	}
-} elseif ($action == 'deletefile') {
+} elseif ($action == 'delete') {
 	// Delete file
 	$langs->load("other");
 	$file = $conf->admin->dir_temp.'/'.GETPOST('urlfile', 'alpha');
@@ -81,6 +73,8 @@ if ($action == 'updateform') {
 	} else {
 		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile', 'alpha')), null, 'errors');
 	}
+	Header('Location: '.$_SERVER["PHP_SELF"]);
+	exit;
 }
 
 
@@ -107,9 +101,9 @@ $head = security_prepare_head();
 
 print dol_get_fiche_head($head, 'file', '', -1);
 
-print '<br>';
 
 // Upload options
+$var = false;
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -128,7 +122,7 @@ if (isset($max)) {
 }
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.dol_escape_htmltag($conf->global->MAIN_UPLOAD_DOC).'"> '.$langs->trans("Kb");
+print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.htmlentities($conf->global->MAIN_UPLOAD_DOC).'"> '.$langs->trans("Kb");
 print '</td>';
 print '</tr>';
 
@@ -138,7 +132,7 @@ print '<td>'.$langs->trans("UMask").'</td><td class="right">';
 print $form->textwithpicto('', $langs->trans("UMaskExplanation"));
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.dol_escape_htmltag($conf->global->MAIN_UMASK).'">';
+print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.htmlentities($conf->global->MAIN_UMASK).'">';
 print '</td>';
 print '</tr>';
 
@@ -159,8 +153,8 @@ if (ini_get('safe_mode') && !empty($conf->global->MAIN_ANTIVIRUS_COMMAND)) {
 		dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
 	}
 }
-print '<input type="text" '.((defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_COMMAND) : '').'">';
-if (defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
+print '<input type="text" '.(defined('MAIN_ANTIVIRUS_COMMAND') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_COMMAND) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_COMMAND) : '').'">';
+if (defined('MAIN_ANTIVIRUS_COMMAND')) {
 	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 }
 print "</td>";
@@ -185,7 +179,7 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print $form->buttonsSaveCancel("Modify", '');
+print '<div class="center"><input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 
@@ -196,7 +190,7 @@ $formfile = new FormFile($db);
 $formfile->form_attach_new_file($_SERVER['PHP_SELF'], $langs->trans("FormToTestFileUploadForm"), 0, 0, 1, 50, '', '', 1, '', 0);
 
 // List of document
-$filearray = dol_dir_list($upload_dir, "files", 0, '', '', $sortfield, $sortorder == 'desc' ? SORT_DESC : SORT_ASC, 1);
+$filearray = dol_dir_list($upload_dir, "files", 0, '', '', 'name', SORT_ASC, 1);
 $formfile->list_of_documents($filearray, null, 'admin_temp', '');
 
 // End of page

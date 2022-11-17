@@ -146,11 +146,6 @@ if ($typeid <= 0) {
 	exit(-2);
 }
 
-if (!empty($dolibarr_main_db_readonly)) {
-	print "Error: instance in read-onyl mode\n";
-	exit(-1);
-}
-
 if (!$confirmed) {
 	print "Hit Enter to continue or CTRL+C to stop...\n";
 	$input = trim(fgets(STDIN));

@@ -44,6 +44,7 @@ if ($result <= 0) {
 	exit;
 }
 
+$physicalperson = 1;
 
 $company = new Societe($db);
 if ($contact->socid) {
@@ -106,7 +107,7 @@ if ($company->id) {
 	}
 
 	// Si contact lie a un tiers non de type "particulier"
-	if ($company->typent_code != 'TE_PRIVATE') {
+	if ($contact->typent_code != 'TE_PRIVATE') {
 		$v->setOrg($company->name);
 	}
 }

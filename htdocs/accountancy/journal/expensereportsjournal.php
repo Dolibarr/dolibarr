@@ -58,7 +58,7 @@ if ($in_bookkeeping == '') {
 $now = dol_now();
 
 // Security check
-if (!isModEnabled('accounting')) {
+if (empty($conf->accounting->enabled)) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
@@ -521,7 +521,7 @@ if (empty($action) || $action == 'view') {
 		print $desc;
 		print '</div>';
 	}
-	print '<div class="tabsAction tabsActionNoBottom centerimp">';
+	print '<div class="tabsAction tabsActionNoBottom">';
 
 	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';

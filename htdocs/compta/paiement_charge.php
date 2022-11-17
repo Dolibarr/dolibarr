@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +70,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$error++;
 		$action = 'create';
 	}
-	if (isModEnabled('banque') && !(GETPOST("accountid") > 0)) {
+	if (!empty($conf->banque->enabled) && !(GETPOST("accountid") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToCredit")), null, 'errors');
 		$error++;
 		$action = 'create';
@@ -84,7 +83,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_') {
 				$other_chid = substr($key, 7);
-				$amounts[$other_chid] = price2num(GETPOST($key));
+				$amounts[$other_chid] = price2num($_POST[$key]);
 			}
 		}
 
@@ -155,7 +154,7 @@ if ($action == 'create') {
 
 	$total = $charge->amount;
 	if (!empty($conf->use_javascript_ajax)) {
-		print "\n".'<script type="text/javascript">';
+		print "\n".'<script type="text/javascript" language="javascript">';
 
 		//Add js for AutoFill
 		print ' $(document).ready(function () {';
@@ -199,7 +198,7 @@ if ($action == 'create') {
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		$sumpaid = $obj->total;
-		$db->free($resql);
+		$db->free();
 	}
 	/*print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td>'.price($sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
@@ -255,7 +254,6 @@ if ($action == 'create') {
 	print "</tr>\n";
 
 	$total = 0;
-	$total_ttc = 0;
 	$totalrecu = 0;
 
 	while ($i < $num) {
@@ -293,7 +291,7 @@ if ($action == 'create') {
 		print "</tr>\n";
 		$total += $objp->total;
 		$total_ttc += $objp->total_ttc;
-		$totalrecu += $objp->amount;
+		$totalrecu += $objp->am;
 		$i++;
 	}
 	if ($i > 1) {

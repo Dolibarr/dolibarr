@@ -127,7 +127,7 @@ class FormSms
 		print "\n<!-- Begin form SMS -->\n";
 
 		print '
-<script type="text/javascript">
+<script language="javascript">
 function limitChars(textarea, limit, infodiv)
 {
     var text = textarea.value;
@@ -178,7 +178,7 @@ function limitChars(textarea, limit, infodiv)
 				} else {
 					if ($this->fromtype) {
 						$langs->load("errors");
-						print '<span class="warning"> &lt;'.$langs->trans("ErrorNoPhoneDefinedForThisUser").'&gt; </span>';
+						print '<font class="warning"> &lt;'.$langs->trans("ErrorNoPhoneDefinedForThisUser").'&gt; </font>';
 					}
 				}
 				print "</td></tr>\n";
@@ -322,7 +322,7 @@ function limitChars(textarea, limit, infodiv)
 
 		if ($showform) {
 			print '<div class="center">';
-			print '<input type="submit" class="button" name="sendmail" value="'.dol_escape_htmltag($langs->trans("SendSms")).'">';
+			print '<input class="button" type="submit" name="sendmail" value="'.dol_escape_htmltag($langs->trans("SendSms")).'">';
 			if ($this->withcancel) {
 				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 				print '<input class="button button-cancel" type="submit" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';

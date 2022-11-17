@@ -302,7 +302,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+		print '<tr><td class="opacitymedium" colspan="8">'.$langs->trans("None").'</td></tr>';
 	}
 	print "</table>";
 	print '</div>';

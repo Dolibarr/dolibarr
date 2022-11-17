@@ -61,13 +61,8 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 		dol_print_error($db);
 	}
 } elseif ($action == 'updateform') {
-	$res1 = 1; $res2 = 1;
-	if (GETPOSTISSET('MAIN_APPLICATION_TITLE')) {
-		$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	}
-	if (GETPOSTISSET('MAIN_SESSION_TIMEOUT')) {
-		$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", GETPOST("MAIN_SESSION_TIMEOUT", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
-	}
+	$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", GETPOST("MAIN_SESSION_TIMEOUT", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	if ($res1 && $res2) {
 		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	}
@@ -99,7 +94,6 @@ $head = security_prepare_head();
 
 print dol_get_fiche_head($head, 'misc', '', -1);
 
-print '<br>';
 
 // Other Options
 print '<table class="noborder centpercent">';
@@ -117,9 +111,9 @@ if (function_exists("imagecreatefrompng")) {
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA');
 	} else {
 		if (empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	}
 } else {
@@ -136,9 +130,9 @@ if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('MAIN_USE_ADVANCED_PERMS');
 } else {
 	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_USE_ADVANCED_PERMS&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_USE_ADVANCED_PERMS&amp;token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_USE_ADVANCED_PERMS&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_USE_ADVANCED_PERMS&amp;token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print "</td></tr>";
@@ -170,11 +164,11 @@ if (ini_get("session.gc_probability") == 0) {
 }
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat right width50" name="MAIN_SESSION_TIMEOUT" type="text" value="'.dol_escape_htmltag($conf->global->MAIN_SESSION_TIMEOUT).'"> '.strtolower($langs->trans("Seconds"));
+print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.htmlentities($conf->global->MAIN_SESSION_TIMEOUT).'"> '.strtolower($langs->trans("Seconds"));
 print '</td>';
 print '</tr>';
 
-/*
+
 if (empty($conf->global->MAIN_APPLICATION_TITLE)) {
 	$conf->global->MAIN_APPLICATION_TITLE = "";
 }
@@ -182,16 +176,15 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_APPLICATION_TITLE" type="text" size="20" value="'.dol_escape_htmltag($conf->global->MAIN_APPLICATION_TITLE).'"> ';
+print '<input class="flat" name="MAIN_APPLICATION_TITLE" type="text" size="20" value="'.htmlentities($conf->global->MAIN_APPLICATION_TITLE).'"> ';
 print '</td>';
 print '</tr>';
-*/
 
 print '</table>';
 
 print dol_get_fiche_end();
 
-print $form->buttonsSaveCancel("Modify", '');
+print '<div class="center"><input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 

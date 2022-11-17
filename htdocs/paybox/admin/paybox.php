@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $servicename = 'PayBox';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'paybox', 'paypal', 'stripe'));
+$langs->loadLangs(array('admin', 'other', 'paybox', 'paypal'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -43,64 +43,64 @@ if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
 	//$result=dolibarr_set_const($db, "PAYBOX_IBS_DEVISE", GETPOST("PAYBOX_IBS_DEVISE"),'chaine',0,'',$conf->entity);
 	$result = dolibarr_set_const($db, "PAYBOX_CGI_URL_V1", GETPOST('PAYBOX_CGI_URL_V1', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "PAYBOX_CGI_URL_V2", GETPOST('PAYBOX_CGI_URL_V2', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "PAYBOX_IBS_SITE", GETPOST('PAYBOX_IBS_SITE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "PAYBOX_IBS_RANG", GETPOST('PAYBOX_IBS_RANG', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "PAYBOX_PBX_IDENTIFIANT", GETPOST('PAYBOX_PBX_IDENTIFIANT', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CREDITOR", GETPOST('ONLINE_PAYMENT_CREDITOR', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_FORM", GETPOST('ONLINE_PAYMENT_MESSAGE_FORM', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_OK", GETPOST('ONLINE_PAYMENT_MESSAGE_OK', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_MESSAGE_KO", GETPOST('ONLINE_PAYMENT_MESSAGE_KO', 'restricthtml'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_SENDEMAIL", GETPOST('ONLINE_PAYMENT_SENDEMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 	// Payment token for URL
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN_UNIQUE", GETPOST('PAYMENT_SECURITY_TOKEN_UNIQUE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 		$result = dolibarr_set_const($db, "PAYBOX_HMAC_KEY", dol_encode(GETPOST('PAYBOX_HMAC_KEY', 'alpha')), 'chaine', 0, '', $conf->entity);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		$error++;
 	}
 
@@ -261,7 +261,7 @@ $doleditor->Create();
 print '</td></tr>';
 
 
-print '<tr class="oddeven"><td class="fieldrequired">';
+print '<tr class="oddeven"><td>';
 print $langs->trans("ONLINE_PAYMENT_SENDEMAIL").'</td><td>';
 print '<input size="32" type="text" name="ONLINE_PAYMENT_SENDEMAIL" value="'.$conf->global->ONLINE_PAYMENT_SENDEMAIL.'">';
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': myemail@myserver.com, Payment service &lt;myemail2@myserver2.com&gt;</span>';
@@ -285,7 +285,7 @@ print '</table>';
 
 print dol_get_fiche_end();
 
-print $form->buttonsSaveCancel("Modify", '');
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 

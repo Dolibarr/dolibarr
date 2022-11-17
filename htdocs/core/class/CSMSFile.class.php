@@ -29,9 +29,8 @@
 
 /**
  *		Class to send SMS
- *      Usage:	$smsfile = new CSMSFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to);
- *      		$smsfile->socid=...; $smsfile->contact_id=...; $smsfile->member_id=...; $smsfile->fk_project=...;
- *             	$smsfile->sendfile();
+ *      Usage: $smsfile = new CSMSFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to);
+ *             $smsfile->sendfile();
  */
 class CSMSFile
 {
@@ -49,8 +48,7 @@ class CSMSFile
 	public $nostop;
 
 	public $socid;
-	public $contact_id;
-	public $member_id;
+	public $contactid;
 
 	public $fk_project;
 
@@ -137,7 +135,6 @@ class CSMSFile
 
 				$sms->socid = $this->socid;
 				$sms->contact_id = $this->contact_id;
-				$sms->member_id = $this->member_id;
 				$sms->project = $this->fk_project;
 
 				$res = $sms->SmsSend();
@@ -170,7 +167,6 @@ class CSMSFile
 
 					$sms->socid = $this->socid;
 					$sms->contact_id = $this->contact_id;
-					$sms->member_id = $this->member_id;
 					$sms->fk_project = $this->fk_project;
 
 					$res = $sms->SmsSend();

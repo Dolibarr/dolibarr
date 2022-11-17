@@ -16,7 +16,7 @@ LoanAccountancyInsuranceCode=Conta contable seguro
 LoanAccountancyInterestCode=Conta contable interese
 ConfirmDeleteLoan=¿Está certo de querer eliminar este empréstito?
 LoanDeleted=Empréstito eliminado correctamente
-ConfirmPayLoan=¿Está certo de querer clasificar como pagado este empréstito?
+ConfirmPayLoan=¿Esta certo de querer clasificar como pagado este empréstito?
 LoanPaid=Empréstito pagado
 ListLoanAssociatedProject=Listaxe de empréstitos asociados ao proxecto
 AddLoan=Crear empréstito
@@ -24,7 +24,7 @@ FinancialCommitment=Compromiso financieiro
 InterestAmount=Interese
 CapitalRemain=Capital restante
 TermPaidAllreadyPaid = Este prazo xa está pago
-CantUseScheduleWithLoanStartedToPaid = Non se pode xerar un cronograma para un rmpréstito cun pago iniciado
+CantUseScheduleWithLoanStartedToPaid = Non pode usar o planificador para un emprétito con pago iniciado
 CantModifyInterestIfScheduleIsUsed = Non pode modificar os intereses se xa está planificado
 # Admin
 ConfigLoan=Configuración do módulo empréstitos

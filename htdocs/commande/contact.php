@@ -91,6 +91,13 @@ if ($action == 'addcontact' && $user->rights->commande->creer) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
+/*
+elseif ($action == 'setaddress' && $user->rights->commande->creer)
+{
+	$object->fetch($id);
+	$result=$object->setDeliveryAddress($_POST['fk_address']);
+	if ($result < 0) dol_print_error($db,$object->error);
+}*/
 
 
 /*
@@ -131,12 +138,12 @@ if ($id > 0 || !empty($ref)) {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (!empty($conf->projet->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if ($user->rights->commande->creer) {
 				if ($action != 'classify') {
-					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 					$morehtmlref .= ' : ';
 				}
 				if ($action == 'classify') {
@@ -154,10 +161,9 @@ if ($id > 0 || !empty($ref)) {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= ' : '.$proj->getNomUrl(1);
-					if ($proj->title) {
-						$morehtmlref .= ' - '.$proj->title;
-					}
+					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+					$morehtmlref .= $proj->ref;
+					$morehtmlref .= '</a>';
 				} else {
 					$morehtmlref .= '';
 				}

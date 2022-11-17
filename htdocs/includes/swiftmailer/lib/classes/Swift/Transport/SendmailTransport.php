@@ -24,21 +24,23 @@ class Swift_Transport_SendmailTransport extends Swift_Transport_AbstractSmtpTran
      *
      * @var array
      */
-    private $params = [
+    private $params = array(
         'timeout' => 30,
         'blocking' => 1,
         'command' => '/usr/sbin/sendmail -bs',
         'type' => Swift_Transport_IoBuffer::TYPE_PROCESS,
-        ];
+        );
 
     /**
      * Create a new SendmailTransport with $buf for I/O.
      *
-     * @param string $localDomain
+     * @param Swift_Transport_IoBuffer     $buf
+     * @param Swift_Events_EventDispatcher $dispatcher
+     * @param string                       $localDomain
      */
-    public function __construct(Swift_Transport_IoBuffer $buf, Swift_Events_EventDispatcher $dispatcher, $localDomain = '127.0.0.1', Swift_AddressEncoder $addressEncoder = null)
+    public function __construct(Swift_Transport_IoBuffer $buf, Swift_Events_EventDispatcher $dispatcher, $localDomain = '127.0.0.1')
     {
-        parent::__construct($buf, $dispatcher, $localDomain, $addressEncoder);
+        parent::__construct($buf, $dispatcher, $localDomain);
     }
 
     /**
@@ -91,7 +93,8 @@ class Swift_Transport_SendmailTransport extends Swift_Transport_AbstractSmtpTran
      * NOTE: If using 'sendmail -t' you will not be aware of any failures until
      * they bounce (i.e. send() will always return 100% success).
      *
-     * @param string[] $failedRecipients An array of failures by-reference
+     * @param Swift_Mime_SimpleMessage $message
+     * @param string[]           $failedRecipients An array of failures by-reference
      *
      * @return int
      */
@@ -111,24 +114,24 @@ class Swift_Transport_SendmailTransport extends Swift_Transport_AbstractSmtpTran
             }
 
             if (false === strpos($command, ' -f')) {
-                $command .= ' -f'.escapeshellarg($this->getReversePath($message) ?? '');
+                $command .= ' -f'.escapeshellarg($this->getReversePath($message));
             }
 
-            $buffer->initialize(array_merge($this->params, ['command' => $command]));
+            $buffer->initialize(array_merge($this->params, array('command' => $command)));
 
             if (false === strpos($command, ' -i') && false === strpos($command, ' -oi')) {
-                $buffer->setWriteTranslations(["\r\n" => "\n", "\n." => "\n.."]);
+                $buffer->setWriteTranslations(array("\r\n" => "\n", "\n." => "\n.."));
             } else {
-                $buffer->setWriteTranslations(["\r\n" => "\n"]);
+                $buffer->setWriteTranslations(array("\r\n" => "\n"));
             }
 
-            $count = \count((array) $message->getTo())
-                + \count((array) $message->getCc())
-                + \count((array) $message->getBcc())
+            $count = count((array) $message->getTo())
+                + count((array) $message->getCc())
+                + count((array) $message->getBcc())
                 ;
             $message->toByteStream($buffer);
             $buffer->flushBuffers();
-            $buffer->setWriteTranslations([]);
+            $buffer->setWriteTranslations(array());
             $buffer->terminate();
 
             if ($evt) {

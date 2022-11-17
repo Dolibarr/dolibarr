@@ -173,7 +173,7 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 END MODULEBUILDER DRAFT MYOBJECT */
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 $NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
@@ -234,7 +234,7 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 }
 */
 
-print '</div></div>';
+print '</div></div></div>';
 
 // End of page
 llxFooter();

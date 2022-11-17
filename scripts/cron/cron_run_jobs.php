@@ -22,7 +22,7 @@
 /**
  * \file scripts/cron/cron_run_jobs.php
  * \ingroup cron
- * \brief Execute pendings jobs from command line
+ * \brief Execute pendings jobs
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -42,11 +42,6 @@ if (!defined('NOLOGIN')) {
 }
 if (!defined('NOSESSION')) {
 	define('NOSESSION', '1');
-}
-
-// So log file will have a suffix
-if (!defined('USESUFFIXINLOG')) {
-	define('USESUFFIXINLOG', '_cron');
 }
 
 $sapi_type = php_sapi_name();
@@ -81,8 +76,6 @@ $userlogin = $argv[2];
 $version = DOL_VERSION;
 $error = 0;
 
-$hookmanager->initHooks(array('cli'));
-
 
 /*
  * Main
@@ -109,11 +102,6 @@ if (empty($conf->cron->enabled)) {
 // Check security key
 if ($key != $conf->global->CRON_KEY) {
 	print "Error: securitykey is wrong\n";
-	exit(-1);
-}
-
-if (!empty($dolibarr_main_db_readonly)) {
-	print "Error: instance in read-only mode\n";
 	exit(-1);
 }
 
@@ -178,7 +166,7 @@ if (!empty($id)) {
 	$filter['t.rowid'] = $id;
 }
 
-$result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
+$result = $object->fetch_all('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result < 0) {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php fetch Error ".$object->error, LOG_ERR);

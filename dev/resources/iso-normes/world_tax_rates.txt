@@ -1,6 +1,3 @@
-VAT Rates
----------
-
 http://www.taxrates.cc/index.html
 https://en.wikipedia.org/wiki/List_of_countries_by_tax_rates
 

@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-if (!empty($conf->project->enabled)) {
+if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -41,8 +41,8 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -74,7 +74,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
 
-if (empty($user->rights->fournisseur->commande->lire)) {
+if (!$user->rights->fournisseur->commande->lire) {
 	accessforbidden();
 }
 
@@ -139,12 +139,12 @@ $morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_
 // Thirdparty
 $morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 // Project
-if (!empty($conf->project->enabled)) {
+if (!empty($conf->projet->enabled)) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 	if ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer) {
 		if ($action != 'classify') {
-			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			$morehtmlref .= ' : ';
 		}
 		if ($action == 'classify') {
@@ -162,10 +162,9 @@ if (!empty($conf->project->enabled)) {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
-			$morehtmlref .= ' : '.$proj->getNomUrl(1);
-			if ($proj->title) {
-				$morehtmlref .= ' - '.$proj->title;
-			}
+			$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+			$morehtmlref .= $proj->ref;
+			$morehtmlref .= '</a>';
 		} else {
 			$morehtmlref .= '';
 		}
@@ -201,7 +200,7 @@ if ($permok) {
 
 print '<div class="tabsAction">';
 
-if (isModEnabled('agenda')) {
+if (!empty($conf->agenda->enabled)) {
 	if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
 	} else {

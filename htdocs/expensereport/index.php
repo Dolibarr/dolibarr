@@ -48,8 +48,8 @@ if ($user->socid) {
 $result = restrictedArea($user, 'expensereport', '', '');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -185,7 +185,7 @@ print '</div>';
 
 
 // Right area
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 $max = 10;
@@ -265,7 +265,7 @@ if ($result) {
 	dol_print_error($db);
 }
 
-print '</div></div>';
+print '</div></div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardExpenseReport', $parameters, $object); // Note that $action and $object may have been modified by hook

@@ -96,7 +96,6 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 		$tooltip = '';
 		$texte = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="COMPANY_DIGITARIA_MASK_SUPPLIER">';
 		$texte .= '<input type="hidden" name="param2" value="COMPANY_DIGITARIA_MASK_CUSTOMER">';
@@ -126,7 +125,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 			$texte .= $langs->trans('COMPANY_DIGITARIA_UNIQUE_CODE').' = '.yn(1)."<br>\n";
 		}
 		$texte .= '</td>';
-		$texte .= '<td class="right"><input type="submit" class="button button-edit reposition" name="modify" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 		$texte .= '</tr></table>';
 		$texte .= '</form>';
 
@@ -253,32 +252,17 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	 */
 	public function checkIfAccountancyCodeIsAlreadyUsed($db, $code, $type = '')
 	{
-		global $conf;
-
 		if ($type == 'supplier') {
-			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-				$typethirdparty = 'accountancy_code_supplier';
-			} else {
-				$typethirdparty = 'code_compta_fournisseur';
-			}
+			$typethirdparty = 'code_compta_fournisseur';
 		} elseif ($type == 'customer') {
-			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-				$typethirdparty = 'accountancy_code_customer';
-			} else {
-				$typethirdparty = 'code_compta';
-			}
+			$typethirdparty = 'code_compta';
 		} else {
 			$this->error = 'Bad value for parameter type';
 			return -1;
 		}
 
-		if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-			$sql = "SELECT " . $typethirdparty . " FROM " . MAIN_DB_PREFIX . "societe_perentity";
-			$sql .= " WHERE " . $typethirdparty . " = '" . $db->escape($code) . "'";
-		} else {
-			$sql = "SELECT " . $typethirdparty . " FROM " . MAIN_DB_PREFIX . "societe";
-			$sql .= " WHERE " . $typethirdparty . " = '" . $db->escape($code) . "'";
-		}
+		$sql = "SELECT ".$typethirdparty." FROM ".MAIN_DB_PREFIX."societe";
+		$sql .= " WHERE ".$typethirdparty." = '".$db->escape($code)."'";
 
 		$resql = $db->query($sql);
 		if ($resql) {

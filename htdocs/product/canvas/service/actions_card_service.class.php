@@ -39,13 +39,6 @@ class ActionsCardService
 	public $field_list = array();
 	public $list_datas = array();
 
-	public $id;
-	public $ref;
-	public $description;
-	public $note;
-	public $price;
-	public $price_min;
-
 
 	/**
 	 *    Constructor
@@ -203,7 +196,6 @@ class ActionsCardService
 			}
 
 			// Duration
-			$dur = array();
 			if ($this->object->duration_value > 1) {
 				$dur = array("h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
 			} elseif ($this->object->duration_value > 0) {
@@ -294,7 +286,6 @@ class ActionsCardService
 		if ($search_categ) {
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 		}
-		$fourn_id = 0;
 		if (GETPOST("fourn_id", 'int') > 0) {
 			$fourn_id = GETPOST("fourn_id", 'int');
 			$sql .= ", ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";

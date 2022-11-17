@@ -159,9 +159,8 @@ class SupplierInvoices extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			$errormessage = '';
-			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			if (!DolibarrApi::_checkFilters($sqlfilters)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -202,16 +201,12 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Create supplier invoice object
 	 *
-	 * Note: soc_id = dolibarr_order_id
-	 *
-	 * Example: {'ref': 'auto', 'ref_supplier': '7985630', 'socid': 1, 'note': 'Inserted with Python', 'order_supplier': 1, 'date': '2021-07-28'}
-	 *
 	 * @param array $request_data Request datas
 	 *
 	 * @return int  ID of supplier invoice
 	 *
 	 * @throws RestException 401
-	 * @throws RestException 500	System error
+	 * @throws RestException 500
 	 */
 	public function post($request_data = null)
 	{
@@ -283,7 +278,7 @@ class SupplierInvoices extends DolibarrApi
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500	System error
+	 * @throws RestException 500
 	 */
 	public function delete($id)
 	{
@@ -300,7 +295,7 @@ class SupplierInvoices extends DolibarrApi
 		}
 
 		if ($this->invoice->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error when deleting invoice');
+			throw new RestException(500);
 		}
 
 		return array(
@@ -326,7 +321,7 @@ class SupplierInvoices extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 * @throws RestException 405
-	 * @throws RestException 500	System error
+	 * @throws RestException 500
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
@@ -450,9 +445,9 @@ class SupplierInvoices extends DolibarrApi
 		}
 
 		// Calculate amount to pay
-		$totalpaid = $this->invoice->getSommePaiement();
+		$totalpaye = $this->invoice->getSommePaiement();
 		$totaldeposits = $this->invoice->getSumDepositsUsed();
-		$resteapayer = price2num($this->invoice->total_ttc - $totalpaid - $totaldeposits, 'MT');
+		$resteapayer = price2num($this->invoice->total_ttc - $totalpaye - $totaldeposits, 'MT');
 
 		$this->db->begin();
 
@@ -473,6 +468,7 @@ class SupplierInvoices extends DolibarrApi
 		$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paiement->paiementid = $payment_mode_id;
 		$paiement->paiementcode = dol_getIdFromCode($this->db, $payment_mode_id, 'c_paiement', 'id', 'code', 1);
+		$paiement->oper = $paiement->paiementcode; // For backward compatibility
 		$paiement->num_payment = $num_payment;
 		$paiement->note_public = $comment;
 
@@ -529,10 +525,6 @@ class SupplierInvoices extends DolibarrApi
 	/**
 	 * Add a line to given supplier invoice
 	 *
-	 * Note: socid = dolibarr_order_id, pu_ht = net price, remise = discount
-	 *
-	 * Example: {'socid': 1, 'qty': 1, 'pu_ht': 21.0, 'tva_tx': 25.0, 'fk_product': '1189', 'product_type': 0, 'remise_percent': 1.0, 'vat_src_code': None}
-	 *
 	 * @param int   $id             Id of supplier invoice to update
 	 * @param array $request_data   supplier invoice line data
 	 *
@@ -557,8 +549,8 @@ class SupplierInvoices extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->description = sanitizeVal($request_data->description, 'restricthtml');
-		$request_data->ref_supplier = sanitizeVal($request_data->ref_supplier);
+		$request_data->description = checkVal($request_data->description, 'restricthtml');
+		$request_data->ref_supplier = checkVal($request_data->ref_supplier);
 
 		$updateRes = $this->invoice->addline(
 			$request_data->description,
@@ -624,8 +616,8 @@ class SupplierInvoices extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->description = sanitizeVal($request_data->description, 'restricthtml');
-		$request_data->ref_supplier = sanitizeVal($request_data->ref_supplier);
+		$request_data->description = checkVal($request_data->description, 'restricthtml');
+		$request_data->ref_supplier = checkVal($request_data->ref_supplier);
 
 		$updateRes = $this->invoice->updateline(
 			$lineid,
@@ -646,8 +638,7 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->array_options,
 			$request_data->fk_unit,
 			$request_data->multicurrency_subprice,
-			$request_data->ref_supplier,
-			$request_data->rang
+			$request_data->ref_supplier
 		);
 
 		if ($updateRes > 0) {

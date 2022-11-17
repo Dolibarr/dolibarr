@@ -135,7 +135,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 		$widthtouse = $maxwidthtouse;
 		$heighttouse = 0; // old value for image
 		$tmp = dol_getImageSize($photo, false);
-		if (!empty($tmp['height'])) {
+		if ($tmp['height']) {
 			$imgratio = $tmp['width'] / $tmp['height'];
 			if ($imgratio >= $defaultratio) {
 				$widthtouse = $maxwidthtouse;

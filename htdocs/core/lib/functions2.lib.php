@@ -286,7 +286,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_creation, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_creation, "dayhour", "tzuserrel").' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_creation, "dayhour", "tzuserrel").' &nbsp;'.$langs->trans("ClientHour");
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -341,7 +341,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_modification, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_modification, "dayhour", "tzuserrel").' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_modification, "dayhour", "tzuserrel").' &nbsp;'.$langs->trans("ClientHour");
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -396,7 +396,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_validation, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_validation, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -451,7 +451,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_approve, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -498,7 +498,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_approve2, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve2, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve2, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -508,7 +508,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User signature
-	if (!empty($object->user_signature) || !empty($object->user_signature_id)) {
+	if (!empty($object->user_signature)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -526,7 +526,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_signature_id ? $object->user_signature_id : $object->user_signature);
+			$userstatic->fetch($object->user_signature);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -553,7 +553,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_signature, 'dayhour');
 		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans('CurrentHour').'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_signature, 'dayhour', 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans('ClientHour').'</span>';
+			print ' '.$langs->trans('CurrentHour').' &nbsp; / &nbsp; '.dol_print_date($object->date_signature, 'dayhour', 'tzuserrel').' &nbsp;'.$langs->trans('ClientHour');
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -563,7 +563,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User close
-	if (!empty($object->user_cloture) || !empty($object->user_closing) || !empty($object->user_closing_id)) {
+	if (!empty($object->user_cloture) || !empty($object->user_closing)) {
 		if (isset($object->user_cloture) && !empty($object->user_cloture)) {
 			$object->user_closing = $object->user_cloture;
 		}
@@ -584,7 +584,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_closing_id ? $object->user_closing_id : $object->user_closing);
+			$userstatic->fetch($object->user_closing);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -614,7 +614,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_closing, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_closing, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_closing, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -624,11 +624,11 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// User conciliate
-	if (!empty($object->user_rappro) || !empty($object->user_rappro_id)) {
+	if (!empty($object->user_rappro)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
-		print $langs->trans("ReconciledBy");
+		print $langs->trans("ConciliatedBy");
 		if ($usetable) {
 			print '</td><td>';
 		} else {
@@ -642,7 +642,7 @@ function dol_print_object_info($object, $usetable = 0)
 			}
 		} else {
 			$userstatic = new User($db);
-			$userstatic->fetch($object->user_rappro_id ? $object->user_rappro_id : $object->user_rappro);
+			$userstatic->fetch($object->user_rappro);
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(1, '', 0, 0, 0);
 			} else {
@@ -669,7 +669,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_rappro, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_rappro, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -691,7 +691,7 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 		print dol_print_date($object->date_envoi, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_envoi, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi, "dayhour", 'tzuserrel').' &nbsp;'.$langs->trans("ClientHour");
 		}
 		if ($usetable) {
 			print '</td></tr>';
@@ -1235,7 +1235,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$sqlwhere .= "(SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$db->escape($yearcomp)."'";
 			$sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") = '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
 		} else { // reset is done on january
-			$sqlwhere .= "(SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$db->escape($yearcomp)."')";
+			$sqlwhere .= '(SUBSTRING('.$field.', '.$yearpos.', '.$yearlen.") = '".$db->escape($yearcomp)."')";
 		}
 	}
 	//print "sqlwhere=".$sqlwhere." yearcomp=".$yearcomp."<br>\n";	// sqlwhere and yearcomp defined only if we ask a reset
@@ -1250,7 +1250,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if ($posnumstart < 0) {
 		return 'ErrorBadMaskFailedToLocatePosOfSequence';
 	}
-	$sqlstring = "SUBSTRING(".$field.", ".($posnumstart + 1).", ".dol_strlen($maskcounter).")";
+	$sqlstring = 'SUBSTRING('.$field.', '.($posnumstart + 1).', '.dol_strlen($maskcounter).')';
 
 	// Define $maskLike
 	$maskLike = dol_string_nospecial($mask);
@@ -1291,7 +1291,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$sql .= $where;
 	}
 	if ($sqlwhere) {
-		$sql .= " AND ".$sqlwhere;
+		$sql .= ' AND '.$sqlwhere;
 	}
 
 	//print $sql.'<br>';
@@ -1351,7 +1351,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$sql .= $where;
 		}
 		if ($sqlwhere) {
-			$sql .= " AND ".$sqlwhere;
+			$sql .= ' AND '.$sqlwhere;
 		}
 
 		dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
@@ -1368,7 +1368,6 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		$numFinal = $ref;
 	} elseif ($mode == 'next') {
 		$counter++;
-		$maskrefclient_counter = 0;
 
 		// If value for $counter has a length higher than $maskcounter chars
 		if ($counter >= pow(10, dol_strlen($maskcounter))) {
@@ -1399,6 +1398,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'), $maskrefclient_clientcode.str_pad("", dol_strlen($maskrefclient_maskcounter), "_"), $maskrefclient_maskLike);
 
 			// Get counter in database
+			$maskrefclient_counter = 0;
 			$maskrefclient_sql = "SELECT MAX(".$maskrefclient_sqlstring.") as val";
 			$maskrefclient_sql .= " FROM ".MAIN_DB_PREFIX.$table;
 			//$sql.= " WHERE ".$field." not like '(%'";
@@ -1414,7 +1414,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			if ($sqlwhere) {
 				$maskrefclient_sql .= ' AND '.$sqlwhere; //use the same sqlwhere as general mask
 			}
-			$maskrefclient_sql .= " AND (SUBSTRING(".$field.", ".(strpos($maskwithnocode, $maskrefclient) + 1).", ".dol_strlen($maskrefclient_maskclientcode).") = '".$db->escape($maskrefclient_clientcode)."')";
+			$maskrefclient_sql .= ' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode, $maskrefclient) + 1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$db->escape($maskrefclient_clientcode)."')";
 
 			dol_syslog("functions2::get_next_value maskrefclient", LOG_DEBUG);
 			$maskrefclient_resql = $db->query($maskrefclient_sql);
@@ -1451,17 +1451,14 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		// Now we replace the counter
 		$maskbefore = '{'.$masktri.'}';
 		$maskafter = str_pad($counter, dol_strlen($maskcounter), "0", STR_PAD_LEFT);
-		//print 'x'.$numFinal.' - '.$maskbefore.' - '.$maskafter.'y';exit;
+		//print 'x'.$maskbefore.'-'.$maskafter.'y';
 		$numFinal = str_replace($maskbefore, $maskafter, $numFinal);
 
 		// Now we replace the refclient
 		if ($maskrefclient) {
-			//print "maskrefclient=".$maskrefclient." maskrefclient_counter=".$maskrefclient_counter." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode." maskrefclient_clientcode=".$maskrefclient_clientcode." maskrefclient_maskcounter=".$maskrefclient_maskcounter."\n<br>";exit;
+			//print "maskrefclient=".$maskrefclient." maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode." maskrefclient_clientcode=".$maskrefclient_clientcode."\n<br>";exit;
 			$maskrefclient_maskbefore = '{'.$maskrefclient.'}';
-			$maskrefclient_maskafter = $maskrefclient_clientcode;
-			if (dol_strlen($maskrefclient_maskcounter) > 0) {
-				$maskrefclient_maskafter .= str_pad($maskrefclient_counter, dol_strlen($maskrefclient_maskcounter), "0", STR_PAD_LEFT);
-			}
+			$maskrefclient_maskafter = $maskrefclient_clientcode.str_pad($maskrefclient_counter, dol_strlen($maskrefclient_maskcounter), "0", STR_PAD_LEFT);
 			$numFinal = str_replace($maskrefclient_maskbefore, $maskrefclient_maskafter, $numFinal);
 		}
 
@@ -1793,8 +1790,8 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 
 	// We remove old parameters for all keys in $tab
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
-	$sql .= " WHERE fk_user = ".((int) $user->id);
-	$sql .= " AND entity = ".((int) $conf->entity);
+	$sql .= " WHERE fk_user = ".$user->id;
+	$sql .= " AND entity = ".$conf->entity;
 	$sql .= " AND param in (";
 	$i = 0;
 	foreach ($tab as $key => $value) {
@@ -1818,7 +1815,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 		// Set new parameters
 		if ($value) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
-			$sql .= " VALUES (".((int) $user->id).",".((int) $conf->entity).",";
+			$sql .= " VALUES (".$user->id.",".$conf->entity.",";
 			$sql .= " '".$db->escape($key)."','".$db->escape($value)."')";
 
 			dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
@@ -1879,7 +1876,7 @@ function version_os($option = '')
  * 	Return PHP version
  *
  * 	@return		string			PHP version
- *  @see		versionphparray(), versioncompare()
+ *  @see		versionphparray()
  */
 function version_php()
 {
@@ -1890,7 +1887,7 @@ function version_php()
  * 	Return Dolibarr version
  *
  * 	@return		string			Dolibarr version
- *  @see		versiondolibarrarray(), versioncompare()
+ *  @see		versiondolibarrarray()
  */
 function version_dolibarr()
 {
@@ -2134,38 +2131,30 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 
 	// Special cases, to work with non standard path
 	if ($objecttype == 'facture' || $objecttype == 'invoice') {
-		$langs->load('bills');
 		$classpath = 'compta/facture/class';
 		$module = 'facture';
 		$myobject = 'facture';
 	} elseif ($objecttype == 'commande' || $objecttype == 'order') {
-		$langs->load('orders');
 		$classpath = 'commande/class';
 		$module = 'commande';
 		$myobject = 'commande';
 	} elseif ($objecttype == 'propal') {
-		$langs->load('propal');
 		$classpath = 'comm/propal/class';
 	} elseif ($objecttype == 'supplier_proposal') {
-		$langs->load('supplier_proposal');
 		$classpath = 'supplier_proposal/class';
 	} elseif ($objecttype == 'shipping') {
-		$langs->load('sendings');
 		$classpath = 'expedition/class';
 		$myobject = 'expedition';
 		$module = 'expedition_bon';
 	} elseif ($objecttype == 'delivery') {
-		$langs->load('deliveries');
 		$classpath = 'delivery/class';
 		$myobject = 'delivery';
 		$module = 'delivery_note';
 	} elseif ($objecttype == 'contract') {
-		$langs->load('contracts');
 		$classpath = 'contrat/class';
 		$module = 'contrat';
 		$myobject = 'contrat';
 	} elseif ($objecttype == 'member') {
-		$langs->load('members');
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$myobject = 'adherent';
@@ -2174,16 +2163,10 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$module = 'cabinetmed';
 		$myobject = 'cabinetmedcons';
 	} elseif ($objecttype == 'fichinter') {
-		$langs->load('interventions');
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
 		$myobject = 'fichinter';
-	} elseif ($objecttype == 'project') {
-		$langs->load('projects');
-		$classpath = 'projet/class';
-		$module = 'projet';
 	} elseif ($objecttype == 'task') {
-		$langs->load('projects');
 		$classpath = 'projet/class';
 		$module = 'projet';
 		$myobject = 'task';
@@ -2229,11 +2212,6 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
-	} elseif ($objecttype == 'facturerec') {
-		$classpath = 'compta/facture/class';
-		$classfile = 'facture-rec';
-		$classname = 'FactureRec';
-		$module='facture';
 	}
 
 	if (!empty($conf->$module->enabled)) {
@@ -2272,7 +2250,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 	$listofparentid = array();
 
 	// Get list of all id in array listofid and all parents in array listofparentid
-	$sql = "SELECT rowid, ".$fieldfkparent." as parent_id FROM ".MAIN_DB_PREFIX.$tabletocleantree;
+	$sql = 'SELECT rowid, '.$fieldfkparent.' as parent_id FROM '.MAIN_DB_PREFIX.$tabletocleantree;
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -2655,7 +2633,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fichinter';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
-	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions'))) {
+	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms'))) {
 		$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
 	}
 

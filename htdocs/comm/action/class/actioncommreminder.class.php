@@ -205,9 +205,9 @@ class ActionCommReminder extends CommonObject
 	}
 
 	/**
-	 *  Return label of the status of a reminder
+	 *  Retourne le libelle du status d'un user (actif, inactif)
 	 *
-	 *  @param  int     $mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -228,18 +228,18 @@ class ActionCommReminder extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		$labelStatus = $langs->transnoentitiesnoconv('ToDo');
+		$labelStatus = $langs->trans('ToDo');
 		if ($status == 1) {
-			$labelStatus = $langs->transnoentitiesnoconv('Done');
+			$labelStatus = $langs->trans('Done');
 		} elseif ($status == -1) {
-			$labelStatus = $langs->transnoentitiesnoconv('Error');
+			$labelStatus = $langs->trans('Error');
 		}
 
-		$labelStatusShort = $langs->transnoentitiesnoconv('ToDo');
+		$labelStatusShort = $langs->trans('ToDo');
 		if ($status == 1) {
-			$labelStatus = $langs->transnoentitiesnoconv('Done');
+			$labelStatus = $langs->trans('Done');
 		} elseif ($status == -1) {
-			$labelStatus = $langs->transnoentitiesnoconv('Error');
+			$labelStatus = $langs->trans('Error');
 		}
 
 		$statusType = 'status5';

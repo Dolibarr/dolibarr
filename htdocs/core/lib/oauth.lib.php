@@ -25,13 +25,13 @@
 
 // Supported OAUTH (a provider is supported when a file xxx_oauthcallback.php is available into htdocs/core/modules/oauth)
 $supportedoauth2array = array(
-	'OAUTH_GOOGLE_NAME'=>array('callbackfile' => 'google', 'picto' => 'google', 'urlforapp' => 'OAUTH_GOOGLE_DESC', 'name'=>'Google', 'urlforcredentials'=>'https://console.developers.google.com/'),
+	'OAUTH_GOOGLE_NAME'=>'google',
 );
-if (!empty($conf->stripe->enabled)) {
-	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME'] = array('callbackfile' => 'stripetest', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeTest', 'urlforcredentials'=>'');
-	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME'] = array('callbackfile' => 'stripelive', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeLive', 'urlforcredentials'=>'');
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME'] = 'stripetest';
+	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME'] = 'stripelive';
 }
-$supportedoauth2array['OAUTH_GITHUB_NAME'] = array('callbackfile' => 'github', 'picto' => 'github', 'urlforapp' => 'OAUTH_GITHUB_DESC', 'name'=>'GitHub', 'urlforcredentials'=>'https://github.com/settings/developers');
+$supportedoauth2array['OAUTH_GITHUB_NAME'] = 'github';
 
 
 

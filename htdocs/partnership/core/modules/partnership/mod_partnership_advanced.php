@@ -79,9 +79,9 @@ class mod_partnership_advanced extends ModeleNumRefPartnership
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskPartnership" value="'.getDolGlobalString('PARTNERSHIP_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskPartnership" value="'.$conf->global->PARTNERSHIP_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte .= '</tr>';
 
@@ -132,7 +132,7 @@ class mod_partnership_advanced extends ModeleNumRefPartnership
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = getDolGlobalString('PARTNERSHIP_ADVANCED_MASK');
+		$mask = $conf->global->PARTNERSHIP_ADVANCED_MASK;
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

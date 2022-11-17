@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,27 +101,11 @@ class PaymentSocialContribution extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @var int ID
-	 */
-	public $chid;
-
-	/**
-	 * @var integer|string datepaye
-	 */
-	public $datepaye;
-
-	/**
-	 * @var integer|string paiementtype
-	 */
-	public $paiementtype;
-
-
-	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	public function __construct(DoliDB $db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -545,14 +528,14 @@ class PaymentSocialContribution extends CommonObject
 	 */
 	public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		// Clean data
 		$this->num_payment = trim($this->num_payment);
 
 		$error = 0;
 
-		if (isModEnabled('banque')) {
+		if (!empty($conf->banque->enabled)) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);
@@ -617,7 +600,7 @@ class PaymentSocialContribution extends CommonObject
 							$result = $acc->add_url_line(
 								$bank_line_id,
 								$socialcontrib->fk_user,
-								DOL_URL_ROOT.'/user/card.php?id=',
+								DOL_URL_ROOT . '/user/card.php?id=',
 								$fuser->getFullName($langs),
 								'user'
 							);

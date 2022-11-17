@@ -58,7 +58,7 @@ foreach ($object->fields as $key => $val) {
 	$value = $object->$key;
 
 	print '<tr class="field_'.$key.'"><td';
-	print ' class="'.(empty($val['tdcss']) ? 'titlefield' : $val['tdcss']).' fieldname_'.$key;
+	print ' class="titlefield fieldname_'.$key;
 	//if ($val['notnull'] > 0) print ' fieldrequired';     // No fieldrequired on the view output
 	if ($val['type'] == 'text' || $val['type'] == 'html') {
 		print ' tdtop';
@@ -67,11 +67,7 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($val['help'])) {
 		print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	} else {
-		if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 1) {
-			print showValueWithClipboardCPButton($value, 0, $langs->transnoentitiesnoconv($val['label']));
-		} else {
-			print $langs->trans($val['label']);
-		}
+		print $langs->trans($val['label']);
 	}
 	print '</td>';
 	print '<td class="valuefield fieldname_'.$key;
@@ -85,19 +81,7 @@ foreach ($object->fields as $key => $val) {
 	if (in_array($val['type'], array('text', 'html'))) {
 		print '<div class="longmessagecut">';
 	}
-	if ($key == 'lang') {
-		$langs->load("languages");
-		$labellang = ($value ? $langs->trans('Language_'.$value) : '');
-		print picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');
-		print $labellang;
-	} else {
-		if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 2) {
-			$out = $object->showOutputField($val, $key, $value, '', '', '', 0);
-			print showValueWithClipboardCPButton($out, 0, $out);
-		} else {
-			print $object->showOutputField($val, $key, $value, '', '', '', 0);
-		}
-	}
+	print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	//print dol_escape_htmltag($object->$key, 1, 1);
 	if (in_array($val['type'], array('text', 'html'))) {
 		print '</div>';
@@ -110,9 +94,11 @@ print '</table>';
 
 // We close div and reopen for second column
 print '</div>';
+print '<div class="fichehalfright">';
 
+print '<div class="underbanner clearboth"></div>';
+print '<table class="border centpercent tableforfield">';
 
-$rightpart = '';
 $alreadyoutput = 1;
 foreach ($object->fields as $key => $val) {
 	if ($alreadyoutput) {
@@ -137,46 +123,38 @@ foreach ($object->fields as $key => $val) {
 
 	$value = $object->$key;
 
-	$rightpart .= '<tr><td';
-	$rightpart .= ' class="'.(empty($val['tdcss']) ? 'titlefield' : $val['tdcss']).'  fieldname_'.$key;
-	//if ($val['notnull'] > 0) $rightpart .= ' fieldrequired';		// No fieldrequired inthe view output
+	print '<tr><td';
+	print ' class="titlefield fieldname_'.$key;
+	//if ($val['notnull'] > 0) print ' fieldrequired';		// No fieldrequired inthe view output
 	if ($val['type'] == 'text' || $val['type'] == 'html') {
-		$rightpart .= ' tdtop';
+		print ' tdtop';
 	}
-	$rightpart.= '">';
+	print '">';
 	if (!empty($val['help'])) {
-		$rightpart .= $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+		print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	} else {
-		$rightpart .= $langs->trans($val['label']);
+		print $langs->trans($val['label']);
 	}
-	$rightpart .= '</td>';
-	$rightpart .= '<td class="valuefield fieldname_'.$key;
+	print '</td>';
+	print '<td class="valuefield fieldname_'.$key;
 	if ($val['type'] == 'text') {
-		$rightpart .= ' wordbreak';
+		print ' wordbreak';
 	}
-	if (!empty($val['cssview'])) {
-		$rightpart .= ' '.$val['cssview'];
+	if ($val['cssview']) {
+		print ' '.$val['cssview'];
 	}
-	$rightpart .= '">';
+	print '">';
 	if (in_array($val['type'], array('text', 'html'))) {
-		$rightpart .= '<div class="longmessagecut">';
+		print '<div class="longmessagecut">';
 	}
-	$rightpart .= $object->showOutputField($val, $key, $value, '', '', '', 0);
-	//$rightpart .= dol_escape_htmltag($object->$key, 1, 1);
+	print $object->showOutputField($val, $key, $value, '', '', '', 0);
+	//print dol_escape_htmltag($object->$key, 1, 1);
 	if (in_array($val['type'], array('text', 'html'))) {
-		$rightpart .= '</div>';
+		print '</div>';
 	}
-	$rightpart .= '</td>';
-	$rightpart .= '</tr>';
+	print '</td>';
+	print '</tr>';
 }
-
-
-print '<div class="fichehalfright">';
-print '<div class="underbanner clearboth"></div>';
-
-print '<table class="border centpercent tableforfield">';
-
-print $rightpart;
 
 ?>
 <!-- END PHP TEMPLATE commonfields_view.tpl.php -->

@@ -18,37 +18,33 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Tudásmenedzsment rendszer
+ModuleKnowledgeManagementName = Knowledge Management System
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Tudásmenedzsment (KM) vagy Help-Desk bázis kezelése
+ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Tudáskezelő rendszer beállítása
+KnowledgeManagementSetup = Knowledge Management System setup
 Settings = Beállítások
-KnowledgeManagementSetupPage = Tudáskezelő rendszer beállítási oldala
+KnowledgeManagementSetupPage = Knowledge Management System setup page
 
 
 #
 # About page
 #
 About = Névjegy
-KnowledgeManagementAbout = A tudásmenedzsmentről
-KnowledgeManagementAboutPage = Tudáskezelés az oldalról
+KnowledgeManagementAbout = About Knowledge Management
+KnowledgeManagementAboutPage = Knowledge Management about page
 
 KnowledgeManagementArea = Tudásmenedzsment
 MenuKnowledgeRecord = Tudásbázis
-ListKnowledgeRecord = Cikkek listája
-NewKnowledgeRecord = Új cikk
-ValidateReply = A megoldás érvényesítése
-KnowledgeRecords = Cikkek
-KnowledgeRecord = Cikk
-KnowledgeRecordExtraFields = Extra mezők a cikkhez
+ListKnowledgeRecord = List of articles
+NewKnowledgeRecord = New article
+ValidateReply = Validate solution
+KnowledgeRecords = Articles
+KnowledgeRecord = Árucikk
+KnowledgeRecordExtraFields = Extrafields for Article
 GroupOfTicket=Jegyek csoportjai
-YouCanLinkArticleToATicketCategory=A cikket összekapcsolhatja egy jegycsoporttal (így a cikk kiemelve lesz a csoport minden jegyén)
-SuggestedForTicketsInGroup=Jegyekhez ajánlott, ha csoport van
-
-SetObsolete=Beállítás elavultként
-ConfirmCloseKM=Megerősíti, hogy a cikk elavultként zárult be?
-ConfirmReopenKM=Szeretné visszaállítani ezt a cikket "Érvényesített" állapotba?
+YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
+SuggestedForTicketsInGroup=Suggested for tickets when group is

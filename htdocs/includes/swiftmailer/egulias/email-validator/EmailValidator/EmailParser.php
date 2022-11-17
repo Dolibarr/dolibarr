@@ -17,33 +17,11 @@ class EmailParser
 {
     const EMAIL_MAX_LENGTH = 254;
 
-    /**
-     * @var array
-     */
-    protected $warnings = [];
-
-    /**
-     * @var string
-     */
+    protected $warnings;
     protected $domainPart = '';
-
-    /**
-     * @var string
-     */
     protected $localPart = '';
-    /**
-     * @var EmailLexer
-     */
     protected $lexer;
-
-    /**
-     * @var LocalPart
-     */
     protected $localPartParser;
-
-    /**
-     * @var DomainPart
-     */
     protected $domainPartParser;
 
     public function __construct(EmailLexer $lexer)
@@ -51,10 +29,11 @@ class EmailParser
         $this->lexer = $lexer;
         $this->localPartParser = new LocalPart($this->lexer);
         $this->domainPartParser = new DomainPart($this->lexer);
+        $this->warnings = new \SplObjectStorage();
     }
 
     /**
-     * @param string $str
+     * @param $str
      * @return array
      */
     public function parse($str)
@@ -78,9 +57,6 @@ class EmailParser
         return array('local' => $this->localPart, 'domain' => $this->domainPart);
     }
 
-    /**
-     * @return Warning\Warning[]
-     */
     public function getWarnings()
     {
         $localPartWarnings = $this->localPartParser->getWarnings();
@@ -92,17 +68,11 @@ class EmailParser
         return $this->warnings;
     }
 
-    /**
-     * @return string
-     */
     public function getParsedDomainPart()
     {
         return $this->domainPart;
     }
 
-    /**
-     * @param string $email
-     */
     protected function setParts($email)
     {
         $parts = explode('@', $email);
@@ -110,9 +80,6 @@ class EmailParser
         $this->localPart = $parts[0];
     }
 
-    /**
-     * @return bool
-     */
     protected function hasAtToken()
     {
         $this->lexer->moveNext();

@@ -197,10 +197,10 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-if (isModEnabled('comptabilite')) {
+if (!empty($conf->comptabilite->enabled)) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
-if (isModEnabled('accounting')) {
+if (!empty($conf->accounting->enabled)) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
@@ -252,7 +252,7 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
-if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
+if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 

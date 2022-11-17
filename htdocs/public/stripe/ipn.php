@@ -83,21 +83,6 @@ if (empty($endpoint_secret)) {
 	exit();
 }
 
-if (!empty($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS)) {
-	// We set the user to use for all ipn actions in Dolibarr
-	$user = new User($db);
-	$user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
-	$user->getrights();
-} else {
-	print 'Error: Setup of module Stripe not complete for mode '.$service.'. The STRIPE_USER_ACCOUNT_FOR_ACTIONS is not defined.';
-	http_response_code(400); // PHP 5.4 or greater
-	exit();
-}
-
-
-// TODO Add a check on a security key
-
-
 
 /*
  * Actions
@@ -125,6 +110,10 @@ try {
 
 $langs->load("main");
 
+// TODO Do we really need a user in setup just to have a name to fill an email topic when it is a technical system notification email
+$user = new User($db);
+$user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
+$user->getrights();
 
 if (!empty($conf->multicompany->enabled) && !empty($conf->stripeconnect->enabled) && is_object($mc)) {
 	$sql = "SELECT entity";
@@ -287,11 +276,11 @@ if ($event->type == 'payout.created') {
 
 		$ret = $mailfile->sendfile();
 
-		http_response_code(200);
+		http_response_code(200); // PHP 5.4 or greater
 		return 1;
 	} else {
 		$error++;
-		http_response_code(500);
+		http_response_code(500); // PHP 5.4 or greater
 		return -1;
 	}
 } elseif ($event->type == 'customer.source.created') {
@@ -396,4 +385,4 @@ if ($event->type == 'payout.created') {
 	// This event is deprecated.
 }
 
-http_response_code(200);
+http_response_code(200); // PHP 5.4 or greater

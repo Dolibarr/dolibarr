@@ -76,7 +76,7 @@ class box_clients extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $hookmanager;
+		global $user, $langs, $conf;
 		$langs->load("boxes");
 
 		$this->max = $max;
@@ -92,23 +92,17 @@ class box_clients extends ModeleBoxes
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->rights->societe->client->voir && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE s.client IN (1, 3)";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->rights->societe->client->voir && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
-			// Add where from hooks
-			$parameters = array('socid' => $user->socid, 'boxcode' => $this->boxcode);
-			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdpartystatic); // Note that $action and $object may have been modified by hook
-			if (empty($reshook)) {
-				if ($user->socid > 0) {
-					$sql .= " AND s.rowid = ".((int) $user->socid);
-				}
+			if ($user->socid) {
+				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
-			$sql .= $hookmanager->resPrint;
 			$sql .= " ORDER BY s.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
 
@@ -140,7 +134,7 @@ class box_clients extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
+						'td' => 'class="center nowraponall"',
 						'text' => dol_print_date($datem, "day", 'tzuserrel')
 					);
 

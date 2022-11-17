@@ -45,8 +45,8 @@ $section_dir = GETPOST('section_dir', 'alpha');
 $overwritefile = GETPOST('overwritefile', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -58,13 +58,13 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 if (!$sortfield) {
-	$sortfield = "name";
+	$sortfield = "fullname";
 }
 
 $ecmdir = new EcmDirectory($db);
 if ($section > 0) {
 	$result = $ecmdir->fetch($section);
-	if (!($result > 0)) {
+	if (!$result > 0) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}

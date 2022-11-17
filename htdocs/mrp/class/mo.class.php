@@ -25,7 +25,6 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -47,7 +46,7 @@ class Mo extends CommonObject
 	/**
 	 * @var int  Does mo support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
-	public $ismultientitymanaged = 1;
+	public $ismultientitymanaged = 0;
 
 	/**
 	 * @var int  Does mo support extrafields ? 0=No, 1=Yes
@@ -98,17 +97,16 @@ class Mo extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1', 'noteditable'=>1),
-		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>'$conf->bom->enabled', 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'minwidth100 maxwidth300', 'csslist'=>'nowraponall', 'picto'=>'bom'),
-		'mrptype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>34, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing', 1=>'Disassemble'), 'css'=>'minwidth150', 'csslist'=>'minwidth150 center'),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>'$conf->product->enabled', 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce", 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax100', 'picto'=>'product'),
+		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'minwidth100 maxwidth300', 'csslist'=>'nowraponall'),
+		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce", 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax100', 'picto'=>'product'),
 		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce", 'css'=>'width75', 'default'=>1, 'isameasure'=>1),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'2', 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax200'),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax150'),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>51, 'notnull'=>-1, 'index'=>1, 'css'=>'minwidth200 maxwidth400', 'csslist'=>'tdoverflowmax100'),
-		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>'$conf->stock->enabled', 'visible'=>1, 'position'=>52, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax200'),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>1, 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax150'),
+		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'picto'=>'project', 'enabled'=>1, 'visible'=>-1, 'position'=>51, 'notnull'=>-1, 'index'=>1, 'css'=>'minwidth200 maxwidth400', 'csslist'=>'tdoverflowmax100'),
+		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>1, 'visible'=>1, 'position'=>52, 'css'=>'maxwidth400', 'csslist'=>'tdoverflowmax200'),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61, 'notnull'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>62, 'notnull'=>-1,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500, 'notnull'=>1,),
@@ -121,12 +119,10 @@ class Mo extends CommonObject
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'default'=>0, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '2'=>'InProgress', '3'=>'StatusMOProduced', '9'=>'Canceled')),
-		'fk_parent_line' => array('type'=>'integer:MoLine:mrp/class/mo.class.php', 'label'=>'ParentMo', 'enabled'=>1, 'visible'=>0, 'position'=>1020, 'default'=>0, 'notnull'=>0, 'index'=>1,'showoncombobox'=>0),
 	);
 	public $rowid;
-	public $entity;
 	public $ref;
-	public $mrptype;
+	public $entity;
 	public $label;
 	public $qty;
 	public $fk_warehouse;
@@ -203,11 +199,6 @@ class Mo extends CommonObject
 	 */
 	public $lines = array();
 
-	/**
-	 * @var integer	Mo parent line
-	 * */
-
-	public $fk_parent_line;
 
 
 	/**
@@ -262,7 +253,7 @@ class Mo extends CommonObject
 		$this->db->begin();
 
 		// Check that product is not a kit/virtual product
-		if (empty($conf->global->ALLOW_USE_KITS_INTO_BOM_AND_MO) && $this->fk_product > 0) {
+		if (empty($conf->global->ALLOW_USE_KITS_INTO_BOM_AND_MO) and $this->fk_product > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpproduct = new Product($this->db);
 			$tmpproduct->fetch($this->fk_product);
@@ -274,14 +265,6 @@ class Mo extends CommonObject
 			}
 		}
 
-		if ($this->fk_bom > 0) {
-			// If there is a nown BOM, we force the type of MO to the type of BOM
-			$tmpbom = new BOM($this->db);
-			$tmpbom->fetch($this->fk_bom);
-
-			$this->mrptype = $tmpbom->bomtype;
-		}
-
 		if (!$error) {
 			$idcreated = $this->createCommon($user, $notrigger);
 			if ($idcreated <= 0) {
@@ -290,7 +273,7 @@ class Mo extends CommonObject
 		}
 
 		if (!$error) {
-			$result = $this->updateProduction($user, $notrigger);	// Insert lines from BOM
+			$result = $this->updateProduction($user, $notrigger);
 			if ($result <= 0) {
 				$error++;
 			}
@@ -349,8 +332,7 @@ class Mo extends CommonObject
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey])) {
-					//var_dump($key);
-					//var_dump($clonedObj->array_options[$key]); exit;
+					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -455,25 +437,25 @@ class Mo extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
+					$sqlwhere[] = $key.'='.$value;
 				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= $this->db->plimit($limit, $offset);
+			$sql .= ' '.$this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -520,7 +502,7 @@ class Mo extends CommonObject
 		if ($lineid > 0) {
 			$sql .= ' AND t.fk_mrp_production = '.((int) $lineid);
 		} else {
-			$sql .= 'AND t.fk_mo = '.((int) $this->id);
+			$sql .= 'AND t.fk_mo = '.$this->id;
 		}
 
 		$resql = $this->db->query($sql);
@@ -564,7 +546,7 @@ class Mo extends CommonObject
 		$result = 0;
 
 		$sql = 'SELECT COUNT(rowid) as nb FROM '.MAIN_DB_PREFIX.'stock_mouvement as sm';
-		$sql .= " WHERE sm.origintype = 'mo' and sm.fk_origin = ".((int) $this->id);
+		$sql .= " WHERE sm.origintype = 'mo' and sm.fk_origin = ".$this->id;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -633,7 +615,6 @@ class Mo extends CommonObject
 	public function updateProduction(User $user, $notrigger = true)
 	{
 		$error = 0;
-		$role = "";
 
 		if ($this->status != self::STATUS_DRAFT) {
 			$this->error = 'BadStatus';
@@ -646,7 +627,7 @@ class Mo extends CommonObject
 		if (!$error) {
 			// TODO Check that production has not started. If yes, we stop here.
 
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'mrp_production WHERE fk_mo = '.((int) $this->id);
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'mrp_production WHERE fk_mo = '.$this->id;
 			$this->db->query($sql);
 
 			$moline = new MoLine($this->db);
@@ -657,7 +638,7 @@ class Mo extends CommonObject
 			$moline->fk_product = $this->fk_product;
 			$moline->position = 1;
 
-			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to produce.
+			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
 				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 				$bom = new Bom($this->db);
 				$bom->fetch($this->fk_bom);
@@ -666,12 +647,6 @@ class Mo extends CommonObject
 					$moline->role = 'toconsume';
 				} else {
 					$role = 'toconsume';
-					$moline->role = 'toproduce';
-				}
-			} else {
-				if ($this->mrptype == 1) {
-					$moline->role = 'toconsume';
-				} else {
 					$moline->role = 'toproduce';
 				}
 			}
@@ -758,79 +733,12 @@ class Mo extends CommonObject
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = false)
 	{
-		global $langs;
-		$langs->load('stocks');
-
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
 
-		$productstatic = new Product($this->db);
-		$fk_movement = GETPOST('fk_movement', 'int');
-		$arrayoflines = $this->fetchLinesLinked('consumed', $idline);
-
-		if (! empty($arrayoflines)) {
-			$this->db->begin();
-
-			$stockmove = new MouvementStock($this->db);
-			$stockmove->setOrigin($this->element, $this->id);
-
-			if (! empty($fk_movement)) {
-				$moline = new MoLine($this->db);
-				$TArrayMoLine = $moline->fetchAll('', '', 1, 0, array('customsql' => 'fk_stock_movement ='.$fk_movement));
-				$moline = array_shift($TArrayMoLine);
-
-				$movement = new MouvementStock($this->db);
-				$movement->fetch($fk_movement);
-				$productstatic->fetch($movement->product_id);
-				$qtytoprocess = $movement->qty;
-
-				// Reverse stock movement
-				$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-				$codemovementCancel = $langs->trans("StockIncrease");
-
-				if (($qtytoprocess >= 0)) {
-					$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
-				} else {
-					$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
-				}
-				if ($idstockmove < 0) {
-					$this->error++;
-					$this->db->rollback();
-					setEventMessages($stockmove->error, $stockmove->errors, 'errors');
-				} else {
-					$this->db->commit();
-				}
-				return $moline->delete($user, $notrigger);
-			} else {
-				foreach ($arrayoflines as $key => $arrayofline) {
-					$lineDetails = $arrayoflines[$key];
-					$productstatic->fetch($lineDetails['fk_product']);
-					$qtytoprocess = $lineDetails['qty'];
-
-					// Reverse stock movement
-					$labelmovementCancel = $langs->trans("CancelProductionForRef", $productstatic->ref);
-					$codemovementCancel = $langs->trans("StockIncrease");
-
-					if ($qtytoprocess >= 0) {
-						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
-					} else {
-						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
-					}
-					if ($idstockmove < 0) {
-						$this->error++;
-						$this->db->rollback();
-						setEventMessages($stockmove->error, $stockmove->errors, 'errors');
-					} else {
-						$this->db->commit();
-					}
-				}
-				return $this->deleteLineCommon($user, $idline, $notrigger);
-			}
-		} else {
-			return $this->deleteLineCommon($user, $idline, $notrigger);
-		}
+		return $this->deleteLineCommon($user, $idline, $notrigger);
 	}
 
 
@@ -930,7 +838,7 @@ class Mo extends CommonObject
 		$sql .= " status = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid='".$this->db->idate($now)."',";
 		$sql .= " fk_user_valid = ".$user->id;
-		$sql .= " WHERE rowid = ".((int) $this->id);
+		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1103,9 +1011,9 @@ class Mo extends CommonObject
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		}
 
-		$url = DOL_URL_ROOT.'/mrp/mo_card.php?id='.$this->id;
+		$url = dol_buildpath('/mrp/mo_card.php', 1).'?id='.$this->id;
 		if ($option == 'production') {
-			$url = DOL_URL_ROOT.'/mrp/mo_production.php?id='.$this->id;
+			$url = dol_buildpath('/mrp/mo_production.php', 1).'?id='.$this->id;
 		}
 
 		if ($option != 'nolink') {
@@ -1147,7 +1055,7 @@ class Mo extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('modao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1230,11 +1138,27 @@ class Mo extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
+				if ($obj->fk_user_author) {
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation = $cuser;
+				}
 
-				$this->user_creation_id = $obj->fk_user_creat;
-				$this->user_modification_id = $obj->fk_user_modif;
+				if ($obj->fk_user_valid) {
+					$vuser = new User($this->db);
+					$vuser->fetch($obj->fk_user_valid);
+					$this->user_validation = $vuser;
+				}
+
+				if ($obj->fk_user_cloture) {
+					$cluser = new User($this->db);
+					$cluser->fetch($obj->fk_user_cloture);
+					$this->user_cloture = $cluser;
+				}
+
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
+				$this->date_modification = $this->db->jdate($obj->datem);
+				$this->date_validation   = $this->db->jdate($obj->datev);
 			}
 
 			$this->db->free($result);
@@ -1252,24 +1176,19 @@ class Mo extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->initAsSpecimenCommon();
-
-		$this->lines = array();
 	}
 
 	/**
 	 * 	Create an array of lines
-	 * 	@param string $rolefilter string lines role filter
+	 *
 	 * 	@return array|int		array of lines if OK, <0 if KO
 	 */
-	public function getLinesArray($rolefilter = '')
+	public function getLinesArray()
 	{
 		$this->lines = array();
 
 		$objectline = new MoLine($this->db);
-
-		$TFilters = array('customsql'=>'fk_mo = '.((int) $this->id));
-		if (!empty($rolefilter)) $TFilters['role'] = $rolefilter;
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, $TFilters);
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_mo = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
 			$this->error = $this->error;
@@ -1362,26 +1281,8 @@ class Mo extends CommonObject
 	{
 		global $langs, $hookmanager, $conf, $form;
 
-		$langs->load('stocks');
-		$text_stock_options = $langs->trans("RealStockDesc").'<br>';
-		$text_stock_options .= $langs->trans("RealStockWillAutomaticallyWhen").'<br>';
-		$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE) ? '- '.$langs->trans("DeStockOnShipment").'<br>' : '');
-		$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) ? '- '.$langs->trans("DeStockOnValidateOrder").'<br>' : '');
-		$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_BILL) ? '- '.$langs->trans("DeStockOnBill").'<br>' : '');
-		$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) ? '- '.$langs->trans("ReStockOnBill").'<br>' : '');
-		$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) ? '- '.$langs->trans("ReStockOnValidateOrder").'<br>' : '');
-		$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) ? '- '.$langs->trans("ReStockOnDispatchOrder").'<br>' : '');
-		$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE) ? '- '.$langs->trans("StockOnReception").'<br>' : '');
-
 		print '<tr class="liste_titre">';
-		// Product or sub-bom
-		print '<td class="linecoldescription">'.$langs->trans('Ref');
-		if (!empty($conf->global->BOM_SUB_BOM)) {
-			print ' &nbsp; <a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>&nbsp;&nbsp;';
-			print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
-		}
-		print '</td>';
-		// Qty
+		print '<td>'.$langs->trans('Ref').'</td>';
 		print '<td class="right">'.$langs->trans('Qty');
 		if ($this->bom->bomtype == 0) {
 			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", $this->bom->qty).')</span>';
@@ -1389,27 +1290,29 @@ class Mo extends CommonObject
 			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityToConsumeOf", $this->bom->qty).')</span>';
 		}
 		print '</td>';
-		print '<td class="center">'.$form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1).'</td>';
-		print '<td class="center">'.$form->textwithpicto($langs->trans("VirtualStock"), $langs->trans("VirtualStockDesc")).'</td>';
 		print '<td class="center">'.$langs->trans('QtyFrozen').'</td>';
 		print '<td class="center">'.$langs->trans('DisableStockChange').'</td>';
-		print '<td class="center">'.$langs->trans('MoChildGenerate').'</td>';
+		//print '<td class="right">'.$langs->trans('Efficiency').'</td>';
 		//print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
-		//print '<td class="center"></td>';
+		print '<td class="center"></td>';
 		print '</tr>';
 		$i = 0;
 
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $line) {
-				$reshook = 0;
-				if (is_object($hookmanager)) {
-					$parameters = array('line'=>$line, 'i'=>$i, 'restrictlist'=>$restrictlist, 'selectedLines'=> $selectedLines);
-					if (!empty($line->fk_parent_line)) { $parameters['fk_parent_line'] = $line->fk_parent_line; }
-					$reshook = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				/*if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line)))
+				{
+					if (empty($line->fk_parent_line))
+					{
+						$parameters = array('line'=>$line, 'i'=>$i);
+						$action = '';
+						$result = $hookmanager->executeHooks('printOriginObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+					}
 				}
-				if (empty($reshook)) {
+				else
+				{*/
 					$this->printOriginLine($line, '', $restrictlist, '/core/tpl', $selectedLines);
-				}
+				//}
 
 				$i++;
 			}
@@ -1440,7 +1343,6 @@ class Mo extends CommonObject
 		if (!empty($line->fk_product)) {
 			$productstatic = new Product($this->db);
 			$productstatic->fetch($line->fk_product);
-			$productstatic->load_virtual_stock();
 			$this->tpl['label'] .= $productstatic->getNomUrl(1);
 			//$this->tpl['label'].= ' - '.$productstatic->label;
 		} else {
@@ -1453,9 +1355,6 @@ class Mo extends CommonObject
 			$this->tpl['qty_bom'] = $this->bom->qty;
 		}
 
-		$this->tpl['stock'] = $productstatic->stock_reel;
-		$this->tpl['seuil_stock_alerte'] = $productstatic->seuil_stock_alerte;
-		$this->tpl['virtual_stock'] = $productstatic->stock_theorique;
 		$this->tpl['qty'] = $line->qty;
 		$this->tpl['qty_frozen'] = $line->qty_frozen;
 		$this->tpl['disable_stock_change'] = $line->disable_stock_change;
@@ -1478,81 +1377,6 @@ class Mo extends CommonObject
 		$tables = array('mrp_mo');
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
-	}
-
-
-	/**
-	 * Function used to return childs of Mo
-	 *
-	 * @return array if OK, -1 if KO
-	 */
-	public function getMoChilds()
-	{
-
-		$TMoChilds = array();
-		$error = 0;
-
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."mrp_mo as mo_child";
-		$sql.= " WHERE fk_parent_line IN ";
-		$sql.= " (SELECT rowid FROM ".MAIN_DB_PREFIX."mrp_production as line_parent";
-		$sql.= " WHERE fk_mo=".((int) $this->id).")";
-
-		$resql = $this->db->query($sql);
-
-		if ($resql) {
-			if ($this->db->num_rows($resql) > 0) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$MoChild = new Mo($this->db);
-					$res = $MoChild->fetch($obj->rowid);
-					if ($res > 0) $TMoChilds[$MoChild->id] = $MoChild;
-					else $error++;
-				}
-			}
-		} else {
-			$error++;
-		}
-
-		if ($error) {
-			return -1;
-		} else {
-			return $TMoChilds;
-		}
-	}
-
-	/**
-	 * Function used to return childs of Mo
-	 *
-	 * @return object Mo if OK, -1 if KO, 0 if not exist
-	 */
-	public function getMoParent()
-	{
-
-		$MoParent = new Mo($this->db);
-		$error = 0;
-
-		$sql = "SELECT lineparent.fk_mo as id_moparent FROM ".MAIN_DB_PREFIX."mrp_mo as mo";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."mrp_production lineparent ON mo.fk_parent_line = lineparent.rowid";
-		$sql.= " WHERE mo.rowid = ".((int) $this->id);
-
-		$resql = $this->db->query($sql);
-
-		if ($resql) {
-			if ($this->db->num_rows($resql) > 0) {
-				$obj = $this->db->fetch_object($resql);
-				$res = $MoParent->fetch($obj->id_moparent);
-				if ($res < 0) $error++;
-			} else {
-				return 0;
-			}
-		} else {
-			$error++;
-		}
-
-		if ($error) {
-			return -1;
-		} else {
-			return $MoParent;
-		}
 	}
 }
 
@@ -1596,7 +1420,7 @@ class MoLine extends CommonObjectLine
 		'role' =>array('type'=>'varchar(10)', 'label'=>'Role', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
 		'fk_mrp_production' =>array('type'=>'integer', 'label'=>'Fk mrp production', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
 		'fk_stock_movement' =>array('type'=>'integer', 'label'=>'StockMovement', 'enabled'=>1, 'visible'=>-1, 'position'=>155),
-		'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>160),
+		'date_creation' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>160),
 		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>165),
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>170),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModification', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
@@ -1722,32 +1546,32 @@ class MoLine extends CommonObjectLine
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
+					$sqlwhere[] = $key.'='.$value;
 				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= $this->db->plimit($limit, $offset);
+			$sql .= ' '.$this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
-			while ($i < ($limit ? min($limit, $num) : $num)) {
+			while ($i < min($limit, $num)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$record = new self($this->db);

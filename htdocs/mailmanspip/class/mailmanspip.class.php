@@ -147,9 +147,28 @@ class MailmanSpip
 		$curl_url = str_replace($patterns, $replace, $url);
 		dol_syslog('Calling Mailman: '.$curl_url);
 
-		$result = getURLContent($curl_url);
+		$ch = curl_init($curl_url);
 
-		return $result['content'];
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_FAILONERROR, true);
+		@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
+		curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
+		$result = curl_exec($ch);
+		dol_syslog('result curl_exec='.$result);
+
+		//An error was found, we store it in $this->error for later
+		if ($result === false || curl_errno($ch) > 0) {
+			$this->error = curl_errno($ch).' '.curl_error($ch);
+			dol_syslog('Error using curl '.$this->error, LOG_ERR);
+		}
+
+		curl_close($ch);
+
+		return $result;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -213,7 +232,7 @@ class MailmanSpip
 				$mydb = $this->connectSpip();
 
 				if ($mydb) {
-					$query = "DELETE FROM spip_auteurs WHERE login = '".$mydb->escape($object->login)."'";
+					$query = "DELETE FROM spip_auteurs WHERE login='".$object->login."'";
 
 					$result = $mydb->query($query);
 
@@ -252,18 +271,18 @@ class MailmanSpip
 				$mydb = $this->connectSpip();
 
 				if ($mydb) {
-					$query = "SELECT login FROM spip_auteurs WHERE login = '".$mydb->escape($object->login)."'";
+					$query = "SELECT login FROM spip_auteurs WHERE login='".$object->login."'";
 
 					$result = $mydb->query($query);
 
 					if ($result) {
 						if ($mydb->num_rows($result)) {
 							// nous avons au moins une reponse
-							$mydb->close();
+							$mydb->close($result);
 							return 1;
 						} else {
 							// nous n'avons pas de reponse => n'existe pas
-							$mydb->close();
+							$mydb->close($result);
 							return 0;
 						}
 					} else {

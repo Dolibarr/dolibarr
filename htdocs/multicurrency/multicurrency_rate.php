@@ -55,8 +55,8 @@ $dateinput 			= dol_mktime(0, 0, 0, GETPOST('dateinputmonth', 'int'), GETPOST('d
 $rateinput 			= price2num(GETPOST('rateinput', 'alpha'));
 $optioncss 			= GETPOST('optioncss', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield 			= GETPOST('sortfield', 'aZ09comma');
-$sortorder 			= GETPOST('sortorder', 'aZ09comma');
+$sortfield 			= GETPOST("sortfield", 'alpha');
+$sortorder 			= GETPOST("sortorder", 'alpha');
 $page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
 
 if (empty($page) || $page == -1) {
@@ -66,7 +66,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) $sortfield = "cr.date_sync";
-if (!$sortorder) $sortorder = "DESC";
+if (!$sortorder) $sortorder = "ASC";
 
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
@@ -106,27 +106,13 @@ if (!$user->admin || empty($conf->multicurrency->enabled)) {
 	accessforbidden();
 }
 
-$error = 0;
-
 
 /*
  * Actions
  */
 
 if ($action == "create") {
-	if (empty($multicurrency_code) || $multicurrency_code == '-1') {
-		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Currency")), null, "errors");
-		$error++;
-	}
-	if ($rateinput === '0') {
-		setEventMessages($langs->trans('NoEmptyRate'), null, "errors");
-		$error++;
-	} elseif (empty($rateinput)) {
-		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Rate")), null, "errors");
-		$error++;
-	}
-
-	if (!$error) {
+	if (!empty($rateinput)) {
 		$currencyRate_static = new CurrencyRate($db);
 		$currency_static = new MultiCurrency($db);
 		$fk_currency = $currency_static->getIdFromCode($db, $multicurrency_code);
@@ -143,6 +129,8 @@ if ($action == "create") {
 			dol_syslog("currencyRate:createRate", LOG_WARNING);
 			setEventMessages($currencyRate_static->error, $currencyRate_static->errors, 'errors');
 		}
+	} else {
+		setEventMessages($langs->trans('NoEmptyRate'), null, "errors");
 	}
 }
 
@@ -241,7 +229,7 @@ if (empty($reshook)) {
  * View
  */
 
-$form = new Form($db);
+$htmlother = new FormOther($db);
 
 $title = $langs->trans("CurrencyRate");
 $page_name = "MultiCurrencySetup";
@@ -259,10 +247,15 @@ print dol_get_fiche_head($head, 'ratelist', $langs->trans("ModuleSetup"), -1, "m
 // ACTION
 
 if (!in_array($action, array("updateRate", "deleteRate"))) {
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("FormCreateRate").'</td>'."\n";
+	print '</tr></table>';
+
+	$form = new Form($db);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent"><tr>';
 
 	print ' <td>'.$langs->trans('Date').'</td>';
@@ -273,17 +266,15 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 	print '<td> '.$langs->trans('Currency').'</td>';
 	print '<td>'.$form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code', 'alpha') : $multicurrency_code), 'multicurrency_code', 1, " code != '".$db->escape($conf->currency)."'", true).'</td>';
 
-	print ' <td>'.$langs->trans('Rate').' / '.$langs->getCurrencySymbol($conf->currency).'</td>';
+	print ' <td>'.$langs->trans('Rate').'</td>';
 	print ' <td><input type="text" min="0" step="any" class="maxwidth75" name="rateinput" value="'.dol_escape_htmltag($rateinput).'"></td>';
 
 	print '<td>';
 	print '<input type="hidden" name="action" value="create">';
-	print '<input type="submit" class="button button-add small" name="btnCreateCurrencyRate" value="'.$langs->trans('CreateRate').'">';
+	print '<input type="submit" class="butAction" name="btnCreateCurrencyRate" value="'.$langs->trans('CreateRate').'">';
 	print '</td>';
 
 	print '</tr></table>';
-	print '</div>';
-
 	print '</form>';
 
 	print '<br>';
@@ -292,7 +283,7 @@ if (!in_array($action, array("updateRate", "deleteRate"))) {
 
 
 
-$sql = 'SELECT cr.rowid, cr.date_sync, cr.rate, cr.entity, m.code, m.name';
+$sql = 'SELECT cr.rowid, cr.date_sync, cr.rate, cr.entity, m.code, m.name ';
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -420,7 +411,7 @@ if ($resql) {
 	}
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable centpercent nomarginbottom liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable centpercent liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	// Lines with input filters
 	print '<tr class="liste_titre_filter">';
@@ -441,7 +432,7 @@ if ($resql) {
 		// rate
 	if (!empty($arrayfields['cr.rate']['checked'])) {
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat maxwidth75" type="text" name="search_rate" value="'.dol_escape_htmltag($search_rate).'">';
+		print '<input class="flat" type="text" name="search_rate" size="8" value="'.dol_escape_htmltag($search_rate).'">';
 		print '</td>';
 	}
 
@@ -508,8 +499,7 @@ if ($resql) {
 			// code
 			if (! empty($arrayfields['m.code']['checked'])) {
 				print '<td class="tdoverflowmax200">';
-				print $obj->code;
-				print ' - <span class="opacitymedium">'.$obj->name.'</span>';
+				print $obj->code." ".$obj->name;
 				print "</td>\n";
 
 				if (! $i) $totalarray['nbfield']++;
@@ -536,8 +526,8 @@ if ($resql) {
 				if (in_array($obj->rowid, $arrayofselected)) {
 					$selected = 1;
 				}
-				print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=updateRate&token='.newToken().'&id_rate='.$obj->rowid.'">'.img_picto('edit', 'edit').'</a>';
-				print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&token='.newToken().'&id_rate='.$obj->rowid.'">'.img_picto('delete', 'delete').'</a>';
+				print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=updateRate&amp;id_rate='.$obj->rowid.'">'.img_picto('edit', 'edit').'</a>';
+				print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?action=deleteRate&amp;id_rate='.$obj->rowid.'">'.img_picto('delete', 'delete').'</a>';
 				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';

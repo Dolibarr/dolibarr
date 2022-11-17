@@ -22,12 +22,12 @@
  *	\brief      File of class to manage expense ik
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/coreobject.class.php';
 
 /**
  *	Class to manage inventories
  */
-class ExpenseReportRule extends CommonObject
+class ExpenseReportRule extends CoreObject
 {
 	/**
 	 * @var string ID to identify managed object
@@ -125,77 +125,20 @@ class ExpenseReportRule extends CommonObject
 		,'entity'=>array('type'=>'integer')
 	);
 
-
 	/**
 	 *  Constructor
 	 *
 	 *  @param      DoliDB		$db      Database handler
 	 */
-	public function __construct(DoliDB $db)
+	public function __construct(DoliDB &$db)
 	{
-		$this->db = $db;
+		global $conf;
+
+		parent::__construct($db);
+		parent::init();
+
+		$this->errors = array();
 	}
-
-
-	/**
-	 * Create object into database
-	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
-	 */
-	public function create(User $user, $notrigger = false)
-	{
-		$resultcreate = $this->createCommon($user, $notrigger);
-
-		//$resultvalidate = $this->validate($user, $notrigger);
-
-		return $resultcreate;
-	}
-
-
-	/**
-	 * Load object in memory from the database
-	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetch($id, $ref = null)
-	{
-		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
-		}
-		return $result;
-	}
-
-
-	/**
-	 * Update object into database
-	 *
-	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
-	 */
-	public function update(User $user, $notrigger = false)
-	{
-		return $this->updateCommon($user, $notrigger);
-	}
-
-	/**
-	 * Delete object in database
-	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
-	 */
-	public function delete(User $user, $notrigger = false)
-	{
-		return $this->deleteCommon($user, $notrigger);
-		//return $this->deleteCommon($user, $notrigger, 1);
-	}
-
 
 	/**
 	 * Return all rules or filtered by something
@@ -205,19 +148,20 @@ class ExpenseReportRule extends CommonObject
 	 * @param int        $fk_user		    user of expense
 	 * @return array                        Array with ExpenseReportRule
 	 */
-	public function getAllRule($fk_c_type_fees = '', $date = '', $fk_user = '')
+	public static function getAllRule($fk_c_type_fees = '', $date = '', $fk_user = '')
 	{
-		$rules = array();
+		global $db;
 
+		$rules = array();
 		$sql = 'SELECT er.rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expensereport_rules er';
-		$sql .= ' WHERE er.entity IN (0,'.getEntity($this->element).')';
+		$sql .= ' WHERE er.entity IN (0,'.getEntity('').')';
 		if (!empty($fk_c_type_fees)) {
-			$sql .= ' AND er.fk_c_type_fees IN (-1, '.((int) $fk_c_type_fees).')';
+			$sql .= ' AND er.fk_c_type_fees IN (-1, '.$fk_c_type_fees.')';
 		}
 		if (!empty($date)) {
-			$sql .= " AND er.dates <= '".$this->db->idate($date)."'";
-			$sql .= " AND er.datee >= '".$this->db->idate($date)."'";
+			$sql .= " AND er.dates <= '".dol_print_date($date, '%Y-%m-%d')."'";
+			$sql .= " AND er.datee >= '".dol_print_date($date, '%Y-%m-%d')."'";
 		}
 		if ($fk_user > 0) {
 			$sql .= ' AND (er.is_for_all = 1';
@@ -226,20 +170,20 @@ class ExpenseReportRule extends CommonObject
 		}
 		$sql .= ' ORDER BY er.is_for_all, er.fk_usergroup, er.fk_user';
 
-		dol_syslog("ExpenseReportRule::getAllRule");
+		dol_syslog("ExpenseReportRule::getAllRule sql=".$sql);
 
-		$resql = $this->db->query($sql);
+		$resql = $db->query($sql);
 		if ($resql) {
-			while ($obj = $this->db->fetch_object($resql)) {
-				$rule = new ExpenseReportRule($this->db);
+			while ($obj = $db->fetch_object($resql)) {
+				$rule = new ExpenseReportRule($db);
 				if ($rule->fetch($obj->rowid) > 0) {
 					$rules[$rule->id] = $rule;
 				} else {
-					dol_print_error($this->db);
+					dol_print_error($db);
 				}
 			}
 		} else {
-			dol_print_error($this->db);
+			dol_print_error($db);
 		}
 
 		return $rules;
@@ -257,7 +201,7 @@ class ExpenseReportRule extends CommonObject
 		if ($this->fk_usergroup > 0) {
 			$group = new UserGroup($this->db);
 			if ($group->fetch($this->fk_usergroup) > 0) {
-				return $group->name;
+				return $group->nom;
 			} else {
 				$this->error = $group->error;
 				$this->errors[] = $this->error;

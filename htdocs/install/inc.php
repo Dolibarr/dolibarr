@@ -195,10 +195,6 @@ if (preg_match('/install\.lock/i', $_SERVER["SCRIPT_FILENAME"])) {
 		$langs->setDefaultLang('auto');
 	}
 	$langs->load("install");
-
-	header("X-Content-Type-Options: nosniff");
-	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
-
 	print $langs->trans("YouTryInstallDisabledByDirLock");
 	if (!empty($dolibarr_main_url_root)) {
 		print 'Click on following link, <a href="'.$dolibarr_main_url_root.'/admin/index.php?mainmenu=home&leftmenu=setup'.(GETPOSTISSET("login") ? '&username='.urlencode(GETPOST("login")) : '').'">';
@@ -220,10 +216,6 @@ if (@file_exists($lockfile)) {
 		$langs->setDefaultLang('auto');
 	}
 	$langs->load("install");
-
-	header("X-Content-Type-Options: nosniff");
-	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
-
 	print $langs->trans("YouTryInstallDisabledByFileLock");
 	if (!empty($dolibarr_main_url_root)) {
 		print $langs->trans("ClickOnLinkOrRemoveManualy").'<br>';
@@ -427,7 +419,6 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 	// We force the content charset
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
 	header("X-Content-Type-Options: nosniff");
-	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 
 	print '<!DOCTYPE HTML>'."\n";
 	print '<html>'."\n";
@@ -530,7 +521,7 @@ function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleas
 		print '<input type="hidden" name="selectlang" value="'.dol_escape_htmltag($setuplang).'">';
 	}
 
-	print '</form><br>'."\n";
+	print '</form>'."\n";
 
 	// If there is some logs in buffer to show
 	if (isset($conf->logbuffer) && count($conf->logbuffer)) {

@@ -58,10 +58,9 @@ class FormPropal
 	 *    @param	int 	$showempty		1=Add empty line
 	 *    @param    string  $mode           'customer', 'supplier'
 	 *    @param    string  $htmlname       Name of select field
-	 *    @param	string	$morecss		More css
 	 *    @return	void
 	 */
-	public function selectProposalStatus($selected = '', $short = 0, $excludedraft = 0, $showempty = 1, $mode = 'customer', $htmlname = 'propal_statut', $morecss = '')
+	public function selectProposalStatus($selected = '', $short = 0, $excludedraft = 0, $showempty = 1, $mode = 'customer', $htmlname = 'propal_statut')
 	{
 		global $langs;
 
@@ -81,7 +80,7 @@ class FormPropal
 		} else {
 			$prefix = "PropalStatus";
 
-			$sql = "SELECT id, code, label, active FROM ".$this->db->prefix()."c_propalst";
+			$sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
 			$sql .= " WHERE active = 1";
 			dol_syslog(get_class($this)."::selectProposalStatus", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -100,12 +99,11 @@ class FormPropal
 			}
 		}
 
-		print '<select id="'.$htmlname.'" name="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
+		print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
 		if ($showempty) {
 			print '<option value="-1">&nbsp;</option>';
 		}
 
-		$i = 0;
 		foreach ($listofstatus as $key => $obj) {
 			if ($excludedraft) {
 				if ($obj['code'] == 'Draft' || $obj['code'] == 'PR_DRAFT') {

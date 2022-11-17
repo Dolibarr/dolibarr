@@ -231,7 +231,7 @@ class SMTPs
 	/**
 	 * An array of options for stream_context_create()
 	 */
-	private $_options = array();
+	private $_options = [];
 
 	/**
 	 * Set delivery receipt
@@ -239,7 +239,7 @@ class SMTPs
 	 * @param	array		$_options		An array of options for stream_context_create()
 	 * @return	void
 	 */
-	public function setOptions($_options = array())
+	public function setOptions($_options = [])
 	{
 		$this->_options = $_options;
 	}
@@ -464,26 +464,20 @@ class SMTPs
 			$host = 'tls://'.$host;
 		}
 
-		$hosth = $host;	// so for example 'localhost' or 'smtp-relay.gmail.com'
+		$hosth = $host;
 
 		if (!empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
-			if (!is_numeric($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
-				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is a string, we use it as domain name
-				$hosth = $conf->global->MAIL_SMTP_USE_FROM_FOR_HELO;
-			} else {
-				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 1, we use the domain in the from.
-				// So if the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
-				$hosth = $this->getFrom('addr');
-				$hosth = preg_replace('/^.*</', '', $hosth);
-				$hosth = preg_replace('/>.*$/', '', $hosth);
-				$hosth = preg_replace('/.*@/', '', $hosth);
-			}
+			// If the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
+			$hosth = $this->getFrom('addr');
+			$hosth = preg_replace('/^.*</', '', $hosth);
+			$hosth = preg_replace('/>.*$/', '', $hosth);
+			$hosth = preg_replace('/.*@/', '', $hosth);
 		}
 
 		if ($_retVal = $this->socket_send_str('EHLO '.$hosth, '250')) {
 			if ($usetls) {
 				/*
-				The following dialog illustrates how a client and server can start a TLS STARTTLS session:
+				The following dialog illustrates how a client and server can start a TLS STARTTLS session
 				S: <waits for connection on TCP port 25>
 				C: <opens connection>
 				S: 220 mail.imc.org SMTP service ready
@@ -500,39 +494,6 @@ class SMTPs
 				S: 250-server-domain.com
 				S: 250 AUTH LOGIN
 				C: <continues by sending an SMTP command
-
-				Another example here:
-				S: 220 smtp.server.com Simple Mail Transfer Service Ready
-				C: EHLO client.example.com
-				S: 250-smtp.server.com Hello client.example.com
-				S: 250-SIZE 1000000
-				S: 250-AUTH LOGIN PLAIN CRAM-MD5
-				S: 250-STARTTLS
-				S: 250 HELP
-				C: STARTTLS
-				S: 220 TLS go ahead
-				C: EHLO client.example.com *
-				S: 250-smtp.server.com Hello client.example.com
-				S: 250-SIZE 1000000
-				S: 250-AUTH LOGIN PLAIN CRAM-MD5
-				S: 250 HELP
-				C: AUTH LOGIN
-				S: 334 VXNlcm5hbWU6
-				C: adlxdkej
-				S: 334 UGFzc3dvcmQ6
-				C: lkujsefxlj
-				S: 235 2.7.0 Authentication successful
-				C: MAIL FROM:<mail@samlogic.com>
-				S: 250 OK
-				C: RCPT TO:<john@mail.com>
-				S: 250 OK
-				C: DATA
-				S: 354 Send message, end with a "." on a line by itself
-				C: <The message data (body text, subject, e-mail header, attachments etc) is sent>
-				S .
-				S: 250 OK, message accepted for delivery: queued as 12345
-				C: QUIT
-				S: 221 Bye
 				*/
 				if (!$_retVal = $this->socket_send_str('STARTTLS', 220)) {
 					$this->_setErr(131, 'STARTTLS connection is not supported.');
@@ -556,10 +517,10 @@ class SMTPs
 					$this->_setErr(132, 'STARTTLS connection failed.');
 					return $_retVal;
 				}
-				// Most servers expect a 2nd pass of EHLO after TLS is established to get another time
+				// Most server servers expect a 2nd pass of EHLO after TLS is established to get another time
 				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
-				if (! $_retVal = $this->socket_send_str('EHLO '.$hosth, '250')) {
-					$this->_setErr(126, '"'.$hosth.'" does not support authenticated connections. Error after sending EHLO '.$hosth);
+				if (!$_retVal = $this->socket_send_str('EHLO '.$hosth, '250')) {
+					$this->_setErr(126, '"'.$hosth.'" does not support authenticated connections.');
 					return $_retVal;
 				}
 			}
@@ -581,15 +542,6 @@ class SMTPs
 					// The error here just means the ID/password combo doesn't work.
 					$_retVal = $this->socket_send_str(base64_encode("\0".$this->_smtpsID."\0".$this->_smtpsPW), '235');
 					break;
-				case 'XOAUTH2':
-					// "user=$email\1auth=Bearer $token\1\1"
-					$token = 'xxx';
-					$xxxx = "user=".$this->_smtpsID."\1auth=Bearer ".$token."\1\1";
-					$_retVal = $this->socket_send_str('AUTH XOAUTH2 '.base64_encode($xxxx), '235');
-					if (!$_retVal) {
-						$this->_setErr(130, 'Error when asking for AUTH XOAUTH2');
-					}
-					break;
 				case 'LOGIN':	// most common case
 				default:
 					$_retVal = $this->socket_send_str('AUTH LOGIN', '334');
@@ -599,7 +551,7 @@ class SMTPs
 						// User name will not return any error, server will take anything we give it.
 						$this->socket_send_str(base64_encode($this->_smtpsID), '334');
 						// The error here just means the ID/password combo doesn't work.
-						// There is no method to determine which is the problem, ID or password
+						// There is not a method to determine which is the problem, ID or password
 						$_retVal = $this->socket_send_str(base64_encode($this->_smtpsPW), '235');
 					}
 					break;
@@ -608,7 +560,7 @@ class SMTPs
 				$this->_setErr(130, 'Invalid Authentication Credentials.');
 			}
 		} else {
-			$this->_setErr(126, '"'.$host.'" does not support authenticated connections. Error after sending EHLO '.$hosth);
+			$this->_setErr(126, '"'.$host.'" does not support authenticated connections.');
 		}
 
 		return $_retVal;
@@ -651,17 +603,11 @@ class SMTPs
 				$hosth = $host;
 
 				if (!empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
-					if (!is_numeric($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO)) {
-						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is a string, we use it as domain name
-						$hosth = $conf->global->MAIL_SMTP_USE_FROM_FOR_HELO;
-					} else {
-						// If value of MAIL_SMTP_USE_FROM_FOR_HELO is 1, we use the domain in the from.
-						// If the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
-						$hosth = $this->getFrom('addr');
-						$hosth = preg_replace('/^.*</', '', $hosth);
-						$hosth = preg_replace('/>.*$/', '', $hosth);
-						$hosth = preg_replace('/.*@/', '', $hosth);
-					}
+					// If the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
+					$hosth = $this->getFrom('addr');
+					$hosth = preg_replace('/^.*</', '', $hosth);
+					$hosth = preg_replace('/>.*$/', '', $hosth);
+					$hosth = preg_replace('/.*@/', '', $hosth);
 				}
 
 				$_retVal = $this->socket_send_str('HELO '.$hosth, '250');
@@ -1476,7 +1422,7 @@ class SMTPs
 		$this->_msgContent[$strType]['dataText'] = $strContentAltText;
 
 		if ($this->getMD5flag()) {
-			$this->_msgContent[$strType]['md5'] = dol_hash($strContent, 3);
+			$this->_msgContent[$strType]['md5']      = dol_hash($strContent, 3);
 		}
 		//}
 	}
@@ -1676,7 +1622,7 @@ class SMTPs
 			$this->_msgContent['image'][$strImageName]['data']     = $strContent;
 
 			if ($this->getMD5flag()) {
-				$this->_msgContent['image'][$strImageName]['md5'] = dol_hash($strContent, 3);
+				$this->_msgContent['image'][$strImageName]['md5']      = dol_hash($strContent, 3);
 			}
 		}
 	}

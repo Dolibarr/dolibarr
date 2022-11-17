@@ -143,8 +143,7 @@ if ($resql) {
 	print price($total);
 	print '</td><td class="right">&nbsp;</td>';
 	print "</tr></table>";
-
-	$db->free($resql);
+	$db->free();
 } else {
 	dol_print_error($db);
 }

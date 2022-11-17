@@ -41,6 +41,17 @@ if (!defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
 
+print "*** SHOW SESSION STATUS<br>\n";
+print "Legend:<br>\n";
+print 'PHP_SESSION_DISABLED='.PHP_SESSION_DISABLED."<br>\n";
+print 'PHP_SESSION_NONE='.PHP_SESSION_NONE."<br>\n";
+print 'PHP_SESSION_ACTIVE='.PHP_SESSION_ACTIVE."<br>\n";
+print '<br>';
+
+print 'session_status='.session_status().' (before main.inc.php)<br>';
+
+print '<br><br>'."\n";
+
 require '../../main.inc.php';
 
 // Security
@@ -52,12 +63,6 @@ if ($dolibarr_main_prod) {
 /*
  * View
  */
-
-header("Content-type: text/html; charset=UTF8");
-
-// Security options
-header("X-Content-Type-Options: nosniff"); // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
-header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 
 print "*** TEST READ OF /tmp/test.txt FILE<br>\n";
 

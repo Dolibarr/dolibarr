@@ -208,7 +208,7 @@ print '</table>';
 print '</div>';
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
@@ -223,7 +223,7 @@ if ($mesg) {
 print '</td></tr></table>';
 
 
-print '</div></div>';
+print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
 

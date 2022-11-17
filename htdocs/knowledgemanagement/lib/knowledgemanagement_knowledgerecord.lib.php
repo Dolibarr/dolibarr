@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2021       Frédéric France			<frederic.france@netlogic.fr>
+/* Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  */
 
 /**
- * \file    htdocs/knowledgemanagement/lib/knowledgemanagement_knowledgerecord.lib.php
+ * \file    htdocs/knowledgemanagementlib/knowledgemanagement_knowledgerecord.lib.php
  * \ingroup knowledgemanagement
  * \brief   Library files with common functions for KnowledgeRecord
  */

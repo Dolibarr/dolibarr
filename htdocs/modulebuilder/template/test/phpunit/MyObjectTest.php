@@ -24,7 +24,6 @@
 
 global $conf, $user, $langs, $db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/mymodule/class/myobject.class.php';
@@ -46,7 +45,7 @@ $langs->load("main");
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class MyObjectTest extends PHPUnit\Framework\TestCase
+class MyObjectTest extends \PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;

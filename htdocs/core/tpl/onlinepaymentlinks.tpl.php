@@ -52,9 +52,9 @@ if (!empty($conf->commande->enabled)) {
 	}
 	print '<br>';
 }
-if (isModEnabled('facture')) {
+if (!empty($conf->facture->enabled)) {
 	print '<div id="invoice"></div>';
-	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice", $servicename).':</span><br>';
+	print img_picto('', 'globe').'  <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'invoice')."</strong><br>\n";
 	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN) && !empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 		$langs->load("bills");
@@ -76,7 +76,7 @@ if (isModEnabled('facture')) {
 }
 if (!empty($conf->contrat->enabled)) {
 	print '<div id="contractline"></div>';
-	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine", $servicename).':</span><br>';
+	print img_picto('', 'globe').'  <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'contractline')."</strong><br>\n";
 	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN) && !empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 		$langs->load("contracts");
@@ -98,7 +98,7 @@ if (!empty($conf->contrat->enabled)) {
 }
 if (!empty($conf->adherent->enabled)) {
 	print '<div id="membersubscription"></div>';
-	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription", $servicename).':</span><br>';
+	print img_picto('', 'globe').'  <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'membersubscription')."</strong><br>\n";
 	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN) && !empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 		$langs->load("members");
@@ -120,7 +120,7 @@ if (!empty($conf->adherent->enabled)) {
 }
 if (!empty($conf->don->enabled)) {
 	print '<div id="donation"></div>';
-	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnDonation", $servicename).':</span><br>';
+	print img_picto('', 'globe').'  <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnDonation", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'donation')."</strong><br>\n";
 	if (!empty($conf->global->PAYMENT_SECURITY_TOKEN) && !empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
 		$langs->load("members");

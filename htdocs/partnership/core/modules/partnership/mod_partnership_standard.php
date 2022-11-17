@@ -36,7 +36,7 @@ class mod_partnership_standard extends ModeleNumRefPartnership
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $prefix = 'PSHIP';
+	public $prefix = 'PARTNERSHIP';
 
 	/**
 	 * @var string Error code (or message)

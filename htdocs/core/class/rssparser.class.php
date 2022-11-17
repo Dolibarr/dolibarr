@@ -49,14 +49,6 @@ class RssParser
 	private $_lastfetchdate; // Last successful fetch
 	private $_rssarray = array();
 
-	private $current_namespace;
-
-	private $initem;
-	private $intextinput;
-	private $incontent;
-	private $inimage;
-	private $inchannel;
-
 	// For parsing with xmlparser
 	public $stack = array(); // parser stack
 	private $_CONTENT_CONSTRUCTS = array('content', 'summary', 'info', 'title', 'tagline', 'copyright');
@@ -235,16 +227,11 @@ class RssParser
 		} else {
 			try {
 				$result = getURLContent($this->_urlRSS, 'GET', '', 1, array(), array('http', 'https'), 0);
-
 				if (!empty($result['content'])) {
 					$str = $result['content'];
-				} elseif (!empty($result['curl_error_msg'])) {
-					$this->error = 'Error retrieving URL '.$this->_urlRSS.' - '.$result['curl_error_msg'];
-					return -1;
 				}
 			} catch (Exception $e) {
-				$this->error = 'Error retrieving URL '.$this->_urlRSS.' - '.$e->getMessage();
-				return -2;
+				print 'Error retrieving URL '.$this->_urlRSS.' - '.$e->getMessage();
 			}
 		}
 
@@ -260,26 +247,19 @@ class RssParser
 					return -1;
 				}
 
-				try {
-					$xmlparser = xml_parser_create(null);
-
-					if (!is_resource($xmlparser) && !is_object($xmlparser)) {
-						$this->error = "ErrorFailedToCreateParser";
-						return -1;
-					}
-
-					xml_set_object($xmlparser, $this);
-					xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
-					xml_set_character_data_handler($xmlparser, 'feed_cdata');
-
-					$status = xml_parse($xmlparser, $str, false);
-
-					xml_parser_free($xmlparser);
-					$rss = $this;
-					//var_dump($status.' '.$rss->_format);exit;
-				} catch (Exception $e) {
-					$rss = null;
+				$xmlparser = xml_parser_create('');
+				if (!is_resource($xmlparser)) {
+					$this->error = "ErrorFailedToCreateParser";
+					return -1;
 				}
+
+				xml_set_object($xmlparser, $this);
+				xml_set_element_handler($xmlparser, 'feed_start_element', 'feed_end_element');
+				xml_set_character_data_handler($xmlparser, 'feed_cdata');
+				$status = xml_parse($xmlparser, $str);
+				xml_parser_free($xmlparser);
+				$rss = $this;
+				//var_dump($rss->_format);exit;
 			}
 		}
 
@@ -454,7 +434,7 @@ class RssParser
 
 						// Loop on each category
 						$itemCategory = array();
-						if (!empty($item->category) && is_array($item->category)) {
+						if (is_array($item->category)) {
 							foreach ($item->category as $cat) {
 								$itemCategory[] = (string) $cat;
 							}
@@ -525,7 +505,7 @@ class RssParser
 	 *  @param	array		$attrs		Attributes of tags
 	 *  @return	void
 	 */
-	public function feed_start_element($p, $element, $attrs)
+	public function feed_start_element($p, $element, &$attrs)
 	{
 		// phpcs:enable
 		$el = $element = strtolower($element);
@@ -692,9 +672,9 @@ class RssParser
 	public function append_content($text)
 	{
 		// phpcs:enable
-		if (!empty($this->initem)) {
+		if ($this->initem) {
 			$this->concat($this->current_item[$this->incontent], $text);
-		} elseif (!empty($this->inchannel)) {
+		} elseif ($this->inchannel) {
 			$this->concat($this->channel[$this->incontent], $text);
 		}
 	}
@@ -711,24 +691,24 @@ class RssParser
 		if (!$el) {
 			return;
 		}
-		if (!empty($this->current_namespace)) {
-			if (!empty($this->initem)) {
+		if ($this->current_namespace) {
+			if ($this->initem) {
 				$this->concat($this->current_item[$this->current_namespace][$el], $text);
-			} elseif (!empty($this->inchannel)) {
+			} elseif ($this->inchannel) {
 				$this->concat($this->channel[$this->current_namespace][$el], $text);
-			} elseif (!empty($this->intextinput)) {
+			} elseif ($this->intextinput) {
 				$this->concat($this->textinput[$this->current_namespace][$el], $text);
-			} elseif (!empty($this->inimage)) {
+			} elseif ($this->inimage) {
 				$this->concat($this->image[$this->current_namespace][$el], $text);
 			}
 		} else {
-			if (!empty($this->initem)) {
+			if ($this->initem) {
 				$this->concat($this->current_item[$el], $text);
-			} elseif (!empty($this->intextinput)) {
+			} elseif ($this->intextinput) {
 				$this->concat($this->textinput[$el], $text);
-			} elseif (!empty($this->inimage)) {
+			} elseif ($this->inimage) {
 				$this->concat($this->image[$el], $text);
-			} elseif (!empty($this->inchannel)) {
+			} elseif ($this->inchannel) {
 				$this->concat($this->channel[$el], $text);
 			}
 		}

@@ -112,7 +112,7 @@ class CUnits // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = "INSERT INTO ".$this->db->prefix()."c_units(";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_units(";
 		$sql .= "rowid,";
 		$sql .= "code,";
 		$sql .= "label,";
@@ -138,7 +138,7 @@ class CUnits // extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id($this->db->prefix()."c_units");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_units");
 		}
 
 		// Commit or rollback
@@ -178,7 +178,7 @@ class CUnits // extends CommonObject
 		$sql .= " t.unit_type,";
 		$sql .= " t.scale,";
 		$sql .= " t.active";
-		$sql .= " FROM ".$this->db->prefix()."c_units as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_units as t";
 		$sql_where = array();
 		if ($id) {
 			$sql_where[] = " t.rowid = ".((int) $id);
@@ -237,40 +237,39 @@ class CUnits // extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = "SELECT";
+		$sql = 'SELECT';
 		$sql .= " t.rowid,";
 		$sql .= " t.code,";
-		$sql .= " t.sortorder,";
 		$sql .= " t.label,";
 		$sql .= " t.short_label,";
 		$sql .= " t.unit_type,";
 		$sql .= " t.scale,";
 		$sql .= " t.active";
-		$sql .= " FROM ".$this->db->prefix()."c_units as t";
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'c_units as t';
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid' || $key == 't.active' || $key == 't.scale') {
-					$sqlwhere[] = $key." = ".((int) $value);
+					$sqlwhere[] = $key.'='.(int) $value;
 				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.unit_type' || $key == 't.code' || $key == 't.short_label') {
-					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
+					$sqlwhere[] = $key.' = \''.$this->db->escape($value).'\'';
 				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+			$sql .= ' WHERE ('.implode(' '.$filtermode.' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= $this->db->plimit($limit, $offset);
+			$sql .= ' '.$this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -281,9 +280,8 @@ class CUnits // extends CommonObject
 				while ($obj = $this->db->fetch_object($resql)) {
 					$record = new self($this->db);
 
-					$record->id = $obj->rowid;
+					$record->id    = $obj->rowid;
 					$record->code = $obj->code;
-					$record->sortorder = $obj->sortorder;
 					$record->label = $obj->label;
 					$record->short_label = $obj->short_label;
 					$record->unit_type = $obj->unit_type;
@@ -320,9 +318,6 @@ class CUnits // extends CommonObject
 		if (isset($this->code)) {
 			$this->code = trim($this->code);
 		}
-		if (isset($this->sortorder)) {
-			$this->sortorder = trim($this->sortorder);
-		}
 		if (isset($this->label)) {
 			$this->libelle = trim($this->label);
 		}
@@ -343,9 +338,8 @@ class CUnits // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".$this->db->prefix()."c_units SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."c_units SET";
 		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
-		$sql .= " sortorder=".(isset($this->sortorder) ? "'".$this->db->escape($this->sortorder)."'" : "null").",";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " short_label=".(isset($this->short_label) ? "'".$this->db->escape($this->short_label)."'" : "null").",";
 		$sql .= " unit_type=".(isset($this->unit_type) ? "'".$this->db->escape($this->unit_type)."'" : "null").",";
@@ -389,7 +383,7 @@ class CUnits // extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
-		$sql = "DELETE FROM ".$this->db->prefix()."c_units";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_units";
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -420,16 +414,15 @@ class CUnits // extends CommonObject
 	 * Get unit from code
 	 * @param string $code code of unit
 	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
-	 * @param string $unit_type weight,size,surface,volume,qty,time...
 	 * @return int            <0 if KO, Id of code if OK
 	 */
-	public function getUnitFromCode($code, $mode = 'code', $unit_type = '')
+	public function getUnitFromCode($code, $mode = 'code')
 	{
 
 		if ($mode == 'short_label') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid', 0, " AND unit_type = '".$this->db->escape($unit_type)."'");
+			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid');
 		} elseif ($mode == 'code') {
-			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid', 0, " AND unit_type = '". $this->db->escape($unit_type) ."'");
+			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid');
 		}
 
 		return $code;
@@ -464,30 +457,22 @@ class CUnits // extends CommonObject
 	}
 
 	/**
-	 * Get scale of unit factor
-	 *
-	 * @param 	int 		$id 	Id of unit in dictionary
-	 * @return 	float|int			Scale of unit
+	 * get scale of unit factor
+	 * @param int $id id of unit in dictionary
+	 * @return float|int
 	 */
 	public function scaleOfUnitPow($id)
 	{
 		$base = 10;
-
-		$sql = "SELECT scale, unit_type FROM ".$this->db->prefix()."c_units WHERE rowid = ".((int) $id);
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			// TODO : add base col into unit dictionary table
-			$unit = $this->db->fetch_object($sql);
-			if ($unit) {
-				// TODO : if base exists in unit dictionary table, remove this convertion exception and update convertion infos in database.
-				// Example time hour currently scale 3600 will become scale 2 base 60
-				if ($unit->unit_type == 'time') {
-					return floatval($unit->scale);
-				}
-
-				return pow($base, floatval($unit->scale));
+		// TODO : add base col into unit dictionary table
+		$unit = $this->db->getRow('SELECT scale, unit_type from '.MAIN_DB_PREFIX.'c_units WHERE rowid = '.intval($id));
+		if ($unit) {
+			// TODO : if base exist in unit dictionary table remove this convertion exception and update convertion infos in database exemple time hour currently scale 3600 will become scale 2 base 60
+			if ($unit->unit_type == 'time') {
+				return floatval($unit->scale);
 			}
+
+			return pow($base, floatval($unit->scale));
 		}
 
 		return 0;

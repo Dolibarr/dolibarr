@@ -141,13 +141,13 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, p.rowid as propalid, p.ref, d.total_ht as amount,";
 			$sql .= " p.ref_client,";
 			$sql .= "p.datep, p.fk_statut as statut, d.rowid, d.qty";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->rights->societe->client->voir && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ",".MAIN_DB_PREFIX."propal as p";
 			$sql .= ", ".MAIN_DB_PREFIX."propaldet as d";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->rights->societe->client->voir && !$socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE p.fk_soc = s.rowid";
@@ -160,7 +160,7 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($search_year)) {
 				$sql .= ' AND YEAR(p.datep) IN ('.$db->sanitize($search_year).')';
 			}
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->rights->societe->client->voir && !$socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($socid) {
@@ -185,10 +185,11 @@ if ($id > 0 || !empty($ref)) {
 			if ($result) {
 				$num = $db->num_rows($result);
 
-				$option .= '&id='.$product->id;
-
 				if ($limit > 0 && $limit != $conf->liste_limit) {
 					$option .= '&limit='.urlencode($limit);
+				}
+				if (!empty($id)) {
+					$option .= '&id='.$product->id;
 				}
 				if (!empty($search_month)) {
 					$option .= '&search_month='.urlencode($search_month);

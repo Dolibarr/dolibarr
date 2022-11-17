@@ -7,6 +7,7 @@ VATCollected=Eingehobene MwSt.
 MenuSpecialExpenses=Steuern, Sozialbeiträge und Dividenden
 AnnualSummaryDueDebtMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus<b>%sForderungen-Verbindlichkeiten%s</b> meldet <b>Kameralistik</b>.
 AnnualSummaryInputOutputMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus <b>%sEinkünfte-Ausgaben%s</b> meldet <b>Ist-Besteuerung</b>.
+VATReportByThirdParties=Sales tax report by third party
 VATReportByCustomersInInputOutputMode=Bericht zur vereinnahmten und bezahlten MwSt. nach Kunden (Steuerbeleg)
 ProposalStats=Statistik über die Vorschläge
 OrderStats=Statistiken über Bestellungen
@@ -16,3 +17,9 @@ PurchasesJournal=Käufe Journal
 DescSellsJournal=Vertrieb Journal
 DescPurchasesJournal=Käufe Journal
 LinkedOrder==> Bestellung
+InvoiceLate30Days =Invoices late (> 30 days)
+InvoiceLate15Days =Invoices late (15 to 30 days)
+InvoiceLateMinus15Days =Invoices late (< 15 days)
+InvoiceNotLate =To be collected (< 15 days)
+InvoiceNotLate15Days =To be collected (15 to 30 days)
+InvoiceNotLate30Days =To be collected (> 30 days)

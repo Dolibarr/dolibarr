@@ -57,7 +57,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 if (!empty($conf->productbatch->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
-if (!empty($conf->project->enabled)) {
+if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -85,7 +85,6 @@ if (empty($origin_id)) {
 }
 $ref = GETPOST('ref', 'alpha');
 $line_id = GETPOST('lineid', 'int') ?GETPOST('lineid', 'int') : '';
-$facid = GETPOST('facid', 'int');
 
 $action	= GETPOST('action', 'alpha');
 //Select mail models is same action as presend
@@ -101,19 +100,20 @@ $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 $object = new Reception($db);
-$objectorder = new CommandeFournisseur($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 $extrafields->fetch_name_optionals_label($object->table_element_line);
-$extrafields->fetch_name_optionals_label($objectorder->table_element_line);
 
 // Load object. Make an object->fetch
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('receptioncard', 'globalcard'));
+
+$permissiondellink = $user->rights->reception->creer; // Used by the include of actions_dellink.inc.php
+//var_dump($object->lines[0]->detail_batch);
 
 $date_delivery = dol_mktime(GETPOST('date_deliveryhour', 'int'), GETPOST('date_deliverymin', 'int'), 0, GETPOST('date_deliverymonth', 'int'), GETPOST('date_deliveryday', 'int'), GETPOST('date_deliveryyear', 'int'));
 
@@ -142,29 +142,14 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-if (!empty($conf->reception->enabled) || $origin == 'reception' || empty($origin)) {
+if ($origin == 'reception') {
 	$result = restrictedArea($user, 'reception', $id);
 } else {
-	// We do not use the reception module, so we test permission on the supplier orders
 	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
 		$result = restrictedArea($user, 'fournisseur', $origin_id, 'commande_fournisseur', 'commande');
 	} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
 		accessforbidden();
 	}
-}
-
-if (!empty($conf->reception->enabled)) {
-	$permissiontoread = $user->rights->reception->lire;
-	$permissiontoadd = $user->rights->reception->creer;
-	$permissiondellink = $user->rights->reception->creer; // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate)));
-	$permissiontodelete = $user->rights->reception->supprimer;
-} else {
-	$permissiontoread = $user->rights->fournisseur->commande->receptionner;
-	$permissiontoadd = $user->rights->fournisseur->commande->receptionner;
-	$permissiondellink = $user->rights->fournisseur->commande->receptionner; // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande->receptionner)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande_advance->check)));
-	$permissiontodelete = $user->rights->fournisseur->commande->receptionner;
 }
 
 
@@ -186,12 +171,12 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
 
 	// Reopen
-	if ($action == 'reopen' && $permissiontoadd) {
+	if ($action == 'reopen' && $user->rights->reception->creer) {
 		$result = $object->reOpen();
 	}
 
 	// Confirm back to draft status
-	if ($action == 'modif' && $permissiontoadd) {
+	if ($action == 'modif' && $user->rights->reception->creer) {
 		$result = $object->setDraft($user);
 		if ($result >= 0) {
 			// Define output language
@@ -218,11 +203,11 @@ if (empty($reshook)) {
 	}
 
 	// Set incoterm
-	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled) && $permissiontoadd) {
+	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled)) {
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	}
 
-	if ($action == 'setref_supplier' && $permissiontoadd) {
+	if ($action == 'setref_supplier') {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -237,7 +222,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update_extras' && $permissiontoadd) {
+	if ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
@@ -261,7 +246,7 @@ if (empty($reshook)) {
 	}
 
 	// Create reception
-	if ($action == 'add' && $permissiontoadd) {
+	if ($action == 'add' && $user->rights->reception->creer) {
 		$error = 0;
 		$predef = '';
 
@@ -272,9 +257,9 @@ if (empty($reshook)) {
 		$object->origin_id = $origin_id;
 		$object->fk_project = GETPOST('projectid', 'int');
 		$object->weight = GETPOST('weight', 'int') == '' ? null : GETPOST('weight', 'int');
-		$object->trueHeight = GETPOST('trueHeight', 'int') == '' ? null : GETPOST('trueHeight', 'int');
-		$object->trueWidth = GETPOST('trueWidth', 'int') == '' ? null : GETPOST('trueWidth', 'int');
-		$object->trueDepth = GETPOST('trueDepth', 'int') == '' ? null : GETPOST('trueDepth', 'int');
+		$object->sizeH = GETPOST('sizeH', 'int') == '' ? null : GETPOST('sizeH', 'int');
+		$object->sizeW = GETPOST('sizeW', 'int') == '' ? null : GETPOST('sizeW', 'int');
+		$object->sizeS = GETPOST('sizeS', 'int') == '' ? null : GETPOST('sizeS', 'int');
 		$object->size_units = GETPOST('size_units', 'int');
 		$object->weight_units = GETPOST('weight_units', 'int');
 
@@ -327,6 +312,7 @@ if (empty($reshook)) {
 			$stockLocation = "ent1".$i."_0";
 			$qty = "qtyl".$i;
 
+			//var_dump(GETPOST($qty,'int')); var_dump($_POST); var_dump($batch);exit;
 			//reception line for product with no batch management and no multiple stock location
 			if (GETPOST($qty, 'alpha') > 0) {
 				$totalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
@@ -338,6 +324,7 @@ if (empty($reshook)) {
 
 
 		if ($totalqty > 0) {  // There is at least one thing to ship
+			//var_dump($_POST);exit;
 			for ($i = 1; $i <= $num; $i++) {
 				$lineToTest = '';
 				$lineId = GETPOST($idl, 'int');
@@ -352,14 +339,10 @@ if (empty($reshook)) {
 				}
 				$qty = "qtyl".$i;
 				$comment = "comment".$i;
-				// EATBY <-> DLUO see productbatch.class.php
-				// SELLBY <-> DLC
-				$eatby = "dluo".$i;
-				$sellby = "dlc".$i;
+				$eatby = "dlc".$i;
+				$sellby = "dluo".$i;
 				$batch = "batch".$i;
-				$cost_price = "cost_price".$i;
 
-				//if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && getDolGlobalString('RECEPTION_GETS_ALL_ORDER_PRODUCTS')) || (GETPOST($qty, 'int') < 0 && getDolGlobalString('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 				if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->RECEPTION_GETS_ALL_ORDER_PRODUCTS)) {
 					$ent = "entl".$i;
 
@@ -384,11 +367,7 @@ if (empty($reshook)) {
 					$eatbydate = str_replace('/', '-', $eatby);
 					$sellbydate = str_replace('/', '-', $sellby);
 
-					if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
-						$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch, 'alpha'), price2num(GETPOST($cost_price, 'double'), 'MU'));
-					} else {
-						$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch, 'alpha'));
-					}
+					$ret = $object->addline($entrepot_id, GETPOST($idl, 'int'), GETPOST($qty, 'int'), $array_options[$i], GETPOST($comment, 'alpha'), strtotime($eatbydate), strtotime($sellbydate), GETPOST($batch, 'alpha'));
 					if ($ret < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -424,7 +403,10 @@ if (empty($reshook)) {
 			$_GET["commande_id"] = GETPOST('commande_id', 'int');
 			$action = 'create';
 		}
-	} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $permissiontovalidate) {
+	} elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
+		((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer))
+		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate)))
+	) {
 		$object->fetch_thirdparty();
 
 		$result = $object->valid($user);
@@ -456,7 +438,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->reception->supprimer) {
 		$result = $object->delete($user);
 		if ($result > 0) {
 			header("Location: ".DOL_URL_ROOT.'/reception/index.php');
@@ -471,7 +453,8 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 		}*/
-	} elseif ($action == 'setdate_livraison' && $permissiontoadd) {
+	} elseif ($action == 'setdate_livraison' && $user->rights->reception->creer) {
+		//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 		$object->fetch($id);
@@ -521,7 +504,7 @@ if (empty($reshook)) {
 		}
 
 		$action = "";
-	} elseif ($action == 'builddoc' && $permissiontoread) {
+	} elseif ($action == 'builddoc') {
 		// Build document
 		// En get ou en post
 		// Save last template used to generate document
@@ -547,7 +530,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
-	} elseif ($action == 'remove_file' && $permissiontoadd) {
+	} elseif ($action == 'remove_file') {
 		// Delete file in doc form
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -565,13 +548,13 @@ if (empty($reshook)) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit();
 		}
-	} elseif ($action == 'classifyclosed' && $permissiontoread) {
+	} elseif ($action == 'classifyclosed') {
 		$result = $object->setClosed();
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit();
 		}
-	} elseif ($action == 'deleteline' && !empty($line_id) && $permissiontoread) {
+	} elseif ($action == 'deleteline' && !empty($line_id)) {
 		// delete a line
 		$lines = $object->lines;
 		$line = new CommandeFournisseurDispatch($db);
@@ -594,7 +577,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
-	} elseif ($action == 'updateline' && GETPOST('save') && $permissiontoadd) {
+	} elseif ($action == 'updateline' && $user->rights->reception->creer && GETPOST('save')) {
 		// Update a line
 		// Clean parameters
 		$qty = 0;
@@ -631,11 +614,9 @@ if (empty($reshook)) {
 						$batch = "batch".$line_id;
 						$dlc = "dlc".$line_id;
 						$dluo = "dluo".$line_id;
-						// EATBY <-> DLUO
-						$eatby = GETPOST($dluo, 'alpha');
+						$eatby = GETPOST($dlc, 'alpha');
 						$eatbydate = str_replace('/', '-', $eatby);
-						// SELLBY <-> DLC
-						$sellby = GETPOST($dlc, 'alpha');
+						$sellby = GETPOST($dluo, 'alpha');
 						$sellbydate = str_replace('/', '-', $sellby);
 						$line->batch = GETPOST($batch, 'alpha');
 						$line->eatby = strtotime($eatbydate);
@@ -646,7 +627,8 @@ if (empty($reshook)) {
 						setEventMessages($line->error, $line->errors, 'errors');
 						$error++;
 					}
-				} else { // Product no predefined
+				} else // Product no predefined
+				{
 					$qty = "qtyl".$line_id;
 					$line->id = $line_id;
 					$line->qty = GETPOST($qty, 'int');
@@ -682,11 +664,11 @@ if (empty($reshook)) {
 				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		} else {
-			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To reshow the record we edit
+			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
 			exit();
 		}
-	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
-		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To reshow the record we edit
+	} elseif ($action == 'updateline' && $user->rights->reception->creer && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
+		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
 
@@ -713,7 +695,7 @@ llxHeader('', $langs->trans('Reception'), 'Reception');
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->project->enabled)) {
+if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -798,7 +780,7 @@ if ($action == 'create') {
 			print '</tr>';
 
 			// Project
-			if (!empty($conf->project->enabled)) {
+			if (!empty($conf->projet->enabled)) {
 				$projectid = GETPOST('projectid', 'int') ?GETPOST('projectid', 'int') : 0;
 				if (empty($projectid) && !empty($objectsrc->fk_project)) {
 					$projectid = $objectsrc->fk_project;
@@ -852,9 +834,9 @@ if ($action == 'create') {
 			// Dim
 			print '<tr><td>';
 			print $langs->trans("Width").' x '.$langs->trans("Height").' x '.$langs->trans("Depth");
-			print ' </td><td colspan="3"><input name="trueWidth" size="4" value="'.GETPOST('trueWidth', 'int').'">';
-			print ' x <input name="trueHeight" size="4" value="'.GETPOST('trueHeight', 'int').'">';
-			print ' x <input name="trueDepth" size="4" value="'.GETPOST('trueDepth', 'int').'">';
+			print ' </td><td colspan="3"><input name="sizeW" size="4" value="'.GETPOST('sizeW', 'int').'">';
+			print ' x <input name="sizeH" size="4" value="'.GETPOST('sizeH', 'int').'">';
+			print ' x <input name="sizeS" size="4" value="'.GETPOST('sizeS', 'int').'">';
 			print ' ';
 			$text = $formproduct->selectMeasuringUnits("size_units", "size", GETPOST('size_units', 'int'), 0, 2);
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
@@ -962,10 +944,10 @@ if ($action == 'create') {
 					$ent = 'entrepot_' . $paramSuffix;
 					$pu = 'pu_' . $paramSuffix;
 					$lot = 'lot_number_' . $paramSuffix;
-					$dDLUO = dol_mktime(12, 0, 0, GETPOST('dluo_'.$paramSuffix.'month', 'int'), GETPOST('dluo_'.$paramSuffix.'day', 'int'), GETPOST('dluo_'.$paramSuffix.'year', 'int'));
-					$dDLC = dol_mktime(12, 0, 0, GETPOST('dlc_'.$paramSuffix.'month', 'int'), GETPOST('dlc_'.$paramSuffix.'day', 'int'), GETPOST('dlc_'.$paramSuffix.'year', 'int'));
+					$dDLUO = dol_mktime(12, 0, 0, $_POST['dluo_'.$paramSuffix.'month'], $_POST['dluo_'.$paramSuffix.'day'], $_POST['dluo_'.$paramSuffix.'year']);
+					$dDLC = dol_mktime(12, 0, 0, $_POST['dlc_'.$paramSuffix.'month'], $_POST['dlc_'.$paramSuffix.'day'], $_POST['dlc_'.$paramSuffix.'year']);
 					$fk_commandefourndet = 'fk_commandefourndet_'.$paramSuffix;
-					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' => GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' => GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
+					$dispatchLines[$numAsked] = array('prod' => GETPOST($prod, 'int'), 'qty' => price2num(GETPOST($qty), 'MS'), 'ent' =>GETPOST($ent, 'int'), 'pu' => price2num(GETPOST($pu), 'MU'), 'comment' =>GETPOST('comment'), 'fk_commandefourndet' => GETPOST($fk_commandefourndet, 'int'), 'DLC'=> $dDLC, 'DLUO'=> $dDLUO, 'lot'=> GETPOST($lot, 'alpha'));
 				}
 
 				// If create form is coming from same page, it means that post was sent but an error occured
@@ -998,7 +980,7 @@ if ($action == 'create') {
 				$dispatchLines[$n]['array_options'] = $extrafields->getOptionalsFromPost('commande_fournisseur_dispatch', '_' . $suffix, '');
 			}
 
-			print '<script type="text/javascript">
+			print '<script type="text/javascript" language="javascript">
             jQuery(document).ready(function() {
 	            jQuery("#autofill").click(function() {';
 			$i = 1;
@@ -1031,9 +1013,6 @@ if ($action == 'create') {
 				print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 				print '<td class="center">'.$langs->trans("QtyToReceive");
-				if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION || $conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
-					print '<td>'.$langs->trans("BuyingPrice").'</td>';
-				}
 				if (empty($conf->productbatch->enabled)) {
 					print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
 					print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
@@ -1178,7 +1157,6 @@ if ($action == 'create') {
 
 					$stock = + $product->stock_warehouse[$dispatchLines[$indiceAsked]['ent']]->real; // Convert to number
 					$deliverableQty = $dispatchLines[$indiceAsked]['qty'];
-					$cost_price = $dispatchLines[$indiceAsked]['pu'];
 
 					// Quantity to send
 					print '<td class="center">';
@@ -1187,17 +1165,11 @@ if ($action == 'create') {
 							$defaultqty = GETPOST('qtyl'.$indiceAsked, 'int');
 						}
 						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-						print '<input class="right" name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+						print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 					} else {
 						print $langs->trans("NA");
 					}
 					print '</td>';
-
-					if (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
-						print '<td>';
-						print '<input class="width75 right" name="cost_price'.$indiceAsked.'" id="cost_price'.$indiceAsked.'" value="'.$cost_price.'">';
-						print '</td>';
-					}
 
 					// Stock
 					if (!empty($conf->stock->enabled)) {
@@ -1240,26 +1212,30 @@ if ($action == 'create') {
 
 				print "</tr>\n";
 
-				// Display lines for extrafields of the Reception line
-				// $line is a 'CommandeFournisseurLigne', $dispatchLines contains values of Reception lines so properties of CommandeFournisseurDispatch
-				if (!empty($extrafields)) {
-					//var_dump($line);
+				$extralabelslines = $extrafields->attributes[$line->table_element];
+				//Display lines extrafields
+				if (is_array($extralabelslines) && count($extralabelslines) > 0) {
 					$colspan = 5;
-					if (isModEnabled('productbatch')) {
+					if ($conf->productbatch->enabled) {
 						$colspan += 3;
 					}
-					$recLine = new CommandeFournisseurDispatch($db);
 
 					$srcLine = new CommandeFournisseurLigne($db);
+					$line = new CommandeFournisseurDispatch($db);
+
+					$extrafields->fetch_name_optionals_label($srcLine->table_element);
+					$extrafields->fetch_name_optionals_label($line->table_element);
+
 					$srcLine->id = $line->id;
 					$srcLine->fetch_optionals(); // fetch extrafields also available in orderline
+					$line->fetch_optionals();
 
-					if (empty($recLine->array_options) && !empty($dispatchLines[$indiceAsked]['array_options'])) {
-						$recLine->array_options = $dispatchLines[$indiceAsked]['array_options'];
+					if (empty($line->array_options) && !empty($dispatchLines[$indiceAsked]['array_options'])) {
+						$line->array_options = $dispatchLines[$indiceAsked]['array_options'];
 					}
-					$recLine->array_options = array_merge($recLine->array_options, $srcLine->array_options);
+					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 
-					print $recLine->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), $indiceAsked, '', 1);
+					print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), $indiceAsked);
 				}
 
 				$indiceAsked++;
@@ -1269,7 +1245,11 @@ if ($action == 'create') {
 
 			print '<br>';
 
-			print $form->buttonsSaveCancel("Create");
+			print '<div class="center">';
+			print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
+			print '&nbsp; ';
+			print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
+			print '</div>';
 
 			print '</form>';
 
@@ -1382,12 +1362,12 @@ if ($action == 'create') {
 		// Thirdparty
 		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (!empty($conf->project->enabled)) {
+		if (!empty($conf->projet->enabled)) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
 			if (0) {    // Do not change on reception
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
 				if ($action == 'classify') {
 					// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
@@ -1395,7 +1375,7 @@ if ($action == 'create') {
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
 					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-					$morehtmlref .= '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+					$morehtmlref .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 					$morehtmlref .= '</form>';
 				} else {
 					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
@@ -1407,10 +1387,9 @@ if ($action == 'create') {
 				if (!empty($objectsrc->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($objectsrc->fk_project);
-					$morehtmlref .= ' : '.$proj->getNomUrl(1);
-					if ($proj->title) {
-						$morehtmlref .= ' - '.$proj->title;
-					}
+					$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$objectsrc->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+					$morehtmlref .= $proj->ref;
+					$morehtmlref .= '</a>';
 				} else {
 					$morehtmlref .= '';
 				}
@@ -1465,7 +1444,7 @@ if ($action == 'create') {
 		print '</td>';
 
 		if ($action != 'editdate_livraison') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="2">';
@@ -1474,7 +1453,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
 			print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
-			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
@@ -1586,6 +1565,7 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
+		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
 		print '<table class="border centpercent tableforfield">';
@@ -1597,7 +1577,7 @@ if ($action == 'create') {
 		print '</td>';
 
 		if ($action != 'editshipping_method_id') {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&amp;id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="2">';
@@ -1610,7 +1590,7 @@ if ($action == 'create') {
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
-			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
+			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			if ($object->shipping_method_id > 0) {
@@ -1634,7 +1614,7 @@ if ($action == 'create') {
 			print $langs->trans('IncotermLabel');
 			print '<td><td class="right">';
 			if ($user->rights->reception->creer) {
-				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/reception/card.php?id='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/reception/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
 			} else {
 				print '&nbsp;';
 			}
@@ -1653,6 +1633,7 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '</div>';
+		print '</div>';
 
 		print '<div class="clearboth"></div>';
 
@@ -1668,8 +1649,7 @@ if ($action == 'create') {
 		print '<br>';
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table id="tablelines" class="noborder centpercent">';
-		print '<thead>';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		// #
 		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
@@ -1734,7 +1714,6 @@ if ($action == 'create') {
 			print '<td class="linecoldelete" width="10"></td>';
 		}
 		print "</tr>\n";
-		print '</thead>';
 
 		$var = false;
 
@@ -1800,10 +1779,9 @@ if ($action == 'create') {
 		$arrayofpurchaselinealreadyoutput = array();
 
 		// Loop on each product to send/sent. Warning: $lines must be sorted by ->fk_commandefourndet (it is a regroupment key on output)
-		print '<tbody>';
 		for ($i = 0; $i < $num_prod; $i++) {
-			print '<!-- origin line id = '.(!empty($lines[$i]->origin_line_id) ? $lines[$i]->origin_line_id : 0).' -->'; // id of order line
-			print '<tr class="oddeven" id="row-'.$lines[$i]->id.'" data-id="'.$lines[$i]->id.'" data-element="'.$lines[$i]->element.'">';
+			print '<!-- origin line id = '.$lines[$i]->origin_line_id.' -->'; // id of order line
+			print '<tr class="oddeven">';
 
 			// #
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
@@ -1821,20 +1799,20 @@ if ($action == 'create') {
 					$label = (!empty($lines[$i]->product->label) ? $lines[$i]->product->label : $lines[$i]->product->product_label);
 				}
 
-				print '<td class="linecoldescription">';
+				print '<td>';
 				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 					$text = $lines[$i]->product->getNomUrl(1);
 					$text .= ' - '.$label;
 					$description = (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($lines[$i]->product->description));
 					print $form->textwithtooltip($text, $description, 3, '', '', $i);
-					print_date_range(!empty($lines[$i]->date_start) ? $lines[$i]->date_start : 0, !empty($lines[$i]->date_end) ? $lines[$i]->date_end : 0);
+					print_date_range($lines[$i]->date_start, $lines[$i]->date_end);
 					if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
 						print (!empty($lines[$i]->product->description) && $lines[$i]->description != $lines[$i]->product->description) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
 					}
 				}
 				print "</td>\n";
 			} else {
-				print '<td class="linecoldescription">';
+				print "<td>";
 				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 					if ($lines[$i]->product_type == Product::TYPE_SERVICE) {
 						$text = img_object($langs->trans('Service'), 'service');
@@ -1862,7 +1840,7 @@ if ($action == 'create') {
 
 
 			// Qty ordered
-			print '<td class="center linecolqty">';
+			print '<td class="center">';
 			if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 				print $lines[$i]->qty_asked;
 			}
@@ -1870,7 +1848,7 @@ if ($action == 'create') {
 
 			// Qty in other receptions (with reception and warehouse used)
 			if ($origin && $origin_id > 0) {
-				print '<td class="center nowrap linecolqtyinotherreceptions">';
+				print '<td class="center nowrap">';
 				if (!array_key_exists($lines[$i]->fk_commandefourndet, $arrayofpurchaselinealreadyoutput)) {
 					foreach ($alreadysent as $key => $val) {
 						if ($lines[$i]->fk_commandefourndet == $key) {
@@ -1941,7 +1919,7 @@ if ($action == 'create') {
 				print '</table></td>';
 			} else {
 				// Qty to receive or received
-				print '<td class="center linecolqtytoreceive">'.$lines[$i]->qty.'</td>';
+				print '<td class="center">'.$lines[$i]->qty.'</td>';
 
 				// Warehouse source
 				if (!empty($conf->stock->enabled)) {
@@ -1961,7 +1939,7 @@ if ($action == 'create') {
 				if (!empty($conf->productbatch->enabled)) {
 					if (isset($lines[$i]->batch)) {
 						print '<!-- Detail of lot -->';
-						print '<td class="linecolbatch">';
+						print '<td>';
 						$detail = '';
 						if ($lines[$i]->product->status_batch) {
 							$detail .= $langs->trans("Batch").': '.$lines[$i]->batch;
@@ -1985,8 +1963,8 @@ if ($action == 'create') {
 			}
 
 			// Weight
-			print '<td class="center linecolweight">';
-			if (!empty($lines[$i]->fk_product_type) && $lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
+			print '<td class="center">';
+			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
 				print $lines[$i]->product->weight * $lines[$i]->qty.' '.measuringUnitString(0, "weight", $lines[$i]->product->weight_units);
 			} else {
 				print '&nbsp;';
@@ -1994,8 +1972,8 @@ if ($action == 'create') {
 			print '</td>';
 
 			// Volume
-			print '<td class="center linecolvolume">';
-			if (!empty($lines[$i]->fk_product_type) && $lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
+			print '<td class="center">';
+			if ($lines[$i]->fk_product_type == Product::TYPE_PRODUCT) {
 				print $lines[$i]->product->volume * $lines[$i]->qty.' '.measuringUnitString(0, "volume", $lines[$i]->product->volume_units);
 			} else {
 				print '&nbsp;';
@@ -2010,10 +1988,10 @@ if ($action == 'create') {
 			} elseif ($object->statut == Reception::STATUS_DRAFT) {
 				// edit-delete buttons
 				print '<td class="linecoledit center">';
-				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
+				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;token='.newToken().'&amp;lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
 				print '</td>';
 				print '<td class="linecoldelete" width="10">';
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;token='.newToken().'&amp;lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
 				print '</td>';
 
 				// Display lines extrafields
@@ -2029,7 +2007,7 @@ if ($action == 'create') {
 
 			// Display lines extrafields
 			$extralabelslines = $extrafields->attributes[$lines[$i]->table_element];
-			if (!empty($extralabelslines) && is_array($extralabelslines) && count($extralabelslines) > 0) {
+			if (is_array($extralabelslines) && count($extralabelslines) > 0) {
 				$colspan = empty($conf->productbatch->enabled) ? 8 : 9;
 				$line = new CommandeFournisseurDispatch($db);
 				$line->id = $lines[$i]->id;
@@ -2042,7 +2020,6 @@ if ($action == 'create') {
 				}
 			}
 		}
-		print '</tbody>';
 
 		// TODO Show also lines ordered but not delivered
 
@@ -2083,10 +2060,10 @@ if ($action == 'create') {
 			// TODO add alternative status
 			// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
 			if ($object->statut == Reception::STATUS_CLOSED && $user->rights->reception->creer) {
-				if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ClassifyUnbilled").'</a>';
+				if (!empty($conf->facture->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ClassifyUnbilled").'</a>';
 				} else {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen").'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
 				}
 			}
 
@@ -2120,12 +2097,12 @@ if ($action == 'create') {
 						$label = "ClassifyBilled";
 						$paramaction = 'classifybilled';
 					}
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$paramaction.'&token='.newToken().'">'.$langs->trans($label).'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action='.$paramaction.'">'.$langs->trans($label).'</a>';
 				}
 			}
 
 			if ($user->rights->reception->supprimer) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>';
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete&amp;token='.newToken().'">'.$langs->trans("Delete").'</a>';
 			}
 		}
 
@@ -2154,9 +2131,7 @@ if ($action == 'create') {
 		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
 		$somethingshown = $form->showLinkedObjectBlock($object, '');
 
-		print '</div><div class="fichehalfright">';
-
-		print '</div></div>';
+		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 	}
 
 	// Presend form

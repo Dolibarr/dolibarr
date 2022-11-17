@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2018       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +54,7 @@ if (empty($year)) {
 }
 $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
 $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
-
 // Quarter
-$q = '';
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q", "int");
 	if (empty($q)) {
@@ -158,12 +155,10 @@ foreach ($listofparams as $param) {
 
 llxHeader('', $langs->trans("TurnoverReport"), '', '', 0, 0, '', '', $morequerystring);
 
-$exportlink="";
-$namelink="";
+
 //print load_fiche_titre($langs->trans("VAT"),"");
 
 //$fsearch.='<br>';
-$fsearch = '';
 $fsearch .= '  <input type="hidden" name="year" value="'.$year.'">';
 $fsearch .= '  <input type="hidden" name="modetax" value="'.$modetax.'">';
 //$fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
@@ -203,17 +198,14 @@ if ($nextquarter < 4) {
 	$nextquarter = 1;
 	$nextyear++;
 }
-$description = $fsearch;
+$description .= $fsearch;
 $builddate = dol_now();
 
-if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
-	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
-}
 if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') {
-	$description .= '<br>'.$langs->trans("RulesVATDueProducts");
+	$description .= $langs->trans("RulesVATDueProducts");
 }
 if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') {
-	$description .= '<br>'.$langs->trans("RulesVATInProducts");
+	$description .= $langs->trans("RulesVATInProducts");
 }
 if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') {
 	$description .= '<br>'.$langs->trans("RulesVATDueServices");
@@ -224,9 +216,10 @@ if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$description .= '<br>'.$langs->trans("DepositsAreNotIncluded");
 }
-if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
-	$description .= $langs->trans("SupplierDepositsAreNotIncluded");
+if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
+	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
 }
+
 // Customers invoices
 $elementcust = $langs->trans("CustomersInvoices");
 $productcust = $langs->trans("ProductOrService");
@@ -236,6 +229,9 @@ $amountcust = $langs->trans("AmountHT");
 $elementsup = $langs->trans("SuppliersInvoices");
 $productsup = $productcust;
 $amountsup = $amountcust;
+$namesup = $namecust;
+
+
 
 // TODO Report from bookkeeping not yet available, so we switch on report on business events
 if ($modecompta == "BOOKKEEPING") {
@@ -251,14 +247,11 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = $langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 
-	$description .= '<br>'.$langs->trans("RulesCADue");
+	$description = $langs->trans("RulesCADue");
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
-	}
-	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
-		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 	}
 
 	$builddate = dol_now();
@@ -267,7 +260,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = $langs->trans("CalcModeEngagement");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 
-	$description .= $langs->trans("RulesCAIn");
+	$description = $langs->trans("RulesCAIn");
 	$description .= $langs->trans("DepositsAreIncluded");
 
 	$builddate = dol_now();
@@ -287,7 +280,7 @@ $description .= '  <input type="hidden" name="modecompta" value="'.$modecompta.'
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
-if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
+if (!empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
@@ -313,7 +306,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " fd.product_type AS product_type,";
 	$sql .= " cc.code, cc.label AS country,";
 	for ($i = 1; $i <= 12; $i++) {
-		$sql .= " SUM(".$db->ifsql("MONTH(f.datef)=".$i, "fd.total_ht", "0").") AS month".str_pad($i, 2, "0", STR_PAD_LEFT).",";
+		$sql .= " SUM(".$db->ifsql('MONTH(f.datef)='.$i, 'fd.total_ht', '0').") AS month".str_pad($i, 2, '0', STR_PAD_LEFT).",";
 	}
 	$sql .= "  SUM(fd.total_ht) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as fd";
@@ -332,7 +325,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label, cc.code ";
 	$sql .= " ORDER BY country, product_type, vatrate";
 
-	dol_syslog("htdocs/compta/tva/index.php", LOG_DEBUG);
+	dol_syslog("htdocs/compta/tva/index.php sql=".$sql, LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -400,7 +393,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql2 .= " ffd.product_type AS product_type,";
 	$sql2 .= " cc.code, cc.label AS country,";
 	for ($i = 1; $i <= 12; $i++) {
-		$sql2 .= " SUM(".$db->ifsql("MONTH(ff.datef)=".$i, "ffd.total_ht", "0").") AS month".str_pad($i, 2, "0", STR_PAD_LEFT).",";
+		$sql2 .= " SUM(".$db->ifsql('MONTH(ff.datef)='.$i, 'ffd.total_ht', '0').") AS month".str_pad($i, 2, '0', STR_PAD_LEFT).",";
 	}
 	$sql2 .= "  SUM(ffd.total_ht) as total";
 	$sql2 .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as ffd";
@@ -410,7 +403,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql2 .= " WHERE ff.datef >= '".$db->idate($date_start)."'";
 	$sql2 .= "  AND ff.datef <= '".$db->idate($date_end)."'";
 	$sql .= " AND ff.fk_statut in (1,2)";
-	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$sql .= " AND ff.type IN (0,1,2,5)";
 	} else {
 		$sql .= " AND ff.type IN (0,1,2,3,5)";
@@ -420,7 +413,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql2 .= " ORDER BY country, product_type, vatrate";
 
 	//print $sql2;
-	dol_syslog("htdocs/compta/tva/index.php", LOG_DEBUG);
+	dol_syslog("htdocs/compta/tva/index.php sql=".$sql, LOG_DEBUG);
 	$resql2 = $db->query($sql2);
 	if ($resql2) {
 		$num = $db->num_rows($resql2);

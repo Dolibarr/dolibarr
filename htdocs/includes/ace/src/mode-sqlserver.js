@@ -429,8 +429,7 @@ oop.inherits(Mode, TextMode);
         return session.$mode.$highlightRules.completions;
     };
     
-    this.$id = "ace/mode/sqlserver";
-    this.snippetFileId = "ace/snippets/sqlserver";
+    this.$id = "ace/mode/sql";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

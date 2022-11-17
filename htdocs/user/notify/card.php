@@ -38,11 +38,11 @@ $id = GETPOST("id", 'int');
 $ref = GETPOST('ref', 'alpha');
 
 $action = GETPOST('action', 'aZ09');
-$actionid = GETPOST('actionid', 'int');
+$actionid = GETPOST('actionid');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) {
 	$sortorder = "DESC";
@@ -99,8 +99,8 @@ if ($action == 'add') {
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
 		$sql .= " WHERE fk_user=".((int) $id)." AND fk_action=".((int) $actionid);
 		if ($db->query($sql)) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec, fk_user, fk_action)";
-			$sql .= " VALUES ('".$db->idate($now)."', ".((int) $id).", ".((int) $actionid).")";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_user, fk_action)";
+			$sql .= " VALUES ('".$db->idate($now)."',".$id.",".$actionid.")";
 
 			if (!$db->query($sql)) {
 				$error++;
@@ -154,11 +154,7 @@ if ($result > 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
-	$morehtmlref .= '</a>';
-
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref, '', 0, '', '', 0, '');
+	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', '', '', 0, '', '', 0, '');
 
 	print '<div class="fichecenter">';
 
@@ -168,21 +164,9 @@ if ($result > 0) {
 	// Login
 	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
 	if (!empty($object->ldap_sid) && $object->statut == 0) {
-		print '<td class="error">';
-		print $langs->trans("LoginAccountDisableInDolibarr");
-		print '</td>';
+		print '<td class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
 	} else {
-		print '<td>';
-		$addadmin = '';
-		if (property_exists($object, 'admin')) {
-			if (!empty($conf->multicompany->enabled) && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
-			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
-			}
-		}
-		print showValueWithClipboardCPButton($object->login).$addadmin;
-		print '</td>';
+		print '<td>'.$object->login.'</td>';
 	}
 	print '</tr>'."\n";
 
@@ -306,7 +290,7 @@ if ($result > 0) {
 			print $form->selectarray("typeid", $type);
 			print '</td>';
 			print '<td class="nowraponall">';
-			print '<input type="submit" class="button button-add" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 			print '&nbsp;';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</td>';
@@ -353,7 +337,7 @@ if ($result > 0) {
 					print $langs->trans("SMS");
 				}
 				print '</td>';
-				print '<td class="right"><a href="card.php?id='.$id.'&action=delete&token='.newToken().'&actid='.$obj->rowid.'">'.img_delete().'</a></td>';
+				print '<td class="right"><a href="card.php?id='.$id.'&amp;action=delete&amp;token='.newToken().'&amp;actid='.$obj->rowid.'">'.img_delete().'</a></td>';
 				print '</tr>';
 				$i++;
 			}
@@ -365,17 +349,21 @@ if ($result > 0) {
 		foreach($conf->global as $key => $val) {
 			if (! preg_match('/^NOTIFICATION_FIXEDEMAIL_(.*)/', $key, $reg)) continue;
 			print '<tr class="oddeven"><td>';
-			$listtmp=explode(',', $val);
+			$listtmp=explode(',',$val);
 			$first=1;
-			foreach($listtmp as $keyemail => $valemail) {
+			foreach($listtmp as $keyemail => $valemail)
+			{
 				if (! $first) print ', ';
 				$first=0;
 				$valemail=trim($valemail);
 				//print $keyemail.' - '.$valemail.' - '.$reg[1].'<br>';
-				if (isValidEmail($valemail, 1)) {
+				if (isValidEmail($valemail, 1))
+				{
 					if ($valemail == '__SUPERVISOREMAIL__') print $valemail;
 					else print ' &lt;'.$valemail.'&gt;';
-				} else {
+				}
+				else
+				{
 					print ' '.img_warning().' '.$langs->trans("ErrorBadEMail",$valemail);
 				}
 			}
@@ -385,7 +373,8 @@ if ($result > 0) {
 			$notifcodecond=preg_replace('/^.*_(THRESHOLD_)/','$1',$reg[1]);
 			$label=($langs->trans("Notify_".$notifcode)!="Notify_".$notifcode?$langs->trans("Notify_".$notifcode):$notifcode);
 			print $label;
-			if (preg_match('/^THRESHOLD_HIGHER_(.*)$/',$notifcodecond,$regcond) && ($regcond[1] > 0)) {
+			if (preg_match('/^THRESHOLD_HIGHER_(.*)$/',$notifcodecond,$regcond) && ($regcond[1] > 0))
+			{
 				print ' - '.$langs->trans("IfAmountHigherThan",$regcond[1]);
 			}
 			print '</td>';
@@ -395,7 +384,9 @@ if ($result > 0) {
 			print '<td class="right">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</td>';
 			print '</tr>';
 		}*/
-		/*if ($user->admin) {
+		/*if ($user->admin)
+		{
+			$var = ! $var;
 			print '<tr class="oddeven"><td colspan="4">';
 			print '+ <a href="'.DOL_URL_ROOT.'/admin/notification.php">'.$langs->trans("SeeModuleSetup", $langs->transnoentitiesnoconv("Module600Name")).'</a>';
 			print '</td></tr>';
@@ -412,7 +403,7 @@ if ($result > 0) {
 
 	// List
 	$sql = "SELECT n.rowid, n.daten, n.email, n.objet_type as object_type, n.objet_id as object_id, n.type,";
-	$sql .= " c.rowid as id, c.lastname, c.firstname, c.email as contactemail, c.statut as status,";
+	$sql .= " c.rowid as id, c.lastname, c.firstname, c.email as contactemail,";
 	$sql .= " a.code, a.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
 	$sql .= " ".MAIN_DB_PREFIX."notify as n";
@@ -486,8 +477,6 @@ if ($result > 0) {
 				$userstatic->id = $obj->id;
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->firstname = $obj->firstname;
-				$userstatic->statut = $obj->status;
-				$userstatic->email = $obj->email;
 				print $userstatic->getNomUrl(1);
 				print $obj->email ? ' &lt;'.$obj->email.'&gt;' : $langs->trans("NoMail");
 			} else {
@@ -508,12 +497,13 @@ if ($result > 0) {
 			print '</td>';
 			// TODO Add link to object here for other types
 			/*print '<td>';
-			if ($obj->object_type == 'order') {
+			if ($obj->object_type == 'order')
+			{
 				$orderstatic->id=$obj->object_id;
 				$orderstatic->ref=...
 				print $orderstatic->getNomUrl(1);
 			}
-			print '</td>';*/
+			   print '</td>';*/
 			// print
 			print'<td class="right">'.dol_print_date($db->jdate($obj->daten), 'dayhour').'</td>';
 			print '</tr>';

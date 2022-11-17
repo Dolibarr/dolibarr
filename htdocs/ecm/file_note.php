@@ -47,11 +47,9 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$backtopage = GETPOST('backtopage', 'alpha');
-
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -80,7 +78,7 @@ if (!$urlfile) {
 // Load ecm object
 $ecmdir = new EcmDirectory($db);
 $result = $ecmdir->fetch(GETPOST("section", 'alpha'));
-if (!($result > 0)) {
+if (!$result > 0) {
 	dol_print_error($db, $ecmdir->error);
 	exit;
 }

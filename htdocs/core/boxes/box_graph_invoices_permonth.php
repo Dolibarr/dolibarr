@@ -56,7 +56,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->facture->lire);
+		$this->hidden = !($user->rights->facture->lire);
 	}
 
 	/**
@@ -99,7 +99,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		if (empty($user->rights->societe->client->voir) || $socid) {
+		if (!$user->rights->societe->client->voir || $socid) {
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 
@@ -145,7 +145,10 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 				$filenamenb = $dir."/".$prefix."invoicesnbinyear-".$endyear.".png";
 				// default value for customer mode
-				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoicesnbinyear-'.$endyear.'.png';
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$endyear.'.png';
+				if ($mode == 'supplier') {
+					$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessuppliernbinyear-'.$endyear.'.png';
+				}
 
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
@@ -186,7 +189,10 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 				$filenamenb = $dir."/".$prefix."invoicesamountinyear-".$endyear.".png";
 				// default value for customer mode
-				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoicesamountinyear-'.$endyear.'.png';
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$endyear.'.png';
+				if ($mode == 'supplier') {
+					$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessupplieramountinyear-'.$endyear.'.png';
+				}
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();
@@ -227,7 +233,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 			if (!$mesg) {
 				$stringtoshow = '';
-				$stringtoshow .= '<script type="text/javascript">
+				$stringtoshow .= '<script type="text/javascript" language="javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 							jQuery("#idfilter'.$this->boxcode.'").toggle();
@@ -245,7 +251,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showtot.'"'.($showtot ? ' checked' : '').'> '.$langs->trans("AmountOfBillsByMonthHT");
 				$stringtoshow .= '<br>';
 				$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-				$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
+				$stringtoshow .= '<input class="reposition inline-block valigntextbottom" type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
 				$stringtoshow .= '</form>';
 				$stringtoshow .= '</div>';
 				if ($shownb && $showtot) {

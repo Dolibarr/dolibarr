@@ -120,7 +120,7 @@ abstract class ModeleNumRefSuppliersInvoices
 	 * @param	string		$mode       'next' for next value or 'last' for last value
 	 * @return 	string      			Value if OK, 0 if KO
 	 */
-	public function getNextValue($objsoc, $object, $mode = 'next')
+	public function getNextValue($objsoc, $object, $mode)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

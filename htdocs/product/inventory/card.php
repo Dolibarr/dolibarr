@@ -109,7 +109,6 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	$savaction = $action;
 	$error = 0;
 
 	$backurlforlist = DOL_URL_ROOT.'/product/inventory/list.php';
@@ -153,12 +152,6 @@ if (empty($reshook)) {
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_INVENTORY_TO';
 	$trackid = 'stockinv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
-	if (!$error && $savaction == 'confirm_validate' && $action == '' && $object->id > 0) {
-		// Switch to the tab inventory
-		header("Location: ".DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id);
-		exit;
-	}
 }
 
 
@@ -196,6 +189,9 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head(array(), '');
 
+	// Set some default values
+	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
+
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Common attributes
@@ -204,13 +200,15 @@ if ($action == 'create') {
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
-	//print '<tr><td class="titlefield fieldname_invcode">'.$langs->trans("InventoryCode").'</td><td>INV'.$object->id.'</td></tr>';
-
 	print '</table>'."\n";
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("Create");
+	print '<div class="center">';
+	print '<input type="submit" class="button" name="add" value="'.dol_escape_htmltag($langs->trans("Create")).'">';
+	print '&nbsp; ';
+	print '<input type="'.($backtopage ? "submit" : "button").'" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"'.($backtopage ? '' : ' onclick="javascript:history.go(-1)"').'>'; // Cancel for create does not post form if we don't know the backtopage
+	print '</div>';
 
 	print '</form>';
 
@@ -246,7 +244,9 @@ if (($id || $ref) && $action == 'edit') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel();
+	print '<div class="center"><input type="submit" class="button button-save" name="save" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 }
@@ -313,7 +313,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	// Project
-	if (! empty($conf->project->enabled))
+	if (! empty($conf->projet->enabled))
 	{
 		$langs->load("projects");
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -321,7 +321,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		{
 			if ($action != 'classify')
 			{
-				$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 				if ($action == 'classify') {
 					//$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -411,7 +411,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_CANCELED) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("ToStart").')</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
 				}
 			}
 
@@ -457,19 +457,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
-		print '</div><div class="fichehalfright">';
+		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		$MAXEVENT = 10;
 
-		//$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/product/inventory/inventory_info.php?id='.$object->id);
-		$morehtmlcenter = '';
+		$morehtmlright = '<a href="'.dol_buildpath('/product/inventory/inventory_info.php', 1).'?id='.$object->id.'">';
+		$morehtmlright .= $langs->trans("SeeAll");
+		$morehtmlright .= '</a>';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, $object->element, 0, 1, '', $MAXEVENT, '', $morehtmlcenter);
+		$somethingshown = $formactions->showactions($object, 'inventory', 0, 1, '', $MAXEVENT, '', $morehtmlright);
 
-		print '</div></div>';
+		print '</div></div></div>';
 	}
 
 

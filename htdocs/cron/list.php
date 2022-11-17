@@ -33,6 +33,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "cron", "bills", "members"));
 
+if (!$user->rights->cron->read) {
+	accessforbidden();
+}
+
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm = GETPOST('confirm', 'alpha');
@@ -42,8 +46,8 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'cro
 $id = GETPOST('id', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -83,15 +87,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Security
-if (!$user->rights->cron->read) {
-	accessforbidden();
-}
-
-$permissiontoread = $user->rights->cron->read;
-$permissiontoadd = $user->rights->cron->create ? $user->rights->cron->create : $user->rights->cron->write;
-$permissiontodelete = $user->rights->cron->delete;
-$permissiontoexecute = $user->rights->cron->execute;
 
 
 /*
@@ -120,7 +115,7 @@ if (empty($reshook)) {
 		$search_label = '';
 		$search_status = -1;
 		$search_lastresult = '';
-		$toselect = array();
+		$toselect = '';
 		$search_array_options = array();
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
@@ -134,7 +129,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete jobs
-	if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
+	if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete) {
 		//Delete cron task
 		$object = new Cronjob($db);
 		$object->id = $id;
@@ -146,7 +141,7 @@ if (empty($reshook)) {
 	}
 
 	// Execute jobs
-	if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
+	if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute) {
 		if (!empty($conf->global->CRON_KEY) && $conf->global->CRON_KEY != $securitykey) {
 			setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 			$action = '';
@@ -201,6 +196,9 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'CronJob';
 	$objectlabel = 'CronJob';
+	$permissiontoread = $user->rights->cron->read;
+	$permissiontoadd = $user->rights->cron->create ? $user->rights->cron->create : $user->rights->cron->write;
+	$permissiontodelete = $user->rights->cron->delete;
 	$uploaddir = $conf->cron->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 	if ($massaction && $permissiontoadd) {
@@ -280,11 +278,15 @@ if ($search_lastresult != '') {
 //Manage filter
 if (is_array($filter) && count($filter) > 0) {
 	foreach ($filter as $key => $value) {
-		$sql .= " AND ".$key." LIKE '%".$db->escape($value)."%'";
+		$sql .= ' AND '.$key.' LIKE \'%'.$db->escape($value).'%\'';
 	}
 }
+$sqlwhere = array();
 if (!empty($search_module_name)) {
-	$sql .= natural_search("t.module_name", $search_module_name);
+	$sqlwhere[] = '(t.module_name='.$db->escape($search_module_name).')';
+}
+if (count($sqlwhere) > 0) {
+	$sql .= " WHERE ".implode(' AND ', $sqlwhere);
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -351,7 +353,7 @@ if ($action == 'execute') {
 	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&securitykey='.$securitykey.$param, $langs->trans("CronExecute"), $langs->trans("CronConfirmExecute"), "confirm_execute", '', '', 1);
 }
 
-if ($action == 'delete' && empty($toselect)) {	// Used when we make a delete on 1 line (not used for mass delete)
+if ($action == 'delete') {
 	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.$param, $langs->trans("CronDelete"), $langs->trans("CronConfirmDelete"), "confirm_delete", '', '', 1);
 }
 
@@ -384,6 +386,7 @@ if ($optioncss != '') {
 }
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
@@ -431,11 +434,10 @@ print '<td class="liste_titre">';
 print '<input type="text" class="flat" name="search_label" value="'.$search_label.'">';
 print '</td>';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre"><input type="text" class="width50" name="search_module_name" value="'.$search_module_name.'"></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
-//print '<td class="liste_titre">&nbsp;</td>';
-//print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
@@ -451,14 +453,13 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "t.rowid", "", $param, '', $sortfield, $sortorder);
+print_liste_field_titre("ID", $_SERVER["PHP_SELF"], "t.rowid", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronLabel", $_SERVER["PHP_SELF"], "t.label", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Prority", $_SERVER["PHP_SELF"], "t.priority", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("CronModule", $_SERVER["PHP_SELF"], "t.module_name", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("CronType", '', '', "", $param, '', $sortfield, $sortorder);
+print_liste_field_titre("CronTask", '', '', "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronFrequency", '', "", "", $param, '', $sortfield, $sortorder);
-//print_liste_field_titre("CronDtStart", $_SERVER["PHP_SELF"], "t.datestart", "", $param, 'align="center"', $sortfield, $sortorder);
-//print_liste_field_titre("CronDtEnd", $_SERVER["PHP_SELF"], "t.dateend", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("CronDtStart", $_SERVER["PHP_SELF"], "t.datestart", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("CronDtEnd", $_SERVER["PHP_SELF"], "t.dateend", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("CronNbRun", $_SERVER["PHP_SELF"], "t.nbrun", "", $param, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre("CronDtLastLaunch", $_SERVER["PHP_SELF"], "t.datelastrun", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
@@ -481,12 +482,8 @@ if ($num > 0) {
 		if (empty($obj)) {
 			break;
 		}
-
-		if (isset($obj->test)) {
-			$veriftest = verifCond($obj->test);
-			if (!$veriftest) {
-				continue; // Discard line with test = false
-			}
+		if (isset($obj->test) && !verifCond($obj->test)) {
+			continue; // Discard line with test = false
 		}
 
 		$object->id = $obj->rowid;
@@ -496,9 +493,6 @@ if ($num > 0) {
 		$object->priority = $obj->priority;
 		$object->processing = $obj->processing;
 		$object->lastresult = $obj->lastresult;
-		$object->datestart = $db->jdate($obj->datestart);
-		$object->dateend = $db->jdate($obj->dateend);
-		$object->module_name = $obj->module_name;
 
 		$datelastrun = $db->jdate($obj->datelastrun);
 		$datelastresult = $db->jdate($obj->datelastresult);
@@ -523,15 +517,9 @@ if ($num > 0) {
 
 		// Priority
 		print '<td class="right">';
-		print dol_escape_htmltag($object->priority);
+		print $object->priority;
 		print '</td>';
 
-		// Module
-		print '<td>';
-		print dol_escape_htmltag($object->module_name);
-		print '</td>';
-
-		// Class/Method
 		print '<td class="nowraponall">';
 		if ($obj->jobtype == 'method') {
 			$text = $langs->trans("CronClass");
@@ -565,7 +553,6 @@ if ($num > 0) {
 		}
 		print '</td>';
 
-		/*
 		print '<td class="center">';
 		if (!empty($obj->datestart)) {
 			print dol_print_date($db->jdate($obj->datestart), 'dayhour', 'tzserver');
@@ -577,30 +564,27 @@ if ($num > 0) {
 			print dol_print_date($db->jdate($obj->dateend), 'dayhour', 'tzserver');
 		}
 		print '</td>';
-		*/
 
 		print '<td class="right">';
 		if (!empty($obj->nbrun)) {
-			print dol_escape_htmltag($obj->nbrun);
+			print $obj->nbrun;
 		} else {
 			print '0';
 		}
 		if (!empty($obj->maxrun)) {
-			print ' <span class="'.$langs->trans("Max").'">/ '.dol_escape_htmltag($obj->maxrun).'</span>';
+			print ' <span class="'.$langs->trans("Max").'">/ '.$obj->maxrun.'</span>';
 		}
 		print '</td>';
 
-		$datefromto = (empty($datelastrun) ? '' : dol_print_date($datelastrun, 'dayhoursec', 'tzserver')).' - '.(empty($datelastresult) ? '' : dol_print_date($datelastresult, 'dayhoursec', 'tzserver'));
-
 		// Date start last run
-		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
+		print '<td class="center">';
 		if (!empty($datelastrun)) {
 			print dol_print_date($datelastrun, 'dayhoursec', 'tzserver');
 		}
 		print '</td>';
 
 		// Duration
-		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
+		print '<td class="center">';
 		if (!empty($datelastresult) && ($datelastresult >= $datelastrun)) {
 			print convertSecondToTime(max($datelastresult - $datelastrun, 1), 'allhourminsec');
 			//print '<br>'.($datelastresult - $datelastrun).' '.$langs->trans("seconds");
@@ -608,27 +592,24 @@ if ($num > 0) {
 		print '</td>';
 
 		// Return code of last run
-		print '<td class="center tdlastresultcode" title="'.dol_escape_htmltag($obj->lastresult).'">';
+		print '<td class="center">';
 		if ($obj->lastresult != '') {
 			if (empty($obj->lastresult)) {
-				print $obj->lastresult;		// Print '0'
+				print $obj->lastresult;
 			} else {
-				print '<span class="error">'.dol_escape_htmltag(dol_trunc($obj->lastresult)).'</div>';
+				print '<span class="error">'.dol_trunc($obj->lastresult).'</div>';
 			}
 		}
 		print '</td>';
 
 		// Output of last run
-		print '<td class="small minwidth150">';
+		print '<td class="small">';
 		if (!empty($obj->lastoutput)) {
-			print '<div class="twolinesmax classfortooltip" title="'.dol_escape_htmltag($obj->lastoutput, 1, 1).'">';
-			print dol_trunc(dolGetFirstLineOfText($obj->lastoutput, 2), 100);
-			print '</div>';
+			print dol_trunc(nl2br($obj->lastoutput), 50);
 		}
 		print '</td>';
 
-		// Next run
-		print '<td class="center minwidth100">';
+		print '<td class="center">';
 		if (!empty($obj->datenextrun)) {
 			$datenextrun = $db->jdate($obj->datenextrun);
 			if (empty($obj->status)) {

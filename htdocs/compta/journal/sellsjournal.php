@@ -50,10 +50,10 @@ $date_endyear = GETPOST('date_endyear');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-if (isModEnabled('comptabilite')) {
+if (!empty($conf->comptabilite->enabled)) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
-if (isModEnabled('accounting')) {
+if (!empty($conf->accounting->enabled)) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 

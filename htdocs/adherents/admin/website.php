@@ -95,13 +95,12 @@ if ($action == 'update') {
 
 $form = new Form($db);
 
-$title = $langs->trans("MembersSetup");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
-llxHeader('', $title, $help_url);
+llxHeader('', $langs->trans("MembersSetup"), $help_url);
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($title, $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("MembersSetup"), $linkback, 'title_setup');
 
 $head = member_admin_prepare_head();
 
@@ -114,7 +113,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print dol_get_fiche_head($head, 'website', $langs->trans("Members"), -1, 'user');
 
 if ($conf->use_javascript_ajax) {
-	print "\n".'<script type="text/javascript">';
+	print "\n".'<script type="text/javascript" language="javascript">';
 	print 'jQuery(document).ready(function () {
                 function initemail()
                 {
@@ -178,14 +177,14 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameter").'</td>';
-	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td class="right">'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
 
 	// Force Type
 	$adht = new AdherentType($db);
 	print '<tr class="oddeven drag" id="trforcetype"><td>';
 	print $langs->trans("ForceMemberType");
-	print '</td><td>';
+	print '</td><td class="right">';
 	$listofval = array();
 	$listofval += $adht->liste_array(1);
 	$forcetype = empty($conf->global->MEMBER_NEWFORM_FORCETYPE) ? -1 : $conf->global->MEMBER_NEWFORM_FORCETYPE;
@@ -197,7 +196,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	$morphys["mor"] = $langs->trans("Moral");
 	print '<tr class="oddeven drag" id="trforcenature"><td>';
 	print $langs->trans("ForceMemberNature");
-	print '</td><td>';
+	print '</td><td class="right">';
 	$forcenature = empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY) ? 0 : $conf->global->MEMBER_NEWFORM_FORCEMORPHY;
 	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature, 1);
 	print "</td></tr>\n";
@@ -205,21 +204,21 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	// Amount
 	print '<tr class="oddeven" id="tramount"><td>';
 	print $langs->trans("DefaultAmount");
-	print '</td><td>';
-	print '<input type="text" class="right width50" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.(!empty($conf->global->MEMBER_NEWFORM_AMOUNT) ? $conf->global->MEMBER_NEWFORM_AMOUNT : '').'">';
+	print '</td><td class="right">';
+	print '<input type="text" class="right width75" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.(!empty($conf->global->MEMBER_NEWFORM_AMOUNT) ? $conf->global->MEMBER_NEWFORM_AMOUNT : '').'">';
 	print "</td></tr>\n";
 
 	// Can edit
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("CanEditAmount");
-	print '</td><td>';
+	print '</td><td class="right">';
 	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) ? $conf->global->MEMBER_NEWFORM_EDITAMOUNT : 0), 1);
 	print "</td></tr>\n";
 
 	// Jump to an online payment page
 	print '<tr class="oddeven" id="trpayment"><td>';
 	print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
-	print '</td><td>';
+	print '</td><td class="right">';
 	$listofval = array();
 	$listofval['-1'] = $langs->trans('No');
 	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
@@ -239,7 +238,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '</div>';
 
 	print '<div class="center">';
-	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</div>';
 }
 
@@ -266,7 +265,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 
 	print '<div class="urllink">';
 	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">';
-	print '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
+	print '<a target="_blank" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.img_picto('', 'globe', 'class="paddingleft"').'</a>';
 	print '</div>';
 	print ajax_autoselect('publicurlmember');
 }

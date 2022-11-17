@@ -147,6 +147,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 		$this->option_logo = 1; // Display logo FAC_PDF_LOGO
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
+		$this->option_codeproduitservice = 1; // Display product-service code
 
 		// Get source company
 		$this->emetteur = $mysoc;
@@ -155,9 +156,6 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		}
 
 		$this->tva = array();
-		$this->tva_array = array();
-		$this->localtax1 = array();
-		$this->localtax2 = array();
 		$this->atleastoneratenotnull = 0;
 		$this->atleastonediscount = 0;
 	}
@@ -344,8 +342,8 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 				$tab_top = 90;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
-
-				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
+				$tab_height = 130;
+				$tab_height_newpage = 150;
 
 				$this->posxdesc = $this->marge_gauche + 1;
 
@@ -354,7 +352,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 				if (!empty($conf->incoterm->enabled)) {
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms) {
-						$tab_top -= 2;
+						$tab_top = 88;
 
 						$pdf->SetFont('', '', $default_font_size - 1);
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
@@ -460,7 +458,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 
 						if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height'])) {
-							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + 1, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
+							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
 							// $pdf->Image does not increase value return by getY, so we save it manually
 							$posYAfterImage = $curY + $imglinesize['height'];
 						}
@@ -541,7 +539,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 					if (!empty($object->lines[$i]->array_options)) {
 						foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
 							if ($this->getColumnStatus($extrafieldColKey)) {
-								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey, $outputlangs);
+								$extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
 								$this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
 								$nexY = max($pdf->GetY(), $nexY);
 							}
@@ -573,9 +571,6 @@ class pdf_storm extends ModelePDFDeliveryOrder
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
-						}
-						if (!empty($tplidx)) {
-							$pdf->useTemplate($tplidx);
 						}
 					}
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {

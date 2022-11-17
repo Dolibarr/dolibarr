@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - externalsite
+ExternalSiteSetup=Nastavenie odkaz na externé webové stránky
+ExternalSiteURL=External Site URL of HTML iframe content
+ExternalSiteModuleNotComplete=Modul ExternalSite nebol správne nakonfigurovaný.
+ExampleMyMenuEntry=My menu entry

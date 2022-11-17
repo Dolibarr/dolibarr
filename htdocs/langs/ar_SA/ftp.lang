@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=إعداد نموذج عميل بروتوكول نقل الملفات
+NewFTPClient=إعداد إتصال بروتوكول نقل الملفات جديد 
+FTPArea=منطقة بروتوكول نقل الملفات 
+FTPAreaDesc=هذه الشاشة تظهر لك المحتوى محتوى خادم بروتوكول نقل الملفات
+SetupOfFTPClientModuleNotComplete=إعداد نموذج عميل بروتوكول نقل الملفات يبدو أنة غير مكتمل
+FTPFeatureNotSupportedByYourPHP=بي اتش بي الخاص بك لا يدعم وظائف بروتوكول نقل الملفات
+FailedToConnectToFTPServer=فشل الاتصال بخادم بروتوكول نقل الملفات ( الخادم%s ، منفذ%s)
+FailedToConnectToFTPServerWithCredentials=فشل في تسجيل الدخول إلى خادم بروتوكول نقل الملفات مع تعريف الدخول / كلمة المرور المحددة
+FTPFailedToRemoveFile=فشل لإزالة الملف <b>%s</b> .
+FTPFailedToRemoveDir=فشل إزالة المسار <b>%s</b> (راجع الأذونات وهذا المسار فارغ).
+FTPPassiveMode=الوضع السلبي
+ChooseAFTPEntryIntoMenu=اختيار مدخل بروتوكول نقل البيانات في القائمة ...
+FailedToGetFile=فشل في الحصول على الملفات %s

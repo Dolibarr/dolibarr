@@ -41,10 +41,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (!empty($conf->propal->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('facture')) {
+if (!empty($conf->facture->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
-if (isModEnabled('facture')) {
+if (!empty($conf->facture->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
 if (!empty($conf->commande->enabled)) {
@@ -65,7 +65,7 @@ if (!empty($conf->ficheinter->enabled)) {
 if (!empty($conf->deplacement->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 }
-if (isModEnabled('agenda')) {
+if (!empty($conf->agenda->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
 
@@ -125,6 +125,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		$this->option_tva = 0; // Manage the vat option COMMANDE_TVAOPTION
 		$this->option_modereg = 0; // Display payment mode
 		$this->option_condreg = 0; // Display payment terms
+		$this->option_codeproduitservice = 0; // Display product-service code
 		$this->option_multilang = 0; // Available in several languages
 		$this->option_escompte = 0; // Displays if there has been a discount
 		$this->option_credit_note = 0; // Support credit notes
@@ -133,8 +134,8 @@ class doc_generic_task_odt extends ModelePDFTask
 
 		// Get source company
 		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
+		if (!$this->emetteur->pays_code) {
+			$this->emetteur->pays_code = substr($langs->defaultlang, -2); // By default, if was not defined
 		}
 	}
 
@@ -379,7 +380,6 @@ class doc_generic_task_odt extends ModelePDFTask
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
-		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="PROJECT_TASK_ADDON_PDF_ODT_PATH">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
@@ -416,7 +416,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		$texte .= $conf->global->PROJECT_TASK_ADDON_PDF_ODT_PATH;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button small" value="'.$langs->trans("Modify").'" name="Button">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -441,9 +441,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		$texte .= '</td>';
 
 		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
-		$texte .= '<span class="opacitymedium">';
 		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
-		$texte .= '</span>';
 		$texte .= '</td>';
 		$texte .= '</tr>';
 
@@ -481,7 +479,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->project->dir_output) {
+		if ($conf->projet->dir_output) {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
@@ -496,7 +494,7 @@ class doc_generic_task_odt extends ModelePDFTask
 			$project->fetch($object->fk_project);
 			$project->fetch_thirdparty();
 
-			$dir = $conf->project->dir_output."/".$project->ref."/";
+			$dir = $conf->projet->dir_output."/".$project->ref."/";
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -525,9 +523,9 @@ class doc_generic_task_odt extends ModelePDFTask
 				//print "file=".$file;
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
-				dol_mkdir($conf->project->dir_temp);
-				if (!is_writable($conf->project->dir_temp)) {
-					$this->error = "Failed to write in temp directory ".$conf->project->dir_temp;
+				dol_mkdir($conf->projet->dir_temp);
+				if (!is_writable($conf->projet->dir_temp)) {
+					$this->error = "Failed to write in temp directory ".$conf->projet->dir_temp;
 					dol_syslog('Error in write_file: '.$this->error, LOG_ERR);
 					return -1;
 				}
@@ -550,7 +548,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->project->dir_temp,
+						'PATH_TO_TMP'	  => $conf->projet->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}'
@@ -708,7 +706,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					// Replace tags of project files
 					$listtasksfiles = $odfHandler->setSegment('tasksfiles');
 
-					$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($object->ref);
+					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($object->ref);
 					$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
 
 
@@ -741,7 +739,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				try {
 					$listlines = $odfHandler->setSegment('projectfiles');
 
-					$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref);
+					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
 					$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
 
 

@@ -110,7 +110,7 @@ ChooseYourDemoProfilMore=... vai izveidojiet savu profilu <br> (manuālā moduļ
 DemoFundation=Pārvaldīt nodibinājuma dalībniekus
 DemoFundation2=Pārvaldīt dalībniekus un bankas kontu nodibinājumam
 DemoCompanyServiceOnly=Tikai uzņēmuma vai ārštata pārdošanas pakalpojums
-DemoCompanyShopWithCashDesk=Pārvaldiet veikalu ar naudas kasti
+DemoCompanyShopWithCashDesk=Pārvaldīt veikals ar kasē
 DemoCompanyProductAndStocks=Veikals, kas pārdod produktus, izmantojot tirdzniecības vietu
 DemoCompanyManufacturing=Uzņēmums, kas ražo produktus
 DemoCompanyAll=Uzņēmums ar vairākām darbībām (visi galvenie moduļi)
@@ -258,10 +258,6 @@ PassEncoding=Paroles kodēšana
 PermissionsAdd=Pievienotas atļaujas
 PermissionsDelete=Atļaujas noņemtas
 YourPasswordMustHaveAtLeastXChars=Jūsu parolei ir jāsatur vismaz <strong>%s</strong> simbolus
-PasswordNeedAtLeastXUpperCaseChars=Parolei ir jābūt vismaz <strong> %s </strong> lielajiem burtiem
-PasswordNeedAtLeastXDigitChars=Parolei ir nepieciešamas vismaz <strong> %s </strong> ciparu rakstzīmes
-PasswordNeedAtLeastXSpecialChars=Parolei ir nepieciešamas vismaz <strong> %s </strong> speciālajam simbolam
-PasswordNeedNoXConsecutiveChars=Parolē nedrīkst būt <strong> %s </strong> līdzīgas rakstzīmes.
 YourPasswordHasBeenReset=Jūsu parole ir veiksmīgi atiestatīta
 ApplicantIpAddress=Pieteikuma iesniedzēja IP adrese
 SMSSentTo=SMS nosūtīta uz %s
@@ -272,7 +268,6 @@ ProjectCreatedByEmailCollector=Projekts, ko izveidojis e-pasta savācējs no e-p
 TicketCreatedByEmailCollector=Biļete, ko izveidojis e-pasta kolekcionārs no e-pasta MSGID %s
 OpeningHoursFormatDesc=Izmantojiet taustiņu -, lai nodalītu darba un aizvēršanas stundas. <br> Izmantojiet atstarpi, lai ievadītu dažādus diapazonus. <br> Piemērs: 8.-12
 SuffixSessionName=Sesijas nosaukuma sufikss
-LoginWith=Piesakieties ar %s
 
 ##### Export #####
 ExportsArea=Eksportēšanas sadaļa
@@ -303,25 +298,3 @@ SelectTheTypeOfObjectToAnalyze=Atlasiet objektu, lai skatītu tā statistiku ...
 ConfirmBtnCommonContent = Vai tiešām vēlaties "%s"?
 ConfirmBtnCommonTitle = Apstipriniet savu darbību
 CloseDialog = Aizvērt
-Autofill = Automātiskā aizpilde
-
-# externalsite
-ExternalSiteSetup=Ārējo vietņu iestatīšana
-ExternalSiteURL=HTML iframe satura ārējās vietnes URL
-ExternalSiteModuleNotComplete=Modulis ExternalSite nav pareizi konfigurēts.
-ExampleMyMenuEntry=Manas izvēlnes ieraksti
-
-# FTP
-FTPClientSetup=FTP vai SFTP klienta moduļa iestatīšana
-NewFTPClient=Jauna FTP / FTPS savienojuma iestatīšana
-FTPArea=FTP/FTPS sadaļa
-FTPAreaDesc=Šajā ekrānā ir redzams FTP un SFTP servera skats.
-SetupOfFTPClientModuleNotComplete=Šķiet, ka FTP vai SFTP klienta moduļa iestatīšana ir nepilnīga
-FTPFeatureNotSupportedByYourPHP=Jūsu PHP neatbalsta FTP vai SFTP funkcijas
-FailedToConnectToFTPServer=Neizdevās izveidot savienojumu ar serveri (serveris %s, ports %s)
-FailedToConnectToFTPServerWithCredentials=Neizdevās pieteikties serverī ar definētu pieteikšanās vārdu/paroli
-FTPFailedToRemoveFile=Neizdevās noņemt failu <b>%s.</b>
-FTPFailedToRemoveDir=Neizdevās noņemt direktoriju <b>%s</b>: pārbaudīt atļaujas un ka katalogs ir tukšs.
-FTPPassiveMode=Pasīvais režīms
-ChooseAFTPEntryIntoMenu=Izvēlnē izvēlieties FTP/SFTP vietni...
-FailedToGetFile=Neizdevās iegūt failus %s

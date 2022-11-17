@@ -325,10 +325,6 @@ class CompanyPaymentMode extends CommonObject
 		}
 
 		$result = $this->fetchCommon($id, $ref, $morewhere);
-
-		// For backward compatibility
-		$this->iban = $this->iban_prefix;
-
 		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
@@ -398,7 +394,7 @@ class CompanyPaymentMode extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$url = '';
+		$url = dol_buildpath('/monmodule/companypaymentmode_card.php', 1).'?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -523,10 +519,10 @@ class CompanyPaymentMode extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
 		}
 
 		$statusType = 'status5';
@@ -554,11 +550,27 @@ class CompanyPaymentMode extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
+				if ($obj->fk_user_author) {
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation = $cuser;
+				}
 
-				$this->user_creation_id = $obj->fk_user_creat;
-				$this->user_modification_id = $obj->fk_user_modif;
+				if ($obj->fk_user_valid) {
+					$vuser = new User($this->db);
+					$vuser->fetch($obj->fk_user_valid);
+					$this->user_validation = $vuser;
+				}
+
+				if ($obj->fk_user_cloture) {
+					$cluser = new User($this->db);
+					$cluser->fetch($obj->fk_user_cloture);
+					$this->user_cloture = $cluser;
+				}
+
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
+				$this->date_modification = $this->db->jdate($obj->datem);
+				$this->date_validation   = $this->db->jdate($obj->datev);
 			}
 
 			$this->db->free($result);

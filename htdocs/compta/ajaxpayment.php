@@ -47,32 +47,28 @@ $langs->load('compta');
 
 //init var
 $invoice_type = GETPOST('invoice_type', 'int');
-$amountPayment = GETPOST('amountPayment');
-$amounts = GETPOST('amounts'); // from text inputs : invoice amount payment (check required)
-$remains = GETPOST('remains'); // from dolibarr's object (no need to check)
-$currentInvId = GETPOST('imgClicked'); // from DOM elements : imgId (equals invoice id)
+$amountPayment = $_POST['amountPayment'];
+$amounts = $_POST['amounts']; // from text inputs : invoice amount payment (check required)
+$remains = $_POST['remains']; // from dolibarr's object (no need to check)
+$currentInvId = $_POST['imgClicked']; // from DOM elements : imgId (equals invoice id)
 
 // Getting the posted keys=>values, sanitize the ones who are from text inputs
 $amountPayment = $amountPayment != '' ? (is_numeric(price2num($amountPayment)) ? price2num($amountPayment) : '') : ''; // keep void if not a valid entry
 
 // Clean checkamounts
-if (is_array($amounts)) {
-	foreach ($amounts as $key => $value) {
-		$value = price2num($value);
-		$amounts[$key] = $value;
-		if (empty($value)) {
-			unset($amounts[$key]);
-		}
+foreach ($amounts as $key => $value) {
+	$value = price2num($value);
+	$amounts[$key] = $value;
+	if (empty($value)) {
+		unset($amounts[$key]);
 	}
 }
 // Clean remains
-if (is_array($remains)) {
-	foreach ($remains as $key => $value) {
-		$value = price2num($value);
-		$remains[$key] = (($invoice_type) == 2 ?-1 : 1) * $value;
-		if (empty($value)) {
-			unset($remains[$key]);
-		}
+foreach ($remains as $key => $value) {
+	$value = price2num($value);
+	$remains[$key] = (($invoice_type) == 2 ?-1 : 1) * $value;
+	if (empty($value)) {
+		unset($remains[$key]);
 	}
 }
 

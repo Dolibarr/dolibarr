@@ -20,7 +20,7 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
      *
      * @var string[]
      */
-    private $array = [];
+    private $array = array();
 
     /**
      * The size of the stack.
@@ -41,7 +41,7 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
      *
      * @var Swift_InputByteStream[]
      */
-    private $mirrors = [];
+    private $mirrors = array();
 
     /**
      * Create a new ArrayByteStream.
@@ -52,13 +52,13 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
      */
     public function __construct($stack = null)
     {
-        if (\is_array($stack)) {
+        if (is_array($stack)) {
             $this->array = $stack;
-            $this->arraySize = \count($stack);
-        } elseif (\is_string($stack)) {
+            $this->arraySize = count($stack);
+        } elseif (is_string($stack)) {
             $this->write($stack);
         } else {
-            $this->array = [];
+            $this->array = array();
         }
     }
 
@@ -102,7 +102,7 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
         foreach ($to_add as $value) {
             $this->array[] = $value;
         }
-        $this->arraySize = \count($this->array);
+        $this->arraySize = count($this->array);
 
         foreach ($this->mirrors as $stream) {
             $stream->write($bytes);
@@ -121,6 +121,8 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
      *
      * The stream acts as an observer, receiving all data that is written.
      * All {@link write()} and {@link flushBuffers()} operations will be mirrored.
+     *
+     * @param Swift_InputByteStream $is
      */
     public function bind(Swift_InputByteStream $is)
     {
@@ -133,6 +135,8 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
      * If $is is not bound, no errors will be raised.
      * If the stream currently has any buffered data it will be written to $is
      * before unbinding occurs.
+     *
+     * @param Swift_InputByteStream $is
      */
     public function unbind(Swift_InputByteStream $is)
     {
@@ -168,7 +172,7 @@ class Swift_ByteStream_ArrayByteStream implements Swift_InputByteStream, Swift_O
     public function flushBuffers()
     {
         $this->offset = 0;
-        $this->array = [];
+        $this->array = array();
         $this->arraySize = 0;
 
         foreach ($this->mirrors as $stream) {

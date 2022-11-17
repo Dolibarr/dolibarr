@@ -301,7 +301,6 @@ oop.inherits(Mode, TextMode);
     };
 
     this.$id = "ace/mode/clojure";
-    this.snippetFileId = "ace/snippets/clojure";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

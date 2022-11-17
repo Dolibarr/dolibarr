@@ -54,7 +54,6 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is
 
 $facid = GETPOST('facid', 'int');
 
-$action = GETPOST('action', 'aZ09');
 $gift = GETPOST('gift', 'int');
 
 if (empty($user->rights->takepos->run)) {
@@ -171,46 +170,33 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 	</thead>
 	<tbody>
 	<?php
-	if ($action == 'without_details') {
-		$qty = GETPOST('qty', 'int') > 0 ? GETPOST('qty', 'int') : 1;
-		print '<tr>';
-		print '<td>' . GETPOST('label', 'alphanohtml') . '</td>';
-		print '<td class="right">' . $qty . '</td>';
-		print '<td class="right">' . price(price2num($object->total_ttc / $qty, 'MU'), 1) . '</td>';
-		if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) {
-			print '<td class="right">' . price($object->total_ht, 1) . '</td>';
-		}
-		print '<td class="right">' . price($object->total_ttc, 1) . '</td>';
-		print '</tr>';
-	} else {
-		foreach ($object->lines as $line) {
-			?>
-		<tr>
-			<td>
-			<?php if (!empty($line->product_label)) {
-				echo $line->product_label;
-			} else {
-				echo $line->description;
-			} ?>
-			</td>
-			<td class="right"><?php echo $line->qty; ?></td>
-			<td class="right"><?php if ($gift != 1) {
-				echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1);
-							  } ?></td>
-			<?php
-			if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) { ?>
-						<td class="right"><?php if ($gift != 1) {
-							echo price($line->total_ht, 1);
-										  } ?></td>
-				<?php
-			}
-			?>
-			<td class="right"><?php if ($gift != 1) {
-				echo price($line->total_ttc, 1);
-							  } ?></td>
-		</tr>
+	foreach ($object->lines as $line) {
+		?>
+	<tr>
+		<td>
+		<?php if (!empty($line->product_label)) {
+			echo $line->product_label;
+		} else {
+			echo $line->description;
+		} ?>
+		</td>
+		<td class="right"><?php echo $line->qty; ?></td>
+		<td class="right"><?php if ($gift != 1) {
+			echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1);
+						  } ?></td>
+		<?php
+		if (!empty($conf->global->TAKEPOS_SHOW_HT_RECEIPT)) { ?>
+					<td class="right"><?php if ($gift != 1) {
+						echo price($line->total_ht, 1);
+									  } ?></td>
 			<?php
 		}
+		?>
+		<td class="right"><?php if ($gift != 1) {
+			echo price($line->total_ttc, 1);
+						  } ?></td>
+	</tr>
+		<?php
 	}
 	?>
 	</tbody>
@@ -258,7 +244,7 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER) {
 					  } ?></td>
 </tr>
 <?php
-if (isModEnabled('multicurrency') && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 	//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 	include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 	$multicurrency = new MultiCurrency($db);
@@ -288,7 +274,7 @@ if ($conf->global->TAKEPOS_PRINT_PAYMENT_METHOD) {
 			echo $langs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
 			echo '</td>';
 			echo '<td class="right">';
-			$amount_payment = (isModEnabled('multicurrency') && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
+			$amount_payment = (!empty($conf->multicurrency->enabled) && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
 			if ($row->code == "LIQ") {
 				$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
 			}

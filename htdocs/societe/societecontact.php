@@ -40,8 +40,8 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -111,6 +111,13 @@ if ($action == 'addcontact' && $user->rights->societe->creer) {
 		dol_print_error($db);
 	}
 }
+/*
+elseif ($action == 'setaddress' && $user->rights->societe->creer)
+{
+	$object->fetch($id);
+	$result=$object->setDeliveryAddress($_POST['fk_address']);
+	if ($result < 0) dol_print_error($db,$object->error);
+}*/
 
 
 /*
@@ -174,7 +181,7 @@ if ($id > 0 || !empty($ref)) {
 			print $object->code_client;
 			$tmpcheck = $object->check_codeclient();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
+				print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
 			}
 			print '</td></tr>';
 		}
@@ -185,7 +192,7 @@ if ($id > 0 || !empty($ref)) {
 			print $object->code_fournisseur;
 			$tmpcheck = $object->check_codefournisseur();
 			if ($tmpcheck != 0 && $tmpcheck != -5) {
-				print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
+				print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
 			}
 			print '</td></tr>';
 		}

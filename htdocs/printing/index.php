@@ -59,7 +59,7 @@ foreach ($result as $driver) {
 	$langs->load($driver);
 	$printer = new $classname($db);
 	$keyforprinteractive = $printer->active;
-	if ($keyforprinteractive && getDolGlobalString($keyforprinteractive)) {
+	if ($keyforprinteractive && $conf->global->$keyforprinteractive) {
 		//$printer->listJobs('commande');
 		$result = $printer->listJobs();
 		print $printer->resprint;

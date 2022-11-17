@@ -29,13 +29,13 @@
 require '../main.inc.php';
 
 // Load translation files required by the page
-$langs->load("other");
+$langs->load("externalsite");
 
 
 $mainmenu = GETPOST('mainmenu', "aZ09");
 $leftmenu = GETPOST('leftmenu', "aZ09");
 $idmenu = GETPOST('idmenu', 'int');
-$theme = GETPOST('theme', 'aZ09');
+$theme = GETPOST('theme', 'alpha');
 $codelang = GETPOST('lang', 'aZ09');
 $keyforcontent = GETPOST('keyforcontent', 'aZ09');
 

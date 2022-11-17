@@ -100,7 +100,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $url = $_SERVER['PHP_SELF'];
 if (preg_match('/api\/index\.php$/', $url)) {	// sometimes $_SERVER['PHP_SELF'] is 'api\/index\.php' instead of 'api\/index\.php/explorer.php' or 'api\/index\.php/method'
-	$url = $_SERVER['PHP_SELF'].(empty($_SERVER['PATH_INFO']) ? $_SERVER['ORIG_PATH_INFO'] : $_SERVER['PATH_INFO']);
+	$url = $_SERVER['PHP_SELF'].$_SERVER['PATH_INFO'];
 }
 // Fix for some NGINX setups (this should not be required even with NGINX, however setup of NGINX are often mysterious and this may help is such cases)
 if (!empty($conf->global->MAIN_NGINX_FIX)) {
@@ -120,7 +120,7 @@ if (empty($conf->global->MAIN_MODULE_API)) {
 // Test if explorer is not disabled
 if (preg_match('/api\/index\.php\/explorer/', $url) && !empty($conf->global->API_EXPLORER_DISABLED)) {
 	$langs->load("admin");
-	dol_syslog("Call Dolibarr API interfaces with module API REST disabled");
+	dol_syslog("Call Dolibarr API interfaces with module REST disabled");
 	print $langs->trans("WarningAPIExplorerDisabled").'.<br><br>';
 	//session_destroy();
 	exit(0);
@@ -153,33 +153,10 @@ preg_match('/index\.php\/([^\/]+)(.*)$/', $url, $reg);
 $refreshcache = (empty($conf->global->API_PRODUCTION_DO_NOT_ALWAYS_REFRESH_CACHE) ? true : false);
 if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root')) {
 	$refreshcache = true;
-	if (!is_writable($conf->api->dir_temp)) {
-		print 'Erreur temp dir api/temp not writable';
-		exit(0);
-	}
 }
 
 $api = new DolibarrApi($db, '', $refreshcache);
 //var_dump($api->r->apiVersionMap);
-
-// If MAIN_API_DEBUG is set to 1, we save logs into file "dolibarr_api.log"
-if (!empty($conf->global->MAIN_API_DEBUG)) {
-	$r = $api->r;
-	$r->onCall(function () use ($r) {
-		// Don't log Luracast Restler Explorer recources calls
-		//if (!preg_match('/^explorer/', $r->url)) {
-		//	'method'  => $api->r->requestMethod,
-		//	'url'     => $api->r->url,
-		//	'route'   => $api->r->apiMethodInfo->className.'::'.$api->r->apiMethodInfo->methodName,
-		//	'version' => $api->r->getRequestedApiVersion(),
-		//	'data'    => $api->r->getRequestData(),
-		//dol_syslog("Debug API input ".var_export($r, true), LOG_DEBUG, 0, '_api');
-		dol_syslog("Debug API url ".var_export($r->url, true), LOG_DEBUG, 0, '_api');
-		dol_syslog("Debug API input ".var_export($r->getRequestData(), true), LOG_DEBUG, 0, '_api');
-		//}
-	});
-}
-
 
 // Enable the Restler API Explorer.
 // See https://github.com/Luracast/Restler-API-Explorer for more info.
@@ -381,34 +358,14 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 //exit;
 
 // We do not want that restler outputs data if we use native compression (default behaviour) but we want to have it returned into a string.
-// If API_DISABLE_COMPRESSION is set, returnResponse is false => It use default handling so output result directly.
-$usecompression = (empty($conf->global->API_DISABLE_COMPRESSION) && !empty($_SERVER['HTTP_ACCEPT_ENCODING']));
-$foundonealgorithm = 0;
-if ($usecompression) {
-	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && is_callable('brotli_compress')) {
-		$foundonealgorithm++;
-	}
-	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'bz') !== false && is_callable('bzcompress')) {
-		$foundonealgorithm++;
-	}
-	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && is_callable('gzencode')) {
-		$foundonealgorithm++;
-	}
-	if (!$foundonealgorithm) {
-		$usecompression = false;
-	}
-}
-
-//dol_syslog('We found some compression algoithm: '.$foundonealgorithm.' -> usecompression='.$usecompression, LOG_DEBUG);
-
-Luracast\Restler\Defaults::$returnResponse = $usecompression;
+Luracast\Restler\Defaults::$returnResponse = (empty($conf->global->API_DISABLE_COMPRESSION) && !empty($_SERVER['HTTP_ACCEPT_ENCODING']));
 
 // Call API (we suppose we found it).
 // The handle will use the file api/temp/routes.php to get data to run the API. If the file exists and the entry for API is not found, it will return 404.
 $result = $api->r->handle();
 
 if (Luracast\Restler\Defaults::$returnResponse) {
-	// We try to compress the data received data
+	// We try to compress data
 	if (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'br') !== false && is_callable('brotli_compress')) {
 		header('Content-Encoding: br');
 		$result = brotli_compress($result, 11, BROTLI_TEXT);
@@ -418,10 +375,6 @@ if (Luracast\Restler\Defaults::$returnResponse) {
 	} elseif (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false && is_callable('gzencode')) {
 		header('Content-Encoding: gzip');
 		$result = gzencode($result, 9);
-	} else {
-		header('Content-Encoding: text/html');
-		print "No compression method found. Try to disable compression by adding API_DISABLE_COMPRESSION=1";
-		exit(0);
 	}
 
 	// Restler did not output data yet, we return it now

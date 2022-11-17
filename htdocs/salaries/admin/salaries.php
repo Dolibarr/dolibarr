@@ -27,7 +27,7 @@ require '../../main.inc.php';
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
-if (isModEnabled('accounting')) {
+if (!empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
 
@@ -83,7 +83,7 @@ if (preg_match('/^(set|del)_?([A-Z_]+)$/', $action, $reg)) {
 llxHeader('', $langs->trans('SalariesSetup'));
 
 $form = new Form($db);
-if (isModEnabled('accounting')) {
+if (!empty($conf->accounting->enabled)) {
 	$formaccounting = new FormAccounting($db);
 }
 
@@ -119,10 +119,10 @@ foreach ($list as $key) {
 
 	// Value
 	print '<td>';
-	if (isModEnabled('accounting')) {
-		print $formaccounting->select_account(getDolGlobalString($key), $key, 1, '', 1, 1);
+	if (!empty($conf->accounting->enabled)) {
+		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	} else {
-		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
+		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	}
 	print '</td></tr>';
 }
@@ -133,7 +133,7 @@ print "</table>\n";
 
 //print dol_get_fiche_end();
 
-print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
 print '</form><br>';
 

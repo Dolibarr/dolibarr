@@ -159,7 +159,7 @@ print "</table>";
 print '</div>';
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /* Affichage de la liste des projets d'hier */
@@ -557,7 +557,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 }
 
 
-print '</div></div>';
+print '</div></div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardActivities', $parameters, $object); // Note that $action and $object may have been modified by hook

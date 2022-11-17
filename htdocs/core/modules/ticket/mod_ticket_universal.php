@@ -83,7 +83,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskticket" value="'.$conf->global->TICKET_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte .= '</tr>';
 
@@ -134,11 +134,8 @@ class mod_ticket_universal extends ModeleNumRefTicket
 			return 0;
 		}
 
-		// Get entities
-		$entity = getEntity('ticketnumber', 1, $ticket);
-
 		$date = empty($ticket->datec) ? dol_now() : $ticket->datec;
-		$numFinal = get_next_value($db, $mask, 'ticket', 'ref', '', $objsoc->code_client, $date, 'next', false, null, $entity);
+		$numFinal = get_next_value($db, $mask, 'ticket', 'ref', '', $objsoc->code_client, $date);
 
 		return $numFinal;
 	}

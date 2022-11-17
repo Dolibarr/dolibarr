@@ -149,17 +149,13 @@ if (!empty($tag) && ($unsuscrib == '1')) {
 	*/
 
 	// Update status communication of email (new usage)
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email, unsubscribegroup, ip) VALUES ('".$db->idate(dol_now())."', ".((int) $obj->entity).", '".$db->escape($obj->email)."', '', '".$db->escape(getUserRemoteIP())."')";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email, unsubscribegroup, ip) VALUES ('".$db->idate(dol_now())."', ".$db->escape($obj->entity).", '".$db->escape($obj->email)."', '', '".$db->escape(getUserRemoteIP())."')";
 
 	$resql = $db->query($sql);
 	//if (! $resql) dol_print_error($db);	No test on errors, may fail if already unsubscribed
 
 
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
-	// Security options
-	header("X-Content-Type-Options: nosniff"); // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
-	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 
 	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 	print "\n";

@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=Configuration du module client FTP
+FTPArea=Zone FTP
+FTPAreaDesc=Cet écran vous montre le contenu d'une vue du serveur FTP
+SetupOfFTPClientModuleNotComplete=La configuration du module client FTP semble ne pas être complète
+FailedToConnectToFTPServer=Impossible de se connecter au serveur FTP (serveur %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Échec de la connexion au serveur FTP avec login / mot de passe défini
+FTPFailedToRemoveFile=Impossible d'enlever le fichier <b>%s</b>.
+FTPFailedToRemoveDir=Impossible de supprimer le répertoire <b>%s</b> (Vérifiez les autorisations et ce répertoire est vide).
+ChooseAFTPEntryIntoMenu=Choisissez une entrée FTP dans le menu ...
+FailedToGetFile=Impossible d'obtenir des fichiers %s

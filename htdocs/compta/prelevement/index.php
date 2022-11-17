@@ -41,16 +41,14 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'prelevement', '', 'bons');
-
-$usercancreate = $user->rights->prelevement->bons->creer;
+$result = restrictedArea($user, 'prelevement', '', '');
 
 
 /*
  * Actions
  */
 
-// None
+
 
 
 /*
@@ -64,12 +62,7 @@ if (prelevement_check_config() < 0) {
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("PaymentByDirectDebit")), null, 'errors');
 }
 
-$newcardbutton = '';
-if ($usercancreate) {
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php?type=');
-}
-
-print load_fiche_titre($langs->trans("CustomersStandingOrdersArea"), $newcardbutton);
+print load_fiche_titre($langs->trans("CustomersStandingOrdersArea"));
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -102,10 +95,10 @@ print '</span></td></tr></table></div><br>';
  */
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
 $sql .= " pfd.date_demande, pfd.amount,";
-$sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
+$sql .= " s.nom as name, s.email, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
@@ -118,7 +111,7 @@ if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
 $sql .= " AND pfd.traite = 0";
 $sql .= " AND pfd.ext_payment_id IS NULL";
 $sql .= " AND pfd.fk_facture = f.rowid";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->rights->societe->client->voir && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
@@ -148,27 +141,17 @@ if ($resql) {
 			$thirdpartystatic->id = $obj->socid;
 			$thirdpartystatic->name = $obj->name;
 			$thirdpartystatic->email = $obj->email;
-			$thirdpartystatic->tva_intra = $obj->tva_intra;
-			$thirdpartystatic->siren = $obj->idprof1;
-			$thirdpartystatic->siret = $obj->idprof2;
-			$thirdpartystatic->ape = $obj->idprof3;
-			$thirdpartystatic->idprof1 = $obj->idprof1;
-			$thirdpartystatic->idprof2 = $obj->idprof2;
-			$thirdpartystatic->idprof3 = $obj->idprof3;
-			$thirdpartystatic->idprof4 = $obj->idprof4;
-			$thirdpartystatic->idprof5 = $obj->idprof5;
-			$thirdpartystatic->idprof6 = $obj->idprof6;
 
-			print '<tr class="oddeven"><td class="nowraponall">';
+			print '<tr class="oddeven"><td>';
 			print $invoicestatic->getNomUrl(1, 'withdraw');
 			print '</td>';
 
-			print '<td class="tdoverflowmax150">';
+			print '<td>';
 			print $thirdpartystatic->getNomUrl(1, 'customer');
 			print '</td>';
 
 			print '<td class="right">';
-			print '<span class="amount">'.price($obj->amount).'</span>';
+			print price($obj->amount);
 			print '</td>';
 
 			print '<td class="right">';
@@ -191,7 +174,7 @@ if ($resql) {
 }
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
@@ -225,24 +208,24 @@ if ($result) {
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($result);
 
-			$bprev->id = $obj->rowid;
-			$bprev->ref = $obj->ref;
-			$bprev->statut = $obj->statut;
 
 			print '<tr class="oddeven">';
 
-			print '<td class="nowraponall">';
+			print "<td>";
+			$bprev->id = $obj->rowid;
+			$bprev->ref = $obj->ref;
+			$bprev->statut = $obj->statut;
 			print $bprev->getNomUrl(1);
 			print "</td>\n";
 			print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
-			print '<td class="right nowraponall"><span class="amount">'.price($obj->amount)."</span></td>\n";
+			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 			print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
 
 			print "</tr>\n";
 			$i++;
 		}
 	} else {
-		print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+		print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("None").'</td></tr>';
 	}
 
 	print "</table></div><br>";
@@ -252,7 +235,7 @@ if ($result) {
 }
 
 
-print '</div></div>';
+print '</div></div></div>';
 
 // End of page
 llxFooter();

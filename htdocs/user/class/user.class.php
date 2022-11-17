@@ -11,7 +11,7 @@
  * Copyright (C) 2013-2015  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       charlene Benke          <charlie@patas-monkey.com>
- * Copyright (C) 2018-2021       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
  *
@@ -80,7 +80,6 @@ class User extends CommonObject
 	 * @var string gender
 	 */
 	public $gender;
-
 	public $birth;
 
 	/**
@@ -276,8 +275,6 @@ class User extends CommonObject
 
 	public $datelastlogin;
 	public $datepreviouslogin;
-	public $iplastlogin;
-	public $ippreviouslogin;
 	public $datestartvalidity;
 	public $dateendvalidity;
 
@@ -298,7 +295,7 @@ class User extends CommonObject
 	public $all_permissions_are_loaded;
 
 	/**
-	 * @var int Number of rights granted to the user. Value loaded after a getrights().
+	 * @var int Number of rights granted to the user
 	 */
 	public $nb_rights;
 
@@ -316,9 +313,7 @@ class User extends CommonObject
 	 * @var stdClass To store personal config
 	 */
 	public $conf;
-
-	public $default_values; // To store default values for user. Loaded by loadDefaultValues().
-
+	public $default_values; // To store default values for user
 	public $lastsearch_values_tmp; // To store current search criterias for user
 	public $lastsearch_values; // To store last saved search criterias for user
 
@@ -344,17 +339,6 @@ class User extends CommonObject
 	public $dateemploymentend; // Define date of employment end by company
 
 	public $default_c_exp_tax_cat;
-
-	/**
-	 * @var string ref for employee
-	 */
-	public $ref_employee;
-
-	/**
-	 * @var string national registration number
-	 */
-	public $national_registration_number;
-
 	public $default_range;
 
 	/**
@@ -362,13 +346,10 @@ class User extends CommonObject
 	 */
 	public $fk_warehouse;
 
-
 	public $fields = array(
 		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'lastname'=>array('type'=>'varchar(50)', 'label'=>'LastName', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1),
-		'firstname'=>array('type'=>'varchar(50)', 'label'=>'FirstName', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
-		'ref_employee'=>array('type'=>'varchar(50)', 'label'=>'RefEmployee', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>30, 'searchall'=>1),
-		'national_registration_number'=>array('type'=>'varchar(50)', 'label'=>'NationalRegistrationNumber', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>40, 'searchall'=>1)
+		'lastname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1),
+		'firstname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
 	);
 
 
@@ -418,10 +399,9 @@ class User extends CommonObject
 	 * 	@param	int		$loadpersonalconf	1=also load personal conf of user (in $user->conf->xxx), 0=do not load personal conf.
 	 *  @param  int     $entity             If a value is >= 0, we force the search on a specific entity. If -1, means search depens on default setup.
 	 *  @param	int		$email       		If defined, email to used for search
-	 *  @param	int		$fk_socpeople		If defined, id of contact for search
 	 * 	@return	int							<0 if KO, 0 not found, >0 if OK
 	 */
-	public function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '', $fk_socpeople = 0)
+	public function fetch($id = '', $login = '', $sid = '', $loadpersonalconf = 0, $entity = -1, $email = '')
 	{
 		global $conf, $user;
 
@@ -441,8 +421,6 @@ class User extends CommonObject
 		$sql .= " u.tms as datem,";
 		$sql .= " u.datelastlogin as datel,";
 		$sql .= " u.datepreviouslogin as datep,";
-		$sql .= " u.iplastlogin,";
-		$sql .= " u.ippreviouslogin,";
 		$sql .= " u.datelastpassvalidation,";
 		$sql .= " u.datestartvalidity,";
 		$sql .= " u.dateendvalidity,";
@@ -459,13 +437,11 @@ class User extends CommonObject
 		$sql .= " u.fk_warehouse,";
 		$sql .= " u.ref_ext,";
 		$sql .= " u.default_range, u.default_c_exp_tax_cat,"; // Expense report default mode
-		$sql .= " u.national_registration_number,";
-		$sql .= " u.ref_employee,";
 		$sql .= " c.code as country_code, c.label as country,";
 		$sql .= " d.code_departement as state_code, d.nom as state";
-		$sql .= " FROM ".$this->db->prefix()."user as u";
-		$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as c ON u.fk_country = c.rowid";
-		$sql .= " LEFT JOIN ".$this->db->prefix()."c_departements as d ON u.fk_state = d.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON u.fk_country = c.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON u.fk_state = d.rowid";
 
 		if ($entity < 0) {
 			if ((empty($conf->multicompany->enabled) || empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) && (!empty($user->entity))) {
@@ -489,8 +465,6 @@ class User extends CommonObject
 			$sql .= " AND u.login = '".$this->db->escape($login)."'";
 		} elseif ($email) {
 			$sql .= " AND u.email = '".$this->db->escape($email)."'";
-		} elseif ($fk_socpeople > 0) {
-			$sql .= " AND u.fk_socpeople = ".((int) $fk_socpeople);
 		} else {
 			$sql .= " AND u.rowid = ".((int) $id);
 		}
@@ -514,8 +488,6 @@ class User extends CommonObject
 				$this->civility_code = $obj->civility_code;
 				$this->lastname = $obj->lastname;
 				$this->firstname = $obj->firstname;
-				$this->ref_employee = $obj->ref_employee;
-				$this->national_registration_number = $obj->national_registration_number;
 
 				$this->employee = $obj->employee;
 
@@ -552,7 +524,7 @@ class User extends CommonObject
 				$this->admin		= $obj->admin;
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
-				$this->note			= $obj->note_private;	// deprecated
+				$this->note			= $obj->note_private;
 				$this->statut		= $obj->statut;
 				$this->photo		= $obj->photo;
 				$this->openid		= $obj->openid;
@@ -572,8 +544,6 @@ class User extends CommonObject
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->datelastlogin = $this->db->jdate($obj->datel);
 				$this->datepreviouslogin = $this->db->jdate($obj->datep);
-				$this->iplastlogin = $obj->iplastlogin;
-				$this->ippreviouslogin = $obj->ippreviouslogin;
 				$this->datestartvalidity = $this->db->jdate($obj->datestartvalidity);
 				$this->dateendvalidity = $this->db->jdate($obj->dateendvalidity);
 
@@ -614,7 +584,7 @@ class User extends CommonObject
 		// To get back the global configuration unique to the user
 		if ($loadpersonalconf) {
 			// Load user->conf for user
-			$sql = "SELECT param, value FROM ".$this->db->prefix()."user_param";
+			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
 			$sql .= " WHERE fk_user = ".((int) $this->id);
 			$sql .= " AND entity = ".((int) $conf->entity);
 			//dol_syslog(get_class($this).'::fetch load personalized conf', LOG_DEBUG);
@@ -692,129 +662,6 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Return if a user has a permission.
-	 *  You can use it like this: if ($user->hasRight('module', 'level11')).
-	 *  It replaces old syntax: if ($user->rights->module->level1)
-	 *
-	 * 	@param	int		$module			Module of permission to check
-	 *  @param  string	$permlevel1		Permission level1 (Example: 'read', 'write', 'delete')
-	 *  @param  string	$permlevel2		Permission level2
-	 *  @return int						1 if user has permission, 0 if not.
-	 *  @see	clearrights(), delrights(), getrights(), hasRight()
-	 */
-	public function hasRight($module, $permlevel1, $permlevel2 = '')
-	{
-		global $conf;
-		// For compatibility with bad naming permissions on module
-		$moduletomoduletouse = array(
-			'contract' => 'contrat',
-			'member' => 'adherent',	// We must check $user->rights->adherent...
-			'mo' => 'mrp',
-			'order' => 'commande',
-			//'product' => 'produit',	// We must check $user->rights->produit...
-			'project' => 'projet',
-			'shipping' => 'expedition',
-			'task' => 'task@projet',
-			'fichinter' => 'ficheinter',
-			'inventory' => 'stock',
-			'invoice' => 'facture',
-			'invoice_supplier' => 'fournisseur',
-			'order_supplier' => 'fournisseur',
-			'knowledgerecord' => 'knowledgerecord@knowledgemanagement',
-			'skill@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
-			'job@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
-			'position@hrm' => 'all@hrm', // skill / job / position objects rights are for the moment grouped into right level "all"
-			'facturerec' => 'facture'
-		);
-
-		if (!empty($moduletomoduletouse[$module])) {
-			$module = $moduletomoduletouse[$module];
-		}
-
-		$moduleRightsMapping = array(
-			'product' => 'produit',	// We must check $user->rights->produit...
-		);
-
-		$rightsPath = $module;
-		if (!empty($moduleRightsMapping[$rightsPath])) {
-			$rightsPath = $moduleRightsMapping[$rightsPath];
-		}
-
-		// If module is abc@module, we check permission user->rights->module->abc->permlevel1
-		$tmp = explode('@', $rightsPath, 2);
-		if (! empty($tmp[1])) {
-			if (strpos($module, '@') !== false) $module = $tmp[1];
-			$rightsPath = $tmp[1];
-			$permlevel2 = $permlevel1;
-			$permlevel1 = $tmp[0];
-		}
-
-		//var_dump($module);
-		//var_dump($this->rights->$module);
-		if (!in_array($module, $conf->modules)) {
-			return 0;
-		}
-
-		// For compatibility with bad naming permissions on permlevel1
-		if ($permlevel1 == 'propale') {
-			$permlevel1 = 'propal';
-		}
-		if ($permlevel1 == 'member') {
-			$permlevel1 = 'adherent';
-		}
-		if ($permlevel1 == 'recruitmentcandidature') {
-			$permlevel1 = 'recruitmentjobposition';
-		}
-		//var_dump($module.' '.$permlevel1.' '.$permlevel2. ' '. $rightsPath);
-		//var_dump($this->rights);
-		if (empty($rightsPath) || empty($this->rights) || empty($this->rights->$rightsPath) || empty($permlevel1)) {
-			return 0;
-		}
-
-		if ($permlevel2) {
-			if (!empty($this->rights->$rightsPath->$permlevel1)) {
-				if (!empty($this->rights->$rightsPath->$permlevel1->$permlevel2)) {
-					return $this->rights->$rightsPath->$permlevel1->$permlevel2;
-				}
-				// For backward compatibility with old permissions called "lire", "creer", "create", "supprimer"
-				// instead of "read", "write", "delete"
-				if ($permlevel2 == 'read' && !empty($this->rights->$rightsPath->$permlevel1->lire)) {
-					return $this->rights->$rightsPath->$permlevel1->lire;
-				}
-				if ($permlevel2 == 'write' && !empty($this->rights->$rightsPath->$permlevel1->creer)) {
-					return $this->rights->$rightsPath->$permlevel1->creer;
-				}
-				if ($permlevel2 == 'write' && !empty($this->rights->$rightsPath->$permlevel1->create)) {
-					return $this->rights->$rightsPath->$permlevel1->create;
-				}
-				if ($permlevel2 == 'delete' && !empty($this->rights->$rightsPath->$permlevel1->supprimer)) {
-					return $this->rights->$rightsPath->$permlevel1->supprimer;
-				}
-			}
-		} else {
-			if (!empty($this->rights->$rightsPath->$permlevel1)) {
-				return $this->rights->$rightsPath->$permlevel1;
-			}
-			// For backward compatibility with old permissions called "lire", "creer", "create", "supprimer"
-			// instead of "read", "write", "delete"
-			if ($permlevel1 == 'read' && !empty($this->rights->$rightsPath->lire)) {
-				return $this->rights->$rightsPath->lire;
-			}
-			if ($permlevel1 == 'write' && !empty($this->rights->$rightsPath->creer)) {
-				return $this->rights->$rightsPath->creer;
-			}
-			if ($permlevel1 == 'write' && !empty($this->rights->$rightsPath->create)) {
-				return $this->rights->$rightsPath->create;
-			}
-			if ($permlevel1 == 'delete' && !empty($this->rights->$rightsPath->supprimer)) {
-				return $this->rights->$rightsPath->supprimer;
-			}
-		}
-
-		return 0;
-	}
-
-	/**
 	 *  Add a right to the user
 	 *
 	 * 	@param	int		$rid			Id of permission to add or 0 to add several permissions
@@ -823,16 +670,15 @@ class User extends CommonObject
 	 *  @param	int		$entity			Entity to use
 	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @return int						> 0 if OK, < 0 if KO
-	 *  @see	clearrights(), delrights(), getrights(), hasRight()
+	 *  @see	clearrights(), delrights(), getrights()
 	 */
 	public function addrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
 		global $conf, $user, $langs;
 
-		$entity = (empty($entity) ? $conf->entity : $entity);
+		$entity = (!empty($entity) ? $entity : $conf->entity);
 
-		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity, $notrigger for user id=".$this->id);
-
+		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms, $entity");
 		$error = 0;
 		$whereforadd = '';
 
@@ -841,9 +687,9 @@ class User extends CommonObject
 		if (!empty($rid)) {
 			$module = $perms = $subperms = '';
 
-			// If we ask to add a given permission, we first load properties of this permission (module, perms and subperms).
+			// Si on a demande ajout d'un droit en particulier, on recupere les caracteristiques (module, perms et subperms) de ce droit.
 			$sql = "SELECT module, perms, subperms";
-			$sql .= " FROM ".$this->db->prefix()."rights_def";
+			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql .= " WHERE id = ".((int) $rid);
 			$sql .= " AND entity = ".((int) $entity);
 
@@ -861,9 +707,9 @@ class User extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			// Define the where for the permission to add
+			// Where pour la liste des droits a ajouter
 			$whereforadd = "id=".((int) $rid);
-			// Add also inherited permissions
+			// Ajout des droits induits
 			if (!empty($subperms)) {
 				$whereforadd .= " OR (module='".$this->db->escape($module)."' AND perms='".$this->db->escape($perms)."' AND (subperms='lire' OR subperms='read'))";
 			} elseif (!empty($perms)) {
@@ -889,7 +735,7 @@ class User extends CommonObject
 		if (!empty($whereforadd)) {
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
-			$sql .= " FROM ".$this->db->prefix()."rights_def";
+			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql .= " WHERE entity = ".((int) $entity);
 			if (!empty($whereforadd) && $whereforadd != 'allmodules') {
 				$sql .= " AND (".$whereforadd.")";	// Note: parenthesis are important because whereforadd can contains OR. Also note that $whereforadd is already sanitized
@@ -901,18 +747,15 @@ class User extends CommonObject
 				$i = 0;
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
+					$nid = $obj->id;
 
-					if ($obj) {
-						$nid = $obj->id;
-
-						$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id)." AND fk_id = ".((int) $nid)." AND entity = ".((int) $entity);
-						if (!$this->db->query($sql)) {
-							$error++;
-						}
-						$sql = "INSERT INTO ".$this->db->prefix()."user_rights (entity, fk_user, fk_id) VALUES (".((int) $entity).", ".((int) $this->id).", ".((int) $nid).")";
-						if (!$this->db->query($sql)) {
-							$error++;
-						}
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".((int) $this->id)." AND fk_id = ".((int) $nid)." AND entity = ".((int) $entity);
+					if (!$this->db->query($sql)) {
+						$error++;
+					}
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (entity, fk_user, fk_id) VALUES (".((int) $entity).", ".((int) $this->id).", ".((int) $nid).")";
+					if (!$this->db->query($sql)) {
+						$error++;
 					}
 
 					$i++;
@@ -954,7 +797,7 @@ class User extends CommonObject
 	 *  @param	int		$entity		Entity to use
 	 *  @param  int	    $notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *  @return int         		> 0 if OK, < 0 if OK
-	 *  @see	clearrights(), addrights(), getrights(), hasRight()
+	 *  @see	clearrights(), addrights(), getrights()
 	 */
 	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -972,7 +815,7 @@ class User extends CommonObject
 			// Si on a demande supression d'un droit en particulier, on recupere
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
-			$sql .= " FROM ".$this->db->prefix()."rights_def";
+			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql .= " WHERE id = '".$this->db->escape($rid)."'";
 			$sql .= " AND entity = ".((int) $entity);
 
@@ -1018,7 +861,7 @@ class User extends CommonObject
 		if (!empty($wherefordel)) {
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
-			$sql .= " FROM ".$this->db->prefix()."rights_def";
+			$sql .= " FROM ".MAIN_DB_PREFIX."rights_def";
 			$sql .= " WHERE entity = ".((int) $entity);
 			if (!empty($wherefordel) && $wherefordel != 'allmodules') {
 				$sql .= " AND (".$wherefordel.")";	// Note: parenthesis are important because wherefordel can contains OR. Also note that $wherefordel is already sanitized
@@ -1040,7 +883,7 @@ class User extends CommonObject
 					$obj = $this->db->fetch_object($result);
 					$nid = $obj->id;
 
-					$sql = "DELETE FROM ".$this->db->prefix()."user_rights";
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights";
 					$sql .= " WHERE fk_user = ".((int) $this->id)." AND fk_id = ".((int) $nid);
 					$sql .= " AND entity = ".((int) $entity);
 					if (!$this->db->query($sql)) {
@@ -1081,7 +924,7 @@ class User extends CommonObject
 	 *  Clear all permissions array of user
 	 *
 	 *  @return	void
-	 *  @see	getrights(), hasRight()
+	 *  @see	getrights()
 	 */
 	public function clearrights()
 	{
@@ -1099,7 +942,7 @@ class User extends CommonObject
 	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
 	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
 	 *	@return	void
-	 *  @see	clearrights(), delrights(), addrights(), hasRight()
+	 *  @see	clearrights(), delrights(), addrights()
 	 */
 	public function getrights($moduletag = '', $forcereload = 0)
 	{
@@ -1117,27 +960,18 @@ class User extends CommonObject
 			}
 		}
 
-		// For avoid error
-		if (!isset($this->rights) || !is_object($this->rights)) {
-			$this->rights = new stdClass(); // For avoid error
-		}
-		if (!isset($this->rights->user) || !is_object($this->rights->user)) {
-			$this->rights->user = new stdClass(); // For avoid error
-		}
-
 		// Get permission of users + Get permissions of groups
 
 		// First user permissions
 		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
-		$sql .= " FROM ".$this->db->prefix()."user_rights as ur,";
-		$sql .= " ".$this->db->prefix()."rights_def as r";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur";
+		$sql .= ", ".MAIN_DB_PREFIX."rights_def as r";
 		$sql .= " WHERE r.id = ur.fk_id";
 		if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
-			// on old version, we use entity defined into table r only
 			$sql .= " AND r.entity IN (0,".(!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) ? "1," : "").$conf->entity.")";
 		} else {
 			// On table r=rights_def, the unique key is (id, entity) because id is hard coded into module descriptor and insert during module activation.
-			// So we must include the filter on entity on both table r. and ur.
+			// So we must include the filter on r.entity on both r and ur.
 			$sql .= " AND r.entity = ".((int) $conf->entity)." AND ur.entity = ".((int) $conf->entity);
 		}
 		$sql .= " AND ur.fk_user= ".((int) $this->id);
@@ -1150,6 +984,7 @@ class User extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			$i = 0;
+
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
@@ -1159,6 +994,9 @@ class User extends CommonObject
 					$subperms = $obj->subperms;
 
 					if (!empty($perms)) {
+						if (!isset($this->rights) || !is_object($this->rights)) {
+							$this->rights = new stdClass(); // For avoid error
+						}
 						if (!empty($module)) {
 							if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
 								$this->rights->$module = new stdClass();
@@ -1187,9 +1025,9 @@ class User extends CommonObject
 
 		// Now permissions of groups
 		$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
-		$sql .= " FROM ".$this->db->prefix()."usergroup_rights as gr,";
-		$sql .= " ".$this->db->prefix()."usergroup_user as gu,";
-		$sql .= " ".$this->db->prefix()."rights_def as r";
+		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
+		$sql .= " ".MAIN_DB_PREFIX."usergroup_user as gu,";
+		$sql .= " ".MAIN_DB_PREFIX."rights_def as r";
 		$sql .= " WHERE r.id = gr.fk_id";
 		if (!empty($conf->global->MULTICOMPANY_BACKWARD_COMPATIBILITY)) {
 			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
@@ -1198,12 +1036,9 @@ class User extends CommonObject
 				$sql .= " AND r.entity = ".((int) $conf->entity);
 			}
 		} else {
-			$sql .= " AND gr.entity = ".((int) $conf->entity);	// Only groups created in current entity
-			// The entity on the table usergroup_user should be useless and shoumd never be used because it is alreay into gr and r.
-			// but when using MULTICOMPANY_TRANSVERSE_MODE, we may insert record that make rubbish result due to duplicate record of
-			// other entities, so we are forced to add a filter here
-			$sql .= " AND gu.entity IN (0,".$conf->entity.")";
-			$sql .= " AND r.entity = ".((int) $conf->entity);	// Only permission of modules enabled in current entity
+			$sql .= " AND gr.entity = ".((int) $conf->entity);
+			$sql .= " AND gu.entity = ".((int) $conf->entity);
+			$sql .= " AND r.entity = ".((int) $conf->entity);
 		}
 		$sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
 		$sql .= " AND gu.fk_user = ".((int) $this->id);
@@ -1225,6 +1060,9 @@ class User extends CommonObject
 					$subperms = $obj->subperms;
 
 					if (!empty($perms)) {
+						if (!isset($this->rights) || !is_object($this->rights)) {
+							$this->rights = new stdClass(); // For avoid error
+						}
 						if (!empty($module)) {
 							if (!isset($this->rights->$module) || !is_object($this->rights->$module)) {
 								$this->rights->$module = new stdClass();
@@ -1252,63 +1090,6 @@ class User extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
-		}
-
-		// Force permission on user for admin
-		if (!empty($this->admin)) {
-			if (empty($this->rights->user->user)) {
-				$this->rights->user->user = new stdClass();
-			}
-			$listofpermtotest = array('lire', 'creer', 'password', 'supprimer', 'export');
-			foreach ($listofpermtotest as $permtotest) {
-				if (empty($this->rights->user->user->$permtotest)) {
-					$this->rights->user->user->$permtotest = 1;
-					$this->nb_rights++;
-				}
-			}
-			if (empty($this->rights->user->self)) {
-				$this->rights->user->self = new stdClass();
-			}
-			$listofpermtotest = array('creer', 'password');
-			foreach ($listofpermtotest as $permtotest) {
-				if (empty($this->rights->user->self->$permtotest)) {
-					$this->rights->user->self->$permtotest = 1;
-					$this->nb_rights++;
-				}
-			}
-			// Add test on advanced permissions
-			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-				if (empty($this->rights->user->user_advance)) {
-					$this->rights->user->user_advance = new stdClass();
-				}
-				$listofpermtotest = array('readperms', 'write');
-				foreach ($listofpermtotest as $permtotest) {
-					if (empty($this->rights->user->user_advance->$permtotest)) {
-						$this->rights->user->user_advance->$permtotest = 1;
-						$this->nb_rights++;
-					}
-				}
-				if (empty($this->rights->user->self_advance)) {
-					$this->rights->user->self_advance = new stdClass();
-				}
-				$listofpermtotest = array('readperms', 'writeperms');
-				foreach ($listofpermtotest as $permtotest) {
-					if (empty($this->rights->user->self_advance->$permtotest)) {
-						$this->rights->user->self_advance->$permtotest = 1;
-						$this->nb_rights++;
-					}
-				}
-				if (empty($this->rights->user->group_advance)) {
-					$this->rights->user->group_advance = new stdClass();
-				}
-				$listofpermtotest = array('read', 'readperms', 'write', 'delete');
-				foreach ($listofpermtotest as $permtotest) {
-					if (empty($this->rights->user) || empty($this->rights->user->group_advance->$permtotest)) {
-						$this->rights->user->group_advance->$permtotest = 1;
-						$this->nb_rights++;
-					}
-				}
-			}
 		}
 
 		// For backward compatibility
@@ -1349,7 +1130,7 @@ class User extends CommonObject
 		$this->db->begin();
 
 		// Save in database
-		$sql = "UPDATE ".$this->db->prefix()."user";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 		$sql .= " SET statut = ".((int) $status);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
@@ -1410,7 +1191,7 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
 		// Remove rights
-		$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = ".((int) $this->id);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".((int) $this->id);
 
 		if (!$error && !$this->db->query($sql)) {
 			$error++;
@@ -1418,14 +1199,14 @@ class User extends CommonObject
 		}
 
 		// Remove group
-		$sql = "DELETE FROM ".$this->db->prefix()."usergroup_user WHERE fk_user  = ".((int) $this->id);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user WHERE fk_user  = ".((int) $this->id);
 		if (!$error && !$this->db->query($sql)) {
 			$error++;
 			$this->error = $this->db->lasterror();
 		}
 
 		// Remove params
-		$sql = "DELETE FROM ".$this->db->prefix()."user_param WHERE fk_user  = ".((int) $this->id);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param WHERE fk_user  = ".((int) $this->id);
 		if (!$error && !$this->db->query($sql)) {
 			$error++;
 			$this->error = $this->db->lasterror();
@@ -1433,7 +1214,7 @@ class User extends CommonObject
 
 		// If contact, remove link
 		if ($this->contact_id > 0) {
-			$sql = "UPDATE ".$this->db->prefix()."socpeople SET fk_user_creat = null WHERE rowid = ".((int) $this->contact_id);
+			$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE rowid = ".((int) $this->contact_id);
 			if (!$error && !$this->db->query($sql)) {
 				$error++;
 				$this->error = $this->db->lasterror();
@@ -1451,7 +1232,7 @@ class User extends CommonObject
 
 		// Remove user
 		if (!$error) {
-			$sql = "DELETE FROM ".$this->db->prefix()."user WHERE rowid = ".((int) $this->id);
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
 				$error++;
@@ -1492,15 +1273,13 @@ class User extends CommonObject
 		// Clean parameters
 		$this->setUpperOrLowerCase();
 
-		$this->civility_code = trim((string) $this->civility_code);
-		$this->login = trim((string) $this->login);
+		$this->civility_code = trim($this->civility_code);
+		$this->login = trim($this->login);
 		if (!isset($this->entity)) {
 			$this->entity = $conf->entity; // If not defined, we use default value
 		}
 
 		dol_syslog(get_class($this)."::create login=".$this->login.", user=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
-
-		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
 
 		// Check parameters
 		if (!empty($conf->global->USER_MAIL_REQUIRED) && !isValidEMail($this->email)) {
@@ -1512,7 +1291,7 @@ class User extends CommonObject
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"));
 			return -1;
-		} elseif (preg_match('/['.preg_quote($badCharUnauthorizedIntoLoginName, '/').']/', $this->login)) {
+		} elseif (preg_match('/[,@<>"\']/', $this->login)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadCharIntoLoginName");
 			return -1;
@@ -1525,7 +1304,7 @@ class User extends CommonObject
 
 		// Check if login already exists in same entity or into entity 0.
 		if ($this->login) {
-			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND login = '".$this->db->escape($this->login)."'";
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND login = '".$this->db->escape($this->login)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
 				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
@@ -1539,8 +1318,8 @@ class User extends CommonObject
 				$this->db->free($resqltochecklogin);
 			}
 		}
-		if (!empty($this->email)) {
-			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
+		if ($this->email !== '') {
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
 				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
@@ -1556,13 +1335,13 @@ class User extends CommonObject
 		}
 
 		// Insert into database
-		$sql = "INSERT INTO ".$this->db->prefix()."user (datec, login, ldap_sid, entity)";
-		$sql .= " VALUES('".$this->db->idate($this->datec)."', '".$this->db->escape($this->login)."', '".$this->db->escape($this->ldap_sid)."', ".((int) $this->entity).")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec, login, ldap_sid, entity)";
+		$sql .= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->db->escape($this->ldap_sid)."',".$this->db->escape($this->entity).")";
 		$result = $this->db->query($sql);
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		if ($result) {
-			$this->id = $this->db->last_insert_id($this->db->prefix()."user");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."user");
 
 			// Set default rights
 			if ($this->set_default_rights() < 0) {
@@ -1664,7 +1443,7 @@ class User extends CommonObject
 		// Create user and set $this->id. Trigger is disabled because executed later.
 		$result = $this->create($user, 1);
 		if ($result > 0) {
-			$sql = "UPDATE ".$this->db->prefix()."user";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql .= " SET fk_socpeople=".((int) $contact->id);
 			$sql .= ", civility='".$this->db->escape($contact->civility_code)."'";
 			if ($contact->socid > 0) {
@@ -1752,7 +1531,7 @@ class User extends CommonObject
 					$result = -2;
 				}
 			} elseif (!empty($this->pass_crypted)) {	// If a crypted password is already known, we save it directly into database because the previous create did not save it.
-				$sql = "UPDATE ".$this->db->prefix()."user";
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 				$sql .= " SET pass_crypted = '".$this->db->escape($this->pass_crypted)."'";
 				$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1763,7 +1542,7 @@ class User extends CommonObject
 			}
 
 			if ($result > 0 && $member->fk_soc) {	// If member is linked to a thirdparty
-				$sql = "UPDATE ".$this->db->prefix()."user";
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 				$sql .= " SET fk_soc=".((int) $member->fk_soc);
 				$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1804,7 +1583,7 @@ class User extends CommonObject
 
 		$rd = array();
 		$num = 0;
-		$sql = "SELECT id FROM ".$this->db->prefix()."rights_def";
+		$sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def";
 		$sql .= " WHERE bydefault = 1";
 		$sql .= " AND entity = ".((int) $conf->entity);
 
@@ -1821,10 +1600,10 @@ class User extends CommonObject
 		}
 		$i = 0;
 		while ($i < $num) {
-			$sql = "DELETE FROM ".$this->db->prefix()."user_rights WHERE fk_user = $this->id AND fk_id=$rd[$i]";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rd[$i]";
 			$result = $this->db->query($sql);
 
-			$sql = "INSERT INTO ".$this->db->prefix()."user_rights (fk_user, fk_id) VALUES ($this->id, $rd[$i])";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rd[$i])";
 			$result = $this->db->query($sql);
 			if (!$result) {
 				return -1;
@@ -1855,49 +1634,47 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember.", nosyncmemberpass=".$nosyncmemberpass);
 
 		// Clean parameters
-		$this->civility_code				= trim((string) $this->civility_code);
-		$this->lastname						= trim((string) $this->lastname);
-		$this->firstname					= trim((string) $this->firstname);
-		$this->ref_employee					= trim((string) $this->ref_employee);
-		$this->national_registration_number	= trim((string) $this->national_registration_number);
-		$this->employee						= ($this->employee > 0 ? $this->employee : 0);
-		$this->login						= trim((string) $this->login);
-		$this->gender						= trim((string) $this->gender);
-		$this->pass							= trim((string) $this->pass);
-		$this->api_key						= trim((string) $this->api_key);
-		$this->address						= trim((string) $this->address);
-		$this->zip							= trim((string) $this->zip);
-		$this->town							= trim((string) $this->town);
+		$this->civility_code = trim($this->civility_code);
+		$this->lastname     = trim($this->lastname);
+		$this->firstname    = trim($this->firstname);
+		$this->employee    	= $this->employee ? $this->employee : 0;
+		$this->login        = trim($this->login);
+		$this->gender       = trim($this->gender);
+		$this->pass         = trim($this->pass);
+		$this->api_key      = trim($this->api_key);
+		$this->address = $this->address ? trim($this->address) : trim($this->address);
+		$this->zip = $this->zip ? trim($this->zip) : trim($this->zip);
+		$this->town = $this->town ? trim($this->town) : trim($this->town);
 		$this->setUpperOrLowerCase();
+		$this->state_id = trim($this->state_id);
+		$this->country_id = ($this->country_id > 0) ? $this->country_id : 0;
+		$this->office_phone = trim($this->office_phone);
+		$this->office_fax   = trim($this->office_fax);
+		$this->user_mobile  = trim($this->user_mobile);
+		$this->personal_mobile = trim($this->personal_mobile);
+		$this->email        = trim($this->email);
+		$this->personal_email = trim($this->personal_email);
 
-		$this->state_id						= ($this->state_id > 0 ? $this->state_id : 0);
-		$this->country_id					= ($this->country_id > 0 ? $this->country_id : 0);
-		$this->office_phone					= trim((string) $this->office_phone);
-		$this->office_fax					= trim((string) $this->office_fax);
-		$this->user_mobile					= trim((string) $this->user_mobile);
-		$this->personal_mobile				= trim((string) $this->personal_mobile);
-		$this->email						= trim((string) $this->email);
-		$this->personal_email				= trim((string) $this->personal_email);
-
-		$this->job							= trim((string) $this->job);
-		$this->signature					= trim((string) $this->signature);
-		$this->note_public					= trim((string) $this->note_public);
-		$this->note_private					= trim((string) $this->note_private);
-		$this->openid						= trim((string) $this->openid);
-		$this->admin						= ($this->admin > 0 ? $this->admin : 0);
-
-		$this->accountancy_code				= trim((string) $this->accountancy_code);
-		$this->color						= trim((string) $this->color);
-		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;
-		$this->dateemploymentend			= empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
-		$this->datestartvalidity			= empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
-		$this->dateendvalidity				= empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
-		$this->birth						= empty($this->birth) ? '' : $this->birth;
-		$this->fk_warehouse					= (int) $this->fk_warehouse;
+		$this->job = trim($this->job);
+		$this->signature    = trim($this->signature);
+		$this->note_public  = trim($this->note_public);
+		$this->note_private = trim($this->note_private);
+		$this->openid       = trim(empty($this->openid) ? '' : $this->openid); // Avoid warning
+		$this->admin        = $this->admin ? $this->admin : 0;
+		$this->address = empty($this->address) ? '' : $this->address;
+		$this->zip			= empty($this->zip) ? '' : $this->zip;
+		$this->town = empty($this->town) ? '' : $this->town;
+		$this->setUpperOrLowerCase();
+		$this->accountancy_code = trim($this->accountancy_code);
+		$this->color = empty($this->color) ? '' : $this->color;
+		$this->dateemployment = empty($this->dateemployment) ? '' : $this->dateemployment;
+		$this->dateemploymentend = empty($this->dateemploymentend) ? '' : $this->dateemploymentend;
+		$this->datestartvalidity = empty($this->datestartvalidity) ? '' : $this->datestartvalidity;
+		$this->dateendvalidity = empty($this->dateendvalidity) ? '' : $this->dateendvalidity;
+		$this->birth        = trim($this->birth);
+		$this->fk_warehouse = (int) $this->fk_warehouse;
 
 		// Check parameters
-		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
-
 		if (!empty($conf->global->USER_MAIL_REQUIRED) && !isValidEMail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
@@ -1907,7 +1684,7 @@ class User extends CommonObject
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFieldRequired", 'Login');
 			return -1;
-		} elseif (preg_match('/['.preg_quote($badCharUnauthorizedIntoLoginName, '/').']/', $this->login)) {
+		} elseif (preg_match('/[,@<>"\']/', $this->login)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadCharIntoLoginName");
 			return -1;
@@ -1917,7 +1694,7 @@ class User extends CommonObject
 
 		// Check if login already exists in same entity or into entity 0.
 		if (!empty($this->oldcopy) && $this->oldcopy->login != $this->login) {
-			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND login = '".$this->db->escape($this->login)."'";
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND login = '".$this->db->escape($this->login)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
 				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
@@ -1930,8 +1707,8 @@ class User extends CommonObject
 				}
 			}
 		}
-		if (!empty($this->oldcopy) && !empty($this->email) && $this->oldcopy->email != $this->email) {
-			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
+		if (!empty($this->oldcopy) && $this->email !== '' && $this->oldcopy->email != $this->email) {
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
 				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
@@ -1946,12 +1723,10 @@ class User extends CommonObject
 		}
 
 		// Update datas
-		$sql = "UPDATE ".$this->db->prefix()."user SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
 		$sql .= " civility = '".$this->db->escape($this->civility_code)."'";
 		$sql .= ", lastname = '".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname = '".$this->db->escape($this->firstname)."'";
-		$sql .= ", ref_employee = '".$this->db->escape($this->ref_employee)."'";
-		$sql .= ", national_registration_number = '".$this->db->escape($this->national_registration_number)."'";
 		$sql .= ", employee = ".(int) $this->employee;
 		$sql .= ", login = '".$this->db->escape($this->login)."'";
 		$sql .= ", api_key = ".($this->api_key ? "'".$this->db->escape($this->api_key)."'" : "null");
@@ -2017,10 +1792,10 @@ class User extends CommonObject
 			// Update password
 			if (!empty($this->pass)) {
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted) {
-					// If a new value for password is set and different than the one crypted into database
+					// Si mot de passe saisi et different de celui en base
 					$result = $this->setPassword($user, $this->pass, 0, $notrigger, $nosyncmemberpass);
-					if ($result < 0) {
-						return -5;
+					if (!$nbrowsaffected) {
+						$nbrowsaffected++;
 					}
 				}
 			}
@@ -2028,7 +1803,7 @@ class User extends CommonObject
 			// If user is linked to a member, remove old link to this member
 			if ($this->fk_member > 0) {
 				dol_syslog(get_class($this)."::update remove link with member. We will recreate it later", LOG_DEBUG);
-				$sql = "UPDATE ".$this->db->prefix()."user SET fk_member = NULL where fk_member = ".((int) $this->fk_member);
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".((int) $this->fk_member);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->error = $this->db->error(); $this->db->rollback(); return -5;
@@ -2036,7 +1811,7 @@ class User extends CommonObject
 			}
 			// Set link to user
 			dol_syslog(get_class($this)."::update set link with member", LOG_DEBUG);
-			$sql = "UPDATE ".$this->db->prefix()."user SET fk_member =".($this->fk_member > 0 ? ((int) $this->fk_member) : 'null')." where rowid = ".((int) $this->id);
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member =".($this->fk_member > 0 ? ((int) $this->fk_member) : 'null')." where rowid = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->error = $this->db->error(); $this->db->rollback(); return -5;
@@ -2062,6 +1837,8 @@ class User extends CommonObject
 						$adh->birth = $this->birth;
 
 						$adh->pass = $this->pass;
+
+						//$adh->societe = (empty($adh->societe) && $this->societe_id ? $this->societe_id : $adh->societe);
 
 						$adh->address = $this->address;
 						$adh->town = $this->town;
@@ -2111,6 +1888,8 @@ class User extends CommonObject
 						$tmpobj->birth = $this->birth;
 
 						//$tmpobj->pass=$this->pass;
+
+						//$tmpobj->societe=(empty($tmpobj->societe) && $this->societe_id ? $this->societe_id : $tmpobj->societe);
 
 						$tmpobj->email = $this->email;
 
@@ -2190,13 +1969,9 @@ class User extends CommonObject
 		// phpcs:enable
 		$now = dol_now();
 
-		$userremoteip = getUserRemoteIP();
-
-		$sql = "UPDATE ".$this->db->prefix()."user SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
 		$sql .= " datepreviouslogin = datelastlogin,";
-		$sql .= " ippreviouslogin = iplastlogin,";
 		$sql .= " datelastlogin = '".$this->db->idate($now)."',";
-		$sql .= " iplastlogin = '".$this->db->escape($userremoteip)."',";
 		$sql .= " tms = tms"; // La date de derniere modif doit changer sauf pour la mise a jour de date de derniere connexion
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2205,8 +1980,6 @@ class User extends CommonObject
 		if ($resql) {
 			$this->datepreviouslogin = $this->datelastlogin;
 			$this->datelastlogin = $now;
-			$this->ippreviouslogin = $this->iplastlogin;
-			$this->iplastlogin = $userremoteip;
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror().' sql='.$sql;
@@ -2224,7 +1997,7 @@ class User extends CommonObject
 	 *	@param	int		$notrigger				1=Does not launch triggers
 	 *	@param	int		$nosyncmember	        Do not synchronize linked member
 	 *  @param	int		$passwordalreadycrypted 0=Value is cleartext password, 1=Value is crypted value.
-	 *  @return string 			          		If OK return clear password, 0 if no change (warning, you may retreive 1 instead of 0 even if password was same), < 0 if error
+	 *  @return string 			          		If OK return clear password, 0 if no change, < 0 if error
 	 */
 	public function setPassword($user, $password = '', $changelater = 0, $notrigger = 0, $nosyncmember = 0, $passwordalreadycrypted = 0)
 	{
@@ -2240,30 +2013,8 @@ class User extends CommonObject
 			$password = getRandomPassword(false);
 		}
 
-		// Check and encrypt the password
+		// Crypt password
 		if (empty($passwordalreadycrypted)) {
-			if (!empty($conf->global->USER_PASSWORD_GENERATED)) {
-				// Add a check on rules for password syntax using the setup of the password generator
-				$modGeneratePassClass = 'modGeneratePass'.ucfirst($conf->global->USER_PASSWORD_GENERATED);
-
-				include_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/'.$modGeneratePassClass.'.class.php';
-				if (class_exists($modGeneratePassClass)) {
-					$modGeneratePass = new $modGeneratePassClass($this->db, $conf, $langs, $user);
-
-					// To check an input user password, we disable the cleaning on ambiguous characters (this is used only for auto-generated password)
-					$modGeneratePass->WithoutAmbi = 0;
-
-					// Call to validatePassword($password) to check pass match rules
-					$testpassword = $modGeneratePass->validatePassword($password);
-					if (!$testpassword) {
-						$this->error = $modGeneratePass->error;
-						return -1;
-					}
-				}
-			}
-
-
-			// Now, we encrypt the new password
 			$password_crypted = dol_hash($password);
 		}
 
@@ -2275,7 +2026,7 @@ class User extends CommonObject
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".$this->db->prefix()."user";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."',";
 			$sql .= " pass_temp = null";
 			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
@@ -2339,7 +2090,7 @@ class User extends CommonObject
 		} else {
 			// We store password in password temporary field.
 			// After receiving confirmation link, we will erase and store it in pass_crypted
-			$sql = "UPDATE ".$this->db->prefix()."user";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql .= " SET pass_temp = '".$this->db->escape($password)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2405,8 +2156,6 @@ class User extends CommonObject
 
 		if (!$changelater) {
 			$url = $urlwithroot.'/';
-			if (!empty($conf->global->URL_REDIRECTION_AFTER_CHANGEPASSWORD))
-				$url = $conf->global->URL_REDIRECTION_AFTER_CHANGEPASSWORD;
 			$mesg .= $outputlangs->transnoentitiesnoconv("RequestToResetPasswordReceived").".\n";
 			$mesg .= $outputlangs->transnoentitiesnoconv("NewKeyIs")." :\n\n";
 			$mesg .= $outputlangs->transnoentitiesnoconv("Login")." = ".$this->login."\n";
@@ -2488,7 +2237,7 @@ class User extends CommonObject
 	{
 		// phpcs:enable
 		$sql = "SELECT url, login, pass, poste ";
-		$sql .= " FROM ".$this->db->prefix()."user_clicktodial as u";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user_clicktodial as u";
 		$sql .= " WHERE u.fk_user = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
@@ -2523,13 +2272,13 @@ class User extends CommonObject
 		// phpcs:enable
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".$this->db->prefix()."user_clicktodial";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_clicktodial";
 		$sql .= " WHERE fk_user = ".((int) $this->id);
 
 		dol_syslog(get_class($this).'::update_clicktodial', LOG_DEBUG);
 		$result = $this->db->query($sql);
 
-		$sql = "INSERT INTO ".$this->db->prefix()."user_clicktodial";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_clicktodial";
 		$sql .= " (fk_user,url,login,pass,poste)";
 		$sql .= " VALUES (".$this->id;
 		$sql .= ", '".$this->db->escape($this->clicktodial_url)."'";
@@ -2568,14 +2317,14 @@ class User extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".$this->db->prefix()."usergroup_user";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
 		$sql .= " WHERE fk_user  = ".((int) $this->id);
 		$sql .= " AND fk_usergroup = ".((int) $group);
 		$sql .= " AND entity = ".((int) $entity);
 
 		$result = $this->db->query($sql);
 
-		$sql = "INSERT INTO ".$this->db->prefix()."usergroup_user (entity, fk_user, fk_usergroup)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_user (entity, fk_user, fk_usergroup)";
 		$sql .= " VALUES (".((int) $entity).",".((int) $this->id).",".((int) $group).")";
 
 		$result = $this->db->query($sql);
@@ -2625,7 +2374,7 @@ class User extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".$this->db->prefix()."usergroup_user";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
 		$sql .= " WHERE fk_user  = ".((int) $this->id);
 		$sql .= " AND fk_usergroup = ".((int) $group);
 		$sql .= " AND entity = ".((int) $entity);
@@ -2712,10 +2461,9 @@ class User extends CommonObject
 		$companylink = '';
 
 		if (!empty($this->photo)) {
-			$label .= '<div class="photointooltip floatright">';
-			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photoref photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
-			$label .= '</div>';
-			//$label .= '<div style="clear: both;"></div>';
+			$label .= '<div class="photointooltip">';
+			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
+			$label .= '</div><div style="clear: both;"></div>';
 		}
 
 		// Info Login
@@ -2756,10 +2504,10 @@ class User extends CommonObject
 			if (empty($hidethirdpartylogo)) {
 				$companylink = ' '.$thirdpartystatic->getNomUrl(2, (($option == 'nolink') ? 'nolink' : '')); // picto only of company
 			}
-			$company = ' ('.$langs->trans("Company").': '.img_picto('', 'company').' '.dol_string_nohtmltag($thirdpartystatic->name).')';
+			$company = ' ('.$langs->trans("Company").': '.dol_string_nohtmltag($thirdpartystatic->name).')';
 		}
-		$type = ($this->socid ? $langs->trans("ExternalUser").$company : $langs->trans("InternalUser"));
-		$label .= '<br><b>'.$langs->trans("Type").':</b> '.$type;
+		$type = ($this->socid ? $langs->trans("External").$company : $langs->trans("Internal"));
+		$label .= '<br><b>'.$langs->trans("Type").':</b> '.dol_string_nohtmltag($type);
 		$label .= '</div>';
 		if ($infologin > 0) {
 			$label .= '<br>';
@@ -2815,6 +2563,13 @@ class User extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+
+			/*
+			 $hookmanager->initHooks(array('userdao'));
+			 $parameters=array('id'=>$this->id);
+			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+			 */
 		}
 
 		$linkstart .= $linkclose.'>';
@@ -2824,7 +2579,7 @@ class User extends CommonObject
 		$result .= (($option == 'nolink') ? '' : $linkstart);
 		if ($withpictoimg) {
 			$paddafterimage = '';
-			if (abs((int) $withpictoimg) == 1) {
+			if (abs($withpictoimg) == 1) {
 				$paddafterimage = 'style="margin-'.($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right').': 3px;"';
 			}
 			// Only picto
@@ -2856,7 +2611,7 @@ class User extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('userdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -2929,7 +2684,7 @@ class User extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut(isset($this->statut) ? (int) $this->statut : (int) $this->status, $mode);
+		return $this->LibStatut($this->statut, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2948,10 +2703,10 @@ class User extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->trans('Enabled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->trans('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->trans('Enabled');
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->trans('Disabled');
 		}
 
 		$statusType = 'status5';
@@ -2960,50 +2715,6 @@ class User extends CommonObject
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
-	}
-
-
-	/**
-	 *	Return clicable link of object (with eventually picto)
-	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @return		string								HTML Code for Kanban thumb.
-	 */
-	public function getKanbanView($option = '')
-	{
-		$return = '<div class="box-flex-item box-flex-grow-zero">';
-		$return .= '<div class="info-box info-box-sm">';
-		$return .= '<span class="info-box-icon bg-infobox-action">';
-
-		$label = '';
-		if (!empty($this->photo)) {
-			//$label .= '<div class="photointooltip floatright">';
-			$label .= Form::showphoto('userphoto', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1); // Force height to 60 so we total height of tooltip can be calculated and collision can be managed
-			//$label .= '</div>';
-			//$label .= '<div style="clear: both;"></div>';
-			$return .= $label;
-		} else {
-			$return .= img_picto('', $this->picto);
-		}
-
-		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
-		$return .= '</span>';
-		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		if (property_exists($this, 'label')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
-		}
-		if ($this->email) {
-			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'email').' '.$this->email.'</span>';
-		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
-		}
-		$return .= '</div>';
-		$return .= '</div>';
-		$return .= '</div>';
-
-		return $return;
 	}
 
 
@@ -3084,7 +2795,7 @@ class User extends CommonObject
 			}
 		}
 		foreach ($socialnetworks as $key => $value) {
-			if (!empty($this->socialnetworks[$value['label']]) && !empty($conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])})) {
+			if ($this->socialnetworks[$value['label']] && !empty($conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])})) {
 				$info[$conf->global->{'LDAP_FIELD_'.strtoupper($value['label'])}] = $this->socialnetworks[$value['label']];
 			}
 		}
@@ -3122,7 +2833,7 @@ class User extends CommonObject
 				$info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass; // this->pass = mot de passe non crypte
 			}
 			if (!empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
-				$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
+				$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // Create OpenLDAP MD5 password (TODO add type of encryption)
 			}
 		} elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') {
 			// Set LDAP password if possible
@@ -3131,7 +2842,7 @@ class User extends CommonObject
 				// Just for the default MD5 !
 				if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
 					if ($this->pass_indatabase_crypted && !empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
-						$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dolGetLdapPasswordHash($this->pass_indatabase_crypted, 'md5frommd5'); // Create OpenLDAP MD5 password from Dolibarr MD5 password
+						$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase_crypted, 5); // Create OpenLDAP MD5 password from Dolibarr MD5 password
 					}
 				}
 			} elseif (!empty($this->pass_indatabase)) {
@@ -3140,7 +2851,7 @@ class User extends CommonObject
 					$info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
 				}
 				if (!empty($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)) {
-					$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
+					$info[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase, 4); // md5 for OpenLdap TODO add type of encryption
 				}
 			}
 		}
@@ -3231,16 +2942,14 @@ class User extends CommonObject
 		$this->personal_mobile = '0999999996';
 		$this->admin = 0;
 		$this->login = 'dolibspec';
-		$this->pass = 'dolibSpec+@123';
+		$this->pass = 'dolibspec';
 		//$this->pass_indatabase='dolibspec';									Set after a fetch
 		//$this->pass_indatabase_crypted='e80ca5a88c892b0aaaf7e154853bccab';	Set after a fetch
 		$this->datec = $now;
 		$this->datem = $now;
 
 		$this->datelastlogin = $now;
-		$this->iplastlogin = '127.0.0.1';
 		$this->datepreviouslogin = $now;
-		$this->ippreviouslogin = '127.0.0.1';
 		$this->statut = 1;
 
 		$this->entity = 1;
@@ -3257,7 +2966,7 @@ class User extends CommonObject
 	{
 		$sql = "SELECT u.rowid, u.login as ref, u.datec,";
 		$sql .= " u.tms as date_modification, u.entity";
-		$sql .= " FROM ".$this->db->prefix()."user as u";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE u.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
@@ -3288,7 +2997,7 @@ class User extends CommonObject
 	public function getNbOfEMailings()
 	{
 		$sql = "SELECT count(mc.email) as nb";
-		$sql .= " FROM ".$this->db->prefix()."mailing_cibles as mc";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql .= " WHERE mc.email = '".$this->db->escape($this->email)."'";
 		$sql .= " AND mc.statut NOT IN (-1,0)"; // -1 erreur, 0 non envoye, 1 envoye avec succes
 
@@ -3318,7 +3027,7 @@ class User extends CommonObject
 		global $conf;
 
 		$sql = "SELECT count(rowid) as nb";
-		$sql .= " FROM ".$this->db->prefix()."user";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user";
 		if ($option == 'superadmin') {
 			$sql .= " WHERE entity = 0";
 		} else {
@@ -3396,10 +3105,10 @@ class User extends CommonObject
 	public function get_children()
 	{
 		// phpcs:enable
-		$sql = "SELECT rowid FROM ".$this->db->prefix()."user";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."user";
 		$sql .= " WHERE fk_user = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::get_children", LOG_DEBUG);
+		dol_syslog(get_class($this)."::get_children sql=".$sql, LOG_DEBUG);
 		$res = $this->db->query($sql);
 		if ($res) {
 			$users = array();
@@ -3429,7 +3138,7 @@ class User extends CommonObject
 
 		// Load array[child]=parent
 		$sql = "SELECT fk_user as id_parent, rowid as id_son";
-		$sql .= " FROM ".$this->db->prefix()."user";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user";
 		$sql .= " WHERE fk_user <> 0";
 		$sql .= " AND entity IN (".getEntity('user').")";
 
@@ -3476,7 +3185,7 @@ class User extends CommonObject
 
 		// Init $this->users array
 		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.photo, u.entity"; // Distinct reduce pb with old tables with duplicates
-		$sql .= " FROM ".$this->db->prefix()."user as u";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		// Add fields from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printUserListWhere', $parameters); // Note that $action and $object may have been modified by hook
@@ -3659,9 +3368,9 @@ class User extends CommonObject
 		$this->nb = array();
 
 		$sql = "SELECT COUNT(DISTINCT u.rowid) as nb";
-		$sql .= " FROM ".$this->db->prefix()."user as u";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-			$sql .= ", ".$this->db->prefix()."usergroup_user as ug";
+			$sql .= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
 			$sql .= " WHERE ug.entity IN (".getEntity('usergroup').")";
 			$sql .= " AND ug.fk_user = u.rowid";
 		} else {
@@ -3733,7 +3442,7 @@ class User extends CommonObject
 		}
 
 		$sql = "SELECT rowid, email, user_mobile, civility, lastname, firstname";
-		$sql .= " FROM ".$this->db->prefix()."user";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user";
 		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		$resql = $this->db->query($sql);
@@ -3772,14 +3481,14 @@ class User extends CommonObject
 		global $conf, $user;
 
 		$sql = "SELECT t.rowid";
-		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t ';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t ';
 
 		if ($entityfilter) {
 			if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql .= " WHERE t.entity IS NOT NULL"; // Show all users
 				} else {
-					$sql .= ",".$this->db->prefix()."usergroup_user as ug";
+					$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 					$sql .= " WHERE ((ug.fk_user = t.rowid";
 					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
 					$sql .= " OR t.entity = 0)"; // Show always superadmin
@@ -3796,18 +3505,18 @@ class User extends CommonObject
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (isset($this->fields[$key]['type']) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+					$sqlwhere[] = $key.'='.$value;
+				} elseif (strpos($key, 'date') !== false) {
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
 		}
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -3858,7 +3567,7 @@ class User extends CommonObject
 	 */
 	public function findUserIdByEmail($email)
 	{
-		if (isset($this->findUserIdByEmailCache[$email])) {
+		if ($this->findUserIdByEmailCache[$email]) {
 			return $this->findUserIdByEmailCache[$email];
 		}
 
@@ -3867,12 +3576,14 @@ class User extends CommonObject
 		global $conf;
 
 		$sql = 'SELECT rowid';
-		$sql .= ' FROM '.$this->db->prefix().'user';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
+
 		if (!empty($conf->global->AGENDA_DISABLE_EXACT_USER_EMAIL_COMPARE_FOR_EXTERNAL_CALENDAR)) {
-			$sql .= " WHERE email LIKE '%".$this->db->escape($email)."%'";
+			$sql .= ' WHERE email LIKE "%'.$email.'%"';
 		} else {
-			$sql .= " WHERE email = '".$this->db->escape($email)."'";
+			$sql .= ' WHERE email = "'.$email.'"';
 		}
+
 		$sql .= ' LIMIT 1';
 
 		$resql = $this->db->query($sql);

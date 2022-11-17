@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (isModEnabled('project')) {
+if (!empty($conf->projet->enabled)) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
@@ -47,8 +47,8 @@ $confirm = GETPOST('confirm', 'alpha');
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST('sortfield', 'aZ09comma');
-$sortorder = GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -78,8 +78,6 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'tax', $object->id, 'chargesociales', 'charges');
 
-$permissiontoadd = $user->rights->tax->charges->creer;	// Used by the include of actions_dellink.inc.php
-
 
 /*
  * Actions
@@ -101,7 +99,7 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer) {
  */
 
 $form = new Form($db);
-if (isModEnabled('project')) {
+if (!empty($conf->projet->enabled)) {
 	$formproject = new FormProjets($db);
 }
 
@@ -121,16 +119,15 @@ if ($object->id) {
 	$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
 	// Project
-	if (isModEnabled('project')) {
+	if (!empty($conf->projet->enabled)) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
-			$morehtmlref .= ' : '.$proj->getNomUrl(1);
-			if ($proj->title) {
-				$morehtmlref .= ' - '.$proj->title;
-			}
+			$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+			$morehtmlref .= $proj->ref;
+			$morehtmlref .= '</a>';
 		} else {
 			$morehtmlref .= '';
 		}
@@ -139,9 +136,7 @@ if ($object->id) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	$object->totalpaid = $alreadypayed; // To give a chance to dol_banner_tab to use already paid amount to show correct status
-
-	$morehtmlright = '';
+	$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 

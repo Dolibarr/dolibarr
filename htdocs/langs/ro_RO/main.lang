@@ -1,15 +1,9 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
-# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese zh_CN
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
-# cid0jp is for Japanish
-# cid0kr is for Korean
-# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
-# freemono is for ru_RU or uk_UA, uz_UZ
-# freeserif is for Tamil
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -73,7 +67,6 @@ ErrorNoVATRateDefinedForSellerCountry=Eroare, nici o cotă de TVA nu este defini
 ErrorNoSocialContributionForSellerCountry=Eroare, niciun tip de taxă socială/fiscală nu este definită pentru ţara '%s'.
 ErrorFailedToSaveFile=Eroare, salvarea fişierului a eşuat.
 ErrorCannotAddThisParentWarehouse=Încercați să adăugați un depozit părinte care este deja subaltern a unui depozit existent
-FieldCannotBeNegative=Câmpul  "%s" nu poate fi negativ
 MaxNbOfRecordPerPage=Numărul maxim de înregistrări pe pagină
 NotAuthorized=Nu aveţi dreptul să faceţi asta.
 SetDate=Setează data
@@ -94,7 +87,7 @@ FileWasNotUploaded=Un fișier este selectat pentru atașament, dar nu a fost în
 NbOfEntries=Numărul de intrări
 GoToWikiHelpPage=Citeşte ajutorul online (Acces la Internet necesar)
 GoToHelpPage=Citeşte Ajutorul
-DedicatedPageAvailable=Pagină de ajutor dedicată pentru ecranul curent
+DedicatedPageAvailable=Există o pagină de ajutor dedicată legată de ecranul curent
 HomePage=Acasă
 RecordSaved=Înregistrare salvată
 RecordDeleted=Înregistrare ştearsă
@@ -121,7 +114,7 @@ ReturnCodeLastAccessInError=Cod returnat pentru ultima eroare de acces la baza d
 InformationLastAccessInError=Info pentru ultima eroare de acces la baza de date
 DolibarrHasDetectedError=Sistemul a întâmpinat o eroare tehnică
 YouCanSetOptionDolibarrMainProdToZero=Puteți citi fișierul jurnal sau setați opțiunea $dolibarr_main_prod la "0" din fișierul config pentru a obține mai multe informații.
-InformationToHelpDiagnose=Aceste informații pot fi utile în scopuri de diagnosticare (poți seta opțiunea $dolibarr_main_prod la '1' pentru a ascunde informațiile sensibile)
+InformationToHelpDiagnose=Aceste informații pot fi utile în scopuri de diagnoză (puteți seta opțiunea $dolibarr_main_prod la '1' pentru a elimina aceste notificări)
 MoreInformation=Mai multe informaţii
 TechnicalInformation=Informații tehnice
 TechnicalID=ID tehnic
@@ -218,8 +211,6 @@ User=Utilizator
 Users=Utilizatori
 Group=Grup
 Groups=Grupuri
-UserGroup=Grup utilizator
-UserGroups=Grupuri utilizator
 NoUserGroupDefined=Niciun grup de utilizatori definit
 Password=Parola
 PasswordRetype=Repetă parola
@@ -250,7 +241,6 @@ Designation=Descriere
 DescriptionOfLine=Descriere de linie
 DateOfLine=Data liniei
 DurationOfLine=Durata liniei
-ParentLine=ID linie părinte
 Model=Șablonul documentului
 DefaultModel=Șablonul implicit document
 Action=Eveniment
@@ -524,7 +514,6 @@ or=sau
 Other=Alt
 Others=Altele
 OtherInformations=Alte informații
-Workflow=Flux de lucru
 Quantity=Cantitate
 Qty=Cant
 ChangedBy=Modificat de
@@ -627,7 +616,6 @@ MonthVeryShort11=N
 MonthVeryShort12=D
 AttachedFiles=Fişiere şi documente ataşate
 JoinMainDoc=Alăturați documentului principal
-JoinMainDocOrLastGenerated=Trimite documentul principal sau ultimul generat dacă nu este găsit 
 DateFormatYYYYMM=YYYY-MM
 DateFormatYYYYMMDD=YYYY-MM-DD
 DateFormatYYYYMMDDHHMM=YYYY-MM-DD HH:SS
@@ -639,7 +627,7 @@ Keyword=Cuvânt cheie
 Origin=Origine
 Legend=Legendă
 Fill=Completează
-Reset=Resetare
+Reset=Resetează
 File=Fișier
 Files=Fişiere
 NotAllowed=Nepermis
@@ -658,7 +646,7 @@ TotalQuantity=Cantitatea totală
 DateFromTo=De la %s la %s
 DateFrom=Începând cu %s
 DateUntil=Până la %s
-Check=Verificare
+Check=Bifaţi
 Uncheck=Debifați
 Internal=Intern
 External=Extern
@@ -718,7 +706,6 @@ FeatureDisabled=Funcţionalitate dezactivată
 MoveBox=Mutați widgetul
 Offered=Oferit
 NotEnoughPermissions=Nu aveţi permisiuni pentru această acţiune
-UserNotInHierachy=Această acțiune este rezervată supervizorilor acestui utilizator
 SessionName=Nume sesiune
 Method=Metodă
 Receive=Recepţionează
@@ -916,10 +903,10 @@ Miscellaneous=Diverse
 Calendar=Calendar
 GroupBy=Grupare după...
 ViewFlatList=Vizualizare listă aplatizată
-ViewAccountList=Afişare registru jurnal
+ViewAccountList=Afişare registru
 ViewSubAccountList=Afişare registru analitice
 RemoveString=Eliminați șirul '%s'
-SomeTranslationAreUncomplete=Unele dintre limbile diponibile pot fi traduse doar parțial sau pot conține erori. Vă rugăm să oferiţi ajutorul pentru a corecta limba înregistrându-vă la <a href="https://transifex.com/projects/p/dolibarr/" target="_blank" rel="noopener noreferrer external">https://transifex.com/projects/p/dolibarr/</a> pentru a adăuga îmbunătățiri.
+SomeTranslationAreUncomplete=Unele dintre limbile oferite pot fi traduse numai parțial sau pot conține erori. Vă rugăm să vă corectați limba prin înscrierea în <a href="https://transifex.com/projects/p/dolibarr/" target="_blank"> https://transifex.com/projects/p/dolibarr/ </a> pentru a îmbunătăți traducerea.
 DirectDownloadLink=Link de descărcare public
 PublicDownloadLinkDesc=Doar linkul este necesar pentru a descărca fișierul
 DirectDownloadInternalLink=Link de descărcare privat
@@ -1171,19 +1158,4 @@ Properties=Proprietăţi
 hasBeenValidated=%s a fost validat
 ClientTZ=Time Zone client (utilizator)
 NotClosedYet=Neînchis
-ClearSignature=Resetare semnătură
-CanceledHidden=Ascunde anulate
-CanceledShown=Afişează anulate
-Terminate=Terminare
-Terminated=Terminat
-AddLineOnPosition=Adaugă linie pe poziție (la sfârșit dacă este goală)
-ConfirmAllocateCommercial=Confirmare asignare reprezentant vânzări
-ConfirmAllocateCommercialQuestion=Sigur vrei să asignezi %s la înregistră(rile) selectate?
-CommercialsAffected=Reprezentanții de vânzări afectați
-CommercialAffected=Reprezentantul de vânzări afectat
-YourMessage=Mesajul tău
-YourMessageHasBeenReceived=Mesajul tău a fost primit. Vă vom răspunde sau vă vom contacta cât mai curând posibil.
-UrlToCheck=Url de verificat
-Automation=Automatizare
-CreatedByEmailCollector=Creat de Colectorul de email
-CreatedByPublicPortal=Creat din Portalul public
+ClearSignature=Şterge semnătură

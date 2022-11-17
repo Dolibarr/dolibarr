@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=FTP vai SFTP klienta moduļa iestatīšana
+NewFTPClient=Jauna FTP / FTPS savienojuma iestatīšana
+FTPArea=FTP/FTPS sadaļa
+FTPAreaDesc=Šajā ekrānā tiek parādīts FTP un SFTP servera skats.
+SetupOfFTPClientModuleNotComplete=Šķiet, ka FTP vai SFTP klienta moduļa iestatīšana nav pilnīga
+FTPFeatureNotSupportedByYourPHP=Jūsu PHP neatbalsta FTP vai SFTP funkcijas
+FailedToConnectToFTPServer=Neizdevās izveidot savienojumu ar serveri (serveris %s, ports %s)
+FailedToConnectToFTPServerWithCredentials=Neizdevās pieteikties serverī ar noteiktu pieteikšanās vārdu / paroli
+FTPFailedToRemoveFile=Neizdevās noņemt failu <b>%s.</b>
+FTPFailedToRemoveDir=Neizdevās noņemt direktoriju <b>%s</b>: pārbaudīt atļaujas un ka katalogs ir tukšs.
+FTPPassiveMode=Pasīvais režīms
+ChooseAFTPEntryIntoMenu=Izvēlnē izvēlieties FTP / SFTP vietni ...
+FailedToGetFile=Neizdevās iegūt failus %s

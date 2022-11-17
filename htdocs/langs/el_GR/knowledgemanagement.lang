@@ -18,37 +18,33 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Σύστημα Διαχείρισης Γνώσης
+ModuleKnowledgeManagementName = Knowledge Management System
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Διαχειριστείτε μια βάση Διαχείρισης Γνώσης (KM) ή Help-Desk
+ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Ρύθμιση Συστήματος Διαχείρισης Γνώσης
+KnowledgeManagementSetup = Knowledge Management System setup
 Settings = Ρυθμίσεις
-KnowledgeManagementSetupPage = Σελίδα ρύθμισης Συστήματος Διαχείρισης Γνώσης
+KnowledgeManagementSetupPage = Knowledge Management System setup page
 
 
 #
 # About page
 #
-About = Σχετικά με
-KnowledgeManagementAbout = Σχετικά με τη Διαχείριση Γνώσης
-KnowledgeManagementAboutPage = Σελίδα σχετικά με τη Διαχείριση Γνώσης 
+About = Πληροφορίες
+KnowledgeManagementAbout = About Knowledge Management
+KnowledgeManagementAboutPage = Knowledge Management about page
 
-KnowledgeManagementArea = Διαχείριση γνώσης
-MenuKnowledgeRecord = Βάση γνώσεων
-ListKnowledgeRecord = Κατάλογος άρθρων
-NewKnowledgeRecord = Νέο άρθρο
-ValidateReply = Επικύρωση λύσης
-KnowledgeRecords = Άρθρα
-KnowledgeRecord = Άρθρο
-KnowledgeRecordExtraFields = Επιπλέον πεδία για το άρθρο
-GroupOfTicket=Ομάδα εισιτηρίων
-YouCanLinkArticleToATicketCategory=Μπορείτε να συνδέσετε το άρθρο με μια ομάδα ticket (έτσι το άρθρο θα επισημαίνεται σε όλα τα tickets αυτής της ομάδας)
-SuggestedForTicketsInGroup=Προτείνεται για εισιτήρια όταν η ομάδα είναι
-
-SetObsolete=Ορισμός ως ξεπερασμένο
-ConfirmCloseKM=Επιβεβαιώνετε το κλείσιμο αυτού του άρθρου ως ξεπερασμένου;
-ConfirmReopenKM=Θέλετε να επαναφέρετε αυτό το άρθρο στην κατάσταση "Επικυρωμένο";
+KnowledgeManagementArea = Knowledge Management
+MenuKnowledgeRecord = Knowledge base
+ListKnowledgeRecord = List of articles
+NewKnowledgeRecord = New article
+ValidateReply = Validate solution
+KnowledgeRecords = Articles
+KnowledgeRecord = Πώληση
+KnowledgeRecordExtraFields = Extrafields for Article
+GroupOfTicket=Group of tickets
+YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
+SuggestedForTicketsInGroup=Suggested for tickets when group is

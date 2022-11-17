@@ -137,7 +137,7 @@ if ($id > 0 || !empty($ref)) {
 			$morehtmlref .= '</div>';
 
 			// Define a complementary filter for search of next/prev ref.
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->rights->projet->all->lire) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
 				$projectstatic->next_prev_filter = " rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 			}
@@ -175,7 +175,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<br>';
 				}
 				if (!empty($conf->eventorganization->enabled)) {
-					print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_organize_event ? ' checked="checked"' : '')).'"> ';
+					print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 					$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 					print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
 				}
@@ -185,10 +185,8 @@ if ($id > 0 || !empty($ref)) {
 			// Visibility
 			print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 			if ($projectstatic->public) {
-				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 				print $langs->trans('SharedProject');
 			} else {
-				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 				print $langs->trans('PrivateProject');
 			}
 			print '</td></tr>';
@@ -205,18 +203,19 @@ if ($id > 0 || !empty($ref)) {
 
 				// Opportunity percent
 				print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
-				if (strcmp($projectstatic->opp_percent, '')) {
+				if (strcmp($object->opp_percent, '')) {
 					print price($projectstatic->opp_percent, 0, $langs, 1, 0).' %';
 				}
 				print '</td></tr>';
 
 				// Opportunity Amount
 				print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+				/*if ($object->opp_status)
+				 {
+				 print price($obj->opp_amount, 1, $langs, 1, 0, -1, $conf->currency);
+				 }*/
 				if (strcmp($projectstatic->opp_amount, '')) {
 					print price($projectstatic->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
-					if (strcmp($projectstatic->opp_percent, '')) {
-						print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($projectstatic->opp_amount * $projectstatic->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
-					}
 				}
 				print '</td></tr>';
 			}
@@ -248,6 +247,7 @@ if ($id > 0 || !empty($ref)) {
 
 			print '</div>';
 			print '<div class="fichehalfright">';
+			print '<div class="ficheaddleft">';
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border centpercent">';
@@ -258,7 +258,7 @@ if ($id > 0 || !empty($ref)) {
 			print '</td></tr>';
 
 			// Categories
-			if (isModEnabled('categorie')) {
+			if ($conf->categorie->enabled) {
 				print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 				print $form->showCategories($projectstatic->id, 'project', 1);
 				print "</td></tr>";
@@ -266,6 +266,7 @@ if ($id > 0 || !empty($ref)) {
 
 			print '</table>';
 
+			print '</div>';
 			print '</div>';
 			print '</div>';
 

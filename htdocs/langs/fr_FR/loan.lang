@@ -24,7 +24,7 @@ FinancialCommitment=Echéancier
 InterestAmount=Intérêt
 CapitalRemain=Capital restant
 TermPaidAllreadyPaid = Ce terme est déjà payé
-CantUseScheduleWithLoanStartedToPaid = Impossible de générer un échéancier pour un prêt avec un paiement commencé
+CantUseScheduleWithLoanStartedToPaid = Impossible d'utiliser l'échéancier sur un prêt commencé à être payé
 CantModifyInterestIfScheduleIsUsed = Vous ne pouvez pas modifier l'intérêt si vous utilisez le calendrier
 # Admin
 ConfigLoan=Configuration du module Emprunt

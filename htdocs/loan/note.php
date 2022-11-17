@@ -30,7 +30,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
-if (!empty($conf->project->enabled)) {
+if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -41,8 +41,6 @@ $langs->loadLangs(array("loan"));
 
 // Security check
 $id = GETPOST('id', 'int');
-
-$hookmanager->initHooks(array('loannote'));
 $result = restrictedArea($user, 'loan', $id, '&loan');
 
 $object = new Loan($db);
@@ -57,14 +55,7 @@ $permissionnote = $user->rights->loan->write; // Used by the include of actions_
  *  Actions
  */
 
-
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
-if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 
 
 /*
@@ -92,12 +83,12 @@ if ($id > 0) {
 	$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, 0, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("Label", 'label', $object->label, $object, 0, 'string', '', null, null, '', 1);
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (!empty($conf->projet->enabled)) {
 		$langs->loadLangs(array("projects"));
 		$morehtmlref .= '<br>'.$langs->trans('Project').' : ';
 		if ($user->rights->loan->write) {
 			//if ($action != 'classify')
-			//	$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			//	$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
 			if ($action == 'classify') {
 				// $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -113,10 +104,9 @@ if ($id > 0) {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= ' : '.$proj->getNomUrl(1);
-				if ($proj->title) {
-					$morehtmlref .= ' - '.$proj->title;
-				}
+				$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+				$morehtmlref .= $proj->ref;
+				$morehtmlref .= '</a>';
 			} else {
 				$morehtmlref .= '';
 			}

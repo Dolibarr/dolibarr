@@ -75,21 +75,11 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	public $fk_product;
 
 	/**
-	 * @var int ID. Should be named fk_origin_line ?
+	 * @var int ID
 	 */
 	public $fk_commandefourndet;
 
-	public $fk_reception;
-
-
 	public $qty;
-	public $qty_asked;
-
-	public $libelle;
-	public $desc;
-	public $tva_tx;
-	public $vat_src_code;
-	public $ref_supplier;
 
 	/**
 	 * @var int ID
@@ -113,7 +103,6 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
-	public $cost_price = 0;
 
 
 
@@ -200,8 +189,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= "batch,";
 		$sql .= "eatby,";
 		$sql .= "sellby,";
-		$sql .= "fk_reception,";
-		$sql .= "cost_price";
+		$sql .= "fk_reception";
 
 
 		$sql .= ") VALUES (";
@@ -217,8 +205,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= " ".(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").",";
 		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";
 		$sql .= " ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";
-		$sql .= " ".(!isset($this->fk_reception) ? 'NULL' : "'".$this->db->escape($this->fk_reception)."'").",";
-		$sql .= " ".(!isset($this->cost_price) ? '0' : "'".$this->db->escape($this->cost_price)."'")."";
+		$sql .= " ".(!isset($this->fk_reception) ? 'NULL' : "'".$this->db->escape($this->fk_reception)."'")."";
 		$sql .= ")";
 
 		$this->db->begin();
@@ -296,7 +283,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 		if ($ref) {
-			$sql .= " WHERE t.ref = '".$this->db->escape($ref)."'";
+			$sql .= " WHERE t.ref = '".$ref."'";
 		} else {
 			$sql .= " WHERE t.rowid = ".((int) $id);
 		}
@@ -384,6 +371,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+
 		$sql .= " fk_commande=".(isset($this->fk_commande) ? $this->fk_commande : "null").",";
 		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
 		$sql .= " fk_commandefourndet=".(isset($this->fk_commandefourndet) ? $this->fk_commandefourndet : "null").",";
@@ -397,6 +385,8 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
 		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
 		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null')."";
+
+
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -420,7 +410,7 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 
 			if (!$notrigger) {
 				// Call triggers
-				$result = $this->call_trigger('LINERECEPTION_MODIFY', $user);
+				$result = $this->call_trigger('LINERECEPTION_UPDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -676,25 +666,25 @@ class CommandeFournisseurDispatch extends CommonObjectLine
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.comment') {
-					$sqlwhere [] = $key." LIKE '%".$this->db->escape($value)."%'";
+					$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				} elseif ($key == 't.datec' || $key == 't.tms' || $key == 't.eatby' || $key == 't.sellby' || $key == 't.batch') {
-					$sqlwhere [] = $key." = '".$this->db->escape($value)."'";
+					$sqlwhere [] = $key.' = \''.$this->db->escape($value).'\'';
 				} elseif ($key == 'qty') {
-					$sqlwhere [] = $key." = ".((float) $value);
+					$sqlwhere [] = $key.' = '.((float) $value);
 				} else {
-					$sqlwhere [] = $key." = ".((int) $value);
+					$sqlwhere [] = $key.' = '.((int) $value);
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE '.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+			$sql .= ' WHERE '.implode(' '.$filtermode.' ', $sqlwhere);
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= $this->db->plimit($limit, $offset);
+			$sql .= ' '.$this->db->plimit($limit, $offset);
 		}
 		$this->lines = array();
 

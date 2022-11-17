@@ -200,7 +200,6 @@ oop.inherits(Mode, TextMode);
 (function() {
     this.lineCommentStart = "#";
     this.$id = "ace/mode/graphqlschema";
-    this.snippetFileId = "ace/snippets/graphqlschema";
 }).call(Mode.prototype);
 
 exports.Mode = Mode;

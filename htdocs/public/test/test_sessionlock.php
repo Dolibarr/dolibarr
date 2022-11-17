@@ -41,17 +41,6 @@ if (!defined("NOSESSION")) {
 	define("NOSESSION", '1');
 }
 
-
-// Special
-// We add header and output some content before the include of main.inc.php !!
-// Because we need to So we can make
-header("Content-type: text/html; charset=UTF8");
-
-// Security options
-header("X-Content-Type-Options: nosniff"); // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
-header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
-
-
 print "Legend:<br>\n";
 print 'PHP_SESSION_DISABLED='.PHP_SESSION_DISABLED."<br>\n";
 print 'PHP_SESSION_NONE='.PHP_SESSION_NONE."<br>\n";
@@ -63,15 +52,11 @@ print '<br>';
 
 require '../../main.inc.php';
 
-// Security
+/* No need for this.
 if ($dolibarr_main_prod) {
 	accessforbidden();
 }
-
-
-/*
- * View
- */
+*/
 
 print 'session_status='.session_status().' (after main.inc.php)';
 print '<br>';

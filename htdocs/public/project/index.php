@@ -54,6 +54,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('newpayment'));
 
+// For encryption
+global $dolibarr_main_instance_unique_id;
+
 // Load translation files
 $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
 
@@ -61,7 +64,7 @@ $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox
 // No check on module enabled. Done later according to $validpaymentmethod
 
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$id = GETPOST('id');
 $securekeyreceived = GETPOST("securekey", 'alpha');
 $securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
 
@@ -83,7 +86,7 @@ if ($resultproject < 0) {
 }
 
 // Security check
-if (empty($conf->project->enabled)) {
+if (empty($conf->projet->enabled)) {
 	accessforbidden('', 0, 0, 1);
 }
 
@@ -180,27 +183,11 @@ if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_ORGANIZEDEVENT)) {
 	print '</div>';
 }
 
-print '<br>';
-
-
-// Event summary
-print '<div class="center">';
-print '<span class="large">'.$project->title.'</span><br>';
-print img_picto('', 'calendar', 'class="pictofixedwidth"').$langs->trans("Date").': ';
-print dol_print_date($project->date_start, 'daytext');
-if ($project->date_end && $project->date_start != $project->date_end) {
-	print ' - '.dol_print_date($project->date_end, 'daytext');
-}
-print '<br><br>'."\n";
-print $langs->trans("EvntOrgRegistrationWelcomeMessage")."\n";
-print $project->note_public."\n";
-//print img_picto('', 'map-marker-alt').$langs->trans("Location").': xxxx';
-print '</div>';
-
-
-print '<br>';
-
 print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
+
+$text  = '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</strong></td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationHelpMessage").' '.$project->title.'.<br><br></td></tr>'."\n";
+$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'<br><br></td></tr>'."\n";;
 
 print $text;
 
@@ -218,27 +205,19 @@ print "\n";
 
 // Show all action buttons
 print '<br>';
-
 // Output introduction text
-$foundaction = 0;
 if ($project->accept_booth_suggestions) {
-	$foundaction++;
-	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" id="suggestbooth" name="suggestbooth" class="button width500">';
+	print '<input type="submit" value="'.$langs->trans("SuggestBooth").'" id="suggestbooth" name="suggestbooth" class="button">';
 	print '<br><br>';
 }
-if ($project->accept_conference_suggestions == 1 || $project->accept_conference_suggestions == 2) {		// Can suggest conferences
-	$foundaction++;
-	print '<input type="submit" value="'.$langs->trans("SuggestConference").'" id="suggestconference" name="suggestconference" class="button width500">';
+if ($project->accept_conference_suggestions) {
+	print '<input type="submit" value="'.$langs->trans("SuggestConference").'" id="suggestconference" name="suggestconference" class="button">';
 	print '<br><br>';
 }
-if ($project->accept_conference_suggestions == 2 || $project->accept_conference_suggestions == 3) {		// Can vote for conferences
-	$foundaction++;
-	print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" name="viewandvote" class="button width500">';
-}
+print '<input type="submit" value="'.$langs->trans("ViewAndVote").'" id="viewandvote" name="viewandvote" class="button">';
 
-if (! $foundaction) {
-	print '<span class="opacitymedium">'.$langs->trans("NoPublicActionsAllowedForThisEvent").'</span>';
-}
+
+
 
 print '</td></tr>'."\n";
 

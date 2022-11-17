@@ -87,7 +87,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskpropal" value="'.$conf->global->PROPALE_SAPHIR_MASK.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte .= '</tr>';
 
@@ -144,7 +144,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		// Get entities
 		$entity = getEntity('proposalnumber', 1, $propal);
 
-		$date = empty($propal->date) ? dol_now() : $propal->date;
+		$date = $propal->date;
 
 		$numFinal = get_next_value($db, $mask, 'propal', 'ref', '', $objsoc, $date, 'next', false, null, $entity);
 

@@ -203,17 +203,12 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 
 		$oFile = isset($_FILES['NewFile']) ? $_FILES['NewFile'] : $_FILES['upload'];
 
-		// $resourceType should be 'Image';
-		$detectHtml = 0;
-
 		// Map the virtual path to the local server path.
 		$sServerDir = ServerMapFolder($resourceType, $currentFolder, $sCommand);
 
 		// Get the uploaded file name.
 		$sFileName = $oFile['name'];
-
-		//$sFileName = SanitizeFileName($sFileName);
-		$sFileName = dol_sanitizeFileName($sFileName);
+		$sFileName = SanitizeFileName($sFileName);
 
 		$sOriginalFileName = $sFileName;
 
@@ -221,8 +216,6 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		$sExtension = substr($sFileName, (strrpos($sFileName, '.') + 1));
 		$sExtension = strtolower($sExtension);
 
-		//var_dump($Config);
-		/*
 		if (isset($Config['SecureImageUploads'])) {
 			if (($isImageValid = IsImageValid($oFile['tmp_name'], $sExtension)) === false) {
 				$sErrorNumber = '202';
@@ -235,71 +228,56 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 				$sErrorNumber = '202';
 			}
 		}
-		*/
-
-
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-		//var_dump($sFileName); var_dump(image_format_supported($sFileName));exit;
-		$isImageValid = (image_format_supported($sFileName) >= 0 ? true : false);
-		if (!$isImageValid) {
-			$sErrorNumber = '202';
-		}
-
 
 		// Check if it is an allowed extension.
-		if (!$sErrorNumber) {
-			if (IsAllowedExt($sExtension, $resourceType)) {
-				$iCounter = 0;
+		if (!$sErrorNumber && IsAllowedExt($sExtension, $resourceType)) {
+			$iCounter = 0;
 
-				while (true) {
-					$sFilePath = $sServerDir.$sFileName;
+			while (true) {
+				$sFilePath = $sServerDir.$sFileName;
+
+				if (is_file($sFilePath)) {
+					$iCounter++;
+					$sFileName = RemoveExtension($sOriginalFileName).'('.$iCounter.').'.$sExtension;
+					$sErrorNumber = '201';
+				} else {
+					move_uploaded_file($oFile['tmp_name'], $sFilePath);
 
 					if (is_file($sFilePath)) {
-						$iCounter++;
-						$sFileName = RemoveExtension($sOriginalFileName).'('.$iCounter.').'.$sExtension;
-						$sErrorNumber = '201';
-					} else {
-						include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-						dol_move_uploaded_file($oFile['tmp_name'], $sFilePath, 0, 0);
-
-						if (is_file($sFilePath)) {
-							if (isset($Config['ChmodOnUpload']) && !$Config['ChmodOnUpload']) {
-								break;
-							}
-
-							$permissions = '0777';
-							if (isset($Config['ChmodOnUpload']) && $Config['ChmodOnUpload']) {
-								$permissions = (string) $Config['ChmodOnUpload'];
-							}
-							$permissionsdec = octdec($permissions);
-							dol_syslog("commands.php permission = ".$permissions." ".$permissionsdec." ".decoct($permissionsdec));
-							$oldumask = umask(0);
-							chmod($sFilePath, $permissionsdec);
-							umask($oldumask);
+						if (isset($Config['ChmodOnUpload']) && !$Config['ChmodOnUpload']) {
+							break;
 						}
 
-						break;
+						$permissions = '0777';
+						if (isset($Config['ChmodOnUpload']) && $Config['ChmodOnUpload']) {
+							$permissions = (string) $Config['ChmodOnUpload'];
+						}
+						$permissionsdec = octdec($permissions);
+						dol_syslog("commands.php permission = ".$permissions." ".$permissionsdec." ".decoct($permissionsdec));
+						$oldumask = umask(0);
+						chmod($sFilePath, $permissionsdec);
+						umask($oldumask);
 					}
-				}
 
-				if (file_exists($sFilePath)) {
-					//previous checks failed, try once again
-					if (isset($isImageValid) && $isImageValid === -1 && IsImageValid($sFilePath, $sExtension) === false) {
-						dol_syslog("commands.php IsImageValid is ko");
-						@unlink($sFilePath);
-						$sErrorNumber = '202';
-					} elseif (isset($detectHtml) && $detectHtml === -1 && DetectHtml($sFilePath) === true) {
-						dol_syslog("commands.php DetectHtml is ko");
-						@unlink($sFilePath);
-						$sErrorNumber = '202';
-					}
+					break;
 				}
-			} else {
-				$sErrorNumber = '202';
 			}
+
+			if (file_exists($sFilePath)) {
+				//previous checks failed, try once again
+				if (isset($isImageValid) && $isImageValid === -1 && IsImageValid($sFilePath, $sExtension) === false) {
+					@unlink($sFilePath);
+					$sErrorNumber = '202';
+				} elseif (isset($detectHtml) && $detectHtml === -1 && DetectHtml($sFilePath) === true) {
+					@unlink($sFilePath);
+					$sErrorNumber = '202';
+				}
+			}
+		} else {
+			$sErrorNumber = '202';
 		}
 	} else {
-		$sErrorNumber = '203';
+		$sErrorNumber = '202';
 	}
 
 

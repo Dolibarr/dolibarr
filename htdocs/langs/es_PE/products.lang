@@ -5,3 +5,5 @@ ProductServiceCard=Ficha Productos/Servicios
 ProductOrService=Producto o Servicio
 ListOfStockMovements=Lista de movimientos de stock
 ExportDataset_produit_1=Productos
+IncludingProductWithTag=Including products/services with the tag
+UseProductFournDesc=Add a feature to define the product description defined by the vendors (for each vendor reference) in addition to the description for customers

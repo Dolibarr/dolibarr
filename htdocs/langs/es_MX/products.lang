@@ -17,3 +17,5 @@ GlobalVariableUpdaterHelpFormat0=Formato de la solicitud {"URL": "http://example
 GlobalVariableUpdaterType1=Datos de WebService
 GlobalVariableUpdaterHelp1=Analiza los datos de WebService desde la URL especificada, NS especifica el espacio de nombres, VALUE especifica la ubicación del valor relevante, DATA debe contener los datos a enviar y METHOD es el método WS que llama
 GlobalVariableUpdaterHelpFormat1=El formato de la solicitud es {"URL": "http://example.com/urlofws", "VALUE": "array, targetvalue", "NS": "http://example.com/urlofns", "METHOD" : "MyWSMethod", "DATA": {"tus": "datos", "a": "enviar"}}
+IncludingProductWithTag=Including products/services with the tag
+UseProductFournDesc=Add a feature to define the product description defined by the vendors (for each vendor reference) in addition to the description for customers

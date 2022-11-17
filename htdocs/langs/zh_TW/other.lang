@@ -35,9 +35,9 @@ OnlyOneFieldForXAxisIsPossible=目前只能將1個欄位用作X軸。僅選擇�
 AtLeastOneMeasureIsRequired=至少需要1個測量欄位
 AtLeastOneXAxisIsRequired=X軸至少需要1個欄位
 LatestBlogPosts=最新的部落格文章
-notiftouser=給用戶
-notiftofixedemail=給固定電子郵件
-notiftouserandtofixedemail=給用戶和固定電子郵件
+notiftouser=To users
+notiftofixedemail=To fixed mail
+notiftouserandtofixedemail=To user and fixed mail
 Notify_ORDER_VALIDATE=銷售訂單已驗證
 Notify_ORDER_SENTBYMAIL=使用郵件寄送的銷售訂單
 Notify_ORDER_SUPPLIER_SENTBYMAIL=使用電子郵件寄送的採購訂單
@@ -110,7 +110,7 @@ ChooseYourDemoProfilMore=...或建立您自己的設定檔案<br>（手動選擇
 DemoFundation=管理基金會會員
 DemoFundation2=管理基金會會員與銀行帳戶
 DemoCompanyServiceOnly=公司或自由業者僅能銷售服務
-DemoCompanyShopWithCashDesk=Manage a shop with a cash box
+DemoCompanyShopWithCashDesk=用收銀台管理商店
 DemoCompanyProductAndStocks=使用銷售點銷售產品的商店
 DemoCompanyManufacturing=公司製造產品
 DemoCompanyAll=有多項活動的公司（所有主要模組）
@@ -258,10 +258,6 @@ PassEncoding=密碼編碼
 PermissionsAdd=權限已增加
 PermissionsDelete=權限已刪除
 YourPasswordMustHaveAtLeastXChars=您的密碼必須至少具有<strong> %s </strong>字元
-PasswordNeedAtLeastXUpperCaseChars=密碼至少需要 <strong> %s </strong> 個大寫字元
-PasswordNeedAtLeastXDigitChars=密碼至少需要 <strong> %s </strong> 位數字
-PasswordNeedAtLeastXSpecialChars=密碼至少需要 <strong> %s </strong>個 特殊字元
-PasswordNeedNoXConsecutiveChars=密碼不能有 <strong> %s </strong> 個連續的相似字元
 YourPasswordHasBeenReset=您的密碼已成功重置
 ApplicantIpAddress=申請人的IP位址
 SMSSentTo=簡訊已傳送至%s
@@ -272,7 +268,6 @@ ProjectCreatedByEmailCollector=電子郵件收集器從電子郵件MSGID %s建�
 TicketCreatedByEmailCollector=電子郵件收集器從電子郵件MSGID %s建立的服務單
 OpeningHoursFormatDesc=使用-分隔營業開始時間和營業結束時間。 <br>使用空格輸入不同的範圍。 <br>範例：8-12 14-18
 SuffixSessionName=程序名稱的後綴
-LoginWith=使用 %s 登入
 
 ##### Export #####
 ExportsArea=出口地區
@@ -303,25 +298,3 @@ SelectTheTypeOfObjectToAnalyze=選擇一個項目以查看其統計資訊...
 ConfirmBtnCommonContent = 您確定要“%s”嗎？
 ConfirmBtnCommonTitle = 確認您的操作
 CloseDialog = 關閉
-Autofill = 自動填入
-
-# externalsite
-ExternalSiteSetup=設定連結到外部網站
-ExternalSiteURL=HTML iframe 內容的外部網站網址
-ExternalSiteModuleNotComplete=外部網站模組設定不正確。
-ExampleMyMenuEntry=我的選單條目
-
-# FTP
-FTPClientSetup=FTP或SFTP客戶端模組設定
-NewFTPClient=新的FTP / FTPS連線設定
-FTPArea=FTP / FTPS區域
-FTPAreaDesc=此畫面顯示FTP和SFTP伺服器的檢視。
-SetupOfFTPClientModuleNotComplete=FTP或SFTP的客戶端模組設定似乎不完整
-FTPFeatureNotSupportedByYourPHP=您的PHP不支援FTP或SFTP功能
-FailedToConnectToFTPServer=無法連接到伺服器（伺服器%s，連接埠%s）
-FailedToConnectToFTPServerWithCredentials=使用已定義的用戶名/密碼登錄伺服器失敗
-FTPFailedToRemoveFile=無法刪除文件<b>%s。</b>
-FTPFailedToRemoveDir=無法刪除資料夾<b>%s</b> ：檢查權限，並且確認資料夾內無檔案。
-FTPPassiveMode=被動模式
-ChooseAFTPEntryIntoMenu=從選單中選擇一個FTP/SFTP站台...
-FailedToGetFile=無法獲取檔案 %s

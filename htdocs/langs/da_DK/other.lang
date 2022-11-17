@@ -110,7 +110,7 @@ ChooseYourDemoProfilMore=... eller bygg din egen profil <br> (manuel modulvalg)
 DemoFundation=Administrer medlemmer af en fond
 DemoFundation2=Administrer medlemmer og bankkonto i en fond
 DemoCompanyServiceOnly=Kun firma eller freelance-salgstjeneste
-DemoCompanyShopWithCashDesk=Administrer en butik med en pengekasse
+DemoCompanyShopWithCashDesk=Administrer en butik med et kontant desk
 DemoCompanyProductAndStocks=Shop med at sælge produkter med Point Of Sales
 DemoCompanyManufacturing=Virksomhed fremstiller produkter
 DemoCompanyAll=Virksomhed med flere aktiviteter (alle hovedmoduler)
@@ -258,10 +258,6 @@ PassEncoding=Kodeord for kodeord
 PermissionsAdd=Tilladelser tilføjet
 PermissionsDelete=Tilladelser fjernet
 YourPasswordMustHaveAtLeastXChars=Dit kodeord skal have mindst <strong> %s </ strong> tegn
-PasswordNeedAtLeastXUpperCaseChars=Adgangskoden skal have mindst <strong> %s </strong> store bogstaver
-PasswordNeedAtLeastXDigitChars=Adgangskoden skal have mindst <strong> %s </strong> numeriske tegn
-PasswordNeedAtLeastXSpecialChars=Adgangskoden skal mindst have <strong> %s </strong> specielle tegn
-PasswordNeedNoXConsecutiveChars=Adgangskoden må ikke have <strong> %s </strong> fortløbende lignende tegn
 YourPasswordHasBeenReset=Dit kodeord er nulstillet
 ApplicantIpAddress=Ansøgerens IP-adresse
 SMSSentTo=SMS sendt til %s
@@ -272,7 +268,6 @@ ProjectCreatedByEmailCollector=Projekt skabt via e-mail indsamler fra mail MSGID
 TicketCreatedByEmailCollector=Billet skabt via e-mail indsamler fra mail MSGID %s
 OpeningHoursFormatDesc=Brug et - til separat åbning og lukning timer. <br> brug en mellemrum"Space" til at indtaste forskellige område. <br> Eksempel: 8-12 14-18
 SuffixSessionName=Suffiks til sessionens navn
-LoginWith=Log ind med %s
 
 ##### Export #####
 ExportsArea=Eksport område
@@ -303,25 +298,3 @@ SelectTheTypeOfObjectToAnalyze=Vælg et objekt for at se dets statistik ...
 ConfirmBtnCommonContent = Er du sikker på, at du vil "%s"?
 ConfirmBtnCommonTitle = Bekræft din handling
 CloseDialog = Luk
-Autofill = Autofyld
-
-# externalsite
-ExternalSiteSetup=Opsætning af ekstern hjemmeside modul
-ExternalSiteURL=Ekstern hjemmeside-URL for HTML iframe-indhold
-ExternalSiteModuleNotComplete=Modul ekstern hjemmeside blev ikke konfigureret korrekt.
-ExampleMyMenuEntry=Min menuindgang
-
-# FTP
-FTPClientSetup=Opsætning af FTP klientmodul
-NewFTPClient=Ny opsætning af FTP forbindelse
-FTPArea=FTP område
-FTPAreaDesc=Denne skærm viser opsætning af en FTP-server.
-SetupOfFTPClientModuleNotComplete=Opsætningen af FTP-klientmodulet ser ud til at være ufuldstændig
-FTPFeatureNotSupportedByYourPHP=Din PHP understøtter ikke FTP/FTPS/SFTP-funktioner
-FailedToConnectToFTPServer=Kunne ikke oprette forbindelse til serveren (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials=Kunne ikke logge på serveren med defineret login/adgangskode
-FTPFailedToRemoveFile=Filen <b>%s</b> kunne ikke fjernes.
-FTPFailedToRemoveDir=Det lykkedes ikke at fjerne mappen <b>%s</b>: Kontroller rettigheder og at mappen er tom.
-FTPPassiveMode=Passiv tilstand
-ChooseAFTPEntryIntoMenu=Vælg en FTP server i menuen...
-FailedToGetFile=Kunne ikke hente filer %s

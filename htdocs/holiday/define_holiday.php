@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Regis Houssin		<regis.houssin@inodbox.com>
@@ -35,8 +35,6 @@ $langs->loadlangs(array('users', 'other', 'holiday', 'hrm'));
 
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'defineholidaylist';
-$massaction = GETPOST('massaction', 'alpha');
-$optioncss = GETPOST('optioncss', 'alpha');
 
 $search_name = GETPOST('search_name', 'alpha');
 $search_supervisor = GETPOST('search_supervisor', 'int');
@@ -113,7 +111,7 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$search_name = '';
 		$search_supervisor = '';
-		$toselect = array();
+		$toselect = '';
 		$search_array_options = array();
 	}
 
@@ -130,14 +128,11 @@ if (empty($reshook)) {
 	// Si il y a une action de mise à jour
 	if ($action == 'update' && GETPOSTISSET('update_cp')) {
 		$error = 0;
-		$nbok = 0;
 
 		$typeleaves = $holiday->getTypes(1, 1);
 
 		$userID = array_keys(GETPOST('update_cp'));
 		$userID = $userID[0];
-
-		$db->begin();
 
 		foreach ($typeleaves as $key => $val) {
 			$userValue = GETPOST('nb_holiday_'.$val['rowid']);
@@ -150,29 +145,22 @@ if (empty($reshook)) {
 			}
 
 			//If the user set a comment, we add it to the log comment
-			$note_holiday = GETPOST('note_holiday');
-			$comment = ((isset($note_holiday[$userID]) && !empty($note_holiday[$userID])) ? ' ('.$note_holiday[$userID].')' : '');
+			$comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
 
-			//print 'holiday: '.$val['rowid'].'-'.$userValue;exit;
+			//print 'holiday: '.$val['rowid'].'-'.$userValue;
 			if ($userValue != '') {
-				// We add the modification to the log (must be done before the update of balance because we read current value of balance inside this method)
+				// We add the modification to the log (must be before update of sold because we read current value of sold)
 				$result = $holiday->addLogCP($user->id, $userID, $langs->transnoentitiesnoconv('ManualUpdate').$comment, $userValue, $val['rowid']);
 				if ($result < 0) {
 					setEventMessages($holiday->error, $holiday->errors, 'errors');
 					$error++;
-				} elseif ($result == 0) {
-					setEventMessages($langs->trans("HolidayQtyNotModified", $user->login), null, 'warnings');
 				}
 
 				// Update of the days of the employee
-				if ($result > 0) {
-					$nbok++;
-
-					$result = $holiday->updateSoldeCP($userID, $userValue, $val['rowid']);
-					if ($result < 0) {
-						setEventMessages($holiday->error, $holiday->errors, 'errors');
-						$error++;
-					}
+				$result = $holiday->updateSoldeCP($userID, $userValue, $val['rowid']);
+				if ($result < 0) {
+					setEventMessages($holiday->error, $holiday->errors, 'errors');
+					$error++;
 				}
 
 				// If it first update of balance, we set date to avoid to have sold incremented by new month
@@ -188,13 +176,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$db->commit();
-
-			if ($nbok > 0) {
-				setEventMessages('UpdateConfCPOK', '', 'mesgs');
-			}
-		} else {
-			$db->rollback();
+			setEventMessages('UpdateConfCPOK', '', 'mesgs');
 		}
 	}
 }

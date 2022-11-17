@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=برپاسازی واحد متقاضی FTP
+NewFTPClient=برپاسازی اتصال جدید FTP
+FTPArea=بخش FTP
+FTPAreaDesc=این صفحه نمائی از سرور FTP را نمایش می‌دهد.
+SetupOfFTPClientModuleNotComplete=ظاهرا برپاسازی واحد متقاضی FTP ناقص است
+FTPFeatureNotSupportedByYourPHP=PHP شما از توابع FTP پشتیبانی نمی‌کن
+FailedToConnectToFTPServer=امکان اتصال به سرور FTP نبود (سرور %s، درگاه %s)
+FailedToConnectToFTPServerWithCredentials=امکان ورود به سرور FTP با نام‌ورود/گذرواژه تعریف شده نبود
+FTPFailedToRemoveFile=حذف فایل <b>%s</b> مقدور نبود
+FTPFailedToRemoveDir=حذف پوشۀ <b>%s</b> مقدور نبود: مجوزها را بررسی کرده و مطمئن شوید پوشه خالی است.
+FTPPassiveMode=حالت انفعالی
+ChooseAFTPEntryIntoMenu=یک سایت FTP از فهرست انتخاب کنید...
+FailedToGetFile=عدم امکان دریافت فایل‌های %s

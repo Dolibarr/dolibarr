@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=FTP klient modul nastavenia
+NewFTPClient=Nový FTP nastavenie pripojenia
+FTPArea=FTP priestor
+FTPAreaDesc=Táto obrazovka zobrazí obsah FTP servera pohľadu
+SetupOfFTPClientModuleNotComplete=Nastavenie FTP klienta modulu Zdá sa, že nie je kompletná
+FTPFeatureNotSupportedByYourPHP=Vaše PHP nepodporuje FTP funkcie
+FailedToConnectToFTPServer=Nepodarilo sa pripojiť k FTP serveru (server %s, prístav %s)
+FailedToConnectToFTPServerWithCredentials=Nepodarilo sa prihlásiť k FTP serveru s definovanou login / heslo
+FTPFailedToRemoveFile=Nepodarilo sa odstrániť súbor <b>%s.</b>
+FTPFailedToRemoveDir=Nepodarilo sa odstrániť adresár <b>%s</b> (Skontrolujte oprávnenia a že adresár je prázdny).
+FTPPassiveMode=Pasívny režim
+ChooseAFTPEntryIntoMenu=Pridajte položku FTP do menu
+FailedToGetFile=Získanie súborov %s zlyhalo

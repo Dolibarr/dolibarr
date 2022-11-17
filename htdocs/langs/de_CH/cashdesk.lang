@@ -4,4 +4,5 @@ CashDeskBankCheque=Bankkonto(Scheckzahlung)
 TotalTicket=Gesamtanzahl Ticket
 BankToPay=Zahlungskonto
 FilterRefOrLabelOrBC=Suche (Art-Nr./Name)
+NotAvailableWithBrowserPrinter=Not available when printer for receipt is set to browser
 Receipt=Beleg
