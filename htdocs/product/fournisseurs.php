@@ -270,10 +270,13 @@ if (empty($reshook)) {
 				if ($ret == -3) {
 					$error++;
 
-					$object->fetch($object->product_id_already_linked);
-					$productLink = $object->getNomUrl(1, 'supplier');
+					$tmpobject = new Product($db);
+					$tmpobject->fetch($object->product_id_already_linked);
+					$productLink = $tmpobject->getNomUrl(1, 'supplier');
 
-					setEventMessages($langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct", $productLink), null, 'errors');
+					$texttoshow = $langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct", '{s1}');
+					$texttoshow = str_replace('{s1}', $productLink, $texttoshow);
+					setEventMessages($texttoshow, null, 'errors');
 				} elseif ($ret < 0) {
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
