@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('ftp', 'companies', 'other'));
+$langs->loadLangs(array('companies', 'other'));
 
 // Security check
 if ($user->socid) {
@@ -52,8 +52,8 @@ $upload_dir = $conf->ftp->dir_temp;
 $download_dir = $conf->ftp->dir_temp;
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -74,14 +74,15 @@ $s_ftp_port = 'FTP_PORT_'.$numero_ftp;
 $s_ftp_user = 'FTP_USER_'.$numero_ftp;
 $s_ftp_password = 'FTP_PASSWORD_'.$numero_ftp;
 $s_ftp_passive = 'FTP_PASSIVE_'.$numero_ftp;
-$ftp_name = $conf->global->$s_ftp_name;
-$ftp_server = $conf->global->$s_ftp_server;
-$ftp_port = $conf->global->$s_ftp_port; if (empty($ftp_port)) {
+$ftp_name = getDolGlobalString($s_ftp_name);
+$ftp_server = getDolGlobalString($s_ftp_server);
+$ftp_port = getDolGlobalString($s_ftp_port);
+if (empty($ftp_port)) {
 	$ftp_port = 21;
 }
-$ftp_user = $conf->global->$s_ftp_user;
-$ftp_password = $conf->global->$s_ftp_password;
-$ftp_passive = $conf->global->$s_ftp_passive;
+$ftp_user = getDolGlobalString($s_ftp_user);
+$ftp_password = getDolGlobalString($s_ftp_password);
+$ftp_passive = getDolGlobalString($s_ftp_passive);
 
 // For result on connection
 $ok = 0;
@@ -99,7 +100,7 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$result = $ecmdir->fetch(GETPOST("section", 'int'));
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
@@ -492,14 +493,30 @@ if (!function_exists('ftp_connect')) {
 					//$newsection = '/./';
 					$newsection = ssh2_sftp_realpath($conn_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
 				}
+
 				//$newsection='/';
 				//$dirHandle = opendir("ssh2.sftp://$conn_id".$newsection);
 				//$dirHandle = opendir("ssh2.sftp://".intval($conn_id).ssh2_sftp_realpath($conn_id, ".").'/./');
+
 				$contents = scandir('ssh2.sftp://'.intval($conn_id).$newsection);
 				$buff = array();
 				foreach ($contents as $i => $key) {
 					$buff[$i] = "---------- - root root 1234 Aug 01 2000 ".$key;
 				}
+
+				//$i = 0;
+				//$handle = opendir('ssh2.sftp://'.intval($conn_id).$newsection);
+				//$buff=array();
+				//while (false !== ($file = readdir($handle))) {
+				//	if (substr("$file", 0, 1) != "."){
+				//  	if (is_dir($file)) {
+				//      	$buff[$i]="d--------- - root root 1234 Aug 01 2000 ".$file;
+				//      } else {
+				//          $buff[$i]="---------- - root root 1234 Aug 01 2000 ".$file;
+				//      }
+				//  }
+				//  $i++;
+				//}
 			} else {
 				$buff = ftp_rawlist($conn_id, $newsectioniso);
 				$contents = ftp_nlist($conn_id, $newsectioniso); // Sometimes rawlist fails but never nlist
@@ -510,6 +527,7 @@ if (!function_exists('ftp_connect')) {
 			$nboflines = count($contents);
 			$rawlisthasfailed = false;
 			$i = 0;
+			$nbofentries = 0;
 			while ($i < $nboflines && $i < 1000) {
 				$vals = preg_split('@ +@', utf8_encode($buff[$i]), 9);
 				//$vals=preg_split('@ +@','drwxr-xr-x 2 root root 4096 Aug 30 2008 backup_apollon1',9);
@@ -527,6 +545,7 @@ if (!function_exists('ftp_connect')) {
 
 				// Is it a directory ?
 				$is_directory = 0;
+				$is_link = 0;
 				if ($file == '..') {
 					$is_directory = 1;
 				} elseif (!$rawlisthasfailed) {
@@ -694,7 +713,10 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 	global $langs, $conf;
 
 	$ok = 1;
+	$error = 0;
 	$conn_id = null;
+	$newsectioniso = '';
+	$mesg="";
 
 	if (!is_numeric($ftp_port)) {
 		$mesg = $langs->transnoentitiesnoconv("FailedToConnectToFTPServer", $ftp_server, $ftp_port);
@@ -704,7 +726,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 	if ($ok) {
 		$connecttimeout = (empty($conf->global->FTP_CONNECT_TIMEOUT) ? 40 : $conf->global->FTP_CONNECT_TIMEOUT);
 		if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
-			dol_syslog('Try to connect with ssh2_ftp');
+			dol_syslog('Try to connect with ssh2_connect');
 			$tmp_conn_id = ssh2_connect($ftp_server, $ftp_port);
 		} elseif (!empty($conf->global->FTP_CONNECT_WITH_SSL)) {
 			dol_syslog('Try to connect with ftp_ssl_connect');
@@ -713,7 +735,7 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
 			dol_syslog('Try to connect with ftp_connect');
 			$conn_id = ftp_connect($ftp_server, $ftp_port, $connecttimeout);
 		}
-		if ($conn_id || $tmp_conn_id) {
+		if (!empty($conn_id) || !empty($tmp_conn_id)) {
 			if ($ftp_user) {
 				if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
 					dol_syslog('Try to authenticate with ssh2_auth_password');

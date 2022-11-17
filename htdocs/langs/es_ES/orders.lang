@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - orders
+OrderExists=Ya había un pedido abierto vinculado a este presupuesto, por lo que no se ha creado ningún otro pedido automáticamente
 OrdersArea=Área pedidos de clientes
 SuppliersOrdersArea=Área pedidos a proveedores
 OrderCard=Ficha pedido
@@ -68,6 +69,8 @@ CreateOrder=Crear pedido
 RefuseOrder=Rechazar el pedido
 ApproveOrder=Aprobar pedido
 Approve2Order=Aprobar pedido (segundo nivel)
+UserApproval=Usuario para aprobación
+UserApproval2=Usuario para aprobación (segundo nivel)
 ValidateOrder=Validar el pedido
 UnvalidateOrder=Desvalidar el pedido
 DeleteOrder=Eliminar el pedido
@@ -102,6 +105,8 @@ ConfirmCancelOrder=¿Está seguro de querer anular este pedido?
 ConfirmMakeOrder=¿Está seguro de querer confirmar este pedido en fecha de <b>%s</b> ?
 GenerateBill=Facturar
 ClassifyShipped=Clasificar enviado
+PassedInShippedStatus=clasificado entregado
+YouCantShipThis=No puedo clasificar esto. Por favor, compruebe los permisos de usuario
 DraftOrders=Pedidos borrador
 DraftSuppliersOrders=Pedidos a proveedor en borrador
 OnProcessOrders=Pedidos en proceso

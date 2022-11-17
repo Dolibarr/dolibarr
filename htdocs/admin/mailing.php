@@ -136,7 +136,8 @@ print '<td>'.$langs->trans("Example").'</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("MailingEMailFrom").'</td><td>';
+$help = img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
+print $langs->trans("MailingEMailFrom").' '.$help.'</td><td>';
 print '<input size="32" type="text" name="MAILING_EMAIL_FROM" value="'.$conf->global->MAILING_EMAIL_FROM.'">';
 if (!empty($conf->global->MAILING_EMAIL_FROM) && !isValidEmail($conf->global->MAILING_EMAIL_FROM)) {
 	print ' '.img_warning($langs->trans("BadEMail"));
@@ -193,8 +194,7 @@ if (!empty($conf->use_javascript_ajax) && $conf->global->MAIN_FEATURES_LEVEL >= 
 
 print '</table>';
 
-print '<br>';
-print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 

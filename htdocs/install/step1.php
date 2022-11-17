@@ -199,6 +199,14 @@ if (!empty($main_url) && substr($main_url, dol_strlen($main_url) - 1) == "/") {
 	$main_url = substr($main_url, 0, dol_strlen($main_url) - 1);
 }
 
+if (!dol_is_dir($main_dir.'/core/db/')) {
+	print '<div class="error">'.$langs->trans("ErrorBadValueForParameter", $main_dir, $langs->transnoentitiesnoconv("WebPagesDirectory")).'</div>';
+	print '<br>';
+	//print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+	print $langs->trans("ErrorGoBackAndCorrectParameters");
+	$error++;
+}
+
 // Test database connection
 if (!$error) {
 	$result = @include_once $main_dir."/core/db/".$db_type.'.class.php';
@@ -261,6 +269,7 @@ if (!$error) {
 				$error++;
 			}
 		}
+
 		// If we need simple access
 		if (!$error && (empty($db_create_database) && empty($db_create_user))) {
 			$db = getDoliDBInstance($db_type, $db_host, $db_user, $db_pass, $db_name, $db_port);
@@ -909,6 +918,8 @@ function write_conf_file($conffile)
 		fputs($fp, "\n");
 
 		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
+		fputs($fp, "\n");
+		fputs($fp, '$dolibarr_mailing_limit_sendbycli=\'0\';');
 		fputs($fp, "\n");
 
 		// Write params to overwrites default lib path

@@ -28,10 +28,10 @@ There is a [Transifex project](https://transifex.com/projects/p/dolibarr-module-
 
 ### From the ZIP file and GUI interface
 
-- If you get the module in a zip file (like when downloading it from the market place [Dolistore](https://www.dolistore.com)), go into
-menu ```Home - Setup - Modules - Deploy external module``` and upload the zip file.
+If the module is a ready to deploy zip file, so with a name module_xxx-version.zip (like when downloading it from a market place like [Dolistore](https://www.dolistore.com)),
+go into menu ```Home - Setup - Modules - Deploy external module``` and upload the zip file.
 
-Note: If this screen tell you there is no custom directory, check your setup is correct:
+Note: If this screen tell you that there is no "custom" directory, check that your setup is correct:
 
 - In your Dolibarr installation directory, edit the ```htdocs/conf/conf.php``` file and check that following lines are not commented:
 
@@ -58,7 +58,7 @@ Note: If this screen tell you there is no custom directory, check your setup is 
 
 ### From a GIT repository
 
-- Clone the repository in ```$dolibarr_main_document_root_alt/mymodule```
+Clone the repository in ```$dolibarr_main_document_root_alt/mymodule```
 
 ```sh
 cd ....../custom

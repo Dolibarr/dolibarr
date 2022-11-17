@@ -6,6 +6,7 @@
 -- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2019 	   Markus Welters       <markus@welters.de>
+-- Copyright (C) 2022 	   Joachim Kueter       <jkueter@gmx.de>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -61,6 +62,24 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('ES-TOUSSAINT',     0, 4,       '', 0, 11,  1, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('ES-CONSTITUIZION', 0, 4,       '', 0, 12,  6, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('ES-IMMACULE',      0, 4,       '', 0, 12,  8, 1);
+
+-- Germany (5)
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-NEUJAHR',              0, 5,                '', 0,  1,  1, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-HL3KOEN--TLW',         0, 5,                '', 0,  1,  6, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-INTFRAUENTAG--TLW',    0, 5,                '', 0,  3,  8, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-KARFREITAG',           0, 5,      'goodfriday', 0,  0,  0, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-OSTERMONTAG',          0, 5,    'eastermonday', 0,  0,  0, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-TAGDERARBEIT',         0, 5,                '', 0,  5,  1, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-HIMMELFAHRT',          0, 5,       'ascension', 0,  0,  0, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-PFINGSTEN',            0, 5, 'pentecotemonday', 0,  0,  0, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-FRONLEICHNAM--TLW',    0, 5,    'fronleichnam', 0,  0,  0, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-MARIAEHIMMEL--TLW',    0, 5,                '', 0,  8, 15, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-WELTKINDERTAG--TLW',   0, 5,                '', 0,  9, 20, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-TAGDERDEUTEINHEIT',    0, 5,                '', 0, 10,  3, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-REFORMATIONSTAG--TLW', 0, 5,                '', 0, 10, 31, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-ALLERHEILIGEN--TLW',   0, 5,                '', 0, 11,  1, 0);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-WEIHNACHTSTAG1',       0, 5,                '', 0, 12, 25, 1);
+INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('DE-WEIHNACHTSTAG2',       0, 5,                '', 0, 12, 26, 1);
 
 -- Austria (41)
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('AT-EASTER',       0, 41, 'eastermonday', 0, 0, 0, 1);

@@ -22,6 +22,7 @@
 define('NOTOKENRENEWAL', 1); // Disables token renewal
 
 require '../../../../main.inc.php';
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
@@ -56,6 +57,24 @@ require '../../../../main.inc.php';
 		<title>Folders</title>
 		<link href="browser.css" type="text/css" rel="stylesheet">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<?php
+print '<!-- Includes CSS for Dolibarr theme -->'."\n";
+// Output style sheets (optioncss='print' or ''). Note: $conf->css looks like '/theme/eldy/style.css.php'
+$themepath = dol_buildpath($conf->css, 1);
+$themesubdir = '';
+if (!empty($conf->modules_parts['theme'])) {	// This slow down
+	foreach ($conf->modules_parts['theme'] as $reldir) {
+		if (file_exists(dol_buildpath($reldir.$conf->css, 0))) {
+			$themepath = dol_buildpath($reldir.$conf->css, 1);
+			$themesubdir = $reldir;
+			break;
+		}
+	}
+}
+
+//print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
+print '<link rel="stylesheet" type="text/css" href="'.$themepath.'">'."\n";
+?>
 		<script type="text/javascript" src="js/common.js"></script>
 		<script type="text/javascript">
 
@@ -96,7 +115,7 @@ oListManager.AddItem = function( folderName, folderPath )
 	// Add the folder icon cell.
 	var oCell = oRow.insertCell(-1);
 	oCell.width = 16 ;
-	oCell.innerHTML = sLink + '<img alt="" src="spacer.gif" width="16" height="16" border="0"><\/a>' ;
+	oCell.innerHTML = sLink + ' <\/a>' ;
 
 	// Add the folder name cell.
 	oCell = oRow.insertCell(-1);

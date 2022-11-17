@@ -90,10 +90,10 @@ TicketPublicAccess=ສ່ວນຕິດຕໍ່ສາທາລະນະທີ�
 TicketSetupDictionaries=ປະເພດຂອງປີ້, ຄວາມຮຸນແຮງແລະລະຫັດການວິເຄາະແມ່ນສາມາດຕັ້ງຄ່າໄດ້ຈາກວັດຈະນານຸກົມ
 TicketParamModule=ການຕັ້ງຄ່າຕົວປ່ຽນໂມດູນ
 TicketParamMail=ການຕັ້ງອີເມລ
-TicketEmailNotificationFrom=ອີເມວແຈ້ງເຕືອນຈາກ
-TicketEmailNotificationFromHelp=ຕົວຢ່າງທີ່ໃຊ້ເຂົ້າໃນການຕອບຂໍ້ຄວາມປີ້ໂດຍຕົວຢ່າງ
-TicketEmailNotificationTo=ແຈ້ງເຕືອນອີເມລຫາ
-TicketEmailNotificationToHelp=ສົ່ງອີເມວແຈ້ງເຕືອນໄປຫາທີ່ຢູ່ນີ້.
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=ຂໍ້ຄວາມໄດ້ຖືກສົ່ງຫຼັງຈາກການສ້າງປີ້
 TicketNewEmailBodyHelp=ຂໍ້ຄວາມທີ່ລະບຸຢູ່ທີ່ນີ້ຈະຖືກໃສ່ເຂົ້າໄປໃນອີເມວຢືນຢັນການສ້າງປີ້ໃfrom່ຈາກສ່ວນຕິດຕໍ່ສາທາລະນະ. ຂໍ້ມູນກ່ຽວກັບການປຶກສາຫາລືຂອງປີ້ຈະຖືກເພີ່ມເຂົ້າໂດຍອັດຕະໂນມັດ.
 TicketParamPublicInterface=ຕັ້ງຄ່າສ່ວນຕິດຕໍ່ຜູ້ໃຊ້ສາທາລະນະ
@@ -136,6 +136,18 @@ TicketsPublicNotificationNewMessage=ສົ່ງອີເມວເມື່ອ�
 TicketsPublicNotificationNewMessageHelp=ສົ່ງອີເມລ when ເມື່ອມີການເພີ່ມຂໍ້ຄວາມໃfrom່ຈາກອິນເຕີເຟດສາທາລະນະ (ໃຫ້ກັບຜູ້ໃຊ້ທີ່ໄດ້ຮັບມອບorາຍຫຼືອີເມລແຈ້ງການຫາ (ອັບເດດ) ແລະ/ຫຼືອີເມວແຈ້ງການຫາ)
 TicketPublicNotificationNewMessageDefaultEmail=ອີເມວແຈ້ງເຕືອນຫາ (ອັບເດດ)
 TicketPublicNotificationNewMessageDefaultEmailHelp=ສົ່ງອີເມວໄປຫາທີ່ຢູ່ນີ້ສໍາລັບການແຈ້ງເຕືອນຂໍ້ຄວາມໃeach່ແຕ່ລະອັນຖ້າປີ້ບໍ່ມີຜູ້ໃຊ້ມອບitາຍໃຫ້ຫຼືຖ້າຜູ້ໃຊ້ບໍ່ມີອີເມວທີ່ຮູ້ຈັກ.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -151,6 +163,8 @@ OrderByDateAsc=ຈັດຮຽງຕາມວັນທີທີ່ຫານ້�
 OrderByDateDesc=ຈັດຮຽງຕາມວັນທີໃຫຍ່ຫານ້ອຍ
 ShowAsConversation=ສະແດງເປັນລາຍການສົນທະນາ
 MessageListViewType=ສະແດງເປັນລາຍການຕາຕະລາງ
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -205,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=ຜູ້ຮັບບໍ່ຫວ�
 TicketGoIntoContactTab=ກະລຸນາເຂົ້າໄປທີ່ແຖບ "ລາຍຊື່ຜູ້ຕິດຕໍ່" ເພື່ອເລືອກພວກມັນ
 TicketMessageMailIntro=ການນໍາສະເຫນີ
 TicketMessageMailIntroHelp=ຂໍ້ຄວາມນີ້ຖືກເພີ່ມໃສ່ແຕ່ຕອນຕົ້ນຂອງອີເມວແລະຈະບໍ່ຖືກບັນທຶກໄວ້.
-TicketMessageMailIntroLabelAdmin=ການ ນຳ ສະ ເໜີ ຂໍ້ຄວາມເມື່ອສົ່ງອີເມວ
-TicketMessageMailIntroText=ສະບາຍດີ, <br> ໄດ້ມີການຕອບກັບໃnew່ຢູ່ໃນປີ້ທີ່ເຈົ້າຕິດຕໍ່. ນີ້ແມ່ນຂໍ້ຄວາມ: <br>
-TicketMessageMailIntroHelpAdmin=ຂໍ້ຄວາມນີ້ຈະຖືກໃສ່ກ່ອນຂໍ້ຄວາມຂອງການຕອບກັບປີ້.
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=ລາຍເຊັນ
 TicketMessageMailSignatureHelp=ຂໍ້ຄວາມນີ້ຖືກເພີ່ມເຂົ້າໄປໃນທ້າຍອີເມວເທົ່ານັ້ນແລະຈະບໍ່ຖືກບັນທຶກໄວ້.
-TicketMessageMailSignatureText= <p> ດ້ວຍຄວາມນັບຖື, </p> <p> - </p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=ລາຍເຊັນອີເມວຕອບກັບ
 TicketMessageMailSignatureHelpAdmin=ຂໍ້ຄວາມນີ້ຈະຖືກແຊກໃສ່ຫຼັງຈາກຂໍ້ຄວາມຕອບກັບ.
 TicketMessageHelp=ສະເພາະຂໍ້ຄວາມນີ້ຈະຖືກບັນທຶກໄວ້ໃນລາຍການຂໍ້ຄວາມຢູ່ໃນບັດປີ້.
@@ -238,9 +252,16 @@ TicketChangeStatus=ປ່ຽນສະຖານະພາບ
 TicketConfirmChangeStatus=ຢືນຢັນການປ່ຽນສະຖານະ: %s?
 TicketLogStatusChanged=ສະຖານະມີການປ່ຽນແປງ: %s ເປັນ %s
 TicketNotNotifyTiersAtCreate=ບໍ່ແຈ້ງໃຫ້ບໍລິສັດສ້າງ
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=ຍັງບໍ່ໄດ້ອ່ານ
 TicketNotCreatedFromPublicInterface=ບໍ່​ສາ​ມາດ​ໃຊ້​ໄດ້. ປີ້ບໍ່ໄດ້ຖືກສ້າງຈາກສ່ວນຕິດຕໍ່ສາທາລະນະ.
 ErrorTicketRefRequired=ຕ້ອງລະບຸຊື່ການອ້າງອີງປີ້
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -268,8 +289,9 @@ TicketNewEmailBody=ນີ້ແມ່ນອີເມວອັດຕະໂນມ�
 TicketNewEmailBodyCustomer=ນີ້ແມ່ນອີເມວອັດຕະໂນມັດເພື່ອຢືນຢັນວ່າປີ້ໃhas່ຫາກໍ່ຖືກສ້າງຂຶ້ນໃນບັນຊີຂອງເຈົ້າ.
 TicketNewEmailBodyInfosTicket=ຂໍ້ມູນສໍາລັບການຕິດຕາມປີ້
 TicketNewEmailBodyInfosTrackId=trackingາຍເລກຕິດຕາມປີ້: %s
-TicketNewEmailBodyInfosTrackUrl=ເຈົ້າສາມາດເບິ່ງຄວາມຄືບ ໜ້າ ຂອງປີ້ໂດຍການຄລິກທີ່ລິ້ງຂ້າງເທິງ.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=ເຈົ້າສາມາດເບິ່ງຄວາມຄືບ ໜ້າ ຂອງປີ້ຢູ່ໃນສ່ວນຕິດຕໍ່ສະເພາະໂດຍການຄລິກທີ່ລິ້ງຕໍ່ໄປນີ້
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=ກະລຸນາຢ່າຕອບກັບອີເມລ directly ນີ້ໂດຍກົງ! ໃຊ້ຕົວເຊື່ອມຕໍ່ເພື່ອຕອບກັບເຂົ້າໄປໃນອິນເຕີເຟດ.
 TicketPublicInfoCreateTicket=ແບບຟອມນີ້ອະນຸຍາດໃຫ້ເຈົ້າບັນທຶກປີ້ສະ ໜັບ ສະ ໜູນ ໃນລະບົບການຈັດການຂອງພວກເຮົາ.
 TicketPublicPleaseBeAccuratelyDescribe=ກະລຸນາອະທິບາຍບັນຫາໃຫ້ຖືກຕ້ອງ. ໃຫ້ຂໍ້ມູນຫຼາຍທີ່ສຸດເທົ່າທີ່ເປັນໄປໄດ້ເພື່ອອະນຸຍາດໃຫ້ພວກເຮົາລະບຸການຮ້ອງຂໍຂອງເຈົ້າໄດ້ຢ່າງຖືກຕ້ອງ.
@@ -291,6 +313,10 @@ NewUser=ຜູ້ນຳໃຊ້ໃໝ່
 NumberOfTicketsByMonth=ຈຳ ນວນປີ້ຕໍ່ເດືອນ
 NbOfTickets=ຈຳ ນວນປີ້
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=ປີ້ %s ອັບເດດແລ້ວ
 TicketNotificationEmailBody=ນີ້ແມ່ນຂໍ້ຄວາມອັດຕະໂນມັດເພື່ອແຈ້ງໃຫ້ເຈົ້າຮູ້ວ່າປີ້ %s ຫາກໍ່ຖືກອັບເດດ
 TicketNotificationRecipient=ຜູ້ຮັບການແຈ້ງເຕືອນ

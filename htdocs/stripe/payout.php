@@ -42,8 +42,8 @@ if ($user->socid) {
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -200,13 +200,13 @@ if (!$rowid) {
 			//}
 			//print "</td>\n";
 			// Date payment
-			print '<td class="center">'.dol_print_date($payout->created, '%d/%m/%Y %H:%M')."</td>\n";
+			print '<td class="center">'.dol_print_date($payout->created, 'dayhour')."</td>\n";
 			// Date payment
-			print '<td class="center">'.dol_print_date($payout->arrival_date, '%d/%m/%Y %H:%M')."</td>\n";
+			print '<td class="center">'.dol_print_date($payout->arrival_date, 'dayhour')."</td>\n";
 			// Type
 			print '<td>'.$payout->description.'</td>';
 			// Amount
-			print '<td class="right">'.price(($payout->amount) / 100, 0, '', 1, -1, -1, strtoupper($payout->currency))."</td>";
+			print '<td class="right"><span class="amount">'.price(($payout->amount) / 100, 0, '', 1, -1, -1, strtoupper($payout->currency))."</span></td>";
 			// Status
 			print "<td class='right'>";
 			if ($payout->status == 'paid') {

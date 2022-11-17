@@ -39,7 +39,7 @@ if ($user->socid > 0) {
 }
 
 $dir = $conf->facture->dir_output.'/payments';
-if (!$user->rights->societe->client->voir || $socid) {
+if (empty($user->rights->societe->client->voir) || $socid) {
 	$dir .= '/private/'.$user->id; // If user has no permission to see all, output dir is specific to user
 }
 
@@ -102,7 +102,7 @@ $syear = GETPOST("reyear") ?GETPOST("reyear") : date("Y", time());
 
 print $formother->select_month($cmonth, 'remonth');
 
-print $formother->select_year($syear, 'reyear');
+print $formother->selectyear($syear, 'reyear');
 
 print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 print '</form>';

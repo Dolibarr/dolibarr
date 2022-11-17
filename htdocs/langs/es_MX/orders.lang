@@ -8,7 +8,6 @@ ToOrder=Crear orden
 MakeOrder=Crear orden
 SupplierOrder=Orden de compra
 SuppliersOrders=Ordenes de compra
-SaleOrderLines=Sales order lines
 SuppliersOrdersRunning=Ordenes de compra actuales
 CustomerOrder=Pedidos
 SuppliersOrdersToProcess=Órdenes de compra a procesar

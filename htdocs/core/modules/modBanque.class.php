@@ -151,7 +151,7 @@ class modBanque extends DolibarrModules
 		$this->export_fields_array[$r] = array(
 			'b.rowid'=>'IdTransaction', 'ba.ref'=>'AccountRef', 'ba.label'=>'AccountLabel', 'b.datev'=>'DateValue', 'b.dateo'=>'DateOperation', 'b.label'=>'Label',
 			'b.num_chq'=>'ChequeOrTransferNumber', 'b.fk_bordereau'=>'ChequeBordereau', '-b.amount'=>'Debit', 'b.amount'=>'Credit',
-			'b.num_releve'=>'AccountStatement', 'b.rappro'=>'Conciliated', 'b.datec'=>"DateCreation", "bu.url_id"=>"IdThirdParty",
+			'b.num_releve'=>'AccountStatement', 'b.rappro'=>'BankLineReconciled', 'b.datec'=>"DateCreation", "bu.url_id"=>"IdThirdParty",
 			"s.nom"=>"ThirdParty", "s.code_compta"=>"CustomerAccountancyCode", "s.code_compta_fournisseur"=>"SupplierAccountancyCode"
 		);
 		$this->export_TypeFields_array[$r] = array('ba.ref'=>'Text', 'ba.label'=>'Text', 'b.datev'=>'Date', 'b.dateo'=>'Date', 'b.label'=>'Text', 'b.num_chq'=>'Text', 'b.fk_bordereau'=>'Text', '-b.amount'=>'Numeric', 'b.amount'=>'Numeric', 'b.num_releve'=>'Text', 'b.rappro'=>'Boolean', 'b.datec'=>"Date", "bu.url_id"=>"Text", "s.nom"=>"Text", "s.code_compta"=>"Text", "s.code_compta_fournisseur"=>"Text");

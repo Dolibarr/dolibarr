@@ -81,10 +81,22 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
  * View
  */
 
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+if (empty($dolibarr_nocache) && GETPOST('cache', 'int')) {
+	header('Cache-Control: max-age='.GETPOST('cache', 'int').', public, must-revalidate');
+	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
+	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOST('cache', 'int')).' GMT');
+	// HTTP/1.0
+	header('Pragma: token=public');
+} else {
+	// HTTP/1.0
+	header('Cache-Control: no-cache');
+}
+
 $title = $langs->trans("Menu");
 
 // URL http://mydolibarr/core/get_menudiv.php?dol_use_jmobile=1 can be used for tests
-$head = '<!-- Menu -->'."\n";
+$head = '<!-- Menu -->'."\n";	// This is used by DoliDroid to know page is a menu page
 $arrayofjs = array();
 $arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
@@ -109,12 +121,22 @@ print '
         display: none;
     }
 
-    a.alilevel0 {
+	ul li.lilevel2 {
+		padding-left: 42px;
+	}
+
+    a.alilevel0, span.spanlilevel0 {
         background-image: url(\''.DOL_URL_ROOT.'/theme/'.urlencode($conf->theme).'/img/next.png\') !important;
-        background-repeat: no-repeat !important;
-        background-position-x: 10px;
+        background-repeat: no-repeat !important;';
+if ($langs->trans("DIRECTION") == 'rtl') {
+	print 'background-position: right;';
+} else {
+	print 'background-position-x: 10px;';
+}
+	print '
         background-position-y: 16px;
         padding: 1em 15px 1em 40px;
+		display: block;
     }
     li.lilevel0 font.vsmenudisabled {
         background-repeat: no-repeat !important;
@@ -139,6 +161,18 @@ print '
     li.lilevel1 a {
         padding-bottom: 5px;
     }
+	li.lilevel1 > a, li.lilevel1 > i {
+        /* background-image: url(\''.DOL_URL_ROOT.'/theme/'.urlencode($conf->theme).'/img/puce.png\') !important; */
+        background-repeat: no-repeat !important;';
+if ($langs->trans("DIRECTION") == 'rtl') {
+	print 'background-position: right;';
+} else {
+	print 'background-position-x: 10px;';
+}
+	print 'background-position-y: 1px;';
+	print 'padding-left: 20px;';
+	print '
+	}
     li.lilevel1 a, li.lilevel1 {
         color: #000;
         cursor: pointer;

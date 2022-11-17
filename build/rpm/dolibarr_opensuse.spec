@@ -25,7 +25,7 @@ BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Productivity/Office/Management
-Requires: apache2, apache2-mod_php5, php5 >= 5.3.0, php5-gd, php5-ldap, php5-imap, php5-mysql, php5-openssl, dejavu
+Requires: apache2, apache2-mod_php, php >= 5.3.0, php-gd, php-ldap, php-imap, php-mysql, php-openssl, dejavu
 Requires: mysql-community-server, mysql-community-server-client 
 %if 0%{?suse_version}
 BuildRequires: update-desktop-files fdupes
@@ -65,7 +65,6 @@ attività. Progettato per poter fornire solo ciò di cui hai bisogno
 ed essere facile da usare.
 Programmo web, progettato per poter fornire solo ciò di 
 cui hai bisogno ed essere facile da usare.
-
 
 
 #---- prep
@@ -174,7 +173,6 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/blockedlog
 %_datadir/dolibarr/htdocs/bookmarks
 %_datadir/dolibarr/htdocs/bom
-%_datadir/dolibarr/htdocs/cashdesk
 %_datadir/dolibarr/htdocs/categories
 %_datadir/dolibarr/htdocs/collab
 %_datadir/dolibarr/htdocs/comm
@@ -236,6 +234,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/ticket
 %_datadir/dolibarr/htdocs/user
 %_datadir/dolibarr/htdocs/variants
+%_datadir/dolibarr/htdocs/webhook
 %_datadir/dolibarr/htdocs/webservices
 %_datadir/dolibarr/htdocs/website
 %_datadir/dolibarr/htdocs/workstation

@@ -134,16 +134,18 @@ class modApi extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
+		$this->rights_admin_allowed = 1; // Admin is always granted of permission (even when module is disabled)
+
 		$r = 0;
 
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
-		// $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		// $this->rights[$r][1] = 'Permision label';	// Permission label
-		// $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $r++;
+		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
+		$this->rights[$r][1] = 'Générer / modifier la clé API des utilisateurs';	// Permission label
+		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'apikey';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = 'generate';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$r++;
 
 
 		// Main menu entries
@@ -228,8 +230,6 @@ class modApi extends DolibarrModules
 	{
 		$sql = array();
 
-		$result = $this->_load_tables('/api/sql/');
-
 		return $this->_init($sql, $options);
 	}
 
@@ -245,8 +245,8 @@ class modApi extends DolibarrModules
 	{
 		// Remove old constants with entity fields different of 0
 		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->db->escape($this->db->encrypt('MAIN_MODULE_API'))."'",
-			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->db->escape($this->db->encrypt('API_PRODUCTION_MODE'))."'"
+			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('MAIN_MODULE_API'),		// API can't be enabled per environment. Why ?
+			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('API_PRODUCTION_MODE')	// Not in production mode by default at activation
 		);
 
 		return $this->_remove($sql, $options);

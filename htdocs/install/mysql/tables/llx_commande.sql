@@ -63,6 +63,7 @@ create table llx_commande
   fk_account				integer,						-- bank account
   fk_currency				varchar(3),						-- currency code
   fk_cond_reglement			integer,						-- condition de reglement
+  deposit_percent			varchar(63) DEFAULT NULL,		-- default deposit % if payment term needs it
   fk_mode_reglement			integer,						-- mode de reglement
 
   date_livraison			datetime 	  default NULL,
@@ -77,7 +78,7 @@ create table llx_commande
   extraparams				varchar(255),					-- for stock other parameters with json format
   
   fk_multicurrency			integer,
-  multicurrency_code		varchar(255),
+  multicurrency_code		varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_total_ht	double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,

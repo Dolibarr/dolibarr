@@ -22,7 +22,7 @@ require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 
 
 /**
- * \file    mrp/class/api_mo.class.php
+ * \file    htdocs/mrp/class/api_mos.class.php
  * \ingroup mrp
  * \brief   File for API management of MO.
  */
@@ -147,8 +147,9 @@ class Mos extends DolibarrApi
 			$sql .= " AND sc.fk_user = ".((int) $search_sale);
 		}
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -353,6 +354,9 @@ class Mos extends DolibarrApi
 
 		$stockmove = new MouvementStock($this->db);
 
+		$consumptioncomplete = true;
+		$productioncomplete = true;
+
 		if (!empty($arraytoconsume) && !empty($arraytoproduce)) {
 			$pos = 0;
 			$arrayofarrayname = array("arraytoconsume","arraytoproduce");
@@ -370,19 +374,21 @@ class Mos extends DolibarrApi
 						$qtytoprocess = $value["qty"];
 						if (isset($value["fk_warehouse"])) {	// If there is a warehouse to set
 							if (!($value["fk_warehouse"] > 0)) {	// If there is no warehouse set.
-								throw new RestException(500, "Field fk_warehouse must be > 0 in ".$arrayname);
 								$error++;
+								throw new RestException(500, "Field fk_warehouse must be > 0 in ".$arrayname);
 							}
 							if ($tmpproduct->status_batch) {
-								throw new RestException(500, "Product ".$tmpproduct->ref."must be in batch");
 								$error++;
+								throw new RestException(500, "Product ".$tmpproduct->ref."must be in batch");
 							}
 						}
 						$idstockmove = 0;
 						if (!$error && $value["fk_warehouse"] > 0) {
 							// Record stock movement
 							$id_product_batch = 0;
-							$stockmove->origin = $this->mo;
+
+							$stockmove->setOrigin($this->mo->element, $this->mo->id);
+
 							if ($qtytoprocess >= 0) {
 								$moline = new MoLine($this->db);
 								$moline->fk_mo = $this->mo->id;
@@ -457,9 +463,6 @@ class Mos extends DolibarrApi
 				}
 			}
 			if (!$error) {
-				$consumptioncomplete = true;
-				$productioncomplete = true;
-
 				if ($autoclose <= 0) {
 					$consumptioncomplete = false;
 					$productioncomplete = false;
@@ -476,20 +479,21 @@ class Mos extends DolibarrApi
 						if (isset($line->fk_warehouse)) {	// If there is a warehouse to set
 							if (!($line->fk_warehouse > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 							}
 							if ($tmpproduct->status_batch) {
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 							}
 						}
 						$idstockmove = 0;
 						if (!$error && $line->fk_warehouse > 0) {
 							// Record stock movement
 							$id_product_batch = 0;
-							$stockmove->origin = $this->mo;
+							$stockmove->origin_type = 'mo';
+							$stockmove->origin_id = $this->mo->id;
 							if ($qtytoprocess >= 0) {
 								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							} else {
@@ -535,20 +539,21 @@ class Mos extends DolibarrApi
 						if (isset($line->fk_warehouse)) {	// If there is a warehouse to set
 							if (!($line->fk_warehouse > 0)) {	// If there is no warehouse set.
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Warehouse"), $tmpproduct->ref));
 							}
 							if ($tmpproduct->status_batch) {
 								$langs->load("errors");
-								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 								$error++;
+								throw new RestException(500, $langs->trans("ErrorFieldRequiredForProduct", $langs->transnoentitiesnoconv("Batch"), $tmpproduct->ref));
 							}
 						}
 						$idstockmove = 0;
 						if (!$error && $line->fk_warehouse > 0) {
 							// Record stock movement
 							$id_product_batch = 0;
-							$stockmove->origin = $this->mo;
+							$stockmove->origin_type = 'mo';
+							$stockmove->origin_id = $this->mo->id;
 							if ($qtytoprocess >= 0) {
 								$idstockmove = $stockmove->livraison(DolibarrApiAccess::$user, $line->fk_product, $line->fk_warehouse, $qtytoprocess, 0, $labelmovement, dol_now(), '', '', $tmpproduct->status_batch, $id_product_batch, $codemovement);
 							} else {
@@ -586,9 +591,6 @@ class Mos extends DolibarrApi
 			}
 
 			if (!$error) {
-				$consumptioncomplete = true;
-				$productioncomplete = true;
-
 				if ($autoclose > 0) {
 					foreach ($this->mo->lines as $line) {
 						if ($line->role == 'toconsume') {
@@ -620,6 +622,7 @@ class Mos extends DolibarrApi
 				}
 			}
 		}
+
 		// Update status of MO
 		dol_syslog("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
 		//var_dump("consumptioncomplete = ".$consumptioncomplete." productioncomplete = ".$productioncomplete);
@@ -716,7 +719,7 @@ class Mos extends DolibarrApi
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
-				$myobject[$field] = $data[$field];
+			$myobject[$field] = $data[$field];
 		}
 		return $myobject;
 	}

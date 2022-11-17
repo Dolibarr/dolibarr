@@ -130,21 +130,21 @@ class MultiCurrency extends CommonObject
 		if (empty($this->entity) || $this->entity <= 0) {
 			$this->entity = $conf->entity;
 		}
-		$now = date('Y-m-d H:i:s');
+		$now = dol_now();
 
 		// Insert request
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 		$sql .= ' code,';
 		$sql .= ' name,';
 		$sql .= ' entity,';
 		$sql .= ' date_create,';
 		$sql .= ' fk_user';
 		$sql .= ') VALUES (';
-		$sql .= ' \''.$this->db->escape($this->code).'\',';
-		$sql .= ' \''.$this->db->escape($this->name).'\',';
-		$sql .= ' \''.$this->entity.'\',';
-		$sql .= ' \''.$now.'\',';
-		$sql .= ' \''.$user->id.'\'';
+		$sql .= " '".$this->db->escape($this->code)."',";
+		$sql .= " '".$this->db->escape($this->name)."',";
+		$sql .= " ".((int) $this->entity).",";
+		$sql .= " '".$this->db->idate($now)."',";
+		$sql .= " ".((int) $user->id);
 		$sql .= ')';
 
 		$this->db->begin();
@@ -194,7 +194,7 @@ class MultiCurrency extends CommonObject
 
 		global $conf;
 
-		$sql = 'SELECT';
+		$sql = "SELECT";
 		$sql .= ' c.rowid, c.name, c.code, c.entity, c.date_create, c.fk_user';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' AS c';
 		if (!empty($code)) {
@@ -243,9 +243,9 @@ class MultiCurrency extends CommonObject
 	 */
 	public function fetchAllCurrencyRate()
 	{
-		$sql = 'SELECT cr.rowid';
+		$sql = "SELECT cr.rowid";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as cr';
-		$sql .= ' WHERE cr.fk_multicurrency = '.$this->id;
+		$sql .= ' WHERE cr.fk_multicurrency = '.((int) $this->id);
 		$sql .= ' ORDER BY cr.date_sync DESC';
 
 		$this->rates = array();
@@ -298,10 +298,10 @@ class MultiCurrency extends CommonObject
 		}
 
 		// Update request
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-		$sql .= ' name=\''.$this->db->escape($this->name).'\'';
-		$sql .= ' code=\''.$this->db->escape($this->code).'\'';
-		$sql .= ' WHERE rowid='.((int) $this->id);
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+		$sql .= " name = '".$this->db->escape($this->name)."'";
+		$sql .= " code = '".$this->db->escape($this->code)."'";
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -362,8 +362,8 @@ class MultiCurrency extends CommonObject
 				dol_syslog('Currency::delete  '.join(',', $this->errors), LOG_ERR);
 			}
 
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE rowid='.((int) $this->id);
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -432,17 +432,17 @@ class MultiCurrency extends CommonObject
 	 */
 	public function addRateFromDolibarr($code, $rate)
 	{
-		global $db, $user;
+		global $user;
 
 		$currency = new MultiCurrency($this->db);
 		$currency->code = $code;
 		$currency->name = $code;
 
-		$sql = 'SELECT label FROM '.MAIN_DB_PREFIX."c_currencies WHERE code_iso = '".$this->db->escape($code)."'";
+		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_currencies WHERE code_iso = '".$this->db->escape($code)."'";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		$resql = $db->query($sql);
-		if ($resql && ($line = $db->fetch_object($resql))) {
+		$resql = $this->db->query($sql);
+		if ($resql && ($line = $this->db->fetch_object($resql))) {
 			$currency->name = $line->label;
 		}
 
@@ -477,10 +477,10 @@ class MultiCurrency extends CommonObject
 	 */
 	public function getRate()
 	{
-		$sql = 'SELECT cr.rowid';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as cr';
-		$sql .= ' WHERE cr.fk_multicurrency = '.$this->id;
-		$sql .= ' AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM '.MAIN_DB_PREFIX.$this->table_element_line.' AS cr2 WHERE cr2.fk_multicurrency = '.$this->id.')';
+		$sql = "SELECT cr.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element_line." as cr";
+		$sql .= " WHERE cr.fk_multicurrency = ".((int) $this->id);
+		$sql .= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX.$this->table_element_line." AS cr2 WHERE cr2.fk_multicurrency = ".((int) $this->id).")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -493,20 +493,20 @@ class MultiCurrency extends CommonObject
 	 /**
 	  * Get id of currency from code
 	  *
-	  * @param  DoliDB	$db		    object db
+	  * @param  DoliDB	$dbs	    object db
 	  * @param  string	$code	    code value search
 	  *
 	  * @return int                 0 if not found, >0 if OK
 	  */
-	public static function getIdFromCode($db, $code)
+	public static function getIdFromCode($dbs, $code)
 	{
 		global $conf;
 
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."multicurrency WHERE code = '".$db->escape($code)."' AND entity = ".$conf->entity;
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."multicurrency WHERE code = '".$dbs->escape($code)."' AND entity = ".((int) $conf->entity);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		$resql = $db->query($sql);
-		if ($resql && $obj = $db->fetch_object($resql)) {
+		$resql = $dbs->query($sql);
+		if ($resql && $obj = $dbs->fetch_object($resql)) {
 			return $obj->rowid;
 		} else {
 			return 0;
@@ -516,38 +516,38 @@ class MultiCurrency extends CommonObject
 	 /**
 	  * Get id and rate of currency from code
 	  *
-	  * @param DoliDB	$db		        Object db
+	  * @param DoliDB	$dbs	        Object db
 	  * @param string	$code	        Code value search
 	  * @param integer	$date_document	Date from document (propal, order, invoice, ...)
 	  *
 	  * @return 	array	[0] => id currency
-	  *					[1] => rate
+	  *						[1] => rate
 	  */
-	public static function getIdAndTxFromCode($db, $code, $date_document = '')
+	public static function getIdAndTxFromCode($dbs, $code, $date_document = '')
 	{
 		global $conf;
 
-		$sql1 = 'SELECT m.rowid, mc.rate FROM '.MAIN_DB_PREFIX.'multicurrency m';
+		$sql1 = "SELECT m.rowid, mc.rate FROM ".MAIN_DB_PREFIX."multicurrency m";
 
 		$sql1 .= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
-		$sql1 .= " WHERE m.code = '".$db->escape($code)."'";
+		$sql1 .= " WHERE m.code = '".$dbs->escape($code)."'";
 		$sql1 .= " AND m.entity IN (".getEntity('multicurrency').")";
 		$sql2 = '';
 		if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE) && !empty($date_document)) {	// Use last known rate compared to document date
 			$tmparray = dol_getdate($date_document);
-			$sql2 .= " AND mc.date_sync <= '".$db->idate(dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], true))."'";
+			$sql2 .= " AND mc.date_sync <= '".$dbs->idate(dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], true))."'";
 		}
-		$sql3 = ' ORDER BY mc.date_sync DESC LIMIT 1';
+		$sql3 = " ORDER BY mc.date_sync DESC LIMIT 1";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		$resql = $db->query($sql1.$sql2.$sql3);
+		$resql = $dbs->query($sql1.$sql2.$sql3);
 
-		if ($resql && $obj = $db->fetch_object($resql)) {
+		if ($resql && $obj = $dbs->fetch_object($resql)) {
 			return array($obj->rowid, $obj->rate);
 		} else {
 			if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE)) {
-				$resql = $db->query($sql1.$sql3);
-				if ($resql && $obj = $db->fetch_object($resql)) {
+				$resql = $dbs->query($sql1.$sql3);
+				if ($resql && $obj = $dbs->fetch_object($resql)) {
 					return array($obj->rowid, $obj->rate);
 				}
 			}
@@ -559,11 +559,11 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Get the conversion of amount with invoice rate
 	 *
-	 * @param	int		$fk_facture		id of facture
-	 * @param	double	$amount			amount to convert
-	 * @param	string	$way			'dolibarr' mean the amount is in dolibarr currency
-	 * @param	string	$table			facture or facture_fourn
-	 * @return	double					amount converted
+	 * @param	int				$fk_facture				id of facture
+	 * @param	double			$amount					amount to convert
+	 * @param	string			$way					'dolibarr' mean the amount is in dolibarr currency
+	 * @param	string			$table					facture or facture_fourn
+	 * @return	double|boolean 							amount converted or false if conversion fails
 	 */
 	public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
 	{
@@ -576,22 +576,22 @@ class MultiCurrency extends CommonObject
 				return price2num($amount / $multicurrency_tx, 'MU');
 			}
 		} else {
-			return $amount;
+			return false;
 		}
 	}
 
 	/**
 	 *  Get current invoite rate
 	 *
-	 *  @param	int 	$fk_facture 	id of facture
-	 *  @param 	string 	$table 			facture or facture_fourn
-	 *  @return bool
+	 *  @param	int 		$fk_facture 	id of facture
+	 *  @param 	string 		$table 			facture or facture_fourn
+	 *  @return float|bool					Rate of currency or false if error
 	 */
 	public static function getInvoiceRate($fk_facture, $table = 'facture')
 	{
 		global $db;
 
-		$sql = 'SELECT multicurrency_tx FROM '.MAIN_DB_PREFIX.$table.' WHERE rowid = '.((int) $fk_facture);
+		$sql = "SELECT multicurrency_tx FROM ".MAIN_DB_PREFIX.$table." WHERE rowid = ".((int) $fk_facture);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -686,12 +686,10 @@ class MultiCurrency extends CommonObject
 	 * @param	string	$code 	current code to search
 	 * @return	boolean         True if exists, false if not exists
 	 */
-	public static function checkCodeAlreadyExists($code)
+	public function checkCodeAlreadyExists($code)
 	{
-		global $db;
-
-		$currency = new MultiCurrency($db);
-		if ($currency->fetch('', $code) > 0) {
+		$currencytmp = new MultiCurrency($this->db);
+		if ($currencytmp->fetch('', $code) > 0) {
 			return true;
 		} else {
 			return false;
@@ -748,7 +746,7 @@ class CurrencyRate extends CommonObjectLine
 	 */
 	public function __construct(DoliDB $db)
 	{
-		$this->db = &$db;
+		$this->db = $db;
 
 		return 1;
 	}
@@ -774,13 +772,13 @@ class CurrencyRate extends CommonObjectLine
 		$now = empty($this->date_sync) ? dol_now() : $this->date_sync;
 
 		// Insert request
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
 		$sql .= ' rate,';
 		$sql .= ' date_sync,';
 		$sql .= ' fk_multicurrency,';
 		$sql .= ' entity';
 		$sql .= ') VALUES (';
-		$sql .= ' '.$this->rate.',';
+		$sql .= ' '.((float) $this->rate).',';
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " ".((int) $fk_multicurrency).",";
 		$sql .= " ".((int) $this->entity);
@@ -830,9 +828,9 @@ class CurrencyRate extends CommonObjectLine
 	{
 		dol_syslog('CurrencyRate::fetch', LOG_DEBUG);
 
-		$sql = 'SELECT cr.rowid, cr.rate, cr.date_sync, cr.fk_multicurrency, cr.entity';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' AS cr';
-		$sql .= ' WHERE cr.rowid = '.((int) $id);
+		$sql = "SELECT cr.rowid, cr.rate, cr.date_sync, cr.fk_multicurrency, cr.entity";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS cr";
+		$sql .= " WHERE cr.rowid = ".((int) $id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -879,15 +877,15 @@ class CurrencyRate extends CommonObjectLine
 		$this->rate = price2num($this->rate);
 
 		// Update request
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
-		$sql .= ' rate='.$this->rate;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= "SET rate = ".((float) $this->rate);
 		if (!empty($this->date_sync)) {
-			$sql .= ", date_sync='".$this->db->idate($this->date_sync)."'";
+			$sql .= ", date_sync = '".$this->db->idate($this->date_sync)."'";
 		}
 		if (!empty($this->fk_multicurrency)) {
-			$sql .= ', fk_multicurrency='.$this->fk_multicurrency;
+			$sql .= ', fk_multicurrency = '.((int) $this->fk_multicurrency);
 		}
-		$sql .= ' WHERE rowid='.((int) $this->id);
+		$sql .= " WHERE rowid =".((int) $this->id);
 
 		$this->db->begin();
 

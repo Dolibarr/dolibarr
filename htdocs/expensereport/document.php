@@ -44,13 +44,6 @@ $confirm = GETPOST('confirm', 'alpha');
 
 $childids = $user->getAllChildIds(1);
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
-
-
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -81,6 +74,12 @@ $modulepart = 'trip';
 // Load object
 //include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expensereport', $id, 'expensereport');
+
 if ($object->id > 0) {
 	// Check current user can read this expense report
 	$canread = 0;
@@ -94,6 +93,8 @@ if ($object->id > 0) {
 		accessforbidden();
 	}
 }
+
+$permissiontoadd = $user->rights->expensereport->creer;	// Used by the include of actions_dellink.inc.php
 
 
 /*

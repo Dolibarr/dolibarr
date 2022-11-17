@@ -154,7 +154,6 @@ class PriceParser
 
 		//Retrieve all extrafield for product and add it to values
 		$extrafields = new ExtraFields($this->db);
-		$extrafields->fetch_name_optionals_label('product', true);
 		$product->fetch_optionals();
 		if (is_array($extrafields->attributes[$product->table_element]['label'])) {
 			foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
@@ -263,13 +262,16 @@ class PriceParser
 			return -1;
 		} elseif ($res == 0) {
 			$supplier_min_price = 0;
+			$supplier_min_price_with_discount = 0;
 		} else {
 			 $supplier_min_price = $productFournisseur->fourn_unitprice;
+			 $supplier_min_price_with_discount = $productFournisseur->fourn_unitprice_with_discount;
 		}
 
 		//Accessible values by expressions
 		$extra_values = array_merge($extra_values, array(
 			"supplier_min_price" => $supplier_min_price,
+			"supplier_min_price_with_discount" => $supplier_min_price_with_discount,
 		));
 
 		//Parse the expression and return the price, if not error occurred check if price is higher than min
@@ -329,12 +331,13 @@ class PriceParser
 		//Values for product expressions
 		$extra_values = array_merge($extra_values, array(
 			"supplier_min_price" => 1,
+			"supplier_min_price_with_discount" => 2,
 		));
 
 		//Values for supplier product expressions
 		$extra_values = array_merge($extra_values, array(
-			"supplier_quantity" => 2,
-			"supplier_tva_tx" => 3,
+			"supplier_quantity" => 3,
+			"supplier_tva_tx" => 4,
 		));
 		return $this->parseExpression($product, $expression, $extra_values);
 	}

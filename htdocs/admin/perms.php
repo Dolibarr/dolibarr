@@ -236,7 +236,7 @@ if ($result) {
 			print '</td>';
 		} else {
 			print '<td class="center">';
-			print '<a class="reposition" href="perms.php?pid='.$obj->id.'&amp;action=add">';
+			print '<a class="reposition" href="perms.php?pid='.$obj->id.'&action=add&token='.newToken().'">';
 			//print img_edit_add();
 			print img_picto('', 'switch_off');
 			print '</a>';

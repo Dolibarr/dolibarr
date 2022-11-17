@@ -9,12 +9,13 @@ HasAccessToken=ໂທເຄັນໄດ້ຖືກສ້າງຂຶ້ນແ�
 NewTokenStored=Token ໄດ້ຮັບແລະບັນທຶກໄວ້
 ToCheckDeleteTokenOnProvider=ຄລິກບ່ອນນີ້ເພື່ອກວດເບິ່ງ/ລຶບການອະນຸຍາດທີ່ບັນທຶກໄວ້ໂດຍຜູ້ໃຫ້ບໍລິການ OAuth %s
 TokenDeleted=Token ຖືກລຶບແລ້ວ
-RequestAccess=ຄລິກບ່ອນນີ້ເພື່ອຮ້ອງຂໍ/ຕໍ່ອາຍຸການເຂົ້າເຖິງແລະຮັບເອົາໂທເຄັນໃto່ເພື່ອບັນທຶກ
-DeleteAccess=ຄລິກທີ່ນີ້ເພື່ອລຶບ token
+RequestAccess=Click here to request/renew access and receive a new token
+DeleteAccess=Click here to delete token
 UseTheFollowingUrlAsRedirectURI=ໃຊ້ URL ຕໍ່ໄປນີ້ເປັນ URI ປ່ຽນເສັ້ນທາງເມື່ອສ້າງຂໍ້ມູນປະຈໍາຕົວຂອງເຈົ້າກັບຜູ້ໃຫ້ບໍລິການ OAuth ຂອງເຈົ້າ:
-ListOfSupportedOauthProviders=ປ້ອນຂໍ້ມູນປະ ຈຳ ຕົວທີ່ສະ ໜອງ ໃຫ້ໂດຍຜູ້ໃຫ້ບໍລິການ OAuth2 ຂອງເຈົ້າ. ມີແຕ່ຜູ້ໃຫ້ບໍລິການ OAuth2 ທີ່ຮອງຮັບເທົ່ານັ້ນທີ່ມີລາຍຊື່ຢູ່ທີ່ນີ້. ການບໍລິການເຫຼົ່ານີ້ອາດຈະຖືກໃຊ້ໂດຍໂມດູນອື່ນທີ່ຕ້ອງການການກວດຮັບຮອງຄວາມຖືກຕ້ອງ OAuth2.
-OAuthSetupForLogin=ໜ້າ ເພື່ອສ້າງໂທເຄັນ OAuth
+ListOfSupportedOauthProviders=Add your OAuth2 token providers. Then, go on your OAuth provider admin page to create/get an OAuth ID and Secret and save them here. Once done, switch on the other tab to generate your token.
+OAuthSetupForLogin=Page to manage (generate/delete) OAuth tokens
 SeePreviousTab=ເບິ່ງແຖບກ່ອນ ໜ້າ
+OAuthProvider=OAuth provider
 OAuthIDSecret=ລະຫັດ OAuth ແລະຄວາມລັບ
 TOKEN_REFRESH=Token Refresh Present
 TOKEN_EXPIRED=ໂທເຄັນiredົດອາຍຸແລ້ວ
@@ -23,10 +24,13 @@ TOKEN_DELETE=ລຶບໂທເຄັນທີ່ບັນທຶກໄວ້
 OAUTH_GOOGLE_NAME=ບໍລິການ OAuth Google
 OAUTH_GOOGLE_ID=OAuth Google Id
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=ໄປທີ່ <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> ໜ້າ ນີ້ </a> ຈາກນັ້ນ "ຂໍ້ມູນປະຈໍາຕົວ" ເພື່ອສ້າງຂໍ້ມູນປະຈໍາຕົວ OAuth
 OAUTH_GITHUB_NAME=ບໍລິການ OAuth GitHub
 OAUTH_GITHUB_ID=ID OAuth GitHub
 OAUTH_GITHUB_SECRET=ຄວາມລັບ OAuth GitHub
-OAUTH_GITHUB_DESC=ໄປທີ່ <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> ໜ້າ ນີ້ </a> ຈາກນັ້ນ "ລົງທະບຽນສະັກໃnew່" ເພື່ອສ້າງຂໍ້ມູນປະຈໍາຕົວ OAuth
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
 OAUTH_STRIPE_TEST_NAME=ການທົດສອບ OAuth Stripe
 OAUTH_STRIPE_LIVE_NAME=ການຖ່າຍທອດສົດ OAuth Stripe
+OAUTH_ID=OAuth ID
+OAUTH_SECRET=OAuth secret
+OAuthProviderAdded=OAuth provider added
+AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=An OAuth entry for this provider and label already exists
