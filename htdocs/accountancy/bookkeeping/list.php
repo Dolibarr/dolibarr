@@ -1262,6 +1262,10 @@ while ($i < min($num, $limit)) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 
+$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 print "</table>";
 print '</div>';
 
@@ -1276,4 +1280,4 @@ print '</form>';
 
 // End of page
 llxFooter();
-$db->close();
+    $db->close();
