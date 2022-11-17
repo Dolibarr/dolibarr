@@ -595,11 +595,11 @@ $sql .= $hookmanager->resPrint;
 
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
-	if (!getDolGlobalInt('MAIN_ENABLE_FAST_SCANLIST')) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
 	} else {
-		/* Experimental: The fast and low memory method to get and count full list converts the sql into a sql count */
+		/* Develop: The fast and low memory method to get and count full list converts the sql into a sql count */
 		$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
 		$sqlforcount = preg_replace('/'.preg_quote($linktopfp, '/').'/', '', $sqlforcount);
 		$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
