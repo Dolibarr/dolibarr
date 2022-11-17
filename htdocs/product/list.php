@@ -594,20 +594,22 @@ $sql .= $hookmanager->resPrint;
 //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	/* $result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
-	*/
-	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
-	$sqlforcount = preg_replace('/'.preg_quote($linktopfp, '/').'/', '', $sqlforcount);
-	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
-	$resql = $db->query($sqlforcount);
-	if ($resql) {
-		$objforcount = $db->fetch_object($resql);
-		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+	if (!getDolGlobalInt('MAIN_ENABLE_FAST_SCANLIST')) {
+		$result = $db->query($sql);
+		$nbtotalofrecords = $db->num_rows($result);
 	} else {
-		dol_print_error($db);
+		/* Experimental: The fast and low memory method to get and count full list converts the sql into a sql count */
+		$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+		$sqlforcount = preg_replace('/'.preg_quote($linktopfp, '/').'/', '', $sqlforcount);
+		$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+		$resql = $db->query($sqlforcount);
+		if ($resql) {
+			$objforcount = $db->fetch_object($resql);
+			$nbtotalofrecords = $objforcount->nbtotalofrecords;
+		} else {
+			dol_print_error($db);
+		}
 	}
 
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
