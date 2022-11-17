@@ -301,7 +301,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	if (!empty($date_start) && !empty($date_end)) {
 		$sql .= " AND f.doc_date >= '".$db->idate($date_start)."' AND f.doc_date <= '".$db->idate($date_end)."'";
 	}
-	$sql .= " GROUP BY pcg_type DESC";
+	$sql .= " GROUP BY pcg_type ORDER BY pcg_type DESC";
 	if ($showaccountdetail == 'no') {
 		$sql .= ", name, socid";	// group by "accounting group" (INCOME/EXPENSE), then "customer".
 	}
