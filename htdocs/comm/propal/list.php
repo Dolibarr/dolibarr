@@ -209,7 +209,7 @@ $arrayfields = array(
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
 	's.name_alias'=>array('label'=>"AliasNameShort", 'checked'=>-1),
 	's.town'=>array('label'=>"Town", 'checked'=>-1),
-	's.zip'=>array('label'=>"Zip", 'checked'=>1),
+	's.zip'=>array('label'=>"Zip", 'checked'=>-1),
 	'state.nom'=>array('label'=>"StateShort", 'checked'=>0),
 	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers),
@@ -1680,7 +1680,7 @@ if ($resql) {
 
 		// Thirdparty
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			print $companystatic->getNomUrl(1, 'customer');
 			print '</td>';
 			if (!$i) {
@@ -1964,7 +1964,7 @@ if ($resql) {
 
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1);
 			}
@@ -1976,7 +1976,7 @@ if ($resql) {
 
 		if (!empty($arrayfields['sale_representative']['checked'])) {
 			// Sales representatives
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->socid > 0) {
 				$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
 				if ($listsalesrepresentatives < 0) {
