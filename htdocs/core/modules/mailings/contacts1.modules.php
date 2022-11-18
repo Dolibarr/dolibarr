@@ -311,7 +311,7 @@ class mailing_contacts1 extends MailingTargets
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 		$formadmin = new FormAdmin($this->db);
 		$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
-		$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
+		$s .= $formadmin->select_language('', 'filter_lang', 0, 0, 1, 0, 0, '', 0, 0, 0, null, 1);
 
 		return $s;
 	}
@@ -407,9 +407,10 @@ class mailing_contacts1 extends MailingTargets
 			$sql .= " AND c3.label = '".$this->db->escape($filter_category_supplier)."'";
 		}
 
-		// Filter on language
+		// Filter on language 
+		// we need substring because escape($filter_lang) take just the short value 
 		if ($filter_lang != '') {
-			$sql .= " AND sp.default_lang = '".$this->db->escape($filter_lang)."'";
+			$sql .= " AND SUBSTRING(sp.default_lang,1, 2) = '".$this->db->escape($filter_lang)."'";
 		}
 
 		// Filter on nature
