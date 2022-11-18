@@ -151,4 +151,6 @@ class ExpeditionStats extends Stats
 
 		return $this->_getAllByYear($sql);
 	}
+	public function getAverageByMonth($year){}
+	public function  getAmountByMonth($year,$format = 0){}
 }
