@@ -448,7 +448,9 @@ class pdf_sponge extends ModelePDFFactures
 				$pagenb++;
 
 				// Output header (logo, ref and address blocks). This is first call for first page.
-				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs, $outputlangsbis);
+				$pagehead = $this->_pagehead($pdf, $object, 1, $outputlangs, $outputlangsbis);
+				$top_shift = $pagehead['top_shift'];
+				$shipp_shift = $pagehead['shipp_shift'];
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
@@ -456,7 +458,7 @@ class pdf_sponge extends ModelePDFFactures
 				// $pdf->GetY() here can't be used. It is bottom of the second addresse box but first one may be higher
 
 				// $this->tab_top is y where we must continue content (90 = 42 + 48: 42 is height of logo and ref, 48 is address blocks)
-				$this->tab_top = 90 + $top_shift;		// top_shift is an addition for linked objects or addons (0 in most cases)
+				$this->tab_top = 90 + $top_shift + $shipp_shift;		// top_shift is an addition for linked objects or addons (0 in most cases)
 				$this->tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				// You can add more thing under header here, if you increase $extra_under_address_shift too.
@@ -1290,7 +1292,7 @@ class pdf_sponge extends ModelePDFFactures
 			// Decret n°2099-1299 2022-10-07
 			// French mention : "Option pour le paiement de la taxe d'après les débits"
 			if ($this->emetteur->country_code == 'FR') {
-				if ($conf->global->TAX_MODE == 1) {
+				if (isset($conf->global->TAX_MODE) && $conf->global->TAX_MODE == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->writeHTMLCell(80, 5, '', '', $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
 
@@ -2222,6 +2224,7 @@ class pdf_sponge extends ModelePDFFactures
 		$posy += 1;
 
 		$top_shift = 0;
+		$shipp_shift = 0;
 		// Show list of linked objects
 		$current_y = $pdf->getY();
 		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
@@ -2243,7 +2246,6 @@ class pdf_sponge extends ModelePDFFactures
 
 			$hautcadre = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 38 : 40;
 			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 82;
-
 
 			// Show sender frame
 			if (empty($conf->global->MAIN_PDF_NO_SENDER_FRAME)) {
@@ -2290,6 +2292,25 @@ class pdf_sponge extends ModelePDFFactures
 			$mode = 'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
 
+			$titelrecipient = $outputlangs->transnoentities("BillTo");
+
+			if (getDolGlobalInt('INVOICE_SHOW_SHIPPING_ADDRESS') || $this->emetteur->country_code == 'FR') {
+				$idaddressshipping = $object->getIdContact('external', 'SHIPPING');
+
+				if (!empty($idaddressshipping)) {
+					$contactshipping = $object->fetch_Contact($idaddressshipping[0]);
+					$object->fetch_thirdparty($object->contact->fk_soc);
+					$carac_client_name_shipping=pdfBuildThirdpartyName($object->contact, $outputlangs);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, $object->contact, $usecontact, 'target', $object);
+				} else {
+					$carac_client_name_shipping=pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
+					$carac_client_shipping=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);;
+				}
+				if ((isset($object->contact->socid) && $object->contact->socid == $object->socid) || !isset($object->contact->socid)) {
+					$titelrecipient = $outputlangs->transnoentities("BillShippTo");
+				}
+			}
+
 			// Show recipient
 			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
 			if ($this->page_largeur < 210) {
@@ -2307,7 +2328,7 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);
-				$pdf->MultiCell($widthrecbox - 2, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
+				$pdf->MultiCell($widthrecbox - 2, 5, $titelrecipient, 0, $ltrdirection);
 				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 			}
 
@@ -2322,10 +2343,42 @@ class pdf_sponge extends ModelePDFFactures
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->MultiCell($widthrecbox - 2, 4, $carac_client, 0, $ltrdirection);
+
+			// Show shipping address
+			if (getDolGlobalInt('INVOICE_SHOW_SHIPPING_ADDRESS') || $this->emetteur->country_code == 'FR') {
+				if (!empty($carac_client_shipping) && (isset($object->contact->socid) && $object->contact->socid != $object->socid)) {
+					$posy += $hautcadre;
+
+					// Show shipping frame
+					$pdf->SetXY($posx + 2, $posy - 5);
+					$pdf->SetFont('', '', $default_font_size - 2);
+					$pdf->MultiCell($widthrecbox, '', $langs->trans('ShippingTo'), 0, 'L', 0);
+					$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+
+					// Show shipping name
+					$pdf->SetXY($posx + 2, $posy + 3);
+					$pdf->SetFont('', 'B', $default_font_size);
+					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_name_shipping, '', 'L');
+
+					$posy = $pdf->getY();
+
+					// Show shipping information
+					$pdf->SetXY($posx+2, $posy);
+					$pdf->SetFont('', '', $default_font_size - 1);
+					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_shipping, '', 'L');
+					$shipp_shift += $hautcadre;
+				}
+			}
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
-		return $top_shift;
+
+		// $pagehead = $this->_pagehead($pdf, $object, 1, $outputlangs, $outputlangsbis);
+		// $top_shift = $pagehead->top_shift;
+		// $shipp_shift = $pagehead->shipp_shift;
+
+		$pagehead = array('top_shift' => $top_shift, 'shipp_shift' => $shipp_shift);
+		return $pagehead;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

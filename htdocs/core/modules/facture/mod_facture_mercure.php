@@ -143,16 +143,28 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		// Get Mask value
 		$mask = '';
 		if (is_object($invoice) && $invoice->type == 1) {
-			$mask = $conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
+			if (isset($conf->global->FACTURE_MERCURE_MASK_REPLACEMENT)) {
+				$mask = $conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
+			}
 			if (!$mask) {
-				$mask = $conf->global->FACTURE_MERCURE_MASK_INVOICE;
+				if (isset($conf->global->FACTURE_MERCURE_MASK_INVOICE)) {
+					$mask = $conf->global->FACTURE_MERCURE_MASK_INVOICE;
+				}
 			}
 		} elseif (is_object($invoice) && $invoice->type == 2) {
-			$mask = $conf->global->FACTURE_MERCURE_MASK_CREDIT;
+			if (isset($conf->global->FACTURE_MERCURE_MASK_CREDIT)) {
+				$mask = $conf->global->FACTURE_MERCURE_MASK_CREDIT;
+			}
 		} elseif (is_object($invoice) && $invoice->type == 3) {
-			$mask = $conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
+			if (isset($conf->global->FACTURE_MERCURE_MASK_DEPOSIT)) {
+				$mask = $conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
+			}
 		} else {
-			$mask = $conf->global->FACTURE_MERCURE_MASK_INVOICE;
+			if (isset($conf->global->FACTURE_MERCURE_MASK_INVOICE)) {
+				$mask = $conf->global->FACTURE_MERCURE_MASK_INVOICE;
+			} else {
+				$mask = '';
+			}
 		}
 		if (!$mask) {
 			$this->error = 'NotConfigured';

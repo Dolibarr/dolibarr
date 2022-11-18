@@ -69,6 +69,10 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "INVOICE_ADD_SWISS_QR_CODE", GETPOST("INVOICE_ADD_SWISS_QR_CODE", 'int'), 'chaine', 0, '', $conf->entity);
 		dolibarr_del_const($db, "INVOICE_ADD_ZATCA_QR_CODE", $conf->entity);
 	}
+	if (GETPOSTISSET('DOC_SHOW_SHIPPING_ADDRESS')) {
+		dolibarr_set_const($db, "DOC_SHOW_SHIPPING_ADDRESS", GETPOST("DOC_SHOW_SHIPPING_ADDRESS", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_del_const($db, "DOC_SHOW_SHIPPING_ADDRESS", $conf->entity);
+	}
 
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
@@ -155,16 +159,16 @@ if (isModEnabled('facture')) {
 	}
 	print '</td></tr>';
 
-	/*
-	  print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
-	  if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING');
-	  } else {
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("INVOICE_SHOW_SHIPPING_ADDRESS"), $langs->trans("INVOICE_SHOW_SHIPPING_ADDRESSMore"));
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('INVOICE_SHOW_SHIPPING_ADDRESS');
+	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING", $arrval, $conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING);
-	  }
-	  print '</td></tr>';
-	*/
+		print $form->selectarray("INVOICE_SHOW_SHIPPING_ADDRESS", $arrval, $conf->global->INVOICE_SHOW_SHIPPING_ADDRESS);
+	}
+	print '</td></tr>';
 
 	print '</table>';
 	print '</div>';
