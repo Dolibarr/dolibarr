@@ -407,8 +407,8 @@ class mailing_contacts1 extends MailingTargets
 			$sql .= " AND c3.label = '".$this->db->escape($filter_category_supplier)."'";
 		}
 
-		// Filter on language 
-		// we need substring because escape($filter_lang) take just the short value 
+		// Filter on language
+		// we need substring because escape($filter_lang) take just the short value
 		if ($filter_lang != '') {
 			$sql .= " AND SUBSTRING(sp.default_lang,1, 2) = '".$this->db->escape($filter_lang)."'";
 		}
