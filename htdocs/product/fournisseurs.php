@@ -998,52 +998,72 @@ END;
 
 				$param = "&id=".$object->id;
 
+				$nbfields = 0;
+
 				print '<tr class="liste_titre">';
 				if (!empty($arrayfields['pfp.datec']['checked'])) {
 					print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder, '', '', 1);
+					$nbfields++;
 				}
 				if (!empty($arrayfields['s.nom']['checked'])) {
 					print_liste_field_titre("Suppliers", $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder, '', '', 1);
+					$nbfields++;
 				}
 				print_liste_field_titre("SupplierRef", $_SERVER["PHP_SELF"], "", "", $param, "", $sortfield, $sortorder, '', '', 1);
+				$nbfields++;
 				if (!empty($arrayfields['pfp.fk_availability']['checked'])) {
 					print_liste_field_titre("Availability", $_SERVER["PHP_SELF"], "pfp.fk_availability", "", $param, "", $sortfield, $sortorder);
+					$nbfields++;
 				}
 				if (!empty($arrayfields['pfp.quantity']['checked'])) {
 					print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "pfp.quantity", "", $param, '', $sortfield, $sortorder, 'right ');
+					$nbfields++;
 				}
 				print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+				$nbfields++;
 				print_liste_field_titre("PriceQtyMinHT", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+				$nbfields++;
 				if (isModEnabled("multicurrency")) {
 					print_liste_field_titre("PriceQtyMinHTCurrency", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+					$nbfields++;
 				}
 				if (!empty($arrayfields['pfp.unitprice']['checked'])) {
 					print_liste_field_titre("UnitPriceHT", $_SERVER["PHP_SELF"], "pfp.unitprice", "", $param, '', $sortfield, $sortorder, 'right ');
+					$nbfields++;
 				}
 				if (!empty($arrayfields['pfp.multicurrency_unitprice']['checked'])) {
 					print_liste_field_titre("UnitPriceHTCurrency", $_SERVER["PHP_SELF"], "pfp.multicurrency_unitprice", "", $param, '', $sortfield, $sortorder, 'right ');
+					$nbfields++;
 				}
 				if (isModEnabled("multicurrency")) {
 					print_liste_field_titre("Currency", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+					$nbfields++;
 				}
 				print_liste_field_titre("DiscountQtyMin", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+				$nbfields++;
 				if (!empty($arrayfields['pfp.delivery_time_days']['checked'])) {
 					print_liste_field_titre("NbDaysToDelivery", $_SERVER["PHP_SELF"], "pfp.delivery_time_days", "", $param, '', $sortfield, $sortorder, 'right ');
+					$nbfields++;
 				}
 				if (!empty($arrayfields['pfp.supplier_reputation']['checked'])) {
 					print_liste_field_titre("ReputationForThisProduct", $_SERVER["PHP_SELF"], "pfp.supplier_reputation", "", $param, '', $sortfield, $sortorder, 'center ');
+					$nbfields++;
 				}
 				if (!empty($arrayfields['pfp.fk_barcode_type']['checked'])) {
 					print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center ');
+					$nbfields++;
 				}
 				if (!empty($arrayfields['pfp.barcode']['checked'])) {
 					print_liste_field_titre("BarcodeValue", $_SERVER["PHP_SELF"], "pfp.barcode", "", $param, '', $sortfield, $sortorder, 'center ');
+					$nbfields++;
 				}
 				if (!empty($arrayfields['pfp.packaging']['checked'])) {
 					print_liste_field_titre("PackagingForThisProduct", $_SERVER["PHP_SELF"], "pfp.packaging", "", $param, 'align="center"', $sortfield, $sortorder);
+					$nbfields++;
 				}
 				if (!empty($arrayfields['pfp.tms']['checked'])) {
 					print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ', '', 1);
+					$nbfields++;
 				}
 
 				// fetch optionals attributes and labels
@@ -1065,6 +1085,7 @@ END;
 								}
 								if (!empty($arrayfields['ef.' . $key]['checked'])) {
 									print_liste_field_titre($extratitle, $_SERVER["PHP_SELF"], 'ef.' . $key, '', $param, '', $sortfield, $sortorder, 'right ');
+									$nbfields++;
 								}
 							}
 						}
@@ -1072,10 +1093,11 @@ END;
 				}
 
 				if (is_object($hookmanager)) {
-					$parameters = array('id_fourn'=>(!empty($id_fourn)?$id_fourn:''), 'prod_id'=>$object->id);
+					$parameters = array('id_fourn'=>(!empty($id_fourn)?$id_fourn:''), 'prod_id'=>$object->id, 'nbfields'=>$nbfields);
 					$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
 				}
 				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+				$nbfields++;
 				print "</tr>\n";
 
 				if (is_array($product_fourn_list)) {
@@ -1256,6 +1278,10 @@ END;
 						print '</td>';
 
 						print '</tr>';
+					}
+
+					if (empty($product_fourn_list)) {
+						print '<tr><td colspan="'.$nbfields.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 					}
 				} else {
 					dol_print_error($db);
