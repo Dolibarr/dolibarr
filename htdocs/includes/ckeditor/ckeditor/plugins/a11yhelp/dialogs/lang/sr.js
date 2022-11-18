@@ -1,5 +1,5 @@
 ﻿/*
- Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
+ Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
  For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
 CKEDITOR.plugins.setLang("a11yhelp","sr",{title:"Упутства за помоћ",contents:"Садржаји за помоћ. Да би сте затворили дијалог притисните ЕСЦ",legend:[{name:"Опште",items:[{name:"Алатке за преуређиванје",legend:"Притисните ${toolbarFocus} да би означили алатке. До следеће и претходне групе алатки можете дићи тастером  TAB и SHIFT+TAB. До тастера следеће и претходне групе алатки можете доћи са тастерима СТРЕЛИЦА ЛЕВО и СТРЕЛИЦА ДЕСНО. Притисните СПАЦЕ и ЕНТЕР да би активирали тастер алатки."},{name:"Уређивач дијалога",

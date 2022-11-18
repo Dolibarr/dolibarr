@@ -26,6 +26,8 @@
  * \brief   Page to show product prices by customer
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -38,13 +40,17 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$prodcustprice = new Productcustomerprice($db);
 }
 
+
+// Load translation files required by the page
 $langs->loadLangs(array("products", "companies", "bills"));
 
-$action = GETPOST('action', 'aZ09');
-$search_prod = GETPOST('search_prod', 'alpha');
-$cancel = GETPOST('cancel', 'alpha');
-$search_label = GETPOST('search_label', 'alpha');
-$search_price = GETPOST('search_price');
+
+// Get parameters
+$action 		= GETPOST('action', 'aZ09');
+$search_prod 	= GETPOST('search_prod', 'alpha');
+$cancel 		= GETPOST('cancel', 'alpha');
+$search_label 	= GETPOST('search_label', 'alpha');
+$search_price 	= GETPOST('search_price');
 $search_price_ttc = GETPOST('search_price_ttc');
 
 // Security check
@@ -54,6 +60,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
+// Initialize objects
 $object = new Societe($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -151,12 +158,12 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'mesgs');
 		} else {
-			setEventMessages($langs->trans('Delete'), null, 'errors');
+			setEventMessages($langs->trans('RecordDeleted'), null, 'errors');
 		}
 		$action = '';
 	}
 
-	if ($action == 'update_customer_price_confirm' && !$_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+	if ($action == 'update_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
 		$prodcustprice->fetch(GETPOST('lineid', 'int'));
 
 		$update_child_soc = GETPOST('updatechildprice');
@@ -192,7 +199,7 @@ $object = new Societe($db);
 $result = $object->fetch($socid);
 llxHeader("", $langs->trans("ThirdParty").'-'.$langs->trans('PriceByCustomer'));
 
-if (!empty($conf->notification->enabled)) {
+if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
 $head = societe_prepare_head($object);
@@ -218,7 +225,7 @@ if ($object->client) {
 	print $object->code_client;
 	$tmpcheck = $object->check_codeclient();
 	if ($tmpcheck != 0 && $tmpcheck != -5) {
-		print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+		print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 	}
 	print '</td></tr>';
 }
@@ -229,7 +236,7 @@ if ($object->fournisseur) {
 	print $object->code_fournisseur;
 	$tmpcheck = $object->check_codefournisseur();
 	if ($tmpcheck != 0 && $tmpcheck != -5) {
-		print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+		print ' <span class="error">('.$langs->trans("WrongSupplierCode").')</span>';
 	}
 	print '</td></tr>';
 }
@@ -245,8 +252,8 @@ print dol_get_fiche_end();
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$prodcustprice = new Productcustomerprice($db);
 
-	$sortfield = GETPOST("sortfield", 'alpha');
-	$sortorder = GETPOST("sortorder", 'alpha');
+	$sortfield = GETPOST('sortfield', 'aZ09comma');
+	$sortorder = GETPOST('sortorder', 'aZ09comma');
 	$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 	if (empty($page) || $page == -1) {
@@ -326,22 +333,14 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		$text = $langs->trans('SellingPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 		print '</td><td>';
-		if ($object->price_base_type == 'TTC') {
-			print '<input name="price" size="10" value="'.price($object->price_ttc).'">';
-		} else {
-			print '<input name="price" size="10" value="'.price($object->price).'">';
-		}
+		print '<input name="price" size="10" value="'.GETPOST('price', 'int').'">';
 		print '</td></tr>';
 
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
 		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
-		if ($object->price_base_type == 'TTC') {
-			print '<td><input name="price_min" size="10" value="'.price($object->price_min_ttc).'">';
-		} else {
-			print '<td><input name="price_min" size="10" value="'.price($object->price_min).'">';
-		}
+		print '<td><input name="price_min" size="10" value="'.GETPOST('price_min', 'int').'">';
 		print '</td></tr>';
 
 		// Update all child soc
@@ -355,13 +354,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '</table>';
 
-		print '<br><div class="center">';
-		print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print $form->buttonsSaveCancel();
 
-		print '<br></form>';
+		print '</form>';
 	} elseif ($action == 'edit_customer_price') {
 		// Edit mode
 
@@ -386,7 +381,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 			// Ref. Customer
 			print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
-			print '<td><input name="ref_customer" size="12" value="' . dol_escape_htmltag($prodcustprice->ref_customer) . '"></td></tr>';
+			print '<td><input name="ref_customer" size="12" value="'.dol_escape_htmltag($prodcustprice->ref_customer).'"></td></tr>';
 
 			// VAT
 			print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
@@ -437,13 +432,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 			print '</table>';
 
-			print '<br><div class="center">';
-			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
+			print $form->buttonsSaveCancel();
 
-			print '<br></form>';
+			print '</form>';
 		}
 	} elseif ($action == 'showlog_customer_price') {
 		print '<br>';
@@ -533,7 +524,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print "\n".'<div class="tabsAction">'."\n";
 
 		if ($user->rights->produit->creer || $user->rights->service->creer) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=add_customer_price&amp;socid='.$object->id.'">'.$langs->trans("AddCustomerPrice").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=add_customer_price&token='.newToken().'&socid='.$object->id.'">'.$langs->trans("AddCustomerPrice").'</a></div>';
 		}
 		print "\n</div>\n";
 
@@ -541,10 +532,10 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		// Count total nb of records
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-			$nbtotalofrecords = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			$nbtotalofrecords = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 		}
 
-		$result = $prodcustprice->fetch_all($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
+		$result = $prodcustprice->fetchAll($sortorder, $sortfield, $conf->liste_limit, $offset, $filter);
 		if ($result < 0) {
 			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 		}
@@ -559,6 +550,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
@@ -578,14 +570,14 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		if (count($prodcustprice->lines) > 0 || $search_prod) {
 			print '<tr class="liste_titre">';
-			print '<td class="liste_titre"><input type="text" class="flat" name="search_prod" value="'.$search_prod.'" size="20"></td>';
-			print '<td class="liste_titre" ><input type="text" class="flat" name="search_label" value="'.$search_label.'" size="20"></td>';
+			print '<td class="liste_titre"><input type="text" class="flat width75" name="search_prod" value="'.$search_prod.'"></td>';
+			print '<td class="liste_titre" ><input type="text" class="flat width75" name="search_label" value="'.$search_label.'"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
-			print '<td class="liste_titre" class="right"><input type="text" class="flat" name="search_price" value="'.$search_price.'" size="10"></td>';
-			print '<td class="liste_titre" class="right"><input type="text" class="flat" name="search_price_ttc" value="'.$search_price_ttc.'" size="10"></td>';
+			print '<td class="liste_titre right"><input type="text" class="flat width75 right" name="search_price" value="'.$search_price.'"></td>';
+			print '<td class="liste_titre right"><input type="text" class="flat width75 right" name="search_price_ttc" value="'.$search_price_ttc.'"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
@@ -624,15 +616,15 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				// Action
 				if ($user->rights->produit->creer || $user->rights->service->creer) {
 					print '<td class="right nowraponall">';
-					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&amp;socid='.$object->id.'&amp;prodid='.$line->fk_product.'">';
+					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&token='.newToken().'&socid='.$object->id.'&prodid='.$line->fk_product.'">';
 					print img_info();
 					print '</a>';
 					print ' ';
-					print '<a class="editfielda paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&amp;socid='.$object->id.'&amp;lineid='.$line->id.'">';
+					print '<a class="editfielda paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&token='.newToken().'&socid='.$object->id.'&lineid='.$line->id.'">';
 					print img_edit('default', 0, 'style="vertical-align: middle;"');
 					print '</a>';
 					print ' ';
-					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;token='.newToken().'&amp;socid='.$object->id.'&amp;lineid='.$line->id.'">';
+					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&token='.newToken().'&socid='.$object->id.'&lineid='.$line->id.'">';
 					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
 					print '</td>';
@@ -649,6 +641,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		}
 
 		print "</table>";
+		print '</div>';
 
 		print "</form>";
 	}

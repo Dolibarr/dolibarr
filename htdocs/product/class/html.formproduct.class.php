@@ -42,6 +42,7 @@ class FormProduct
 	// Cache arrays
 	public $cache_warehouses = array();
 	public $cache_lot = array();
+	public $cache_workstations = array();
 
 
 	/**
@@ -102,12 +103,12 @@ class FormProduct
 		} elseif ($sumStock) {
 			$sql .= ", sum(ps.reel) as stock";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.fk_entrepot = e.rowid";
+		$sql .= " FROM ".$this->db->prefix()."entrepot as e";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock as ps on ps.fk_entrepot = e.rowid";
 		if (!empty($fk_product) && $fk_product > 0) {
 			$sql .= " AND ps.fk_product = ".((int) $fk_product);
 			if (!empty($batch)) {
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$this->db->escape($batch)."'";
+				$sql .= " LEFT JOIN ".$this->db->prefix()."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$this->db->escape($batch)."'";
 			}
 		}
 		$sql .= " WHERE e.entity IN (".getEntity('stock').")";
@@ -172,6 +173,63 @@ class FormProduct
 		}
 	}
 
+	/**
+	 * Load in cache array list of workstations
+	 * If fk_product is not 0, we do not use cache
+	 *
+	 * @param	int		    $fk_product			Add quantity of stock in label for product with id fk_product. Nothing if 0.
+	 * @param	array       $exclude            warehouses ids to exclude
+	 * @param   string      $orderBy            [='e.ref'] Order by
+	 * @return  int                             Nb of loaded lines, 0 if already loaded, <0 if KO
+	 * @throws  Exception
+	 */
+	public function loadWorkstations($fk_product = 0, $exclude = array(), $orderBy = 'w.ref')
+	{
+		global $conf, $langs;
+
+		if (empty($fk_product) && count($this->cache_workstations)) {
+			return 0; // Cache already loaded and we do not want a list with information specific to a product
+		}
+
+		$sql = "SELECT w.rowid, w.ref as ref, w.label as label, w.type, w.nb_operators_required,w.thm_operator_estimated,w.thm_machine_estimated";
+		$sql .= " FROM ".$this->db->prefix()."workstation_workstation as w";
+		$sql .= " WHERE 1 = 1";
+		if (!empty($fk_product) && $fk_product > 0) {
+			$sql .= " AND w.fk_product = ".((int) $fk_product);
+		}
+		$sql .= " AND w.entity IN (".getEntity('workstation').")";
+
+		if (is_array($exclude) && !empty($exclude)) {
+			$sql .= ' AND w.rowid NOT IN('.$this->db->sanitize(implode(',', $exclude)).')';
+		}
+
+		$sql .= " ORDER BY ".$orderBy;
+
+		dol_syslog(get_class($this).'::loadWorkstations', LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+
+				$this->cache_workstations[$obj->rowid]['id'] = $obj->rowid;
+				$this->cache_workstations[$obj->rowid]['ref'] = $obj->ref;
+				$this->cache_workstations[$obj->rowid]['label'] = $obj->label;
+				$this->cache_workstations[$obj->rowid]['type'] = $obj->type;
+				$this->cache_workstations[$obj->rowid]['nb_operators_required'] = $obj->nb_operators_required;
+				$this->cache_workstations[$obj->rowid]['thm_operator_estimated'] = $obj->thm_operator_estimated;
+				$this->cache_workstations[$obj->rowid]['thm_machine_estimated'] = $obj->thm_machine_estimated;
+				$i++;
+			}
+
+			return $num;
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return full path to current warehouse in $tab (recursive function)
@@ -202,7 +260,7 @@ class FormProduct
 	/**
 	 *  Return list of warehouses
 	 *
-	 *  @param  string|int  $selected           Id of preselected warehouse ('' or '-1' for no value, 'ifone'=select value if one value otherwise no value, '-2' to use the default value from setup)
+	 *  @param  string|int  $selected           Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
 	 *  @param  string      $htmlname           Name of html select html
 	 *  @param  string      $filterstatus       warehouse status filter, following comma separated filter options can be used
 	 *                                          'warehouseopen' = select products from open warehouses,
@@ -279,7 +337,7 @@ class FormProduct
 			}
 
 			$out .= '<option value="'.$id.'"';
-			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) {
+			if ($selected == $id || (preg_match('/^ifone/', $selected) && $nbofwarehouses == 1)) {
 				$out .= ' selected';
 			}
 			$out .= ' data-html="'.dol_escape_htmltag($label).'"';
@@ -311,6 +369,105 @@ class FormProduct
 		);
 
 		$reshook = $hookmanager->executeHooks('selectWarehouses', $parameters, $this);
+		if ($reshook > 0) {
+			$out = $hookmanager->resPrint;
+		} elseif ($reshook == 0) {
+			$out .= $hookmanager->resPrint;
+		}
+
+		return $out;
+	}
+
+	/**
+	 *  Return list of workstations
+	 *
+	 *  @param  string|int  $selected           Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
+	 *  @param  string      $htmlname           Name of html select html
+	 *  @param  int		    $empty			    1=Can be empty, 0 if not
+	 * 	@param	int		    $disabled		    1=Select is disabled
+	 * 	@param	int		    $fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
+	 *  @param	string	    $empty_label	    Empty label if needed (only if $empty=1)
+	 *  @param	int	    	$forcecombo		    1=Force combo iso ajax select2
+	 *  @param	array	    $events			            Events to add to select2
+	 *  @param  string      $morecss                    Add more css classes to HTML select
+	 *  @param	array	    $exclude            Warehouses ids to exclude
+	 *  @param  int         $showfullpath       1=Show full path of name (parent ref into label), 0=Show only ref of current warehouse
+	 *  @param  string      $orderBy            [='e.ref'] Order by
+	 * 	@return string					        HTML select
+	 *
+	 *  @throws Exception
+	 */
+	public function selectWorkstations($selected = '', $htmlname = 'idworkstations', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = array(), $showfullpath = 1, $orderBy = 'e.ref')
+	{
+		global $conf, $langs, $user, $hookmanager;
+
+		dol_syslog(get_class($this)."::selectWorkstations $selected, $htmlname, $empty, $disabled, $fk_product, $empty_label, $forcecombo, $morecss", LOG_DEBUG);
+
+		$filterstatus='';
+		$out = '';
+		if (!empty($fk_product) && $fk_product > 0) {
+			$this->cache_workstations = array();
+		}
+
+		$this->loadWorkstations($fk_product);
+		$nbofworkstations = count($this->cache_workstations);
+
+		if ($conf->use_javascript_ajax && !$forcecombo) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$comboenhancement = ajax_combobox($htmlname, $events);
+			$out .= $comboenhancement;
+		}
+
+		if (strpos($htmlname, 'search_') !== 0) {
+			if (empty($user->fk_workstation) || $user->fk_workstation == -1) {
+				if (($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WORKSTATION)) {
+					$selected = $conf->global->MAIN_DEFAULT_WORKSTATION;
+				}
+			} else {
+				if (($selected == '-2' || $selected == 'ifone') && !empty($conf->global->MAIN_DEFAULT_WORKSTATION)) {
+					$selected = $user->fk_workstation;
+				}
+			}
+		}
+
+		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '').' id="'.$htmlname.'" name="'.($htmlname.($disabled ? '_disabled' : '')).'">';
+		if ($empty) {
+			$out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
+		}
+		foreach ($this->cache_workstations as $id => $arraytypes) {
+			$label = $arraytypes['label'];
+
+			$out .= '<option value="'.$id.'"';
+			if ($selected == $id || (preg_match('/^ifone/', $selected) && $nbofworkstations == 1)) {
+				$out .= ' selected';
+			}
+			$out .= ' data-html="'.dol_escape_htmltag($label).'"';
+			$out .= '>';
+			$out .= $label;
+			$out .= '</option>';
+		}
+		$out .= '</select>';
+		if ($disabled) {
+			$out .= '<input type="hidden" name="'.$htmlname.'" value="'.(($selected > 0) ? $selected : '').'">';
+		}
+
+		$parameters = array(
+			'selected' => $selected,
+			'htmlname' => $htmlname,
+			'filterstatus' => $filterstatus,
+			'empty' => $empty,
+			'disabled ' => $disabled,
+			'fk_product' => $fk_product,
+			'empty_label' => $empty_label,
+			'forcecombo' => $forcecombo,
+			'events' => $events,
+			'morecss' => $morecss,
+			'exclude' => $exclude,
+			'showfullpath' => $showfullpath,
+			'orderBy' => $orderBy
+		);
+
+		$reshook = $hookmanager->executeHooks('selectWorkstations', $parameters, $this);
 		if ($reshook > 0) {
 			$out = $hookmanager->resPrint;
 		} elseif ($reshook == 0) {
@@ -477,18 +634,13 @@ class FormProduct
 		$filter = array();
 		$filter['t.active'] = 1;
 
-		$result = $productNature->fetchAll(
-			'',
-			'',
-			0,
-			0,
-			$filter
-		);
+		$result = $productNature->fetchAll('', '', 0, 0, $filter);
+
 		if ($result < 0) {
 			dol_print_error($db);
 			return -1;
 		} else {
-			$return .= '<select class="flat" name="'.$name.'">';
+			$return .= '<select class="flat" name="'.$name.'" id="'.$name.'">';
 			if ($showempty || ($selected == '' || $selected == '-1')) {
 				$return .= '<option value="-1"';
 				if ($selected == '' || $selected == '-1') {
@@ -521,6 +673,8 @@ class FormProduct
 			$return .= '</select>';
 		}
 
+		$return .= ajax_combobox($name);
+
 		return $return;
 	}
 
@@ -546,7 +700,7 @@ class FormProduct
 	{
 		global $conf, $langs;
 
-		dol_syslog(get_class($this)."::selectLot $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $forcecombo, $morecss", LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectLotStock $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out = '';
 		$productIdArray = array();
@@ -594,6 +748,7 @@ class FormProduct
 					}
 
 					$out .= '<option value="'.$id.'"';
+
 					if ($selected == $id || ($selected == 'ifone' && $nboflot == 1)) {
 						$out .= ' selected';
 					}
@@ -611,6 +766,67 @@ class FormProduct
 
 		return $out;
 	}
+
+
+
+	/**
+	 *  Return list of lot numbers (stock from product_batch) for product and warehouse.
+	 *
+	 *  @param  string	$htmlname		Name of key that is inside attribute "list" of an input text field.
+	 *  @param  int		$empty			1=Can be empty, 0 if not
+	 *  @param	int		$fk_product		show lot numbers of product with id fk_product. All from objectLines if 0.
+	 *  @param	int		$fk_entrepot	filter lot numbers for warehouse with id fk_entrepot. All if 0.
+	 *  @param	array	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
+	 *  @return	string					HTML datalist
+	 */
+	public function selectLotDataList($htmlname = 'batch_id', $empty = 0, $fk_product = 0, $fk_entrepot = 0, $objectLines = array())
+	{
+		global $conf, $langs;
+
+		dol_syslog(get_class($this)."::selectLotDataList $htmlname, $empty, $fk_product, $fk_entrepot,$objectLines", LOG_DEBUG);
+
+		$out = '';
+		$productIdArray = array();
+		if (!is_array($objectLines) || !count($objectLines)) {
+			if (!empty($fk_product) && $fk_product > 0) {
+				$productIdArray[] = (int) $fk_product;
+			}
+		} else {
+			foreach ($objectLines as $line) {
+				if ($line->fk_product) {
+					$productIdArray[] = $line->fk_product;
+				}
+			}
+		}
+
+		$nboflot = $this->loadLotStock($productIdArray);
+
+		$out .= '<datalist id="'.$htmlname.'" >';
+
+		if (!empty($fk_product) && $fk_product > 0) {
+			$productIdArray = array((int) $fk_product); // only show lot stock for product
+		} else {
+			foreach ($this->cache_lot as $key => $value) {
+				$productIdArray[] = $key;
+			}
+		}
+
+		foreach ($productIdArray as $productId) {
+			if (array_key_exists($productId, $this->cache_lot)) {
+				foreach ($this->cache_lot[$productId] as $id => $arraytypes) {
+					if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id']) {
+						$label = $arraytypes['entrepot_label'] . ' - ';
+						$label .= $arraytypes['batch'];
+						$out .= '<option>' . $arraytypes['batch'] . '</option>';
+					}
+				}
+			}
+		}
+		$out .= '</datalist>';
+
+		return $out;
+	}
+
 
 	/**
 	 * Load in cache array list of lot available in stock from a given list of products
@@ -642,9 +858,9 @@ class FormProduct
 			$this->cache_lot = array();
 			$productIdList = implode(',', $productIdArray);
 			$sql = "SELECT pb.batch, pb.rowid, ps.fk_entrepot, pb.qty, e.ref as label, ps.fk_product";
-			$sql .= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.rowid = pb.fk_product_stock";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (".getEntity('stock').")";
+			$sql .= " FROM ".$this->db->prefix()."product_batch as pb";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock as ps on ps.rowid = pb.fk_product_stock";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (".getEntity('stock').")";
 			if (!empty($productIdList)) {
 				$sql .= " WHERE ps.fk_product IN (".$this->db->sanitize($productIdList).")";
 			}

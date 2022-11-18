@@ -27,6 +27,7 @@
  *       \brief      tab for Adding, editing, deleting a member's memberships
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -39,6 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->loadLangs(array("companies", "bills", "members", "users", "mails", 'other'));
+
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -110,10 +113,10 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Define variables to determine what the current user can do on the members
-$canaddmember = $user->rights->adherent->creer;
+$canaddmember = $user->hasRight('adherent', 'creer');
 // Define variables to determine what the current user can do on the properties of a member
 if ($id) {
-	$caneditfieldmember = $user->rights->adherent->creer;
+	$caneditfieldmember = $user->hasRight('adherent', 'creer');
 }
 
 // Security check
@@ -209,7 +212,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 	// Subscription informations
 	$datesubscription = 0;
 	$datesubend = 0;
-	$paymentdate = '';	// Do not use 0 here, default value is '' that means not filled where 0 means 1970-01-01
+	$paymentdate = ''; // Do not use 0 here, default value is '' that means not filled where 0 means 1970-01-01
 	if (GETPOST("reyear", "int") && GETPOST("remonth", "int") && GETPOST("reday", "int")) {
 		$datesubscription = dol_mktime(0, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
 	}
@@ -269,7 +272,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 			$action = 'addsubscription';
 		} else {
 			// If an amount has been provided, we check also fields that becomes mandatory when amount is not null.
-			if (!empty($conf->banque->enabled) && GETPOST("paymentsave") != 'none') {
+			if (isModEnabled('banque') && GETPOST("paymentsave") != 'none') {
 				if (GETPOST("subscription")) {
 					if (!GETPOST("label")) {
 						$errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
@@ -473,7 +476,7 @@ if ($rowid > 0) {
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 		$rowspan++;
 	}
-	if (!empty($conf->societe->enabled)) {
+	if (isModEnabled('societe')) {
 		$rowspan++;
 	}
 
@@ -485,7 +488,11 @@ if ($rowid > 0) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-	dol_banner_tab($object, 'rowid', $linkback);
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= '</a>';
+
+	dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
@@ -495,36 +502,37 @@ if ($rowid > 0) {
 
 	// Login
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-		print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
 	}
 
 	// Type
-	print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
+	print '<tr><td class="titlefield">'.$langs->trans("Type").'</td>';
+	print '<td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 	// Morphy
-	print '<tr><td>'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
+	print '<tr><td>'.$langs->trans("MemberNature").'</td>';
+	print '<td class="valeur" >'.$object->getmorphylib('', 1).'</td>';
 	print '</tr>';
 
 	// Company
-	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.dol_escape_htmltag($object->company).'</td></tr>';
 
 	// Civility
-	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
+	print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'</td>';
 	print '</tr>';
 
 	// Password
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-		print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $object->pass);
+		print '<tr><td>'.$langs->trans("Password").'</td><td>';
 		if ($object->pass) {
 			print preg_replace('/./i', '*', $object->pass);
 		} else {
 			if ($user->admin) {
-				print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
-			} else {
-				print $langs->trans("Hidden");
+				print '<!-- '.$langs->trans("Crypted").': '.$object->pass_indatabase_crypted.' -->';
 			}
+			print '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
 		}
-		if ((!empty($object->pass) || !empty($object->pass_crypted)) && empty($object->user_id)) {
+		if (!empty($object->pass_indatabase) && empty($object->user_id)) {	// Show warning only for old password still in clear (does not happen anymore)
 			$langs->load("errors");
 			$htmltext = $langs->trans("WarningPasswordSetWithNoAccount");
 			print ' '.$form->textwithpicto('', $htmltext, 1, 'warning');
@@ -540,15 +548,17 @@ if ($rowid > 0) {
 			print " ".img_warning($langs->trans("Late"));
 		}
 	} else {
-		if (!$adht->subscription) {
+		if ($object->need_subscription == 0) {
+			print $langs->trans("SubscriptionNotNeeded");
+		} elseif (!$adht->subscription) {
 			print $langs->trans("SubscriptionNotRecorded");
-			if ($object->statut > 0) {
-				print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+			if (Adherent::STATUS_VALIDATED == $object->statut) {
+				print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
 			}
 		} else {
 			print $langs->trans("SubscriptionNotReceived");
-			if ($object->statut > 0) {
-				print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
+			if (Adherent::STATUS_VALIDATED == $object->statut) {
+				print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft, not excluded and not resiliated
 			}
 		}
 	}
@@ -557,37 +567,38 @@ if ($rowid > 0) {
 	print '</table>';
 
 	print '</div>';
-	print '<div class="fichehalfright"><div class="ficheaddleft">';
 
+	print '<div class="fichehalfright">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border tableforfield" width="100%">';
 
-	// Birthday
-	print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+	print '<table class="border tableforfield centpercent">';
 
-	// Public
-	print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
-
-	// Categories
-	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+	// Tags / Categories
+	if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 		print '<tr><td>'.$langs->trans("Categories").'</td>';
 		print '<td colspan="2">';
 		print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
 		print '</td></tr>';
 	}
 
+	// Birth Date
+	print '<tr><td class="titlefield">'.$langs->trans("DateOfBirth").'</td><td class="valeur">'.dol_print_date($object->birth, 'day').'</td></tr>';
+
+	// Public
+	print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($object->public).'</td></tr>';
+
 	// Other attributes
 	$cols = 2;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	// Third party Dolibarr
-	if (!empty($conf->societe->enabled)) {
+	if (isModEnabled('societe')) {
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans("LinkedToDolibarrThirdParty");
 		print '</td>';
-		if ($action != 'editthirdparty' && $user->rights->adherent->creer) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'), 1).'</a></td>';
+		if ($action != 'editthirdparty' && $user->hasRight('adherent', 'creer')) {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdparty&token='.newToken().'&rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToThirdParty'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td colspan="2" class="valeur">';
@@ -601,7 +612,7 @@ if ($rowid > 0) {
 			print '<tr><td>';
 			print $form->select_company($object->fk_soc, 'socid', '', 1);
 			print '</td>';
-			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '<td class="left"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
 		} else {
 			if ($object->fk_soc) {
@@ -628,10 +639,10 @@ if ($rowid > 0) {
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans("LinkedToDolibarrUser");
 	print '</td>';
-	if ($action != 'editlogin' && $user->rights->adherent->creer) {
+	if ($action != 'editlogin' && $user->hasRight('adherent', 'creer')) {
 		print '<td class="right">';
 		if ($user->rights->user->user->creer) {
-			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editlogin&amp;rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'), 1).'</a>';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editlogin&token='.newToken().'&rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'), 1).'</a>';
 		}
 		print '</td>';
 	}
@@ -652,12 +663,10 @@ if ($rowid > 0) {
 
 	print "</table>\n";
 
-	print "</div></div></div>\n";
+	print "</div></div>\n";
 	print '<div style="clear:both"></div>';
 
 	print dol_get_fiche_end();
-
-	print '</form>';
 
 
 	/*
@@ -670,7 +679,7 @@ if ($rowid > 0) {
 			print '<div class="tabsAction">';
 
 			if ($object->statut > 0) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription">'.$langs->trans("AddSubscription")."</a></div>";
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'&action=addsubscription&token='.newToken().'">'.$langs->trans("AddSubscription")."</a></div>";
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("ValidateBefore")).'">'.$langs->trans("AddSubscription").'</a></div>';
 			}
@@ -712,7 +721,7 @@ if ($rowid > 0) {
 			print_liste_field_titre('DateStart', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 			print_liste_field_titre('DateEnd', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 			print_liste_field_titre('Amount', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled('banque')) {
 				print_liste_field_titre('Account', $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 			}
 			print "</tr>\n";
@@ -747,7 +756,7 @@ if ($rowid > 0) {
 				print '<td class="center">'.dol_print_date($db->jdate($objp->dateh), 'day')."</td>\n";
 				print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day')."</td>\n";
 				print '<td class="right">'.price($objp->subscription).'</td>';
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled('banque')) {
 					print '<td class="right">';
 					if ($objp->bid) {
 						$accountstatic->label = $objp->label;
@@ -756,7 +765,7 @@ if ($rowid > 0) {
 						$accountstatic->account_number = $objp->account_number;
 						$accountstatic->currency_code = $objp->currency_code;
 
-						if (!empty($conf->accounting->enabled) && $objp->fk_accountancy_journal > 0) {
+						if (isModEnabled('accounting') && $objp->fk_accountancy_journal > 0) {
 							$accountingjournal = new AccountingJournal($db);
 							$accountingjournal->fetch($objp->fk_accountancy_journal);
 
@@ -776,7 +785,7 @@ if ($rowid > 0) {
 
 			if (empty($num)) {
 				$colspan = 6;
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled('banque')) {
 					$colspan++;
 				}
 				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
@@ -791,7 +800,7 @@ if ($rowid > 0) {
 
 	if (($action != 'addsubscription' && $action != 'create_thirdparty')) {
 		// Shon online payment link
-		$useonlinepayment = (!empty($conf->paypal->enabled) || !empty($conf->stripe->enabled) || !empty($conf->paybox->enabled));
+		$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
 
 		if ($useonlinepayment) {
 			print '<br>';
@@ -825,11 +834,11 @@ if ($rowid > 0) {
 				$bankviainvoice = 1;
 			}
 		} else {
-			if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+			if (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && isModEnabled('banque') && isModEnabled('societe') && isModEnabled('facture')) {
 				$bankviainvoice = 1;
-			} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && !empty($conf->banque->enabled)) {
+			} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && isModEnabled('banque')) {
 				$bankdirect = 1;
-			} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && !empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+			} elseif (!empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && isModEnabled('banque') && isModEnabled('societe') && isModEnabled('facture')) {
 				$invoiceonly = 1;
 			}
 		}
@@ -838,7 +847,7 @@ if ($rowid > 0) {
 
 		if ($conf->use_javascript_ajax) {
 			//var_dump($bankdirect.'-'.$bankviainvoice.'-'.$invoiceonly.'-'.empty($conf->global->ADHERENT_BANK_USE));
-			print "\n".'<script type="text/javascript" language="javascript">';
+			print "\n".'<script type="text/javascript">';
 			print '$(document).ready(function () {
 						$(".bankswitchclass, .bankswitchclass2").'.(($bankdirect || $bankviainvoice) ? 'show()' : 'hide()').';
 						$("#none, #invoiceonly").click(function() {
@@ -976,7 +985,7 @@ if ($rowid > 0) {
 			print '"></td></tr>';
 
 			// Complementary action
-			if ((!empty($conf->banque->enabled) || !empty($conf->facture->enabled)) && empty($conf->global->ADHERENT_SUBSCRIPTION_HIDECOMPLEMENTARYACTIONS)) {
+			if ((isModEnabled('banque') || isModEnabled('facture')) && empty($conf->global->ADHERENT_SUBSCRIPTION_HIDECOMPLEMENTARYACTIONS)) {
 				$company = new Societe($db);
 				if ($object->fk_soc) {
 					$result = $company->fetch($object->fk_soc);
@@ -992,12 +1001,12 @@ if ($rowid > 0) {
 				print '<input type="radio" class="moreaction" id="none" name="paymentsave" value="none"'.(empty($bankdirect) && empty($invoiceonly) && empty($bankviainvoice) ? ' checked' : '').'>';
 				print '<label for="none"> '.$langs->trans("None").'</label><br>';
 				// Add entry into bank accoun
-				if (!empty($conf->banque->enabled)) {
+				if (isModEnabled('banque')) {
 					print '<input type="radio" class="moreaction" id="bankdirect" name="paymentsave" value="bankdirect"'.(!empty($bankdirect) ? ' checked' : '');
 					print '><label for="bankdirect">  '.$langs->trans("MoreActionBankDirect").'</label><br>';
 				}
 				// Add invoice with no payments
-				if (!empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				if (isModEnabled('societe') && isModEnabled('facture')) {
 					print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(!empty($invoiceonly) ? ' checked' : '');
 					//if (empty($object->fk_soc)) print ' disabled';
 					print '><label for="invoiceonly"> '.$langs->trans("MoreActionInvoiceOnly");
@@ -1016,7 +1025,7 @@ if ($rowid > 0) {
 					if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') {
 						print '. <span class="opacitymedium">'.$langs->trans("NoVatOnSubscription", 0).'</span>';
 					}
-					if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (!empty($conf->product->enabled) || !empty($conf->service->enabled))) {
+					if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (isModEnabled('product') || isModEnabled('service'))) {
 						$prodtmp = new Product($db);
 						$result = $prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
 						if ($result < 0) {
@@ -1027,7 +1036,7 @@ if ($rowid > 0) {
 					print '</label><br>';
 				}
 				// Add invoice with payments
-				if (!empty($conf->banque->enabled) && !empty($conf->societe->enabled) && !empty($conf->facture->enabled)) {
+				if (isModEnabled('banque') && isModEnabled('societe') && isModEnabled('facture')) {
 					print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.(!empty($bankviainvoice) ? ' checked' : '');
 					//if (empty($object->fk_soc)) print ' disabled';
 					print '><label for="bankviainvoice">  '.$langs->trans("MoreActionBankViaInvoice");
@@ -1046,7 +1055,7 @@ if ($rowid > 0) {
 					if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') {
 						print '. <span class="opacitymedium">'.$langs->trans("NoVatOnSubscription", 0).'</span>';
 					}
-					if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (!empty($conf->product->enabled) || !empty($conf->service->enabled))) {
+					if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (isModEnabled('product')|| isModEnabled('service'))) {
 						$prodtmp = new Product($db);
 						$result = $prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
 						if ($result < 0) {
@@ -1066,7 +1075,7 @@ if ($rowid > 0) {
 
 				// Payment mode
 				print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-				$form->select_types_paiements(GETPOST('operation'), 'operation', '', 2, 1, 0, 0, 1, 'minwidth200');
+				print $form->select_types_paiements(GETPOST('operation'), 'operation', '', 2, 1, 0, 0, 1, 'minwidth200', 1);
 				print "</td></tr>\n";
 
 				// Date of payment
@@ -1159,9 +1168,13 @@ if ($rowid > 0) {
 		print dol_get_fiche_end();
 
 		print '<div class="center">';
-		print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
+		if (empty($reshook)) {
+			print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
+			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+		}
 		print '</div>';
 
 		print '</form>';

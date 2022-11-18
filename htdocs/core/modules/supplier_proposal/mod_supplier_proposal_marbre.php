@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier
 
 
 /**
- *	Class to manage customer order numbering rules Marbre
+ * Class to manage the Marbre numbering rule for Request for quotation
  */
 class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 {
@@ -120,9 +120,9 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	Propal		$supplier_proposal		Object commercial proposal
-	 *  @return string      			Next value
+	 *  @param	Societe				$objsoc     			Object third party
+	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
+	 *  @return string      								Next value
 	 */
 	public function getNextValue($objsoc, $supplier_proposal)
 	{

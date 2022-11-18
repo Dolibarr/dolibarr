@@ -52,3 +52,6 @@ BlockedLogDisableNotAllowedForCountry=Liste des pays où l'utilisation de ce mod
 OnlyNonValid=Non valide
 TooManyRecordToScanRestrictFilters=Trop d'enregistrements à analyser / analyser. Veuillez restreindre la liste avec des filtres plus restrictifs.
 RestrictYearToExport=Restreindre mois / année pour exporter
+BlockedLogEnabled=Le système de suivi des événements dans des journaux inaltérables a été activé
+BlockedLogDisabled=Le système de suivi des événements dans des journaux inaltérables a été désactivé après certains enregistrements. Nous avons enregistré une empreinte digitale spéciale pour suivre la chaîne comme cassée
+BlockedLogDisabledBis=Le système de suivi des événements dans des journaux inaltérables a été désactivé. Ceci est possible car aucun enregistrement n'a encore été fait.

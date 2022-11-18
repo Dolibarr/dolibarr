@@ -21,39 +21,45 @@
  */
 
 /**
- *   	\file       htdocs/hrm/index.php
- *		\ingroup    hrm
- *		\brief      Home page for HRM area.
+ *    \file       htdocs/hrm/index.php
+ *    \ingroup    hrm
+ *    \brief      Home page for HRM area.
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-if ($conf->deplacement->enabled) {
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+
+if (isModEnabled('deplacement')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 }
-if ($conf->expensereport->enabled) {
+if (isModEnabled('expensereport')) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
-if ($conf->recruitment->enabled) {
+if (isModEnabled('recruitment')) {
 	require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 }
-if ($conf->holiday->enabled) {
+if (isModEnabled('holiday')) {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 }
 
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks('hrmindex');
 
 // Load translation files required by the page
-$langs->loadLangs(array('users', 'holidays', 'trips', 'boxes'));
+$langs->loadLangs(array('users', 'holiday', 'trips', 'boxes'));
 
+// Get Parameters
 $socid = GETPOST("socid", "int");
 
 // Protection if external user
@@ -73,7 +79,7 @@ $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
  */
 
 // Update sold
-if (!empty($conf->holiday->enabled) && !empty($setupcompanynotcomplete)) {
+if (isModEnabled('holiday') && !empty($setupcompanynotcomplete)) {
 	$holidaystatic = new Holiday($db);
 	$result = $holidaystatic->updateBalance();
 }
@@ -96,7 +102,7 @@ print load_fiche_titre($langs->trans("HRMArea"), '', 'hrm');
 if (!empty($setupcompanynotcomplete)) {
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()).'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 
 	llxFooter();
 	exit;
@@ -106,15 +112,15 @@ if (!empty($setupcompanynotcomplete)) {
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is useless due to the global search combo
-	if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
+	if (isModEnabled('holiday') && $user->rights->holiday->read) {
 		$langs->load("holiday");
 		$listofsearchfields['search_holiday'] = array('text'=>'TitreRequestCP');
 	}
-	if (!empty($conf->deplacement->enabled) && $user->rights->deplacement->lire) {
+	if (isModEnabled('deplacement') && $user->rights->deplacement->lire) {
 		$langs->load("trips");
 		$listofsearchfields['search_deplacement'] = array('text'=>'ExpenseReport');
 	}
-	if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire) {
+	if (isModEnabled('expensereport') && $user->rights->expensereport->lire) {
 		$langs->load("trips");
 		$listofsearchfields['search_expensereport'] = array('text'=>'ExpenseReport');
 	}
@@ -144,7 +150,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This is usel
 }
 
 
-if (!empty($conf->holiday->enabled)) {
+if (isModEnabled('holiday')) {
 	if (empty($conf->global->HOLIDAY_HIDE_BALANCE)) {
 		$holidaystatic = new Holiday($db);
 		$user_id = $user->id;
@@ -153,7 +159,7 @@ if (!empty($conf->holiday->enabled)) {
 		print '<table class="noborder nohover centpercent">';
 		print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
 		print '<tr class="oddeven">';
-		print '<td colspan="3">';
+		print '<td>';
 
 		$out = '';
 		$nb_holiday = 0;
@@ -163,8 +169,9 @@ if (!empty($conf->holiday->enabled)) {
 			$nb_holiday += $nb_type;
 			$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ? price2num($nb_type) : 0).'</strong><br>';
 		}
-		print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
-		print $out;
+		$balancetoshow = $langs->trans('SoldeCPUser', '{s1}');
+		print '<div class="valignmiddle div-balanceofleave">'.str_replace('{s1}', img_picto('', 'holiday', 'class="paddingleft pictofixedwidth"').'<span class="balanceofleave valignmiddle'.($nb_holiday > 0 ? ' amountpaymentcomplete' : ($nb_holiday < 0 ? ' amountremaintopay' : ' amountpaymentneutral')).'">'.round($nb_holiday, 5).'</span>', $balancetoshow).'</div>';
+		print '<span class="opacitymedium">'.$out.'</span>';
 
 		print '</td>';
 		print '</tr>';
@@ -175,12 +182,12 @@ if (!empty($conf->holiday->enabled)) {
 }
 
 
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div><div class="fichetwothirdright">';
 
 
 
 // Latest leave requests
-if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
+if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.photo, u.statut as user_status,";
 	$sql .= " x.rowid, x.ref, x.fk_type, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.tms as dm, x.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
@@ -189,7 +196,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 	if (empty($user->rights->holiday->readall)) {
 		$sql .= ' AND x.fk_user IN ('.$db->sanitize(join(',', $childids)).')';
 	}
-	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
 	$sql .= $db->order("x.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
@@ -222,6 +229,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 				$holidaystatic->id = $obj->rowid;
 				$holidaystatic->ref = $obj->ref;
 				$holidaystatic->statut = $obj->status;
+				$holidaystatic->date_debut = $db->jdate($obj->date_start);
 
 				$userstatic->id = $obj->uid;
 				$userstatic->lastname = $obj->lastname;
@@ -233,8 +241,10 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">'.$holidaystatic->getNomUrl(1).'</td>';
-				print '<td class="tdoverflowmax125">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
-				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($langs->trans($typeleaves[$obj->fk_type]['code'])).'">'.dol_escape_htmltag($langs->trans($typeleaves[$obj->fk_type]['code'])).'</td>';
+				print '<td class="tdoverflowmax100">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+
+				$leavecode = empty($typeleaves[$obj->fk_type]) ? 'Undefined' : $typeleaves[$obj->fk_type]['code'];
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($langs->trans($leavecode)).'">'.dol_escape_htmltag($langs->trans($leavecode)).'</td>';
 
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
@@ -242,7 +252,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 				print '<td>'.dol_print_date($db->jdate($obj->date_start), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
 				print '<td>'.dol_print_date($db->jdate($obj->date_end), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
-				print '<td class="right nowrap" width="16">'.$holidaystatic->LibStatut($obj->status, 3).'</td>';
+				print '<td class="right nowrap" width="16">'.$holidaystatic->LibStatut($obj->status, 3, $holidaystatic->date_debut).'</td>';
 				print '</tr>';
 
 				$i++;
@@ -260,17 +270,17 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read) {
 
 
 // Latest expense report
-if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire) {
+if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.statut as user_status, u.photo,";
 	$sql .= " x.rowid, x.ref, x.date_debut as date, x.tms as dm, x.total_ttc, x.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as x, ".MAIN_DB_PREFIX."user as u";
-	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE u.rowid = x.fk_user_author";
 	$sql .= " AND x.entity = ".$conf->entity;
 	if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)) {
 		$sql .= ' AND x.fk_user_author IN ('.$db->sanitize(join(',', $childids)).')';
 	}
-	//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= " AND x.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if (!empty($socid)) $sql.= " AND x.fk_soc = ".((int) $socid);
 	$sql .= $db->order("x.tms", "DESC");
 	$sql .= $db->plimit($max, 0);
@@ -332,18 +342,18 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 
 
 // Last modified job position
-if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitmentjobposition->read) {
+if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjobposition', 'read')) {
 	$staticrecruitmentcandidature = new RecruitmentCandidature($db);
 	$staticrecruitmentjobposition = new RecruitmentJobPosition($db);
 	$sql = "SELECT rc.rowid, rc.ref, rc.email, rc.lastname, rc.firstname, rc.date_creation, rc.tms, rc.status,";
 	$sql.= " rp.rowid as jobid, rp.ref as jobref, rp.label";
 	$sql .= " FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rc";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."recruitment_recruitmentjobposition as rp ON rc.fk_recruitmentjobposition = rp.rowid";
-	if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$socid) {
+	if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE rc.entity IN (".getEntity($staticrecruitmentcandidature->element).")";
-	if ($conf->societe->enabled && !$user->rights->societe->client->voir && !$socid) {
+	if (isModEnabled('societe') && empty($user->rights->societe->client->voir) && !$socid) {
 		$sql .= " AND rp.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -404,7 +414,7 @@ if (!empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitme
 	}
 }
 
-print '</div></div></div>';
+print '</div></div>';
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $parameters = array('user' => $user);

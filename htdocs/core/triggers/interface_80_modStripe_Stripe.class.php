@@ -141,7 +141,7 @@ class InterfaceStripe extends DolibarrTriggers
 					}
 
 					if ($changerequested) {
-						/*if (! empty($object->email)) $customer->email = $object->email;
+						/*if (!empty($object->email)) $customer->email = $object->email;
 						$customer->description = $namecleaned;
 						if (empty($taxinfo)) $customer->tax_info = array('type'=>'vat', 'tax_id'=>null);
 						else $customer->tax_info = $taxinfo; */
@@ -183,7 +183,7 @@ class InterfaceStripe extends DolibarrTriggers
 		if ($action == 'COMPANY_DELETE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if (!empty($conf->global->STRIPE_DELETE_STRIPE_ACCOUNT_WHEN_DELETING_THIRPARTY)) {
+			if (!empty($conf->global->STRIPE_DELETE_STRIPE_ACCOUNT_WHEN_DELETING_THIRDPARTY)) {
 				// By default, we do not delete the stripe account. We may need to reuse it with its payment_intent, for example if delete is for a merge of thirdparties.
 				$stripeacc = $stripe->getStripeAccount($service); // No need of network access for this. May return '' if no Oauth defined.
 
@@ -202,8 +202,8 @@ class InterfaceStripe extends DolibarrTriggers
 			$this->db->query($sql);
 		}
 
-		// If payment mode is linked to Stripee, we update/delete Stripe too
-		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
+		// If payment mode is linked to Stripe, we update/delete Stripe too
+		if ($action == 'COMPANYPAYMENTMODE_CREATE' && $object->type == 'card') {
 			// For creation of credit card, we do not create in Stripe automatically
 		}
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
@@ -222,6 +222,7 @@ class InterfaceStripe extends DolibarrTriggers
 					}
 
 					if ($customer) {
+						dol_syslog("We got the customer, so now we update the credit card", LOG_DEBUG);
 						$card = $stripe->cardStripe($customer, $object, $stripeacc, $servicestatus);
 						if ($card) {
 							$card->metadata = array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']));

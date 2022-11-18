@@ -30,7 +30,7 @@ dol_include_once('/partnership/core/modules/partnership/modules_partnership.php'
 
 
 /**
- *	Class to manage customer Bom numbering rules advanced
+ *	Class to manage the Advanced numbering rule for Partnership
  */
 class mod_partnership_advanced extends ModeleNumRefPartnership
 {
@@ -79,9 +79,9 @@ class mod_partnership_advanced extends ModeleNumRefPartnership
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskPartnership" value="'.$conf->global->PARTNERSHIP_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskPartnership" value="'.getDolGlobalString('PARTNERSHIP_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -132,7 +132,7 @@ class mod_partnership_advanced extends ModeleNumRefPartnership
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->PARTNERSHIP_ADVANCED_MASK;
+		$mask = getDolGlobalString('PARTNERSHIP_ADVANCED_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

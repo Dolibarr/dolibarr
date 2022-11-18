@@ -23,7 +23,7 @@
  */
 
 /**
- *  \file			htdocs/core/modules/knowledgemanagement/modules_knowledgerecord.php
+ *  \file			htdocs/knowledgemanagement/core/modules/knowledgemanagement/modules_knowledgerecord.php
  *  \ingroup		knowledgemanagement
  *  \brief			File that contains parent class for knowledgerecords document models and parent class for knowledgerecords numbering models
  */

@@ -24,6 +24,7 @@
  *       \brief      Page des stats des commandes clients pour un produit
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -49,8 +50,8 @@ $hookmanager->initHooks(array('productstatsorder'));
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -139,13 +140,14 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, c.rowid, d.total_ht as total_ht, c.ref,";
 			$sql .= " c.ref_client,";
 			$sql .= " c.date_commande, c.fk_statut as statut, c.facture, c.rowid as commandeid, d.rowid, d.qty";
-			if (!$user->rights->societe->client->voir && !$socid) {
+			$sql .= ", c.date_livraison";
+			if (empty($user->rights->societe->client->voir) && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."commande as c";
 			$sql .= ", ".MAIN_DB_PREFIX."commandedet as d";
-			if (!$user->rights->societe->client->voir && !$socid) {
+			if (empty($user->rights->societe->client->voir) && !$socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE c.fk_soc = s.rowid";
@@ -158,7 +160,7 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($search_year)) {
 				$sql .= ' AND YEAR(c.date_commande) IN ('.$db->sanitize($search_year).')';
 			}
-			if (!$user->rights->societe->client->voir && !$socid) {
+			if (empty($user->rights->societe->client->voir) && !$socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($socid) {
@@ -183,11 +185,10 @@ if ($id > 0 || !empty($ref)) {
 			if ($result) {
 				$num = $db->num_rows($result);
 
+				$option = '&id='.$product->id;
+
 				if ($limit > 0 && $limit != $conf->liste_limit) {
 					$option .= '&limit='.urlencode($limit);
-				}
-				if (!empty($id)) {
-					$option .= '&id='.$product->id;
 				}
 				if (!empty($search_month)) {
 					$option .= '&search_month='.urlencode($search_month);
@@ -231,6 +232,7 @@ if ($id > 0 || !empty($ref)) {
 				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
 				print_liste_field_titre("OrderDate", $_SERVER["PHP_SELF"], "c.date_commande", "", $option, 'align="center"', $sortfield, $sortorder);
+				print_liste_field_titre('DateDeliveryPlanned', $_SERVER['PHP_SELF'], 'c.date_livraison', '', $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "c.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
 				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "c.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
@@ -256,6 +258,10 @@ if ($id > 0 || !empty($ref)) {
 						print "<td>".$objp->code_client."</td>\n";
 						print '<td class="center">';
 						print dol_print_date($db->jdate($objp->date_commande), 'dayhour')."</td>";
+						// delivery planned date
+						print '<td class="center">';
+						print dol_print_date($db->jdate($objp->date_livraison), 'dayhour');
+						print '</td>';
 						print  '<td class="center">'.$objp->qty."</td>\n";
 						print '<td align="right">'.price($objp->total_ht)."</td>\n";
 						print '<td align="right">'.$orderstatic->LibStatut($objp->statut, $objp->facture, 5).'</td>';
@@ -270,6 +276,8 @@ if ($id > 0 || !empty($ref)) {
 					print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
 				}
 				print '<td colspan="3"></td>';
+				// delivery planned date
+				print '<td></td>';
 				print '<td class="center">'.$total_qty.'</td>';
 				print '<td align="right">'.price($total_ht).'</td>';
 				print '<td></td>';

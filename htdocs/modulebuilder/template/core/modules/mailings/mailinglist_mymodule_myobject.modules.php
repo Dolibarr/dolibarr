@@ -24,7 +24,8 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	// CHANGE THIS: Set to 1 if selector is available for admin users only
 	public $require_admin = 0;
 
-	public $enabled = 0;
+	public $enabled = '$conf->mymodule->enabled';
+
 	public $require_module = array();
 
 	/**
@@ -45,19 +46,15 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 */
 	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db = $db;
-		if (is_array($conf->modules)) {
-			$this->enabled = in_array('mymodule', $conf->modules) ? 1 : 0;
-		}
+		$this->enabled = isModEnabled('mymodule');
 	}
 
 
 	/**
-	 *  Affiche formulaire de filtre qui apparait dans page de selection des destinataires de mailings
+	 *  Displays the filter form that appears in the mailing recipient selection page
 	 *
-	 *  @return     string      Retourne zone select
+	 *  @return     string      Return select zone
 	 */
 	public function formFilter()
 	{
@@ -83,7 +80,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 
 
 	/**
-	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
+	 *  Returns url link to file of the source of the recipient of the mailing
 	 *
 	 *  @param      int         $id     ID
 	 *  @return     string              Url lien
@@ -115,7 +112,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 		}
 		$sql .= " ORDER BY email";
 
-		// Stocke destinataires dans target
+		// Store recipients in target
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);

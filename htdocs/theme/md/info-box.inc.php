@@ -48,7 +48,20 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin: 2px;
 	border-radius: 3px;
 }
-
+.member-company-back {
+	padding: 2px 7px 2px 7px;
+	background-color: #e4e4e4;
+	color: #666;
+	border-radius: 10px;
+	white-space: nowrap;
+}
+.member-individual-back {
+	padding: 2px 7px 2px 7px;
+	background-color: #e4e4e4;
+	color: #666;
+	border-radius: 10px;
+	white-space: nowrap;
+}
 
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
@@ -133,7 +146,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	display: block;
 	position: relative;
 	min-height: 90px;
-	background: #fff;
+	background: var(--colorbacklineimpair2);
 	width: 100%;
 	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
 	border-radius: 2px;
@@ -193,10 +206,15 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
 	<?php } ?>
 }
+
 .info-box-sm .info-box-icon {
+	height: 80px;
 	width: 80px;
 	font-size: 25px;
 	line-height: 92px;
+}
+.opened-dash-board-wrap .info-box .info-box-icon {
+	font-size: 2em;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
 	line-height: 80px;
@@ -241,8 +259,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	cursor: default;
 
 	font-size: 10px;
-	line-height: 22px;
-	padding: 0px 3px;
+	line-height: 1.5em;
+	padding: 4px 3px;
 	text-align: center;
 	opacity: 1;
 	-webkit-transition: opacity 0.5s, visibility 0s 0.5s;
@@ -465,6 +483,10 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	width: 100%;
 	margin: 0 0 0 -15px;
 	/*justify-content: space-between;*/
+}
+
+.box-flex-grow-zero{
+	flex-grow: 0 !important;
 }
 
 .box-flex-item{

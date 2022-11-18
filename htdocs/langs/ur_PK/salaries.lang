@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=اکاؤنٹنگ اکاؤنٹ صارف تیسرے فریق کے لیے استعمال کیا جاتا ہے۔
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=صارف کارڈ پر بیان کردہ وقف اکاؤنٹنگ اکاؤنٹ صرف Subledger اکاؤنٹنگ کے لیے استعمال کیا جائے گا۔ یہ جنرل لیجر کے لیے اور سبلیجر اکاؤنٹنگ کی ڈیفالٹ ویلیو کے طور پر استعمال کیا جائے گا اگر صارف پر وقف صارف اکاؤنٹنگ اکاؤنٹ کی وضاحت نہیں کی گئی ہے۔
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=اجرت کی ادائیگی کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ
+CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=بطور ڈیفالٹ، تنخواہ بناتے وقت "خودکار طور پر کل ادائیگی بنائیں" کے آپشن کو خالی چھوڑ دیں۔
+Salary=تنخواہ
+Salaries=تنخواہیں
+NewSalary=نئی تنخواہ
+AddSalary=تنخواہ شامل کریں۔
+NewSalaryPayment=نیا تنخواہ کارڈ
+AddSalaryPayment=تنخواہ کی ادائیگی شامل کریں۔
+SalaryPayment=تنخواہ کی ادائیگی
+SalariesPayments=تنخواہوں کی ادائیگی
+SalariesPaymentsOf=%s کی تنخواہوں کی ادائیگی
+ShowSalaryPayment=تنخواہ کی ادائیگی دکھائیں۔
+THM=اوسط فی گھنٹہ کی شرح
+TJM=روزانہ کی اوسط شرح
+CurrentSalary=موجودہ تنخواہ
+THMDescription=اگر ماڈیول پروجیکٹ استعمال کیا جاتا ہے تو اس قدر کا استعمال صارفین کے داخل کردہ پروجیکٹ پر خرچ ہونے والے وقت کی لاگت کا حساب لگانے کے لیے کیا جا سکتا ہے۔
+TJMDescription=یہ قیمت فی الحال صرف معلومات کے لیے ہے اور کسی حساب کتاب کے لیے استعمال نہیں ہوتی ہے۔
+LastSalaries=تازہ ترین %s تنخواہیں۔
+AllSalaries=تمام تنخواہیں۔
+SalariesStatistics=تنخواہ کے اعدادوشمار
+SalariesAndPayments=تنخواہیں اور ادائیگیاں
+ConfirmDeleteSalaryPayment=کیا آپ اس تنخواہ کی ادائیگی کو حذف کرنا چاہتے ہیں؟
+FillFieldFirst=پہلے ملازم کی فیلڈ کو بھریں۔
+UpdateAmountWithLastSalary=آخری تنخواہ کے ساتھ رقم مقرر کریں۔

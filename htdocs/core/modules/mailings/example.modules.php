@@ -111,8 +111,8 @@ class mailing_example extends MailingTargets
 	 *  For example if this selector is used to extract 500 different
 	 *  emails from a text file, this function must return 500.
 	 *
-	 *  @param		string		$sql		Requete sql de comptage
-	 *  @return		int|string				Number of recipient or '?'
+	 *  @param		string			$sql		Requete sql de comptage
+	 *  @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql = '')
 	{

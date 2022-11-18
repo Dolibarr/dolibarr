@@ -73,7 +73,7 @@ class ExpeditionStats extends Stats
 
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
 		$this->where .= " AND c.entity = ".$conf->entity;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($this->socid) {
@@ -97,7 +97,7 @@ class ExpeditionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -121,7 +121,7 @@ class ExpeditionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE ".$this->where;
@@ -129,6 +129,54 @@ class ExpeditionStats extends Stats
 		$sql .= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByYear($sql);
+	}
+
+	/**
+	 * Return the orders amount by month for a year
+	 *
+	 * @param	int		$year		Year to scan
+	 * @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return	array				Array with amount by month
+	 */
+	public function getAmountByMonth($year, $format = 0)
+	{
+		global $user;
+
+		$sql = "SELECT date_format(c.date_valid,'%m') as dm, SUM(c.".$this->field.")";
+		$sql .= " FROM ".$this->from;
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
+		$sql .= $this->join;
+		$sql .= " WHERE ".$this->where;
+		$sql .= " GROUP BY dm";
+		$sql .= $this->db->order('dm', 'DESC');
+
+		$res = $this->_getAmountByMonth($year, $sql, $format);
+		return $res;
+	}
+
+	/**
+	 * Return the orders amount average by month for a year
+	 *
+	 * @param	int		$year	year for stats
+	 * @return	array			array with number by month
+	 */
+	public function getAverageByMonth($year)
+	{
+		global $user;
+
+		$sql = "SELECT date_format(c.date_valid,'%m') as dm, AVG(c.".$this->field.")";
+		$sql .= " FROM ".$this->from;
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		}
+		$sql .= $this->join;
+		$sql .= " WHERE ".$this->where;
+		$sql .= " GROUP BY dm";
+		$sql .= $this->db->order('dm', 'DESC');
+
+		return $this->_getAverageByMonth($year, $sql);
 	}
 
 	/**
@@ -142,7 +190,7 @@ class ExpeditionStats extends Stats
 
 		$sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		if (!$user->rights->societe->client->voir && !$this->socid) {
+		if (empty($user->rights->societe->client->voir) && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE ".$this->where;

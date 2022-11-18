@@ -17,7 +17,6 @@ UserForApprovalID=ID de aprobación del usuario
 SendRequestCP=Crear solicitud de permiso
 DelayToRequestCP=Las solicitudes de ausencia deben hacerse al menos <b> %s día (s) </ b> antes que ellas.
 MenuConfCP=Balance de licencia
-SoldeCPUser=El saldo de la licencia es <b>%s</b> días.
 ErrorEndDateCP=Debe seleccionar una fecha de finalización mayor que la fecha de inicio.
 ErrorSQLCreateCP=Se produjo un error SQL durante la creación:
 ErrorIDFicheCP=Se ha producido un error, la solicitud de ausencia no existe.
