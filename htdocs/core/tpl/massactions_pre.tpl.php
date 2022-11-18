@@ -87,8 +87,9 @@ if ($massaction == 'presend') {
 				$thirdpartyid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
 				if ($objecttmp->element == 'societe') {
 					$thirdpartyid = $objecttmp->id;
-				}
-				if ($objecttmp->element == 'expensereport') {
+				} elseif ($objecttmp->element == 'contact') {
+					$thirdpartyid = $objecttmp->id;
+				} elseif ($objecttmp->element == 'expensereport') {
 					$thirdpartyid = $objecttmp->fk_user_author;
 				}
 				$listofselectedthirdparties[$thirdpartyid] = $thirdpartyid;
@@ -124,6 +125,10 @@ if ($massaction == 'presend') {
 			$fuser = new User($db);
 			$fuser->fetch($thirdpartyid);
 			$liste['thirdparty'] = $fuser->getFullName($langs)." &lt;".$fuser->email."&gt;";
+		} elseif ($objecttmp->element == 'contact') {
+			$fcontact = new Contact($db);
+			$fcontact->fetch($thirdpartyid);
+			$liste['contact'] = $fcontact->getFullName($langs)." &lt;".$fcontact->email."&gt;";
 		} elseif ($objecttmp->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
 			$fadherent = new Adherent($db);
 			$fadherent->fetch($objecttmp->fk_member);
@@ -147,12 +152,17 @@ if ($massaction == 'presend') {
 	$formmail->withtocc = 1;
 	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
 	$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REF_CLIENT__');
-	$formmail->withfile = 1;
-	// $formmail->withfile = 2; Not yet supported in mass action
-	$formmail->withmaindocfile = 1; // Add a checkbox "Attach also main document"
-	if ($objecttmp->element != 'societe') {
-		$formmail->withfile = '<span class="hideonsmartphone opacitymedium">'.$langs->trans("OnlyPDFattachmentSupported").'</span>';
-		$formmail->withmaindocfile = - 1; // Add a checkbox "Attach also main document" but not checked by default
+	if ($objecttmp->element == 'contact') {
+		$formmail->withfile = 0;
+		$formmail->withmaindocfile = 0; // Add a checkbox "Attach also main document"
+	} else {
+		$formmail->withfile = 1;
+		// $formmail->withfile = 2; Not yet supported in mass action
+		$formmail->withmaindocfile = 1; // Add a checkbox "Attach also main document"
+		if ($objecttmp->element != 'societe') {
+			$formmail->withfile = '<span class="hideonsmartphone opacitymedium">' . $langs->trans("OnlyPDFattachmentSupported") . '</span>';
+			$formmail->withmaindocfile = -1; // Add a checkbox "Attach also main document" but not checked by default
+		}
 	}
 	$formmail->withbody = 1;
 	$formmail->withdeliveryreceipt = 1;
