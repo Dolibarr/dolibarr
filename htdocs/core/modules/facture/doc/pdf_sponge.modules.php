@@ -2365,10 +2365,6 @@ class pdf_sponge extends ModelePDFFactures
 
 		$pdf->SetTextColor(0, 0, 0);
 
-		// $pagehead = $this->_pagehead($pdf, $object, 1, $outputlangs, $outputlangsbis);
-		// $top_shift = $pagehead->top_shift;
-		// $shipp_shift = $pagehead->shipp_shift;
-
 		$pagehead = array('top_shift' => $top_shift, 'shipp_shift' => $shipp_shift);
 		return $pagehead;
 	}
