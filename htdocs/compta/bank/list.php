@@ -59,7 +59,10 @@ $search_number = GETPOST('search_number', 'alpha');
 $search_status = GETPOST('search_status') ?GETPOST('search_status', 'alpha') : 'opened'; // 'all' or ''='opened'
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$search_category_list = GETPOST("search_category_".Categorie::TYPE_ACCOUNT."_list", "array");
+$search_category_list ="";
+if (isModEnabled('categorie')) {
+	$search_category_list = GETPOST("search_category_".Categorie::TYPE_ACCOUNT."_list", "array");
+}
 
 $socid = 0;
 // Security check
