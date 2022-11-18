@@ -492,7 +492,7 @@ if ($step == 2 && $datatoimport) {
 		$text = $objmodelimport->getDriverDescForKey($key);
 		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $text).'</td>';
 		print '<td style="text-align:center">';
-		$filename = $langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
+		$filename = $langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$key;
 		print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'&output=file&file='.urlencode($filename).'" target="_blank" rel="noopener noreferrer">';
 		print img_picto('', 'download', 'class="paddingright opacitymedium"');
 		print $langs->trans("DownloadEmptyExampleShort");
