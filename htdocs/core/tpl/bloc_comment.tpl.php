@@ -49,7 +49,7 @@ if ($action !== 'editcomment') {
 	print '</td>';
 
 	print '<td class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+	print '<input type="submit" class="button button-add" value="'.$langs->trans("Add").'">';
 	print '</td></tr>';
 }
 

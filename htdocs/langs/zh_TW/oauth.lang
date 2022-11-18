@@ -9,12 +9,13 @@ HasAccessToken=已產生許可證並儲存到本地資料庫中
 NewTokenStored=已收到並已儲存許可證
 ToCheckDeleteTokenOnProvider=點擊此處以檢查/刪除由%s OAuth供應商儲存的授權
 TokenDeleted=許可證已刪除
-RequestAccess=點擊此處請求/續訂訪問權限並接收新許可證以保存
+RequestAccess=Click here to request/renew access and receive a new token
 DeleteAccess=點擊此處刪除許可證
 UseTheFollowingUrlAsRedirectURI=使用您的OAuth供應商建立憑證時，請使用以下網址作為重新轉向URI：
-ListOfSupportedOauthProviders=輸入您的OAuth2供應商提供的憑據。此處僅列出受支援的OAuth2供應商。這些服務可由需要OAuth2身份驗證的其他模組使用。
-OAuthSetupForLogin=產生OAuth許可證的頁面
+ListOfSupportedOauthProviders=Add your OAuth2 token providers. Then, go on your OAuth provider admin page to create/get an OAuth ID and Secret and save them here. Once done, switch on the other tab to generate your token.
+OAuthSetupForLogin=Page to manage (generate/delete) OAuth tokens
 SeePreviousTab=查看上一個分頁
+OAuthProvider=OAuth provider
 OAuthIDSecret=OAuth ID和Secret
 TOKEN_REFRESH=更新目前的許可證
 TOKEN_EXPIRED=許可證已過期
@@ -23,10 +24,13 @@ TOKEN_DELETE=刪除已儲存的許可證
 OAUTH_GOOGLE_NAME=OAuth Google服務
 OAUTH_GOOGLE_ID=OAuth Google Id
 OAUTH_GOOGLE_SECRET=OAuth Google Secret
-OAUTH_GOOGLE_DESC=前往<a class="notasortlink" href="https://console.developers.google.com/" target="_blank">此頁面</a>然後點擊“憑證”以建立OAuth憑證
 OAUTH_GITHUB_NAME=OAuth GitHub服務
 OAUTH_GITHUB_ID=OAuth GitHub Id
 OAUTH_GITHUB_SECRET=OAuth GitHub Secret
-OAUTH_GITHUB_DESC=前往<a class="notasortlink" href="https://github.com/settings/developers" target="_blank">此頁面</a>然後“註冊新應用程式”以建立OAuth憑證
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe測試
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+OAUTH_ID=OAuth ID
+OAUTH_SECRET=OAuth secret
+OAuthProviderAdded=OAuth provider added
+AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=An OAuth entry for this provider and label already exists

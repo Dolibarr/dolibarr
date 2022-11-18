@@ -26,6 +26,7 @@
  *  \brief      Page to list stocks at a given date
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -188,7 +189,7 @@ if ($date && $dateIsValid) {
 	if ($mode == 'future') {
 		$sql .= " AND sm.datem <= '".$db->idate($dateendofday)."'";
 	} else {
-		$sql .= " AND sm.datem >= '".$db->idate($date)."'";
+		$sql .= " AND sm.datem >= '".$db->idate($dateendofday)."'";
 	}
 	if ($productid > 0) {
 		$sql .= " AND sm.fk_product = ".((int) $productid);
@@ -242,7 +243,7 @@ $num = 0;
 
 $title = $langs->trans('StockAtDate');
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price,';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price, p.pmp,';
 $sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 $sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock, ';
 if ($fk_warehouse > 0) {
@@ -272,7 +273,7 @@ if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 	$sql .= " AND p.fk_product_type = 0";
 }
 if (!empty($canvas)) {
-	$sql .= ' AND p.canvas = "'.$db->escape($canvas).'"';
+	$sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 }
 if ($fk_warehouse > 0) {
 	$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
@@ -363,7 +364,7 @@ print $form->select_produits($productid, 'productid', '', 0, 0, -1, 2, '', 0, ar
 print ' <span class="clearbothonsmartphone marginleftonly paddingleftonly marginrightonly paddingrightonly">&nbsp;</span> ';
 print img_picto('', 'stock', 'class="pictofiwedwidth"');
 print '</span> ';
-print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifone'), 'fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, '', null, 1, false, 'e.ref');
+print $formproduct->selectWarehouses((GETPOSTISSET('fk_warehouse') ? $fk_warehouse : 'ifonenodefault'), 'fk_warehouse', '', 1, 0, 0, $langs->trans('Warehouse'), 0, 0, null, '', null, 1, false, 'e.ref');
 print '</div>';
 
 $parameters = array();
@@ -373,7 +374,7 @@ if (empty($reshook)) {
 }
 
 print '<div class="inline-block valignmiddle">';
-print '<input class="button" type="submit" name="valid" value="'.$langs->trans('Refresh').'">';
+print '<input type="submit" class="button" name="valid" value="'.$langs->trans('Refresh').'">';
 print '</div>';
 
 //print '</form>';
@@ -475,6 +476,10 @@ print $hookmanager->resPrint;
 
 print "</tr>\n";
 
+$totalbuyingprice = 0;
+$totalcurrentstock = 0;
+$totalvirtualstock = 0;
+
 $i = 0;
 while ($i < ($limit ? min($num, $limit) : $num)) {
 	$objp = $db->fetch_object($resql);
@@ -483,12 +488,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$prod->fetch($objp->rowid);
 
 		// Multilangs
-		/*if (!empty($conf->global->MAIN_MULTILANGS))
+		/*if (getDolGlobalInt('MAIN_MULTILANGS'))
 		{
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_lang';
 			$sql .= ' WHERE fk_product = '.((int) $objp->rowid);
-			$sql .= ' AND lang = "'.$langs->getDefaultLang().'"';
+			$sql .= " AND lang = '".$db->escape($langs->getDefaultLang())."'";
 			$sql .= ' LIMIT 1';
 
 			$resqlm = $db->query($sql);
@@ -516,13 +521,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 
 		if ($mode == 'future') {
-			$prod->load_stock('warehouseopen, warehouseinternal', 0); // This call also ->load_virtual_stock()
-
-			//$result = $prod->load_stats_reception(0, '4');
-			//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
-			//print $prod->stats_reception['qty'];
-
-			$stock = '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
+			$prod->load_stock('warehouseopen, warehouseinternal', 0, $dateendofday);
+			$stock = $prod->stock_theorique;
+			$prod->load_stock('warehouseopen, warehouseinternal', 0);
 			$virtualstock = $prod->stock_theorique;
 		} else {
 			if ($fk_warehouse > 0) {
@@ -548,6 +549,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		if ($mode == 'future') {
 			// Current stock
 			print '<td class="right">'.$currentstock.'</td>';
+			$totalcurrentstock += $currentstock;
 
 			print '<td class="right"></td>';
 
@@ -556,17 +558,19 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 			// Final virtual stock
 			print '<td class="right">'.$virtualstock.'</td>';
+			$totalvirtualstock += $virtualstock;
 		} else {
 			// Stock at date
 			print '<td class="right">'.($stock ? $stock : '<span class="opacitymedium">'.$stock.'</span>').'</td>';
 
 			// PMP value
 			print '<td class="right">';
-			if (price2num($objp->estimatedvalue, 'MT')) {
-				print price(price2num($objp->estimatedvalue, 'MT'), 1);
+			if (price2num($stock * $objp->pmp, 'MT')) {
+				print '<span class="amount">'.price(price2num($stock * $objp->pmp, 'MT'), 1).'</span>';
 			} else {
 				print '';
 			}
+			$totalbuyingprice += $stock * $objp->pmp;
 			print '</td>';
 
 			// Selling value
@@ -575,7 +579,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				print price(price2num($objp->sellvalue, 'MT'), 1);
 			} else {
 				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
-				print $form->textwithtooltip($langs->trans("Variable"), $htmltext);
+				print $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
 			}
 			print'</td>';
 
@@ -588,6 +592,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 			// Current stock
 			print '<td class="right">'.($currentstock ? $currentstock : '<span class="opacitymedium">0</span>').'</td>';
+			$totalcurrentstock += $currentstock;
 		}
 
 		// Action
@@ -598,7 +603,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
-		print '</tr>';
+		print '</tr>'."\n";
 	}
 	$i++;
 }
@@ -607,12 +612,32 @@ $parameters = array('sql'=>$sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
-if (empty($date) || ! $dateIsValid) {
-	$colspan = 8;
-	if ($mode == 'future') {
-		$colspan++;
-	}
+$colspan = 8;
+if ($mode == 'future') {
+	$colspan++;
+}
+
+
+if (empty($date) || !$dateIsValid) {
 	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("EnterADateCriteria").'</span></td></tr>';
+} else {
+	print '<tr class="liste_total">';
+	print '<td>'.$langs->trans("Totalforthispage").'</td>';
+	print '<td></td>';
+	if ($mode == 'future') {
+		print '<td class="right">'.price(price2num($totalcurrentstock, 'MS')).'</td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td class="right">'.price(price2num($totalvirtualstock, 'MS')).'</td>';
+	} else {
+		print '<td></td>';
+		print '<td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td class="right">'.($productid > 0 ? price(price2num($totalcurrentstock, 'MS')) : '').'</td>';
+	}
+	print '<td></td>';
+	print '</tr>';
 }
 
 print '</table>';

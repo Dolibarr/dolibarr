@@ -23,6 +23,7 @@
  *		\brief      Page to setup emailing module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -107,21 +108,11 @@ llxHeader('', $langs->trans("MailingSetup"));
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("MailingSetup"), $linkback, 'title_setup');
 
-if (!empty($conf->use_javascript_ajax)) {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
-            $("#generate_token").click(function() {
-            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-            		action: \'getrandompassword\',
-            		generic: true
-				},
-				function(token) {
-					$("#MAILING_EMAIL_UNSUBSCRIBE_KEY").val(token);
-				});
-            });
-    });';
-	print '</script>';
-}
+$constname = 'MAILING_EMAIL_UNSUBSCRIBE_KEY';
+
+// Add button to autosuggest a key
+include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+print dolJSToSetRandomPassword($constname);
 
 print '<br>';
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -136,7 +127,8 @@ print '<td>'.$langs->trans("Example").'</td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("MailingEMailFrom").'</td><td>';
+$help = img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
+print $langs->trans("MailingEMailFrom").' '.$help.'</td><td>';
 print '<input size="32" type="text" name="MAILING_EMAIL_FROM" value="'.$conf->global->MAILING_EMAIL_FROM.'">';
 if (!empty($conf->global->MAILING_EMAIL_FROM) && !isValidEmail($conf->global->MAILING_EMAIL_FROM)) {
 	print ' '.img_warning($langs->trans("BadEMail"));
@@ -193,8 +185,7 @@ if (!empty($conf->use_javascript_ajax) && $conf->global->MAIN_FEATURES_LEVEL >= 
 
 print '</table>';
 
-print '<br>';
-print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print $form->buttonsSaveCancel("Modify", '');
 
 print '</form>';
 

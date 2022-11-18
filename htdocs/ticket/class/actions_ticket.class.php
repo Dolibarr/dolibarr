@@ -40,6 +40,9 @@ class ActionsTicket
 	 */
 	public $db;
 
+	/**
+	 * @var Ticket Ticket
+	 */
 	public $dao;
 
 	public $mesg;
@@ -161,7 +164,7 @@ class ActionsTicket
 		} elseif ($action == 'view') {
 			return $langs->trans("TicketCard");
 		} elseif ($action == 'add_message') {
-			return $langs->trans("AddMessage");
+			return $langs->trans("TicketAddMessage");
 		} else {
 			return $langs->trans("TicketsManagement");
 		}
@@ -196,8 +199,8 @@ class ActionsTicket
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
-		if ($user->rights->ticket->manage) {
-			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&amp;track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
+		if ($user->hasRight("ticket", "manage")) {
+			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
 		}
 		print '</td></tr>';
 
@@ -233,7 +236,7 @@ class ActionsTicket
 		}
 		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
 			print '<div class="center">';
-			print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print ' <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 		}

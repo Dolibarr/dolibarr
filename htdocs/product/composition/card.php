@@ -24,11 +24,12 @@
 /**
  *  \file       htdocs/product/composition/card.php
  *  \ingroup    product
- *  \brief      Page de la fiche produit
+ *  \brief      Page of product file
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
-
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -51,6 +52,9 @@ if (!empty($user->socid)) {
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('productcompositioncard', 'globalcard'));
+
 $object = new Product($db);
 $objectid = 0;
 if ($id > 0 || !empty($ref)) {
@@ -71,6 +75,9 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->lire));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
+$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
 
 
 /*
@@ -129,6 +136,8 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 		setEventMessages('RecordSaved', null);
 	}
 	$action = '';
+	header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
+	exit;
 }
 
 
@@ -136,9 +145,10 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
  * View
  */
 
+$form = new Form($db);
+$formproduct = new FormProduct($db);
 $product_fourn = new ProductFournisseur($db);
 $productstatic = new Product($db);
-$form = new Form($db);
 
 // action recherche des produits par mot-cle et/ou par categorie
 if ($action == 'search') {
@@ -147,12 +157,12 @@ if ($action == 'search') {
 	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type as type, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 	$sql .= ' p.fk_product_type, p.tms as datem, p.tobatch';
 	$sql .= ', p.tosell as status, p.tobuy as status_buy';
-	if (!empty($conf->global->MAIN_MULTILANGS)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$sql .= ', pl.label as labelm, pl.description as descriptionm';
 	}
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON p.rowid = cp.fk_product';
-	if (!empty($conf->global->MAIN_MULTILANGS)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND lang='".($current_lang)."'";
 	}
 	$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
@@ -160,17 +170,17 @@ if ($action == 'search') {
 		// For natural search
 		$params = array('p.ref', 'p.label', 'p.description', 'p.note');
 		// multilang
-		if (!empty($conf->global->MAIN_MULTILANGS)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$params[] = 'pl.label';
 			$params[] = 'pl.description';
 			$params[] = 'pl.note';
 		}
-		if (!empty($conf->barcode->enabled)) {
+		if (isModEnabled('barcode')) {
 			$params[] = 'p.barcode';
 		}
 		$sql .= natural_search($params, $key);
 	}
-	if (!empty($conf->categorie->enabled) && !empty($parent) && $parent != -1) {
+	if (isModEnabled('categorie') && !empty($parent) && $parent != -1) {
 		$sql .= " AND cp.fk_categorie ='".$db->escape($parent)."'";
 	}
 	$sql .= " ORDER BY p.ref ASC";
@@ -193,8 +203,10 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 llxHeader('', $title, $help_url);
 
 $head = product_prepare_head($object);
+
 $titre = $langs->trans("CardProduct".$object->type);
 $picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
+
 print dol_get_fiche_head($head, 'subproduct', $titre, -1, $picto);
 
 
@@ -210,34 +222,45 @@ if ($id > 0 || !empty($ref)) {
 			$shownav = 0;
 		}
 
-		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 0);
+		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '');
 
 		if ($object->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES) || empty($conf->global->PRODUIT_MULTIPRICES)) {
 			print '<div class="fichecenter">';
+			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border centpercent tableforfield">';
 
 			// Type
-			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
-				print '<tr><td class="titlefieldcreate">';
+				print '<tr><td class="titlefield">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 				print '</td></tr>';
 			}
 
+			print '</table>';
+
+			print '</div><div class="fichehalfright">';
+			print '<div class="underbanner clearboth"></div>';
+
+			print '<table class="border centpercent tableforfield">';
+
 			// Nature
 			if ($object->type != Product::TYPE_SERVICE) {
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("Nature").'</td><td>';
-				print $object->getLibFinished();
-				print '</td></tr>';
+				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
+					print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
+					print $object->getLibFinished();
+					//print $formproduct->selectProductNature('finished', $object->finished);
+					print '</td></tr>';
+				}
 			}
 
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
 				// Price
-				print '<tr><td class="titlefieldcreate">'.$langs->trans("SellingPrice").'</td><td>';
+				print '<tr><td class="titlefield">'.$langs->trans("SellingPrice").'</td><td>';
 				if ($object->price_base_type == 'TTC') {
 					print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
 				} else {
@@ -257,15 +280,27 @@ if ($id > 0 || !empty($ref)) {
 
 			print '</table>';
 			print '</div>';
+			print '</div>';
 		}
 
 		print dol_get_fiche_end();
 
-		print '<br>';
+
+		print '<br><br>';
 
 		$prodsfather = $object->getFather(); // Parent Products
 		$object->get_sousproduits_arbo(); // Load $object->sousprods
+		$parent_label = $object->label;
 		$prods_arbo = $object->get_arbo_each_prod();
+
+		$tmpid = $id;
+		if (!empty($conf->use_javascript_ajax)) {
+			$nboflines = $prods_arbo;
+			$table_element_line='product_association';
+
+			include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
+		}
+		$id = $tmpid;
 
 		$nbofsubsubproducts = count($prods_arbo); // This include sub sub product into nb
 		$prodschild = $object->getChildsArbo($id, 1);
@@ -295,13 +330,13 @@ if ($id > 0 || !empty($ref)) {
 
 				print '<tr class="oddeven">';
 				print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
-				print '<td>'.$productstatic->label.'</td>';
-				print '<td>'.$value['qty'].'</td>';
+				print '<td>'.dol_escape_htmltag($productstatic->label).'</td>';
+				print '<td>'.dol_escape_htmltag($value['qty']).'</td>';
 				print '</tr>';
 			}
 		} else {
 			print '<tr class="oddeven">';
-			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
+			print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 			print '</tr>';
 		}
 		print '</table>';
@@ -320,32 +355,50 @@ if ($id > 0 || !empty($ref)) {
 		print '<input type="hidden" name="action" value="save_composed_product" />';
 		print '<input type="hidden" name="id" value="'.$id.'" />';
 
-		print '<table class="liste">';
+		print '<table id="tablelines" class="ui-sortable liste nobottom">';
 
-		print '<tr class="liste_titre">';
+		print '<tr class="liste_titre nodrag nodrop">';
+		// Rank
+		print '<td>'.$langs->trans('Position').'</td>';
+		// Product ref
 		print '<td>'.$langs->trans('ComposedProduct').'</td>';
+		// Product label
 		print '<td>'.$langs->trans('Label').'</td>';
+		// Min supplier price
 		print '<td class="right" colspan="2">'.$langs->trans('MinSupplierPrice').'</td>';
+		// Min customer price
 		print '<td class="right" colspan="2">'.$langs->trans('MinCustomerPrice').'</td>';
-		if (!empty($conf->stock->enabled)) {
+		// Stock
+		if (isModEnabled('stock')) {
 			print '<td class="right">'.$langs->trans('Stock').'</td>';
 		}
+		// Qty in kit
 		print '<td class="center">'.$langs->trans('Qty').'</td>';
+		// Stoc inc/dev
 		print '<td class="center">'.$langs->trans('ComposedProductIncDecStock').'</td>';
+		// Move
+		print '<td class="linecolmove" style="width: 10px"></td>';
 		print '</tr>'."\n";
 
 		$totalsell = 0;
+		$total = 0;
 		if (count($prods_arbo))	{
 			foreach ($prods_arbo as $value)	{
 				$productstatic->fetch($value['id']);
 
 				if ($value['level'] <= 1) {
-					print '<tr class="oddeven">';
+					print '<tr id="'.$object->sousprods[$parent_label][$value['id']][6].'" class="drag drop oddeven level1">';
+
+					// Rank
+					print '<td>'.$object->sousprods[$parent_label][$value['id']][7].'</td>';
 
 					$notdefined = 0;
 					$nb_of_subproduct = $value['nb'];
 
+					// Product ref
 					print '<td>'.$productstatic->getNomUrl(1, 'composition').'</td>';
+
+					// Product label
 					print '<td>'.$productstatic->label.'</td>';
 
 					// Best buying price
@@ -367,10 +420,10 @@ if ($id > 0 || !empty($ref)) {
 
 					$unitline = price2num(($fourn_unitprice * (1 - ($fourn_remise_percent / 100)) - $fourn_remise), 'MU');
 					$totalline = price2num($value['nb'] * ($fourn_unitprice * (1 - ($fourn_remise_percent / 100)) - $fourn_remise), 'MT');
-					$total += $totalline;
+					$total +=  $totalline;
 
-					print '<td class="right">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x' : '').price($unitline, '', '', 0, 0, -1, $conf->currency));
+					print '<td class="right nowraponall">';
+					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, '', '', 0, 0, -1, $conf->currency)).'</span>';
 					print '</td>';
 
 					// Best selling price
@@ -382,16 +435,16 @@ if ($id > 0 || !empty($ref)) {
 						$totalsell += $totallinesell;
 					}
 					print '<td class="right" colspan="2">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x' : ''));
+					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : ''));
 					if (is_numeric($pricesell)) {
-						print price($pricesell, '', '', 0, 0, -1, $conf->currency);
+						print '<span class="amount">'.price($pricesell, '', '', 0, 0, -1, $conf->currency).'</span>';
 					} else {
-						print $langs->trans($pricesell);
+						print '<span class="opacitymedium">'.$langs->trans($pricesell).'</span>';
 					}
 					print '</td>';
 
 					// Stock
-					if (!empty($conf->stock->enabled)) {
+					if (isModEnabled('stock')) {
 						print '<td class="right">'.$value['stock'].'</td>'; // Real stock
 					}
 
@@ -404,6 +457,9 @@ if ($id > 0 || !empty($ref)) {
 						print '<td>'.($value['incdec'] == 1 ? 'x' : '').'</td>';
 					}
 
+					// Move action
+					print '<td class="linecolmove tdlineupdown center"></td>';
+
 					print '</tr>'."\n";
 				} else {
 					$hide = '';
@@ -411,15 +467,22 @@ if ($id > 0 || !empty($ref)) {
 						$hide = ' hideobject'; // By default, we do not show this. It makes screen very difficult to understand
 					}
 
-					print '<tr class="oddeven'.$hide.'" id="sub-'.$value['id_parent'].'">';
+					print '<tr class="oddeven'.$hide.'" id="sub-'.$value['id_parent'].'" data-ignoreidfordnd=1>';
 
 					//$productstatic->ref=$value['label'];
 					$productstatic->ref = $value['ref'];
+
+					// Rankd
+					print '<td></td>';
+
+					// Product ref
 					print '<td>';
 					for ($i = 0; $i < $value['level']; $i++) {
 						print ' &nbsp; &nbsp; '; // Add indentation
 					}
 					print $productstatic->getNomUrl(1, 'composition').'</td>';
+
+					// Product label
 					print '<td>'.$productstatic->label.'</td>';
 
 					// Best buying price
@@ -429,18 +492,36 @@ if ($id > 0 || !empty($ref)) {
 					print '<td>&nbsp;</td>';
 					print '<td>&nbsp;</td>';
 
-					if (!empty($conf->stock->enabled)) {
+					// Stock
+					if (isModEnabled('stock')) {
 						print '<td></td>'; // Real stock
 					}
+
+					// Qty in kit
 					print '<td class="center">'.$value['nb'].'</td>';
+
+					// Inc/dec
+					print '<td>&nbsp;</td>';
+
+					// Action move
 					print '<td>&nbsp;</td>';
 
 					print '</tr>'."\n";
 				}
 			}
 
+
+			// Total
+
 			print '<tr class="liste_total">';
+
+			// Rank
+			print '<td></td>';
+
+			// Product ref
 			print '<td class="liste_total"></td>';
+
+			// Product label
 			print '<td class="liste_total"></td>';
 
 			// Minimum buying price
@@ -468,24 +549,29 @@ if ($id > 0 || !empty($ref)) {
 			print '</td>';
 
 			// Stock
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				print '<td class="liste_total right">&nbsp;</td>';
 			}
 
-			print '<td class="right" colspan="2">';
+			print '<td></td>';
+
+			print '<td class="center">';
 			if ($user->rights->produit->creer || $user->rights->service->creer) {
 				print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
 			}
 			print '</td>';
+
+			print '<td></td>';
+
 			print '</tr>'."\n";
 		} else {
-			$colspan = 8;
-			if (!empty($conf->stock->enabled)) {
+			$colspan = 10;
+			if (isModEnabled('stock')) {
 				$colspan++;
 			}
 
 			print '<tr class="oddeven">';
-			print '<td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td>';
+			print '<td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 			print '</tr>';
 		}
 
@@ -505,7 +591,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<br>';
 
 			$rowspan = 1;
-			if (!empty($conf->categorie->enabled)) {
+			if (isModEnabled('categorie')) {
 				$rowspan++;
 			}
 
@@ -518,7 +604,7 @@ if ($id > 0 || !empty($ref)) {
 			print $langs->trans("KeywordFilter").': ';
 			print '<input type="text" name="key" value="'.$key.'"> &nbsp; ';
 			print '</div>';
-			if (!empty($conf->categorie->enabled)) {
+			if (isModEnabled('categorie')) {
 				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 				print '<div class="inline-block">'.$langs->trans("CategoryFilter").': ';
 				print $form->select_all_categories(Categorie::TYPE_PRODUCT, $parent, 'parent').' &nbsp; </div>';
@@ -538,6 +624,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="add_prod">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
+
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			print '<th class="liste_titre">'.$langs->trans("ComposedProduct").'</td>';
@@ -595,7 +682,7 @@ if ($id > 0 || !empty($ref)) {
 
 						print '<td>'.$productstatic->getNomUrl(1, '', 24).'</td>';
 						$labeltoshow = $objp->label;
-						if ($conf->global->MAIN_MULTILANGS && $objp->labelm) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($objp->labelm)) {
 							$labeltoshow = $objp->labelm;
 						}
 
@@ -647,9 +734,8 @@ if ($id > 0 || !empty($ref)) {
 			print '<input type="hidden" name="max_prod" value="'.$i.'">';
 
 			if ($num > 0) {
-				print '<br><div class="center">';
-				print '<input type="submit" class="button" name="save" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
-				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				print '<div class="center">';
+				print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
 				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				print '</div>';
 			}

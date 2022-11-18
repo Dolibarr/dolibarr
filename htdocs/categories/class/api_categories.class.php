@@ -51,10 +51,13 @@ class Categories extends DolibarrApi
 		4 => 'contact',
 		5 => 'account',
 		6 => 'project',
-		//7 => 'user',
-		//8 => 'bank_line',
-		//9 => 'warehouse',
-		//10 => 'actioncomm',
+		7 => 'user',
+		8 => 'bank_line',
+		9 => 'warehouse',
+		10 => 'actioncomm',
+		11 => 'website_page',
+		12 => 'ticket',
+		13 => 'knowledgemanagement'
 	);
 
 	/**
@@ -145,8 +148,9 @@ class Categories extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -301,7 +305,8 @@ class Categories extends DolibarrApi
 			Categorie::TYPE_CUSTOMER,
 			Categorie::TYPE_SUPPLIER,
 			Categorie::TYPE_MEMBER,
-			Categorie::TYPE_PROJECT
+			Categorie::TYPE_PROJECT,
+			Categorie::TYPE_KNOWLEDGEMANAGEMENT
 		])) {
 			throw new RestException(401);
 		}
@@ -310,13 +315,15 @@ class Categories extends DolibarrApi
 			throw new RestException(401);
 		} elseif ($type == Categorie::TYPE_CONTACT && !DolibarrApiAccess::$user->rights->contact->lire) {
 			throw new RestException(401);
-		} elseif ($type == Categorie::TYPE_CUSTOMER && !DolibarrApiAccess::$user->rights->societe->lire) {
+		} elseif ($type == Categorie::TYPE_CUSTOMER && !DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 			throw new RestException(401);
 		} elseif ($type == Categorie::TYPE_SUPPLIER && !DolibarrApiAccess::$user->rights->fournisseur->lire) {
 			throw new RestException(401);
 		} elseif ($type == Categorie::TYPE_MEMBER && !DolibarrApiAccess::$user->rights->adherent->lire) {
 			throw new RestException(401);
 		} elseif ($type == Categorie::TYPE_PROJECT && !DolibarrApiAccess::$user->rights->projet->lire) {
+			throw new RestException(401);
+		} elseif ($type == Categorie::TYPE_KNOWLEDGEMANAGEMENT && !DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read) {
 			throw new RestException(401);
 		}
 
@@ -379,7 +386,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Contact($this->db);
 		} elseif ($type === Categorie::TYPE_MEMBER) {
-			if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Adherent($this->db);
@@ -459,7 +466,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Contact($this->db);
 		} elseif ($type === Categorie::TYPE_MEMBER) {
-			if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Adherent($this->db);
@@ -539,7 +546,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Contact($this->db);
 		} elseif ($type === Categorie::TYPE_MEMBER) {
-			if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Adherent($this->db);
@@ -617,7 +624,7 @@ class Categories extends DolibarrApi
 			}
 			$object = new Contact($this->db);
 		} elseif ($type === Categorie::TYPE_MEMBER) {
-			if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+			if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 				throw new RestException(401);
 			}
 			$object = new Adherent($this->db);
@@ -661,6 +668,10 @@ class Categories extends DolibarrApi
 		$object = parent::_cleanObjectDatas($object);
 
 		// Remove fields not relevent to categories
+		unset($object->MAP_CAT_FK);
+		unset($object->MAP_CAT_TABLE);
+		unset($object->MAP_OBJ_CLASS);
+		unset($object->MAP_OBJ_TABLE);
 		unset($object->country);
 		unset($object->country_id);
 		unset($object->country_code);
@@ -671,9 +682,6 @@ class Categories extends DolibarrApi
 		unset($object->total_ttc);
 		unset($object->total_tva);
 		unset($object->lines);
-		unset($object->fk_incoterms);
-		unset($object->label_incoterms);
-		unset($object->location_incoterms);
 		unset($object->civility_id);
 		unset($object->name);
 		unset($object->lastname);

@@ -41,11 +41,11 @@ if (empty($conf->adherent->enabled)) {
 	print "Error: Module member must be enabled to have significant results.\n";
 	exit(1);
 }
-if (! empty($conf->ldap->enabled)) {
+if (!empty($conf->ldap->enabled)) {
 	print "Error: LDAP module should not be enabled.\n";
 	exit(1);
 }
-if (! empty($conf->google->enabled)) {
+if (!empty($conf->google->enabled)) {
 	print "Warning: Google module should not be enabled.\n";
 }
 if (empty($user->id)) {

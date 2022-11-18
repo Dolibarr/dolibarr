@@ -24,328 +24,327 @@
 
 -- SKR03
 
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,    1, 'SKR03', '0', '1', '0', 'Aufwendungen für die Ingangsetzung und Erweiterung des Geschäftsbetriebs');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,    2, 'SKR03', '0', '2', '0', 'Aufwendungen für die Währungsumstellung auf den Euro');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   10, 'SKR03', '0', '10', '0', 'Konzessionen gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   15, 'SKR03', '0', '15', '10', 'Konzessionen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   20, 'SKR03', '0', '20', '10', 'Gewerbliche Schutzrechte');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   25, 'SKR03', '0', '25', '10', 'ähnliche Rechte und Werte');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   27, 'SKR03', '0', '27', '10', 'EDV-Software');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   30, 'SKR03', '0', '30', '10', 'Lizenzen an gewerblichen Schutzrechten und ähnlichen Rechten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   35, 'SKR03', '0', '35', '0', 'Geschäfts- oder Firmenwert');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   38, 'SKR03', '0', '38', '0', 'Anzahlungen auf Geschäfts- oder Firmenwert');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   39, 'SKR03', '0', '39', '0', 'Anzahlungen auf immaterielle Vermögensgegenstände');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   40, 'SKR03', '0', '40', '0', 'Verschmelzungsmehrwert');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   50, 'SKR03', '0', '50', '0', 'Grundstücke grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstücken');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   59, 'SKR03', '0', '59', '50', 'Grundstücksanteil des häuslichen Arbeitszimmers.');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   60, 'SKR03', '0', '60', '0', 'Grundstücke und grundstücksgleiche Rechte ohne Bauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   65, 'SKR03', '0', '65', '60', 'Unbebaute Grundstücke');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   70, 'SKR03', '0', '70', '60', 'Grundstücksgleiche Rechte - (erbbaurecht Daürwohnrecht)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   75, 'SKR03', '0', '75', '60', 'Grundstücke mit Substanzverzehr');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   79, 'SKR03', '0', '79', '60', 'Anzahlungen auf Grundstücke und grundstücksgleiche Rechte ohne Bauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   80, 'SKR03', '0', '80', '0', 'Bauten auf eigenen Grundstücken und grundstücksgleichen Rechten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   85, 'SKR03', '0', '85', '80', 'Grundstückswerte eigener bebauter Grundstücke');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   90, 'SKR03', '0', '90', '80', 'Geschäftsbauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,  100, 'SKR03', '0', '100', '80', 'Fabrikbauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,  110, 'SKR03', '0', '110', '80', 'Garagen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1055, 'SKR03', '0', '111', '80', 'Außenanlagen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1056, 'SKR03', '0', '112', '80', 'Hof- und Wegebefestigungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1057, 'SKR03', '0', '113', '80', 'Einrichtung Fabrik- und Geschäftsbauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1058, 'SKR03', '0', '115', '80', 'Andere Bauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1059, 'SKR03', '0', '120', '80', 'Geschäfts- Fabrik- und andere Bauten im Bau');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1060, 'SKR03', '0', '129', '80', 'Anzahlungen auf Geshäfts- Fabrik- und andere Bauten auf eigenen Grundstücken und grundstücksgleichen Rechten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1061, 'SKR03', '0', '140', '80', 'Wohnbauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1062, 'SKR03', '0', '145', '80', 'Garagen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1063, 'SKR03', '0', '146', '80', 'Aussenanlagen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1064, 'SKR03', '0', '147', '80', 'Hof- und Wegebefestigungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1065, 'SKR03', '0', '148', '80', 'Einrichtungen für Wohnbauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1066, 'SKR03', '0', '149', '80', 'Gebäudeteil des häuslichen Arbeitszimmers');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1067, 'SKR03', '0', '150', '80', 'Wohnbauten im Bau');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1068, 'SKR03', '0', '159', '80', 'Anzahlgen auf Wohnbauten auf eigenen Grundstücken und grundstücksgleichen Rechten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1069, 'SKR03', '0', '160', '0', 'Bauten auf fremden Grundstücken');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1070, 'SKR03', '0', '165', '160', 'Geschäftsbauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1071, 'SKR03', '0', '170', '160', 'Fabrikbauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1072, 'SKR03', '0', '175', '160', 'Garagen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1073, 'SKR03', '0', '176', '160', 'Aussenanlagen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1074, 'SKR03', '0', '177', '160', 'Hof- und Wegebefestigungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1075, 'SKR03', '0', '178', '160', 'Einrichtung für Fabrik- und Geschäftsbauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1076, 'SKR03', '0', '179', '160', 'Andere Bauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1077, 'SKR03', '0', '180', '160', 'Geschäfts- Fabrik- und andere Bauten im Bau');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1078, 'SKR03', '0', '189', '160', 'Anzahlungen auf Geschäfts- Fabrik- und andere Bauten auf fremden Grundstücken');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1079, 'SKR03', '0', '190', '160', 'Wohnbauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1080, 'SKR03', '0', '191', '160', 'Garagen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1081, 'SKR03', '0', '192', '160', 'Aussenanlagen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1082, 'SKR03', '0', '193', '160', 'Hof- und Wegebefestigungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1083, 'SKR03', '0', '194', '160', 'Einrichtungen für Wohnbauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1084, 'SKR03', '0', '195', '160', 'Wohnbauten im Bau');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1085, 'SKR03', '0', '199', '160', 'Anzahlungen a. Wohnbauten auf fremden Grundstücken');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1087, 'SKR03', '0', '200', '0', 'Technische Anlagen und Maschinen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1088, 'SKR03', '0', '210', '200', 'Maschinen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1089, 'SKR03', '0', '220', '200', 'Maschinengebundene Werkzeuge');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1090, 'SKR03', '0', '240', '200', 'Maschinelle Anlagen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1091, 'SKR03', '0', '260', '200', 'Transportanlagen und ähnliches');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1092, 'SKR03', '0', '280', '200', 'Betriebsvorrichtungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1093, 'SKR03', '0', '290', '200', 'Technische Anlagen und Maschinen im Bau');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1094, 'SKR03', '0', '299', '200', 'Anzahlungen auf technische Anlagen und Maschinen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1096, 'SKR03', '0', '300', '0', 'Andere Anlagen Betriebs- und Geschäftsausstattung');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1097, 'SKR03', '0', '310', '300', 'Andere Anlagen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1098, 'SKR03', '0', '320', '300', 'PKW');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1099, 'SKR03', '0', '350', '300', 'LKW');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1100, 'SKR03', '0', '380', '300', 'Sonstige Transportmittel');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1101, 'SKR03', '0', '400', '300', 'Betriebsausstattung');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1102, 'SKR03', '0', '410', '300', 'Geschäftsausstattung');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1103, 'SKR03', '0', '420', '300', 'Büroeinrichtung');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1104, 'SKR03', '0', '430', '300', 'Ladeneinrichtung');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1105, 'SKR03', '0', '440', '300', 'Werkzeuge');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1106, 'SKR03', '0', '450', '300', 'Einbauten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1107, 'SKR03', '0', '460', '300', 'Gerüst- und Schalungsmaterial');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1108, 'SKR03', '0', '480', '300', 'Geringwertige Wirtschaftsgüter bis 410 Euro');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1109, 'SKR03', '0', '490', '300', 'Sonstige Betriebs- und Geschäftsausstattung');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1110, 'SKR03', '0', '498', '300', 'Andere Anlagen Betriebs- und Geschäftsausstattung im Bau');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1111, 'SKR03', '0', '499', '300', 'Anzahlungen auf andere Anlagen Betriebs- und Geschäftsausstattung');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1114, 'SKR03', '0', '500', '0', 'Anteile an verbundenen Unternehmen (Anlagevermögen)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1115, 'SKR03', '0', '504', '500', 'Anteile an herrschender oder mit Mehrheit beteiligter Gesellschaft');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1117, 'SKR03', '0', '505', '500', 'Ausleihungen an verbundene Unternehmen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1119, 'SKR03', '0', '510', '500', 'Beteiligungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1120, 'SKR03', '0', '513', '510', 'Typisch stille Beteiligungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1121, 'SKR03', '0', '516', '510', 'Atypisch stille Beteiligungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1122, 'SKR03', '0', '517', '510', 'Andere Beteiligungen an Kapitalgesellschaften');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1123, 'SKR03', '0', '518', '510', 'Andere Beteiligungen an Personengesellschaften');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1124, 'SKR03', '0', '519', '510', 'Beteiligung einer GmbH&Co.KG an einer Komplementär GmbH');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1126, 'SKR03', '0', '520', '0', 'Ausleihungen an Unternehmen mit denen ein Beteiligungsverhältnis besteht');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1128, 'SKR03', '0', '525', '520', 'Wertpapiere des Anlagevermögens');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1129, 'SKR03', '0', '530', '525', 'Wertpapiere mit Gewinnbeteiligungsansprüchen die dem Halbeinkünfteverfahren unterliegen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1130, 'SKR03', '0', '535', '525', 'Festverzinsliche Wertpapiere');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1132, 'SKR03', '0', '540', '0', 'Sonstige Ausleihungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1133, 'SKR03', '0', '550', '540', 'Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1135, 'SKR03', '0', '570', '0', 'Genossenschaftsanteile zum langfristigen Verbleib');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1136, 'SKR03', '0', '580', '570', 'Ausleihungen an Gesellschafter');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1137, 'SKR03', '0', '590', '570', 'Ausleihungen an nahe stehende Personen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1139, 'SKR03', '0', '595', '0', 'Rückdeckungsansprüche aus Lebensversicherungen zum langfristigen Verbleib');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1142, 'SKR03', '0', '600', '0', 'Anleihen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1143, 'SKR03', '0', '601', '600', 'Anleihen nicht konvertibel (bis 1 Jahr)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1144, 'SKR03', '0', '605', '600', 'Anleihen nicht konvertibel (1-5 Jahre)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1145, 'SKR03', '0', '610', '600', 'Anleihen nicht konvertibel (größer 5 Jahre)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1146, 'SKR03', '0', '615', '600', 'Anleihen konvertibel');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1147, 'SKR03', '0', '616', '600', 'Anleihen konvertibel(bis 1 Jahr)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1148, 'SKR03', '0', '620', '600', 'Anleihen konvertibel(1-5 Jahre)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1149, 'SKR03', '0', '625', '600', 'Anleihen konvertibel(größer 5 Jahre)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1151, 'SKR03', '0', '630', '0', 'Verbindlichkeiten gegenüber Kreditinstituten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1152, 'SKR03', '0', '631', '630', 'Verbindlichkeiten gegenüber Kreditinstitut ( bis 1Jahr )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1153, 'SKR03', '0', '640', '630', 'Verbindlichkeiten gegenüber Kreditinstitut (1 bis 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1154, 'SKR03', '0', '650', '630', 'Verbindlichkeiten gegenüber Kreditinstitut (größer 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1155, 'SKR03', '0', '660', '630', 'Verbindlichkeit. gegenüber Kreditinstituten aus Teilzahlungsverträgen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1156, 'SKR03', '0', '661', '630', 'Verbindlichkeit. gegenüber Kreditinstituten aus Teilzahlungsverträgen ( bis 1Jahr )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1157, 'SKR03', '0', '670', '630', 'Verbindlichkeit. gegenüber Kreditinstituten aus Teilzahlungsverträgen (1 bis 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1158, 'SKR03', '0', '680', '630', 'Verbindlichkeit. gegenüber Kreditinstituten aus Teilzahlungsverträgen (größer 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1159, 'SKR03', '0', '690', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1160, 'SKR03', '0', '691', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1161, 'SKR03', '0', '692', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1162, 'SKR03', '0', '693', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1163, 'SKR03', '0', '694', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1164, 'SKR03', '0', '695', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1165, 'SKR03', '0', '696', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1166, 'SKR03', '0', '697', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1167, 'SKR03', '0', '698', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1169, 'SKR03', '0', '699', '600', 'Gegenkonto 0630-0689 bei Aufteilung der Konten 0690-0698');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1171, 'SKR03', '0', '700', '600', 'Verbindlichkeiten gegenüber verbundenen Unternehmen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1172, 'SKR03', '0', '701', '700', 'Verbindlichkeiten gegenüber verbundenen Unternehmen ( bis 1 Jahr )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1173, 'SKR03', '0', '705', '700', 'Verbindlichkeiten gegenüber verbundenen Unternehmen ( 1 bis 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1174, 'SKR03', '0', '710', '700', 'Verbindlichkeiten gegenüber verbundenen Unternehmen ( größer 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1176, 'SKR03', '0', '715', '600', 'Verbindlichkeit. gegenüber Unternehmen mit denen ein Beteiligungsverhältnis besteht');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1177, 'SKR03', '0', '716', '600', 'Verbindlichkeit. gegenüber Unternehmen mit denen ein Beteiligungsverhältnis besteht ( bis 1 Jahr )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1178, 'SKR03', '0', '720', '600', 'Verbindlichkeit. gegenüber Unternehmen mit denen ein Beteiligungsverhältnis besteht ( 1 bis 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1179, 'SKR03', '0', '725', '600', 'Verbindlichkeit. gegenüber Unternehmen mit denen ein Beteiligungsverhältnis besteht ( größer 5 Jahre)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1181, 'SKR03', '0', '730', '600', 'Verbindlichkeit gegenüber Gesellschaftern');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1182, 'SKR03', '0', '731', '730', 'Verbindlichkeit gegenüber Gesellschaftern ( bis 1 Jahr )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1183, 'SKR03', '0', '740', '730', 'Verbindlichkeit gegenüber Gesellschaftern ( 1 bis 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1184, 'SKR03', '0', '750', '730', 'Verbindlichkeit gegenüber Gesellschaftern ( größer 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1185, 'SKR03', '0', '755', '730', 'Verbindlichkeit gegenüber Gesellschaftern für offene Ausschüttungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1186, 'SKR03', '0', '760', '730', 'Darlehen typisch stiller Gesellschafter');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1187, 'SKR03', '0', '761', '730', 'Darlehen typisch stiller Gesellschafter ( bis 1 Jahr)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1188, 'SKR03', '0', '764', '730', 'Darlehen typisch stiller Gesellschafter ( 1 bis 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1189, 'SKR03', '0', '767', '730', 'Darlehen typisch stiller Gesellschafter ( größer 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1190, 'SKR03', '0', '770', '730', 'Darlehen atypisch stiller Gesellschafter');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1191, 'SKR03', '0', '771', '730', 'Darlehen atypisch stiller Gesellschafter ( bis 1 Jahr)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1192, 'SKR03', '0', '774', '730', 'Darlehen atypisch stiller Gesellschafter ( 1 bis 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1193, 'SKR03', '0', '777', '730', 'Darlehen atypisch stiller Gesellschafter ( größer 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1194, 'SKR03', '0', '780', '730', 'Partiarische Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1195, 'SKR03', '0', '781', '730', 'Partiarische Darlehen ( bis 1 Jahr )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1196, 'SKR03', '0', '784', '730', 'Partiarische Darlehen ( 1 bis 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1197, 'SKR03', '0', '787', '730', 'Partiarische Darlehen ( größer 5 Jahre )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1198, 'SKR03', '0', '790', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1199, 'SKR03', '0', '791', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1200, 'SKR03', '0', '792', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1201, 'SKR03', '0', '793', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1202, 'SKR03', '0', '794', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1203, 'SKR03', '0', '795', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1204, 'SKR03', '0', '796', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1205, 'SKR03', '0', '797', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1206, 'SKR03', '0', '798', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1207, 'SKR03', '0', '799', '730', 'Gegenkonto 0730 - 0789 bei Aufteilung der Konten 0790 - 0798');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1210, 'SKR03', '0', '800', '0', 'Gezeichnetes Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1212, 'SKR03', '0', '801', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1213, 'SKR03', '0', '802', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1214, 'SKR03', '0', '803', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1215, 'SKR03', '0', '804', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1216, 'SKR03', '0', '805', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1217, 'SKR03', '0', '806', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1218, 'SKR03', '0', '807', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1219, 'SKR03', '0', '808', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1220, 'SKR03', '0', '809', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1221, 'SKR03', '0', '810', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1222, 'SKR03', '0', '811', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1223, 'SKR03', '0', '812', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1224, 'SKR03', '0', '813', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1225, 'SKR03', '0', '814', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1226, 'SKR03', '0', '815', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1227, 'SKR03', '0', '816', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1228, 'SKR03', '0', '817', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1229, 'SKR03', '0', '818', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1230, 'SKR03', '0', '819', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1232, 'SKR03', '0', '820', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1233, 'SKR03', '0', '821', '800', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1234, 'SKR03', '0', '822', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1235, 'SKR03', '0', '823', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1236, 'SKR03', '0', '824', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1237, 'SKR03', '0', '825', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1238, 'SKR03', '0', '826', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1239, 'SKR03', '0', '827', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1240, 'SKR03', '0', '828', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1241, 'SKR03', '0', '829', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1243, 'SKR03', '0', '830', '800', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1244, 'SKR03', '0', '831', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1245, 'SKR03', '0', '832', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1246, 'SKR03', '0', '833', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1247, 'SKR03', '0', '834', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1248, 'SKR03', '0', '835', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1249, 'SKR03', '0', '836', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1250, 'SKR03', '0', '837', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1251, 'SKR03', '0', '838', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1253, 'SKR03', '0', '839', '830', 'Eingeforderte Nachschüsse ( Forderungen  Gegenkonto 0845 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1256, 'SKR03', '0', '840', '0', 'Kapitalrücklage');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1257, 'SKR03', '0', '841', '840', 'Kapitalrücklage durch Ausgabe von Anteilen über Nennbetrag');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1258, 'SKR03', '0', '842', '840', 'Kapitalrücklage durch Ausgabe von Schuldverschreibungen für Wandlungsrechte und Optionsrechte zum Erwerb von Anteilen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1259, 'SKR03', '0', '843', '840', 'Kapitalrücklage durch Zuzahlungen gegen Gewährung eines Vorzugs für Anteile');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1260, 'SKR03', '0', '844', '840', 'Kapitalrücklage durch andere Zuzahlungen in das Eigenkapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1261, 'SKR03', '0', '845', '840', 'Eingefordertes Nachschusskapital ( Gegenkonto 0839 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1264, 'SKR03', '0', '846', '840', 'Gesetzliche Rücklage');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1266, 'SKR03', '0', '850', '840', 'Rücklage für eigene Anteile');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1268, 'SKR03', '0', '851', '840', 'Satzungsmässige Rücklagen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1270, 'SKR03', '0', '855', '840', 'Andere Gewinnrücklagen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1271, 'SKR03', '0', '856', '840', 'Eigenkapitalanteil von Wertaufholungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1273, 'SKR03', '0', '860', '0', 'Gewinnvortrag vor Verwendung');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1274, 'SKR03', '0', '868', '860', 'Verlustvortrag vor Verwendung');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1276, 'SKR03', '0', '869', '860', 'Vortrag auf neue Rechnung (Bilanz)');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1278, 'SKR03', '0', '870', '0', 'Festkapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1279, 'SKR03', '0', '871', '870', 'Festkapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1280, 'SKR03', '0', '872', '870', 'Festkapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1281, 'SKR03', '0', '873', '870', 'Festkapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1282, 'SKR03', '0', '874', '870', 'Festkapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1283, 'SKR03', '0', '875', '870', 'Festkapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1284, 'SKR03', '0', '876', '870', 'Festkapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1285, 'SKR03', '0', '877', '870', 'Festkapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1286, 'SKR03', '0', '878', '870', 'Festkapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1287, 'SKR03', '0', '879', '870', 'Festkapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1288, 'SKR03', '0', '880', '870', 'Variables Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1289, 'SKR03', '0', '881', '870', 'Variables Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1290, 'SKR03', '0', '882', '870', 'Variables Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1291, 'SKR03', '0', '883', '870', 'Variables Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1292, 'SKR03', '0', '884', '870', 'Variables Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1293, 'SKR03', '0', '885', '870', 'Variables Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1294, 'SKR03', '0', '886', '870', 'Variables Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1295, 'SKR03', '0', '887', '870', 'Variables Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1296, 'SKR03', '0', '888', '870', 'Variables Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1297, 'SKR03', '0', '889', '870', 'Variables Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1298, 'SKR03', '0', '890', '870', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1299, 'SKR03', '0', '891', '870', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1300, 'SKR03', '0', '892', '870', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1301, 'SKR03', '0', '893', '870', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1302, 'SKR03', '0', '894', '870', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1303, 'SKR03', '0', '895', '870', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1304, 'SKR03', '0', '896', '870', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1305, 'SKR03', '0', '897', '870', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1306, 'SKR03', '0', '898', '870', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1307, 'SKR03', '0', '899', '870', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1309, 'SKR03', '0', '900', '0', 'Kommandit-Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1310, 'SKR03', '0', '901', '1309', 'Kommandit-Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1311, 'SKR03', '0', '902', '1309', 'Kommandit-Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1312, 'SKR03', '0', '903', '1309', 'Kommandit-Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1313, 'SKR03', '0', '904', '1309', 'Kommandit-Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1314, 'SKR03', '0', '905', '1309', 'Kommandit-Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1315, 'SKR03', '0', '906', '1309', 'Kommandit-Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1316, 'SKR03', '0', '907', '1309', 'Kommandit-Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1317, 'SKR03', '0', '908', '1309', 'Kommandit-Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1318, 'SKR03', '0', '909', '1309', 'Kommandit-Kapital');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1319, 'SKR03', '0', '910', '1309', 'Verlustausgleichskonto');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1320, 'SKR03', '0', '911', '1309', 'Verlustausgleichskonto');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1321, 'SKR03', '0', '912', '1309', 'Verlustausgleichskonto');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1322, 'SKR03', '0', '913', '1309', 'Verlustausgleichskonto');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1323, 'SKR03', '0', '914', '1309', 'Verlustausgleichskonto');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1324, 'SKR03', '0', '915', '1309', 'Verlustausgleichskonto');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1325, 'SKR03', '0', '916', '1309', 'Verlustausgleichskonto');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1326, 'SKR03', '0', '917', '1309', 'Verlustausgleichskonto');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1327, 'SKR03', '0', '918', '1309', 'Verlustausgleichskonto');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1328, 'SKR03', '0', '919', '1309', 'Verlustausgleichskonto');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1329, 'SKR03', '0', '920', '1309', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1330, 'SKR03', '0', '921', '1309', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1331, 'SKR03', '0', '922', '1309', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1332, 'SKR03', '0', '923', '1309', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1333, 'SKR03', '0', '924', '1309', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1334, 'SKR03', '0', '925', '1309', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1335, 'SKR03', '0', '926', '1309', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1336, 'SKR03', '0', '927', '1309', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1337, 'SKR03', '0', '928', '1309', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1338, 'SKR03', '0', '929', '1309', 'Gesellschafter-Darlehen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1341, 'SKR03', '0', '930', '1309', 'Sonderposten mit Rücklageanteil steuerfreie Rücklagen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1342, 'SKR03', '0', '931', '1341', 'Sonderposten mit Rücklageanteil nach § 6b EStG');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1343, 'SKR03', '0', '932', '1341', 'Sonderposten mit Rücklageanteil nach Abschnitt 35 EStG');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1344, 'SKR03', '0', '933', '1341', 'Sonderposten mit Rücklageanteil nach § 6d EStG');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1345, 'SKR03', '0', '934', '1341', 'Sonderposten mit Rücklageanteil nach § 1 EntwLStG');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1347, 'SKR03', '0', '935', '1309', 'Sonderposten aus der Währungsumstellung auf den Euro');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1348, 'SKR03', '0', '936', '1341', 'Sonderposten mit Rücklageanteil nach § 7 d EStG');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1349, 'SKR03', '0', '937', '1341', 'Sonderposten mit Rücklageanteil nach § 79 EStDV');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1350, 'SKR03', '0', '938', '1341', 'Sonderposten mit Rücklageanteil nach § 80 EStDV');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1351, 'SKR03', '0', '939', '1341', 'Sonderposten mit Rücklageanteil nach § 52 Abs.16 EStG');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1352, 'SKR03', '0', '940', '1341', 'Sonderposten mit Rücklageanteil Sonderabschreibungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1353, 'SKR03', '0', '941', '1341', 'Sonderposten mit Rücklageanteil § 82 a EStDV');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1354, 'SKR03', '0', '942', '1341', 'Sonderposten mit Rücklageanteil § 82 d EStDV');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1355, 'SKR03', '0', '943', '1341', 'Sonderposten mit Rücklageanteil nach § 82 e EStDV');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1356, 'SKR03', '0', '944', '1341', 'Sonderposten mit Rücklageanteil nach § 14 BerlinFG');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1357, 'SKR03', '0', '945', '1341', 'Sonderposten mit Rücklageanteil für Förderung nach § 3 Zonen-RFG/§ 4-6 FördergebietsG');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1358, 'SKR03', '0', '946', '1341', 'Sonderposten mit Rücklageanteil nach § 4d EStG');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1359, 'SKR03', '0', '947', '1341', 'Sonderposten mit Rücklageanteil nach § 7g Abs.1 EStG');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1360, 'SKR03', '0', '948', '1341', 'Sonderposten mit Rücklageanteil nach § 7g Abs.3 u.7 EStG');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1362, 'SKR03', '0', '949', '1309', 'Sonderposten für Zuschüsse und Zulagen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1365, 'SKR03', '0', '950', '1309', 'Rückstellungen für Pensionen und ähnliche Verpflichtungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1367, 'SKR03', '0', '955', '1309', 'Steuerrückstellungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1368, 'SKR03', '0', '957', '1367', 'Gewerbesteuerrückstellung');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1369, 'SKR03', '0', '963', '1367', 'Körperschaftsteuerrückstellung');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1371, 'SKR03', '0', '965', '1309', 'Rückstellungen für Personalkosten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1372, 'SKR03', '0', '966', '1309', 'Rückstellungen zur Erfüllung der Aufbewahrungspflichten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1373, 'SKR03', '0', '969', '1309', 'Rückstellung für latente Steuern');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1374, 'SKR03', '0', '970', '1309', 'Sonstige Rückstellungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1375, 'SKR03', '0', '971', '1309', 'Rückstellungen für unterlassene Aufwendungen für Instandhaltung Nachholung in den ersten drei Monaten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1376, 'SKR03', '0', '972', '1309', 'Rückstellungen für unterlassene Aufwendungen für Instandhaltung Nachholung innerhalb des 4. bis 12. Monats');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1377, 'SKR03', '0', '973', '1309', 'Rückstellungen für Abraum- und Abfallbeseitigung');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1378, 'SKR03', '0', '974', '1309', 'Rückstellungen für Gewährleistungen ( Gegenkonto 4790 )');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1379, 'SKR03', '0', '976', '1309', 'Rückstellungen für drohende Verluste aus schwebenden Geschäften');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1380, 'SKR03', '0', '977', '1309', 'Rückstellungen für Abschluss- und Prüfungskosten');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1381, 'SKR03', '0', '978', '1309', 'Aufwandsrückstellungen gemäß § 249 Abs. 2 HGB');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1382, 'SKR03', '0', '979', '1309', 'Rückstellungen für Umweltschutz');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1385, 'SKR03', '0', '980', '1309', 'Aktive Rechnungsabgrenzung');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1387, 'SKR03', '0', '983', '1385', 'Abgrenzung aktive latente Steuern');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1388, 'SKR03', '0', '984', '1309', 'Als Aufwand berücksichtigte Zölle und Verbrauchsteuern');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1389, 'SKR03', '0', '985', '1309', 'Als Aufwand berücksichtigte Umsatzsteuer auf Anzahlungen');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1390, 'SKR03', '0', '986', '1309', 'Damnum / Disagio');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1393, 'SKR03', '0', '990', '1309', 'Passive Rechnungsabgrenzung');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1395, 'SKR03', '0', '992', '1393', 'Abgenzungsposten zur unterjährigen Kostenverrechnung für BWA');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1396, 'SKR03', '0', '993', '1393', 'Forderungen aus Lieferungen und Leistungen H-Saldo');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1397, 'SKR03', '0', '996', '1393', 'Pauschalwertberichtigung auf Forderungen mit einer Restlaufzeit bis zu 1 Jahr');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1398, 'SKR03', '0', '997', '1393', 'Pauschalwertberichtigung auf Forderungen mit einer Restlaufzeit von mehr als 1 Jahr');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1399, 'SKR03', '0', '998', '1393', 'Einzelwertberichtigungen auf Forderungen mit einer Restlaufzeit bis zu 1 Jahr');
-INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1400, 'SKR03', '0', '999', '1393', 'Einzelwertberichtigungen auf Forderungen mit einer Restlaufzeit von mehr als 1 Jahr');
-
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,    1, 'SKR03', '0', '0001', '0', 'Aufwendungen für die Ingangsetzung und Erweiterung des Geschäftsbetriebs');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,    2, 'SKR03', '0', '0002', '0', 'Aufwendungen für die Währungsumstellung auf den Euro');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   10, 'SKR03', '0', '0010', '0', 'Konzessionen gewerbliche Schutzrechte und ähnliche Rechte und Werte sowie Lizenzen an solchen Rechten und Werten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   15, 'SKR03', '0', '0015', '10', 'Konzessionen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   20, 'SKR03', '0', '0020', '10', 'Gewerbliche Schutzrechte');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   25, 'SKR03', '0', '0025', '10', 'ähnliche Rechte und Werte');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   27, 'SKR03', '0', '0027', '10', 'EDV-Software');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   30, 'SKR03', '0', '0030', '10', 'Lizenzen an gewerblichen Schutzrechten und ähnlichen Rechten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   35, 'SKR03', '0', '0035', '0', 'Geschäfts- oder Firmenwert');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   38, 'SKR03', '0', '0038', '0', 'Anzahlungen auf Geschäfts- oder Firmenwert');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   39, 'SKR03', '0', '0039', '0', 'Anzahlungen auf immaterielle Vermögensgegenstände');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   40, 'SKR03', '0', '0040', '0', 'Verschmelzungsmehrwert');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   50, 'SKR03', '0', '0050', '0', 'Grundstücke grundstücksgleiche Rechte und Bauten einschließlich der Bauten auf fremden Grundstücken');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   59, 'SKR03', '0', '0059', '50', 'Grundstücksanteil des häuslichen Arbeitszimmers.');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   60, 'SKR03', '0', '0060', '0', 'Grundstücke und grundstücksgleiche Rechte ohne Bauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   65, 'SKR03', '0', '0065', '60', 'Unbebaute Grundstücke');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   70, 'SKR03', '0', '0070', '60', 'Grundstücksgleiche Rechte - (erbbaurecht Daürwohnrecht)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   75, 'SKR03', '0', '0075', '60', 'Grundstücke mit Substanzverzehr');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   79, 'SKR03', '0', '0079', '60', 'Anzahlungen auf Grundstücke und grundstücksgleiche Rechte ohne Bauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   80, 'SKR03', '0', '0080', '0', 'Bauten auf eigenen Grundstücken und grundstücksgleichen Rechten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   85, 'SKR03', '0', '0085', '80', 'Grundstückswerte eigener bebauter Grundstücke');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,   90, 'SKR03', '0', '0090', '80', 'Geschäftsbauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,  100, 'SKR03', '0', '0100', '80', 'Fabrikbauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__,  110, 'SKR03', '0', '0110', '80', 'Garagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1055, 'SKR03', '0', '0111', '80', 'Außenanlagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1056, 'SKR03', '0', '0112', '80', 'Hof- und Wegebefestigungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1057, 'SKR03', '0', '0113', '80', 'Einrichtung Fabrik- und Geschäftsbauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1058, 'SKR03', '0', '0115', '80', 'Andere Bauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1059, 'SKR03', '0', '0120', '80', 'Geschäfts- Fabrik- und andere Bauten im Bau');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1060, 'SKR03', '0', '0129', '80', 'Anzahlungen auf Geshäfts- Fabrik- und andere Bauten auf eigenen Grundstücken und grundstücksgleichen Rechten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1061, 'SKR03', '0', '0140', '80', 'Wohnbauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1062, 'SKR03', '0', '0145', '80', 'Garagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1063, 'SKR03', '0', '0146', '80', 'Aussenanlagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1064, 'SKR03', '0', '0147', '80', 'Hof- und Wegebefestigungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1065, 'SKR03', '0', '0148', '80', 'Einrichtungen für Wohnbauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1066, 'SKR03', '0', '0149', '80', 'Gebäudeteil des häuslichen Arbeitszimmers');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1067, 'SKR03', '0', '0150', '80', 'Wohnbauten im Bau');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1068, 'SKR03', '0', '0159', '80', 'Anzahlgen auf Wohnbauten auf eigenen Grundstücken und grundstücksgleichen Rechten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1069, 'SKR03', '0', '0160', '0', 'Bauten auf fremden Grundstücken');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1070, 'SKR03', '0', '0165', '160', 'Geschäftsbauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1071, 'SKR03', '0', '0170', '160', 'Fabrikbauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1072, 'SKR03', '0', '0175', '160', 'Garagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1073, 'SKR03', '0', '0176', '160', 'Aussenanlagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1074, 'SKR03', '0', '0177', '160', 'Hof- und Wegebefestigungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1075, 'SKR03', '0', '0178', '160', 'Einrichtung für Fabrik- und Geschäftsbauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1076, 'SKR03', '0', '0179', '160', 'Andere Bauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1077, 'SKR03', '0', '0180', '160', 'Geschäfts- Fabrik- und andere Bauten im Bau');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1078, 'SKR03', '0', '0189', '160', 'Anzahlungen auf Geschäfts- Fabrik- und andere Bauten auf fremden Grundstücken');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1079, 'SKR03', '0', '0190', '160', 'Wohnbauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1080, 'SKR03', '0', '0191', '160', 'Garagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1081, 'SKR03', '0', '0192', '160', 'Aussenanlagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1082, 'SKR03', '0', '0193', '160', 'Hof- und Wegebefestigungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1083, 'SKR03', '0', '0194', '160', 'Einrichtungen für Wohnbauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1084, 'SKR03', '0', '0195', '160', 'Wohnbauten im Bau');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1085, 'SKR03', '0', '0199', '160', 'Anzahlungen a. Wohnbauten auf fremden Grundstücken');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1087, 'SKR03', '0', '0200', '0', 'Technische Anlagen und Maschinen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1088, 'SKR03', '0', '0210', '200', 'Maschinen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1089, 'SKR03', '0', '0220', '200', 'Maschinengebundene Werkzeuge');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1090, 'SKR03', '0', '0240', '200', 'Maschinelle Anlagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1091, 'SKR03', '0', '0260', '200', 'Transportanlagen und ähnliches');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1092, 'SKR03', '0', '0280', '200', 'Betriebsvorrichtungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1093, 'SKR03', '0', '0290', '200', 'Technische Anlagen und Maschinen im Bau');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1094, 'SKR03', '0', '0299', '200', 'Anzahlungen auf technische Anlagen und Maschinen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1096, 'SKR03', '0', '0300', '0', 'Andere Anlagen Betriebs- und Geschäftsausstattung');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1097, 'SKR03', '0', '0310', '300', 'Andere Anlagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1098, 'SKR03', '0', '0320', '300', 'PKW');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1099, 'SKR03', '0', '0350', '300', 'LKW');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1100, 'SKR03', '0', '0380', '300', 'Sonstige Transportmittel');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1101, 'SKR03', '0', '0400', '300', 'Betriebsausstattung');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1102, 'SKR03', '0', '0410', '300', 'Geschäftsausstattung');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1103, 'SKR03', '0', '0420', '300', 'Büroeinrichtung');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1104, 'SKR03', '0', '0430', '300', 'Ladeneinrichtung');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1105, 'SKR03', '0', '0440', '300', 'Werkzeuge');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1106, 'SKR03', '0', '0450', '300', 'Einbauten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1107, 'SKR03', '0', '0460', '300', 'Gerüst- und Schalungsmaterial');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1108, 'SKR03', '0', '0480', '300', 'Geringwertige Wirtschaftsgüter bis 410 Euro');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1109, 'SKR03', '0', '0490', '300', 'Sonstige Betriebs- und Geschäftsausstattung');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1110, 'SKR03', '0', '0498', '300', 'Andere Anlagen Betriebs- und Geschäftsausstattung im Bau');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1111, 'SKR03', '0', '0499', '300', 'Anzahlungen auf andere Anlagen Betriebs- und Geschäftsausstattung');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1114, 'SKR03', '0', '0500', '0', 'Anteile an verbundenen Unternehmen (Anlagevermögen)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1115, 'SKR03', '0', '0504', '500', 'Anteile an herrschender oder mit Mehrheit beteiligter Gesellschaft');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1117, 'SKR03', '0', '0505', '500', 'Ausleihungen an verbundene Unternehmen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1119, 'SKR03', '0', '0510', '500', 'Beteiligungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1120, 'SKR03', '0', '0513', '510', 'Typisch stille Beteiligungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1121, 'SKR03', '0', '0516', '510', 'Atypisch stille Beteiligungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1122, 'SKR03', '0', '0517', '510', 'Andere Beteiligungen an Kapitalgesellschaften');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1123, 'SKR03', '0', '0518', '510', 'Andere Beteiligungen an Personengesellschaften');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1124, 'SKR03', '0', '0519', '510', 'Beteiligung einer GmbH&Co.KG an einer Komplementär GmbH');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1126, 'SKR03', '0', '0520', '0', 'Ausleihungen an Unternehmen mit denen ein Beteiligungsverhältnis besteht');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1128, 'SKR03', '0', '0525', '520', 'Wertpapiere des Anlagevermögens');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1129, 'SKR03', '0', '0530', '525', 'Wertpapiere mit Gewinnbeteiligungsansprüchen die dem Halbeinkünfteverfahren unterliegen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1130, 'SKR03', '0', '0535', '525', 'Festverzinsliche Wertpapiere');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1132, 'SKR03', '0', '0540', '0', 'Sonstige Ausleihungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1133, 'SKR03', '0', '0550', '540', 'Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1135, 'SKR03', '0', '0570', '0', 'Genossenschaftsanteile zum langfristigen Verbleib');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1136, 'SKR03', '0', '0580', '570', 'Ausleihungen an Gesellschafter');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1137, 'SKR03', '0', '0590', '570', 'Ausleihungen an nahe stehende Personen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1139, 'SKR03', '0', '0595', '0', 'Rückdeckungsansprüche aus Lebensversicherungen zum langfristigen Verbleib');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1142, 'SKR03', '0', '0600', '0', 'Anleihen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1143, 'SKR03', '0', '0601', '600', 'Anleihen nicht konvertibel (bis 1 Jahr)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1144, 'SKR03', '0', '0605', '600', 'Anleihen nicht konvertibel (1-5 Jahre)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1145, 'SKR03', '0', '0610', '600', 'Anleihen nicht konvertibel (größer 5 Jahre)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1146, 'SKR03', '0', '0615', '600', 'Anleihen konvertibel');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1147, 'SKR03', '0', '0616', '600', 'Anleihen konvertibel(bis 1 Jahr)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1148, 'SKR03', '0', '0620', '600', 'Anleihen konvertibel(1-5 Jahre)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1149, 'SKR03', '0', '0625', '600', 'Anleihen konvertibel(größer 5 Jahre)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1151, 'SKR03', '0', '0630', '0', 'Verbindlichkeiten gegenüber Kreditinstituten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1152, 'SKR03', '0', '0631', '630', 'Verbindlichkeiten gegenüber Kreditinstitut ( bis 1Jahr )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1153, 'SKR03', '0', '0640', '630', 'Verbindlichkeiten gegenüber Kreditinstitut (1 bis 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1154, 'SKR03', '0', '0650', '630', 'Verbindlichkeiten gegenüber Kreditinstitut (größer 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1155, 'SKR03', '0', '0660', '630', 'Verbindlichkeit. gegenüber Kreditinstituten aus Teilzahlungsverträgen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1156, 'SKR03', '0', '0661', '630', 'Verbindlichkeit. gegenüber Kreditinstituten aus Teilzahlungsverträgen ( bis 1Jahr )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1157, 'SKR03', '0', '0670', '630', 'Verbindlichkeit. gegenüber Kreditinstituten aus Teilzahlungsverträgen (1 bis 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1158, 'SKR03', '0', '0680', '630', 'Verbindlichkeit. gegenüber Kreditinstituten aus Teilzahlungsverträgen (größer 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1159, 'SKR03', '0', '0690', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1160, 'SKR03', '0', '0691', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1161, 'SKR03', '0', '0692', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1162, 'SKR03', '0', '0693', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1163, 'SKR03', '0', '0694', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1164, 'SKR03', '0', '0695', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1165, 'SKR03', '0', '0696', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1166, 'SKR03', '0', '0697', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1167, 'SKR03', '0', '0698', '630', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1169, 'SKR03', '0', '0699', '600', 'Gegenkonto 0630-0689 bei Aufteilung der Konten 0690-0698');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1171, 'SKR03', '0', '0700', '600', 'Verbindlichkeiten gegenüber verbundenen Unternehmen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1172, 'SKR03', '0', '0701', '700', 'Verbindlichkeiten gegenüber verbundenen Unternehmen ( bis 1 Jahr )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1173, 'SKR03', '0', '0705', '700', 'Verbindlichkeiten gegenüber verbundenen Unternehmen ( 1 bis 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1174, 'SKR03', '0', '0710', '700', 'Verbindlichkeiten gegenüber verbundenen Unternehmen ( größer 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1176, 'SKR03', '0', '0715', '600', 'Verbindlichkeit. gegenüber Unternehmen mit denen ein Beteiligungsverhältnis besteht');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1177, 'SKR03', '0', '0716', '600', 'Verbindlichkeit. gegenüber Unternehmen mit denen ein Beteiligungsverhältnis besteht ( bis 1 Jahr )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1178, 'SKR03', '0', '0720', '600', 'Verbindlichkeit. gegenüber Unternehmen mit denen ein Beteiligungsverhältnis besteht ( 1 bis 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1179, 'SKR03', '0', '0725', '600', 'Verbindlichkeit. gegenüber Unternehmen mit denen ein Beteiligungsverhältnis besteht ( größer 5 Jahre)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1181, 'SKR03', '0', '0730', '600', 'Verbindlichkeit gegenüber Gesellschaftern');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1182, 'SKR03', '0', '0731', '730', 'Verbindlichkeit gegenüber Gesellschaftern ( bis 1 Jahr )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1183, 'SKR03', '0', '0740', '730', 'Verbindlichkeit gegenüber Gesellschaftern ( 1 bis 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1184, 'SKR03', '0', '0750', '730', 'Verbindlichkeit gegenüber Gesellschaftern ( größer 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1185, 'SKR03', '0', '0755', '730', 'Verbindlichkeit gegenüber Gesellschaftern für offene Ausschüttungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1186, 'SKR03', '0', '0760', '730', 'Darlehen typisch stiller Gesellschafter');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1187, 'SKR03', '0', '0761', '730', 'Darlehen typisch stiller Gesellschafter ( bis 1 Jahr)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1188, 'SKR03', '0', '0764', '730', 'Darlehen typisch stiller Gesellschafter ( 1 bis 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1189, 'SKR03', '0', '0767', '730', 'Darlehen typisch stiller Gesellschafter ( größer 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1190, 'SKR03', '0', '0770', '730', 'Darlehen atypisch stiller Gesellschafter');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1191, 'SKR03', '0', '0771', '730', 'Darlehen atypisch stiller Gesellschafter ( bis 1 Jahr)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1192, 'SKR03', '0', '0774', '730', 'Darlehen atypisch stiller Gesellschafter ( 1 bis 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1193, 'SKR03', '0', '0777', '730', 'Darlehen atypisch stiller Gesellschafter ( größer 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1194, 'SKR03', '0', '0780', '730', 'Partiarische Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1195, 'SKR03', '0', '0781', '730', 'Partiarische Darlehen ( bis 1 Jahr )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1196, 'SKR03', '0', '0784', '730', 'Partiarische Darlehen ( 1 bis 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1197, 'SKR03', '0', '0787', '730', 'Partiarische Darlehen ( größer 5 Jahre )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1198, 'SKR03', '0', '0790', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1199, 'SKR03', '0', '0791', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1200, 'SKR03', '0', '0792', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1201, 'SKR03', '0', '0793', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1202, 'SKR03', '0', '0794', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1203, 'SKR03', '0', '0795', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1204, 'SKR03', '0', '0796', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1205, 'SKR03', '0', '0797', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1206, 'SKR03', '0', '0798', '730', '(frei in Bilanz kein Restlaufzeitvermerk)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1207, 'SKR03', '0', '0799', '730', 'Gegenkonto 0730 - 0789 bei Aufteilung der Konten 0790 - 0798');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1210, 'SKR03', '0', '0800', '0', 'Gezeichnetes Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1212, 'SKR03', '0', '0801', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1213, 'SKR03', '0', '0802', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1214, 'SKR03', '0', '0803', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1215, 'SKR03', '0', '0804', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1216, 'SKR03', '0', '0805', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1217, 'SKR03', '0', '0806', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1218, 'SKR03', '0', '0807', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1219, 'SKR03', '0', '0808', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1220, 'SKR03', '0', '0809', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1221, 'SKR03', '0', '0810', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1222, 'SKR03', '0', '0811', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1223, 'SKR03', '0', '0812', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1224, 'SKR03', '0', '0813', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1225, 'SKR03', '0', '0814', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1226, 'SKR03', '0', '0815', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1227, 'SKR03', '0', '0816', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1228, 'SKR03', '0', '0817', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1229, 'SKR03', '0', '0818', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1230, 'SKR03', '0', '0819', '801', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert (Aktivausweis)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1232, 'SKR03', '0', '0820', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1233, 'SKR03', '0', '0821', '800', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1234, 'SKR03', '0', '0822', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1235, 'SKR03', '0', '0823', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1236, 'SKR03', '0', '0824', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1237, 'SKR03', '0', '0825', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1238, 'SKR03', '0', '0826', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1239, 'SKR03', '0', '0827', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1240, 'SKR03', '0', '0828', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1241, 'SKR03', '0', '0829', '820', 'Ausstehende Einlagen auf das gezeichnete Kapital nicht eingefordert (Passivausweis von gezeichnetem Kapital offen abgesetzt eingeforderte ausstehende Einlagen s. Konten 0830 - 0838 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1243, 'SKR03', '0', '0830', '800', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1244, 'SKR03', '0', '0831', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1245, 'SKR03', '0', '0832', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1246, 'SKR03', '0', '0833', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1247, 'SKR03', '0', '0834', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1248, 'SKR03', '0', '0835', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1249, 'SKR03', '0', '0836', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1250, 'SKR03', '0', '0837', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1251, 'SKR03', '0', '0838', '830', 'Ausstehende Einlagen auf das gezeichnete Kapital eingefordert ( Forderungen nicht eingeforderte ausstehende Einlagen s. Konten 0820 - 0829 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1253, 'SKR03', '0', '0839', '830', 'Eingeforderte Nachschüsse ( Forderungen  Gegenkonto 0845 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1256, 'SKR03', '0', '0840', '0', 'Kapitalrücklage');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1257, 'SKR03', '0', '0841', '840', 'Kapitalrücklage durch Ausgabe von Anteilen über Nennbetrag');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1258, 'SKR03', '0', '0842', '840', 'Kapitalrücklage durch Ausgabe von Schuldverschreibungen für Wandlungsrechte und Optionsrechte zum Erwerb von Anteilen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1259, 'SKR03', '0', '0843', '840', 'Kapitalrücklage durch Zuzahlungen gegen Gewährung eines Vorzugs für Anteile');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1260, 'SKR03', '0', '0844', '840', 'Kapitalrücklage durch andere Zuzahlungen in das Eigenkapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1261, 'SKR03', '0', '0845', '840', 'Eingefordertes Nachschusskapital ( Gegenkonto 0839 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1264, 'SKR03', '0', '0846', '840', 'Gesetzliche Rücklage');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1266, 'SKR03', '0', '0850', '840', 'Rücklage für eigene Anteile');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1268, 'SKR03', '0', '0851', '840', 'Satzungsmässige Rücklagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1270, 'SKR03', '0', '0855', '840', 'Andere Gewinnrücklagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1271, 'SKR03', '0', '0856', '840', 'Eigenkapitalanteil von Wertaufholungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1273, 'SKR03', '0', '0860', '0', 'Gewinnvortrag vor Verwendung');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1274, 'SKR03', '0', '0868', '860', 'Verlustvortrag vor Verwendung');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1276, 'SKR03', '0', '0869', '860', 'Vortrag auf neue Rechnung (Bilanz)');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1278, 'SKR03', '0', '0870', '0', 'Festkapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1279, 'SKR03', '0', '0871', '870', 'Festkapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1280, 'SKR03', '0', '0872', '870', 'Festkapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1281, 'SKR03', '0', '0873', '870', 'Festkapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1282, 'SKR03', '0', '0874', '870', 'Festkapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1283, 'SKR03', '0', '0875', '870', 'Festkapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1284, 'SKR03', '0', '0876', '870', 'Festkapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1285, 'SKR03', '0', '0877', '870', 'Festkapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1286, 'SKR03', '0', '0878', '870', 'Festkapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1287, 'SKR03', '0', '0879', '870', 'Festkapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1288, 'SKR03', '0', '0880', '870', 'Variables Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1289, 'SKR03', '0', '0881', '870', 'Variables Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1290, 'SKR03', '0', '0882', '870', 'Variables Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1291, 'SKR03', '0', '0883', '870', 'Variables Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1292, 'SKR03', '0', '0884', '870', 'Variables Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1293, 'SKR03', '0', '0885', '870', 'Variables Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1294, 'SKR03', '0', '0886', '870', 'Variables Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1295, 'SKR03', '0', '0887', '870', 'Variables Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1296, 'SKR03', '0', '0888', '870', 'Variables Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1297, 'SKR03', '0', '0889', '870', 'Variables Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1298, 'SKR03', '0', '0890', '870', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1299, 'SKR03', '0', '0891', '870', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1300, 'SKR03', '0', '0892', '870', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1301, 'SKR03', '0', '0893', '870', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1302, 'SKR03', '0', '0894', '870', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1303, 'SKR03', '0', '0895', '870', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1304, 'SKR03', '0', '0896', '870', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1305, 'SKR03', '0', '0897', '870', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1306, 'SKR03', '0', '0898', '870', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1307, 'SKR03', '0', '0899', '870', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1309, 'SKR03', '0', '0900', '0', 'Kommandit-Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1310, 'SKR03', '0', '0901', '1309', 'Kommandit-Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1311, 'SKR03', '0', '0902', '1309', 'Kommandit-Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1312, 'SKR03', '0', '0903', '1309', 'Kommandit-Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1313, 'SKR03', '0', '0904', '1309', 'Kommandit-Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1314, 'SKR03', '0', '0905', '1309', 'Kommandit-Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1315, 'SKR03', '0', '0906', '1309', 'Kommandit-Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1316, 'SKR03', '0', '0907', '1309', 'Kommandit-Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1317, 'SKR03', '0', '0908', '1309', 'Kommandit-Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1318, 'SKR03', '0', '0909', '1309', 'Kommandit-Kapital');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1319, 'SKR03', '0', '0910', '1309', 'Verlustausgleichskonto');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1320, 'SKR03', '0', '0911', '1309', 'Verlustausgleichskonto');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1321, 'SKR03', '0', '0912', '1309', 'Verlustausgleichskonto');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1322, 'SKR03', '0', '0913', '1309', 'Verlustausgleichskonto');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1323, 'SKR03', '0', '0914', '1309', 'Verlustausgleichskonto');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1324, 'SKR03', '0', '0915', '1309', 'Verlustausgleichskonto');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1325, 'SKR03', '0', '0916', '1309', 'Verlustausgleichskonto');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1326, 'SKR03', '0', '0917', '1309', 'Verlustausgleichskonto');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1327, 'SKR03', '0', '0918', '1309', 'Verlustausgleichskonto');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1328, 'SKR03', '0', '0919', '1309', 'Verlustausgleichskonto');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1329, 'SKR03', '0', '0920', '1309', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1330, 'SKR03', '0', '0921', '1309', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1331, 'SKR03', '0', '0922', '1309', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1332, 'SKR03', '0', '0923', '1309', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1333, 'SKR03', '0', '0924', '1309', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1334, 'SKR03', '0', '0925', '1309', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1335, 'SKR03', '0', '0926', '1309', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1336, 'SKR03', '0', '0927', '1309', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1337, 'SKR03', '0', '0928', '1309', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1338, 'SKR03', '0', '0929', '1309', 'Gesellschafter-Darlehen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1341, 'SKR03', '0', '0930', '1309', 'Sonderposten mit Rücklageanteil steuerfreie Rücklagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1342, 'SKR03', '0', '0931', '1341', 'Sonderposten mit Rücklageanteil nach § 6b EStG');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1343, 'SKR03', '0', '0932', '1341', 'Sonderposten mit Rücklageanteil nach Abschnitt 35 EStG');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1344, 'SKR03', '0', '0933', '1341', 'Sonderposten mit Rücklageanteil nach § 6d EStG');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1345, 'SKR03', '0', '0934', '1341', 'Sonderposten mit Rücklageanteil nach § 1 EntwLStG');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1347, 'SKR03', '0', '0935', '1309', 'Sonderposten aus der Währungsumstellung auf den Euro');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1348, 'SKR03', '0', '0936', '1341', 'Sonderposten mit Rücklageanteil nach § 7 d EStG');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1349, 'SKR03', '0', '0937', '1341', 'Sonderposten mit Rücklageanteil nach § 79 EStDV');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1350, 'SKR03', '0', '0938', '1341', 'Sonderposten mit Rücklageanteil nach § 80 EStDV');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1351, 'SKR03', '0', '0939', '1341', 'Sonderposten mit Rücklageanteil nach § 52 Abs.16 EStG');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1352, 'SKR03', '0', '0940', '1341', 'Sonderposten mit Rücklageanteil Sonderabschreibungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1353, 'SKR03', '0', '0941', '1341', 'Sonderposten mit Rücklageanteil § 82 a EStDV');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1354, 'SKR03', '0', '0942', '1341', 'Sonderposten mit Rücklageanteil § 82 d EStDV');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1355, 'SKR03', '0', '0943', '1341', 'Sonderposten mit Rücklageanteil nach § 82 e EStDV');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1356, 'SKR03', '0', '0944', '1341', 'Sonderposten mit Rücklageanteil nach § 14 BerlinFG');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1357, 'SKR03', '0', '0945', '1341', 'Sonderposten mit Rücklageanteil für Förderung nach § 3 Zonen-RFG/§ 4-6 FördergebietsG');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1358, 'SKR03', '0', '0946', '1341', 'Sonderposten mit Rücklageanteil nach § 4d EStG');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1359, 'SKR03', '0', '0947', '1341', 'Sonderposten mit Rücklageanteil nach § 7g Abs.1 EStG');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1360, 'SKR03', '0', '0948', '1341', 'Sonderposten mit Rücklageanteil nach § 7g Abs.3 u.7 EStG');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1362, 'SKR03', '0', '0949', '1309', 'Sonderposten für Zuschüsse und Zulagen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1365, 'SKR03', '0', '0950', '1309', 'Rückstellungen für Pensionen und ähnliche Verpflichtungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1367, 'SKR03', '0', '0955', '1309', 'Steuerrückstellungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1368, 'SKR03', '0', '0957', '1367', 'Gewerbesteuerrückstellung');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1369, 'SKR03', '0', '0963', '1367', 'Körperschaftsteuerrückstellung');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1371, 'SKR03', '0', '0965', '1309', 'Rückstellungen für Personalkosten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1372, 'SKR03', '0', '0966', '1309', 'Rückstellungen zur Erfüllung der Aufbewahrungspflichten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1373, 'SKR03', '0', '0969', '1309', 'Rückstellung für latente Steuern');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1374, 'SKR03', '0', '0970', '1309', 'Sonstige Rückstellungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1375, 'SKR03', '0', '0971', '1309', 'Rückstellungen für unterlassene Aufwendungen für Instandhaltung Nachholung in den ersten drei Monaten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1376, 'SKR03', '0', '0972', '1309', 'Rückstellungen für unterlassene Aufwendungen für Instandhaltung Nachholung innerhalb des 4. bis 12. Monats');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1377, 'SKR03', '0', '0973', '1309', 'Rückstellungen für Abraum- und Abfallbeseitigung');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1378, 'SKR03', '0', '0974', '1309', 'Rückstellungen für Gewährleistungen ( Gegenkonto 4790 )');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1379, 'SKR03', '0', '0976', '1309', 'Rückstellungen für drohende Verluste aus schwebenden Geschäften');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1380, 'SKR03', '0', '0977', '1309', 'Rückstellungen für Abschluss- und Prüfungskosten');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1381, 'SKR03', '0', '0978', '1309', 'Aufwandsrückstellungen gemäß § 249 Abs. 2 HGB');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1382, 'SKR03', '0', '0979', '1309', 'Rückstellungen für Umweltschutz');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1385, 'SKR03', '0', '0980', '1309', 'Aktive Rechnungsabgrenzung');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1387, 'SKR03', '0', '0983', '1385', 'Abgrenzung aktive latente Steuern');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1388, 'SKR03', '0', '0984', '1309', 'Als Aufwand berücksichtigte Zölle und Verbrauchsteuern');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1389, 'SKR03', '0', '0985', '1309', 'Als Aufwand berücksichtigte Umsatzsteuer auf Anzahlungen');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1390, 'SKR03', '0', '0986', '1309', 'Damnum / Disagio');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1393, 'SKR03', '0', '0990', '1309', 'Passive Rechnungsabgrenzung');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1395, 'SKR03', '0', '0992', '1393', 'Abgenzungsposten zur unterjährigen Kostenverrechnung für BWA');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1396, 'SKR03', '0', '0993', '1393', 'Forderungen aus Lieferungen und Leistungen H-Saldo');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1397, 'SKR03', '0', '0996', '1393', 'Pauschalwertberichtigung auf Forderungen mit einer Restlaufzeit bis zu 1 Jahr');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1398, 'SKR03', '0', '0997', '1393', 'Pauschalwertberichtigung auf Forderungen mit einer Restlaufzeit von mehr als 1 Jahr');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1399, 'SKR03', '0', '0998', '1393', 'Einzelwertberichtigungen auf Forderungen mit einer Restlaufzeit bis zu 1 Jahr');
+INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1400, 'SKR03', '0', '0999', '1393', 'Einzelwertberichtigungen auf Forderungen mit einer Restlaufzeit von mehr als 1 Jahr');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1403, 'SKR03', '1', '1000', '0', 'Kasse');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1404, 'SKR03', '1', '1010', '1403', 'Nebenkasse 1');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1405, 'SKR03', '1', '1020', '1403', 'Nebenkasse 2');
@@ -385,7 +384,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1447, 'SKR03', '1', '1340', '1425', 'Anteile an verbundenen Unternehmen (Umlaufvermögen)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1448, 'SKR03', '1', '1344', '1425', 'Anteile an herrschender oder mit Mehrheit beteiligter Gesellschaft');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1450, 'SKR03', '1', '1345', '1425', 'Eigene Anteile');
--- TODO Fix value for account_parent
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1456, 'SKR03', '1', '1350', '0', 'GmbH-Anteile zum kurzfristigen Verbleib');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1457, 'SKR03', '1', '1352', '0', 'Genossenschaftsanteile zum kurzfristigen Verbleib');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1458, 'SKR03', '1', '1355', '0', 'Ansprüche aus Rückdeckungsversicherung');
@@ -532,7 +530,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1608, 'SKR03', '1', '1590', '0', 'Durchlaufende Posten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1609, 'SKR03', '1', '1591', '0', 'Durchlaufende Posten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1610, 'SKR03', '1', '1592', '0', 'Fremdgeld');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1612, 'SKR03', '1', '1593', '0', 'Verrechnungskonto erhaltene Anzahlungen bei Buchung über Debitorenkonto');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1613, 'SKR03', '1', '1594', '0', 'Forderungen gegen verbundene Unternehmen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1614, 'SKR03', '1', '1595', '0', 'Forderungen gegen verbundene Unternehmen ( bis 1 Jahr )');
@@ -540,7 +537,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1616, 'SKR03', '1', '1597', '0', 'Forderungen gegen Unternehmen mit denen ein Beteiligungsverhältnis besteht');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1617, 'SKR03', '1', '1598', '0', 'Forderungen gegen Unternehmen mit denen ein Beteiligungsverhältnis besteht ( bis 1 Jahr )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1618, 'SKR03', '1', '1599', '0', 'Forderungen gegen Unternehmen mit denen ein Beteiligungsverhältnis besteht ( größer 1 Jahr )');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1621, 'SKR03', '1', '1600', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1622, 'SKR03', '1', '1601', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1623, 'SKR03', '1', '1602', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen');
@@ -567,12 +563,10 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1644, 'SKR03', '1', '1625', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen ohne Kontokorrent ( bis 1 Jahr )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1645, 'SKR03', '1', '1626', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen ohne Kontokorrent ( 1 bis 5 Jahre )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1646, 'SKR03', '1', '1628', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen ohne Kontokorrent ( größer 5 Jahre )');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1648, 'SKR03', '1', '1630', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen gegenüber verbundenen Unternehmen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1649, 'SKR03', '1', '1631', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen gegenüber verbundenen Unternehmen ( bis 1 Jahr )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1650, 'SKR03', '1', '1635', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen gegenüber verbundenen Unternehmen ( 1 bis 5 Jahre )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1651, 'SKR03', '1', '1638', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen gegenüber verbundenen Unternehmen ( größer 5 Jahre )');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1653, 'SKR03', '1', '1640', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen gegenüber Unternehmen mit denen ein Beteiligungsverhältnis besteht');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1654, 'SKR03', '1', '1641', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen gegenüber Unternehmen mit denen ein Beteiligungsverhältnis besteht ( bis 1 Jahr )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1655, 'SKR03', '1', '1645', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen gegenüber Unternehmen mit denen ein Beteiligungsverhältnis besteht ( 1 bis 5 Jahre )');
@@ -581,14 +575,11 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1658, 'SKR03', '1', '1651', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen gegenüber Gesellschaftern ( bis 1 Jahr )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1659, 'SKR03', '1', '1655', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen gegenüber Gesellschaftern ( 1 bis 5 Jahre )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1660, 'SKR03', '1', '1658', '0', 'Verbindlichkeiten aus Lieferungen und Leistungen gegenüber Gesellschaftern ( größer 5 Jahre )');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1662, 'SKR03', '1', '1659', '0', 'Gegenkonto 1625 - 1658 bei Aufteilung Kreditorenkonto');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1664, 'SKR03', '1', '1660', '0', 'Schuldwechsel');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1665, 'SKR03', '1', '1661', '0', 'Schuldwechsel ( bis 1 Jahr )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1666, 'SKR03', '1', '1680', '0', 'Schuldwechsel ( 1 bis 5 Jahre )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1667, 'SKR03', '1', '1690', '0', 'Schuldwechsel ( größer 5 Jahre )');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1669, 'SKR03', '1', '1700', '0', 'Sonstige Verbindlichkeiten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1670, 'SKR03', '1', '1701', '0', 'Sonstige Verbindlichkeiten ( bis 1 Jahr )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1671, 'SKR03', '1', '1702', '0', 'Sonstige Verbindlichkeiten ( 1 bis 5 Jahre )');
@@ -598,9 +589,7 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1675, 'SKR03', '1', '1706', '0', 'Darlehen ( bis 1 Jahr )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1676, 'SKR03', '1', '1707', '0', 'Darlehen ( 1 bis 5 Jahre )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1677, 'SKR03', '1', '1708', '0', 'Darlehen ( größer 5 Jahre )');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1679, 'SKR03', '1', '1709', '0', 'Gewinnverfügungskonto stiller Gesellschafter');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1681, 'SKR03', '1', '1710', '0', 'Erhaltene Anzahlungen ( Verbindlichkeiten )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1682, 'SKR03', '1', '1711', '0', 'Erhaltene versteuerte Anzahlungen 7% USt ( Verbindlichkeiten )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1683, 'SKR03', '1', '1716', '0', 'Erhaltene versteuerte Anzahlungen 15% USt ( Verbindlichkeiten )');
@@ -609,7 +598,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1686, 'SKR03', '1', '1719', '0', 'Erhaltene Anzahlungen ( bis 1 Jahr )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1687, 'SKR03', '1', '1720', '0', 'Erhaltene Anzahlungen ( 1 bis 5 Jahre )');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1688, 'SKR03', '1', '1721', '0', 'Erhaltene Anzahlungen ( größer 5 Jahre )');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1690, 'SKR03', '1', '1722', '0', 'Erhaltene Anzahlungen (von Vorräten offen abgesetzt)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1691, 'SKR03', '1', '1730', '0', 'Kreditkartenabrechnung');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1692, 'SKR03', '1', '1731', '0', 'Agenturwarenabrechnung');
@@ -639,7 +627,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1716, 'SKR03', '1', '1755', '0', 'Lohn- und Gehaltsverrechnungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1717, 'SKR03', '1', '1756', '0', 'Lohn- und Gehaltsverrechnung § 11 Abs. 2 EStG für § 4/3 EStG');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1718, 'SKR03', '1', '1759', '0', 'Voraussichtliche Beitragsschuld gegenüber den sozialversicherungsträgern');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1720, 'SKR03', '1', '1760', '0', 'Umsatzsteuer nicht fällig');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1721, 'SKR03', '1', '1761', '0', 'Umsatzsteuer nicht fällig 7%');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1722, 'SKR03', '1', '1762', '0', 'Umsatzsteuer nicht fällig aus im Inland steuerpflichtigen EG-Lieferant');
@@ -673,10 +660,8 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1750, 'SKR03', '1', '1790', '0', 'Umsatzsteuer Vorjahr');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1751, 'SKR03', '1', '1791', '0', 'Umsatzsteuer frühere Jahre');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1752, 'SKR03', '1', '1792', '0', 'Sonstige Verrechnungskonten (Interimskonten)');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1754, 'SKR03', '1', '1793', '0', 'Verrechnungskonto geleistete Anzahlungen bei Buchung über Kreditkonto');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1755, 'SKR03', '1', '1795', '0', 'Verbindlichkeiten im Rahmen der sozialen Sicherheit (für § 4/3 EStG)');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1757, 'SKR03', '1', '1800', '0', 'Privatentnahmen allgemein');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1758, 'SKR03', '1', '1801', '0', 'Privatentnahmen allgemein');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1759, 'SKR03', '1', '1802', '0', 'Privatentnahmen allgemein');
@@ -777,7 +762,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1854, 'SKR03', '1', '1897', '0', 'Privateinlagen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1855, 'SKR03', '1', '1898', '0', 'Privateinlagen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1856, 'SKR03', '1', '1899', '0', 'Privateinlagen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1859, 'SKR03', '1', '1900', '0', 'Privatentnahmen allgemein');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1860, 'SKR03', '1', '1901', '0', 'Privatentnahmen allgemein');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1861, 'SKR03', '1', '1902', '0', 'Privatentnahmen allgemein');
@@ -878,14 +862,11 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1956, 'SKR03', '1', '1997', '0', 'Privateinlagen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1957, 'SKR03', '1', '1998', '0', 'Privateinlagen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1958, 'SKR03', '1', '1999', '0', 'Privateinlagen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1961, 'SKR03', '2', '2000', '0', 'Außerordentliche Aufwendungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1962, 'SKR03', '2', '2001', '0', 'Außerordentliche Aufwendungen finanzwirksam');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1963, 'SKR03', '2', '2005', '0', 'Außerordentliche Aufwendungen nicht finanzwirksam');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1966, 'SKR03', '2', '2010', '0', 'Betriebsfremde Aufwendungen (soweit nicht außerordentlich)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1967, 'SKR03', '2', '2020', '0', 'Periodenfremde Aufwendungen (soweit nicht außerordentlich)');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1970, 'SKR03', '2', '2100', '0', 'Zinsen und ähnliche Aufwendungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1971, 'SKR03', '2', '2103', '0', 'Steuerlich abzugsfähige andere Nebenleistungen zu steuern');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1972, 'SKR03', '2', '2104', '0', 'Steuerlich nicht abzugsfähige andere Nebenleistungen zu Steuern');
@@ -908,15 +889,12 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1989, 'SKR03', '2', '2139', '0', 'Diskontaufwendungen an verbundene Unternehmen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1990, 'SKR03', '2', '2140', '0', 'Zinsähnliche Aufwendungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1991, 'SKR03', '2', '2149', '0', 'Zinsähnliche Aufwendungen an verbundene Unternehmen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1993, 'SKR03', '2', '2150', '0', 'Aufwendungen aus Kursdifferenzen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1994, 'SKR03', '2', '2166', '0', 'Aufwendungen Bewertung Finanzmittelfonds');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1995, 'SKR03', '2', '2170', '0', 'Nicht abziehbare Vorsteuer');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1996, 'SKR03', '2', '2171', '0', 'Nicht abziehbare Vorsteuer 7%');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1997, 'SKR03', '2', '2175', '0', 'Nicht abziehbare Vorsteuer 16%');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 1998, 'SKR03', '2', '2176', '0', 'Nicht abziehbare Vorsteuer 19%');
-
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2001, 'SKR03', '2', '2200', '0', 'Körperschaftsteuer');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2002, 'SKR03', '2', '2203', '0', 'Körperschaftsteuer für Vorjahre');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2003, 'SKR03', '2', '2204', '0', 'Körperschaftsteuererstattungen für Vorjahre');
@@ -933,11 +911,9 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2014, 'SKR03', '2', '2280', '0', 'Steuernachzahlungen Vorjahre für Steuern vom Einkommen und Ertrag');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2015, 'SKR03', '2', '2282', '0', 'Steuererstattungen Vorjahre für Steuern vom Einkommen und Ertrag');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2016, 'SKR03', '2', '2284', '0', 'Erträge aus der Auflösung von Rückstellungen für Steuern vom Einkommen und Ertrag');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2018, 'SKR03', '2', '2285', '0', 'Steuernachzahlungen Vorjahre für sonstige Steuern');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2019, 'SKR03', '2', '2287', '0', 'Steuererstattungen Vorjahre für sonstige Steuern');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2020, 'SKR03', '2', '2289', '0', 'Erträge aus der Auflösung von Rückstellungen für sonstige Steuern');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2023, 'SKR03', '2', '2300', '0', 'Sonstige Aufwendungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2024, 'SKR03', '2', '2307', '0', 'Sonstige Aufwendungen betriebsfremde und regelmäßig');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2025, 'SKR03', '2', '2309', '0', 'Sonstige Aufwendungen unregelmässig');
@@ -945,7 +921,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2027, 'SKR03', '2', '2311', '0', 'Anlagenabgänge immaterielle Vermögensgegenstände (Restbuchwert bei Buchverlust)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2028, 'SKR03', '2', '2312', '0', 'Anlagenabgänge Finanzanlagen (Restbuchwert bei Buchverlust)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2029, 'SKR03', '2', '2313', '0', 'Anlagenabgänge Finanzanlagen 100% / 50% nicht abzugsfähig (inländische Kap. Ges.) (Restbuchwert bei Buchverlust)');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2031, 'SKR03', '2', '2315', '0', 'Anlagenabgänge Sachanlagen (Restbuchwert bei Buchgewinn)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2032, 'SKR03', '2', '2316', '0', 'Anlagenabgänge immaterielle Vermögensgegenstände (Restbuchwert bei Buchgewinn)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2033, 'SKR03', '2', '2317', '0', 'Anlagenabgänge Finanzanlagen (Restbuchwert bei Buchgewinn)');
@@ -964,7 +939,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2046, 'SKR03', '2', '2348', '0', 'Aufwendungen aus der Zuschreibung von steuerlich niedriger bewerteten Verbindlichkeiten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2047, 'SKR03', '2', '2349', '0', 'Aufwendungen aus der Zuschreibung von steuerlich niedriger bewerteten Rückstellungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2048, 'SKR03', '2', '2350', '0', 'Grundstücksaufwendungen neutral');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2050, 'SKR03', '2', '2375', '0', 'Grundsteuer');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2051, 'SKR03', '2', '2380', '0', 'Zuwendungen Spenden steuerlich nicht abziehbar');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2052, 'SKR03', '2', '2381', '0', 'Zuwendungen Spenden für wissenschaftliche und kulturelle Zwecke');
@@ -987,28 +961,18 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2069, 'SKR03', '2', '2407', '0', 'Forderungsverluste 15% USt (übliche Höhe)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2070, 'SKR03', '2', '2408', '0', 'Forderungsverluste aus im Inland steuerpflichtigen EG-Lieferungen 19% USt (übliche Höhe)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2071, 'SKR03', '2', '2409', '0', 'Forderungsverluste aus im Inland steuerpflichtigen EG-Lieferungen 15% USt (übliche Höhe)');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2073, 'SKR03', '2', '2430', '0', 'Forderungsverluste unüblich hoch');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2074, 'SKR03', '2', '2450', '0', 'Einstellung in die Pauschalwertberichtigung zu Forderungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2075, 'SKR03', '2', '2451', '0', 'Einstellung in die Einzelwertberichtigung zu Forderungen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2077, 'SKR03', '2', '2490', '0', 'Aufwendungen aus Verlustübernahme');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2079, 'SKR03', '2', '2492', '0', 'Abgeführte Gewinne auf Grund einer Gewinngemeinschaft');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2080, 'SKR03', '2', '2493', '0', 'Abgeführte Gewinnanteile an stille Gesellschafter § 8 GewStG');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2081, 'SKR03', '2', '2494', '0', 'Abgeführte Gewinne auf Grund eines Gewinn- oder Teilgewinnabführungsvetrags');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2083, 'SKR03', '2', '2495', '0', 'Einstellungen in die Kapitalrücklage nach den Vorschriften über die vereinfachte Kapitalherabsetzung');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2085, 'SKR03', '2', '2496', '0', 'Einstellung in die gesetzliche Rücklage');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2087, 'SKR03', '2', '2497', '0', 'Einstellungen in satzungsmäßige Rücklagen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2089, 'SKR03', '2', '2498', '0', 'Einstellung in die Rücklage für eigene Anteile');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2091, 'SKR03', '2', '2499', '0', 'Einstellung in andere Gewinnrücklagen');
-
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2094, 'SKR03', '2', '2500', '0', 'Außerordentliche Erträge');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2095, 'SKR03', '2', '2501', '0', 'Außerordentliche Erträge finanzwirksam');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2096, 'SKR03', '2', '2505', '0', 'Außerordentliche Erträge nicht finanzwirksam');
@@ -1020,19 +984,16 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2106, 'SKR03', '2', '2617', '0', 'Gewinne aus Anteilen an nicht steuerbefreiten inländischen Kapitalgesellschaften § 9 Nr. 2a GewStG');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2107, 'SKR03', '2', '2618', '0', 'Gewinnanteile aus Mitunternehmerschaften § 9 GewStG');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2108, 'SKR03', '2', '2619', '0', 'Erträge aus Beteiligungen an verbundenen Unternehmen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2110, 'SKR03', '2', '2620', '0', 'Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2111, 'SKR03', '2', '2625', '0', 'laufende Erträge aus Anteilen an Kapitalgesellschaften (Finanzanlagevermögen) 100% / 50% steuerfrei (inländische Kap. Ges.)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2112, 'SKR03', '2', '2626', '0', 'Laufende Erträge aus Anteilen an Kapitalgesellschaften (verbundene Unternehmen) 100% / 50% steuerfrei (inländische Kap. Ges.)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2113, 'SKR03', '2', '2649', '0', 'Erträge aus anderen Wertpapieren und Ausleihungen des Finanzanlagevermögen aus verbundenen Unternehmen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2115, 'SKR03', '2', '2650', '0', 'Sonstige Zinsen und ähnliche Erträge');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2116, 'SKR03', '2', '2655', '0', 'laufende Erträge aus Anteilen an Kapitalgesellschaften (Umlaufvermögen) 100% / 50% steuerfrei (inländische Kap. Ges.)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2117, 'SKR03', '2', '2656', '0', 'laufende Erträge aus Anteilen an Kapitalgesellschaften (verbundene Unternehmen) 100% / 50% steuerfrei (inländische Kap. Ges.)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2118, 'SKR03', '2', '2657', '0', 'Zinserträge § 233a AO');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2119, 'SKR03', '2', '2658', '0', 'Zinserträge § 233a AO Sonderfall Anlage A KSt');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2120, 'SKR03', '2', '2659', '0', 'Sonstige Zinsen und ähnliche Erträge aus verbundenen Unternehmen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2122, 'SKR03', '2', '2660', '0', 'Erträge aus Kursdifferenzen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2123, 'SKR03', '2', '2661', '0', 'Nicht realisierbare Währungsdifferenzen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2124, 'SKR03', '2', '2662', '0', 'Realisierte Währungsdifferenzen');
@@ -1043,7 +1004,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2129, 'SKR03', '2', '2667', '0', 'Bank Währungsverlust (Konto)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2130, 'SKR03', '2', '2668', '0', 'Währungsdifferenz zum Kontenausgleich');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2131, 'SKR03', '2', '2669', '0', 'Nicht realisierbare Währungsdifferenzen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2133, 'SKR03', '2', '2670', '0', 'Diskonterträge');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2134, 'SKR03', '2', '2671', '0', 'Bank Bewertungsertrag');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2135, 'SKR03', '2', '2672', '0', 'Rundungsdifferenzen');
@@ -1051,7 +1011,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2137, 'SKR03', '2', '2679', '0', 'Diskonterträge verbundene Unternehmen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2138, 'SKR03', '2', '2680', '0', 'Zinsähnliche Erträge');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2139, 'SKR03', '2', '2689', '0', 'Zinsähnliche Erträge aus verbundenen Unternehmen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2142, 'SKR03', '2', '2700', '0', 'Sonstige Erträge');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2143, 'SKR03', '2', '2705', '0', 'Sonstige Erträge betrieblich und regelmäßig');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2144, 'SKR03', '2', '2707', '0', 'Sonstige Erträge betriebsfremd und regelmäßig');
@@ -1082,33 +1041,22 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2169, 'SKR03', '2', '2742', '0', 'Versicherungsentschädigungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2170, 'SKR03', '2', '2743', '0', 'Investitionszuschüsse (steuerpflichtig)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2171, 'SKR03', '2', '2744', '0', 'Investitionszulagen (steuerfrei)');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2173, 'SKR03', '2', '2745', '0', 'Erträge aus Kapitalherabsetzung');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2174, 'SKR03', '2', '2746', '0', 'Steuerfreie Erträge aus der Auflösung von Sonderposten mit Rücklageanteil');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2175, 'SKR03', '2', '2747', '0', 'Sonstige steuerfreie Betriebseinnahmen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2176, 'SKR03', '2', '2749', '0', 'Erstattungen Aufwendungsausgleichsgesetz');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2177, 'SKR03', '2', '2750', '0', 'Grundstückserträge');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2179, 'SKR03', '2', '2790', '0', 'Erträge aus Verlustübernahme');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2181, 'SKR03', '2', '2792', '0', 'Erhaltene Gewinne auf Grund einer Gewinngemeinschaft');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2182, 'SKR03', '2', '2794', '0', 'Erhaltene Gewinne auf Grund eines Gewinn- oder Teilgewinnabführungsvetrags');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2184, 'SKR03', '2', '2795', '0', 'Entnahmen aus der Kapitalrücklage');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2186, 'SKR03', '2', '2796', '0', 'Entnahmen aus der gesetzlichen Rücklage');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2188, 'SKR03', '2', '2797', '0', 'Entnahmen aus satzungsmäßigen Rücklagen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2190, 'SKR03', '2', '2798', '0', 'Entnahmen aus der Rücklage für eigene Anteile');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2192, 'SKR03', '2', '2799', '0', 'Entnahmen aus anderen Gewinnrücklagen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2194, 'SKR03', '2', '2860', '0', 'Gewinnvortrag nach Verwendung');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2195, 'SKR03', '2', '2868', '0', 'Verlustvortrag nach Verwendung');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2197, 'SKR03', '2', '2869', '0', 'Vortrag auf neue Rechnung (GuV)');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2199, 'SKR03', '2', '2870', '0', 'Vorabausschüttung');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2202, 'SKR03', '2', '2890', '0', 'Verrechneter kalkulatorischer Unternehmerlohn');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2203, 'SKR03', '2', '2891', '0', 'Verrechnete kalkulatorische Miete und Pacht');
@@ -1116,11 +1064,9 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2205, 'SKR03', '2', '2893', '0', 'Verrechnete kalkulatorische Abschreibungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2206, 'SKR03', '2', '2894', '0', 'Verrechnete kalkulatorische Wagnisse');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2207, 'SKR03', '2', '2895', '0', 'Verrechneter kalkulatorische Lohn für unentgeltliche Mitarbeiter');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2209, 'SKR03', '2', '2990', '0', 'Aufwendungen/Erträge aus Umrechnungsdifferenzen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2212, 'SKR03', '3', '3000', '0', 'Roh- Hilfs- und Betriebsstoffe');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2213, 'SKR03', '3', '3090', '0', 'Energiestoffe (Fertigung');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2215, 'SKR03', '3', '3100', '0', 'Fremdleistungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2219, 'SKR03', '3', '3110', '2215', 'Bauleistungen eines im Inland ansässigen Unternehmens 7% Vorsteuer und 7% Umsatzsteuer');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2220, 'SKR03', '3', '3115', '2215', 'Leistungen eines im Ausland ansässigen Unternehmens 7% Vorsteuer und 7% Umsatzsteuer');
@@ -1142,7 +1088,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2236, 'SKR03', '3', '3151', '2215', 'Erhaltene Skonti aus Leistungen für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird 19% Vorsteuer und 19% Umsatzsteuer');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2237, 'SKR03', '3', '3152', '2215', 'Erhaltene Skonti aus Leistungen für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird 16% Vorsteuer und 16% Umsatzsteuer');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2238, 'SKR03', '3', '3153', '2215', 'Erhaltene Skonti aus Leistungen für die als Leistungsempfänger die Steuer nach § 13b UStG geschuldet wird ohne Vorsteuer aber mit Umsatzsteuer');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2240, 'SKR03', '3', '3200', '0', 'Wareneingang');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2241, 'SKR03', '3', '3300', '2240', 'Wareneingang 7% Vorsteuer');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2242, 'SKR03', '3', '3301', '2240', 'Wareneingang 7% Vorsteuer');
@@ -1273,7 +1218,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2367, 'SKR03', '3', '3725', '2240', 'Nachlässe aus innergemeinschaftlichem Erwerb 19% Vorsteuer und 19% Umsatzsteuer');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2368, 'SKR03', '3', '3726', '2240', 'Nachlässe aus innergemeinschaftlichem Erwerb 16% Vorsteuer und 16% Umsatzsteuer');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2369, 'SKR03', '3', '3727', '2240', 'Nachlässe aus innergemeinschaftlichem Erwerb 15% Vorsteuer und 15% Umsatzsteuer');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2372, 'SKR03', '3', '3730', '0', 'Erhaltene Skonti');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2373, 'SKR03', '3', '3731', '0', 'Erhaltene Skonti 7% Vorsteuer');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2374, 'SKR03', '3', '3735', '0', 'Erhaltene Skonti 16% Vorsteuer');
@@ -1299,7 +1243,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2394, 'SKR03', '3', '3800', '0', 'Bezugsnebenkosten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2395, 'SKR03', '3', '3830', '0', 'Leergut');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2396, 'SKR03', '3', '3850', '0', 'Zölle und Einfuhrabgaben');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2399, 'SKR03', '3', '3960', '0', 'Bestandsveränderungen Roh- Hilfs- und Betriebsstoffe sowie bezogene Waren');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2400, 'SKR03', '3', '3961', '0', 'Bestandsveränderungen Roh- Hilfs- und Betriebsstoffe sowie bezogene Waren');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2401, 'SKR03', '3', '3962', '0', 'Bestandsveränderungen Roh- Hilfs- und Betriebsstoffe sowie bezogene Waren');
@@ -1310,7 +1253,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2406, 'SKR03', '3', '3967', '0', 'Bestandsveränderungen Roh- Hilfs- und Betriebsstoffe sowie bezogene Waren');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2407, 'SKR03', '3', '3968', '0', 'Bestandsveränderungen Roh- Hilfs- und Betriebsstoffe sowie bezogene Waren');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2408, 'SKR03', '3', '3969', '0', 'Bestandsveränderungen Roh- Hilfs- und Betriebsstoffe sowie bezogene Waren');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2411, 'SKR03', '3', '3970', '0', 'Bestand Roh- Hilfs- und Betriebsstoffe');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2412, 'SKR03', '3', '3971', '0', 'Bestand Roh- Hilfs- und Betriebsstoffe');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2413, 'SKR03', '3', '3972', '0', 'Bestand Roh- Hilfs- und Betriebsstoffe');
@@ -1321,7 +1263,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2418, 'SKR03', '3', '3977', '0', 'Bestand Roh- Hilfs- und Betriebsstoffe');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2419, 'SKR03', '3', '3978', '0', 'Bestand Roh- Hilfs- und Betriebsstoffe');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2420, 'SKR03', '3', '3979', '0', 'Bestand Roh- Hilfs- und Betriebsstoffe');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2422, 'SKR03', '3', '3980', '0', 'Bestand Waren');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2423, 'SKR03', '3', '3981', '0', 'Bestand Waren');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2424, 'SKR03', '3', '3982', '0', 'Bestand Waren');
@@ -1332,7 +1273,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2429, 'SKR03', '3', '3987', '0', 'Lager Differenzkorrektur Marktwert');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2430, 'SKR03', '3', '3988', '0', 'Lager Bestand Zwischenkonto');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2431, 'SKR03', '3', '3989', '0', 'Bestand Waren');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2434, 'SKR03', '3', '3990', '0', 'Verrechnete Stoffkosten (Gegenkonto zu 4000-99)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2435, 'SKR03', '3', '3991', '0', 'Verrechnete Stoffkosten (Gegenkonto zu 4000-99)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2436, 'SKR03', '3', '3992', '0', 'Verrechnete Stoffkosten (Gegenkonto zu 4000-99)');
@@ -1343,7 +1283,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2441, 'SKR03', '3', '3997', '0', 'Verrechnete Stoffkosten (Gegenkonto zu 4000-99)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2442, 'SKR03', '3', '3998', '0', 'Verrechnete Stoffkosten (Gegenkonto zu 4000-99)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2443, 'SKR03', '3', '3999', '0', 'Verrechnete Stoffkosten (Gegenkonto zu 4000-99)');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2446, 'SKR03', '4', '4000', '0', 'Material-und Stoffverbrauch');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2447, 'SKR03', '4', '4001', '2446', 'Material-und Stoffverbrauch');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2448, 'SKR03', '4', '4002', '2446', 'Material-und Stoffverbrauch');
@@ -1444,8 +1383,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2543, 'SKR03', '4', '4097', '2446', 'Material-und Stoffverbrauch');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2544, 'SKR03', '4', '4098', '2446', 'Material-und Stoffverbrauch');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2545, 'SKR03', '4', '4099', '2446', 'Material-und Stoffverbrauch');
-
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2548, 'SKR03', '4', '4100', '0', 'Löhne und Gehälter');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2549, 'SKR03', '4', '4110', '2548', 'Löhne');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2550, 'SKR03', '4', '4120', '2548', 'Gehälter');
@@ -1454,11 +1391,9 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2553, 'SKR03', '4', '4126', '2548', 'Tantiemen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2554, 'SKR03', '4', '4127', '2548', 'Geschäftsführergehälter');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2555, 'SKR03', '4', '4128', '2548', 'Vergütungen an angestellte Mitunternehmer §15 EStG');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2557, 'SKR03', '4', '4130', '2548', 'Gesetzliche Soziale Aufwendungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2558, 'SKR03', '4', '4137', '2548', 'Gesetzliche soziale Aufwendungen für Mitunternehmer §15 EStG');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2559, 'SKR03', '4', '4138', '2548', 'Beiträge zur Berufsgenossenschaft');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2561, 'SKR03', '4', '4139', '2548', 'Ausgleichsabgabe i. S. d. Schwerbehindertengesetz');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2562, 'SKR03', '4', '4140', '2548', 'Freiwillige soziale Aufwendungen lohnsteuerfrei');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2563, 'SKR03', '4', '4145', '2548', 'Freiwillige soziale Aufwendungen lohnsteuerpflichtig');
@@ -1475,8 +1410,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2574, 'SKR03', '4', '4180', '2548', 'Bedienungsgelder');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2575, 'SKR03', '4', '4190', '2548', 'Aushilfslöhne');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2576, 'SKR03', '4', '4199', '2548', 'Pauschale Steuer für Aushilfen');
-
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2579, 'SKR03', '4', '4200', '0', 'Raumkosten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2580, 'SKR03', '4', '4210', '2579', 'Miete');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2581, 'SKR03', '4', '4218', '2579', 'Gewerbesteuerlich zu berücksichtigende Miete §8 GewStG');
@@ -1497,9 +1430,7 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2596, 'SKR03', '4', '4301', '2579', 'Nicht abziehbare Vorsteuer 7%');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2597, 'SKR03', '4', '4305', '2579', 'Nicht abziehbare Vorsteuer 16%');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2598, 'SKR03', '4', '4306', '2579', 'Nicht abziehbare Vorsteuer 19%');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2600, 'SKR03', '4', '4320', '2579', 'Gewerbesteuer');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2602, 'SKR03', '4', '4340', '2579', 'Sonstige Betriebssteuern');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2603, 'SKR03', '4', '4350', '2579', 'Verbrauchsteuer');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2604, 'SKR03', '4', '4355', '2579', 'ökosteuer');
@@ -1659,7 +1590,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2758, 'SKR03', '4', '4809', '2579', 'Sonstige Reparaturen und Instandhaltungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2759, 'SKR03', '4', '4810', '2579', 'Mietleasing');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2760, 'SKR03', '4', '4814', '2579', 'Gewerbesteuerlich zu berücksichtigendes Mietleasing § 8 GewStG');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2762, 'SKR03', '4', '4815', '2579', 'Kaufleasing');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2763, 'SKR03', '4', '4820', '2579', 'Abschreibung auf Aufwendungen für die Ingangsetzung und Erweiterung des Geschäftsbetriebs');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2764, 'SKR03', '4', '4821', '2579', 'Abschreibung auf Aufwendungen für die Währungsumstellung auf den Euro');
@@ -1681,7 +1611,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2780, 'SKR03', '4', '4860', '2579', 'Abschreibungen auf aktivierte geringwertiger Wirtschaftsgüter');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2781, 'SKR03', '4', '4862', '2579', 'Abschreibung auf Sammelposten WG');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2782, 'SKR03', '4', '4865', '2579', 'Außerplanmäßige Abschreibungen auf aktivierte geringwertiger Wirtschaftsgüter');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2784, 'SKR03', '4', '4870', '2579', 'Abschreibungen auf Finanzanlagen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2785, 'SKR03', '4', '4871', '2579', 'Abschreibungen auf Finanzanlagen 100% / 50% nicht abzugsfähig (inländische Kap. Ges.)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2786, 'SKR03', '4', '4872', '2579', 'Abschreibungen auf Grund von Verlustanteilen an Mitunternehmerschaften § 8 GewStG');
@@ -1690,7 +1619,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2789, 'SKR03', '4', '4875', '2579', 'Abschreibungen auf Wertpapiere des Umlaufvermögens');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2790, 'SKR03', '4', '4876', '2579', 'Abschreibungen auf Wertpapiere des Umlaufvermögens 100% / 50% nicht abzugsfähig (inländische Kap. Ges.)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2791, 'SKR03', '4', '4879', '2579', 'Vorwegnahme künftiger Wertschwankungen bei Wertpapieren des Umlaufvermögens');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2793, 'SKR03', '4', '4880', '2579', 'Abschreibungen auf Umlaufvermögen ohne Wertpapiere (soweit unübliche Höhe)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2794, 'SKR03', '4', '4882', '2579', 'Abschreibungen auf Umlaufvermögen steuerrechtlich bedingt (soweit unübliche Höhe)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2795, 'SKR03', '4', '4885', '2579', 'Vorwegnahme künftiger Wertschwankungen im Umlaufvermögen außer Vorräte und Wertpapiere des Umlaufvermögens');
@@ -1711,7 +1639,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2810, 'SKR03', '4', '4949', '2579', 'Haftungsvergütung an Mitunternehmer § 15 EStG');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2811, 'SKR03', '4', '4950', '2579', 'Rechts- und Beratungskosten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2812, 'SKR03', '4', '4955', '2579', 'Buchführungskosten');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2814, 'SKR03', '4', '4957', '2579', 'Abschluss- und Prüfungskosten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2815, 'SKR03', '4', '4960', '2579', 'Mieten für Einrichtungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2816, 'SKR03', '4', '4964', '2579', 'Aufwendungen für die zeitlich befristetete Überlassung von Rechten (Lizenzen,Konzessionen)');
@@ -1724,32 +1651,24 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2823, 'SKR03', '4', '4976', '2579', 'Aufwendungen aus der Veräußerung von Anteilen an Kapitalgesellschaften 100% / 50% nicht abzugsfähig (inländische Kap. Ges.)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2824, 'SKR03', '4', '4980', '2579', 'Betriebsbedarf');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2825, 'SKR03', '4', '4985', '2579', 'Werkzeuge und Kleingeräte');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2828, 'SKR03', '4', '4990', '0', 'Kalkulatorischer Unternehmerlohn');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2829, 'SKR03', '4', '4991', '0', 'Kalkulatorische Miete und Pacht');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2830, 'SKR03', '4', '4992', '0', 'Kalkulatorische Zinsen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2831, 'SKR03', '4', '4993', '0', 'Kalkulatorische Abschreibungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2832, 'SKR03', '4', '4994', '0', 'Kalkulatorische Wagnisse');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2833, 'SKR03', '4', '4995', '0', 'Kalkulatorischer Lohn für unentgeltliche Mitarbeiter');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2836, 'SKR03', '4', '4996', '0', 'Herstellungskosten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2837, 'SKR03', '4', '4997', '0', 'Verwaltungskosten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2838, 'SKR03', '4', '4998', '0', 'Vertriebskosten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2839, 'SKR03', '4', '4999', '0', 'Gegenkonto 4996 - 4998');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2841, 'SKR03', '7', '7000', '0', 'Unfertige Erzeugnisse und Leistungen (Bestand)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2842, 'SKR03', '7', '7050', '2841', 'Unfertige Erzeugnisse (Bestand)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2843, 'SKR03', '7', '7080', '2841', 'Unfertige Leistungen (Bestand)');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2845, 'SKR03', '7', '7090', '2841', 'In Ausführung befindliche Bauaufträge');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2847, 'SKR03', '7', '7095', '2841', 'In Arbeit befindliche Aufträge');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2849, 'SKR03', '7', '7100', '0', 'Fertige Erzeugnisse und Waren (Bestand)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2850, 'SKR03', '7', '7110', '2849', 'Fertige Erzeugnisse (Bestand)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2851, 'SKR03', '7', '7140', '2849', 'Waren (Bestand)');
-
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2854, 'SKR03', '8', '8000', '0', '(Zur freien Verfügung)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2855, 'SKR03', '8', '8001', '2854', '(Zur freien Verfügung)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 2856, 'SKR03', '8', '8002', '2854', '(Zur freien Verfügung)');
@@ -1901,7 +1820,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3002, 'SKR03', '8', '8348', '2854', 'Erlöse 16% USt');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3003, 'SKR03', '8', '8349', '2854', 'Erlöse 16% USt');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3004, 'SKR03', '8', '8400', '2854', 'Erlöse 19% USt');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3006, 'SKR03', '8', '8401', '2854', 'Vorausberechnete Einnahmen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3007, 'SKR03', '8', '8402', '2854', 'Sontige Einnahmen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3008, 'SKR03', '8', '8403', '2854', 'Konto Kasse Ertrag');
@@ -1926,12 +1844,10 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3028, 'SKR03', '8', '8576', '2854', 'Provision sonstige Erträge 7 % USt');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3029, 'SKR03', '8', '8578', '2854', 'Provision sonstige Erträge 16 % USt');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3030, 'SKR03', '8', '8579', '2854', 'Provision sonstige Erträge 19 % USt');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3033, 'SKR03', '8', '8580', '2854', 'Statistisches Konto Erlöse zum Allgemeinen Umsatzsteuerersatz (EüR)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3034, 'SKR03', '8', '8581', '2854', 'Statistisches Konto Erlöse zum ermäßigten Umsatzsteuerersatz (EüR)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3035, 'SKR03', '8', '8582', '2854', 'Statistisches Konto Erlöse steuerfrei und nicht steuerbar (EüR)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3036, 'SKR03', '8', '8589', '2854', 'Gegenkonto 8580-8582 bei Aufteilung der Erlöse nach Steuersätzen (EüR)');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3038, 'SKR03', '8', '8590', '2854', 'Verrechnete sonstige Sachbezüge (keine Waren)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3039, 'SKR03', '8', '8591', '2854', 'Sachbezüge 7% USt (Waren)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3040, 'SKR03', '8', '8595', '2854', 'Sachbezüge 19% USt (Waren)');
@@ -1960,11 +1876,8 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3063, 'SKR03', '8', '8644', '2854', 'Sonstige Erlöse betrieblich und regelmäßig 19% USt');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3064, 'SKR03', '8', '8648', '2854', 'Sonstige Erlöse betrieblich und regelmäßig 16% USt');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3065, 'SKR03', '8', '8649', '2854', 'Sonstige Erlöse betrieblich und regelmäßig 16% USt');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3067, 'SKR03', '8', '8650', '2854', 'Erlöse Zinsen und Diskontspesen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3068, 'SKR03', '8', '8660', '2854', 'Erlöse Zinsen und Diskontspesen aus verbundenen Unternehmen');
-
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3071, 'SKR03', '8', '8700', '0', 'Erlösschmälerungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3072, 'SKR03', '8', '8701', '3071', 'Nicht abgerechnete Einnahmen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3073, 'SKR03', '8', '8705', '3071', 'Erlösschmälerungen');
@@ -2002,7 +1915,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3105, 'SKR03', '8', '8791', '3071', 'Gewährte Rabatte 19% USt');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3106, 'SKR03', '8', '8794', '3071', 'Gewährte Rabatte 16% USt');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3107, 'SKR03', '8', '8795', '3071', 'Gewährte Rabatte 16% USt');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3109, 'SKR03', '8', '8800', '0', 'Erlöse aus Verkäufen Sachanlagevermögen (Bei Buchverlust)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3110, 'SKR03', '8', '8801', '3109', 'Erlöse aus Verkäufen Sachanlagevermögen 19% USt (Bei Buchverlust)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3111, 'SKR03', '8', '8802', '3109', 'Erlöse aus Verkäufen Sachanlagevermögen 19% USt (Bei Buchverlust)');
@@ -2078,17 +1990,12 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3181, 'SKR03', '8', '8949', '0', 'Unentgeltliche Zuwendung von Waren ohne USt');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3182, 'SKR03', '8', '8950', '0', 'Nicht steuerbare Umsätze (Innenumsätze)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3183, 'SKR03', '8', '8955', '0', 'Umsatzsteuervergütungen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3185, 'SKR03', '8', '8960', '0', 'Bestandsveränderungen- unfertige Erzeugnisse');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3186, 'SKR03', '8', '8970', '0', 'Bestandsveränderungen- unfertige Leistungen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3188, 'SKR03', '8', '8975', '0', 'Bestandsveränderungen - in Ausführung befindliche Bauaufträge');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3190, 'SKR03', '8', '8977', '0', 'Bestandsveränderungen - in Arbeit befindliche Aufträge');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3191, 'SKR03', '8', '8980', '0', 'Bestandsveränderungen - fertige Erzeugnisse');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3192, 'SKR03', '8', '8990', '0', 'Andere aktivierte Eigenleistungen');
-
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3195, 'SKR03', '9', '9000', '0', 'Saldenvorträge Sachkonten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3196, 'SKR03', '9', '9001', '3195', 'Saldenvorträge Sachkonten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3197, 'SKR03', '9', '9002', '3195', 'Saldenvorträge Sachkonten');
@@ -2118,7 +2025,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3221, 'SKR03', '9', '9096', '3215', 'Offene Posten aus 1996');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3222, 'SKR03', '9', '9097', '3215', 'Offene Posten aus 1997');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3223, 'SKR03', '9', '9098', '3215', 'Offene Posten aus 1998');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3225, 'SKR03', '9', '9101', '3195', 'Verkaufstage');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3226, 'SKR03', '9', '9102', '3195', 'Anzahl der Barkunden');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3227, 'SKR03', '9', '9103', '3195', 'Beschäftigte Personen');
@@ -2134,17 +2040,13 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3237, 'SKR03', '9', '9140', '3195', 'Auftragsbestand');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3238, 'SKR03', '9', '9190', '3195', 'Gegenkonto für statistischen Mengeneinheiten Konten 9101 - 9107 und Konten 9116 - 9118');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3239, 'SKR03', '9', '9199', '3195', 'Gegenkonto zu Konten 9120  9135 - 9140');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3241, 'SKR03', '9', '9200', '3195', 'Beschäftigte Personen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3242, 'SKR03', '9', '9209', '3195', 'Gegenkonto zu 9200');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3243, 'SKR03', '9', '9210', '3195', 'Produktive Löhne');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3244, 'SKR03', '9', '9219', '3195', 'Gegenkonto zu 9210');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3247, 'SKR03', '9', '9220', '3195', 'Gezeichnetes Kapital in DM (Art. 42 Abs. 3 S. 1 EGHGB)');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3249, 'SKR03', '9', '9221', '3195', 'Gezeichnetes Kapital in Euro (Art. 42 Abs. 3 S. 2 EGHGB)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3250, 'SKR03', '9', '9229', '3195', 'Gegenkonto zu Konten 9022 - 9221');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3252, 'SKR03', '9', '9230', '3195', 'Baukostenzuschüsse');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3253, 'SKR03', '9', '9232', '3195', 'Investitionszulagen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3254, 'SKR03', '9', '9234', '3195', 'Investitionszuschüsse');
@@ -2158,16 +2060,13 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3262, 'SKR03', '9', '9246', '3195', 'Forderungen aus Verkäufen immaterieller Vermögensgegenständen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3263, 'SKR03', '9', '9247', '3195', 'Forderungen aus Verkäufe von Finanzanlagen bei sonstigen Vermögensgegenständen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3264, 'SKR03', '9', '9249', '3195', 'Gegenkonto zu Konten 9245 - 9247');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3266, 'SKR03', '9', '9250', '3195', 'Eigenkapitalersetzende Gesellschafterdarlehen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3267, 'SKR03', '9', '9255', '3195', 'Ungesicherte Gesellschafterdarlehen mit Restlaufzeit größer 5 Jahre');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3268, 'SKR03', '9', '9259', '3195', 'Gegenkonto zu 9250 und 9255');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3270, 'SKR03', '9', '9260', '3195', 'Kurzfristige Rückstellungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3271, 'SKR03', '9', '9262', '3195', 'Mittelfristige Rückstellungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3272, 'SKR03', '9', '9264', '3195', 'Langfristige Rückstellungen außer Pensionen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3273, 'SKR03', '9', '9269', '3195', 'Gegenkonto zu Konten 9260 - 9268');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3275, 'SKR03', '9', '9270', '3195', 'Gegenkonto zu 9271 bis 9278 (soll-Buchung)');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3276, 'SKR03', '9', '9271', '3195', 'Verbindlichkeiten aus der Begebung und übertragung von Wechsel');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3277, 'SKR03', '9', '9272', '3195', 'Verbindlichkeiten aus der Begebung und übertragung von Wechseln gegenüber verbundenen Unternehmen');
@@ -2178,7 +2077,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3282, 'SKR03', '9', '9277', '3195', 'Haftung aus der Bestellung von Sicherheiten für fremde Verbindlichkeiten');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3283, 'SKR03', '9', '9278', '3195', 'Haftung aus der Bestellung von Sicherheiten für fremde Verbindlichkeiten gegenüber verbundenen Unternehmen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3284, 'SKR03', '9', '9279', '3195', 'Verpflichtungen aus Trendhandvermögen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3286, 'SKR03', '9', '9280', '3195', 'Gegenkonto zu Konten 9281 - 9284');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3287, 'SKR03', '9', '9281', '3195', 'Verpflichtungen aus Miet- und Leasingverträgen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3288, 'SKR03', '9', '9282', '3195', 'Verpflichtungen aus Miet- und Leasingverträgen gegenüber verbundenen Unternehmen');
@@ -2192,10 +2090,8 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3296, 'SKR03', '9', '9291', '3195', 'Gegenkonto zu 9290');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3297, 'SKR03', '9', '9292', '3195', 'Statistisches Konto Fremdgeld');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3298, 'SKR03', '9', '9293', '3195', 'Gegenkonto zu 9292');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3300, 'SKR03', '9', '9295', '3195', 'Einlagen stiller Gesellschafter');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3302, 'SKR03', '9', '9297', '3195', 'Steuerrechtlicher Ausgleichsposten');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3304, 'SKR03', '9', '9400', '3195', 'Privatentnahmen Allgemein');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3305, 'SKR03', '9', '9401', '3195', 'Privatentnahmen Allgemein');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3306, 'SKR03', '9', '9402', '3195', 'Privatentnahmen Allgemein');
@@ -2296,7 +2192,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3401, 'SKR03', '9', '9497', '3195', 'Privateinlagen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3402, 'SKR03', '9', '9498', '3195', 'Privateinlagen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3403, 'SKR03', '9', '9499', '3195', 'Privateinlagen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3405, 'SKR03', '9', '9500', '3195', 'Anteil für Konto 0900 Teilhafter');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3406, 'SKR03', '9', '9501', '3195', 'Anteil für Konto 0901 Teilhafter');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3407, 'SKR03', '9', '9502', '3195', 'Anteil für Konto 0902 Teilhafter');
@@ -2569,7 +2464,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3674, 'SKR03', '9', '9799', '3195', 'Restanteil Teilhafter');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3675, 'SKR03', '9', '9800', '3195', 'Lösch- und Korrekturschlüssel');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3676, 'SKR03', '9', '9801', '3195', 'Lösch- und Korrekturschlüssel');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3678, 'SKR03', '9', '9810', '3195', 'Gesellschafter Darlehen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3679, 'SKR03', '9', '9811', '3195', 'Gesellschafter Darlehen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3680, 'SKR03', '9', '9812', '3195', 'Gesellschafter Darlehen');
@@ -2600,7 +2494,6 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3705, 'SKR03', '9', '9837', '3195', 'Verrechnungskonto für Einzahlungsverpflichtungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3706, 'SKR03', '9', '9838', '3195', 'Verrechnungskonto für Einzahlungsverpflichtungen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3707, 'SKR03', '9', '9839', '3195', 'Verrechnungskonto für Einzahlungsverpflichtungen');
-
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3709, 'SKR03', '9', '9840', '3195', 'Gesellschafter-Darlehen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3710, 'SKR03', '9', '9841', '3195', 'Gesellschafter-Darlehen');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3711, 'SKR03', '9', '9842', '3195', 'Gesellschafter-Darlehen');
@@ -2703,6 +2596,11 @@ INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, acc
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3818, 'SKR03', '9', '9957', '3195', 'Ausstehende Einlagen auf das Kommandit-Kapital eingefordert');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3819, 'SKR03', '9', '9958', '3195', 'Ausstehende Einlagen auf das Kommandit-Kapital eingefordert');
 INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label) VALUES (__ENTITY__, 3820, 'SKR03', '9', '9959', '3195', 'Ausstehende Einlagen auf das Kommandit-Kapital eingefordert');
+
+
+
+
+
 
 
 -- SKR04

@@ -24,6 +24,7 @@
  * 	\brief      Page to list direct debit orders or credit transfer orders
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -51,6 +52,8 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "p.datec";
 }
+
+$optioncss = GETPOST('optioncss', 'alpha');
 
 // Get supervariables
 $statut = GETPOST('statut', 'int');
@@ -144,15 +147,15 @@ if ($result) {
 
 	$newcardbutton = '';
 	if ($usercancreate) {
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php');
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php?type='.urlencode($type));
 	}
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
-	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -215,7 +218,7 @@ if ($result) {
 			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";
 
 			print '<td class="right">';
-			print $bon->LibStatut($obj->statut, 3);
+			print $bon->LibStatut($obj->statut, 5);
 			print '</td>';
 
 			print '<td class="right"></td>'."\n";
@@ -224,7 +227,7 @@ if ($result) {
 			$i++;
 		}
 	} else {
-		print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
+		print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 
 	print "</table>";

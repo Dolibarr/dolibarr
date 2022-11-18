@@ -57,6 +57,4 @@ ActionAC_AUTO=Eventos insertados automáticamente
 Stats=Estadísticas de ventas
 StatusProsp=Estado de la perspectiva
 DraftPropals=Cotizaciones borrador
-WelcomeOnOnlineSignaturePage=Bienvenido a la página para aceptar propuestas comerciales de %s
-ThisScreenAllowsYouToSignDocFrom=Esta pantalla le permite aceptar y firmar, o rechazar, un presupuesto/propuesta comercial
 SignatureProposalRef=Firma de cotización / propuesta comercial %s

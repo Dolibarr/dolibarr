@@ -38,8 +38,8 @@ class WorkstationResource extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'fk_workstation' => array ('type' => 'integer'),
-		'fk_resource' => array ('type' => 'integer')
+		'fk_workstation' => array('type' => 'integer'),
+		'fk_resource' => array('type' => 'integer')
 	);
 
 	/**

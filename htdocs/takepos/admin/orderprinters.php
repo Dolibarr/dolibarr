@@ -26,6 +26,7 @@
  *      \brief      Home page of category area
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
@@ -135,13 +136,10 @@ print load_fiche_titre($langs->trans("OrderPrinters"));
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
+print '</div><div class="fichetwothirdright">';
 
-//print '</td><td valign="top" width="70%">';
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+print '</div></div>';
 
-
-//print '</td></tr></table>';
-print '</div></div></div>';
 
 print '<div class="fichecenter"><br>';
 
@@ -177,6 +175,7 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 1</td><td></td><
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
 print '<form action="orderprinters.php">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter1">';
@@ -186,7 +185,7 @@ if ($nbofentries > 0) {
 		} else {
 			$checked = '';
 		}
-		if ($row["fk_menu"] == 0) {
+		if ($row["fk_menu"] >= 0) {
 			print '<input type="checkbox" name="printer1[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
 		}
 	}
@@ -210,6 +209,7 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 2</td><td></td><
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
 print '<form action="orderprinters.php">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter2">';
@@ -219,7 +219,7 @@ if ($nbofentries > 0) {
 		} else {
 			$checked = '';
 		}
-		if ($row["fk_menu"] == 0) {
+		if ($row["fk_menu"] >= 0) {
 			print '<input type="checkbox" name="printer2[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
 		}
 	}
@@ -243,6 +243,7 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Printer").' 3</td><td></td><
 print '</td></tr>';
 $nbofentries = (count($data) - 1);
 print '<form action="orderprinters.php">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 if ($nbofentries > 0) {
 	print '<tr class="pair"><td colspan="3">';
 	print '<input type="hidden" name="action" value="SavePrinter3">';
@@ -252,7 +253,7 @@ if ($nbofentries > 0) {
 		} else {
 			$checked = '';
 		}
-		if ($row["fk_menu"] == 0) {
+		if ($row["fk_menu"] >= 0) {
 			print '<input type="checkbox" name="printer3[]" value="'.$row["rowid"].'" '.$checked.'>'.$row["label"].'<br>';
 		}
 	}

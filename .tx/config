@@ -98,6 +98,12 @@ source_file = htdocs/langs/en_US/cron.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.datapolicy]
+file_filter = htdocs/langs/<lang>/datapolicy.lang
+source_file = htdocs/langs/en_US/datapolicy.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.deliveries]
 file_filter = htdocs/langs/<lang>/deliveries.lang
 source_file = htdocs/langs/en_US/deliveries.lang
@@ -140,18 +146,6 @@ source_file = htdocs/langs/en_US/exports.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
-[dolibarr.externalsite]
-file_filter = htdocs/langs/<lang>/externalsite.lang
-source_file = htdocs/langs/en_US/externalsite.lang
-source_lang = en_US
-type = MOZILLAPROPERTIES
-
-[dolibarr.ftp]
-file_filter = htdocs/langs/<lang>/ftp.lang
-source_file = htdocs/langs/en_US/ftp.lang
-source_lang = en_US
-type = MOZILLAPROPERTIES
-
 [dolibarr.help]
 file_filter = htdocs/langs/<lang>/help.lang
 source_file = htdocs/langs/en_US/help.lang
@@ -170,12 +164,6 @@ source_file = htdocs/langs/en_US/hrm.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
-[dolibarr.intracommreport]
-file_filter = htdocs/langs/<lang>/intracommreport.lang
-source_file = htdocs/langs/en_US/intracommreport.lang
-source_lang = en_US
-type = MOZILLAPROPERTIES
-
 [dolibarr.install]
 file_filter = htdocs/langs/<lang>/install.lang
 source_file = htdocs/langs/en_US/install.lang
@@ -185,6 +173,12 @@ type = MOZILLAPROPERTIES
 [dolibarr.interventions]
 file_filter = htdocs/langs/<lang>/interventions.lang
 source_file = htdocs/langs/en_US/interventions.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.intracommreport]
+file_filter = htdocs/langs/<lang>/intracommreport.lang
+source_file = htdocs/langs/en_US/intracommreport.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
@@ -392,15 +386,15 @@ source_file = htdocs/langs/en_US/stripe.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
-[dolibarr.suppliers]
-file_filter = htdocs/langs/<lang>/suppliers.lang
-source_file = htdocs/langs/en_US/suppliers.lang
-source_lang = en_US
-type = MOZILLAPROPERTIES
-
 [dolibarr.supplier_proposal]
 file_filter = htdocs/langs/<lang>/supplier_proposal.lang
 source_file = htdocs/langs/en_US/supplier_proposal.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
+[dolibarr.suppliers]
+file_filter = htdocs/langs/<lang>/suppliers.lang
+source_file = htdocs/langs/en_US/suppliers.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 

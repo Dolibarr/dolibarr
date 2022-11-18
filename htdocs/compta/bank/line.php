@@ -30,6 +30,7 @@
  *	\brief      Page to edit a bank transaction record
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -37,16 +38,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills', 'other'));
-if (!empty($conf->adherent->enabled)) {
+if (isModEnabled('adherent')) {
 	$langs->load("members");
 }
-if (!empty($conf->don->enabled)) {
+if (isModEnabled('don')) {
 	$langs->load("donations");
 }
-if (!empty($conf->loan->enabled)) {
+if (isModEnabled('loan')) {
 	$langs->load("loan");
 }
-if (!empty($conf->salaries->enabled)) {
+if (isModEnabled('salaries')) {
 	$langs->load("salaries");
 }
 
@@ -65,12 +66,13 @@ $cancel = GETPOST('cancel', 'alpha');
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
 
 $result = restrictedArea($user, 'banque', $accountoldid, 'bank_account');
-if (!$user->rights->banque->lire && !$user->rights->banque->consolidate) {
+if (empty($user->rights->banque->lire) && empty($user->rights->banque->consolidate)) {
 	accessforbidden();
 }
 
@@ -124,7 +126,11 @@ if ($user->rights->banque->modifier && $action == "update") {
 	$error = 0;
 
 	$acline = new AccountLine($db);
-	$acline->fetch($rowid);
+	$result = $acline->fetch($rowid);
+	if ($result <= 0) {
+		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.
+		$acline->id = $rowid;
+	}
 
 	$acsource = new Account($db);
 	$acsource->fetch($accountoldid);
@@ -263,10 +269,14 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("BankTransaction"));
 
+$arrayselected = array();
+
 $c = new Categorie($db);
 $cats = $c->containing($rowid, Categorie::TYPE_BANK_LINE);
-foreach ($cats as $cat) {
-	$arrayselected[] = $cat->id;
+if (is_array($cats)) {
+	foreach ($cats as $cat) {
+		$arrayselected[] = $cat->id;
+	}
 }
 
 $head = bankline_prepare_head($rowid);
@@ -325,11 +335,12 @@ if ($result) {
 		// Bank account
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Account").'</td>';
 		print '<td>';
-		if (!$objp->rappro && !$bankline->getVentilExportCompta()) {
-			print img_picto('', 'bank_account', 'class="paddingright"');
-			print $form->select_comptes($acct->id, 'accountid', 0, '', 0, '', 0, '', 1);
-		} else {
+		// $objp->fk_account may be not > 0 if data was lost by an old bug. In such a case, we let a chance to user to fix it.
+		if (($objp->rappro || $bankline->getVentilExportCompta()) && $objp->fk_account > 0) {
 			print $acct->getNomUrl(1, 'transactions', 'reflabel');
+		} else {
+			print img_picto('', 'bank_account', 'class="paddingright"');
+			print $form->select_comptes($acct->id, 'accountid', 0, '', ($acct->id > 0 ? $acct->id : 1), '', 0, '', 1);
 		}
 		print '</td>';
 		print '</tr>';
@@ -570,12 +581,22 @@ if ($result) {
 		print "</tr>";
 
 		// Categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 			$langs->load('categories');
 
 			// Bank line
 			print '<tr><td class="toptd">'.$form->editfieldkey('RubriquesTransactions', 'custcats', '', $object, 0).'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, null, 'parent', null, null, 1);
+
+			$arrayselected = array();
+
+			$c = new Categorie($db);
+			$cats = $c->containing($bankline->id, Categorie::TYPE_BANK_LINE);
+			if (is_array($cats)) {
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
+			}
 			print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, null, null, null, null, "90%");
 			print "</td></tr>";
 		}
@@ -636,13 +657,13 @@ if ($result) {
 			if ($user->rights->banque->consolidate) {
 				print '<td>';
 				if ($objp->rappro) {
-					print '<input name="num_rel_bis" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
-					print '<input name="num_rel" type="hidden" value="'.$objp->num_releve.'">';
+					print '<input name="num_rel_bis" id="num_rel_bis" class="flat" type="text" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
+					print '<input name="num_rel" id="num_rel" class="flat" type="hidden" value="'.$objp->num_releve.'">';
 				} else {
-					print '<input name="num_rel" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
+					print '<input name="num_rel" id="num_rel" class="flat" value="'.$objp->num_releve.'"'.($objp->rappro ? ' disabled' : '').'>';
 				}
 				if ($objp->num_releve) {
-					print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?num='.$objp->num_releve.'&account='.$acct->id.'">'.$langs->trans("AccountStatement").' '.$objp->num_releve.')</a>';
+					print ' &nbsp; <a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?num='.$objp->num_releve.'&account='.$acct->id.'">('.$langs->trans("AccountStatement").' '.$objp->num_releve.')</a>';
 				}
 				print '</td>';
 			} else {
@@ -654,6 +675,28 @@ if ($result) {
 			if ($user->rights->banque->consolidate) {
 				print '<td>';
 				print '<input type="checkbox" id="reconciled" name="reconciled" class="flat" '.(GETPOSTISSET("reconciled") ? (GETPOST("reconciled") ? ' checked="checked"' : '') : ($objp->rappro ? ' checked="checked"' : '')).'">';
+
+				print '
+					<script type="text/javascript">
+					jQuery(document).ready(function() {
+						$("#reconciled").click(function(){
+							console.log("We click on checkbox reconciled "+$("#reconciled").prop("checked"));
+							if ($("#reconciled").prop("checked") == false) {
+								console.log("we remove disabled");
+								jQuery("#num_rel_bis").removeAttr("disabled");
+								jQuery("#num_rel").removeAttr("disabled");
+								jQuery("#num_rel_bis").attr("type", "hidden");
+								jQuery("#num_rel").attr("type", "text");
+								jQuery("#num_rel_bis").hide();
+								jQuery("#num_rel").show();
+							} else {
+
+							}
+						});
+					});
+					</script>
+					';
+
 				print '</td>';
 			} else {
 				print '<td>'.yn($objp->rappro).'</td>';
