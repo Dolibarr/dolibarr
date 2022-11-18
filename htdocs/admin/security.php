@@ -45,7 +45,7 @@ $allow_disable_encryption = true;
  */
 
 if ($action == 'setgeneraterule') {
-	if (!dolibarr_set_const($db, 'USER_PASSWORD_GENERATED', GETPOST("value", "none"), 'chaine', 0, '', $conf->entity)) {
+	if (!dolibarr_set_const($db, 'USER_PASSWORD_GENERATED', GETPOST("value", "alphanohtml"), 'chaine', 0, '', $conf->entity)) {
 		dol_print_error($db);
 	} else {
 		header("Location: ".$_SERVER["PHP_SELF"]);
