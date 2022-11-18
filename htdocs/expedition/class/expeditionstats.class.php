@@ -151,6 +151,19 @@ class ExpeditionStats extends Stats
 
 		return $this->_getAllByYear($sql);
 	}
-	public function getAverageByMonth($year){}
-	public function  getAmountByMonth($year,$format = 0){}
+
+	/**
+	* @param	int     $year           year number
+	* @return 	int						value
+	*/
+	public function getAverageByMonth($year)
+	{}
+
+	/**
+	 * @param	int		$year			year number
+	 * @param	int 	$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return 	int						value
+	 */
+	public function getAmountByMonth($year, $format = 0)
+	{}
 }
