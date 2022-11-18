@@ -6028,6 +6028,12 @@ abstract class CommonObject
 							dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 						}
 						break;
+					case 'checkbox':
+					case 'chkbxlst':
+						if (is_array($this->array_options[$key])) {
+							$new_array_options[$key] = implode(',', $this->array_options[$key]);
+						}
+						break;
 				}
 			}
 
@@ -6373,6 +6379,12 @@ abstract class CommonObject
 					}
 					break;
 				*/
+				case 'checkbox':
+				case 'chkbxlst':
+					if (is_array($this->array_options[$key])) {
+						$new_array_options[$key] = implode(',', $this->array_options[$key]);
+					}
+					break;
 			}
 
 			$this->db->begin();
