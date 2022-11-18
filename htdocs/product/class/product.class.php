@@ -4509,6 +4509,8 @@ class Product extends CommonObject
 				$type = (!empty($desc_pere[2]) ? $desc_pere[2] : '');
 				$label = (!empty($desc_pere[3]) ? $desc_pere[3] : '');
 				$incdec = (!empty($desc_pere[4]) ? $desc_pere[4] : 0);
+				$ref = (!empty($desc_pere[5]) ? $desc_pere[5] : '');
+				$fullpath = $compl_path . $ref . (!empty($label) ? ' - ' . $label : '');
 
 				if ($multiply < 1) {
 					$multiply = 1;
@@ -4532,8 +4534,8 @@ class Product extends CommonObject
 					'nb_total'=>$nb * $multiply, // Nb of units for all nb of product
 					'stock'=>$tmpproduct->stock_reel, // Stock
 					'stock_alert'=>$tmpproduct->seuil_stock_alerte, // Stock alert
-					'label'=>$label,
-					'fullpath'=>$compl_path.$label, // Label
+					'label'=>$label, // Label
+					'fullpath' => $fullpath, // Full path
 					'type'=>$type, // Nb of units that compose parent product
 					'desiredstock'=>$tmpproduct->desiredstock,
 					'level'=>$level,
@@ -4544,7 +4546,7 @@ class Product extends CommonObject
 				// Recursive call if there is childs to child
 				if (is_array($desc_pere['childs'])) {
 					//print 'YYY We go down for '.$desc_pere[3]." -> \n";
-					$this->fetch_prod_arbo($desc_pere['childs'], $compl_path.$desc_pere[3]." -> ", $desc_pere[1] * $multiply, $level + 1, $id, $ignore_stock_load);
+					$this->fetch_prod_arbo($desc_pere['childs'], $fullpath . ' -> ', $desc_pere[1] * $multiply, $level + 1, $id, $ignore_stock_load);
 				}
 			}
 		}
@@ -4695,6 +4697,29 @@ class Product extends CommonObject
 		}
 	}
 
+	/**
+	 * Return if a product has children or not
+	 *
+	 * @return	int		<0 if KO, else Number of children (first level only)
+	 */
+	public function hasChildren()
+	{
+		$sql  = "SELECT pa.fk_product_fils as child_id";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_association as pa";
+		$sql .= " WHERE pa.fk_product_pere = ".((int) $this->id);
+
+		$res = $this->db->query($sql);
+		if ($res) {
+			$nb = $this->db->num_rows($res);
+			$this->db->free($res);
+			return $nb;
+		} else {
+			$this->error = $this->db->lasterror().' sql='.$sql;
+			$this->errors[] = $this->error;
+			dol_syslog(__METHOD__.' Error '.$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 	/**
 	 *  Return childs of product $id
@@ -4735,9 +4760,11 @@ class Product extends CommonObject
 		if ($res) {
 			$prods = array();
 			while ($rec = $this->db->fetch_array($res)) {
+				$parents[] = $id;
+
 				if (!empty($alreadyfound[$rec['rowid']])) {
-					dol_syslog(get_class($this).'::getChildsArbo the product id='.$rec['rowid'].' was already found at a higher level in tree. We discard to avoid infinite loop', LOG_WARNING);
 					if (in_array($rec['id'], $parents)) {
+						dol_syslog(get_class($this).'::getChildsArbo the product id='.$rec['rowid'].' was already found at a higher level in tree. We discard to avoid infinite loop', LOG_WARNING);
 						continue; // We discard this child if it is already found at a higher level in tree in the same branch.
 					}
 				}
@@ -4753,7 +4780,7 @@ class Product extends CommonObject
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty'],2=>$rec['fk_product_type']);
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				if (empty($firstlevelonly)) {
-					$listofchilds = $this->getChildsArbo($rec['rowid'], 0, $level + 1, array_push($parents, $rec['rowid']));
+					$listofchilds = $this->getChildsArbo($rec['rowid'], 0, $level + 1, $parents);
 					foreach ($listofchilds as $keyChild => $valueChild) {
 						$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
 					}
