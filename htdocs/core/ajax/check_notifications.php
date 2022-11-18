@@ -152,7 +152,7 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.$user->id;
 		$sql .= ' WHERE a.code <> "AC_OTH_AUTO"';
 		$sql .= ' AND (';
-		$sql .= " (ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."' AND ar.status = 0 AND ar.entity = ".$conf->entity;
+		$sql .= " ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."' AND ar.status = 0 AND ar.entity = ".$conf->entity;
 		$sql .= ' )';
 	} else {
 		$sql .= ' JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.$user->id;
