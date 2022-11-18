@@ -2030,25 +2030,6 @@ class pdf_crabe extends ModelePDFFactures
 			$mode =  'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
 
-			$titelrecipient = $outputlangs->transnoentities("BillTo");
-
-			if (getDolGlobalInt('INVOICE_SHOW_SHIPPING_ADDRESS') || $this->emetteur->country_code == 'FR') {
-				$idaddressshipping = $object->getIdContact('external', 'SHIPPING');
-
-				if (!empty($idaddressshipping)) {
-					$contactshipping = $object->fetch_Contact($idaddressshipping[0]);
-					$object->fetch_thirdparty($object->contact->fk_soc);
-					$carac_client_name_shipping=pdfBuildThirdpartyName($object->contact, $outputlangs);
-					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, $object->contact, $usecontact, 'target', $object);
-				} else {
-					$carac_client_name_shipping=pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
-					$carac_client_shipping=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);;
-				}
-				if ((isset($object->contact->socid) && $object->contact->socid == $object->socid) || !isset($object->contact->socid)) {
-					$titelrecipient = $outputlangs->transnoentities("BillShippTo");
-				}
-			}
-
 			// Show recipient
 			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
 			if ($this->page_largeur < 210) {
@@ -2066,7 +2047,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetTextColor(0, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$pdf->SetXY($posx + 2, $posy - 5);
-				$pdf->MultiCell($widthrecbox - 2, 5, $titelrecipient, 0, $ltrdirection);
+				$pdf->MultiCell($widthrecbox - 2, 5, $outputlangs->transnoentities("BillTo"), 0, $ltrdirection);
 				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 			}
 
@@ -2084,6 +2065,17 @@ class pdf_crabe extends ModelePDFFactures
 
 			// Show shipping address
 			if (getDolGlobalInt('INVOICE_SHOW_SHIPPING_ADDRESS') || $this->emetteur->country_code == 'FR') {
+				$idaddressshipping = $object->getIdContact('external', 'SHIPPING');
+
+				if (!empty($idaddressshipping)) {
+					$contactshipping = $object->fetch_Contact($idaddressshipping[0]);
+					$object->fetch_thirdparty($object->contact->fk_soc);
+					$carac_client_name_shipping=pdfBuildThirdpartyName($object->contact, $outputlangs);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, $object->contact, $usecontact, 'target', $object);
+				} else {
+					$carac_client_name_shipping=pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
+					$carac_client_shipping=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);;
+				}
 				if (!empty($carac_client_shipping) && (isset($object->contact->socid) && $object->contact->socid != $object->socid)) {
 					$posy += $hautcadre;
 
