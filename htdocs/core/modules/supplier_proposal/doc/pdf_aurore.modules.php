@@ -521,6 +521,11 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
 
+					// Price
+					$price = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
+					$pdf->SetXY($this->posxup, $curY);
+					$pdf->MultiCell($this->posxqty-$this->posxup - 0.8, 4, $price, 0, 'R'); // Enough for 6 chars
+
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
@@ -534,7 +539,6 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					}
 
 					// Discount on line
-					/*
 					if ($object->lines[$i]->remise_percent)
 					{
 						$pdf->SetXY($this->posxdiscount-2, $curY);
@@ -547,7 +551,6 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					$pdf->SetXY($this->postotalht, $curY);
 					if ($total_excl_tax > 0)
 						$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
-					*/
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
