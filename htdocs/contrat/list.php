@@ -741,7 +741,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-if(getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 if (!empty($arrayfields['c.ref']['checked'])) {
@@ -801,7 +801,7 @@ if (!empty($arrayfields['status']['checked'])) {
 	print_liste_field_titre($staticcontratligne->LibStatut(4, 3, 1, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
 	print_liste_field_titre($staticcontratligne->LibStatut(5, 3, -1, 'class="nochangebackground"'), '', '', '', '', 'width="16"');
 }
-if(!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 print "</tr>\n";
