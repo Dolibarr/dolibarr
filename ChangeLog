@@ -9,7 +9,6 @@ For users:
 ---------------
 
 NEW: Minimal PHP version is now PHP 7.0 instead of PHP 5.6
-NEW: #21750 Added "Get lines and Post lines from BOM" at the REST Service
 NEW: #21780 Add pid field to Cronjob class and store PID on job execution
 NEW: #19680 Add option PRODUCT_ALLOW_EXTERNAL_DOWNLOAD
 NEW: #20650 can move the checkbox column on left (experimental option)
@@ -23,7 +22,6 @@ NEW: #21775 Template 03 manages send mails
 NEW: #22048 Added notes to productlot module
 NEW: #22298 Bank - Add salaries & vat in tab planned entries
 NEW: #22328
-NEW: #22370 Modulebuilder supports 'alwayseditable' (like extrafields)
 NEW: #22424
 NEW: #22500 member module set up made easier
 NEW: #22527 projects and thirdparties can be viewed as conversation ("Message" view), like events/agenda.
@@ -129,7 +127,6 @@ NEW: manage no email with thirdparties (better for GDPR)
 NEW: Manage Position (Rank) on Contract Lines
 NEW: Manage VAT on all lines on purchases cycle
 NEW: manage virtual stock at a future date
-NEW: ModuleBuilder can generate code of class from an existing SQL table
 NEW: On a bank reconciled line, we can modify the bank receipt
 NEW: On a form to send an email, we show all emails of all contacts of object
 NEW: Option PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT showing wh on PDF
@@ -163,7 +160,6 @@ NEW: SMTP using oauth2 authentication
 NEW: can substitue project title in mail template
 NEW: Supplier order list - Add column private and public note
 NEW: Support IP type in extrafields
-NEW: support multilang in Civilities API
 NEW: Table of membership types
 NEW: The purge of files can purge only if older than a number of seconds
 NEW: Update ActionComm type_code on email message ticket
@@ -174,8 +170,11 @@ NEW: expand/collapse permissions on user permission page
 For developers or integrators:
 ------------------------------
 
+NEW: ModuleBuilder can generate code of class from an existing SQL table
+NEW: #22370 Modulebuilder supports 'alwayseditable' (like extrafields)
 NEW: #20912 Add trigger to record the event of sending an email from a project
-NEW: Removed completely the need for library adodbtime
+NEW: #21750 Added "Get lines and Post lines from BOM" at the REST Service
+NEW: Removed completely the need for the library adodbtime
 NEW: hook on agenda pages
 NEW: hook to complete payment in TakePOS
 NEW: hook "changeHelpURL" to modify target of the help button
@@ -186,6 +185,7 @@ NEW: Add new hooks for actioncomm
 NEW: conf->global->SYSLOG_FILE_ONEPERSESSION accept a string
 NEW: translate for contact type API, setup/ticket API, shipping method API
 NEW: All ajax pages have now a top_httphead()
+NEW: support multilang in Civilities API
 NEW: Add API for the partnership module
 NEW: Add "Get lines and Post lines from BOM" in the API
 NEW: Replace fk_categories_product with categories_product in inventory
