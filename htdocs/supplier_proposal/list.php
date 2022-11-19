@@ -706,7 +706,7 @@ if ($resql) {
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre middle">';
-		$searchpicto = $form->showFilterButtons();
+		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
 		print '</td>';
 	}
