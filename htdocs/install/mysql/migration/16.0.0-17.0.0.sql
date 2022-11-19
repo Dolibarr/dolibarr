@@ -55,6 +55,8 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 
 -- v17
 
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_percent (percent);
+
 UPDATE llx_c_paiement SET code = 'BANCON' WHERE code = 'BAN' AND libelle = 'Bancontact';
 
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN fk_user_creat integer NULL;

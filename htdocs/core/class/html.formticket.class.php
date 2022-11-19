@@ -81,6 +81,7 @@ class FormTicket
 	public $withtitletopic;
 	public $withtopicreadonly;
 	public $withreadid;
+
 	public $withcompany;  // to show company drop-down list
 	public $withfromsocid;
 	public $withfromcontactid;
@@ -108,6 +109,7 @@ class FormTicket
 	 * @var string Error code (or message)
 	 */
 	public $error;
+	public $errors = array();
 
 
 	/**
@@ -126,7 +128,7 @@ class FormTicket
 		$this->withcompany = isModEnabled("societe");
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
-		//$this->withreadid=0;
+		$this->withreadid=0;
 		//$this->withtitletopic='';
 		$this->withnotifytiersatcreate = 0;
 		$this->withusercreate = 1;
@@ -332,27 +334,25 @@ class FormTicket
 		print '</td></tr>';
 
 		// Severity => Priority
-		print '<tr><td><span class="none"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
+		print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
 		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 1);
 		print '</td></tr>';
 
 		// Subject
 		if ($this->withtitletopic) {
 			print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
-
 			// Answer to a ticket : display of the thread title in readonly
 			if ($this->withtopicreadonly) {
 				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
-				print '</td></tr>';
 			} else {
-				if (isset($this->withreadid) &&  $this->withreadid > 0) {
+				if (isset($this->withreadid) && $this->withreadid > 0) {
 					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title.'';
 				} else {
 					$subject = GETPOST('subject', 'alpha');
 				}
 				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'" autofocus />';
-				print '</td></tr>';
 			}
+			print '</td></tr>';
 		}
 
 		if (!empty($conf->knowledgemanagement->enabled)) {

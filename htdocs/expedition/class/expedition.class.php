@@ -84,6 +84,13 @@ class Expedition extends CommonObject
 	 */
 	public $picto = 'dolly';
 
+
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array();
+
+
 	public $socid;
 
 	/**
