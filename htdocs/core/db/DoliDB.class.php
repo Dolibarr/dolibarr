@@ -246,8 +246,8 @@ abstract class DoliDB implements Database
 			foreach ($fields as $val) {
 				if (!$return) $return .= ' ORDER BY ';
 				else $return .= ', ';
-				
-				if (strpos($val,'ref') !== false ){
+
+				if (strpos($val, 'ref') !== false ){
 					$return  .= "lpad(".preg_replace('/[^0-9a-z_\.]/i', '', $val).", 30, '0')";
 					$val='';
 				} else {
