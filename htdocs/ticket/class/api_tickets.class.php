@@ -181,32 +181,6 @@ class Tickets extends DolibarrApi
 			$this->ticket->messages = $messages;
 		}
 
-		// History
-		$history = array();
-		$this->ticket->loadCacheLogsTicket();
-		if (is_array($this->ticket->cache_logs_ticket) && count($this->ticket->cache_logs_ticket) > 0) {
-			$num = count($this->ticket->cache_logs_ticket);
-			$i = 0;
-			while ($i < $num) {
-				if ($this->ticket->cache_logs_ticket[$i]['fk_user_create'] > 0) {
-					$user_action = new User($this->db);
-					$user_action->fetch($this->ticket->cache_logs_ticket[$i]['fk_user_create']);
-				}
-
-				// Now define messages
-				$history[] = array(
-				'id' => $this->ticket->cache_logs_ticket[$i]['id'],
-				'fk_user_author' => $this->ticket->cache_msgs_ticket[$i]['fk_user_author'],
-				'fk_user_action' => $this->ticket->cache_logs_ticket[$i]['fk_user_create'],
-				'fk_user_action_string' => dolGetFirstLastname($user_action->firstname, $user_action->lastname),
-				'message' => $this->ticket->cache_logs_ticket[$i]['message'],
-				'datec' => $this->ticket->cache_logs_ticket[$i]['datec'],
-				);
-				$i++;
-			}
-			$this->ticket->history = $history;
-		}
-
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -244,6 +218,7 @@ class Tickets extends DolibarrApi
 
 		$search_sale = null;
 		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
 		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}

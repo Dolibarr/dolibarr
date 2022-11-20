@@ -49,6 +49,7 @@ ErrorBadImageFormat=Image file has not a supported format (Your PHP does not sup
 ErrorBadDateFormat=Value '%s' has wrong date format
 ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Failed to write in directory %s
+ErrorFailedToBuildArchive=Failed to build archive file %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=User cannot be deleted. Maybe it is associated to Dolibarr entities.
 ErrorFieldsRequired=Some required fields have been left blank.
@@ -77,7 +78,7 @@ ErrorNoValueForCheckBoxType=Please fill value for checkbox list
 ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one comma: <u>%s</u>, but need at least one: key,value
 ErrorFieldCanNotContainSpecialCharacters=The field <b>%s</b> must not contains special characters.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=The field <b>%s</b> must not contain special characters, nor upper case characters and cannot contain only numbers.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=The field <b>%s</b> must not contain special characters, nor upper case characters, and must start with an alphabetical character (a-z)
 ErrorFieldMustHaveXChar=The field <b>%s</b> must have at least %s characters.
 ErrorNoAccountancyModuleLoaded=No accountancy module activated
 ErrorExportDuplicateProfil=This profile name already exists for this export set.
@@ -99,7 +100,6 @@ ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
 ErrorMultipleRecordFoundFromRef=Several record found when searching from ref <b>%s</b>. No way to know which ID to use. 
 ErrorsOnXLines=%s errors found
 ErrorFileIsInfectedWithAVirus=The antivirus program was not able to validate the file (file might be infected by a virus)
-ErrorSpecialCharNotAllowedForField=Special characters are not allowed for field "%s"
 ErrorNumRefModel=A reference exists into database (%s) and is not compatible with this numbering rule. Remove record or renamed reference to activate this module.
 ErrorQtyTooLowForThisSupplier=Quantity too low for this vendor or no price defined on this product for this vendor
 ErrorOrdersNotCreatedQtyTooLow=Some orders haven't been created because of too-low quantities
@@ -293,6 +293,11 @@ ErrorAjaxRequestFailed=Request failed
 ErrorThirpdartyOrMemberidIsMandatory=Third party or Member of partnership is mandatory
 ErrorFailedToWriteInTempDirectory=Failed to write in temp directory
 ErrorQuantityIsLimitedTo=Quantity is limited to %s
+ErrorFailedToLoadThirdParty=Failed to find/load thirdparty from id=%s, email=%s, name=%s
+ErrorThisPaymentModeIsNotSepa=This payment mode is not a bank account 
+ErrorStripeCustomerNotFoundCreateFirst=Stripe customer is not set for this thirdparty (or set to a value deleted on Stripe side). Create (or re-attach) it first.
+ErrorCharPlusNotSupportedByImapForSearch=IMAP search is not able to search into sender or recipient for a string containing the character + 
+ErrorTableNotFound=Table <b>%s</b> not found
 ErrorValueForTooLow=Value for <b>%s</b> is too low
 ErrorValueCantBeNull=Value for <b>%s</b> can't be null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
@@ -331,6 +336,7 @@ WarningAvailableOnlyForHTTPSServers=Available only if using HTTPS secured connec
 WarningModuleXDisabledSoYouMayMissEventHere=Module %s has not been enabled. So you may miss a lot of event here.
 WarningPaypalPaymentNotCompatibleWithStrict=The value 'Strict' makes the online payment features not working correctly. Use 'Lax' instead.
 WarningThemeForcedTo=Warning, theme has been forced to <b>%s</b> by hidden constant MAIN_FORCETHEME
+WarningPagesWillBeDeleted=Warning, this will also delete all existing pages/containers of the website. You should export your website before, so you have a backup to re-import it later.
 WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=Automatic validation is disabled when option to decrease stock is set on "Invoice validation".
 
 # Validate

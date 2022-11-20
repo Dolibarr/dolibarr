@@ -104,8 +104,10 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$upload_dir = $rootdirfordoc.'/'.$relativepath;
 }
 
-if (empty($url)) {
-	if (GETPOSTISSET('website')) {
+if (empty($url)) {	// autoset $url but it is better to have it defined before into filemanager.tpl.php (not possible when in auto tree)
+	if (!empty($module) && $module == 'medias' && !GETPOST('website')) {
+		$url = DOL_URL_ROOT.'/ecm/index_medias.php';
+	} elseif (GETPOSTISSET('website')) {
 		$url = DOL_URL_ROOT.'/website/index.php';
 	} else {
 		$url = DOL_URL_ROOT.'/ecm/index.php';
@@ -315,7 +317,7 @@ if ($type == 'directory') {
 			$upload_dir = $dolibarr_main_data_root.'/'.$module.'/'.$relativepath;
 			if (GETPOSTISSET('website') || GETPOSTISSET('file_manager')) {
 				$param .= '&file_manager=1';
-				if (!preg_match('/website=/', $param)) {
+				if (!preg_match('/website=/', $param) && GETPOST('website', 'alpha')) {
 					$param .= '&website='.urlencode(GETPOST('website', 'alpha'));
 				}
 				if (!preg_match('/pageid=/', $param)) {

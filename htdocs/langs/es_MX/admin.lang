@@ -238,7 +238,6 @@ ExtrafieldSelectList =Seleccionar de la tabla
 ComputedFormula=Campo calculado
 Computedpersistent=Almacenar campo calculado
 SetAsDefault=Establecer como predeterminado
-InitEmptyBarCode=Init value for the %s empty barcodes
 ClickToShowDescription=Haga clic para mostrar la descripción
 DependsOn=Este módulo necesita los módulo(s)
 WarningSettingSortOrder=Advertencia, establecer un orden predeterminado puede resultar en un error técnico al pasar a la página de lista si "campo" es un campo desconocido. Si experimenta un error de este tipo, vuelva a esta página para eliminar el orden predeterminado y restaurar el comportamiento predeterminado.

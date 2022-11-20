@@ -31,6 +31,7 @@
  *	\brief      List of bank transactions
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -235,8 +236,12 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
+$rowids = GETPOST('rowid', 'array');
+
 // Conciliation
-if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha')) && !empty($user->rights->banque->consolidate)
+if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', 'alpha'))
+	&& (GETPOST("num_releve", "alpha") || !empty($rowids))
+	&& !empty($user->rights->banque->consolidate)
 	&& (!GETPOSTISSET('pageplusone') || (GETPOST('pageplusone') == GETPOST('pageplusoneold')))) {
 	$error = 0;
 
@@ -512,10 +517,16 @@ $buttonreconcile = '';
 $morehtmlref = '';
 
 if ($id > 0 || !empty($ref)) {
-	$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Transactions");
-	$helpurl = "";
-	llxHeader('', $title, $helpurl);
+	$title = $object->ref.' - '.$langs->trans("Transactions");
+} else {
+	$title = $langs->trans("BankTransactions");
+}
+$help_url = '';
 
+llxHeader('', $title, $help_url, '', 0, 0, array(), array(), $param);
+
+
+if ($id > 0 || !empty($ref)) {
 	// Load bank groups
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 	$bankcateg = new BankCateg($db);
@@ -570,10 +581,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 		}
 	}
-} else {
-	llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
 }
-
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql .= " b.fk_account, b.fk_type, b.fk_bordereau,";
@@ -1077,7 +1085,7 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['type']['checked'])) {
 		print '<td class="liste_titre" align="center">';
-		$form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100');
+		print $form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
 	// Numero
@@ -1270,7 +1278,7 @@ if ($resql) {
 				}
 				// Extra fields
 				$element = 'banktransaction';
-				if (is_array($extrafields->attributes[$element]['label']) && count($extrafields->attributes[$element]['label'])) {
+				if (!empty($extrafields->attributes[$element]['label']) && is_array($extrafields->attributes[$element]['label']) && count($extrafields->attributes[$element]['label'])) {
 					foreach ($extrafields->attributes[$element]['label'] as $key => $val) {
 						if (!empty($arrayfields["ef.".$key]['checked'])) {
 							if (!empty($arrayfields[$key]['checked'])) {
