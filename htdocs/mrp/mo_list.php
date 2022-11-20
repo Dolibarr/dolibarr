@@ -174,7 +174,7 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		foreach ($object->fields as $key => $val) {
 			$search[$key] = '';
-			if ($key == 'status'){
+			if ($key == 'status') {
 				$search[$key] = -1;
 			}
 			if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
