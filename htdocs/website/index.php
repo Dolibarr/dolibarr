@@ -694,7 +694,10 @@ if ($action == 'addsite' && $usercanedit) {
 		$tmpobject->virtualhost = GETPOST('virtualhost', 'alpha');
 
 		$result = $tmpobject->create($user);
-		if ($result <= 0) {
+		if ($result == 0) {
+			$error++;
+			setEventMessages($langs->trans("ErrorLabelAlreadyExists"), null, 'errors');
+		} elseif ($result < 0) {
 			$error++;
 			setEventMessages($tmpobject->error, $tmpobject->errors, 'errors');
 		}

@@ -10,7 +10,7 @@ For users:
 
 NEW: Minimal PHP version is now PHP 7.0 instead of PHP 5.6
 NEW: #21780 Add pid field to Cronjob class and store PID on job execution
-NEW: #19680 Add option PRODUCT_ALLOW_EXTERNAL_DOWNLOAD
+NEW: #19680 Add option PRODUCT_ALLOW_EXTERNAL_DOWNLOAD to automatically have uploaded files shared publicly by a link
 NEW: #20650 can move the checkbox column on left (experimental option)
 NEW: #21000 Added columns 'alias_name' on poject, supplier invoice, supplier order, supplier proposals and taks list
 NEW: #21395 Added option for dark theme mode in display - color and theme
@@ -18,9 +18,8 @@ NEW: #21397 added option to auto define barcode numbers for third-parties in bar
 NEW: #21399
 NEW: #21442 Enhancement of module builder init
 NEW: #21654 add bank account number used on invoices for debit
-NEW: #21775 Template 03 manages send mails
 NEW: #22048 Added notes to productlot module
-NEW: #22298 Bank - Add salaries & vat in tab planned entries
+NEW: #22298 Bank - Add salaries & vat in the tab of planned entries of a bank account
 NEW: #22328
 NEW: #22424
 NEW: #22500 member module set up made easier
@@ -55,7 +54,6 @@ NEW: Add hidden option MAIN_EMAIL_SUPPORT_ACK to restore Email ack checkbox (fea
 NEW: Add IMAP port setting on email collector module
 NEW: Adding JAPAN Chart-of-Account and regions/departments
 NEW: Adding NIF verification for Algeria
-NEW: Add 4 other templates in website module
 NEW: Add link to create an element from the category page
 NEW: add margin infos to takepos invoice lines
 NEW: Add max size send for "backup and link to mail" option
@@ -96,6 +94,7 @@ NEW: Website Can remove a website template
 NEW: Website can set header "Strict-Transport-Security" in web sites.
 NEW: Website Can switch status of website and page from the website toolbar
 NEW: Website Templates of websites are now directories and not zip into core repo
+NEW: Website Add 4 other templates in website module
 NEW: Can use products categories to make inventory
 NEW: Change filter type on tickets list into a multiselect combo
 NEW: conf TIMESPENT_ALWAYS_UPDATE_THM, when it's on we always check current thm of user to update it in task time line
