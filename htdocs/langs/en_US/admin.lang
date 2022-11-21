@@ -1440,6 +1440,10 @@ SuppliersPayment=Vendor payments
 SupplierPaymentSetup=Vendor payments setup
 InvoiceCheckPosteriorDate=Check facture date before validation
 InvoiceCheckPosteriorDateHelp=Validating an invoice will be forbidden if its date is anterior to the date of last invoice of same type.
+InvoiceOptionCategoryOfOperations=Display the mention "category of operations" on the invoice.
+InvoiceOptionCategoryOfOperationsHelp=Depending on the situation, the mention will appear in the form:<br>- Category of operations: Delivery of goods<br>- Category of operations: Provision of services<br>- Category of operations: Mixed - Delivery of goods & provision of services
+InvoiceOptionCategoryOfOperationsYes1=Yes, below the address block
+InvoiceOptionCategoryOfOperationsYes2=Yes, in the lower left-hand corner
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
 ProposalsNumberingModules=Commercial proposal numbering models

@@ -5838,50 +5838,49 @@ class FactureLigne extends CommonInvoiceLine
 				return 0;
 			}
 
-			$this->rowid = $objp->rowid;
-			$this->id = $objp->rowid;
-			$this->fk_facture = $objp->fk_facture;
-			$this->fk_parent_line = $objp->fk_parent_line;
+			$this->rowid				= $objp->rowid;
+			$this->id					= $objp->rowid;
+			$this->fk_facture			= $objp->fk_facture;
+			$this->fk_parent_line		= $objp->fk_parent_line;
 			$this->label				= $objp->custom_label;
 			$this->desc					= $objp->description;
-			$this->qty = $objp->qty;
-			$this->subprice = $objp->subprice;
-			$this->ref_ext = $objp->ref_ext;
-			$this->vat_src_code = $objp->vat_src_code;
-			$this->tva_tx = $objp->tva_tx;
+			$this->qty					= $objp->qty;
+			$this->subprice				= $objp->subprice;
+			$this->ref_ext				= $objp->ref_ext;
+			$this->vat_src_code			= $objp->vat_src_code;
+			$this->tva_tx				= $objp->tva_tx;
 			$this->localtax1_tx			= $objp->localtax1_tx;
 			$this->localtax2_tx			= $objp->localtax2_tx;
-			$this->remise_percent = $objp->remise_percent;
-			$this->fk_remise_except = $objp->fk_remise_except;
+			$this->remise_percent		= $objp->remise_percent;
+			$this->fk_remise_except		= $objp->fk_remise_except;
 			$this->fk_product			= $objp->fk_product;
-			$this->product_type = $objp->product_type;
+			$this->product_type			= $objp->product_type;
 			$this->date_start			= $this->db->jdate($objp->date_start);
 			$this->date_end				= $this->db->jdate($objp->date_end);
 			$this->info_bits			= $objp->info_bits;
-			$this->tva_npr = ($objp->info_bits & 1 == 1) ? 1 : 0;
-			$this->special_code = $objp->special_code;
+			$this->tva_npr				= ($objp->info_bits & 1 == 1) ? 1 : 0;
+			$this->special_code			= $objp->special_code;
 			$this->total_ht				= $objp->total_ht;
 			$this->total_tva			= $objp->total_tva;
 			$this->total_localtax1		= $objp->total_localtax1;
 			$this->total_localtax2		= $objp->total_localtax2;
 			$this->total_ttc			= $objp->total_ttc;
-			$this->fk_code_ventilation = $objp->fk_code_ventilation;
+			$this->fk_code_ventilation	= $objp->fk_code_ventilation;
 			$this->rang					= $objp->rang;
-			$this->fk_fournprice = $objp->fk_fournprice;
+			$this->fk_fournprice		= $objp->fk_fournprice;
 			$marginInfos				= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
 			$this->pa_ht				= $marginInfos[0];
 			$this->marge_tx				= $marginInfos[1];
 			$this->marque_tx			= $marginInfos[2];
 
-			$this->ref = $objp->product_ref; // deprecated
-
-			$this->product_ref = $objp->product_ref;
+			$this->ref					= $objp->product_ref; // deprecated
+			$this->product_ref			= $objp->product_ref;
 			$this->product_label		= $objp->product_label;
 			$this->product_desc			= $objp->product_desc;
 
-			$this->fk_unit = $objp->fk_unit;
+			$this->fk_unit				= $objp->fk_unit;
 			$this->fk_user_modif		= $objp->fk_user_modif;
-			$this->fk_user_author = $objp->fk_user_author;
+			$this->fk_user_author		= $objp->fk_user_author;
 
 			$this->situation_percent    = $objp->situation_percent;
 			$this->fk_prev_id           = $objp->fk_prev_id;
