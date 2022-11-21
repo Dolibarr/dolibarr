@@ -380,9 +380,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
 		$object->paye = 0;
 		$object->id = $object->ref = null;
 
-                if (GETPOST('amount', 'alphanohtml')) {
-                        $object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);
-                }
+		if (GETPOST('amount', 'alphanohtml')) {
+				$object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);
+		}
 
 		if (GETPOST('clone_label', 'alphanohtml')) {
 			$object->label = GETPOST('clone_label', 'alphanohtml');
