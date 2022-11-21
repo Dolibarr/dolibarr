@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2018 Juanjo Menent	       <jmenent@2byte.es>
  * Copyright (C) 2014-2015 Cédric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2019 Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022 Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021	   Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1132,6 +1132,7 @@ if (!$variants) {
 				}
 				foreach ($details as $pdluo) {
 					$product_lot_static->id = $pdluo->lotid;
+					$product_lot_static->fk_product = $pdluo->fk_product_stock;
 					$product_lot_static->batch = $pdluo->batch;
 					$product_lot_static->eatby = $pdluo->eatby;
 					$product_lot_static->sellby = $pdluo->sellby;
