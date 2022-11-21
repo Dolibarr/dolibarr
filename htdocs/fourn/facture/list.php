@@ -972,7 +972,7 @@ if ($moreforfilter) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 if ($massactionbutton) {
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 }
@@ -982,6 +982,13 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 
 // Line for filters
 print '<tr class="liste_titre_filter">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre middle">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
 // Ref
 if (!empty($arrayfields['f.ref']['checked'])) {
 	print '<td class="liste_titre left">';
@@ -1202,14 +1209,19 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre middle">';
-$searchpicto = $form->showFilterButtons();
-print $searchpicto;
-print '</td>';
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre middle">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 if (!empty($arrayfields['f.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER['PHP_SELF'], 'f.ref,f.rowid', '', $param, '', $sortfield, $sortorder);
 }
@@ -1321,7 +1333,9 @@ if (!empty($arrayfields['f.tms']['checked'])) {
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['f.fk_statut']['label'], $_SERVER["PHP_SELF"], "fk_statut,paye,type", "", $param, '', $sortfield, $sortorder, 'right ');
 }
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 print "</tr>\n";
 
 $facturestatic = new FactureFournisseur($db);
@@ -1395,6 +1409,18 @@ if ($num > 0) {
 		}
 
 		print '<tr class="oddeven">';
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->facid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->facid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->facid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+		}
 		if (!empty($arrayfields['f.ref']['checked'])) {
 			print '<td class="nowraponall">';
 
@@ -1767,15 +1793,17 @@ if ($num > 0) {
 		}
 
 		// Action column
-		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->facid, $arrayofselected)) {
-				$selected = 1;
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->facid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->facid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->facid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
-			print '<input id="cb'.$obj->facid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->facid.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '</td>';
 		}
-		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
