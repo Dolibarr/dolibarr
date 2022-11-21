@@ -694,7 +694,10 @@ if ($action == 'addsite' && $usercanedit) {
 		$tmpobject->virtualhost = GETPOST('virtualhost', 'alpha');
 
 		$result = $tmpobject->create($user);
-		if ($result <= 0) {
+		if ($result == 0) {
+			$error++;
+			setEventMessages($langs->trans("ErrorLabelAlreadyExists"), null, 'errors');
+		} elseif ($result < 0) {
 			$error++;
 			setEventMessages($tmpobject->error, $tmpobject->errors, 'errors');
 		}
@@ -3678,7 +3681,7 @@ if ($action == 'editcss') {
 	// Manifest.json
 	print '<tr><td class="tdtop">';
 	$htmlhelp = $langs->trans("Example").' :<br>';
-	$htmlhelp .= dol_htmlentitiesbr($manifestjsoncontentdefault);
+	$htmlhelp .= '<small>'.dol_htmlentitiesbr($manifestjsoncontentdefault).'</small>';
 	print $form->textwithpicto($langs->trans('WEBSITE_MANIFEST_JSON'), $htmlhelp, 1, 'help', '', 0, 2, 'manifestjsontooltip');
 	print '</td><td>';
 	print $langs->trans("UseManifest").': '.$form->selectyesno('use_manifest', $website->use_manifest, 1).'<br>';
