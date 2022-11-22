@@ -285,7 +285,7 @@ function limitChars(textarea, limit, infodiv)
 				print '<input type="hidden" name="message" value="'.dol_escape_htmltag($defaultmessage).'">';
 			} else {
 				print '<textarea class="quatrevingtpercent" name="message" id="message" rows="'.ROWS_4.'" onkeyup="limitChars(this, 160, \'charlimitinfospan\')">'.$defaultmessage.'</textarea>';
-				print '<div id="charlimitinfo">'.$langs->trans("SmsInfoCharRemain").': <span id="charlimitinfospan">'.(160 - dol_strlen($defaultmessage)).'</span></div></td>';
+				print '<div id="charlimitinfo" class="opacitymedium">'.$langs->trans("SmsInfoCharRemain").': <span id="charlimitinfospan">'.(160 - dol_strlen($defaultmessage)).'</span></div></td>';
 			}
 			print "</td></tr>\n";
 		}

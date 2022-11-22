@@ -18,8 +18,8 @@ ob_start();
 <meta name="keywords" content="" />
 <meta name="title" content="Contact us" />
 <meta name="description" content="" />
-<meta name="generator" content="Dolibarr 17.0.0-alpha (https://www.dolibarr.org)" />
-<meta name="dolibarr:pageid" content="170" />
+<meta name="generator" content="Dolibarr 17.0.0-beta (https://www.dolibarr.org)" />
+<meta name="dolibarr:pageid" content="249" />
 <?php if ($website->use_manifest) { print '<link rel="manifest" href="/manifest.json.php" />'."\n"; } ?>
 <!-- Include link to CSS file -->
 <link rel="stylesheet" href="/styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />
@@ -34,7 +34,7 @@ ob_start();
 <body id="bodywebsite" class="bodywebsite bodywebpage-contact">
 <!-- Enter here your HTML content. Add a section with an id tag and tag contenteditable="true" if you want to use the inline editor for the content  -->
 <?php 
-    if (GETPOST('action') == 'sendmail')    {
+if (GETPOST('action') == 'sendmail')    {
     include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
     $from = GETPOST('email', 'alpha');
     $to = $mysoc->email;
@@ -51,67 +51,12 @@ ob_start();
 	}
 }
 ?>
+
+<?php includeContainer('header'); ?>
+
+
 <section id="mysection1" contenteditable="true">
-     <nav class="navbar navbar-expand-lg bg-white shadow-lg">
-            <div class="container">
-                <button
-                    class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav"
-                    aria-controls="navbarNav"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
-                >
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <a class="navbar-brand" href="index.html"><?php echo $mysoc->name; ?></a>
-
-                <div class="d-lg-none">
-                    <a href="#reservation"
-                        class="custom-btn btn btn-danger"
-                        data-bs-toggle="modal"
-                        data-bs-target="#BookingModal"
-                    >
-                        Reservation
-                    </a>
-                </div>
-
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav mx-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="index.php">Home</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="about.php">About</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="menu.php">Menu</a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a class="nav-link active" href="contact.php">Contact</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="d-none d-lg-block">
-                    <a href="#reservation"
-                        type="button"
-                        class="custom-btn btn btn-danger"
-                        data-bs-toggle="modal"
-                        data-bs-target="#BookingModal"
-                    >
-                        Reservation
-                    </a>
-                </div>
-            </div>
-        </nav>
-
-        <main>
+    <main>
             <header class="site-header site-contact-header">
                 <div class="container">
                     <div class="row">
@@ -128,7 +73,7 @@ ob_start();
                 <div class="overlay"></div>
             </header>
 
-            <a id="reservation"></a>
+            <a id="reservation"></a><br>
             
             <section class="contact section-padding">
                 <div class="container">
@@ -144,6 +89,9 @@ ob_start();
                                 method="post"
                                 role="form"
                             >
+                                <input type="hidden" name="action" value="sendmail">
+                                <input type="hidden" name="toekn" value="<?php echo newToken(); ?>">
+                                
                                 <div class="col-lg-6 col-6">
                                     <label for="contact-name" class="form-label"
                                         >Full Name</label
@@ -163,7 +111,7 @@ ob_start();
                                     <label
                                         for="contact-phone"
                                         class="form-label"
-                                        >Phone Number</label
+                                        ><?php echo $weblangs->trans("Phone"); ?></label
                                     >
 
                                     <input
@@ -178,7 +126,7 @@ ob_start();
                                     <label
                                         for="contact-email"
                                         class="form-label"
-                                        >Email</label
+                                        ><?php echo $weblangs->trans("Email"); ?></label
                                     >
 
                                     <input
@@ -194,7 +142,7 @@ ob_start();
                                     <label
                                         for="contact-message"
                                         class="form-label"
-                                        >Message</label
+                                        ><?php echo $weblangs->trans("Message"); ?></label
                                     >
 
                                     <textarea
@@ -208,7 +156,7 @@ ob_start();
 
                                 <div class="col-lg-5 col-12 ms-auto">
                                     <button type="submit" class="form-control">
-                                        Send
+                                        <?php echo $weblangs->trans("Send"); ?>
                                     </button>
                                 </div>
                             </form>
@@ -234,89 +182,25 @@ ob_start();
                             </div>
                         </div>
 
-                        <div class="col-12">
-                            <h4 class="mt-5 mb-4">
+                        <div class="col-12" id="divaddress">
+                            <br><br>
+                        
+                            <h4 class="mt-5 mb-4 center">
                                 <?php echo $mysoc->getFullAddress() ?>
                             </h4>
 
-                            <div class="google-map pt-3">
-                                <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d90596.06698695973!2d-0.7089680200547398!3d44.79859846268479!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd54d8fb00b62b4d%3A0x963d0840e2fa1f97!2sPessac%20Centre!5e0!3m2!1sen!2sfr!4v1659970475018!5m2!1sen!2sfr"
-                                    width="100%"
-                                    height="300"
-                                    style="border: 0"
-                                    allowfullscreen=""
-                                    loading="lazy"
-                                    referrerpolicy="no-referrer-when-downgrade"
-                                ></iframe>
+                            <!-- Google MAPS -->
+                            <center><div class="mapouter"><div class="gmap_canvas"><iframe width="600" height="500" id="gmap_canvas" src="https://maps.google.com/maps?q=<?php echo urlencode($mysoc->getFullAddress()); ?>&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
                             </div>
+                            <style>.mapouter{text-align:right;height:500px;width:600px;}.gmap_canvas {overflow:hidden;background:none!important;height:500px;width:600px;}</style>
+                            </div></center>
                         </div>
                     </div>
                 </div>
             </section>
         </main>
 
-        <footer class="site-footer section-padding">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <h4 class="text-white mb-4 me-5"><?php echo $mysoc->name; ?></h4>
-                    </div>
 
-                    <div class="col-lg-4 col-md-7 col-xs-12 tooplate-mt30">
-                        <h6 class="text-white mb-lg-4 mb-3">Location</h6>
-
-                        <p><?php echo $mysoc->getFullAddress(); ?></p>
-
-                        <a
-                            href="https://goo.gl/maps/CJ8FfebWZHLQBA2r5"
-                            class="custom-btn btn btn-dark mt-2"
-                            >Directions</a
-                        >
-                    </div>
-
-                    <div class="col-lg-4 col-md-5 col-xs-12 tooplate-mt30">
-                        <h6 class="text-white mb-lg-4 mb-3">Opening Hours</h6>
-
-         
-                        <?php $days = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
-                        foreach ($days as $day){
-                            echo "<p> $day : " .getDolGlobalString("MAIN_INFO_OPENINGHOURS_$day")  ."</p>";    
-                        }
-                        ?>
-
-                        <p>
-                            Tel:
-                            <a href="tel: 010-02-0340" class="tel-link"
-                                ><?php echo $mysoc->phone ?></a
-                            >
-                        </p>
-                    </div>
-
-                    <div class="col-lg-4 col-md-6 col-xs-12 tooplate-mt30">
-                        <h6 class="text-white mb-lg-4 mb-3">Social</h6>
-
-                        <ul class="social-icon">
-                             <?php foreach($mysoc->socialnetworks as $key => $value) {
-                                print '<li> <a class="btn btn-perso2 btn-floating m-1" href="'. (preg_match('/^http/', $value) ? $value : 'https://www.'.$key.'.com/'.$value).'"><span class="fab fa-'.$key.'"></i></a> </li>';
-                             } ?>
-
-                       
-                        </ul>
-
-                        <p class="copyright-text tooplate-mt60">
-                            Copyright © <?php echo $mysoc->name; ?>
-                        </p>
-                    </div>
-                </div>
-                <!-- row ending -->
-            </div>
-            <!-- container ending -->
-        </footer>
-        
-        
-        
-        
         
         <!-- Modal -->
         <div
@@ -346,7 +230,7 @@ ob_start();
                             <form
                                 class="booking-form row"
                                 role="form"
-                                action="index.php"
+                                action="contact.php"
                                 method="POST"
                             >
                                 <input type="hidden" name="token" value="<?php echo newToken(); ?>" />
@@ -473,8 +357,12 @@ ob_start();
 
 </section>
 
+
+<?php includeContainer('footer'); ?>
+
+
 </body>
 </html>
 <?php // BEGIN PHP
-$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", 170);
+$tmp = ob_get_contents(); ob_end_clean(); dolWebsiteOutput($tmp, "html", 249);
 // END PHP ?>

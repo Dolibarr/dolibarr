@@ -401,8 +401,8 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 /**
  * Fast compare of 2 files identified by their properties ->name, ->date and ->size
  *
- * @param	string 	$a		File 1
- * @param 	string	$b		File 2
+ * @param	object 	$a		File 1
+ * @param 	object	$b		File 2
  * @return 	int				1, 0, 1
  */
 function dol_compare_file($a, $b)

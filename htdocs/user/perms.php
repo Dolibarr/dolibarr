@@ -331,9 +331,9 @@ if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->ad
 
 print '<td>'.$langs->trans("Permissions").'</td>';
 print '<td class="right nowrap">';
-print '<a class="showallperms" title="'.dol_escape_htmltag($langs->trans("ShowAllPerms")).'" alt="'.dol_escape_htmltag($langs->trans("ShowAllPerms")).'" href="#anchorforperms">'.img_picto('', 'folder-open', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("ExpandAll").'</span></a>';
+print '<a class="showallperms" title="'.dol_escape_htmltag($langs->trans("ShowAllPerms")).'" alt="'.dol_escape_htmltag($langs->trans("ShowAllPerms")).'" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("ExpandAll").'</span></a>';
 print ' | ';
-print '<a class="hideallperms" title="'.dol_escape_htmltag($langs->trans("HideAllPerms")).'" alt="'.dol_escape_htmltag($langs->trans("HideAllPerms")).'" href="#anchorforperms">'.img_picto('', 'folder', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("UndoExpandAll").'</span></a>';
+print '<a class="hideallperms" title="'.dol_escape_htmltag($langs->trans("HideAllPerms")).'" alt="'.dol_escape_htmltag($langs->trans("HideAllPerms")).'" href="#">'.img_picto('', 'folder', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("UndoExpandAll").'</span></a>';
 print '</td>';
 
 print '</tr>'."\n";
@@ -469,6 +469,11 @@ if ($result) {
 		}
 		*/
 
+		$isexpanded = ($updatedmodulename == $obj->module || $module == "allmodules");
+		if (!$action) {
+			$isexpanded = 1;	// By default (no action done) we have lines expanded
+		}
+
 		// Break found, it's a new module to catch
 		if (isset($obj->module) && ($oldmod <> $obj->module)) {
 			$oldmod = $obj->module;
@@ -485,24 +490,24 @@ if ($result) {
 			print '</td>';
 			if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin)) {
 				if ($caneditperms) {
-					print '<td class="center nowrap permtohide_'.$obj->module.'"'.($updatedmodulename != $obj->module && $module != "allmodules" ? ' style="display:none"' : '').'>';
+					print '<td class="center nowrap permtohide_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none"' : '').'>';
 					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("All")."</a>";
 					print ' / ';
 					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("None")."</a>";
 					print '</td>';
-					print '<td class="permtoshow_'.$obj->module.'"'.($updatedmodulename == $obj->module || $module == "allmodules" ? ' style="display:none"' : '').'>&nbsp;</td>';
+					print '<td class="permtoshow_'.$obj->module.'"'.($isexpanded ? ' style="display:none"' : '').'>&nbsp;</td>';
 				} else {
 					print '<td>&nbsp;</td>';
 				}
 				print '<td>&nbsp;</td>';
 			} else {
 				if ($caneditperms) {
-					print '<td class="center wraponsmartphone permtohide_'.$obj->module.'"'.($updatedmodulename != $obj->module && $module != "allmodules" ? ' style="display:none"' : '').'>';
+					print '<td class="center wraponsmartphone permtohide_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none"' : '').'>';
 					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("All")."</a>";
 					print ' / ';
 					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("None")."</a>";
 					print '</td>';
-					print '<td class="permtoshow_'.$obj->module.'"'.($updatedmodulename == $obj->module || $module == "allmodules" ? ' style="display:none"' : '').'>&nbsp;</td>';
+					print '<td class="permtoshow_'.$obj->module.'"'.($isexpanded ? ' style="display:none"' : '').'>&nbsp;</td>';
 				} else {
 					print '<td class="right"></td>';
 				}
@@ -510,11 +515,11 @@ if ($result) {
 			}
 			print '<td>&nbsp;</td>';
 
-			print '<td class="maxwidthonsmartphone right trforbreakperms" data-hide-perms="'.$obj->module.'" data-hidden-perms="'.($updatedmodulename == $obj->module ? '0' : "1").'">';
-			print '<div class="switchfolderperms folderperms_'.$obj->module.'">';
+			print '<td class="maxwidthonsmartphone right trforbreakperms" data-hide-perms="'.$obj->module.'" data-hidden-perms="'.($isexpanded ? '0' : "1").'">';
+			print '<div class="switchfolderperms folderperms_'.$obj->module.'"'.($isexpanded ? ' style="display:none;"' : '').'>';
 			print img_picto('', 'folder', 'class="marginright"');
 			print '</div>';
-			print '<div class="switchfolderperms folderopenperms_'.$obj->module.'" style="display:none;">';
+			print '<div class="switchfolderperms folderopenperms_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none;"' : '').'>';
 			print img_picto('', 'folder-open', 'class="marginright"');
 			print '</div>';
 			print '</td>'; //Add picto + / - when open en closed
@@ -522,7 +527,7 @@ if ($result) {
 		}
 
 		print '<!-- '.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '').' -->'."\n";
-		print '<tr class="oddeven trtohide_'.$obj->module.'"'.($updatedmodulename != $obj->module && $module != "allmodules" ? ' style="display:none"' : '').'>';
+		print '<tr class="oddeven trtohide_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none"' : '').'>';
 
 		// Picto and label of module
 		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
@@ -625,6 +630,7 @@ print '</div>';
 
 print '<script>';
 print '$(".trforbreakperms").on("click", function(){
+	console.log("Click on trforbreakperms");
 	moduletohide = $(this).data("hide-perms");
 	if ($(this).data("hidden-perms") == 1){
 		$(".trtohide_"+moduletohide).show();
@@ -646,6 +652,7 @@ print '$(".trforbreakperms").on("click", function(){
 print "\n";
 
 print '$(".showallperms").on("click", function(){
+	console.log("Click on showallperms");
 	$(".trforbreakperms").each( function(){
 		if($(this).data("hidden-perms") != 0){
 			$(this).trigger("click");
@@ -655,6 +662,7 @@ print '$(".showallperms").on("click", function(){
 print "\n";
 
 print '$(".hideallperms").on("click", function(){
+	console.log("Click on hideallperms");
 	$(".trforbreakperms").each( function(){
 		if($(this).data("hidden-perms") != 1){
 			$(this).trigger("click");
