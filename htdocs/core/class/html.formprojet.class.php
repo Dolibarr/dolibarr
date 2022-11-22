@@ -764,8 +764,8 @@ class FormProjets extends Form
 		if (is_array($selected)) {
 			$selectedarray = $selected;
 		} elseif ($selected == 99) {
-			if ($conf->global->MAIN_FEATURES_LEVEL >= 1 || getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
-				$selectedarray = array(0,1,2);
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+				$selectedarray = array(0,1,3);
 			} else {
 				$selectedarray = array(0,1);
 			}
