@@ -98,6 +98,51 @@ function getDolGlobalInt($key, $default = 0)
 }
 
 /**
+ * Return dolibarr global constant array value
+ *
+ * Get the json encoded value from the _const db table
+ * and return the associative array
+ *
+ * @since 17.0.0 added function
+ *
+ * @param string $key key to return value, return 0 if not set
+ * @param array $default value to return
+ *
+ * @return array associative array
+ */
+function getDolGlobalArray($key, $default = array())
+{
+	global $conf;
+	// return $conf->global->$key ?? $default;
+	$global_value = (empty($conf->global->$key) ? $default : $conf->global->$key);
+
+	return (array) json_decode($global_value, true);
+}
+
+/**
+ * Set dolibarr global constant array value
+ *
+ * Save an array value to _const db table in json form
+ * to set the global value
+ *
+ * @since 17.0.0 added function
+ *
+ * @param string    $key key to set value
+ * @param array     $value values as array to be saved
+ * @param int       $entity entity id
+ *
+ * @return int      -1 if KO, 1 if OK
+ */
+function setDolGlobalArray(string $key, array $value, int $entity = 1)
+{
+	global $db;
+
+	$json = json_encode($value);
+
+	return dolibarr_set_const($db, $key, $json, 'array', 0, '', $entity);
+}
+
+/**
  * Is Dolibarr module enabled
  * @param string $module module name to check
  * @return int
