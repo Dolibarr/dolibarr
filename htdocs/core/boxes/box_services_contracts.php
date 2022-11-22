@@ -124,7 +124,7 @@ class box_services_contracts extends ModeleBoxes
 					$contractlinestatic->label = $objp->label;
 					$contractlinestatic->description = $objp->description;
 					$contractlinestatic->type = $objp->type;
-					$contractlinestatic->product_id = $objp->product_id;
+					$contractlinestatic->fk_productyy = $objp->product_id;
 					$contractlinestatic->product_ref = $objp->product_ref;
 					$contractlinestatic->product_type = $objp->product_type;
 					$contractlinestatic->statut = $objp->contractline_status;
