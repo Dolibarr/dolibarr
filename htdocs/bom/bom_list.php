@@ -513,7 +513,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -523,6 +523,15 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
+
 foreach ($object->fields as $key => $val) {
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
@@ -561,16 +570,22 @@ $parameters = array('arrayfields'=>$arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print '<td class="liste_titre maxwidthsearch">';
-$searchpicto = $form->showFilterButtons();
-print $searchpicto;
-print '</td>';
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 print '</tr>'."\n";
 
 
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+// Action column
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+}
 foreach ($object->fields as $key => $val) {
 	$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 	if ($key == 'status') {
@@ -593,7 +608,9 @@ $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
-print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+}
 print '</tr>'."\n";
 
 
@@ -624,6 +641,18 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	// Show here line of result
 	print '<tr class="oddeven">';
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+	}
 	foreach ($object->fields as $key => $val) {
 		$cssforfield = (empty($val['csslist']) ? (empty($val['css']) ? '' : $val['css']) : $val['csslist']);
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
@@ -676,15 +705,17 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
-	print '<td class="nowrap center">';
-	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		$selected = 0;
-		if (in_array($object->id, $arrayofselected)) {
-			$selected = 1;
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		print '</td>';
 	}
-	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
