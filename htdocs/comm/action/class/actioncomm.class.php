@@ -2079,7 +2079,7 @@ class ActionComm extends CommonObject
 			}
 
 			if ($exportholiday == 1) {
-				$langs->load("holidays");
+				$langs->load("holiday");
 				$title = $langs->trans("Holidays");
 
 				$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.email, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
