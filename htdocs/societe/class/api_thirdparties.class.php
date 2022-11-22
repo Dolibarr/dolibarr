@@ -1048,7 +1048,7 @@ class Thirdparties extends DolibarrApi
     {
 		global $db, $conf;
 
-		if (!DolibarrApiAccess::$user->rights->facture->lire) {
+		if (!DolibarrApiAccess::$user->rights->societe->lire) {
 			throw new RestException(401);
 		}
 		if (empty($id)) {
