@@ -95,7 +95,7 @@ if ($action == 'add_payment') {
 			// Create a line of payments
 			$payment = new PaymentDonation($db);
 			$payment->chid         = $chid;
-			$payment->datep     = $datep;
+			$payment->datep     = $datepaid;
 			$payment->amounts      = $amounts; // Tableau de montant
 			$payment->paymenttype  = GETPOST("paymenttype", 'int');
 			$payment->num_payment  = GETPOST("num_payment", 'alphanohtml');
@@ -199,7 +199,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToCredit').'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid") : $object->accountid, "accountid", 0, '', 2); // Show open bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid") : "0", "accountid", 0, '', 2); // Show open bank account list
 	print '</td></tr>';
 
 	// Number
