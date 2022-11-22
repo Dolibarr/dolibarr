@@ -494,7 +494,11 @@ if ($search_all) {
 }
 if ($search_status != '' && $search_status != '-1') {
 	if ($search_status == 99) {
-		$sql .= " AND p.fk_statut IN (0,1)";
+		if ($conf->global->MAIN_FEATURES_LEVEL >= 1 || getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+			$sql .= " AND p.fk_statut IN (0,1,3)";
+		} else {
+			$sql .= " AND p.fk_statut IN (0,1)";
+		}
 	} else {
 		$sql .= " AND p.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 	}

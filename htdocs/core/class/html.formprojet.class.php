@@ -743,7 +743,7 @@ class FormProjets extends Form
 	}
 
 	/**
-	 *  Return combo list of differents status of a orders
+	 *  Return combo list of different states of projects
 	 *
 	 *  @param	string	$selected   Preselected value
 	 *  @param	int		$short		Use short labels
@@ -754,24 +754,21 @@ class FormProjets extends Form
 	{
 		$options = array();
 
-		// 7 is same label than 6. 8 does not exists (billed is another field)
-		$statustohow = array(
-			'0' => '0',
-			'1' => '1',
-			'2' => '2',
-		);
-
 		$tmpproject = new Project($this->db);
 
-		foreach ($statustohow as $key => $value) {
+		foreach ($tmpproject->statuts_short as $key => $value) {
 			$tmpproject->statut = $key;
-			$options[$value] = $tmpproject->getLibStatut($short);
+			$options[$key] = $tmpproject->getLibStatut($short);
 		}
 
 		if (is_array($selected)) {
 			$selectedarray = $selected;
 		} elseif ($selected == 99) {
-			$selectedarray = array(0,1);
+			if ($conf->global->MAIN_FEATURES_LEVEL >= 1 || getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+				$selectedarray = array(0,1,2);
+			} else {
+				$selectedarray = array(0,1);
+			}
 		} else {
 			$selectedarray = explode(',', $selected);
 		}

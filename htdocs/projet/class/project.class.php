@@ -328,6 +328,21 @@ class Project extends CommonObject
 	const STATUS_CLOSED = 2;
 
 	/**
+	 * In Progress status (advanced states)
+	 */
+	const STATUS_INPROGRESS = 3;
+
+	/**
+	 * Closed successfully status (advanced states)
+	 */
+	const STATUS_DONE = 5;
+
+	/**
+	 * Canceled status (advanced states)
+	 */
+	const STATUS_CANCELED = 6;
+
+	/**
 	 *  Constructor
 	 *
 	 *  @param      DoliDB		$db      Database handler
@@ -338,10 +353,32 @@ class Project extends CommonObject
 
 		$this->db = $db;
 
-		$this->statuts_short = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
-		$this->statuts_long = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
-
-		global $conf;
+		if ($conf->global->MAIN_FEATURES_LEVEL >= 1 || getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+			$this->statuts_short = array(
+				0 => "ProjectStatusDraftShort",
+				1 => "ProjectStatusValidatedShort",
+				3 => "ProjectStatusInProgressShort",
+				5 => "ProjectStatusDoneShort",
+				6 => "ProjectStatusCanceledShort",
+			);
+			$this->statuts_long = array(
+				0 => "ProjectStatusDraft",
+				1 => "ProjectStatusValidated",
+				3 => "ProjectStatusInProgress",
+				5 => "ProjectStatusDone",
+				6 => "ProjectStatusCanceled"
+			);
+		} else {
+			$this->statuts_short = array(
+				0 => "ProjectStatusDraftShort",
+				1 => "ProjectStatusValidatedShort",
+				2 => "ProjectStatusClosedShort");
+			$this->statuts_long = array(
+				0 => "ProjectStatusDraft",
+				1 => "ProjectStatusValidated",
+				2 => "ProjectStatusClosed"
+			);
+		}
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
 			$this->fields['rowid']['visible'] = 0;
@@ -1226,20 +1263,53 @@ class Project extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
+		global $langs, $conf;
 
-		$statustrans = array(
-			0 => 'status0',
-			1 => 'status4',
-			2 => 'status6',
-		);
+		$langs->load("projects");
 
-		$statusClass = 'status0';
-		if (!empty($statustrans[$status])) {
-			$statusClass = $statustrans[$status];
+		// Init/load array of translation of status
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv("ProjectStatusDraft");
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv("ProjectStatusValidated");
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv("ProjectStatusClosed");
+			$this->labelStatus[self::STATUS_INPROGRESS] = $langs->transnoentitiesnoconv("ProjectStatusInProgress");
+			$this->labelStatus[self::STATUS_DONE] = $langs->transnoentitiesnoconv("ProjectStatusDone");
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv("ProjectStatusCanceled");
+
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv("ProjectStatusDraftShort");
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv("ProjectStatusValidatedShort");
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv("ProjectStatusClosedShort");
+			$this->labelStatusShort[self::STATUS_INPROGRESS] = $langs->transnoentitiesnoconv("ProjectStatusInProgressShort");
+			$this->labelStatusShort[self::STATUS_DONE] = $langs->transnoentitiesnoconv("ProjectStatusDoneShort");
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv("ProjectStatusCanceledShort");
 		}
 
-		return dolGetStatus($langs->transnoentitiesnoconv($this->statuts_long[$status]), $langs->transnoentitiesnoconv($this->statuts_short[$status]), '', $statusClass, $mode);
+		$statusnew = '';
+		if ($conf->global->MAIN_FEATURES_LEVEL >= 1 || getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+			if ($status == self::STATUS_DRAFT) {
+				$statusnew = 'status0'; // OK
+			} elseif ($status == self::STATUS_VALIDATED) {
+				$statusnew = 'status4';
+			} elseif ($status == self::STATUS_CLOSED) {
+				$statusnew = 'status6';
+			} elseif ($status == self::STATUS_INPROGRESS) {
+				$statusnew = 'status2';
+			} elseif ($status == self::STATUS_DONE) {
+				$statusnew = 'status6';
+			} elseif ($status == self::STATUS_CANCELED) {
+				$statusnew = 'status8'; // OK
+			}
+		} else {
+			$statustrans = array(
+				0 => 'status0',
+				1 => 'status4',
+				2 => 'status6',
+			);
+			$statusnew = $statustrans[$status];
+		}
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusnew, $mode);
+
 	}
 
 	/**
