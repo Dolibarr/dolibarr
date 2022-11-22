@@ -778,5 +778,4 @@ class FormProjets extends Form
 
 		print Form::multiselectarray($hmlname, $options, $selectedarray, 0);
 	}
-
 }
