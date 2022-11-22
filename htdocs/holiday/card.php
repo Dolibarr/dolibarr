@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2014-2017  Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020-2021  Udo Tamm            <dev@dolibit.de>
  * Copyright (C) 2022		Anthony Berton      <anthony.berton@bb2a.fr>
  *
@@ -258,6 +258,12 @@ if (empty($reshook)) {
 			$approverslist = $object->fetch_users_approver_holiday();
 			if (!in_array($approverid, $approverslist)) {
 				setEventMessages($langs->transnoentitiesnoconv('InvalidValidator'), null, 'errors');
+				$error++;
+			}
+
+			// Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			if ($ret < 0) {
 				$error++;
 			}
 

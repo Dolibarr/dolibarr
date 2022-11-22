@@ -1317,7 +1317,7 @@ class ActionComm extends CommonObject
 		dol_syslog(get_class()."::getActions", LOG_DEBUG);
 
 		require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-		$hookmanager = new HookManager($db);
+		$hookmanager = new HookManager($this->db);
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		$hookmanager->initHooks(array('agendadao'));
 
@@ -1399,7 +1399,6 @@ class ActionComm extends CommonObject
 		if (empty($user->rights->agenda->allactions->read)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources AS ar ON a.id = ar.fk_actioncomm AND ar.element_type ='user' AND ar.fk_element = ".((int) $user->id);
 		}
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 		$sql .= " WHERE 1 = 1";
 		if (empty($load_state_board)) {
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";

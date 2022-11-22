@@ -54,6 +54,11 @@ class Propal extends CommonObject
 	use CommonIncoterm;
 
 	/**
+	 * @var string code
+	 */
+	public $code = "";
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'propal';
@@ -2642,10 +2647,10 @@ class Propal extends CommonObject
 		if ($resql) {
 			// Status self::STATUS_REFUSED by default
 			$modelpdf = !empty($conf->global->PROPALE_ADDON_PDF_ODT_CLOSED) ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
-			$trigger_name = 'PROPAL_CLOSE_REFUSED';
+			$trigger_name = 'PROPAL_CLOSE_REFUSED';		// used later in call_trigger()
 
 			if ($status == self::STATUS_SIGNED) {	// Status self::STATUS_SIGNED
-				$trigger_name = 'PROPAL_CLOSE_SIGNED';
+				$trigger_name = 'PROPAL_CLOSE_SIGNED';	// used later in call_trigger()
 				$modelpdf = !empty($conf->global->PROPALE_ADDON_PDF_ODT_TOBILL) ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->model_pdf;
 
 				// The connected company is classified as a client
@@ -3347,7 +3352,7 @@ class Propal extends CommonObject
 	public function LibStatut($status, $mode = 1)
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf, $hookmanager;
 
 		// Init/load array of translation of status
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
@@ -3376,6 +3381,14 @@ class Propal extends CommonObject
 			$statusType = 'status9';
 		} elseif ($status == self::STATUS_BILLED) {
 			$statusType = 'status6';
+		}
+
+
+		$parameters = array('status' => $status, 'mode' => $mode);
+		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
+
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);

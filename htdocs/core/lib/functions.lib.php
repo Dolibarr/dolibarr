@@ -1810,7 +1810,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 /**
  *	Show tab header of a card
  *
- *	@param	array	$links				Array of tabs. Currently initialized by calling a function xxx_admin_prepare_head
+ *	@param	array	$links				Array of tabs (0=>url, 1=>label, 2=>code, 3=>not used, 4=>text after link, 5=>morecssonlink). Currently initialized by calling a function xxx_admin_prepare_head. Note that label into $links[$i][1] must be already HTML escaped.
  *	@param	string	$active     		Active tab name (document', 'info', 'ldap', ....)
  *	@param  string	$title      		Title
  *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after)
@@ -1831,7 +1831,7 @@ function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0
 /**
  *  Show tabs of a record
  *
- *	@param	array	$links				Array of tabs. Note that label into $links[$i][1] must be already HTML escaped.
+ *	@param	array	$links				Array of tabs (0=>url, 1=>label, 2=>code, 3=>not used, 4=>text after link, 5=>morecssonlink). Currently initialized by calling a function xxx_admin_prepare_head. Note that label into $links[$i][1] must be already HTML escaped.
  *	@param	string	$active     		Active tab name
  *	@param  string	$title      		Title
  *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after), -3=-2+'noborderbottom'
@@ -1934,7 +1934,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				$out .= '<div class="tab tab'.($isactive?'active':'unactive').'" style="margin: 0 !important">';
 				if (!empty($links[$i][0])) {
 					$titletoshow = preg_replace('/<.*$/', '', $links[$i][1]);
-					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tab inline-block valignmiddle'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'" title="'.dol_escape_htmltag($titletoshow).'">';
+					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tab inline-block valignmiddle'.($morecss ? ' '.$morecss : '').(!empty($links[$i][5]) ? ' '.$links[$i][5] : '').'" href="'.$links[$i][0].'" title="'.dol_escape_htmltag($titletoshow).'">';
 				}
 				$out .= $links[$i][1];
 				if (!empty($links[$i][0])) {
@@ -3853,10 +3853,11 @@ function isValidPhone($phone)
  * @param 	int		$nbofchar		Nb of characters to keep
  * @return	string					Return first chars.
  */
-function dolGetFirstLetters($s, $nbofchar = 1) {
+function dolGetFirstLetters($s, $nbofchar = 1)
+{
 	$ret = '';
 	$tmparray = explode(' ', $s);
-	foreach($tmparray as $tmps) {
+	foreach ($tmparray as $tmps) {
 		$ret .= dol_substr($tmps, 0, $nbofchar);
 	}
 
@@ -5746,7 +5747,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	if ((string) $forcerounding != '-1') {
 		if ($forcerounding == 'MU') {
 			$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_UNIT;
-		} else if ($forcerounding == 'MT') {
+		} elseif ($forcerounding == 'MT') {
 			$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_TOT;
 		} elseif ($forcerounding >= 0) {
 			$nbdecimal = $forcerounding;

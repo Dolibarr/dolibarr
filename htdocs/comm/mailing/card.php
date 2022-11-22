@@ -522,9 +522,10 @@ if (empty($reshook)) {
 				exit;
 			}
 			$mesgs[] = $object->error;
+			$mesgs = array_merge($mesgs, $object->errors);
 		}
 
-		setEventMessages(null, $mesgs, 'errors');
+		setEventMessages('', $mesgs, 'errors');
 		$action = "create";
 	}
 
@@ -609,9 +610,10 @@ if (empty($reshook)) {
 					exit;
 				}
 				$mesgs[] = $object->error;
+				$mesgs = array_merge($mesgs, $object->errors);
 			}
 
-			setEventMessages($mesg, $mesgs, 'errors');
+			setEventMessages('', $mesgs, 'errors');
 			$action = "edit";
 		} else {
 			$action = "edit";

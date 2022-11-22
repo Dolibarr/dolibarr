@@ -54,6 +54,7 @@ $toselect = GETPOST('toselect', 'array'); // Array of ids of elements selected i
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'timespentlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss	= GETPOST('optioncss', 'alpha');
+$mode       = GETPOST('mode', 'alpha');
 
 $id			= GETPOST('id', 'int');
 $projectid	= GETPOST('projectid', 'int');
@@ -323,10 +324,10 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 	}
 }
 
-if ($action == 'confirm_deleteline' && $confirm == "yes" && $user->rights->projet->supprimer) {
-	$object->fetchTimeSpent(GETPOST('lineid', 'int'));	// load properties like $object->timespent_id
+if ($action == 'confirm_deleteline' && $confirm == "yes" && ($user->hasRight('projet', 'time') || $user->hasRight('projet', 'all', 'creer'))) {
+	$object->fetchTimeSpent(GETPOST('lineid', 'int'));	// load properties like $object->timespent_xxx
 
-	if (in_array($object->timespent_fk_user, $childids) || $user->rights->projet->all->creer) {
+	if (in_array($object->timespent_fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
 		$result = $object->delTimeSpent($user);	// delete line with $object->timespent_id
 
 		if ($result < 0) {
@@ -1892,14 +1893,16 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Thirdparty
 			if (!empty($arrayfields['p.fk_soc']['checked'])) {
 				print '<td class="nowrap">';
-				if (empty($conf->cache['thridparty'][$task_time->fk_soc])) {
-					$tmpsociete = new Societe($db);
-					$tmpsociete->fetch($task_time->fk_soc);
-					$conf->cache['thridparty'][$task_time->fk_soc] = $tmpsociete;
-				} else {
-					$tmpsociete = $conf->cache['thridparty'][$task_time->fk_soc];
+				if ($task_time->fk_soc > 0) {
+					if (empty($conf->cache['thridparty'][$task_time->fk_soc])) {
+						$tmpsociete = new Societe($db);
+						$tmpsociete->fetch($task_time->fk_soc);
+						$conf->cache['thridparty'][$task_time->fk_soc] = $tmpsociete;
+					} else {
+						$tmpsociete = $conf->cache['thridparty'][$task_time->fk_soc];
+					}
+					print $tmpsociete->getNomUrl(1);
 				}
-				print $tmpsociete->getNomUrl(1);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2107,7 +2110,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print ' ';
 				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			} elseif ($user->hasRight('projet', 'time') || $user->hasRight('projet', 'all', 'creer')) {	 // Read project and enter time consumed on assigned tasks
-				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
+				if (in_array($task_time->fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
 					if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 2) {
 						print '&nbsp;';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=splitline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
