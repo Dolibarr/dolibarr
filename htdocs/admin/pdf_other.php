@@ -69,9 +69,9 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "INVOICE_ADD_SWISS_QR_CODE", GETPOST("INVOICE_ADD_SWISS_QR_CODE", 'int'), 'chaine', 0, '', $conf->entity);
 		dolibarr_del_const($db, "INVOICE_ADD_ZATCA_QR_CODE", $conf->entity);
 	}
-	if (GETPOSTISSET('DOC_SHOW_SHIPPING_ADDRESS')) {
-		dolibarr_set_const($db, "DOC_SHOW_SHIPPING_ADDRESS", GETPOST("DOC_SHOW_SHIPPING_ADDRESS", 'int'), 'chaine', 0, '', $conf->entity);
-		dolibarr_del_const($db, "DOC_SHOW_SHIPPING_ADDRESS", $conf->entity);
+	if (GETPOSTISSET('INVOICE_SHOW_SHIPPING_ADDRESS')) {
+		dolibarr_set_const($db, "INVOICE_SHOW_SHIPPING_ADDRESS", GETPOST("INVOICE_SHOW_SHIPPING_ADDRESS", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_del_const($db, "INVOICE_SHOW_SHIPPING_ADDRESS", $conf->entity);
 	}
 
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
