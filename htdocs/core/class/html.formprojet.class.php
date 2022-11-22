@@ -23,11 +23,12 @@
  *      \brief      Class file for html component project
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 /**
  *      Class to manage building of HTML components
  */
-class FormProjets
+class FormProjets extends Form
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -740,4 +741,42 @@ class FormProjets
 			return -1;
 		}
 	}
+
+	/**
+	 *  Return combo list of differents status of a orders
+	 *
+	 *  @param	string	$selected   Preselected value
+	 *  @param	int		$short		Use short labels
+	 *  @param	string	$hmlname	Name of HTML select element
+	 *  @return	void
+	 */
+	public function selectProjectsStatus($selected = '', $short = 0, $hmlname = 'order_status')
+	{
+		$options = array();
+
+		// 7 is same label than 6. 8 does not exists (billed is another field)
+		$statustohow = array(
+			'0' => '0',
+			'1' => '1',
+			'2' => '2',
+		);
+
+		$tmpproject = new Project($this->db);
+
+		foreach ($statustohow as $key => $value) {
+			$tmpproject->statut = $key;
+			$options[$value] = $tmpproject->getLibStatut($short);
+		}
+
+		if (is_array($selected)) {
+			$selectedarray = $selected;
+		} elseif ($selected == 99) {
+			$selectedarray = array(0,1);
+		} else {
+			$selectedarray = explode(',', $selected);
+		}
+
+		print Form::multiselectarray($hmlname, $options, $selectedarray, 0);
+	}
+
 }
