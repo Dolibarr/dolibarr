@@ -130,7 +130,7 @@ class PaymentDonation extends CommonObject
 		$now = dol_now();
 
 		// Validate parameters
-		if (!$this->datepaid) {
+		if (!$this->datep) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentDonation';
 			return -1;
 		}
@@ -587,7 +587,7 @@ class PaymentDonation extends CommonObject
 
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
-				$this->datepaid,
+				$this->datep,
 				$this->paymenttype, // Payment mode id or code ("CHQ or VIR for example")
 				$label,
 				$amount,
