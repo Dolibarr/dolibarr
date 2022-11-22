@@ -389,7 +389,7 @@ if ($resql) {
 	if ($type != '') {
 		print '<input type="hidden" name="type" value="'.$type.'">';
 	}
-	
+
 	$title = $langs->trans("InvoiceWaitingWithdraw");
 	if ($type == 'bank-transfer') {
 		$title = $langs->trans("InvoiceWaitingPaymentByBankTransfer");
