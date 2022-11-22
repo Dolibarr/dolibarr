@@ -743,12 +743,15 @@ class FormProjets extends Form
 	}
 
 	/**
-	 *  Return combo list of different states of projects
+	 * Return combo list of different states of projects
 	 *
-	 *  @param	string	$selected   Preselected value
-	 *  @param	int		$short		Use short labels
-	 *  @param	string	$hmlname	Name of HTML select element
-	 *  @return	void
+	 * @since 17.0.0 added function
+	 *
+	 * @param	string	$selected   Preselected value
+	 * @param	int		$short		Use short labels
+	 * @param	string	$hmlname	Name of HTML select element
+	 *
+	 * @return	void
 	 */
 	public function selectProjectsStatus($selected = '', $short = 0, $hmlname = 'order_status')
 	{
