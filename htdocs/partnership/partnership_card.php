@@ -374,7 +374,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// 	require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 		// 	$notify = new Notify($db);
 		// 	$formquestion = array_merge($formquestion, array(
-		// 		array('type' => 'onecolumn', 'value' => $notify->confirmMessage('PROPAL_CLOSE_SIGNED', $object->socid, $object)),
+		// 		array('type' => 'onecolumn', 'value' => $notify->confirmMessage('PARTNERSHIP_CLOSE_DENY', $object->socid, $object)),
 		// 	));
 		// }
 
