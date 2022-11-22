@@ -95,26 +95,15 @@ class modFournisseur extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		/* OLD For supplier invoice, we must not have default pdf template on. In most cases, we need to join PDF from supplier, not have a document generated.
-		   NEW Uncomment to add ability to generate PDF for Supplier Invoices which generated not from Order.
-		*/
-
+		/* For supplier invoice, we must not have default pdf template on. In most cases, we need to join PDF from supplier, not have a document generated.
 		$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "canelle";
 		$this->const[$r][3] = 'Nom du gestionnaire de generation des factures fournisseur en PDF';
 		$this->const[$r][4] = 0;
 		$r++;
-
-		// Add abbility ODT for Supplier Invoices
-		$this->const[$r][0] = "SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-
+		*/
+		
 		$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_NUMBER";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "mod_facture_fournisseur_cactus";
@@ -122,10 +111,19 @@ class modFournisseur extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		// Add ability ODT for Supplier orders
 		$this->const[$r][0] = "SUPPLIER_ORDER_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/supplier_orders";
 		$this->const[$r][3] = '';
+		$this->const[$r][4] = 0;
+		$r++;
+
+		// Add ability ODT for Supplier Invoices
+		$this->const[$r][0] = "SUPPLIER_INVOICE_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "";
+		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -919,12 +917,14 @@ class modFournisseur extends DolibarrModules
 			}
 		}
 
+		/*
 		$sql_invoice = array(
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[2][2])."' AND type = 'invoice_supplier' AND entity = ".((int) $conf->entity),
 			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[2][2])."', 'invoice_supplier', ".((int) $conf->entity).")",
 		);
 
 		$sql = array_merge($sql_order, $sql_invoice);
+		*/
 		//var_dump($sql);
 		//die;
 
