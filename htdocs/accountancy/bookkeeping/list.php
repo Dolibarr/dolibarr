@@ -1280,4 +1280,5 @@ print '</form>';
 
 // End of page
 llxFooter();
-	$db->close();
+
+$db->close();
