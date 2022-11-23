@@ -191,6 +191,9 @@ if ($result) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	if ($type != '') {
+		print '<input type="hidden" name="type" value="'.$type.'">';
+	}
 
 	$title = $langs->trans("WithdrawalsLines");
 	if ($type == 'bank-transfer') {
