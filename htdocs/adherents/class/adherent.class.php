@@ -3091,7 +3091,7 @@ class Adherent extends CommonObject
 				if ($listofids) {
 					$listofids .= ']';
 				}
-				$this->output .= ' ids='.$listofids;
+				$this->output .= ($listofids ? ' ids='.$listofids : '');
 			}
 			if ($nbko) {
 				$this->output .= ' - Canceled for '.$nbko.' member (no email or email sending error)';
@@ -3114,7 +3114,7 @@ class Adherent extends CommonObject
 					if ($listofids) {
 						$listofids .= ']';
 					}
-					$this->output .= $listofids;
+					$this->output .= ($listofids ? ' ids='.$listofids : '');
 				}
 			}
 		}
