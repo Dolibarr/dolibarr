@@ -86,10 +86,10 @@ if ($resultproject < 0) {
 $securekeyreceived = GETPOST("securekey");
 $securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
 
-// if ($securekeytocompare != $securekeyreceived) {
-// 	print $langs->trans('MissingOrBadSecureKey');
-// 	exit;
-// }
+if ($securekeytocompare != $securekeyreceived) {
+	print $langs->trans('MissingOrBadSecureKey');
+	exit;
+}
 
 // Load translation files
 $langs->loadLangs(array("main", "companies", "install", "other", "eventorganization"));
