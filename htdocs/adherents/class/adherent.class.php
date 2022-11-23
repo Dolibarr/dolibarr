@@ -2957,7 +2957,7 @@ class Adherent extends CommonObject
 			dol_syslog(__METHOD__.' - Process delta = '.$daysbeforeend, LOG_DEBUG);
 
 			if (!is_numeric($daysbeforeend)) {
-				$blockingerrormsg = "Value for delta is not a positive or negative numeric";
+				$blockingerrormsg = "Value for delta is not a numeric value";
 				$nbko++;
 				break;
 			}
@@ -2968,6 +2968,7 @@ class Adherent extends CommonObject
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
 			$sql .= " WHERE entity = ".((int) $conf->entity); // Do not use getEntity('adherent').")" here, we want the batch to be on its entity only;
 			$sql .= " AND datefin = '".$this->db->idate($datetosearchfor)."'";
+			//$sql .= " LIMIT 10000";
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -3000,7 +3001,7 @@ class Adherent extends CommonObject
 						dol_syslog("sendReminderForExpiredSubscription Language for member id ".$adherent->id." set to ".$outputlangs->defaultlang." mysoc->default_lang=".$mysoc->default_lang);
 
 						$arraydefaultmessage = null;
-						$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION;
+						$labeltouse = getDolGlobalString('ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION');
 
 						if (!empty($labeltouse)) {
 							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
@@ -3024,7 +3025,7 @@ class Adherent extends CommonObject
 							$result = $cmail->sendfile();
 							if (!$result) {
 								$error++;
-								$this->error = $cmail->error;
+								$this->error .= $cmail->error.' ';
 								if (!is_null($cmail->errors)) {
 									$this->errors += $cmail->errors;
 								}
@@ -3089,7 +3090,10 @@ class Adherent extends CommonObject
 								$actioncomm->create($user);
 							}
 						} else {
-							$blockingerrormsg = "Can't find email template, defined into member module setup, to use for reminding";
+							//$blockingerrormsg = "Can't find email template with label=".$labeltouse.", to use for the reminding email";
+
+							$error++;
+							$this->error .= "Can't find email template with label=".$labeltouse.", to use for the reminding email ";
 
 							$nbko++;
 							$listofmembersko[$adherent->id] = $adherent->id;
@@ -3159,6 +3163,6 @@ class Adherent extends CommonObject
 			}
 		}
 
-		return 0;
+		return $nbko;
 	}
 }
