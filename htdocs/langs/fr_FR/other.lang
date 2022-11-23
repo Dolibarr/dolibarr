@@ -40,6 +40,7 @@ notiftofixedemail=aux e-mails définis
 notiftouserandtofixedemail=Aux utilisateurs et e-mails définis
 Notify_ORDER_VALIDATE=Validation commande client
 Notify_ORDER_SENTBYMAIL=Envoi commande client par email
+Notify_ORDER_CLOSE=Commande client livrée
 Notify_ORDER_SUPPLIER_SENTBYMAIL=Envoi commande fournisseur par email
 Notify_ORDER_SUPPLIER_VALIDATE=Commande fournisseur enregistrée
 Notify_ORDER_SUPPLIER_APPROVE=Commande fournisseur approuvée
