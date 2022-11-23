@@ -176,20 +176,22 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
-		'product'        => 'ProductsCategoriesArea',
-		'customer'       => 'CustomersCategoriesArea',
-		'supplier'       => 'SuppliersCategoriesArea',
-		'member'         => 'MembersCategoriesArea',
-		'contact'        => 'ContactsCategoriesArea',
-		'user'           => 'UsersCategoriesArea',
-		'account'        => 'AccountsCategoriesArea', // old for bank account
-		'bank_account'   => 'AccountsCategoriesArea',
-		'project'        => 'ProjectsCategoriesArea',
-		'warehouse'      => 'StocksCategoriesArea',
-		'actioncomm'     => 'ActioncommCategoriesArea',
-		'website_page'   => 'WebsitePageCategoriesArea',
-		'order'          => 'OrderCategoriesArea',
-		'supplier_order' => 'SupplierOrderCategoriesArea'
+		'product'          => 'ProductsCategoriesArea',
+		'customer'         => 'CustomersCategoriesArea',
+		'supplier'         => 'SuppliersCategoriesArea',
+		'member'           => 'MembersCategoriesArea',
+		'contact'          => 'ContactsCategoriesArea',
+		'user'             => 'UsersCategoriesArea',
+		'account'          => 'AccountsCategoriesArea', // old for bank account
+		'bank_account'     => 'AccountsCategoriesArea',
+		'project'          => 'ProjectsCategoriesArea',
+		'warehouse'        => 'StocksCategoriesArea',
+		'actioncomm'       => 'ActioncommCategoriesArea',
+		'website_page'     => 'WebsitePageCategoriesArea',
+		'invoice'          => 'InvoiceCategoriesArea',
+		'supplier_invoice' => 'SupplierInvoiceCategoriesArea',
+		'order'            => 'OrderCategoriesArea',
+		'supplier_order'   => 'SupplierOrderCategoriesArea'
 	);
 
 	/**
