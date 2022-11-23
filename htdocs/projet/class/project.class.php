@@ -349,11 +349,9 @@ class Project extends CommonObject
 	 */
 	public function __construct($db)
 	{
-		global $conf;
-
 		$this->db = $db;
 
-		if ($conf->global->MAIN_FEATURES_LEVEL >= 1 || getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
 			$this->statuts_short = array(
 				0 => "ProjectStatusDraftShort",
 				1 => "ProjectStatusValidatedShort",
@@ -366,17 +364,18 @@ class Project extends CommonObject
 				1 => "ProjectStatusValidated",
 				3 => "ProjectStatusInProgress",
 				5 => "ProjectStatusDone",
-				6 => "ProjectStatusCanceled"
+				6 => "ProjectStatusCanceled",
 			);
 		} else {
 			$this->statuts_short = array(
 				0 => "ProjectStatusDraftShort",
 				1 => "ProjectStatusValidatedShort",
-				2 => "ProjectStatusClosedShort");
+				2 => "ProjectStatusClosedShort",
+			);
 			$this->statuts_long = array(
 				0 => "ProjectStatusDraft",
 				1 => "ProjectStatusValidated",
-				2 => "ProjectStatusClosed"
+				2 => "ProjectStatusClosed",
 			);
 		}
 
@@ -1293,7 +1292,7 @@ class Project extends CommonObject
 		}
 
 		$statusnew = '';
-		if ($conf->global->MAIN_FEATURES_LEVEL >= 1 || getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
 			if ($status == self::STATUS_DRAFT) {
 				$statusnew = 'status0'; // OK
 			} elseif ($status == self::STATUS_VALIDATED) {
