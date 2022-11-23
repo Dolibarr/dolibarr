@@ -213,6 +213,7 @@ EMailTextInvoicePayed=Invoice %s has been paid.
 EMailTextProposalValidated=Proposal %s has been validated.
 EMailTextProposalClosedSigned=Proposal %s has been closed signed.
 EMailTextOrderValidated=Order %s has been validated.
+EMailTextOrderClose=Order %s has been delivered.
 EMailTextOrderApproved=Order %s has been approved.
 EMailTextOrderValidatedBy=Order %s has been recorded by %s.
 EMailTextOrderApprovedBy=Order %s has been approved by %s.

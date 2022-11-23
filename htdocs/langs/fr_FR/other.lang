@@ -212,6 +212,7 @@ EMailTextInvoicePayed=La facture %s a été payée.
 EMailTextProposalValidated=La proposition commerciale %s vous concernant a été validée.
 EMailTextProposalClosedSigned=La proposition %s a été clôturée signée.
 EMailTextOrderValidated=La commande %s a été validée.
+EMailTextOrderClose=La commande %s a été livrée.
 EMailTextOrderApproved=La commande %s a été approuvée.
 EMailTextOrderValidatedBy=La commande %s a été enregistrée par %s
 EMailTextOrderApprovedBy=La commande %s a été approuvée par %s.
