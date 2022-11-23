@@ -3213,6 +3213,17 @@ if (!function_exists("llxFooter")) {
 
 		$ext = 'layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
+		// Hook to add more things on all pages within fiche DIV
+		$llxfooter = '';
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('llxFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			$llxfooter .= $hookmanager->resPrint;
+		} elseif ($reshook > 0) {
+			$llxfooter = $hookmanager->resPrint;
+		}
+		print $llxfooter;
+
 		// Global html output events ($mesgs, $errors, $warnings)
 		dol_htmloutput_events($disabledoutputofmessages);
 
