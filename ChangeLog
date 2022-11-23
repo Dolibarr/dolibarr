@@ -165,6 +165,7 @@ NEW: Update ActionComm type_code on email message ticket
 NEW: VAT - Admin - Add information on deadline day for submission of VAT declaration
 NEW: expand/collapse permissions on user permission page
 NEW: Show delivery mode on PDF for proposals
+NEW: Add the target to select attendees of event for emailings
 
 
 For developers or integrators:
