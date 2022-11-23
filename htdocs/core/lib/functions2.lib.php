@@ -1755,6 +1755,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
 	 *  weigh_convert(320, $f, 0) retournera 0.32
 	 *
 	 */
+	$weight = is_numeric($weight) ? $weight : 0;
 	while ($from_unit <> $to_unit) {
 		if ($from_unit > $to_unit) {
 			$weight = $weight * 10;
