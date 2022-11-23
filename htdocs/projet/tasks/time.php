@@ -77,6 +77,8 @@ $search_user = GETPOST('search_user', 'int');
 $search_valuebilled = GETPOST('search_valuebilled', 'int');
 $search_product_ref = GETPOST('search_product_ref', 'alpha');
 $search_company = GETPOST('$search_company', 'alpha');
+$search_project_ref = GETPOST('$search_project_ref', 'alpha');
+$search_project_label = GETPOST('$search_project_label', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -168,6 +170,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_update = '';
 	$search_task_ref = '';
 	$search_company = '';
+    $search_project_ref = '';
+    $search_project_label = '';
 	$search_task_label = '';
 	$search_user = 0;
 	$search_valuebilled = '';
@@ -1221,10 +1225,14 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$arrayfields['t.task_date'] = array('label'=>$langs->trans("Date"), 'checked'=>1);
 		$arrayfields['p.fk_soc'] = array('label'=>$langs->trans("ThirdParty"), 'type'=>'integer:Societe:/societe/class/societe.class.php:1','checked'=>1);
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
+            if(! empty($allprojectforuser)) {
+                $arrayfields['p.project_ref'] = ['label' => $langs->trans('RefProject'), 'checked' => 1];
+                $arrayfields['p.project_label'] = ['label' => $langs->trans('ProjectLabel'), 'checked' => 1];
+            }
 			$arrayfields['t.task_ref'] = array('label'=>$langs->trans("RefTask"), 'checked'=>1);
 			$arrayfields['t.task_label'] = array('label'=>$langs->trans("LabelTask"), 'checked'=>1);
-		}
-		$arrayfields['author'] = array('label'=>$langs->trans("By"), 'checked'=>1);
+        }
+        $arrayfields['author'] = array('label'=>$langs->trans("By"), 'checked'=>1);
 		$arrayfields['t.note'] = array('label'=>$langs->trans("Note"), 'checked'=>1);
 		if ($conf->service->enabled && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 			$arrayfields['t.fk_product'] = array('label' => $langs->trans("Product"), 'checked' => 1);
@@ -1259,6 +1267,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if ($search_company != '') {
 			$param .= '&amp;$search_company='.urlencode($search_company);
 		}
+        if ($search_project_ref != '') {
+            $param .= '&amp;$search_project_ref='.urlencode($search_project_ref);
+        }
+        if ($search_project_label != '') {
+            $param .= '&amp;$search_project_label='.urlencode($search_project_label);
+        }
 		if ($search_task_label != '') {
 			$param .= '&search_task_label='.urlencode($search_task_label);
 		}
@@ -1502,6 +1516,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		if ($search_company) {
 			$sql .= natural_search('s.nom', $search_company);
+		}
+        if ($search_project_ref) {
+			$sql .= natural_search('p.ref', $search_project_ref);
+		}
+        if ($search_project_label) {
+			$sql .= natural_search('p.title', $search_project_label);
 		}
 		if ($search_task_label) {
 			$sql .= natural_search('pt.label', $search_task_label);
@@ -1755,7 +1775,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 
 		if (!empty($allprojectforuser)) {
-			print '<td class="liste_titre"></td>';
+            if (!empty($arrayfields['p.project_ref']['checked'])) {
+                print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
+            }
+            if (!empty($arrayfields['p.project_label']['checked'])) {
+                print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_project_label" value="'.dol_escape_htmltag($search_project_label).'"></td>';
+            }
 		}
 		// Task
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
@@ -1814,7 +1839,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print_liste_field_titre($arrayfields['p.fk_soc']['label'], $_SERVER['PHP_SELF'], 't.task_date,t.task_datehour,t.rowid', '', $param, '', $sortfield, $sortorder);
 		}
 		if (!empty($allprojectforuser)) {
-			print_liste_field_titre("Project", $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
+            if (!empty($arrayfields['p.project_ref']['checked'])) {
+                print_liste_field_titre("Project", $_SERVER['PHP_SELF'], 'p.ref', '', $param, '', $sortfield, $sortorder);
+            }
+            if (!empty($arrayfields['p.project_label']['checked'])) {
+                print_liste_field_titre("ProjectLabel", $_SERVER['PHP_SELF'], 'p.title', '', $param, '', $sortfield, $sortorder);
+            }
 		}
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 			if (!empty($arrayfields['t.task_ref']['checked'])) {
@@ -1909,21 +1939,40 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				}
 			}
 
-			// Project ref
+			// Project ref & label
 			if (!empty($allprojectforuser)) {
-				print '<td class="nowraponall">';
-				if (empty($conf->cache['project'][$task_time->fk_projet])) {
-					$tmpproject = new Project($db);
-					$tmpproject->fetch($task_time->fk_projet);
-					$conf->cache['project'][$task_time->fk_projet] = $tmpproject;
-				} else {
-					$tmpproject = $conf->cache['project'][$task_time->fk_projet];
-				}
-				print $tmpproject->getNomUrl(1);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
+                if (!empty($arrayfields['p.project_ref']['checked'])) {
+                    print '<td class="nowraponall">';
+                    if(empty($conf->cache['project'][$task_time->fk_projet])) {
+                        $tmpproject = new Project($db);
+                        $tmpproject->fetch($task_time->fk_projet);
+                        $conf->cache['project'][$task_time->fk_projet] = $tmpproject;
+                    }
+                    else {
+                        $tmpproject = $conf->cache['project'][$task_time->fk_projet];
+                    }
+                    print $tmpproject->getNomUrl(1);
+                    print '</td>';
+                    if(! $i) {
+                        $totalarray['nbfield']++;
+                    }
+                }
+                if (!empty($arrayfields['p.project_label']['checked'])) {
+                    print '<td class="nowraponall">';
+                    if(empty($conf->cache['project'][$task_time->fk_projet])) {
+                        $tmpproject = new Project($db);
+                        $tmpproject->fetch($task_time->fk_projet);
+                        $conf->cache['project'][$task_time->fk_projet] = $tmpproject;
+                    }
+                    else {
+                        $tmpproject = $conf->cache['project'][$task_time->fk_projet];
+                    }
+                    print $tmpproject->title;
+                    print '</td>';
+                    if(! $i) {
+                        $totalarray['nbfield']++;
+                    }
+                }
 			}
 
 			// Task ref
