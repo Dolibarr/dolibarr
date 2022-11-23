@@ -435,7 +435,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$newlang = !empty($object->thirdparty->default_lang) ? $object->thirdparty->default_lang : "";
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);

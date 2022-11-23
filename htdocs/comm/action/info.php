@@ -39,6 +39,9 @@ $langs->load("commercial");
 
 $id = GETPOST('id', 'int');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('actioncard', 'globalcard'));
+
 // Security check
 if ($user->socid > 0) {
 	$action = '';
@@ -82,6 +85,15 @@ $out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"),
 $out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
 $out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
 $out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
+
+// Add more views from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
+if (empty($reshook)) {
+	$out .= $hookmanager->resPrint;
+} elseif ($reshook > 1) {
+	$out = $hookmanager->resPrint;
+}
 
 $linkback .= $out;
 

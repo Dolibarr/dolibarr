@@ -536,7 +536,11 @@ if (!empty($searchCategoryCustomerList)) {
 		if (intval($searchCategoryCustomer) == -2) {
 			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc)";
 		} elseif (intval($searchCategoryCustomer) > 0) {
-			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+			if ($searchCategoryCustomerOperator == 0) {
+				$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie = ".((int) $searchCategoryCustomer).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+			}
 		}
 	}
 	if ($listofcategoryid) {
@@ -562,7 +566,11 @@ if (!empty($searchCategorySupplierList)) {
 		if (intval($searchCategorySupplier) == -2) {
 			$searchCategorySupplierSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc)";
 		} elseif (intval($searchCategorySupplier) > 0) {
-			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplier);
+			if ($searchCategorySupplierOperator == 0) {
+				$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie = ".((int) $searchCategorySupplier).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplier);
+			}
 		}
 	}
 	if ($listofcategoryid) {
@@ -759,7 +767,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && (
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	if (!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)) {
-		if ($obj->client > 0) {
+		if ($companystatic->client > 0) {
 			header("Location: ".DOL_URL_ROOT.'/comm/card.php?socid='.$id);
 			exit;
 		}
@@ -1439,27 +1447,36 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
+	$parameters = array('staticdata' => $obj);
+	// Note that $action and $object may have been modified by hook
+	// do companystatic fetch in hook if wanted or anything else
+	$reshook = $hookmanager->executeHooks('loadStaticObject', $parameters, $companystatic, $action);
+	if (empty($reshook)) {
+		$companystatic->id = $obj->rowid;
+		$companystatic->name = $obj->name;
+		$companystatic->name_alias = $obj->name_alias;
+		$companystatic->logo = $obj->logo;
+		$companystatic->barcode = $obj->barcode;
+		$companystatic->canvas = $obj->canvas;
+		$companystatic->client = $obj->client;
+		$companystatic->status = $obj->status;
+		$companystatic->email = $obj->email;
+		$companystatic->address = $obj->address;
+		$companystatic->zip = $obj->zip;
+		$companystatic->town = $obj->town;
+		$companystatic->fournisseur = $obj->fournisseur;
+		$companystatic->code_client = $obj->code_client;
+		$companystatic->code_fournisseur = $obj->code_fournisseur;
+		$companystatic->tva_intra = $obj->tva_intra;
+		$companystatic->country_code = $obj->country_code;
 
-	$companystatic->id = $obj->rowid;
-	$companystatic->name = $obj->name;
-	$companystatic->name_alias = $obj->name_alias;
-	$companystatic->logo = $obj->logo;
-	$companystatic->canvas = $obj->canvas;
-	$companystatic->client = $obj->client;
-	$companystatic->status = $obj->status;
-	$companystatic->email = $obj->email;
-	$companystatic->fournisseur = $obj->fournisseur;
-	$companystatic->code_client = $obj->code_client;
-	$companystatic->code_fournisseur = $obj->code_fournisseur;
-	$companystatic->tva_intra = $obj->tva_intra;
-	$companystatic->country_code = $obj->country_code;
+		$companystatic->code_compta_client = $obj->code_compta;
+		$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
-	$companystatic->code_compta_client = $obj->code_compta;
-	$companystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
-
-	$companystatic->fk_prospectlevel = $obj->fk_prospectlevel;
-	$companystatic->fk_parent = $obj->fk_parent;
-	$companystatic->entity = $obj->entity;
+		$companystatic->fk_prospectlevel = $obj->fk_prospectlevel;
+		$companystatic->fk_parent = $obj->fk_parent;
+		$companystatic->entity = $obj->entity;
+	}
 
 	print '<tr class="oddeven"';
 	if ($contextpage == 'poslist') {
@@ -1478,6 +1495,9 @@ while ($i < min($num, $limit)) {
 			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 	if (!empty($arrayfields['s.rowid']['checked'])) {
 		print '<td class="tdoverflowmax50" data-key="id">';
@@ -1490,7 +1510,7 @@ while ($i < min($num, $limit)) {
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print '<td'.(empty($conf->global->MAIN_SOCIETE_SHOW_COMPLETE_NAME) ? ' class="tdoverflowmax200"' : '').' data-key="ref">';
 		if ($contextpage == 'poslist') {
-			print dol_escape_htmltag($obj->name);
+			print dol_escape_htmltag($companystatic->name);
 		} else {
 			print $companystatic->getNomUrl(1, '', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 		}
@@ -1509,56 +1529,56 @@ while ($i < min($num, $limit)) {
 	}
 	// Barcode
 	if (!empty($arrayfields['s.barcode']['checked'])) {
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->barcode).'">'.dol_escape_htmltag($obj->barcode).'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->barcode).'">'.dol_escape_htmltag($companystatic->barcode).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Customer code
 	if (!empty($arrayfields['s.code_client']['checked'])) {
-		print '<td class="nowraponall">'.dol_escape_htmltag($obj->code_client).'</td>';
+		print '<td class="nowraponall">'.dol_escape_htmltag($companystatic->code_client).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Supplier code
 	if (!empty($arrayfields['s.code_fournisseur']['checked'])) {
-		print '<td class="nowraponall">'.dol_escape_htmltag($obj->code_fournisseur).'</td>';
+		print '<td class="nowraponall">'.dol_escape_htmltag($companystatic->code_fournisseur).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Account customer code
 	if (!empty($arrayfields['s.code_compta']['checked'])) {
-		print '<td>'.dol_escape_htmltag($obj->code_compta).'</td>';
+		print '<td>'.dol_escape_htmltag($companystatic->code_compta_client).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Account supplier code
 	if (!empty($arrayfields['s.code_compta_fournisseur']['checked'])) {
-		print '<td>'.dol_escape_htmltag($obj->code_compta_fournisseur).'</td>';
+		print '<td>'.dol_escape_htmltag($companystatic->code_compta_fournisseur).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Address
 	if (!empty($arrayfields['s.address']['checked'])) {
-		print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($obj->address).'">'.dol_escape_htmltag($obj->address).'</td>';
+		print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($companystatic->address).'">'.dol_escape_htmltag($companystatic->address).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Zip
 	if (!empty($arrayfields['s.zip']['checked'])) {
-		print "<td>".dol_escape_htmltag($obj->zip)."</td>\n";
+		print "<td>".dol_escape_htmltag($companystatic->zip)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	// Town
 	if (!empty($arrayfields['s.town']['checked'])) {
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->town).'">'.dol_escape_htmltag($obj->town)."</td>\n";
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->town).'">'.dol_escape_htmltag($companystatic->town)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1580,7 +1600,7 @@ while ($i < min($num, $limit)) {
 	// Country
 	if (!empty($arrayfields['country.code_iso']['checked'])) {
 		print '<td class="center tdoverflowmax100">';
-		$labelcountry = ($obj->country_code && ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code)) ? $langs->trans("Country".$obj->country_code) : $obj->country_label;
+		$labelcountry = ($companystatic->country_code && ($langs->trans("Country".$companystatic->country_code) != "Country".$companystatic->country_code)) ? $langs->trans("Country".$companystatic->country_code) : $obj->country_label;
 		print $labelcountry;
 		print '</td>';
 		if (!$i) {
@@ -1627,13 +1647,13 @@ while ($i < min($num, $limit)) {
 		}
 	}
 	if (!empty($arrayfields['s.phone']['checked'])) {
-		print '<td class="nowraponall">'.dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
+		print '<td class="nowraponall">'.dol_print_phone($obj->phone, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 	}
 	if (!empty($arrayfields['s.fax']['checked'])) {
-		print '<td class="nowraponall">'.dol_print_phone($obj->fax, $obj->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'fax')."</td>\n";
+		print '<td class="nowraponall">'.dol_print_phone($obj->fax, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'fax')."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1682,11 +1702,11 @@ while ($i < min($num, $limit)) {
 	}
 	// VAT
 	if (!empty($arrayfields['s.tva_intra']['checked'])) {
-		print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->tva_intra).'">';
-		if ($obj->tva_intra && !isValidVATID($companystatic)) {
+		print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($companystatic->tva_intra).'">';
+		if ($companystatic->tva_intra && !isValidVATID($companystatic)) {
 			print img_warning("BadVATNumber", '', 'pictofixedwidth');
 		}
-		print $obj->tva_intra;
+		print $companystatic->tva_intra;
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1714,7 +1734,7 @@ while ($i < min($num, $limit)) {
 
 	if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 		// Prospect status
-		print '<td class="center nowrap"><div class="nowrap">';
+		print '<td class="center nowrap"><div class="nowraponall">';
 		print '<div class="inline-block">';
 		print $companystatic->LibProspCommStatut($obj->stcomm_id, 2, $prospectstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
 		print '</div> - <div class="inline-block">';
@@ -1795,9 +1815,9 @@ while ($i < min($num, $limit)) {
 			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
-	}
-	if (!$i) {
-		$totalarray['nbfield']++;
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 	}
 
 	print '</tr>'."\n";

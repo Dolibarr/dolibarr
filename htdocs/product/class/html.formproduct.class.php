@@ -403,6 +403,7 @@ class FormProduct
 
 		dol_syslog(get_class($this)."::selectWorkstations $selected, $htmlname, $empty, $disabled, $fk_product, $empty_label, $forcecombo, $morecss", LOG_DEBUG);
 
+		$filterstatus='';
 		$out = '';
 		if (!empty($fk_product) && $fk_product > 0) {
 			$this->cache_workstations = array();

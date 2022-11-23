@@ -55,6 +55,8 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 
 -- v17
 
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_percent (percent);
+
 UPDATE llx_c_paiement SET code = 'BANCON' WHERE code = 'BAN' AND libelle = 'Bancontact';
 
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN fk_user_creat integer NULL;
@@ -211,6 +213,9 @@ ALTER TABLE llx_projet ADD COLUMN location         varchar(255);
 
 ALTER TABLE llx_c_action_trigger MODIFY COLUMN code varchar(128);
 
+ALTER TABLE llx_overwrite_trans DROP INDEX uk_overwrite_trans;
+ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(entity, lang, transkey);
+
 --
 -- List of all managed triggered events (used for trigger agenda automatic events and for notification)
 --
@@ -361,3 +366,13 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BILLREC_MODIFY','Template invoices update','Executed when a Template invoices is updated','facturerec',901);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BILLREC_DELETE','Template invoices deleted','Executed when a Template invoices is deleted','facturerec',902);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('BILLREC_AUTOCREATEBILL','Template invoices use to create invoices with auto batch','Executed when a Template invoices is use to create invoice with auto batch','facturerec',903);
+
+
+ALTER TABLE llx_prelevement_facture RENAME TO llx_prelevement;
+ALTER TABLE llx_prelevement_facture_demande RENAME TO llx_prelevement_demande;
+
+ALTER TABLE llx_prelevement ADD COLUMN fk_salary INTEGER NULL AFTER fk_facture_fourn;
+ALTER TABLE llx_prelevement_demande ADD COLUMN fk_salary INTEGER NULL AFTER fk_facture_fourn;
+
+
+ALTER TABLE llx_user ADD COLUMN birth_place varchar(64);

@@ -267,7 +267,7 @@ class CMailFile
 			}
 
 			// Set atleastoneimage if there is at least one embedded file (into ->html_images)
-			if ($findimg) {
+			if ($findimg > 0) {
 				foreach ($this->html_images as $i => $val) {
 					if ($this->html_images[$i]) {
 						$this->atleastoneimage = 1;
@@ -1783,7 +1783,7 @@ class CMailFile
 			foreach ($matches[1] as $key => $ext) {
 				// We save the image to send in disk
 				$filecontent = $matches[2][$key];
-				$cid = dol_hash($this->html, 'md5');
+				$cid = 'cid000'.dol_hash($this->html, 'md5');
 				$destfiletmp = $images_dir.'/'.$cid.'.'.$ext;
 
 				$fhandle = @fopen($destfiletmp, 'w');

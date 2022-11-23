@@ -1152,6 +1152,7 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['color'] = $obj->color;
 				$this->cats[$obj->rowid]['visible'] = $obj->visible;
 				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
+				$this->cats[$obj->rowid]['picto'] = 'category';
 				$i++;
 			}
 		} else {

@@ -47,7 +47,8 @@ $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'mostockmovement'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
-//$lineid   = GETPOST('lineid', 'int');
+$massaction = GETPOST('massaction', 'aZ09');
+$lineid   = GETPOST('lineid', 'int');
 
 $msid = GETPOST('msid', 'int');
 $year = GETPOST("year", 'int');
