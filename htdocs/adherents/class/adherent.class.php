@@ -704,7 +704,7 @@ class Adherent extends CommonObject
 		$sql .= ", state_id = ".($this->state_id > 0 ? $this->db->escape($this->state_id) : "null");
 		$sql .= ", email = '".$this->db->escape($this->email)."'";
 		$sql .= ", url = ".(!empty($this->url) ? "'".$this->db->escape($this->url)."'" : "null");
-		$sql .= ", socialnetworks = '".$this->db->escape(json_encode($this->socialnetworks))."'";
+		$sql .= ", socialnetworks = ".($this->socialnetworks ? "'".$this->db->escape(json_encode($this->socialnetworks))."'" : "null");
 		$sql .= ", phone = ".($this->phone ? "'".$this->db->escape($this->phone)."'" : "null");
 		$sql .= ", phone_perso = ".($this->phone_perso ? "'".$this->db->escape($this->phone_perso)."'" : "null");
 		$sql .= ", phone_mobile = ".($this->phone_mobile ? "'".$this->db->escape($this->phone_mobile)."'" : "null");
