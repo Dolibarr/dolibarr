@@ -1378,7 +1378,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			*/
 
 			// Modify
-			if ($object->statut != Project::STATUS_CLOSED && $user->rights->projet->creer) {
+			if (!in_array($object->statut, array(Project::STATUS_CLOSED, Project::STATUS_DONE, Project::STATUS_CANCELED)) && $user->rights->projet->creer) {
 				if ($userWrite > 0) {
 					print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '');
 				} else {
@@ -1396,7 +1396,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			}
 
 			// Close
-			if ($object->statut == Project::STATUS_VALIDATED && $user->rights->projet->creer) {
+			if (in_array($object->statut, array(Project::STATUS_VALIDATED, Project::STATUS_INPROGRESS)) && $user->rights->projet->creer) {
 				if ($userWrite > 0) {
 					print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=close&amp;token='.newToken().'&amp;id='.$object->id, '');
 				} else {
