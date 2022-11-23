@@ -44,6 +44,7 @@ class Odf
 	public $userdefined=array();
 
 	const PIXEL_TO_CM = 0.026458333;
+	const FIND_TAGS_REGEX = '/<([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/';
 	const FIND_ENCODED_TAGS_REGEX = '/&lt;([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/&gt;)|(?:&gt;(.*)&lt;\/\1&gt;))/';
 
 
@@ -329,7 +330,7 @@ class Odf
      */
     private function _isHtmlTag($text)
 	{
-        return preg_match('/<([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/', $text);
+        return preg_match(self::FIND_TAGS_REGEX, $text);
     }
 
     /**
@@ -339,7 +340,7 @@ class Odf
      */
     private function _hasHtmlTag($text)
 	{
-        $result = preg_match_all('/<([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/', $text);
+        $result = preg_match_all(self::FIND_TAGS_REGEX, $text);
         return is_numeric($result) && $result > 0;
     }
 
@@ -355,7 +356,7 @@ class Odf
 
         while (strlen($tempHtml) > 0) {
             // Check if the string includes a html tag
-            if (preg_match_all('/<([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/', $tempHtml, $matches)) {
+            if (preg_match_all(self::FIND_TAGS_REGEX, $tempHtml, $matches)) {
                 $tagOffset = strpos($tempHtml, $matches[0][0]);
                 // Check if the string starts with the html tag
                 if ($tagOffset > 0) {
