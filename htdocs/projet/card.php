@@ -63,6 +63,7 @@ $date_end = dol_mktime(0, 0, 0, GETPOST('projectendmonth', 'int'), GETPOST('proj
 $date_start_event = dol_mktime(GETPOST('date_start_eventhour', 'int'), GETPOST('date_start_eventmin', 'int'), GETPOST('date_start_eventsec', 'int'), GETPOST('date_start_eventmonth', 'int'), GETPOST('date_start_eventday', 'int'), GETPOST('date_start_eventyear', 'int'));
 $date_end_event = dol_mktime(GETPOST('date_end_eventhour', 'int'), GETPOST('date_end_eventmin', 'int'), GETPOST('date_end_eventsec', 'int'), GETPOST('date_end_eventmonth', 'int'), GETPOST('date_end_eventday', 'int'), GETPOST('date_end_eventyear', 'int'));
 $location = GETPOST('location', 'alphanohtml');
+$targetstatus = GETPOST('targetstatus', 'int');
 
 
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
@@ -421,7 +422,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'confirm_close' && $confirm == 'yes') {
-		$result = $object->setClose($user);
+		$result = $object->setClose($user, $targetstatus);
 		if ($result <= 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -830,7 +831,14 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	}
 	// Confirmation close
 	if ($action == 'close') {
-		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloseAProject"), $langs->trans("ConfirmCloseAProject"), "confirm_close", '', '', 1);
+		$formquestion = '';
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+			$formquestion = array(
+				array('type' => 'select', 'name' => 'targetstatus', 'label' => '<span class="fieldrequired">'.$langs->trans("ProjectCloseAs").'</span>', 'values' => array($object::STATUS_DONE => $object->LibStatut($object::STATUS_DONE), $object::STATUS_CANCELED => $object->LibStatut($object::STATUS_CANCELED))),
+				array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
+			);
+		}
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloseAProject"), $langs->trans("ConfirmCloseAProject"), "confirm_close", $formquestion, '', 1);
 	}
 	// Confirmation reopen
 	if ($action == 'reopen') {

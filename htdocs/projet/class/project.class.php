@@ -1186,28 +1186,36 @@ class Project extends CommonObject
 	}
 
 	/**
-	 * 		Close a project
+	 * Close a project
 	 *
-	 * 		@param		User	$user		User that close project
-	 * 		@return		int					<0 if KO, 0 if already closed, >0 if OK
+	 * @since 17.0.0 support for extended project states
+	 * @since 2.8.0
+	 *
+	 * @param User  $user User that closes the project
+	 * @param int   $targetstatus target status diverging from simple STATUS_CLOSED
+	 *
+	 * @return  int     <0 if KO, 0 if already closed, >0 if OK
+	 * @throws  Exception
 	 */
-	public function setClose($user)
+	public function setClose(object $user, int $targetstatus = 2)
 	{
-		global $langs, $conf;
-
 		$now = dol_now();
 
 		$error = 0;
 
-		if ($this->statut != self::STATUS_CLOSED) {
+		if (!in_array($this->statut, array(self::STATUS_CLOSED, self::STATUS_DONE, self::STATUS_CANCELED)) ) {
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
-			$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", fk_user_close = ".((int) $user->id).", date_close = '".$this->db->idate($now)."'";
+			$sql .= " SET fk_statut = ".$targetstatus.", fk_user_close = ".((int) $user->id).", date_close = '".$this->db->idate($now)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalInt('PROJECT_EXTENDED_STATES')) {
+				$sql .= " AND fk_statut IN (".self::STATUS_VALIDATED.",".self::STATUS_INPROGRESS.") ";
+			} else {
+				$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
+			}
 
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (!empty(getDolGlobalInt('PROJECT_USE_OPPORTUNITIES'))) {
 				// TODO What to do if fk_opp_status is not code 'WON' or 'LOST'
 			}
 

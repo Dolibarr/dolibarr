@@ -135,6 +135,7 @@ CantRemoveProject=This project can't be removed as it is referenced by some othe
 ValidateProject=Validate projet
 ConfirmValidateProject=Are you sure you want to validate this project?
 CloseAProject=Close project
+ProjectCloseAs=Close status
 ConfirmCloseAProject=Are you sure you want to close this project?
 AlsoCloseAProject=Also close project (keep it open if you still need to follow production tasks on it)
 ReOpenAProject=Open project
