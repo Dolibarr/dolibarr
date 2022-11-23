@@ -271,12 +271,10 @@ class FormActions
 						break;
 					}
 
-					$ref = $actioncomm->getNomUrl(1, -1);
-
 					print '<tr class="oddeven">';
 
 					// Ref
-					print '<td class="nowraponall">'.$ref.'</td>';
+					print '<td class="nowraponall">'.$actioncomm->getNomUrl(1, -1).'</td>';
 
 					// Onwer
 					print '<td class="nowraponall tdoverflowmax125">';
@@ -310,7 +308,7 @@ class FormActions
 							$labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
 						}
 					}
-					print '<td class="tdoverflowmax100" title="'.$labeltype.'">';
+					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltype).'">';
 					print $actioncomm->getTypePicto();
 					print $labeltype;
 					print '</td>';
