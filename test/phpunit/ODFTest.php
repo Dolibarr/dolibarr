@@ -335,6 +335,9 @@ class ODFTest extends PHPUnit\Framework\TestCase
 			// 	'expected' => "123 <text:span text:style-name="customStyle1668592427018">trucmachin &gt; truc &lt; troc &gt; trac</text:span>bla bla'",
 			// ],
 
+			/* Tests that can evolve */
+			// Following tests reflect the current behavior. They may evolve if the method behavior changes.
+
 			// The method removes hyperlinks and tags that are not dealt with.
 			29 => [
 				'to_convert' => '123 <a href="/test.php">trucmachin > truc < troc > trac</a>bla bla',
@@ -342,9 +345,14 @@ class ODFTest extends PHPUnit\Framework\TestCase
 				'charset' => null,
 				'expected' => "123 trucmachin &gt; truc &lt; troc &gt; tracbla bla",
 			],
-
-			// HTML should not take \n into account, but only <br />.
 			30 => [
+				'to_convert' => '123 <h3>Title</h3> bla',
+				'encode' => true,
+				'charset' => null,
+				'expected' => "123 Title bla",
+			],
+			// HTML should not take \n into account, but only <br />.
+			31 => [
 				'to_convert' => "text with <strong>strong text </strong>, a line\nbreak and <u>underlined</u> words with <i>it@lic sp&ciàlchärs éè l'</i>",
 				'encode' => false,
 				'charset' => 'UTF-8',
