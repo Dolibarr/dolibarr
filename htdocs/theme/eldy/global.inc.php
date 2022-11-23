@@ -1395,6 +1395,12 @@ select.flat.selectlimit {
 	overflow: hidden;
 	height: auto !important;
 }
+.tenlinesmax {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 10;
+	overflow: hidden;
+}
 
 .tablelistofcalendars {
 	margin-top: 25px !important;
