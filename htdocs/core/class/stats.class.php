@@ -103,7 +103,8 @@ abstract class Stats
 				$data[$i][] = $datay[$endyear][($i + $sm) % 12][0];
 				$year = $startyear;
 				while ($year <= $endyear) {
-					$data[$i][] = $datay[$year - (1 - ((int) ($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1];
+					// floor(($i + $sm) / 12)) is 0 if we are after the month start $sm and same year, become 1 when we reach january of next year
+					$data[$i][] = $datay[$year - (1 - floor(($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1];
 					$year++;
 				}
 			}
@@ -204,7 +205,8 @@ abstract class Stats
 				$data[$i][] = isset($datay[$endyear][($i + $sm) % 12]['label']) ? $datay[$endyear][($i + $sm) % 12]['label'] : $datay[$endyear][($i + $sm) % 12][0]; // set label
 				$year = $startyear;
 				while ($year <= $endyear) {
-					$data[$i][] = $datay[$year - (1 - ((int) ($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1]; // set yval for x=i
+					// floor(($i + $sm) / 12)) is 0 if we are after the month start $sm and same year, become 1 when we reach january of next year
+					$data[$i][] = $datay[$year - (1 - floor(($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1]; // set yval for x=i
 					$year++;
 				}
 			}

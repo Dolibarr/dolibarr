@@ -118,7 +118,7 @@ if ($cancel) {
 	}
 }
 
-if ($action == 'add' && $user->rights->adherent->configurer) {
+if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	$object->label = trim($label);
 	$object->morphy = trim($morphy);
 	$object->status = (int) $status;
@@ -145,6 +145,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
 		$sql .= " WHERE entity IN (".getEntity('member_type').")";
 		$result = $db->query($sql);
+		$num = null;
 		if ($result) {
 			$num = $db->num_rows($result);
 		}
@@ -504,19 +505,19 @@ if ($rowid > 0) {
 		print '<div class="tabsAction">';
 
 		// Edit
-		if ($user->rights->adherent->configurer) {
+		if ($user->hasRight('adherent', 'configurer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		// Add
-		if ($user->rights->adherent->configurer && !empty($object->status)) {
+		if ($user->hasRight('adherent', 'configurer')&& !empty($object->status)) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&token='.newToken().'&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoAddMember")).'">'.$langs->trans("AddMember").'</a></div>';
 		}
 
 		// Delete
-		if ($user->rights->adherent->configurer) {
+		if ($user->hasRight('adherent', 'configurer')) {
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
 		}
 
@@ -720,7 +721,7 @@ if ($rowid > 0) {
 				*/
 
 				// Moral/Physique
-				print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
+				print "<td>".$adh->getmorphylib($objp->morphy, 1)."</td>\n";
 
 				// EMail
 				print "<td>".dol_print_email($objp->email, 0, 0, 1)."</td>\n";
@@ -740,9 +741,9 @@ if ($rowid > 0) {
 					}
 					print '</td>';
 				} else {
-					print '<td class="nowrap left">';
+					print '<td class="nowrap center">';
 					if (!empty($objp->subscription)) {
-						print $langs->trans("SubscriptionNotReceived");
+						print '<span class="opacitymedium">'.$langs->trans("SubscriptionNotReceived").'</span>';
 						if ($objp->status > 0) {
 							print " ".img_warning();
 						}
@@ -757,8 +758,8 @@ if ($rowid > 0) {
 				if ($user->hasRight('adherent', 'creer')) {
 					print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
 				}
-				if ($user->rights->adherent->supprimer) {
-					print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resign&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
+				if ($user->hasRight('adherent', 'supprimer')) {
+					print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
 				}
 				print "</td>";
 
@@ -845,7 +846,7 @@ if ($rowid > 0) {
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('comment', $object->note, '', 280, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
+		$doleditor = new DolEditor('comment', $object->note_public, '', 220, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";
 

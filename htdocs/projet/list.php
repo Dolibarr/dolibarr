@@ -35,6 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
@@ -143,15 +145,12 @@ $search_date_end_endmonth = GETPOST('search_date_end_endmonth', 'int');
 $search_date_end_endyear = GETPOST('search_date_end_endyear', 'int');
 $search_date_end_endday = GETPOST('search_date_end_endday', 'int');
 $search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
-
+$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
 
 if ($search_status == '') {
 	$search_status = -1; // -1 or 1
 }
 
-if (isModEnabled('categorie')) {
-	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
-}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Project($db);
@@ -358,8 +357,10 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$formcompany = new FormCompany($db);
 
 $companystatic = new Societe($db);
+$taskstatic = new Task($db);
 $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 
@@ -424,9 +425,6 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as p";
-if (isModEnabled('categorie')) {
-	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_PROJECT, "p.rowid");
-}
 if (!empty($extrafields->attributes[$object->table_element]['label']) &&is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 }
@@ -447,9 +445,6 @@ if ($search_project_contact > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ecp_contact";
 }
 $sql .= " WHERE p.entity IN (".getEntity('project').')';
-if (isModEnabled('categorie')) {
-	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_PROJECT, "p.rowid", $search_category_array);
-}
 if (empty($user->rights->projet->all->lire)) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 }
@@ -568,6 +563,36 @@ if ($search_price_booth != '') {
 }
 if ($search_login) {
 	$sql .= natural_search(array('u.login', 'u.firstname', 'u.lastname'), $search_login);
+}
+// Search for tag/category ($searchCategoryProjectList is an array of ID)
+$searchCategoryProjectList = $search_category_array;
+$searchCategoryProjectOperator = 0;
+if (!empty($searchCategoryProjectList)) {
+	$searchCategoryProjectSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryProjectList as $searchCategoryProject) {
+		if (intval($searchCategoryProject) == -2) {
+			$searchCategoryProjectSqlList[] = "NOT EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project)";
+		} elseif (intval($searchCategoryProject) > 0) {
+			if ($searchCategoryProjectOperator == 0) {
+				$searchCategoryProjectSqlList[] = " EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project AND ck.fk_categorie = ".((int) $searchCategoryProject).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProject);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryProjectSqlList[] = " EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryProjectOperator == 1) {
+		if (!empty($searchCategoryProjectSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryProjectSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryProjectSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryProjectSqlList).")";
+		}
+	}
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -781,6 +806,7 @@ $arrayofmassactions = array(
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 if ($user->rights->projet->creer) {
 	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Close");
+	$arrayofmassactions['preaffectuser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AffectUser");
 }
 if ($user->rights->projet->supprimer) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -788,7 +814,7 @@ if ($user->rights->projet->supprimer) {
 if (isModEnabled('category') && $user->rights->projet->creer) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if (in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
+if (in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preaffectuser'))) {
 	$arrayofmassactions = array();
 }
 
@@ -973,10 +999,11 @@ if (!empty($arrayfields['p.datee']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Visibility
 if (!empty($arrayfields['p.public']['checked'])) {
 	print '<td class="liste_titre center">';
 	$array = array(''=>'', 0 => $langs->trans("PrivateProject"), 1 => $langs->trans("SharedProject"));
-	print $form->selectarray('search_public', $array, $search_public);
+	print $form->selectarray('search_public', $array, $search_public, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth75');
 	print '</td>';
 }
 if (!empty($arrayfields['c.assigned']['checked'])) {
@@ -986,7 +1013,7 @@ if (!empty($arrayfields['c.assigned']['checked'])) {
 // Opp status
 if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
 	print '<td class="liste_titre nowrap center">';
-	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 0, 1, 0, 'maxwidth100 nowrapoption', 1, 0);
+	print $formproject->selectOpportunityStatus('search_opp_status', $search_opp_status, 1, 1, 1, 0, 'maxwidth125 nowrapoption', 1, 1);
 	print '</td>';
 }
 if (!empty($arrayfields['p.opp_amount']['checked'])) {
@@ -1245,6 +1272,9 @@ while ($i < $imaxinloop) {
 				print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Project url
 		if (!empty($arrayfields['p.ref']['checked'])) {
@@ -1295,7 +1325,7 @@ while ($i < $imaxinloop) {
 		}
 		// Sales Representatives
 		if (!empty($arrayfields['commercial']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->socid) {
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -1337,7 +1367,8 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Date start
+
+		// Date start project
 		if (!empty($arrayfields['p.dateo']['checked'])) {
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_start), 'day');
@@ -1346,7 +1377,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Date end
+		// Date end project
 		if (!empty($arrayfields['p.datee']['checked'])) {
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_end), 'day');
@@ -1355,6 +1386,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+
 		// Visibility
 		if (!empty($arrayfields['p.public']['checked'])) {
 			print '<td class="center">';
@@ -1372,10 +1404,10 @@ while ($i < $imaxinloop) {
 		}
 		// Contacts of project
 		if (!empty($arrayfields['c.assigned']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall tdoverflowmax200">';
 			$ifisrt = 1;
 			foreach (array('internal', 'external') as $source) {
-				$tab = $object->liste_contact(-1, $source);
+				$tab = $object->liste_contact(-1, $source, 0, '', 1);
 				$numcontact = count($tab);
 				if (!empty($numcontact)) {
 					foreach ($tab as $contactproject) {
@@ -1404,6 +1436,9 @@ while ($i < $imaxinloop) {
 				}
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Opp Status
 		if (!empty($arrayfields['p.fk_opp_status']['checked'])) {
@@ -1588,7 +1623,7 @@ while ($i < $imaxinloop) {
 		$userstatic->gender = $obj->gender;
 
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td class="center tdoverflowmax200">';
+			print '<td class="center tdoverflowmax150">';
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1);
 			} else {
@@ -1648,9 +1683,9 @@ while ($i < $imaxinloop) {
 				print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
 			print '</td>';
-		}
-		if (!$i) {
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		print "</tr>\n";

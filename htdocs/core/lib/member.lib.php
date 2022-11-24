@@ -66,9 +66,23 @@ function member_prepare_head(Adherent $object)
 	if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 		if (!empty($user->rights->partnership->read)) {
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
-			$head[$h][0] = DOL_URL_ROOT.'/adherents/partnership.php?rowid='.$object->id;
-			$head[$h][1] = $langs->trans("Partnership");
-			$head[$h][2] = 'partnership';
+			$head[$h][0] = DOL_URL_ROOT.'/partnership/partnership_list.php?rowid='.$object->id;
+			$head[$h][1] = $langs->trans("Partnerships");
+			$nbNote = 0;
+			$sql = "SELECT COUNT(n.rowid) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."partnership as n";
+			$sql .= " WHERE fk_member = ".((int) $object->id);
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbNote = $obj->nb;
+			} else {
+				dol_print_error($db);
+			}
+			if ($nbNote > 0) {
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+			}
+			$head[$h][2] = 'partnerships';
 			if ($nbPartnership > 0) {
 				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbPartnership.'</span>';
 			}

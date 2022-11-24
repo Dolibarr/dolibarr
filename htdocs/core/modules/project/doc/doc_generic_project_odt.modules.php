@@ -67,7 +67,9 @@ if (isModEnabled('deplacement')) {
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
-
+if (isModEnabled('expedition')) {
+	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+}
 
 /**
  *	Class to build documents using ODF templates generator
@@ -132,8 +134,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		// Get source company
 		$this->emetteur = $mysoc;
-		if (!$this->emetteur->pays_code) {
-			$this->emetteur->pays_code = substr($langs->defaultlang, -2); // Par defaut, si n'etait pas defini
+		if (!$this->emetteur->country_code) {
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // Par defaut, si n'etait pas defini
 		}
 	}
 
@@ -466,7 +468,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
-				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=projects/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a><br>';
+				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=projects/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
+				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=PROJECT_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
+				$texte .= '<br>';
 			}
 			$texte .= '</div>';
 		}
@@ -941,7 +945,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListProposalsAssociatedProject",
 						'class' => 'Propal',
 						'table' => 'propal',
-						'test' => $conf->propal->enabled && $user->rights->propale->lire
+						'test' => $conf->propal->enabled && $user->rights->propal->lire
 					),
 					'order' => array(
 						'title' => "ListOrdersAssociatedProject",

@@ -1281,9 +1281,9 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	}
 	// Show page nb only on iso languages (so default Helvetica font)
 	if (strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica') {
-		$pdf->SetXY($dims['wk'] - $dims['rm'] - 15, -$posy);
-		//print 'xxx'.$pdf->PageNo().'-'.$pdf->getAliasNbPages().'-'.$pdf->getAliasNumPage();exit;
-		$pdf->MultiCell(15, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+		$pdf->SetXY($dims['wk'] - $dims['rm'] - 18, -$posy);
+		//$pdf->MultiCell(18, 2, $pdf->getPageNumGroupAlias().' / '.$pdf->getPageGroupAlias(), 0, 'R', 0);
+		$pdf->MultiCell(18, 2, $pdf->PageNo().' / '.$pdf->getAliasNbPages(), 0, 'R', 0);
 	}
 
 	//  Show Draft Watermark
@@ -1567,7 +1567,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				$productCustomerPriceStatic = new Productcustomerprice($db);
 				$filter = array('fk_product' => $idprod, 'fk_soc' => $object->socid);
 
-				$nbCustomerPrices = $productCustomerPriceStatic->fetch_all('', '', 1, 0, $filter);
+				$nbCustomerPrices = $productCustomerPriceStatic->fetchAll('', '', 1, 0, $filter);
 
 				if ($nbCustomerPrices > 0) {
 					$productCustomerPrice = $productCustomerPriceStatic->lines[0];

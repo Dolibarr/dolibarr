@@ -293,7 +293,11 @@ if (!empty($searchCategoryKnowledgemanagementList)) {
 		if (intval($searchCategoryKnowledgemanagement) == -2) {
 			$searchCategoryKnowledgemanagementSqlList[] = "NOT EXISTS (SELECT ck.fk_knowledgemanagement FROM ".MAIN_DB_PREFIX."categorie_knowledgemanagement as ck WHERE t.rowid = ck.fk_knowledgemanagement)";
 		} elseif (intval($searchCategoryKnowledgemanagement) > 0) {
-			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryKnowledgemanagement);
+			if ($searchCategoryKnowledgemanagementOperator == 0) {
+				$searchCategoryKnowledgemanagementSqlList[] = " EXISTS (SELECT ck.fk_knowledgemanagement FROM ".MAIN_DB_PREFIX."categorie_knowledgemanagement as ck WHERE t.rowid = ck.fk_knowledgemanagement AND ck.fk_categorie = ".((int) $searchCategoryKnowledgemanagement).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryKnowledgemanagement);
+			}
 		}
 	}
 	if ($listofcategoryid) {
@@ -472,7 +476,7 @@ $moreforfilter.= '</div>';*/
 
 // Filter on categories
 $moreforfilter = '';
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
 	$categoriesKnowledgeArr = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', '', 64, 0, 1);

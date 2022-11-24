@@ -1193,7 +1193,7 @@ class FormMail extends Form
 			$out .= "</td></tr>\n";
 		} else {
 			$out = '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td>';
-			$out .= '<input size="30" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
+			$out .= '<input class="minwidth200" id="errorstomail" name="errorstomail" value="'.$errorstomail.'" />';
 			$out .= "</td></tr>\n";
 		}
 		return $out;
@@ -1279,12 +1279,12 @@ class FormMail extends Form
 	 *
 	 *  @param	DoliDB		$dbs			Database handler
 	 *  @param	string		$type_template	Get message for model/type=$type_template, type='all' also included.
-	 *  @param	User		$user			Get template public or limited to this user
+	 *  @param	User		$user			Get templates public + limited to this user
 	 *  @param	Translate	$outputlangs	Output lang object
 	 *  @param	int			$id				Id of template to get, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
 	 *  @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *  @param	string		$label			Label of template to get
-	 *  @return ModelMail|integer			One instance of ModelMail or -1 if error
+	 *  @return ModelMail|integer			One instance of ModelMail or < 0 if error
 	 */
 	public function getEMailTemplate($dbs, $type_template, $user, $outputlangs, $id = 0, $active = 1, $label = '')
 	{
@@ -1305,9 +1305,9 @@ class FormMail extends Form
 			$languagetosearchmain = '';
 		}
 
-		$sql = "SELECT rowid, module, label, type_template, topic, joinfiles, content, content_lines, lang";
+		$sql = "SELECT rowid, module, label, type_template, topic, joinfiles, content, content_lines, lang, email_from, email_to, email_tocc, email_tobcc";
 		$sql .= " FROM ".$dbs->prefix().'c_email_templates';
-		$sql .= " WHERE (type_template='".$dbs->escape($type_template)."' OR type_template='all')";
+		$sql .= " WHERE (type_template = '".$dbs->escape($type_template)."' OR type_template = 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql .= " AND (private = 0 OR fk_user = ".((int) $user->id).")"; // Get all public or private owned
 		if ($active >= 0) {
@@ -1395,8 +1395,6 @@ class FormMail extends Form
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
 					} elseif ($type_template == 'actioncomm_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm");
-					} elseif ($type_template == 'thirdparty') {
-						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentThirdparty");
 					} elseif (!empty($type_template)) {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");
 					}
@@ -1620,13 +1618,13 @@ class FormMail extends Form
 			//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet in mass emailing
 
 			$onlinepaymentenabled = 0;
-			if (!empty($conf->paypal->enabled)) {
+			if (isModEnabled('paypal')) {
 				$onlinepaymentenabled++;
 			}
-			if (!empty($conf->paybox->enabled)) {
+			if (isModEnabled('paybox')) {
 				$onlinepaymentenabled++;
 			}
-			if (!empty($conf->stripe->enabled)) {
+			if (isModEnabled('stripe')) {
 				$onlinepaymentenabled++;
 			}
 			if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
@@ -1729,6 +1727,11 @@ class ModelMail
 	public $content_lines;
 	public $lang;
 	public $joinfiles;
+
+	public $email_from;
+	public $email_to;
+	public $email_tocc;
+	public $email_tobcc;
 
 	/**
 	 * @var string Module the template is dedicated for

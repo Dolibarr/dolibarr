@@ -124,7 +124,7 @@ class box_services_contracts extends ModeleBoxes
 					$contractlinestatic->label = $objp->label;
 					$contractlinestatic->description = $objp->description;
 					$contractlinestatic->type = $objp->type;
-					$contractlinestatic->product_id = $objp->product_id;
+					$contractlinestatic->fk_product = $objp->product_id;
 					$contractlinestatic->product_ref = $objp->product_ref;
 					$contractlinestatic->product_type = $objp->product_type;
 					$contractlinestatic->statut = $objp->contractline_status;
@@ -168,12 +168,6 @@ class box_services_contracts extends ModeleBoxes
 							$text .= $objp->product_label;
 						}
 						$description = $objp->description;
-
-						// Add description in form
-						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
-							//$text .= (!empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-							$description = ''; // Already added into main visible desc
-						}
 
 						$s = $form->textwithtooltip($text, $description, 3, '', '', '', 0, (!empty($objp->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 					} else {

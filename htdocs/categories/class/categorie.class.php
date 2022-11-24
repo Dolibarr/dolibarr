@@ -694,6 +694,7 @@ class Categorie extends CommonObject
 	 * @param   CommonObject 	$obj  	Object to link to category
 	 * @param   string     		$type 	Type of category ('product', ...). Use '' to take $obj->element.
 	 * @return  int                		1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
+	 * @see del_type()
 	 */
 	public function add_type($obj, $type = '')
 	{
@@ -785,8 +786,8 @@ class Categorie extends CommonObject
 	 *
 	 * @param   CommonObject $obj  Object
 	 * @param   string       $type Type of category ('customer', 'supplier', 'contact', 'product', 'member')
-	 *
 	 * @return  int          1 if OK, -1 if KO
+	 * @see add_type()
 	 */
 	public function del_type($obj, $type)
 	{
@@ -1151,6 +1152,7 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['color'] = $obj->color;
 				$this->cats[$obj->rowid]['visible'] = $obj->visible;
 				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
+				$this->cats[$obj->rowid]['picto'] = 'category';
 				$i++;
 			}
 		} else {
@@ -1673,10 +1675,10 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Deplace fichier uploade sous le nom $files dans le repertoire sdir
+	 *  Deplace fichier uploade sous le nom $file dans le repertoire sdir
 	 *
-	 *  @param      string	$sdir       Repertoire destination finale
-	 *  @param      string	$file		Nom du fichier uploade
+	 *  @param      string	$sdir       Final destination directory
+	 *  @param      array	$file		Uploaded file name
 	 *	@return		void
 	 */
 	public function add_photo($sdir, $file)
@@ -1980,6 +1982,7 @@ class Categorie extends CommonObject
 	 * @param string	$type			The category type (e.g Categorie::TYPE_WAREHOUSE)
 	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
 	 * @return string					A additional SQL JOIN query
+	 * @deprecated	search on some categories must be done using a WHERE EXISTS or NOT EXISTS and not a LEFT JOIN. @TODO Replace with getWhereQuery($type, $searchCategoryList)
 	 */
 	public static function getFilterJoinQuery($type, $rowIdName)
 	{
@@ -1997,6 +2000,7 @@ class Categorie extends CommonObject
 	 * @param string	$rowIdName		The name of the row id inside the whole sql query (e.g. "e.rowid")
 	 * @param Array		$searchList		A list with the selected categories
 	 * @return string					A additional SQL SELECT query
+	 * @deprecated	search on some categories must be done using a WHERE EXISTS or NOT EXISTS and not a LEFT JOIN
 	 */
 	public static function getFilterSelectQuery($type, $rowIdName, $searchList)
 	{

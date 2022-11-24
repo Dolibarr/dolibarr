@@ -39,6 +39,9 @@ $langs->load("commercial");
 
 $id = GETPOST('id', 'int');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('actioncard', 'globalcard'));
+
 // Security check
 if ($user->socid > 0) {
 	$action = '';
@@ -49,6 +52,8 @@ $result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|
 if ($user->socid && $socid) {
 	$result = restrictedArea($user, 'societe', $socid);
 }
+
+$usercancreate = $user->rights->agenda->allactions->create || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create);
 
 
 /*
@@ -81,6 +86,15 @@ $out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.do
 $out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
 $out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
 
+// Add more views from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
+if (empty($reshook)) {
+	$out .= $hookmanager->resPrint;
+} elseif ($reshook > 1) {
+	$out = $hookmanager->resPrint;
+}
+
 $linkback .= $out;
 
 $morehtmlref = '<div class="refidno">';
@@ -89,17 +103,22 @@ $morehtmlref = '<div class="refidno">';
 // Project
 if (isModEnabled('project')) {
 	$langs->load("projects");
-	//$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
-	$morehtmlref .= $langs->trans('Project').': ';
-	if (!empty($object->fk_project)) {
-		$proj = new Project($db);
-		$proj->fetch($object->fk_project);
-		$morehtmlref .= ' : '.$proj->getNomUrl(1);
-		if ($proj->title) {
-			$morehtmlref .= ' - '.$proj->title;
+	//$morehtmlref .= '<br>';
+	if (0) {
+		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
+		if ($action != 'classify') {
+			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 		}
+		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
 	} else {
-		$morehtmlref .= '';
+		if (!empty($object->fk_project)) {
+			$proj = new Project($db);
+			$proj->fetch($object->fk_project);
+			$morehtmlref .= $proj->getNomUrl(1);
+			if ($proj->title) {
+				$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+			}
+		}
 	}
 }
 $morehtmlref .= '</div>';

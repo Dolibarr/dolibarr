@@ -367,7 +367,7 @@ function LoadProducts(position, issubcat) {
 				?>
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
+					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
 				}
 				console.log("#prodiv"+ishow+".data(rowid)="+data[idata]['id']);
 				console.log($("#prodiv"+ishow));
@@ -449,7 +449,7 @@ function MoreProducts(moreorless) {
 				$("#probutton"+ishow).show();
 				if (data[parseInt(idata)]['price_formated']) {
 					$("#proprice"+ishow).attr("class", "productprice");
-					$("#proprice"+ishow).html(data[parseInt(idata)]['price_formated']);
+					$("#proprice"+ishow).html(data[parseInt(idata)]['price_ttc_formated']);
 				}
 				$("#proimg"+ishow).attr("src","genimg/index.php?query=pro&id="+data[idata]['id']);
 				$("#prodiv"+ishow).data("rowid",data[idata]['id']);
@@ -583,11 +583,14 @@ function New() {
 /**
  * Search products
  *
- * @param   {int}			keyCodeForEnter     Key code for "enter"
- * return   {void}
+ * @param   string			keyCodeForEnter     Key code for "enter" or '' if not
+ * @param   int				moreorless          ??
+ * return   void
  */
 function Search2(keyCodeForEnter, moreorless) {
-	console.log("Search2 Call ajax search to replace products keyCodeForEnter="+keyCodeForEnter);
+	var eventKeyCode = window.event.keyCode;
+
+	console.log("Search2 Call ajax search to replace products keyCodeForEnter="+keyCodeForEnter+", eventKeyCode="+eventKeyCode);
 
 	var search_term  = $('#search').val();
 	var search_start = 0;
@@ -596,6 +599,8 @@ function Search2(keyCodeForEnter, moreorless) {
 		search_term = $('#search_pagination').val();
 		search_start = $('#search_start_'+moreorless).val();
 	}
+
+	console.log("search_term="+search_term);
 
 	if (search_term == '') {
 		$("[id^=prowatermark]").html("");
@@ -610,20 +615,19 @@ function Search2(keyCodeForEnter, moreorless) {
 	}
 
 	var search = false;
-	var eventKeyCode = window.event.keyCode;
 	if (keyCodeForEnter == '' || eventKeyCode == keyCodeForEnter) {
 		search = true;
 	}
 
 	if (search === true) {
-
-		// temporization time to give time to type
+		// if a timer has been already started (search2_timer is a global js variable), we cancel it now
+		// we click onto another key, we will restart another timer just after
 		if (search2_timer) {
 			clearTimeout(search2_timer);
 		}
 
+		// temporization time to give time to type
 		search2_timer = setTimeout(function(){
-
 			pageproducts = 0;
 			jQuery(".wrapper2 .catwatermark").hide();
 			var nbsearchresults = 0;
@@ -656,7 +660,7 @@ function Search2(keyCodeForEnter, moreorless) {
 					$("#probutton" + i).show();
 					if (data[i]['price_formated']) {
 						$("#proprice" + i).attr("class", "productprice");
-						$("#proprice" + i).html(data[i]['price_formated']);
+						$("#proprice" + i).html(data[i]['price_ttc_formated']);
 					}
 					$("#proimg" + i).attr("title", titlestring);
 					if( undefined !== data[i]['img']) {
@@ -695,8 +699,8 @@ function Search2(keyCodeForEnter, moreorless) {
 					if (data.length == 0) {
 						$('#search').val('<?php
 						$langs->load('errors');
-						echo dol_escape_js($langs->trans("ErrorRecordNotFound"));
-						?>');
+						echo dol_escape_js($langs->transnoentitiesnoconv("ErrorRecordNotFoundShort"));
+						?> ('+search_term+')');
 						$('#search').select();
 					}
 					else ClearSearch();
@@ -938,6 +942,65 @@ $( document ).ready(function() {
 		}
 	}
 	?>
+
+	/* For Header Scroll */
+	var elem1 = $("#topnav-left")[0];
+	var elem2 = $("#topnav-right")[0];
+	var checkOverflow = function() {
+		if (scrollBars().horizontal) $("#topnav").addClass("overflow");
+		else  $("#topnav").removeClass("overflow");
+	}
+
+	var scrollBars = function(){
+		var container= $('#topnav')[0];
+		return {
+			vertical:container.scrollHeight > container.clientHeight,
+			horizontal:container.scrollWidth > container.clientWidth
+		};
+	}
+
+	$(window).resize(function(){
+		checkOverflow();
+	});
+
+	   let resizeObserver = new ResizeObserver(() => {
+		   checkOverflow();
+	   });
+		  resizeObserver.observe(elem1);
+	   resizeObserver.observe(elem2);
+	checkOverflow();
+
+	var pressTimer = [];
+	var direction = 1;
+	var step = 200;
+
+	$(".indicator").mousedown(function(){
+		direction = $(this).hasClass("left") ? -1 : 1;
+		scrollTo();
+		pressTimer.push(setInterval(scrollTo, 100));
+	});
+
+	$(".indicator").mouseup(function(){
+		pressTimer.forEach(clearInterval);
+	});
+
+	$("body").mouseup(function(){
+		pressTimer.forEach(clearInterval);
+		console.log("body");
+	});
+
+	function scrollTo(){
+		console.log("here");
+		var pos = $("#topnav").scrollLeft();
+		document.getElementById("topnav").scrollTo({ left: $("#topnav").scrollLeft() + direction * step, behavior: 'smooth' })
+	}
+
+	$("#topnav").scroll(function(){
+		if (($("#topnav").offsetWidth + $("#topnav").scrollLeft >= $("#topnav").scrollWidth)) {
+			console.log("end");
+		}
+	});
+	/* End Header Scroll */
 });
 </script>
 
@@ -950,8 +1013,8 @@ $keyCodeForEnter = getDolGlobalInt('CASHDESK_READER_KEYCODE_FOR_ENTER'.$_SESSION
 if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	?>
 	<div class="header">
-		<div class="topnav">
-			<div class="topnav-left">
+		<div id="topnav" class="topnav">
+			<div id="topnav-left" class="topnav-left">
 				<div class="inline-block valignmiddle">
 				<a class="topnav-terminalhour" onclick="ModalBox('ModalTerminal');">
 				<span class="fa fa-cash-register"></span>
@@ -985,7 +1048,7 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				}
 				?>
 			</div>
-			<div class="topnav-right">
+			<div id="topnav-right" class="topnav-right">
 				<div class="login_block_other">
 				<input type="text" id="search" name="search" class="input-search-takepos" onkeyup="Search2('<?php echo dol_escape_js($keyCodeForEnter); ?>', null);" placeholder="<?php echo dol_escape_htmltag($langs->trans("Search")); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
@@ -1000,6 +1063,10 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				print top_menu_user(1);
 				?>
 				</div>
+			</div>
+			<div class="arrows">
+				<span class="indicator left"><i class="fa fa-arrow-left"></i></span>
+				<span class="indicator right"><i class="fa fa-arrow-right"></i></span>
 			</div>
 		</div>
 	</div>
@@ -1345,7 +1412,7 @@ if (!empty($conf->global->TAKEPOS_WEIGHING_SCALE)) {
 	<?php
 	$count = 0;
 	while ($count < $MAXPRODUCT) {
-			print '<div class="wrapper2" id="prodiv'.$count.'"  ';
+			print '<div class="wrapper2 arrow" id="prodiv'.$count.'"  ';
 		?>
 				<?php if ($count == ($MAXPRODUCT - 2)) {
 					?> onclick="MoreProducts('less');" <?php

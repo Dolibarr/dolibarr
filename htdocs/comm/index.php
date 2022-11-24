@@ -321,7 +321,7 @@ if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire)
 
 
 /*
- * Draft customer orders
+ * Draft sales orders
  */
 
 if (isModEnabled('commande') && $user->rights->commande->lire) {
@@ -1091,7 +1091,7 @@ if (isModEnabled('commande') && $user->rights->commande->lire) {
 				print '</table>';
 				print '</td>';
 
-				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
+				print '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 				$datem = $db->jdate($obj->dv);
 				print '<td class="center tddate" title="'.dol_escape_htmltag($langs->trans("DateValue").': '.dol_print_date($datem, 'day', 'tzserver')).'">';
 				print dol_print_date($datem, 'day', 'tzserver');
