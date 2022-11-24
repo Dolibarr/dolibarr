@@ -1646,8 +1646,10 @@ class ActionComm extends CommonObject
 		}
 		if (!empty($this->note_private)) {
 			$tooltip .= '<br><br><b>'.$langs->trans('Description').':</b><br>';
-			$texttoshow = dolGetFirstLineOfText($this->note_private, 10);
+			$texttoshow = dolGetFirstLineOfText($this->note_private, 10);	// Try to limit length of content
+			$tooltip .= '<div class="tenlinesmax">';						// Restrict height of content into the tooltip
 			$tooltip .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
+			$tooltip .= '</div>';
 		}
 		$linkclose = '';
 		//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color)
