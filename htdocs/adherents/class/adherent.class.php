@@ -605,7 +605,7 @@ class Adherent extends CommonObject
 
 		// Insert member
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
-		$sql .= " (ref, datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key)";
+		$sql .= " (ref, datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key, ip)";
 		$sql .= " VALUES (";
 		$sql .= " '(PROV)'";
 		$sql .= ", '".$this->db->idate($this->datec)."'";
@@ -615,6 +615,7 @@ class Adherent extends CommonObject
 		$sql .= ", ".((int) $this->typeid);
 		$sql .= ", ".$conf->entity;
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		$sql .= ", ".(!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
