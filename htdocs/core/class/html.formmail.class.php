@@ -196,6 +196,8 @@ class FormMail extends Form
 		$this->withbodyreadonly = 0;
 		$this->withdeliveryreceiptreadonly = 0;
 		$this->withfckeditor = -1; // -1 = Auto
+
+		$this->trackid = GETPOST('track_id', 'aZ09');
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
