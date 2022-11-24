@@ -67,6 +67,8 @@ ALTER TABLE llx_adherent ADD COLUMN ip varchar(250);
 ALTER TABLE llx_projet ADD COLUMN ip varchar(250);
 ALTER TABLE llx_actioncomm ADD COLUMN ip varchar(250);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN ip varchar(250);
+ALTER TABLE llx_opensurvey_user_studs ADD COLUMN ip varchar(250);
+ALTER TABLE llx_opensurvey_comments ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_fichinterdet_rec DROP COLUMN remise;
 ALTER TABLE llx_fichinterdet_rec DROP COLUMN fk_export_commpta;
