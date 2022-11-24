@@ -2870,7 +2870,18 @@ if (empty($reshook)) {
 	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
+	// Make calculation according to calculationrule
+	if ($action == 'calculate') {
+		$calculationrule = GETPOST('calculationrule');
 
+		$object->fetch($id);
+		$object->fetch_thirdparty();
+		$result = $object->update_price(0, (($calculationrule == 'totalofround') ? '0' : '1'), 0, $object->thirdparty);
+		if ($result <= 0) {
+			dol_print_error($db, $result);
+			exit;
+		}
+	}
 	if ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object);
 
@@ -4801,9 +4812,31 @@ if ($action == 'create') {
 	print '<td class="nowrap right amountcard">'.price($sign * $object->total_ht, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 
 	// Vat
-	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td colspan="3" class="nowrap right amountcard">'.price($sign * $object->total_tva, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
-	print '</tr>';
+	print '<tr><td>'.$langs->trans('AmountVAT').'</td>';
+	print '<td class="nowrap right amountcard">';
 
+	print '<div class="inline-block">';
+	if (GETPOST('calculationrule')) {
+		$calculationrule = GETPOST('calculationrule', 'alpha');
+	} else {
+		$calculationrule = (empty($conf->global->MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND) ? 'totalofround' : 'roundoftotal');
+	}
+	if ($calculationrule == 'totalofround') {
+		$calculationrulenum = 1;
+	} else {
+		$calculationrulenum = 2;
+	}
+	// Show link for "recalculate"
+	if ($object->getVentilExportCompta() == 0) {
+		$s = $langs->trans("ReCalculate").' ';
+		$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
+		$s .= ' / ';
+		$s .= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
+		print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum), 2, 1, img_picto('', 'help'));
+	}
+	print '</div>';
+	print  "&nbsp; &nbsp; &nbsp; &nbsp; ".price($sign * $object->total_tva, 1, $langs, 1, -1, -1, $conf->currency);
+	print '</td></tr>';
 	// Amount Local Taxes
 	if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) { 	// Localtax1
 		print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
