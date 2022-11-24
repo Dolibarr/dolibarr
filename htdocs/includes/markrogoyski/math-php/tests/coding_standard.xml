@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="MathPHP">
+ <description>The coding standard for Math PHP.</description>
+
+ <config name="php_version" value="70000"/>
+
+ <rule ref="PSR12">
+  <!-- MathPHP supports PHP 7.0 which does not have constant visibility declarations yet -->
+  <exclude name="PSR12.Properties.ConstantVisibility.NotFound"/>
+
+  <!-- Math functions may start with Greek letters which wont be CamelCase -->
+  <exclude name="PSR1.Methods.CamelCapsMethodName.NotCamelCaps"/>
+  <exclude name="Generic.NamingConventions.UpperCaseConstantName.ClassConstantNotUpperCase"/>
+
+  <!-- Sometimes it is nice to write math operations like this: 3/2 -->
+  <exclude name="PSR12.Operators.OperatorSpacing.NoSpaceBefore"/>
+  <exclude name="PSR12.Operators.OperatorSpacing.NoSpaceAfter"/>
+
+  <!-- Welcome to the future where we have HD wide-screen monitors -->
+  <exclude name="Generic.Files.LineLength.TooLong"/>
+ </rule>
+
+</ruleset>

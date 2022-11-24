@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="bootstrap.php" colors="true">
+  <php>
+    <ini name="memory_limit" value="512M" />
+  </php>
+  <testsuites>
+    <testsuite name="Algebra">
+      <directory suffix="Test.php">Algebra</directory>
+    </testsuite>
+    <testsuite name="Arithmetic">
+      <directory suffix="Test.php">Arithmetic</directory>
+    </testsuite>
+    <testsuite name="Exception">
+      <directory suffix="Test.php">Exception</directory>
+    </testsuite>
+    <testsuite name="Expression">
+      <directory suffix="Test.php">Expression</directory>
+    </testsuite>
+    <testsuite name="Finance">
+      <directory suffix="Test.php">Finance</directory>
+    </testsuite>
+    <testsuite name="Functions">
+      <directory suffix="Test.php">Functions</directory>
+    </testsuite>
+    <testsuite name="InformationTheory">
+      <directory suffix="Test.php">InformationTheory</directory>
+    </testsuite>
+    <testsuite name="LinearAlgebra">
+      <directory suffix="Test.php">LinearAlgebra</directory>
+    </testsuite>
+    <testsuite name="Number">
+      <directory suffix="Test.php">Number</directory>
+    </testsuite>
+    <testsuite name="NumberTheory">
+      <directory suffix="Test.php">NumberTheory</directory>
+    </testsuite>
+    <testsuite name="NumericalAnalysis">
+      <directory suffix="Test.php">NumericalAnalysis</directory>
+    </testsuite>
+    <testsuite name="Probabilty">
+      <directory suffix="Test.php">Probability</directory>
+    </testsuite>
+    <testsuite name="SampleData">
+      <directory suffix="Test.php">SampleData</directory>
+    </testsuite>
+    <testsuite name="Search">
+      <directory suffix="Test.php">Search</directory>
+    </testsuite>
+    <testsuite name="Sequence">
+      <directory suffix="Test.php">Sequence</directory>
+    </testsuite>
+    <testsuite name="SetTheory">
+      <directory suffix="Test.php">SetTheory</directory>
+    </testsuite>
+    <testsuite name="Statistics">
+      <directory suffix="Test.php">Statistics</directory>
+    </testsuite>
+    <testsuite name="Trigonometry">
+      <directory suffix="Test.php">Trigonometry</directory>
+    </testsuite>
+    <testsuite name="Util">
+      <directory suffix="Test.php">Util</directory>
+    </testsuite>
+
+    <testsuite name="All">
+      <directory suffix="Test.php">Algebra</directory>
+      <directory suffix="Test.php">Arithmetic</directory>
+      <directory suffix="Test.php">Exception</directory>
+      <directory suffix="Test.php">Expression</directory>
+      <directory suffix="Test.php">Finance</directory>
+      <directory suffix="Test.php">Functions</directory>
+      <directory suffix="Test.php">InformationTheory</directory>
+      <directory suffix="Test.php">LinearAlgebra</directory>
+      <directory suffix="Test.php">Number</directory>
+      <directory suffix="Test.php">NumberTheory</directory>
+      <directory suffix="Test.php">NumericalAnalysis</directory>
+      <directory suffix="Test.php">Probability</directory>
+      <directory suffix="Test.php">SampleData</directory>
+      <directory suffix="Test.php">Search</directory>
+      <directory suffix="Test.php">Sequence</directory>
+      <directory suffix="Test.php">SetTheory</directory>
+      <directory suffix="Test.php">Statistics</directory>
+      <directory suffix="Test.php">Trigonometry</directory>
+      <directory suffix="Test.php">Util</directory>
+    </testsuite>
+
+    <testsuite name="AllButLinearAlgebra">
+      <directory suffix="Test.php">Algebra</directory>
+      <directory suffix="Test.php">Arithmetic</directory>
+      <directory suffix="Test.php">Exception</directory>
+      <directory suffix="Test.php">Expression</directory>
+      <directory suffix="Test.php">Finance</directory>
+      <directory suffix="Test.php">Functions</directory>
+      <directory suffix="Test.php">InformationTheory</directory>
+      <directory suffix="Test.php">Number</directory>
+      <directory suffix="Test.php">NumberTheory</directory>
+      <directory suffix="Test.php">NumericalAnalysis</directory>
+      <directory suffix="Test.php">Probability</directory>
+      <directory suffix="Test.php">SampleData</directory>
+      <directory suffix="Test.php">Search</directory>
+      <directory suffix="Test.php">Sequence</directory>
+      <directory suffix="Test.php">SetTheory</directory>
+      <directory suffix="Test.php">Statistics</directory>
+      <directory suffix="Test.php">Trigonometry</directory>
+      <directory suffix="Test.php">Util</directory>
+    </testsuite>
+  </testsuites>
+  <filter>
+    <whitelist processUncoveredFilesFromWhitelist="true">
+      <directory suffix=".php">../src/</directory>
+      <exclude>
+        <directory suffix=".php">../vendor/</directory>
+      </exclude>
+    </whitelist>
+  </filter>
+</phpunit>
