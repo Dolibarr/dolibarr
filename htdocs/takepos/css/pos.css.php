@@ -338,7 +338,7 @@ div.paymentbordline
 	height: 100%;
 	margin: 0 auto;
 	overflow-x: hidden;
-    overfloy-y: scroll;
+	overfloy-y: scroll;
 	box-sizing: border-box;
 }
 
