@@ -66,14 +66,15 @@ class FormProjets
 	 *  @param	int				$forcefocus				Force focus on field (works with javascript only)
 	 *  @param	int				$disabled				Disabled
 	 *  @param  int     		$mode           		0 for HTML mode and 1 for JSON mode
-	 *  @param  string  		$filterkey      		Key to filter
+	 *  @param  string  		$filterkey      		Key to filter on ref or title
 	 *  @param  int     		$nooutput       		No print output. Return it only.
 	 *  @param  int     		$forceaddid     		Force to add project id in list, event if not qualified
 	 *  @param  string  		$morecss        		More css
 	 *	@param  int     		$htmlid         		Html id to use instead of htmlname
+	 *  @param  string          $morefilter		        More filters (Must be a sql sanitized string)
 	 *	@return string           						Return html content
 	 */
-	public function select_projects($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 16, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $morecss = '', $htmlid = '')
+	public function select_projects($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 16, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $morecss = '', $htmlid = '', $morefilter = '')
 	{
 		// phpcs:enable
 		global $langs, $conf, $form;
@@ -96,16 +97,14 @@ class FormProjets
 				$selected_input_value = $project->ref;
 			}
 			$urloption = 'socid='.((int) $socid).'&htmlname='.urlencode($htmlname).'&discardclosed='.((int) $discard_closed);
-
+			if ($morefilter == 'usage_organize_event=1') {
+				$urloption .= '&usage_organize_event=1';
+			}
 			$out .= '<input type="text" class="minwidth200'.($morecss ? ' '.$morecss : '').'" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.$placeholder.' />';
 
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array(
-				//  'update' => array(
-				//      'projectid' => 'id'
-				//  )
-			));
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/projet/ajax/projects.php', $urloption, $conf->global->PROJECT_USE_SEARCH_TO_SELECT, 0, array());
 		} else {
-			$out .= $this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, abs($discard_closed), $forcefocus, $disabled, 0, $filterkey, 1, $forceaddid, $htmlid, $morecss);
+			$out .= $this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, abs($discard_closed), $forcefocus, $disabled, 0, $filterkey, 1, $forceaddid, $htmlid, $morecss, $morefilter);
 		}
 		if ($discard_closed > 0) {
 			if (!empty($form)) {
@@ -135,14 +134,15 @@ class FormProjets
 	 * @param  int     $forcefocus		   Force focus on field (works with javascript only)
 	 * @param  int     $disabled           Disabled
 	 * @param  int     $mode               0 for HTML mode and 1 for array return (to be used by json_encode for example)
-	 * @param  string  $filterkey          Key to filter
+	 * @param  string  $filterkey          Key to filter on title or ref
 	 * @param  int     $nooutput           No print output. Return it only.
 	 * @param  int     $forceaddid         Force to add project id in list, event if not qualified
 	 * @param  int     $htmlid             Html id to use instead of htmlname
 	 * @param  string  $morecss            More CSS
+	 * @param  string  $morefilter		   More filters (Must be a sql sanitized string)
 	 * @return int         			       Nb of project if OK, <0 if KO
 	 */
-	public function select_projects_list($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500')
+	public function select_projects_list($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 24, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $htmlid = '', $morecss = 'maxwidth500', $morefilter = '')
 	{
 		// phpcs:enable
 		global $user, $conf, $langs;
@@ -186,6 +186,9 @@ class FormProjets
 		}
 		if (!empty($filterkey)) {
 			$sql .= natural_search(array('p.title', 'p.ref'), $filterkey);
+		}
+		if ($morefilter) {
+			$sql .= ' AND ('.$morefilter.')';
 		}
 		$sql .= " ORDER BY p.ref ASC";
 
