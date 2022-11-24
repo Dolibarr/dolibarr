@@ -571,12 +571,13 @@ class Opensurveysondage extends CommonObject
 	 *
 	 * @param string $comment Comment content
 	 * @param string $comment_user Comment author
+	 * @param string $user_ip Comment author IP
 	 * @return boolean False in case of the query fails, true if it was successful
 	 */
-	public function addComment($comment, $comment_user)
+	public function addComment($comment, $comment_user, $user_ip = '')
 	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment)";
-		$sql .= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment, ip)";
+		$sql .= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."'".($user_ip ? ",'".$this->db->escape($user_ip)."'" : '').")";
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {

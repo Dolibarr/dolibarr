@@ -22,6 +22,8 @@
  * \brief       This file is a CRUD class file for Partnership (Create/Read/Update/Delete)
  */
 
+use Illuminate\Support\Arr;
+
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
@@ -124,6 +126,7 @@ class Partnership extends CommonObject
 		'last_check_backlink' => array('type'=>'datetime', 'label'=>'LastCheckBacklink', 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>-2,),
 		'reason_decline_or_cancel' => array('type'=>'text', 'label'=>'ReasonDeclineOrCancel', 'enabled'=>'1', 'position'=>73, 'notnull'=>0, 'visible'=>-2,),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150',),
+		'ip' => array('type'=>'varchar(250)', 'label'=>'Ip', 'enabled'=>'1', 'position'=>74, 'notnull'=>0, 'visible'=>-2,),
 	);
 	public $rowid;
 	public $ref;

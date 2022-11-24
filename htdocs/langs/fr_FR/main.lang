@@ -45,6 +45,7 @@ NoError=Aucune erreur
 Error=Erreur
 Errors=Erreurs
 ErrorFieldRequired=Le champ '%s' est obligatoire
+AlreadyTooMuchPostOnThisIPAdress=Vous avez déjà posté trop de messages depuis cette adresse IP.
 ErrorFieldFormat=Le champ '%s' a une valeur incorrecte
 ErrorFileDoesNotExists=Le fichier %s n'existe pas
 ErrorFailedToOpenFile=Impossible d'ouvrir le fichier %s
