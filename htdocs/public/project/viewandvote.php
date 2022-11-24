@@ -70,10 +70,10 @@ $id = GETPOST('id');
 $securekeyreceived = GETPOST("securekey");
 $securekeytocompare = dol_hash($conf->global->EVENTORGANIZATION_SECUREKEY.'conferenceorbooth'.$id, 'md5');
 
-// if ($securekeytocompare != $securekeyreceived) {
-// 	print $langs->trans('MissingOrBadSecureKey');
-// 	exit;
-// }
+if ($securekeytocompare != $securekeyreceived) {
+	print $langs->trans('MissingOrBadSecureKey');
+	exit;
+}
 
 $listofvotes = explode(',', $_SESSION["savevotes"]);
 
