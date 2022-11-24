@@ -97,8 +97,34 @@ if (GETPOST('ajoutcomment', 'alpha')) {
 		$error++;
 	}
 
+	$user_ip = getUserRemoteIP();
+	$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
+
+	// Calculate nb of post for IP
+	$nb_post_ip = 0;
+	if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+		$sql = "SELECT COUNT(id_comment) as nb_comments";
+		$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_comments";
+		$sql .= " WHERE ip = '".$db->escape($user_ip)."'";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$i++;
+				$obj = $db->fetch_object($resql);
+				$nb_post_ip = $obj->nb_comments;
+			}
+		}
+	}
+
+	if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+		setEventMessages($langs->trans("AlreadyTooMuchPostOnThisIPAdress"), null, 'errors');
+		$error++;
+	}
+
 	if (!$error) {
-		$resql = $object->addComment($comment, $comment_user);
+		$resql = $object->addComment($comment, $comment_user, $user_ip);
 
 		if (!$resql) {
 			dol_print_error($db);
@@ -125,6 +151,28 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			}
 		}
 
+		$user_ip = getUserRemoteIP();
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
+
+		// Calculate nb of post for IP
+		$nb_post_ip = 0;
+		if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+			$sql = "SELECT COUNT(id_users) as nb_records";
+			$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+			$sql .= " WHERE ip = '".$db->escape($user_ip)."'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$i++;
+					$obj = $db->fetch_object($resql);
+					$nb_post_ip = $obj->nb_records;
+				}
+			}
+		}
+
+
 		$nom = substr(GETPOST("nom", 'alphanohtml'), 0, 64);
 
 		// Check if vote already exists
@@ -137,12 +185,16 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 		}
 
 		$num_rows = $db->num_rows($resql);
+
 		if ($num_rows > 0) {
 			setEventMessages($langs->trans("VoteNameAlreadyExists"), null, 'errors');
 			$error++;
+		} elseif ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+			setEventMessages($langs->trans("AlreadyTooMuchPostOnThisIPAdress"), null, 'errors');
+			$error++;
 		} else {
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses)';
-			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."','".$db->escape($nouveauchoix)."')";
+			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, ip)';
+			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."','".$db->escape($nouveauchoix)."', '".$db->escape($user_ip)."')";
 			$resql = $db->query($sql);
 
 			if ($resql) {
