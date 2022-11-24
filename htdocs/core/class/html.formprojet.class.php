@@ -188,7 +188,7 @@ class FormProjets
 			$sql .= natural_search(array('p.title', 'p.ref'), $filterkey);
 		}
 		if ($morefilter) {
-			$sql .= ' AND ('.$morefilter.')';
+			$sql .= ' AND ('.$this->db->sanitize($morefilter, 0, 1).')';
 		}
 		$sql .= " ORDER BY p.ref ASC";
 
