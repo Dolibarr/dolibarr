@@ -488,6 +488,7 @@ ActionsOnContact=Events for this contact/address
 ActionsOnContract=Events for this contract
 ActionsOnMember=Events about this member
 ActionsOnProduct=Events about this product
+ActionsOnAsset=Events for this fixed asset
 NActionsLate=%s late
 ToDo=To do
 Completed=Completed
