@@ -12,7 +12,7 @@ NEW: Minimal PHP version is now PHP 7.0 instead of PHP 5.6
 NEW: #21780 Add pid field to Cronjob class and store PID on job execution
 NEW: #19680 Add option PRODUCT_ALLOW_EXTERNAL_DOWNLOAD to automatically have uploaded files shared publicly by a link
 NEW: #20650 can move the checkbox column on left (experimental option)
-NEW: #21000 Added columns 'alias_name' on poject, supplier invoice, supplier order, supplier proposals and taks list
+NEW: #21000 Added columns 'alias_name' on project, supplier invoice, supplier order, supplier proposals and task list
 NEW: #21395 Added option for dark theme mode in display - color and theme
 NEW: #21397 added option to auto define barcode numbers for third-parties in barcode module setup
 NEW: #21399
@@ -22,11 +22,11 @@ NEW: #22048 Added notes to productlot module
 NEW: #22298 Bank - Add salaries & vat in the tab of planned entries of a bank account
 NEW: #22328
 NEW: #22424
-NEW: #22500 member module set up made easier
+NEW: #22500 member module set up made easier
 NEW: #22527 projects and thirdparties can be viewed as conversation ("Message" view), like events/agenda.
 NEW: #22546 can now set user supervisors using mass action in htdocs/user
 NEW: #22594 can chose if VAT ID is unique or not for third parties
-NEW: #22622 all partneships displayed on tab partnership of a thirdparty and member
+NEW: #22622 all partnerships displayed on tab partnership of a thirdparty and member
 NEW: #22676 massaction for updating product prices
 NEW: #22735 Massaction to affect users on projects
 NEW: #25594 can chose if VAT ID is unique or not for third parties
@@ -66,7 +66,7 @@ NEW: Add option FICHINTER_ALLOW_EXTERNAL_DOWNLOAD
 NEW: Add option --force on CLI cron_run_jobs.php
 NEW: Add option "Show price on the generated documents for receptions"
 NEW: Add performance index (name for company and contact) and llx_bank_url(url_id)
-NEW: Add picto property on sub-module for paswword generation
+NEW: Add picto property on sub-module for password generation
 NEW: Add price to product box in TakePOS
 NEW: add redirect on action confirm addconsumedline and addproduceline
 NEW: Add a new advanced permission "read price"
@@ -85,7 +85,7 @@ NEW: Can enter the unit price including the vat
 NEW: Can invoice task time per different services
 NEW: Can join several files by default on email form
 NEW: Can send an email on scheduled job error
-NEW: Can set a commercial discount by entereing amount including VAT
+NEW: Can set a commercial discount by entering amount including VAT
 NEW: Can set a monthly frequency (or multiple) in cron tasks.
 NEW: Can set start and end dates and comment on button "Activate all services"
 NEW: can sort and preselected best supplier price
@@ -133,7 +133,7 @@ NEW: Option PRODUIT_DESC_IN_FORM accept (desktop only or +smartphone)
 NEW: Page for mass stock transfer can be used with no source stock
 NEW: parent company column and filter in invoice and order list
 NEW: Add show "Sales rep" option for PDF
-NEW: Picto for shared link is clicable
+NEW: Picto for shared link is clickable
 NEW: possibility to select scopes with checkbox for Oauth tokens
 NEW: private and public note on user, thirdparty and contact list
 NEW: product categories filter on inventory list
@@ -147,7 +147,7 @@ NEW: Saved token of OAUTH module are now encrypted into llx_oauth_token
 NEW: Save one click to select on delivery ack, on emails.
 NEW: scheduled job to send unpaid invoice reminder can now use the cc and bcc from email template
 NEW: set thirdparty type with company modify trigger
-NEW: Show also shceduled task never finished in scheduled task widget
+NEW: Show also scheduled task never finished in scheduled task widget
 NEW: show badge with number of extrafields in setup
 NEW: show category tree in sellist and chkbxlst for common object
 NEW: Show picto and color into combo for selection of tags
@@ -167,6 +167,8 @@ NEW: expand/collapse permissions on user permission page
 NEW: Show delivery mode on PDF for proposals
 NEW: Add the target to select attendees of event for emailings
 
+ Modules
+NEW: Experimental module Asset
 
 For developers or integrators:
 ------------------------------
