@@ -8363,7 +8363,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  @param		int			$keepindex			If 0 and index key of array to sort is a numeric, than index will be rewrote. If 1 or index key is not numeric, key for index is kept after sorting.
  *  @return     array							Sorted array
  */
-function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sensitive = 0, $keepindex = 0)
+function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 1, $case_sensitive = 0, $keepindex = 0)
 {
 	// Clean parameters
 	$order = strtolower($order);
