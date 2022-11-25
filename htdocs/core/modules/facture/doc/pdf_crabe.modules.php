@@ -2065,7 +2065,7 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->MultiCell($widthrecbox - 2, 4, $carac_client, 0, $ltrdirection);
 
 			// Show shipping address
-			if (getDolGlobalInt('INVOICE_SHOW_SHIPPING_ADDRESS') || $this->emetteur->country_code == 'FR') {
+			if (getDolGlobalInt('INVOICE_SHOW_SHIPPING_ADDRESS')) {
 				$idaddressshipping = $object->getIdContact('external', 'SHIPPING');
 
 				if (!empty($idaddressshipping)) {
