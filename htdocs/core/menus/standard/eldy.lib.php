@@ -932,7 +932,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 						$lastopened = false;
 					}
 				}
-				
+
 				/* Suggestion : use CSS for FIRST, LAST and EVEN/ODD  :last-of-type, :first-child, :nth-child(odd) */
 				print '<ul class="blockvmenu">';
 			}
