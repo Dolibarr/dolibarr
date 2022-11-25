@@ -121,7 +121,8 @@ $formfile->form_attach_new_file(
 	$object,
 	'',
 	1,
-	$savingdocmask
+	$savingdocmask,
+	0
 );
 
 // List of document
@@ -146,8 +147,4 @@ $formfile->list_of_documents(
 	$disablemove
 );
 
-print "<br>";
-
-//List of links
-$formfile->listOfLinks($object, $permission, $action, GETPOST('linkid', 'int'), $param);
 print "<br>";
