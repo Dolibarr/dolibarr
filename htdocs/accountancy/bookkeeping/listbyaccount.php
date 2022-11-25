@@ -1227,6 +1227,10 @@ if ($num > 0 && $colspan > 0) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 
+$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 print "</table>";
 print '</div>';
 
