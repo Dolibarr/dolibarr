@@ -257,14 +257,8 @@ if (isModEnabled("banque")) {
 if (isModEnabled('stock')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>'; // Force warehouse (this is not a default value)
 	print '<td>';
-	if (!isModEnabled('productbatch') || getDolGlobalInt('CASHDESK_FORCE_DECREASE_STOCK')) {
+	if (isModEnabled('productbatch') || getDolGlobalInt('CASHDESK_FORCE_DECREASE_STOCK')) {
 		print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal), 1);
-	} else {
-		if (getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal)) {
-			$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK".$terminal, 1, 'chaine', 0, '', $conf->entity);
-		}
-		print $langs->trans("Yes").'<br>';
-		print '<span class="opacitymedium">'.$langs->trans('StockDecreaseForPointOfSaleDisabledbyBatch').'</span>';
 	}
 	print '</td></tr>';
 
