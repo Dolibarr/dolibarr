@@ -2038,24 +2038,7 @@ li#mainmenutd_companylogo {
 	}
 <?php } ?>
 
-div.blockvmenupair, div.blockvmenuimpair {
-	border-top: none !important;
-	border-left: none !important;
-	border-right: none !important;
-	border-bottom: 1px solid #e0e0e0;
-	padding-left: 0 !important;
-}
-div.blockvmenuend, div.blockvmenubookmarks {
-	border: none !important;
-	padding-left: 0 !important;
-}
-div.vmenu, td.vmenu {
-	padding-right: 10px !important;
-}
-.blockvmenu .menu_titre {
-	margin-top: 4px;
-	margin-bottom: 1px;
-}
+
 
 /* Try responsive even not on smartphone
 #id-container {
@@ -3096,22 +3079,39 @@ form[name="addtime"] img.userphoto {
 /* ============================================================================== */
 
 div.vmenu, td.vmenu {
-	margin-<?php print $right; ?>: 2px;
 	position: relative;
 	float: left;
-	padding: 0px;
-	padding-bottom: 0px;
-	padding-top: 1px;
 	width: 190px;
+	padding:0 1rem;
 }
 
 .vmenu {
-	width: 190px;
-	margin-left: 6px;
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
 }
+
+div.blockvmenuend, div.blockvmenubookmarks {
+	border: none !important;
+	padding-left: 0 !important;
+}
+
+ul.blockvmenu{
+	color: var(--colortextbackvmenu);
+	padding:1em 0;
+	margin:0;
+	list-style:none;	
+	border-bottom:solid 1px;	
+	line-height:1.5em;
+}
+ul.blockvmenu>li{}
+ul.blockvmenu>.menu_titre:not(:last-of-type) {
+	margin:0 0 1em;
+}
+ul.blockvmenu:first-of-type{
+	border-top:solid 1px;
+}
+
 
 /* Force vmenusearchselectcombo with type=text differently than without because beautify with select2 affect vmenusearchselectcombo differently */
 input.vmenusearchselectcombo[type=text] {
@@ -3126,7 +3126,7 @@ input.vmenusearchselectcombo[type=text] {
 	padding-bottom: 3px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	width: 188px;				/* required to have overflow working. must be same than .menu_titre */
+	
 }
 #menu_contenu_logo { /* padding-top: 0; */ }
 .companylogo { }

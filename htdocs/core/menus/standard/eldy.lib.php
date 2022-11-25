@@ -728,20 +728,20 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 	if (is_array($moredata) && !empty($moredata['searchform'])) {	// searchform can contains select2 code or link to show old search form or link to switch on search page
 		print "\n";
-		print "<!-- Begin SearchForm -->\n";
-		print '<div id="blockvmenusearch" class="blockvmenusearch">'."\n";
+		//print "<!-- Begin SearchForm -->\n";
+		print '<div id="blockvmenusearch" class="blockvmenusearch">';
 		print $moredata['searchform'];
-		print '</div>'."\n";
-		print "<!-- End SearchForm -->\n";
+		print '</div>';
+		//print "<!-- End SearchForm -->\n";
 	}
 
 	if (is_array($moredata) && !empty($moredata['bookmarks'])) {
 		print "\n";
-		print "<!-- Begin Bookmarks -->\n";
-		print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">'."\n";
+		//print "<!-- Begin Bookmarks -->\n";
+		print '<div id="blockvmenubookmarks" class="blockvmenubookmarks">';
 		print $moredata['bookmarks'];
-		print '</div>'."\n";
-		print "<!-- End Bookmarks -->\n";
+		print '</div>';
+		//print "<!-- End Bookmarks -->\n";
 	}
 
 	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
@@ -932,21 +932,19 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 						$lastopened = false;
 					}
 				}
-				if ($altok % 2 == 0) {
-					print '<div class="blockvmenu blockvmenuimpair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').'">'."\n";
-				} else {
-					print '<div class="blockvmenu blockvmenupair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').'">'."\n";
-				}
+				
+				/* Suggestion : use CSS for FIRST, LAST and EVEN/ODD  :last-of-type, :first-child, :nth-child(odd) */
+				print '<ul class="blockvmenu">';
 			}
 
 			// Add tabulation
 			$tabstring = '';
 			$tabul = ($menu_array[$i]['level'] - 1);
-			if ($tabul > 0) {
-				for ($j = 0; $j < $tabul; $j++) {
-					$tabstring .= '&nbsp;&nbsp;&nbsp;';
-				}
-			}
+			// if ($tabul > 0) {
+			// 	for ($j = 0; $j < $tabul; $j++) {
+			// 		$tabstring .= '&nbsp;&nbsp;&nbsp;';
+			// 	}
+			// }
 
 			// $menu_array[$i]['url'] can be a relative url, a full external url. We try substitution
 
@@ -971,13 +969,13 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$shorturl = $shorturl.($param ? '?'.$param : '');
 			}
 
-
-			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].', position='.$menu_array[$i]['position'].' -->'."\n";
+			// For debug only ? (add global option) ?
+			//print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].', position='.$menu_array[$i]['position'].' -->'."\n";
 
 			// Menu level 0
 			if ($menu_array[$i]['level'] == 0) {
 				if ($menu_array[$i]['enabled']) {     // Enabled so visible
-					print '<div class="menu_titre">'.$tabstring;
+					print '<li class="menu_titre">'.$tabstring;
 					if ($shorturlwithoutparam) {
 						print '<a class="vmenu" title="'.dol_escape_htmltag(dol_string_nohtmltag($menu_array[$i]['titre'])).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					} else {
@@ -989,20 +987,21 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					} else {
 						print '</span>';
 					}
-					print '</div>'."\n";
+					print '</li>';
 					$lastlevel0 = 'enabled';
 				} elseif ($showmenu) {                 // Not enabled but visible (so greyed)
-					print '<div class="menu_titre">'.$tabstring;
+					print '<li class="menu_titre">'.$tabstring;
 					print '<span class="vmenudisabled">';
 					print ($menu_array[$i]['prefix'] ? $menu_array[$i]['prefix'] : '').$menu_array[$i]['titre'];
 					print '</span>';
-					print '</div>'."\n";
+					print '</li>';
 					$lastlevel0 = 'greyed';
 				} else {
 					$lastlevel0 = 'hidden';
 				}
 				if ($showmenu) {
-					print '<div class="menu_top"></div>'."\n";
+					// empty = necessary ?
+					//print '<li class="menu_top"></li>';
 				}
 			}
 
@@ -1015,8 +1014,8 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
 				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled') {
 					// Enabled so visible, except if parent was not enabled.
-					print '<div class="menu_contenu'.$cssmenu.'">';
-					print $tabstring;
+					print '<li class="menu_contenu'.$cssmenu.'">';
+					//print $tabstring;
 					if ($shorturlwithoutparam) {
 						print '<a class="vsmenu" title="'.dol_escape_htmltag(dol_string_nohtmltag($menu_array[$i]['titre'])).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					} else {
@@ -1029,33 +1028,35 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 						print '</span>';
 					}
 					// If title is not pure text and contains a table, no carriage return added
-					if (!strstr($menu_array[$i]['titre'], '<table')) {
-						print '<br>';
-					}
-					print '</div>'."\n";
+					// if (!strstr($menu_array[$i]['titre'], '<table')) {
+					// 	print '<br>';
+					// }
+					print '</li>';
 				} elseif ($showmenu && $lastlevel0 == 'enabled') {
 					// Not enabled but visible (so greyed), except if parent was not enabled.
-					print '<div class="menu_contenu'.$cssmenu.'">';
-					print $tabstring;
+					print '<li class="menu_contenu'.$cssmenu.'">';
+					//print $tabstring;
 					print '<span class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</span><br>';
-					print '</div>'."\n";
+					print '</li>';
 				}
 			}
 
 			// If next is a new block or if there is nothing after
 			if (empty($menu_array[$i + 1]['level'])) {               // End menu block
 				if ($showmenu) {
-					print '<div class="menu_end"></div>'."\n";
+					// empty = necessary ?
+					//print '<li class="menu_end"></li>';
 				}
 				if ($blockvmenuopened) {
-					print '</div>'."\n";
+					print '</ul>';
 					$blockvmenuopened = false;
 				}
 			}
 		}
 
 		if ($altok) {
-			print '<div class="blockvmenuend"></div>'; // End menu block
+			// empty = necessary ?
+			//print '<div class="blockvmenuend"></div>'; // End menu block
 		}
 	}
 
