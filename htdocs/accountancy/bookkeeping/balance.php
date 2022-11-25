@@ -497,10 +497,10 @@ if ($action != 'export_csv') {
 	print "<td></td>\n";
 	print '</tr>';
 
-    $parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-    
+
 	print "</table>";
 	print '</form>';
 }
