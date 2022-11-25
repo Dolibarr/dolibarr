@@ -920,9 +920,6 @@ if ($nbtotalofrecords === '' || $nbtotalofrecords) {
 		$hidegeneratedfilelistifempty = 0;
 	}
 
-	// require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-	// $formfile = new FormFile($db);
-
 	// Show list of available documents
 	$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	$urlsource .= str_replace('&amp;', '&', $param);
