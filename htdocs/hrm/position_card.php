@@ -199,6 +199,9 @@ function displayPositionCard(&$object)
 	$formfile = new FormFile($db);
 	$formproject = new FormProjets($db);
 
+	$backtopage = GETPOST('backtopage', 'alpha');
+	$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+
 	$title = $langs->trans("Position");
 	$help_url = '';
 	llxHeader('', $title, $help_url);
