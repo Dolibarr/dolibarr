@@ -179,7 +179,7 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 			}
 			for ($line = 0 ; $line < $nbLinesOrdered; $line++) {
 				//If line is a product of conf to manage stocks for services
-				if($object->lines[$line]->product_type == 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)){
+				if ($object->lines[$line]->product_type == 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 					$sumQtyOrdered = $sumQtyOrdered + $object->lines[$line]->qty;
 				}
 			}
