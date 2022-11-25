@@ -102,7 +102,7 @@ $permissiontoadd = $user->rights->societe->contact->creer;
 if ($user->socid) {
 	$socid = $user->socid;
 }
-if($object->priv && $object->user_creation->id != $user->id){
+if ($object->priv && $object->user_creation->id != $user->id) {
 	accessforbidden();
 }
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
