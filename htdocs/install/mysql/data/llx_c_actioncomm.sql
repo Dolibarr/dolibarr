@@ -21,7 +21,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
---
 
 --
 -- Do not put a comment at the end of the line, this file is parsed during the
@@ -47,10 +46,10 @@ delete from llx_c_actioncomm where id in (1,2,3,4,5,6,8,9,10,11,30,31,40,50);
 
 -- Code used from 3.3+ when type of event is used
 insert into llx_c_actioncomm (id, code, libelle, type, module, active, position) values (  1, 'AC_TEL',       'Phone call',       'system', NULL, 1, 2);
-insert into llx_c_actioncomm (id, code, libelle, type, module, active, position) values (  2, 'AC_FAX',       'Send Fax',         'system', NULL, 1, 3);
-insert into llx_c_actioncomm (id, code, libelle, type, module, active, position) values (  4, 'AC_EMAIL',     'Send Email',       'system', NULL, 1, 4);
+insert into llx_c_actioncomm (id, code, libelle, type, module, active, position) values (  2, 'AC_FAX',       'Send Fax',         'system', NULL, 0, 3);
+insert into llx_c_actioncomm (id, code, libelle, type, module, active, position) values (  4, 'AC_EMAIL',     'Send Email',       'system', NULL, 0, 4);
 insert into llx_c_actioncomm (id, code, libelle, type, module, active, position) values (  5, 'AC_RDV',       'Rendez-vous',      'system', NULL, 1, 1);
-insert into llx_c_actioncomm (id, code, libelle, type, module, active, position) values (  6, 'AC_EMAIL_IN',  'reception Email',  'system', NULL, 1, 4);
+insert into llx_c_actioncomm (id, code, libelle, type, module, active, position) values (  6, 'AC_EMAIL_IN',  'Reception Email',  'system', NULL, 0, 4);
 insert into llx_c_actioncomm (id, code, libelle, type, module, active, position) values ( 11, 'AC_INT',   'Intervention on site', 'system', NULL, 1, 4);
 
 -- Code used from 3.3+ when type of event is not used
