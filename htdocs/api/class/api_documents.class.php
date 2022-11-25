@@ -476,7 +476,8 @@ class Documents extends DolibarrApi
 				if ($result < 0) {
 					throw new RestException(503, 'Error when retrieve ecm list : ' . $this->db->lasterror());
 				} elseif (is_array($ecmfile->lines) && count($ecmfile->lines) > 0) {
-					for ($i = 0 ; $i < count($filearray); $i++) {
+					$count = count($filearray);
+					for ($i = 0 ; $i < $count ; $i++) {
 						if ($filearray[$i]['name'] == $ecmfile->lines[$i]->filename) $filearray[$i] = array_merge($filearray[$i], (array) $ecmfile->lines[0]);
 					}
 				}
