@@ -733,14 +733,14 @@ class Facture extends CommonInvoice
 							$this->error = $this->db->lasterror();
 							$error++;
 						}
-						else{
-							if($origin == "shipping"){
+						else {
+							if ($origin == "shipping"){
 								require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 								$exp = new Expedition($this->db);
 								$exp->fetch($this->origin_id);
 								$exp->billed = 1;
 								$ret = $exp->setBilled();
-								if(!$ret){
+								if (!$ret){
 									$this->error = $exp->error;
 									$error ++;
 								}
