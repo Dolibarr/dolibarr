@@ -167,7 +167,7 @@ if ($action == "importSignature") {
 						// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
 						// TODO Get position of box from PDF template
 						$xforimgstart = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
-						$yforimgstart = (empty($s['h']) ? 240 : $s['h'] - 60);
+						$yforimgstart = (empty($s['h']) ? 240 : $s['h'] - 90);
 						$wforimg = $s['w'] - 20 - $xforimgstart;
 
 						$pdf->Image($upload_dir.$filename, $xforimgstart, $yforimgstart, $wforimg, round($wforimg / 4));	// FIXME Position will be wrong with non A4 format. Use a value from width and height of page minus relative offset.
