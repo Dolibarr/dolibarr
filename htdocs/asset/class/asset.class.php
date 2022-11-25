@@ -652,6 +652,7 @@ class Asset extends CommonObject
 			return -1;
 		}
 
+		// Old request with 'WITH'
 		/*
 		$sql = "WITH in_accounting_bookkeeping(fk_docdet) AS (";
 		$sql .= " SELECT DISTINCT fk_docdet";
@@ -717,6 +718,7 @@ class Asset extends CommonObject
 			return -1;
 		}
 
+		// Old request with 'WITH'
 		/*
 		$sql = "WITH in_accounting_bookkeeping(fk_docdet) AS (";
 		$sql .= " SELECT DISTINCT fk_docdet";
@@ -883,6 +885,8 @@ class Asset extends CommonObject
 			foreach ($options->deprecation_options as $mode_key => $fields) {
 				// Get last depreciation lines save in bookkeeping
 				//-----------------------------------------------------
+
+				// Old request with 'WITH'
 				/*
 				$sql = "WITH in_accounting_bookkeeping(fk_docdet) AS (";
 				$sql .= " SELECT fk_docdet";
