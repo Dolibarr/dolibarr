@@ -1763,11 +1763,11 @@ class ActionComm extends CommonObject
 					$imgpicto = img_picto('', 'object_phoning', $color, false, 0, 0, '', 'paddingright');
 				} elseif ($this->type_code == 'AC_FAX') {
 					$imgpicto = img_picto('', 'object_phoning_fax', $color, false, 0, 0, '', 'paddingright');
-				} elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN') {
+				} elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN' || preg_match('/_SENTBYMAIL/', $this->code)) {
 					$imgpicto = img_picto('', 'object_email', $color, false, 0, 0, '', 'paddingright');
 				} elseif ($this->type_code == 'AC_INT') {
 					$imgpicto = img_picto('', 'object_intervention', $color, false, 0, 0, '', 'paddingright');
-				} elseif ($this->type_code == 'AC_OTH' && $this->code == 'TICKET_MSG') {
+				} elseif (preg_match('/^TICKET_MSG/', $this->code)) {
 					$imgpicto = img_picto('', 'object_conversation', $color, false, 0, 0, '', 'paddingright');
 				} elseif ($this->type != 'systemauto') {
 					$imgpicto = img_picto('', 'user-cog', $color, false, 0, 0, '', 'paddingright');

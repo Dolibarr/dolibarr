@@ -1716,7 +1716,7 @@ if ($id > 0) {
 		if ($backtopage) {
 			print '<input type="hidden" name="backtopage" value="'.($backtopage != '1' ? $backtopage : dol_htmlentities($_SERVER["HTTP_REFERER"])).'">';
 		}
-		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && $object->code != "TICKET_MSG_PRIVATE") {
+		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! preg_match('/^TICKET_MSG_PRIVATE/', $object->code)) {
 			print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">';
 		}
 
@@ -1742,7 +1742,9 @@ if ($id > 0) {
 		}
 
 		// Private
-		if ($object->elementtype == 'ticket') print '<tr><td>'.$langs->trans("PrivateEventMessage").'</td><td colspan="3"><input type="checkbox" id="private" name="private" '.(($object->code == 'TICKET_MSG_PRIVATE') ? ' checked' : '').'></td></tr>';
+		if ($object->elementtype == 'ticket') {
+			print '<tr><td>'.$langs->trans("PrivateEventMessage").'</td><td colspan="3"><input type="checkbox" id="private" name="private" '.(preg_match('/^TICKET_MSG_PRIVATE/', $object->code) ? ' checked' : '').'></td></tr>';
+		}
 
 		// Title
 		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE) ? ' class="fieldrequired titlefieldcreate"' : '').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" class="soixantepercent" value="'.$object->label.'"></td></tr>';
@@ -2214,7 +2216,7 @@ if ($id > 0) {
 
 		// Private
 		if ($object->elementtype == 'ticket') {
-			print '<tr><td class="titlefield">'.$langs->trans("PrivateEventMessage").'</td><td>'.yn(($object->code == 'TICKET_MSG_PRIVATE') ? 1 : 0, 3).'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("PrivateEventMessage").'</td><td>'.yn(preg_match('/^TICKET_MSG_PRIVATE/', $object->code) ? 1 : 0, 3).'</td></tr>';
 		}
 
 		// Full day event

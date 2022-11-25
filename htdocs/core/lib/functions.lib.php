@@ -11450,9 +11450,9 @@ function getTimelineIcon($actionstatic, &$histo, $key)
 		$iconClass = 'fa fa-ticket';
 	} elseif ($actionstatic->code == 'AC_TICKET_MODIFY') {
 		$iconClass = 'fa fa-pencilxxx';
-	} elseif ($actionstatic->code == 'TICKET_MSG') {
+	} elseif (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 		$iconClass = 'fa fa-comments';
-	} elseif ($actionstatic->code == 'TICKET_MSG_PRIVATE') {
+	} elseif (preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
 		$iconClass = 'fa fa-mask';
 	} elseif (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 		if ($actionstatic->type_picto) {
@@ -11997,9 +11997,9 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			// Title
 			$out .= ' <span class="messaging-title">';
 
-			if ($actionstatic->code == 'TICKET_MSG') {
+			if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage');
-			} elseif ($actionstatic->code == 'TICKET_MSG_PRIVATE') {
+			} elseif (preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage').' <em>('.$langs->trans('Private').')</em>';
 			} else {
 				if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {

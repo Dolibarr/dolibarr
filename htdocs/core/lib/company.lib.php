@@ -1896,7 +1896,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
 				$labeltype = 'AC_OTH';
 			}
-			if ($actionstatic->type_code == 'AC_OTH' && $actionstatic->code == 'TICKET_MSG') {
+			if (preg_mach('/^TICKET_MSG/', $actionstatic->code)) {
 				$labeltype = $langs->trans("Message");
 			} else {
 				if (!empty($arraylist[$labeltype])) {
