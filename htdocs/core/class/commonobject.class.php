@@ -496,7 +496,7 @@ abstract class CommonObject
 	/**
 	 * @var	float	Amount already paid (used to show correct status)
 	 */
-	public $alreadypaid = 0;
+	public $alreadypaid;
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
