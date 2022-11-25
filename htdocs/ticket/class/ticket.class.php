@@ -2497,7 +2497,7 @@ class Ticket extends CommonObject
 			$object->message = GETPOST("message", "restricthtml");
 			$object->private = GETPOST("private_message", "alpha");
 			$object->trackid = GETPOST('trackid', 'aZ09');
-				
+
 			$send_email = GETPOST('send_email', 'int');
 
 			// Copy attached files (saved into $_SESSION) as linked files to ticket. Return array with final name used.
