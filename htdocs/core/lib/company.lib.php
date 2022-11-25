@@ -2227,3 +2227,66 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 		return $sql2;
 	}
 }
+
+/**
+ * Get footer of company in HTML pages
+ *
+ * @param   Societe		$fromcompany	Third party
+ * @param   Translate	$langs			Output language
+ * @return	array 		Line1 and line2
+ */
+function htmlOnlineCompanyFooter($fromcompany, $langs)
+{
+	global $conf;
+
+	// Juridical status
+	$line1 = "";
+	if ($fromcompany->forme_juridique_code) {
+		$line1 .= ($line1 ? " - " : "").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
+	}
+	// Capital
+	if ($fromcompany->capital) {
+		$line1 .= ($line1 ? " - " : "").$langs->transnoentities("CapitalOf", $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
+	}
+	// Prof Id 1
+	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
+		$field = $langs->transcountrynoentities("ProfId1", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof1;
+	}
+	// Prof Id 2
+	if ($fromcompany->idprof2) {
+		$field = $langs->transcountrynoentities("ProfId2", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof2;
+	}
+
+	// Second line of company infos
+	$line2 = "";
+	// Prof Id 3
+	if ($fromcompany->idprof3) {
+		$field = $langs->transcountrynoentities("ProfId3", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof3;
+	}
+	// Prof Id 4
+	if ($fromcompany->idprof4) {
+		$field = $langs->transcountrynoentities("ProfId4", $fromcompany->country_code);
+		if (preg_match('/\((.*)\)/i', $field, $reg)) {
+			$field = $reg[1];
+		}
+		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof4;
+	}
+	// IntraCommunautary VAT
+	if ($fromcompany->tva_intra != '') {
+		$line2 .= ($line2 ? " - " : "").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
+	}
+
+	return array('line1' => $line1, 'line2' => $line2);
+}

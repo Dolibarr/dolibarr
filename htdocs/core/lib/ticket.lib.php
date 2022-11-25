@@ -219,7 +219,8 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	$urllogo = "";
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, 1); // Show html headers
 
-	print '<body id="mainbody" class="publicnewticketform">';
+	print '<body id="mainbody" class="publicnewticketform" style="height: 100%;">';
+	print '<div class="publicnewticketform2" style="min-height: calc(100% - 100px); margin-bottom: 100px; position: relative;">';
 	print '<div class="center">';
 
 	// Define urllogo
@@ -267,4 +268,30 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	print '</div>';
 
 	print '<div class="ticketlargemargin">';
+}
+
+
+/**
+ * Show footer of company in HTML pages
+ *
+ * @param   Societe		$fromcompany	Third party
+ * @param   Translate	$langs			Output language
+ * @return	void
+ */
+function htmlPrintOnlineTicketFooter($fromcompany, $langs)
+{
+	$lineList = htmlOnlineCompanyFooter($fromcompany, $langs);
+	$line1 = $lineList['line1'];
+	$line2 = $lineList['line2'];
+
+	print '</div>'; // end div publicnewticketform from llxHeaderTicket
+	print '</div>'; // end div publicnewticketform2 from llxHeaderTicket
+	print '<div class="center" style="position: relative; float: left; width: 100%;">';
+	print '<div style="font-size: 14px; position: absolute; bottom: 0px; margin-top: 20px; padding-top: 20px; width: 100%; height: 80px;">';
+	print '<hr>';
+	print '<b>'.$fromcompany->name.'</b>';
+	print '<br>'.(!empty($line1) ? $line1.'<br>' : '');
+	print $line2;
+	print '</div>';
+	print '</div>';
 }

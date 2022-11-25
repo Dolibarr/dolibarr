@@ -403,67 +403,23 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 
 
 /**
- * Show footer of company in HTML pages
+ * Show footer of payments in HTML pages
  *
- * @param   Societe		$fromcompany	Third party
- * @param   Translate	$langs			Output language
- * @param	int			$addformmessage	Add the payment form message
- * @param	string		$suffix			Suffix to use on constants
- * @param	Object		$object			Object related to payment
+ * @param   Societe		$fromcompany		Third party
+ * @param   Translate	$langs				Output language
+ * @param	int			$addformmessage		Add the payment form message
+ * @param	string		$suffix				Suffix to use on constants
+ * @param	Object		$object				Object related to payment
+ * @param	Object		$footerPosition		[=''] Footer position : 'fixed' to have footer on bottom of the page or '' to have footer after all content
  * @return	void
  */
-function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0, $suffix = '', $object = null)
+function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0, $suffix = '', $object = null, $footerPosition = '')
 {
 	global $conf;
 
-	// Juridical status
-	$line1 = "";
-	if ($fromcompany->forme_juridique_code) {
-		$line1 .= ($line1 ? " - " : "").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
-	}
-	// Capital
-	if ($fromcompany->capital) {
-		$line1 .= ($line1 ? " - " : "").$langs->transnoentities("CapitalOf", $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
-	}
-	// Prof Id 1
-	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
-		$field = $langs->transcountrynoentities("ProfId1", $fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i', $field, $reg)) {
-			$field = $reg[1];
-		}
-		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof1;
-	}
-	// Prof Id 2
-	if ($fromcompany->idprof2) {
-		$field = $langs->transcountrynoentities("ProfId2", $fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i', $field, $reg)) {
-			$field = $reg[1];
-		}
-		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof2;
-	}
-
-	// Second line of company infos
-	$line2 = "";
-	// Prof Id 3
-	if ($fromcompany->idprof3) {
-		$field = $langs->transcountrynoentities("ProfId3", $fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i', $field, $reg)) {
-			$field = $reg[1];
-		}
-		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof3;
-	}
-	// Prof Id 4
-	if ($fromcompany->idprof4) {
-		$field = $langs->transcountrynoentities("ProfId4", $fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i', $field, $reg)) {
-			$field = $reg[1];
-		}
-		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof4;
-	}
-	// IntraCommunautary VAT
-	if ($fromcompany->tva_intra != '') {
-		$line2 .= ($line2 ? " - " : "").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
-	}
+	$lineList = htmlOnlineCompanyFooter($fromcompany, $langs);
+	$line1 = $lineList['line1'];
+	$line2 = $lineList['line2'];
 
 	print '<!-- htmlPrintOnlinePaymentFooter -->'."\n";
 
@@ -492,14 +448,24 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0,
 		}
 	}
 
-	print '<span style="font-size: 10px;"><br><hr>'."\n";
-	print $fromcompany->name.'<br>';
-	print $line1;
-	if (strlen($line1.$line2) > 50) {
-		print '<br>';
+	if ($footerPosition == 'fixed') {
+		print '</div>';
+		print '<div  class="center" style="font-size: 14px; position: fixed; bottom: 0px; width: 100%; z-index: -1;">';
+		print '<br><hr>';
+		print '<b>'.$fromcompany->name.'</b>';
+		print '<br>'.(!empty($line1) ? $line1.'<br>' : '');
+		print $line2.'<br>.&nbsp;';
+		print '	</div>';
 	} else {
-		print ' - ';
+		print '<span style="font-size: 10px;"><br><hr>' . "\n";
+		print $fromcompany->name . '<br>';
+		print $line1;
+		if (strlen($line1 . $line2) > 50) {
+			print '<br>';
+		} else {
+			print ' - ';
+		}
+		print $line2;
+		print '</span></div>' . "\n";
 	}
-	print $line2;
-	print '</span></div>'."\n";
 }

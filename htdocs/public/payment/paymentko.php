@@ -286,7 +286,7 @@ if ($type || $tag) {
 print "\n</div>\n";
 
 
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix);
+htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix, null, 'fixed');
 
 
 llxFooter('', 'public');
