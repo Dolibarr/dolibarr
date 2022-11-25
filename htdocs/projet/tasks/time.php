@@ -68,6 +68,14 @@ $search_month = GETPOST('search_month', 'int');
 $search_year = GETPOST('search_year', 'int');
 $search_datehour = '';
 $search_datewithhour = '';
+$search_date_startday = GETPOST('search_date_startday', 'int');
+$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
+$search_date_startyear = GETPOST('search_date_startyear', 'int');
+$search_date_endday = GETPOST('search_date_endday', 'int');
+$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
+$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear); // Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_note = GETPOST('search_note', 'alpha');
 $search_duration = GETPOST('search_duration', 'int');
 $search_value = GETPOST('search_value', 'int');
@@ -77,6 +85,7 @@ $search_user = GETPOST('search_user', 'int');
 $search_valuebilled = GETPOST('search_valuebilled', 'int');
 $search_product_ref = GETPOST('search_product_ref', 'alpha');
 $search_company = GETPOST('$search_company', 'alpha');
+$search_company_alias = GETPOST('$search_company_alias', 'alpha');
 $search_project_ref = GETPOST('$search_project_ref', 'alpha');
 $search_project_label = GETPOST('$search_project_label', 'alpha');
 
@@ -168,8 +177,17 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_value = '';
 	$search_date_creation = '';
 	$search_date_update = '';
+    $search_date_startday = '';
+    $search_date_startmonth = '';
+    $search_date_startyear = '';
+    $search_date_endday = '';
+    $search_date_endmonth = '';
+    $search_date_endyear = '';
+    $search_date_start = '';
+    $search_date_end = '';
 	$search_task_ref = '';
 	$search_company = '';
+    $search_company_alias = '';
     $search_project_ref = '';
     $search_project_label = '';
 	$search_task_label = '';
@@ -1224,6 +1242,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$arrayfields = array();
 		$arrayfields['t.task_date'] = array('label'=>$langs->trans("Date"), 'checked'=>1);
 		$arrayfields['p.fk_soc'] = array('label'=>$langs->trans("ThirdParty"), 'type'=>'integer:Societe:/societe/class/societe.class.php:1','checked'=>1);
+		$arrayfields['s.name_alias'] = array('label'=>$langs->trans("AliasNameShort"), 'type'=>'integer:Societe:/societe/class/societe.class.php:1');
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
             if(! empty($allprojectforuser)) {
                 $arrayfields['p.project_ref'] = ['label' => $langs->trans('RefProject'), 'checked' => 1];
@@ -1267,6 +1286,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if ($search_company != '') {
 			$param .= '&amp;$search_company='.urlencode($search_company);
 		}
+        if ($search_company_alias != '') {
+			$param .= '&amp;$search_company_alias='.urlencode($search_company_alias);
+		}
         if ($search_project_ref != '') {
             $param .= '&amp;$search_project_ref='.urlencode($search_project_ref);
         }
@@ -1285,6 +1307,25 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if ($optioncss != '') {
 			$param .= '&optioncss='.urlencode($optioncss);
 		}
+        if ($search_date_startday) {
+            $param .= '&search_date_startday='.urlencode($search_date_startday);
+        }
+        if ($search_date_startmonth) {
+            $param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+        }
+        if ($search_date_startyear) {
+            $param .= '&search_date_startyear='.urlencode($search_date_startyear);
+        }
+        if ($search_date_endday) {
+            $param .= '&search_date_endday='.urlencode($search_date_endday);
+        }
+        if ($search_date_endmonth) {
+            $param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+        }
+        if ($search_date_endyear) {
+            $param .= '&search_date_endyear='.urlencode($search_date_endyear);
+        }
+
 		/*
 		 // Add $param from extra fields
 		 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -1474,7 +1515,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$sql .= " pt.ref, pt.label, pt.fk_projet,";
 		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.statut as user_status,";
 		$sql .= " il.fk_facture as invoice_id, inv.fk_statut,";
-		$sql .= " p.fk_soc,";
+		$sql .= " p.fk_soc,s.name_alias,";
 		// Add fields from hooks
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -1517,6 +1558,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if ($search_company) {
 			$sql .= natural_search('s.nom', $search_company);
 		}
+        if ($search_company_alias) {
+			$sql .= natural_search('s.name_alias', $search_company_alias);
+		}
         if ($search_project_ref) {
 			$sql .= natural_search('p.ref', $search_project_ref);
 		}
@@ -1538,6 +1582,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if ($search_valuebilled == '0') {
 			$sql .= ' AND (t.invoice_id = 0 OR t.invoice_id IS NULL)';
 		}
+
+        if ($search_date_start) {
+            $sql .= " AND t.task_date >= '".$db->idate($search_date_start)."'";
+        }
+        if ($search_date_end) {
+            $sql .= " AND t.task_date <= '".$db->idate($search_date_end)."'";
+        }
 
 		$sql .= dolSqlDateFilter('t.task_datehour', $search_day, $search_month, $search_year);
 
@@ -1760,19 +1811,25 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		// Fields title search
 		print '<tr class="liste_titre_filter">';
 		// Date
-		if (!empty($arrayfields['t.task_date']['checked'])) {
-			print '<td class="liste_titre">';
-			if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-				print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
-			}
-			print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
-			print $formother->selectyear($search_year, 'search_year', 1, 20, 5);
-			print '</td>';
-		}
+        if (!empty($arrayfields['t.task_date']['checked'])) {
+            print '<td class="liste_titre left">';
+            print '<div class="nowrap">';
+            print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+            print '</div>';
+            print '<div class="nowrap">';
+            print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+            print '</div>';
+            print '</td>';
+        }
 		// Thirdparty
 		if (!empty($arrayfields['p.fk_soc']['checked'])) {
 			print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_company" value="'.dol_escape_htmltag($search_company).'"></td>';
 		}
+
+        // Thirdparty alias
+        if (!empty($arrayfields['s.name_alias']['checked'])) {
+            print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_company_alias" value="'.dol_escape_htmltag($search_company_alias).'"></td>';
+        }
 
 		if (!empty($allprojectforuser)) {
             if (!empty($arrayfields['p.project_ref']['checked'])) {
@@ -1835,8 +1892,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if (!empty($arrayfields['t.task_date']['checked'])) {
 			print_liste_field_titre($arrayfields['t.task_date']['label'], $_SERVER['PHP_SELF'], 't.task_date,t.task_datehour,t.rowid', '', $param, '', $sortfield, $sortorder);
 		}
+
 		if (!empty($arrayfields['p.fk_soc']['checked'])) {
 			print_liste_field_titre($arrayfields['p.fk_soc']['label'], $_SERVER['PHP_SELF'], 't.task_date,t.task_datehour,t.rowid', '', $param, '', $sortfield, $sortorder);
+		}
+        if (!empty($arrayfields['s.name_alias']['checked'])) {
+			print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER['PHP_SELF'], 's.name_alias', '', $param, '', $sortfield, $sortorder);
 		}
 		if (!empty($allprojectforuser)) {
             if (!empty($arrayfields['p.project_ref']['checked'])) {
@@ -1931,7 +1992,26 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					} else {
 						$tmpsociete = $conf->cache['thridparty'][$task_time->fk_soc];
 					}
-					print $tmpsociete->getNomUrl(1);
+                    print $tmpsociete->getNomUrl(1, '', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+            // Thirdparty alias
+			if (!empty($arrayfields['s.name_alias']['checked'])) {
+				print '<td class="nowrap">';
+				if ($task_time->fk_soc > 0) {
+					if (empty($conf->cache['thridparty'][$task_time->fk_soc])) {
+						$tmpsociete = new Societe($db);
+						$tmpsociete->fetch($task_time->fk_soc);
+						$conf->cache['thridparty'][$task_time->fk_soc] = $tmpsociete;
+					} else {
+						$tmpsociete = $conf->cache['thridparty'][$task_time->fk_soc];
+					}
+					print $tmpsociete->name_alias;
 				}
 				print '</td>';
 				if (!$i) {
