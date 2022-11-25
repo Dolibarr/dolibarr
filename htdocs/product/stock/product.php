@@ -1170,7 +1170,7 @@ if (!$variants) {
 							print $product_lot_static->getNomUrl(1);
 						} else {
 							print $product_lot_static->getNomUrl(1, 'nolink');
-						}						
+						}
 						print '</td>';
 						$colspan = 3;
 						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
