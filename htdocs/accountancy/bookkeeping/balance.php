@@ -235,10 +235,18 @@ if ($action != 'export_csv') {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
+
+	$button = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
+
 	if (empty($reshook)) {
-		$button = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
+		$button .= '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 
 		print '<script type="text/javascript" language="javascript">
 		jQuery(document).ready(function() {
