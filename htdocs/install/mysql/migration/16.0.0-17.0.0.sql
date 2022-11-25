@@ -52,6 +52,7 @@ ALTER TABLE llx_user DROP COLUMN idpers1;
 ALTER TABLE llx_user DROP COLUMN idpers2;
 ALTER TABLE llx_user DROP COLUMN idpers3;
 
+UPDATE llx_c_actioncomm SET type = 'system' WHERE code = 'AC_OTH';
 
 -- v17
 
