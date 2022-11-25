@@ -268,7 +268,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
 			}
 		}
-		print showValueWithClipboardCPButton($object->login).$addadmin;
+		print showValueWithClipboardCPButton(!empty($object->login) ? $object->login : '').$addadmin;
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -281,14 +281,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Ref employee
 	print '<tr><td class="titlefield">'.$langs->trans("RefEmployee").'</td>';
 	print '<td class="error">';
-	print showValueWithClipboardCPButton($object->ref_employee);
+	print showValueWithClipboardCPButton(!empty($object->ref_employee) ? $object->ref_employee : '');
 	print '</td>';
 	print '</tr>'."\n";
 
 	// National Registration Number
 	print '<tr><td class="titlefield">'.$langs->trans("NationalRegistrationNumber").'</td>';
 	print '<td class="error">';
-	print showValueWithClipboardCPButton($object->national_registration_number);
+	print showValueWithClipboardCPButton(!empty($object->national_registration_number) ? $object->national_registration_number : '');
 	print '</td>';
 	print '</tr>'."\n";
 
