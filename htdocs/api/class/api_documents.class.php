@@ -463,7 +463,7 @@ class Documents extends DolibarrApi
 		}
 
 		$objectType = $modulepart;
-		if(! empty($object->id) && ! empty($object->table_element)) $objectType = $object->table_element;
+		if (! empty($object->id) && ! empty($object->table_element)) $objectType = $object->table_element;
 
 		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 		if (empty($filearray)) {
@@ -476,8 +476,8 @@ class Documents extends DolibarrApi
 				if ($result < 0) {
 					throw new RestException(503, 'Error when retrieve ecm list : ' . $this->db->lasterror());
 				} elseif (is_array($ecmfile->lines) && count($ecmfile->lines) > 0) {
-					for($i = 0 ; $i < count($filearray) ; $i++) {
-						if($filearray[$i]['name'] == $ecmfile->lines[$i]->filename) $filearray[$i] = array_merge($filearray[$i], (array) $ecmfile->lines[0]);
+					for ($i = 0 ; $i < count($filearray); $i++) {
+						if ($filearray[$i]['name'] == $ecmfile->lines[$i]->filename) $filearray[$i] = array_merge($filearray[$i], (array) $ecmfile->lines[0]);
 					}
 				}
 			}
