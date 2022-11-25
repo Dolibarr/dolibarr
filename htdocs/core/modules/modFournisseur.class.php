@@ -901,7 +901,7 @@ class modFournisseur extends DolibarrModules
 			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'order_supplier' AND entity = ".((int) $conf->entity),
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."', 'order_supplier', ".((int) $conf->entity).")",
 		);
-		
+
 		//ODT template for Supplier Invoice
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/supplier_invoices/template_supplier_invoices.odt';
 		$dirodt = DOL_DATA_ROOT.'/doctemplates/supplier_invoices';
@@ -926,7 +926,7 @@ class modFournisseur extends DolibarrModules
 
 		$sql = array_merge($sql_order, $sql_invoice);
 		*/
-		
+
 		$sql = $sql_order;
 
 		return $this->_init($sql, $options);
