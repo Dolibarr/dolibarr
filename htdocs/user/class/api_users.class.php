@@ -639,7 +639,6 @@ class Users extends DolibarrApi
 				'message' => 'Ticket deleted'
 			)
 		);
-
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

@@ -229,9 +229,9 @@ class MembersTypes extends DolibarrApi
 		}
 
 		$res = $membertype->delete();
-		if($res < 0) {
+		if ($res < 0) {
 			throw new RestException(500, "Can't delete, error occurs");
-		}elseif($res == 0) {
+		} elseif ($res == 0) {
 			throw new RestException(409, "Can't delete, that product is probably used");
 		}
 
