@@ -147,10 +147,10 @@ if ($action == 'other') {
 	$value = GETPOST('activate_FillProductDescAuto', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_AUTOFILL_DESC", $value, 'chaine', 0, '', $conf->entity);
 
-/*	$value = GETPOST('PRODUIT_FOURN_TEXTS', 'alpha');
+	/*  $value = GETPOST('PRODUIT_FOURN_TEXTS', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);*/
 
-/*	$value = GETPOST('PRODUCT_USE_SUPPLIER_PACKAGING', 'alpha');
+	/*  $value = GETPOST('PRODUCT_USE_SUPPLIER_PACKAGING', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);*/
 }
 
