@@ -16,6 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Output javascript for interactions code of ecm module
+ * $conf, $module, $param, $preopened, $nameforformuserfile may be defined
  */
 
 // Protection to avoid direct call of template
@@ -23,6 +24,7 @@ if (empty($conf) || !is_object($conf)) {
 	print "Error, template enablefiletreeajax.tpl.php can't be called as URL";
 	exit;
 }
+// Must have set $module, $nameforformuserfile, $preopened
 
 ?>
 
@@ -34,6 +36,9 @@ if (empty($conf) || !is_object($conf)) {
 <?php
 if (empty($module)) {
 	$module = 'ecm';
+}
+if (empty($nameforformuserfile)) {
+	$nameforformuserfile = '';
 }
 $paramwithoutsection = preg_replace('/&?section=(\d+)/', '', $param);
 
@@ -47,13 +52,13 @@ $(document).ready(function() {
 	$('#filetree').fileTree({
 		root: '<?php print dol_escape_js($openeddir); ?>',
 		// Ajax called if we click to expand a dir (not a file). Parameter 'dir' is provided as a POST parameter by fileTree code to this following URL.
-		// We must use token=$_SESSION['token'] and not token=$_SESSION['newtoken'] here because ajaxdirtree has NOTOKENRENEWAL define so there is no rollup of token so we must compare with the one valid on main page
-		script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?token='.urlencode($_SESSION['token']).'&modulepart='.urlencode($module).(empty($preopened) ? '' : '&preopened='.urlencode($preopened)).'&openeddir='.urlencode($openeddir).(empty($paramwithoutsection) ? '' : $paramwithoutsection); ?>',
+		// We must use token=currentToken() and not newToken() here because ajaxdirtree has NOTOKENRENEWAL define so there is no rollup of token so we must compare with the one valid on main page
+		script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?token='.currentToken().'&modulepart='.urlencode($module).(empty($preopened) ? '' : '&preopened='.urlencode($preopened)).'&openeddir='.urlencode($openeddir).(empty($paramwithoutsection) ? '' : $paramwithoutsection); ?>',
 		folderEvent: 'click',	// 'dblclick'
 		multiFolder: false  },
 		// Called if we click on a file (not a dir)
 		function(file) {
-			console.log("We click on a file");
+			console.log("We click on a file "+file);
 			$("#mesg").hide();
 			loadandshowpreview(file,0);
 		},
@@ -61,7 +66,7 @@ $(document).ready(function() {
 		function(elem) {
 			id=elem.attr('id').substr(12);	// We get id that is 'fmdirlia_id_xxx' (id we want is xxx)
 			rel=elem.attr('rel')
-			console.log("We click on a dir, we call the ajaxdirtree.php with modulepart=<?php echo $module; ?>, param=<?php echo $paramwithoutsection; ?>");
+			console.log("We click on a dir id="+id+", we call the ajaxdirtree.php with modulepart=<?php echo $module; ?>, param=<?php echo $paramwithoutsection; ?>");
 			console.log("We also save id and dir name into <?php echo $nameforformuserfile ?>_section_id|dir (vars into form to attach new file in filemanager.tpl.php) with id="+id+" and rel="+rel);
 			jQuery("#<?php echo $nameforformuserfile ?>_section_dir").val(rel);
 			jQuery("#<?php echo $nameforformuserfile ?>_section_id").val(id);
@@ -77,13 +82,14 @@ $(document).ready(function() {
 	$('#refreshbutton').click( function() {
 		console.log("Click on refreshbutton");
 		$.pleaseBePatient("<?php echo $langs->trans('PleaseBePatient'); ?>");
-		$.get( "<?php echo DOL_URL_ROOT.'/ecm/ajax/ecmdatabase.php'; ?>", {
-			action: "build",
-			element: "ecm"
+		$.get("<?php echo DOL_URL_ROOT.'/ecm/ajax/ecmdatabase.php'; ?>", {
+			action: 'build',
+			token: '<?php echo newToken(); ?>',
+			element: 'ecm'
 		},
 		function(response) {
 			$.unblockUI();
-			location.href="<?php echo $_SERVER['PHP_SELF']; ?>";
+			location.href='<?php echo $_SERVER['PHP_SELF']; ?>';
 		});
 	});
 });

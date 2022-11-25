@@ -18,11 +18,13 @@
  */
 
 /**
- *	\file       htdocs/blockedlog/admin/blockedlog_list.php
- *  \ingroup    blockedlog
- *  \brief      Page setup for blockedlog module
+ *    \file       htdocs/blockedlog/admin/blockedlog_list.php
+ *    \ingroup    blockedlog
+ *    \brief      Page setup for blockedlog module
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
@@ -31,27 +33,35 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
+$langs->loadLangs(array('admin', 'bills', 'blockedlog', 'other'));
 
-if ((!$user->admin && !$user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) {
+// Access Control
+if ((!$user->admin && empty($user->rights->blockedlog->read)) || empty($conf->blockedlog->enabled)) {
 	accessforbidden();
 }
 
-$action = GETPOST('action', 'aZ09');
+// Get Parameters
+$action      = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'blockedloglist'; // To manage different context of search
-$backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
-$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
+$optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $search_showonlyerrors = GETPOST('search_showonlyerrors', 'int');
 if ($search_showonlyerrors < 0) {
 	$search_showonlyerrors = 0;
 }
 
+$search_startyear = GETPOST('search_startyear', 'int');
+$search_startmonth = GETPOST('search_startmonth', 'int');
+$search_startday = GETPOST('search_startday', 'int');
+$search_endyear = GETPOST('search_endyear', 'int');
+$search_endmonth = GETPOST('search_endmonth', 'int');
+$search_endday = GETPOST('search_endday', 'int');
 $search_id = GETPOST('search_id', 'alpha');
 $search_fk_user = GETPOST('search_fk_user', 'intcomma');
 $search_start = -1;
-if (GETPOST('search_startyear') != '') {
-	$search_start = dol_mktime(0, 0, 0, GETPOST('search_startmonth'), GETPOST('search_startday'), GETPOST('search_startyear'));
+if ($search_startyear != '') {
+	$search_start = dol_mktime(0, 0, 0, $search_startmonth, $search_startday, $search_startyear);
 }
 $search_end = -1;
 if (GETPOST('search_endyear') != '') {
@@ -89,7 +99,7 @@ $block_static->loadTrackedEvents();
 
 $result = restrictedArea($user, 'blockedlog', 0, '');
 
-
+// Execution Time
 $max_execution_time_for_importexport = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 $max_time = @ini_get("max_execution_time");
 if ($max_time && $max_time < $max_execution_time_for_importexport) {
@@ -112,7 +122,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_ref = '';
 	$search_amount = '';
 	$search_showonlyerrors = 0;
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 }
 
@@ -321,22 +331,22 @@ if ($search_fk_user > 0) {
 	$param .= '&search_fk_user='.urlencode($search_fk_user);
 }
 if ($search_startyear > 0) {
-	$param .= '&search_startyear='.urlencode(GETPOST('search_startyear', 'int'));
+	$param .= '&search_startyear='.urlencode($search_startyear);
 }
 if ($search_startmonth > 0) {
-	$param .= '&search_startmonth='.urlencode(GETPOST('search_startmonth', 'int'));
+	$param .= '&search_startmonth='.urlencode($search_startmonth);
 }
 if ($search_startday > 0) {
-	$param .= '&search_startday='.urlencode(GETPOST('search_startday', 'int'));
+	$param .= '&search_startday='.urlencode($search_startday);
 }
 if ($search_endyear > 0) {
-	$param .= '&search_endyear='.urlencode(GETPOST('search_endyear', 'int'));
+	$param .= '&search_endyear='.urlencode($search_endyear);
 }
 if ($search_endmonth > 0) {
-	$param .= '&search_endmonth='.urlencode(GETPOST('search_endmonth', 'int'));
+	$param .= '&search_endmonth='.urlencode($search_endmonth);
 }
 if ($search_endday > 0) {
-	$param .= '&search_endday='.urlencode(GETPOST('search_endday', 'int'));
+	$param .= '&search_endday='.urlencode($search_endday);
 }
 if ($search_showonlyerrors > 0) {
 	$param .= '&search_showonlyerrors='.urlencode($search_showonlyerrors);
@@ -517,7 +527,7 @@ if (is_array($blocks)) {
 			print '<tr class="oddeven">';
 
 			// ID
-			print '<td>'.$block->id.'</td>';
+			print '<td>'.dol_escape_htmltag($block->id).'</td>';
 
 			// Date
 			print '<td>'.dol_print_date($block->date_creation, 'dayhour').'</td>';
@@ -525,11 +535,11 @@ if (is_array($blocks)) {
 			// User
 			print '<td>';
 			//print $block->getUser()
-			print $block->user_fullname;
+			print dol_escape_htmltag($block->user_fullname);
 			print '</td>';
 
 			// Action
-			print '<td>'.$langs->trans('log'.$block->action).'</td>';
+			print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($langs->trans('log'.$block->action)).'">'.$langs->trans('log'.$block->action).'</td>';
 
 			// Ref
 			print '<td class="nowraponall">';

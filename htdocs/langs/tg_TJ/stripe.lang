@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Танзими модули Stripe
-StripeDesc=Ба мизоҷон як саҳифаи пардохти онлайнии Stripe барои пардохт бо кортҳои кредитӣ/cebit тавассути <a href="http://www.stripe.com" target="_blank"> Stripe </a> пешниҳод кунед. Ин метавонад барои фароҳам овардани мизоҷони шумо барои пардохти муваққатӣ ё барои пардохти марбут ба объекти мушаххаси Dolibarr истифода шавад (фактура, фармоиш, ...)
+StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
 StripeOrCBDoPayment=Бо корти кредитӣ ё Stripe пардохт кунед
 FollowingUrlAreAvailableToMakePayments=URL -ҳои зерин барои пешниҳоди саҳифа ба муштарӣ барои пардохт дар объектҳои Dolibarr дастрасанд
 PaymentForm=Шакли пардохт

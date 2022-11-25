@@ -48,7 +48,7 @@ CountriesNotInEEC=非欧共体国家
 CountriesInEECExceptMe=欧共体国家除了%s
 CountriesExceptMe=除%s以外的所有国家/地区
 AccountantFiles=Export source documents
-ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that were used to generate your accountancy.
+ExportAccountingSourceDocHelp=With this tool, you can export the source events (list in CSV and PDFs) that are used to generate your accountancy.
 ExportAccountingSourceDocHelp2=To export your journals, use the menu entry %s - %s.
 VueByAccountAccounting=View by accounting account
 VueBySubAccountAccounting=View by accounting subaccount
@@ -62,24 +62,24 @@ MainAccountForSubscriptionPaymentNotDefined=Main accounting account for subscrip
 AccountancyArea=会计区
 AccountancyAreaDescIntro=会计模块的使用分几步完成：
 AccountancyAreaDescActionOnce=以下动作通常只执行一次，或每年执行一次......
-AccountancyAreaDescActionOnceBis=下一步将在未来节省您将来的时间，在记帐时使用正确的默认会计科目（在日记帐和总帐中写入记录时）
+AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automaticaly the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=对于非常大的公司，通常每月，每周或每天执行以下操作......
 
-AccountancyAreaDescJournalSetup=步骤%s：从菜单%s创建或检查日常报表的内容
+AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
 AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=步骤%s：为每个税率定义会计科目，使用菜单%s。
 AccountancyAreaDescDefault=步骤%s：定义默认会计科目，使用菜单%s。
-AccountancyAreaDescExpenseReport=步骤%s：为每种类型的费用报告定义默认会计科目，使用菜单%s。
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=步骤%s：定义支付工资的默认会计科目，使用菜单%s。
-AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expenses (miscellaneous taxes). For this, use the menu entry %s.
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for Taxes (special expenses). For this, use the menu entry %s.
 AccountancyAreaDescDonation=步骤%s：定义捐赠的默认会计科目，使用菜单%s。
 AccountancyAreaDescSubscription=STEP %s: Define default accounting accounts for member subscription. For this, use the menu entry %s.
 AccountancyAreaDescMisc=步骤%s：为杂项交易定义强制性默认帐户和默认会计科目，使用菜单%s。
 AccountancyAreaDescLoan=步骤%s：定义贷款的默认会计科目，使用菜单%s。
 AccountancyAreaDescBank=步骤%s：为每个银行和财务帐户定义会计科目和日常报表代码，使用菜单%s。
-AccountancyAreaDescProd=步骤%s：在您的产品/服务上定义会计科目，使用菜单%s。
+AccountancyAreaDescProd=STEP %s: Define accounting accounts on your Products/Services. For this, use the menu entry %s.
 
 AccountancyAreaDescBind=步骤%s：检查现有%s行与会计科目之间的绑定， 使程序通过单击完成对分类帐中的交易进行日志记录。完成缺失的绑定，使用菜单%s。
 AccountancyAreaDescWriteRecords=步骤%s：将交易写入分类帐，进入菜单<strong> %s </strong>，然后点击按钮<strong> %s</strong>。
@@ -112,7 +112,7 @@ MenuAccountancyClosure=Closure
 MenuAccountancyValidationMovements=Validate movements
 ProductsBinding=产品帐户
 TransferInAccounting=Transfer in accounting
-RegistrationInAccounting=Registration in accounting
+RegistrationInAccounting=Recording in accounting
 Binding=Binding to accounts
 CustomersVentilation=顾客发票绑定
 SuppliersVentilation=供应商发票绑定
@@ -120,7 +120,7 @@ ExpenseReportsVentilation=费用报告绑定
 CreateMvts=创建新交易
 UpdateMvts=修改交易
 ValidTransaction=验证交易
-WriteBookKeeping=Register transactions in accounting
+WriteBookKeeping=Record transactions in accounting
 Bookkeeping=分类帐
 BookkeepingSubAccount=Subledger
 AccountBalance=账目平衡
@@ -182,6 +182,7 @@ DONATION_ACCOUNTINGACCOUNT=会计科目-登记捐款
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
 
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Accounting account by default to register customer deposit
+UseAuxiliaryAccountOnCustomerDeposit=Use sub-accounts on customer deposit lines
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)
@@ -219,12 +220,12 @@ ByPredefinedAccountGroups=按预定义的组
 ByPersonalizedAccountGroups=通过个性化团体
 ByYear=在今年
 NotMatch=未设定
-DeleteMvt=Delete some operation lines from accounting
+DeleteMvt=Delete some lines from accounting
 DelMonth=Month to delete
 DelYear=删除整年
 DelJournal=日记帐删除
-ConfirmDeleteMvt=This will delete all operation lines of the accounting for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
-ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all operation lines related to the same transaction will be deleted)
+ConfirmDeleteMvt=This will delete all lines in accountancy for the year/month and/or for a specific journal (At least one criterion is required). You will have to reuse the feature '%s' to have the deleted record back in the ledger.
+ConfirmDeleteMvtPartial=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted)
 FinanceJournal=财务账
 ExpenseReportsJournal=费用报告日常报表
 DescFinanceJournal=财务账包括全部银行账户付款类型
@@ -278,30 +279,31 @@ DescVentilExpenseReportMore=If you setup accounting account on type of expense r
 DescVentilDoneExpenseReport=请在此查询费用报表行及其费用会计帐户清单
 
 Closure=Annual closure
-DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
-OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
-AllMovementsWereRecordedAsValidated=All movements were recorded as validated
-NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated
-ValidateMovements=Validate movements
+DescClosure=Consult here the number of movements by month who are not yet validated & locked
+OverviewOfMovementsNotValidated=Overview of movements not validated and locked
+AllMovementsWereRecordedAsValidated=All movements were recorded as validated and locked
+NotAllMovementsCouldBeRecordedAsValidated=Not all movements could be recorded as validated and locked
+ValidateMovements=Validate and lock record...
 DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
 
 ValidateHistory=自动绑定
-AutomaticBindingDone=自动绑定完成
+AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
 
 ErrorAccountancyCodeIsAlreadyUse=错误，你不能删除这个会计科目，因为正被使用。
-MvtNotCorrectlyBalanced=运动不正确平衡。借方= %s | Credit = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
 Balancing=平衡
 FicheVentilation=绑定卡
 GeneralLedgerIsWritten=交易是在Ledger中写的
 GeneralLedgerSomeRecordWasNotRecorded=某些交易无法记录。如果没有其他错误消息，这可能是因为它们已经被记录。
-NoNewRecordSaved=没有更多的记录记录
+NoNewRecordSaved=No more record to transfer
 ListOfProductsWithoutAccountingAccount=未绑定到任何会计科目的产品列表
 ChangeBinding=更改绑定
 Accounted=占总账
 NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Show Tutorial
 NotReconciled=未调解
-WarningRecordWithoutSubledgerAreExcluded=Warning, all operations without subledger account defined are filtered and excluded from this view
+WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
+AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 
 ## Admin
 BindingOptions=Binding options
@@ -329,8 +331,9 @@ ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountanc
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
-NotifiedExportDate=Flag exported lines as exported (modification of the lines will not be possible)
-NotifiedValidationDate=Validate the exported entries (modification or deletion of the lines will not be possible)
+NotifiedExportDate=Flag exported lines as Exported <span class="warning">(to modify a line, you will need to delete the whole transaction and re-transfert it into accounting)</span>
+NotifiedValidationDate=Validate and Lock the exported entries <span class="warning">(same effect than the "Closure" feature, modification and deletion of the lines will DEFINITELY not be possible)</span>
+DateValidationAndLock=Date validation and lock
 ConfirmExportFile=Confirmation of the generation of the accounting export file ?
 ExportDraftJournal=导出日常报表草稿
 Modelcsv=导出型号
@@ -387,11 +390,27 @@ SaleExport=Export sale
 SaleEEC=Sale in EEC
 SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
-
+ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
+ForbiddenTransactionAlreadyValidated=Forbidden: The transaction has been validated.
 ## Dictionary
 Range=会计科目范围
 Calculated=计算
 Formula=公式
+
+## Reconcile
+Unlettering=Unreconcile
+AccountancyNoLetteringModified=No reconcile modified
+AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
+AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
+AccountancyNoUnletteringModified=No unreconcile modified
+AccountancyOneUnletteringModifiedSuccessfully=One unreconcile successfully modified
+AccountancyUnletteringModifiedSuccessfully=%s unreconcile successfully modified
+
+## Confirm box
+ConfirmMassUnlettering=Bulk Unreconcile confirmation
+ConfirmMassUnletteringQuestion=Are you sure you want to Unreconcile the %s selected record(s)?
+ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
+ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all lines related to the same transaction will be deleted) Are you sure you want to delete the %s selected record(s)?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=一些强制性的安装步骤没有完成，请完成它们
@@ -404,6 +423,10 @@ NoJournalDefined=没有定义日常报表
 Binded=已绑定的行
 ToBind=要绑定的行
 UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
+SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Sorry this module is not compatible with the experimental feature of situation invoices
+AccountancyErrorMismatchLetterCode=Mismatch in reconcile code
+AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
+AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 
 ## Import
 ImportAccountingEntries=会计分录

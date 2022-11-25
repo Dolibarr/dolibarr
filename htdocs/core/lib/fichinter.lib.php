@@ -61,10 +61,10 @@ function fichinter_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention', 'add', 'core');
 
 	// Tab to link resources
-	if ($conf->resource->enabled) {
+	if (isModEnabled('resource')) {
 		require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 		$objectres = new Dolresource($db);
 		$linked_resources = $objectres->getElementResources('fichinter', $object->id);
@@ -125,6 +125,8 @@ function fichinter_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention', 'add', 'external');
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'intervention', 'remove');
 
 	return $head;
@@ -137,7 +139,11 @@ function fichinter_prepare_head($object)
  */
 function fichinter_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('fichinter');
+	$extrafields->fetch_name_optionals_label('fichinterdet');
 
 	$h = 0;
 	$head = array();
@@ -157,19 +163,25 @@ function fichinter_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinter_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['fichinter']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinterdet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$nbExtrafields = $extrafields->attributes['fichinterdet']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributesdet';
 	$h++;
 
-
-
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'fichinter_admin', 'remove');
 
-		return $head;
+	return $head;
 }
 
 /**

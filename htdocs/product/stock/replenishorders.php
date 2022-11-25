@@ -25,6 +25,7 @@
  *  \brief      Page to list replenishment orders
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -37,11 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
-// Security check
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'produit|service');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'replenishorders'; // To manage different context of search
 
 $sall = GETPOST('search_all', 'alphanohtml');
 $sref = GETPOST('search_ref', 'alpha');
@@ -54,10 +51,11 @@ $search_dateyear = GETPOST('search_dateyear', 'int');
 $search_datemonth = GETPOST('search_datemonth', 'int');
 $search_dateday = GETPOST('search_dateday', 'int');
 $search_date = dol_mktime(0, 0, 0, $search_datemonth, $search_dateday, $search_dateyear);
+$optioncss = GETPOST('optioncss', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortorder) {
 	$sortorder = 'DESC';
 }
@@ -69,6 +67,12 @@ if ($page < 0) {
 	$page = 0;
 }
 $offset = $limit * $page;
+
+// Security check
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'produit|service');
 
 
 /*
@@ -122,20 +126,20 @@ $sql .= ' cf.rowid, cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,';
 $sql .= ' u.login';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande_fournisseur as cf';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON cf.fk_user_author = u.rowid';
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ', '.MAIN_DB_PREFIX.'societe_commerciaux as sc';
 }
 $sql .= ' WHERE cf.fk_soc = s.rowid ';
 $sql .= ' AND cf.entity = '.$conf->entity;
-if ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) {
+if (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
 	$sql .= ' AND cf.fk_statut < 3';
-} elseif ($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
+} elseif (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) {
 	$sql .= ' AND cf.fk_statut < 6'; // We want also status 5, we will keep them visible if dispatching is not yet finished (tested with function dolDispatchToDo).
 } else {
 	$sql .= ' AND cf.fk_statut < 5';
 }
-if (!$user->rights->societe->client->voir && !$socid) {
-	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.$user->id;
+if (empty($user->rights->societe->client->voir) && !$socid) {
+	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = '.((int) $user->id);
 }
 if ($sref) {
 	$sql .= natural_search('cf.ref', $sref);
@@ -171,9 +175,10 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print '<span class="opacitymedium">'.$langs->trans("ReplenishmentOrdersDesc").'</span><br><br>';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
+	print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ReplenishmentOrdersDesc").'</span><br class="hideonsmartphone">';
 
 	print_barre_liste('', $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num, 0, '');
 
@@ -209,22 +214,23 @@ if ($resql) {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ref" value="'.dol_escape_htmltag($sref).'">';
+	print '<input type="text" class="flat maxwidth100" name="search_ref" value="'.dol_escape_htmltag($sref).'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_nom" value="'.dol_escape_htmltag($snom).'">';
+	print '<input type="text" class="flat maxwidth100" name="search_nom" value="'.dol_escape_htmltag($snom).'">';
 	print '</td>';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_user" value="'.dol_escape_htmltag($suser).'">';
+	print '<input type="text" class="flat maxwidth100" name="search_user" value="'.dol_escape_htmltag($suser).'">';
 	print '</td>';
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ttc" value="'.dol_escape_htmltag($sttc).'">';
+	print '<td class="liste_titre right">';
+	print '<input type="text" class="flat width75" name="search_ttc" value="'.dol_escape_htmltag($sttc).'">';
 	print '</td>';
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center">';
 	print $form->selectDate($search_date, 'search_date', 0, 0, 1, '', 1, 0, 0, '');
 	print '</td>';
 	print '<td class="liste_titre right">';
@@ -272,7 +278,8 @@ if ($resql) {
 		$param,
 		'',
 		$sortfield,
-		$sortorder
+		$sortorder,
+		'right '
 	);
 	print_liste_field_titre(
 		'OrderCreation',
@@ -282,7 +289,8 @@ if ($resql) {
 		$param,
 		'',
 		$sortfield,
-		$sortorder
+		$sortorder,
+		'center '
 	);
 	print_liste_field_titre(
 		'Status',
@@ -316,7 +324,7 @@ if ($resql) {
 
 			// Company
 			$href = DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid;
-			print '<td><a href="'.$href.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.$obj->name.'</a></td>';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->name).'"><a href="'.$href.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.$obj->name.'</a></td>';
 
 			// Author
 			$userstatic->id = $obj->fk_user_author;
@@ -329,15 +337,15 @@ if ($resql) {
 			print '<td>'.$txt.'</td>';
 
 			// Amount
-			print '<td>'.price($obj->total_ttc).'</td>';
+			print '<td class="right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
 
 			// Date
 			if ($obj->dc) {
-				$date = dol_print_date($db->jdate($obj->dc), 'dayhour');
+				$date = dol_print_date($db->jdate($obj->dc), 'dayhour', 'tzuserrel');
 			} else {
 				$date = '-';
 			}
-			print '<td>'.$date.'</td>';
+			print '<td class="center">'.$date.'</td>';
 
 			// Statut
 			print '<td class="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
@@ -347,6 +355,8 @@ if ($resql) {
 		$i++;
 	}
 	print '</table>';
+	print '</div>';
+
 	print '</form>';
 
 	$db->free($resql);

@@ -181,32 +181,6 @@ class Tickets extends DolibarrApi
 			$this->ticket->messages = $messages;
 		}
 
-		// History
-		$history = array();
-		$this->ticket->loadCacheLogsTicket();
-		if (is_array($this->ticket->cache_logs_ticket) && count($this->ticket->cache_logs_ticket) > 0) {
-			$num = count($this->ticket->cache_logs_ticket);
-			$i = 0;
-			while ($i < $num) {
-				if ($this->ticket->cache_logs_ticket[$i]['fk_user_create'] > 0) {
-					$user_action = new User($this->db);
-					$user_action->fetch($this->ticket->cache_logs_ticket[$i]['fk_user_create']);
-				}
-
-				// Now define messages
-				$history[] = array(
-				'id' => $this->ticket->cache_logs_ticket[$i]['id'],
-				'fk_user_author' => $this->ticket->cache_msgs_ticket[$i]['fk_user_author'],
-				'fk_user_action' => $this->ticket->cache_logs_ticket[$i]['fk_user_create'],
-				'fk_user_action_string' => dolGetFirstLastname($user_action->firstname, $user_action->lastname),
-				'message' => $this->ticket->cache_logs_ticket[$i]['message'],
-				'datec' => $this->ticket->cache_logs_ticket[$i]['datec'],
-				);
-				$i++;
-			}
-			$this->ticket->history = $history;
-		}
-
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -242,7 +216,9 @@ class Tickets extends DolibarrApi
 			$socid = DolibarrApiAccess::$user->socid;
 		}
 
+		$search_sale = null;
 		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
 		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
@@ -274,8 +250,9 @@ class Tickets extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -376,7 +353,7 @@ class Tickets extends DolibarrApi
 		}
 		$this->ticket->message = $ticketMessageText;
 		if (!$this->ticket->createTicketMessage(DolibarrApiAccess::$user)) {
-			throw new RestException(500);
+			throw new RestException(500, 'Error when creating ticket');
 		}
 		return $this->ticket->id;
 	}
@@ -437,7 +414,7 @@ class Tickets extends DolibarrApi
 		}
 
 		if (!$this->ticket->delete($id)) {
-			throw new RestException(500);
+			throw new RestException(500, 'Error when deleting ticket');
 		}
 
 		return array(

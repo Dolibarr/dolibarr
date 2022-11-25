@@ -25,6 +25,7 @@
  *  \brief      Tab for notes on an ECM file
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
@@ -47,9 +48,11 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -78,7 +81,7 @@ if (!$urlfile) {
 // Load ecm object
 $ecmdir = new EcmDirectory($db);
 $result = $ecmdir->fetch(GETPOST("section", 'alpha'));
-if (!$result > 0) {
+if (!($result > 0)) {
 	dol_print_error($db, $ecmdir->error);
 	exit;
 }

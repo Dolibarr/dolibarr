@@ -10,16 +10,12 @@
 	font-style: normal;
 	font-variant: normal;
 	text-rendering: auto;
-	line-height: 23px;
-	font-size: <?php echo $topMenuFontSize; ?>;
+	line-height: 28px;
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
-	color: #<?php echo $colortextbackhmenu; ?>;
-}
-
-.fa-15x {
-	font-size: 1.5em;
+	color: var(--colortextbackhmenu);
+	/* font-size: <?php echo $topMenuFontSize; ?>; */
 }
 
 div.mainmenu.menu {
@@ -53,7 +49,7 @@ div.mainmenu.bank::before {
 	content: "\f19c";
 }
 
-<?php if ($conf->global->MAIN_FEATURES_LEVEL == 2) { ?>
+<?php if (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 2) { ?>
 /* TESTING USAGE OF SVG WITHOUT FONT */
 div.mainmenu.cashdesk {
 	line-height: 26px;

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
-FONTFORPDF=helvetica
-FONTSIZEFORPDF=10
+FONTFORPDF=DejaVuSans
+FONTSIZEFORPDF=9
 SeparatorDecimal=.
 SeparatorThousand=,
 FormatDateShort=%m/%d/%Y

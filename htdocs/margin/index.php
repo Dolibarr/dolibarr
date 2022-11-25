@@ -22,14 +22,15 @@
  *	\brief      Page d'index du module margin
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 if ($user->rights->produit->lire) {
 	$page = 'productMargins';
-} elseif ($user->rights->societe->lire) {
+} elseif ($user->hasRight('societe', 'lire')) {
 	$page = 'customerMargins';
 } else {
 	$page = 'agentMargins';
 }
 
-header('Location: '.dol_buildpath('/margin/'.$page.'.php', 1));
+header('Location: '.DOL_URL_ROOT.'/margin/'.$page.'.php');

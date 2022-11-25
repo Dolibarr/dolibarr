@@ -21,6 +21,7 @@
  *  \brief	  Setup page of product lot module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -36,6 +37,9 @@ if (!$user->admin || (empty($conf->productbatch->enabled)))
 $action = GETPOST('action', 'alpha');
 $value = GETPOST('value', 'alpha');
 
+$error = 0;
+
+
 /*
  * Actions
  */
@@ -46,9 +50,10 @@ if ($action == 'updateMaskLot') {
 	$maskconstbatch = GETPOST('maskconstLot', 'alpha');
 	$maskbatch = GETPOST('maskLot', 'alpha');
 
-	if ($maskconstbatch) $res = dolibarr_set_const($db, $maskconstbatch, $maskbatch, 'chaine', 0, '', $conf->entity);
-
-	if (!$res > 0) $error++;
+	if ($maskconstbatch) {
+		$res = dolibarr_set_const($db, $maskconstbatch, $maskbatch, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) $error++;
+	}
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -59,9 +64,10 @@ if ($action == 'updateMaskLot') {
 	$maskconstbatch = GETPOST('maskconstSN', 'alpha');
 	$maskbatch = GETPOST('maskSN', 'alpha');
 
-	if ($maskconstbatch) $res = dolibarr_set_const($db, $maskconstbatch, $maskbatch, 'chaine', 0, '', $conf->entity);
-
-	if (!$res > 0) $error++;
+	if ($maskconstbatch) {
+		$res = dolibarr_set_const($db, $maskconstbatch, $maskbatch, 'chaine', 0, '', $conf->entity);
+		if ($res <= 0) $error++;
+	}
 
 	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -161,7 +167,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
 							if ($conf->global->PRODUCTBATCH_LOT_ADDON == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodlot&amp;value='.$file.'">';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodlot&token='.newToken().'&value='.urlencode($file).'">';
 								print img_picto($langs->trans("Disabled"), 'switch_off');
 								print '</a>';
 							}
@@ -253,7 +259,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
 							if ($conf->global->PRODUCTBATCH_SN_ADDON == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
-								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodsn&amp;value='.$file.'">';
+								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodsn&token='.newToken().'&value='.urlencode($file).'">';
 								print img_picto($langs->trans("Disabled"), 'switch_off');
 								print '</a>';
 							}

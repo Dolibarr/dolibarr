@@ -23,6 +23,8 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -78,7 +80,7 @@ class BOM extends CommonObject
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
-	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'maxwidth200', 'wordbreak', 'tdoverflowmax200'
+	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
 	 *  'help' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
@@ -94,10 +96,10 @@ class BOM extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>5),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'noteditable'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of BOM", 'showoncombobox'=>'1',),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'searchall'=>1, 'showoncombobox'=>'2', 'autofocusoncreate'=>1, 'css'=>'maxwidth300', 'csslist'=>'tdoverflowmax200'),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'noteditable'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of BOM", 'showoncombobox'=>'1', 'csslist'=>'nowraponall'),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'notnull'=>1, 'searchall'=>1, 'showoncombobox'=>'2', 'autofocusoncreate'=>1, 'css'=>'minwidth300 maxwidth400', 'csslist'=>'tdoverflowmax200'),
 		'bomtype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing', 1=>'Disassemble'), 'css'=>'minwidth175', 'csslist'=>'minwidth175 center'),
 		//'bomtype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'position'=>32, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing')),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1:(finished IS NULL or finished <> 0)', 'label'=>'Product', 'picto'=>'product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax100'),
@@ -239,7 +241,7 @@ class BOM extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -400,6 +402,58 @@ class BOM extends CommonObject
 	}
 
 	/**
+	 * Load object lines in memory from the database by type of product
+	 *
+	 * 	@param int    $typeproduct   0 type product, 1 type service
+
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchLinesbytypeproduct($typeproduct = 0)
+	{
+		$this->lines = array();
+
+		$objectlineclassname = get_class($this).'Line';
+		if (!class_exists($objectlineclassname)) {
+			$this->error = 'Error, class '.$objectlineclassname.' not found during call of fetchLinesCommon';
+			return -1;
+		}
+
+		$objectline = new $objectlineclassname($this->db);
+
+		$sql = "SELECT ".$objectline->getFieldList('l');
+		$sql .= " FROM ".$this->db->prefix().$objectline->table_element." as l";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product as p ON p.rowid = l.fk_product";
+		$sql .= " WHERE l.fk_".$this->db->escape($this->element)." = ".((int) $this->id);
+		$sql .= " AND p.fk_product_type = ". ((int) $typeproduct);
+		if (isset($objectline->fields['position'])) {
+			$sql .= $this->db->order('position', 'ASC');
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num_rows = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_rows) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$newline = new $objectlineclassname($this->db);
+					$newline->setVarsFromFetchObj($obj);
+
+					$this->lines[] = $newline;
+				}
+				$i++;
+			}
+
+			return $num_rows;
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+	}
+
+
+	/**
 	 * Load list of objects in memory from the database.
 	 *
 	 * @param  string      $sortorder    Sort Order
@@ -431,7 +485,7 @@ class BOM extends CommonObject
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sqlwhere[] = $key.' = '.((int) $value);
+					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
@@ -442,14 +496,14 @@ class BOM extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -503,6 +557,213 @@ class BOM extends CommonObject
 	}
 
 	/**
+	 * Add an BOM line into database (linked to BOM)
+	 *
+	 * @param	int		$fk_product				Id of product
+	 * @param	float	$qty					Quantity
+	 * @param	int		$qty_frozen				Frozen quantity
+	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
+	 * @param	float	$efficiency				Efficiency in MO
+	 * @param	int		$position				Position of BOM-Line in BOM-Lines
+	 * @param	int		$fk_bom_child			Id of BOM Child
+	 * @param	string	$import_key				Import Key
+	 * @param	string	$fk_unit				Unit
+	 * @return	int								<0 if KO, Id of created object if OK
+	 */
+	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '')
+	{
+		global $mysoc, $conf, $langs, $user;
+
+		$logtext = "::addLine bomid=$this->id, qty=$qty, fk_product=$fk_product, qty_frozen=$qty_frozen, disable_stock_change=$disable_stock_change, efficiency=$efficiency";
+		$logtext .= ", fk_bom_child=$fk_bom_child, import_key=$import_key";
+		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
+
+		if ($this->statut == self::STATUS_DRAFT) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+
+			// Clean parameters
+			if (empty($qty)) {
+				$qty = 0;
+			}
+			if (empty($qty_frozen)) {
+				$qty_frozen = 0;
+			}
+			if (empty($disable_stock_change)) {
+				$disable_stock_change = 0;
+			}
+			if (empty($efficiency)) {
+				$efficiency = 1.0;
+			}
+			if (empty($fk_bom_child)) {
+				$fk_bom_child = null;
+			}
+			if (empty($import_key)) {
+				$import_key = null;
+			}
+			if (empty($position)) {
+				$position = -1;
+			}
+
+			$qty = price2num($qty);
+			$efficiency = price2num($efficiency);
+			$position = price2num($position);
+
+			$this->db->begin();
+
+			// Rank to use
+			$rangMax = $this->line_max();
+			$rankToUse = $position;
+			if ($rankToUse <= 0 or $rankToUse > $rangMax) { // New line after existing lines
+				$rankToUse = $rangMax + 1;
+			} else { // New line between the existing lines
+				foreach ($this->lines as $bl) {
+					if ($bl->position >= $rankToUse) {
+						$bl->position++;
+						$bl->update($user);
+					}
+				}
+			}
+
+			// Insert line
+			$this->line = new BOMLine($this->db);
+
+			$this->line->context = $this->context;
+
+			$this->line->fk_bom = $this->id;
+			$this->line->fk_product = $fk_product;
+			$this->line->qty = $qty;
+			$this->line->qty_frozen = $qty_frozen;
+			$this->line->disable_stock_change = $disable_stock_change;
+			$this->line->efficiency = $efficiency;
+			$this->line->fk_bom_child = $fk_bom_child;
+			$this->line->import_key = $import_key;
+			$this->line->position = $rankToUse;
+			$this->line->fk_unit = $fk_unit;
+
+			$result = $this->line->create($user);
+
+			if ($result > 0) {
+				$this->calculateCosts();
+				$this->db->commit();
+				return $result;
+			} else {
+				$this->error = $this->line->error;
+				dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -2;
+			}
+		} else {
+			dol_syslog(get_class($this)."::addLine status of BOM must be Draft to allow use of ->addLine()", LOG_ERR);
+			return -3;
+		}
+	}
+
+	/**
+	 * Update an BOM line into database
+	 *
+	 * @param 	int		$rowid					Id of line to update
+	 * @param	float	$qty					Quantity
+	 * @param	int		$qty_frozen				Frozen quantity
+	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
+	 * @param	float	$efficiency				Efficiency in MO
+	 * @param	int		$position				Position of BOM-Line in BOM-Lines
+	 * @param	string	$import_key				Import Key
+	 * @param	int		$fk_unit					Unit of line
+	 * @return	int								<0 if KO, Id of updated BOM-Line if OK
+	 */
+	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0)
+	{
+		global $mysoc, $conf, $langs, $user;
+
+		$logtext = "::updateLine bomid=$this->id, qty=$qty, qty_frozen=$qty_frozen, disable_stock_change=$disable_stock_change, efficiency=$efficiency";
+		$logtext .= ", import_key=$import_key";
+		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
+
+		if ($this->statut == self::STATUS_DRAFT) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+
+			// Clean parameters
+			if (empty($qty)) {
+				$qty = 0;
+			}
+			if (empty($qty_frozen)) {
+				$qty_frozen = 0;
+			}
+			if (empty($disable_stock_change)) {
+				$disable_stock_change = 0;
+			}
+			if (empty($efficiency)) {
+				$efficiency = 1.0;
+			}
+			if (empty($import_key)) {
+				$import_key = null;
+			}
+			if (empty($position)) {
+				$position = -1;
+			}
+
+			$qty = price2num($qty);
+			$efficiency = price2num($efficiency);
+			$position = price2num($position);
+
+			$this->db->begin();
+
+			//Fetch current line from the database and then clone the object and set it in $oldline property
+			$line = new BOMLine($this->db);
+			$line->fetch($rowid);
+			$line->fetch_optionals();
+
+			$staticLine = clone $line;
+			$line->oldcopy = $staticLine;
+			$this->line = $line;
+			$this->line->context = $this->context;
+
+			// Rank to use
+			$rankToUse = (int) $position;
+			if ($rankToUse != $line->oldcopy->position) { // check if position have a new value
+				foreach ($this->lines as $bl) {
+					if ($bl->position >= $rankToUse AND $bl->position < ($line->oldcopy->position + 1)) { // move rank up
+						$bl->position++;
+						$bl->update($user);
+					}
+					if ($bl->position <= $rankToUse AND $bl->position > ($line->oldcopy->position)) { // move rank down
+						$bl->position--;
+						$bl->update($user);
+					}
+				}
+			}
+
+
+			$this->line->fk_bom = $this->id;
+			$this->line->qty = $qty;
+			$this->line->qty_frozen = $qty_frozen;
+			$this->line->disable_stock_change = $disable_stock_change;
+			$this->line->efficiency = $efficiency;
+			$this->line->import_key = $import_key;
+			$this->line->position = $rankToUse;
+			if (!empty($fk_unit)) {
+				$this->line->fk_unit = $fk_unit;
+			}
+
+			$result = $this->line->update($user);
+
+			if ($result > 0) {
+				$this->calculateCosts();
+				$this->db->commit();
+				return $result;
+			} else {
+				$this->error = $this->line->error;
+				dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -2;
+			}
+		} else {
+			dol_syslog(get_class($this)."::addLine status of BOM must be Draft to allow use of ->addLine()", LOG_ERR);
+			return -3;
+		}
+	}
+
+	/**
 	 *  Delete a line of object in database
 	 *
 	 *	@param  User	$user       User that delete
@@ -517,7 +778,38 @@ class BOM extends CommonObject
 			return -2;
 		}
 
-		return $this->deleteLineCommon($user, $idline, $notrigger);
+		$this->db->begin();
+
+		//Fetch current line from the database and then clone the object and set it in $oldline property
+		$line = new BOMLine($this->db);
+		$line->fetch($idline);
+		$line->fetch_optionals();
+
+		$staticLine = clone $line;
+		$line->oldcopy = $staticLine;
+		$this->line = $line;
+		$this->line->context = $this->context;
+
+		$result = $this->line->delete($user, $notrigger);
+
+		//Positions (rank) reordering
+		foreach ($this->lines as $bl) {
+			if ($bl->position > ($line->oldcopy->position)) { // move rank down
+				$bl->position--;
+				$bl->update($user);
+			}
+		}
+
+		if ($result > 0) {
+			$this->calculateCosts();
+			$this->db->commit();
+			return $result;
+		} else {
+			$this->error = $this->line->error;
+			dol_syslog(get_class($this)."::addLine error=".$this->error, LOG_ERR);
+			$this->db->rollback();
+			return -2;
+		}
 	}
 
 	/**
@@ -589,8 +881,8 @@ class BOM extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->create))
-			|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->create))
+			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		{
 			$this->error='NotEnoughPermissions';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -701,8 +993,8 @@ class BOM extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -725,8 +1017,8 @@ class BOM extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -749,8 +1041,8 @@ class BOM extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -789,6 +1081,15 @@ class BOM extends CommonObject
 		if (isset($this->label)) {
 			$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		}
+		if (!empty($this->fk_product) && $this->fk_product > 0) {
+			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			$product = new Product($db);
+			$resultFetch = $product->fetch($this->fk_product);
+			if ($resultFetch > 0) {
+				$label .= "<br><b>".$langs->trans("Product").'</b>: '.$product->ref.' - '.$product->label;
+			}
+		}
+
 
 		$url = DOL_URL_ROOT.'/bom/bom_card.php?id='.$this->id;
 
@@ -811,13 +1112,6 @@ class BOM extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('bomdao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -838,7 +1132,7 @@ class BOM extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('bomdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -907,27 +1201,11 @@ class BOM extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 
 			$this->db->free($result);
@@ -949,8 +1227,8 @@ class BOM extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_bom = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
+			$this->error = $objectline->error;
+			$this->errors = $objectline->errors;
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -1042,9 +1320,18 @@ class BOM extends CommonObject
 	 */
 	public function calculateCosts()
 	{
+		global $conf, $hookmanager;
+
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$this->unit_cost = 0;
 		$this->total_cost = 0;
+
+		$parameters=array();
+		$reshook = $hookmanager->executeHooks('calculateCostsBom', $parameters, $this); // Note that $action and $object may have been modified by hook
+
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
+		}
 
 		if (is_array($this->lines) && count($this->lines)) {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -1054,27 +1341,164 @@ class BOM extends CommonObject
 			foreach ($this->lines as &$line) {
 				$tmpproduct->cost_price = 0;
 				$tmpproduct->pmp = 0;
-
 				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
-				if ($result < 0) {
-					$this->error = $tmpproduct->error;
-					return -1;
-				}
-				$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
-				if (empty($line->unit_cost)) {
-					if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
-						$line->unit_cost = $productFournisseur->fourn_unitprice;
+
+				if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
+					if (empty($line->fk_bom_child)) {
+						if ($result < 0) {
+							$this->error = $tmpproduct->error;
+							return -1;
+						}
+						$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+						if (empty($line->unit_cost)) {
+							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+								$line->unit_cost = $productFournisseur->fourn_unitprice;
+							}
+						}
+
+						$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
+
+						$this->total_cost += $line->total_cost;
+					} else {
+						$bom_child = new BOM($this->db);
+						$res = $bom_child->fetch($line->fk_bom_child);
+						if ($res > 0) {
+							$bom_child->calculateCosts();
+							$line->childBom[] = $bom_child;
+							$this->total_cost += $bom_child->total_cost * $line->qty;
+						} else {
+							$this->error = $bom_child->error;
+							return -2;
+						}
 					}
+				} else {
+					//Convert qty to hour
+					$unit = measuringUnitString($line->fk_unit, '', '', 1);
+					$qty = convertDurationtoHour($line->qty, $unit);
+
+					if (isModEnabled('workstation') && !empty($tmpproduct->fk_default_workstation)) {
+						$workstation = new Workstation($this->db);
+						$res = $workstation->fetch($tmpproduct->fk_default_workstation);
+
+						if ($res > 0) $line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+						else {
+							$this->error = $workstation->error;
+								return -3;
+						}
+					} else {
+						$line->total_cost = price2num($qty * $tmpproduct->cost_price, 'MT');
+					}
+
+					$this->total_cost += $line->total_cost;
 				}
-
-				$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
-
-				$this->total_cost += $line->total_cost;
 			}
 
 			$this->total_cost = price2num($this->total_cost, 'MT');
-			if ($this->qty) {
+
+			if ($this->qty > 0) {
 				$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+			} elseif ($this->qty < 0) {
+				$this->unit_cost = price2num($this->total_cost * $this->qty, 'MU');
+			}
+		}
+	}
+
+	/**
+	 * Function used to replace a product id with another one.
+	 *
+	 * @param DoliDB $db Database handler
+	 * @param int $origin_id Old product id
+	 * @param int $dest_id New product id
+	 * @return bool
+	 */
+	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	{
+		$tables = array(
+			'bom_bomline'
+		);
+
+		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 * Get Net needs by product
+	 *
+	 * @param array $TNetNeeds Array of ChildBom and infos linked to
+	 * @param int   $qty       qty needed
+	 * @return void
+	 */
+	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
+	{
+		if (!empty($this->lines)) {
+			foreach ($this->lines as $line) {
+				if (!empty($line->childBom)) {
+					foreach ($line->childBom as $childBom) $childBom->getNetNeeds($TNetNeeds, $line->qty*$qty);
+				} else {
+					if (empty($TNetNeeds[$line->fk_product])) {
+						$TNetNeeds[$line->fk_product] = 0;
+					}
+					$TNetNeeds[$line->fk_product] += $line->qty*$qty;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get Net needs Tree by product or bom
+	 *
+	 * @param array $TNetNeeds Array of ChildBom and infos linked to
+	 * @param int   $qty       qty needed
+	 * @param int   $level     level of recursivity
+	 * @return void
+	 */
+	public function getNetNeedsTree(&$TNetNeeds = array(), $qty = 0, $level = 0)
+	{
+		if (!empty($this->lines)) {
+			foreach ($this->lines as $line) {
+				if (!empty($line->childBom)) {
+					foreach ($line->childBom as $childBom) {
+						$TNetNeeds[$childBom->id]['bom'] = $childBom;
+						$TNetNeeds[$childBom->id]['parentid'] = $this->id;
+						$TNetNeeds[$childBom->id]['qty'] = $line->qty*$qty;
+						$TNetNeeds[$childBom->id]['level'] = $level;
+						$childBom->getNetNeedsTree($TNetNeeds, $line->qty*$qty, $level+1);
+					}
+				} else {
+					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
+					$TNetNeeds[$this->id]['product'][$line->fk_product]['level'] = $level;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Recursively retrieves all parent bom in the tree that leads to the $bom_id bom
+	 *
+	 * @param 	array	$TParentBom		We put all found parent bom in $TParentBom
+	 * @param 	int		$bom_id			ID of bom from which we want to get parent bom ids
+	 * @param 	int		$level		Protection against infinite loop
+	 * @return 	void
+	 */
+	public function getParentBomTreeRecursive(&$TParentBom, $bom_id = '', $level = 1)
+	{
+
+		// Protection against infinite loop
+		if ($level > 1000) {
+			return;
+		}
+
+		if (empty($bom_id)) $bom_id=$this->id;
+
+		$sql = 'SELECT l.fk_bom, b.label
+				FROM '.MAIN_DB_PREFIX.'bom_bomline l
+				INNER JOIN '.MAIN_DB_PREFIX.$this->table_element.' b ON b.rowid = l.fk_bom
+				WHERE fk_bom_child = '.((int) $bom_id);
+
+		$resql = $this->db->query($sql);
+		if (!empty($resql)) {
+			while ($res = $this->db->fetch_object($resql)) {
+				$TParentBom[$res->fk_bom] = $res->fk_bom;
+				$this->getParentBomTreeRecursive($TParentBom, $res->fk_bom, $level+1);
 			}
 		}
 	}
@@ -1139,11 +1563,13 @@ class BOMLine extends CommonObjectLine
 		'rowid' => array('type'=>'integer', 'label'=>'LineID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
 		'fk_bom' => array('type'=>'integer:BillOfMaterials:societe/class/bom.class.php', 'label'=>'BillOfMaterials', 'enabled'=>1, 'visible'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1,),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
+		'fk_bom_child' => array('type'=>'integer:BOM:bom/class/bom.class.php', 'label'=>'BillOfMaterials', 'enabled'=>1, 'visible'=>-1, 'position'=>40, 'notnull'=>-1,),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
 		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'notnull'=>1, 'isameasure'=>'1',),
 		'qty_frozen' => array('type'=>'smallint', 'label'=>'QuantityFrozen', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>105, 'css'=>'maxwidth50imp', 'help'=>'QuantityConsumedInvariable'),
 		'disable_stock_change' => array('type'=>'smallint', 'label'=>'DisableStockChange', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>108, 'css'=>'maxwidth50imp', 'help'=>'DisableStockChangeHelp'),
 		'efficiency' => array('type'=>'double(24,8)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfEfficiencyConsumedMeans'),
+		'fk_unit' => array('type'=>'integer', 'label'=>'Unit', 'enabled'=>1, 'visible'=>1, 'position'=>120, 'notnull'=>-1,),
 		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 	);
@@ -1162,6 +1588,11 @@ class BOMLine extends CommonObjectLine
 	 * @var int Id of product
 	 */
 	public $fk_product;
+
+	/**
+	 * @var int Id of parent bom
+	 */
+	public $fk_bom_child;
 
 	/**
 	 * @var string description
@@ -1199,6 +1630,12 @@ class BOMLine extends CommonObjectLine
 
 
 	/**
+	 * @var Bom     array of Bom in line
+	 */
+	public $childBom = array();
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param DoliDb $db Database handler
@@ -1212,7 +1649,7 @@ class BOMLine extends CommonObjectLine
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -1259,7 +1696,7 @@ class BOMLine extends CommonObjectLine
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		//if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();
+		//if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
 
@@ -1295,25 +1732,25 @@ class BOMLine extends CommonObjectLine
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
-					$sqlwhere[] = $key.'='.$value;
+					$sqlwhere[] = $key." = ".((int) $value);
 				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
 				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .= ' '.$this->db->plimit($limit, $offset);
+			$sql .= $this->db->plimit($limit, $offset);
 		}
 
 		$resql = $this->db->query($sql);
@@ -1390,7 +1827,7 @@ class BOMLine extends CommonObjectLine
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$url = dol_buildpath('/bom/bomline_card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT.'/bom/bomline_card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -1411,13 +1848,6 @@ class BOMLine extends CommonObjectLine
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-
-			/*
-			 $hookmanager->initHooks(array('bomlinedao'));
-			 $parameters=array('id'=>$this->id);
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-			 */
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
@@ -1438,7 +1868,7 @@ class BOMLine extends CommonObjectLine
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('bomlinedao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1491,29 +1921,11 @@ class BOMLine extends CommonObjectLine
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
-
 			$this->db->free($result);
 		} else {
 			dol_print_error($this->db);

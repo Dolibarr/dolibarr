@@ -21,6 +21,7 @@
  *		\brief      List of IRPF payments
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
@@ -63,6 +64,7 @@ if ($result) {
 	$i = 0;
 	$total = 0;
 
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td class="nowrap" align="left">'.$langs->trans("Ref").'</td>';
@@ -85,7 +87,7 @@ if ($result) {
 		print '<td class="left">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
 		$total = $total + $obj->amount;
 
-		print "<td align=\"right\">".price($obj->amount)."</td>";
+		print '<td class="right nowraponall"><span class="amount">'.price($obj->amount).'</span></td>';
 		print "</tr>\n";
 
 		$i++;
@@ -94,6 +96,8 @@ if ($result) {
 	print '<td class="right"><span class="amount">'.price($total).'</span></td></tr>';
 
 	print "</table>";
+	print '</div>';
+
 	$db->free($result);
 } else {
 	dol_print_error($db);
