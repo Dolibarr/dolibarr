@@ -284,12 +284,41 @@ if (empty($reshook) && $action == 'add') {
 		$adh->morphy      = getDolGlobalString("MEMBER_NEWFORM_FORCEMORPHY", GETPOST('morphy'));
 		$adh->birth       = $birthday;
 
+		$adh->ip = getUserRemoteIP();
+
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
+
+		// Calculate nb of post for IP
+		$nb_post_ip = 0;
+		if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+			$sql = "SELECT COUNT(ref) as nb_adh";
+			$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
+			$sql .= " WHERE ip = '".$db->escape($adh->ip)."'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$i++;
+					$obj = $db->fetch_object($resql);
+					$nb_post_ip = $obj->nb_adh;
+				}
+			}
+		}
+
 
 		// Fill array 'array_options' with data from add form
 		$extrafields->fetch_name_optionals_label($adh->table_element);
 		$ret = $extrafields->setOptionalsFromPost(null, $adh);
 		if ($ret < 0) {
 			$error++;
+			$errmsg .= $adh->error;
+		}
+
+		if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+			$error++;
+			$errmsg .= $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
+			array_push($adh->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
 		}
 
 		if (!$error) {
