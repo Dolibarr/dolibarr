@@ -1207,3 +1207,4 @@ CreatedByPublicPortal=Créé à partir du portail public
 UserAgent=User Agent
 InternalUser=Utilisateur interne
 ExternalUser=Utilisateur externe
+WarningUserDifferentContactSocid=Contact non relié à un tiers. Le tiers ne sera pas enregistré.
