@@ -1123,7 +1123,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = ".((int) $object->id);
-	$sql .= " AND ((t.fk_user_creat = ".(int) $user->id." AND t.priv = 1) OR t.priv = 0)";
+	$sql .= " AND ((t.fk_user_creat = ".((int) $user->id)." AND t.priv = 1) OR t.priv = 0)";
 	if ($search_rowid) {
 		$sql .= natural_search('t.rowid', $search_rowid);
 	}
