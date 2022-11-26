@@ -59,10 +59,14 @@ class Mo extends CommonObject
 	 */
 	public $picto = 'mrp';
 
-	/** @var double cost of the object related to toconsume  role in lines  	*/
+	/**
+	 * @var double cost of the object related to toconsume role in lines
+	 */
 	public $expected_cost;
 
-	/** @var double cost of the object related to consumed  role in lines  	*/
+	/**
+	 * @var double cost of the object related to consumed role in lines
+	 */
 	public $real_cost;
 
 	const STATUS_DRAFT = 0;
@@ -1569,114 +1573,62 @@ class Mo extends CommonObject
 		}
 	}
 
-
 	/**
-	 * * return the product cost
-	 *
-	 * Rules
-	 *  COST PRICE
-	 *  OTHERWISE PMP
-	 *  OTHERWISE LOWEST SUPPLIER PRICE
-	 *
-	 * @param $tmpProduct temp product
-	 *
-	 * @return float|int
-	 */
-	public  function getProductUnitCost(&$tmpProduct)
-	{
-		global  $langs;
-
-		$uCost = (!empty(price2num($tmpProduct->cost_price))) ? price2num($tmpProduct->cost_price) : price2num($tmpProduct->pmp);
-		if (empty($uCost)) {
-			$productFournisseur = new ProductFournisseur($this->db);
-			if (is_a($productFournisseur, 'ProductFournisseur')) {
-				if ($productFournisseur->find_min_price_product_fournisseur($tmpProduct->id) > 0) {
-					$uCost = $productFournisseur->fourn_unitprice;
-				}
-			} else {
-				setEventMessage($langs->trans('ErrorLoadProductSupplierClass'));
-			}
-		}
-
-		return $uCost;
-	}
-
-
-
-	/**
-	 * calculate the real_cost and expected_cost for the object
+	 * Calculate the real_cost and expected_cost for the object
+	 * @param bool $expected Calculate expected cost
+	 * @param bool $real Calculate real cost
 	 * @return void
 	 */
-	public function calculateCostLines()
+	public function calculateCostLines($expected = false, $real = false)
 	{
-		global $db, $langs;
-		// foreach lines
+		global $langs, $conf;
 		if (is_array($this->lines) && count($this->lines)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-			$tmpproduct = new Product($db);
-			$Texpected = array();
-			$Treal = array();
-			$totalRealCost = 0;
-			$totalExpectedCost = 0;
+			$this->expected_cost = 0;
+			$this->real_cost = 0;
 
 			foreach ($this->lines as &$line) {
-				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
-				if ($result > 0) {
+				$res = $line->fetch_product();
+				if ($res > 0) {
 					// PRODUCT
-					if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
-						$productunitCost = $this->getProductUnitCost($tmpproduct);
+					if ($line->product->type == Product::TYPE_PRODUCT) {
+						if (empty($conf->global->MARGIN_TYPE)) $conf->global->MARGIN_TYPE = 'costprice'; // We use the same rule as in the module margin, forced to costprice if module is not enabled
+						$productUnitCost = $line->product->defineBuyPrice(0, 0, $line->product->id);
 
-						if ($line->role == SELF::PRODUCTION_ROLE_TO_CONSUME) {
+						if ($expected && $line->role == SELF::PRODUCTION_ROLE_TO_CONSUME) {
 							// sql
-							$sql  = 'SELECT SUM(m.qty) as Allqty FROM '.$this->db->prefix().'mrp_production as m';
+							$sql  = 'SELECT SUM(m.qty) as total_qty_toconsume FROM '.$this->db->prefix().'mrp_production as m';
 							$sql .= ' WHERE m.fk_mo = '.(int) $this->id;
-							$sql .= ' AND  m.fk_product = '.(int) $line->fk_product;
-							$sql .= ' AND  m.role = "'.SELF::PRODUCTION_ROLE_TO_CONSUME.'"';
+							$sql .= ' AND m.fk_product = '.(int) $line->fk_product;
+							$sql .= ' AND m.role = "'.SELF::PRODUCTION_ROLE_TO_CONSUME.'"';
 
 							$resql = $this->db->query($sql);
 
 							if ($resql) {
 								$obj = $this->db->fetch_object($resql);
-
-								if (!$Texpected[$line->fk_product]) {
-									$Texpected[$line->fk_product]['expectedCost'] = $productunitCost * $obj->Allqty;
-									$Texpected[$line->fk_product]['Allqty'] = $obj->Allqty;
-									$Texpected[$line->fk_product]['productunitCost'] = $productunitCost;
-								}
+								$this->expected_cost += $productUnitCost * $obj->total_qty_toconsume;
 							}
 						}
 
-						if ($line->role == SELF::PRODUCTION_ROLE_CONSUMED) {
-							$sqlConsumed = 'SELECT SUM(m.qty) as Allqty FROM ' . $this->db->prefix() . 'mrp_production as m';
+						if ($real && $line->role == SELF::PRODUCTION_ROLE_CONSUMED) {
+							$sqlConsumed = 'SELECT SUM(m.qty) as total_qty_consumed FROM ' . $this->db->prefix() . 'mrp_production as m';
 							$sqlConsumed .= ' WHERE m.fk_mo = ' . (int) $this->id;
-							$sqlConsumed .= ' AND  m.fk_product = ' . (int) $line->fk_product;
-							$sqlConsumed .= ' AND  m.role = "' . SELF::PRODUCTION_ROLE_CONSUMED . '"';
+							$sqlConsumed .= ' AND m.fk_product = ' . (int) $line->fk_product;
+							$sqlConsumed .= ' AND m.role = "' . SELF::PRODUCTION_ROLE_CONSUMED . '"';
 							$resql = $this->db->query($sqlConsumed);
 
 							if ($resql) {
 								$obj = $this->db->fetch_object($resql);
-
-								if (!$Treal[$line->fk_product]) {
-									$Treal[$line->fk_product]['realCost'] = $productunitCost * $obj->Allqty;
-								}
+								$this->real_cost += $productUnitCost * $obj->total_qty_consumed;
 							}
 						}
 
 						// SERVICE
-					} elseif ($tmpproduct->type == $tmpproduct::TYPE_SERVICE) {
+					} elseif ($line->product->type == Product::TYPE_SERVICE) {
 						// This part is to be considered in a later development.
 					}
 				}
 			}
-
-			foreach ($Texpected as $cost) {
-				$totalExpectedCost += $cost['expectedCost'];
-			}
-			foreach ($Treal as $cost) {
-				$totalRealCost += $cost['realCost'];
-			}
-
-
 
 			// we could use the update function here. via
 			// $this->expected_cost = price2num($totalExpectedCost,'MT');
@@ -1684,8 +1636,8 @@ class Mo extends CommonObject
 			// but we should first check the status and change it on the fly if necessary to restore it after the update.
 			// we prefer to go directly through a request to avoid this.
 			$sql = "UPDATE ".MAIN_DB_PREFIX."mrp_mo";
-			$sql .= " SET expected_cost = ".doubleval(price2num($totalExpectedCost, 'MT')). " ,";
-			$sql .= " real_cost = ".doubleval(price2num($totalRealCost, 'MT'));
+			$sql .= " SET expected_cost = ".doubleval(price2num($this->expected_cost, 'MT')). " ,";
+			$sql .= " real_cost = ".doubleval(price2num($this->real_cost, 'MT'));
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
