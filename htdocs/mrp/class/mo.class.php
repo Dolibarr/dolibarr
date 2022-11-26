@@ -60,7 +60,7 @@ class Mo extends CommonObject
 	public $picto = 'mrp';
 
 	/** @var double cost of the object related to toconsume  role in lines  	*/
-	public $predicted_cost;
+	public $expected_cost;
 
 	/** @var double cost of the object related to consumed  role in lines  	*/
 	public $real_cost;
@@ -132,8 +132,8 @@ class Mo extends CommonObject
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>2, 'position'=>1000, 'default'=>0, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '2'=>'InProgress', '3'=>'StatusMOProduced', '9'=>'Canceled')),
 		'fk_parent_line' => array('type'=>'integer:MoLine:mrp/class/mo.class.php', 'label'=>'ParentMo', 'enabled'=>1, 'visible'=>0, 'position'=>1020, 'default'=>0, 'notnull'=>0, 'index'=>1,'showoncombobox'=>0),
-		'predicted_cost' => array('type'=>'real', 'label'=>'predictedCost', 'enabled'=>1, 'visible'=>5, 'position'=>1041, 'notnull'=>1, 'comment'=>"real cost for of", 'css'=>'width75', 'default'=>1),
-		'real_cost' => array('type'=>'real', 'label'=>'realCost', 'enabled'=>1, 'visible'=>5, 'position'=>1042, 'notnull'=>1, 'comment'=>"real cost for of", 'css'=>'width75', 'default'=>1),
+		'expected_cost' => array('type'=>'real', 'label'=>'ExpectedCost', 'enabled'=>1, 'visible'=>5, 'position'=>1041, 'notnull'=>1, 'comment'=>"real cost for of", 'css'=>'width75', 'default'=>1),
+		'real_cost' => array('type'=>'real', 'label'=>'RealCost', 'enabled'=>1, 'visible'=>5, 'position'=>1042, 'notnull'=>1, 'comment'=>"real cost for of", 'css'=>'width75', 'default'=>1),
 	);
 	public $rowid;
 	public $entity;
@@ -1594,7 +1594,7 @@ class Mo extends CommonObject
 					$uCost = $productFournisseur->fourn_unitprice;
 				}
 			} else {
-				setEventMessage($langs->trans('errorLoadProductSupplierClass'));
+				setEventMessage($langs->trans('ErrorLoadProductSupplierClass'));
 			}
 		}
 
@@ -1604,7 +1604,7 @@ class Mo extends CommonObject
 
 
 	/**
-	 * calculate the real_cost and predicted_cost for the object
+	 * calculate the real_cost and expected_cost for the object
 	 * @return void
 	 */
 	public function calculateCostLines()
@@ -1614,10 +1614,10 @@ class Mo extends CommonObject
 		if (is_array($this->lines) && count($this->lines)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$tmpproduct = new Product($db);
-			$Tpredicted = array();
+			$Texpected = array();
 			$Treal = array();
 			$totalRealCost = 0;
-			$totalPredictedCost = 0;
+			$totalExpectedCost = 0;
 
 			foreach ($this->lines as &$line) {
 				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
@@ -1638,10 +1638,10 @@ class Mo extends CommonObject
 							if ($resql) {
 								$obj = $this->db->fetch_object($resql);
 
-								if (!$Tpredicted[$line->fk_product]) {
-									$Tpredicted[$line->fk_product]['predictedCost'] = $productunitCost * $obj->Allqty;
-									$Tpredicted[$line->fk_product]['Allqty'] = $obj->Allqty;
-									$Tpredicted[$line->fk_product]['productunitCost'] = $productunitCost;
+								if (!$Texpected[$line->fk_product]) {
+									$Texpected[$line->fk_product]['expectedCost'] = $productunitCost * $obj->Allqty;
+									$Texpected[$line->fk_product]['Allqty'] = $obj->Allqty;
+									$Texpected[$line->fk_product]['productunitCost'] = $productunitCost;
 								}
 							}
 						}
@@ -1669,8 +1669,8 @@ class Mo extends CommonObject
 				}
 			}
 
-			foreach ($Tpredicted as $cost) {
-				$totalPredictedCost += $cost['predictedCost'];
+			foreach ($Texpected as $cost) {
+				$totalExpectedCost += $cost['expectedCost'];
 			}
 			foreach ($Treal as $cost) {
 				$totalRealCost += $cost['realCost'];
@@ -1679,19 +1679,19 @@ class Mo extends CommonObject
 
 
 			// we could use the update function here. via
-			// $this->predicted_cost = price2num($totalPredictedCost,'MT');
+			// $this->expected_cost = price2num($totalExpectedCost,'MT');
 			// $this->real_cost = price2num($totalRealCost,'MT');
 			// but we should first check the status and change it on the fly if necessary to restore it after the update.
 			// we prefer to go directly through a request to avoid this.
 			$sql = "UPDATE ".MAIN_DB_PREFIX."mrp_mo";
-			$sql .= " SET predicted_cost = ".doubleval(price2num($totalPredictedCost, 'MT')). " ,";
+			$sql .= " SET expected_cost = ".doubleval(price2num($totalExpectedCost, 'MT')). " ,";
 			$sql .= " real_cost = ".doubleval(price2num($totalRealCost, 'MT'));
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);
 
 			if (!$resql) {
-				setEventMessage($langs->trans("errorCostUpdatingInDb"));
+				setEventMessage($langs->trans("ErrorCostUpdatingInDb"));
 			}
 		}
 	}

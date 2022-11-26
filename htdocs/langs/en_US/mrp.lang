@@ -114,10 +114,10 @@ MoChildGenerate=Generate Child Mo
 ParentMo=MO Parent
 MOChild=MO Child
 
-predictedCost= Predicted cost
-realCost= Real cost
-errorCostUpdatingInDb= error on updating costs in db
-errorLoadProductSupplierClass=error on load product Supplier class
+ExpectedCost=Expected cost
+RealCost=Real cost
+ErrorCostUpdatingInDb=Error on updating costs in db
+ErrorLoadProductSupplierClass=error on load product Supplier class
 
 BomCantAddChildBom=The nomenclature %s is already present in the tree leading to the nomenclature %s
 BOMNetNeeds = BOM Net Needs

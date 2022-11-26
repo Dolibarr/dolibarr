@@ -22,6 +22,8 @@ CREATE TABLE llx_mrp_mo(
 	mrptype integer DEFAULT 0,                  -- 0 for a manufacture MO, 1 for a dismantle MO 
 	label varchar(255), 
 	qty real NOT NULL,
+    expected_cost double(24,8) DEFAULT 0,
+    real_cost double(24,8) DEFAULT 0,
 	fk_warehouse integer,
 	fk_soc integer, 
 	note_public text, 
@@ -41,8 +43,6 @@ CREATE TABLE llx_mrp_mo(
 	fk_bom integer, 
 	fk_project integer,
 	last_main_doc varchar(255),
-    fk_parent_line integer,
-    predicted_cost double(24,8) DEFAULT 0,
-    real_cost double(24,8) DEFAULT 0
+    fk_parent_line integer
     -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
