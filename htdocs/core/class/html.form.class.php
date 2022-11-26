@@ -3679,7 +3679,11 @@ class Form
 		$sql .= " AND p.tobuy = 1";
 		$sql .= " AND s.fournisseur = 1";
 		$sql .= " AND p.rowid = ".((int) $productid);
-		$sql .= " ORDER BY s.nom, pfp.ref_fourn DESC";
+		if (empty($conf->global->PRODUCT_BEST_SUPPLIER_PRICE_PRESELECTED)) {
+			$sql .= " ORDER BY s.nom, pfp.ref_fourn DESC";
+		} else {
+			$sql .= " ORDER BY pfp.unitprice ASC";
+		}
 
 		dol_syslog(get_class($this)."::select_product_fourn_price", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -3701,7 +3705,7 @@ class Form
 
 					$opt = '<option value="'.$objp->idprodfournprice.'"';
 					//if there is only one supplier, preselect it
-					if ($num == 1 || ($selected_supplier > 0 && $objp->fk_soc == $selected_supplier)) {
+					if ($num == 1 || ($selected_supplier > 0 && $objp->fk_soc == $selected_supplier) || ($i == 0 && !empty($conf->global->PRODUCT_BEST_SUPPLIER_PRICE_PRESELECTED))) {
 						$opt .= ' selected';
 					}
 					$opt .= '>'.$objp->name.' - '.$objp->ref_fourn.' - ';
@@ -8097,7 +8101,7 @@ class Form
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', $show_empty < 0 ? (string) $show_empty : '-1');
+			$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($show_empty < 0 ? (string) $show_empty : '-1'), $morecss);
 		}
 
 		return $out;
@@ -9300,7 +9304,7 @@ class Form
 		} elseif ($object->element == 'ecm_directories') {
 			$ret .= '';
 		} elseif ($fieldref != 'none') {
-			$ret .= dol_htmlentities($object->$fieldref);
+			$ret .= dol_htmlentities(!empty($object->$fieldref) ? $object->$fieldref : "");
 		}
 
 		if ($morehtmlref) {

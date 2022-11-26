@@ -1262,13 +1262,13 @@ class Cronjob extends CommonObject
 					dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$errmsg, LOG_ERR);
 
 					$this->error = $errmsg;
-					$this->lastoutput = ($object->output ? $object->output."\n" : "").$errmsg;
+					$this->lastoutput = (!empty($object->output) ? $object->output."\n" : "").$errmsg;
 					$this->lastresult = is_numeric($result) ? $result : -1;
 					$retval = $this->lastresult;
 					$error++;
 				} else {
 					dol_syslog(get_class($this)."::run_jobs END");
-					$this->lastoutput = $object->output;
+					$this->lastoutput = (!empty($object->output) ? $object->output : "");
 					$this->lastresult = var_export($result, true);
 					$retval = $this->lastresult;
 				}

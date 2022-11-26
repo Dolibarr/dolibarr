@@ -267,7 +267,7 @@ class CMailFile
 			}
 
 			// Set atleastoneimage if there is at least one embedded file (into ->html_images)
-			if ($findimg) {
+			if ($findimg > 0) {
 				foreach ($this->html_images as $i => $val) {
 					if ($this->html_images[$i]) {
 						$this->atleastoneimage = 1;

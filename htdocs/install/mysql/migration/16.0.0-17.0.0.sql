@@ -52,8 +52,13 @@ ALTER TABLE llx_user DROP COLUMN idpers1;
 ALTER TABLE llx_user DROP COLUMN idpers2;
 ALTER TABLE llx_user DROP COLUMN idpers3;
 
+UPDATE llx_c_actioncomm SET type = 'system' WHERE code = 'AC_OTH';
 
 -- v17
+
+ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_type varchar(32); 
+
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_percent (percent);
 
 UPDATE llx_c_paiement SET code = 'BANCON' WHERE code = 'BAN' AND libelle = 'Bancontact';
 
@@ -62,6 +67,11 @@ UPDATE llx_c_paiement SET code = 'BANCON' WHERE code = 'BAN' AND libelle = 'Banc
 
 ALTER TABLE llx_partnership ADD COLUMN ip varchar(250);
 ALTER TABLE llx_adherent ADD COLUMN ip varchar(250);
+ALTER TABLE llx_projet ADD COLUMN ip varchar(250);
+ALTER TABLE llx_actioncomm ADD COLUMN ip varchar(250);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN ip varchar(250);
+ALTER TABLE llx_opensurvey_user_studs ADD COLUMN ip varchar(250);
+ALTER TABLE llx_opensurvey_comments ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_fichinterdet_rec DROP COLUMN remise;
 ALTER TABLE llx_fichinterdet_rec DROP COLUMN fk_export_commpta;

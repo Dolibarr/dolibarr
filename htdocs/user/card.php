@@ -537,6 +537,9 @@ if (empty($reshook)) {
 						$sql .= " SET fk_socpeople=".((int) $contactid);
 						if (!empty($contact->socid)) {
 							$sql .= ", fk_soc=".((int) $contact->socid);
+						} elseif ($socid > 0) {
+							$sql .= ", fk_soc = null";
+							setEventMessages($langs->trans("WarningUserDifferentContactSocid"), '', 'warnings'); // Add message if post socid != $contact->socid
 						}
 						$sql .= " WHERE rowid = ".((int) $object->id);
 					} elseif ($socid > 0) {
@@ -1834,10 +1837,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<tr class="nooddeven"><td>'.$langs->trans("LastConnexion").'</td>';
 			print '<td>';
 			if ($object->datepreviouslogin) {
-				print dol_print_date($object->datepreviouslogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
+				print dol_print_date($object->datepreviouslogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
 			}
 			if ($object->datelastlogin) {
-				print dol_print_date($object->datelastlogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
+				print dol_print_date($object->datelastlogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
 			}
 			print '</td>';
 			print "</tr>\n";
@@ -2111,7 +2114,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</tr>';
 
 			// Firstname
-			print "<tr>".'<td>'.$langs->trans("Firstname").'</td>';
+			print '<tr><td>'.$langs->trans("Firstname").'</td>';
 			print '<td>';
 			if ($caneditfield && !$object->ldap_sid) {
 				print '<input class="minwidth100" type="text" class="flat" name="firstname" value="'.$object->firstname.'">';
@@ -2239,7 +2242,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td></tr>';
 
 			// Hierarchy
-			print '<tr><td class="titlefield">'.$langs->trans("HierarchicalResponsible").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("HierarchicalResponsible").'</td>';
 			print '<td>';
 			if ($caneditfield) {
 				print img_picto('', 'user').$form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
@@ -2254,7 +2257,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Expense report validator
 			if (isModEnabled('expensereport')) {
-				print '<tr><td class="titlefield">';
+				print '<tr><td class="titlefieldcreate">';
 				$text = $langs->trans("ForceUserExpenseValidator");
 				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
 				print '</td>';
@@ -2273,7 +2276,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Holiday request validator
 			if (isModEnabled('holiday')) {
-				print '<tr><td class="titlefield">';
+				print '<tr><td class="titlefieldcreate">';
 				$text = $langs->trans("ForceUserHolidayValidator");
 				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
 				print '</td>';
@@ -2336,8 +2339,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td></tr>';
 
 
-			print '</table><hr><table class="border centpercent">';
+			print '</table>';
 
+			print '<hr>';
+
+			print '<table class="border centpercent">';
 
 			// Date access validity
 			print '<tr><td>'.$langs->trans("RangeOfLoginValidity").'</td>';

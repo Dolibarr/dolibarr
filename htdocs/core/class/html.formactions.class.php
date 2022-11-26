@@ -271,12 +271,10 @@ class FormActions
 						break;
 					}
 
-					$ref = $actioncomm->getNomUrl(1, -1);
-
 					print '<tr class="oddeven">';
 
 					// Ref
-					print '<td class="nowraponall">'.$ref.'</td>';
+					print '<td class="nowraponall">'.$actioncomm->getNomUrl(1, -1).'</td>';
 
 					// Onwer
 					print '<td class="nowraponall tdoverflowmax125">';
@@ -295,12 +293,17 @@ class FormActions
 					print '</td>';
 
 					$actionstatic = $actioncomm;
+
+					// Example: Email sent from invoice card
+					//$actionstatic->code = 'AC_BILL_SENTBYMAIL
+					//$actionstatic->type_code = 'AC_OTHER_AUTO'
+
 					// Type
 					$labeltype = $actionstatic->type_code;
 					if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
 						$labeltype = 'AC_OTH';
 					}
-					if ($actionstatic->type_code == 'AC_OTH' && $actionstatic->code == 'TICKET_MSG') {
+					if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 						$labeltype = $langs->trans("Message");
 					} else {
 						if (!empty($arraylist[$labeltype])) {
@@ -310,7 +313,7 @@ class FormActions
 							$labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
 						}
 					}
-					print '<td class="tdoverflowmax100" title="'.$labeltype.'">';
+					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltype).'">';
 					print $actioncomm->getTypePicto();
 					print $labeltype;
 					print '</td>';

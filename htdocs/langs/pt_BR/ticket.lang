@@ -76,7 +76,6 @@ TicketHistory=Histórico de bilhetes
 TicketChangeCategory=Modifica o código analítico
 TicketChangeSeverity=Alterar gravidade
 TicketAddMessage=Adiciona uma mensagem
-AddMessage=Adiciona uma mensagem
 MessageSuccessfullyAdded=Bilhete adicionado
 NoMsgForThisTicket=Nenhuma mensagem para este bilhete
 TicketProperties=Classificação

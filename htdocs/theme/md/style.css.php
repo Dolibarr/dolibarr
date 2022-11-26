@@ -1514,6 +1514,12 @@ select.flat.selectlimit {
 	overflow: hidden;
 	height: auto !important;
 }
+.tenlinesmax {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 10;
+	overflow: hidden;
+}
 
 .tablelistofcalendars {
 	margin-top: 25px !important;
@@ -2118,7 +2124,7 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
-	z-index: 1001;
+	z-index: 1005;
 }
 <?php } ?>
 
@@ -2584,6 +2590,12 @@ span.mainmenuaspan.tmenudisabled {
 	color: var(--colortextbackhmenu);
 	opacity: 0.5;
 	cursor: not-allowed;
+}
+
+a.disabled {
+	color: #aaa;
+	text-decoration: none !important;
+	cursor: default;
 }
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
@@ -5188,10 +5200,14 @@ td.cal_other_month {
 
 
 /* ============================================================================== */
-/*  Ajax - Liste deroulante de l'autocompletion                                   */
+/*  Ajax - Combo list for autocompletion                                          */
 /* ============================================================================== */
 
-.ui-widget-content { border: solid 1px rgba(0,0,0,.3); background: #fff !important; }
+.ui-widget-content {
+	border: solid 1px rgba(0,0,0,.3);
+	background: var(--colorbackbody) !important;
+	color: var(--colortext) !important;
+}
 
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif', 1) ?>) right center no-repeat; }
 .ui-autocomplete {
@@ -6220,6 +6236,9 @@ ul.select2-results__options li {
 	}
 	.select2-container.select2-container--open .select2-dropdown--below {
 		min-width: 220px !important;
+	}
+	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below {
+		min-width: 140px !important;
 	}
 
 	.select2-container--open .select2-dropdown--below {
