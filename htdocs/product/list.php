@@ -621,6 +621,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
 // Complete request and execute it with limit
