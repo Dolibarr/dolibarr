@@ -1642,10 +1642,10 @@ if ($dirins && $action == 'confirm_deletemodule') {
 
 		// Dir for module
 		$dir = $dirins.'/'.$modulelowercase;
-		
+
 		$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 
-    	// Dir for module
+		// Dir for module
 		$dir = dol_buildpath($modulelowercase, 0);
 
 		// Zip file to build
@@ -1668,8 +1668,8 @@ if ($dirins && $action == 'confirm_deletemodule') {
 			dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 			exit;
 		}
-	
-		$moduleobj->remove();    
+
+		$moduleobj->remove();
 
 		$result = dol_delete_dir_recursive($dir);
 
