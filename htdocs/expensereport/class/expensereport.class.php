@@ -1119,14 +1119,14 @@ class ExpenseReport extends CommonObject
 				$error++;
 			}
 		}
-
-		if (!$error) {
+		// Not possible to add contact on expense reports - Moreover delete contact on other objects ...
+		/*if (!$error) {
 			// Delete linked contacts
 			$res = $this->delete_linked_contact();
 			if ($res < 0) {
 				$error++;
 			}
-		}
+		}*/
 
 		// Removed extrafields of object
 		if (!$error) {
