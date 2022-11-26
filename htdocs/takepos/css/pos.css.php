@@ -716,9 +716,12 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	button.actionbutton {
-		min-height: 60px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		padding-left: 4px;
 		padding-right: 4px;
+		min-height: 30px;
 	}
 }
 
