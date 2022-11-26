@@ -1642,6 +1642,34 @@ if ($dirins && $action == 'confirm_deletemodule') {
 
 		// Dir for module
 		$dir = $dirins.'/'.$modulelowercase;
+		
+		$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+
+    	// Dir for module
+		$dir = dol_buildpath($modulelowercase, 0);
+
+		// Zip file to build
+		$FILENAMEZIP = '';
+
+		// Load module
+		dol_include_once($pathtofile);
+		$class = 'mod'.$module;
+
+		if (class_exists($class)) {
+			try {
+				$moduleobj = new $class($db);
+			} catch (Exception $e) {
+				$error++;
+				dol_print_error($db, $e->getMessage());
+			}
+		} else {
+			$error++;
+			$langs->load("errors");
+			dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+			exit;
+		}
+	
+		$moduleobj->remove();    
 
 		$result = dol_delete_dir_recursive($dir);
 
