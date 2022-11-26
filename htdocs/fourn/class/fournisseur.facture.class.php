@@ -590,7 +590,7 @@ class FactureFournisseur extends CommonInvoice
 			}
 
 			// Update total price
-			$result = $this->update_price();
+			$result = $this->update_price(1);
 			if ($result > 0) {
 				// Actions on extra fields
 				if (!$error) {
@@ -2192,7 +2192,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->errors[] = $line->error;
 		} else {
 			// Update total price into invoice record
-			$res = $this->update_price('', 'auto', 0, $this->thirdparty);
+			$res = $this->update_price('1', 'auto', 0, $this->thirdparty);
 		}
 
 		return $res;
@@ -2239,7 +2239,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->db->rollback();
 			return -3;
 		} else {
-			$res = $this->update_price();
+			$res = $this->update_price(1);
 
 			if ($res > 0) {
 				$this->db->commit();
