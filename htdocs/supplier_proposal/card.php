@@ -972,7 +972,7 @@ if (empty($reshook)) {
 			}
 
 			$ttc = price2num(GETPOST('price_ttc'), '', 2);
-			$ht = $ttc / (1 + ($vatratecleaned / 100));
+			$ht = (float) $ttc / (1 + ((float) $vatratecleaned / 100));
 			$price_base_type = 'HT';
 		}
 
@@ -1879,7 +1879,7 @@ if ($action == 'create') {
 	// Show object lines
 	$result = $object->getLinesArray();
 
-	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '').'" method="POST">
 	<input type="hidden" name="token" value="' . newToken().'">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">

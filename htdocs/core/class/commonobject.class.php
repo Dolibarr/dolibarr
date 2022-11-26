@@ -9489,7 +9489,7 @@ abstract class CommonObject
 	 * @param 	User 	$user       			User that deletes
 	 * @param 	bool 	$notrigger  			false=launch triggers after, true=disable triggers
 	 * @param	int		$forcechilddeletion		0=no, 1=Force deletion of children
-	 * @return 	int             				<=0 if KO, 0=Nothing done because object has child, >0 if OK
+	 * @return 	int             				<0 if KO, 0=Nothing done because object has child, >0 if OK
 	 */
 	public function deleteCommon(User $user, $notrigger = false, $forcechilddeletion = 0)
 	{
