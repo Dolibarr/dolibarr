@@ -2189,6 +2189,7 @@ ShowProjectLabel=Libellé du projet
 PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME=Inclure un alias dans le nom du tiers
 THIRDPARTY_ALIAS=Nom du tiers - Alias du tiers
 ALIAS_THIRDPARTY=Alias du tiers - Nom du tiers
+MAIN_USE_COMPANY_NAME_OF_CONTACT=Use company name of contact
 PDF_USE_ALSO_LANGUAGE_CODE=Si vous souhaitez que certains textes de votre PDF soient dupliqués dans 2 langues différentes dans le même PDF généré, vous devez définir ici cette deuxième langue pour que le PDF généré contienne 2 langues différentes dans la même page, celle choisie lors de la génération du PDF et celle-ci (seuls quelques modèles PDF prennent en charge cette fonction). Gardez vide pour 1 langue par PDF.
 PDF_USE_A=Générer document PDF avec le format PDF/A à la place du format PDF standard
 FafaIconSocialNetworksDesc=Entrez ici le code d'une icône FontAwesome. Si vous ne savez pas ce qu'est FontAwesome, vous pouvez utiliser la valeur générique fa-address-book.

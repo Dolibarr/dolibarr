@@ -2297,11 +2297,13 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		$tmptxt = $object->getLibStatut(5);
 		$morehtmlstatus .= $tmptxt; // No status on task
 	} else { // Generic case
-		$tmptxt = $object->getLibStatut(6);
-		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-			$tmptxt = $object->getLibStatut(5);
+		if (isset($object->status)) {
+			$tmptxt = $object->getLibStatut(6);
+			if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
+				$tmptxt = $object->getLibStatut(5);
+			}
+			$morehtmlstatus .= $tmptxt;
 		}
-		$morehtmlstatus .= $tmptxt;
 	}
 
 	// Add if object was dispatched "into accountancy"
@@ -7608,7 +7610,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : null);
 			$substitutionarray['__NOTE_PRIVATE__'] = (isset($object->note_private) ? $object->note_private : null);
-			$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs) : '');
+			if ($object->element == "shipping") {
+				$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_delivery) ? dol_print_date($object->date_delivery, 'day', 0, $outputlangs) : '');
+			} else {
+				$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs) : '');
+			}
 			$substitutionarray['__DATE_DELIVERY_DAY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%d") : '');
 			$substitutionarray['__DATE_DELIVERY_DAY_TEXT__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%A") : '');
 			$substitutionarray['__DATE_DELIVERY_MON__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%m") : '');
@@ -11450,9 +11456,9 @@ function getTimelineIcon($actionstatic, &$histo, $key)
 		$iconClass = 'fa fa-ticket';
 	} elseif ($actionstatic->code == 'AC_TICKET_MODIFY') {
 		$iconClass = 'fa fa-pencilxxx';
-	} elseif ($actionstatic->code == 'TICKET_MSG') {
+	} elseif (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 		$iconClass = 'fa fa-comments';
-	} elseif ($actionstatic->code == 'TICKET_MSG_PRIVATE') {
+	} elseif (preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
 		$iconClass = 'fa fa-mask';
 	} elseif (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 		if ($actionstatic->type_picto) {
@@ -11997,9 +12003,9 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			// Title
 			$out .= ' <span class="messaging-title">';
 
-			if ($actionstatic->code == 'TICKET_MSG') {
+			if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage');
-			} elseif ($actionstatic->code == 'TICKET_MSG_PRIVATE') {
+			} elseif (preg_match('/^TICKET_MSG_PRIVATE/', $actionstatic->code)) {
 				$out .= $langs->trans('TicketNewMessage').' <em>('.$langs->trans('Private').')</em>';
 			} else {
 				if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {

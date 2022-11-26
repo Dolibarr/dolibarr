@@ -243,7 +243,7 @@ class CompanyBankAccount extends Account
 		if ($id) {
 			$sql .= " WHERE rowid = ".((int) $id);
 		}
-		if ($socid) {
+		elseif ($socid) {
 			$sql .= " WHERE fk_soc  = ".((int) $socid);
 			if ($default > -1) {
 				$sql .= " AND default_rib = ".((int) $default);

@@ -555,7 +555,8 @@ class ActionComm extends CommonObject
 		$sql .= "recurdateend,";
 		$sql .= "num_vote,";
 		$sql .= "event_paid,";
-		$sql .= "status";
+		$sql .= "status,";
+		$sql .= "ip";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)', ";
 		$sql .= "'".$this->db->idate($now)."', ";
@@ -596,7 +597,8 @@ class ActionComm extends CommonObject
 		$sql .= (!empty($this->recurdateend) ? "'".$this->db->idate($this->recurdateend)."'" : "null").", ";
 		$sql .= (!empty($this->num_vote) ? (int) $this->num_vote : "null").", ";
 		$sql .= (!empty($this->event_paid) ? (int) $this->event_paid : 0).", ";
-		$sql .= (!empty($this->status) ? (int) $this->status : "0");
+		$sql .= (!empty($this->status) ? (int) $this->status : "0").", ";
+		$sql .= (!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::add", LOG_DEBUG);
@@ -1761,11 +1763,11 @@ class ActionComm extends CommonObject
 					$imgpicto = img_picto('', 'object_phoning', $color, false, 0, 0, '', 'paddingright');
 				} elseif ($this->type_code == 'AC_FAX') {
 					$imgpicto = img_picto('', 'object_phoning_fax', $color, false, 0, 0, '', 'paddingright');
-				} elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN') {
+				} elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN' || preg_match('/_SENTBYMAIL/', $this->code)) {
 					$imgpicto = img_picto('', 'object_email', $color, false, 0, 0, '', 'paddingright');
 				} elseif ($this->type_code == 'AC_INT') {
 					$imgpicto = img_picto('', 'object_intervention', $color, false, 0, 0, '', 'paddingright');
-				} elseif ($this->type_code == 'AC_OTH' && $this->code == 'TICKET_MSG') {
+				} elseif (preg_match('/^TICKET_MSG/', $this->code)) {
 					$imgpicto = img_picto('', 'object_conversation', $color, false, 0, 0, '', 'paddingright');
 				} elseif ($this->type != 'systemauto') {
 					$imgpicto = img_picto('', 'user-cog', $color, false, 0, 0, '', 'paddingright');

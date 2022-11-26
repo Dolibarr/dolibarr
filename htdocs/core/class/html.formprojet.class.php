@@ -188,7 +188,7 @@ class FormProjets
 			$sql .= natural_search(array('p.title', 'p.ref'), $filterkey);
 		}
 		if ($morefilter) {
-			$sql .= ' AND ('.$morefilter.')';
+			$sql .= ' AND ('.$this->db->sanitize($morefilter, 0, 1).')';
 		}
 		$sql .= " ORDER BY p.ref ASC";
 
@@ -375,7 +375,7 @@ class FormProjets
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
 				$out .= $comboenhancement;
-				$morecss = 'minwidth200 maxwidth500';
+				$morecss .= ' minwidth200 maxwidth500';
 			}
 
 			if (empty($option_only)) {
