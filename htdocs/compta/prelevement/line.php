@@ -61,7 +61,7 @@ if ($sortfield == "") {
 	$sortfield = "pl.fk_soc";
 }
 
-$type = $object->type;
+
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 } else {
