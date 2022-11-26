@@ -512,7 +512,7 @@ if ($action == 'confirm_generateinvoice') {
 						}
 
 						// Add lines
-						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0));
+						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), 0, $datestart, $datestop);
 						if ($lineid<0) {
 							$error++;
 							setEventMessages(null, $tmpinvoice->errors, 'errors');
@@ -1301,9 +1301,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '<input type="hidden" name="action" value="updatesplitline">';
 		} elseif ($action == 'createtime' && $user->rights->projet->time) {
 			print '<input type="hidden" name="action" value="addtimespent">';
-		} elseif ($massaction == 'generateinvoice' && $user->rights->facture->lire) {
+		} elseif ($massaction == 'generateinvoice' && $user->rights->facture->creer) {
 			print '<input type="hidden" name="action" value="confirm_generateinvoice">';
-		} elseif ($massaction == 'generateinter' && $user->rights->ficheinter->lire) {
+		} elseif ($massaction == 'generateinter' && $user->rights->ficheinter->creer) {
 			print '<input type="hidden" name="action" value="confirm_generateinter">';
 		} else {
 			print '<input type="hidden" name="action" value="list">';
