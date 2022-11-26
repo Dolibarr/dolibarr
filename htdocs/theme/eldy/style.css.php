@@ -326,6 +326,7 @@ print '*/'."\n";
 
 // Include the global.inc.php that include the badges, btn, info-box, dropdown, progress...
 require __DIR__.'/global.inc.php';
+require __DIR__ . '/malabar.css.php';
 
 
 if (is_object($db)) {

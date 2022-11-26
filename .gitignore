@@ -57,3 +57,7 @@ yarn.lock
 package-lock.json
 
 doc/install.lock
+
+#theme 
+.sass-cache
+*.scssc

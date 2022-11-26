@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,kFAAkF;AAClF,6BAA6B;ACD7B,KAAM;EACJ,aAAa,CAAC,IAAI",
+"sources": ["scss/carambar.scss","scss/dolivar.scss"],
+"names": [],
+"file": "malabar.css.php"
+}
