@@ -1577,11 +1577,14 @@ class SMTPs
 					// loop through all attachments
 					foreach ($_content as $_file => $_data) {
 						$content .= "--".$this->_getBoundary('mixed')."\r\n"
-						.  'Content-Disposition: attachment; filename="'.$_data['fileName'].'"'."\r\n"
-						.  'Content-Type: '.$_data['mimeType'].'; name="'.$_data['fileName'].'"'."\r\n"
-						.  'Content-Transfer-Encoding: base64'."\r\n"
-						.  'Content-Description: '.$_data['fileName']."\r\n";
-
+						. 'Content-Disposition: attachment; filename="'.$_data['fileName'].'"'."\r\n"
+						. 'Content-Type: '.$_data['mimeType'].'; name="'.$_data['fileName'].'"'."\r\n"
+						. 'Content-Transfer-Encoding: base64'."\r\n"
+						. 'Content-Description: '.$_data['fileName']."\r\n";
+						if (!empty($_data['cid'])) {
+							$content .= "X-Attachment-Id: ".$_data['cid']."\r\n";
+							$content .= "Content-ID: <".$_data['cid'].">\r\n";
+						}
 						if ($this->getMD5flag()) {
 							$content .= 'Content-MD5: '.$_data['md5']."\r\n";
 						}
@@ -1595,9 +1598,9 @@ class SMTPs
 						$content .= "--".$this->_getBoundary('related')."\r\n"; // always related for an inline image
 
 						$content .= 'Content-Type: '.$_data['mimeType'].'; name="'.$_data['imageName'].'"'."\r\n"
-						.  'Content-Transfer-Encoding: base64'."\r\n"
-						.  'Content-Disposition: inline; filename="'.$_data['imageName'].'"'."\r\n"
-						.  'Content-ID: <'.$_data['cid'].'> '."\r\n";
+						. 'Content-Transfer-Encoding: base64'."\r\n"
+						. 'Content-Disposition: inline; filename="'.$_data['imageName'].'"'."\r\n"
+						. 'Content-ID: <'.$_data['cid'].'> '."\r\n";
 
 						if ($this->getMD5flag()) {
 							$content .= 'Content-MD5: '.$_data['md5']."\r\n";
@@ -1664,9 +1667,10 @@ class SMTPs
 	 * @param string $strContent  File data to attach to message
 	 * @param string $strFileName File Name to give to attachment
 	 * @param string $strMimeType File Mime Type of attachment
+	 * @param string $strCid      File Cid of attachment (if defined, to be shown inline)
 	 * @return void
 	 */
-	public function setAttachment($strContent, $strFileName = 'unknown', $strMimeType = 'unknown')
+	public function setAttachment($strContent, $strFileName = 'unknown', $strMimeType = 'unknown', $strCid = '')
 	{
 		if ($strContent) {
 			$strContent = rtrim(chunk_split(base64_encode($strContent), 76, "\r\n")); // 76 max is defined into http://tools.ietf.org/html/rfc2047
@@ -1674,6 +1678,7 @@ class SMTPs
 			$this->_msgContent['attachment'][$strFileName]['mimeType'] = $strMimeType;
 			$this->_msgContent['attachment'][$strFileName]['fileName'] = $strFileName;
 			$this->_msgContent['attachment'][$strFileName]['data']     = $strContent;
+			$this->_msgContent['attachment'][$strFileName]['cid']      = $strCid;		// If defined, it means this attachment must be shown inline
 
 			if ($this->getMD5flag()) {
 				$this->_msgContent['attachment'][$strFileName]['md5'] = dol_hash($strContent, 3);

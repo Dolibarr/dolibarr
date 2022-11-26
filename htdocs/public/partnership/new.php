@@ -223,7 +223,27 @@ if (empty($reshook) && $action == 'add') {
 		$partnership->fk_user_creat          = 0;
 		$partnership->fk_type                = GETPOST('partnershiptype', 'int');
 		//$partnership->typeid               = $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE ? $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
+		$partnership->ip = getUserRemoteIP();
 
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
+
+		// Calculate nb of post for IP
+		$nb_post_ip = 0;
+		if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+			$sql = "SELECT COUNT(ref) as nb_partnerships";
+			$sql .= " FROM ".MAIN_DB_PREFIX."partnership";
+			$sql .= " WHERE ip = '".$db->escape($partnership->ip)."'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$i++;
+					$obj = $db->fetch_object($resql);
+					$nb_post_ip = $obj->nb_partnerships;
+				}
+			}
+		}
 		// test if societe already exist
 		$company = new Societe($db);
 		$result = $company->fetch(0, GETPOST('societe'));
@@ -290,6 +310,11 @@ if (empty($reshook) && $action == 'add') {
 			$error++;
 		}
 
+		if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+			$error++;
+			$errmsg = $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
+			array_push($partnership->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
+		}
 		if (!$error) {
 			$result = $partnership->create($user);
 			if ($result > 0) {
@@ -464,6 +489,8 @@ if (empty($reshook) && $action == 'add') {
 				$error++;
 				$errmsg .= join('<br>', $partnership->errors);
 			}
+		} else {
+			setEventMessage($errmsg, 'errors');
 		}
 	}
 
@@ -502,7 +529,7 @@ if (empty($reshook) && $action == 'added') {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-$extrafields->fetch_name_optionals_label($partnership->table_element); // fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
 
 
 llxHeaderVierge($langs->trans("NewPartnershipRequest"));
@@ -518,7 +545,7 @@ print '<div class="center subscriptionformhelptext justify">';
 if (!empty($conf->global->PARTNERSHIP_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PARTNERSHIP_NEWFORM_TEXT)."<br>\n";
 } else {
-	print $langs->trans("NewPartnershipRequestDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
+	print $langs->trans("NewPartnershipRequestDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }
 print '</div>';
 

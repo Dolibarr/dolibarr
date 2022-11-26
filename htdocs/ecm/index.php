@@ -328,6 +328,9 @@ print dol_get_fiche_head($head, 'index', '', -1, '');
 
 // Add filemanager component
 $module = 'ecm';
+if (empty($url)) {
+	$url = DOL_URL_ROOT.'/ecm/index.php'; // Must be an url without param
+}
 include DOL_DOCUMENT_ROOT.'/core/tpl/filemanager.tpl.php';
 
 // End of page

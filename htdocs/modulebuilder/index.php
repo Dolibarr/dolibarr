@@ -84,7 +84,7 @@ $idmodule= GETPOST('idmodule', 'alpha');
 if (!isModEnabled('modulebuilder')) {
 	accessforbidden('Module ModuleBuilder not enabled');
 }
-if (!$user->admin && empty($conf->global->MODULEBUILDER_FOREVERYONE)) {
+if (!$user->hasRight("modulebuilder", "run")) {
 	accessforbidden('ModuleBuilderNotAllowed');
 }
 
@@ -1643,6 +1643,34 @@ if ($dirins && $action == 'confirm_deletemodule') {
 		// Dir for module
 		$dir = $dirins.'/'.$modulelowercase;
 
+		$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+
+		// Dir for module
+		$dir = dol_buildpath($modulelowercase, 0);
+
+		// Zip file to build
+		$FILENAMEZIP = '';
+
+		// Load module
+		dol_include_once($pathtofile);
+		$class = 'mod'.$module;
+
+		if (class_exists($class)) {
+			try {
+				$moduleobj = new $class($db);
+			} catch (Exception $e) {
+				$error++;
+				dol_print_error($db, $e->getMessage());
+			}
+		} else {
+			$error++;
+			$langs->load("errors");
+			dol_print_error($db, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+			exit;
+		}
+
+		$moduleobj->remove();
+
 		$result = dol_delete_dir_recursive($dir);
 
 		if ($result > 0) {
@@ -1780,7 +1808,7 @@ if ($dirins && $action == 'generatepackage') {
 				dol_mkdir($dirofmodule);
 			}
 			// Note: We exclude /bin/ to not include the already generated zip
-			$result = dol_compress_dir($dir, $outputfilezip, 'zip', '/\/bin\//', $modulelowercase);
+			$result = dol_compress_dir($dir, $outputfilezip, 'zip', '/\/bin\/|\.git|\.old|\.back|\.ssh/', $modulelowercase);
 		} else {
 			$result = -1;
 		}
@@ -1972,6 +2000,28 @@ if ($message) {
 
 //print $langs->trans("ModuleBuilderDesc3", count($listofmodules), $FILEFLAG).'<br>';
 $infomodulesfound = '<div style="padding: 12px 9px 12px">'.$form->textwithpicto('', $langs->trans("ModuleBuilderDesc3", count($listofmodules)).'<br><br>'.$langs->trans("ModuleBuilderDesc4", $FILEFLAG).'<br>'.$textforlistofdirs).'</div>';
+
+
+
+$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
+$allowonlineinstall = true;
+if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
+	$allowonlineinstall = false;
+}
+if (empty($allowonlineinstall)) {
+	if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
+		// Show clean message
+		$message = info_admin($langs->trans('InstallModuleFromWebHasBeenDisabledContactUs'));
+	} else {
+		// Show technical message
+		$message = info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'), 0, 0, 1, 'warning');
+	}
+
+	print $message;
+
+	llxFooter();
+	exit(0);
+}
 
 
 // Load module descriptor
@@ -2836,9 +2886,9 @@ if ($module == 'initmodule') {
 							print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&file='.urlencode($pathtoapi).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 							print ' &nbsp; ';
 							if (empty($conf->global->$const_name)) {	// If module is not activated
-								print '<a href="#" class="classfortooltip" target="apiexplorer" title="'.$langs->trans("ModuleMustBeEnabled", $module).'"><strike>'.$langs->trans("GoToApiExplorer").'</strike></a>';
+								print '<a href="#" class="classfortooltip" target="apiexplorer" title="'.$langs->trans("ModuleMustBeEnabled", $module).'"><strike>'.$langs->trans("ApiExplorer").'</strike></a>';
 							} else {
-								print '<a href="'.DOL_URL_ROOT.'/api/index.php/explorer/" target="apiexplorer">'.$langs->trans("GoToApiExplorer").'</a>';
+								print '<a href="'.DOL_URL_ROOT.'/api/index.php/explorer/" target="apiexplorer">'.$langs->trans("ApiExplorer").'</a>';
 							}
 						} else {
 							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initapi&token='.newToken().'&format=php&file='.urlencode($pathtoapi).'">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';

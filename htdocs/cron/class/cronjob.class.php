@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,7 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 
 
 /**
@@ -1261,13 +1262,13 @@ class Cronjob extends CommonObject
 					dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$errmsg, LOG_ERR);
 
 					$this->error = $errmsg;
-					$this->lastoutput = ($object->output ? $object->output."\n" : "").$errmsg;
+					$this->lastoutput = (!empty($object->output) ? $object->output."\n" : "").$errmsg;
 					$this->lastresult = is_numeric($result) ? $result : -1;
 					$retval = $this->lastresult;
 					$error++;
 				} else {
 					dol_syslog(get_class($this)."::run_jobs END");
-					$this->lastoutput = $object->output;
+					$this->lastoutput = (!empty($object->output) ? $object->output : "");
 					$this->lastresult = var_export($result, true);
 					$retval = $this->lastresult;
 				}
@@ -1408,21 +1409,30 @@ class Cronjob extends CommonObject
 
 		if (empty($this->datenextrun)) {
 			if (empty($this->datestart)) {
-				$this->datenextrun = $now + ($this->frequency * $this->unitfrequency);
+				if ($this->unitfrequency == 2678400) {
+					$this->datenextrun = dol_time_plus_duree($now, $this->frequency, 'm');
+				} else {
+					$this->datenextrun = $now + ($this->frequency * $this->unitfrequency);
+				}
 			} else {
-				$this->datenextrun = $this->datestart + ($this->frequency * $this->unitfrequency);
+				if ($this->unitfrequency == 2678400) {
+					$this->datenextrun = dol_time_plus_duree($this->datestart, $this->frequency, 'm');
+				} else {
+					$this->datenextrun = $this->datestart + ($this->frequency * $this->unitfrequency);
+				}
 			}
 		}
 
 		if ($this->datenextrun < $now && $this->frequency > 0 && $this->unitfrequency > 0) {
 			// Loop until date is after future
 			while ($this->datenextrun < $now) {
-				$this->datenextrun += ($this->frequency * $this->unitfrequency);
-
-				// TODO For exact frequency (every month, every year, ...), use instead a dol_time_plus_duree($time, $duration_value, $duration_unit)
+				if ($this->unitfrequency == 2678400) {
+					$this->datenextrun = dol_time_plus_duree($this->datenextrun, $this->frequency, 'm');
+				} else {
+					$this->datenextrun += ($this->frequency * $this->unitfrequency);
+				}
 			}
 		} else {
-			//$this->datenextrun=$this->datenextrun + ($this->frequency * $this->unitfrequency);
 			dol_syslog(get_class($this)."::reprogram_jobs datenextrun is already in future, we do not change it");
 		}
 

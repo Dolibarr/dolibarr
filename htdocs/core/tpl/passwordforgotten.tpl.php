@@ -16,7 +16,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', 1);
 }
@@ -234,15 +233,19 @@ if (!empty($morelogincontent)) {
 
 
 <div class="center login_main_home divpasswordmessagedesc paddingtopbottom<?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow'; ?>" style="max-width: 70%">
-<?php if ($mode == 'dolibarr' || !$disabled) { ?>
-	<span class="passwordmessagedesc">
-	<?php echo $langs->trans('SendNewPasswordDesc'); ?>
-	</span>
-<?php } else { ?>
-	<div class="warning center">
-	<?php echo $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode); ?>
-	</div>
-<?php } ?>
+<?php
+if ($mode == 'dolibarr' || !$disabled) {
+	if ($action != 'validatenewpassword' && empty($message)) {
+		print '<span class="passwordmessagedesc opacitymedium">';
+		print $langs->trans('SendNewPasswordDesc');
+		print '</span>';
+	}
+} else {
+	print '<div class="warning center">';
+	print $langs->trans('AuthenticationDoesNotAllowSendNewPassword', $mode);
+	print '</div>';
+}
+?>
 </div>
 
 

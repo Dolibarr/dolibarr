@@ -556,7 +556,7 @@ if (empty($reshook)) {
 			// Ajout / mise à jour
 			if ($rowid > 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product_price_by_qty SET";
-				$sql .= " price=".((float) $price)."',";
+				$sql .= " price=".((float) $price).",";
 				$sql .= " unitprice=".((float) $unitPrice).",";
 				$sql .= " quantity=".((float) $quantity).",";
 				$sql .= " remise_percent=".((float) $remise_percent).",";
@@ -1217,9 +1217,9 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 	if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {    // TODO Fix the form inside tr instead of td
 		print '<tr><td>'.$langs->trans("PriceByQuantity");
 		if ($object->prices_by_qty[0] == 0) {
-			print '&nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=activate_price_by_qty&level=1">('.$langs->trans("Activate").')';
+			print '&nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=activate_price_by_qty&level=1&token='.newToken().'">('.$langs->trans("Activate").')';
 		} else {
-			print '&nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=disable_price_by_qty&level=1">('.$langs->trans("DisablePriceByQty").')';
+			print '&nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=disable_price_by_qty&level=1&token='.newToken().'">('.$langs->trans("DisablePriceByQty").')';
 		}
 		print '</td><td>';
 
@@ -2249,7 +2249,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			}
 
 			print '<tr class="liste_titre">';
-			print '<td class="liste_titre"><input type="text" class="flat" name="search_soc" value="'.$search_soc.'" size="20"></td>';
+			print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_soc" value="'.$search_soc.'"></td>';
 			print '<td class="liste_titre" colspan="'.$colspan.'">&nbsp;</td>';
 			// Print the search button
 			print '<td class="liste_titre maxwidthsearch">';
@@ -2261,7 +2261,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
-		print '<td>' . $langs->trans('RefCustomer') . '</td>';
+		print '<td>'.$langs->trans('RefCustomer').'</td>';
 		print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
 		print '<td class="center">'.$langs->trans("PriceBase").'</td>';
 		print '<td class="right">'.$langs->trans("DefaultTaxRate").'</td>';
@@ -2298,6 +2298,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<td colspan="3">' . $langs->trans('Default') . '</td>';
 
 		print '<td class="center">'.$langs->trans($object->price_base_type)."</td>";
+
+		// VAT Rate
 		print '<td class="right">';
 
 		$positiverates = '';
@@ -2319,12 +2321,12 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		//print $object->default_vat_code?' ('.$object->default_vat_code.')':'';
 		print "</td>";
 
-		print '<td class="right">'.price($object->price)."</td>";
+		print '<td class="right"><span class="amount">'.price($object->price)."</span></td>";
 
-		print '<td class="right">'.price($object->price_ttc)."</td>";
+		print '<td class="right"><span class="amount">'.price($object->price_ttc)."</span></td>";
 		if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
 			//print '<td class="right">' . price($object->price_ttc) . "</td>";
-			print '<td class="right">'.price($resultarray[2]).'</td>';
+			print '<td class="right"><span class="amount">'.price($resultarray[2]).'</span></td>';
 		}
 
 		print '<td class="right">'.price($object->price_min).'</td>';
@@ -2376,6 +2378,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				print '<td>'.dol_escape_htmltag($line->ref_customer).'</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour", 'tzuserrel')."</td>";
 				print '<td class="center">'.$langs->trans($line->price_base_type)."</td>";
+				// VAT Rate
 				print '<td class="right">';
 
 				$positiverates = '';
@@ -2395,12 +2398,13 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				echo vatrate($positiverates.($line->default_vat_code ? ' ('.$line->default_vat_code.')' : ''), '%', ($line->tva_npr ? $line->tva_npr : $line->recuperableonly));
 
 				print "</td>";
+
 				print '<td class="right"><span class="amount">'.price($line->price)."</span></td>";
 
 				print '<td class="right"><span class="amount">'.price($line->price_ttc)."</span></td>";
 				if ($mysoc->localtax1_assuj == "1" || $mysoc->localtax2_assuj == "1") {
 					//print '<td class="right">' . price($line->price_ttc) . "</td>";
-					print '<td class="right">'.price($resultarray[2]).'</td>';
+					print '<td class="right"><span class="amount">'.price($resultarray[2]).'</span></td>';
 				}
 
 				print '<td class="right">'.price($line->price_min).'</td>';
