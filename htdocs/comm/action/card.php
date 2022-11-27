@@ -1253,7 +1253,7 @@ if ($action == 'create') {
 		print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
 		print '</div>';
 		// limit date
-		$repeateventlimitdate = $repeateventlimitdate ? $repeateventlimitdate : '';
+		$repeateventlimitdate = !empty($repeateventlimitdate) ? $repeateventlimitdate : '';
 		print '<div class="hidden marginrightonly inline-block repeateventlimitdate">';
 		print $langs->trans("Until")." ";
 		print $form->selectDate($repeateventlimitdate, 'limit', 0, 0, 0, "action", 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');

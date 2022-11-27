@@ -3112,7 +3112,7 @@ if ($module == 'initmodule') {
 									$proplabel = $propval['label'];
 									$proptype = $propval['type'];
 									$proparrayofkeyval = !empty($propval['arrayofkeyval'])?$propval['arrayofkeyval']:'';
-									$propnotnull = $propval['notnull'];
+									$propnotnull = !empty($propval['notnull']) ? $propval['notnull'] : '0';
 									$propdefault = !empty($propval['default'])?$propval['default']:'';
 									$propindex = !empty($propval['index'])?$propval['index']:'';
 									$propforeignkey = !empty($propval['foreignkey'])?$propval['foreignkey']:'';
