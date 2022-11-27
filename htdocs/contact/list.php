@@ -626,12 +626,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-// Add order
-if ($view == "recent") {
-	$sql .= $db->order("p.datec", "DESC");
-} else {
-	$sql .= $db->order($sortfield, $sortorder);
-}
 //print $sql;
 
 // Count total nb of records
@@ -655,7 +649,15 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+if ($view == "recent") {
+	$sql .= $db->order("p.datec", "DESC");
+} else {
+	$sql .= $db->order($sortfield, $sortorder);
+}
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $resql = $db->query($sql);
 if (!$resql) {
