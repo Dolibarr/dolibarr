@@ -3081,7 +3081,7 @@ form[name="addtime"] img.userphoto {
 div.vmenu, td.vmenu {
 	position: relative;
 	float: left;
-	width: 190px;
+	width: 200px;
 	padding:0 1rem;
 }
 
@@ -3096,21 +3096,8 @@ div.blockvmenuend, div.blockvmenubookmarks {
 	padding-left: 0 !important;
 }
 
-ul.blockvmenu{
-	color: var(--colortextbackvmenu);
-	padding:1em 0;
-	margin:0;
-	list-style:none;	
-	border-bottom:solid 1px;	
-	line-height:1.5em;
-}
-ul.blockvmenu>li{}
-ul.blockvmenu>.menu_titre:not(:last-of-type) {
-	margin:0 0 1em;
-}
-ul.blockvmenu:first-of-type{
-	border-top:solid 1px;
-}
+
+
 
 
 /* Force vmenusearchselectcombo with type=text differently than without because beautify with select2 affect vmenusearchselectcombo differently */
