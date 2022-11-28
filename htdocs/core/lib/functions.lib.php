@@ -915,8 +915,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 					try {
 						$dom = new DOMDocument;
 						// Add a trick to solve pb with text without parent tag
-						// like '<h1>Foo</h1><p>bar</p>' that ends up with '<h1>Foo<p>bar</p></h1>'
-						// like 'abc' that ends up with '<p>abc</p>'
+						// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up without the trick into '<h1>Foo<p>bar</p></h1>'
+						// like 'abc' that wrongly ends up without the tric into with '<p>abc</p>'
 						$out = '<div class="tricktoremove">'.$out.'</div>';
 
 						$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
@@ -925,6 +925,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 						// Remove the trick added to solve pb with text without parent tag
 						$out = preg_replace('/^<div class="tricktoremove">/', '', $out);
 						$out = preg_replace('/<\/div>$/', '', $out);
+						var_dump('xxx');
+						var_dump($out);
 					} catch (Exception $e) {
 						//print $e->getMessage();
 						return 'InvalidHTMLString';
