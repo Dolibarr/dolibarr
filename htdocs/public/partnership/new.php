@@ -59,6 +59,7 @@ require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Init vars
 $errmsg = '';
@@ -226,13 +227,15 @@ if (empty($reshook) && $action == 'add') {
 		$partnership->ip = getUserRemoteIP();
 
 		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
-
+		$now = dol_now();
+		$minmonthpost = dol_time_plus_duree($now, -1, "m");
 		// Calculate nb of post for IP
 		$nb_post_ip = 0;
 		if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
 			$sql = "SELECT COUNT(ref) as nb_partnerships";
 			$sql .= " FROM ".MAIN_DB_PREFIX."partnership";
 			$sql .= " WHERE ip = '".$db->escape($partnership->ip)."'";
+			$sql .= " AND date_creation > '".$db->idate($minmonthpost)."'";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);

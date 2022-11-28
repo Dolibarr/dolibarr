@@ -57,6 +57,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Init vars
 $errmsg = '';
@@ -298,12 +299,14 @@ if (empty($reshook) && $action == 'add') {
 
 		$proj->ip = getUserRemoteIP();
 		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
-		// Calculate nb of post for IP
+		$now = dol_now();
+		$minmonthpost = dol_time_plus_duree($now, -1, "m");
 		$nb_post_ip = 0;
 		if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
 			$sql = "SELECT COUNT(rowid) as nb_projets";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet";
 			$sql .= " WHERE ip = '".$db->escape($proj->ip)."'";
+			$sql .= " AND datec > '".$db->idate($minmonthpost)."'";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
