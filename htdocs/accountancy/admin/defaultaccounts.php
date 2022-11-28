@@ -81,6 +81,10 @@ $list_account[] = '---Others---';
 $list_account[] = 'ACCOUNTING_VAT_BUY_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_SOLD_ACCOUNT';
 $list_account[] = 'ACCOUNTING_VAT_PAY_ACCOUNT';
+$list_account[] = 'ACCOUNTING_ACCOUNT_VAT_BUY_REVERSE_CHARGES_CREDIT';
+$list_account[] = 'ACCOUNTING_ACCOUNT_VAT_BUY_REVERSE_CHARGES_DEBIT';
+
+$list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
 if (!empty($conf->banque->enabled)) {
 	$list_account[] = 'ACCOUNTING_ACCOUNT_TRANSFER_CASH';
 }
@@ -95,7 +99,6 @@ if (!empty($conf->loan->enabled)) {
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INTEREST';
 	$list_account[] = 'LOAN_ACCOUNTING_ACCOUNT_INSURANCE';
 }
-$list_account[] = 'ACCOUNTING_ACCOUNT_SUSPENSE';
 if (!empty($conf->societe->enabled)) {
 	$list_account[] = '---Deposits---';
 }
