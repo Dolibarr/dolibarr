@@ -108,7 +108,7 @@ if (GETPOST('ajoutcomment', 'alpha')) {
 		$sql = "SELECT COUNT(id_comment) as nb_comments";
 		$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_comments";
 		$sql .= " WHERE ip = '".$db->escape($user_ip)."'";
-		//$sql .= " AND date_creation > '".$db->idate($minmonthpost)."'";
+		$sql .= " AND date_creation > '".$db->idate($minmonthpost)."'";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -164,7 +164,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			$sql = "SELECT COUNT(id_users) as nb_records";
 			$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 			$sql .= " WHERE ip = '".$db->escape($user_ip)."'";
-			//$sql .= " AND date_creation > '".$db->idate($minmonthpost)."'";
+			$sql .= " AND date_creation > '".$db->idate($minmonthpost)."'";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
@@ -198,8 +198,9 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			setEventMessages($langs->trans("AlreadyTooMuchPostOnThisIPAdress"), null, 'errors');
 			$error++;
 		} else {
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, ip)';
-			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."','".$db->escape($nouveauchoix)."', '".$db->escape($user_ip)."')";
+			$now = dol_now();
+			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, ip, date_creation)';
+			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."','".$db->escape($nouveauchoix)."', '".$db->escape($user_ip)."', '".$db->idate($now)."')";
 			$resql = $db->query($sql);
 
 			if ($resql) {

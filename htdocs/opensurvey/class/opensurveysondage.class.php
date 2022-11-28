@@ -576,8 +576,9 @@ class Opensurveysondage extends CommonObject
 	 */
 	public function addComment($comment, $comment_user, $user_ip = '')
 	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment, ip)";
-		$sql .= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."'".($user_ip ? ",'".$this->db->escape($user_ip)."'" : '').")";
+		$now = dol_now();
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment, date_creation, ip)";
+		$sql .= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."','".$this->db->idate($now)."'".($user_ip ? ",'".$this->db->escape($user_ip)."'" : '').")";
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {
