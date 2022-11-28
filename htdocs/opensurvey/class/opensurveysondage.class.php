@@ -274,7 +274,7 @@ class Opensurveysondage extends CommonObject
 				$this->sujet = $obj->sujet;
 				$this->fk_user_creat = $obj->fk_user_creat;
 
-				$this->date_m = $this->db->jdate($obj->tls);
+				$this->date_m = $this->db->jdate(!empty($obj->tls) ? $obj->tls : "");
 				$ret = 1;
 			} else {
 				$sondage = ($id ? 'id='.$id : 'sondageid='.$numsurvey);
@@ -686,7 +686,7 @@ class Opensurveysondage extends CommonObject
 	{
 		$result = 0;
 
-		$sql .= " SELECT COUNT(id_users) as nb FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+		$sql = " SELECT COUNT(id_users) as nb FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql .= " WHERE id_sondage = '".$this->db->escape($this->ref)."'";
 
 		$resql = $this->db->query($sql);
