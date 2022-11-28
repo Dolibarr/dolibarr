@@ -196,7 +196,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MaxNumberOfPostOnPublicPagesByIP").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat right width50" name="MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS" type="text" value="'.getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000).'">';
+print '<input class="flat right width50" name="MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS" type="text" value="'.getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000).'"> '.strtolower($langs->trans("Files"));
 print '</td>';
 print '</tr>';
 
@@ -204,7 +204,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MaxNumberOfAttachementOnForms").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat right width50" name="MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS" type="text" value="'.getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10).'">';
+print '<input class="flat right width50" name="MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS" type="text" value="'.getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10).'"> '.strtolower($langs->trans("Files"));
 print '</td>';
 print '</tr>';
 
