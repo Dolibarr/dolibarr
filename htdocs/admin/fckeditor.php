@@ -172,7 +172,7 @@ if (empty($conf->use_javascript_ajax)) {
 			print '<br><span class="warning">'.$langs->trans("FCKeditorForProductDetails2").'</span>';
 		}
 		print '</td>';
-		print '<td class="center" width="100">';
+		print '<td class="center centpercent">';
 		$value = (isset($conf->global->$constante) ? $conf->global->$constante : 0);
 		if ($value == 0) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
