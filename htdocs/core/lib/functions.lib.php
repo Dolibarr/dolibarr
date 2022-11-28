@@ -908,7 +908,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
 		case 'restricthtmlallowunvalid':
-			$out = dol_htmlwithnojs($out, 1);
+			$out = dol_htmlwithnojs($out, 1, $check);
 			break;
 		case 'custom':
 			if (!empty($out)) {
@@ -7097,10 +7097,11 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
  * Sanitize a HTML to remove js and dangerous content
  *
  * @param	string	$stringtoencode				String to encode
- * @param	int     $nouseofiframesandbox	Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing
+ * @param	int     $nouseofiframesandbox		Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing
+ * @param	string	$check						'restricthtml' or 'restricthtmlallowunvalid'
  * @return	string								HTML sanitized
  */
-function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0)
+function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = 'restricthtml')
 {
 	global $conf;
 
