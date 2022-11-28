@@ -908,65 +908,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
 		case 'restricthtmlallowunvalid':
-			do {
-				$oldstringtoclean = $out;
-
-				if (!empty($out) && !empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) && $check != 'restricthtmlallowunvalid') {
-					try {
-						$dom = new DOMDocument;
-						// Add a trick to solve pb with text without parent tag
-						// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up without the trick into '<h1>Foo<p>bar</p></h1>'
-						// like 'abc' that wrongly ends up without the tric into with '<p>abc</p>'
-						$out = '<div class="tricktoremove">'.$out.'</div>';
-
-						$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
-						$out = trim($dom->saveHTML());
-
-						// Remove the trick added to solve pb with text without parent tag
-						$out = preg_replace('/^<div class="tricktoremove">/', '', $out);
-						$out = preg_replace('/<\/div>$/', '', $out);
-						var_dump('xxx');
-						var_dump($out);
-					} catch (Exception $e) {
-						//print $e->getMessage();
-						return 'InvalidHTMLString';
-					}
-				}
-
-				// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are
-				// encoded using text entities) so we can then exclude all numeric entities.
-				$out = preg_replace('/&#39;/i', '&apos;', $out);
-
-				// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step (preg_replace).
-				// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
-				// using a non coventionnel way to be encoded, to not have them sanitized just after)
-				//$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
-				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
-					return realCharForNumericEntities($m); }, $out);
-
-
-				// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
-				$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
-
-				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
-
-				// We should also exclude non expected HTML attributes and clean content of some attributes.
-				if (!empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
-					// Warning, the function may add a LF so we are forced to trim to compare with old $out without having always a difference and an infinit loop.
-					$out = dol_string_onlythesehtmlattributes($out);
-				}
-
-				// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
-				$out = preg_replace('/&apos;/i', "&#39;", $out);
-			} while ($oldstringtoclean != $out);
-
-			// Check the limit of external links in a Rich text content. We count '<img' and 'url('
-			$reg = array();
-			preg_match_all('/(<img|url\()/i', $out, $reg);
-			if (count($reg[0]) > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
-				return 'TooManyLinksIntoHTMLString';
-			}
-
+			$out = dol_htmlwithnojs($out, 1);
 			break;
 		case 'custom':
 			if (!empty($out)) {
@@ -7151,6 +7093,87 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 	}
 }
 
+/**
+ * Sanitize a HTML to remove js and dangerous content
+ *
+ * @param	string	$stringtoencode				String to encode
+ * @param	int     $nouseofiframesandbox	Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing
+ * @return	string								HTML sanitized
+ */
+function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0)
+{
+	global $conf;
+
+	if (empty($nouseofiframesandbox) && !empty($conf->global->MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS)) {
+		// TODO using sandbox on inline html content is not possible yet with current browsers
+		//$s = '<iframe class="iframewithsandbox" sandbox><html><body>';
+		//$s .= $stringtoencode;
+		//$s .= '</body></html></iframe>';
+		return $stringtoencode;
+	} else {
+		$out = $stringtoencode;
+
+		do {
+			$oldstringtoclean = $out;
+
+			if (!empty($out) && !empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) && $check != 'restricthtmlallowunvalid') {
+				try {
+					$dom = new DOMDocument;
+					// Add a trick to solve pb with text without parent tag
+					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up without the trick into '<h1>Foo<p>bar</p></h1>'
+					// like 'abc' that wrongly ends up without the tric into with '<p>abc</p>'
+					$out = '<div class="tricktoremove">'.$out.'</div>';
+
+					$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+					$out = trim($dom->saveHTML());
+
+					// Remove the trick added to solve pb with text without parent tag
+					$out = preg_replace('/^<div class="tricktoremove">/', '', $out);
+					$out = preg_replace('/<\/div>$/', '', $out);
+				} catch (Exception $e) {
+					// If error, invalid HTML string with no way to clean it
+					//print $e->getMessage();
+					$out = 'InvalidHTMLString';
+				}
+			}
+
+			// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are
+			// encoded using text entities) so we can then exclude all numeric entities.
+			$out = preg_replace('/&#39;/i', '&apos;', $out);
+
+			// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step (preg_replace).
+			// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
+			// using a non coventionnel way to be encoded, to not have them sanitized just after)
+				//$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
+				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
+					return realCharForNumericEntities($m); }, $out);
+
+
+					// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
+					$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
+
+					$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+
+					// We should also exclude non expected HTML attributes and clean content of some attributes.
+			if (!empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
+				// Warning, the function may add a LF so we are forced to trim to compare with old $out without having always a difference and an infinit loop.
+				$out = dol_string_onlythesehtmlattributes($out);
+			}
+
+					// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
+					$out = preg_replace('/&apos;/i', "&#39;", $out);
+		} while ($oldstringtoclean != $out);
+
+		// Check the limit of external links in a Rich text content. We count '<img' and 'url('
+		$reg = array();
+		preg_match_all('/(<img|url\()/i', $out, $reg);
+		if (count($reg[0]) > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
+			$out = 'TooManyLinksIntoHTMLString';
+		}
+
+		return $out;
+	}
+}
 
 /**
  *	This function is called to encode a string into a HTML string but differs from htmlentities because

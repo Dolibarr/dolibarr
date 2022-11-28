@@ -218,7 +218,7 @@ class ActionsTicket
 			// Deal with format differences (text / HTML)
 			if (dol_textishtml($object->message)) {
 				print '<div class="longmessagecut">';
-				print $object->message;
+				print dol_htmlwithnojs($object->message);
 				print '</div>';
 				/*print '<div class="clear center">';
 				print $langs->trans("More").'...';

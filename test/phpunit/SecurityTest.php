@@ -547,8 +547,8 @@ class SecurityTest extends PHPUnit\Framework\TestCase
 
 		$result=GETPOST("param15", 'restricthtml');		// param15 = <img onerror<=alert(document.domain)> src=>0xbeefed that is a dangerous string
 		print __METHOD__." result=".$result."\n";
-		//$this->assertEquals('InvalidHTMLString', $result, 'Test 15b');
-		$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');
+		$this->assertEquals('InvalidHTMLString', $result, 'Test 15b');
+		//$this->assertEquals('<img onerror> src=&gt;0xbeefed', $result, 'Test 15b');
 
 
 		unset($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML);
