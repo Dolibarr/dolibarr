@@ -346,6 +346,10 @@ if (empty($reshook)) {
 		$filter['t.numero_compte<='] = $search_accountancy_code_end;
 		$param .= '&search_accountancy_code_end='.urlencode($search_accountancy_code_end);
 	}
+	if (!empty($search_accountancy_aux_code)) {
+		$filter['t.subledger_account'] = $search_accountancy_aux_code;
+		$param .= '&search_accountancy_aux_code='.urlencode($search_accountancy_aux_code);
+	}
 	if (!empty($search_accountancy_aux_code_start)) {
 		$filter['t.subledger_account>='] = $search_accountancy_aux_code_start;
 		$param .= '&search_accountancy_aux_code_start='.urlencode($search_accountancy_aux_code_start);
@@ -1442,6 +1446,9 @@ while ($i < min($num, $limit)) {
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
+$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 
 print "</table>";
 print '</div>';

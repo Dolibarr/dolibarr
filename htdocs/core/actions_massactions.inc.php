@@ -89,11 +89,11 @@ if (!$error && $massaction == 'confirm_presend') {
 		$objecttmp = new $objectclass($db);
 		if ($objecttmp->element == 'expensereport') {
 			$thirdparty = new User($db);
-		}
-		if ($objecttmp->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+		} elseif ($objecttmp->element == 'contact') {
+			$thirdparty = new Contact($db);
+		} elseif ($objecttmp->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
 			$thirdparty = new Adherent($db);
-		}
-		if ($objecttmp->element == 'holiday') {
+		} elseif ($objecttmp->element == 'holiday') {
 			$thirdparty = new User($db);
 		}
 
@@ -106,14 +106,13 @@ if (!$error && $massaction == 'confirm_presend') {
 				$thirdpartyid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
 				if ($objecttmp->element == 'societe') {
 					$thirdpartyid = $objecttmp->id;
-				}
-				if ($objecttmp->element == 'expensereport') {
+				} elseif ($objecttmp->element == 'contact') {
+					$thirdpartyid = $objecttmp->id;
+				} elseif ($objecttmp->element == 'expensereport') {
 					$thirdpartyid = $objecttmp->fk_user_author;
-				}
-				if ($objecttmp->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
+				} elseif ($objecttmp->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
 					$thirdpartyid = $objecttmp->fk_member;
-				}
-				if ($objecttmp->element == 'holiday') {
+				} elseif ($objecttmp->element == 'holiday') {
 					$thirdpartyid = $objecttmp->fk_user;
 				}
 				if (empty($thirdpartyid)) {
@@ -256,6 +255,10 @@ if (!$error && $massaction == 'confirm_presend') {
 						$fuser = new User($db);
 						$fuser->fetch($objectobj->fk_user_author);
 						$sendto = $fuser->email;
+					} elseif ($objectobj->element == 'contact') {
+						$fcontact = new Contact($db);
+						$fcontact->fetch($objectobj->id);
+						$sendto = $fcontact->email;
 					} elseif ($objectobj->element == 'partnership' && $conf->global->PARTNERSHIP_IS_MANAGED_FOR == 'member') {
 						$fadherent = new Adherent($db);
 						$fadherent->fetch($objectobj->fk_member);
@@ -485,31 +488,28 @@ if (!$error && $massaction == 'confirm_presend') {
 						$trackid = 'thi'.$thirdparty->id;
 						if ($objecttmp->element == 'expensereport') {
 							$trackid = 'use'.$thirdparty->id;
-						}
-						if ($objecttmp->element == 'holiday') {
+						} elseif ($objecttmp->element == 'contact') {
+							$trackid = 'ctc'.$thirdparty->id;
+						} elseif ($objecttmp->element == 'holiday') {
 							$trackid = 'use'.$thirdparty->id;
 						}
 					} else {
 						$trackid = strtolower(get_class($objecttmp));
-						if (get_class($objecttmp) == 'Contrat') {
+						if (get_class($objecttmp) == 'Contact') {
+							$trackid = 'ctc';
+						} elseif (get_class($objecttmp) == 'Contrat') {
 							$trackid = 'con';
-						}
-						if (get_class($objecttmp) == 'Propal') {
+						} elseif (get_class($objecttmp) == 'Propal') {
 							$trackid = 'pro';
-						}
-						if (get_class($objecttmp) == 'Commande') {
+						} elseif (get_class($objecttmp) == 'Commande') {
 							$trackid = 'ord';
-						}
-						if (get_class($objecttmp) == 'Facture') {
+						} elseif (get_class($objecttmp) == 'Facture') {
 							$trackid = 'inv';
-						}
-						if (get_class($objecttmp) == 'Supplier_Proposal') {
+						} elseif (get_class($objecttmp) == 'Supplier_Proposal') {
 							$trackid = 'spr';
-						}
-						if (get_class($objecttmp) == 'CommandeFournisseur') {
+						} elseif (get_class($objecttmp) == 'CommandeFournisseur') {
 							$trackid = 'sor';
-						}
-						if (get_class($objecttmp) == 'FactureFournisseur') {
+						} elseif (get_class($objecttmp) == 'FactureFournisseur') {
 							$trackid = 'sin';
 						}
 

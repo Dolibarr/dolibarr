@@ -24,6 +24,7 @@
  *	\brief      File of class to manage stock movement (input or output)
  */
 
+require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionlinedispatch.class.php';
 
 /**
  *	Class to manage stock movements
@@ -110,6 +111,11 @@ class MouvementStock extends CommonObject
 		'sellby' =>array('type'=>'date', 'label'=>'Sellby', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'fk_project' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk project', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 	);
+
+	/**
+	 * @var ExpeditionLineDispatch[] array of dispatched shipment lines
+	 */
+	public $detail_dispatch;
 
 
 
@@ -202,7 +208,11 @@ class MouvementStock extends CommonObject
 
 		// Check parameters
 		if (!($fk_product > 0)) return 0;
-		if (!($entrepot_id > 0)) return 0;
+		if ((empty($conf->global->PRODUIT_SOUSPRODUITS) && !($entrepot_id > 0))
+			|| (!empty($conf->global->PRODUIT_SOUSPRODUITS) && !($entrepot_id >= 0))
+		) {
+			return 0;
+		}
 
 		if (is_numeric($eatby) && $eatby < 0) {
 			dol_syslog(get_class($this)."::_create start ErrorBadValueForParameterEatBy eatby = ".$eatby);
@@ -245,7 +255,9 @@ class MouvementStock extends CommonObject
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		// Only record into stock tables wil be disabled by this (the rest like writing into lot table or movement of subproucts are done)
 		$movestock = 0;
-		if ($product->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock = 1;
+		if (($product->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $product->hasChildren()==0) {
+			$movestock = 1;
+		}
 
 		$this->db->begin();
 
@@ -572,7 +584,23 @@ class MouvementStock extends CommonObject
 
 		// Add movement for sub products (recursive call)
 		if (!$error && !empty($conf->global->PRODUIT_SOUSPRODUITS) && empty($conf->global->INDEPENDANT_SUBPRODUCT_STOCK) && empty($disablestockchangeforsubproduct)) {
-			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label, $inventorycode); // we use 0 as price, because AWP must not change for subproduct
+			if (isset($this->detail_dispatch)) {
+				if (!empty($this->detail_dispatch)) {
+					$lines_dispatch = $this->detail_dispatch;
+					unset($this->detail_dispatch);
+
+					foreach ($lines_dispatch as $line_dispatch) {
+						$result = $this->_create($user, $line_dispatch->fk_product, $line_dispatch->fk_entrepot, $line_dispatch->qty, $type, 0, $label, $inventorycode); // we use 0 as price, because AWP must not change for sub-product
+						if ($result < 0) {
+							$error++;
+						}
+
+						if ($error)	break;
+					}
+				}
+			} else {
+				$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, 0, $label, $inventorycode); // we use 0 as price, because AWP must not change for subproduct
+			}
 		}
 
 		if ($movestock && !$error) {
