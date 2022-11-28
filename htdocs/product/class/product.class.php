@@ -1115,17 +1115,19 @@ class Product extends CommonObject
 					if ($ObjW->real <> $qty_batch) {
 						$qty_to_complete = $ObjW->real - $qty_batch;
 						$batches_to_complete = array();
-						if ($this->status_batch == 2) {
+						if ($this->status_batch == 2 && $qty_to_complete > 0) {
 							// For serial type we add postfix to default value
-							for ($i=1; $i <= $qty_to_complete; $i++) {
-								$batches_to_complete[$valueforundefinedlot . '-' . $i] = 1;
+							$qty_completed = 1;
+							while ($qty_completed < $qty_to_complete) {
+								$batches_to_complete[$valueforundefinedlot . '-' . $qty_completed++] = 1;
 							}
-							if (($i - $qty_to_complete) > 0) {
-								// we remaining decimal part
-								$batches_to_complete[$valueforundefinedlot . '-' . $i] = $i - $qty_to_complete;
+							// we get remaining decimal part
+							$qty_completed--;
+							if (($qty_to_complete - $qty_completed) > 0) {
+								$batches_to_complete[$valueforundefinedlot . '-' . $qty_completed+1] = $qty_to_complete - $qty_completed;
 							}
 						} else {
-							$batch_array[$valueforundefinedlot] = $qty_to_complete;
+							$batches_to_complete[$valueforundefinedlot] = $qty_to_complete;
 						}
 						foreach ($batches_to_complete as $valueforundefinedlot => $qty) {
 							$ObjBatch = new Productbatch($this->db);
