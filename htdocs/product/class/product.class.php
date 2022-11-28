@@ -1098,7 +1098,6 @@ class Product extends CommonObject
 					foreach ($ObjW->detail_batch as $detail) {    // Each lines of detail in product_batch of the current $ObjW = product_stock
 						if ($detail->batch == $valueforundefinedlot || $detail->batch == 'Undefined') {
 							// We discard this line, we will create it later
-							// TODO discard serail undefined lines
 							$sqlclean = "DELETE FROM ".$this->db->prefix()."product_batch WHERE batch in('Undefined', '".$this->db->escape($valueforundefinedlot)."') AND fk_product_stock = ".((int) $ObjW->id);
 							$result = $this->db->query($sqlclean);
 							if (!$result) {
@@ -1113,42 +1112,24 @@ class Product extends CommonObject
 					// Quantities in batch details are not same as stock quantity,
 					// so we add a default batch record to complete and get same qty in parent and child table
 					if ($ObjW->real <> $qty_batch) {
-						$qty_to_complete = $ObjW->real - $qty_batch;
-						$batches_to_complete = array();
-						if ($this->status_batch == 2) {
-							// For serial type we add postfix to default value
-							for ($i=1; $i <= $qty_to_complete; $i++) {
-								$batches_to_complete[$valueforundefinedlot . '-' . $i] = 1;
-							}
-							if (($qty_to_complete - $i) > 0) {
-								// we remaining decimal part
-								$batches_to_complete[$valueforundefinedlot . '-' . $i+1] = $qty_to_complete - $i;
-							}
-						} else {
-							$batch_array[$valueforundefinedlot] = $qty_to_complete;
-						}
-						foreach ($batches_to_complete as $valueforundefinedlot => $qty) {
-							$ObjBatch = new Productbatch($this->db);
-							$ObjBatch->batch = $valueforundefinedlot;
-							$ObjBatch->qty = $qty;
-							$ObjBatch->fk_product_stock = $ObjW->id;
+						$ObjBatch = new Productbatch($this->db);
+						$ObjBatch->batch = $valueforundefinedlot;
+						$ObjBatch->qty = ($ObjW->real - $qty_batch);
+						$ObjBatch->fk_product_stock = $ObjW->id;
 
-							if ($ObjBatch->create($user, 1) < 0) {
+						if ($ObjBatch->create($user, 1) < 0) {
+							$error++;
+							$this->errors = $ObjBatch->errors;
+						} else {
+							// we also add lot record
+							$ObjLot = new Productlot($this->db);
+							$ObjLot->fk_product = $this->id;
+							$ObjLot->entity = $this->entity;
+							$ObjLot->fk_user_creat = $user->id;
+							$ObjLot->batch = $valueforundefinedlot;
+							if ($ObjLot->create($user, true) < 0) {
 								$error++;
-								$this->errors = $ObjBatch->errors;
-							} else {
-								// we also add lot record if not exist
-								$ObjLot = new Productlot($this->db);
-								if ($ObjLot->fetch(0, 0, $valueforundefinedlot) == 0) {
-									$ObjLot->fk_product = $this->id;
-									$ObjLot->entity = $this->entity;
-									$ObjLot->fk_user_creat = $user->id;
-									$ObjLot->batch = $valueforundefinedlot;
-									if ($ObjLot->create($user, true) < 0) {
-										$error++;
-										$this->errors = $ObjLot->errors;
-									}
-								}
+								$this->errors = $ObjLot->errors;
 							}
 						}
 					}
