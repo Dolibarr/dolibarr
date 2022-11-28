@@ -329,10 +329,10 @@ class CMailFile
 		$this->addr_bcc = dol_sanitizeEmail($addr_bcc);
 		$this->deliveryreceipt = $deliveryreceipt;
 		if (empty($replyto)) {
-			$replyto = $from;
+			$replyto = dol_sanitizeEmail($from);
 		}
-		$this->reply_to = $replyto;
-		$this->errors_to = $errors_to;
+		$this->reply_to = dol_sanitizeEmail($replyto);
+		$this->errors_to = dol_sanitizeEmail($errors_to);
 		$this->trackid = $trackid;
 		// Set arrays with attached files info
 		$this->filename_list = $filename_list;
