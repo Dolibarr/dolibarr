@@ -322,11 +322,11 @@ class CMailFile
 		}
 
 		$this->subject = $subject;
-		$this->addr_to = $to;
-		$this->addr_from = $from;
+		$this->addr_to = dol_sanitizeEmail($to);
+		$this->addr_from = dol_sanitizeEmail($from);
 		$this->msg = $msg;
-		$this->addr_cc = $addr_cc;
-		$this->addr_bcc = $addr_bcc;
+		$this->addr_cc = dol_sanitizeEmail($addr_cc);
+		$this->addr_bcc = dol_sanitizeEmail($addr_bcc);
 		$this->deliveryreceipt = $deliveryreceipt;
 		if (empty($replyto)) {
 			$replyto = $from;
@@ -341,7 +341,7 @@ class CMailFile
 		$this->cid_list = $cid_list;
 
 		if (!empty($conf->global->MAIN_MAIL_FORCE_SENDTO)) {
-			$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;
+			$this->addr_to = dol_sanitizeEmail($conf->global->MAIN_MAIL_FORCE_SENDTO);
 			$this->addr_cc = '';
 			$this->addr_bcc = '';
 		}
