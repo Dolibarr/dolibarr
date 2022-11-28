@@ -206,9 +206,9 @@ class ActionsTicket
 
 		print '<tr>';
 		print '<td colspan="2">';
-		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
 			// MESSAGE
-			$msg = GETPOST('message_initial', 'alpha') ? GETPOST('message_initial', 'alpha') : $object->message;
+			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
 			$ckeditorenabledforticket = $conf->global->FCKEDITOR_ENABLE_TICKET;
