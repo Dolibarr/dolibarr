@@ -1120,9 +1120,9 @@ class Product extends CommonObject
 							for ($i=1; $i <= $qty_to_complete; $i++) {
 								$batches_to_complete[$valueforundefinedlot . '-' . $i] = 1;
 							}
-							if (($i - $qty_to_complete) > 0) {
+							if (($qty_to_complete - $i) > 0) {
 								// we remaining decimal part
-								$batches_to_complete[$valueforundefinedlot . '-' . $i] = $i - $qty_to_complete;
+								$batches_to_complete[$valueforundefinedlot . '-' . $i+1] = $qty_to_complete - $i;
 							}
 						} else {
 							$batch_array[$valueforundefinedlot] = $qty_to_complete;
