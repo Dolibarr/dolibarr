@@ -251,7 +251,7 @@ class Categorie extends CommonObject
 	/**
 	 * @var array Categories table in memory
 	 * @deprecated
-	 * @see $cats_sortby_fullname
+	 * @see $cats_sortby_fulllabel
 	 */
 	public $cats = array();
 
