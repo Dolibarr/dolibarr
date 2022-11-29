@@ -423,7 +423,7 @@ class ActionComm extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		global $langs, $conf, $hookmanager;
+		global $langs, $conf;
 
 		$error = 0;
 		$now = dol_now();
@@ -707,10 +707,9 @@ class ActionComm extends CommonObject
 	 */
 	public function createFromClone(User $fuser, $socid)
 	{
-		global $db, $conf, $hookmanager;
+		global $hookmanager;
 
 		$error = 0;
-		$now = dol_now();
 
 		$this->db->begin();
 
@@ -1174,7 +1173,7 @@ class ActionComm extends CommonObject
 		}
 
 		$code = $this->code;
-		if (empty($code)) {
+		if (empty($code) || (!empty($this->oldcopy) && $this->oldcopy->type_code != $this->type_code)) {	// If code unknown or if we change the type, we reset $code too
 			$code = $this->type_code;
 		}
 

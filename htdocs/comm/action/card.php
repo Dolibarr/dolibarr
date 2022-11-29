@@ -735,6 +735,7 @@ if (empty($reshook) && $action == 'update') {
 			// type_id and type_code is not modified
 		} else {
 			$object->type_id = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
+			$object->type_code = GETPOST("actioncode", 'aZ09');
 		}
 
 		$object->label       = GETPOST("label", "alphanohtml");
