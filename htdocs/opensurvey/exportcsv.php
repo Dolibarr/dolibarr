@@ -113,10 +113,10 @@ if ($resql) {
 				$input .= 'OK;';
 				$somme[$k]++;
 			} elseif ($car == "2") {
-				$input .= 'KO;';
+				$input .= ';';
 				$somme[$k]++;
 			} else {
-				$input .= ';';
+				$input .= 'KO;';
 			}
 		}
 
