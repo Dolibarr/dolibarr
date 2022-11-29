@@ -256,9 +256,9 @@ class Categorie extends CommonObject
 	public $cats = array();
 
 	/**
-	 * @var array Categories table sort by fullname in memory
+	 * @var array Categories table sort by fulllabel in memory
 	 */
-	public $cats_sortby_fullname = array();
+	public $cats_sortby_fulllabel = array();
 
 	/**
 	 * @var array Categories table sort by id in memory
@@ -1200,12 +1200,12 @@ class Categorie extends CommonObject
 
 		dol_syslog(get_class($this)."::get_full_arbo dol_sort_array", LOG_DEBUG);
 		$this->cats_sortby_id = $categories;
-		$this->cats_sortby_fullname =  dol_sort_array($categories, 'fulllabel', 'asc', true, false);
-		$this->cats = $this->cats_sortby_fullname;
+		$this->cats_sortby_fulllabel =  dol_sort_array($categories, 'fulllabel', 'asc', true, false);
+		$this->cats = $this->cats_sortby_fulllabel;
 
 		//$this->debug_cats();
 
-		return $this->cats_sortby_fullname;
+		return $this->cats_sortby_fulllabel;
 	}
 
 	/**
