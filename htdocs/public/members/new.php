@@ -287,7 +287,7 @@ if (empty($reshook) && $action == 'add') {
 
 		$adh->ip = getUserRemoteIP();
 
-		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
 		$now = dol_now();
 		$minmonthpost = dol_time_plus_duree($now, -1, "m");
 		// Calculate nb of post for IP
