@@ -1158,7 +1158,7 @@ class Categorie extends CommonObject
 			while ($obj = $this->db->fetch_object($resql)) {
 				$categories[$obj->rowid]['rowid'] = $obj->rowid;
 				$categories[$obj->rowid]['id'] = $obj->rowid;
-				$$categories[$obj->rowid]['fk_parent'] = $obj->fk_parent;
+				$categories[$obj->rowid]['fk_parent'] = $obj->fk_parent;
 				$categories[$obj->rowid]['label'] = !empty($obj->label_trans) ? $obj->label_trans : $obj->label;
 				$categories[$obj->rowid]['description'] = !empty($obj->description_trans) ? $obj->description_trans : $obj->description;
 				$categories[$obj->rowid]['color'] = $obj->color;
