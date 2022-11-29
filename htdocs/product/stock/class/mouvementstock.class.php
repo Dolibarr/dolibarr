@@ -104,8 +104,8 @@ class MouvementStock extends CommonObject
 	public $inventorycode;
 	public $batch;
 
-	public $lineIdObjectSrc;
-	public $lineIdObjectOrigin;
+	public $line_id_oject_src;
+	public $line_id_oject_origin;
 
 
 	public $fields = array(
@@ -1005,17 +1005,17 @@ class MouvementStock extends CommonObject
 	 *
 	 * @param	string	$origin_element		Type of element
 	 * @param	int		$origin_id			Id of element
-	 * @param	int		$lineIdObjectSrc	Id line of element Source
-	 * @param	int		$lineIdObjectOrigin	Id line of element Origin
+	 * @param	int		$line_id_oject_src	Id line of element Source
+	 * @param	int		$line_id_oject_origin	Id line of element Origin
 	 *
 	 * @return	void
 	 */
-	public function setOrigin($origin_element, $origin_id, $lineIdObjectSrc = 0, $lineIdObjectOrigin = 0)
+	public function setOrigin($origin_element, $origin_id, $line_id_oject_src = 0, $line_id_oject_origin = 0)
 	{
 		$this->origin_type = $origin_element;
 		$this->origin_id = $origin_id;
-		$this->lineIdObjectSrc = $lineIdObjectSrc;
-		$this->lineIdObjectOrigin = $lineIdObjectOrigin;
+		$this->line_id_oject_src = $line_id_oject_src;
+		$this->line_id_oject_origin = $line_id_oject_origin;
 		// For backward compatibility
 		$this->origintype = $origin_element;
 		$this->fk_origin = $origin_id;
