@@ -1971,6 +1971,10 @@ class AccountLine extends CommonObject
 	 */
 	public function insert()
 	{
+		$error = 0;
+
+		$this->db->begin();
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (";
 		$sql .= "datec";
 		$sql .= ", dateo";
@@ -2006,15 +2010,26 @@ class AccountLine extends CommonObject
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-
-		if (!$resql) {
+		if ($resql) {
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'bank');
+			// Actions on extra fields (by external module or standard code)
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		} else {
+			$error++;
 			$this->error = $this->db->lasterror();
-			return -1;
+			dol_print_error($this->db);
 		}
 
-		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'bank');
-
-		return $this->id;
+		if (!$error) {
+			$this->db->commit();
+			return $this->id;
+		} else {
+			$this->db->rollback();
+			return -1 * $error;
+		}
 	}
 
 	/**
