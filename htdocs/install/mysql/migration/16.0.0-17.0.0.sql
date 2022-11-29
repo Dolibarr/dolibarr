@@ -384,3 +384,5 @@ ALTER TABLE llx_prelevement_demande ADD COLUMN fk_salary INTEGER NULL AFTER fk_f
 
 
 ALTER TABLE llx_user ADD COLUMN birth_place varchar(64);
+ALTER TABLE llx_opensurvey_user_studs ADD COLUMN date_creation datetime NOT NULL;
+ALTER TABLE llx_opensurvey_comments ADD COLUMN date_creation datetime NOT NULL;
