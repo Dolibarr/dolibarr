@@ -852,7 +852,7 @@ class Account extends CommonObject
 
 		$sql .= ",min_allowed = ".($this->min_allowed != '' ? price2num($this->min_allowed) : "null");
 		$sql .= ",min_desired = ".($this->min_desired != '' ? price2num($this->min_desired) : "null");
-		$sql .= ",comment     = '".$this->db->escape($this->comment)."'";
+		$sql .= ",comment = '".$this->db->escape($this->comment)."'";
 
 		$sql .= ",state_id = ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
 		$sql .= ",fk_pays = ".($this->country_id > 0 ? ((int) $this->country_id) : "null");
@@ -1926,18 +1926,18 @@ class AccountLine extends CommonObject
 			$obj = $this->db->fetch_object($result);
 			if ($obj) {
 				$this->id = $obj->rowid;
-				$this->rowid			= $obj->rowid;
+				$this->rowid = $obj->rowid;
 				$this->ref = $obj->rowid;
 
-				$this->datec			= $obj->datec;
-				$this->datev			= $obj->datev;
-				$this->dateo			= $obj->dateo;
+				$this->datec = $obj->datec;
+				$this->datev = $obj->datev;
+				$this->dateo = $obj->dateo;
 				$this->amount = $obj->amount;
-				$this->label			= $obj->label;
-				$this->note				= $obj->note;
+				$this->label = $obj->label;
+				$this->note = $obj->note;
 
-				$this->fk_user_author	= $obj->fk_user_author;
-				$this->fk_user_rappro	= $obj->fk_user_rappro;
+				$this->fk_user_author = $obj->fk_user_author;
+				$this->fk_user_rappro = $obj->fk_user_rappro;
 
 				$this->fk_type = $obj->fk_type; // Type of transaction
 				$this->rappro = $obj->rappro;
@@ -1948,8 +1948,12 @@ class AccountLine extends CommonObject
 				$this->fk_bordereau = $obj->fk_bordereau;
 
 				$this->fk_account = $obj->fk_account;
-				$this->bank_account_ref   = $obj->bank_account_ref;
+				$this->bank_account_ref = $obj->bank_account_ref;
 				$this->bank_account_label = $obj->bank_account_label;
+
+				// Retrieve all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 
 				$ret = 1;
 			}
