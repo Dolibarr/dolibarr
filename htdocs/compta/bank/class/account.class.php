@@ -9,6 +9,7 @@
  * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2078,6 +2079,12 @@ class AccountLine extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=".(int) $this->rowid;
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if (!$result) {
+			$nbko++;
+		}
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_extrafields WHERE fk_object=".(int) $this->rowid;
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$nbko++;
