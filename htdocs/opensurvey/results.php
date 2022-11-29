@@ -701,34 +701,10 @@ if ($object->format == "D") {
 	$colspan = 1;
 	$nbofsujet = count($toutsujet);
 	for ($i = 0; $i < $nbofsujet; $i++) {
-		$current = $toutsujet[$i];
-
-		if (strpos($toutsujet[$i], '@') !== false) {
-			$current = substr($toutsujet[$i], 0, strpos($toutsujet[$i], '@'));
-		}
-
-		if (isset($toutsujet[$i + 1]) && strpos($toutsujet[$i + 1], '@') !== false) {
-			$next = substr($toutsujet[$i + 1], 0, strpos($toutsujet[$i + 1], '@'));
-		} elseif (isset($toutsujet[$i + 1])) {
-			$next = $toutsujet[$i + 1];
-		}
-
-		$currenty = 0;
-		if ($current) {
-			$currenty = strftime("%Y", $current);
-		}
-		$next = 0;
-		if ($next) {
-			$nexty = strftime("%Y", $next);
-		}
-		if (isset($toutsujet[$i + 1]) && ($currenty == $nexty)) {
+		if (isset($toutsujet[$i + 1]) && date('Y', intval($toutsujet[$i])) == date('Y', intval($toutsujet[$i + 1]))) {
 			$colspan++;
 		} else {
-			print '<td colspan='.$colspan.' class="annee">';
-			if ($current) {
-				print strftime("%Y", $current);
-			}
-			print '</td>'."\n";
+			print '<td colspan='.$colspan.' class="annee">'.date('Y', intval($toutsujet[$i])).'</td>'."\n";
 			$colspan = 1;
 		}
 	}
