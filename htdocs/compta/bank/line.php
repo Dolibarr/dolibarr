@@ -7,7 +7,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills', 'other'));
@@ -77,7 +78,7 @@ if (empty($user->rights->banque->lire) && empty($user->rights->banque->consolida
 }
 
 $hookmanager->initHooks(array('bankline'));
-
+$extrafields = new ExtraFields($db);
 
 /*
  * Actions
@@ -302,6 +303,7 @@ if ($result) {
 		$account = $acct->id;
 
 		$bankline = new AccountLine($db);
+		$extrafields->fetch_name_optionals_label($bankline->element);
 		$bankline->fetch($rowid, $ref);
 
 		$links = $acct->get_url($rowid);
@@ -601,6 +603,13 @@ if ($result) {
 			print "</td></tr>";
 		}
 
+		// Other attributes
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $bankline, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		if (empty($reshook)) {
+			print $bankline->showOptionals($extrafields, 'create', $parameters);
+		}
 		print "</table>";
 
 		// Code to adjust value date with plus and less picto using an Ajax call instead of a full reload of page
