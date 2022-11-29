@@ -1710,7 +1710,7 @@ class ExtraFields
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			if(!isset($param['options'][$value])){
+			if (!isset($param['options'][$value])) {
 				$value = $langs->trans('ErrorNoValueForRadioType');
 			} else {
 				$value = $langs->trans($param['options'][$value]);
