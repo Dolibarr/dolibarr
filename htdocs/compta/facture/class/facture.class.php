@@ -171,6 +171,8 @@ class Facture extends CommonInvoice
 	public $total_ttc;
 	public $revenuestamp;
 
+	public $resteapayer;
+
 	/**
 	 * ! Closing after partial payment: discount_vat, badcustomer or badsupplier, bankcharge, other
 	 * ! Closing when no payment: replaced, abandoned
@@ -199,6 +201,7 @@ class Facture extends CommonInvoice
 	public $fk_facture_source;
 	public $linked_objects = array();
 
+	public $date_valid;
 	public $date_lim_reglement;
 	public $cond_reglement_code; // Code in llx_c_paiement
 	public $mode_reglement_code; // Code in llx_c_paiement
