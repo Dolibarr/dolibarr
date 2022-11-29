@@ -178,7 +178,10 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 				$sumQtyAllreadyDispatched = $sumQtyAllreadyDispatched + $dispachedLines[$line]['qty'];
 			}
 			for ($line = 0 ; $line < $nbLinesOrdered; $line++) {
-				$sumQtyOrdered = $sumQtyOrdered + $object->lines[$line]->qty;
+				//If line is a product of conf to manage stocks for services
+				if ($object->lines[$line]->product_type == 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					$sumQtyOrdered = $sumQtyOrdered + $object->lines[$line]->qty;
+				}
 			}
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.price2num($sumQtyAllreadyDispatched, 'MS').' / '.price2num($sumQtyOrdered, 'MS').'</span>';
 		}

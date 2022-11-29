@@ -80,7 +80,7 @@ function realCharForNumericEntities($matches)
  * Warning: Such a protection can't be enough. It is not reliable as it will always be possible to bypass this. Good protection can
  * only be guaranted by escaping data during output.
  *
- * @param		string		$val		Brut value found into $_GET, $_POST or PHP_SELF
+ * @param		string		$val		Brute value found into $_GET, $_POST or PHP_SELF
  * @param		string		$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @return		int						>0 if there is an injection, 0 if none
  */
@@ -226,6 +226,10 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 	}
 }
 
+// To disable the WAF for GET and POST and PHP_SELF, uncomment this
+//define('NOSCANPHPSELFFORINJECTION', 1);
+//define('NOSCANGETFORINJECTION', 1);
+//define('NOSCANPOSTFORINJECTION', 1);
 
 // Check consistency of NOREQUIREXXX DEFINES
 if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && !defined('NOREQUIREMENU')) {
@@ -238,7 +242,7 @@ if (defined('NOREQUIREUSER') && !defined('NOREQUIREMENU')) {
 }
 
 // Sanity check on URL
-if (!empty($_SERVER["PHP_SELF"])) {
+if (!defined('NOSCANPHPSELFFORINJECTION') && !empty($_SERVER["PHP_SELF"])) {
 	$morevaltochecklikepost = array($_SERVER["PHP_SELF"]);
 	analyseVarsForSqlAndScriptsInjection($morevaltochecklikepost, 2);
 }
@@ -2530,12 +2534,28 @@ function printDropdownQuickadd()
 				"position" => 90,
 			),
 			array(
+				"url" => "/ticket/card.php?action=create&amp;mainmenu=ticket",
+				"title" => "NewTicket@ticket",
+				"name" => "Ticket@ticket",
+				"picto" => "ticket",
+				"activation" => isModEnabled('ticket') && $user->hasRight("ticket", "write"), // vs hooking
+				"position" => 100,
+			),
+			array(
+				"url" => "/fichinter/card.php?action=create&mainmenu=commercial",
+				"title" => "NewIntervention@interventions",
+				"name" => "Intervention@interventions",
+				"picto" => "intervention",
+				"activation" => isModEnabled('ficheinter') && $user->hasRight("ficheinter", "creer"), // vs hooking
+				"position" => 110,
+			),
+			array(
 				"url" => "/product/card.php?action=create&amp;type=0&amp;mainmenu=products",
 				"title" => "NewProduct@products",
 				"name" => "Product@products",
 				"picto" => "object_product",
 				"activation" => isModEnabled("product") && $user->hasRight("produit", "write"), // vs hooking
-				"position" => 100,
+				"position" => 400,
 			),
 			array(
 				"url" => "/product/card.php?action=create&amp;type=1&amp;mainmenu=products",
@@ -2543,7 +2563,7 @@ function printDropdownQuickadd()
 				"name" => "Service@products",
 				"picto" => "object_service",
 				"activation" => isModEnabled("service") && $user->hasRight("service", "write"), // vs hooking
-				"position" => 110,
+				"position" => 410,
 			),
 			array(
 				"url" => "/user/card.php?action=create&amp;type=1&amp;mainmenu=home",

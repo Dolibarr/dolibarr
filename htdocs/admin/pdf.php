@@ -174,7 +174,6 @@ if ($action == 'update') {
 	if (GETPOSTISSET('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) {
 		dolibarr_set_const($db, "PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", GETPOST('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
-
 	if (GETPOSTISSET('PDF_USE_A')) {
 		dolibarr_set_const($db, "PDF_USE_A", GETPOST('PDF_USE_A', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
@@ -400,6 +399,13 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
+// Show alias in thirdparty name
+print '<tr class="oddeven"><td>'.$langs->trans("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("THIRDPARTY_ALIAS"), '2' => $langs->trans("ALIAS_THIRDPARTY"));
+	print $form->selectarray("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", $arrval, getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME'));
+}
+
 print '</table>';
 print '</div>';
 
@@ -583,16 +589,6 @@ if ($conf->use_javascript_ajax) {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("DOC_SHOW_FIRST_SALES_REP", $arrval, $conf->global->DOC_SHOW_FIRST_SALES_REP);
 }
-
-// Show alias in thirdparty name
-
-/* Disabled because not yet completely implemented (does not work when we force a contact on object)
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("THIRDPARTY_ALIAS"), '2' => $langs->trans("ALIAS_THIRDPARTY"));
-	print $form->selectarray("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", $arrval, getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME'));
-}
-*/
 
 // Show online payment link on invoices
 

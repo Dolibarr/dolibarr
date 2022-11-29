@@ -207,31 +207,31 @@ if ($action == 'validatehistory') {
 		while ($i < min($num_lines, 10000)) {	// No more than 10000 at once
 			$objp = $db->fetch_object($result);
 
-			$thirdpartystatic->id = $objp->socid;
-			$thirdpartystatic->name = $objp->name;
-			$thirdpartystatic->client = $objp->client;
-			$thirdpartystatic->fournisseur = $objp->fournisseur;
-			$thirdpartystatic->code_client = $objp->code_client;
-			$thirdpartystatic->code_compta_client = $objp->code_compta_client;
-			$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
-			$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
-			$thirdpartystatic->email = $objp->email;
-			$thirdpartystatic->country_code = $objp->country_code;
-			$thirdpartystatic->tva_intra = $objp->tva_intra;
-			$thirdpartystatic->code_compta_product = $objp->company_code_sell;		// The accounting account for product stored on thirdparty object (for level3 suggestion)
+			$thirdpartystatic->id = !empty($objp->socid) ? $objp->socid : 0;
+			$thirdpartystatic->name = !empty($objp->name) ? $objp->name : "";
+			$thirdpartystatic->client = !empty($objp->client) ? $objp->client : "";
+			$thirdpartystatic->fournisseur = !empty($objp->fournisseur) ? $objp->fournisseur : "";
+			$thirdpartystatic->code_client = !empty($objp->code_client) ? $objp->code_client : "";
+			$thirdpartystatic->code_compta_client = !empty($objp->code_compta_client) ? $objp->code_compta_client : "";
+			$thirdpartystatic->code_fournisseur = !empty($objp->code_fournisseur) ? $objp->code_fournisseur : "";
+			$thirdpartystatic->code_compta_fournisseur = !empty($objp->code_compta_fournisseur) ? $objp->code_compta_fournisseur : "";
+			$thirdpartystatic->email = !empty($objp->email) ? $objp->email : "";
+			$thirdpartystatic->country_code = !empty($objp->country_code) ? $objp->country_code : "";
+			$thirdpartystatic->tva_intra = !empty($objp->tva_intra) ? $objp->tva_intra : "";
+			$thirdpartystatic->code_compta_product = !empty($objp->company_code_sell) ? $objp->company_code_sell : "";		// The accounting account for product stored on thirdparty object (for level3 suggestion)
 
 			$product_static->ref = $objp->product_ref;
 			$product_static->id = $objp->product_id;
 			$product_static->type = $objp->type;
 			$product_static->label = $objp->product_label;
-			$product_static->status = $objp->status;
-			$product_static->status_buy = $objp->status_buy;
+			$product_static->status = !empty($objp->status) ? $objp->status : 0;
+			$product_static->status_buy = !empty($objp->status_buy) ? $objp->status_buy : 0;
 			$product_static->accountancy_code_sell = $objp->code_sell;
 			$product_static->accountancy_code_sell_intra = $objp->code_sell_intra;
 			$product_static->accountancy_code_sell_export = $objp->code_sell_export;
-			$product_static->accountancy_code_buy = $objp->code_buy;
-			$product_static->accountancy_code_buy_intra = $objp->code_buy_intra;
-			$product_static->accountancy_code_buy_export = $objp->code_buy_export;
+			$product_static->accountancy_code_buy = !empty($objp->code_buy) ? $objp->code_buy : "";
+			$product_static->accountancy_code_buy_intra = !empty($objp->code_buy_intra) ? $objp->code_buy_intra : "";
+			$product_static->accountancy_code_buy_export = !empty($objp->code_buy_export) ? $objp->code_buy_export : "";
 			$product_static->tva_tx = $objp->tva_tx_prod;
 
 			$facture_static->ref = $objp->ref;

@@ -4978,7 +4978,7 @@ abstract class CommonObject
 		// Line in view mode
 		if ($action != 'editline' || $selected != $line->id) {
 			// Product
-			if ($line->fk_product > 0) {
+			if (!empty($line->fk_product) && $line->fk_product > 0) {
 				$product_static = new Product($this->db);
 				$product_static->fetch($line->fk_product);
 
@@ -8410,6 +8410,8 @@ abstract class CommonObject
 			$element = 'facture';
 		} elseif ($element == 'invoice_supplier_rec') {
 			return $user->rights->fournisseur->facture;
+		} elseif ($element == 'evaluation') {
+			return $user->rights->hrm->evaluation;
 		}
 
 		return $user->rights->{$element};
@@ -8957,7 +8959,11 @@ abstract class CommonObject
 				// $this->{$field} may be null, '', 0, '0', 123, '123'
 				if ((isset($this->{$field}) && $this->{$field} != '') || !empty($info['notnull'])) {
 					if (!isset($this->{$field})) {
-						$queryarray[$field] = 0;
+						if (!empty($info['default'])) {
+							$queryarray[$field] = $info['default'];
+						} else {
+							$queryarray[$field] = 0;
+						}
 					} else {
 						$queryarray[$field] = (int) $this->{$field};		// If '0', it may be set to null later if $info['notnull'] == -1
 					}
@@ -9487,7 +9493,7 @@ abstract class CommonObject
 	 * @param 	User 	$user       			User that deletes
 	 * @param 	bool 	$notrigger  			false=launch triggers after, true=disable triggers
 	 * @param	int		$forcechilddeletion		0=no, 1=Force deletion of children
-	 * @return 	int             				<=0 if KO, 0=Nothing done because object has child, >0 if OK
+	 * @return 	int             				<0 if KO, 0=Nothing done because object has child, >0 if OK
 	 */
 	public function deleteCommon(User $user, $notrigger = false, $forcechilddeletion = 0)
 	{

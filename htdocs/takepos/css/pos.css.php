@@ -337,7 +337,8 @@ div.paymentbordline
 	width: 100%;
 	height: 100%;
 	margin: 0 auto;
-	overflow: visible;
+	overflow-x: hidden;
+	overfloy-y: scroll;
 	box-sizing: border-box;
 }
 
@@ -364,6 +365,7 @@ div.paymentbordline
 	margin: 0 auto;
 	width: 100%;
 	height: 55%;
+	overflow: hidden;
 }
 
 .div1{
@@ -714,9 +716,12 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	button.actionbutton {
-		min-height: 60px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		padding-left: 4px;
 		padding-right: 4px;
+		min-height: 30px;
 	}
 }
 
@@ -940,17 +945,19 @@ div#moreinfo, div#infowarehouse {
 	}
 }
 
-.arrows {
-	display: none;
-	position: absolute;
-	justify-content: space-between;
-	width: 100%;
-}
-
 .indicator {
 	background: #00000042;
 	padding: 15px 5px;
 	cursor: pointer;
+	position:absolute;
+}
+
+.indicator.left {
+	left:0;
+}
+
+.indicator.right {
+	right:0;
 }
 
 .indicator:hover {

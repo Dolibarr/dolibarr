@@ -62,7 +62,7 @@ class modEventOrganization extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (where EVENTORGANIZATION is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 
-		$this->picto = 'action';
+		$this->picto = 'conferenceorbooth';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
