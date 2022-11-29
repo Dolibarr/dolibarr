@@ -504,6 +504,12 @@ class Societe extends CommonObject
 	 */
 	public $tva_intra;
 
+	public $tva_npr;
+
+	public $tva_tx;
+
+	public $price_base_type;
+
 	// Local taxes
 	public $localtax1_assuj;
 	public $localtax1_value;
