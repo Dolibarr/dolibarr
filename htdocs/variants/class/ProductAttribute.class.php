@@ -294,9 +294,10 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Returns an array of all product variants
 	 *
-	 * @return ProductAttribute[]
+	 * @param	int		$returnonlydata		0: return object, 1: return only data
+	 * @return								ProductAttribute[]
 	 */
-	public function fetchAll()
+	public function fetchAll($returnonlydata = 0)
 	{
 		$return = array();
 
@@ -306,24 +307,28 @@ class ProductAttribute extends CommonObject
 		$sql .= $this->db->order("position", "asc");
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
+		$query = $this->db->query($sql);
+		if ($query) {
+			while ($result = $this->db->fetch_object($query)) {
+				if (empty($returnonlydata)) {
+					$tmp = new ProductAttribute($this->db);
+				} else {
+					$tmp = new stdClass();
+				}
+
+				$tmp->id = $result->rowid;
+				$tmp->ref = $result->ref;
+				$tmp->ref_ext = $result->ref_ext;
+				$tmp->label = $result->label;
+				$tmp->rang = $result->position; // deprecated
+				$tmp->position = $result->position;
+
+				$return[] = $tmp;
+			}
+		} else {
 			$this->errors[] = "Error " . $this->db->lasterror();
 			dol_print_error($this->db);
 			return $return;
-		}
-
-		while ($obj = $this->db->fetch_object($resql)) {
-			$tmp = new ProductAttribute($this->db);
-
-			$tmp->id = $obj->rowid;
-			$tmp->ref = $obj->ref;
-			$tmp->ref_ext = $obj->ref_ext;
-			$tmp->label = $obj->label;
-			$tmp->rang = $obj->position; // deprecated
-			$tmp->position = $obj->position;
-
-			$return[] = $tmp;
 		}
 
 		return $return;

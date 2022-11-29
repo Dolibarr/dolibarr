@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2021 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
- * Copyright (C) 2017-2020 Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2017-2022 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
  *
@@ -981,7 +981,7 @@ if ($id > 0 || !empty($ref)) {
 							if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
 								// Price
 								print '<td class="right">';
-								print '<input id="pu'.$suffix.'" name="pu'.$suffix.'" type="text" size="8" value="'.price((GETPOST('pu'.$suffix) != '' ? GETPOST('pu'.$suffix) : $up_ht_disc)).'">';
+								print '<input id="pu'.$suffix.'" name="pu'.$suffix.'" type="text" size="8" value="'.price((GETPOST('pu'.$suffix) != '' ? price2num(GETPOST('pu'.$suffix)) : $up_ht_disc)).'">';
 								print '</td>';
 
 								// Discount
