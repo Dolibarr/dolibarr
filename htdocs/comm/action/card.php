@@ -709,12 +709,11 @@ if (empty($reshook) && $action == 'update') {
 		if ($object->elementtype == 'ticket') {
 			if ($private) {
 				$object->type_code = 'TICKET_MSG_PRIVATE';
-			} else {
 				$object->type_id = dol_getIdFromCode($db, 'AC_EMAIL', 'c_actioncomm');
+			} else {
+				$object->type_id = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
 			}
-		} else {
-			$object->type_id = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
-		}
+		} 
 		$object->label       = GETPOST("label", "alphanohtml");
 		$object->datep       = $datep;
 		$object->datef       = $datef;
@@ -1720,7 +1719,7 @@ if ($id > 0) {
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td colspan="3">'.$object->id.'</td></tr>';
 
 		// Type of event
-		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $object->elementtype != "ticket") {
+		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $object->elementtype == "ticket") {
 			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
 			if ($object->type_code != 'AC_OTH_AUTO') {
 				print img_picto($langs->trans("ActionType"), 'square', 'class="fawidth30 inline-block" style="color: #ddd;"');
@@ -2197,7 +2196,7 @@ if ($id > 0) {
 		print '<table class="border tableforfield" width="100%">';
 
 		// Type
-		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $object->elementtype != 'ticket') {
+		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $object->elementtype == 'ticket') {
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 			print $object->getTypePicto();
 			print $langs->trans("Action".$object->type_code);
