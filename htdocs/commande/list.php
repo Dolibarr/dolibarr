@@ -1945,7 +1945,7 @@ if ($resql) {
 		$companystatic->town = $obj->town;
 		$companystatic->country_code = $obj->country_code;
 		if (!isset($getNomUrl_cache[$obj->socid])) {
-			$getNomUrl_cache[$obj->socid] = $companystatic->getNomUrl(1, 'customer');
+			$getNomUrl_cache[$obj->socid] = $companystatic->getNomUrl(1, 'customer', 100, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 		}
 
 		$generic_commande->id = $obj->rowid;
