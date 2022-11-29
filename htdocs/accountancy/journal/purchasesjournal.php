@@ -244,9 +244,9 @@ if ($result) {
 		if (!isset($tablocaltax2[$obj->rowid][$compta_localtax2])) {
 			$tablocaltax2[$obj->rowid][$compta_localtax2] = 0;
 		}
-		dol_syslog($obj->country_code, LOG_ERR);
+
 		// VAT Reverse charge
-		if (($mysoc->country_code == 'FR' || !empty($conf->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) && in_array($obj->country_code, $country_code_in_EEC)) {
+		if (($mysoc->country_code == 'FR' || !empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) && in_array($obj->country_code, $country_code_in_EEC)) {
 			$rcvatdata = getTaxesFromId($obj->product_buy_vat . ($obj->product_buy_default_vat_code ? ' (' . $obj->product_buy_default_vat_code . ')' : ''), $mysoc, $mysoc, 0);
 			$rcc_compta_tva = (!empty($vatdata['accountancy_code_vat_reverse_charge_credit']) ? $vatdata['accountancy_code_vat_reverse_charge_credit'] : $rcctva);
 			$rcd_compta_tva = (!empty($vatdata['accountancy_code_vat_reverse_charge_debit']) ? $vatdata['accountancy_code_vat_reverse_charge_debit'] : $rcdtva);
@@ -280,16 +280,16 @@ if ($result) {
 				$tabrclocaltax2[$obj->rowid][$rcd_compta_localtax2] = 0;
 			}
 
-			$rcvat = $obj->total_ttc * $obj->product_buy_vat;
-			$rclocalvat1 = $obj->total_ttc * $obj->product_buy_localvat1;
-			$rclocalvat2 = $obj->total_ttc * $obj->product_buy_localvat2;
+			$rcvat = $obj->total_ttc * $obj->product_buy_vat / 100;
+			$rclocalvat1 = $obj->total_ttc * $obj->product_buy_localvat1 / 100;
+			$rclocalvat2 = $obj->total_ttc * $obj->product_buy_localvat2 / 100;
 
-			$tabrctva[$obj->rowid][$rcc_compta_tva] += $rcvat;
-			$tabrctva[$obj->rowid][$rcd_compta_tva] -= $rcvat;
-			$tabrclocaltax1[$obj->rowid][$rcc_compta_localtax1] += $rclocalvat1;
-			$tabrclocaltax1[$obj->rowid][$rcd_compta_localtax1] -= $rclocalvat1;
-			$tabrclocaltax2[$obj->rowid][$rcc_compta_localtax2] += $rclocalvat2;
-			$tabrclocaltax2[$obj->rowid][$rcd_compta_localtax2] -= $rclocalvat2;
+			$tabrctva[$obj->rowid][$rcd_compta_tva] += $rcvat;
+			$tabrctva[$obj->rowid][$rcc_compta_tva] -= $rcvat;
+			$tabrclocaltax1[$obj->rowid][$rcd_compta_localtax1] += $rclocalvat1;
+			$tabrclocaltax1[$obj->rowid][$rcc_compta_localtax1] -= $rclocalvat1;
+			$tabrclocaltax2[$obj->rowid][$rcd_compta_localtax2] += $rclocalvat2;
+			$tabrclocaltax2[$obj->rowid][$rcc_compta_localtax2] -= $rclocalvat2;
 		}
 
 		$tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
@@ -529,7 +529,7 @@ if ($action == 'writebookkeeping') {
 				}
 
 				// VAT Reverse charge
-				if ($mysoc->country_code == 'fr' || !empty($conf->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+				if ($mysoc->country_code == 'fr' || !empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
 					$has_vat = false;
 					foreach ($arrayofvat[$key] as $k => $mt) {
 						if ($mt) {
@@ -803,7 +803,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 			}
 
 			// VAT Reverse charge
-			if ($mysoc->country_code == 'fr' || !empty($conf->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+			if ($mysoc->country_code == 'fr' || !empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
 				$has_vat = false;
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {
@@ -1097,7 +1097,7 @@ if (empty($action) || $action == 'view') {
 			}
 
 			// VAT Reverse charge
-			if ($mysoc->country_code == 'fr' || !empty($conf->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
+			if ($mysoc->country_code == 'fr' || !empty($conf->global->ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE)) {
 				$has_vat = false;
 				foreach ($arrayofvat[$key] as $k => $mt) {
 					if ($mt) {

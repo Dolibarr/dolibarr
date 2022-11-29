@@ -253,7 +253,7 @@ foreach ($list_account as $key) {
 			print img_picto('', 'service', 'class="pictofixedwidth"');
 		} elseif (preg_match('/^ACCOUNTING_VAT_PAY_ACCOUNT/', $key)) {
 			print img_picto('', 'payment_vat', 'class="pictofixedwidth"');
-		} elseif (preg_match('/^ACCOUNTING_VAT/', $key)) {
+		} elseif (preg_match('/^ACCOUNTING_VAT/', $key) || preg_match('/^ACCOUNTING_ACCOUNT_VAT/', $key)) {
 			print img_picto('', 'vat', 'class="pictofixedwidth"');
 		} elseif (preg_match('/^ACCOUNTING_ACCOUNT_CUSTOMER/', $key)) {
 			print img_picto('', 'bill', 'class="pictofixedwidth"');
