@@ -250,13 +250,20 @@ class Categorie extends CommonObject
 
 	/**
 	 * @var array Categories table in memory
+	 * @deprecated
+	 * @see $cats_sortby_fullname
 	 */
 	public $cats = array();
 
 	/**
+	 * @var array Categories table sort by fullname in memory
+	 */
+	public $cats_sortby_fullname = array();
+
+	/**
 	 * @var array Categories table sort by id in memory
 	 */
-	public $cats_by_id = array();
+	public $cats_sortby_id = array();
 
 	/**
 	 * @var array Mother of table
@@ -1126,8 +1133,7 @@ class Categorie extends CommonObject
 			$markafterid = array();
 		}
 
-		$this->cats = array();
-		$this->cats_by_id = array();
+		$categories = array();
 
 		// Init this->motherof that is array(id_son=>id_parent, ...)
 		$this->load_motherof();
@@ -1150,15 +1156,15 @@ class Categorie extends CommonObject
 		if ($resql) {
 			$i = 0;
 			while ($obj = $this->db->fetch_object($resql)) {
-				$this->cats[$obj->rowid]['rowid'] = $obj->rowid;
-				$this->cats[$obj->rowid]['id'] = $obj->rowid;
-				$this->cats[$obj->rowid]['fk_parent'] = $obj->fk_parent;
-				$this->cats[$obj->rowid]['label'] = !empty($obj->label_trans) ? $obj->label_trans : $obj->label;
-				$this->cats[$obj->rowid]['description'] = !empty($obj->description_trans) ? $obj->description_trans : $obj->description;
-				$this->cats[$obj->rowid]['color'] = $obj->color;
-				$this->cats[$obj->rowid]['visible'] = $obj->visible;
-				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
-				$this->cats[$obj->rowid]['picto'] = 'category';
+				$categories[$obj->rowid]['rowid'] = $obj->rowid;
+				$categories[$obj->rowid]['id'] = $obj->rowid;
+				$$categories[$obj->rowid]['fk_parent'] = $obj->fk_parent;
+				$categories[$obj->rowid]['label'] = !empty($obj->label_trans) ? $obj->label_trans : $obj->label;
+				$categories[$obj->rowid]['description'] = !empty($obj->description_trans) ? $obj->description_trans : $obj->description;
+				$categories[$obj->rowid]['color'] = $obj->color;
+				$categories[$obj->rowid]['visible'] = $obj->visible;
+				$categories[$obj->rowid]['ref_ext'] = $obj->ref_ext;
+				$categories[$obj->rowid]['picto'] = 'category';
 				$i++;
 			}
 		} else {
@@ -1168,7 +1174,7 @@ class Categorie extends CommonObject
 
 		// We add the fullpath property to each elements of first level (no parent exists)
 		dol_syslog(get_class($this)."::get_full_arbo call to buildPathFromId", LOG_DEBUG);
-		foreach ($this->cats as $key => $val) {
+		foreach ($categories as $key => $val) {
 			//print 'key='.$key.'<br>'."\n";
 			$this->buildPathFromId($key, 0); // Process a branch from the root category key (this category has no parent)
 		}
@@ -1182,23 +1188,24 @@ class Categorie extends CommonObject
 			$keyfilter2 = '_'.$keyfiltercatid.'$';
 			$keyfilter3 = '^'.$keyfiltercatid.'_';
 			$keyfilter4 = '_'.$keyfiltercatid.'_';
-			foreach ($this->cats as $key => $val) {
+			foreach ($categories as $key => $val) {
 				$test = (preg_match('/'.$keyfilter1.'/', $val['fullpath']) || preg_match('/'.$keyfilter2.'/', $val['fullpath'])
 					|| preg_match('/'.$keyfilter3.'/', $val['fullpath']) || preg_match('/'.$keyfilter4.'/', $val['fullpath']));
 
 				if (($test && !$include) || (!$test && $include)) {
-					unset($this->cats[$key]);
+					unset($categories[$key]);
 				}
 			}
 		}
 
 		dol_syslog(get_class($this)."::get_full_arbo dol_sort_array", LOG_DEBUG);
-		$this->cats_by_id = $this->cats;
-		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
+		$this->cats_sortby_id = $categories;
+		$this->cats_sortby_fullname =  dol_sort_array($categories, 'fulllabel', 'asc', true, false);
+		$this->cats = $this->cats_sortby_fullname;
 
 		//$this->debug_cats();
 
-		return $this->cats;
+		return $this->cats_sortby_fullname;
 	}
 
 	/**
