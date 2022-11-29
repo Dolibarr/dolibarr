@@ -716,15 +716,27 @@ if (empty($reshook) && $action == 'update') {
 			$datef = dol_mktime($fulldayevent ? '23' : GETPOST("p2hour", 'int'), $fulldayevent ? '59' : GETPOST("p2min", 'int'), $fulldayevent ? '59' : GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuser');
 		}
 
-		if ($object->elementtype == 'ticket') {
+		if ($object->elementtype == 'ticket') {	// code should be TICKET_MSG, TICKET_MSG_PRIVATE, TICKET_MSG_SENTBYMAIL, TICKET_MSG_PRIVATE_SENTBYMAIL
 			if ($private) {
-				$object->type_code = 'TICKET_MSG_PRIVATE';
+				if ($object->code == 'TICKET_MSG') {
+					$object->code = 'TICKET_MSG_PRIVATE';
+				}
+				if ($object->code == 'TICKET_MSG_SENTBYMAIL') {
+					$object->code = 'TICKET_MSG_PRIVATE_SENTBYMAIL';
+				}
 			} else {
-				$object->type_id = dol_getIdFromCode($db, 'AC_EMAIL', 'c_actioncomm');
+				if ($object->code == 'TICKET_MSG_PRIVATE') {
+					$object->code = 'TICKET_MSG';
+				}
+				if ($object->code == 'TICKET_MSG_PRIVATE_SENTBYMAIL') {
+					$object->code = 'TICKET_MSG_SENTBYMAIL';
+				}
 			}
+			// type_id and type_code is not modified
 		} else {
 			$object->type_id = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
 		}
+
 		$object->label       = GETPOST("label", "alphanohtml");
 		$object->datep       = $datep;
 		$object->datef       = $datef;
@@ -1315,11 +1327,6 @@ if ($action == 'create') {
 
 	// Date start
 	print '<tr><td class="nowrap">';
-	/*
-	print '<span class="fieldrequired">'.$langs->trans("DateActionStart").'</span>';
-	print ' - ';
-	print '<span id="dateend"'.(GETPOST("actioncode", 'aZ09') == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
-	*/
 	print '</td><td>';
 	if (GETPOST("afaire") == 1) {
 		print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart', '', '', '', 1, '', '', 'tzuserrel'); // Empty value not allowed for start date and hours if "todo"
@@ -1743,7 +1750,9 @@ if ($id > 0) {
 
 		// Private
 		if ($object->elementtype == 'ticket') {
-			print '<tr><td>'.$langs->trans("PrivateEventMessage").'</td><td colspan="3"><input type="checkbox" id="private" name="private" '.(preg_match('/^TICKET_MSG_PRIVATE/', $object->code) ? ' checked' : '').'></td></tr>';
+			print '<tr><td>'.$langs->trans("MarkMessageAsPrivate");
+			print ' '.$form->textwithpicto('', $langs->trans("TicketMessagePrivateHelp"), 1, 'help');
+			print '</td><td colspan="3"><input type="checkbox" id="private" name="private" '.(preg_match('/^TICKET_MSG_PRIVATE/', $object->code) ? ' checked' : '').'></td></tr>';
 		}
 
 		// Title
@@ -2207,16 +2216,11 @@ if ($id > 0) {
 		print '<table class="border tableforfield" width="100%">';
 
 		// Type
-		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && $object->elementtype != 'ticket') {
+		if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 			print $object->getTypePicto();
 			print $langs->trans("Action".$object->type_code);
 			print '</td></tr>';
-		}
-
-		// Private
-		if ($object->elementtype == 'ticket') {
-			print '<tr><td class="titlefield">'.$langs->trans("PrivateEventMessage").'</td><td>'.yn(preg_match('/^TICKET_MSG_PRIVATE/', $object->code) ? 1 : 0, 3).'</td></tr>';
 		}
 
 		// Full day event

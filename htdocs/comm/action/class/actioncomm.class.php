@@ -1162,12 +1162,8 @@ class ActionComm extends CommonObject
 		$userownerid = ($this->userownerid ? $this->userownerid : 0);
 		$userdoneid = ($this->userdoneid ? $this->userdoneid : 0);
 
-		$this->db->begin();
-
-		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
-		$sql .= " SET percent = '".$this->db->escape($this->percentage)."'";
+		// If a type_id is set, we must also have the type_code set
 		if ($this->type_id > 0) {
-			$sql .= ", fk_action = ".(int) $this->type_id;
 			if (empty($this->type_code)) {
 				$cactioncomm = new CActionComm($this->db);
 				$result = $cactioncomm->fetch($this->type_id);
@@ -1176,7 +1172,18 @@ class ActionComm extends CommonObject
 				}
 			}
 		}
-		$sql .= ", code = " . (isset($this->type_code)? "'".$this->db->escape($this->type_code) . "'":"null");
+
+		$code = $this->code;
+		if (empty($code)) {
+			$code = $this->type_code;
+		}
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm";
+		$sql .= " SET percent = '".$this->db->escape($this->percentage)."'";
+		$sql .= ", fk_action = ".(int) $this->type_id;
+		$sql .= ", code = " . ($code ? "'".$this->db->escape($code)."'" : "null");
 		$sql .= ", label = ".($this->label ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", datep = ".(strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : 'null');
 		$sql .= ", datep2 = ".(strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : 'null');
@@ -1207,7 +1214,7 @@ class ActionComm extends CommonObject
 		if (!empty($this->status)) {
 			$sql .= ", status=".($this->status ? (int) $this->status : 0);
 		}
-		$sql .= " WHERE id=".$this->id;
+		$sql .= " WHERE id=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		if ($this->db->query($sql)) {
