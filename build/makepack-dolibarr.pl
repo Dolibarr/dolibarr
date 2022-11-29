@@ -678,7 +678,7 @@ if ($nboftargetok) {
 				mkdir($DESTI.'/standard');
 				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; } 
 			}
-			
+
 			print "Remove target $FILENAMETGZ.tgz...\n";
 			unlink("$NEWDESTI/$FILENAMETGZ.tgz");
 
@@ -1064,7 +1064,8 @@ if ($nboftargetok) {
 			$ret=`mv $BUILDROOT/*_all.deb "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.dsc "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.orig.tar.gz "$NEWDESTI/"`;
-			$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;
+			#$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;		# xz file is generated when build/debian/sources/option 
+			$ret=`mv $BUILDROOT/*.debian.tar.gz "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.changes "$NEWDESTI/"`;
 			next;
 		}
