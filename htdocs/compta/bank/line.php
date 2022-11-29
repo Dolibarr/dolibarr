@@ -217,6 +217,11 @@ if ($user->rights->banque->modifier && $action == "update") {
 		}
 
 		if (!$error) {
+			$extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+			$object->insertExtraFields();
+		}
+
+		if (!$error) {
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
 		} else {
