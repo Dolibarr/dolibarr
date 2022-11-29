@@ -635,7 +635,7 @@ while ($i < $imaxinloop) {
 	$product_static->status_batch = $objp->tobatch;
 
 	$product_lot_static->batch = $objp->batch;
-	$product_lot_static->product_id = $objp->rowid;
+	$product_lot_static->fk_product = $objp->rowid;
 	$product_lot_static->id = $objp->lotid;
 	$product_lot_static->eatby = $objp->eatby;
 	$product_lot_static->sellby = $objp->sellby;
