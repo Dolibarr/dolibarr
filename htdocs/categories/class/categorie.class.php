@@ -254,6 +254,11 @@ class Categorie extends CommonObject
 	public $cats = array();
 
 	/**
+	 * @var array Categories table sort by id in memory
+	 */
+	public $cats_by_id = array();
+
+	/**
 	 * @var array Mother of table
 	 */
 	public $motherof = array();
@@ -1122,6 +1127,7 @@ class Categorie extends CommonObject
 		}
 
 		$this->cats = array();
+		$this->cats_by_id = array();
 
 		// Init this->motherof that is array(id_son=>id_parent, ...)
 		$this->load_motherof();
@@ -1187,6 +1193,7 @@ class Categorie extends CommonObject
 		}
 
 		dol_syslog(get_class($this)."::get_full_arbo dol_sort_array", LOG_DEBUG);
+		$this->cats_by_id = $this->cats;
 		$this->cats = dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
 
 		//$this->debug_cats();
