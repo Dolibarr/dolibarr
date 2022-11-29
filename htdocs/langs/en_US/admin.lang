@@ -1932,7 +1932,7 @@ BackupDumpWizard=Wizard to build the database dump file
 BackupZipWizard=Wizard to build the archive of documents directory
 SomethingMakeInstallFromWebNotPossible=Installation of external module is not possible from the web interface for the following reason:
 SomethingMakeInstallFromWebNotPossible2=For this reason, process to upgrade described here is a manual process only a privileged user may perform.
-InstallModuleFromWebHasBeenDisabledContactUs=Install or development of external modules from the application is currently locked for security purpose. Please contact us if you need to enable this feature.
+InstallModuleFromWebHasBeenDisabledContactUs=Install or development of external modules or dynamic websites, from the application, is currently locked for security purpose. Please contact us if you need to enable this feature.
 InstallModuleFromWebHasBeenDisabledByFile=Install of external module from application has been disabled by your administrator. You must ask him to remove the file <strong>%s</strong> to allow this feature.
 ConfFileMustContainCustom=Installing or building an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
