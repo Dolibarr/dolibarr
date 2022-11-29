@@ -7,7 +7,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,7 +78,9 @@ if (empty($user->rights->banque->lire) && empty($user->rights->banque->consolida
 }
 
 $hookmanager->initHooks(array('bankline'));
+$object = new AccountLine($db);
 $extrafields = new ExtraFields($db);
+$extrafields->fetch_name_optionals_label($object->element);
 
 /*
  * Actions
@@ -126,18 +128,17 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->ban
 if ($user->rights->banque->modifier && $action == "update") {
 	$error = 0;
 
-	$acline = new AccountLine($db);
-	$result = $acline->fetch($rowid);
+	$result = $object->fetch($rowid);
 	if ($result <= 0) {
 		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.
-		$acline->id = $rowid;
+		$object->id = $rowid;
 	}
 
 	$acsource = new Account($db);
 	$acsource->fetch($accountoldid);
 
 	$actarget = new Account($db);
-	if (GETPOST('accountid', 'int') > 0 && !$acline->rappro && !$acline->getVentilExportCompta()) {	// We ask to change bank account
+	if (GETPOST('accountid', 'int') > 0 && !$object->rappro && !$object->getVentilExportCompta()) {	// We ask to change bank account
 		$actarget->fetch(GETPOST('accountid', 'int'));
 	} else {
 		$actarget->fetch($accountoldid);
@@ -174,7 +175,7 @@ if ($user->rights->banque->modifier && $action == "update") {
 			$sql .= " emetteur='".$db->escape(GETPOST("emetteur"))."',";
 		}
 		// Blocked when conciliated
-		if (!$acline->rappro) {
+		if (!$object->rappro) {
 			if (GETPOSTISSET('label')) {
 				$sql .= " label = '".$db->escape(GETPOST("label"))."',";
 			}
@@ -189,7 +190,7 @@ if ($user->rights->banque->modifier && $action == "update") {
 			}
 		}
 		$sql .= " fk_account = ".((int) $actarget->id);
-		$sql .= " WHERE rowid = ".((int) $acline->id);
+		$sql .= " WHERE rowid = ".((int) $object->id);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -303,7 +304,6 @@ if ($result) {
 		$account = $acct->id;
 
 		$bankline = new AccountLine($db);
-		$extrafields->fetch_name_optionals_label($bankline->element);
 		$bankline->fetch($rowid, $ref);
 
 		$links = $acct->get_url($rowid);
@@ -608,7 +608,7 @@ if ($result) {
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $bankline, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
-			print $bankline->showOptionals($extrafields, 'create', $parameters);
+			print $bankline->showOptionals($extrafields, ($objp->rappro ? 'view' : 'create'), $parameters);
 		}
 		print "</table>";
 
