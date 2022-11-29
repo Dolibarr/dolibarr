@@ -713,7 +713,7 @@ if (empty($reshook) && $action == 'update') {
 			} else {
 				$object->type_id = dol_getIdFromCode($db, GETPOST("actioncode", 'aZ09'), 'c_actioncomm');
 			}
-		} 
+		}
 		$object->label       = GETPOST("label", "alphanohtml");
 		$object->datep       = $datep;
 		$object->datef       = $datef;
