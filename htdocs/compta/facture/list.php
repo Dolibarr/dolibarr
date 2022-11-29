@@ -1813,10 +1813,10 @@ if ($resql) {
 			$facturestatic->close_code = $obj->close_code;
 			$facturestatic->total_ttc = $obj->total_ttc;
 			$facturestatic->paye = $obj->paye;
-			$facturestatic->fk_soc = $obj->fk_soc;
+			$facturestatic->socid = $obj->fk_soc;
 
 			$facturestatic->date = $db->jdate($obj->datef);
-			$facturestatic->date_valid = $db->jdate($obj->date_valid);
+			$facturestatic->date_validation = $db->jdate($obj->date_valid);
 			$facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
 
 			$facturestatic->note_public = $obj->note_public;
