@@ -1147,7 +1147,8 @@ if ($nboftargetok) {
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'Dolibarr installer for Debian-Ubuntu (DoliDeb)',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_amd64.changes"=>'none',		# none means it won't be published on SF
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.dsc"=>'none',					# none means it won't be published on SF
-			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'none',		# none means it won't be published on SF
+			#"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'none',		# none means it won't be published on SF
+			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.gz"=>'none',		# none means it won't be published on SF
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'none',		# none means it won't be published on SF
 			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'Dolibarr installer for Windows (DoliWamp)',
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',
