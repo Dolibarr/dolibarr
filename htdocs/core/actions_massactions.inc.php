@@ -44,6 +44,7 @@ if (empty($objectclass) || empty($uploaddir)) {
 if (empty($massaction)) {
 	$massaction = '';
 }
+$error = 0;
 
 // For backward compatibility
 if (!empty($permtoread) && empty($permissiontoread)) {

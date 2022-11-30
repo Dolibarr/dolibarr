@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2003-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
+ * Copyright (C) 2013		uanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,16 +144,28 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		// Get Mask value
 		$mask = '';
 		if (is_object($invoice) && $invoice->type == 1) {
-			$mask = $conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
+			if (isset($conf->global->FACTURE_MERCURE_MASK_REPLACEMENT)) {
+				$mask = $conf->global->FACTURE_MERCURE_MASK_REPLACEMENT;
+			}
 			if (!$mask) {
-				$mask = $conf->global->FACTURE_MERCURE_MASK_INVOICE;
+				if (isset($conf->global->FACTURE_MERCURE_MASK_INVOICE)) {
+					$mask = $conf->global->FACTURE_MERCURE_MASK_INVOICE;
+				}
 			}
 		} elseif (is_object($invoice) && $invoice->type == 2) {
-			$mask = $conf->global->FACTURE_MERCURE_MASK_CREDIT;
+			if (isset($conf->global->FACTURE_MERCURE_MASK_CREDIT)) {
+				$mask = $conf->global->FACTURE_MERCURE_MASK_CREDIT;
+			}
 		} elseif (is_object($invoice) && $invoice->type == 3) {
-			$mask = $conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
+			if (isset($conf->global->FACTURE_MERCURE_MASK_DEPOSIT)) {
+				$mask = $conf->global->FACTURE_MERCURE_MASK_DEPOSIT;
+			}
 		} else {
-			$mask = $conf->global->FACTURE_MERCURE_MASK_INVOICE;
+			if (isset($conf->global->FACTURE_MERCURE_MASK_INVOICE)) {
+				$mask = $conf->global->FACTURE_MERCURE_MASK_INVOICE;
+			} else {
+				$mask = '';
+			}
 		}
 		if (!$mask) {
 			$this->error = 'NotConfigured';

@@ -234,14 +234,14 @@ if (($line->info_bits & 2) == 2) {
 	}
 }
 
-if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0 && empty($conf->global->SUPPLIER_HIDE_SUPPLIER_OBJECTLINES)) {
+if ($user->hasRight('fournisseur', 'lire') && isset($line->fk_fournprice) && $line->fk_fournprice > 0 && empty($conf->global->SUPPLIER_HIDE_SUPPLIER_OBJECTLINES)) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 	$productfourn = new ProductFournisseur($this->db);
 	$productfourn->fetch_product_fournisseur_price($line->fk_fournprice);
 	print '<div class="clearboth"></div>';
 	print '<span class="opacitymedium">'.$langs->trans('Supplier').' : </span>'.$productfourn->getSocNomUrl(1, 'supplier').' - <span class="opacitymedium">'.$langs->trans('Ref').' : </span>';
 	// Supplier ref
-	if ($user->rights->produit->creer || $user->rights->service->creer) { // change required right here
+	if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) { // change required right here
 		print $productfourn->getNomUrl();
 	} else {
 		print $productfourn->ref_supplier;

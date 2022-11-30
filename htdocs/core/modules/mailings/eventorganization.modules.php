@@ -11,7 +11,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/mailings/partnership.modules.php
+ *	\file       htdocs/core/modules/mailings/eventorganization.modules.php
  *	\ingroup    mailing
  *	\brief      Example file to provide a list of recipients for mailing module
  */
@@ -24,11 +24,11 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 /**
  *	Class to manage a list of personalised recipients for mailing feature
  */
-class mailing_partnership extends MailingTargets
+class mailing_eventorganization extends MailingTargets
 {
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	public $name = 'PartnershipThirdpartiesOrMembers';
-	public $desc = "Thirdparties or members included into a partnership program";
+	public $name = 'AttendeesOfOrganizedEvent';
+	public $desc = "Attendees of an organized event";
 
 	public $require_admin = 0;
 
@@ -37,14 +37,14 @@ class mailing_partnership extends MailingTargets
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'partnership';
+	public $picto = 'conferenceorbooth';
 
 	/**
 	 * @var DoliDB Database handler.
 	 */
 	public $db;
 
-	public $enabled = 'isModEnabled("partnership")';
+	public $enabled = 'isModEnabled("eventorganization")';
 
 
 	/**
@@ -76,31 +76,16 @@ class mailing_partnership extends MailingTargets
 		$cibles = array();
 		$addDescription = '';
 
-		$sql = "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact, null as firstname, pt.label as label, 'thirdparty' as source";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."partnership as p, ".MAIN_DB_PREFIX."c_partnership_type as pt";
-		$sql .= " WHERE s.email <> ''";
-		$sql .= " AND s.entity IN (".getEntity('societe').")";
-		$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
-		$sql .= " AND p.fk_soc = s.rowid";
-		$sql .= " AND pt.rowid = p.fk_type";
-		if (GETPOST('filter', 'int') > 0) {
-			$sql .= " AND pt.rowid=".((int) GETPOST('filter', 'int'));
-		}
-
-		$sql .= " UNION ";
-
-		$sql .= "SELECT s.rowid as id, s.email as email, s.lastname as name, null as fk_contact, s.firstname as firstname, pt.label as label, 'member' as source";
-		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as s, ".MAIN_DB_PREFIX."partnership as p, ".MAIN_DB_PREFIX."c_partnership_type as pt";
-		$sql .= " WHERE s.email <> ''";
-		$sql .= " AND s.entity IN (".getEntity('member').")";
-		$sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
-		$sql .= " AND p.fk_member = s.rowid";
-		$sql .= " AND pt.rowid = p.fk_type";
-		if (GETPOST('filter', 'int') > 0) {
-			$sql .= " AND pt.rowid=".((int) GETPOST('filter', 'int'));
-		}
-
-		$sql .= " ORDER BY email";
+		$sql = "SELECT p.ref, p.entity, e.rowid as id, e.fk_project, e.email as email, e.email_company as company_name, e.firstname as firstname, e.lastname as lastname,";
+		$sql .= " 'eventorganizationattendee' as source";
+		$sql .= " FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee as e,";
+		$sql .= " ".MAIN_DB_PREFIX."projet as p";
+		$sql .= " WHERE e.email <> ''";
+		$sql .= " AND e.fk_project = p.rowid";
+		$sql .= " AND p.entity IN (".getEntity('project').")";
+		$sql .= " AND e.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
+		$sql .= " AND e.fk_project = ".((int) GETPOST('filter_eventorganization', 'int'));
+		$sql .= " ORDER BY e.email";
 
 		// Stock recipients emails into targets table
 		$result = $this->db->query($sql);
@@ -115,16 +100,16 @@ class mailing_partnership extends MailingTargets
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
 				if ($old <> $obj->email) {
-					$otherTxt = ($obj->label ? $langs->transnoentities("PartnershipType").'='.$obj->label : '');
+					$otherTxt = ($obj->ref ? $langs->transnoentities("Project").'='.$obj->ref : '');
 					if (strlen($addDescription) > 0 && strlen($otherTxt) > 0) {
 						$otherTxt .= ";";
 					}
 					$otherTxt .= $addDescription;
 					$cibles[$j] = array(
 								'email' => $obj->email,
-								'fk_contact' => $obj->fk_contact,
-								'lastname' => $obj->name, // For a thirdparty, we must use name
-								'firstname' => '', // For a thirdparty, lastname is ''
+								'fk_project' => $obj->fk_project,
+								'lastname' => $obj->lastname,
+								'firstname' => $obj->firstname,
 								'other' => $otherTxt,
 								'source_url' => $this->url($obj->id, $obj->source),
 								'source_id' => $obj->id,
@@ -176,17 +161,12 @@ class mailing_partnership extends MailingTargets
 	{
 		global $conf;
 
-		$sql = "SELECT count(distinct(s.email)) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."partnership as p, ".MAIN_DB_PREFIX."societe as s";
-		$sql .= " WHERE s.rowid = p.fk_soc AND s.email <> ''";
-		$sql .= " AND s.entity IN (".getEntity('societe').")";
-
-		$sql .= " UNION ";
-
-		$sql .= "SELECT count(distinct(s.email)) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."partnership as p, ".MAIN_DB_PREFIX."adherent as s";
-		$sql .= " WHERE s.rowid = p.fk_member AND s.email <> ''";
-		$sql .= " AND s.entity IN (".getEntity('member').")";
+		$sql = "SELECT COUNT(DISTINCT(e.email)) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee as e, ";
+		$sql .= " ".MAIN_DB_PREFIX."projet as p";
+		$sql .= " WHERE e.email <> ''";
+		$sql .= " AND e.fk_project = p.rowid";
+		$sql .= " AND p.entity IN (".getEntity('project').")";
 
 		//print $sql;
 
@@ -206,42 +186,9 @@ class mailing_partnership extends MailingTargets
 
 		$langs->load("companies");
 
-		$s = '<select id="filter_partnership" name="filter" class="flat">';
-
-		// Show categories
-		$sql = "SELECT rowid, label, code, active";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_partnership_type";
-		$sql .= " WHERE active = 1";
-		$sql .= " AND entity = ".$conf->entity;
-		$sql .= " ORDER BY label";
-
-		//print $sql;
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-
-			if (empty($conf->partnership->enabled)) {
-				$num = 0;   // Force empty list if category module is not enabled
-			}
-
-			if ($num) {
-				$s .= '<option value="-1">'.$langs->trans("PartnershipType").'</option>';
-			}
-
-			$i = 0;
-			while ($i < $num) {
-				$obj = $this->db->fetch_object($resql);
-
-				$s .= '<option value="'.$obj->rowid.'">'.dol_escape_htmltag($obj->label);
-				$s .= '</option>';
-				$i++;
-			}
-			$s .= ajax_combobox("filter_partnership");
-		} else {
-			dol_print_error($this->db);
-		}
-
-		$s .= '</select> ';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+		$formproject = new FormProjets($this->db);
+		$s .= $formproject->select_projects(-1, 0, "filter_eventorganization", 0, 0, 1, 1, 0, 0, 0, '', 1, 0, '', '', 'usage_organize_event=1');
 
 		return $s;
 	}
@@ -256,11 +203,8 @@ class mailing_partnership extends MailingTargets
 	 */
 	public function url($id, $sourcetype = 'thirdparty')
 	{
-		if ($sourcetype == 'thirdparty') {
-			return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $id).'">'.img_object('', "societe").'</a>';
-		}
-		if ($sourcetype == 'member') {
-			return '<a href="'.DOL_URL_ROOT.'/adherent/card.php?id='.((int) $id).'">'.img_object('', "member").'</a>';
+		if ($sourcetype == 'project') {
+			return '<a href="'.DOL_URL_ROOT.'/eventorganization/conferenceorboothattendee_card.php?id='.((int) $id).'">'.img_object('', "eventorganization").'</a>';
 		}
 
 		return '';

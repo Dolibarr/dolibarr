@@ -9304,7 +9304,7 @@ class Form
 		} elseif ($object->element == 'ecm_directories') {
 			$ret .= '';
 		} elseif ($fieldref != 'none') {
-			$ret .= dol_htmlentities($object->$fieldref);
+			$ret .= dol_htmlentities(!empty($object->$fieldref) ? $object->$fieldref : "");
 		}
 
 		if ($morehtmlref) {
