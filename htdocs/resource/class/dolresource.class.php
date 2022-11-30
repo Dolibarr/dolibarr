@@ -52,11 +52,6 @@ class Dolresource extends CommonObject
 	public $mandatory;
 
 	/**
-	 * @var integer
-	 */
-	public $socid;
-
-	/**
 	 * @var int ID
 	 */
 	public $fk_user_create;
