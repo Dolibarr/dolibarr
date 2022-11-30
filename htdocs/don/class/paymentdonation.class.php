@@ -189,7 +189,7 @@ class PaymentDonation extends CommonObject
 			$sql .= " fk_typepayment, num_payment, note, ext_payment_id, ext_payment_site,";
 			$sql .= " fk_user_creat, fk_bank)";
 			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
-			$sql .= " '".$this->db->idate($this->datepaid)."',";
+			$sql .= " '".$this->db->idate($this->datep)."',";
 			$sql .= " ".price2num($totalamount).",";
 			$sql .= " ".((int) $this->paymenttype).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ";
 			$sql .= " ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").",";
@@ -584,7 +584,6 @@ class PaymentDonation extends CommonObject
 			if ($mode == 'payment_donation') {
 				$amount = $total;
 			}
-
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
 				$this->datep,
