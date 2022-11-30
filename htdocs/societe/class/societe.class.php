@@ -784,16 +784,6 @@ class Societe extends CommonObject
 	 */
 	public $multicurrency_code;
 
-	/**
-	 * @var string login
-	 */
-	public $login;
-
-	/**
-	 * @var string admin
-	 */
-	public $admin;
-
 	// Fields loaded by fetchPartnerships()
 
 	public $partnerships = array();

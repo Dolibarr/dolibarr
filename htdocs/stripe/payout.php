@@ -154,15 +154,8 @@ if (!$rowid) {
 			{
 				$memberstatic->id = 0;
 			}*/
-
 			$societestatic->fetch($charge->metadata->idcustomer);
 			$societestatic->id = $charge->metadata->idcustomer;
-			$societestatic->lastname = $obj->lastname;
-			$societestatic->firstname = $obj->firstname;
-			$societestatic->admin = $obj->admin;
-			$societestatic->login = $obj->login;
-			$societestatic->email = $obj->email;
-			$societestatic->socid = $obj->fk_soc;
 
 			print '<tr class="oddeven">';
 
