@@ -28,9 +28,12 @@
  */
 function partnershipAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
 
 	$langs->loadLangs(array("members", "partnership"));
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('partnership');
 
 	$h = 0;
 	$head = array();
@@ -43,6 +46,10 @@ function partnershipAdminPrepareHead()
 
 	$head[$h][0] = dol_buildpath("/partnership/admin/partnership_extrafields.php", 1);
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['partnership']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'partnership_extrafields';
 	$h++;
 
@@ -50,13 +57,6 @@ function partnershipAdminPrepareHead()
 	$head[$h][1] = $langs->trans("BlankSubscriptionForm");
 	$head[$h][2] = 'website';
 	$h++;
-
-	/*
-	$head[$h][0] = dol_buildpath("/partnership/admin/about.php", 1);
-	$head[$h][1] = $langs->trans("About");
-	$head[$h][2] = 'about';
-	$h++;
-	*/
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
