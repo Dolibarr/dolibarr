@@ -53,6 +53,8 @@ ALTER TABLE llx_user DROP COLUMN idpers2;
 ALTER TABLE llx_user DROP COLUMN idpers3;
 
 
+ALTER TABLE llx_opensurvey_user_studs MODIFY reponses VARCHAR(200) NOT NULL;
+
 -- v17
 
 UPDATE llx_c_paiement SET code = 'BANCON' WHERE code = 'BAN' AND libelle = 'Bancontact';
