@@ -177,7 +177,7 @@ if (GETPOST('confirmation')) {
 	}
 
 	// Add survey into database
-	if (!$erreur && $erreurNb==0) {
+	if (!$erreur && $erreurNb == 0) {
 		$_SESSION["toutchoix"] = substr("$choixdate", 1);
 
 		ajouter_sondage();
