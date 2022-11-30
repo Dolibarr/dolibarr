@@ -201,7 +201,6 @@ class Facture extends CommonInvoice
 	public $fk_facture_source;
 	public $linked_objects = array();
 
-	public $date_valid;
 	public $date_lim_reglement;
 	public $cond_reglement_code; // Code in llx_c_paiement
 	public $mode_reglement_code; // Code in llx_c_paiement
