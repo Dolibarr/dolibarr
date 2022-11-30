@@ -1711,6 +1711,7 @@ class ExtraFields
 			}
 		} elseif ($type == 'radio') {
 			if (!isset($param['options'][$value])) {
+				$langs->load('errors');
 				$value = $langs->trans('ErrorNoValueForRadioType');
 			} else {
 				$value = $langs->trans($param['options'][$value]);
