@@ -2234,7 +2234,7 @@ class EmailCollector extends CommonObject
 							$tickettocreate->fk_user_create = $user->id;
 							$tickettocreate->datec = $date;
 							$tickettocreate->fk_project = $projectstatic->id;
-							$tickettocreate->notify_tiers_at_create = 0;
+							$tickettocreate->notify_tiers_at_create = empty($conf->global->TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION) ? 0 : 1;
 							$tickettocreate->note_private = $descriptionfull;
 							$tickettocreate->entity = $conf->entity;
 							$tickettocreate->email_msgid = $msgid;
