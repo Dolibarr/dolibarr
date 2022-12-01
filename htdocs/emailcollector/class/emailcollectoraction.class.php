@@ -85,7 +85,7 @@ class EmailCollectorAction extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
 		'fk_emailcollector' => array('type'=>'integer', 'label'=>'Id of emailcollector', 'foreignkey'=>'emailcollector.rowid'),
 		'type' => array('type'=>'varchar(128)', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1),
-		'actionparam' => array('type'=>'varchar(255)', 'label'=>'ParamForAction', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>-1),
+		'actionparam' => array('type'=>'text', 'label'=>'ParamForAction', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>-1),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>501, 'notnull'=>1,),
 		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'llx_user.rowid',),
