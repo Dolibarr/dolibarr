@@ -386,3 +386,6 @@ ALTER TABLE llx_user ADD COLUMN birth_place varchar(64);
 
 ALTER TABLE llx_opensurvey_user_studs ADD COLUMN date_creation datetime NULL;
 ALTER TABLE llx_opensurvey_comments ADD COLUMN date_creation datetime NULL;
+
+ALTER TABLE llx_c_tva ADD COLUMN use_default tinyint DEFAULT 0;
+
