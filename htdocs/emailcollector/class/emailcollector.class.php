@@ -920,6 +920,7 @@ class EmailCollector extends CommonObject
 								}
 							}
 						}
+						$substitutionarray['__DATE_NOW__'] = dol_now();
 						//var_dump($substitutionarray);
 						dol_syslog(var_export($substitutionarray, true));
 						//var_dump($substitutionarray);
