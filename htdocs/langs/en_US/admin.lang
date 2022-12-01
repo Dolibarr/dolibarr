@@ -2119,6 +2119,7 @@ CodeLastResult=Latest result code
 NbOfEmailsInInbox=Number of emails in source directory
 LoadThirdPartyFromName=Load third party searching on %s (load only)
 LoadThirdPartyFromNameOrCreate=Load third party searching on %s (create if not found)
+LoadContactFromEmailOrCreate=Load contact searching on %s (create if not found)
 AttachJoinedDocumentsToObject=Save attached files into object documents if a ref of an object is found into email topic.
 WithDolTrackingID=Message from a conversation initiated by a first email sent from Dolibarr
 WithoutDolTrackingID=Message from a conversation initiated by a first email NOT sent from Dolibarr
