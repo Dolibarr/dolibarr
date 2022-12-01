@@ -1284,8 +1284,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
 
 	// To ensure that all variables within the MAX() brackets are integers
-	$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', true);
-
+	if (getDolGlobalInt('MAIN_NUMBERING_FILTER_ON_INT_ONLY')) {
+		$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', true);
+	}
 
 	if ($bentityon) { // only if entity enable
 		$sql .= " AND entity IN (".getEntity($sharetable).")";
