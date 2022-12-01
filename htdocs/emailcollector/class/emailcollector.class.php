@@ -2141,9 +2141,7 @@ class EmailCollector extends CommonObject
 									}
 								}
 							}
-						}
-						// Search and create contact
-						elseif ($operation['type'] == 'loadandcreatecontact') {
+						} elseif ($operation['type'] == 'loadandcreatecontact') { // Search and create contact
 							if (empty($operation['actionparam'])) {
 								$errorforactions++;
 								$this->error = "Action loadandcreatecontact has empty parameter. Must be 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to extract data";
