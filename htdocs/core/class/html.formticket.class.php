@@ -1361,12 +1361,6 @@ class FormTicket
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		print '<input type="hidden" name="actionbis" value="add_message">';
 		print '<input type="hidden" name="backtopage" value="'.$this->backtopage.'">';
-		if (!empty($this->trackid)) {
-			print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
-		} else {
-			print '<input type="hidden" name="trackid" value="'.(empty($this->track_id) ? '' : $this->track_id).'">';
-			$keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id; // track_id instead of trackid
-		}
 		foreach ($this->param as $key => $value) {
 			print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 		}

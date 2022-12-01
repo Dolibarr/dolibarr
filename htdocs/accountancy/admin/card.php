@@ -315,7 +315,7 @@ if ($action == 'create') {
 
 			// Account number
 			print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("AccountNumber").'</span></td>';
-			print '<td><input name="account_number" size="30" value="'.$object->account_number.'"></td></tr>';
+			print '<td><input name="account_number" size="30" value="'.$object->account_number.'"</td></tr>';
 
 			// Label
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td>';
