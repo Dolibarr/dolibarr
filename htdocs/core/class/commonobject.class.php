@@ -9068,7 +9068,7 @@ abstract class CommonObject
 	/**
 	 * Function to concat keys of fields
 	 *
-	 * @param   string   $alias   	String of alias of table for fields. For example 't'.
+	 * @param   string   $alias   	String of alias of table for fields. For example 't'. It is recommended to use '' and set alias into fields defintion.
 	 * @return  string				list of alias fields
 	 */
 	public function getFieldList($alias = '')
