@@ -721,3 +721,6 @@ ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product_parent FOREIGN KEY (fk_product_parent) REFERENCES llx_product (rowid);
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+
+-- Increase size of action params for email collector (v15)
+ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
