@@ -2420,14 +2420,17 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 
 				$fileofzip = '';
 				if (GETPOSTISSET('templateuserfile')) {
-					$fileofzip = DOL_DATA_ROOT.'/doctemplates/websites/'.GETPOST('templateuserfile', 'alpha');
+					// Case we selected one template
+					$fileofzip = DOL_DATA_ROOT.'/doctemplates/websites/'.GETPOST('templateuserfile', 'alpha');	// $fileofzip will be sanitized later into the importWebSite()
 				} elseif (!empty($_FILES)) {
+					// Case we upload a new template
 					if (is_array($_FILES['userfile']['tmp_name'])) {
 						$userfiles = $_FILES['userfile']['tmp_name'];
 					} else {
 						$userfiles = array($_FILES['userfile']['tmp_name']);
 					}
 
+					// Check if $_FILES is ok
 					foreach ($userfiles as $key => $userfile) {
 						if (empty($_FILES['userfile']['tmp_name'][$key])) {
 							$error++;
@@ -2442,20 +2445,25 @@ if ($action == 'importsiteconfirm' && $usercanedit) {
 					}
 
 					if (!$error) {
-						$upload_dir = $conf->website->dir_temp;
+						//$upload_dir = $conf->website->dir_temp;
+						$upload_dir = DOL_DATA_ROOT.'/doctemplates/websites/';
 						$result = dol_add_file_process($upload_dir, 1, -1, 'userfile', '');
 					}
 
 					// Get name of file (take last one if several name provided)
+					/*
 					$fileofzip = $upload_dir.'/unknown';
 					foreach ($_FILES as $key => $ifile) {
 						foreach ($ifile['name'] as $key2 => $ifile2) {
 							$fileofzip = $upload_dir.'/'.$ifile2;
 						}
 					}
+					*/
+
+					$action = 'importsite';
 				}
 
-				if (!$error) {
+				if (!$error && GETPOSTISSET('templateuserfile')) {
 					$result = $object->importWebSite($fileofzip);
 
 					if ($result < 0) {

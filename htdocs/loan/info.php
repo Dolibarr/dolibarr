@@ -102,8 +102,6 @@ $morehtmlref .= '</div>';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
-
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 
 print '<div class="fichecenter">';

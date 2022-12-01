@@ -2234,7 +2234,11 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'compta/facture/class';
 		$classfile = 'facture-rec';
 		$classname = 'FactureRec';
-		$module='facture';
+		$module = 'facture';
+	} elseif ($objecttype == 'mailing') {
+		$classpath = 'comm/mailing/class';
+		$classfile = 'mailing';
+		$classname = 'Mailing';
 	}
 
 	if (isModEnabled($module)) {

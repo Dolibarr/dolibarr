@@ -912,8 +912,8 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	print '"'.$langs->transnoentitiesnoconv("LedgerAccount").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("SubledgerAccount").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("Label").'"'.$sep;
-	print '"'.$langs->transnoentitiesnoconv("Debit").'"'.$sep;
-	print '"'.$langs->transnoentitiesnoconv("Credit").'"'.$sep;
+	print '"'.$langs->transnoentitiesnoconv("AccountingDebit").'"'.$sep;
+	print '"'.$langs->transnoentitiesnoconv("AccountingCredit").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("Journal").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("Note").'"'.$sep;
 	print "\n";
@@ -1136,8 +1136,8 @@ if (empty($action) || $action == 'view') {
 	print "<td>".$langs->trans("SubledgerAccount")."</td>";
 	print "<td>".$langs->trans("LabelOperation")."</td>";
 	print '<td class="center">'.$langs->trans("PaymentMode")."</td>";
-	print '<td class="right">'.$langs->trans("Debit")."</td>";
-	print '<td class="right">'.$langs->trans("Credit")."</td>";
+	print '<td class="right">'.$langs->trans("AccountingDebit")."</td>";
+	print '<td class="right">'.$langs->trans("AccountingCredit")."</td>";
 	print "</tr>\n";
 
 	$r = '';
