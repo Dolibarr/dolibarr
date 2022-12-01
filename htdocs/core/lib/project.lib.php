@@ -207,6 +207,18 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$head[$h][2] = 'element';
 		$h++;
 	}
+	if (!empty($conf->ticket->enabled)) {
+		$Tickettatic = new Ticket($db);
+		$nbTicket = count($Tickettatic->getAllItemsLinkedByObjectID($project->id, '*', 'fk_project', 'ticket'));
+		$head[$h][0] = DOL_URL_ROOT.'/ticket/list.php?projectid='.((int) $project->id);
+		$head[$h][1] = $langs->trans("Ticket");
+		if ($nbTicket > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbTicket).'</span>';
+		}
+		$head[$h][2] = 'ticket';
+		$h++;
+	}
+
 
 	if ($conf->eventorganization->enabled && !empty($project->usage_organize_event)) {
 		$langs->load('eventorganization');
