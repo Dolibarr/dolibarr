@@ -794,8 +794,8 @@ class ImportCsv extends ModeleImports
 							if (empty($lastinsertid)) {	// No insert done yet for a parent table
 								$sqlSelect = 'SELECT rowid FROM '.$tablename;
 								if (!empty($tablewithentity_cache[$tablename])) {
-									$where[] = 'entity = ' . $conf->entity;
-									$filters[] = 'entity = ' . $conf->entity;
+									$where[] = "entity = ".((int) $conf->entity);
+									$filters[] = "entity = ".((int) $conf->entity);
 								}
 								$sqlSelect .= ' WHERE '.implode(' AND ', $where);
 
