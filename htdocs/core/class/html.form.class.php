@@ -6279,8 +6279,10 @@ class Form
 			// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
 			if ($defaulttx < 0 || dol_strlen($defaulttx) == 0) {
 				$tmpthirdparty = new Societe($this->db);
+
 				$defaulttx = get_default_tva($societe_vendeuse, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod);
 				$defaultnpr = get_default_npr($societe_vendeuse, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod);
+
 				if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
 					$defaultcode = $reg[1];
 					$defaulttx = preg_replace('/\s*\(.*\)/', '', $defaulttx);
@@ -6290,13 +6292,22 @@ class Form
 				}
 			}
 
-			// Si taux par defaut n'a pu etre determine, on prend dernier de la liste.
-			// Comme ils sont tries par ordre croissant, dernier = plus eleve = taux courant
+			// If we fails to find a default vat rate, we take the last one in list
+			// Because they are sorted in ascending order, the last one will be the higher one (we suppose the higher one is the current rate)
 			if ($defaulttx < 0 || dol_strlen($defaulttx) == 0) {
 				if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS)) {
+					// We take the last one found in list
 					$defaulttx = $this->cache_vatrates[$num - 1]['txtva'];
 				} else {
-					$defaulttx = ($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS == 'none' ? '' : $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS);
+					// We will use the rate defined into MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
+					$defaulttx = '';
+					if ($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS != 'none') {
+						$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+					}
+					if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
+						$defaultcode = $reg[1];
+						$defaulttx = preg_replace('/\s*\(.*\)/', '', $defaulttx);
+					}
 				}
 			}
 

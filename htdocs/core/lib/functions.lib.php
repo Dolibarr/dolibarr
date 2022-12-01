@@ -6306,11 +6306,11 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 
 	if (!$found) {
 		if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS)) {
-			// If vat of product for the country not found or not defined, we return the first higher vat of country.
+			// If vat of product for the country not found or not defined, we return the first found (sorting on use_default then higher vat of country).
 			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdpartytouse->country_code)."'";
-			$sql .= " ORDER BY t.taux DESC, t.code ASC, t.recuperableonly ASC";
+			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code = '".$db->escape($thirdpartytouse->country_code)."'";
+			$sql .= " ORDER BY t.use_default DESC, t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
 
 			$resql = $db->query($sql);
@@ -6327,7 +6327,8 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 				dol_print_error($db);
 			}
 		} else {
-			$ret = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS; // Forced value if autodetect fails
+			// Forced value if autodetect fails. MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS can be '1.23' or '1.23 (CODE)'
+			$ret = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
 		}
 	}
 
