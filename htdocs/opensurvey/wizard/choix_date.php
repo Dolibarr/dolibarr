@@ -37,6 +37,7 @@ if (!$user->rights->opensurvey->write) {
 $_SESSION["formatsondage"] = "D";
 
 $erreur = false;
+$erreurNbchoice = 0;
 
 /*
  * Actions
@@ -49,113 +50,119 @@ if (GETPOST('confirmation')) {
 		$nbofchoice = count($_SESSION["totalchoixjour"]);
 		$errheure = array();
 
-		for ($i = 0; $i < $nbofchoice; $i++) {
-			// Show hours choices
-			for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-				$horairesi = GETPOST("horaires".$i);
-				$_SESSION["horaires$i"][$j] = $horairesi[$j];
-
-				$tmphorairesi = GETPOST('horaires'.$i, 'array');
-
-				if (!is_array($tmphorairesi)) {
-					$errheure[$i][$j] = true;
-					$erreur = true;
-					continue;
-				}
-
-				// A range like 8:00-11:00
-				$creneaux = array();
-				$heures = array();
-				if (preg_match("/(\d{1,2}:\d{2})-(\d{1,2}:\d{2})/", $tmphorairesi[$j], $creneaux)) {
-					//on recupere les deux parties du preg_match qu'on redécoupe autour des ":"
-					$debutcreneau = explode(":", $creneaux[1]);
-					$fincreneau = explode(":", $creneaux[2]);
-
-					//comparaison des heures de fin et de debut
-					//si correctes, on entre les données dans la variables de session
-					if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
-						$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
-					} else { //sinon message d'erreur et nettoyage de la case
-						$errheure[$i][$j] = true;
-						$erreur = true;
-					}
-				} elseif (preg_match(";^(\d{1,2}h\d{0,2})-(\d{1,2}h\d{0,2})$;i", $tmphorairesi[$j], $creneaux)) { //si c'est un creneau type 8h00-11h00
-					//on recupere les deux parties du preg_match qu'on redécoupe autour des "H"
-					$debutcreneau = preg_split("/h/i", $creneaux[1]);
-					$fincreneau = preg_split("/h/i", $creneaux[2]);
-
-					//comparaison des heures de fin et de debut
-					//si correctes, on entre les données dans la variables de session
-					if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
-						$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
-					} else { //sinon message d'erreur et nettoyage de la case
-						$errheure[$i][$j] = true;
-						$erreur = true;
-					}
-				} elseif (preg_match(";^(\d{1,2}):(\d{2})$;", $tmphorairesi[$j], $heures)) { //si c'est une heure simple type 8:00
-					//si valeures correctes, on entre les données dans la variables de session
-					if ($heures[1] < 24 && $heures[2] < 60) {
-						$_SESSION["horaires$i"][$j] = $heures[0];
-					} else { //sinon message d'erreur et nettoyage de la case
-						$errheure[$i][$j] = true;
-						$erreur = true;
-					}
-				} elseif (preg_match(";^(\d{1,2})h(\d{0,2})$;i", $tmphorairesi[$j], $heures)) { //si c'est une heure encore plus simple type 8h
-					//si valeures correctes, on entre les données dans la variables de session
-					if ($heures[1] < 24 && $heures[2] < 60) {
-						$_SESSION["horaires$i"][$j] = $heures[0];
-					} else { //sinon message d'erreur et nettoyage de la case
-						$errheure[$i][$j] = true;
-						$erreur = true;
-					}
-				} elseif (preg_match(";^(\d{1,2})-(\d{1,2})$;", $tmphorairesi[$j], $heures)) { //si c'est un creneau simple type 8-11
-					//si valeures correctes, on entre les données dans la variables de session
-					if ($heures[1] < $heures[2] && $heures[1] < 24 && $heures[2] < 24) {
-						$_SESSION["horaires$i"][$j] = $heures[0];
-					} else { //sinon message d'erreur et nettoyage de la case
-						$errheure[$i][$j] = true;
-						$erreur = true;
-					}
-				} elseif (preg_match(";^(\d{1,2})h-(\d{1,2})h$;", $tmphorairesi[$j], $heures)) { //si c'est un creneau H type 8h-11h
-					//si valeures correctes, on entre les données dans la variables de session
-					if ($heures[1] < $heures[2] && $heures[1] < 24 && $heures[2] < 24) {
-						$_SESSION["horaires$i"][$j] = $heures[0];
-					} else { //sinon message d'erreur et nettoyage de la case
-						$errheure[$i][$j] = true;
-						$erreur = true;
-					}
-				} elseif ($tmphorairesi[$j] == "") { //Si la case est vide
-					unset($_SESSION["horaires$i"][$j]);
-				} else { //pour tout autre format, message d'erreur
-					$errheure[$i][$j] = true;
-					$erreur = true;
-				}
-
-				if (issetAndNoEmpty('horaires'.$i, $_SESSION) === false || issetAndNoEmpty($j, $_SESSION['horaires'.$i]) === false) {
-					if (issetAndNoEmpty('horaires'.$i, $_SESSION) === true) {
-						$_SESSION["horaires$i"][$j] = '';
-					} else {
-						$_SESSION["horaires$i"] = array();
-						$_SESSION["horaires$i"][$j] = '';
-					}
-				}
-			}
-
-			if ($_SESSION["horaires$i"][0] == "" && $_SESSION["horaires$i"][1] == "" && $_SESSION["horaires$i"][2] == "" && $_SESSION["horaires$i"][3] == "" && $_SESSION["horaires$i"][4] == "") {
-				$choixdate .= ",";
-				$choixdate .= $_SESSION["totalchoixjour"][$i];
-			} else {
+		if ($nbofchoice * $_SESSION["nbrecaseshoraires"] > 200) {
+			setEventMessages($langs->trans("ErrorFieldTooLong"), null, 'errors');
+			$erreurNb++;
+		} else {
+			for ($i = 0; $i < $nbofchoice; $i++) {
+				// Show hours choices
 				for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
-					if ($_SESSION["horaires$i"][$j] != "") {
-						$choixdate .= ",";
-						$choixdate .= $_SESSION["totalchoixjour"][$i];
-						$choixdate .= "@";
-						// On remplace la virgule et l'arobase pour ne pas avoir de problème par la suite
-						$choixdate .= str_replace(array(',', '@'), array('&#44;', '&#64;'), $_SESSION["horaires$i"][$j]);
+					$horairesi = GETPOST("horaires".$i);
+					$_SESSION["horaires$i"][$j] = $horairesi[$j];
+
+					$tmphorairesi = GETPOST('horaires'.$i, 'array');
+
+					if (!is_array($tmphorairesi)) {
+						$errheure[$i][$j] = true;
+						$erreur = true;
+						continue;
+					}
+
+					// A range like 8:00-11:00
+					$creneaux = array();
+					$heures = array();
+					if (preg_match("/(\d{1,2}:\d{2})-(\d{1,2}:\d{2})/", $tmphorairesi[$j], $creneaux)) {
+						//on recupere les deux parties du preg_match qu'on redécoupe autour des ":"
+						$debutcreneau = explode(":", $creneaux[1]);
+						$fincreneau = explode(":", $creneaux[2]);
+
+						//comparaison des heures de fin et de debut
+						//si correctes, on entre les données dans la variables de session
+						if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
+							$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
+						} else { //sinon message d'erreur et nettoyage de la case
+							$errheure[$i][$j] = true;
+							$erreur = true;
+						}
+					} elseif (preg_match(";^(\d{1,2}h\d{0,2})-(\d{1,2}h\d{0,2})$;i", $tmphorairesi[$j], $creneaux)) { //si c'est un creneau type 8h00-11h00
+						//on recupere les deux parties du preg_match qu'on redécoupe autour des "H"
+						$debutcreneau = preg_split("/h/i", $creneaux[1]);
+						$fincreneau = preg_split("/h/i", $creneaux[2]);
+
+						//comparaison des heures de fin et de debut
+						//si correctes, on entre les données dans la variables de session
+						if ($debutcreneau[0] < 24 && $fincreneau[0] < 24 && $debutcreneau[1] < 60 && $fincreneau[1] < 60 && ($debutcreneau[0] < $fincreneau[0] || ($debutcreneau[0] == $fincreneau[0] && $debutcreneau[1] < $fincreneau[1]))) {
+							$_SESSION["horaires$i"][$j] = $creneaux[1].'-'.$creneaux[2];
+						} else { //sinon message d'erreur et nettoyage de la case
+							$errheure[$i][$j] = true;
+							$erreur = true;
+						}
+					} elseif (preg_match(";^(\d{1,2}):(\d{2})$;", $tmphorairesi[$j], $heures)) { //si c'est une heure simple type 8:00
+						//si valeures correctes, on entre les données dans la variables de session
+						if ($heures[1] < 24 && $heures[2] < 60) {
+							$_SESSION["horaires$i"][$j] = $heures[0];
+						} else { //sinon message d'erreur et nettoyage de la case
+							$errheure[$i][$j] = true;
+							$erreur = true;
+						}
+					} elseif (preg_match(";^(\d{1,2})h(\d{0,2})$;i", $tmphorairesi[$j], $heures)) { //si c'est une heure encore plus simple type 8h
+						//si valeures correctes, on entre les données dans la variables de session
+						if ($heures[1] < 24 && $heures[2] < 60) {
+							$_SESSION["horaires$i"][$j] = $heures[0];
+						} else { //sinon message d'erreur et nettoyage de la case
+							$errheure[$i][$j] = true;
+							$erreur = true;
+						}
+					} elseif (preg_match(";^(\d{1,2})-(\d{1,2})$;", $tmphorairesi[$j], $heures)) { //si c'est un creneau simple type 8-11
+						//si valeures correctes, on entre les données dans la variables de session
+						if ($heures[1] < $heures[2] && $heures[1] < 24 && $heures[2] < 24) {
+							$_SESSION["horaires$i"][$j] = $heures[0];
+						} else { //sinon message d'erreur et nettoyage de la case
+							$errheure[$i][$j] = true;
+							$erreur = true;
+						}
+					} elseif (preg_match(";^(\d{1,2})h-(\d{1,2})h$;", $tmphorairesi[$j], $heures)) { //si c'est un creneau H type 8h-11h
+						//si valeures correctes, on entre les données dans la variables de session
+						if ($heures[1] < $heures[2] && $heures[1] < 24 && $heures[2] < 24) {
+							$_SESSION["horaires$i"][$j] = $heures[0];
+						} else { //sinon message d'erreur et nettoyage de la case
+							$errheure[$i][$j] = true;
+							$erreur = true;
+						}
+					} elseif ($tmphorairesi[$j] == "") { //Si la case est vide
+						unset($_SESSION["horaires$i"][$j]);
+					} else { //pour tout autre format, message d'erreur
+						$errheure[$i][$j] = true;
+						$erreur = true;
+					}
+
+					if (issetAndNoEmpty('horaires'.$i, $_SESSION) === false || issetAndNoEmpty($j, $_SESSION['horaires'.$i]) === false) {
+						if (issetAndNoEmpty('horaires'.$i, $_SESSION) === true) {
+							$_SESSION["horaires$i"][$j] = '';
+						} else {
+							$_SESSION["horaires$i"] = array();
+							$_SESSION["horaires$i"][$j] = '';
+						}
+					}
+				}
+
+				if ($_SESSION["horaires$i"][0] == "" && $_SESSION["horaires$i"][1] == "" && $_SESSION["horaires$i"][2] == "" && $_SESSION["horaires$i"][3] == "" && $_SESSION["horaires$i"][4] == "") {
+					$choixdate .= ",";
+					$choixdate .= $_SESSION["totalchoixjour"][$i];
+				} else {
+					for ($j = 0; $j < $_SESSION["nbrecaseshoraires"]; $j++) {
+						if ($_SESSION["horaires$i"][$j] != "") {
+							$choixdate .= ",";
+							$choixdate .= $_SESSION["totalchoixjour"][$i];
+							$choixdate .= "@";
+							// On remplace la virgule et l'arobase pour ne pas avoir de problème par la suite
+							$choixdate .= str_replace(array(',', '@'), array('&#44;', '&#64;'), $_SESSION["horaires$i"][$j]);
+						}
 					}
 				}
 			}
 		}
+
 
 		if (!empty($errheure)) {
 			setEventMessages($langs->trans("ErrorBadFormat"), null, 'errors');
@@ -170,7 +177,7 @@ if (GETPOST('confirmation')) {
 	}
 
 	// Add survey into database
-	if (!$erreur) {
+	if (!$erreur && $erreurNb == 0) {
 		$_SESSION["toutchoix"] = substr("$choixdate", 1);
 
 		ajouter_sondage();

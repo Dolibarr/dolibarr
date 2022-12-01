@@ -54,6 +54,8 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 
 UPDATE llx_c_actioncomm SET type = 'system' WHERE code = 'AC_OTH';
 
+ALTER TABLE llx_opensurvey_user_studs MODIFY reponses VARCHAR(200) NOT NULL;
+
 -- v17
 
 ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_type varchar(32); 
