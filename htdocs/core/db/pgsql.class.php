@@ -758,6 +758,24 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
+	 *	Format a SQL REGEXP
+	 *
+	 *	@param	string	$subject        string tested
+	 *	@param	string  $pattern        SQL pattern to match
+	 *	@param	string	$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@return	string          		SQL string
+	 */
+	public function regexpsql($subject, $pattern, $sqlstring = false)
+	{
+		if ($sqlstring) {
+			return "(". $subject ." ~ '" . $pattern . "')";
+		}
+
+		return "('". $subject ."' ~ '" . $pattern . "')";
+	}
+
+
+	/**
 	 * Renvoie le code erreur generique de l'operation precedente.
 	 *
 	 * @return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
