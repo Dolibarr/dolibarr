@@ -793,6 +793,10 @@ class ImportCsv extends ModeleImports
 
 							if (empty($lastinsertid)) {	// No insert done yet for a parent table
 								$sqlSelect = 'SELECT rowid FROM '.$tablename;
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$where[] = 'entity = ' . $conf->entity;
+									$filters[] = 'entity = ' . $conf->entity;
+								}
 								$sqlSelect .= ' WHERE '.implode(' AND ', $where);
 
 								$resql = $this->db->query($sqlSelect);
@@ -828,6 +832,10 @@ class ImportCsv extends ModeleImports
 								$sqlSelect .= ' WHERE '.$keyfield.' = '.((int) $lastinsertid);
 								if (!empty($where)) $sqlSelect .= ' AND ' . implode(' AND ', $where);
 
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlSelect .= " AND entity = ".((int) $conf->entity);
+								}
+
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
 									$res = $this->db->fetch_object($resql);
@@ -862,6 +870,10 @@ class ImportCsv extends ModeleImports
 								}
 								$sqlend = ' WHERE '.$keyfield.' = '.((int) $lastinsertid);
 								if (!empty($where)) $sqlend .= ' AND ' . implode(' AND ', $where);
+
+								if (!empty($tablewithentity_cache[$tablename])) {
+									$sqlend .= " AND entity = ".((int) $conf->entity);
+								}
 
 								$sql = $sqlstart.$sqlend;
 
