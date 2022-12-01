@@ -1182,7 +1182,7 @@ class DoliDBPgsql extends DoliDB
 		// phpcs:enable
 		$sql = "ALTER TABLE ".$table;
 		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
-		if (in_array($field_desc['type'], array('double', 'tinyint', 'int', 'varchar')) && $field_desc['value']) {
+		if (in_array($field_desc['type'], array('double', 'varchar')) && $field_desc['value']) {
 			$sql .= "(".$field_desc['value'].")";
 		}
 
