@@ -1492,12 +1492,12 @@ if ($object->id > 0) {
 				//print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td>';
 				if ($objp->df > 0) {
-					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->df), 'day').'</td>';
+					print '<td class="right" width="80px">'.$langs->trans('DateInvoice').": ".dol_print_date($db->jdate($objp->df), 'day').'</td>';
 				} else {
 					print '<td class="right"><b>!!!</b></td>';
 				}
 				if ($objp->dl > 0) {
-					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dl), 'day').'</td>';
+					print '<td class="right" width="80px">'.$langs->trans('DateMaxPayment').": ".dol_print_date($db->jdate($objp->dl), 'day').'</td>';
 				} else {
 					print '<td class="right"><b>!!!</b></td>';
 				}
