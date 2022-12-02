@@ -91,7 +91,7 @@ if ($action == "save" && empty($cancel)) {
 	foreach ($triggers as $trigger) {
 		$keyparam = 'MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 		if ($search_event === '' || preg_match('/'.preg_quote($search_event, '/').'/i', $keyparam)) {
-			$res = dolibarr_set_const($db, $keyparam, (GETPOST($keyparam, 'alpha') ?GETPOST($keyparam, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
+			$res = dolibarr_set_const($db, $keyparam, (GETPOST($keyparam, 'alpha') ?GETPOST($keyparam, 'alpha') : '0'), 'chaine', 0, '', $conf->entity);
 			if (!($res > 0)) {
 				$error++;
 			}
