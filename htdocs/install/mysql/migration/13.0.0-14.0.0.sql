@@ -702,6 +702,9 @@ ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_supplier_general v
 UPDATE llx_const SET name = 'MAIN_LIST_HIDE_PUBLIC_NOTES' WHERE name = 'MAIN_LIST_ALLOW_PUBLIC_NOTES';
 UPDATE llx_const SET name = 'MAIN_LIST_HIDE_PRIVATE_NOTES' WHERE name = 'MAIN_LIST_ALLOW_PRIVATE_NOTES';
 
+-- Rename prospect level on contact
+ALTER TABLE llx_socpeople CHANGE fk_prospectcontactlevel fk_prospectlevel varchar(12);
+
 -- Add shipment lines dispatcher
 create table llx_expeditiondet_dispatch
 (
