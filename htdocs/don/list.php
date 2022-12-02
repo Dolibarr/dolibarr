@@ -88,6 +88,11 @@ $fieldstosearchall = array(
 	'd.firstname'=>'Firstname',
 );
 
+// Security check
+$result = restrictedArea($user, 'don');
+
+
+
 
 /*
  * View
