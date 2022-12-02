@@ -8070,7 +8070,7 @@ class Form
 					if (empty($nohtmlescape)) {
 						$selectOptionValue = dol_escape_htmltag($maxlen ?dol_trunc($value, $maxlen) : $value);
 					} else {
-						$selectOptionValue = $maxlen ?dol_trunc($value, $maxlen) : $value;
+						$selectOptionValue = $maxlen ? dol_trunc($value, $maxlen) : $value;
 					}
 					if ($value == '' || $value == '-') {
 						$selectOptionValue = '&nbsp;';
@@ -9070,7 +9070,7 @@ class Form
 		$resultyesno .= '</select>'."\n";
 
 		if ($addjscombo) {
-			$resultyesno .= ajax_combobox($htmlname);
+			$resultyesno .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($useempty < 0 ? (string) $useempty : '-1'), $morecss);
 		}
 
 		return $resultyesno;

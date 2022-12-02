@@ -239,7 +239,7 @@ if ($resql) {
 		Don::STATUS_PAID=>$langs->trans("DonationStatusPaid"),
 		Don::STATUS_CANCELED=>$langs->trans("Canceled")
 	);
-	print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+	print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100 onrightofpage');
 	print '</td>';
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(0);

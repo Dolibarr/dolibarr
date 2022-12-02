@@ -1469,7 +1469,7 @@ if ($resql) {
 	// Status billed
 	if (!empty($arrayfields['cf.billed']['checked'])) {
 		print '<td class="liste_titre center">';
-		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1, 1);
+		print $form->selectyesno('search_billed', $search_billed, 1, false, 1, 1, 'maxwidth100 onrightofpage');
 		print '</td>';
 	}
 	// Date valid
