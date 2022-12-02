@@ -37,6 +37,8 @@ $search_group = GETPOST('search_group');
 $optioncss = GETPOST('optioncss', 'alpha');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $contextpage = GETPOST('optioncss', 'aZ09');
+$mode = GETPOST('mode', 'aZ');
+
 
 // Defini si peux lire/modifier utilisateurs et permisssions
 $caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
@@ -152,6 +154,10 @@ if ($resql) {
 	$i = 0;
 
 	$param = "&amp;search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
+	if (!empty($mode)) {
+		$param .= '&mode='.urlencode($mode);
+	}
+
 	if ($optioncss != '') {
 		$param .= '&amp;optioncss='.$optioncss;
 	}
@@ -159,6 +165,9 @@ if ($resql) {
 	$text = $langs->trans("ListOfGroups");
 
 	$newcardbutton = '';
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+
 	if ($caneditperms) {
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewGroup'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=');
 	}
@@ -172,6 +181,8 @@ if ($resql) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
+
 
 	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'object_group', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -205,33 +216,50 @@ if ($resql) {
 
 	$grouptemp = new UserGroup($db);
 
-	while ($i < $num) {
+	$imaxinloop = ($limit ? min($num, $limit) : $num);
+
+	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
+		$grouptemp->setVarsFromFetchObj($obj);
 
-		$grouptemp->id = $obj->rowid;
-		$grouptemp->name = $obj->name;
-		$grouptemp->note = $obj->note;
+			$grouptemp->name = $obj->name;
+			$grouptemp->note = $obj->note;
+			$grouptemp->members = $obj->nb;
+			$grouptemp->nb_rights = $obj->nbpermissions;
 
-		print '<tr class="oddeven">';
-		print '<td>';
-		print $grouptemp->getNomUrl(1);
-		if (isModEnabled('multicompany') && !$obj->entity) {
-			print img_picto($langs->trans("GlobalGroup"), 'redstar');
+		if ($mode == 'kanban') {
+			if ($i == 0) {
+				print '<tr><td colspan=5>';
+				print '<div class="box-flex-container">';
+			}
+			// Output Kanban
+			print $grouptemp->getKanbanView('');
+			if ($i == ($imaxinloop - 1)) {
+				print '</div>';
+				print '</td></tr>';
+			}
+		} else {
+			print '<tr class="oddeven">';
+			print '<td>';
+			print $grouptemp->getNomUrl(1);
+			if (isModEnabled('multicompany') && !$obj->entity) {
+				print img_picto($langs->trans("GlobalGroup"), 'redstar');
+			}
+			print "</td>";
+			//multicompany
+			if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
+				$mc->getInfo($obj->entity);
+				print '<td class="center">'.dol_escape_htmltag($mc->label).'</td>';
+			}
+			print '<td class="center">'.$obj->nb.'</td>';
+			print '<td class="center">';
+			print '<a href="'.DOL_URL_ROOT.'/user/group/perms.php?id='.$obj->rowid.'">'.$obj->nbpermissions.'</a>';
+			print '</td>';
+			print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), "dayhour").'</td>';
+			print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datem), "dayhour").'</td>';
+			print '<td></td>';
+			print "</tr>\n";
 		}
-		print "</td>";
-		//multicompany
-		if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
-			$mc->getInfo($obj->entity);
-			print '<td class="center">'.dol_escape_htmltag($mc->label).'</td>';
-		}
-		print '<td class="center">'.$obj->nb.'</td>';
-		print '<td class="center">';
-		print '<a href="'.DOL_URL_ROOT.'/user/group/perms.php?id='.$obj->rowid.'">'.$obj->nbpermissions.'</a>';
-		print '</td>';
-		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), "dayhour").'</td>';
-		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datem), "dayhour").'</td>';
-		print '<td></td>';
-		print "</tr>\n";
 		$i++;
 	}
 	print "</table>";
