@@ -6265,10 +6265,10 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
  *	Return vat rate of a product in a particular country, or default country vat if product is unknown.
  *  Function called by get_default_tva().
  *
- *  @param	int			$idprod          	Id of product or 0 if not a predefined product
- *  @param  Societe		$thirdpartytouse  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
- *	@param	int			$idprodfournprice	Id product_fournisseur_price (for "supplier" proposal/order/invoice)
- *  @return float|string   				    Vat rate to use with format 5.0 or '5.0 (XXX)'
+ *  @param	int				$idprod          	Id of product or 0 if not a predefined product
+ *  @param  Societe			$thirdpartytouse  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *	@param	int				$idprodfournprice	Id product_fournisseur_price (for "supplier" proposal/order/invoice)
+ *  @return float|string   					    Vat rate to use with format 5.0 or '5.0 (XXX)'
  *  @see get_product_localtax_for_country()
  */
 function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournprice = 0)
@@ -6329,7 +6329,16 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 			}
 		} else {
 			// Forced value if autodetect fails. MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS can be '1.23' or '1.23 (CODE)'
-			$ret = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+			$defaulttx = '';
+			if ($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS != 'none') {
+				$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+			}
+			/*if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
+				$defaultcode = $reg[1];
+				$defaulttx = preg_replace('/\s*\(.*\)/', '', $defaulttx);
+			}*/
+
+			$ret = $defaulttx;
 		}
 	}
 
