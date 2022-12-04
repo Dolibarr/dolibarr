@@ -6318,7 +6318,7 @@ class Form
 				// Override/enable VAT for expense report regardless of global setting - needed if expense report used for business expenses instead
 				// of using supplier invoices (this is a very bad idea !)
 				if (empty($conf->global->EXPENSEREPORT_OVERRIDE_VAT)) {
-					$title = ' title="'.$langs->trans('VATIsNotUsed').'"';
+					$title = ' title="'.dol_escape_htmltag($langs->trans('VATIsNotUsed')).'"';
 					$disabled = true;
 				}
 			}
@@ -6375,7 +6375,7 @@ class Form
 
 			if (!$options_only) {
 				$return .= '</select>';
-				//$return .= ajax_combobox($htmlname);		// This break for the moment dynamic autoselection of a value when selecting a product in object lines
+				//$return .= ajax_combobox($htmlname);		// This break for the moment the dynamic autoselection of a value when selecting a product in object lines
 			}
 		} else {
 			$return .= $this->error;
