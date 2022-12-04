@@ -328,17 +328,17 @@ $sql .= $hookmanager->resPrint;
 $sql .= ' WHERE e.entity IN (' . getEntity('expedition') . ')';
 
 if ($socid > 0) {
-	$sql .= ' AND s.rowid = ' . ((int)$socid);
+	$sql .= ' AND s.rowid = ' . ((int) $socid);
 }
 if (empty($user->rights->societe->client->voir) && !$socid) {	// Internal user with no permission to see all
 	$sql .= ' AND e.fk_soc = sc.fk_soc';
-	$sql .= ' AND sc.fk_user = ' . ((int)$user->id);
+	$sql .= ' AND sc.fk_user = ' . ((int) $user->id);
 }
 if ($socid) {
-	$sql .= ' AND e.fk_soc = ' . ((int)$socid);
+	$sql .= ' AND e.fk_soc = ' . ((int) $socid);
 }
 if ($search_status <> '' && $search_status >= 0) {
-	$sql .= ' AND e.fk_statut = ' . ((int)$search_status);
+	$sql .= ' AND e.fk_statut = ' . ((int) $search_status);
 }
 if ($search_ref_customer != '') {
 	$sql .= natural_search('e.ref_customer', $search_ref_customer);
@@ -359,7 +359,7 @@ if ($search_country) {
 	$sql .= ' AND s.fk_pays IN (' . $db->sanitize($search_country) . ')';
 }
 if ($search_shipping_method_id > 0) {
-	$sql .= ' AND e.fk_shipping_method = ' . ((int)$search_shipping_method_id);
+	$sql .= ' AND e.fk_shipping_method = ' . ((int) $search_shipping_method_id);
 }
 if ($search_tracking) {
 	$sql .= natural_search('e.tracking_number', $search_tracking);
@@ -368,7 +368,7 @@ if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$sql .= ' AND s.fk_typent IN (' . $db->sanitize($search_type_thirdparty) . ')';
 }
 if ($search_sale > 0) {
-	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = ' . ((int)$search_sale);
+	$sql .= ' AND s.rowid = sc.fk_soc AND sc.fk_user = ' . ((int) $search_sale);
 }
 if ($search_user > 0) {
 	// The contact on a shipment is also the contact of the order.
@@ -401,7 +401,7 @@ if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($search_categ_cus > 0) {
-	$sql .= ' AND cc.fk_categorie = ' . ((int)$search_categ_cus);
+	$sql .= ' AND cc.fk_categorie = ' . ((int) $search_categ_cus);
 }
 if ($search_categ_cus == -2) {
 	$sql .= ' AND cc.fk_categorie IS NULL';
@@ -417,7 +417,7 @@ if (!empty($searchCategoryProductList)) {
 			$searchCategoryProductSqlList[] = 'NOT EXISTS (SELECT ck.fk_product FROM ' . MAIN_DB_PREFIX . 'categorie_product as ck, ' . MAIN_DB_PREFIX . 'expeditiondet as ed, ' . MAIN_DB_PREFIX . 'commandedet as cd WHERE ed.fk_expedition = e.rowid AND ed.fk_origin_line = cd.rowid AND cd.fk_product = ck.fk_product)';
 		} elseif (intval($searchCategoryProduct) > 0) {
 			if ($searchCategoryProductOperator == 0) {
-				$searchCategoryProductSqlList[] = ' EXISTS (SELECT ck.fk_product FROM ' . MAIN_DB_PREFIX . 'categorie_product as ck, ' . MAIN_DB_PREFIX . 'expeditiondet as ed, ' . MAIN_DB_PREFIX . 'commandedet as cd WHERE ed.fk_expedition = e.rowid AND ed.fk_origin_line = cd.rowid AND cd.fk_product = ck.fk_product AND ck.fk_categorie = ' . ((int)$searchCategoryProduct) . ')';
+				$searchCategoryProductSqlList[] = ' EXISTS (SELECT ck.fk_product FROM ' . MAIN_DB_PREFIX . 'categorie_product as ck, ' . MAIN_DB_PREFIX . 'expeditiondet as ed, ' . MAIN_DB_PREFIX . 'commandedet as cd WHERE ed.fk_expedition = e.rowid AND ed.fk_origin_line = cd.rowid AND cd.fk_product = ck.fk_product AND ck.fk_categorie = ' . ((int) $searchCategoryProduct) . ')';
 			} else {
 				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProduct);
 			}

@@ -365,28 +365,28 @@ class Expedition extends CommonObject
 		$sql .= ', fk_incoterms, location_incoterms';
 		$sql .= ') VALUES (';
 		$sql .= "'(PROV)'";
-		$sql .= ', ' . ((int)$conf->entity);
+		$sql .= ', ' . ((int) $conf->entity);
 		$sql .= ', ' . ($this->ref_customer ? "'" . $this->db->escape($this->ref_customer) . "'" : 'null');
 		$sql .= ', ' . ($this->ref_ext ? "'" . $this->db->escape($this->ref_ext) . "'" : 'null');
 		$sql .= ", '" . $this->db->idate($now) . "'";
-		$sql .= ', ' . ((int)$user->id);
+		$sql .= ', ' . ((int) $user->id);
 		$sql .= ', ' . ($this->date_expedition > 0 ? "'" . $this->db->idate($this->date_expedition) . "'" : 'null');
 		$sql .= ', ' . ($this->date_delivery > 0 ? "'" . $this->db->idate($this->date_delivery) . "'" : 'null');
-		$sql .= ', ' . ($this->socid > 0 ? ((int)$this->socid) : 'null');
-		$sql .= ', ' . ($this->fk_project > 0 ? ((int)$this->fk_project) : 'null');
+		$sql .= ', ' . ($this->socid > 0 ? ((int) $this->socid) : 'null');
+		$sql .= ', ' . ($this->fk_project > 0 ? ((int) $this->fk_project) : 'null');
 		$sql .= ', ' . ($this->fk_delivery_address > 0 ? $this->fk_delivery_address : 'null');
-		$sql .= ', ' . ($this->shipping_method_id > 0 ? ((int)$this->shipping_method_id) : 'null');
+		$sql .= ', ' . ($this->shipping_method_id > 0 ? ((int) $this->shipping_method_id) : 'null');
 		$sql .= ", '" . $this->db->escape($this->tracking_number) . "'";
 		$sql .= ', ' . (is_numeric($this->weight) ? $this->weight : 'NULL');
 		$sql .= ', ' . (is_numeric($this->sizeS) ? $this->sizeS : 'NULL');     // TODO Should use this->trueDepth
 		$sql .= ', ' . (is_numeric($this->sizeW) ? $this->sizeW : 'NULL');     // TODO Should use this->trueWidth
 		$sql .= ', ' . (is_numeric($this->sizeH) ? $this->sizeH : 'NULL');     // TODO Should use this->trueHeight
-		$sql .= ', ' . ($this->weight_units != '' ? (int)$this->weight_units : 'NULL');
-		$sql .= ', ' . ($this->size_units != '' ? (int)$this->size_units : 'NULL');
+		$sql .= ', ' . ($this->weight_units != '' ? (int) $this->weight_units : 'NULL');
+		$sql .= ', ' . ($this->size_units != '' ? (int) $this->size_units : 'NULL');
 		$sql .= ', ' . (!empty($this->note_private) ? "'" . $this->db->escape($this->note_private) . "'" : 'null');
 		$sql .= ', ' . (!empty($this->note_public) ? "'" . $this->db->escape($this->note_public) . "'" : 'null');
 		$sql .= ', ' . (!empty($this->model_pdf) ? "'" . $this->db->escape($this->model_pdf) . "'" : 'null');
-		$sql .= ', ' . (int)$this->fk_incoterms;
+		$sql .= ', ' . (int) $this->fk_incoterms;
 		$sql .= ", '" . $this->db->escape($this->location_incoterms) . "'";
 		$sql .= ')';
 
@@ -397,7 +397,7 @@ class Expedition extends CommonObject
 
 			$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'expedition';
 			$sql .= " SET ref = '(PROV" . $this->id . ")'";
-			$sql .= ' WHERE rowid = ' . ((int)$this->id);
+			$sql .= ' WHERE rowid = ' . ((int) $this->id);
 
 			dol_syslog(get_class($this) . '::create', LOG_DEBUG);
 			if ($this->db->query($sql)) {
@@ -580,7 +580,7 @@ class Expedition extends CommonObject
 		$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_shipment_mode as s ON e.fk_shipping_method = s.rowid';
 		$sql .= ' WHERE e.entity IN (' . getEntity('expedition') . ')';
 		if ($id) {
-			$sql .= ' AND e.rowid = ' . ((int)$id);
+			$sql .= ' AND e.rowid = ' . ((int) $id);
 		}
 		if ($ref) {
 			$sql .= " AND e.ref='" . $this->db->escape($ref) . "'";
@@ -745,7 +745,7 @@ class Expedition extends CommonObject
 		$sql .= ', fk_statut = 1';
 		$sql .= ", date_valid = '" . $this->db->idate($now) . "'";
 		$sql .= ', fk_user_valid = ' . $user->id;
-		$sql .= ' WHERE rowid = ' . ((int)$this->id);
+		$sql .= ' WHERE rowid = ' . ((int) $this->id);
 
 		dol_syslog(get_class($this) . '::valid update expedition', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -767,7 +767,7 @@ class Expedition extends CommonObject
 			$sql .= ' FROM ' . MAIN_DB_PREFIX . 'commandedet as cd,';
 			$sql .= ' ' . MAIN_DB_PREFIX . 'expeditiondet as ed';
 			$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid';
-			$sql .= ' WHERE ed.fk_expedition = ' . ((int)$this->id);
+			$sql .= ' WHERE ed.fk_expedition = ' . ((int) $this->id);
 			$sql .= ' AND cd.rowid = ed.fk_origin_line';
 
 			dol_syslog(get_class($this) . '::valid select details', LOG_DEBUG);
@@ -1190,7 +1190,7 @@ class Expedition extends CommonObject
 		$sql .= ' model_pdf=' . (isset($this->model_pdf) ? "'" . $this->db->escape($this->model_pdf) . "'" : 'null') . ',';
 		$sql .= ' entity=' . $conf->entity;
 
-		$sql .= ' WHERE rowid=' . ((int)$this->id);
+		$sql .= ' WHERE rowid=' . ((int) $this->id);
 
 		$this->db->begin();
 
@@ -1271,7 +1271,7 @@ class Expedition extends CommonObject
 			$sql = 'SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.rowid as expeditiondet_id';
 			$sql .= ' FROM ' . MAIN_DB_PREFIX . 'commandedet as cd,';
 			$sql .= ' ' . MAIN_DB_PREFIX . 'expeditiondet as ed';
-			$sql .= ' WHERE ed.fk_expedition = ' . ((int)$this->id);
+			$sql .= ' WHERE ed.fk_expedition = ' . ((int) $this->id);
 			$sql .= ' AND cd.rowid = ed.fk_origin_line';
 
 			dol_syslog(get_class($this) . '::delete select details', LOG_DEBUG);
@@ -1341,7 +1341,7 @@ class Expedition extends CommonObject
 
 		if (!$error) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'expeditiondet';
-			$sql .= ' WHERE fk_expedition = ' . ((int)$this->id);
+			$sql .= ' WHERE fk_expedition = ' . ((int) $this->id);
 
 			if ($this->db->query($sql)) {
 				// Delete linked object
@@ -1353,7 +1353,7 @@ class Expedition extends CommonObject
 				// No delete expedition
 				if (!$error) {
 					$sql = 'SELECT rowid FROM ' . MAIN_DB_PREFIX . 'expedition';
-					$sql .= ' WHERE rowid = ' . ((int)$this->id);
+					$sql .= ' WHERE rowid = ' . ((int) $this->id);
 
 					if ($this->db->query($sql)) {
 						if (!empty($this->origin) && $this->origin_id > 0) {
@@ -1467,7 +1467,7 @@ class Expedition extends CommonObject
 			$sql = 'SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.rowid as expeditiondet_id';
 			$sql .= ' FROM ' . MAIN_DB_PREFIX . 'commandedet as cd,';
 			$sql .= ' ' . MAIN_DB_PREFIX . 'expeditiondet as ed';
-			$sql .= ' WHERE ed.fk_expedition = ' . ((int)$this->id);
+			$sql .= ' WHERE ed.fk_expedition = ' . ((int) $this->id);
 			$sql .= ' AND cd.rowid = ed.fk_origin_line';
 
 			dol_syslog(get_class($this) . '::delete select details', LOG_DEBUG);
@@ -1531,10 +1531,10 @@ class Expedition extends CommonObject
 		if (!$error) {
 			$main = MAIN_DB_PREFIX . 'expeditiondet';
 			$ef = $main . '_extrafields';
-			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_expedition = " . ((int)$this->id) . ')';
+			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_expedition = " . ((int) $this->id) . ')';
 
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'expeditiondet';
-			$sql .= ' WHERE fk_expedition = ' . ((int)$this->id);
+			$sql .= ' WHERE fk_expedition = ' . ((int) $this->id);
 
 			if ($this->db->query($sqlef) && $this->db->query($sql)) {
 				// Delete linked object
@@ -1551,7 +1551,7 @@ class Expedition extends CommonObject
 
 				if (!$error) {
 					$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'expedition';
-					$sql .= ' WHERE rowid = ' . ((int)$this->id);
+					$sql .= ' WHERE rowid = ' . ((int) $this->id);
 
 					if ($this->db->query($sql)) {
 						if (!empty($this->origin) && $this->origin_id > 0) {
@@ -1643,7 +1643,7 @@ class Expedition extends CommonObject
 		$sql .= ', p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'expeditiondet as ed, ' . MAIN_DB_PREFIX . 'commandedet as cd';
 		$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product as p ON p.rowid = cd.fk_product';
-		$sql .= ' WHERE ed.fk_expedition = ' . ((int)$this->id);
+		$sql .= ' WHERE ed.fk_expedition = ' . ((int) $this->id);
 		$sql .= ' AND ed.fk_origin_line = cd.rowid';
 		$sql .= ' ORDER BY cd.rang, ed.fk_origin_line';        // We need after a break on fk_origin_line but when there is no break on fk_origin_line, cd.rang is same so we can add it as first order criteria.
 
@@ -2048,7 +2048,7 @@ class Expedition extends CommonObject
 		if ($user->rights->expedition->creer) {
 			$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'expedition';
 			$sql .= ' SET date_delivery = ' . ($delivery_date ? "'" . $this->db->idate($delivery_date) . "'" : 'null');
-			$sql .= ' WHERE rowid = ' . ((int)$this->id);
+			$sql .= ' WHERE rowid = ' . ((int) $this->id);
 
 			dol_syslog(get_class($this) . '::setDeliveryDate', LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -2110,7 +2110,7 @@ class Expedition extends CommonObject
 		$sql = 'SELECT em.rowid, em.code, em.libelle as label, em.description, em.tracking, em.active';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'c_shipment_mode as em';
 		if ($id != '') {
-			$sql .= ' WHERE em.rowid=' . ((int)$id);
+			$sql .= ' WHERE em.rowid=' . ((int) $id);
 		}
 
 		$resql = $this->db->query($sql);
@@ -2139,7 +2139,7 @@ class Expedition extends CommonObject
 		if (!empty($this->shipping_method_id)) {
 			$sql = 'SELECT em.code, em.tracking';
 			$sql .= ' FROM ' . MAIN_DB_PREFIX . 'c_shipment_mode as em';
-			$sql .= ' WHERE em.rowid = ' . ((int)$this->shipping_method_id);
+			$sql .= ' WHERE em.rowid = ' . ((int) $this->shipping_method_id);
 
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -2176,7 +2176,7 @@ class Expedition extends CommonObject
 		$this->db->begin();
 
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'expedition SET fk_statut = ' . self::STATUS_CLOSED;
-		$sql .= ' WHERE rowid = ' . ((int)$this->id) . ' AND fk_statut > 0';
+		$sql .= ' WHERE rowid = ' . ((int) $this->id) . ' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2224,7 +2224,7 @@ class Expedition extends CommonObject
 				$sql .= ' ' . MAIN_DB_PREFIX . 'expeditiondet as ed';
 				$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid';
 				$sql .= ' INNER JOIN ' . MAIN_DB_PREFIX . 'expedition as e ON ed.fk_expedition = e.rowid';
-				$sql .= ' WHERE ed.fk_expedition = ' . ((int)$this->id);
+				$sql .= ' WHERE ed.fk_expedition = ' . ((int) $this->id);
 				$sql .= ' AND cd.rowid = ed.fk_origin_line';
 
 				dol_syslog(get_class($this) . '::valid select details', LOG_DEBUG);
@@ -2314,7 +2314,7 @@ class Expedition extends CommonObject
 		$this->db->begin();
 
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'expedition SET billed=1';
-		$sql .= ' WHERE rowid = ' . ((int)$this->id) . ' AND fk_statut > 0';
+		$sql .= ' WHERE rowid = ' . ((int) $this->id) . ' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2363,7 +2363,7 @@ class Expedition extends CommonObject
 		$oldbilled = $this->billed;
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX . 'expedition SET fk_statut=1';
-		$sql .= ' WHERE rowid = ' . ((int)$this->id) . ' AND fk_statut > 0';
+		$sql .= ' WHERE rowid = ' . ((int) $this->id) . ' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -2384,7 +2384,7 @@ class Expedition extends CommonObject
 				$sql .= ' FROM ' . MAIN_DB_PREFIX . 'commandedet as cd,';
 				$sql .= ' ' . MAIN_DB_PREFIX . 'expeditiondet as ed';
 				$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid';
-				$sql .= ' WHERE ed.fk_expedition = ' . ((int)$this->id);
+				$sql .= ' WHERE ed.fk_expedition = ' . ((int) $this->id);
 				$sql .= ' AND cd.rowid = ed.fk_origin_line';
 
 				dol_syslog(get_class($this) . '::valid select details', LOG_DEBUG);
@@ -2784,9 +2784,9 @@ class ExpeditionLigne extends CommonObjectLine
 		$sql .= ') VALUES (';
 		$sql .= $this->fk_expedition;
 		$sql .= ', ' . (empty($this->entrepot_id) ? 'NULL' : $this->entrepot_id);
-		$sql .= ', ' . ((int)$this->fk_origin_line);
+		$sql .= ', ' . ((int) $this->fk_origin_line);
 		$sql .= ', ' . price2num($this->qty, 'MS');
-		$sql .= ', ' . ((int)$ranktouse);
+		$sql .= ', ' . ((int) $ranktouse);
 		$sql .= ')';
 
 		dol_syslog(get_class($this) . '::insert', LOG_DEBUG);
@@ -2847,7 +2847,7 @@ class ExpeditionLigne extends CommonObjectLine
 		// delete batch expedition line
 		if (isModEnabled('productbatch')) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'expeditiondet_batch';
-			$sql .= ' WHERE fk_expeditiondet = ' . ((int)$this->id);
+			$sql .= ' WHERE fk_expeditiondet = ' . ((int) $this->id);
 
 			if (!$this->db->query($sql)) {
 				$this->errors[] = $this->db->lasterror() . " - sql=$sql";
@@ -2856,7 +2856,7 @@ class ExpeditionLigne extends CommonObjectLine
 		}
 
 		$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'expeditiondet';
-		$sql .= ' WHERE rowid = ' . ((int)$this->id);
+		$sql .= ' WHERE rowid = ' . ((int) $this->id);
 
 		if (!$error && $this->db->query($sql)) {
 			// Remove extrafields
@@ -2994,8 +2994,8 @@ class ExpeditionLigne extends CommonObjectLine
 				if (!$error && !empty($expedition_batch_id)) {
 					// delete lot expedition line
 					$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'expeditiondet_batch';
-					$sql .= ' WHERE fk_expeditiondet = ' . ((int)$this->id);
-					$sql .= ' AND rowid = ' . ((int)$expedition_batch_id);
+					$sql .= ' WHERE fk_expeditiondet = ' . ((int) $this->id);
+					$sql .= ' AND rowid = ' . ((int) $expedition_batch_id);
 
 					if (!$this->db->query($sql)) {
 						$this->errors[] = $this->db->lasterror() . " - sql=$sql";
@@ -3024,8 +3024,8 @@ class ExpeditionLigne extends CommonObjectLine
 			// update line
 			$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
 			$sql .= ' fk_entrepot = ' . ($this->entrepot_id > 0 ? $this->entrepot_id : 'null');
-			$sql .= ' , qty = ' . ((float)price2num($qty, 'MS'));
-			$sql .= ' WHERE rowid = ' . ((int)$this->id);
+			$sql .= ' , qty = ' . ((float) price2num($qty, 'MS'));
+			$sql .= ' WHERE rowid = ' . ((int) $this->id);
 
 			if (!$this->db->query($sql)) {
 				$this->errors[] = $this->db->lasterror() . " - sql=$sql";
