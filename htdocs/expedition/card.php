@@ -144,7 +144,7 @@ if (empty($reshook)) {
 	if ($cancel) {
 		if ($origin && $origin_id > 0) {
 			if ($origin == 'commande') {
-				header('Location: ' . DOL_URL_ROOT . '/expedition/shipment.php?id=' . ((int)$origin_id));
+				header('Location: ' . DOL_URL_ROOT . '/expedition/shipment.php?id=' . ((int) $origin_id));
 				exit;
 			}
 		} else {
