@@ -264,7 +264,7 @@ if (empty($reshook) && $action == 'add') {
 		if (!$ok) {
 			$error++;
 			$errmsg .= $langs->trans("ErrorBadValueForCode")."<br>\n";
-			//$action = '';
+			$action = '';
 		}
 	}
 
