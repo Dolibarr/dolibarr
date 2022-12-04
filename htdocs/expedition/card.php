@@ -2010,13 +2010,23 @@ if ($action == 'create') {
 			if ($action != 'editincoterm') {
 				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 			} else {
-				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
+				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'] . '?id=' . $object->id);
 			}
 			print '</td></tr>';
 		}
 
+		//Billed status
+		print '<tr>';
+		print '<td>' . $langs->trans('Billed') . '?</td>';
+		if ($object->billed == 1) {
+			print '<td><span class="badge badge-status4 badge-status">' . $langs->trans('Billed') . '</span></td>';
+		} else {
+			print '<td><span class="badge badge-status0 badge-status">' . $langs->trans('ToBill') . '</span></td>';
+		}
+		print '</tr>';
+
 		// Other attributes
-		$parameters = array('colspan' => ' colspan="3"', 'cols' => '3');
+		$parameters = ['colspan' => ' colspan="3"', 'cols' => '3'];
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
