@@ -2365,7 +2365,7 @@ class Expedition extends CommonObject
 		$oldbilled = $this->billed;
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "expedition SET fk_statut=" . self::STATUS_RETURNED;
-		$sql .= " WHERE rowid = " . ((int)$this->id) . " AND fk_statut > 0";
+		$sql .= " WHERE rowid = " . ((int) $this->id) . " AND fk_statut > 0";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
