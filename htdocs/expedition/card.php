@@ -144,7 +144,7 @@ if (empty($reshook)) {
 	if ($cancel) {
 		if ($origin && $origin_id > 0) {
 			if ($origin == 'commande') {
-				header('Location: ' . DOL_URL_ROOT . '/expedition/shipment.php?id=' . ((int)$origin_id));
+				header('Location: ' . DOL_URL_ROOT . '/expedition/shipment.php?id=' . ((int) $origin_id));
 				exit;
 			}
 		} else {
@@ -2148,7 +2148,7 @@ if ($action == 'create') {
 			//if ($conf->delivery_note->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
 			$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product as p ON obj.fk_product = p.rowid';
 			$sql .= ' WHERE e.entity IN (' . getEntity('expedition') . ')';
-			$sql .= ' AND obj.fk_' . $origin . ' = ' . ((int)$db->escape($origin_id));
+			$sql .= ' AND obj.fk_' . $origin . ' = ' . ((int) $db->escape($origin_id));
 			$sql .= ' AND obj.rowid = ed.fk_origin_line';
 			$sql .= ' AND ed.fk_expedition = e.rowid';
 			//if ($filter) $sql.= $filter;
