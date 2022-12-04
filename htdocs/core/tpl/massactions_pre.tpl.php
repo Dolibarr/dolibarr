@@ -193,7 +193,7 @@ if ($massaction == 'presend') {
 }
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
-	'toselect' => $toselect,
+	'toselect' => isset($toselect) ? $toselect : array(),
 	'uploaddir' => isset($uploaddir) ? $uploaddir : null,
 	'massaction' => $massaction
 );
