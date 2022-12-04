@@ -2263,6 +2263,11 @@ if ($action == 'create') {
 		print '</td></tr>';
 	}
 
+	// Vat reverse-charge by default
+	print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
+	print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes((GETPOSTISSET('fk_account') ?GETPOST('fk_account', 'alpha') : $fk_account), 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+	print '</td></tr>';
+
 	// Multicurrency
 	if (!empty($conf->multicurrency->enabled)) {
 		print '<tr>';

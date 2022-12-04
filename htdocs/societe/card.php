@@ -451,9 +451,9 @@ if (empty($reshook)) {
 					}
 				}
 			}
-			$object->phone = GETPOST('phone', 'alpha');
+			$object->phone					= GETPOST('phone', 'alpha');
 			$object->fax					= GETPOST('fax', 'alpha');
-			$object->email = trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
+			$object->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
 			$object->url					= trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
 			$object->idprof1				= trim(GETPOST('idprof1', 'alphanohtml'));
 			$object->idprof2				= trim(GETPOST('idprof2', 'alphanohtml'));
@@ -463,13 +463,14 @@ if (empty($reshook)) {
 			$object->idprof6				= trim(GETPOST('idprof6', 'alphanohtml'));
 			$object->prefix_comm			= GETPOST('prefix_comm', 'alphanohtml');
 			$object->code_client			= GETPOSTISSET('customer_code') ?GETPOST('customer_code', 'alpha') : GETPOST('code_client', 'alpha');
-			$object->code_fournisseur = GETPOSTISSET('supplier_code') ?GETPOST('supplier_code', 'alpha') : GETPOST('code_fournisseur', 'alpha');
+			$object->code_fournisseur		= GETPOSTISSET('supplier_code') ?GETPOST('supplier_code', 'alpha') : GETPOST('code_fournisseur', 'alpha');
 			$object->capital				= GETPOST('capital', 'alphanohtml');
 			$object->barcode				= GETPOST('barcode', 'alphanohtml');
 
 			$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
 			$object->tva_assuj				= GETPOST('assujtva_value', 'alpha');
-			$object->status = GETPOST('status', 'alpha');
+			$object->vat_reverse_charge		= GETPOST('vat_reverse_charge_value', 'alpha');
+			$object->status					= GETPOST('status', 'alpha');
 
 			// Local Taxes
 			$object->localtax1_assuj		= GETPOST('localtax1assuj_value', 'alpha');
@@ -478,17 +479,17 @@ if (empty($reshook)) {
 			$object->localtax1_value		= GETPOST('lt1', 'alpha');
 			$object->localtax2_value		= GETPOST('lt2', 'alpha');
 
-			$object->forme_juridique_code = GETPOST('forme_juridique_code', 'int');
+			$object->forme_juridique_code	= GETPOST('forme_juridique_code', 'int');
 			$object->effectif_id			= GETPOST('effectif_id', 'int');
-			$object->typent_id = GETPOST('typent_id', 'int');
+			$object->typent_id				= GETPOST('typent_id', 'int');
 
 			$object->typent_code			= dol_getIdFromCode($db, $object->typent_id, 'c_typent', 'id', 'code'); // Force typent_code too so check in verify() will be done on new type
 
-			$object->client = GETPOST('client', 'int');
+			$object->client					= GETPOST('client', 'int');
 			$object->fournisseur			= GETPOST('fournisseur', 'int');
 
-			$object->commercial_id = GETPOST('commercial_id', 'int');
-			$object->default_lang = GETPOST('default_lang');
+			$object->commercial_id			= GETPOST('commercial_id', 'int');
+			$object->default_lang			= GETPOST('default_lang');
 
 			// Webservices url/key
 			$object->webservices_url		= GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
@@ -1053,12 +1054,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object->idprof4			= GETPOST('idprof4', 'alphanohtml');
 		$object->idprof5			= GETPOST('idprof5', 'alphanohtml');
 		$object->idprof6			= GETPOST('idprof6', 'alphanohtml');
-		$object->typent_id = GETPOST('typent_id', 'int');
+		$object->typent_id			= GETPOST('typent_id', 'int');
 		$object->effectif_id		= GETPOST('effectif_id', 'int');
 		$object->civility_id		= GETPOST('civility_id', 'alpha');
 
-		$object->tva_assuj = GETPOST('assujtva_value', 'int');
-		$object->status = GETPOST('status', 'int');
+		$object->tva_assuj			= GETPOST('assujtva_value', 'int');
+		$object->vat_reverse_charge	= GETPOST('vat_reverse_charge_value', 'int');
+		$object->status				= GETPOST('status', 'int');
 
 		//Local Taxes
 		$object->localtax1_assuj	= GETPOST('localtax1assuj_value', 'int');
@@ -1067,10 +1069,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$object->localtax1_value	= GETPOST('lt1', 'int');
 		$object->localtax2_value	= GETPOST('lt2', 'int');
 
-		$object->tva_intra = GETPOST('tva_intra', 'alphanohtml');
+		$object->tva_intra			= GETPOST('tva_intra', 'alphanohtml');
 
-		$object->commercial_id = GETPOST('commercial_id', 'int');
-		$object->default_lang = GETPOST('default_lang');
+		$object->commercial_id		= GETPOST('commercial_id', 'int');
+		$object->default_lang		= GETPOST('default_lang');
 
 		if (GETPOSTISSET('accountancy_code_sell')) {
 			$accountancy_code_sell  = GETPOST('accountancy_code_sell', 'alpha');
@@ -1801,15 +1803,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->idprof4				= GETPOST('idprof4', 'alphanohtml');
 				$object->idprof5				= GETPOST('idprof5', 'alphanohtml');
 				$object->idprof6				= GETPOST('idprof6', 'alphanohtml');
-				$object->typent_id = GETPOST('typent_id', 'int');
-				$object->effectif_id = GETPOST('effectif_id', 'int');
+				$object->typent_id				= GETPOST('typent_id', 'int');
+				$object->effectif_id			= GETPOST('effectif_id', 'int');
 				$object->barcode				= GETPOST('barcode', 'alphanohtml');
-				$object->forme_juridique_code = GETPOST('forme_juridique_code', 'int');
-				$object->default_lang = GETPOST('default_lang', 'alpha');
+				$object->forme_juridique_code	= GETPOST('forme_juridique_code', 'int');
+				$object->default_lang			= GETPOST('default_lang', 'alpha');
 
 				$object->tva_assuj				= GETPOST('assujtva_value', 'int');
+				$object->vat_reverse_charge		= GETPOST('vat_reverse_charge_value', 'int');
 				$object->tva_intra				= GETPOST('tva_intra', 'alphanohtml');
-				$object->status = GETPOST('status', 'int');
+				$object->status					= GETPOST('status', 'int');
 
 				// Webservices url/key
 				$object->webservices_url        = GETPOST('webservices_url', 'custom', 0, FILTER_SANITIZE_URL);
@@ -2230,6 +2233,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
+			// VAT reverse charge by default
+			print '<tr><td>'.$form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge_value', '', $object, 0).'</td><td colspan="3">';
+			print $form->selectyesno('vat_reverse_charge_value', $object->vat_reverse_charge, 1);
+			print '</td></tr>';
+
 			// VAT Code
 			print '<tr><td>'.$form->editfieldkey('VATIntra', 'intra_vat', '', $object, 0).'</td>';
 			print '<td colspan="3">';
@@ -2585,6 +2593,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print $form->textwithpicto($langs->trans('VATIsUsed'), $langs->trans('VATIsUsedWhenSelling'));
 			print '</td><td>';
 			print yn($object->tva_assuj);
+			print '</td>';
+			print '</tr>';
+
+			// VAT reverse charge by default
+			print '<tr><td>';
+			print $form->textwithpicto($langs->trans('VATReverseChargeByDefault'), $langs->trans('VATReverseChargeByDefaultDesc'));
+			print '</td><td>';
+			print yn($object->vat_reverse_charge);
 			print '</td>';
 			print '</tr>';
 		}

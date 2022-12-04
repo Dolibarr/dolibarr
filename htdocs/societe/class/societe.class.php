@@ -220,6 +220,7 @@ class Societe extends CommonObject
 		'localtax1_value' =>array('type'=>'double(6,3)', 'label'=>'Localtax1 value', 'enabled'=>1, 'visible'=>-1, 'position'=>345),
 		'localtax2_assuj' =>array('type'=>'tinyint(4)', 'label'=>'Localtax2 assuj', 'enabled'=>1, 'visible'=>-1, 'position'=>350),
 		'localtax2_value' =>array('type'=>'double(6,3)', 'label'=>'Localtax2 value', 'enabled'=>1, 'visible'=>-1, 'position'=>355),
+		'vat_reverse_charge' =>array('type'=>'tinyint(4)', 'label'=>'Vat reverse charge', 'enabled'=>1, 'visible'=>-1, 'position'=>335),
 		'barcode' =>array('type'=>'varchar(255)', 'label'=>'Barcode', 'enabled'=>1, 'visible'=>-1, 'position'=>360),
 		'price_level' =>array('type'=>'integer', 'label'=>'Price level', 'enabled'=>'$conf->global->PRODUIT_MULTIPRICES || $conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES', 'visible'=>-1, 'position'=>365),
 		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>-1, 'position'=>370),
@@ -452,6 +453,11 @@ class Societe extends CommonObject
 	 * @var string
 	 */
 	public $tva_intra;
+
+	/**
+	 * @var int Vat reverse charge concerned
+	 */
+	public $vat_reverse_charge = 0;
 
 	// Local taxes
 	public $localtax1_assuj;
@@ -815,6 +821,7 @@ class Societe extends CommonObject
 		$this->effectif_id = 0;
 		$this->forme_juridique_code = 0;
 		$this->tva_assuj = 1;
+		$this->vat_reverse_charge = 0;
 		$this->status = 1;
 
 		if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
@@ -1258,8 +1265,9 @@ class Societe extends CommonObject
 		$this->order_min_amount = price2num($this->order_min_amount);
 		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
-		$this->tva_assuj	= trim($this->tva_assuj);
-		$this->tva_intra	= dol_sanitizeFileName($this->tva_intra, '');
+		$this->tva_assuj			= trim($this->tva_assuj);
+		$this->tva_intra			= dol_sanitizeFileName($this->tva_intra, '');
+		$this->vat_reverse_charge	= trim($this->vat_reverse_charge);
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
@@ -1415,6 +1423,7 @@ class Societe extends CommonObject
 
 			$sql .= ",tva_assuj = ".($this->tva_assuj != '' ? "'".$this->db->escape($this->tva_assuj)."'" : "null");
 			$sql .= ",tva_intra = '".$this->db->escape($this->tva_intra)."'";
+			$sql .= ",vat_reverse_charge = ".($this->vat_reverse_charge != '' ? "'".$this->db->escape($this->vat_reverse_charge)."'" : 0);
 			$sql .= ",status = ".((int) $this->status);
 
 			// Local taxes
@@ -1694,7 +1703,7 @@ class Societe extends CommonObject
 		}
 		$sql .= ', s.code_client, s.code_fournisseur, s.parent, s.barcode';
 		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.mode_reglement, s.cond_reglement, s.deposit_percent, s.transport_mode';
-		$sql .= ', s.fk_account, s.tva_assuj';
+		$sql .= ', s.fk_account, s.tva_assuj, s.vat_reverse_charge';
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.transport_mode_supplier';
 		$sql .= ', s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo, s.logo_squarred';
 		$sql .= ', s.fk_shipping_method';
@@ -1843,8 +1852,9 @@ class Societe extends CommonObject
 
 				$this->barcode = $obj->barcode;
 
-				$this->tva_assuj      = $obj->tva_assuj;
-				$this->tva_intra      = $obj->tva_intra;
+				$this->tva_assuj      		= $obj->tva_assuj;
+				$this->tva_intra      		= $obj->tva_intra;
+				$this->vat_reverse_charge	= $obj->vat_reverse_charge;
 				$this->status = $obj->status;
 
 				// Local Taxes
