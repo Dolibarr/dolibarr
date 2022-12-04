@@ -2144,7 +2144,7 @@ if ($action == 'create') {
 			$sql .= ', p.description as product_desc';
 			$sql .= ' FROM ' . MAIN_DB_PREFIX . 'expeditiondet as ed';
 			$sql .= ', ' . MAIN_DB_PREFIX . 'expedition as e';
-			$sql .= ', ' . MAIN_DB_PREFIX . $origin . 'det as obj';
+			$sql .= ", ".MAIN_DB_PREFIX.$origin."det as obj";
 			//if ($conf->delivery_note->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."delivery as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."deliverydet as ld ON ld.fk_delivery = l.rowid  AND obj.rowid = ld.fk_origin_line";
 			$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product as p ON obj.fk_product = p.rowid';
 			$sql .= ' WHERE e.entity IN (' . getEntity('expedition') . ')';
