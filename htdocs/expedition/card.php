@@ -1725,8 +1725,14 @@ if ($action == 'create') {
 		}
 		// Change status
 		if ($action == 'set_status') {
-			$object->statut = $status;
-			$object->update($user);
+			if ($status == Expedition::STATUS_PREPARED) {
+				$object->setClosed(1);
+			} elseif ($status == Expedition::STATUS_RETURNED) {
+				$object->setReturned();
+			} else {
+				$object->statut = $status;
+				$object->update($user);
+			}
 		}
 		// Confirm cancelation
 		if ($action == 'cancel') {
@@ -2530,7 +2536,10 @@ if ($action == 'create') {
 				print dolGetButtonAction('', $langs->trans('SetStatusInProcess'), 'default', $_SERVER['PHP_SELF'] . '?action=set_status&status=' . Expedition::STATUS_INPROCESS . '&token=' . newToken() . '&id=' . $object->id, '');
 				print dolGetButtonAction('', $langs->trans('SetStatusPrepared'), 'default', $_SERVER['PHP_SELF'] . '?action=set_status&status=' . Expedition::STATUS_PREPARED . '&token=' . newToken() . '&id=' . $object->id, '');
 			}
-			if ($object->statut == Expedition::STATUS_INPROCESS || $object->statut == Expedition::STATUS_PREPARED) {
+			if ($object->statut == Expedition::STATUS_INPROCESS) {
+				print dolGetButtonAction('', $langs->trans('SetStatusPrepared'), 'default', $_SERVER['PHP_SELF'] . '?action=set_status&status=' . Expedition::STATUS_PREPARED . '&token=' . newToken() . '&id=' . $object->id, '');
+			}
+			if ($object->statut == Expedition::STATUS_PREPARED) {
 				print dolGetButtonAction('', $langs->trans('SetStatusShipped'), 'default', $_SERVER['PHP_SELF'] . '?action=set_status&status=' . Expedition::STATUS_SHIPPED . '&token=' . newToken() . '&id=' . $object->id, '');
 			}
 			if ($object->statut == Expedition::STATUS_SHIPPED) {
