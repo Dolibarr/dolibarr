@@ -2297,7 +2297,7 @@ if ($action == 'create') {
 							}
 						}
 
-						$tredited = 'tredited';
+						$tredited = 'tredited';	// Case the addfile and linkto file is used for edit (used by following tpl)
 						include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
 						include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
 
@@ -2455,6 +2455,7 @@ if ($action == 'create') {
 				print '</script>'."\n";
 				print '</td></tr>';
 
+				$tredited = '';	// Case the addfile and linkto file is used for edit (used by following tpl)
 				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
 				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
 
