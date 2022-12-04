@@ -197,7 +197,7 @@ $parameters = array(
 	'uploaddir' => isset($uploaddir) ? $uploaddir : null
 );
 
-$reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);
+$reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $massaction);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 } else {
