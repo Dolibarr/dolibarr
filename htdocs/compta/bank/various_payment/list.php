@@ -266,8 +266,6 @@ if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 
-$sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -289,7 +287,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -501,6 +503,7 @@ if ($resql) {
 	print '</td>';
 
 	print '</tr>';
+
 
 	print '<tr class="liste_titre">';
 

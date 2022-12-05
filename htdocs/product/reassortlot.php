@@ -635,7 +635,7 @@ while ($i < $imaxinloop) {
 	$product_static->status_batch = $objp->tobatch;
 
 	$product_lot_static->batch = $objp->batch;
-	$product_lot_static->product_id = $objp->rowid;
+	$product_lot_static->fk_product = $objp->rowid;
 	$product_lot_static->id = $objp->lotid;
 	$product_lot_static->eatby = $objp->eatby;
 	$product_lot_static->sellby = $objp->sellby;
@@ -659,6 +659,7 @@ while ($i < $imaxinloop) {
 
 	if (isModEnabled("service") && $type == 1) {
 		print '<td class="center">';
+		$regs = array();
 		if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
 			print $regs[1].' '.$langs->trans("DurationYear");
 		} elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {

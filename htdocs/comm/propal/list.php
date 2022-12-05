@@ -105,7 +105,8 @@ $search_date_endyear = GETPOST('search_date_endyear', 'int');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_date_end_startday = GETPOST('search_date_end_startday', 'int');
-$search_date_end_startmonth = GETPOST('search_date_end_startmonth', 'int');
+$search_date_end_startmonth = GETPOST('se$sql .= $db->plimit($limit + 1, $offset);
+arch_date_end_startmonth', 'int');
 $search_date_end_startyear = GETPOST('search_date_end_startyear', 'int');
 $search_date_end_endday = GETPOST('search_date_end_endday', 'int');
 $search_date_end_endmonth = GETPOST('search_date_end_endmonth', 'int');
@@ -793,9 +794,6 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
-$sql .= ', p.ref DESC';
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -817,7 +815,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+$sql .= $db->order($sortfield, $sortorder);
+$sql .= ', p.ref DESC';
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $resql = $db->query($sql);
 
@@ -1430,7 +1432,7 @@ if ($resql) {
 	// Status
 	if (!empty($arrayfields['p.fk_statut']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone right">';
-		$formpropal->selectProposalStatus($search_status, 1, 0, 1, 'customer', 'search_statut');
+		$formpropal->selectProposalStatus($search_status, 1, 0, 1, 'customer', 'search_statut', 'search_status maxwidth125 onrightofpage');
 		print '</td>';
 	}
 	// Action column
@@ -1484,22 +1486,22 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['state.nom']['label'], $_SERVER["PHP_SELF"], "state.nom", "", $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['country.code_iso']['checked'])) {
-		print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, 'class="center"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['typent.code']['checked'])) {
-		print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['typent.code']['label'], $_SERVER["PHP_SELF"], "typent.code", "", $param, 'class="center"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['p.date']['checked'])) {
-		print_liste_field_titre($arrayfields['p.date']['label'], $_SERVER["PHP_SELF"], 'p.datep', '', $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.date']['label'], $_SERVER["PHP_SELF"], 'p.datep', '', $param, 'class="center"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['p.fin_validite']['checked'])) {
-		print_liste_field_titre($arrayfields['p.fin_validite']['label'], $_SERVER["PHP_SELF"], 'dfv', '', $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.fin_validite']['label'], $_SERVER["PHP_SELF"], 'dfv', '', $param, 'class="center"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['p.date_livraison']['checked'])) {
-		print_liste_field_titre($arrayfields['p.date_livraison']['label'], $_SERVER["PHP_SELF"], 'p.date_livraison', '', $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.date_livraison']['label'], $_SERVER["PHP_SELF"], 'p.date_livraison', '', $param, 'class="center"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['p.date_signature']['checked'])) {
-		print_liste_field_titre($arrayfields['p.date_signature']['label'], $_SERVER["PHP_SELF"], 'p.date_signature', '', $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['p.date_signature']['label'], $_SERVER["PHP_SELF"], 'p.date_signature', '', $param, 'class="center"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['ava.rowid']['checked'])) {
 		print_liste_field_titre($arrayfields['ava.rowid']['label'], $_SERVER["PHP_SELF"], 'availability', '', $param, '', $sortfield, $sortorder);
@@ -1553,7 +1555,7 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['p.multicurrency_total_invoiced']['label'], $_SERVER["PHP_SELF"], '', '', $param, 'class="right"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['u.login']['checked'])) {
-		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER["PHP_SELF"], 'u.login', '', $param, 'class="center"', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['sale_representative']['checked'])) {
 		print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "", "", "$param", '', $sortfield, $sortorder);

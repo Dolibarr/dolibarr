@@ -954,8 +954,6 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -977,7 +975,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 //print $sql;
 
 $resql = $db->query($sql);
@@ -1468,7 +1469,7 @@ if ($resql) {
 	// Status billed
 	if (!empty($arrayfields['cf.billed']['checked'])) {
 		print '<td class="liste_titre center">';
-		print $form->selectyesno('search_billed', $search_billed, 1, 0, 1, 1);
+		print $form->selectyesno('search_billed', $search_billed, 1, false, 1, 1, 'maxwidth100 onrightofpage');
 		print '</td>';
 	}
 	// Date valid

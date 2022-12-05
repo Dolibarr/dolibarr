@@ -1585,7 +1585,7 @@ if ($resql) {
 	if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone right">';
 		$liststatus = array('0'=>$langs->trans("BillShortStatusDraft"), '0,1'=>$langs->trans("BillShortStatusDraft").'+'.$langs->trans("BillShortStatusNotPaid"), '1'=>$langs->trans("BillShortStatusNotPaid"), '1,2'=>$langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
-		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'width100 onrightofpage', 1);
 		print '</td>';
 	}
 	// Action column
@@ -1813,10 +1813,10 @@ if ($resql) {
 			$facturestatic->close_code = $obj->close_code;
 			$facturestatic->total_ttc = $obj->total_ttc;
 			$facturestatic->paye = $obj->paye;
-			$facturestatic->fk_soc = $obj->fk_soc;
+			$facturestatic->socid = $obj->fk_soc;
 
 			$facturestatic->date = $db->jdate($obj->datef);
-			$facturestatic->date_valid = $db->jdate($obj->date_valid);
+			$facturestatic->date_validation = $db->jdate($obj->date_valid);
 			$facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
 
 			$facturestatic->note_public = $obj->note_public;

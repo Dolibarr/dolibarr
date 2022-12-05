@@ -449,8 +449,6 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
-
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
@@ -471,7 +469,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 //print $sql;
 $resql = $db->query($sql);
@@ -785,7 +787,7 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 // Status
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone right">';
-	print $form->selectarray('search_status', array('0'=>$langs->trans('StatusSendingDraftShort'), '1'=>$langs->trans('StatusSendingValidatedShort'), '2'=>$langs->trans('StatusSendingProcessedShort')), $search_status, 1);
+	print $form->selectarray('search_status', array('0'=>$langs->trans('StatusSendingDraftShort'), '1'=>$langs->trans('StatusSendingValidatedShort'), '2'=>$langs->trans('StatusSendingProcessedShort')), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
 	print '</td>';
 }
 // Status billed

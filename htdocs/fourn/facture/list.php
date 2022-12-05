@@ -702,8 +702,6 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -725,7 +723,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 //print $sql;
 
 $resql = $db->query($sql);
@@ -1219,7 +1221,7 @@ if (!empty($arrayfields['f.tms']['checked'])) {
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone right">';
 	$liststatus = array('0'=>$langs->trans("Draft"), '1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"));
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'onrightofpage', 1);
 	print '</td>';
 }
 // Action column

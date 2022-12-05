@@ -776,8 +776,8 @@ if (empty($action) || $action == 'view') {
 	print "<td>".$langs->trans("AccountAccounting")."</td>";
 	print "<td>".$langs->trans("SubledgerAccount")."</td>";
 	print "<td>".$langs->trans("LabelOperation")."</td>";
-	print '<td class="center">'.$langs->trans("Debit")."</td>";
-	print '<td class="center">'.$langs->trans("Credit")."</td>";
+	print '<td class="center">'.$langs->trans("AccountingDebit")."</td>";
+	print '<td class="center">'.$langs->trans("AccountingCredit")."</td>";
 	print "</tr>\n";
 
 	$r = '';

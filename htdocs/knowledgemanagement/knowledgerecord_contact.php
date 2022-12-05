@@ -53,12 +53,14 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'knowledgemanagement', $object->id);
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, '', 'rowid', $isdraft);
 
 $permission = $user->rights->knowledgemanagement->knowledgerecord->write;
 
+
 /*
- * Add a new contact
+ * Actions
  */
 
 if ($action == 'addcontact' && $permission) {
@@ -108,16 +110,10 @@ $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
 
-/* *************************************************************************** */
-/*                                                                             */
-/* View and edit mode                                                         */
-/*                                                                             */
-/* *************************************************************************** */
+// View and edit mode
 
 if ($object->id) {
-	/*
-	 * Show tabs
-	 */
+	// Show tabs
 	$head = knowledgerecordPrepareHead($object);
 
 	print dol_get_fiche_head($head, 'contact', $langs->trans("KnowledgeRecord"), -1, $object->picto);

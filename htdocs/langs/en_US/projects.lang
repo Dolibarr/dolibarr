@@ -23,6 +23,7 @@ TasksPublicDesc=This view presents all projects and tasks you are allowed to rea
 TasksDesc=This view presents all projects and tasks (your user permissions grant you permission to view everything).
 AllTaskVisibleButEditIfYouAreAssigned=All tasks for qualified projects are visible, but you can enter time only for task assigned to selected user. Assign task if you need to enter time on it.
 OnlyYourTaskAreVisible=Only tasks assigned to you are visible. If you need to enter time on a task and if the task is not visible here, then you need to assign the task to yourself.
+ImportDatasetProjects=Projects or opportunities
 ImportDatasetTasks=Tasks of projects
 ProjectCategories=Project tags/categories
 NewProject=New project

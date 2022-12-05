@@ -39,6 +39,9 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 160);
 $id = GETPOST('account') ?GETPOST('account', 'alpha') : GETPOST('id');
 $ref = GETPOST('ref');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('bankannualreport', 'globalcard'));
+
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
