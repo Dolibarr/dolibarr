@@ -2868,7 +2868,7 @@ class Form
 	 * This define value for &$opt and &$optJson.
 	 * This function is called by select_produits_list().
 	 *
-	 * @param 	resource	$objp			    Resultset of fetch
+	 * @param 	object		$objp			    Resultset of fetch
 	 * @param 	string		$opt			    Option (var used for returned value in string option format)
 	 * @param 	string		$optJson		    Option (var used for returned value in json format)
 	 * @param 	int			$price_level	    Price level
@@ -7202,7 +7202,7 @@ class Form
 	 * constructTicketListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param 	resource	$objp			    Result set of fetch
+	 * @param 	object		$objp			    Result set of fetch
 	 * @param 	string		$opt			    Option (var used for returned value in string option format)
 	 * @param 	string		$optJson		    Option (var used for returned value in json format)
 	 * @param 	string		$selected		    Preselected value
@@ -7400,7 +7400,7 @@ class Form
 	 * constructProjectListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param 	resource	$objp			    Result set of fetch
+	 * @param 	object		$objp			    Result set of fetch
 	 * @param 	string		$opt			    Option (var used for returned value in string option format)
 	 * @param 	string		$optJson		    Option (var used for returned value in json format)
 	 * @param 	string		$selected		    Preselected value
@@ -7615,7 +7615,7 @@ class Form
 	 * constructMemberListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param 	resource	$objp			    Result set of fetch
+	 * @param 	object		$objp			    Result set of fetch
 	 * @param 	string		$opt			    Option (var used for returned value in string option format)
 	 * @param 	string		$optJson		    Option (var used for returned value in json format)
 	 * @param 	string		$selected		    Preselected value
@@ -9583,7 +9583,7 @@ class Form
 	/**
 	 *	Return select list of groups
 	 *
-	 *  @param	string			$selected       Id group preselected
+	 *  @param	string|object	$selected       Id group or group preselected
 	 *  @param  string			$htmlname       Field name in form
 	 *  @param  int				$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
 	 *  @param  string|array	$exclude        Array list of groups id to exclude
