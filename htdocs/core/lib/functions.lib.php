@@ -6909,7 +6909,6 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 
 	$stringtoclean = preg_replace('/&colon;/i', ':', $stringtoclean);
 	$stringtoclean = preg_replace('/&#58;|&#0+58|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have a : encoded like this) to disable 'javascript:...'
-	$stringtoclean = preg_replace('/javascript\s*:/i', '', $stringtoclean);
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);	// Warning: This remove also undesired </> changing string obfuscated with </> that pass injection detection into harmfull string
 
@@ -6923,7 +6922,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	// Remove 'javascript:' that we should not find into a text with
 	// Warning: This is not reliable to fight against obfuscated javascript, there is a lot of other solution to include js into a common html tag (only filtered by a GETPOST(.., powerfullfilter)).
 	if ($cleanalsojavascript) {
-		$temp = preg_replace('/javascript\s*:/i', '', $temp);
+		$temp = preg_replace('/j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:/i', '', $temp);
 	}
 
 	$temp = str_replace('__!DOCTYPE_HTML__', '<!DOCTYPE html>', $temp);	// Restore the DOCTYPE
@@ -7149,6 +7148,9 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				}
 			}
 
+			// Clean some html entities that are useless so text is cleaner
+			$out = preg_replace('/&(tab|newline);/i', ' ', $out);
+
 			// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are
 			// encoded using text entities) so we can then exclude all numeric entities.
 			$out = preg_replace('/&#39;/i', '&apos;', $out);
@@ -7156,24 +7158,24 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step (preg_replace).
 			// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
 			// using a non coventionnel way to be encoded, to not have them sanitized just after)
-				//$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
-				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
-					return realCharForNumericEntities($m); }, $out);
+			$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
+				return realCharForNumericEntities($m); }, $out);
 
 
-					// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
-					$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
+			// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
+			$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
 
-					$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+			// Keep only some html tags and remove also some 'javascript:' strings
+			$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
 
-					// We should also exclude non expected HTML attributes and clean content of some attributes.
+			// We should also exclude non expected HTML attributes and clean content of some attributes (keep only alt=, title=...).
 			if (!empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
 				// Warning, the function may add a LF so we are forced to trim to compare with old $out without having always a difference and an infinit loop.
 				$out = dol_string_onlythesehtmlattributes($out);
 			}
 
-					// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
-					$out = preg_replace('/&apos;/i', "&#39;", $out);
+			// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
+			$out = preg_replace('/&apos;/i', "&#39;", $out);
 		} while ($oldstringtoclean != $out);
 
 		// Check the limit of external links in a Rich text content. We count '<img' and 'url('
