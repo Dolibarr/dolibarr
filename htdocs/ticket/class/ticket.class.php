@@ -381,6 +381,7 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
+			if (dol_strlen($this->message) > 65000) $this->message = dol_substr($this->message, 0, 65000, 'UTF-8') . '...';
 		}
 
 		if (isset($this->fk_statut)) {
@@ -915,6 +916,7 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
+			if (dol_strlen($this->message) > 65000) $this->message = dol_substr($this->message, 0, 65000, 'UTF-8') . '...';
 		}
 
 		if (isset($this->fk_statut)) {
