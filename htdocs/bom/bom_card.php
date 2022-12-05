@@ -195,7 +195,6 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-
 			// Extrafields
 			$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
 			$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
@@ -244,7 +243,6 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-
 			// Extrafields
 			$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
 			$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
