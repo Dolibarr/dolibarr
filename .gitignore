@@ -41,6 +41,18 @@ htdocs/includes/php-parallel-lint/
 htdocs/includes/sebastian/
 htdocs/includes/squizlabs/
 htdocs/includes/webmozart/
+/htdocs/includes/autoload.php
+/htdocs/includes/bin/
+/htdocs/includes/composer/
+/htdocs/includes/doctrine/
+/htdocs/includes/jakub-onderka/
+/htdocs/includes/phpdocumentor/
+/htdocs/includes/phpspec/
+/htdocs/includes/phpunit/
+/htdocs/includes/php-parallel-lint/
+/htdocs/includes/sebastian/
+/htdocs/includes/squizlabs/
+/htdocs/includes/webmozart/
 htdocs/.well-known/apple-developer-merchantid-domain-association
 /factory/
 /output/
@@ -57,3 +69,7 @@ yarn.lock
 package-lock.json
 
 doc/install.lock
+
+composer.json
+composer.lock
+/htdocs/includes/

@@ -26,3 +26,6 @@
 /of/
 /workstation/
 /oblyon*
+composer.json
+composer.lock
+/htdocs/includes/
