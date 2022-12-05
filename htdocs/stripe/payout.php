@@ -155,7 +155,6 @@ if (!$rowid) {
 				$memberstatic->id = 0;
 			}*/
 			$societestatic->fetch($charge->metadata->idcustomer);
-			$societestatic->id = $charge->metadata->idcustomer;
 
 			print '<tr class="oddeven">';
 
