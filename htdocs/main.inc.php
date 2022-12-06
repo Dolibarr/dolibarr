@@ -127,6 +127,7 @@ function testSqlAndScriptInject($val, $type)
 
 	// For SQL Injection (only GET are used to scan for such injection strings)
 	if ($type == 1 || $type == 3) {
+		// Note the \s+ is replaced into \s* because some spaces may have been modified in previous loop
 		$inj += preg_match('/delete\s*from/i', $val);
 		$inj += preg_match('/create\s*table/i', $val);
 		$inj += preg_match('/insert\s*into/i', $val);
@@ -139,7 +140,8 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/union.+select/i', $val);
 	}
 	if ($type == 3) {
-		$inj += preg_match('/select|update|delete|truncate|replace|group\s+by|concat|count|from|union/i', $val);
+		// Note the \s+ is replaced into \s* because some spaces may have been modified in previous loop
+		$inj += preg_match('/select|update|delete|truncate|replace|group\s*by|concat|count|from|union/i', $val);
 	}
 	if ($type != 2) {	// Not common key strings, so we can check them both on GET and POST
 		$inj += preg_match('/updatexml\(/i', $val);
