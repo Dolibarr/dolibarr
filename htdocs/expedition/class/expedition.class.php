@@ -181,22 +181,47 @@ class Expedition extends CommonObject
 	/**
 	 * Draft status
 	 */
-	const STATUS_DRAFT = 0;
+	public const STATUS_DRAFT = 0;
 
 	/**
 	 * Validated status
 	 */
-	const STATUS_VALIDATED = 1;
+	public const STATUS_VALIDATED = 1;
+
+	/**
+	 * InProcess status
+	 */
+	public const STATUS_INPROCESS = 2;
+
+	/**
+	 * Prepared status
+	 */
+	public const STATUS_PREPARED = 3;
+
+	/**
+	 * Shipped status
+	 */
+	public const STATUS_SHIPPED = 4;
+
+	/**
+	 * Delivered status
+	 */
+	public const STATUS_DELIVERED = 5;
+
+	/**
+	 * Returned status
+	 */
+	public const STATUS_RETURNED = 8;
 
 	/**
 	 * Closed status
 	 */
-	const STATUS_CLOSED = 2;
+	public const STATUS_CLOSED = 9;
 
 	/**
 	 * Canceled status
 	 */
-	const STATUS_CANCELED = -1;
+	public const STATUS_CANCELED = -1;
 
 
 	/**
@@ -211,18 +236,28 @@ class Expedition extends CommonObject
 		$this->db = $db;
 
 		// List of long language codes for status
-		$this->statuts = array();
+		$this->statuts = [];
 		$this->statuts[-1] = 'StatusSendingCanceled';
-		$this->statuts[0]  = 'StatusSendingDraft';
-		$this->statuts[1]  = 'StatusSendingValidated';
-		$this->statuts[2]  = 'StatusSendingProcessed';
+		$this->statuts[0] = 'StatusSendingDraft';
+		$this->statuts[1] = 'StatusSendingValidated';
+		$this->statuts[2] = 'StatusSendingInProcess';
+		$this->statuts[3] = 'StatusSendingPrepared';
+		$this->statuts[4] = 'StatusSendingShipped';
+		$this->statuts[5] = 'StatusSendingDelivered';
+		$this->statuts[8] = 'StatusSendingReturned';
+		$this->statuts[9] = 'StatusSendingProcessed';
 
 		// List of short language codes for status
-		$this->statuts_short = array();
+		$this->statuts_short = [];
 		$this->statuts_short[-1] = 'StatusSendingCanceledShort';
-		$this->statuts_short[0]  = 'StatusSendingDraftShort';
-		$this->statuts_short[1]  = 'StatusSendingValidatedShort';
-		$this->statuts_short[2]  = 'StatusSendingProcessedShort';
+		$this->statuts_short[0] = 'StatusSendingDraftShort';
+		$this->statuts_short[1] = 'StatusSendingValidatedShort';
+		$this->statuts_short[2] = 'StatusSendingInProcessShort';
+		$this->statuts_short[3] = 'StatusSendingPreparedShort';
+		$this->statuts_short[4] = 'StatusSendingShippedShort';
+		$this->statuts_short[5] = 'StatusSendingDeliveredShort';
+		$this->statuts_short[8] = 'StatusSendingReturnedShort';
+		$this->statuts_short[9] = 'StatusSendingProcessedShort';
 	}
 
 	/**
@@ -671,7 +706,7 @@ class Expedition extends CommonObject
 		}
 
 		if (!((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->creer))
-		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->shipping_advance->validate)))) {
+			  || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->shipping_advance->validate)))) {
 			$this->error = 'Permission denied';
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
@@ -2110,22 +2145,32 @@ class Expedition extends CommonObject
 	/**
 	 *	Classify the shipping as closed.
 	 *
+	 * @param int $prepared set new status and decrease stock when marked as prepared
+	 *
 	 *	@return     int     <0 if KO, >0 if OK
 	 */
-	public function setClosed()
+	public function setClosed($prepared = '')
 	{
 		global $conf, $langs, $user;
 
 		$error = 0;
 
 		// Protection. This avoid to move stock later when we should not
-		if ($this->statut == self::STATUS_CLOSED) {
+		if ($this->statut == self::STATUS_CLOSED || $this->statut == self::STATUS_PREPARED) {
 			return 0;
+		}
+
+		if ($prepared) {
+			$this->statut = self::STATUS_PREPARED;
+			$this->status = self::STATUS_PREPARED;
+		} else {
+			$this->statut = self::STATUS_CLOSED;
+			$this->status = self::STATUS_CLOSED;
 		}
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".self::STATUS_CLOSED;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".$this->statut;
 		$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut > 0";
 
 		$resql = $this->db->query($sql);
@@ -2155,8 +2200,14 @@ class Expedition extends CommonObject
 				}
 			}
 
-			$this->statut = self::STATUS_CLOSED;	// Will be revert to STATUS_VALIDATED at end if there is a rollback
-			$this->status = self::STATUS_CLOSED;	// Will be revert to STATUS_VALIDATED at end if there is a rollback
+			// Will be reverted to STATUS_VALIDATED at end if there is a rollback
+			if ($prepared) {
+				$this->statut = self::STATUS_PREPARED;
+				$this->status = self::STATUS_PREPARED;
+			} else {
+				$this->statut = self::STATUS_CLOSED;
+				$this->status = self::STATUS_CLOSED;
+			}
 
 			// If stock increment is done on closing
 			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
@@ -2263,7 +2314,7 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2, billed=1'; // TODO Update only billed
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET billed=1';
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
@@ -2293,6 +2344,126 @@ class Expedition extends CommonObject
 	}
 
 	/**
+	 * Classify the shipping as returned
+	 *
+	 * @return int
+	 */
+	public function setReturned()
+	{
+
+		global $conf, $langs, $user;
+
+		$error = 0;
+
+		// Protection. This avoid to move stock later when we should not
+		if ($this->statut == self::STATUS_VALIDATED || $this->statut == self::STATUS_RETURNED) {
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$oldbilled = $this->billed;
+
+		$sql = "UPDATE " . MAIN_DB_PREFIX . "expedition SET fk_statut=" . self::STATUS_RETURNED;
+		$sql .= " WHERE rowid = " . ((int) $this->id) . " AND fk_statut > 0";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$this->statut = self::STATUS_RETURNED;
+
+			// If stock increment is done on closing
+			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+				$langs->load("agenda");
+
+				// Loop on each product line to add a stock movement
+				// TODO possibilite d'expedier a partir d'une propale ou autre origine
+				$sql = "SELECT cd.fk_product, cd.subprice,";
+				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
+				$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
+				$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
+				$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
+				$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
+				$sql .= " AND cd.rowid = ed.fk_origin_line";
+
+				dol_syslog(get_class($this)."::returned select details", LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$cpt = $this->db->num_rows($resql);
+					for ($i = 0; $i < $cpt; $i++) {
+						$obj = $this->db->fetch_object($resql);
+						if (empty($obj->edbrowid)) {
+							$qty = $obj->qty;
+						} else {
+							$qty = $obj->edbqty;
+						}
+						if ($qty <= 0) {
+							continue;
+						}
+						dol_syslog(get_class($this)."::returned expedition movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+
+						//var_dump($this->lines[$i]);
+						$mouvS = new MouvementStock($this->db);
+						$mouvS->origin = &$this;
+						$mouvS->setOrigin($this->element, $this->id);
+
+						if (empty($obj->edbrowid)) {
+							// line without batch detail
+
+							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $numref));
+							if ($result < 0) {
+								$this->error = $mouvS->error;
+								$this->errors = $mouvS->errors;
+								$error++;
+								break;
+							}
+						} else {
+							// line with batch detail
+
+							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+							if ($result < 0) {
+								$this->error = $mouvS->error;
+								$this->errors = $mouvS->errors;
+								$error++;
+								break;
+							}
+						}
+					}
+				} else {
+					$this->error = $this->db->lasterror();
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				// Call trigger
+				$result = $this->call_trigger('SHIPPING_RETURNED', $user);
+				if ($result < 0) {
+					$error++;
+				}
+			}
+		} else {
+			$error++;
+			$this->errors[] = $this->db->lasterror();
+		}
+
+		if (!$error) {
+			$this->db->commit();
+
+			return 1;
+		} else {
+			$this->statut = self::STATUS_CLOSED;
+			$this->db->rollback();
+
+			return -1;
+		}
+	}
+
+	/**
 	 *	Classify the shipping as validated/opened
 	 *
 	 *	@return     int     <0 if KO, 0 if already open, >0 if OK
@@ -2310,7 +2481,7 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		$oldbilled = $this->billed;
+		//$oldbilled = $this->billed;
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=1';
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
@@ -2318,7 +2489,7 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->statut = self::STATUS_VALIDATED;
-			$this->billed = 0;
+			//$this->billed = 0;
 
 			// If stock increment is done on closing
 			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
@@ -2405,7 +2576,7 @@ class Expedition extends CommonObject
 			return 1;
 		} else {
 			$this->statut = self::STATUS_CLOSED;
-			$this->billed = $oldbilled;
+			//$this->billed = $oldbilled;
 			$this->db->rollback();
 			return -1;
 		}

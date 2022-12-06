@@ -1268,6 +1268,7 @@ TriggerActiveAsModuleActive=Triggers in this file are active as module <b>%s</b>
 GeneratedPasswordDesc=Choose the method to be used for auto-generated passwords.
 DictionaryDesc=Insert all reference data. You can add your values to the default.
 ConstDesc=This page allows you to edit (override) parameters not available in other pages. These are mostly reserved parameters for developers/advanced troubleshooting only.
+ConstLink=Full list of the available parameters can be found here:
 MiscellaneousDesc=All other security related parameters are defined here.
 LimitsSetup=Limits/Precision setup
 LimitsDesc=You can define limits, precisions and optimizations used by Dolibarr here
