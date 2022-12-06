@@ -827,7 +827,23 @@ class EmailCollector extends CommonObject
 	 */
 	private function overwritePropertiesOfObject(&$object, $actionparam, $messagetext, $subject, $header)
 	{
+		global $conf, $langs;
+
 		$errorforthisaction = 0;
+
+		// set output lang
+		$outputlangs = $langs;
+		$newlang = '';
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			$newlang = GETPOST('lang_id', 'aZ09');
+		}
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+			$newlang = $object->thirdparty->default_lang;
+		}
+		if (!empty($newlang)) {
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
 
 		// Overwrite values with values extracted from source email
 		// $this->actionparam = 'opportunity_status=123;abc=EXTRACT:BODY:....'
@@ -909,7 +925,8 @@ class EmailCollector extends CommonObject
 
 					if ($regforregex[1] == 'SET' || empty($valuecurrent)) {
 						$valuetouse = $regforregex[2];
-						$substitutionarray = array();
+						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+						complete_substitutions_array($substitutionarray, $outputlangs, $object);
 						$matcharray = array();
 						preg_match_all('/__([a-z0-9]+(?:_[a-z0-9]+)?)__/i', $valuetouse, $matcharray);
 						//var_dump($tmpproperty.' - '.$object->$tmpproperty.' - '.$valuetouse); var_dump($matcharray);
@@ -920,7 +937,6 @@ class EmailCollector extends CommonObject
 								}
 							}
 						}
-						$substitutionarray['__DATE_NOW__'] = dol_now();
 						//var_dump($substitutionarray);
 						dol_syslog(var_export($substitutionarray, true));
 						//var_dump($substitutionarray);
