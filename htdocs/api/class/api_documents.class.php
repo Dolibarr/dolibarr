@@ -462,6 +462,9 @@ class Documents extends DolibarrApi
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}
 
+		$objectType = $modulepart;
+		if (! empty($object->id) && ! empty($object->table_element)) $objectType = $object->table_element;
+
 		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 		if (empty($filearray)) {
 			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(!empty($object->ref) ? ' or Ref '.$object->ref : '').' does not return any document.');
@@ -469,11 +472,14 @@ class Documents extends DolibarrApi
 			if (($object->id) > 0 && !empty($modulepart)) {
 				require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
 				$ecmfile = new EcmFiles($this->db);
-				$result = $ecmfile->fetchAll('', '', 0, 0, array('t.src_object_type' => $modulepart, 't.src_object_id' => $object->id));
+				$result = $ecmfile->fetchAll('', '', 0, 0, array('t.src_object_type' => $objectType, 't.src_object_id' => $object->id));
 				if ($result < 0) {
 					throw new RestException(503, 'Error when retrieve ecm list : ' . $this->db->lasterror());
 				} elseif (is_array($ecmfile->lines) && count($ecmfile->lines) > 0) {
-					$filearray['ecmfiles_infos'] = $ecmfile->lines;
+					$count = count($filearray);
+					for ($i = 0 ; $i < $count ; $i++) {
+						if ($filearray[$i]['name'] == $ecmfile->lines[$i]->filename) $filearray[$i] = array_merge($filearray[$i], (array) $ecmfile->lines[0]);
+					}
 				}
 			}
 		}

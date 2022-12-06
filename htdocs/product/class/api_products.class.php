@@ -435,7 +435,19 @@ class Products extends DolibarrApi
 		global $user;
 		$user = DolibarrApiAccess::$user;
 
-		return $this->product->delete(DolibarrApiAccess::$user);
+		$res = $this->product->delete(DolibarrApiAccess::$user);
+		if ($res < 0) {
+			throw new RestException(500, "Can't delete, error occurs");
+		} elseif ($res == 0) {
+			throw new RestException(409, "Can't delete, that product is probably used");
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Object deleted'
+			)
+		);
 	}
 
 	/**
