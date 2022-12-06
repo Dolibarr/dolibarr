@@ -656,13 +656,13 @@ ALTER TABLE llx_c_socialnetworks ADD UNIQUE INDEX idx_c_socialnetworks_code_enti
 
 ALTER TABLE llx_propaldet ADD COLUMN import_key varchar(14);
 
+-- Easya 2022.5
+
 -- Backport 15.0.0 -> 16.0.0
 ALTER TABLE llx_product_attribute_value MODIFY COLUMN ref VARCHAR(180) NOT NULL;
 ALTER TABLE llx_product_attribute_value MODIFY COLUMN value VARCHAR(255) NOT NULL;
 ALTER TABLE llx_product_attribute_value ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE llx_product_attribute CHANGE rang position INTEGER DEFAULT 0 NOT NULL;
-
--- Easya 2022.5
 
 -- Dictionaries - add possibility to manage countries in EEC #20261
 UPDATE llx_c_country SET eec = 0 WHERE code IN ('GB', 'UK', 'IM');
@@ -721,3 +721,15 @@ ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product_parent FOREIGN KEY (fk_product_parent) REFERENCES llx_product (rowid);
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+
+-- Backport 14.0.0 -> 15.0.0
+ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
+
+-- Backport 15.0.0 -> 16.0.0
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+
+-- Backport 16.0.0 -> 17.0.0
+ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN lastresult text;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN port varchar(10) DEFAULT '993';
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN acces_type integer DEFAULT 0;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN oauth_service varchar(128) DEFAULT NULL;
