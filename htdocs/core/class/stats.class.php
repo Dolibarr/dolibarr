@@ -318,7 +318,7 @@ abstract class Stats
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		} else {
-			$data = $this->getAllByProduct($year, $limit);
+			$data = $this->getAllByProductEntry($year, $limit);
 			//					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
 		}
 
