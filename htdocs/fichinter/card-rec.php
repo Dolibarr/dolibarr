@@ -153,7 +153,7 @@ if ($action == 'add') {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 			$action = "create";
 			$error++;
-		}else {
+		} else {
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		}
 		if ($nb_gen_max === '') {
