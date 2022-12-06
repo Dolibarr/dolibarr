@@ -194,6 +194,31 @@ class Expedition extends CommonObject
 	const STATUS_CLOSED = 2;
 
 	/**
+	 * InProcess status
+	 */
+	const STATUS_INPROCESS = 3;
+
+	/**
+	 * Prepared status
+	 */
+	const STATUS_PREPARED = 4;
+
+	/**
+	 * Shipped status
+	 */
+	const STATUS_SHIPPED = 5;
+
+	/**
+	 * Delivered status
+	 */
+	const STATUS_DELIVERED = 6;
+
+	/**
+	 * Returned status
+	 */
+	const STATUS_RETURNED = 8;
+
+	/**
 	 * Canceled status
 	 */
 	const STATUS_CANCELED = -1;
@@ -216,6 +241,11 @@ class Expedition extends CommonObject
 		$this->statuts[0]  = 'StatusSendingDraft';
 		$this->statuts[1]  = 'StatusSendingValidated';
 		$this->statuts[2]  = 'StatusSendingProcessed';
+		$this->statuts[3] = 'StatusSendingInProcess';
+		$this->statuts[4] = 'StatusSendingPrepared';
+		$this->statuts[5] = 'StatusSendingShipped';
+		$this->statuts[6] = 'StatusSendingDelivered';
+		$this->statuts[8] = 'StatusSendingReturned';
 
 		// List of short language codes for status
 		$this->statuts_short = array();
@@ -223,6 +253,11 @@ class Expedition extends CommonObject
 		$this->statuts_short[0]  = 'StatusSendingDraftShort';
 		$this->statuts_short[1]  = 'StatusSendingValidatedShort';
 		$this->statuts_short[2]  = 'StatusSendingProcessedShort';
+		$this->statuts_short[3] = 'StatusSendingInProcessShort';
+		$this->statuts_short[4] = 'StatusSendingPreparedShort';
+		$this->statuts_short[5] = 'StatusSendingShippedShort';
+		$this->statuts_short[6] = 'StatusSendingDeliveredShort';
+		$this->statuts_short[8] = 'StatusSendingReturnedShort';
 	}
 
 	/**
@@ -2252,6 +2287,270 @@ class Expedition extends CommonObject
 	}
 
 	/**
+	 * Classify shipping as prepared and move stock
+	 *
+	 * @return int
+	 */
+	public function setPrepared()
+	{
+		global $conf, $langs, $user;
+
+		$error = 0;
+
+		// Protection. This avoid to move stock later when we should not
+		if ($this->statut == self::STATUS_PREPARED) {
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".self::STATUS_PREPARED;
+		$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut > 0";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// Set order billed if 100% of order is shipped (qty in shipment lines match qty in order lines)
+			if ($this->origin == 'commande' && $this->origin_id > 0) {
+				$order = new Commande($this->db);
+				$order->fetch($this->origin_id);
+
+				$order->loadExpeditions(self::STATUS_PREPARED); // Fill $order->expeditions = array(orderlineid => qty)
+
+				$shipments_match_order = 1;
+				foreach ($order->lines as $line) {
+					$lineid = $line->id;
+					$qty = $line->qty;
+					if (($line->product_type == 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $order->expeditions[$lineid] != $qty) {
+						$shipments_match_order = 0;
+						$text = 'Qty for order line id '.$lineid.' is '.$qty.'. However in the shipments with status Expedition::STATUS_CLOSED='.self::STATUS_CLOSED.' we have qty = '.$order->expeditions[$lineid].', so we can t close order';
+						dol_syslog($text);
+						break;
+					}
+				}
+				if ($shipments_match_order) {
+					dol_syslog("Qty for the ".count($order->lines)." lines of the origin order is same than qty for lines in the shipment we close (shipments_match_order is true), with new status Expedition::STATUS_CLOSED=".self::STATUS_CLOSED.', so we close order');
+					// We close the order
+					$order->cloture($user);		// Note this may also create an invoice if module workflow ask it
+				}
+			}
+
+			$this->statut = self::STATUS_PREPARED;	// Will be revert to STATUS_VALIDATED at end if there is a rollback
+			$this->status = self::STATUS_PREPARED;	// Will be revert to STATUS_VALIDATED at end if there is a rollback
+
+			// If stock increment is done on closing
+			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+				$langs->load("agenda");
+
+				// Loop on each product line to add a stock movement
+				// TODO possibilite d'expedier a partir d'une propale ou autre origine ?
+				$sql = "SELECT cd.fk_product, cd.subprice,";
+				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
+				$sql .= " e.ref,";
+				$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
+				$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
+				$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."expedition as e ON ed.fk_expedition = e.rowid";
+				$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
+				$sql .= " AND cd.rowid = ed.fk_origin_line";
+
+				dol_syslog(get_class($this)."::prepared select details", LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$cpt = $this->db->num_rows($resql);
+					for ($i = 0; $i < $cpt; $i++) {
+						$obj = $this->db->fetch_object($resql);
+						if (empty($obj->edbrowid)) {
+							$qty = $obj->qty;
+						} else {
+							$qty = $obj->edbqty;
+						}
+						if ($qty <= 0) {
+							continue;
+						}
+						dol_syslog(get_class($this)."::prepared movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+
+						$mouvS = new MouvementStock($this->db);
+						$mouvS->origin = &$this;
+						$mouvS->setOrigin($this->element, $this->id);
+
+						if (empty($obj->edbrowid)) {
+							// line without batch detail
+
+							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentClassifyClosedInDolibarr", $obj->ref));
+							if ($result < 0) {
+								$this->error = $mouvS->error;
+								$this->errors = $mouvS->errors;
+								$error++;
+								break;
+							}
+						} else {
+							// line with batch detail
+
+							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentClassifyClosedInDolibarr", $obj->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+							if ($result < 0) {
+								$this->error = $mouvS->error;
+								$this->errors = $mouvS->errors;
+								$error++;
+								break;
+							}
+						}
+					}
+				} else {
+					$this->error = $this->db->lasterror();
+					$error++;
+				}
+			}
+
+			// Call trigger
+			if (!$error) {
+				$result = $this->call_trigger('SHIPPING_PREPARED', $user);
+				if ($result < 0) {
+					$error++;
+				}
+			}
+		} else {
+			dol_print_error($this->db);
+			$error++;
+		}
+
+		if (!$error) {
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->statut = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_VALIDATED;
+
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 * Classify the shipping as returned and move stock back
+	 *
+	 * @return int
+	 */
+	public function setReturned()
+	{
+
+		global $conf, $langs, $user;
+
+		$error = 0;
+
+		// Protection. This avoid to move stock later when we should not
+		if ($this->statut == self::STATUS_VALIDATED || $this->statut == self::STATUS_RETURNED) {
+			return 0;
+		}
+
+		$this->db->begin();
+
+		$oldbilled = $this->billed;
+
+		$sql = "UPDATE " . MAIN_DB_PREFIX . "expedition SET fk_statut=" . self::STATUS_RETURNED;
+		$sql .= " WHERE rowid = " . ((int) $this->id) . " AND fk_statut > 0";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$this->statut = self::STATUS_RETURNED;
+
+			// If stock increment is done on closing
+			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+				$langs->load("agenda");
+
+				// Loop on each product line to add a stock movement
+				// TODO possibilite d'expedier a partir d'une propale ou autre origine
+				$sql = "SELECT cd.fk_product, cd.subprice,";
+				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
+				$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
+				$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
+				$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
+				$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
+				$sql .= " AND cd.rowid = ed.fk_origin_line";
+
+				dol_syslog(get_class($this)."::returned select details", LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if ($resql) {
+					$cpt = $this->db->num_rows($resql);
+					for ($i = 0; $i < $cpt; $i++) {
+						$obj = $this->db->fetch_object($resql);
+						if (empty($obj->edbrowid)) {
+							$qty = $obj->qty;
+						} else {
+							$qty = $obj->edbqty;
+						}
+						if ($qty <= 0) {
+							continue;
+						}
+						dol_syslog(get_class($this)."::returned expedition movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+
+						//var_dump($this->lines[$i]);
+						$mouvS = new MouvementStock($this->db);
+						$mouvS->origin = &$this;
+						$mouvS->setOrigin($this->element, $this->id);
+
+						if (empty($obj->edbrowid)) {
+							// line without batch detail
+
+							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $numref));
+							if ($result < 0) {
+								$this->error = $mouvS->error;
+								$this->errors = $mouvS->errors;
+								$error++;
+								break;
+							}
+						} else {
+							// line with batch detail
+
+							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
+							if ($result < 0) {
+								$this->error = $mouvS->error;
+								$this->errors = $mouvS->errors;
+								$error++;
+								break;
+							}
+						}
+					}
+				} else {
+					$this->error = $this->db->lasterror();
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				// Call trigger
+				$result = $this->call_trigger('SHIPPING_RETURNED', $user);
+				if ($result < 0) {
+					$error++;
+				}
+			}
+		} else {
+			$error++;
+			$this->errors[] = $this->db->lasterror();
+		}
+
+		if (!$error) {
+			$this->db->commit();
+
+			return 1;
+		} else {
+			$this->statut = self::STATUS_CLOSED;
+			$this->db->rollback();
+
+			return -1;
+		}
+	}
+
+	/**
 	 *	Classify the shipping as invoiced (used when WORKFLOW_BILL_ON_SHIPMENT is on)
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
@@ -2263,7 +2562,7 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2, billed=1'; // TODO Update only billed
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET billed=1'; // TODO Update only billed
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
 
 		$resql = $this->db->query($sql);
@@ -2310,7 +2609,8 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		$oldbilled = $this->billed;
+		//Invoice can already be created so billed status should not change
+		//$oldbilled = $this->billed;
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=1';
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > 0';
@@ -2318,7 +2618,8 @@ class Expedition extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->statut = self::STATUS_VALIDATED;
-			$this->billed = 0;
+			//Invoice can already be created so billed status should not change
+			//$this->billed = 0;
 
 			// If stock increment is done on closing
 			if (!$error && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
@@ -2405,7 +2706,8 @@ class Expedition extends CommonObject
 			return 1;
 		} else {
 			$this->statut = self::STATUS_CLOSED;
-			$this->billed = $oldbilled;
+			//Invoice can already be created so billed status should not change
+			//$this->billed = $oldbilled;
 			$this->db->rollback();
 			return -1;
 		}

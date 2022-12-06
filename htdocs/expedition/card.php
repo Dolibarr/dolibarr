@@ -89,6 +89,8 @@ $action		= GETPOST('action', 'alpha');
 $confirm	= GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
+$status = GETPOST('status', 'alpha');
+
 //PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
@@ -1719,6 +1721,20 @@ if ($action == 'create') {
 
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateSending'), $text, 'confirm_valid', '', 0, 1);
 		}
+
+		if (getDolGlobalInt('EXPEDITION_USE_MORE_STATUSES')) {
+			// Change status
+			if ($action == 'set_status') {
+				if ($status == Expedition::STATUS_PREPARED) {
+					$object->setPrepared();
+				} elseif ($status == Expedition::STATUS_RETURNED) {
+					$object->setReturned();
+				} else {
+					$object->statut = $status;
+					$object->update($user);
+				}
+			}
+		}
 		// Confirm cancelation
 		if ($action == 'cancel') {
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelSending'), $langs->trans("ConfirmCancelSending", $object->ref), 'confirm_cancel', '', 0, 1);
@@ -2005,6 +2021,16 @@ if ($action == 'create') {
 			}
 			print '</td></tr>';
 		}
+
+		//Billed status
+		print '<tr>';
+		print '<td>' . $langs->trans('Billed') . '?</td>';
+		if ($object->billed == 1) {
+			print '<td><span class="badge badge-status4 badge-status">' . $langs->trans('Billed') . '</span></td>';
+		} else {
+			print '<td><span class="badge badge-status0 badge-status">' . $langs->trans('ToBill') . '</span></td>';
+		}
+		print '</tr>';
 
 		// Other attributes
 		$parameters = array('colspan' => ' colspan="3"', 'cols' => '3');
@@ -2506,13 +2532,34 @@ if ($action == 'create') {
 				}
 			}
 
-			// TODO add alternative status
 			// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
 			if ($object->statut == Expedition::STATUS_CLOSED && $user->rights->expedition->creer) {
 				if (isModEnabled('facture') && !empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
 					print dolGetButtonAction('', $langs->trans('ClassifyUnbilled'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
 				} else {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
+				}
+			} elseif (($object->statut > Expedition::STATUS_CLOSED && $object->statut != Expedition::STATUS_RETURNED) && $user->rights->expedition->creer) {
+				print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
+			}
+
+			//Add more statuses
+			if (getDolGlobalInt('EXPEDITION_USE_MORE_STATUSES')) {
+				if ($object->statut == Expedition::STATUS_VALIDATED) {
+					print dolGetButtonAction('', $langs->trans('SetStatusInProcess'), 'default', $_SERVER['PHP_SELF'] . '?action=set_status&status=' . Expedition::STATUS_INPROCESS . '&token=' . newToken() . '&id=' . $object->id, '');
+					print dolGetButtonAction('', $langs->trans('SetStatusPrepared'), 'default', $_SERVER['PHP_SELF'] . '?action=set_status&status=' . Expedition::STATUS_PREPARED . '&token=' . newToken() . '&id=' . $object->id, '');
+				}
+				if ($object->statut == Expedition::STATUS_INPROCESS) {
+					print dolGetButtonAction('', $langs->trans('SetStatusPrepared'), 'default', $_SERVER['PHP_SELF'] . '?action=set_status&status=' . Expedition::STATUS_PREPARED . '&token=' . newToken() . '&id=' . $object->id, '');
+				}
+				if ($object->statut == Expedition::STATUS_PREPARED) {
+					print dolGetButtonAction('', $langs->trans('SetStatusShipped'), 'default', $_SERVER['PHP_SELF'] . '?action=set_status&status=' . Expedition::STATUS_SHIPPED . '&token=' . newToken() . '&id=' . $object->id, '');
+				}
+				if ($object->statut == Expedition::STATUS_SHIPPED) {
+					print dolGetButtonAction('', $langs->trans('SetStatusDelivered'), 'default', $_SERVER['PHP_SELF'] . '?action=set_status&status=' . Expedition::STATUS_DELIVERED . '&token=' . newToken() . '&id=' . $object->id, '');
+				}
+				if ($object->statut == Expedition::STATUS_DELIVERED) {
+					print dolGetButtonAction('', $langs->trans('SetStatusReturned'), 'default', $_SERVER['PHP_SELF'] . '?action=set_status&status=' . Expedition::STATUS_RETURNED . '&token=' . newToken() . '&id=' . $object->id, '');
 				}
 			}
 
@@ -2534,6 +2581,11 @@ if ($action == 'create') {
 					// If we do that, we must also make this option official.
 					print dolGetButtonAction('', $langs->trans('CreateBill'), 'default', DOL_URL_ROOT.'/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->socid, '');
 				}
+			}
+
+			//Classify as billed without status change
+			if ($object->billed != 1 && ($object->statut != Expedition::STATUS_DRAFT || $object->statut != Expedition::STATUS_CANCELED)) {
+				print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER['PHP_SELF'] . '?action=classifybilled&token=' . newToken() . '&id=' . $object->id, '');
 			}
 
 			// This is just to generate a delivery receipt
