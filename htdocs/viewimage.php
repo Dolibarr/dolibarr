@@ -228,6 +228,10 @@ $original_file = str_replace('..\\', '/', $original_file);
 
 // Find the subdirectory name as the reference
 $refname = basename(dirname($original_file)."/");
+if ($refname == 'thumbs') {
+	// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
+	$refname = basename(dirname(dirname($original_file))."/");
+}
 
 // Check that file is allowed for view with viewimage.php
 if (!empty($original_file) && !dolIsAllowedForPreview($original_file)) {
