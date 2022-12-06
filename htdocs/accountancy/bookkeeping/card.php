@@ -25,6 +25,7 @@
  * \brief		Page to show book-entry
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
@@ -85,7 +86,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -332,7 +333,9 @@ if ($action == 'valid') {
 $html = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxHeader('', $langs->trans("CreateMvts"));
+$title = $langs->trans("CreateMvts");
+
+llxHeader('', $title);
 
 // Confirmation to delete the command
 if ($action == 'delete') {
@@ -341,7 +344,7 @@ if ($action == 'delete') {
 }
 
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("CreateMvts"));
+	print load_fiche_titre($title);
 
 	$object = new BookKeeping($db);
 	$next_num_mvt = $object->getNextNumMvt('_tmp');
@@ -641,8 +644,8 @@ if ($action == 'create') {
 				print_liste_field_titre("AccountAccountingShort");
 				print_liste_field_titre("SubledgerAccount");
 				print_liste_field_titre("LabelOperation");
-				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
-				print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
+				print_liste_field_titre("AccountingDebit", "", "", "", "", 'class="right"');
+				print_liste_field_titre("AccountingCredit", "", "", "", "", 'class="right"');
 				if (empty($object->date_validation)) {
 					print_liste_field_titre("Action", "", "", "", "", 'width="60"', "", "", 'center ');
 				} else {

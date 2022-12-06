@@ -237,7 +237,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 				if ($object->table_element == 'societe') {
 					$fieldid = 'socid';
 				}
-				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formextra">';
+				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"] . '?' . $fieldid . '=' . $object->id . '" method="post" name="formextra">';
 				print '<input type="hidden" name="action" value="update_extras">';
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';

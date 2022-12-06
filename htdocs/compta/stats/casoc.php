@@ -27,6 +27,7 @@
  *       \brief       Page reporting Turnover (CA) by thirdparty
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -673,7 +674,7 @@ if (count($amount)) {
 
 		// Other stats
 		print '<td class="center">';
-		if (isModEnabled('propal') && $key > 0) {
+		if (isModEnabled("propal") && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
 		}
 		if (isModEnabled('commande') && $key > 0) {

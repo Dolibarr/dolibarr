@@ -91,7 +91,7 @@ class modEmailCollector extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("admin");
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(7, 0); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -131,7 +131,7 @@ class modEmailCollector extends DolibarrModules
 		// 'invoice_supplier' to add a tab in supplier invoice view
 		// 'member'           to add a tab in fundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -175,7 +175,7 @@ class modEmailCollector extends DolibarrModules
 			'titre'=>'EmailCollectors',
 			'url'=>'/admin/emailcollector_list.php?leftmenu=admintools',
 			'langs'=>'admin', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>201,
+			'position'=>400,
 			'enabled'=>'$conf->emailcollector->enabled && preg_match(\'/^(admintools|all)/\', $leftmenu)', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'perms'=>'$user->admin', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 			'target'=>'',

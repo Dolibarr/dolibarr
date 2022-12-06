@@ -216,6 +216,12 @@ class Adherent extends CommonObject
 	public $public;
 
 	/**
+	 * Default language code of member (en_US, ...)
+	 * @var string
+	 */
+	public $default_lang;
+
+	/**
 	 * @var string photo of member
 	 */
 	public $photo;
@@ -328,8 +334,9 @@ class Adherent extends CommonObject
 		'photo' => array('type' => 'varchar(255)', 'label' => 'Photo', 'enabled' => 1, 'visible' => -1, 'position' => 135),
 		'public' => array('type' => 'smallint(6)', 'label' => 'Public', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 145),
 		'datefin' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => -1, 'position' => 150),
-		'note_private' => array('type' => 'text', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 155),
-		'note_public' => array('type' => 'text', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 160),
+		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>-1, 'position'=> 153),
+		'note_public' => array('type' => 'text', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155),
+		'note_private' => array('type' => 'text', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 160),
 		'datevalid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 165),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 170),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 175),
@@ -513,21 +520,51 @@ class Adherent extends CommonObject
 	 *	Return translated label by the nature of a adherent (physical or moral)
 	 *
 	 *	@param	string		$morphy		Nature of the adherent (physical or moral)
+	 *  @param	int			$addbadge	Add badge (1=Full label, 2=First letters only)
 	 *	@return	string					Label
 	 */
-	public function getmorphylib($morphy = '')
+	public function getmorphylib($morphy = '', $addbadge = 0)
 	{
 		global $langs;
+
+		// Clean var
 		if (!$morphy) {
 			$morphy = $this->morphy;
 		}
-		if ($morphy == 'phy') {
-			return $langs->trans("Physical");
+
+		if ($addbadge) {
+			$s = '';
+			$labeltoshowm = $langs->trans("Moral");
+			$labeltoshowp = $langs->trans("Physical");
+			if ($morphy == 'phy') {
+				$labeltoshow = $labeltoshowp;
+				if ($addbadge == 2) {
+					$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshowp));
+					if ($labeltoshow == dol_strtoupper(dolGetFirstLetters($labeltoshowm))) {
+						$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshowp, 2));
+					}
+				}
+				$s .= '<span class="member-individual-back paddingleftimp paddingrightimp" title="'.$langs->trans("Physical").'">'.$labeltoshow.'</span>';
+			}
+			if ($morphy == 'mor') {
+				$labeltoshow = $labeltoshowm;
+				if ($addbadge == 2) {
+					$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshowm));
+					if ($labeltoshow == dol_strtoupper(dolGetFirstLetters($labeltoshowp))) {
+						$labeltoshow = dol_strtoupper(dolGetFirstLetters($labeltoshowm, 2));
+					}
+				}
+				$s .= '<span class="member-company-back paddingleftimp paddingrightimp" title="'.$langs->trans("Moral").'">'.$labeltoshow.'</span>';
+			}
+		} else {
+			if ($morphy == 'phy') {
+				$s = $langs->trans("Physical");
+			} elseif ($morphy == 'mor') {
+				$s = $langs->trans("Moral");
+			}
 		}
-		if ($morphy == 'mor') {
-			return $langs->trans("Moral");
-		}
-		return $morphy;
+
+		return $s;
 	}
 
 	/**
@@ -568,7 +605,7 @@ class Adherent extends CommonObject
 
 		// Insert member
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
-		$sql .= " (ref, datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key)";
+		$sql .= " (ref, datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key, ip)";
 		$sql .= " VALUES (";
 		$sql .= " '(PROV)'";
 		$sql .= ", '".$this->db->idate($this->datec)."'";
@@ -578,6 +615,7 @@ class Adherent extends CommonObject
 		$sql .= ", ".((int) $this->typeid);
 		$sql .= ", ".$conf->entity;
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		$sql .= ", ".(!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -672,11 +710,10 @@ class Adherent extends CommonObject
 		$this->town = ($this->town ? $this->town : $this->town);
 		$this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 		$this->state_id = ($this->state_id > 0 ? $this->state_id : $this->state_id);
-		$this->setUpperOrLowerCase();
 		$this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
 		$this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
 		$this->url = $this->url ?clean_url($this->url, 0) : '';
-
+		$this->setUpperOrLowerCase();
 		// Check parameters
 		if (!empty($conf->global->ADHERENT_MAIL_REQUIRED) && !isValidEMail($this->email)) {
 			$langs->load("errors");
@@ -713,9 +750,11 @@ class Adherent extends CommonObject
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
 		$sql .= ", public = '".$this->db->escape($this->public)."'";
 		$sql .= ", statut = ".$this->db->escape($this->statut);
+		$sql .= ", default_lang = ".(!empty($this->default_lang) ? "'".$this->db->escape($this->default_lang)."'" : "null");
 		$sql .= ", fk_adherent_type = ".$this->db->escape($this->typeid);
 		$sql .= ", morphy = '".$this->db->escape($this->morphy)."'";
 		$sql .= ", birth = ".($this->birth ? "'".$this->db->idate($this->birth)."'" : "null");
+
 		if ($this->datefin) {
 			$sql .= ", datefin = '".$this->db->idate($this->datefin)."'"; // Must be modified only when deleting a subscription
 		}
@@ -836,6 +875,8 @@ class Adherent extends CommonObject
 						$luser->office_phone = $this->phone;
 						$luser->user_mobile = $this->phone_mobile;
 
+						$luser->lang = $this->default_lang;
+
 						$luser->fk_member = $this->id;
 
 						$result = $luser->update($user, 0, 1, 1); // Use nosync to 1 to avoid cyclic updates
@@ -871,6 +912,7 @@ class Adherent extends CommonObject
 						$lthirdparty->state_id = $this->state_id;
 						$lthirdparty->country_id = $this->country_id;
 						//$lthirdparty->phone_mobile=$this->phone_mobile;
+						$lthirdparty->default_lang = $this->default_lang;
 
 						$result = $lthirdparty->update($this->fk_soc, $user, 0, 1, 1, 'update'); // Use sync to 0 to avoid cyclic updates
 
@@ -1095,7 +1137,7 @@ class Adherent extends CommonObject
 		// Mise a jour
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
 		$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."'";
-		//if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
+		//if (!empty($conf->global->DATABASE_PWD_ENCRYPTED))
 		if ($isencrypted) {
 			$sql .= ", pass = null";
 		} else {
@@ -1317,7 +1359,7 @@ class Adherent extends CommonObject
 		$sql .= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
 		$sql .= " d.datec as datec,";
 		$sql .= " d.tms as datem,";
-		$sql .= " d.datefin as datefin,";
+		$sql .= " d.datefin as datefin, d.default_lang,";
 		$sql .= " d.birth as birthday,";
 		$sql .= " d.datevalid as datev,";
 		$sql .= " d.country,";
@@ -1394,7 +1436,7 @@ class Adherent extends CommonObject
 				$this->email = $obj->email;
 				$this->url = $obj->url;
 
-				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
+				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
 
 				$this->photo = $obj->photo;
 				$this->statut = $obj->statut;
@@ -1409,6 +1451,8 @@ class Adherent extends CommonObject
 				$this->datevalid = $this->db->jdate($obj->datev);
 				$this->date_validation = $this->db->jdate($obj->datev);
 				$this->birth = $this->db->jdate($obj->birthday);
+
+				$this->default_lang = $obj->default_lang;
 
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
@@ -1762,7 +1806,7 @@ class Adherent extends CommonObject
 			if (!$error) {
 				// Add line to draft invoice
 				$idprodsubscription = 0;
-				if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (!empty($conf->product->enabled) || !empty($conf->service->enabled))) {
+				if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (isModEnabled("product") || isModEnabled("service"))) {
 					$idprodsubscription = $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS;
 				}
 
@@ -1854,10 +1898,10 @@ class Adherent extends CommonObject
 				$outputlangs = $langs;
 				$newlang = '';
 				$lang_id = GETPOST('lang_id');
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && !empty($lang_id)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && !empty($lang_id)) {
 					$newlang = $lang_id;
 				}
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 					$newlang = $customer->default_lang;
 				}
 				if (!empty($newlang)) {
@@ -2046,7 +2090,7 @@ class Adherent extends CommonObject
 		$err = 0;
 
 		// mailman
-		if (!empty($conf->global->ADHERENT_USE_MAILMAN) && !empty($conf->mailmanspip->enabled)) {
+		if (!empty($conf->global->ADHERENT_USE_MAILMAN) && isModEnabled('mailmanspip')) {
 			$result = $mailmanspip->add_to_mailman($this);
 
 			if ($result < 0) {
@@ -2066,7 +2110,7 @@ class Adherent extends CommonObject
 		}
 
 		// spip
-		if (!empty($conf->global->ADHERENT_USE_SPIP) && !empty($conf->mailmanspip->enabled)) {
+		if (!empty($conf->global->ADHERENT_USE_SPIP) && isModEnabled('mailmanspip')) {
 			$result = $mailmanspip->add_to_spip($this);
 			if ($result < 0) {
 				$this->errors[] = $mailmanspip->error;
@@ -2117,7 +2161,7 @@ class Adherent extends CommonObject
 			}
 		}
 
-		if ($conf->global->ADHERENT_USE_SPIP && !empty($conf->mailmanspip->enabled)) {
+		if ($conf->global->ADHERENT_USE_SPIP && isModEnabled('mailmanspip')) {
 			$result = $mailmanspip->del_to_spip($this);
 			if ($result < 0) {
 				$this->errors[] = $mailmanspip->error;
@@ -2339,8 +2383,8 @@ class Adherent extends CommonObject
 				$statusType = 'status1';
 				$labelStatus = $langs->trans("MemberStatusActive");
 				$labelStatusShort = $langs->trans("MemberStatusActiveShort");
-			} elseif ($date_end_subscription < dol_now()) {
-				$statusType = 'status3';
+			} elseif ($date_end_subscription < dol_now()) {	// expired
+				$statusType = 'status8';
 				$labelStatus = $langs->trans("MemberStatusActiveLate");
 				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
 			} else {
@@ -2559,6 +2603,7 @@ class Adherent extends CommonObject
 
 		$this->datefin = $now;
 		$this->datevalid = $now;
+		$this->default_lang = '';
 
 		$this->typeid = 1; // Id type adherent
 		$this->type = 'Type adherent'; // Libelle type adherent
@@ -3091,6 +3136,7 @@ class Adherent extends CommonObject
 				if ($listofids) {
 					$listofids .= ']';
 				}
+
 				$this->output .= ($listofids ? ' ids='.$listofids : '');
 			}
 			if ($nbko) {

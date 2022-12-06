@@ -32,6 +32,7 @@
  *  \brief      Page of tab suppliers for products
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -40,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
-if (!empty($conf->barcode->enabled)) {
+if (isModEnabled('barcode')) {
 	dol_include_once('/core/class/html.formbarcode.class.php');
 }
 // Load translation files required by the page
@@ -75,7 +76,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-if (empty($user->rights->fournisseur->lire)) {
+if (empty($user->rights->fournisseur->lire) && (empty($conf->margin->enabled) && !$user->hasRight("margin", "liretous"))) {
 	accessforbidden();
 }
 
@@ -243,7 +244,7 @@ if (empty($reshook)) {
 				$_POST["price"] = 0;
 			}
 		}
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			if (!GETPOST("multicurrency_code")) {
 				$error++;
 				$langs->load("errors");
@@ -302,7 +303,7 @@ if (empty($reshook)) {
 				}*/
 				$object->packaging = $packaging;
 
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled("multicurrency")) {
 					$multicurrency_tx = price2num(GETPOST("multicurrency_tx", 'alpha'));
 					$multicurrency_price = price2num(GETPOST("multicurrency_price", 'alpha'));
 					$multicurrency_code = GETPOST("multicurrency_code", 'alpha');
@@ -315,7 +316,7 @@ if (empty($reshook)) {
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
-					if (!empty($conf->dynamicprices->enabled) && $price_expression !== '') {
+					if (isModEnabled('dynamicprices') && $price_expression !== '') {
 						//Check the expression validity by parsing it
 						$priceparser = new PriceParser($db);
 						$object->fk_supplier_price_expression = $price_expression;
@@ -325,7 +326,7 @@ if (empty($reshook)) {
 							setEventMessages($priceparser->translatedError(), null, 'errors');
 						}
 					}
-					if (!$error && !empty($conf->dynamicprices->enabled)) {
+					if (!$error && isModEnabled('dynamicprices')) {
 						//Set the price expression for this supplier price
 						$ret = $object->setSupplierPriceExpression($price_expression);
 						if ($ret < 0) {
@@ -400,7 +401,7 @@ if ($id > 0 || $ref) {
 			print '<table class="border tableforfield centpercent">';
 
 			// Type
-			if (!empty($conf->product->enabled) && !empty($conf->service->enabled)) {
+			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
 				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
@@ -509,6 +510,43 @@ if ($id > 0 || $ref) {
 							print '</a>';
 						}
 					}
+					print '<script type="text/javascript">
+					$(document).ready(function () {
+						$("#search_id_fourn").change(load_vat)
+						console.log("Requesting default VAT rate for the supplier...")
+					});
+					function load_vat() {
+						// get soc id
+						let socid = $("#id_fourn")[0].value
+
+						// load available VAT rates
+						let vat_url = "'.dol_buildpath('/core/ajax/vatrates.php', 1).'"
+						//Make GET request with params
+						let options = "";
+						options += "id=" + socid
+						options += "&htmlname=tva_tx"
+						options += "&action=default" // not defined in vatrates.php, default behavior.
+
+						var get = $.getJSON(
+							vat_url,
+							options,
+							(data) => {
+								rate_options = $.parseHTML(data.value)
+								rate_options.forEach(opt => {
+									if (opt.selected) {
+										replaceVATWithSupplierValue(opt.value)
+										return
+									}
+								})
+							}
+						);
+
+					}
+					function replaceVATWithSupplierValue(vat_rate) {
+						console.log("Default VAT rate for the supplier: " + vat_rate + "%")
+						$("[name=\'tva_tx\']")[0].value = vat_rate;
+					}
+				</script>';
 				}
 				print '</td></tr>';
 
@@ -600,7 +638,7 @@ if ($id > 0 || $ref) {
 				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.$vattosuggest.'">';
 				print '</td></tr>';
 
-				if (!empty($conf->dynamicprices->enabled)) { //Only show price mode and expression selector if module is enabled
+				if (isModEnabled('dynamicprices')) { //Only show price mode and expression selector if module is enabled
 					// Price mode selector
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceMode").'</td><td>';
 					$price_expression = new PriceExpression($db);
@@ -633,7 +671,7 @@ if ($id > 0 || $ref) {
 					</script>';
 				}
 
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled("multicurrency")) {
 					// Currency
 					print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
 					print '<td>';
@@ -748,7 +786,7 @@ END;
 				print '</td></tr>';
 
 				// Barcode
-				if (!empty($conf->barcode->enabled)) {
+				if (isModEnabled('barcode')) {
 					$formbarcode = new FormBarCode($db);
 
 					// Barcode type
@@ -763,7 +801,7 @@ END;
 
 				// Option to define a transport cost on supplier price
 				if (!empty($conf->global->PRODUCT_CHARGES)) {
-					if (!empty($conf->margin->enabled)) {
+					if (isModEnabled('margin')) {
 						print '<tr>';
 						print '<td>'.$langs->trans("Charges").'</td>';
 						print '<td><input class="flat width75" name="charges" value="'.(GETPOST('charges') ? price(GETPOST('charges')) : (isset($object->fourn_charges) ? price($object->fourn_charges) : '')).'">';
@@ -781,7 +819,7 @@ END;
 					print '<td>'.$langs->trans('ProductSupplierDescription').'</td>';
 					print '<td>';
 
-					$doleditor = new DolEditor('supplier_description', $object->desc_supplier, '', 160, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_4, '90%');
+					$doleditor = new DolEditor('supplier_description', $object->desc_supplier, '', 160, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_4, '90%');
 					$doleditor->Create();
 
 					print '</td>';
@@ -879,7 +917,7 @@ END;
 
 			print "</div>\n";
 
-			if ($user->rights->fournisseur->lire) { // Duplicate ? this check is already in the head of this file
+			if ($user->hasRight("fournisseur", "read")) { // Duplicate ? this check is already in the head of this file
 				$param = '';
 				if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 					$param .= '&contextpage='.urlencode($contextpage);
@@ -909,8 +947,8 @@ END;
 					'pfp.quantity'=>array('label'=>$langs->trans("QtyMin"), 'checked'=>1, 'position'=>5),
 					'pfp.unitprice'=>array('label'=>$langs->trans("UnitPriceHT"), 'checked'=>1, 'position'=>9),
 					'pfp.multicurrency_unitprice'=>array('label'=>$langs->trans("UnitPriceHTCurrency"), 'enabled' => isModEnabled('multicurrency'), 'checked'=>0, 'position'=>10),
-					'pfp.delivery_time_days'=>array('label'=>$langs->trans("NbDaysToDelivery"), 'checked'=>1, 'position'=>13),
-					'pfp.supplier_reputation'=>array('label'=>$langs->trans("ReputationForThisProduct"), 'checked'=>1, 'position'=>14),
+					'pfp.delivery_time_days'=>array('label'=>$langs->trans("NbDaysToDelivery"), 'checked'=>-1, 'position'=>13),
+					'pfp.supplier_reputation'=>array('label'=>$langs->trans("ReputationForThisProduct"), 'checked'=>-1, 'position'=>14),
 					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>15),
 					'pfp.barcode'=>array('label'=>$langs->trans("BarcodeValue"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>16),
 					'pfp.packaging'=>array('label'=>$langs->trans("PackagingForThisProduct"), 'enabled' => getDolGlobalInt('PRODUCT_USE_SUPPLIER_PACKAGING'), 'checked'=>0, 'position'=>17),
@@ -980,7 +1018,7 @@ END;
 				$nbfields++;
 				print_liste_field_titre("PriceQtyMinHT", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 				$nbfields++;
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled("multicurrency")) {
 					print_liste_field_titre("PriceQtyMinHTCurrency", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 					$nbfields++;
 				}
@@ -992,7 +1030,7 @@ END;
 					print_liste_field_titre("UnitPriceHTCurrency", $_SERVER["PHP_SELF"], "pfp.multicurrency_unitprice", "", $param, '', $sortfield, $sortorder, 'right ');
 					$nbfields++;
 				}
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled("multicurrency")) {
 					print_liste_field_titre("Currency", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 					$nbfields++;
 				}
@@ -1109,7 +1147,7 @@ END;
 						print $productfourn->fourn_price ? '<span class="amount">'.price($productfourn->fourn_price).'</span>' : "";
 						print '</td>';
 
-						if (!empty($conf->multicurrency->enabled)) {
+						if (isModEnabled("multicurrency")) {
 							// Price for the quantity in currency
 							print '<td class="right">';
 							print $productfourn->fourn_multicurrency_price ? '<span class="amount">'.price($productfourn->fourn_multicurrency_price).'</span>' : "";
@@ -1132,7 +1170,7 @@ END;
 						}
 
 						// Currency
-						if (!empty($conf->multicurrency->enabled)) {
+						if (isModEnabled("multicurrency")) {
 							print '<td class="right nowraponall">';
 							print $productfourn->fourn_multicurrency_code ? currency_name($productfourn->fourn_multicurrency_code) : '';
 							print '</td>';

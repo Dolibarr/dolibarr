@@ -16,17 +16,19 @@
  */
 
 /**
- *       \file        htdocs/compta/stats/supplier_turnover_by_thirdparty.php
- *       \brief       Page reporting purchase turnover by thirdparty
+ *    \file        htdocs/compta/stats/supplier_turnover_by_thirdparty.php
+ *    \brief       Page reporting purchase turnover by thirdparty
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
@@ -38,6 +40,7 @@ if (GETPOST("modecompta")) {
 	$modecompta = GETPOST("modecompta");
 }
 
+// Sort Order
 $sortorder = GETPOST("sortorder", 'aZ09comma');
 $sortfield = GETPOST("sortfield", 'aZ09comma');
 if (!$sortorder) {
@@ -46,6 +49,7 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "nom";
 }
+
 
 $socid = GETPOST('socid', 'int');
 
@@ -59,13 +63,17 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
 // Hook
 $hookmanager->initHooks(array('supplierturnoverbythirdpartylist'));
 
-// Date range
-$year = GETPOST("year", 'int');
-$month = GETPOST("month", 'int');
+
+// Search Parameters
 $search_societe = GETPOST("search_societe", 'alpha');
 $search_zip = GETPOST("search_zip", 'alpha');
 $search_town = GETPOST("search_town", 'alpha');
 $search_country = GETPOST("search_country", 'alpha');
+
+
+// Date range
+$year = GETPOST("year", 'int');
+$month = GETPOST("month", 'int');
 $date_startyear = GETPOST("date_startyear", 'alpha');
 $date_startmonth = GETPOST("date_startmonth", 'alpha');
 $date_startday = GETPOST("date_startday", 'alpha');
@@ -587,13 +595,13 @@ if (count($amount)) {
 
 		// Other stats
 		print '<td class="center">';
-		if (!empty($conf->supplier_proposal->enabled) && $key > 0) {
+		if (isModEnabled('supplier_proposal') && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal/stats/index.php?socid='.$key.'">'.img_picto($langs->trans("ProposalStats"), "stats").'</a>&nbsp;';
 		}
-		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_order')) && $key > 0) {
+		if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$key.'">'.img_picto($langs->trans("OrderStats"), "stats").'</a>&nbsp;';
 		}
-		if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled('supplier_invoice')) && $key > 0) {
+		if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) && $key > 0) {
 			print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/stats/index.php?mode=supplier&socid='.$key.'">'.img_picto($langs->trans("InvoiceStats"), "stats").'</a>&nbsp;';
 		}
 		print '</td>';

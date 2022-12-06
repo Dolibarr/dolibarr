@@ -421,7 +421,7 @@ class DoliDBMysqli extends DoliDB
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		return $resultset->num_rows;
+		return isset($resultset->num_rows) ? $resultset->num_rows : 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -769,6 +769,9 @@ class DoliDBMysqli extends DoliDB
 	{
 		// phpcs:enable
 		// FIXME: $fulltext_keys parameter is unused
+
+		$pk = '';
+		$sqluq = $sqlk = array();
 
 		// cles recherchees dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
 		// ex. : $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');

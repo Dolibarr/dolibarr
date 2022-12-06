@@ -912,8 +912,8 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	print '"'.$langs->transnoentitiesnoconv("LedgerAccount").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("SubledgerAccount").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("Label").'"'.$sep;
-	print '"'.$langs->transnoentitiesnoconv("Debit").'"'.$sep;
-	print '"'.$langs->transnoentitiesnoconv("Credit").'"'.$sep;
+	print '"'.$langs->transnoentitiesnoconv("AccountingDebit").'"'.$sep;
+	print '"'.$langs->transnoentitiesnoconv("AccountingCredit").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("Journal").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("Note").'"'.$sep;
 	print "\n";
@@ -1032,9 +1032,11 @@ if (empty($action) || $action == 'view') {
 	$salarystatic = new Salary($db);
 	$variousstatic = new PaymentVarious($db);
 
-	llxHeader('', $langs->trans("FinanceJournal"));
+	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
 
-	$nom = $langs->trans("FinanceJournal").' | '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
+	llxHeader('', dol_string_nohtmltag($title));
+
+	$nom = $title;
 	$builddate = dol_now();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
@@ -1052,6 +1054,7 @@ if (empty($action) || $action == 'view') {
 
 	journalHead($nom, '', $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
+	$desc = '';
 
 	// Test that setup is complete (we are in accounting, so test on entity is always on $conf->entity only, no sharing allowed)
 	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."bank_account WHERE entity = ".((int) $conf->entity)." AND fk_accountancy_journal IS NULL AND clos=0";
@@ -1074,7 +1077,7 @@ if (empty($action) || $action == 'view') {
 	if (($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "") || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
 		|| ($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1'
 		|| empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1') {
-		print '<br><div class="warning">'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
+		print ($desc ? '' : '<br>').'<div class="warning">'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
 		$desc = ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '{link}');
 		$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>', $desc);
 		print $desc;
@@ -1125,16 +1128,16 @@ if (empty($action) || $action == 'view') {
 
 	$i = 0;
 	print '<div class="div-table-responsive">';
-	print "<table class=\"noborder\" width=\"100%\">";
-	print "<tr class=\"liste_titre\">";
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
 	print "<td>".$langs->trans("Date")."</td>";
 	print "<td>".$langs->trans("Piece").' ('.$langs->trans("ObjectsRef").")</td>";
 	print "<td>".$langs->trans("AccountAccounting")."</td>";
 	print "<td>".$langs->trans("SubledgerAccount")."</td>";
 	print "<td>".$langs->trans("LabelOperation")."</td>";
 	print '<td class="center">'.$langs->trans("PaymentMode")."</td>";
-	print '<td class="right">'.$langs->trans("Debit")."</td>";
-	print '<td class="right">'.$langs->trans("Credit")."</td>";
+	print '<td class="right">'.$langs->trans("AccountingDebit")."</td>";
+	print '<td class="right">'.$langs->trans("AccountingCredit")."</td>";
 	print "</tr>\n";
 
 	$r = '';

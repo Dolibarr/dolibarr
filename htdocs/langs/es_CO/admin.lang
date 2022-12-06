@@ -362,7 +362,6 @@ ValueOverwrittenByUserSetup=Advertencia, este valor puede ser sobrescrito por la
 BarcodeInitForThirdparties=init para código de barras masivo para terceros
 BarcodeInitForProductsOrServices=Código de barras masivo de inicio o reinicio para productos o servicios.
 CurrentlyNWithoutBarCode=Actualmente, tienes el registro <strong> %s </strong> en <strong> %s </strong> %s sin un código de barras definido.
-InitEmptyBarCode=Init value for the %s empty barcodes
 EraseAllCurrentBarCode=Borrar todos los valores de código de barras actuales
 ConfirmEraseAllCurrentBarCode=¿Está seguro de que desea borrar todos los valores de código de barras actuales?
 AllBarcodeReset=Todos los valores de código de barras han sido eliminados
@@ -1308,7 +1307,6 @@ ActivateFCKeditor=Activar editor avanzado para:
 FCKeditorForNotePublic=Creación / edición WYSIWIG del campo "notas públicas" de elementos
 FCKeditorForNotePrivate=Creación / edición WYSIWIG del campo "notas privadas" de elementos
 FCKeditorForCompany=Creación / edición WYSIWIG de la descripción de campo de elementos (excepto productos / servicios)
-FCKeditorForProduct=Creación / edición WYSIWIG de la descripción de campo de productos / servicios
 FCKeditorForProductDetails=WYSIWIG creación / edición de líneas de detalle de productos para todas las entidades (propuestas, pedidos, facturas, etc ...). <span class="warning">Advertencia: El uso de esta opción para este caso no se recomienda seriamente, ya que puede crear problemas con caracteres especiales y formato de página al crear archivos PDF.</span>
 FCKeditorForMailing=Creación / edición WYSIWIG para eMailings masivos (Herramientas-> eMailing)
 FCKeditorForUserSignature=Creación / edición WYSIWIG de la firma del usuario.

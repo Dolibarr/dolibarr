@@ -25,6 +25,7 @@
  *	\brief      Third party module setup page
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -170,6 +171,20 @@ if ($action == 'setdoc') {
 if ($action == "setaccountancycodecustomerinvoicemandatory") {
 	$setaccountancycodecustomerinvoicemandatory = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_INVOICE_MANDATORY", $setaccountancycodecustomerinvoicemandatory, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
+//Activate Set vat id unique
+if ($action == "setvatintraunique") {
+	$setvatintraunique = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "SOCIETE_VAT_INTRA_UNIQUE", $setvatintraunique, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -406,7 +421,7 @@ foreach ($arrayofmodules as $file => $modCodeTiers) {
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
 	} else {
-		$disabled = (!empty($conf->multicompany->enabled) && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
+		$disabled = (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
 		print '<td class="center">';
 		if (!$disabled) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&token='.newToken().'&value='.urlencode($file).'">';
@@ -713,7 +728,7 @@ foreach ($profid as $key => $val) {
 	$i++;
 }
 
-if ($conf->accounting->enabled) {
+if (isModEnabled('accounting')) {
 	print '<tr class="oddeven">';
 	print '<td colspan="2">'.$langs->trans('CustomerAccountancyCodeShort')."</td>\n";
 	print '<td colspan="2"></td>';
@@ -729,6 +744,22 @@ if ($conf->accounting->enabled) {
 	}
 	print "</tr>\n";
 }
+
+// VAT ID
+print '<tr class="oddeven">';
+print '<td colspan="2">'.$langs->trans('VATIntra')."</td>\n";
+
+if (!empty($conf->global->SOCIETE_VAT_INTRA_UNIQUE)) {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatintraunique&token='.newToken().'&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatintraunique&token='.newToken().'&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '<td colspan="2"></td>';
+print "</tr>\n";
 
 print "</table>\n";
 print '</div>';
@@ -853,7 +884,7 @@ if (!empty($conf->global->CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST)) {
 print '</a></td>';
 print '</tr>';
 
-if (!empty($conf->expedition->enabled)) {
+if (isModEnabled("expedition")) {
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 0) {	// Visible on experimental only because seems to not be implemented everywhere (only on proposal)
 		print '<tr class="oddeven">';
 		print '<td width="80%">'.$langs->trans("AskForPreferredShippingMethod").'</td>';

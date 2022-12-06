@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  *
@@ -17,22 +18,22 @@
  */
 
 /**
- *  \file       workstation_document.php
+ *  \file       htdocs/workstation/workstation_document.php
  *  \ingroup    workstation
  *  \brief      Tab for documents linked to Workstation
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("workstation", "companies", "other", "mails"));
+$langs->loadLangs(array('companies', 'mails', 'other', 'workstation'));
 
 
 $action = GETPOST('action', 'aZ09');
@@ -64,6 +65,7 @@ $object = new Workstation($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->workstation->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('workstationdocument', 'globalcard')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 

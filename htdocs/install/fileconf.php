@@ -695,7 +695,7 @@ function jscheckparam()
 	else if (! checkDatabaseName(document.forminstall.db_name.value))
 	{
 		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorSpecialCharNotAllowedForField", $langs->transnoentitiesnoconv("DatabaseName"))); ?>');
+		alert('<?php echo dol_escape_js($langs->transnoentities("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentitiesnoconv("DatabaseName"))); ?>');
 	}
 	// If create database asked
 	else if (document.forminstall.db_create_database.checked == true && (document.forminstall.db_user_root.value == ''))

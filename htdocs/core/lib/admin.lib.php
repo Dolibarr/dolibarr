@@ -151,18 +151,18 @@ function versiondolibarrarray()
  *  Install process however does not use it.
  *  Note that Sql files must have all comments at start of line. Also this function take ';' as the char to detect end of sql request
  *
- *	@param		string	$sqlfile			Full path to sql file
- * 	@param		int		$silent				1=Do not output anything, 0=Output line for update page
- * 	@param		int		$entity				Entity targeted for multicompany module
- *	@param		int		$usesavepoint		1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
- *	@param		string	$handler			Handler targeted for menu (replace __HANDLER__ with this value)
- *	@param 		string	$okerror			Family of errors we accept ('default', 'none')
- *  @param		int		$linelengthlimit	Limit for length of each line (Use 0 if unknown, may be faster if defined)
- *  @param		int		$nocommentremoval	Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
+ *	@param		string	$sqlfile					Full path to sql file
+ * 	@param		int		$silent						1=Do not output anything, 0=Output line for update page
+ * 	@param		int		$entity						Entity targeted for multicompany module
+ *	@param		int		$usesavepoint				1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+ *	@param		string	$handler					Handler targeted for menu (replace __HANDLER__ with this value)
+ *	@param 		string	$okerror					Family of errors we accept ('default', 'none')
+ *  @param		int		$linelengthlimit			Limit for length of each line (Use 0 if unknown, may be faster if defined)
+ *  @param		int		$nocommentremoval			Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
  *  @param		int		$offsetforchartofaccount	Offset to use to load chart of account table to update sql on the fly to add offset to rowid and account_parent value
- *  @param		int		$colspan			2=Add a colspan=2 on td
+ *  @param		int		$colspan					2=Add a colspan=2 on td
  *  @param		int		$onlysqltoimportwebsite		Only sql resquests used to import a website template is allowed
- * 	@return		int							<=0 if KO, >0 if OK
+ * 	@return		int									<=0 if KO, >0 if OK
  */
 function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0, $colspan = 0, $onlysqltoimportwebsite = 0)
 {
@@ -523,7 +523,11 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 			});
 		});
 		</script>';
-		print ' - <a class="trforrunsqlshowhide'.$keyforsql.'" href="#">'.$langs->trans("ShowHideDetails").'</a>';
+		if (count($arraysql)) {
+			print ' - <a class="trforrunsqlshowhide'.$keyforsql.'" href="#" title="'.($langs->trans("ShowHideTheNRequests", count($arraysql))).'">'.$langs->trans("ShowHideDetails").'</a>';
+		} else {
+			print ' - <span class="opacitymedium">'.$langs->trans("ScriptIsEmpty").'</span>';
+		}
 		//}
 
 		print '</td></tr>'."\n";
@@ -603,7 +607,8 @@ function dolibarr_get_const($db, $name, $entity = 1)
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$value = $obj->value;
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+			$value = dolDecrypt($obj->value);
 		}
 	}
 	return $value;
@@ -651,11 +656,22 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	$resql = $db->query($sql);
 
 	if (strcmp($value, '')) {	// true if different. Must work for $value='0' or $value=0
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity)";
+		if (!preg_match('/^MAIN_LOGEVENTS/', $name) && (preg_match('/(_KEY|_EXPORTKEY|_SECUREKEY|_SERVERKEY|_PASS|_PASSWORD|_PW|_PW_TICKET|_PW_EMAILING|_SECRET|_SECURITY_TOKEN|_WEB_TOKEN)$/', $name))) {
+			// This seems a sensitive constant, we encrypt its value
+			// To list all sensitive constant, you can make a
+			// WHERE name like '%\_KEY' or name like '%\_EXPORTKEY' or name like '%\_SECUREKEY' or name like '%\_SERVERKEY' or name like '%\_PASS' or name like '%\_PASSWORD' or name like '%\_SECRET'
+			// or name like '%\_SECURITY_TOKEN' or name like '%\WEB_TOKEN'
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+			$newvalue = dolEncrypt($value);
+		} else {
+			$newvalue = $value;
+		}
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name, value, type, visible, note, entity)";
 		$sql .= " VALUES (";
 		$sql .= $db->encrypt($name);
-		$sql .= ", ".$db->encrypt($value);
-		$sql .= ",'".$db->escape($type)."',".((int) $visible).",'".$db->escape($note)."',".((int) $entity).")";
+		$sql .= ", ".$db->encrypt($newvalue);
+		$sql .= ", '".$db->escape($type)."', ".((int) $visible).", '".$db->escape($note)."', ".((int) $entity).")";
 
 		//print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
 		//print "xx".$db->escape($value);
@@ -693,7 +709,7 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules)
 
 	$h = 0;
 	$head = array();
-	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common';
+	$mode = empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : $conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT;
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$mode;
 	if ($nbofactivatedmodules <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled)
 		//$head[$h][1] = $form->textwithpicto($langs->trans("AvailableModules"), $desc);

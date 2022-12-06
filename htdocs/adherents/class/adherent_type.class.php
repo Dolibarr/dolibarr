@@ -95,6 +95,11 @@ class AdherentType extends CommonObject
 	public $amount;
 
 	/**
+	 * @var int Amount can be choosen by the visitor during subscription (0 or 1)
+	 */
+	public $caneditamount;
+
+	/**
 	 * @var string 	Public note
 	 * @deprecated
 	 */
@@ -380,6 +385,7 @@ class AdherentType extends CommonObject
 		$sql .= "morphy = '".$this->db->escape($this->morphy)."',";
 		$sql .= "subscription = '".$this->db->escape($this->subscription)."',";
 		$sql .= "amount = ".((empty($this->amount) && $this->amount == '') ? 'null' : ((float) $this->amount)).",";
+		$sql .= "caneditamount = ".((int) $this->caneditamount).",";
 		$sql .= "duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."',";
 		$sql .= "note = '".$this->db->escape($this->note_public)."',";
 		$sql .= "vote = ".(integer) $this->db->escape($this->vote).",";
@@ -391,7 +397,7 @@ class AdherentType extends CommonObject
 			$this->description = $this->db->escape($this->note_public);
 
 			// Multilangs
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				if ($this->setMultiLangs($user) < 0) {
 					$this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
 					return -2;
@@ -475,7 +481,7 @@ class AdherentType extends CommonObject
 	{
 		global $langs, $conf;
 
-		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut as status, d.duration, d.subscription, d.amount, d.mail_valid, d.note as note_public, d.vote";
+		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut as status, d.duration, d.subscription, d.amount, d.caneditamount, d.mail_valid, d.note as note_public, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".(int) $rowid;
 
@@ -496,13 +502,14 @@ class AdherentType extends CommonObject
 				$this->duration_unit  = substr($obj->duration, -1);
 				$this->subscription   = $obj->subscription;
 				$this->amount         = $obj->amount;
+				$this->caneditamount  = $obj->caneditamount;
 				$this->mail_valid     = $obj->mail_valid;
 				$this->note           = $obj->note_public;	// deprecated
 				$this->note_public    = $obj->note_public;
 				$this->vote           = $obj->vote;
 
 				// multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$this->getMultiLangs();
 				}
 
@@ -851,6 +858,7 @@ class AdherentType extends CommonObject
 		$this->note_public = 'This is a public note';
 		$this->mail_valid = 'This is welcome email';
 		$this->subscription = 1;
+		$this->caneditamount = 0;
 		$this->vote = 0;
 
 		$this->status = 1;

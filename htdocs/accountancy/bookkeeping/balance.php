@@ -24,6 +24,7 @@
  *  \brief 		Balance of book keeping
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Class
@@ -149,7 +150,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -502,6 +503,10 @@ if ($action != 'export_csv') {
 	}
 	print "<td></td>\n";
 	print '</tr>';
+
+	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print "</table>";
 	print '</form>';

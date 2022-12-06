@@ -31,13 +31,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
 // Load translation files required by the page
 $langsLoad=array('projects', 'users', 'companies');
-if (!empty($conf->eventorganization->enabled)) {
+if (isModEnabled('eventorganization')) {
 	$langsLoad[]='eventorganization';
 }
 
@@ -402,9 +402,12 @@ $projectstatic = new Project($db);
 $taskstatic = new Task($db);
 $userstatic = new User($db);
 
-$title = $langs->trans("Project").' - '.$langs->trans("Tasks").' - '.$object->ref.' '.$object->name;
+$title = $langs->trans("Tasks").' - '.$object->ref.' '.$object->name;
 if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Tasks");
+}
+if ($action == 'create') {
+	$title = $langs->trans("NewTask");
 }
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 
@@ -550,7 +553,7 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref .= $object->title;
 	// Thirdparty
 	if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
@@ -569,7 +572,7 @@ if ($id > 0 || !empty($ref)) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Usage
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
 		print '<tr><td class="tdtop">';
 		print $langs->trans("Usage");
 		print '</td>';
@@ -592,7 +595,7 @@ if ($id > 0 || !empty($ref)) {
 			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 			print '<br>';
 		}
-		if (!empty($conf->eventorganization->enabled)) {
+		if (isModEnabled('eventorganization')) {
 			print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
@@ -611,8 +614,15 @@ if ($id > 0 || !empty($ref)) {
 	}
 	print '</td></tr>';
 
-	// Date start - end
-	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+	// Budget
+	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+	if (strcmp($object->budget_amount, '')) {
+		print '<span class="amount">'.price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
+	}
+	print '</td></tr>';
+
+	// Date start - end project
+	print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 	$start = dol_print_date($object->date_start, 'day');
 	print ($start ? $start : '?');
 	$end = dol_print_date($object->date_end, 'day');
@@ -620,13 +630,6 @@ if ($id > 0 || !empty($ref)) {
 	print ($end ? $end : '?');
 	if ($object->hasDelay()) {
 		print img_warning("Late");
-	}
-	print '</td></tr>';
-
-	// Budget
-	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-	if (strcmp($object->budget_amount, '')) {
-		print '<span class="amount">'.price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
 	}
 	print '</td></tr>';
 
@@ -747,12 +750,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	}
 	print '</td></tr>';
 
-	// Date start
+	// Date start task
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
 	print $form->selectDate((!empty($date_start) ? $date_start : ''), 'dateo', 1, 1, 0, '', 1, 1);
 	print '</td></tr>';
 
-	// Date end
+	// Date end task
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 	print $form->selectDate((!empty($date_end) ? $date_end : -1), 'datee', -1, 1, 0, '', 1, 1);
 	print '</td></tr>';
@@ -771,18 +774,14 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
 
-	if (empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
-		print '<textarea name="description" class="quatrevingtpercent" rows="'.ROWS_4.'">'.$description.'</textarea>';
-	} else {
-		// WYSIWYG editor
-		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$cked_enabled = (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
-		if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
-			$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
-		}
-		$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
-		print $doleditor->Create();
+	// WYSIWYG editor
+	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$cked_enabled = (!empty($conf->global->FCKEDITOR_ENABLE_SOCIETE) ? $conf->global->FCKEDITOR_ENABLE_SOCIETE : 0);
+	if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
+		$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
 	}
+	$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
+	print $doleditor->Create();
 
 	print '</td></tr>';
 

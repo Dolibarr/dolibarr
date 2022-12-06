@@ -416,7 +416,7 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		if (is_object($object->user_approve)) {
+		if (!empty($object->user_approve) && is_object($object->user_approve)) {
 			if ($object->user_approve->id) {
 				print $object->user_approve->getNomUrl(-1, '', 0, 0, 0);
 			} else {
@@ -439,7 +439,7 @@ function dol_print_object_info($object, $usetable = 0)
 	}
 
 	// Date approve
-	if (!empty($object->date_approve)) {
+	if (!empty($object->date_approve) || !empty($object->date_approval)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
@@ -449,7 +449,7 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		print dol_print_date($object->date_approve, 'dayhour', 'tzserver');
+		print dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, 'dayhour', 'tzserver');
 		if ($deltadateforuser) {
 			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
 		}
@@ -1282,6 +1282,12 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
 	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
+
+	// To ensure that all variables within the MAX() brackets are integers
+	if (getDolGlobalInt('MAIN_NUMBERING_FILTER_ON_INT_ONLY')) {
+		$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', true);
+	}
+
 	if ($bentityon) { // only if entity enable
 		$sql .= " AND entity IN (".getEntity($sharetable).")";
 	} elseif (!empty($forceentity)) {
@@ -2234,10 +2240,14 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'compta/facture/class';
 		$classfile = 'facture-rec';
 		$classname = 'FactureRec';
-		$module='facture';
+		$module = 'facture';
+	} elseif ($objecttype == 'mailing') {
+		$classpath = 'comm/mailing/class';
+		$classfile = 'mailing';
+		$classname = 'Mailing';
 	}
 
-	if (!empty($conf->$module->enabled)) {
+	if (isModEnabled($module)) {
 		$res = dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 		if ($res) {
 			if (class_exists($classname)) {

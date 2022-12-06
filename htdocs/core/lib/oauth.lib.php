@@ -25,14 +25,16 @@
 
 // Supported OAUTH (a provider is supported when a file xxx_oauthcallback.php is available into htdocs/core/modules/oauth)
 $supportedoauth2array = array(
-	'OAUTH_GOOGLE_NAME'=>array('callbackfile' => 'google', 'picto' => 'google', 'urlforapp' => 'OAUTH_GOOGLE_DESC', 'name'=>'Google', 'urlforcredentials'=>'https://console.developers.google.com/'),
+	'OAUTH_GOOGLE_NAME'=>array('callbackfile' => 'google', 'picto' => 'google', 'urlforapp' => 'OAUTH_GOOGLE_DESC', 'name'=>'Google', 'urlforcredentials'=>'https://console.developers.google.com/', 'availablescopes'=> 'userinfo_email,userinfo_profile,openid,email,profile,cloud_print,admin_directory_user,gmail_full'),
 );
-if (!empty($conf->stripe->enabled)) {
-	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME'] = array('callbackfile' => 'stripetest', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeTest', 'urlforcredentials'=>'');
-	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME'] = array('callbackfile' => 'stripelive', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeLive', 'urlforcredentials'=>'');
+if (isModEnabled('stripe')) {
+	$supportedoauth2array['OAUTH_STRIPE_TEST_NAME'] = array('callbackfile' => 'stripetest', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeTest', 'urlforcredentials'=>'', 'availablescopes'=>'read_write');
+	$supportedoauth2array['OAUTH_STRIPE_LIVE_NAME'] = array('callbackfile' => 'stripelive', 'picto' => 'stripe', 'urlforapp' => '', 'name'=>'StripeLive', 'urlforcredentials'=>'', 'availablescopes'=>'read_write');
 }
-$supportedoauth2array['OAUTH_GITHUB_NAME'] = array('callbackfile' => 'github', 'picto' => 'github', 'urlforapp' => 'OAUTH_GITHUB_DESC', 'name'=>'GitHub', 'urlforcredentials'=>'https://github.com/settings/developers');
-
+$supportedoauth2array['OAUTH_GITHUB_NAME'] = array('callbackfile' => 'github', 'picto' => 'github', 'urlforapp' => 'OAUTH_GITHUB_DESC', 'name'=>'GitHub', 'urlforcredentials'=>'https://github.com/settings/developers', 'availablescopes'=>'user,public_repo');
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+	$supportedoauth2array['OAUTH_OTHER_NAME'] = array('callbackfile' => 'generic', 'picto' => 'generic', 'urlforapp' => 'OAUTH_OTHER_DESC', 'name'=>'Other', 'urlforcredentials'=>'', 'availablescopes'=>'Standard');
+}
 
 
 // API access parameters OAUTH
@@ -258,6 +260,11 @@ $list = array(
 		'OAUTH_YAMMER_NAME',
 		'OAUTH_YAMMER_ID',
 		'OAUTH_YAMMER_SECRET',
+	),
+	array(
+		'OAUTH_OTHER_NAME',
+		'OAUTH_OTHER_ID',
+		'OAUTH_OTHER_SECRET',
 	),
 );
 

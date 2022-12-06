@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,11 +26,11 @@
 require '../../main.inc.php';
 
 // Libraries
-require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/zapier/lib/zapier.lib.php';
 
 // Translations
-$langs->loadLangs(array("admin", "zapier"));
+$langs->loadLangs(array('admin', 'zapier'));
 
 // Access control
 if (!$user->admin) {
@@ -63,7 +63,7 @@ if ((float) DOL_VERSION >= 6) {
  * View
  */
 
-$page_name = "ZapierForDolibarrSetup";
+$page_name = 'ZapierForDolibarrSetup';
 $help_url = 'EN:Module_Zapier';
 llxHeader('', $langs->trans($page_name), $help_url);
 

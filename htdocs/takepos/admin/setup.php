@@ -24,6 +24,7 @@
  *	\brief      Setup page for TakePos module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -264,7 +265,7 @@ print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" value="' . (emp
 print "</td></tr>\n";
 
 // Services
-if (isModEnabled('service')) {
+if (isModEnabled("service")) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("CashdeskShowServices");
 	print '<td colspan="2">';
