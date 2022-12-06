@@ -578,7 +578,7 @@ if (empty($reshook)) {
 
 			// If no SQL error, we redirect to the request form
 			if (!$error) {
-				// Calculcate number of days consummed
+				// Calculcate number of days consumed
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);
 				$newSolde = ($soldeActuel - $nbopenedday);
@@ -799,7 +799,7 @@ if (empty($reshook)) {
 					$error++;
 				}
 
-				// Calculcate number of days consummed
+				// Calculcate number of days consumed
 				$nbopenedday = num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
 
 				$soldeActuel = $object->getCpforUser($object->fk_user, $object->fk_type);

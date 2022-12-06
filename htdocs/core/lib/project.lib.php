@@ -1529,7 +1529,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				if (!empty($arrayfields['timeconsumed']['checked'])) {
 					// Time spent by everybody
 					print '<td class="right">';
-					// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consummed by user
+					// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
 					if ($lines[$i]->duration) {
 						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
 						print convertSecondToTime($lines[$i]->duration, 'allhourmin');
@@ -1934,7 +1934,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				if (!empty($arrayfields['timeconsumed']['checked'])) {
 					// Time spent by everybody
 					print '<td class="right">';
-					// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consummed by user
+					// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
 					if ($lines[$i]->duration) {
 						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
 						print convertSecondToTime($lines[$i]->duration, 'allhourmin');
@@ -2228,7 +2228,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 
 				// Time spent by everybody
 				print '<td class="right">';
-				// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consummed by user
+				// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
 				if ($lines[$i]->duration) {
 					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
 					print convertSecondToTime($lines[$i]->duration, 'allhourmin');
