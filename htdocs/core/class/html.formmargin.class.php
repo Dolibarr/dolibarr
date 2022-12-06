@@ -218,25 +218,25 @@ class FormMargin
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		} elseif (empty($reshook)) {
-			if (!empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON)) {    // TODO Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
-				print $langs->trans('ShowMarginInfos') . ' : ';
+			if (!empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON)) {
+				print $langs->trans('ShowMarginInfos') . ' ';
 				$hidemargininfos = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW']); // Clean cookie
-				print '<span id="showMarginInfos" class="linkobject ' . (!empty($hidemargininfos) ? '' : 'hideobject') . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</span>';
-				print '<span id="hideMarginInfos" class="linkobject ' . (!empty($hidemargininfos) ? 'hideobject' : '') . '">' . img_picto($langs->trans("Enabled"), 'switch_on') . '</span>';
+				print '<span id="showMarginInfos" class="linkobject valignmiddle ' . (!empty($hidemargininfos) ? '' : 'hideobject') . '">' . img_picto($langs->trans("Disabled"), 'switch_off') . '</span>';
+				print '<span id="hideMarginInfos" class="linkobject valignmiddle ' . (!empty($hidemargininfos) ? 'hideobject' : '') . '">' . img_picto($langs->trans("Enabled"), 'switch_on') . '</span>';
 
 				print '<script>$(document).ready(function() {
-        	    $("span#showMarginInfos").click(function() { $.getScript( "' . dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1) . '", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 0); $(".margininfos").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject");})});
-        	    $("span#hideMarginInfos").click(function() { $.getScript( "' . dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1) . '", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 1); $(".margininfos").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject");})});
+        	    	$("span#showMarginInfos").click(function() { console.log("click on showMargininfos"); date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "DOLUSER_MARGININFO_HIDE_SHOW=0; expires=" + date.toGMTString() + "; path=/ "; $(".margintable").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject"); });
+        	    	$("span#hideMarginInfos").click(function() { console.log("click on hideMarginInfos"); date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "DOLUSER_MARGININFO_HIDE_SHOW=1; expires=" + date.toGMTString() + "; path=/ "; $(".margintable").hide(); $("span#hideMarginInfos").addClass("hideobject"); $("span#showMarginInfos").removeClass("hideobject"); });
       	        });</script>';
 				if (!empty($hidemargininfos)) {
-					print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
+					print '<script>$(document).ready(function() { console.log("hide the margin info"); $("#margintable").hide(); });</script>';
 				}
 			}
 
 			print '<div class="div-table-responsive-no-min">';
 			print '<!-- Margin table -->' . "\n";
 
-			print '<table class="noborder margintable centpercent">';
+			print '<table class="noborder margintable centpercent" id="margintable">';
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre">' . $langs->trans('Margins') . '</td>';
 			print '<td class="liste_titre right">' . $langs->trans('SellingPrice') . '</td>';
