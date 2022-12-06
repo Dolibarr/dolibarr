@@ -85,8 +85,8 @@ $upload_dir = $conf->knowledgemanagement->multidir_output[isset($object->entity)
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-//restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, '', 'rowid', $isdraft);
 //if (empty($conf->knowledgemanagement->enabled)) accessforbidden();
 //if (empty($permissiontoread)) accessforbidden();
 

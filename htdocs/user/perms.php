@@ -307,6 +307,9 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+$listofexpandedmodules = array();
+
+
 print "\n";
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -316,9 +319,9 @@ print '<td>'.$langs->trans("Module").'</td>';
 if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin)) {
 	if ($caneditperms) {
 		print '<td class="center nowrap">';
-		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module=allmodules&confirm=yes">'.$langs->trans("All")."</a>";
+		print '<a class="reposition commonlink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module=allmodules&confirm=yes">'.$langs->trans("All")."</a>";
 		print ' / ';
-		print '<a class="reposition commonlink" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module=allmodules&confirm=yes">'.$langs->trans("None")."</a>";
+		print '<a class="reposition commonlink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module=allmodules&confirm=yes">'.$langs->trans("None")."</a>";
 		print '</td>';
 	} else {
 		print '<td>&nbsp;</td>';
@@ -329,7 +332,7 @@ if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->ad
 	print '<td>&nbsp;</td>';
 }
 
-print '<td>'.$langs->trans("Permissions").'</td>';
+print '<td></td>';
 print '<td class="right nowrap">';
 print '<a class="showallperms" title="'.dol_escape_htmltag($langs->trans("ShowAllPerms")).'" alt="'.dol_escape_htmltag($langs->trans("ShowAllPerms")).'" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("ExpandAll").'</span></a>';
 print ' | ';
@@ -417,8 +420,12 @@ $sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
-	$i = 0;
+	$i = 0; $j = 0;
 	$oldmod = '';
+
+	$cookietohidegroup = (empty($_COOKIE["DOLUSER_PERMS_HIDE_GRP"]) ? '' : preg_replace('/^,/', '', $_COOKIE["DOLUSER_PERMS_HIDE_GRP"]));
+	$cookietohidegrouparray = explode(',', $cookietohidegroup);
+	//var_dump($cookietohidegrouparray);
 
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
@@ -469,53 +476,71 @@ if ($result) {
 		}
 		*/
 
-		$isexpanded = ($updatedmodulename == $obj->module || $module == "allmodules");
-		if (!$action) {
-			$isexpanded = 1;	// By default (no action done) we have lines expanded
+		if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
+			$ishidden = GETPOST('forbreakperms_'.$obj->module, 'int');
+		} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
+			$ishidden = 1;
+		} else {
+			$ishidden = 0;
 		}
+		$isexpanded = ! $ishidden;
+		//var_dump("isexpanded=".$isexpanded);
 
 		// Break found, it's a new module to catch
 		if (isset($obj->module) && ($oldmod <> $obj->module)) {
 			$oldmod = $obj->module;
+
+			$j++;
+			if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
+				$ishidden = GETPOST('forbreakperms_'.$obj->module, 'int');
+			} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
+				$ishidden = 1;
+			} else {
+				$ishidden = 0;
+			}
+			$isexpanded = ! $ishidden;
+			//var_dump('$obj->module='.$obj->module.' isexpanded='.$isexpanded);
 
 			// Break detected, we get objMod
 			$objMod = $modules[$obj->module];
 			$picto = ($objMod->picto ? $objMod->picto : 'generic');
 
 			// Show break line
-			print '<tr class="oddeven">';
-			print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+			print '<tr class="oddeven trforbreakperms" data-hide-perms="'.$obj->module.'" data-j="'.$j.'">';
+			print '<td class="maxwidthonsmartphone tdoverflowonsmartphone tdforbreakperms" data-hide-perms="'.$obj->module.'">';
+			print '<input type="hidden" name="forbreakperms_'.$obj->module.'" id="idforbreakperms_'.$obj->module.'" css="cssforfieldishiden" data-j="'.$j.'" value="'.($isexpanded ? '0' : "1").'">';
 			print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
 			print '<a name="'.$objMod->getName().'"></a>';
 			print '</td>';
 			if (($caneditperms && empty($objMod->rights_admin_allowed)) || empty($object->admin)) {
 				if ($caneditperms) {
-					print '<td class="center nowrap permtohide_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none"' : '').'>';
-					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("All")."</a>";
+					print '<td class="center wraponsmartphone permtohide_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none"' : '').'>';
+					print '<a class="reposition alink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("All")."</a>";
 					print ' / ';
-					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("None")."</a>";
+					print '<a class="reposition alink addexpandedmodulesinparamlist" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("None")."</a>";
 					print '</td>';
-					print '<td class="permtoshow_'.$obj->module.'"'.($isexpanded ? ' style="display:none"' : '').'>&nbsp;</td>';
+					print '<td class="permtoshow_'.$obj->module.' tdforbreakperms" data-hide-perms="'.$obj->module.'"'.($isexpanded ? ' style="display:none"' : '').'>&nbsp;</td>';
 				} else {
-					print '<td>&nbsp;</td>';
+					print '<td class="tdforbreakperms" data-hide-perms="'.$obj->module.'">&nbsp;</td>';
 				}
-				print '<td>&nbsp;</td>';
+				print '<td class="tdforbreakperms" data-hide-perms="'.$obj->module.'">&nbsp;</td>';
 			} else {
 				if ($caneditperms) {
 					print '<td class="center wraponsmartphone permtohide_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none"' : '').'>';
-					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("All")."</a>";
+					/*print '<a class="reposition alink" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("All")."</a>";
 					print ' / ';
-					print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("None")."</a>";
+					print '<a class="reposition alink" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&module='.$obj->module.'&confirm=yes&updatedmodulename='.$obj->module.'">'.$langs->trans("None")."</a>";
+					*/
 					print '</td>';
-					print '<td class="permtoshow_'.$obj->module.'"'.($isexpanded ? ' style="display:none"' : '').'>&nbsp;</td>';
+					print '<td class="permtoshow_'.$obj->module.' tdforbreakperms" data-hide-perms="'.$obj->module.'"'.($isexpanded ? ' style="display:none"' : '').'>&nbsp;</td>';
 				} else {
-					print '<td class="right"></td>';
+					print '<td class="right tdforbreakperms" data-hide-perms="'.$obj->module.'"></td>';
 				}
-				print '<td>&nbsp;</td>';
+				print '<td class="tdforbreakperms" data-hide-perms="'.$obj->module.'">&nbsp;</td>';
 			}
-			print '<td>&nbsp;</td>';
+			print '<td class="tdforbreakperms" data-hide-perms="'.$obj->module.'">&nbsp;</td>';
 
-			print '<td class="maxwidthonsmartphone right trforbreakperms" data-hide-perms="'.$obj->module.'" data-hidden-perms="'.($isexpanded ? '0' : "1").'">';
+			print '<td class="maxwidthonsmartphone right tdforbreakperms" data-hide-perms="'.$obj->module.'">';
 			print '<div class="switchfolderperms folderperms_'.$obj->module.'"'.($isexpanded ? ' style="display:none;"' : '').'>';
 			print img_picto('', 'folder', 'class="marginright"');
 			print '</div>';
@@ -546,7 +571,8 @@ if ($result) {
 			print '</td>';
 		} elseif (in_array($obj->id, $permsuser)) {					// Permission granted by user
 			if ($caneditperms) {
-				print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
+				print '<td class="center">';
+				print '<a class="reposition addexpandedmodulesinparamlist" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delrights&token='.newToken().'&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&updatedmodulename='.$obj->module.'">';
 				//print img_edit_remove($langs->trans("Remove"));
 				print img_picto($langs->trans("Remove"), 'switch_on');
 				print '</a></td>';
@@ -571,7 +597,8 @@ if ($result) {
 			} else {
 				// Do not own permission
 				if ($caneditperms) {
-					print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&token='.newToken().'&updatedmodulename='.$obj->module.'">';
+					print '<td class="center">';
+					print '<a class="reposition addexpandedmodulesinparamlist" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&token='.newToken().'&updatedmodulename='.$obj->module.'">';
 					//print img_edit_add($langs->trans("Add"));
 					print img_picto($langs->trans("Add"), 'switch_off');
 					print '</a></td>';
@@ -583,7 +610,8 @@ if ($result) {
 		} else {
 			// Do not own permission
 			if ($caneditperms) {
-				print '<td class="center"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&token='.newToken().'&updatedmodulename='.$obj->module.'">';
+				print '<td class="center">';
+				print '<a class="reposition addexpandedmodulesinparamlist" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addrights&entity='.$entity.'&rights='.$obj->id.'&confirm=yes&token='.newToken().'&updatedmodulename='.$obj->module.'">';
 				//print img_edit_add($langs->trans("Add"));
 				print img_picto($langs->trans("Add"), 'switch_off');
 				print '</a></td>';
@@ -629,46 +657,74 @@ print '</table>';
 print '</div>';
 
 print '<script>';
-print '$(".trforbreakperms").on("click", function(){
-	console.log("Click on trforbreakperms");
+print '$(".tdforbreakperms:not(.alink)").on("click", function(){
+	console.log("Click on tdforbreakperms");
 	moduletohide = $(this).data("hide-perms");
-	if ($(this).data("hidden-perms") == 1){
+	j = $(this).data("j");
+	if ($("#idforbreakperms_"+moduletohide).val() == 1) {
+		console.log("idforbreakperms_"+moduletohide+" has value hidden=1");
 		$(".trtohide_"+moduletohide).show();
 		$(".permtoshow_"+moduletohide).hide();
 		$(".permtohide_"+moduletohide).show();
 		$(".folderperms_"+moduletohide).hide();
-		console.log()
 		$(".folderopenperms_"+moduletohide).show();
-		$(this).data("hidden-perms", 0);
+		$("#idforbreakperms_"+moduletohide).val("0");
 	} else {
+		console.log("idforbreakperms_"+moduletohide+" has value hidden=0");
 		$(".trtohide_"+moduletohide).hide();
 		$(".folderopenperms_"+moduletohide).hide();
 		$(".folderperms_"+moduletohide).show();
 		$(".permtoshow_"+moduletohide).show();
 		$(".permtohide_"+moduletohide).hide();
-		$(this).data("hidden-perms", 1);
+		$("#idforbreakperms_"+moduletohide).val("1");
 	}
-})';
+
+	// Now rebuild the value for cookie
+	var hideuserperm="";
+	$(".trforbreakperms").each(function(index) {
+		//console.log( index + ": " + $( this ).data("j") + " " + $( this ).data("hide-perms") + " " + $("input[data-j="+(index+1)+"]").val());
+		if ($("input[data-j="+(index+1)+"]").val() == 1) {
+			hideuserperm=hideuserperm+","+(index+1);
+		}
+	});
+	// set cookie by js
+	date = new Date(); date.setTime(date.getTime()+(30*86400000));
+	if (hideuserperm) {
+		console.log("set cookie DOLUSER_PERMS_HIDE_GRP="+hideuserperm);
+		document.cookie = "DOLUSER_PERMS_HIDE_GRP=" + hideuserperm + "; expires=" + date.toGMTString() + "; path=/ ";
+	} else {
+		console.log("delete cookie DOLUSER_PERMS_HIDE_GRP");
+		document.cookie = "DOLUSER_PERMS_HIDE_GRP=; expires=Thu, 01-Jan-70 00:00:01 GMT; path=/ ";
+	}
+});';
 print "\n";
 
+// Button expand / collapse all
 print '$(".showallperms").on("click", function(){
 	console.log("Click on showallperms");
-	$(".trforbreakperms").each( function(){
-		if($(this).data("hidden-perms") != 0){
-			$(this).trigger("click");
-		}
-	})
-})';
-print "\n";
 
-print '$(".hideallperms").on("click", function(){
-	console.log("Click on hideallperms");
-	$(".trforbreakperms").each( function(){
-		if($(this).data("hidden-perms") != 1){
-			$(this).trigger("click");
+	console.log("delete cookie DOLUSER_PERMS_HIDE_GRP from showallperms click");
+	document.cookie = "DOLUSER_PERMS_HIDE_GRP=; expires=Thu, 01-Jan-70 00:00:01 GMT; path=/ ";
+	$(".tdforbreakperms").each( function(){
+		moduletohide = $(this).data("hide-perms");
+		//console.log(moduletohide);
+		if ($("#idforbreakperms_"+moduletohide).val() != 0) {
+			$(this).trigger("click");	// emulate the click, so the cooki will be resaved
 		}
 	})
-})';
+});
+
+$(".hideallperms").on("click", function(){
+	console.log("Click on hideallperms");
+
+	$(".tdforbreakperms").each( function(){
+		moduletohide = $(this).data("hide-perms");
+		//console.log(moduletohide);
+		if ($("#idforbreakperms_"+moduletohide).val() != 1) {
+			$(this).trigger("click");	// emulate the click, so the cooki will be resaved
+		}
+	})
+});';
 print "\n";
 print '</script>';
 

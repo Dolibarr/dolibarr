@@ -503,7 +503,7 @@ if (!empty($arrayfields['cs.amount']['checked'])) {
 if (!empty($arrayfields['cs.paye']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone right">';
 	$liststatus = array('0'=>$langs->trans("Unpaid"), '1'=>$langs->trans("Paid"));
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100', 1);
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100 onrightofpage', 1);
 	print '</td>';
 }
 

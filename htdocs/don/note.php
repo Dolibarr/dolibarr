@@ -43,17 +43,19 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
+$hookmanager->initHooks(array('donnote'));
+
+$object = new Don($db);
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
+
 // Security check
 $socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$hookmanager->initHooks(array('donnote'));
-
-$result = restrictedArea($user, 'don', $id, '');
-
-$object = new Don($db);
-$object->fetch($id);
+$result = restrictedArea($user, 'don', $object->id, '');
 
 $permissionnote = $user->rights->don->creer; // Used by the include of actions_setnotes.inc.php
 

@@ -1726,10 +1726,10 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 
 							if ($nature) {
 								$langs->load('accountancy');
-								$journallabel = $langs->transnoentities($objp->label); // Labels in this table are set by loading llx_accounting_abc.sql. Label can be 'ACCOUNTING_SELL_JOURNAL', 'InventoryJournal', ...
+								$journallabel = $langs->transnoentities($objp->label); // Label of bank account in llx_accounting_journal
 
 								$key = $langs->trans("AccountingJournalType".strtoupper($objp->nature));
-								$transferlabel = ($objp->nature && $key != "AccountingJournalType".strtoupper($langs->trans($objp->nature)) ? $key : $objp->label);
+								$transferlabel = ($objp->nature && $key != "AccountingJournalType".strtoupper($langs->trans($objp->nature)) ? $key.($journallabel != $key ? ' '.$journallabel : ''): $journallabel);
 
 								$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $transferlabel, 2, $user->hasRight('accounting',  'comptarapport', 'lire'));
 							}

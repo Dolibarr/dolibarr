@@ -1585,7 +1585,7 @@ if ($resql) {
 	if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone right">';
 		$liststatus = array('0'=>$langs->trans("BillShortStatusDraft"), '0,1'=>$langs->trans("BillShortStatusDraft").'+'.$langs->trans("BillShortStatusNotPaid"), '1'=>$langs->trans("BillShortStatusNotPaid"), '1,2'=>$langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
-		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'width100 onrightofpage', 1);
 		print '</td>';
 	}
 	// Action column

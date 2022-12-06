@@ -843,7 +843,7 @@ if (!empty($arrayfields['d.statut']['checked'])) {
 		Adherent::STATUS_RESILIATED => $langs->trans("MemberStatusResiliatedShort"),
 		Adherent::STATUS_EXCLUDED =>$langs->trans("MemberStatusExcludedShort")
 	);
-	print $form->selectarray('search_status', $liststatus, $search_status, -3);
+	print $form->selectarray('search_status', $liststatus, $search_status, -3, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
 	print '</td>';
 }
 if (!empty($arrayfields['d.import_key']['checked'])) {

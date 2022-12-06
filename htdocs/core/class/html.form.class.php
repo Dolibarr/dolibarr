@@ -6279,8 +6279,10 @@ class Form
 			// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
 			if ($defaulttx < 0 || dol_strlen($defaulttx) == 0) {
 				$tmpthirdparty = new Societe($this->db);
+
 				$defaulttx = get_default_tva($societe_vendeuse, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod);
 				$defaultnpr = get_default_npr($societe_vendeuse, (is_object($societe_acheteuse) ? $societe_acheteuse : $tmpthirdparty), $idprod);
+
 				if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
 					$defaultcode = $reg[1];
 					$defaulttx = preg_replace('/\s*\(.*\)/', '', $defaulttx);
@@ -6290,13 +6292,22 @@ class Form
 				}
 			}
 
-			// Si taux par defaut n'a pu etre determine, on prend dernier de la liste.
-			// Comme ils sont tries par ordre croissant, dernier = plus eleve = taux courant
+			// If we fails to find a default vat rate, we take the last one in list
+			// Because they are sorted in ascending order, the last one will be the higher one (we suppose the higher one is the current rate)
 			if ($defaulttx < 0 || dol_strlen($defaulttx) == 0) {
 				if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS)) {
+					// We take the last one found in list
 					$defaulttx = $this->cache_vatrates[$num - 1]['txtva'];
 				} else {
-					$defaulttx = ($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS == 'none' ? '' : $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS);
+					// We will use the rate defined into MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
+					$defaulttx = '';
+					if ($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS != 'none') {
+						$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+					}
+					if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
+						$defaultcode = $reg[1];
+						$defaulttx = preg_replace('/\s*\(.*\)/', '', $defaulttx);
+					}
 				}
 			}
 
@@ -6307,7 +6318,7 @@ class Form
 				// Override/enable VAT for expense report regardless of global setting - needed if expense report used for business expenses instead
 				// of using supplier invoices (this is a very bad idea !)
 				if (empty($conf->global->EXPENSEREPORT_OVERRIDE_VAT)) {
-					$title = ' title="'.$langs->trans('VATIsNotUsed').'"';
+					$title = ' title="'.dol_escape_htmltag($langs->trans('VATIsNotUsed')).'"';
 					$disabled = true;
 				}
 			}
@@ -6346,12 +6357,16 @@ class Form
 					}
 				}
 				$return .= '>';
-				//if (!empty($conf->global->MAIN_VAT_SHOW_POSITIVE_RATES))
+
+				// Show label of VAT
 				if ($mysoc->country_code == 'IN' || !empty($conf->global->MAIN_VAT_LABEL_IS_POSITIVE_RATES)) {
+					// Label with all localtax and code. For example:  x.y / a.b / c.d (CODE)'
 					$return .= $rate['labelpositiverates'];
 				} else {
+					// Simple label
 					$return .= vatrate($rate['label']);
 				}
+
 				//$return.=($rate['code']?' '.$rate['code']:'');
 				$return .= (empty($rate['code']) && $rate['nprtva']) ? ' *' : ''; // We show the *  (old behaviour only if new vat code is not used)
 
@@ -6360,7 +6375,7 @@ class Form
 
 			if (!$options_only) {
 				$return .= '</select>';
-				//$return .= ajax_combobox($htmlname);		// This break for the moment dynamic autoselection of a value when selecting a product in object lines
+				//$return .= ajax_combobox($htmlname);		// This break for the moment the dynamic autoselection of a value when selecting a product in object lines
 			}
 		} else {
 			$return .= $this->error;
@@ -8059,7 +8074,7 @@ class Form
 					if (empty($nohtmlescape)) {
 						$selectOptionValue = dol_escape_htmltag($maxlen ?dol_trunc($value, $maxlen) : $value);
 					} else {
-						$selectOptionValue = $maxlen ?dol_trunc($value, $maxlen) : $value;
+						$selectOptionValue = $maxlen ? dol_trunc($value, $maxlen) : $value;
 					}
 					if ($value == '' || $value == '-') {
 						$selectOptionValue = '&nbsp;';
@@ -9059,7 +9074,7 @@ class Form
 		$resultyesno .= '</select>'."\n";
 
 		if ($addjscombo) {
-			$resultyesno .= ajax_combobox($htmlname);
+			$resultyesno .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($useempty < 0 ? (string) $useempty : '-1'), $morecss);
 		}
 
 		return $resultyesno;

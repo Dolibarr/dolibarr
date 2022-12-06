@@ -507,7 +507,9 @@ class Documents extends DolibarrApi
 		}
 
 		$objectType = $modulepart;
-		if (! empty($object->id) && ! empty($object->table_element)) $objectType = $object->table_element;
+		if (! empty($object->id) && ! empty($object->table_element)) {
+			$objectType = $object->table_element;
+		}
 
 		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 		if (empty($filearray)) {

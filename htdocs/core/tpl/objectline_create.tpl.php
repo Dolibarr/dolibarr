@@ -971,7 +971,15 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			var tva_tx = parseFloat($('option:selected', this).attr('data-tvatx')); 					// When select is done from HTML select
 			if (isNaN(tva_tx)) { tva_tx = parseFloat(jQuery('#idprodfournprice').attr('data-tvatx'));}	// When select is done from HTML input with ajax autocomplete
 
-			console.log("objectline_create.tpl We find supplier price : up = "+up+", up_locale = "+up_locale+", qty = "+qty+", tva_tx = "+tva_tx+", discount = "+discount+" for product "+jQuery('#idprodfournprice').val());
+			var default_vat_code = $('option:selected', this).attr('data-default-vat-code');							 					// When select is done from HTML select
+			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
+
+			var stringforvatrateselection = tva_tx;
+			if (typeof default_vat_code != 'undefined') {
+				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
+			}
+
+			console.log("objectline_create.tpl We find supplier price : up = "+up+", up_locale = "+up_locale+", qty = "+qty+", tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+", discount = "+discount+" for product supplier ref id = "+jQuery('#idprodfournprice').val());
 
 			if (typeof up_locale === 'undefined') {
 				jQuery("#price_ht").val(up);
@@ -979,8 +987,13 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 				jQuery("#price_ht").val(up_locale);
 			}
 
-			/* $('#tva_tx option').removeAttr('selected').filter('[value='+tva_tx+']').prop('selected', true); */
-			$('#tva_tx option').val(tva_tx);
+			// Set vat rate if field is an input box
+			$('#tva_tx').val(tva_tx);
+			// Set vat rate by selecting the combo
+			//$('#tva_tx option').val(tva_tx);	// This is bugged, it replaces the vat key of all options
+			$('#tva_tx option').removeAttr('selected');
+			console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option for this selection="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
+			$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
 
 			if (jQuery("#qty").val() < qty)	{
 				jQuery("#qty").val(qty);

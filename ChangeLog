@@ -209,6 +209,32 @@ Following changes may create regressions for some external modules, but were nec
 * Rename the substitution for project label instead of project title in substitution variables
 
 
+***** ChangeLog for 16.0.3 compared to 16.0.2 *****
+
+FIX: $sign is useless
+FIX: #18304 Member subscription confirmation email sent even if mandatory fields are missing
+FIX: #19828
+FIX: #19877
+FIX: #22509 default value on integer fields don't retrieve by setSaveQuery
+FIX: #22786
+FIX: #22813
+FIX: #22824 Accountancy - Journal - Search on subledger when list of subledger is disabled
+FIX: Backup using the low memory mode
+FIX: Bankaccounts API fetch with 'id' and 'socid'
+FIX: base64_decode should be forbiden in dol_eval
+FIX: Broken Permissions check, $object is null.
+FIX: compute next value when year is on one digit for reset counter
+FIX: copy same behaviour in other accountancy files
+FIX: Fix the position of the verification condition of the test field in case of multi entities
+FIX: for #22882
+FIX: for #22952
+FIX: merge errors on mailing card
+FIX: PaymentBankTransfer Type page management with Select and Input on create.php
+FIX: remove not initialized variable
+FIX: SQL request parenthesis
+FIX: Use the Hook addMoreActionsButtons resPrint
+FIX: Wrong Extrafields Element For Assets
+
 ***** ChangeLog for 16.0.2 compared to 16.0.1 *****
 
 FIX: 16.0 - computed extrafields are not displayed if the object has no other extrafields

@@ -448,7 +448,7 @@ print '<td class="liste_titre center"><input type="text" class="width50" name="s
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre center">';
-print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Scheduled")), $search_status, 1);
+print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Scheduled")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
 print '</td><td class="liste_titre right">';
 $searchpicto = $form->showFilterButtons();
 print $searchpicto;
