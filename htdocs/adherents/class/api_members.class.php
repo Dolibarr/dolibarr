@@ -2,7 +2,7 @@
 /* Copyright (C) 2016	Xebax Christy	<xebax@wanadoo.fr>
  * Copyright (C) 2017	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2020	Thibault FOUCART<support@ptibogxiv.net>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020	Frédéric France	<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,7 +204,7 @@ class Members extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $typeid     ID of the type of member
-	 * @param  int    $category   Use this param to filter list by category
+	 * @param int    	$category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma.
 	 *                              Example: "(t.ref:like:'SO-%') and ((t.date_creation:<:'20160101') or (t.nature:is:NULL))"
 	 * @return array                Array of member objects
@@ -237,8 +237,9 @@ class Members extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -285,7 +286,7 @@ class Members extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 			throw new RestException(401);
 		}
 		// Check mandatory fields
@@ -310,7 +311,7 @@ class Members extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->creer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'creer')) {
 			throw new RestException(401);
 		}
 
@@ -357,7 +358,7 @@ class Members extends DolibarrApi
 		if ($member->update(DolibarrApiAccess::$user) >= 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $member->error);
+			throw new RestException(500, 'Error when updating member: '.$member->error);
 		}
 	}
 
@@ -483,11 +484,11 @@ class Members extends DolibarrApi
 	/**
 	 * Add a subscription for a member
 	 *
-	 * @param int $id               ID of member
-	 * @param int $start_date       Start date {@from body} {@type timestamp}
-	 * @param int $end_date         End date {@from body} {@type timestamp}
-	 * @param float $amount         Amount (may be 0) {@from body}
-	 * @param string $label         Label {@from body}
+	 * @param int 		$id             ID of member
+	 * @param string 	$start_date     Start date {@from body} {@type timestamp}
+	 * @param string 	$end_date       End date {@from body} {@type timestamp}
+	 * @param float 	$amount         Amount (may be 0) {@from body}
+	 * @param string 	$label         	Label {@from body}
 	 * @return int  ID of subscription
 	 *
 	 * @url POST {id}/subscriptions

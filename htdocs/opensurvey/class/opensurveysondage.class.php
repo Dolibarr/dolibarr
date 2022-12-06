@@ -274,7 +274,7 @@ class Opensurveysondage extends CommonObject
 				$this->sujet = $obj->sujet;
 				$this->fk_user_creat = $obj->fk_user_creat;
 
-				$this->date_m = $this->db->jdate($obj->tls);
+				$this->date_m = $this->db->jdate(!empty($obj->tls) ? $obj->tls : "");
 				$ret = 1;
 			} else {
 				$sondage = ($id ? 'id='.$id : 'sondageid='.$numsurvey);
@@ -492,10 +492,12 @@ class Opensurveysondage extends CommonObject
 	public function fetch_lines()
 	{
 		// phpcs:enable
-		$ret = array();
+		$this->lines = array();
 
-		$sql = "SELECT id_users, nom as name, reponses FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+		$sql = "SELECT id_users, nom as name, reponses";
+		$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql .= " WHERE id_sondage = '".$this->db->escape($this->id_sondage)."'";
+
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -505,14 +507,12 @@ class Opensurveysondage extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$tmp = array('id_users'=>$obj->id_users, 'nom'=>$obj->name, 'reponses'=>$obj->reponses);
 
-				$ret[] = $tmp;
+				$this->lines[] = $tmp;
 				$i++;
 			}
 		} else {
 			dol_print_error($this->db);
 		}
-
-		$this->lines = $ret;
 
 		return count($this->lines);
 	}
@@ -571,12 +571,14 @@ class Opensurveysondage extends CommonObject
 	 *
 	 * @param string $comment Comment content
 	 * @param string $comment_user Comment author
+	 * @param string $user_ip Comment author IP
 	 * @return boolean False in case of the query fails, true if it was successful
 	 */
-	public function addComment($comment, $comment_user)
+	public function addComment($comment, $comment_user, $user_ip = '')
 	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment)";
-		$sql .= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."')";
+		$now = dol_now();
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment, date_creation, ip)";
+		$sql .= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."','".$this->db->idate($now)."'".($user_ip ? ",'".$this->db->escape($user_ip)."'" : '').")";
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {
@@ -652,12 +654,12 @@ class Opensurveysondage extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Opened');
-			$this->labelStatus[self::STATUS_CLOSED] = $langs->trans('Closed');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Opened');
-			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->trans('Closed');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Opened');
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Opened');
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
 		}
 
 		$statusType = 'status'.$status;
@@ -673,5 +675,32 @@ class Opensurveysondage extends CommonObject
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+	}
+
+
+	/**
+	 *	Return number of votes done for this survey.
+	 *
+	 *	@return     int			Number of votes
+	 */
+	public function countVotes()
+	{
+		$result = 0;
+
+		$sql = " SELECT COUNT(id_users) as nb FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+		$sql .= " WHERE id_sondage = '".$this->db->escape($this->ref)."'";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) {
+				$result = $obj->nb;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+		}
+
+		return $result;
 	}
 }

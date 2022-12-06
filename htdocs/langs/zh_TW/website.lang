@@ -45,7 +45,7 @@ ViewWebsiteInProduction=使用家庭網址檢視網站
 SetHereVirtualHost=<u>使用Apache/NGinx/...</u><br>建立您的網頁伺服器 (Apache, Nginx, ...) 啟用了含有PHP的專用虛擬主機並且根目錄資料夾位於<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=在Apache虛擬主機設定中使用的範例：
 YouCanAlsoTestWithPHPS=在開發環境中<u>使用嵌入式PHP伺服器</u><br>, 您也許想要使用<br><strong>php -S 0.0.0.0:8080 -t %s</strong> 來測試此嵌入式PHP伺服器 (需要PHP 5.5) 的網站
-YouCanAlsoDeployToAnotherWHP=<u>在其他Dolibarr網站託管供應商執行您的網站</u> <br>如果您在網路上沒有Apache或NGinx之類的Web伺服器，則可以將網站匯出並匯入到另一個由Dolibarr網站託管供應商提供且有完整整合網站模組。您可以在<a href="https://saas.dolibarr.org" target="_blank"> https://saas.dolibarr.org </a>上找到一些Dolibarr網站託管服務供應商的清單。
+YouCanAlsoDeployToAnotherWHP=<u>在其他Dolibarr網站託管供應商執行您的網站</u> <br>如果您在網路上沒有Apache或NGinx之類的Web伺服器，則可以將網站匯出並匯入到另一個由Dolibarr網站託管供應商提供且有完整整合網站模組。您可以在<a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external"> https://saas.dolibarr.org </a>上找到一些Dolibarr網站託管服務供應商的清單。
 CheckVirtualHostPerms=同時請確認虛擬主機使用者(例如www-data)擁有檔案<br><strong>%s</strong>的<strong>%s</strong>權限
 ReadPerm=閱讀
 WritePerm=寫入
@@ -60,7 +60,7 @@ YouCanEditHtmlSourceckeditor=您可以使用編輯器中的“Source”按鈕來
 YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> 您可以使用標籤將PHP代碼包含到此源中<strong>&lt;?php ?&gt;</strong>. 以下全域變數可用: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs.<br><br><span class="fa fa-bug"></span> 您還可以使用以下語法包含另一個頁面/容器的內容:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> 您可以使用以下語法重新定向到另一個頁面/容器（注意：重新定向之前請勿輸出任何內容）:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> 要增加到另一個頁面的連結，請使用以下語法:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> 要包含一個 <strong>連結</strong> 下載儲存到 <strong>文件</strong>資料夾, 使用<strong>document.php</strong>打包器:<br>例如, 一個檔案要儲存到documents/ecm (需要紀錄)中, 語法為:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>檔案要儲存到documents/medias (公共權限的資料夾)中, 語法為:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>對於使用共用連結共享的檔案(使用檔案的共用hash鍵進行開放訪問), 語法為:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> 要包含一個<strong>影像</strong> 檔案且儲存到<strong>documents</strong>目錄中, 使用 <strong>viewimage.php</strong> 打包器:<br>例如, 儲存影像到documents/medias (公共權限的資料夾), 語法為:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>.
 #YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource2=使用有分享連結的影像 (使用檔案的Hash key開啟), 語法為:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSourceMore=<br>您可以在<a href="%s" target="_blank">Wiki文件</a>中找到更多HTML或是動態編碼的範例<br>
+YouCanEditHtmlSourceMore=<br>您可以在<a href="%s" target="_blank" rel="noopener noreferrer external">Wiki文件</a>中找到更多HTML或是動態編碼的範例<br>
 ClonePage=複製頁面/容器
 CloneSite=複製網站
 SiteAdded=網站已增加

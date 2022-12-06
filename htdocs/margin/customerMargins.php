@@ -22,6 +22,7 @@
  *	\brief      Page des marges par client
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -43,8 +44,6 @@ $result = restrictedArea($user, 'societe', '', '');
 $result = restrictedArea($user, 'margins');
 
 
-$mesg = '';
-
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -64,17 +63,17 @@ if (!$sortorder) {
 }
 
 $startdate = $enddate = '';
-
-if (!empty($_POST['startdatemonth'])) {
-	$startdate = dol_mktime(0, 0, 0, $_POST['startdatemonth'], $_POST['startdateday'], $_POST['startdateyear']);
+if (GETPOST('startdatemonth')) {
+	$startdate = dol_mktime(0, 0, 0, GETPOST('startdatemonth', 'int'),  GETPOST('startdateday', 'int'),  GETPOST('startdateyear', 'int'));
 }
-if (!empty($_POST['enddatemonth'])) {
-	$enddate = dol_mktime(23, 59, 59, $_POST['enddatemonth'], $_POST['enddateday'], $_POST['enddateyear']);
+if (GETPOST('enddatemonth')) {
+	$enddate = dol_mktime(23, 59, 59, GETPOST('enddatemonth', 'int'), GETPOST('enddateday', 'int'), GETPOST('enddateyear'));
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Societe($db);
 $hookmanager->initHooks(array('margincustomerlist'));
+
 
 /*
  * View
@@ -129,8 +128,8 @@ if ($socid > 0) {
 	print '</td></tr>';
 }
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortorder) {
 	$sortorder = "ASC";
 }
@@ -188,7 +187,7 @@ print '<table class="border centpercent">';
 
 // Total Margin
 print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="4">';
-print '<span id="totalMargin"></span>'; // set by jquery (see below)
+print '<span id="totalMargin" class="amount"></span> <span class="amount">'.$langs->getCurrencySymbol($conf->currency).'</span>'; // set by jquery (see below)
 print '</td></tr>';
 
 // Margin Rate
@@ -229,14 +228,14 @@ if (!empty($TSelectedCats)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=d.fk_product';
 }
 
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE f.fk_soc = s.rowid";
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
@@ -271,6 +270,30 @@ $sql .= $db->order($sortfield, $sortorder);
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
+$param = '&socid='.((int) $socid);
+if (GETPOST('startdatemonth', 'int')) {
+	$param .= '&startdateyear='.GETPOST('startdateyear', 'int');
+	$param .= '&startdatemonth='.GETPOST('startdatemonth', 'int');
+	$param .= '&startdateday='.GETPOST('startdateday', 'int');
+}
+if (GETPOST('enddatemonth', 'int')) {
+	$param .= '&enddateyear='.GETPOST('enddateyear', 'int');
+	$param .= '&enddatemonth='.GETPOST('enddatemonth', 'int');
+	$param .= '&enddateday='.GETPOST('enddateday', 'int');
+}
+$listofproducts = GETPOST('products', 'array:int');
+if (is_array($listofproducts)) {
+	foreach ($listofproducts as $val) {
+		$param .= '&products[]='.$val;
+	}
+}
+$listofcateg = GETPOST('categories', 'array:int');
+if (is_array($listofcateg)) {
+	foreach ($listofcateg as $val) {
+		$param .= '&categories[]='.$val;
+	}
+}
+
 dol_syslog('margin::customerMargins.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
@@ -293,19 +316,19 @@ if ($result) {
 
 	print '<tr class="liste_titre">';
 	if (!empty($client)) {
-		print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", "&amp;socid=".$socid, '', $sortfield, $sortorder);
-		print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", "&amp;socid=".$socid, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center"', $sortfield, $sortorder);
 	} else {
-		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;socid=".$socid, '', $sortfield, $sortorder);
+		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	}
-	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", $param, 'align="right"', $sortfield, $sortorder);
 	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
-		print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
 	}
 	if (!empty($conf->global->DISPLAY_MARK_RATES)) {
-		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
 	}
 	print "</tr>\n";
 

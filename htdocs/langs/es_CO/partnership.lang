@@ -2,6 +2,7 @@
 ModulePartnershipName=Gestión de alianzas
 PartnershipDescription=Módulo de gestión de asociaciones
 PartnershipDescriptionLong=Módulo de gestión de asociaciones
+Partnership=Sociedad (Partnership)
 NewPartnership=Nueva sociedad
 ListOfPartnerships=Lista de asociación
 PartnershipSetup=Configuración de la asociación

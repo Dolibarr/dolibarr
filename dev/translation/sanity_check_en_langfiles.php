@@ -6,7 +6,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -221,7 +221,7 @@ foreach ($dups as $string => $pages) {
 		// Loop on each line keword was found into file.
 		$listoffilesforthisentry=array();
 		foreach ($lines as $line => $translatedvalue) {
-			if (! empty($listoffilesforthisentry[$file])) {
+			if (!empty($listoffilesforthisentry[$file])) {
 				$duplicateinsamefile=1;
 			}
 			$listoffilesforthisentry[$file]=1;
@@ -300,7 +300,7 @@ if ($web) {
 
 // STEP 2 - Search key not used
 
-if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($argv[1]) && $argv[1]=='unused=true')) {
+if ((!empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($argv[1]) && $argv[1]=='unused=true')) {
 	print "***** Strings in en_US that are never used:\n";
 
 	$unused=array();

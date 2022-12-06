@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - orders
+OrderExists=En åben ordre var allerede knyttet til dette tilbud, så ingen anden ordre blev oprettet automatisk
 OrdersArea=Kundeordrer
 SuppliersOrdersArea=Indkøbsordreområde
 OrderCard=Ordreside
@@ -68,6 +69,8 @@ CreateOrder=Opret ordre
 RefuseOrder=Afvis ordre
 ApproveOrder=Godkendelse af ordre
 Approve2Order=Godkend ordre (andet niveau)
+UserApproval=Bruger til godkendelse
+UserApproval2=Bruger til godkendelse (andet niveau)
 ValidateOrder=Bekræft orden
 UnvalidateOrder=Unvalidate rækkefølge
 DeleteOrder=Slet orden
@@ -102,6 +105,8 @@ ConfirmCancelOrder=Er du sikker på, at du vil annullere denne ordre?
 ConfirmMakeOrder=Er du sikker på, at du vil bekræfte, at du har foretaget denne ordre på <b> %s </b>?
 GenerateBill=Generer faktura
 ClassifyShipped=Klassificer leveret
+PassedInShippedStatus=sæt den som leveret
+YouCantShipThis=Jeg kan ikke klassificere dette. Tjek venligst brugertilladelser
 DraftOrders=Udkast til ordrer
 DraftSuppliersOrders=Udkast til indkøbsordrer
 OnProcessOrders=Den proces ordrer

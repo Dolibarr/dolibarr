@@ -195,14 +195,14 @@ class vCard
 		// $type may be DOM | INTL | POSTAL | PARCEL | HOME | WORK or any combination of these: e.g. "WORK;PARCEL;POSTAL"
 		$key = "ADR";
 		if ($type != "") {
-			$key .= ";$type";
+			$key .= ";".$type;
 		}
 		$key .= ";CHARSET=".$this->encoding;
 		$this->properties[$key] = ";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
 
-		if ($this->properties["LABEL;$type;CHARSET=".$this->encoding] == "") {
+		//if ($this->properties["LABEL;".$type.";CHARSET=".$this->encoding] == '') {
 			//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
-		}
+		//}
 	}
 
 	/**

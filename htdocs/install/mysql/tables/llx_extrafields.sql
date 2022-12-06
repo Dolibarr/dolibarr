@@ -27,7 +27,7 @@ create table llx_extrafields
 	type            varchar(8),
 	size            varchar(8) DEFAULT NULL,
 	fieldcomputed   text,
-	fielddefault    varchar(255),
+	fielddefault    text,
 	fieldunique     integer DEFAULT 0,
 	fieldrequired   integer DEFAULT 0,
 	perms			varchar(255),								-- not used yet
@@ -40,6 +40,9 @@ create table llx_extrafields
     totalizable     boolean DEFAULT FALSE,                      -- is extrafield totalizable on list
 	langs			varchar(64),								-- example: fileofmymodule@mymodule
 	help            text,                                       -- to store help tooltip
+	css             varchar(128),                               -- to store css on create/update forms
+	cssview         varchar(128),                               -- to store css on view form
+	csslist         varchar(128),                               -- to store css on list
 	fk_user_author	integer,									-- user making creation
 	fk_user_modif	integer,	                                -- user making last change
 	datec			datetime,									-- date de creation

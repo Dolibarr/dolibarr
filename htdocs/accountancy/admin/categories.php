@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
- * Copyright (C) 2017		Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2016       Jamal Elbaz         <jamelbaz@gmail.pro>
+ * Copyright (C) 2017-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  * \brief	Page to assign mass categories to accounts
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
@@ -44,7 +45,7 @@ if ($cat_id == 0) {
 }
 
 // Security check
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -110,7 +111,7 @@ print '<table class="border centpercent">';
 print '<tr><td class="titlefield">'.$langs->trans("AccountingCategory").'</td>';
 print '<td>';
 $formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 1);
-print '<input class="button" type="submit" value="'.$langs->trans("Select").'">';
+print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
 print '</td></tr>';
 
 // Select the accounts
@@ -124,7 +125,8 @@ if (!empty($cat_id)) {
 
 	$arraykeyvalue = array();
 	foreach ($accountingcategory->lines_cptbk as $key => $val) {
-		$arraykeyvalue[length_accountg($val->numero_compte)] = length_accountg($val->numero_compte).' ('.$val->label_compte.($val->doc_ref ? ' '.$val->doc_ref : '').')';
+		$doc_ref = !empty($val->doc_ref) ? $val->doc_ref : '';
+		$arraykeyvalue[length_accountg($val->numero_compte)] = length_accountg($val->numero_compte) . ' - ' . $val->label_compte . ($doc_ref ? ' '.$doc_ref : '');
 	}
 
 	if (is_array($accountingcategory->lines_cptbk) && count($accountingcategory->lines_cptbk) > 0) {
@@ -137,7 +139,7 @@ if (!empty($cat_id)) {
 		print '</select><br>';
 		print ajax_combobox('cpt_bk');
 		*/
-		print '<input class="button" type="submit" id="" class="action-delete" value="'.$langs->trans("Add").'"> ';
+		print '<input type="submit" class="button button-add" id="" class="action-delete" value="'.$langs->trans("Add").'"> ';
 	}
 	print '</td></tr>';
 }

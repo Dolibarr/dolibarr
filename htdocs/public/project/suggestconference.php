@@ -19,16 +19,6 @@
  *	\file       htdocs/public/project/suggestconference.php
  *	\ingroup    member
  *	\brief      Example of form to suggest a conference
- *
- *  Note that you can add following constant to change behaviour of page
- *  MEMBER_NEWFORM_AMOUNT               Default amount for auto-subscribe form
- *  MEMBER_NEWFORM_EDITAMOUNT           0 or 1 = Amount can be edited
- *  MEMBER_NEWFORM_PAYONLINE            Suggest payment with paypal, paybox or stripe
- *  MEMBER_NEWFORM_DOLIBARRTURNOVER     Show field turnover (specific for dolibarr foundation)
- *  MEMBER_URL_REDIRECT_SUBSCRIPTION    Url to redirect once subscribe submitted
- *  MEMBER_NEWFORM_FORCETYPE            Force type of member
- *  MEMBER_NEWFORM_FORCEMORPHY          Force nature of member (mor/phy)
- *  MEMBER_NEWFORM_FORCECOUNTRYCODE     Force country
  */
 
 if (!defined('NOLOGIN')) {
@@ -55,6 +45,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -65,8 +56,8 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-global $dolibarr_main_instance_unique_id;
 global $dolibarr_main_url_root;
 
 // Init vars
@@ -113,11 +104,11 @@ $extrafields = new ExtraFields($db);
 $user->loadDefaultValues();
 
 $cactioncomm = new CActionComm($db);
-$arrayofeventtype = $cactioncomm->liste_array('', 'id', '', 0, "module='conference@eventorganization'");
+$arrayofconfboothtype = $cactioncomm->liste_array('', 'id', '', 0, "module='conference@eventorganization'");
 
 // Security check
 if (empty($conf->eventorganization->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Event organization not enabled');
 }
 
 
@@ -369,7 +360,41 @@ if (empty($reshook) && $action == 'add') {
 			$conforbooth->tms = dol_now();
 			$conforbooth->firstname = $contact->firstname;
 			$conforbooth->lastname = $contact->lastname;
-			$resultconforbooth = $conforbooth->create($user);
+			$conforbooth->ip = getUserRemoteIP();
+
+			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+			$now = dol_now();
+			$minmonthpost = dol_time_plus_duree($now, -1, "m");
+
+			// Calculate nb of post for IP
+			$nb_post_ip = 0;
+			if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+				$sql = "SELECT COUNT(ref) as nb_confs";
+				$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
+				$sql .= " WHERE ip = '".$db->escape($conforbooth->ip)."'";
+				$sql .= " AND datec > '".$db->idate($minmonthpost)."'";
+				$resql = $db->query($sql);
+				if ($resql) {
+					$num = $db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$i++;
+						$obj = $db->fetch_object($resql);
+						$nb_post_ip = $obj->nb_confs;
+					}
+				}
+			}
+
+			$resultconforbooth = 0;
+
+			if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+				$error++;
+				$errmsg .= $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
+				array_push($conforbooth->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
+				setEventMessage($errmsg, 'errors');
+			} else {
+				$resultconforbooth = $conforbooth->create($user);
+			}
 			if ($resultconforbooth<=0) {
 				$error++;
 				$errmsg .= $conforbooth->error;
@@ -450,6 +475,22 @@ $formcompany = new FormCompany($db);
 
 llxHeaderVierge($langs->trans("NewSuggestionOfConference"));
 
+print '<br>';
+
+// Event summary
+print '<div class="center">';
+print '<span class="large">'.$project->title.'</span><br>';
+print img_picto('', 'calendar', 'class="pictofixedwidth"').$langs->trans("Date").': ';
+print dol_print_date($project->date_start, 'daytext');
+if ($project->date_end && $project->date_start != $project->date_end) {
+	print ' - '.dol_print_date($project->date_end, 'daytext');
+}
+print '<br><br>'."\n";
+//print $langs->trans("EvntOrgRegistrationWelcomeMessage")."\n";
+//print $project->note_public."\n";
+//print img_picto('', 'map-marker-alt').$langs->trans("Location").': xxxx';
+print '</div>';
+
 
 print load_fiche_titre($langs->trans("NewSuggestionOfConference"), '', '', 0, 0, 'center');
 
@@ -458,14 +499,7 @@ print '<div align="center">';
 print '<div id="divsubscribe">';
 print '<div class="center subscriptionformhelptext justify">';
 
-// Welcome message
-$text  = '<tr><td class="textpublicpayment"><strong>'.$langs->trans("EvntOrgRegistrationConfWelcomeMessage").'</strong></td></tr></br>';
-$text .= '<tr><td class="textpublicpayment">'.$langs->trans("EvntOrgRegistrationConfHelpMessage").' '.$project->label.'.<br><br></td></tr>'."\n";
-$text .= '<tr><td class="textpublicpayment">'.$project->note_public.'</td></tr>'."\n";;
-print $text;
-print '</div>';
-
-dol_htmloutput_errors($errmsg);
+dol_htmloutput_errors($errmsg, $errors);
 
 // Print form
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
@@ -496,17 +530,17 @@ jQuery(document).ready(function () {
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
 
 // Last Name
-print '<tr><td><label for="lastname">'.$langs->trans("Lastname").'<FONT COLOR="red">*</FONT></label></td>';
+print '<tr><td><label for="lastname">'.$langs->trans("Lastname").'<span style="color: red">*</span></label></td>';
 print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ?GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
 print '</tr>';
 // First Name
-print '<tr><td><label for="firstname">'.$langs->trans("Firstname").'<FONT COLOR="red">*</FONT></label></td>';
+print '<tr><td><label for="firstname">'.$langs->trans("Firstname").'<span style="color: red">*</span></label></td>';
 print '<td colspan="3"><input name="firstname" id="firstname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha') ?GETPOST("firstname", 'alpha') : $object->firstname).'" autofocus="autofocus"></td>';
 print '</tr>';
 // Email
-print '<tr><td>'.$langs->trans("Email").'<FONT COLOR="red">*</FONT></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+print '<tr><td>'.$langs->trans("Email").'<span style="color: red">*</span></td><td><input type="text" name="email" maxlength="255" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
 // Company
-print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'<FONT COLOR="red">*</FONT>';
+print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'<span style="color: red">*</span>';
 print ' </td><td><input type="text" name="societe" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
 // Address
 print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
@@ -548,13 +582,13 @@ if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
 	print '</td></tr>';
 }
 // Type of event
-print '<tr><td>'.$langs->trans("EventType").'<FONT COLOR="red">*</FONT></td>'."\n";
-print '<td>'.FORM::selectarray('eventtype', $arrayofeventtype, $eventtype).'</td>';
+print '<tr><td>'.$langs->trans("Format").'<span style="color: red">*</span></td>'."\n";
+print '<td>'.Form::selectarray('eventtype', $arrayofconfboothtype, $eventtype, 1).'</td>';
 // Label
-print '<tr><td>'.$langs->trans("LabelOfconference").'<FONT COLOR="red">*</FONT></td>'."\n";
+print '<tr><td>'.$langs->trans("LabelOfconference").'<span style="color: red">*</span></td>'."\n";
 print '</td><td><input type="text" name="label" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>'."\n";
 // Note
-print '<tr><td>'.$langs->trans("Description").'<FONT COLOR="red">*</FONT></td>'."\n";
+print '<tr><td>'.$langs->trans("Description").'<span style="color: red">*</span></td>'."\n";
 print '<td><textarea name="note" id="note" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('note', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
 
 print "</table>\n";

@@ -199,6 +199,14 @@ if (!empty($main_url) && substr($main_url, dol_strlen($main_url) - 1) == "/") {
 	$main_url = substr($main_url, 0, dol_strlen($main_url) - 1);
 }
 
+if (!dol_is_dir($main_dir.'/core/db/')) {
+	print '<div class="error">'.$langs->trans("ErrorBadValueForParameter", $main_dir, $langs->transnoentitiesnoconv("WebPagesDirectory")).'</div>';
+	print '<br>';
+	//print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+	print $langs->trans("ErrorGoBackAndCorrectParameters");
+	$error++;
+}
+
 // Test database connection
 if (!$error) {
 	$result = @include_once $main_dir."/core/db/".$db_type.'.class.php';
@@ -261,6 +269,7 @@ if (!$error) {
 				$error++;
 			}
 		}
+
 		// If we need simple access
 		if (!$error && (empty($db_create_database) && empty($db_create_user))) {
 			$db = getDoliDBInstance($db_type, $db_host, $db_user, $db_pass, $db_name, $db_port);
@@ -816,7 +825,7 @@ function write_conf_file($conffile)
 	global $dolibarr_main_distrib;
 	global $db_host, $db_port, $db_name, $db_user, $db_pass, $db_type, $db_character_set, $db_collation;
 	global $conffile, $conffiletoshow, $conffiletoshowshort;
-	global $force_dolibarr_lib_ADODB_PATH, $force_dolibarr_lib_NUSOAP_PATH;
+	global $force_dolibarr_lib_NUSOAP_PATH;
 	global $force_dolibarr_lib_TCPDF_PATH, $force_dolibarr_lib_FPDI_PATH;
 	global $force_dolibarr_lib_GEOIP_PATH;
 	global $force_dolibarr_lib_ODTPHP_PATH, $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP;
@@ -910,6 +919,8 @@ function write_conf_file($conffile)
 
 		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
 		fputs($fp, "\n");
+		fputs($fp, '$dolibarr_mailing_limit_sendbycli=\'0\';');
+		fputs($fp, "\n");
 
 		// Write params to overwrites default lib path
 		fputs($fp, "\n");
@@ -932,11 +943,6 @@ function write_conf_file($conffile)
 			fputs($fp, '//'); $force_dolibarr_lib_TCPDI_PATH = '';
 		}
 		fputs($fp, '$dolibarr_lib_TCPDI_PATH=\''.$force_dolibarr_lib_TCPDI_PATH.'\';');
-		fputs($fp, "\n");
-		if (empty($force_dolibarr_lib_ADODB_PATH)) {
-			fputs($fp, '//'); $force_dolibarr_lib_ADODB_PATH = '';
-		}
-		fputs($fp, '$dolibarr_lib_ADODB_PATH=\''.$force_dolibarr_lib_ADODB_PATH.'\';');
 		fputs($fp, "\n");
 		if (empty($force_dolibarr_lib_GEOIP_PATH)) {
 			fputs($fp, '//'); $force_dolibarr_lib_GEOIP_PATH = '';

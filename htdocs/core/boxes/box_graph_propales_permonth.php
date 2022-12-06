@@ -56,7 +56,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->propale->lire);
+		$this->hidden = empty($user->rights->propal->lire);
 	}
 
 	/**
@@ -101,11 +101,11 @@ class box_graph_propales_permonth extends ModeleBoxes
 		if ($user->socid) {
 			$socid = $user->socid;
 		}
-		if (!$user->rights->societe->client->voir || $socid) {
+		if (empty($user->rights->societe->client->voir) || $socid) {
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 
-		if ($user->rights->propale->lire) {
+		if ($user->rights->propal->lire) {
 			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
 			$param_shownb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
 			$param_showtot = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
@@ -231,7 +231,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 			if (!$mesg) {
 				$stringtoshow = '';
-				$stringtoshow .= '<script type="text/javascript" language="javascript">
+				$stringtoshow .= '<script type="text/javascript">
 					jQuery(document).ready(function() {
 						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 							jQuery("#idfilter'.$this->boxcode.'").toggle();

@@ -23,7 +23,7 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
-print "<!-- BEGIN PHP TEMPLATE -->\n";
+print "<!-- BEGIN PHP TEMPLATE compta/facture/tpl/linkedobjectblock.tpl.php -->\n";
 
 global $user;
 global $noMoreLinkedObjectBlockAfter;
@@ -45,7 +45,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		$trclass .= ' liste_sub_total';
 	}
 	print '<tr class="'.$trclass.'" data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'" >';
-	print '<td class="linkedcol-element">';
+	print '<td class="linkedcol-element tdoverflowmax100">';
 	switch ($objectlink->type) {
 		case Facture::TYPE_REPLACEMENT:
 			echo $langs->trans("InvoiceReplacement");
@@ -68,17 +68,13 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	print '</td>';
 	print '<td class="linkedcol-name nowraponall">'.$objectlink->getNomUrl(1).'</td>';
-	print '<td class="linkedcol-ref left">'.$objectlink->ref_client.'</td>';
+	print '<td class="linkedcol-ref tdoverflowmax150" title="'.dol_escape_htmltag($objectlink->ref_client).'">'.dol_escape_htmltag($objectlink->ref_client).'</td>';
 	print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
-	print '<td class="linkedcol-amount right">';
-	if ($user->rights->facture->lire) {
-		$sign = 1;
-		if ($object->type == Facture::TYPE_CREDIT_NOTE) {
-			$sign = -1;
-		}
+	print '<td class="linkedcol-amount right nowraponall">';
+	if (!empty($objectlink) && $objectlink->element == 'facture' && $user->hasRight('facture', 'lire')) {
 		if ($objectlink->statut != 3) {
 			// If not abandonned
-			$total = $total + $sign * $objectlink->total_ht;
+			$total += $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} else {
 			echo '<strike>'.price($objectlink->total_ht).'</strike>';
@@ -93,7 +89,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		print $objectlink->getLibStatut(3);
 	}
 	print '</td>';
-	print '<td class="linkedcol-action right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
+	print '<td class="linkedcol-action right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
 	print "</tr>\n";
 }
 if (count($linkedObjectBlock) > 1) {

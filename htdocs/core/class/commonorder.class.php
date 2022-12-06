@@ -31,6 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 abstract class CommonOrder extends CommonObject
 {
 	use CommonIncoterm;
+
+	/**
+	 * @var string code
+	 */
+	public $code = "";
 }
 
 /**
@@ -73,10 +78,22 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $product_label;
 
 	/**
+	 * Boolean that indicates whether the product is available for sale '1' or not '0'
+	 * @var int
+	 */
+	public $product_tosell=0;
+
+	/**
+	 * Boolean that indicates whether the product is available for purchase '1' or not '0'
+	 * @var int
+	 */
+	public $product_tobuy=0;
+
+	/**
 	 * Product description
 	 * @var string
 	 */
-	public $product_desc;
+	 public $product_desc;
 
 	/**
 	 * Product use lot

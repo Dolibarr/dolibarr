@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011-2019	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2015		Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2021           Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,12 @@
  *		\brief     	List of salaries payments
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
@@ -129,11 +130,11 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
+		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
+			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -178,7 +179,7 @@ if (empty($reshook)) {
 		$search_date_start = '';
 		$search_date_end = '';
 		$search_dateep_start = '';
-				$search_dateep_end = '';
+		$search_dateep_end = '';
 		$search_amount = "";
 		$search_account = '';
 		$search_fk_bank = '';
@@ -391,7 +392,9 @@ if (!empty($socid)) {
 }
 $newcardbutton = dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->salaries->write);
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+$moreforfilter = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 //$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -441,12 +444,12 @@ print '<input class="flat" type="text" size="6" name="search_user" value="'.$db-
 print '</td>';
 // Type
 print '<td class="liste_titre left">';
-$form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16);
+print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, '', 1);
 print '</td>';
 // Chq number
 print '<td class="liste_titre right"><input name="search_chq_number" class="flat" type="text" size="8" value="'.$db->escape($search_chq_number).'"></td>';
 
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	// Bank transaction
 	print '<td class="liste_titre center">';
 	print '<input class="flat" type="text" size="3" name="search_fk_bank" value="'.$db->escape($search_fk_bank).'">';
@@ -487,7 +490,7 @@ print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep,s.rowid", 
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pst.code", "", $param, 'class="left"', $sortfield, $sortorder);
 print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "s.num_payment", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "s.fk_bank", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 }
@@ -505,7 +508,7 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine = 0;
-if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
+if (isset($extrafields->attributes[$object->table_element]['computed']) && is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0) {
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val) {
 		if (preg_match('/\$object/', $val)) {
 			$needToFetchEachLine++;
@@ -553,6 +556,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		$totalarray['nbfield']++;
 	}
 
+	// Ref salary
 	print "<td>".$salstatic->getNomUrl(1)."</td>\n";
 	if (!$i) {
 		$totalarray['nbfield']++;
@@ -587,7 +591,9 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	// Type
-	print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).'</td>';
+	print '<td>';
+	print $langs->trans("PaymentTypeShort".$obj->payment_code);
+	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
@@ -599,7 +605,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	// Account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		// Bank transaction
 		print '<td>';
 		$accountlinestatic->id = $obj->fk_bank;
@@ -620,7 +626,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$accountstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
 			$accountstatic->clos = $obj->clos;
 
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				$accountstatic->account_number = $obj->account_number;
 
 				$accountingjournal = new AccountingJournal($db);

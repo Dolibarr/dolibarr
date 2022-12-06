@@ -133,8 +133,16 @@ class Orders extends DolibarrApi
 		}
 
 		// Add external contacts ids
-		$this->commande->contacts_ids = $this->commande->liste_contact(-1, 'external', $contact_list);
+		$tmparray = $this->commande->liste_contact(-1, 'external', $contact_list);
+		if (is_array($tmparray)) {
+			$this->commande->contacts_ids = $tmparray;
+		}
 		$this->commande->fetchObjectLinked();
+
+		// Add online_payment_url, cf #20477
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		$this->commande->online_payment_url = getOnlinePaymentUrl(0, 'order', $this->commande->ref);
+
 		return $this->_cleanObjectDatas($this->commande);
 	}
 
@@ -199,8 +207,9 @@ class Orders extends DolibarrApi
 		}
 		// Add sql filters
 		if ($sqlfilters) {
-			if (!DolibarrApi::_checkFilters($sqlfilters)) {
-				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			$errormessage = '';
+			if (!DolibarrApi::_checkFilters($sqlfilters, $errormessage)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
 			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
@@ -228,7 +237,14 @@ class Orders extends DolibarrApi
 				$commande_static = new Commande($this->db);
 				if ($commande_static->fetch($obj->rowid)) {
 					// Add external contacts ids
-					$commande_static->contacts_ids = $commande_static->liste_contact(-1, 'external', 1);
+					$tmparray = $commande_static->liste_contact(-1, 'external', 1);
+					if (is_array($tmparray)) {
+						$commande_static->contacts_ids = $tmparray;
+					}
+					// Add online_payment_url, cf #20477
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+					$commande_static->online_payment_url = getOnlinePaymentUrl(0, 'order', $commande_static->ref);
+
 					$obj_ret[] = $this->_cleanObjectDatas($commande_static);
 				}
 				$i++;
@@ -334,8 +350,8 @@ class Orders extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->commande->addline(
 			$request_data->desc,
@@ -402,8 +418,8 @@ class Orders extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->commande->updateline(
 			$lineid,
@@ -429,7 +445,8 @@ class Orders extends DolibarrApi
 			$request_data->fk_unit,
 			$request_data->multicurrency_subprice,
 			0,
-			$request_data->ref_ext
+			$request_data->ref_ext,
+			$request_data->rang
 		);
 
 		if ($updateRes > 0) {
@@ -573,7 +590,7 @@ class Orders extends DolibarrApi
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 */
 	public function deleteContact($id, $contactid, $type)
 	{
@@ -703,7 +720,7 @@ class Orders extends DolibarrApi
 	 * @throws RestException 304
 	 * @throws RestException 401
 	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws RestException 500 System error
 	 *
 	 * @return  array
 	 */
@@ -733,6 +750,10 @@ class Orders extends DolibarrApi
 		$result = $this->commande->fetch($id);
 
 		$this->commande->fetchObjectLinked();
+
+		//fix #20477 : add online_payment_url
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		$this->commande->online_payment_url = getOnlinePaymentUrl(0, 'order', $this->commande->ref);
 
 		return $this->_cleanObjectDatas($this->commande);
 	}
@@ -962,6 +983,102 @@ class Orders extends DolibarrApi
 		return $this->_cleanObjectDatas($this->commande);
 	}
 
+	/**
+	 * Get the shipments of an order
+	 *
+	 * @param int   $id       Id of the order
+	 *
+	 * @url     GET {id}/shipment
+	 *
+	 * @return array
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function getOrderShipments($id)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+		if (!DolibarrApiAccess::$user->rights->expedition->lire) {
+			throw new RestException(401);
+		}
+		$obj_ret = array();
+		$sql = "SELECT e.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."expeditiondet as edet";
+		$sql .= " ON e.rowid = edet.fk_expedition";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cdet";
+		$sql .= " ON edet.fk_origin_line = cdet.rowid";
+		$sql .= " JOIN ".MAIN_DB_PREFIX."commande as c";
+		$sql .= " ON cdet.fk_commande = c.rowid";
+		$sql .= " WHERE c.rowid = ".((int) $id);
+		$sql .= " GROUP BY e.rowid";
+		$sql .= $this->db->order("e.rowid", "ASC");
+
+		dol_syslog("API Rest request");
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			if ($num <= 0) {
+				throw new RestException(404, 'Shipments not found ');
+			}
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($result);
+				$shipment_static = new Expedition($this->db);
+				if ($shipment_static->fetch($obj->rowid)) {
+					$obj_ret[] = $this->_cleanObjectDatas($shipment_static);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(500, 'Error when retrieve shipment list : '.$this->db->lasterror());
+		}
+		return $obj_ret;
+	}
+
+	/**
+	 * Create the shipment of an order
+	 *
+	 * @param int   $id       Id of the order
+	 * @param int	$warehouse_id Id of a warehouse
+	 *
+	 * @url     POST {id}/shipment/{warehouse_id}
+	 *
+	 * @return int
+	 *
+	 * @throws RestException 401
+	 * @throws RestException 404
+	 * @throws RestException 500 System error
+	 */
+	public function createOrderShipment($id, $warehouse_id)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+		if (!DolibarrApiAccess::$user->rights->expedition->creer) {
+			throw new RestException(401);
+		}
+		if ($warehouse_id <= 0) {
+			throw new RestException(404, 'Warehouse not found');
+		}
+		$result = $this->commande->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+		$shipment = new Expedition($this->db);
+		$shipment->socid = $this->commande->socid;
+		$result = $shipment->create(DolibarrApiAccess::$user);
+		if ($result <= 0) {
+			throw new RestException(500, 'Error on creating expedition :'.$this->db->lasterror());
+		}
+		foreach ($this->commande->lines as $line) {
+			$result = $shipment->create_line($warehouse_id, $line->id, $line->qty);
+			if ($result <= 0) {
+				throw new RestException(500, 'Error on creating expedition lines:'.$this->db->lasterror());
+			}
+		}
+		return $shipment->id;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**

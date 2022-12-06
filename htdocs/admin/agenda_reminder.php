@@ -21,6 +21,7 @@
  *      \brief      Page to setup agenda reminder options
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -36,6 +37,8 @@ $langs->loadLangs(array("admin", "other", "agenda"));
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $param = GETPOST('param', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $scandir = GETPOST('scandir', 'alpha');
@@ -174,14 +177,14 @@ if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
 		$langs->load("errors");
 		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
 	}
-	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	print '</td></tr>'."\n";
 } else {
 	if (!isHTTPS()) {
 		$langs->load("errors");
 		print img_warning($langs->trans("WarningAvailableOnlyForHTTPSServers"), '', 'valignmiddle size15x').' ';
 	}
-	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
 	print '</td></tr>'."\n";
 
 	print '<tr class="oddeven">'."\n";
@@ -190,9 +193,9 @@ if (empty($conf->global->AGENDA_REMINDER_BROWSER)) {
 	print '<td class="right">'."\n";
 
 	if (empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_BROWSER_SOUND&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	} else {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_BROWSER_SOUND&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
 	}
 
 	print '</td></tr>'."\n";
@@ -204,7 +207,7 @@ $job->fetch(0, 'ActionComm', 'sendEmailsReminder');
 // AGENDA REMINDER EMAIL
 print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans('AGENDA_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"));
-if (!empty($conf->cron->enabled)) {
+if (isModEnabled('cron')) {
 	if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) {
 		if ($job->id > 0) {
 			if ($job->status == $job::STATUS_ENABLED) {
@@ -217,11 +220,11 @@ print '</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowraponall">'."\n";
 
-if (empty($conf->cron->enabled)) {
+if (!isModEnabled('cron')) {
 	print '<span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module2300Name")).'</span>';
 } else {
 	if (empty($conf->global->AGENDA_REMINDER_EMAIL)) {
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_EMAIL&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
 	} else {
 		// Get the max frequency of reminder
 		if ($job->id > 0) {
@@ -229,7 +232,7 @@ if (empty($conf->cron->enabled)) {
 				$langs->load("cron");
 				print '<span class="opacitymedium warning">'.$langs->trans("JobXMustBeEnabled", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
 			} else {
-				print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL&amp;token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_EMAIL&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
 			}
 		}
 	}
