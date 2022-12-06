@@ -234,7 +234,7 @@ class FichinterRec extends Fichinter
 						0,
 						$fichintsrc->lines[$i]->product_type,
 						$fichintsrc->lines[$i]->special_code,
-						$fichintsrc->lines[$i]->label,
+						!empty($fichintsrc->lines[$i]->label) ? $fichintsrc->lines[$i]->label : "",
 						$fichintsrc->lines[$i]->fk_unit
 					);
 
@@ -304,10 +304,10 @@ class FichinterRec extends Fichinter
 				$this->note_private = $obj->note_private;
 				$this->note_public			= $obj->note_public;
 				$this->user_author			= $obj->fk_user_author;
-				$this->model_pdf			= $obj->model_pdf;
-				$this->modelpdf				= $obj->model_pdf; // deprecated
-				$this->rang = $obj->rang;
-				$this->special_code = $obj->special_code;
+				$this->model_pdf			= !empty($obj->model_pdf) ? $obj->model_pdf : "";
+				$this->modelpdf				= !empty($obj->model_pdf) ? $obj->model_pdf : ""; // deprecated
+				$this->rang = !empty($obj->rang) ? $obj->rang : "";
+				$this->special_code = !empty($obj->special_code) ? $obj->special_code : "";
 				$this->frequency			= $obj->frequency;
 				$this->unit_frequency = $obj->unit_frequency;
 				$this->date_when			= $this->db->jdate($obj->date_when);
@@ -384,9 +384,9 @@ class FichinterRec extends Fichinter
 				$line->subprice = $objp->subprice;
 				$line->tva_tx = $objp->tva_tx;
 				$line->remise_percent = $objp->remise_percent;
-				$line->fk_remise_except = $objp->fk_remise_except;
+				$line->fk_remise_except = !empty($objp->fk_remise_except) ? $objp->fk_remise_except : "";
 				$line->fk_product = $objp->fk_product;
-				$line->info_bits = $objp->info_bits;
+				$line->info_bits = !empty($objp->info_bits) ? $objp->info_bits : "";
 				$line->total_ht = $objp->total_ht;
 				$line->total_tva = $objp->total_tva;
 				$line->total_ttc = $objp->total_ttc;
