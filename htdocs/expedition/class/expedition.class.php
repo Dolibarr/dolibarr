@@ -302,7 +302,6 @@ class Expedition extends CommonObject
 		}
 
 		$this->user = $user;
-		var_dump(is_numeric($this->sizeW), $this->sizeW, $this->trueWidth);exit;
 
 
 		$this->db->begin();
