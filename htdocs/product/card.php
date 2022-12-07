@@ -2406,7 +2406,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 
-			if (empty($conf->global->PRODUCT_DISABLE_ACCOUNTING)) {
+			if (empty($conf->global->PRODUCT_DISABLE_ACCOUNTING) && isModEnabled('accounting')) {
 				// Accountancy sell code
 				print '<tr><td class="nowrap">';
 				print $langs->trans("ProductAccountancySellCode");
