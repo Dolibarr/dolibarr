@@ -31,6 +31,40 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 abstract class CommonOrder extends CommonObject
 {
 	use CommonIncoterm;
+
+		/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs, $conf;
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<div class="info-box-order">';
+		$return .= img_picto('', 'order');
+
+		$return .= '</div>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<br><span class="info-box-ref opacitymedium">'.$this->thirdparty->getNomUrl(1).'</span>';
+		}
+		if (property_exists($this, 'total_ht')) {
+			$return .= '<br><span class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency).' '.$langs->trans('HT').'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
+	}
 }
 
 /**
