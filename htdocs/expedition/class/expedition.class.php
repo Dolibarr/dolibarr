@@ -54,6 +54,11 @@ class Expedition extends CommonObject
 	use CommonIncoterm;
 
 	/**
+	 * @var string code
+	 */
+	public $code = "";
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = "shipping";
@@ -297,6 +302,7 @@ class Expedition extends CommonObject
 		}
 
 		$this->user = $user;
+		var_dump(is_numeric($this->sizeW), $this->sizeW, $this->trueWidth);exit;
 
 
 		$this->db->begin();
