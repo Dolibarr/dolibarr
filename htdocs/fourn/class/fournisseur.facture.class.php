@@ -592,7 +592,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(double) $this->multicurrency_tx;
-		$sql .= ", ".($this->fk_facture_source ? "'".$this->db->escape($this->fk_facture_source)."'" : "null");
+		$sql .= ", ".($this->fk_facture_source ? ((int) $this->db->escape($this->fk_facture_source)) : "null");
 		$sql .= ", ".(isset($this->fk_fac_rec_source) ? $this->fk_fac_rec_source : "NULL");
 		$sql .= ")";
 
@@ -1255,7 +1255,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " fk_statut=".(isset($this->status) ? $this->status : (isset($this->statut) ? $this->statut : "null")).",";
 		$sql .= " fk_user_author=".(isset($this->author) ? $this->author : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? $this->fk_user_valid : "null").",";
-		$sql .= " fk_facture_source=".($this->fk_facture_source ? "'".$this->db->escape($this->fk_facture_source)."'" : "null").",";
+		$sql .= " fk_facture_source=".($this->fk_facture_source ? ((int) $this->db->escape($this->fk_facture_source)) : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
 		$sql .= " date_lim_reglement=".(dol_strlen($this->date_echeance) != 0 ? "'".$this->db->idate($this->date_echeance)."'" : 'null').",";
