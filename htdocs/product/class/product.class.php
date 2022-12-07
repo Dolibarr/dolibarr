@@ -5483,10 +5483,9 @@ class Product extends CommonObject
 			// Note that $action and $object may have been modified by some hooks
 			$reshook = $hookmanager->executeHooks('loadRealStockAtTime', $parameters, $this, $action);
 			if ($reshook > 0) {
-				if (!empty($this->stock_warehouse[$hookmanager->resArray['fk_warehouse']])){
+				if (!empty($this->stock_warehouse[$hookmanager->resArray['fk_warehouse']])) {
 					$this->stock_warehouse[$hookmanager->resArray['fk_warehouse']]->real = $hookmanager->resArray['real']->real;
 				}
-
 			}
 			return 1;
 		} else {
