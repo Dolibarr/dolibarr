@@ -442,6 +442,9 @@ if ($type == 'f' && (empty($search_type) || ($search_type == '4'))) {
 	$title = $langs->trans("Suppliers");
 }
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
 // Select every potentiels, and note each potentiels which fit in search parameters
 $tab_level = array();
 $sql = "SELECT code, label, sortorder";
@@ -598,11 +601,16 @@ if (strlen($search_cti)) {
 if ($search_id > 0) {
 	$sql .= natural_search("s.rowid", $search_id, 1);
 }
-if ($search_nom) {
-	$sql .= natural_search("s.nom", $search_nom);
-}
-if ($search_alias) {
-	$sql .= natural_search("s.name_alias", $search_alias);
+if(empty($arrayfields['s.name_alias']['checked']) && $search_nom){
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_nom);
+} else {
+	if ($search_nom) {
+		$sql .= natural_search("s.nom", $search_nom);
+	}
+
+	if ($search_alias) {
+		$sql .= natural_search("s.name_alias", $search_alias);
+	}
 }
 if ($search_nom_only) {
 	$sql .= natural_search("s.nom", $search_nom_only);

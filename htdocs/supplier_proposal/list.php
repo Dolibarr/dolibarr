@@ -288,6 +288,9 @@ $formpropal = new FormPropal($db);
 $companystatic = new Societe($db);
 $formcompany = new FormCompany($db);
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
 $title = $langs->trans('ListOfSupplierProposals');
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
 
@@ -362,11 +365,15 @@ if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 if ($search_ref) {
 	$sql .= natural_search('sp.ref', $search_ref);
 }
-if ($search_societe) {
-	$sql .= natural_search('s.nom', $search_societe);
-}
-if ($search_societe_alias) {
-	$sql .= natural_search('s.name_alias', $search_societe_alias);
+if(empty($arrayfields['s.name_alias']['checked']) && $search_societe){
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+} else {
+	if ($search_societe) {
+		$sql .= natural_search('s.nom', $search_societe);
+	}
+	if ($search_societe_alias) {
+		$sql .= natural_search('s.name_alias', $search_societe_alias);
+	}
 }
 if ($search_login) {
 	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_login);
