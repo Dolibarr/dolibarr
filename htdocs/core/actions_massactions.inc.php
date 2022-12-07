@@ -1049,8 +1049,9 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 			}
 
 			if ($objectclass == 'Holiday' && ! in_array($objecttmp->statut, array(Holiday::STATUS_DRAFT, Holiday::STATUS_CANCELED, Holiday::STATUS_REFUSED))) {
+				$langs->load("errors");
 				$nbignored++;
-				$resaction .= '<div class="error">'.$langs->trans('ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted', $objecttmp->ref).'</div><br>';
+				$TMsg[] = '<div class="error">'.$langs->trans('ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted', $objecttmp->ref).'</div><br>';
 				continue;
 			}
 
