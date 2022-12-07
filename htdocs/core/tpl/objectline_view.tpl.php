@@ -426,7 +426,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 				print 'Error SQL: ' . $this->db->lasterror();
 			} elseif ($obj = $this->db->fetch_object($resql_asset)) {
 				if (!empty($obj->found)) {
-					print '<a class="reposition" href="' . DOL_URL_ROOT . '/asset/card.php?action=create&supplier_invoice_id=' . $object->id . '&token=' . newToken() . '">';
+					print '<a class="reposition" href="' . DOL_URL_ROOT . '/asset/card.php?action=create&token='.newToken().'&supplier_invoice_id='.$object->id.'">';
 					print img_edit_add() . '</a>';
 				}
 			}
@@ -438,7 +438,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
 	} else { ?>
-		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id.'#line_'.$line->id; ?>">
+		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id; ?>">
 		<?php print img_edit().'</a>';
 	}
 	print '</td>';
