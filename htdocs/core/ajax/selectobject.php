@@ -45,6 +45,7 @@ $objectdesc = GETPOST('objectdesc', 'alpha');
 $htmlname = GETPOST('htmlname', 'aZ09');
 $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $id = GETPOST('id', 'int');
+$filter = GETPOST('filter', 'alpha');
 
 
 /*
@@ -75,6 +76,11 @@ if (!empty($classpath)) {
 		$objecttmp = new $classname($db);
 	}
 }
+
+if (!empty($filter)) {
+    $objecttmp->filter = $filter;
+}
+
 if (!is_object($objecttmp)) {
 	dol_syslog('Error bad param objectdesc', LOG_WARNING);
 	print 'Error bad param objectdesc';
