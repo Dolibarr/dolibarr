@@ -803,7 +803,7 @@ if ($action == 'create') {
 		if (!empty($search_frequency) && $search_frequency == '1') {
 			$sql .= ' AND f.frequency > 0';
 		}
-		if (!empty($search_frequency) && $search_frequency == '0') {
+		if (isset($search_frequency) && (string) $search_frequency == '0') {
 			$sql .= ' AND (f.frequency IS NULL or f.frequency = 0)';
 		}
 
