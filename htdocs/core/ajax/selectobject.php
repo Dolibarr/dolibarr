@@ -78,7 +78,7 @@ if (!empty($classpath)) {
 }
 
 if (!empty($filter)) {
-    $objecttmp->filter = $filter;
+	$objecttmp->filter = $filter;
 }
 
 if (!is_object($objecttmp)) {
