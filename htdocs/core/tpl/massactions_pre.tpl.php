@@ -40,6 +40,18 @@ if ($massaction == 'predelete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeletion"), $langs->trans("ConfirmMassDeletionQuestion", count($toselect)), "delete", null, '', 0, 200, 500, 1);
 }
 
+if ($massaction == 'preclonetasks') {
+	$selected = '';
+	foreach (GETPOST('toselect') as $tmpselected) {
+		$selected .= '&selected[]=' . $tmpselected;
+	}
+
+	$formquestion = array(
+		array('type' => 'other', 'name' => 'projectid', 'label' => $langs->trans('Project') .': ', 'value' => $form->selectProjects('', 'projectid', '', '', '', '', '', '', '', 1, 1)),
+	);
+	print $form->formconfirm($_SERVER['PHP_SELF'] . '?id=' . $object->id . $selected . '', $langs->trans('ConfirmMassClone'), '', 'clonetasks', $formquestion, '', 1, 300, 590);
+}
+
 if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$categ = new Categorie($db);

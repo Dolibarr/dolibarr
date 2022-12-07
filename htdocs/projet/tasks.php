@@ -553,9 +553,10 @@ if ($id > 0 || !empty($ref)) {
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-	$arrayofmassactions = array(
-		//'clone'=>img_picto('', 'rightarrow', 'class="pictofixedwidth"').$langs->trans("Clone"),
-	);
+	$arrayofmassactions = array();
+	if ($user->rights->projet->creer) {
+		$arrayofmassactions['preclonetasks'] = img_picto('', 'rightarrow', 'class="pictofixedwidth"').$langs->trans("Clone");
+	}
 	if ($permissiontodelete) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}

@@ -7286,7 +7286,7 @@ class Form
 			$out .= $this->selectProjectsList($selected, $htmlname, $filtertype, $limit, $status, 0, $socid, $showempty, $forcecombo, $morecss);
 		}
 
-		if (empty($nooutput)) print $out;
+		if (!empty($nooutput)) print $out;
 		else return $out;
 	}
 
