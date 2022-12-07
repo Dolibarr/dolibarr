@@ -5416,7 +5416,7 @@ class Product extends CommonObject
 	public function load_stock($option = '', $includedraftpoforvirtual = null, $dateofvirtualstock = null)
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf, $hookmanager;
 
 		$this->stock_reel = 0;
 		$this->stock_warehouse = array();
@@ -5474,6 +5474,20 @@ class Product extends CommonObject
 				$this->load_virtual_stock($includedraftpoforvirtual, $dateofvirtualstock); // This also load all arrays stats_xxx...
 			}
 
+			if (!is_object($hookmanager)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+				$hookmanager = new HookManager($this->db);
+			}
+			$hookmanager->initHooks(array('productdao'));
+			$parameters = array('id'=>$this->id);
+			// Note that $action and $object may have been modified by some hooks
+			$reshook = $hookmanager->executeHooks('loadRealStockAtTime', $parameters, $this, $action);
+			if ($reshook > 0) {
+				if (!empty($this->stock_warehouse[$hookmanager->resArray['fk_warehouse']])){
+					$this->stock_warehouse[$hookmanager->resArray['fk_warehouse']]->real = $hookmanager->resArray['real']->real;
+				}
+
+			}
 			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
