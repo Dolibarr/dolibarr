@@ -146,11 +146,8 @@ if ($action === 'add_payment' || ($action === 'confirm_payment' && $confirm === 
 			}
 		}
 	}
-
-} elseif($action === 'confirm_payment') {
-
+} elseif ($action === 'confirm_payment') {
 	$action = 'create';
-
 }
 
 /*
@@ -168,7 +165,7 @@ if ($action == 'create' || $action == 'add_payment') {
 	$expensereport = new ExpenseReport($db);
 	$expensereport->fetch($id, $ref);
 
-//	$total = $expensereport->total_ttc;
+	//  $total = $expensereport->total_ttc;
 
 	// autofill remainder amount
 	if (!empty($conf->use_javascript_ajax)) {
@@ -262,9 +259,8 @@ if ($action == 'create' || $action == 'add_payment') {
 	$sql.= ' GROUP BY e.rowid, e.ref, e.total_ttc';
 	$resql = $db->query($sql);
 
-	if(!empty($resql)) {
+	if (!empty($resql)) {
 		while ($objp = $db->fetch_object($resql)) {
-
 			$expensereport = new ExpenseReport($db);
 			$expensereport->id = $objp->rowid;
 			$expensereport->ref = $objp->ref;
@@ -314,7 +310,6 @@ if ($action == 'create' || $action == 'add_payment') {
 
 	$langs->load('expensereports');
 	if ($action == 'add_payment' && empty($error)) {
-
 		print '<br>';
 		if (!empty($totalpayment)) {
 			$text = $langs->trans('ConfirmUserPayment', $totalpayment, $langs->trans("Currency".$conf->currency));
@@ -327,9 +322,7 @@ if ($action == 'create' || $action == 'add_payment') {
 
 		// Print form confirm
 		print $formconfirm;
-
 	} else {
-
 		$checkboxlabel = $langs->trans("ClosePaidExpenseReportsAutomatically");
 		print '<div class="center">';
 		print '<input type="checkbox" checked name="closepaidexpensereports"> ' . $checkboxlabel;
