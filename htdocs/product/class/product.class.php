@@ -5416,7 +5416,7 @@ class Product extends CommonObject
 	public function load_stock($option = '', $includedraftpoforvirtual = null, $dateofvirtualstock = null)
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf, $hookmanager;
 
 		$this->stock_reel = 0;
 		$this->stock_warehouse = array();
