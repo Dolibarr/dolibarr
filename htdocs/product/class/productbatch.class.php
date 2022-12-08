@@ -435,7 +435,7 @@ class Productbatch extends CommonObject
 	 */
 	public static function findAll($dbs, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{
-		global $conf, $hookmanager;
+		global $conf, $hookmanager, $db;
 
 		$ret = array();
 
@@ -494,7 +494,7 @@ class Productbatch extends CommonObject
 
 			if (!is_object($hookmanager)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-				$hookmanager = new HookManager($this->db);
+				$hookmanager = new HookManager($db);
 			}
 
 			$hookmanager->initHooks(array('productdao'));
