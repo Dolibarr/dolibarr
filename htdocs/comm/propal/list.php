@@ -659,7 +659,7 @@ if ($search_project) {
 if ($search_availability) {
 	$sql .= " AND p.fk_availability IN (".$db->sanitize($db->escape($search_availability)).')';
 }
-if(empty($arrayfields['s.name_alias']['checked']) && $search_societe){
+if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
 } else {
 	if ($search_societe) {
@@ -1784,7 +1784,7 @@ if ($resql) {
 		// Thirdparty
 		if (!empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax150">';
-			print $companystatic->getNomUrl(1, 'customer',0,0,1,empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+			print $companystatic->getNomUrl(1, 'customer', 0, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

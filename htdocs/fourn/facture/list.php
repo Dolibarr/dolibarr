@@ -509,7 +509,7 @@ if ($search_type != '' && $search_type >= 0) {
 if ($search_project) {
 	$sql .= natural_search('p.ref', $search_project);
 }
-if(empty($arrayfields['s.name_alias']['checked']) && $search_company){
+if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
 } else {
 	if ($search_company) {

@@ -468,7 +468,7 @@ if ($search_ref) {
 if ($search_label) {
 	$sql .= natural_search('p.title', $search_label);
 }
-if(empty($arrayfields['s.name_alias']['checked']) && $search_societe){
+if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
 } else {
 	if ($search_societe) {

@@ -817,7 +817,7 @@ if ($search_refsupp) {
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
-if(empty($arrayfields['s.name_alias']['checked']) && $search_company){
+if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
 } else {
 	if ($search_company) {

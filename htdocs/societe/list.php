@@ -601,7 +601,7 @@ if (strlen($search_cti)) {
 if ($search_id > 0) {
 	$sql .= natural_search("s.rowid", $search_id, 1);
 }
-if(empty($arrayfields['s.name_alias']['checked']) && $search_nom){
+if (empty($arrayfields['s.name_alias']['checked']) && $search_nom) {
 	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_nom);
 } else {
 	if ($search_nom) {

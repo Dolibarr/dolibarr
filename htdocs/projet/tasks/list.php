@@ -408,7 +408,7 @@ if ($search_task_progress) {
 if ($search_task_budget_amount) {
 	$sql .= natural_search('t.budget_amount', $search_task_budget_amount, 1);
 }
-if(empty($arrayfields['s.name_alias']['checked']) && $search_societe){
+if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
 } else {
 	if ($search_societe) {

@@ -938,7 +938,7 @@ if ($search_country) {
 if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
-if(empty($arrayfields['s.name_alias']['checked']) && $search_company){
+if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
 } else {
 	if ($search_company) {

@@ -673,7 +673,7 @@ if ($search_project_ref) {
 if ($search_project) {
 	$sql .= natural_search('p.title', $search_project);
 }
-if(empty($arrayfields['s.name_alias']['checked']) && $search_company){
+if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
 	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
 } else {
 	if ($search_company) {

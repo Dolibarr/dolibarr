@@ -365,7 +365,7 @@ if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 if ($search_ref) {
 	$sql .= natural_search('sp.ref', $search_ref);
 }
-if(empty($arrayfields['s.name_alias']['checked']) && $search_societe){
+if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
 } else {
 	if ($search_societe) {
