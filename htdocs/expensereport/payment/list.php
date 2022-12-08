@@ -35,7 +35,7 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentuser.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -111,7 +111,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('paymentexpensereportlist'));
-$object = new PaymentExpenseReport($db);
+$object = new PaymentUser($db);
 
 // Security check
 if ($user->socid) {
@@ -172,15 +172,16 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $accountstatic = new Account($db);
 $userstatic = new User($db);
-$paymentexpensereportstatic = new PaymentExpenseReport($db);
+$paymentexpensereportstatic = new PaymentUser($db);
 
 $sql = 'SELECT pndf.rowid, pndf.rowid as ref, pndf.datep, pndf.amount as pamount, pndf.num_payment';
 $sql .= ', u.rowid as userid, u.login, u.lastname, u.firstname';
 $sql .= ', c.code as paiement_type, c.libelle as paiement_libelle';
 $sql .= ', ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.fk_accountancy_journal as accountancy_journal';
 $sql .= ', SUM(pndf.amount)';
-$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport AS pndf';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'expensereport AS ndf ON ndf.rowid=pndf.fk_expensereport';
+$sql .= ' FROM '.MAIN_DB_PREFIX.'paymentuser AS pndf';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'payment_expense_report AS pexp ON (pndf.rowid = pexp.fk_paiementuser)';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'expensereport AS ndf ON (ndf.rowid=pexp.fk_expensereport)';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON pndf.fk_typepayment = c.id';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON u.rowid = ndf.fk_user_author';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON pndf.fk_bank = b.rowid';

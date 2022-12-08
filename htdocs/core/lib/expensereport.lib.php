@@ -94,7 +94,7 @@ function expensereport_prepare_head($object)
  * @param	Paiement	$object		Current payment object
  * @return	array					Tabs for the payment section
  */
-function payment_expensereport_prepare_head(PaymentExpenseReport $object)
+function payment_expensereport_prepare_head(PaymentUser $object)
 {
 
 	global $langs, $conf;

@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentuser.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
@@ -82,7 +82,7 @@ $expensereport = new ExpenseReport($db);
 $product_static = new Product($db);
 $payment_static = new Paiement($db);
 $paymentfourn_static = new PaiementFourn($db);
-$paymentexpensereport_static = new PaymentExpenseReport($db);
+$paymentexpensereport_static = new PaymentUser($db);
 $user_static = new User($db);
 
 $morequerystring = '';

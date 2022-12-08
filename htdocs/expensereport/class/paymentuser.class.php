@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/expensereport/class/paymentexpensereport.class.php
+ *  \file       htdocs/expensereport/class/paymentuser.class.php
  *  \ingroup    Expense Report
  *  \brief      File of class to manage payment of expense report
  */
@@ -28,17 +28,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 /**
  *	Class to manage payments of expense report
  */
-class PaymentExpenseReport extends CommonObject
+class PaymentUser extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'payment_expensereport';
+	public $element = 'paymentuser';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'payment_expensereport';
+	public $table_element = 'paymentuser';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -101,10 +101,11 @@ class PaymentExpenseReport extends CommonObject
 	 *  Create payment of expense report into database.
 	 *  Use this->amounts to have list of lines for the payment
 	 *
-	 *  @param      User		$user   User making payment
-	 *  @return     int     			<0 if KO, id of payment if OK
+	 *  @param      User		$user   					User making payment
+	 * 	@param		int			$closepaidexpensereports	1=Also close payed expense reports to paid, 0=Do nothing more
+	 *  @return     int     								<0 if KO, id of payment if OK
 	 */
-	public function create($user)
+	public function create($user, $closepaidexpensereports=0)
 	{
 		global $conf, $langs;
 
@@ -167,9 +168,9 @@ class PaymentExpenseReport extends CommonObject
 		$this->db->begin();
 
 		if ($totalamount != 0) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount,";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paymentuser (datec, datep, amount,";
 			$sql .= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
-			$sql .= " VALUES ($this->fk_expensereport, '".$this->db->idate($now)."',";
+			$sql .= " VALUES ('".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaid)."',";
 			$sql .= " ".price2num($totalamount).",";
 			$sql .= " ".((int) $this->fk_typepayment).", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".((int) $user->id).",";
@@ -178,7 +179,41 @@ class PaymentExpenseReport extends CommonObject
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_expensereport");
+				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."paymentuser");
+
+				foreach ($this->amounts as $key => $amount) {
+					$expid = $key;
+					$amount = price2num($amount);
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expense_report (fk_expensereport, fk_paiementuser, amount)";
+					// TODO Add multicurrency_code and multicurrency_tx
+					$sql .= " VALUES (".((int) $expid).", ".((int) $this->id).", ".((float) $amount).")";
+
+					dol_syslog(get_class($this).'::create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
+					$resql = $this->db->query($sql);
+					if ($resql) {
+
+						if(!empty($closepaidexpensereports)) {
+
+							$exp = new ExpenseReport($this->db);
+							$exp->fetch($expid);
+							$paiements = $exp->getSumPayments();
+
+							$remaintopay = $exp->total_ttc - $paiements;
+							if(empty($remaintopay)) {
+
+								$exp->setPaid($exp->id, $user->id);
+
+							}
+
+						}
+
+					} else {
+
+						$error++;
+
+					}
+				}
+
 			} else {
 				$error++;
 			}
@@ -205,7 +240,7 @@ class PaymentExpenseReport extends CommonObject
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-		$sql .= " t.fk_expensereport,";
+//		$sql .= " t.fk_expensereport,";
 		$sql .= " t.datec,";
 		$sql .= " t.tms,";
 		$sql .= " t.datep,";
@@ -218,7 +253,7 @@ class PaymentExpenseReport extends CommonObject
 		$sql .= " t.fk_user_modif,";
 		$sql .= " pt.code as type_code, pt.libelle as type_label,";
 		$sql .= ' b.fk_account';
-		$sql .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."paymentuser as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
 		$sql .= " WHERE t.rowid = ".((int) $id);
@@ -275,9 +310,9 @@ class PaymentExpenseReport extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_expensereport)) {
-			$this->fk_expensereport = trim($this->fk_expensereport);
-		}
+//		if (isset($this->fk_expensereport)) {
+//			$this->fk_expensereport = trim($this->fk_expensereport);
+//		}
 		if (isset($this->amount)) {
 			$this->amount = trim($this->amount);
 		}
@@ -305,9 +340,9 @@ class PaymentExpenseReport extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_expensereport SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."paymentuser SET";
 
-		$sql .= " fk_expensereport=".(isset($this->fk_expensereport) ? $this->fk_expensereport : "null").",";
+//		$sql .= " fk_expensereport=".(isset($this->fk_expensereport) ? $this->fk_expensereport : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
@@ -358,22 +393,39 @@ class PaymentExpenseReport extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
+		$bank_line_id = $this->bank_line;
+
 		$this->db->begin();
 
-		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-			$sql .= " WHERE type='payment_expensereport' AND url_id=".((int) $this->id);
+		// Delete bank urls. If payment is on a conciliated line, return error.
+		if ($bank_line_id > 0) {
+			$accline = new AccountLine($this->db);
 
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$result = $accline->fetch($bank_line_id);
+			if ($result == 0) {
+				$accline->id = $accline->rowid = $bank_line_id; // If not found, we set artificially rowid to allow delete of llx_bank_url
+			}
+
+			// Delete bank account url lines linked to payment
+			$result = $accline->delete_urls($user);
+			if ($result < 0) {
+				$error++;
+				$this->errors[] = $accline->error;
+			} else {
+
+				// Delete bank account lines linked to payment
+				$result = $accline->delete($user);
+				if ($result < 0) {
+					$error++;
+					$this->errors[] = $accline->error;
+				}
+
 			}
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_expensereport";
-			$sql .= " WHERE rowid=".((int) $this->id);
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
+			$sql .= " WHERE type='payment_expensereport' AND url_id=".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -383,12 +435,35 @@ class PaymentExpenseReport extends CommonObject
 			}
 		}
 
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_expense_report";
+			$sql .= " WHERE fk_paiementuser=".((int) $this->id);
+
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paymentuser';
+				$sql .= " WHERE rowid = ".((int) $this->id);
+				dol_syslog($sql);
+				$result = $this->db->query($sql);
+				if (!$result) {
+					$error++;
+					$this->errors[] = $this->db->lasterror();
+				}
+			} else {
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
+			}
+		}
+
 		// Commit or rollback
 		if ($error) {
+			if(!empty($this->db->lasterror)) $this->errors[] = $this->db->lasterror;
 			foreach ($this->errors as $errmsg) {
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
+
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
@@ -410,7 +485,7 @@ class PaymentExpenseReport extends CommonObject
 	{
 		$error = 0;
 
-		$object = new PaymentExpenseReport($this->db);
+		$object = new PaymentUser($this->db);
 
 		$this->db->begin();
 
@@ -566,22 +641,30 @@ class PaymentExpenseReport extends CommonObject
 
 				// Add link 'user' in bank_url between user and bank transaction
 				if (!$error) {
+					$linkaddedforuser=array();
 					foreach ($this->amounts as $key => $value) {  // We should have always same user but we loop in case of.
 						if ($mode == 'payment_expensereport') {
-							$fuser = new User($this->db);
-							$fuser->fetch($key);
 
-							$result = $acc->add_url_line(
-								$bank_line_id,
-								$fuser->id,
-								DOL_URL_ROOT.'/user/card.php?id=',
-								$fuser->getFullName($langs),
-								'user'
-							);
-							if ($result <= 0) {
-								$this->error = $this->db->lasterror();
-								dol_syslog(get_class($this).'::addPaymentToBank '.$this->error);
-								$error++;
+							$exp = new ExpenseReport($this->db);
+							$exp->fetch($key);
+							$fuser = new User($this->db);
+							$fuser->fetch($exp->fk_user_author);
+
+							if (!in_array($fuser->id, $linkaddedforuser)) { // Not yet done for this thirdparty
+
+								$result = $acc->add_url_line(
+									$bank_line_id,
+									$fuser->id,
+									DOL_URL_ROOT . '/user/card.php?id=',
+									$fuser->getFullName($langs),
+									'user'
+								);
+								if ($result <= 0) {
+									$this->error = $this->db->lasterror();
+									dol_syslog(get_class($this) . '::addPaymentToBank ' . $this->error);
+									$error++;
+								}
+								$linkaddedforuser[$fuser->id] = $fuser->id; // Mark as done for this thirdparty
 							}
 						}
 					}
@@ -611,7 +694,7 @@ class PaymentExpenseReport extends CommonObject
 	public function update_fk_bank($id_bank)
 	{
 		// phpcs:enable
-		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_expensereport SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".((int) $this->id);
+		$sql = "UPDATE ".MAIN_DB_PREFIX."paymentuser SET fk_bank = ".((int) $id_bank)." WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_fk_bank", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -685,7 +768,7 @@ class PaymentExpenseReport extends CommonObject
 	public function info($id)
 	{
 		$sql = 'SELECT e.rowid, e.datec, e.fk_user_creat, e.fk_user_modif, e.tms';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as e';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'paymentuser as e';
 		$sql .= ' WHERE e.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
