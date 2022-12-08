@@ -189,10 +189,12 @@ if ($resql) {
 		while ($i < $num) {
 			$objp = $db->fetch_object($resql);
 
-			print '<tr class="oddeven">';
 
 			$expensereport = new ExpenseReport($db);
 			$expensereport->fetch($objp->eid);
+			$alreadypayed = $expensereport->getSumPayments();
+
+			print '<tr class="oddeven">';
 
 			// Expense report
 			print '<td>';
@@ -206,7 +208,7 @@ if ($resql) {
 			print '<td class="right">'.price($objp->amount).'</td>';
 
 			// Remain to pay
-			print '<td class="right">'.price($objp->total_ttc - $objp->amount).'</td>';
+			print '<td class="right">'.price($objp->total_ttc - $alreadypayed).'</td>';
 
 			// Status
 			print '<td class="center">'.$expensereport->getLibStatut(4, $objp->amount).'</td>';
