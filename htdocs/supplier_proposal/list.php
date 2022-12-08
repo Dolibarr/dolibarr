@@ -845,7 +845,7 @@ if ($resql) {
 	// Status
 	if (!empty($arrayfields['sp.fk_statut']['checked'])) {
 		print '<td class="liste_titre right">';
-		$formpropal->selectProposalStatus($search_status, 1, 0, 1, 'supplier', 'search_status', 'minwidth75imp');
+		$formpropal->selectProposalStatus($search_status, 1, 0, 1, 'supplier', 'search_status', 'minwidth75imp onrightofpage');
 		print '</td>';
 	}
 	// Action column

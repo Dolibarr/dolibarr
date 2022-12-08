@@ -1024,7 +1024,7 @@ class FactureRec extends CommonInvoice
 			if ($this->db->query($sql)) {
 				$lineId = $this->db->last_insert_id(MAIN_DB_PREFIX."facturedet_rec");
 				$this->id = $facid;
-				$this->update_price();
+				$this->update_price(1);
 				return $lineId;
 			} else {
 				$this->error = $this->db->lasterror();
@@ -1198,7 +1198,7 @@ class FactureRec extends CommonInvoice
 			dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 			if ($this->db->query($sql)) {
 				$this->id = $facid;
-				$this->update_price();
+				$this->update_price(1);
 				return 1;
 			} else {
 				$this->error = $this->db->lasterror();

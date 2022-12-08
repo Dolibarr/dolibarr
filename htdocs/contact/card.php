@@ -86,6 +86,7 @@ $hookmanager->initHooks(array('contactcard', 'globalcard'));
 
 if ($id > 0) {
 	$object->fetch($id);
+	$object->info($id);
 }
 
 if (!($object->id > 0) && $action == 'view') {
@@ -100,6 +101,9 @@ $permissiontoadd = $user->rights->societe->contact->creer;
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
+}
+if ($object->priv && $object->user_creation->id != $user->id) {
+	accessforbidden();
 }
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
