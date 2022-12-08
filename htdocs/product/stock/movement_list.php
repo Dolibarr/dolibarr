@@ -600,7 +600,6 @@ if (!empty($conf->project->enabled)) {
 }
 
 // Build and execute select
-// --------------------------------------------------------------------
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.tosell, p.tobuy, p.tobatch, p.fk_product_type as type, p.entity,";
 $sql .= " e.ref as warehouse_ref, e.rowid as entrepot_id, e.lieu, e.fk_parent, e.statut,";
 $sql .= " m.rowid as mid, m.value as qty, m.datem, m.fk_user_author, m.label, m.inventorycode, m.fk_origin, m.origintype,";
@@ -691,32 +690,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-
-/* If a group by is required
- $sql .= " GROUP BY ";
- foreach($object->fields as $key => $val) {
- $sql .= "t.".$key.", ";
- }
- // Add fields from extrafields
- if (!empty($extrafields->attributes[$object->table_element]['label'])) {
- foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
- $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
- }
- }
- // Add where from hooks
- $parameters = array();
- $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object);    // Note that $action and $object may have been modified by hook
- $sql .= $hookmanager->resPrint;
- $sql = preg_replace('/,\s*$/', '', $sql);
- */
-
-// Add HAVING from hooks
-/*
- $parameters = array();
- $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
- $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
- */
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
@@ -1369,7 +1342,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	print '<tr class="oddeven">';
 	// Id movement
 	if (!empty($arrayfields['m.rowid']['checked'])) {
-		print '<td>';
+		print '<td class="nowraponall">';
 		print img_picto($langs->trans("StockMovement"), 'movement', 'class="pictofixedwidth"');
 		print $obj->mid;
 		print '</td>'; // This is primary not movement id

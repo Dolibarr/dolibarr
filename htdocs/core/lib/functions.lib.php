@@ -1810,7 +1810,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 /**
  *	Show tab header of a card
  *
- *	@param	array	$links				Array of tabs. Currently initialized by calling a function xxx_admin_prepare_head
+ *	@param	array	$links				Array of tabs (0=>url, 1=>label, 2=>code, 3=>not used, 4=>text after link, 5=>morecssonlink). Currently initialized by calling a function xxx_admin_prepare_head. Note that label into $links[$i][1] must be already HTML escaped.
  *	@param	string	$active     		Active tab name (document', 'info', 'ldap', ....)
  *	@param  string	$title      		Title
  *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after)
@@ -1831,7 +1831,7 @@ function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0
 /**
  *  Show tabs of a record
  *
- *	@param	array	$links				Array of tabs. Note that label into $links[$i][1] must be already HTML escaped.
+ *	@param	array	$links				Array of tabs (0=>url, 1=>label, 2=>code, 3=>not used, 4=>text after link, 5=>morecssonlink). Currently initialized by calling a function xxx_admin_prepare_head. Note that label into $links[$i][1] must be already HTML escaped.
  *	@param	string	$active     		Active tab name
  *	@param  string	$title      		Title
  *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no seaparation under tab (to start a tab just after), -3=-2+'noborderbottom'
@@ -1934,7 +1934,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				$out .= '<div class="tab tab'.($isactive?'active':'unactive').'" style="margin: 0 !important">';
 				if (!empty($links[$i][0])) {
 					$titletoshow = preg_replace('/<.*$/', '', $links[$i][1]);
-					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tab inline-block valignmiddle'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'" title="'.dol_escape_htmltag($titletoshow).'">';
+					$out .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="tab inline-block valignmiddle'.($morecss ? ' '.$morecss : '').($links[$i][5] ? ' '.$links[$i][5] : '').'" href="'.$links[$i][0].'" title="'.dol_escape_htmltag($titletoshow).'">';
 				}
 				$out .= $links[$i][1];
 				if (!empty($links[$i][0])) {
@@ -3845,6 +3845,27 @@ function isValidPhone($phone)
 
 
 /**
+ * Return first letters of a strings.
+ * Example with nbofchar=1: 'ghi' will return 'g' but 'abc def' will return 'ad'
+ * Example with nbofchar=2: 'ghi' will return 'gh' but 'abc def' will return 'abde'
+ *
+ * @param	string	$s				String to truncate
+ * @param 	int		$nbofchar		Nb of characters to keep
+ * @return	string					Return first chars.
+ */
+function dolGetFirstLetters($s, $nbofchar = 1)
+{
+	$ret = '';
+	$tmparray = explode(' ', $s);
+	foreach ($tmparray as $tmps) {
+		$ret .= dol_substr($tmps, 0, $nbofchar);
+	}
+
+	return $ret;
+}
+
+
+/**
  * Make a strlen call. Works even if mbstring module not enabled
  *
  * @param   string		$string				String to calculate length
@@ -5726,7 +5747,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	if ((string) $forcerounding != '-1') {
 		if ($forcerounding == 'MU') {
 			$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_UNIT;
-		} else if ($forcerounding == 'MT') {
+		} elseif ($forcerounding == 'MT') {
 			$nbdecimal = $conf->global->MAIN_MAX_DECIMALS_TOT;
 		} elseif ($forcerounding >= 0) {
 			$nbdecimal = $forcerounding;
@@ -10601,21 +10622,21 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param int|boolean	$userRight  User action right
  * // phpcs:disable
  * @param array 		$params = [ // Various params for future : recommended rather than adding more function arguments
- *                          'attr' => [ // to add or override button attributes
- *                          'xxxxx' => '', // your xxxxx attribute you want
- *                          'class' => 'reposition', // to add more css class to the button class attribute
- *                          'classOverride' => '' // to replace class attribute of the button
- *                          ],
- *                          'confirm' => [
- *                          'url' => 'http://', // Overide Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
- *                          'title' => '', // Overide title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
- *                          'action-btn-label' => '', // Overide label of action button,  if empty default label use "Confirm" lang key
- *                          'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
- *                          'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
- *                          'modal' => true, // true|false to display dialog as a modal (with dark background)
- * 						    'isDropDrown' => false, // true|false to display dialog as a dropdown (with dark background)
- *                          ],
- *                          ]
+ *                              'attr' => [ // to add or override button attributes
+ *                              'xxxxx' => '', // your xxxxx attribute you want
+ *                              'class' => 'reposition', // to add more css class to the button class attribute
+ *                              'classOverride' => '' // to replace class attribute of the button
+ *                              ],
+ *                              'confirm' => [
+ *                              'url' => 'http://', // Overide Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
+ *                              'title' => '', // Overide title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
+ *                              'action-btn-label' => '', // Overide label of action button,  if empty default label use "Confirm" lang key
+ *                              'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
+ *                              'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
+ *                              'modal' => true, // true|false to display dialog as a modal (with dark background)
+ *                              'isDropDrown' => false, // true|false to display dialog as a dropdown (with dark background)
+ *                              ],
+ *                              ]
  * // phpcs:enable
  * @return string               	html button
  */
