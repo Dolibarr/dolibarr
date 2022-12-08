@@ -1784,7 +1784,7 @@ if ($resql) {
 		// Thirdparty
 		if (!empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax150">';
-			print $companystatic->getNomUrl(1, 'customer');
+			print $companystatic->getNomUrl(1, 'customer',0,0,1,empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
