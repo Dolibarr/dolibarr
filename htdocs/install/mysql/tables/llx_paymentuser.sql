@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+-- Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
