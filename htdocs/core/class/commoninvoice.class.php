@@ -1756,11 +1756,12 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->ref_client) {
 			$complementaryinfo .= '/20/'.$this->ref_client;
 		}
-		if ($this->thirdparty->vat_number) {
-			$complementaryinfo .= '/30/'.$this->thirdparty->vat_number;
+		if ($this->thirdparty->tva_intra) {
+			$complementaryinfo .= '/30/'.$this->thirdparty->tva_intra;
 		}
 
 		// Header
+		$s = '';
 		$s .= "SPC\n";
 		$s .= "0200\n";
 		$s .= "1\n";

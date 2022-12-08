@@ -127,3 +127,5 @@ DateLastLogin=Date last login
 DatePreviousLogin=Date previous login
 IPLastLogin=IP last login
 IPPreviousLogin=IP previous login
+ShowAllPerms=Show all permission rows
+HideAllPerms=Hide all permission rows

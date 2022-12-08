@@ -40,7 +40,7 @@
  *	\brief      File of class to manage invoices
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
@@ -170,6 +170,8 @@ class Facture extends CommonInvoice
 	public $total_localtax2;
 	public $total_ttc;
 	public $revenuestamp;
+
+	public $resteapayer;
 
 	/**
 	 * ! Closing after partial payment: discount_vat, badcustomer or badsupplier, bankcharge, other

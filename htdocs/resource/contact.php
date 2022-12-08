@@ -114,10 +114,6 @@ llxHeader('', $langs->trans("Resource"));
 // View and edit mode
 
 if ($id > 0 || !empty($ref)) {
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
-
-
 	$head = resource_prepare_head($object);
 	print dol_get_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), -1, 'resource');
 

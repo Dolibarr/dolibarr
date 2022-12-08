@@ -46,6 +46,11 @@ function bomAdminPrepareHead()
 	$head[$h][2] = 'bom_extrafields';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/admin/bomline_extrafields.php";
+	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$head[$h][2] = 'bomline_extrafields';
+	$h++;
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(

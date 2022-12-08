@@ -537,6 +537,9 @@ if (empty($reshook)) {
 						$sql .= " SET fk_socpeople=".((int) $contactid);
 						if (!empty($contact->socid)) {
 							$sql .= ", fk_soc=".((int) $contact->socid);
+						} elseif ($socid > 0) {
+							$sql .= ", fk_soc = null";
+							setEventMessages($langs->trans("WarningUserDifferentContactSocid"), '', 'warnings'); // Add message if post socid != $contact->socid
 						}
 						$sql .= " WHERE rowid = ".((int) $object->id);
 					} elseif ($socid > 0) {
@@ -1834,10 +1837,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<tr class="nooddeven"><td>'.$langs->trans("LastConnexion").'</td>';
 			print '<td>';
 			if ($object->datepreviouslogin) {
-				print dol_print_date($object->datepreviouslogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
+				print dol_print_date($object->datepreviouslogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
 			}
 			if ($object->datelastlogin) {
-				print dol_print_date($object->datelastlogin, "dayhour").' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
+				print dol_print_date($object->datelastlogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
 			}
 			print '</td>';
 			print "</tr>\n";

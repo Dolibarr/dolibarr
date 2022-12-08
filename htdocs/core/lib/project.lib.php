@@ -209,6 +209,19 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$h++;
 	}
 
+	if (isModEnabled('ticket') && $user->hasRight('ticket', 'read')) {
+		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+		$Tickettatic = new Ticket($db);
+		$nbTicket = count($Tickettatic->getAllItemsLinkedByObjectID($project->id, '*', 'fk_project', 'ticket'));
+		$head[$h][0] = DOL_URL_ROOT.'/ticket/list.php?projectid='.((int) $project->id);
+		$head[$h][1] = $langs->trans("Ticket");
+		if ($nbTicket > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbTicket).'</span>';
+		}
+		$head[$h][2] = 'ticket';
+		$h++;
+	}
+
 	if (isModEnabled('eventorganization') && !empty($project->usage_organize_event)) {
 		$langs->load('eventorganization');
 		$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php?projectid=' . $project->id;
@@ -1062,6 +1075,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param   string		$projectsrole			Array of roles user has on project
  * @param   string		$tasksrole				Array of roles user has on task
  * @param	string		$mine					Show only task lines I am assigned to
+<<<<<<<<< Temporary merge branch 1
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
  * @param	int			$preselectedday			Preselected day
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
@@ -1544,7 +1558,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				if (!empty($arrayfields['timeconsumed']['checked'])) {
 					// Time spent by everybody
 					print '<td class="right">';
-					// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consummed by user
+					// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
 					if ($lines[$i]->duration) {
 						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
 						print convertSecondToTime($lines[$i]->duration, 'allhourmin');
@@ -1950,7 +1964,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				if (!empty($arrayfields['timeconsumed']['checked'])) {
 					// Time spent by everybody
 					print '<td class="right">';
-					// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consummed by user
+					// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
 					if ($lines[$i]->duration) {
 						print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
 						print convertSecondToTime($lines[$i]->duration, 'allhourmin');
@@ -2244,7 +2258,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 
 				// Time spent by everybody
 				print '<td class="right">';
-				// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consummed by user
+				// $lines[$i]->duration is a denormalised field = summ of time spent by everybody for task. What we need is time consumed by user
 				if ($lines[$i]->duration) {
 					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
 					print convertSecondToTime($lines[$i]->duration, 'allhourmin');

@@ -568,9 +568,10 @@ class BOM extends CommonObject
 	 * @param	int		$fk_bom_child			Id of BOM Child
 	 * @param	string	$import_key				Import Key
 	 * @param	string	$fk_unit				Unit
+	 * @param	array		$array_options		extrafields array
 	 * @return	int								<0 if KO, Id of created object if OK
 	 */
-	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '')
+	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = 0)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -640,6 +641,10 @@ class BOM extends CommonObject
 			$this->line->position = $rankToUse;
 			$this->line->fk_unit = $fk_unit;
 
+			if (is_array($array_options) && count($array_options) > 0) {
+				$this->line->array_options = $array_options;
+			}
+
 			$result = $this->line->create($user);
 
 			if ($result > 0) {
@@ -668,10 +673,11 @@ class BOM extends CommonObject
 	 * @param	float	$efficiency				Efficiency in MO
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
 	 * @param	string	$import_key				Import Key
-	 * @param	int		$fk_unit					Unit of line
+	 * @param	int		$fk_unit				Unit of line
+	 * @param	array	$array_options			extrafields array
 	 * @return	int								<0 if KO, Id of updated BOM-Line if OK
 	 */
-	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0)
+	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = 0)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -743,6 +749,13 @@ class BOM extends CommonObject
 			$this->line->position = $rankToUse;
 			if (!empty($fk_unit)) {
 				$this->line->fk_unit = $fk_unit;
+			}
+
+			if (is_array($array_options) && count($array_options) > 0) {
+				// We replace values in this->line->array_options only for entries defined into $array_options
+				foreach ($array_options as $key => $value) {
+					$this->line->array_options[$key] = $array_options[$key];
+				}
 			}
 
 			$result = $this->line->update($user);

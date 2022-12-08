@@ -1514,6 +1514,12 @@ select.flat.selectlimit {
 	overflow: hidden;
 	height: auto !important;
 }
+.tenlinesmax {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 10;
+	overflow: hidden;
+}
 
 .tablelistofcalendars {
 	margin-top: 25px !important;
@@ -2453,6 +2459,8 @@ img.photoref, div.photoref {
 img.photokanban, div.photokanban {
 	padding: 0;
 	border: none;
+	box-shadow: none;
+	vertical-align: middle;
 }
 
 div.photoref .fa, div.photoref .fas, div.photoref .far {

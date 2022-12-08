@@ -522,9 +522,10 @@ if (empty($reshook)) {
 				exit;
 			}
 			$mesgs[] = $object->error;
+			$mesgs = array_merge($mesgs, $object->errors);
 		}
 
-		setEventMessages(null, $mesgs, 'errors');
+		setEventMessages('', $mesgs, 'errors');
 		$action = "create";
 	}
 
@@ -609,9 +610,10 @@ if (empty($reshook)) {
 					exit;
 				}
 				$mesgs[] = $object->error;
+				$mesgs = array_merge($mesgs, $object->errors);
 			}
 
-			setEventMessages($mesg, $mesgs, 'errors');
+			setEventMessages('', $mesgs, 'errors');
 			$action = "edit";
 		} else {
 			$action = "edit";
@@ -728,7 +730,7 @@ if ($action == 'create') {
 	// Print mail form
 	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
 
-	print dol_get_fiche_head();
+	print dol_get_fiche_head(array(), '', '', -3);
 
 	print '<table class="border centpercent">';
 
@@ -766,7 +768,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("CreateMailing", '');
+	print $form->buttonsSaveCancel("CreateMailing", 'Cancel');
 
 	print '</form>';
 } else {
@@ -1091,18 +1093,18 @@ if ($action == 'create') {
 			}
 
 
-			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br><br><span class="small">';
 			foreach ($object->substitutionarray as $key => $val) {
 				$htmltext .= $key.' = '.$langs->trans($val).'<br>';
 			}
-			$htmltext .= '</i>';
+			$htmltext .= '</span></i>';
 
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'emailsubstitionhelp'), 'generic');
+			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 3, 'emailsubstitionhelp'), 'generic');
 
 			print dol_get_fiche_head('', '', '', -1);
 
-			print '<table class="bordernooddeven" width="100%">';
+			print '<table class="bordernooddeven tableforfield centpercent">';
 
 			// Subject
 			print '<tr><td class="titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
@@ -1312,7 +1314,7 @@ if ($action == 'create') {
 
 			print '<div class="center">';
 			print '<input type="submit" class="button buttonforacesave button-save" value="'.$langs->trans("Save").'" name="save">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '&nbsp; &nbsp; &nbsp;';
 			print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel">';
 			print '</div>';
 

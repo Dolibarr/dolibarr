@@ -12,7 +12,7 @@
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021-2022	Anthony Berton       	<bertonanthony@gmail.com>
+ * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -400,9 +400,16 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 			}
 		}
 	} elseif ($thirdparty instanceof Contact) {
-		$socname = $thirdparty->socname;
-		if (($includealias || getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) && !empty($thirdparty->name_alias)) {
-			// TODO PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME not completely implemented
+		if ($thirdparty->socid > 0) {
+			$thirdparty->fetch_thirdparty();
+			$socname = $thirdparty->thirdparty->name;
+			if (($includealias || getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) && !empty($thirdparty->thirdparty->name_alias)) {
+				if (getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME') == 2) {
+					$socname = $thirdparty->thirdparty->name_alias." - ".$thirdparty->thirdparty->name;
+				} else {
+					$socname = $thirdparty->thirdparty->name." - ".$thirdparty->thirdparty->name_alias;
+				}
+			}
 		}
 	} else {
 		throw new InvalidArgumentException('Parameter 1 $thirdparty is not a Societe nor Contact');

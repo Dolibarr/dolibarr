@@ -51,6 +51,11 @@ class Reception extends CommonObject
 	use CommonIncoterm;
 
 	/**
+	 * @var string code
+	 */
+	public $code = "";
+
+	/**
 	 * @var string element name
 	 */
 	public $element = "reception";
@@ -112,6 +117,10 @@ class Reception extends CommonObject
 
 	public $lines = array();
 
+
+	// detail of lot and qty = array(id in llx_commande_fournisseur_dispatch, batch, qty)
+	// We can use this to know warehouse planned to be used for each lot.
+	public $detail_batch;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -1204,6 +1213,14 @@ class Reception extends CommonObject
 
 				$this->total_ttc += $pu_ht + $tva;
 
+				if (isModEnabled('productbatch') && !empty($line->batch)) {
+					$detail_batch = new stdClass();
+					$detail_batch->eatby = $line->eatby;
+					$detail_batch->sellby = $line->sellby;
+					$detail_batch->batch = $line->batch;
+					$detail_batch->qty = $line->qty;
+					$line->detail_batch[] = $detail_batch;
+				}
 
 				$this->lines[] = $line;
 			}
