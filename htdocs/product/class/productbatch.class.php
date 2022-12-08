@@ -491,22 +491,21 @@ class Productbatch extends CommonObject
 				$i++;
 			}
 			$dbs->free($resql);
-			
+
 			if (!is_object($hookmanager)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 				$hookmanager = new HookManager($this->db);
 			}
-			
+
 			$hookmanager->initHooks(array('productdao'));
 			$parameters = array('fk_product_stock' => $fk_product_stock,'with_qty' => $with_qty, 'fk_product'=> $fk_product);
 			// Note that $action and $object may have been modified by some hooks
-			$reshook = $hookmanager->executeHooks('loadBatchStockAtTime', $parameters );
-			
+			$reshook = $hookmanager->executeHooks('loadBatchStockAtTime', $parameters);
+
 			if ($reshook > 0 ) {
-			     
-			  	return $hookmanager->resArray['ret'];
+				return $hookmanager->resArray['ret'];
 			}
-			
+
 			return $ret;
 		} else {
 			$error = "Error ".$dbs->lasterror();
