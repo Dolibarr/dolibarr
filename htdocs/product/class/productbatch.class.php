@@ -435,7 +435,7 @@ class Productbatch extends CommonObject
 	 */
 	public static function findAll($dbs, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{
-		global $conf;
+		global $conf, $hookmanager;
 
 		$ret = array();
 
@@ -491,7 +491,15 @@ class Productbatch extends CommonObject
 				$i++;
 			}
 			$dbs->free($resql);
-
+			
+			$hookmanager->initHooks(array('productdao'));
+			$parameters = array('fk_product_stock' => $fk_product_stock,'with_qty' => $with_qty, 'fk_product'=> $fk_product);
+			// Note that $action and $object may have been modified by some hooks
+			$reshook = $hookmanager->executeHooks('loadBatchStockAtTime', $parameters );
+			if ($reshook > 0) {
+			  	return $hookmanager->resArray['ret'];
+			}
+			
 			return $ret;
 		} else {
 			$error = "Error ".$dbs->lasterror();
