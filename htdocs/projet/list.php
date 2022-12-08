@@ -451,6 +451,10 @@ if ($search_project_user > 0) {
 if ($search_project_contact > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ecp_contact";
 }
+
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= " WHERE p.entity IN (".getEntity('project').')';
 if (empty($user->rights->projet->all->lire)) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
