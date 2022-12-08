@@ -5479,7 +5479,7 @@ class Product extends CommonObject
 				$hookmanager = new HookManager($this->db);
 			}
 			$hookmanager->initHooks(array('productdao'));
-			$parameters = array('id'=>$this->id);
+			$parameters = array('id'=>$this->id,'option' => $option, 'includedraftpoforvirtual' => $includedraftpoforvirtual,'dateofvirtualstock' => $dateofvirtualstock);
 			// Note that $action and $object may have been modified by some hooks
 			$reshook = $hookmanager->executeHooks('loadRealStockAtTime', $parameters, $this, $action);
 			if ($reshook > 0) {
