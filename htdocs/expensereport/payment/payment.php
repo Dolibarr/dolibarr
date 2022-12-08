@@ -251,7 +251,7 @@ if ($action == 'create' || $action == 'add_payment') {
 	$sql = 'SELECT e.rowid, e.total_ttc, e.ref, SUM(pe.amount) as total_amount';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport as e';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'payment_expense_report as pe ON pe.fk_expensereport = e.rowid';
-	$sql.= ' WHERE fk_user_author = '.((int)$expensereport->fk_user_author);
+	$sql.= ' WHERE fk_user_author = '.((int) $expensereport->fk_user_author);
 	$sql .= ' AND e.entity IN ('.getEntity('expensereport').')';
 	$sql .= ' AND e.fk_statut = '.ExpenseReport::STATUS_APPROVED;
 	$sql .= ' AND e.paid = 0';
