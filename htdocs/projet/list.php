@@ -414,7 +414,7 @@ $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
 $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount,";
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
-$sql .= " p.email_msgid,";
+$sql .= " p.email_msgid, p.import_key,";
 $sql .= " p.accept_conference_suggestions, p.accept_booth_suggestions, p.price_registration, p.price_booth,";
 $sql .= " s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
 $sql .= " country.code as country_code,";
@@ -1170,6 +1170,11 @@ if (!empty($arrayfields['p.email_msgid']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+if (!empty($arrayfields['p.import_key']['checked'])) {
+	// Import key
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '<td class="liste_titre nowrap right">';
 	$arrayofstatus = array();
@@ -1177,7 +1182,7 @@ if (!empty($arrayfields['p.fk_statut']['checked'])) {
 		$arrayofstatus[$key] = $langs->trans($val);
 	}
 	$arrayofstatus['99'] = $langs->trans("NotClosed").' ('.$langs->trans('Draft').' + '.$langs->trans('Opened').')';
-	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'minwidth75imp maxwidth125 selectarrowonleft');
+	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'minwidth75imp maxwidth125 selectarrowonleft onrightofpage');
 	print ajax_combobox('search_status');
 	print '</td>';
 }
@@ -1277,6 +1282,9 @@ if (!empty($arrayfields['p.tms']['checked'])) {
 }
 if (!empty($arrayfields['p.email_msgid']['checked'])) {
 	print_liste_field_titre($arrayfields['p.email_msgid']['label'], $_SERVER["PHP_SELF"], "p.email_msgid", "", $param, '', $sortfield, $sortorder, 'center ');
+}
+if (!empty($arrayfields['p.import_key']['checked'])) {
+	print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, '');
 }
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -1730,6 +1738,13 @@ while ($i < $imaxinloop) {
 			print $obj->email_msgid;
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
+		}
+		// Import key
+		if (!empty($arrayfields['p.import_key']['checked'])) {
+			print '<td class="right">'.dol_escape_htmltag($obj->import_key).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Status
 		if (!empty($arrayfields['p.fk_statut']['checked'])) {

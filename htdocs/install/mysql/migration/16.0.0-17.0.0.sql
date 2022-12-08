@@ -54,6 +54,8 @@ ALTER TABLE llx_user DROP COLUMN idpers3;
 
 UPDATE llx_c_actioncomm SET type = 'system' WHERE code = 'AC_OTH';
 
+ALTER TABLE llx_opensurvey_user_studs MODIFY reponses VARCHAR(200) NOT NULL;
+
 -- v17
 
 ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_type varchar(32); 
@@ -91,8 +93,6 @@ UPDATE llx_holiday SET fk_user_approve = fk_user_valid WHERE statut = 3 AND fk_u
 
 ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
 
-ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
-
 ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN lastresult text;
@@ -120,11 +120,11 @@ ALTER TABLE llx_product ADD COLUMN sell_or_eat_by_mandatory tinyint DEFAULT 0 NO
 
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD email_date datetime after email_msgid;
 
-ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
-
 ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
+
+ALTER TABLE llx_ticket MODIFY COLUMN message mediumtext;
 
 ALTER TABLE llx_cronjob ADD COLUMN pid integer;
 
@@ -386,6 +386,8 @@ ALTER TABLE llx_user ADD COLUMN birth_place varchar(64);
 
 ALTER TABLE llx_opensurvey_user_studs ADD COLUMN date_creation datetime NULL;
 ALTER TABLE llx_opensurvey_comments ADD COLUMN date_creation datetime NULL;
+
+ALTER TABLE llx_c_tva ADD COLUMN use_default tinyint DEFAULT 0;
 
 -- expense report payments
 ALTER TABLE llx_payment_expensereport RENAME TO llx_paymentuser;

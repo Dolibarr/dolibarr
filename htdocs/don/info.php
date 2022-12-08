@@ -38,14 +38,17 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
+$object = new Don($db);
+if ($id > 0 || $ref) {
+	$object->fetch($id, $ref);
+}
+
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'don', $id, '');
+$result = restrictedArea($user, 'don', $object->id);
 
-$object = new Don($db);
-$object->fetch($id);
 
 
 /*

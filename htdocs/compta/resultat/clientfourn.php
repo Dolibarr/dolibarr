@@ -1167,7 +1167,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			}
 			print '<tr class="oddeven">';
 			print '<td>&nbsp;</td>';
-			print "<td>".$langs->trans("Debit")."</td>\n";
+			print "<td>".$langs->trans("AccountingDebit")."</td>\n";
 			print '<td class="right">';
 			if ($modecompta == 'CREANCES-DETTES') {
 				print '<span class="amount">'.price(-$obj->amount).'</span>';
@@ -1186,7 +1186,7 @@ if ($modecompta == 'BOOKKEEPING') {
 				$total_ttc_income += $obj->amount;
 			}
 			print '<tr class="oddeven"><td>&nbsp;</td>';
-			print "<td>".$langs->trans("Credit")."</td>\n";
+			print "<td>".$langs->trans("AccountingCredit")."</td>\n";
 			print '<td class="right">';
 			if ($modecompta == 'CREANCES-DETTES') {
 				print '<span class="amount">'.price($obj->amount).'</span>';

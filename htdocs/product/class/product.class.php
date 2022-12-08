@@ -2159,7 +2159,7 @@ class Product extends CommonObject
 				}
 			} else {
 				$price = price2num($newprice, 'MU');
-				$price_ttc = ($newnpr != 1) ? price2num($newprice) * (1 + ($newvat / 100)) : $price;
+				$price_ttc = ($newnpr != 1) ? (float) price2num($newprice) * (1 + ($newvat / 100)) : $price;
 				$price_ttc = price2num($price_ttc, 'MU');
 
 				if ($newminprice !== '' || $newminprice === 0) {
@@ -2179,12 +2179,34 @@ class Product extends CommonObject
 				$localtax1 = $localtaxes_array['1'];
 				$localtaxtype2 = $localtaxes_array['2'];
 				$localtax2 = $localtaxes_array['3'];
-			} else // old method. deprecated because ot can't retrieve type
-			{
-				$localtaxtype1 = '0';
-				$localtax1 = get_localtax($newvat, 1);
-				$localtaxtype2 = '0';
-				$localtax2 = get_localtax($newvat, 2);
+			} else {
+				// if array empty, we try to use the vat code
+				if (!empty($newdefaultvatcode)) {
+					global $mysoc;
+					// Get record from code
+					$sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+					$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+					$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->db->escape($mysoc->country_code)."'";
+					$sql .= " AND t.taux = ".((float) $newdefaultvatcode)." AND t.active = 1";
+					$sql .= " AND t.code = '".$this->db->escape($newdefaultvatcode)."'";
+					$resql = $this->db->query($sql);
+					if ($resql) {
+						$obj = $this->db->fetch_object($resql);
+						if ($obj) {
+							$npr = $obj->recuperableonly;
+							$localtax1 = $obj->localtax1;
+							$localtax2 = $obj->localtax2;
+							$localtaxtype1 = $obj->localtax1_type;
+							$localtaxtype2 = $obj->localtax2_type;
+						}
+					}
+				} else {
+					// old method. deprecated because we can't retrieve type
+					$localtaxtype1 = '0';
+					$localtax1 = get_localtax($newvat, 1);
+					$localtaxtype2 = '0';
+					$localtax2 = get_localtax($newvat, 2);
+				}
 			}
 			if (empty($localtax1)) {
 				$localtax1 = 0; // If = '' then = 0

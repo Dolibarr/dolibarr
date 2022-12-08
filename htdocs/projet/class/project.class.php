@@ -306,7 +306,7 @@ class Project extends CommonObject
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>405),
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>410),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModification', 'enabled'=>1, 'visible'=>0, 'position'=>415),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>0, 'position'=>420),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>420),
 		'email_msgid'=>array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'enabled'=>1, 'visible'=>-1, 'position'=>450, 'help'=>'EmailMsgIDWhenSourceisEmail'),
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
 	);

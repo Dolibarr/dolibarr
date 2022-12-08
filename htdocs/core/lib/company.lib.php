@@ -1117,7 +1117,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$extrafieldsobjectkey = $contactstatic->table_element;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-	$sql = "SELECT t.rowid, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.socialnetworks, t.statut, t.photo,";
+	$sql = "SELECT t.rowid, t.entity, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.socialnetworks, t.statut, t.photo,";
 	$sql .= " t.civility as civility_id, t.address, t.zip, t.town";
 	$sql .= ", t.note_private";
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
@@ -1183,7 +1183,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		if (!empty($arrayfields['t.'.$key]['checked']) || !empty($arrayfields['sc.'.$key]['checked'])) {
 			print '<td class="liste_titre'.($align ? ' '.$align : '').'">';
 			if (in_array($key, array('statut'))) {
-				print $form->selectarray('search_status', array('-1'=>'', '0'=>$contactstatic->LibStatut(0, 1), '1'=>$contactstatic->LibStatut(1, 1)), $search_status);
+				print $form->selectarray('search_status', array('-1'=>'', '0'=>$contactstatic->LibStatut(0, 1), '1'=>$contactstatic->LibStatut(1, 1)), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
 			} elseif (in_array($key, array('role'))) {
 				print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles, 'minwidth200 maxwidth300');
 			} else {
@@ -1272,6 +1272,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			$contactstatic->email = $obj->email;
 			$contactstatic->socialnetworks = $obj->socialnetworks;
 			$contactstatic->photo = $obj->photo;
+			$contactstatic->entity = $obj->entity;
 
 			$country_code = getCountry($obj->country_id, 2);
 			$contactstatic->country_code = $country_code;

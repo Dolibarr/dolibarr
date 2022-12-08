@@ -7,7 +7,7 @@
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
  * Copyright (C) 2017-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -873,10 +873,11 @@ if ($id > 0 || !empty($ref)) {
 
 							// Enable hooks to append additional columns
 							$parameters = array(
-								'is_information_row' => true, // allows hook to distinguish between the
-															  // rows with information and the rows with
-															  // dispatch form input
-								'objp' => $objp
+								// allows hook to distinguish between the rows with information and the rows with dispatch form input
+								'is_information_row' => true,
+								'i' => $i,
+								'suffix' => $suffix,
+								'objp' => $objp,
 							);
 							$reshook = $hookmanager->executeHooks(
 								'printFieldListValue',
@@ -935,10 +936,11 @@ if ($id > 0 || !empty($ref)) {
 
 							// Enable hooks to append additional columns
 							$parameters = array(
-								'is_information_row' => true, // allows hook to distinguish between the
-															  // rows with information and the rows with
-															  // dispatch form input
-								'objp' => $objp
+								// allows hook to distinguish between the rows with information and the rows with dispatch form input
+								'is_information_row' => true,
+								'i' => $i,
+								'suffix' => $suffix,
+								'objp' => $objp,
 							);
 							$reshook = $hookmanager->executeHooks(
 								'printFieldListValue',
@@ -1016,7 +1018,10 @@ if ($id > 0 || !empty($ref)) {
 
 						// Enable hooks to append additional columns
 						$parameters = array(
-							'is_information_row' => false // this is a dispatch form row
+							'is_information_row' => false, // this is a dispatch form row
+							'i' => $i,
+							'suffix' => $suffix,
+							'objp' => $objp,
 						);
 						$reshook = $hookmanager->executeHooks(
 							'printFieldListValue',

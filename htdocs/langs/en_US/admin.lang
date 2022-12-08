@@ -1250,6 +1250,7 @@ AreaForAdminOnly=Setup parameters can be set by <b>administrator users</b> only.
 SystemInfoDesc=System information is miscellaneous technical information you get in read only mode and visible for administrators only.
 SystemAreaForAdminOnly=This area is available to administrator users only. Dolibarr user permissions cannot change this restriction.
 CompanyFundationDesc=Edit the information of your company/organization. Click on "%s" button at the bottom of the page when done.
+MoreNetworksAvailableWithModule=More social networks may be available by enabling the module "Social networks".
 AccountantDesc=If you have an external accountant/bookkeeper, you can edit here its information.
 AccountantFileNumber=Accountant code
 DisplayDesc=Parameters affecting the look and presentation of the application can be modified here.

@@ -644,8 +644,8 @@ if ($action == 'create') {
 				print_liste_field_titre("AccountAccountingShort");
 				print_liste_field_titre("SubledgerAccount");
 				print_liste_field_titre("LabelOperation");
-				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
-				print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
+				print_liste_field_titre("AccountingDebit", "", "", "", "", 'class="right"');
+				print_liste_field_titre("AccountingCredit", "", "", "", "", 'class="right"');
 				if (empty($object->date_validation)) {
 					print_liste_field_titre("Action", "", "", "", "", 'width="60"', "", "", 'center ');
 				} else {

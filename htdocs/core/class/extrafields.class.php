@@ -10,6 +10,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1758,7 +1759,12 @@ class ExtraFields
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			$value = $langs->trans($param['options'][$value]);
+			if (!isset($param['options'][$value])) {
+				$langs->load('errors');
+				$value = $langs->trans('ErrorNoValueForRadioType');
+			} else {
+				$value = $langs->trans($param['options'][$value]);
+			}
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
 			$value = '';

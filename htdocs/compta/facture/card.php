@@ -2505,12 +2505,12 @@ if (empty($reshook)) {
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
 			if ($usermustrespectpricemin && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)) {
-				if ($pu_ht && $price_min && ((price2num($pu_ht) * (1 - $remise_percent / 100)) < price2num($price_min))) {
+				if ($pu_ht && $price_min && (((float) price2num($pu_ht) * (1 - (float) $remise_percent / 100)) < (float) price2num($price_min))) {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
-				} elseif ($pu_ttc && $price_min_ttc && ((price2num($pu_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
+				} elseif ($pu_ttc && $price_min_ttc && ((price2num($pu_ttc) * (1 - (float) $remise_percent / 100)) < price2num($price_min_ttc))) {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;

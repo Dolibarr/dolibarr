@@ -915,8 +915,8 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	print '"'.$langs->transnoentitiesnoconv("LedgerAccount").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("SubledgerAccount").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("Label").'"'.$sep;
-	print '"'.$langs->transnoentitiesnoconv("Debit").'"'.$sep;
-	print '"'.$langs->transnoentitiesnoconv("Credit").'"'.$sep;
+	print '"'.$langs->transnoentitiesnoconv("AccountingDebit").'"'.$sep;
+	print '"'.$langs->transnoentitiesnoconv("AccountingCredit").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("Journal").'"'.$sep;
 	print '"'.$langs->transnoentitiesnoconv("Note").'"'.$sep;
 	print "\n";
@@ -1139,8 +1139,8 @@ if (empty($action) || $action == 'view') {
 	print "<td>".$langs->trans("SubledgerAccount")."</td>";
 	print "<td>".$langs->trans("LabelOperation")."</td>";
 	print '<td class="center">'.$langs->trans("PaymentMode")."</td>";
-	print '<td class="right">'.$langs->trans("Debit")."</td>";
-	print '<td class="right">'.$langs->trans("Credit")."</td>";
+	print '<td class="right">'.$langs->trans("AccountingDebit")."</td>";
+	print '<td class="right">'.$langs->trans("AccountingCredit")."</td>";
 	print "</tr>\n";
 
 	$r = '';
@@ -1165,19 +1165,24 @@ if (empty($action) || $action == 'view') {
 				//var_dump($tabpay[$key]);
 				print '<!-- Bank bank.rowid='.$key.' type='.$tabpay[$key]['type'].' ref='.$tabpay[$key]['ref'].'-->';
 				print '<tr class="oddeven">';
+
+				// Date
 				print "<td>".$date."</td>";
-				print "<td>".$ref."</td>";
+
+				// Ref
+				print "<td>".dol_escape_htmltag($ref)."</td>";
+
 				// Ledger account
-				print "<td>";
 				$accounttoshow = length_accountg($k);
 				if (empty($accounttoshow) || $accounttoshow == 'NotDefined') {
-					print '<span class="error">'.$langs->trans("BankAccountNotDefined").'</span>';
-				} else {
-					print $accounttoshow;
+					$accounttoshow = '<span class="error">'.$langs->trans("BankAccountNotDefined").'</span>';
 				}
+				print '<td class="maxwidth300" title="'.dol_escape_htmltag(dol_string_nohtmltag($accounttoshow)).'">';
+				print $accounttoshow;
 				print "</td>";
+
 				// Subledger account
-				print "<td>";
+				print '<td class="maxwidth300">';
 				/*$accounttoshow = length_accountg($k);
 				if (empty($accounttoshow) || $accounttoshow == 'NotDefined')
 				{
@@ -1185,9 +1190,12 @@ if (empty($action) || $action == 'view') {
 				}
 				else print $accounttoshow;*/
 				print "</td>";
-				print "<td>";
-				print $reflabel;
+
+				// Label operation
+				print '<td>';
+				print $reflabel;	// This is already html escaped content
 				print "</td>";
+
 				print '<td class="center">'.$val["type_payment"]."</td>";
 				print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 				print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
@@ -1211,10 +1219,14 @@ if (empty($action) || $action == 'view') {
 
 					print '<!-- Thirdparty bank.rowid='.$key.' -->';
 					print '<tr class="oddeven">';
+
+					// Date
 					print "<td>".$date."</td>";
-					print "<td>".$ref."</td>";
+
+					// Ref
+					print "<td>".dol_escape_htmltag($ref)."</td>";
+
 					// Ledger account
-					print "<td>";
 					$account_ledger = $k;
 					// Try to force general ledger account depending on type
 					if ($tabtype[$key] == 'payment') {
@@ -1243,9 +1255,9 @@ if (empty($action) || $action == 'view') {
 						if ($tabtype[$key] == 'unknown') {
 							// We will accept writing, but into a waiting account
 							if (empty($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) || $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE == '-1') {
-								print '<span class="error small">'.$langs->trans('UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking').'</span>';
+								$accounttoshow = '<span class="error small">'.$langs->trans('UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking').'</span>';
 							} else {
-								print '<span class="warning small">'.$langs->trans('UnknownAccountForThirdparty', length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE)).'</span>'; // We will use a waiting account
+								$accounttoshow = '<span class="warning small">'.$langs->trans('UnknownAccountForThirdparty', length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE)).'</span>'; // We will use a waiting account
 							}
 						} else {
 							// We will refuse writing
@@ -1268,15 +1280,15 @@ if (empty($action) || $action == 'view') {
 							if ($tabtype[$key] == 'member') {
 								$errorstring = 'MainAccountForSubscriptionPaymentNotDefined';
 							}
-							print '<span class="error small">'.$langs->trans($errorstring).'</span>';
+							$accounttoshow = '<span class="error small">'.$langs->trans($errorstring).'</span>';
 						}
-					} else {
-						print $accounttoshow;
 					}
+					print '<td class="maxwidth300" title="'.dol_escape_htmltag(dol_string_nohtmltag($accounttoshow)).'">';
+					print $accounttoshow;
 					print "</td>";
 
 					// Subledger account
-					print "<td>";
+					$accounttoshowsubledger = '';
 					if (in_array($tabtype[$key], array('payment', 'payment_supplier', 'payment_expensereport', 'payment_salary', 'payment_various'))) {	// Type of payments that uses a subledger
 						$accounttoshowsubledger = length_accounta($k);
 						if ($accounttoshow != $accounttoshowsubledger) {
@@ -1288,18 +1300,20 @@ if (empty($action) || $action == 'view') {
 								if (!empty($tabcompany[$key]['code_compta'])) {
 									if (in_array($tabtype[$key], array('payment_various', 'payment_salary'))) {
 										// For such case, if subledger is not defined, we won't use subledger accounts.
-										print '<span class="warning small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored").'</span>';
+										$accounttoshowsubledger = '<span class="warning small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored").'</span>';
 									} else {
-										print '<span class="warning small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
+										$accounttoshowsubledger = '<span class="warning small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
 									}
 								} else {
-									print '<span class="error small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking").'</span>';
+									$accounttoshowsubledger = '<span class="error small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking").'</span>';
 								}
-							} else {
-								print $accounttoshowsubledger;
 							}
+						} else {
+							$accounttoshowsubledger = '';
 						}
 					}
+					print '<td class="maxwidth300">';
+					print $accounttoshowsubledger;
 					print "</td>";
 
 					print "<td>".$reflabel."</td>";

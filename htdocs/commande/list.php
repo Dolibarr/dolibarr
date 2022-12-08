@@ -1726,7 +1726,7 @@ if ($resql) {
 			-2=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
 			Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
 		);
-		print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'maxwidth125', 1);
+		print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'maxwidth125 onrightofpage', 1);
 		print '</td>';
 	}
 	// Action column
