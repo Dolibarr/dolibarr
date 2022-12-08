@@ -462,7 +462,7 @@ if ($action == 'confirm_generateinvoice') {
 
 				foreach ($arrayoftasks as $userid => $value) {
 					$fuser->fetch($userid);
-					//$pu_ht = $value['timespent'] * $fuser->thm;
+					$pu_ht = $fuser->thm;
 					$username = $fuser->getFullName($langs);
 
 					// Define qty per hour
