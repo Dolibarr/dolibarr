@@ -435,7 +435,7 @@ class Productbatch extends CommonObject
 	 */
 	public static function findAll($dbs, $fk_product_stock, $with_qty = 0, $fk_product = 0)
 	{
-		global $conf, $hookmanager, $db;
+		global $conf, $db;
 
 		$ret = array();
 
