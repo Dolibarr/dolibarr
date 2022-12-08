@@ -1772,6 +1772,7 @@ if ($resql) {
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
 		$totalarray['val'] = array();
+		$totalarray['val']['f.total_tva'] = 0;
 		$totalarray['val']['f.total_ht'] = 0;
 		$totalarray['val']['f.total_ttc'] = 0;
 

@@ -7801,11 +7801,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$dateplannedstart = '';
 				$datenextexpiration = '';
 				foreach ($object->lines as $line) {
-					if ($line->date_ouverture_prevue > $dateplannedstart) {
-						$dateplannedstart = $line->date_ouverture_prevue;
+					if ($line->date_start > $dateplannedstart) {
+						$dateplannedstart = $line->date_start;
 					}
-					if ($line->statut == 4 && $line->date_fin_prevue && (!$datenextexpiration || $line->date_fin_prevue < $datenextexpiration)) {
-						$datenextexpiration = $line->date_fin_prevue;
+					if ($line->statut == 4 && $line->date_end && (!$datenextexpiration || $line->date_end < $datenextexpiration)) {
+						$datenextexpiration = $line->date_end;
 					}
 				}
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = dol_print_date($dateplannedstart, 'dayrfc');
