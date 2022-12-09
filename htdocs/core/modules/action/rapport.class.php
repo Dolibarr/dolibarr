@@ -234,7 +234,7 @@ class CommActionRapport
 
 		$sql = "SELECT s.nom as thirdparty, s.rowid as socid, s.client,";
 		$sql .= " a.id, a.datep as dp, a.datep2 as dp2,";
-		$sql .= " a.fk_contact, a.note, a.percent as percent, a.label, a.fk_project,";
+		$sql .= " a.fk_contact, a.note, a.percent as percent, a.fulldayevent, a.label, a.fk_project,";
 		$sql .= " c.code, c.libelle,";
 		$sql .= " u.login";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
