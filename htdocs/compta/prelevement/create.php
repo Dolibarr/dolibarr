@@ -386,6 +386,9 @@ if ($resql) {
 	if (!empty($limit)) {
 		print '<input type="hidden" name="limit" value="'.$limit.'"/>';
 	}
+	if ($type != '') {
+		print '<input type="hidden" name="type" value="'.$type.'">';
+	}
 
 	$title = $langs->trans("InvoiceWaitingWithdraw");
 	if ($type == 'bank-transfer') {

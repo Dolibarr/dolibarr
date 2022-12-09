@@ -702,6 +702,9 @@ ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_supplier_general v
 UPDATE llx_const SET name = 'MAIN_LIST_HIDE_PUBLIC_NOTES' WHERE name = 'MAIN_LIST_ALLOW_PUBLIC_NOTES';
 UPDATE llx_const SET name = 'MAIN_LIST_HIDE_PRIVATE_NOTES' WHERE name = 'MAIN_LIST_ALLOW_PRIVATE_NOTES';
 
+-- Rename prospect level on contact
+ALTER TABLE llx_socpeople CHANGE fk_prospectcontactlevel fk_prospectlevel varchar(12);
+
 -- Add shipment lines dispatcher
 create table llx_expeditiondet_dispatch
 (
@@ -721,6 +724,9 @@ ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product_parent FOREIGN KEY (fk_product_parent) REFERENCES llx_product (rowid);
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+
+-- Increase size of action params for email collector (v15)
+ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
 
 -- Make sell-by or eat-by date mandatory
 ALTER TABLE llx_product ADD COLUMN sell_or_eat_by_mandatory tinyint DEFAULT 0 NOT NULL AFTER tobatch;

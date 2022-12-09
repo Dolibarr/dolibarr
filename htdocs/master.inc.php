@@ -212,6 +212,11 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 	if ($mysoc->country_code == 'DE' && !isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
 		$conf->global->MAIN_INVERT_SENDER_RECIPIENT = 1;
 	}
+
+	// Easya Specific - Remove check module version
+	if (!empty($conf->global->EASYA_VERSION)) {
+		$conf->global->CHECKLASTVERSION_EXTERNALMODULE = 0;
+	}
 }
 
 
