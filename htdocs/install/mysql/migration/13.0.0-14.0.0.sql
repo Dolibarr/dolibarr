@@ -727,3 +727,9 @@ ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_
 
 -- Increase size of action params for email collector (v15)
 ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
+
+-- Replace MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS by (MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST, MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST and MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST)
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT 'MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST', entity, value, type, visible, note FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT 'MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST', entity, value, type, visible, note FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT 'MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST', entity, value, type, visible, note FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
+DELETE FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
