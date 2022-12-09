@@ -46,7 +46,7 @@ $mode = GETPOST('mode', 'aZ');
 $id = GETPOST('id', 'int');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_categ = GETPOST("search_categ", 'alpha');
+$search_categ = GETPOST("search_categ", 'int');
 
 $search_projectstatus = GETPOST('search_projectstatus');
 if (!isset($search_projectstatus) || $search_projectstatus === '') {
@@ -70,6 +70,13 @@ $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_societe = GETPOST('search_societe');
 $search_societe_alias = GETPOST('search_societe_alias');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
+$searchCategoryCustomerOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator', 'int');
+} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+	$searchCategoryCustomerOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+}
+$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
 
 $mine = GETPOST('mode', 'alpha') == 'mine' ? 1 : 0;
 if ($mine) {
@@ -235,6 +242,7 @@ if (empty($reshook)) {
 		$search_datelimit_start = '';
 		$search_datelimit_end = '';
 		$toselect = array();
+		$searchCategoryCustomerList = array();
 		$search_array_options = array();
 	}
 
@@ -332,13 +340,9 @@ $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be
 $sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.usage_bill_time,";
 $sql .= " s.nom as name, s.name_alias as alias, s.rowid as socid,";
 $sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update,";
-$sql .= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut, ";
+$sql .= " t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut,";
 $sql .= " t.description, t.fk_task_parent";
 $sql .= " ,t.budget_amount";
-// We'll need these fields in order to filter by categ
-if ($search_categ > 0) {
-	$sql .= ", cs.fk_categorie, cs.fk_project";
-}
 // Add sum fields
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
 	$sql .= " , SUM(tt.task_duration * ".$db->ifsql("invoice_id IS NULL", "1", "0").") as tobill, SUM(tt.task_duration * ".$db->ifsql("invoice_id IS NULL", "0", "1").") as billed";
@@ -355,10 +359,6 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-// We'll need this table joined to the select in order to filter by categ
-if ($search_categ > 0) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_project as cs ON p.rowid = cs.fk_project"; // We'll need this table joined to the select in order to filter by categ
-}
 $sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed']['checked'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
@@ -383,12 +383,6 @@ if (is_object($projectstatic) && $projectstatic->id > 0) {
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) {
 	$sql .= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".((int) $socid).")";
-}
-if ($search_categ > 0) {
-	$sql .= " AND cs.fk_categorie = ".((int) $search_categ);
-}
-if ($search_categ == -2) {
-	$sql .= " AND cs.fk_categorie IS NULL";
 }
 if ($search_project_ref) {
 	$sql .= natural_search('p.ref', $search_project_ref);
@@ -448,6 +442,80 @@ if ($search_project_user > 0) {
 if ($search_task_user > 0) {
 	$sql .= " AND ect.fk_c_type_contact IN (".$db->sanitize(join(',', array_keys($listoftaskcontacttype))).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".((int) $search_task_user);
 }
+// Search for tag/category ($searchCategoryProjectList is an array of ID)
+$searchCategoryProjectList = array($search_categ);
+$searchCategoryProjectOperator = 0;
+if (!empty($searchCategoryProjectList)) {
+	$searchCategoryProjectSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryProjectList as $searchCategoryProject) {
+		if (intval($searchCategoryProject) == -2) {
+			$searchCategoryProjectSqlList[] = "NOT EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project)";
+		} elseif (intval($searchCategoryProject) > 0) {
+			if ($searchCategoryProjectOperator == 0) {
+				$searchCategoryProjectSqlList[] = " EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project AND ck.fk_categorie = ".((int) $searchCategoryProject).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProject);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryProjectSqlList[] = " EXISTS (SELECT ck.fk_project FROM ".MAIN_DB_PREFIX."categorie_project as ck WHERE p.rowid = ck.fk_project AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryProjectOperator == 1) {
+		if (!empty($searchCategoryProjectSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryProjectSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryProjectSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryProjectSqlList).")";
+		}
+	}
+}
+$searchCategoryCustomerSqlList = array();
+if ($searchCategoryCustomerOperator == 1) {
+	$existsCategoryCustomerList = array();
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$sqlCategoryCustomerNotExists  = " NOT EXISTS (";
+			$sqlCategoryCustomerNotExists .= " SELECT cat_cus.fk_soc";
+			$sqlCategoryCustomerNotExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
+			$sqlCategoryCustomerNotExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
+			$sqlCategoryCustomerNotExists .= " )";
+			$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerNotExists;
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			$existsCategoryCustomerList[] = $db->escape($searchCategoryCustomer);
+		}
+	}
+	if (!empty($existsCategoryCustomerList)) {
+		$sqlCategoryCustomerExists = " EXISTS (";
+		$sqlCategoryCustomerExists .= " SELECT cat_cus.fk_soc";
+		$sqlCategoryCustomerExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
+		$sqlCategoryCustomerExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
+		$sqlCategoryCustomerExists .= " AND cat_cus.fk_categorie IN (".$db->sanitize(implode(',', $existsCategoryCustomerList)).")";
+		$sqlCategoryCustomerExists .= " )";
+		$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerExists;
+	}
+	if (!empty($searchCategoryCustomerSqlList)) {
+		$sql .= " AND (".implode(' OR ', $searchCategoryCustomerSqlList).")";
+	}
+} else {
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$sqlCategoryCustomerNotExists = " NOT EXISTS (";
+			$sqlCategoryCustomerNotExists .= " SELECT cat_cus.fk_soc";
+			$sqlCategoryCustomerNotExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
+			$sqlCategoryCustomerNotExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
+			$sqlCategoryCustomerNotExists .= " )";
+			$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerNotExists;
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			$searchCategoryCustomerSqlList[] = "p.fk_soc IN (SELECT fk_soc FROM ".$db->prefix()."categorie_societe WHERE fk_categorie = ".((int) $searchCategoryCustomer).")";
+		}
+	}
+	if (!empty($searchCategoryCustomerSqlList)) {
+		$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
+	}
+}
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
@@ -459,9 +527,6 @@ if (!empty($arrayfields['t.tobill']['checked']) || !empty($arrayfields['t.billed
 	$sql .= " s.nom, s.rowid,";
 	$sql .= " t.datec, t.dateo, t.datee, t.tms,";
 	$sql .= " t.rowid, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress,t.budget_amount, t.fk_statut";
-	if ($search_categ) {
-		$sql .= ", cs.fk_categorie, cs.fk_project";
-	}
 	// Add fields from extrafields
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -604,6 +669,9 @@ if ($search_task_user > 0) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+	$param .= "&search_category_customer_list[]=".urlencode($searchCategoryCustomer);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
@@ -671,11 +739,11 @@ if ($search_all) {
 $moreforfilter = '';
 
 // Filter on categories
-if (!empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ProjectCategories');
-	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('project', $search_categ, 'search_categ', 0, $tmptitle, 'maxwidth300');
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('project', $search_categ, 'search_categ', 1, $tmptitle, 'maxwidth300');
 	$moreforfilter .= '</div>';
 }
 
@@ -698,6 +766,19 @@ if (empty($user->rights->user->user->lire)) {
 }
 $moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_task_user, 'search_task_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');
 $moreforfilter .= '</div>';
+
+// Filter on customer categories
+if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST) && !empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
+	$categoriesArr = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 1);
+	$categoriesArr[-2] = '- '.$langs->trans('NotCategorized').' -';
+	$moreforfilter .= Form::multiselectarray('search_category_customer_list', $categoriesArr, $searchCategoryCustomerList, 0, 0, 'minwidth300', 0, 0, '', 'category', $tmptitle);
+	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_customer_operator" name="search_category_customer_operator" value="1"'.($searchCategoryCustomerOperator == 1 ? ' checked="checked"' : '').'/>';
+	$moreforfilter .= $form->textwithpicto('', $langs->trans('UseOrOperatorForCategories') . ' : ' . $tmptitle, 1, 'help', '', 0, 2, 'tooltip_cat_cus'); // Tooltip on click
+	$moreforfilter .= '</div>';
+}
 
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -1102,13 +1183,14 @@ while ($i < $imaxinloop) {
 			// Description
 			if (!empty($arrayfields['t.description']['checked'])) {
 				print '<td>';
-				print dol_escape_htmltag($object->description);
+				print dolGetFirstLineOfText($object->description, 5);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
 			}
-			// Date start
+
+			// Date start project
 			if (!empty($arrayfields['t.dateo']['checked'])) {
 				print '<td class="center">';
 				print dol_print_date($db->jdate($obj->date_start), 'day');
@@ -1117,7 +1199,7 @@ while ($i < $imaxinloop) {
 					$totalarray['nbfield']++;
 				}
 			}
-			// Date end
+			// Date end project
 			if (!empty($arrayfields['t.datee']['checked'])) {
 				print '<td class="center">';
 				print dol_print_date($db->jdate($obj->date_end), 'day');
@@ -1376,7 +1458,7 @@ while ($i < $imaxinloop) {
 				}
 			}
 			// Status
-			/*if (! empty($arrayfields['p.fk_statut']['checked']))
+			/*if (!empty($arrayfields['p.fk_statut']['checked']))
 			{
 				$projectstatic->statut = $obj->fk_statut;
 				print '<td class="right">'.$projectstatic->getLibStatut(5).'</td>';

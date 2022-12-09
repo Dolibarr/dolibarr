@@ -235,6 +235,8 @@ function pHeader($soutitre, $next, $action = 'none')
 
 	// On force contenu dans format sortie
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
+	// Security options
 	header("X-Content-Type-Options: nosniff");
 	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 

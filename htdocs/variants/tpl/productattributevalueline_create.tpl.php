@@ -84,7 +84,7 @@ if ($nolinesbefore) {
 	</td>
 
 	<td class="nobottom linecoledit center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay += $colspan; ?>
-		<input type="submit" class="button reposition" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
+		<input type="submit" class="button reposition small" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
 	</td>
 </tr>
 

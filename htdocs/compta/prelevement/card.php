@@ -24,6 +24,7 @@
  *	\brief      Card of a direct debit
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
@@ -53,10 +54,10 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if (!$sortfield) {
-	$sortfield = 'pl.fk_soc';
+	$sortfield = 'pl.rowid';
 }
 if (!$sortorder) {
-	$sortorder = 'DESC';
+	$sortorder = 'ASC';
 }
 
 $object = new BonPrelevement($db);
@@ -284,7 +285,7 @@ if ($id > 0 || $ref) {
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode", $object->methodes_trans);
 		print '</td></tr>';
-		print '</table><br>';
+		print '</table>';
 		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("SetToStatusSent")).'"></div>';
 		print '</form>';
 		print '<br>';
@@ -342,7 +343,7 @@ if ($id > 0 || $ref) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE pl.fk_prelevement_bons = ".((int) $id);
 	$sql .= " AND pl.fk_prelevement_bons = pb.rowid";
-	$sql .= " AND pb.entity = ".$conf->entity;
+	$sql .= " AND pb.entity = ".((int) $conf->entity);	// No sharing of entity here
 	$sql .= " AND pl.fk_soc = s.rowid";
 	if ($socid) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -374,7 +375,8 @@ if ($id > 0 || $ref) {
 			$urladd .= '&limit='.urlencode($limit);
 		}
 
-		print '<form method="get" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";
+		print '<form method="POST" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";
+		print '<input type="hidden" name="token" value="'.newToken().'"/>';
 		print '<input type="hidden" name="id" value="'.$id.'"/>';
 		print '<input type="hidden" name="socid" value="'.$socid.'"/>';
 		if (!empty($page)) {
@@ -394,9 +396,9 @@ if ($id > 0 || $ref) {
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 		print '<table class="noborder liste" width="100%" cellpadding="4">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd);
-		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd);
-		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $urladd, 'class="right"');
+		print_liste_field_titre("Lines", $_SERVER["PHP_SELF"], "pl.rowid", '', $urladd, '', $sortfield, $sortorder);
+		print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $urladd, '', $sortfield, $sortorder);
+		print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "pl.amount", "", $urladd, 'class="right"', $sortfield, $sortorder);
 		print_liste_field_titre('');
 		print "</tr>\n";
 

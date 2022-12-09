@@ -97,14 +97,14 @@ class modTicket extends DolibarrModules
 		$this->depends = array('modAgenda'); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("ticket");
 
 		// Constants
 		// List of particular constants to add when module is enabled
 		// (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
 		// Example:
-		$default_signature = $langs->trans('TicketMessageMailSignatureText', getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
+		$default_footer = $langs->trans('TicketMessageMailFooterText', getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
 		$this->const = array(
 			1 => array('TICKET_ENABLE_PUBLIC_INTERFACE', 'chaine', '0', 'Enable ticket public interface', 0),
 			2 => array('TICKET_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module', 0),
@@ -116,14 +116,14 @@ class modTicket extends DolibarrModules
 			8 => array('TICKET_PRODUCT_CATEGORY', 'chaine', 0, 'The category of product that is being used for ticket accounting', 0),
 			9 => array('TICKET_NOTIFICATION_EMAIL_FROM', 'chaine', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), 'Email to use by default as sender for messages sent from Dolibarr', 0),
 			10 => array('TICKET_MESSAGE_MAIL_INTRO', 'chaine', $langs->trans('TicketMessageMailIntroText'), 'Introduction text of ticket replies sent from Dolibarr', 0),
-			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_signature, 'Signature to use by default for messages sent from Dolibarr', 0),
-			12 => array('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER', 'chaine', "1", 'Disable the rendering of headers in tickets', 0)
+			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_footer, 'Signature to use by default for messages sent from Dolibarr', 0),
+			12 => array('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER', 'chaine', "1", 'Disable the rendering of headers in tickets', 0),
+			13 => array('MAIN_SECURITY_ENABLECAPTCHA_TICKET', 'chaine', getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET'), 'Enable captcha code by default', 0)
 		);
 
 
 		$this->tabs = array(
-			'thirdparty:+ticket:Tickets:@ticket:$user->rights->ticket->read:/ticket/list.php?socid=__ID__',
-			'project:+ticket:Tickets:@ticket:$user->rights->ticket->read:/ticket/list.php?projectid=__ID__',
+			'thirdparty:+ticket:Tickets:ticket:$user->rights->ticket->read:/ticket/list.php?socid=__ID__',
 		);
 
 		// Dictionaries

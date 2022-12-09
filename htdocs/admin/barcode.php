@@ -24,6 +24,7 @@
  *	\brief      Page to setup barcode module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
@@ -31,10 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 // Load translation files required by the page
 $langs->load("admin");
 
+// Security Check Access
 if (!$user->admin) {
 	accessforbidden();
 }
 
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
@@ -190,7 +193,7 @@ foreach ($dirbarcode as $reldir) {
 
 
 // Select barcode numbering module
-if ($conf->product->enabled) {
+if (isModEnabled('product')) {
 	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")", '', '');
 
 	print '<div class="div-table-responsive-no-min">';
@@ -252,7 +255,7 @@ if ($conf->product->enabled) {
 }
 
 // Select barcode numbering module
-if ($conf->societe->enabled) {
+if (isModEnabled('societe')) {
 	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("ThirdParty").")", '', '');
 
 	print '<div class="div-table-responsive-no-min">';
@@ -450,7 +453,7 @@ if (!isset($_SERVER['WINDIR'])) {
 }
 
 // Module products
-if (!empty($conf->product->enabled)) {
+if (isModEnabled('product')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" class="right">';
@@ -461,7 +464,7 @@ if (!empty($conf->product->enabled)) {
 }
 
 // Module thirdparty
-if (!empty($conf->societe->enabled)) {
+if (isModEnabled('societe')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" class="right">';

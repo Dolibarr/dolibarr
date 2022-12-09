@@ -16,12 +16,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  * or see https://www.gnu.org/
  */
+
 /**
  *  \file			htdocs/core/lib/functionsnumtoword.lib.php
  *	\brief			A set of functions for Dolibarr
  *					This file contains all frequently used functions.
  */
-
 
 /**
  * Function to return a number into a text.
@@ -187,7 +187,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 
 	/*In dolibarr 3.6.2 (my current version) doesn't have $langs->default and
 	in case exist why ask $lang like a parameter?*/
-	if (((is_object($langs) && $langs->default == 'es_MX') || (!is_object($langs) && $langs == 'es_MX')) && $numorcurrency == 'currency') {
+	if (((is_object($langs) && $langs->getDefaultLang(0) == 'es_MX') || (!is_object($langs) && $langs == 'es_MX')) && $numorcurrency == 'currency') {
 		if ($numero >= 1 && $numero < 2) {
 			return ("UN PESO ".$parte_decimal." / 100 M.N.");
 		} elseif ($numero >= 0 && $numero < 1) {

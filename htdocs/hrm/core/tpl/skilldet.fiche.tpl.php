@@ -43,7 +43,7 @@ $value_private .= "\n";
 /*
 // Special cases
 if ($module == 'propal') {
-$permission = $user->rights->propale->creer;
+$permission = $user->rights->propal->creer;
 } elseif ($module == 'supplier_proposal') {
 $permission = $user->rights->supplier_proposal->creer;
 } elseif ($module == 'fichinter') {

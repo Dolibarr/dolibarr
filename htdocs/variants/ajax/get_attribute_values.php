@@ -32,13 +32,14 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php';
 
 // Security check
-if (empty($conf->variants->enabled)) {
+if (!isModEnabled('variants')) {
 	accessforbidden('Module not enabled');
 }
 if ($user->socid > 0) { // Protection if external user
@@ -73,7 +74,7 @@ if ($prodattr->fetch($id) < 0) {
 
 $prodattrval = new ProductAttributeValue($db);
 
-$res = $prodattrval->fetchAllByProductAttribute($id);
+$res = $prodattrval->fetchAllByProductAttribute($id, false, 1);
 
 if ($res == -1) {
 	print json_encode(array(

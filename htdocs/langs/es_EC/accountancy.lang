@@ -229,4 +229,3 @@ ToBind=Líneas para atar
 UseMenuToSetBindindManualy=Líneas aún no enlazadas, use el menú <a href="%s">%s</a> para hacer el enlace manualmente.
 WarningReportNotReliable=Advertencia, este informe no se basa en el Libro mayor, por lo que no contiene la transacción modificada manualmente en el Libro mayor. Si su publicación está actualizada, la vista de contabilidad es más precisa.
 ExpenseReportJournal=Diario del informe de gastos
-InventoryJournal=Diario de inventario

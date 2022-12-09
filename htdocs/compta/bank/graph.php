@@ -23,6 +23,7 @@
  *	\brief      Page graph des transactions bancaires
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -33,6 +34,9 @@ $langs->loadLangs(array('banks', 'categories'));
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width', 768);
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 200);
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('bankstats', 'globalcard'));
 
 // Security check
 if (GETPOST('account') || GETPOST('ref')) {

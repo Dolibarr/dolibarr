@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,7 @@
  *		\brief      Page to create/view a bank account
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -36,16 +37,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
@@ -67,6 +68,15 @@ $hookmanager->initHooks(array('bankcard', 'globalcard'));
 // Security check
 $id = GETPOST("id", 'int') ? GETPOST("id", 'int') : GETPOST('ref', 'alpha');
 $fieldid = GETPOST("id", 'int') ? 'rowid' : 'ref';
+
+if (GETPOST("id", 'int') || GETPOST("ref")) {
+	if (GETPOST("id", 'int')) {
+		$object->fetch(GETPOST("id", 'int'));
+	}
+	if (GETPOST("ref")) {
+		$object->fetch(0, GETPOST("ref"));
+	}
+}
 
 $result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
@@ -319,6 +329,7 @@ if (empty($reshook)) {
 	}
 }
 
+
 /*
  * View
  */
@@ -326,22 +337,22 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formbank = new FormBank($db);
 $formcompany = new FormCompany($db);
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 $help_url = 'EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:Módulo_Bancos_y_Cajas|DE:Modul_Banken_und_Barbestände';
+if ($action == 'create') {
+	$title = $langs->trans("NewFinancialAccount");
+} elseif (!empty($object->ref)) {
+	$title = $object->ref." - ".$langs->trans("Card");
+}
+llxHeader("", $title, $help_url);
 
 // Creation
-
 if ($action == 'create') {
-	$object = new Account($db);
-
-	$title = $langs->trans("NewFinancialAccount");
-	llxHeader("", $title, $help_url);
-
 	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'bank_account');
 
 	if ($conf->use_javascript_ajax) {
@@ -435,7 +446,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// Tags-Categories
-	if (!empty($conf->categorie->enabled)) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
 
@@ -571,7 +582,7 @@ if ($action == 'create') {
 		$fieldrequired = 'fieldrequired ';
 	}
 
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
 		print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
@@ -582,7 +593,7 @@ if ($action == 'create') {
 	}
 
 	// Accountancy journal
-	if (!empty($conf->accounting->enabled)) {
+	if (isModEnabled('accounting')) {
 		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
 		print '<td>';
 		print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
@@ -597,25 +608,8 @@ if ($action == 'create') {
 
 	print '</form>';
 } else {
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Visu et edition                                                            */
-	/*                                                                            */
-	/* ************************************************************************** */
-
+	// View and edit mode
 	if ((GETPOST("id", 'int') || GETPOST("ref")) && $action != 'edit') {
-		$object = new Account($db);
-		if (GETPOST("id", 'int')) {
-			$object->fetch(GETPOST("id", 'int'));
-		}
-		if (GETPOST("ref")) {
-			$object->fetch(0, GETPOST("ref"));
-			$_GET["id"] = $object->id;
-		}
-
-		$title = $object->ref." - ".$langs->trans("Card");
-		llxHeader("", $title, $help_url);
-
 		// Show tabs
 		$head = bank_prepare_head($object);
 		print dol_get_fiche_head($head, 'bankname', $langs->trans("FinancialAccount"), -1, 'account');
@@ -678,7 +672,7 @@ if ($action == 'create') {
 		// Accountancy code
 		print '<tr class="liste_titre_add"><td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			$accountingaccount = new AccountingAccount($db);
 			$accountingaccount->fetch('', $object->account_number, 1);
 
@@ -689,7 +683,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Accountancy journal
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
 
@@ -715,7 +709,7 @@ if ($action == 'create') {
 		print '<table class="border tableforfield centpercent">';
 
 		// Categories
-		if (!empty($conf->categorie->enabled)) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($object->id, Categorie::TYPE_ACCOUNT, 1);
 			print "</td></tr>";
@@ -758,7 +752,7 @@ if ($action == 'create') {
 			}
 
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
-			print '<td>'.$object->iban.'&nbsp;';
+			print '<td>'.getIbanHumanReadable($object).'&nbsp;';
 			if (!empty($object->iban)) {
 				if (!checkIbanForAccount($object)) {
 					print img_picto($langs->trans("IbanNotValid"), 'warning');
@@ -843,12 +837,6 @@ if ($action == 'create') {
 	/* ************************************************************************** */
 
 	if (GETPOST('id', 'int') && $action == 'edit' && $user->rights->banque->configurer) {
-		$object = new Account($db);
-		$object->fetch(GETPOST('id', 'int'));
-
-		$title = $object->ref." - ".$langs->trans("Card");
-		llxHeader("", $title, $help_url);
-
 		print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'bank_account');
 
 		if ($conf->use_javascript_ajax) {
@@ -971,7 +959,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Tags-Categories
-		if (!empty($conf->categorie->enabled)) {
+		if (isModEnabled('categorie')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
@@ -1019,7 +1007,7 @@ if ($action == 'create') {
 
 		print '<tr><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
 		} else {
 			print '<input type="text" name="account_number" value="'.(GETPOST("account_number") ? GETPOST("account_number") : $object->account_number).'">';
@@ -1027,7 +1015,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Accountancy journal
-		if (!empty($conf->accounting->enabled)) {
+		if (isModEnabled('accounting')) {
 			print '<tr><td class="fieldrequired">'.$langs->trans("AccountancyJournal").'</td>';
 			print '<td>';
 			print $formaccounting->select_journal($object->fk_accountancy_journal, 'fk_accountancy_journal', 4, 1, 0, 0);
@@ -1092,7 +1080,7 @@ if ($action == 'create') {
 				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics" value="'.(GETPOSTISSET('ics') ? GETPOST('ics', 'alphanohtml') : $object->ics).'"></td></tr>';
 			}
 
-			if (!empty(isModEnabled('paymentbybanktransfer'))) {
+			if (isModEnabled('paymentbybanktransfer')) {
 				print '<tr><td>'.$form->textwithpicto($langs->trans("IDS"), $langs->trans("IDS").' ('.$langs->trans("UsedFor", $langs->transnoentitiesnoconv("BankTransfer")).')').'</td>';
 				print '<td><input class="minwidth150 maxwidth200onsmartphone" maxlength="32" type="text" class="flat" name="ics_transfer" value="'.(GETPOSTISSET('ics_transfer') ? GETPOST('ics_transfer', 'alphanohtml') : $object->ics_transfer).'"></td></tr>';
 

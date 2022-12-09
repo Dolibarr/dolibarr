@@ -7,6 +7,7 @@
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
+ * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +63,8 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -70,6 +73,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Init vars
 $errmsg = '';
@@ -83,12 +87,11 @@ $langs->loadLangs(array("main", "members", "companies", "install", "other"));
 
 // Security check
 if (empty($conf->adherent->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Membership not enabled');
 }
 
 if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
-	print $langs->trans("Auto subscription form for public visitors has not been enabled");
-	exit;
+	httponly_accessforbidden("Auto subscription form for public visitors has not been enabled");
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -275,12 +278,36 @@ if (empty($reshook) && $action == 'add') {
 			$adh->pass        = GETPOST('pass1');
 		}
 		$adh->photo       = GETPOST('photo');
-		$adh->country_id  = $conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE ? $conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE : GETPOST('country_id', 'int');
+		$adh->country_id  = getDolGlobalString("MEMBER_NEWFORM_FORCECOUNTRYCODE", GETPOST('country_id', 'int'));
 		$adh->state_id    = GETPOST('state_id', 'int');
-		$adh->typeid      = $conf->global->MEMBER_NEWFORM_FORCETYPE ? $conf->global->MEMBER_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
+		$adh->typeid      = getDolGlobalString("MEMBER_NEWFORM_FORCETYPE", GETPOST('typeid', 'int'));
 		$adh->note_private = GETPOST('note_private');
-		$adh->morphy      = $conf->global->MEMBER_NEWFORM_FORCEMORPHY ? $conf->global->MEMBER_NEWFORM_FORCEMORPHY : GETPOST('morphy');
+		$adh->morphy      = getDolGlobalString("MEMBER_NEWFORM_FORCEMORPHY", GETPOST('morphy'));
 		$adh->birth       = $birthday;
+
+		$adh->ip = getUserRemoteIP();
+
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+		$now = dol_now();
+		$minmonthpost = dol_time_plus_duree($now, -1, "m");
+		// Calculate nb of post for IP
+		$nb_post_ip = 0;
+		if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+			$sql = "SELECT COUNT(ref) as nb_adh";
+			$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
+			$sql .= " WHERE ip = '".$db->escape($adh->ip)."'";
+			$sql .= " AND datec > '".$db->idate($minmonthpost)."'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$i++;
+					$obj = $db->fetch_object($resql);
+					$nb_post_ip = $obj->nb_adh;
+				}
+			}
+		}
 
 
 		// Fill array 'array_options' with data from add form
@@ -288,139 +315,155 @@ if (empty($reshook) && $action == 'add') {
 		$ret = $extrafields->setOptionalsFromPost(null, $adh);
 		if ($ret < 0) {
 			$error++;
+			$errmsg .= $adh->error;
 		}
 
-		$result = $adh->create($user);
-		if ($result > 0) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$object = $adh;
+		if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+			$error++;
+			$errmsg .= $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
+			array_push($adh->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
+		}
 
-			$adht = new AdherentType($db);
-			$adht->fetch($object->typeid);
+		if (!$error) {
+			$result = $adh->create($user);
+			if ($result > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+				$object = $adh;
 
-			if ($object->email) {
-				$subject = '';
-				$msg = '';
+				$adht = new AdherentType($db);
+				$adht->fetch($object->typeid);
 
-				// Send subscription email
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-				// Set output language
-				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-				// Load traductions files required by page
-				$outputlangs->loadLangs(array("main", "members"));
-				// Get email content from template
-				$arraydefaultmessage = null;
-				$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
+				if ($object->email) {
+					$subject = '';
+					$msg = '';
 
-				if (!empty($labeltouse)) {
-					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+					// Send subscription email
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+					$formmail = new FormMail($db);
+					// Set output language
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					// Load traductions files required by page
+					$outputlangs->loadLangs(array("main", "members"));
+					// Get email content from template
+					$arraydefaultmessage = null;
+					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
+
+					if (!empty($labeltouse)) {
+						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+					}
+
+					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+						$subject = $arraydefaultmessage->topic;
+						$msg     = $arraydefaultmessage->content;
+					}
+
+					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+					$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
+
+					if ($subjecttosend && $texttosend) {
+						$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
+
+						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+					}
+					/*if ($result < 0) {
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}*/
 				}
 
-				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-					$subject = $arraydefaultmessage->topic;
-					$msg     = $arraydefaultmessage->content;
-				}
-
-				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-				complete_substitutions_array($substitutionarray, $outputlangs, $object);
-				$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-				$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
-
-				if ($subjecttosend && $texttosend) {
-					$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
-
-					$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
-				}
-				/*if ($result < 0) {
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
-				}*/
-			}
-
-			// Send email to the foundation to say a new member subscribed with autosubscribe form
-			if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL) && !empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
-				  !empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL)) {
-				// Define link to login card
-				$appli = constant('DOL_APPLICATION_TITLE');
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-					$appli = $conf->global->MAIN_APPLICATION_TITLE;
-					if (preg_match('/\d\.\d/', $appli)) {
-						if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
-							$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
+				// Send email to the foundation to say a new member subscribed with autosubscribe form
+				if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL) && !empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
+					!empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL)) {
+					// Define link to login card
+					$appli = constant('DOL_APPLICATION_TITLE');
+					if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+						$appli = $conf->global->MAIN_APPLICATION_TITLE;
+						if (preg_match('/\d\.\d/', $appli)) {
+							if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
+								$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
+							}
+						} else {
+							$appli .= " ".DOL_VERSION;
 						}
 					} else {
 						$appli .= " ".DOL_VERSION;
 					}
+
+					$to = $adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
+					$from = $conf->global->ADHERENT_MAIL_FROM;
+					$mailfile = new CMailFile(
+						'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
+						$to,
+						$from,
+						$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
+						array(),
+						array(),
+						array(),
+						"",
+						"",
+						0,
+						-1
+					);
+
+					if (!$mailfile->sendfile()) {
+						dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
+					}
+				}
+
+				// Auto-create thirdparty on member creation
+				if (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY)) {
+					$company = new Societe($db);
+					$result = $company->create_from_member($adh);
+					if ($result < 0) {
+						$error++;
+						$errmsg .= join('<br>', $company->errors);
+					}
+				}
+
+				if (!empty($backtopage)) {
+					$urlback = $backtopage;
+				} elseif (!empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)) {
+					$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
+					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
-					$appli .= " ".DOL_VERSION;
+					$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
 				}
 
-				$to = $adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
-				$from = $conf->global->ADHERENT_MAIL_FROM;
-				$mailfile = new CMailFile(
-					'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
-					$to,
-					$from,
-					$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
-					array(),
-					array(),
-					array(),
-					"",
-					"",
-					0,
-					-1
-				);
+				if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
+					if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {			// If edition of amount not allowed
+						// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
+						// It is not so important because a test is done on return of payment validation.
+					}
 
-				if (!$mailfile->sendfile()) {
-					dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
-				}
-			}
+					$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, price2num(GETPOST('amount', 'alpha'), 'MT'), '', 0);
 
-			// Auto-create thirdparty on member creation
-			if (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY)) {
-				$company = new Societe($db);
-				$result = $company->create_from_member($adh);
-				if ($result < 0) {
-					$error++;
-					$errmsg .= join('<br>', $company->errors);
+					if (GETPOST('email')) {
+						$urlback .= '&email='.urlencode(GETPOST('email'));
+					}
+					if ($conf->global->MEMBER_NEWFORM_PAYONLINE != '-1' && $conf->global->MEMBER_NEWFORM_PAYONLINE != 'all') {
+						$urlback .= '&paymentmethod='.urlencode($conf->global->MEMBER_NEWFORM_PAYONLINE);
+					}
+				} else {
+					if (!empty($entity)) {
+						$urlback .= '&entity='.((int) $entity);
+					}
 				}
 			}
 
 			if (!empty($backtopage)) {
 				$urlback = $backtopage;
+				dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
 			} elseif (!empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)) {
 				$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
 				// TODO Make replacement of __AMOUNT__, etc...
+				dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
 			} else {
-				$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
+				$error++;
+				$errmsg .= join('<br>', $adh->errors);
 			}
-
-			if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
-				if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {			// If edition of amount not allowed
-					// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
-					// It is not so important because a test is done on return of payment validation.
-				}
-
-				$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, price2num(GETPOST('amount', 'alpha'), 'MT'), '', 0);
-
-				if (GETPOST('email')) {
-					$urlback .= '&email='.urlencode(GETPOST('email'));
-				}
-				if ($conf->global->MEMBER_NEWFORM_PAYONLINE != '-1' && $conf->global->MEMBER_NEWFORM_PAYONLINE != 'all') {
-					$urlback .= '&paymentmethod='.urlencode($conf->global->MEMBER_NEWFORM_PAYONLINE);
-				}
-			} else {
-				if (!empty($entity)) {
-					$urlback .= '&entity='.((int) $entity);
-				}
-			}
-
-			dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
-		} else {
-			$error++;
-			$errmsg .= join('<br>', $adh->errors);
 		}
 	}
 
@@ -431,16 +474,18 @@ if (empty($reshook) && $action == 'add') {
 		exit;
 	} else {
 		$db->rollback();
+		$action = "create";
 	}
 }
 
 // Action called after a submitted was send and member created successfully
 // If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to url we never go here because a redirect was done to this url.
 // backtopage parameter with an url was set on member submit page, we never go here because a redirect was done to this url.
+
 if (empty($reshook) && $action == 'added') {
 	llxHeaderVierge($langs->trans("NewMemberForm"));
 
-	// Si on a pas ete redirige
+	// If we have not been redirected
 	print '<br><br>';
 	print '<div class="center">';
 	print $langs->trans("NewMemberbyWeb");
@@ -475,11 +520,12 @@ print '<div class="center subscriptionformhelptext justify">';
 if (!empty($conf->global->MEMBER_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
 } else {
-	print $langs->trans("NewSubscriptionDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
+	print $langs->trans("NewSubscriptionDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }
 print '</div>';
 
 dol_htmloutput_errors($errmsg);
+dol_htmloutput_events();
 
 // Print form
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
@@ -556,42 +602,51 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		print '<input type="hidden" id="morphy" name="morphy" value="'.$conf->global->MEMBER_NEWFORM_FORCEMORPHY.'">';
 	}
 
-	// Company
+	// Company   // TODO : optional hide
 	print '<tr id="trcompany" class="trcompany"><td>'.$langs->trans("Company").'</td><td>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print '<input type="text" name="societe" class="minwidth150 widthcentpercentminusx" value="'.dol_escape_htmltag(GETPOST('societe')).'"></td></tr>'."\n";
+
 	// Title
 	print '<tr><td class="titlefield">'.$langs->trans('UserTitle').'</td><td>';
 	print $formcompany->select_civility(GETPOST('civility_id'), 'civility_id').'</td></tr>'."\n";
+
 	// Lastname
 	print '<tr><td>'.$langs->trans("Lastname").' <span style="color: red">*</span></td><td><input type="text" name="lastname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('lastname')).'"></td></tr>'."\n";
+
 	// Firstname
 	print '<tr><td>'.$langs->trans("Firstname").' <span style="color: red">*</span></td><td><input type="text" name="firstname" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('firstname')).'"></td></tr>'."\n";
+
 	// EMail
-	print '<tr><td>'.$langs->trans("Email").($conf->global->ADHERENT_MAIL_REQUIRED ? ' <span style="color:red;">*</span>' : '').'</td><td>';
+	print '<tr><td>'.$langs->trans("Email").(getDolGlobalString("ADHERENT_MAIL_REQUIRED") ? ' <span style="color:red;">*</span>' : '').'</td><td>';
 	//print img_picto('', 'email', 'class="pictofixedwidth"');
 	print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+
 	// Login
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
 		print '<tr><td>'.$langs->trans("Login").' <span style="color: red">*</span></td><td><input type="text" name="login" maxlength="50" class="minwidth100"value="'.dol_escape_htmltag(GETPOST('login')).'"></td></tr>'."\n";
 		print '<tr><td>'.$langs->trans("Password").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass1" class="minwidth100" value="'.dol_escape_htmltag(GETPOST("pass1", "none", 2)).'"></td></tr>'."\n";
 		print '<tr><td>'.$langs->trans("PasswordRetype").' <span style="color: red">*</span></td><td><input type="password" maxlength="128" name="pass2" class="minwidth100" value="'.dol_escape_htmltag(GETPOST("pass2", "none", 2)).'"></td></tr>'."\n";
 	}
+
 	// Gender
 	print '<tr><td>'.$langs->trans("Gender").'</td>';
 	print '<td>';
-	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"));
-	print $form->selectarray('gender', $arraygender, GETPOST('gender') ?GETPOST('gender') : $object->gender, 1);
+	$arraygender = array('man'=>$langs->trans("Genderman"), 'woman'=>$langs->trans("Genderwoman"), 'other'=>$langs->trans("Genderother"));
+	print $form->selectarray('gender', $arraygender, GETPOST('gender', 'alphanohtml'), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 	print '</td></tr>';
+
 	// Address
 	print '<tr><td>'.$langs->trans("Address").'</td><td>'."\n";
 	print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST('address', 'restricthtml'), 0, 1).'</textarea></td></tr>'."\n";
+
 	// Zip / Town
 	print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td>';
 	print $formcompany->select_ziptown(GETPOST('zipcode'), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 1, '', 'width75');
 	print ' / ';
 	print $formcompany->select_ziptown(GETPOST('town'), 'town', array('zipcode', 'selectcountry_id', 'state_id'), 0, 1);
 	print '</td></tr>';
+
 	// Country
 	print '<tr><td>'.$langs->trans('Country').'</td><td>';
 	print img_picto('', 'country', 'class="pictofixedwidth"');
@@ -621,17 +676,22 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		}
 		print '</td></tr>';
 	}
+
 	// Birthday
 	print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateOfBirth").'</td><td>';
-	print $form->selectDate($birthday, 'birth', 0, 0, 1, "newmember", 1, 0);
+	print $form->selectDate(!empty($birthday) ? $birthday : "", 'birth', 0, 0, 1, "newmember", 1, 0);
 	print '</td></tr>'."\n";
+
 	// Photo
 	print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
+
 	// Public
 	print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
+
 	// Other attributes
 	$tpl_context = 'public'; // define template context to public
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
 	// Comments
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
@@ -733,7 +793,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 
 	print dol_get_fiche_end();
 
-	// Save
+	// Save / Submit
 	print '<div class="center">';
 	print '<input type="submit" value="'.$langs->trans("GetMembershipButtonLabel").'" id="submitsave" class="button">';
 	if (!empty($backtopage)) {
@@ -753,10 +813,14 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 	foreach ($measuringUnits->records as $lines)
 		$units[$lines->short_label] = $langs->trans(ucfirst($lines->label));
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut as status, d.morphy";
+	$publiccounters = getDolGlobalString("MEMBER_COUNTERS_ARE_PUBLIC");
+
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut as status, d.morphy, COUNT(a.rowid) AS membercount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as a";
+	$sql .= " ON d.rowid = a.fk_adherent_type AND a.statut>0";
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
-	$sql .= " AND d.statut=1";
+	$sql .= " AND d.statut=1 GROUP BY d.rowid";
 
 	$result = $db->query($sql);
 	if ($result) {
@@ -772,6 +836,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		print '<th class="center">'.$langs->trans("Amount").'</th>';
 		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
 		print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
+		if ($publiccounters) print '<th class="center">'.$langs->trans("Members").'</th>';
 		print '<th class="center">'.$langs->trans("NewSubscription").'</th>';
 		print "</tr>\n";
 
@@ -786,7 +851,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			print max(1, intval($objp->duration)).' '.$units[$unit];
 			print '</td>';
 			print '<td class="center"><span class="amount nowrap">';
-			$displayedamount = max(intval($objp->amount), intval($conf->global->MEMBER_MIN_AMOUNT));
+			$displayedamount = max(intval($objp->amount), intval(getDolGlobalInt("MEMBER_MIN_AMOUNT")));
 			$caneditamount = !empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $objp->caneditamount;
 			if ($objp->subscription) {
 				if ($displayedamount > 0 || !$caneditamount) {
@@ -811,6 +876,8 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			}
 			print '</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
+			$membercount = $objp->membercount>0? $objp->membercount: "–";
+			if ($publiccounters) print '<td class="center">'.$membercount.'</td>';
 			print '<td class="center"><button class="button button-save reposition" name="typeid" type="submit" name="submit" value="'.$objp->rowid.'">'.$langs->trans("GetMembershipButtonLabel").'</button></td>';
 			print "</tr>";
 			$i++;

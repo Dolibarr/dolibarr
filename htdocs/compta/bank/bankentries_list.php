@@ -31,6 +31,7 @@
  *	\brief      List of bank transactions
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -365,7 +366,7 @@ if (GETPOST('save') && !$cancel && !empty($user->rights->banque->modifier)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 	}
-	/*if (! empty($conf->accounting->enabled) && (empty($search_accountancy_code) || $search_accountancy_code == '-1'))
+	/*if (isModEnabled('accounting') && (empty($search_accountancy_code) || $search_accountancy_code == '-1'))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountAccounting")), null, 'errors');
 		$error++;
@@ -517,9 +518,15 @@ $morehtmlref = '';
 
 if ($id > 0 || !empty($ref)) {
 	$title = $object->ref.' - '.$langs->trans("Transactions");
-	$helpurl = "";
-	llxHeader('', $title, $helpurl);
+} else {
+	$title = $langs->trans("BankTransactions");
+}
+$help_url = '';
 
+llxHeader('', $title, $help_url, '', 0, 0, array(), array(), $param);
+
+
+if ($id > 0 || !empty($ref)) {
 	// Load bank groups
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 	$bankcateg = new BankCateg($db);
@@ -574,10 +581,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 		}
 	}
-} else {
-	llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
 }
-
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql .= " b.fk_account, b.fk_type, b.fk_bordereau,";
@@ -879,7 +883,7 @@ if ($resql) {
 		print '<td class=right>'.$langs->trans("BankAccount").'</td>';
 		print '<td class=right>'.$langs->trans("Debit").'</td>';
 		print '<td class=right>'.$langs->trans("Credit").'</td>';
-		/*if (! empty($conf->accounting->enabled))
+		/*if (isModEnabled('accounting'))
 		{
 			print '<td class="center">';
 			print $langs->trans("AccountAccounting");
@@ -914,7 +918,7 @@ if ($resql) {
 		//}
 		print '<td class="right"><input name="adddebit" class="flat" type="text" size="4" value="'.GETPOST("adddebit", "alpha").'"></td>';
 		print '<td class="right"><input name="addcredit" class="flat" type="text" size="4" value="'.GETPOST("addcredit", "alpha").'"></td>';
-		/*if (! empty($conf->accounting->enabled))
+		/*if (isModEnabled('accounting'))
 		{
 			print '<td class="center">';
 			print $formaccounting->select_account($search_accountancy_code, 'search_accountancy_code', 1, null, 1, 1, '');
@@ -1023,9 +1027,9 @@ if ($resql) {
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
 
-	if (!empty($conf->categorie->enabled)) {
+	if (isModEnabled('categorie')) {
 		// Categories
-		if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 			$langs->load('categories');
 
 			// Bank line
@@ -1081,7 +1085,7 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['type']['checked'])) {
 		print '<td class="liste_titre" align="center">';
-		$form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100');
+		print $form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
 	// Numero
@@ -1274,7 +1278,7 @@ if ($resql) {
 				}
 				// Extra fields
 				$element = 'banktransaction';
-				if (is_array($extrafields->attributes[$element]['label']) && count($extrafields->attributes[$element]['label'])) {
+				if (!empty($extrafields->attributes[$element]['label']) && is_array($extrafields->attributes[$element]['label']) && count($extrafields->attributes[$element]['label'])) {
 					foreach ($extrafields->attributes[$element]['label'] as $key => $val) {
 						if (!empty($arrayfields["ef.".$key]['checked'])) {
 							if (!empty($arrayfields[$key]['checked'])) {
@@ -1557,6 +1561,7 @@ if ($resql) {
 
 			$companylinked_id = 0;
 			$userlinked_id = 0;
+			$type_link = "";
 
 			//payment line type to define user display and user or company linked
 			foreach ($links as $key => $value) {

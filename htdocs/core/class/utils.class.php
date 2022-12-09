@@ -52,8 +52,8 @@ class Utils
 	 *  Purge files into directory of data files.
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	string      $choices	   Choice of purge mode ('tempfiles', 'tempfilesold' to purge temp older than $nbsecondsold seconds, 'logfiles', or mix of this). Note 'allfiles' is possible too but very dangerous.
-	 *  @param  int         $nbsecondsold  Nb of seconds old to accept deletion of a directory if $choice is 'tempfilesold'
+	 *  @param	string      $choices	   Choice of purge mode ('tempfiles', 'tempfilesold' to purge temp older than $nbsecondsold seconds, 'logfiles', or mix of this). Note that 'allfiles' is also possible but very dangerous.
+	 *  @param  int         $nbsecondsold  Nb of seconds old to accept deletion of a directory if $choice is 'tempfilesold', or deletion of file if $choice is 'allfiles'
 	 *  @return	int						   0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	public function purgeFiles($choices = 'tempfilesold+logfiles', $nbsecondsold = 86400)
@@ -67,6 +67,9 @@ class Utils
 		if (empty($choices)) {
 			$choices = 'tempfilesold+logfiles';
 		}
+		if ($choices == 'allfiles' && $nbsecondsold > 0) {
+			$choices = 'allfilesold';
+		}
 
 		dol_syslog("Utils::purgeFiles choice=".$choices, LOG_DEBUG);
 
@@ -77,6 +80,7 @@ class Utils
 
 		$choicesarray = preg_split('/[\+,]/', $choices);
 		foreach ($choicesarray as $choice) {
+			$now = dol_now();
 			$filesarray = array();
 
 			if ($choice == 'tempfiles' || $choice == 'tempfilesold') {
@@ -85,7 +89,6 @@ class Utils
 					$filesarray = dol_dir_list($dolibarr_main_data_root, "directories", 1, '^temp$', '', 'name', SORT_ASC, 2, 0, '', 1); // Do not follow symlinks
 
 					if ($choice == 'tempfilesold') {
-						$now = dol_now();
 						foreach ($filesarray as $key => $val) {
 							if ($val['date'] > ($now - ($nbsecondsold))) {
 								unset($filesarray[$key]); // Discard temp dir not older than $nbsecondsold
@@ -98,7 +101,14 @@ class Utils
 			if ($choice == 'allfiles') {
 				// Delete all files (except install.lock, do not follow symbolic links)
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);	// No need to use recursive, we will delete directory
+				}
+			}
+
+			if ($choice == 'allfilesold') {
+				// Delete all files (except install.lock, do not follow symbolic links)
+				if ($dolibarr_main_data_root) {
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 1, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1, $nbsecondsold);	// No need to use recursive, we will delete directory
 				}
 			}
 
@@ -138,21 +148,23 @@ class Utils
 							$countdeleted += $tmpcountdeleted;
 						}
 					} elseif ($filesarray[$key]['type'] == 'file') {
-						// If (file that is not logfile) or (if mode is logfile)
-						if ($filesarray[$key]['fullname'] != $filelog || $choice == 'logfile' || $choice == 'logfiles') {
-							$result = dol_delete_file($filesarray[$key]['fullname'], 1, 1);
-							if ($result) {
-								$count++;
-								$countdeleted++;
-							} else {
-								$counterror++;
+						if ($choice != 'allfilesold' || $filesarray[$key]['date'] < ($now - $nbsecondsold)) {
+							// If (file that is not logfile) or (if mode is logfile)
+							if ($filesarray[$key]['fullname'] != $filelog || $choice == 'logfile' || $choice == 'logfiles') {
+								$result = dol_delete_file($filesarray[$key]['fullname'], 1, 1);
+								if ($result) {
+									$count++;
+									$countdeleted++;
+								} else {
+									$counterror++;
+								}
 							}
 						}
 					}
 				}
 
 				// Update cachenbofdoc
-				if (!empty($conf->ecm->enabled) && $choice == 'allfiles') {
+				if (isModEnabled('ecm') && $choice == 'allfiles') {
 					require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 					$ecmdirstatic = new EcmDirectory($this->db);
 					$result = $ecmdirstatic->refreshcachenboffile(1);
@@ -161,6 +173,7 @@ class Utils
 		}
 
 		if ($count > 0) {
+			$langs->load("admin");
 			$this->output = $langs->trans("PurgeNDirectoriesDeleted", $countdeleted);
 			if ($count > $countdeleted) {
 				$this->output .= '<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
@@ -190,9 +203,10 @@ class Utils
 	 *  @param  string      $file              'auto' or filename to build
 	 *  @param  int         $keeplastnfiles    Keep only last n files (not used yet)
 	 *  @param	int		    $execmethod		   0=Use default method (that is 1 by default), 1=Use the PHP 'exec' - need size of dump in memory, but low memory method is used if GETPOST('lowmemorydump') is set, 2=Use the 'popen' method (low memory method)
+	 *  @param	int			$lowmemorydump	   1=Use the low memory method. If $lowmemorydump is set, it means we want to make the compression using an external pipe instead retreiving the content of the dump in PHP memory array $output_arr and then print it into the PHP pipe open with xopen().
 	 *  @return	int						       0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0)
+	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0, $lowmemorydump = 0)
 	{
 		global $db, $conf, $langs, $dolibarr_main_data_root;
 		global $dolibarr_main_db_name, $dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_port, $dolibarr_main_db_pass;
@@ -202,6 +216,9 @@ class Utils
 
 		dol_syslog("Utils::dumpDatabase type=".$type." compression=".$compression." file=".$file, LOG_DEBUG);
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+		// Clean data
+		$file = dol_sanitizeFileName($file);
 
 		// Check compression parameter
 		if (!in_array($compression, array('none', 'gz', 'bz', 'zip', 'zstd'))) {
@@ -342,8 +359,6 @@ class Utils
 
 			$handle = '';
 
-			$lowmemorydump = GETPOSTISSET("lowmemorydump") ? GETPOST("lowmemorydump") : getDolGlobalString('MAIN_LOW_MEMORY_DUMP');
-
 			// Start call method to execute dump
 			$fullcommandcrypted = $command." ".$paramcrypted." 2>&1";
 			$fullcommandclear = $command." ".$paramclear." 2>&1";
@@ -359,23 +374,23 @@ class Utils
 				}
 			} else {
 				if ($compression == 'none') {
-					$fullcommandclear .= " > ".$outputfile;
-					$fullcommandcrypted .= " > ".$outputfile;
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
 					$handle = 1;
 				} elseif ($compression == 'gz') {
-					$fullcommandclear .= " | gzip > ".$outputfile;
-					$fullcommandcrypted .= " | gzip > ".$outputfile;
-					$paramcrypted.=" | gzip";
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip';
 					$handle = 1;
 				} elseif ($compression == 'bz') {
-					$fullcommandclear .= " | bzip2 > ".$outputfile;
-					$fullcommandcrypted .= " | bzip2 > ".$outputfile;
-					$paramcrypted.=" | bzip2";
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2';
 					$handle = 1;
 				} elseif ($compression == 'zstd') {
-					$fullcommandclear .= " | zstd > ".$outputfile;
-					$fullcommandcrypted .= " | zstd > ".$outputfile;
-					$paramcrypted.=" | zstd";
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd';
 					$handle = 1;
 				}
 			}
@@ -399,8 +414,8 @@ class Utils
 				}
 
 
-				// TODO Replace with executeCLI function but
-				// we must first introduce a low memory mode
+				// TODO Replace with Utils->executeCLI() function but
+				// we must first introduce the variant with $lowmemorydump into this method.
 				if ($execmethod == 1) {
 					$output_arr = array();
 					$retval = null;
@@ -459,15 +474,16 @@ class Utils
 					}
 				}
 
-
-				if ($compression == 'none') {
-					fclose($handle);
-				} elseif ($compression == 'gz') {
-					gzclose($handle);
-				} elseif ($compression == 'bz') {
-					bzclose($handle);
-				} elseif ($compression == 'zstd') {
-					fclose($handle);
+				if (!$lowmemorydump) {
+					if ($compression == 'none') {
+						fclose($handle);
+					} elseif ($compression == 'gz') {
+						gzclose($handle);
+					} elseif ($compression == 'bz') {
+						bzclose($handle);
+					} elseif ($compression == 'zstd') {
+						fclose($handle);
+					}
 				}
 
 				if (!empty($conf->global->MAIN_UMASK)) {
@@ -614,7 +630,7 @@ class Utils
 			//if ($compression == 'bz')
 			$paramcrypted = $param;
 			$paramclear = $param;
-			/*if (! empty($dolibarr_main_db_pass))
+			/*if (!empty($dolibarr_main_db_pass))
 			 {
 			 $paramcrypted.=" -W".preg_replace('/./i','*',$dolibarr_main_db_pass);
 			 $paramclear.=" -W".$dolibarr_main_db_pass;
@@ -652,7 +668,7 @@ class Utils
 	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
 	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
 	 * @param	string	$redirectionfile	If defined, a redirection of output to this file is added.
-	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter need you alreay sanitized the command. if not, it will lead to security vulnerability.
+	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you alreay have sanitized the command. if not, it will lead to security vulnerability.
 	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
 	 * @param	string	$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
 	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
@@ -1237,9 +1253,10 @@ class Utils
 	 *	@param 	string	$message             Message
 	 *	@param 	string	$filename		     List of files to attach (full path of filename on file system)
 	 * 	@param 	string	$filter			     Filter file send
+	 * 	@param 	string	$sizelimit			 Limit size to send file
 	 *  @return	int						     0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '')
+	public function sendBackup($sendto = '', $from = '', $subject = '', $message = '', $filename = '', $filter = '', $sizelimit = 100000000)
 	{
 		global $conf, $langs;
 
@@ -1297,9 +1314,13 @@ class Utils
 		}
 
 		if ($filepath) {
-			if ($filesize > 100000000) {
-				$output = 'Sorry, last backup file is too large to be send by email';
-				$error++;
+			if ($filesize > $sizelimit) {
+				$message .= '<br>'.$langs->trans("BackupIsTooLargeSend");
+				$documenturl =  $dolibarr_main_url_root.'/document.php?modulepart=systemtools&atachement=1&file=backup/'.urlencode($filename[0]);
+				$message .= '<br><a href='.$documenturl.'>Lien de téléchargement</a>';
+				$filepath = '';
+				$mimetype = '';
+				$filename = '';
 			}
 		} else {
 			$output = 'No backup file found';
@@ -1333,5 +1354,75 @@ class Utils
 		} else {
 			return $result;
 		}
+	}
+
+	/**
+	 *  Clean unfinished cronjob in processing when pid is no longer present in the system
+	 *  CAN BE A CRON TASK
+	 *
+	 * @return    int                               0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
+	 * @throws Exception
+	 */
+	public function cleanUnfinishedCronjob()
+	{
+		global $db, $user;
+		dol_syslog("Utils::cleanUnfinishedCronjob Starting cleaning");
+
+		// Import Cronjob class if not present
+		dol_include_once('/cron/class/cronjob.class.php');
+
+		// Get this job object
+		$this_job = new Cronjob($db);
+		$this_job->fetch(-1, 'Utils', 'cleanUnfinishedCronjob');
+		if (empty($this_job->id) || !empty($this_job->error)) {
+			dol_syslog("Utils::cleanUnfinishedCronjob Unable to fetch himself: ".$this_job->error, LOG_ERR);
+			return -1;
+		}
+
+		// Set this job processing to 0 to avoid being locked by his processing state
+		$this_job->processing = 0;
+		if ($this_job->update($user) < 0) {
+			dol_syslog("Utils::cleanUnfinishedCronjob Unable to update himself: ".implode(', ', $this_job->errors), LOG_ERR);
+			return -1;
+		}
+
+		$cron_job = new Cronjob($db);
+		$cron_job->fetchAll('DESC', 't.rowid', 100, 0, 1, '', 1);	// Fetch jobs that are currently running
+
+		// Iterate over all jobs in processing (this can't be this job since his state is set to 0 before)
+		foreach ($cron_job->lines as $job_line) {
+			// Avoid job with no PID
+			if (empty($job_line->pid)) {
+				dol_syslog("Utils::cleanUnfinishedCronjob Cronjob ".$job_line->id." don't have a PID", LOG_DEBUG);
+				continue;
+			}
+
+			$job = new Cronjob($db);
+			$job->fetch($job_line->id);
+			if (empty($job->id) || !empty($job->error)) {
+				dol_syslog("Utils::cleanUnfinishedCronjob Cronjob ".$job_line->id." can't be fetch: ".$job->error, LOG_ERR);
+				continue;
+			}
+
+			// Calling posix_kill with the 0 kill signal will return true if the process is running, false otherwise.
+			if (! posix_kill($job->pid, 0)) {
+				// Clean processing and pid values
+				$job->processing = 0;
+				$job->pid = null;
+
+				// Set last result as an error and add the reason on the last output
+				$job->lastresult = -1;
+				$job->lastoutput = 'Job killed by job cleanUnfinishedCronjob';
+
+				if ($job->update($user) < 0) {
+					dol_syslog("Utils::cleanUnfinishedCronjob Cronjob ".$job_line->id." can't be updated: ".implode(', ', $job->errors), LOG_ERR);
+					continue;
+				}
+				dol_syslog("Utils::cleanUnfinishedCronjob Cronjob ".$job_line->id." cleaned");
+			}
+		}
+
+		dol_syslog("Utils::cleanUnfinishedCronjob Cleaning completed");
+		return 0;
 	}
 }

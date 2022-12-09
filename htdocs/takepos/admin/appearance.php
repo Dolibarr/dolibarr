@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,6 +23,7 @@
  *	\brief      Setup page for TakePos module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -114,7 +115,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("NumberOfLinesToShow");
 print '<td colspan="2">';
 $array = array(1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6");
-print $form->selectarray('TAKEPOS_LINES_TO_SHOW', $array, (empty($conf->global->TAKEPOS_LINES_TO_SHOW) ? '2' : $conf->global->TAKEPOS_LINES_TO_SHOW), 0);
+print $form->selectarray('TAKEPOS_LINES_TO_SHOW', $array, getDolGlobalInt('TAKEPOS_LINES_TO_SHOW', 2), 0);
 print "</td></tr>\n";
 
 // D'ont display category
