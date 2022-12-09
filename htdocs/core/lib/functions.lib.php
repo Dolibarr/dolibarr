@@ -73,8 +73,9 @@ if (!function_exists('utf8_decode')) {
 
 /**
  * Return dolibarr global constant string value
- * @param string $key key to return value, return '' if not set
- * @param string $default value to return
+ *
+ * @param string $key 		key to return value, return '' if not set
+ * @param string $default 	value to return
  * @return string
  */
 function getDolGlobalString($key, $default = '')
@@ -86,8 +87,9 @@ function getDolGlobalString($key, $default = '')
 
 /**
  * Return dolibarr global constant int value
- * @param string $key key to return value, return 0 if not set
- * @param int $default value to return
+ *
+ * @param string 	$key 		key to return value, return 0 if not set
+ * @param int 		$default 	value to return
  * @return int
  */
 function getDolGlobalInt($key, $default = 0)
@@ -98,7 +100,36 @@ function getDolGlobalInt($key, $default = 0)
 }
 
 /**
+ * Return dolibarr user constant string value
+ *
+ * @param string $key 		key to return value, return '' if not set
+ * @param string $default 	value to return
+ * @return string
+ */
+function getDolUserString($key, $default = '')
+{
+	global $user;
+	// return $conf->global->$key ?? $default;
+	return (string) (empty($user->conf->$key) ? $default : $user->conf->$key);
+}
+
+/**
+ * Return dolibarr user constant int value
+ *
+ * @param string 	$key 			key to return value, return 0 if not set
+ * @param int 		$default 		value to return
+ * @return int
+ */
+function getDolUserInt($key, $default = 0)
+{
+	global $user;
+	// return $conf->global->$key ?? $default;
+	return (int) (empty($user->conf->$key) ? $default : $user->conf->$key);
+}
+
+/**
  * Is Dolibarr module enabled
+ *
  * @param string $module module name to check
  * @return int
  */
