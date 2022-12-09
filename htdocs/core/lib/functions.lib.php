@@ -73,8 +73,9 @@ if (!function_exists('utf8_decode')) {
 
 /**
  * Return dolibarr global constant string value
- * @param string $key key to return value, return '' if not set
- * @param string $default value to return
+ *
+ * @param string $key 		key to return value, return '' if not set
+ * @param string $default 	value to return
  * @return string
  */
 function getDolGlobalString($key, $default = '')
@@ -86,8 +87,9 @@ function getDolGlobalString($key, $default = '')
 
 /**
  * Return dolibarr global constant int value
- * @param string $key key to return value, return 0 if not set
- * @param int $default value to return
+ *
+ * @param string 	$key 		key to return value, return 0 if not set
+ * @param int 		$default 	value to return
  * @return int
  */
 function getDolGlobalInt($key, $default = 0)
@@ -98,7 +100,36 @@ function getDolGlobalInt($key, $default = 0)
 }
 
 /**
+ * Return dolibarr user constant string value
+ *
+ * @param string $key 		key to return value, return '' if not set
+ * @param string $default 	value to return
+ * @return string
+ */
+function getDolUserString($key, $default = '')
+{
+	global $user;
+	// return $conf->global->$key ?? $default;
+	return (string) (empty($user->conf->$key) ? $default : $user->conf->$key);
+}
+
+/**
+ * Return dolibarr user constant int value
+ *
+ * @param string 	$key 			key to return value, return 0 if not set
+ * @param int 		$default 		value to return
+ * @return int
+ */
+function getDolUserInt($key, $default = 0)
+{
+	global $user;
+	// return $conf->global->$key ?? $default;
+	return (int) (empty($user->conf->$key) ? $default : $user->conf->$key);
+}
+
+/**
  * Is Dolibarr module enabled
+ *
  * @param string $module module name to check
  * @return int
  */
@@ -7801,11 +7832,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$dateplannedstart = '';
 				$datenextexpiration = '';
 				foreach ($object->lines as $line) {
-					if ($line->date_ouverture_prevue > $dateplannedstart) {
-						$dateplannedstart = $line->date_ouverture_prevue;
+					if ($line->date_start > $dateplannedstart) {
+						$dateplannedstart = $line->date_start;
 					}
-					if ($line->statut == 4 && $line->date_fin_prevue && (!$datenextexpiration || $line->date_fin_prevue < $datenextexpiration)) {
-						$datenextexpiration = $line->date_fin_prevue;
+					if ($line->statut == 4 && $line->date_end && (!$datenextexpiration || $line->date_end < $datenextexpiration)) {
+						$datenextexpiration = $line->date_end;
 					}
 				}
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = dol_print_date($dateplannedstart, 'dayrfc');

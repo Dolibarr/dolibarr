@@ -208,7 +208,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 
 .info-box-sm .info-box-icon {
-	height: 80px;
+	height: 96px;
 	width: 80px;
 	font-size: 25px;
 	line-height: 92px;
@@ -223,7 +223,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	height: 98px;
 }
 .info-box-icon > img {
-	max-width: 100%;
+	max-width: 85%;
 }
 .info-box-module .info-box-icon > img {
 	max-width: 55%;
