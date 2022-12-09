@@ -754,14 +754,14 @@ class Mo extends CommonObject
 			$error++;
 		}
 
-		if(!$error){
+		if (!$error) {
 			$res = $this->deleteCommon($user, $notrigger);
-			if($res < 0){
+			if ($res < 0) {
 				$error++;
 			}
 		}
 
-		if(!$error){
+		if (!$error) {
 			dol_syslog(get_class($this)."::delete ".$this->id." by ".$user->id, LOG_DEBUG);
 			$this->db->commit();
 			return $res;
