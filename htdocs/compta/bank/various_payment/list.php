@@ -36,6 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "accountancy"));
 
+$massaction = GETPOST('massaction', 'alpha');
+$toselect = GETPOST('toselect', 'array');
+$confirm = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 
 // Security check
@@ -78,12 +81,14 @@ if (empty($search_datev_start)) {
 if (empty($search_datev_end)) {
 	$search_datev_end = GETPOST("search_datev_end", 'int');
 }
+$search_btn = GETPOST('button_search', 'alpha');
+$search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_type_id = GETPOST('search_type_id', 'int');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
+if ($page == -1 || $page == null || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
 }	 // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -96,7 +101,13 @@ if (!$sortorder) {
 	$sortorder = "DESC,DESC";
 }
 
+$object = new PaymentVarious($db);
+
 $filtre = GETPOST("filtre", 'alpha');
+
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
+	$massaction = '';
+}
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
 	$search_ref = '';
@@ -112,9 +123,19 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_accountancy_account = '';
 	$search_accountancy_subledger = '';
 	$search_type_id = '';
+	$toselect = array();
 }
 
 $search_all = GETPOSTISSET("search_all") ? trim(GETPOST("search_all", 'alpha')) : trim(GETPOST('sall'));
+
+// Mass actions
+$objectclass = 'PaymentVarious';
+$objectlabel = 'VariousPayments';
+$permissiontoread = ($user->rights->banque->lire);
+$permissiontoadd = ($user->rights->banque->modifier);
+$permissiontodelete = ($user->rights->banque->modifier);
+$uploaddir = $conf->banque->dir_output;
+include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 /*
 * TODO: fill array "$fields" in "/compta/bank/class/paymentvarious.class.php" and use
@@ -162,8 +183,6 @@ $arrayfields = array(
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-
-$object = new PaymentVarious($db);
 
 $result = restrictedArea($user, 'banque', '', '', '');
 
@@ -297,6 +316,8 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
+	$arrayofselected = is_array($toselect) ? $toselect : array();
+
 	// Direct jump if only one record found
 	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
 		$obj = $db->fetch_object($resql);
@@ -358,6 +379,15 @@ if ($resql) {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 
+	// List of mass actions available
+	if ($user->rights->banque->modifier) {
+		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+	}
+	if (in_array($massaction, array('predelete'))) {
+		$arrayofmassactions = array();
+	}
+	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+
 	$url = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create';
 	if (!empty($socid)) {
 		$url .= '&socid='.urlencode($socid);
@@ -376,7 +406,7 @@ if ($resql) {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	print_barre_liste($langs->trans("MenuVariousPayment"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans("MenuVariousPayment"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	if ($search_all) {
 		foreach ($fieldstosearchall as $key => $val) {
@@ -394,7 +424,15 @@ if ($resql) {
 
 	print '<tr class="liste_titre">';
 
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre middle">';
+		$searchpicto = $form->showFilterButtons('left');
+		print $searchpicto;
+		print '</td>';
+	}
+
+	if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
@@ -497,17 +535,23 @@ if ($resql) {
 		print '</td>';
 	}
 
-	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto = $form->showFilterAndCheckAddButtons(0);
-	print $searchpicto;
-	print '</td>';
+	// Action column
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="liste_titre middle">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
 
-	print '</tr>';
+	print "</tr>\n";
 
 
 	print '<tr class="liste_titre">';
 
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	}
+	if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 		print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	}
 
@@ -553,8 +597,10 @@ if ($resql) {
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
-	print '</tr>';
+	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+	}
+	print "</tr>\n";
 
 
 	$totalarray = array();
@@ -570,9 +616,20 @@ if ($resql) {
 		$variousstatic->label = $obj->label;
 
 		print '<tr class="oddeven">';
-
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+		}
 		// No
-		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+		if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 			print '<td>'.(($offset * $limit) + $i).'</td>';
 		}
 
@@ -594,7 +651,7 @@ if ($resql) {
 
 		// Date payment
 		if ($arrayfields['datep']['checked']) {
-			print '<td class="center">'.dol_print_date($obj->datep, 'day')."</td>";
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -603,7 +660,7 @@ if ($resql) {
 
 		// Date value
 		if ($arrayfields['datev']['checked']) {
-			print '<td class="center">'.dol_print_date($obj->datev, 'day')."</td>";
+			print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -720,7 +777,17 @@ if ($resql) {
 			print '</td>';
 		}
 
-		print '<td></td>';
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+		}
 
 		if (!$i) {
 			$totalarray['nbfield']++;
