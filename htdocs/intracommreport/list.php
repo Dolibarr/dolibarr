@@ -144,11 +144,21 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // Security check
 if ($search_type == '0') {
 	$result = restrictedArea($user, 'produit', '', '', '', '', '', 0);
+
+	$permissiontoread = $user->rights->produit->lire;
+	$permissiontodelete = $user->rights->produit->supprimer;
 } elseif ($search_type == '1') {
 	$result = restrictedArea($user, 'service', '', '', '', '', '', 0);
+
+	$permissiontoread = $user->rights->service->lire;
+	$permissiontodelete = $user->rights->service->supprimer;
 } else {
 	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
+
+	$permissiontoread = $user->rights->produit->lire;
+	$permissiontodelete = $user->rights->produit->supprimer;
 }
+
 
 
 /*
@@ -156,7 +166,8 @@ if ($search_type == '0') {
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -192,8 +203,6 @@ if (empty($reshook)) {
 		$objectlabel = 'Products';
 	}
 
-	$permtoread = $user->rights->produit->lire;
-	$permtodelete = $user->rights->produit->supprimer;
 	$uploaddir = $conf->product->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

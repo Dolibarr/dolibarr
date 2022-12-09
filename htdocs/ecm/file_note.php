@@ -108,9 +108,9 @@ if ($result < 0) {
 
 $permissionnote = $user->rights->ecm->setup; // Used by the include of actions_setnotes.inc.php
 
-$permtoread = $user->rights->ecm->read;
+$permissiontoread = $user->rights->ecm->read;
 
-if (!$permtoread) {
+if (!$permissiontoread) {
 	accessforbidden();
 }
 
