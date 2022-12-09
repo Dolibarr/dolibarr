@@ -744,8 +744,31 @@ class Mo extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		return $this->deleteCommon($user, $notrigger);
-		//return $this->deleteCommon($user, $notrigger, 1);
+		$this->db->begin();
+
+		$error = 0;
+
+		// Delete linked object
+		$res = $this->deleteObjectLinked();
+		if ($res < 0) {
+			$error++;
+		}
+
+		if(!$error){
+			$res = $this->deleteCommon($user, $notrigger);
+			if($res < 0){
+				$error++;
+			}
+		}
+
+		if(!$error){
+			dol_syslog(get_class($this)."::delete ".$this->id." by ".$user->id, LOG_DEBUG);
+			$this->db->commit();
+			return $res;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 	/**
