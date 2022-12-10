@@ -600,6 +600,7 @@ if ($action == 'confirm_generateinvoice') {
 					}
 					*/
 
+					//Unit price
 					$pu_ht = price2num(($value['totalvaluetodivideby3600'] / $value['timespent']), 'MU');
 
 					// Add lines
