@@ -594,10 +594,15 @@ if ($action == 'confirm_generateinvoice') {
 					// Define qty per hour
 					$qtyhour = $value['timespent'] / 3600;
 
+					/*
 					// If no unit price known
 					if (empty($pu_ht)) {
 						$pu_ht = price2num($value['totalvaluetodivideby3600'] / 3600, 'MU');
 					}
+					*/
+
+					//Unit price
+					$pu_ht = price2num(($value['totalvaluetodivideby3600'] / $value['timespent']), 'MU');
 
 					// Add lines
 					$prodDurationHours = $prodDurationHoursBase;
