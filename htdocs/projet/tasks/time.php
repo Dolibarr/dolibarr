@@ -1510,6 +1510,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		 */
 		$tasks = array();
 
+		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+
 		$sql = "SELECT t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm,";
 		$sql .= " t.fk_product,";
 		$sql .= " pt.ref, pt.label, pt.fk_projet,";
@@ -1555,11 +1558,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if ($search_task_ref) {
 			$sql .= natural_search('pt.ref', $search_task_ref);
 		}
-		if ($search_company) {
-			$sql .= natural_search('s.nom', $search_company);
-		}
-		if ($search_company_alias) {
-			$sql .= natural_search('s.name_alias', $search_company_alias);
+		if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
+			$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
+		} else {
+			if ($search_company) {
+				$sql .= natural_search('s.nom', $search_company);
+			}
+			if ($search_company_alias) {
+				$sql .= natural_search('s.name_alias', $search_company_alias);
+			}
 		}
 		if ($search_project_ref) {
 			$sql .= natural_search('p.ref', $search_project_ref);
