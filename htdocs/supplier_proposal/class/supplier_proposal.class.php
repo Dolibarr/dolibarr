@@ -3063,14 +3063,14 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= ' ref_fourn,';
 		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc, fk_unit)';
 		$sql .= " VALUES (".$this->fk_supplier_proposal.",";
-		$sql .= " ".($this->fk_parent_line > 0 ? ((int) $this->db->escape($this->fk_parent_line)) : "null").",";
+		$sql .= " ".($this->fk_parent_line > 0 ? ((int) $this->fk_parent_line) : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " ".($this->fk_product ? ((int) $this->fk_product) : "null").",";
 		$sql .= " '".$this->db->escape($this->product_type)."',";
 		$sql .= " ".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : "null").",";
 		$sql .= " ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null").",";
-		$sql .= " ".($this->fk_remise_except ? ((int) $this->db->escape($this->fk_remise_except)) : "null").",";
+		$sql .= " ".($this->fk_remise_except ? ((int) $this->fk_remise_except) : "null").",";
 		$sql .= " ".price2num($this->qty, 'MS').",";
 		$sql .= " ".price2num($this->tva_tx).",";
 		$sql .= " ".price2num($this->localtax1_tx).",";
