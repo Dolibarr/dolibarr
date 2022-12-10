@@ -2123,7 +2123,7 @@ class Project extends CommonObject
 
 
 		$projectsListId = null;
-		if (!$user->rights->projet->all->lire) {
+		if (!$user->hasRight("projet", "all", "lire")) {
 			$response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
 			$projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
 			if (empty($projectsListId)) {
