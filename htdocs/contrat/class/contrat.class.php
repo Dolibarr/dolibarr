@@ -718,7 +718,7 @@ class Contrat extends CommonObject
 					$this->socid = $obj->fk_soc;
 					$this->fk_soc = $obj->fk_soc;
 					$this->last_main_doc = $obj->last_main_doc;
-					$this->extraparams = (array) json_decode($obj->extraparams, true);
+					$this->extraparams = (isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : null);
 
 					$this->db->free($resql);
 
