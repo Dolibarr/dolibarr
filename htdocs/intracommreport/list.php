@@ -207,7 +207,7 @@ $formother = new FormOther($db);
 
 $title = $langs->trans('IntracommReportList'.$type);
 
-$sql = 'SELECT DISTINCT i.rowid, i.type_declaration, i.type_export, i.periods, i.mode, i.entity';
+$sql = "SELECT DISTINCT i.rowid, i.type_declaration, i.type_export, i.periods, i.mode, i.entity";
 /*
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -220,11 +220,11 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= ' FROM '.MAIN_DB_PREFIX.'intracommreport as i';
+$sql .= " FROM ".MAIN_DB_PREFIX."intracommreport as i";
 
 // if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."intracommreport_extrafields as ef on (i.rowid = ef.fk_object)";
 
-$sql .= ' WHERE i.entity IN ('.getEntity('intracommreport').')';
+$sql .= " WHERE i.entity IN (".getEntity("intracommreport").")";
 
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
