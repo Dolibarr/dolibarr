@@ -589,7 +589,6 @@ if ($action == 'confirm_generateinvoice') {
 				foreach ($arrayoftasks as $timespent_id => $value) {
 					$userid = $value['user'];
 					//$pu_ht = $value['timespent'] * $fuser->thm;
-					$pu_ht = $fuser->thm;
 
 					// Define qty per hour
 					$qtyhour = $value['timespent'] / 3600;
