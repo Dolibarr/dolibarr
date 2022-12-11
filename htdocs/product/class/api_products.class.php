@@ -1727,8 +1727,12 @@ class Products extends DolibarrApi
 			throw new RestException(401);
 		}
 
-		if (empty($id) || empty($features) || !is_array($features)) {
-			throw new RestException(401);
+		if (empty($id)) {
+			throw new RestException(400, 'Product ID is mandatory');
+		}
+
+		if (empty($features) || !is_array($features)) {
+			throw new RestException(400, 'Features is mandatory and should be IDs of attribute values indexed by IDs of attributes');
 		}
 
 		$weight_impact = price2num($weight_impact);
@@ -1738,10 +1742,10 @@ class Products extends DolibarrApi
 		$prodattr_val = new ProductAttributeValue($this->db);
 		foreach ($features as $id_attr => $id_value) {
 			if ($prodattr->fetch((int) $id_attr) < 0) {
-				throw new RestException(401);
+				throw new RestException(400, 'Invalid attribute ID: '.$id_attr);
 			}
 			if ($prodattr_val->fetch((int) $id_value) < 0) {
-				throw new RestException(401);
+				throw new RestException(400, 'Invalid attribute value ID: '.$id_value);
 			}
 		}
 
