@@ -209,8 +209,8 @@ $formother = new FormOther($db);
 
 $title = $langs->trans('IntracommReportList'.$type);
 
-$sqlfields = 'i.rowid, i.type_declaration, i.type_export, i.periods, i.mode, i.entity';
-$sql = 'SELECT '.$sqlfields;
+$sql = 'SELECT i.rowid, i.type_declaration, i.type_export, i.periods, i.mode, i.entity';
+
 /*
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -220,7 +220,12 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+$sql = preg_replace('/,\s*$/', '', $sql);
 $sql .= $hookmanager->resPrint;
+
+$sqlfields = $sql;
+
 $sql .= ' FROM '.MAIN_DB_PREFIX.'intracommreport as i';
 // if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."intracommreport_extrafields as ef on (i.rowid = ef.fk_object)";
 $sql .= ' WHERE i.entity IN ('.getEntity('intracommreport').')';
