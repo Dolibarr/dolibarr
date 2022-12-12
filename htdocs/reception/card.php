@@ -1951,7 +1951,7 @@ if ($action == 'create') {
 				if (isModEnabled('productbatch')) {
 					if (isset($lines[$i]->batch)) {
 						print '<!-- Detail of lot -->';
-						print '<td class="linecolbatch">';
+						print '<td class="linecolbatch nowrap">';
 						$detail = $langs->trans("NA");
 						if ($lines[$i]->product->status_batch && $lines[$i]->fk_product > 0) {
 							require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
