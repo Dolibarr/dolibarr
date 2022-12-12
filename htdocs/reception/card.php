@@ -1954,7 +1954,7 @@ if ($action == 'create') {
 						print '<td class="linecolbatch">';
 						$detail = $langs->trans("NA");
 						if ($lines[$i]->product->status_batch && $lines[$i]->fk_product > 0) {
-							require_once DOL_DOCUMENT_ROOT.'/product/stock/productlot.class.php';
+							require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 							$productlot = new Productlot($db);
 							$reslot = $productlot->fetch(0, $lines[$i]->fk_product, $lines[$i]->batch);
 							if ($reslot > 0) {
