@@ -62,6 +62,7 @@ create table llx_socpeople
   fk_prospectcontactlevel  	varchar(12),                         		-- prospect level (in llx_c_prospectcontactlevel)
   fk_stcommcontact  		integer        DEFAULT 0 NOT NULL,      	-- commercial statut
   fk_parent 		integer   NULL,
+  update_parent 		integer   NULL,
   fk_user_creat		integer DEFAULT 0,							-- user qui a creel'enregistrement
   fk_user_modif		integer,
   note_private		text,
