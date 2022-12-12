@@ -1867,7 +1867,6 @@ function showModulesExludedForExternal($modules)
 			if ($tmptext != 'Module'.$module->numero.'Name') {
 				$text .= $langs->trans('Module'.$module->numero.'Name');
 			} else {
-				var_dump($module->numero);
 				$text .= $langs->trans($module->name);
 			}
 		}
