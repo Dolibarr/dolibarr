@@ -1959,6 +1959,16 @@ if ($action == 'create') {
 							$reslot = $productlot->fetch(0, $lines[$i]->fk_product, $lines[$i]->batch);
 							if ($reslot > 0) {
 								$detail = $productlot->getNomUrl(1);
+							} else {
+								// lot is not created and info is only in reception lines
+								$batchinfo = $langs->trans("Batch").': '.$lines[$i]->batch;
+								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+									$batchinfo .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby, "day");
+								}
+								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+									$batchinfo .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby, "day");
+								}
+								$detail = $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $batchinfo);
 							}
 						}
 						print $detail . '</td>';
