@@ -9472,6 +9472,12 @@ abstract class CommonObject
 			}
 		}
 
+		// Delete linked object
+		$res = $this->deleteObjectLinked();
+		if ($res < 0) {
+			$error++;
+		}
+
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
