@@ -389,4 +389,4 @@ ALTER TABLE llx_opensurvey_comments ADD COLUMN date_creation datetime NULL;
 
 ALTER TABLE llx_c_tva ADD COLUMN use_default tinyint DEFAULT 0;
 
-ALTER TABLE llx_socpeople ADD COLUMN fk_parent integer DEFAULT 0 NOT NULL AFTER fk_stcommcontact;
+ALTER TABLE llx_socpeople ADD COLUMN fk_parent integer NULL AFTER fk_stcommcontact;
