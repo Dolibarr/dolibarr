@@ -246,51 +246,18 @@ if ($reshook == 0) {
 	}
 }
 
+$id = 25;
 
+$acceptlocallinktomedia = (acceptLocalLinktoMedia() > 0 ? 1 : 0);
 
+// Security
 if (!empty($user->socid)) {
 	accessforbidden();
 }
 
 $permissiontoadd = 1;
+$permissiontodelete = 1;
 
-//asort($elementList);
-
-$id = 25;
-
-// If $acceptlocallinktomedia is true, we can add link media files int email templates (we already can do this into HTML editor of an email).
-// Note that local link to a file into medias are replaced with a real link by email in CMailFile.class.php with value $urlwithroot defined like this:
-// $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-// $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
-if ($acceptlocallinktomedia) {
-	global $dolibarr_main_url_root;
-	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-
-	// Parse $newUrl
-	$newUrlArray = parse_url($urlwithouturlroot);
-	$hosttocheck = $newUrlArray['host'];
-	$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
-
-	if (function_exists('gethostbyname')) {
-		$iptocheck = gethostbyname($hosttocheck);
-	} else {
-		$iptocheck = $hosttocheck;
-	}
-
-	//var_dump($iptocheck.' '.$acceptlocallinktomedia);
-	if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-		// If ip of public url is an private network IP, we do not allow this.
-		$acceptlocallinktomedia = 0;
-		// TODO Show a warning
-	}
-
-	if (preg_match('/http:/i', $urlwithouturlroot)) {
-		// If public url is not a https, we do not allow to add medias link. It will generate security alerts when email will be sent.
-		$acceptlocallinktomedia = 0;
-		// TODO Show a warning
-	}
-}
 
 
 /*
@@ -327,8 +294,8 @@ if (empty($reshook)) {
 		$search_array_options = array();
 	}
 
-	// Actions add or modify an entry into a dictionary
-	if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
+	// Actions add or modify an email template
+	if ((GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) && $permissiontoadd) {
 		$listfield = explode(',', str_replace(' ', '', $tabfield[$id]));
 		$listfieldinsert = explode(',', $tabfieldinsert[$id]);
 		$listfieldmodify = explode(',', $tabfieldinsert[$id]);
@@ -545,7 +512,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {       // delete
 		$rowidcol = "rowid";
 
 		$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol." = ".((int) $rowid);
@@ -564,7 +531,7 @@ if (empty($reshook)) {
 	}
 
 	// activate
-	if ($action == $acts[0]) {
+	if ($action == $acts[0] && $permissiontoadd) {
 		$rowidcol = "rowid";
 
 		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE rowid = ".((int) $rowid);
@@ -576,7 +543,7 @@ if (empty($reshook)) {
 	}
 
 	// disable
-	if ($action == $acts[1]) {
+	if ($action == $acts[1] && $permissiontoadd) {
 		$rowidcol = "rowid";
 
 		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE rowid = ".((int) $rowid);
@@ -946,17 +913,17 @@ foreach ($fieldlist as $field => $value) {
 		print '<td class="liste_titre"><input type="text" name="search_label" class="maxwidth200" value="'.dol_escape_htmltag($search_label).'"></td>';
 	} elseif ($value == 'lang') {
 		print '<td class="liste_titre">';
-		print $formadmin->select_language($search_lang, 'search_lang', 0, null, 1, 0, 0, 'maxwidth150');
+		print $formadmin->select_language($search_lang, 'search_lang', 0, null, 1, 0, 0, 'maxwidth100');
 		print '</td>';
 	} elseif ($value == 'fk_user') {
 		print '<td class="liste_titre">';
-		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'maxwidth150', 1);
+		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'maxwidth125', 1);
 		print '</td>';
 	} elseif ($value == 'topic') {
 		print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
 	} elseif ($value == 'type_template') {
 		print '<td class="liste_titre center">';
-		print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'minwidth150', 1, '', 0, 1);
+		print $form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth125', 1, '', 0, 1);
 		print '</td>';
 	} elseif (!in_array($value, array('content', 'content_lines'))) {
 		print '<td class="liste_titre"></td>';
