@@ -329,7 +329,14 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 		$sExtension = strtolower($sExtension);
 
 		// Check permission
-		if (!$user->hasRight('website', 'write') && !$user->hasRight('mailing', 'write') || !empty($user->socid)) {
+		$permissiontouploadmediaisok = 1;
+		if (!empty($user->socid)) {
+			$permissiontouploadmediaisok = 0;
+		}
+		/*if (!$user->hasRight('website', 'write') && !$user->hasRight('mailing', 'write')) {
+			$permissiontouploadmediaisok = 0;
+		}*/
+		if (!$permissiontouploadmediaisok) {
 			dol_syslog("connector.lib.php Try to upload a file with no permission");
 			$sErrorNumber = '202';
 		}
@@ -547,12 +554,25 @@ function GetParentFolder($folderPath)
  */
 function CreateServerFolder($folderPath, $lastFolder = null)
 {
+	global $user;
 	global $Config;
+
 	$sParent = GetParentFolder($folderPath);
 
 	// Ensure the folder path has no double-slashes, or mkdir may fail on certain platforms
 	while (strpos($folderPath, '//') !== false) {
 		$folderPath = str_replace('//', '/', $folderPath);
+	}
+
+	$permissiontouploadmediaisok = 1;
+	if (!empty($user->socid)) {
+		$permissiontouploadmediaisok = 0;
+	}
+	/*if (!$user->hasRight('website', 'write') && !$user->hasRight('mailing', 'write')) {
+	 $permissiontouploadmediaisok = 0;
+	 }*/
+	if (!$permissiontouploadmediaisok) {
+		return 'Bad permissions to create a folder in media directory';
 	}
 
 	// Check if the parent exists, or create it.

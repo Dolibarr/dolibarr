@@ -2902,5 +2902,6 @@ function acceptLocalLinktoMedia()
 		}
 	}
 
+	//return 1;
 	return $acceptlocallinktomedia;
 }
