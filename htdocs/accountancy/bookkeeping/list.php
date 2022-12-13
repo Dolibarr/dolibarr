@@ -860,7 +860,7 @@ if ($action == 'export_file') {
 	}
 
 	// add documents in an archive for accountancy export (Quadratus)
-	if(getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_QUADRATUS) {
+	if (getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_QUADRATUS) {
 		$form_question['notifiedexportfull'] = array(
 			'name' => 'notifiedexportfull',
 			'type' => 'checkbox',
