@@ -2103,7 +2103,7 @@ if ($action == 'create') {
 
 			// Close
 			if ($object->statut == Reception::STATUS_VALIDATED) {
-				if ($user->hasRight('reception', 'supprimer') && $object->statut > 0 && !$object->billed) {
+				if ($user->hasRight('reception', 'creer') && $object->statut > 0 && !$object->billed) {
 					$label = "Close"; $paramaction = 'classifyclosed'; // = Transferred/Received
 					// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on receptions instead of orders
 					if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
