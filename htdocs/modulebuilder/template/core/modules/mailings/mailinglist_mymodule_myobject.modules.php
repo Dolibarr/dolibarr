@@ -24,7 +24,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	// CHANGE THIS: Set to 1 if selector is available for admin users only
 	public $require_admin = 0;
 
-	public $enabled = '$conf->mymodule->enabled';
+	public $enabled = 'isModEnabled("mymodule")';
 
 	public $require_module = array();
 

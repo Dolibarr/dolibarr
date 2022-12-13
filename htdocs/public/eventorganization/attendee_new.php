@@ -56,6 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 global $dolibarr_main_url_root;
 
@@ -104,14 +105,16 @@ if ($type == 'global') {
 		$errmsg .= $project->error;
 		$errors = array_merge($errors, $project->errors);
 	} else {
-		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."projet";
-		$sql .= " WHERE ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee = ".((int) $project->id);
+		$sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
+		$sql .= " WHERE fk_project = ".((int) $project->id);
 
-		$resql = $db->query($resql);
+		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
 				$currentnbofattendees = $obj->nb;
+			} else {
+				dol_print_error($db);
 			}
 		}
 	}
@@ -227,7 +230,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status!=2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
+if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status==2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
 	$error = 0;
 
 	$urlback = '';
@@ -257,10 +260,12 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		// Check if attendee already exists (by email and for this event)
 		$confattendee = new ConferenceOrBoothAttendee($db);
 
+		$filter = array();
+
 		if ($type == 'global') {
 			$filter = array('t.fk_project'=>((int) $id), 'customsql'=>'t.email="'.$db->escape($email).'"');
 		}
-		if ($action == 'conf') {
+		if ($type == 'conf') {
 			$filter = array('t.fk_actioncomm'=>((int) $id), 'customsql'=>'t.email="'.$db->escape($email).'"');
 		}
 
@@ -279,7 +284,39 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$confattendee->fk_actioncomm = $id;
 			$confattendee->note_public = $note_public;
 
-			$resultconfattendee = $confattendee->create($user);
+			$confattendee->ip = getUserRemoteIP();
+			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+			$now = dol_now();
+			$minmonthpost = dol_time_plus_duree($now, -1, "m");
+			// Calculate nb of post for IP
+			$nb_post_ip = 0;
+			if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+				$sql = "SELECT COUNT(ref) as nb_attendee";
+				$sql .= " FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
+				$sql .= " WHERE ip = '".$db->escape($confattendee->ip)."'";
+				$sql .= " AND date_creation > '".$db->idate($minmonthpost)."'";
+				$resql = $db->query($sql);
+				if ($resql) {
+					$num = $db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$i++;
+						$obj = $db->fetch_object($resql);
+						$nb_post_ip = $obj->nb_attendee;
+					}
+				}
+			}
+
+			$resultconforbooth = -1;
+
+			if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+				$error++;
+				$errmsg .= $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
+				array_push($confattendee->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
+				setEventMessage($errmsg, 'errors');
+			} else {
+				$resultconfattendee = $confattendee->create($user);
+			}
 			if ($resultconfattendee < 0) {
 				$error++;
 				$errmsg .= $confattendee->error;
@@ -785,7 +822,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print '</td></tr>';
 
 		// Country
-		print '<tr><td><span class="fieldrequired"' . $langs->trans('Country') . '</span></td><td>';
+		print '<tr><td><span class="fieldrequired">'.$langs->trans('Country').'</span></td><td>';
 		print img_picto('', 'country', 'class="pictofixedwidth"');
 		$country_id = GETPOST('country_id');
 		if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {

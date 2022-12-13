@@ -84,6 +84,8 @@ if (empty($user->rights->mailing->lire) || (empty($conf->global->EXTERNAL_USERS_
 	accessforbidden();
 }
 
+$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+
 
 /*
  * Actions
@@ -124,8 +126,6 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'warnings');
 			$action = '';
 		} else {
-			$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
-
 			if ($object->statut == 0) {
 				dol_print_error('', 'ErrorMailIsNotValidated');
 				exit;
@@ -318,7 +318,8 @@ if (empty($reshook)) {
 
 						// Mail making
 						$trackid = 'emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing');
+						$upload_dir_tmp = $upload_dir;
+						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', '', $upload_dir_tmp);
 
 						if ($mail->error) {
 							$res = 0;
@@ -478,7 +479,8 @@ if (empty($reshook)) {
 			}
 
 			$trackid = 'emailing-test';
-			$mailfile = new CMailFile($tmpsujet, $object->sendto, $object->email_from, $tmpbody, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $object->email_errorsto, $arr_css, $trackid, '', 'emailing');
+			$upload_dir_tmp = $upload_dir;
+			$mailfile = new CMailFile($tmpsujet, $object->sendto, $object->email_from, $tmpbody, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $object->email_errorsto, $arr_css, $trackid, '', 'emailing', '', $upload_dir_tmp);
 
 			$result = $mailfile->sendfile();
 			if ($result) {
@@ -520,9 +522,10 @@ if (empty($reshook)) {
 				exit;
 			}
 			$mesgs[] = $object->error;
+			$mesgs = array_merge($mesgs, $object->errors);
 		}
 
-		setEventMessages(null, $mesgs, 'errors');
+		setEventMessages('', $mesgs, 'errors');
 		$action = "create";
 	}
 
@@ -607,9 +610,10 @@ if (empty($reshook)) {
 					exit;
 				}
 				$mesgs[] = $object->error;
+				$mesgs = array_merge($mesgs, $object->errors);
 			}
 
-			setEventMessages($mesg, $mesgs, 'errors');
+			setEventMessages('', $mesgs, 'errors');
 			$action = "edit";
 		} else {
 			$action = "edit";
@@ -726,7 +730,7 @@ if ($action == 'create') {
 	// Print mail form
 	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
 
-	print dol_get_fiche_head();
+	print dol_get_fiche_head(array(), '', '', -3);
 
 	print '<table class="border centpercent">';
 
@@ -764,7 +768,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("CreateMailing", '');
+	print $form->buttonsSaveCancel("CreateMailing", 'Cancel');
 
 	print '</form>';
 } else {
@@ -1089,18 +1093,18 @@ if ($action == 'create') {
 			}
 
 
-			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br><br><span class="small">';
 			foreach ($object->substitutionarray as $key => $val) {
 				$htmltext .= $key.' = '.$langs->trans($val).'<br>';
 			}
-			$htmltext .= '</i>';
+			$htmltext .= '</span></i>';
 
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'emailsubstitionhelp'), 'generic');
+			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 3, 'emailsubstitionhelp'), 'generic');
 
 			print dol_get_fiche_head('', '', '', -1);
 
-			print '<table class="bordernooddeven" width="100%">';
+			print '<table class="bordernooddeven tableforfield centpercent">';
 
 			// Subject
 			print '<tr><td class="titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
@@ -1265,8 +1269,9 @@ if ($action == 'create') {
 					$out .= '<br></div>';
 				}
 			} else {
-				$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
+				//$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
 			}
+
 			// Add link to add file
 			$maxfilesizearray = getMaxFileSizeArray();
 			$maxmin = $maxfilesizearray['maxmin'];
@@ -1275,7 +1280,7 @@ if ($action == 'create') {
 			}
 			$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 			$out .= ' ';
-			$out .= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+			$out .= '<input type="submit" class="button smallpaddingimp" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 			print $out;
 			print '</td></tr>';
 
@@ -1309,7 +1314,7 @@ if ($action == 'create') {
 
 			print '<div class="center">';
 			print '<input type="submit" class="button buttonforacesave button-save" value="'.$langs->trans("Save").'" name="save">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '&nbsp; &nbsp; &nbsp;';
 			print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel">';
 			print '</div>';
 

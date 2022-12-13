@@ -29,7 +29,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
 	public $require_module = array('contrat');
 
-	public $enabled = '$conf->societe->enabled';
+	public $enabled = 'isModEnabled("societe")';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -219,6 +219,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
 		$s = '<select id="filter_services_expired" name="filter" class="flat">';
 		if (count($this->arrayofproducts)) {
+			$langs->loadLangs(array("products"));
 			$s .= '<option value="-1">'.$langs->trans("ProductOrService").'</option>';
 		} else {
 			$s .= '<option value="0">'.$langs->trans("ContactsAllShort").'</option>';

@@ -51,6 +51,11 @@ class Reception extends CommonObject
 	use CommonIncoterm;
 
 	/**
+	 * @var string code
+	 */
+	public $code = "";
+
+	/**
 	 * @var string element name
 	 */
 	public $element = "reception";
@@ -112,6 +117,10 @@ class Reception extends CommonObject
 
 	public $lines = array();
 
+
+	// detail of lot and qty = array(id in llx_commande_fournisseur_dispatch, batch, qty)
+	// We can use this to know warehouse planned to be used for each lot.
+	public $detail_batch;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -571,7 +580,7 @@ class Reception extends CommonObject
 
 					$qty = $obj->qty;
 
-					if ($qty <= 0) {
+					if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 						continue;
 					}
 					dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
@@ -1204,6 +1213,14 @@ class Reception extends CommonObject
 
 				$this->total_ttc += $pu_ht + $tva;
 
+				if (isModEnabled('productbatch') && !empty($line->batch)) {
+					$detail_batch = new stdClass();
+					$detail_batch->eatby = $line->eatby;
+					$detail_batch->sellby = $line->sellby;
+					$detail_batch->batch = $line->batch;
+					$detail_batch->qty = $line->qty;
+					$line->detail_batch[] = $detail_batch;
+				}
 
 				$this->lines[] = $line;
 			}
@@ -1641,23 +1658,8 @@ class Reception extends CommonObject
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Classify the reception as invoiced (used when WORKFLOW_BILL_ON_RECEPTION is on)
-	 *
-	 *	@deprecated
-	 *  @see setBilled()
-	 *	@return     int     <0 if ko, >0 if ok
-	 */
-	public function set_billed()
-	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::set_billed is deprecated, use setBilled instead", LOG_NOTICE);
-		return $this->setBilled();
-	}
-
-	/**
-	 *	Classify the reception as invoiced (used when WORKFLOW_BILL_ON_RECEPTION is on)
+	 *	Classify the reception as invoiced (used when WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE is on)
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
 	 */

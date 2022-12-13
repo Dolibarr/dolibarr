@@ -300,8 +300,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Adherent';
 	$objectlabel = 'Members';
-	$permissiontoread = $user->rights->adherent->lire;
-	$permissiontodelete = $user->rights->adherent->supprimer;
+	$permissiontoread = $user->hasRight('adherent', 'lire');
+	$permissiontodelete = $user->hasRight('adherent', 'supprimer');
 	$permissiontoadd = $user->hasRight('adherent', 'creer');
 	$uploaddir = $conf->adherent->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
@@ -346,6 +346,9 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
@@ -370,7 +373,11 @@ if (!empty($searchCategoryContactList)) {
 		if (intval($searchCategoryContact) == -2) {
 			$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member)";
 		} elseif (intval($searchCategoryContact) > 0) {
-			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
+			if ($searchCategoryContactOperator == 0) {
+				$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member AND ck.fk_categorie = ".((int) $searchCategoryContact).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
+			}
 		}
 	}
 	if ($listofcategoryid) {
@@ -476,9 +483,13 @@ $sql .= $hookmanager->resPrint;
 // Count total nb of records with no order and no limits
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$resql = $db->query($sql);
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
 	if ($resql) {
-		$nbtotalofrecords = $db->num_rows($resql);
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
 	} else {
 		dol_print_error($db);
 	}
@@ -610,13 +621,13 @@ $arrayofmassactions = array(
 if ($user->hasRight('adherent', 'creer')) {
 	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Resiliate");
 }
-if ($user->rights->adherent->supprimer) {
+if ($user->hasRight('adherent', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (isModEnabled('category') && $user->rights->adherent->creer) {
+if (isModEnabled('category') && $user->hasRight('adherent', 'creer')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if ($user->hasRight('adherent', 'creer') && $user->rights->user->user->creer) {
+if ($user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'creer')) {
 	$arrayofmassactions['createexternaluser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("CreateExternalUser");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
@@ -657,7 +668,7 @@ if ($sall) {
 
 // Filter on categories
 $moreforfilter = '';
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedlength"').$formother->select_categories(Categorie::TYPE_MEMBER, $search_categ, 'search_categ', 1, $langs->trans("MembersCategoriesShort"));

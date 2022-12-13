@@ -182,7 +182,22 @@ class modECM extends DolibarrModules
 			'langs'=>'ecm',
 			'position'=>103,
 			'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-			'enabled'=>'($user->rights->ecm->read || $user->rights->ecm->upload) && !empty($conf->global->ECM_AUTO_TREE_ENABLED)',
+			'enabled'=>'($user->rights->ecm->read || $user->rights->ecm->upload) && getDolGlobalInt("ECM_AUTO_TREE_ENABLED")',
+			'target'=>'',
+			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+		);
+		$r++;
+
+		$this->menu[$r] = array(
+			'fk_menu'=>'fk_mainmenu=ecm,fk_leftmenu=ecm',
+			'type'=>'left',
+			'titre'=>'ECMSectionsMedias',
+			'mainmenu'=>'ecm',
+			'url'=>'/ecm/index_medias.php?action=file_manager&mainmenu=ecm&leftmenu=ecm',
+			'langs'=>'ecm',
+			'position'=>104,
+			'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
+			'enabled'=>'($user->rights->ecm->read || $user->rights->ecm->upload) && getDolGlobalInt("MAIN_FEATURES_LEVEL") == 2',
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);

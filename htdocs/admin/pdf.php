@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2107 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019	   Ferran Marcet		<fmarcet@2byte.es>
@@ -174,7 +174,6 @@ if ($action == 'update') {
 	if (GETPOSTISSET('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) {
 		dolibarr_set_const($db, "PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", GETPOST('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
-
 	if (GETPOSTISSET('PDF_USE_A')) {
 		dolibarr_set_const($db, "PDF_USE_A", GETPOST('PDF_USE_A', 'alpha'), 'chaine', 0, '', $conf->entity);
 	}
@@ -314,7 +313,7 @@ print load_fiche_titre($langs->trans("PDFAddressForging"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td class="">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 // Show sender name
 
@@ -378,6 +377,7 @@ if ($conf->use_javascript_ajax) {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("MAIN_PDF_NO_RECIPENT_FRAME", $arrval, $conf->global->MAIN_PDF_NO_RECIPENT_FRAME);
 }
+print '</td></tr>';
 
 //Invert sender and recipient
 
@@ -398,6 +398,13 @@ if ($conf->use_javascript_ajax) {
 	print $form->selectyesno('MAIN_PDF_USE_ISO_LOCATION', (!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION)) ? $conf->global->MAIN_PDF_USE_ISO_LOCATION : 0, 1);
 }
 print '</td></tr>';
+
+// Show alias in thirdparty name
+print '<tr class="oddeven"><td>'.$langs->trans("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("THIRDPARTY_ALIAS"), '2' => $langs->trans("ALIAS_THIRDPARTY"));
+	print $form->selectarray("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", $arrval, getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME'));
+}
 
 print '</table>';
 print '</div>';
@@ -443,7 +450,7 @@ if ($mysoc->useLocalTax(1) || $mysoc->useLocalTax(2)) {
 print load_fiche_titre($title, '', '');
 
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 // Hide any information on Sale tax / VAT
 
@@ -463,22 +470,20 @@ print '<br>';
 
 
 // Other
+
 print load_fiche_titre($langs->trans("Other"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 // Use 2 languages into PDF
 
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_USE_ALSO_LANGUAGE_CODE").'</td><td>';
-//if (getDolGlobalInt('MAIN_MULTILANGS'))
-	//{
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("PDFIn2Languages"), $langs->trans("PDF_USE_ALSO_LANGUAGE_CODE"));
+print '</td><td>';
 $selected = GETPOSTISSET('PDF_USE_ALSO_LANGUAGE_CODE') ? GETPOST('PDF_USE_ALSO_LANGUAGE_CODE') : (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) ? $conf->global->PDF_USE_ALSO_LANGUAGE_CODE : 0);
 print $formadmin->select_language($selected, 'PDF_USE_ALSO_LANGUAGE_CODE', 0, null, 1);
-//} else {
-//	print '<span class="opacitymedium">'.$langs->trans("MultiLangNotEnabled").'</span>';
-//}
 print '</td></tr>';
 
 // Height of logo
@@ -584,16 +589,6 @@ if ($conf->use_javascript_ajax) {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("DOC_SHOW_FIRST_SALES_REP", $arrval, $conf->global->DOC_SHOW_FIRST_SALES_REP);
 }
-
-// Show alias in thirdparty name
-
-/* Disabled because not yet completely implemented (does not work when we force a contact on object)
-print '<tr class="oddeven"><td>'.$langs->trans("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME").'</td><td>';
-if ($conf->use_javascript_ajax) {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("THIRDPARTY_ALIAS"), '2' => $langs->trans("ALIAS_THIRDPARTY"));
-	print $form->selectarray("PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME", $arrval, getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME'));
-}
-*/
 
 // Show online payment link on invoices
 

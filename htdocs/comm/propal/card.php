@@ -131,7 +131,6 @@ $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown
 // Security check
 if (!empty($user->socid)) {
 	$socid = $user->socid;
-	$object->id = $user->socid;
 }
 restrictedArea($user, 'propal', $object->id);
 
@@ -1792,13 +1791,13 @@ if ($action == 'create') {
 	// Terms of payment
 	print '<tr class="field_cond_reglement_id"><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	print img_picto('', 'paiment');
-	print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id') != 0) ? GETPOST('cond_reglement_id', 'int') : $soc->cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', (GETPOSTISSET('cond_reglement_id_deposit_percent') ? GETPOST('cond_reglement_id_deposit_percent', 'alpha') : $soc->deposit_percent));
+	print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') && GETPOST('cond_reglement_id', 'int') != 0) ? GETPOST('cond_reglement_id', 'int') : $soc->cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', (GETPOSTISSET('cond_reglement_id_deposit_percent') ? GETPOST('cond_reglement_id_deposit_percent', 'alpha') : $soc->deposit_percent));
 	print '</td></tr>';
 
 	// Mode of payment
 	print '<tr class="field_mode_reglement_id"><td class="titlefieldcreate">'.$langs->trans('PaymentMode').'</td><td class="valuefieldcreate">';
 	print img_picto('', 'bank', 'class="pictofixedwidth"');
-	print $form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id') != 0) ? GETPOST('mode_reglement_id', 'int') : $soc->mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
+	print $form->select_types_paiements((GETPOSTISSET('mode_reglement_id') && GETPOST('mode_reglement_id', 'int') != 0) ? GETPOST('mode_reglement_id', 'int') : $soc->mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx', 1);
 	print '</td></tr>';
 
 	// Bank Account
@@ -2004,8 +2003,8 @@ if ($action == 'create') {
 			$i = 0;
 			while ($i < $num) {
 				$row = $db->fetch_row($resql);
-				$propalRefAndSocName = $row [1]." - ".$row [2];
-				$liste_propal [$row [0]] = $propalRefAndSocName;
+				$propalRefAndSocName = $row[1]." - ".$row[2];
+				$liste_propal[$row[0]] = $propalRefAndSocName;
 				$i++;
 			}
 			print $form->selectarray("copie_propal", $liste_propal, 0);
@@ -2317,7 +2316,7 @@ if ($action == 'create') {
 				$proj->fetch($object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
-					$morehtmlref .= ' - '.dol_escape_htmltag($proj->title);
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 				}
 			}
 		}

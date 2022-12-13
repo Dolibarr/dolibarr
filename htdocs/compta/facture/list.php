@@ -493,7 +493,7 @@ if ($action == 'makepayment_confirm' && !empty($user->rights->facture->paiement)
 				$rsql .= " , pfd.date_traite as date_traite";
 				$rsql .= " , pfd.amount";
 				$rsql .= " , u.rowid as user_id, u.lastname, u.firstname, u.login";
-				$rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+				$rsql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 				$rsql .= " , ".MAIN_DB_PREFIX."user as u";
 				$rsql .= " WHERE fk_facture = ".((int) $objecttmp->id);
 				$rsql .= " AND pfd.fk_user_demande = u.rowid";
@@ -559,7 +559,7 @@ $companyparent = new Societe($db);
 $company_url_list = array();
 
 $sql = 'SELECT';
-if ($sall || $search_product_category > 0 || $search_user > 0) {
+if ($sall || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
 $sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.fk_cond_reglement, f.total_ht, f.total_tva, f.total_ttc,';
@@ -595,8 +595,11 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 }
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s2 ON s2.rowid = s.parent";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
@@ -616,7 +619,7 @@ if (!$sall) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 }
 */
-if ($sall || $search_product_category > 0) {
+if ($sall) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as pd ON f.rowid=pd.fk_facture';
 }
 if (!empty($search_fac_rec_source_title)) {
@@ -811,13 +814,17 @@ if (!empty($searchCategoryProductList)) {
 	$listofcategoryid = '';
 	foreach ($searchCategoryProductList as $searchCategoryProduct) {
 		if (intval($searchCategoryProduct) == -2) {
-			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE p.rowid = ck.fk_product)";
+			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."facturedet as fd WHERE fd.fk_facture = f.rowid AND fd.fk_product = ck.fk_product)";
 		} elseif (intval($searchCategoryProduct) > 0) {
-			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProduct);
+			if ($searchCategoryProductOperator == 0) {
+				$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."facturedet as fd WHERE fd.fk_facture = f.rowid AND fd.fk_product = ck.fk_product AND ck.fk_categorie = ".((int) $searchCategoryProduct).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProduct);
+			}
 		}
 	}
 	if ($listofcategoryid) {
-		$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck WHERE p.rowid = ck.fk_product AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+		$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."facturedet as fd WHERE fd.fk_facture = f.rowid AND fd.fk_product = ck.fk_product AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
 	}
 	if ($searchCategoryProductOperator == 1) {
 		if (!empty($searchCategoryProductSqlList)) {
@@ -839,7 +846,11 @@ if (!empty($searchCategoryCustomerList)) {
 		if (intval($searchCategoryCustomer) == -2) {
 			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc)";
 		} elseif (intval($searchCategoryCustomer) > 0) {
-			$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+			if ($searchCategoryCustomerOperator == 0) {
+				$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie = ".((int) $searchCategoryCustomer).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+			}
 		}
 	}
 	if ($listofcategoryid) {
@@ -859,7 +870,7 @@ if (!empty($searchCategoryCustomerList)) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 // We disable this. It create a bug when searching with sall and sorting on status. Also it create performance troubles.
@@ -903,21 +914,12 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
+// Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	/* This old and fast method to get and count full list returns all record so use a high amount of memory.
-	 $result = $db->query($sql);
-	 $nbtotalofrecords = $db->num_rows($result);
-	 */
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	if ($sall || $search_product_category > 0 || $search_user > 0) {
-		$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(DISTINCT f.rowid) as nbtotalofrecords FROM', $sql);
-	} else {
-		$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(f.rowid) as nbtotalofrecords FROM', $sql);
-		$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid/', '', $sqlforcount);
-	}
-	$sqlforcount = preg_replace('/GROUP BY.*$/', '', $sqlforcount);
-
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -926,7 +928,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -934,13 +936,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 }
 
 // Complete request and execute it with limit
-$sql .= ' ORDER BY ';
-$listfield = explode(',', $sortfield);
-$listorder = explode(',', $sortorder);
-foreach ($listfield as $key => $value) {
-	$sql .= $listfield[$key].' '.($listorder[$key] ? $listorder[$key] : 'DESC').',';
-}
-$sql .= ' f.rowid DESC ';
+$sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
@@ -1147,7 +1143,7 @@ if ($resql) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 	// Add $param from hooks
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	$param .= $hookmanager->resPrint;
 
 	$arrayofmassactions = array(
@@ -1265,7 +1261,7 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$moreforfilter .= $hookmanager->resPrint;
 	} else {
@@ -1420,13 +1416,13 @@ if ($resql) {
 	// Payment mode
 	if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 		print '<td class="liste_titre">';
-		print $form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 1, 1, 10, 1, '', 1);
+		print $form->select_types_paiements($search_paymentmode, 'search_paymentmode', '', 0, 1, 1, 0, 1, 'minwidth100 maxwidth100', 1);
 		print '</td>';
 	}
 	// Payment terms
 	if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 		print '<td class="liste_titre">';
-		print $form->getSelectConditionsPaiements($search_paymentterms, 'search_paymentterms', -1, 1, 1);
+		print $form->getSelectConditionsPaiements($search_paymentterms, 'search_paymentterms', -1, 1, 1, 'minwidth100 maxwidth100');
 		print '</td>';
 	}
 	// Module source
@@ -1552,7 +1548,7 @@ if ($resql) {
 
 	// Fields from hook
 	$parameters = array('arrayfields'=>$arrayfields);
-	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
 	if (!empty($arrayfields['f.datec']['checked'])) {
@@ -1737,7 +1733,7 @@ if ($resql) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
-	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['f.datec']['checked'])) {
 		print_liste_field_titre($arrayfields['f.datec']['label'], $_SERVER["PHP_SELF"], "f.datec", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
@@ -1793,7 +1789,6 @@ if ($resql) {
 		$total_margin = 0;
 
 		$savnbfield = $totalarray['nbfield'];
-		$totalarray = array();
 		$totalarray['nbfield'] = 0;
 		$imaxinloop = ($limit ? min($num, $limit) : $num);
 		while ($i < $imaxinloop) {
@@ -1818,10 +1813,10 @@ if ($resql) {
 			$facturestatic->close_code = $obj->close_code;
 			$facturestatic->total_ttc = $obj->total_ttc;
 			$facturestatic->paye = $obj->paye;
-			$facturestatic->fk_soc = $obj->fk_soc;
+			$facturestatic->socid = $obj->fk_soc;
 
 			$facturestatic->date = $db->jdate($obj->datef);
-			$facturestatic->date_valid = $db->jdate($obj->date_valid);
+			$facturestatic->date_validation = $db->jdate($obj->date_valid);
 			$facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
 
 			$facturestatic->note_public = $obj->note_public;
@@ -2129,8 +2124,9 @@ if ($resql) {
 
 			// Payment mode
 			if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
-				print '<td class="tdoverflowmax100">';
-				$form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1);
+				$s = $form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1, 0, '', 1);
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
+				print $s;
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2139,8 +2135,9 @@ if ($resql) {
 
 			// Payment terms
 			if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
-				print '<td>';
-				$form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none');
+				$s = $form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', 0, '', -1, -1, 1);
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
+				print $s;
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2436,7 +2433,7 @@ if ($resql) {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
 			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
-			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			// Date creation
 			if (!empty($arrayfields['f.datec']['checked'])) {
@@ -2549,7 +2546,7 @@ if ($resql) {
 	$db->free($resql);
 
 	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
-	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
 	print '</table>'."\n";

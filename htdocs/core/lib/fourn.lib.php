@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Marc Barilley		<marc@ocebo.com>
  * Copyright (C) 2011-2013  Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +59,7 @@ function facturefourn_prepare_head($object)
 	if (!empty($conf->paymentbybanktransfer->enabled)) {
 		$nbStandingOrders = 0;
 		$sql = "SELECT COUNT(pfd.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 		$sql .= " WHERE pfd.fk_facture_fourn = ".((int) $object->id);
 		$sql .= " AND pfd.ext_payment_id IS NULL";
 		$resql = $db->query($sql);
@@ -178,7 +179,10 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 				$sumQtyAllreadyDispatched = $sumQtyAllreadyDispatched + $dispachedLines[$line]['qty'];
 			}
 			for ($line = 0 ; $line < $nbLinesOrdered; $line++) {
-				$sumQtyOrdered = $sumQtyOrdered + $object->lines[$line]->qty;
+				//If line is a product of conf to manage stocks for services
+				if ($object->lines[$line]->product_type == 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+					$sumQtyOrdered = $sumQtyOrdered + $object->lines[$line]->qty;
+				}
 			}
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.price2num($sumQtyAllreadyDispatched, 'MS').' / '.price2num($sumQtyOrdered, 'MS').'</span>';
 		}
@@ -246,7 +250,13 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
  */
 function supplierorder_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('commande_fournisseur');
+	$extrafields->fetch_name_optionals_label('commande_fournisseurdet');
+	$extrafields->fetch_name_optionals_label('facture_fourn');
+	$extrafields->fetch_name_optionals_label('facture_fourn_det');
 
 	$h = 0;
 	$head = array();
@@ -270,21 +280,37 @@ function supplierorder_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorder_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrders");
+	$nbExtrafields = $extrafields->attributes['commande_fournisseur']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'supplierorder';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierorderdet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrdersLines");
+	$nbExtrafields = $extrafields->attributes['commande_fournisseurdet']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'supplierorderdet';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoice_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoices");
+	$nbExtrafields = $extrafields->attributes['facture_fourn']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'supplierinvoice';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoicedet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoicesLines");
+	$nbExtrafields = $extrafields->attributes['facture_fourn_det']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'supplierinvoicedet';
 	$h++;
 

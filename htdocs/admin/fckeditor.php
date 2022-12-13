@@ -51,7 +51,7 @@ $modules = array(
 	'NOTE_PUBLIC' => 'FCKeditorForNotePublic',
 	'NOTE_PRIVATE' => 'FCKeditorForNotePrivate',
 	'SOCIETE' => 'FCKeditorForCompany',
-	'PRODUCTDESC' => 'FCKeditorForProduct',
+	//'PRODUCTDESC' => 'FCKeditorForProduct',
 	'DETAILS' => 'FCKeditorForProductDetails',
 	'USERSIGN' => 'FCKeditorForUserSignature',
 	'MAILING' => 'FCKeditorForMailing',
@@ -100,7 +100,7 @@ foreach ($modules as $const => $desc) {
 		exit;
 	}
 	if ($action == 'disable_'.strtolower($const)) {
-		dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const, $conf->entity);
+		dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "0", 'chaine', 0, '', $conf->entity);
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
@@ -166,8 +166,13 @@ if (empty($conf->use_javascript_ajax)) {
 		print '<!-- constant = '.$constante.' -->'."\n";
 		print '<tr class="oddeven">';
 		print '<td width="16">'.img_object("", $picto[$const]).'</td>';
-		print '<td>'.$langs->trans($desc).'</td>';
-		print '<td class="center" width="100">';
+		print '<td>';
+		print $langs->trans($desc);
+		if ($const == 'DETAILS') {
+			print '<br><span class="warning">'.$langs->trans("FCKeditorForProductDetails2").'</span>';
+		}
+		print '</td>';
+		print '<td class="center centpercent">';
 		$value = (isset($conf->global->$constante) ? $conf->global->$constante : 0);
 		if ($value == 0) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
@@ -185,6 +190,7 @@ if (empty($conf->use_javascript_ajax)) {
 
 	print '<form name="formtest" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="page_y" value="">';
 
 	// Skins
 	show_skin(null, 1);
@@ -219,7 +225,7 @@ if (empty($conf->use_javascript_ajax)) {
 		print $conf->global->FCKEDITOR_TEST;
 		print '</div>';
 	}
-	print $form->buttonsSaveCancel("Save", '');
+	print $form->buttonsSaveCancel("Save", '', null, 0, 'reposition');
 	print '<div id="divforlog"></div>';
 	print '</form>'."\n";
 

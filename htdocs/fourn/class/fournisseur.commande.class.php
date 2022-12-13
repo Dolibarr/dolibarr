@@ -1398,7 +1398,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
-		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".setEntity($this);
 		$sql .= ", ".((int) $this->socid);
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
@@ -2138,7 +2138,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			if ($line->delete($notrigger) > 0) {
-				$this->update_price();
+				$this->update_price(1);
 				return 1;
 			} else {
 				$this->error = $line->error;
@@ -2641,7 +2641,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= ", ".price2num($comclient->lines[$i]->qty, 'MS').", ".price2num($comclient->lines[$i]->tva_tx, 5).", ".price2num($comclient->lines[$i]->localtax1_tx, 5).", ".price2num($comclient->lines[$i]->localtax2_tx, 5).", ".price2num($comclient->lines[$i]->remise_percent, 3);
 			$sql .= ", '".price2num($comclient->lines[$i]->subprice, 'MT')."','0', '".$this->db->escape($ref)."');";
 			if ($this->db->query($sql)) {
-				$this->update_price();
+				$this->update_price(1);
 			}
 		}
 
@@ -2894,7 +2894,7 @@ class CommandeFournisseur extends CommonOrder
 
 			// Mise a jour info denormalisees au niveau facture
 			if ($result >= 0) {
-				$this->update_price('', 'auto');
+				$this->update_price('1', 'auto');
 				$this->db->commit();
 				return $result;
 			} else {

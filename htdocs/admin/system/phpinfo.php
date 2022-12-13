@@ -250,9 +250,19 @@ foreach ($phparray as $key => $value) {
 	//var_dump($value);
 	foreach ($value as $keyparam => $keyvalue) {
 		if (!is_array($keyvalue)) {
-			print '<tr class="oddeven">';
-			print '<td>'.$keyparam.'</td>';
+			$keytoshow = $keyparam;
 			$valtoshow = $keyvalue;
+			// Hide value of session cookies
+			if (in_array($keyparam, array('HTTP_COOKIE', 'Cookie', "\$_SERVER['HTTP_COOKIE']", 'Authorization'))) {
+				$valtoshow = '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+			}
+			if (preg_match('/'.preg_quote('$_COOKIE[\'DOLSESSID_', '/').'/i', $keyparam)) {
+				$keytoshow = $keyparam;
+				$valtoshow = '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
+			}
+
+			print '<tr class="oddeven">';
+			print '<td>'.$keytoshow.'</td>';
 			if ($keyparam == 'X-ChromePhp-Data') {
 				$valtoshow = dol_trunc($keyvalue, 80);
 			}

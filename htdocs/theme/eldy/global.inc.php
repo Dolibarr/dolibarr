@@ -1393,6 +1393,13 @@ select.flat.selectlimit {
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	overflow: hidden;
+	height: auto !important;
+}
+.tenlinesmax {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 10;
+	overflow: hidden;
 }
 
 .tablelistofcalendars {
@@ -1582,6 +1589,7 @@ table[summary="list_of_modules"] .fa-cog {
 .widthauto { width: auto; }
 .width20  { width: 20px; }
 .width25  { width: 25px; }
+.width40  { width: 40px; }
 .width50  { width: 50px; }
 .width75  { width: 75px; }
 .width100 { width: 100px; }
@@ -1707,6 +1715,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth200imp, select.minwidth300 {
 		width: calc(100% - 40px) !important;
+		min-width: 100px;
 		display: inline-block;
 	}
 	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
@@ -1964,7 +1973,7 @@ td.showDragHandle {
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
-	z-index: 1001;
+	z-index: 1005;
 }
 <?php } ?>
 <?php if (!empty($conf->global->THEME_DARKMODEENABLED)) {  ?>
@@ -2532,6 +2541,12 @@ span.mainmenuaspan.tmenudisabled {
 	color: var(--colortextbackhmenu);
 	opacity: 0.5;
 	cursor: not-allowed;
+}
+
+a.disabled {
+	color: #aaa;
+	text-decoration: none !important;
+	cursor: default;
 }
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
@@ -5161,6 +5176,10 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
+.previewnotyetavailable {
+	opacity: 0.5;
+}
+
 .websiteformtoolbar {
 	position: sticky;
 	top: <?php echo empty($dol_hide_topmenu) ? ($disableimages ? '32px' : '52px') : '0'; ?>;
@@ -5348,10 +5367,17 @@ td.cal_other_month {
 
 
 /* ============================================================================== */
-/*  Ajax - Liste deroulante de l'autocompletion                                   */
+/*  Ajax - Combo list for autocompletion                                          */
 /* ============================================================================== */
 
-.ui-widget-content { border: solid 1px rgba(0,0,0,.3); background: #fff !important; }
+.ui-widget-content {
+	border: solid 1px rgba(0,0,0,.3);
+	background: var(--colorbackbody) !important;
+	color: var(--colortext) !important;
+}
+/*.ui-widget-header {
+	background: var(--colorbacktitle);
+}*/
 
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif', 1) ?>) right center no-repeat; }
 .ui-autocomplete {
@@ -5616,7 +5642,9 @@ a.cke_dialog_ui_button
 .cke_dialog_ui_hbox_first {
 	vertical-align: middle !important;
 }
-
+.cke_combo_text {
+	width: 40px !important;
+}
 /*
 .cke_editable
 {
@@ -6438,9 +6466,17 @@ ul.select2-results__options li {
 
 @media only screen and (min-width: 767px)
 {
+	/* CSS to have the dropdown boxes larger that the input search area */
 	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
-		min-width: 200px !important;
+		min-width: 220px !important;
 	}
+	.select2-container.select2-container--open .select2-dropdown--below {
+		min-width: 220px !important;
+	}
+	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below {
+		min-width: 140px !important;
+	}
+
 	.select2-container--open .select2-dropdown--below {
 		border-top: 1px solid var(--inputbordercolor);
 		/* border-top: 1px solid #aaaaaa; */

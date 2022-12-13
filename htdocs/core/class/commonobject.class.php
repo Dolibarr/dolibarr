@@ -2193,7 +2193,7 @@ abstract class CommonObject
 					$sql .= " AND te.entity IS NOT NULL"; // Show all users
 				} else {
 					$sql .= " AND ug.fk_user = te.rowid";
-					$sql .= " AND ug.entity IN (".getEntity($this->element).")";
+					$sql .= " AND ug.entity IN (".getEntity('usergroup').")";
 				}
 			} else {
 				$sql .= ' AND te.entity IN ('.getEntity($this->element).')';
@@ -2263,7 +2263,7 @@ abstract class CommonObject
 					$sql .= " AND te.entity IS NOT NULL"; // Show all users
 				} else {
 					$sql .= " AND ug.fk_user = te.rowid";
-					$sql .= " AND ug.entity IN (".getEntity($this->element).")";
+					$sql .= " AND ug.entity IN (".getEntity('usergroup').")";
 				}
 			} else {
 				$sql .= ' AND te.entity IN ('.getEntity($this->element).')';
@@ -4978,7 +4978,7 @@ abstract class CommonObject
 		// Line in view mode
 		if ($action != 'editline' || $selected != $line->id) {
 			// Product
-			if ($line->fk_product > 0) {
+			if (!empty($line->fk_product) && $line->fk_product > 0) {
 				$product_static = new Product($this->db);
 				$product_static->fetch($line->fk_product);
 
@@ -5610,6 +5610,9 @@ abstract class CommonObject
 				$setsharekey = true;
 			}
 			if ($this->element == 'contrat' && !empty($conf->global->CONTRACT_ALLOW_EXTERNAL_DOWNLOAD)) {
+				$setsharekey = true;
+			}
+			if ($this->element == 'fichinter' && !empty($conf->global->FICHINTER_ALLOW_EXTERNAL_DOWNLOAD)) {
 				$setsharekey = true;
 			}
 			if ($this->element == 'supplier_proposal' && !empty($conf->global->SUPPLIER_PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD)) {
@@ -6267,7 +6270,7 @@ abstract class CommonObject
 					case 'date':
 					case 'datetime':
 						// If data is a string instead of a timestamp, we convert it
-						if (!is_int($this->array_options[$key])) {
+						if (!is_numeric($this->array_options[$key]) || $this->array_options[$key] != intval($this->array_options[$key])) {
 							$this->array_options[$key] = strtotime($this->array_options[$key]);
 						}
 						$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
@@ -8054,8 +8057,9 @@ abstract class CommonObject
 
 		$out = '';
 
-		$parameters = array();
+		$parameters = array('mode'=>$mode, 'params'=>$params, 'keysuffix'=>$keysuffix, 'keyprefix'=>$keyprefix, 'display_type'=>$display_type);
 		$reshook = $hookmanager->executeHooks('showOptionals', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
+
 		if (empty($reshook)) {
 			if (is_array($extrafields->attributes[$this->table_element]) && key_exists('label', $extrafields->attributes[$this->table_element]) && is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0) {
 				$out .= "\n";
@@ -8407,6 +8411,8 @@ abstract class CommonObject
 			$element = 'facture';
 		} elseif ($element == 'invoice_supplier_rec') {
 			return $user->rights->fournisseur->facture;
+		} elseif ($element == 'evaluation') {
+			return $user->rights->hrm->evaluation;
 		}
 
 		return $user->rights->{$element};
@@ -8954,7 +8960,11 @@ abstract class CommonObject
 				// $this->{$field} may be null, '', 0, '0', 123, '123'
 				if ((isset($this->{$field}) && $this->{$field} != '') || !empty($info['notnull'])) {
 					if (!isset($this->{$field})) {
-						$queryarray[$field] = 0;
+						if (!empty($info['default'])) {
+							$queryarray[$field] = $info['default'];
+						} else {
+							$queryarray[$field] = 0;
+						}
 					} else {
 						$queryarray[$field] = (int) $this->{$field};		// If '0', it may be set to null later if $info['notnull'] == -1
 					}
@@ -9058,7 +9068,7 @@ abstract class CommonObject
 	/**
 	 * Function to concat keys of fields
 	 *
-	 * @param   string   $alias   	String of alias of table for fields. For example 't'.
+	 * @param   string   $alias   	String of alias of table for fields. For example 't'. It is recommended to use '' and set alias into fields defintion.
 	 * @return  string				list of alias fields
 	 */
 	public function getFieldList($alias = '')
@@ -9484,7 +9494,7 @@ abstract class CommonObject
 	 * @param 	User 	$user       			User that deletes
 	 * @param 	bool 	$notrigger  			false=launch triggers after, true=disable triggers
 	 * @param	int		$forcechilddeletion		0=no, 1=Force deletion of children
-	 * @return 	int             				<=0 if KO, 0=Nothing done because object has child, >0 if OK
+	 * @return 	int             				<0 if KO, 0=Nothing done because object has child, >0 if OK
 	 */
 	public function deleteCommon(User $user, $notrigger = false, $forcechilddeletion = 0)
 	{

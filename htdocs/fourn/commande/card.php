@@ -413,7 +413,7 @@ if (empty($reshook)) {
 
 	// Add a product line
 	if ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && GETPOST('vatforalllines', 'alpha') && $usercancreate) {
-		// Define vat_rate
+		// Define new vat_rate for all lines
 		$vat_rate = (GETPOST('vatforalllines') ? GETPOST('vatforalllines') : 0);
 		$vat_rate = str_replace('*', '', $vat_rate);
 		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
@@ -1698,7 +1698,7 @@ if ($action == 'create') {
 		print $societe->getNomUrl(1, 'supplier');
 		print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 	} else {
-		print img_picto('', 'company').$form->select_company((empty($socid) ? '' : $socid), 'socid', 's.fournisseur=1', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
+		print img_picto('', 'company').$form->select_company((empty($socid) ? '' : $socid), 'socid', '(s.fournisseur=1 AND s.status=1)', 'SelectThirdParty', 1, 0, null, 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script>
@@ -2068,7 +2068,7 @@ if ($action == 'create') {
 				$proj->fetch($object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
-					$morehtmlref .= ' - '.dol_escape_htmltag($proj->title);
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 				}
 			}
 		}

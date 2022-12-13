@@ -717,6 +717,7 @@ class User extends CommonObject
 			'shipping' => 'expedition',
 			'task' => 'task@projet',
 			'fichinter' => 'ficheinter',
+			'propale' => 'propal',
 			'inventory' => 'stock',
 			'invoice' => 'facture',
 			'invoice_supplier' => 'fournisseur',
@@ -1521,7 +1522,7 @@ class User extends CommonObject
 			return -1;
 		} elseif (preg_match('/['.preg_quote($badCharUnauthorizedIntoLoginName, '/').']/', $this->login)) {
 			$langs->load("errors");
-			$this->error = $langs->trans("ErrorBadCharIntoLoginName");
+			$this->error = $langs->trans("ErrorBadCharIntoLoginName", $langs->transnoentitiesnoconv("Login"));
 			return -1;
 		}
 
@@ -1917,7 +1918,7 @@ class User extends CommonObject
 			return -1;
 		} elseif (preg_match('/['.preg_quote($badCharUnauthorizedIntoLoginName, '/').']/', $this->login)) {
 			$langs->load("errors");
-			$this->error = $langs->trans("ErrorBadCharIntoLoginName");
+			$this->error = $langs->trans("ErrorBadCharIntoLoginName", $langs->transnoentitiesnoconv("Login"));
 			return -1;
 		}
 
@@ -3792,7 +3793,7 @@ class User extends CommonObject
 				} else {
 					$sql .= ",".$this->db->prefix()."usergroup_user as ug";
 					$sql .= " WHERE ((ug.fk_user = t.rowid";
-					$sql .= " AND ug.entity IN (".getEntity('user')."))";
+					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
 					$sql .= " OR t.entity = 0)"; // Show always superadmin
 				}
 			} else {

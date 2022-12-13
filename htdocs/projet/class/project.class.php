@@ -308,7 +308,7 @@ class Project extends CommonObject
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModification', 'enabled'=>1, 'visible'=>0, 'position'=>415),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>0, 'position'=>420),
 		'email_msgid'=>array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'enabled'=>1, 'visible'=>-1, 'position'=>450, 'help'=>'EmailMsgIDWhenSourceisEmail'),
-		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500)
+		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -435,6 +435,7 @@ class Project extends CommonObject
 		$sql .= ", note_private";
 		$sql .= ", note_public";
 		$sql .= ", entity";
+		$sql .= ", ip";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->escape($this->ref)."'";
 		$sql .= ", '".$this->db->escape($this->title)."'";
@@ -466,6 +467,7 @@ class Project extends CommonObject
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : 'null');
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null');
 		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -926,7 +928,7 @@ class Project extends CommonObject
 		}
 
 		// Fetch tasks
-		$this->getLinesArray($user);
+		$this->getLinesArray($user, 0);
 
 		// Delete tasks
 		$ret = $this->deleteTasks($user);
@@ -1279,7 +1281,7 @@ class Project extends CommonObject
 		$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('Label').': </b>'.$this->title; // The space must be after the : to not being explode when showing the title in img_picto
 		if (isset($this->public)) {
 			$label .= '<br><b>'.$langs->trans("Visibility").":</b> ";
-			$label .= ($this->public ? img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"').$langs->trans("SharedProject") : img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"').$langs->trans("PrivateProject"));
+			$label .= ($this->public ? img_picto($langs->trans('SharedProject'), 'world', 'class="pictofixedwidth"').$langs->trans("SharedProject") : img_picto($langs->trans('PrivateProject'), 'private', 'class="pictofixedwidth"').$langs->trans("PrivateProject"));
 		}
 		if (!empty($this->thirdparty_name)) {
 			$label .= ($label ? '<br>' : '').'<b>'.$langs->trans('ThirdParty').': </b>'.$this->thirdparty_name; // The space must be after the : to not being explode when showing the title in img_picto
@@ -1340,14 +1342,14 @@ class Project extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip pictofixedwidth em088"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $picto, ($notooltip ? (($withpicto != 2) ? 'class="pictofixedwidth"' : '') : 'class="'.(($withpicto != 2) ? 'pictofixedwidth ' : '').'classfortooltip pictofixedwidth em088"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
 		if ($withpicto != 2) {
-			$result .= (($addlabel && $this->title) ? $sep.dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
+			$result .= (($addlabel && $this->title) ? '<span class="opacitymedium">'.$sep.dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)).'</span>' : '');
 		}
 
 		global $action;
@@ -2046,7 +2048,7 @@ class Project extends CommonObject
 		$sql .= " AND pt.fk_projet = ".((int) $this->id);
 		$sql .= " AND (ptt.task_date >= '".$this->db->idate($datestart)."' ";
 		$sql .= " AND ptt.task_date <= '".$this->db->idate(dol_time_plus_duree($datestart, 1, 'm') - 1)."')";
-		if ($task_id) {
+		if ($taskid) {
 			$sql .= " AND ptt.fk_task=".((int) $taskid);
 		}
 		if (is_numeric($userid)) {
@@ -2300,14 +2302,15 @@ class Project extends CommonObject
 	/**
 	 * 	Create an array of tasks of current project
 	 *
-	 *  @param  User   $user       Object user we want project allowed to
-	 * 	@return int		           >0 if OK, <0 if KO
+	 *  @param  User	$user       		Object user we want project allowed to
+	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
+	 * 	@return int							>0 if OK, <0 if KO
 	 */
-	public function getLinesArray($user)
+	public function getLinesArray($user, $loadRoleMode = 1)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 		$taskstatic = new Task($this->db);
 
-		$this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0);
+		$this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0, '',  '-1', '', 0, 0, array(),  0,  array(),  0,  $loadRoleMode);
 	}
 }

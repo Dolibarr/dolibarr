@@ -188,6 +188,8 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
+		$newproductcloned2 = dol_clone($newproduct1, 2);
+		var_dump($newproductcloned2);
 		//print __METHOD__." newproductcloned1->db must be null\n";
 		//$this->assertNull($newproductcloned1->db, 'newproductcloned1->db is null');
 	}

@@ -86,6 +86,7 @@ $hookmanager->initHooks(array('contactcard', 'globalcard'));
 
 if ($id > 0) {
 	$object->fetch($id);
+	$object->info($id);
 }
 
 if (!($object->id > 0) && $action == 'view') {
@@ -100,6 +101,9 @@ $permissiontoadd = $user->rights->societe->contact->creer;
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
+}
+if ($object->priv && $object->user_creation->id != $user->id) {
+	accessforbidden();
 }
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
@@ -1473,39 +1477,38 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Categories
 		if (isModEnabled('categorie') && !empty($user->rights->categorie->lire)) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td>';
-			print '<td colspan="3">';
+			print '<td>';
 			print $form->showCategories($object->id, Categorie::TYPE_CONTACT, 1);
 			print '</td></tr>';
 		}
 
 		if (!empty($object->socid)) {
 			print '<tr><td class="titlefield">'.$langs->trans("ContactByDefaultFor").'</td>';
-			print '<td colspan="3">';
+			print '<td>';
 			print $formcompany->showRoles("roles", $object, 'view', $object->roles);
 			print '</td></tr>';
 		}
 
 		// Other attributes
-		$cols = 3;
 		$parameters = array('socid'=>$socid);
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		$object->load_ref_elements();
 
 		if (isModEnabled("propal")) {
-			print '<tr><td class="titlefield">'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
+			print '<tr><td class="titlefield tdoverflow">'.$langs->trans("ContactForProposals").'</td><td>';
 			print $object->ref_propal ? $object->ref_propal : $langs->trans("NoContactForAnyProposal");
 			print '</td></tr>';
 		}
 
 		if (isModEnabled('commande') || isModEnabled("expedition")) {
-			print '<tr><td>';
+			print '<tr><td class="titlefield tdoverflow">';
 			if (isModEnabled("expedition")) {
 				print $langs->trans("ContactForOrdersOrShipments");
 			} else {
 				print $langs->trans("ContactForOrders");
 			}
-			print '</td><td colspan="3">';
+			print '</td><td>';
 			$none = $langs->trans("NoContactForAnyOrder");
 			if (isModEnabled("expedition")) {
 				$none = $langs->trans("NoContactForAnyOrderOrShipments");
@@ -1515,18 +1518,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 
 		if (isModEnabled('contrat')) {
-			print '<tr><td>'.$langs->trans("ContactForContracts").'</td><td colspan="3">';
+			print '<tr><td class="tdoverflow">'.$langs->trans("ContactForContracts").'</td><td>';
 			print $object->ref_contrat ? $object->ref_contrat : $langs->trans("NoContactForAnyContract");
 			print '</td></tr>';
 		}
 
 		if (isModEnabled('facture')) {
-			print '<tr><td>'.$langs->trans("ContactForInvoices").'</td><td colspan="3">';
+			print '<tr><td class="tdoverflow">'.$langs->trans("ContactForInvoices").'</td><td>';
 			print $object->ref_facturation ? $object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
 			print '</td></tr>';
 		}
 
-		print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
+		print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td>';
 		if ($object->user_id) {
 			$dolibarr_user = new User($db);
 			$result = $dolibarr_user->fetch($object->user_id);

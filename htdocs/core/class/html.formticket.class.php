@@ -81,6 +81,7 @@ class FormTicket
 	public $withtitletopic;
 	public $withtopicreadonly;
 	public $withreadid;
+
 	public $withcompany;  // to show company drop-down list
 	public $withfromsocid;
 	public $withfromcontactid;
@@ -108,6 +109,7 @@ class FormTicket
 	 * @var string Error code (or message)
 	 */
 	public $error;
+	public $errors = array();
 
 
 	/**
@@ -126,7 +128,7 @@ class FormTicket
 		$this->withcompany = isModEnabled("societe");
 		$this->withfromsocid = 0;
 		$this->withfromcontactid = 0;
-		//$this->withreadid=0;
+		$this->withreadid=0;
 		//$this->withtitletopic='';
 		$this->withnotifytiersatcreate = 0;
 		$this->withusercreate = 1;
@@ -173,7 +175,7 @@ class FormTicket
 			print dol_get_fiche_head(null, 'card', '', 0, '');
 		}
 
-		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.(!empty($this->param["returnurl"]) ? $this->param["returnurl"] : "").'">';
+		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.(!empty($this->param["returnurl"]) ? $this->param["returnurl"] : $_SERVER['PHP_SELF']).'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		foreach ($this->param as $key => $value) {
@@ -332,27 +334,25 @@ class FormTicket
 		print '</td></tr>';
 
 		// Severity => Priority
-		print '<tr><td><span class="none"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
+		print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
 		$this->selectSeveritiesTickets((GETPOST('severity_code') ? GETPOST('severity_code') : $this->severity_code), 'severity_code', '', 2, 1);
 		print '</td></tr>';
 
 		// Subject
 		if ($this->withtitletopic) {
 			print '<tr><td><label for="subject"><span class="fieldrequired">'.$langs->trans("Subject").'</span></label></td><td>';
-
 			// Answer to a ticket : display of the thread title in readonly
 			if ($this->withtopicreadonly) {
 				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
-				print '</td></tr>';
 			} else {
-				if (isset($this->withreadid) &&  $this->withreadid > 0) {
+				if (isset($this->withreadid) && $this->withreadid > 0) {
 					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title.'';
 				} else {
 					$subject = GETPOST('subject', 'alpha');
 				}
 				print '<input class="text minwidth500" id="subject" name="subject" value="'.$subject.'" autofocus />';
-				print '</td></tr>';
 			}
+			print '</td></tr>';
 		}
 
 		if (!empty($conf->knowledgemanagement->enabled)) {
@@ -670,7 +670,7 @@ class FormTicket
 	/**
 	 *      Return html list of tickets type
 	 *
-	 *      @param  string|array	$selected		Id du type pre-selectionne
+	 *      @param  string|array	$selected		Id of preselected field or array of Ids
 	 *      @param  string			$htmlname		Nom de la zone select
 	 *      @param  string			$filtertype		To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
 	 *      @param  int				$format			0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
@@ -685,7 +685,7 @@ class FormTicket
 	{
 		global $langs, $user;
 
-		$selected = is_array($selected) ? $selected : (!empty($selected) ? implode(',', $selected) : array());
+		$selected = is_array($selected) ? $selected : (!empty($selected) ? array($selected) : array());
 		$ticketstat = new Ticket($this->db);
 
 		dol_syslog(get_class($this) . "::select_types_tickets " . implode(';', $selected) . ", " . $htmlname . ", " . $filtertype . ", " . $format . ", " . $multiselect, LOG_DEBUG);
@@ -1270,7 +1270,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->param['langsmodels'])) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
@@ -1281,7 +1281,7 @@ class FormTicket
 
 		// Get message template for $this->param["models"] into c_email_templates
 		$arraydefaultmessage = -1;
-		if ($this->param['models'] != 'none') {
+		if (isset($this->param['models']) && $this->param['models'] != 'none') {
 			$model_id = 0;
 			if (array_key_exists('models_id', $this->param)) {
 				$model_id = (int) $this->param["models_id"];
@@ -1323,7 +1323,7 @@ class FormTicket
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($this->param['langsmodels'])) {
 			$newlang = $this->param['langsmodels'];
 		}
 		if (!empty($newlang)) {
@@ -1380,7 +1380,12 @@ class FormTicket
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		print '<input type="hidden" name="actionbis" value="add_message">';
 		print '<input type="hidden" name="backtopage" value="'.$this->backtopage.'">';
-		print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
+		if (!empty($this->trackid)) {
+			print '<input type="hidden" name="trackid" value="'.$this->trackid.'">';
+		} else {
+			print '<input type="hidden" name="trackid" value="'.(empty($this->track_id) ? '' : $this->track_id).'">';
+			$keytoavoidconflict = empty($this->track_id) ? '' : '-'.$this->track_id; // track_id instead of trackid
+		}
 		foreach ($this->param as $key => $value) {
 			print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 		}
@@ -1392,7 +1397,7 @@ class FormTicket
 			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
 		}
 
-		$result = $formmail->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
+		$result = $formmail->fetchAllEMailTemplate(!empty($this->param["models"]) ? $this->param["models"] : "", $user, $outputlangs);
 		if ($result < 0) {
 			setEventMessages($this->error, $this->errors, 'errors');
 		}
@@ -1404,9 +1409,18 @@ class FormTicket
 		print '<table class="border" width="'.$width.'">';
 
 		// External users can't send message email
-		if ($user->rights->ticket->write && !$user->socid) {
+		if ($user->hasRight("ticket", "write") && !$user->socid) {
 			$ticketstat = new Ticket($this->db);
 			$res = $ticketstat->fetch('', '', $this->track_id);
+
+			print '<tr><td></td><td>';
+			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : ($conf->global->TICKETS_MESSAGE_FORCE_MAIL?'checked':''));
+			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
+			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
+			$texttooltip = $langs->trans("TicketMessageSendEmailHelp", '{s1}');
+			$texttooltip = str_replace('{s1}', $langs->trans('MarkMessageAsPrivate'), $texttooltip);
+			print ' '.$form->textwithpicto('', $texttooltip, 1, 'help');
+			print '</td></tr>';
 
 			// Private message (not visible by customer/external user)
 			if (!$user->socid) {
@@ -1417,12 +1431,6 @@ class FormTicket
 				print ' '.$form->textwithpicto('', $langs->trans("TicketMessagePrivateHelp"), 1, 'help');
 				print '</td></tr>';
 			}
-
-			print '<tr><td></td><td>';
-			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : ($conf->global->TICKETS_MESSAGE_FORCE_MAIL?'checked':''));
-			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
-			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
-			print '</td></tr>';
 
 			// Zone to select its email template
 			if (count($modelmail_array) > 0) {
@@ -1501,7 +1509,7 @@ class FormTicket
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_2, 70);
+			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, $uselocalbrowser, getDolGlobalInt('FCKEDITOR_ENABLE_TICKET'), ROWS_2, 70);
 
 			$doleditor->Create();
 			print '</td></tr>';
@@ -1556,7 +1564,7 @@ class FormTicket
 		// Deal with format differences between message and signature (text / HTML)
 		if (dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 			$this->substit['__USER_SIGNATURE__'] = dol_nl2br($this->substit['__USER_SIGNATURE__']);
-		} elseif (!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
+		} elseif (!dol_textishtml($defaultmessage) && isset($this->substit['__USER_SIGNATURE__']) && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 			$defaultmessage = dol_nl2br($defaultmessage);
 		}
 		if (GETPOSTISSET("message") && !GETPOST('modelselected')) {
@@ -1569,7 +1577,7 @@ class FormTicket
 		}
 
 		print '<tr><td colspan="2"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span>';
-		if ($user->rights->ticket->write && !$user->socid) {
+		if ($user->hasRight("ticket", "write") && !$user->socid) {
 			$texttooltip = $langs->trans("TicketMessageHelp");
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO') || getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE')) {
 				$texttooltip .= '<br><br>'.$langs->trans("ForEmailMessageWillBeCompletedWith").'...';
@@ -1610,7 +1618,7 @@ class FormTicket
 		print '</table>';
 
 		print '<center><br>';
-		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("AddMessage").'" />';
+		print '<input type="submit" class="button" name="btn_add_message" value="'.$langs->trans("Add").'" />';
 		if ($this->withcancel) {
 			print " &nbsp; &nbsp; ";
 			print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';

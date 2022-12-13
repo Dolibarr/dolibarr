@@ -330,7 +330,9 @@ if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeTe
 ?>
 
 <script type="text/javascript">
-	window.print();
+	<?php
+	if ($facid) print 'window.print();'; //Avoid print when is specimen
+	?>
 </script>
 
 </body>

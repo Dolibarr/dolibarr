@@ -239,10 +239,17 @@ if ($action != 'export_csv') {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtonsList', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
+
+	$button = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
+
 	if (empty($reshook)) {
-		$button = '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
+		$button .= '<input type="button" id="exportcsvbutton" name="exportcsvbutton" class="butAction" value="'.$langs->trans("Export").' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 
 		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
@@ -496,6 +503,10 @@ if ($action != 'export_csv') {
 	}
 	print "<td></td>\n";
 	print '</tr>';
+
+	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print "</table>";
 	print '</form>';

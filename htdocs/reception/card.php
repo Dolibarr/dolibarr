@@ -358,6 +358,7 @@ if (empty($reshook)) {
 				$batch = "batch".$i;
 				$cost_price = "cost_price".$i;
 
+				//if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && getDolGlobalString('RECEPTION_GETS_ALL_ORDER_PRODUCTS')) || (GETPOST($qty, 'int') < 0 && getDolGlobalString('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 				if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->RECEPTION_GETS_ALL_ORDER_PRODUCTS)) {
 					$ent = "entl".$i;
 
@@ -1285,7 +1286,7 @@ if ($action == 'create') {
 	$lines = $object->lines;
 
 	$num_prod = count($lines);
-
+	$indiceAsked = 0;
 	if ($object->id > 0) {
 		if (!empty($object->origin) && $object->origin_id > 0) {
 			$object->origin = 'CommandeFournisseur';
@@ -1395,7 +1396,7 @@ if ($action == 'create') {
 					$proj->fetch($objectsrc->fk_project);
 					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
-						$morehtmlref .= ' - '.dol_escape_htmltag($proj->title);
+						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 					}
 				}
 			}

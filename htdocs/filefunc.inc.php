@@ -34,7 +34,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '17.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '17.0.0-beta'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -253,7 +253,7 @@ if (empty($dolibarr_main_data_root)) {
 // Define some constants
 define('DOL_CLASS_PATH', 'class/'); // Filesystem path to class dir (defined only for some code that want to be compatible with old versions without this parameter)
 define('DOL_DATA_ROOT', $dolibarr_main_data_root); // Filesystem data (documents)
-// Try to autodetect DOL_MAIN_URL_ROOT and DOL_URL_ROOT.
+// Try to autodetect DOL_MAIN_URL_ROOT and DOL_URL_ROOT when root is not directly the main domain.
 // Note: autodetect works only in case 1, 2, 3 and 4 of phpunit test CoreTest.php. For case 5, 6, only setting value into conf.php will works.
 $tmp = '';
 $found = 0;
@@ -283,7 +283,8 @@ foreach ($paths as $tmppath) {	// We check to find (B+start of C)=A
 }
 //print "found=".$found." dolibarr_main_url_root=".$dolibarr_main_url_root."\n";
 if (!$found) {
-	$tmp = $dolibarr_main_url_root; // If autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT).
+	// There is no subdir that compose the main url root or autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT).
+	$tmp = $dolibarr_main_url_root;
 } else {
 	$tmp = 'http'.(((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && (empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] != 443)) ? '' : 's').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443) ? '' : ':'.$_SERVER["SERVER_PORT"]).($tmp3 ? (preg_match('/^\//', $tmp3) ? '' : '/').$tmp3 : '');
 }

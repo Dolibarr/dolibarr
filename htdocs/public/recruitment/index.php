@@ -171,6 +171,7 @@ if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
 
 
 $results = $object->fetchAll($sortfield, $sortorder, 0, 0, array('status' => 1));
+$now = dol_now();
 
 if (is_array($results)) {
 	if (empty($results)) {
