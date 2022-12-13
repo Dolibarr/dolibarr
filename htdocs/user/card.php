@@ -125,6 +125,40 @@ $hookmanager->initHooks(array('usercard', 'globalcard'));
 
 $error = 0;
 
+// If $acceptlocallinktomedia is true, we can add link media files int email templates (we already can do this into HTML editor of an email).
+// Note that local link to a file into medias are replaced with a real link by email in CMailFile.class.php with value $urlwithroot defined like this:
+// $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+// $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
+if ($acceptlocallinktomedia) {
+	global $dolibarr_main_url_root;
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+
+	// Parse $newUrl
+	$newUrlArray = parse_url($urlwithouturlroot);
+	$hosttocheck = $newUrlArray['host'];
+	$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
+
+	if (function_exists('gethostbyname')) {
+		$iptocheck = gethostbyname($hosttocheck);
+	} else {
+		$iptocheck = $hosttocheck;
+	}
+
+	//var_dump($iptocheck.' '.$acceptlocallinktomedia);
+	if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+		// If ip of public url is an private network IP, we do not allow this.
+		$acceptlocallinktomedia = 0;
+		// TODO Show a warning
+	}
+
+	if (preg_match('/http:/i', $urlwithouturlroot)) {
+		// If public url is not a https, we do not allow to add medias link. It will generate security alerts when email will be sent.
+		$acceptlocallinktomedia = 0;
+		// TODO Show a warning
+	}
+}
+
 
 /**
  * Actions
@@ -1212,7 +1246,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 	print '<tr><td class="tdtop">'.$langs->trans("Signature").'</td>';
 	print '<td class="wordbreak">';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('signature', GETPOST('signature', 'restricthtml'), '', 138, 'dolibarr_notes', 'In', true, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
+
+	$doleditor = new DolEditor('signature', GETPOST('signature', 'restricthtml'), '', 138, 'dolibarr_notes', 'In', true, $acceptlocallinktomedia, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -2699,7 +2734,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<td>';
 			if ($caneditfield) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor('signature', $object->signature, '', 138, 'dolibarr_notes', 'In', false, true, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
+
+				$doleditor = new DolEditor('signature', $object->signature, '', 138, 'dolibarr_notes', 'In', false, $acceptlocallinktomedia, empty($conf->global->FCKEDITOR_ENABLE_USERSIGN) ? 0 : 1, ROWS_4, '90%');
 				print $doleditor->Create(1);
 			} else {
 				print dol_htmlentitiesbr($object->signature);

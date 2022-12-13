@@ -60,7 +60,7 @@ class DolEditor
 	 *                       		                    'In' = each window has its own toolbar
 	 *                              		            'Out:name' = share toolbar into the div called 'name'
 	 *  @param  boolean	$toolbarstartexpanded  			Bar is visible or not at start
-	 *  @param	boolean	$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
+	 *  @param	boolean|int		$uselocalbrowser		Enabled to add links to local object with local browser. If false, only external images can be added in content.
 	 *  @param  boolean|string	$okforextendededitor    True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
 	 *                                                  Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
 	 *  @param  int		$rows                   		Size of rows for textarea tool
