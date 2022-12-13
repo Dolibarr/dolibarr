@@ -6316,20 +6316,25 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 		$product = new Product($db);
 		$product->fetch($idprod);
 
-		if ($mysoc->country_code == $thirdpartytouse->country_code) { // If country to consider is ours
+		if ($mysoc->country_code == $thirdpartytouse->country_code) {
+			// If country to consider is ours
 			if ($idprodfournprice > 0) {     // We want vat for product for a "supplier" object
-				$product->get_buyprice($idprodfournprice, 0, 0, 0);
-				$ret = $product->vatrate_supplier;
-				if ($product->default_vat_code) {
-					$ret .= ' ('.$product->default_vat_code.')';
-				}
-			} else {
-				$ret = $product->tva_tx; // Default vat of product we defined
-				if ($product->default_vat_code) {
-					$ret .= ' ('.$product->default_vat_code.')';
+				$result = $product->get_buyprice($idprodfournprice, 0, 0, 0);
+				if ($result > 0) {
+					$ret = $product->vatrate_supplier;
+					if ($product->default_vat_code_supplier) {
+						$ret .= ' ('.$product->default_vat_code_supplier.')';
+					}
+					$found = 1;
 				}
 			}
-			$found = 1;
+			if (!$found) {
+				$ret = $product->tva_tx; 	// Default sales vat of product
+				if ($product->default_vat_code) {
+					$ret .= ' ('.$product->default_vat_code.')';
+				}
+				$found = 1;
+			}
 		} else {
 			// TODO Read default product vat according to product and another countrycode.
 			// Vat for couple anothercountrycode/product is data that is not managed and store yet, so we will fallback on next rule.
@@ -6341,7 +6346,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 			// If vat of product for the country not found or not defined, we return the first rate found (sorting on use_default, then on higher vat of country).
 			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code = '".$db->escape($thirdpartytouse->country_code)."'";
+			$sql .= " WHERE t.active = 1 AND t.fk_pays = c.rowid AND c.code = '".$db->escape($thirdpartytouse->country_code)."'";
 			$sql .= " ORDER BY t.use_default DESC, t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
 
@@ -6359,7 +6364,9 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 				dol_print_error($db);
 			}
 		} else {
-			// Forced value if autodetect fails. MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS can be '1.23' or '1.23 (CODE)'
+			// Forced value if autodetect fails. MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS can be
+			// '1.23'
+			// or '1.23 (CODE)'
 			$defaulttx = '';
 			if ($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS != 'none') {
 				$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;

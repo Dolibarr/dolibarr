@@ -2828,6 +2828,8 @@ class Form
 					if (isModEnabled('dynamicprices') && !empty($objp->fk_price_expression)) {
 						$price_product = new Product($this->db);
 						$price_product->fetch($objp->rowid, '', '', 1);
+
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProduct($price_product);
 						if ($price_result >= 0) {
@@ -3463,6 +3465,8 @@ class Form
 						$prod_supplier->fourn_qty = $objp->quantity;
 						$prod_supplier->fourn_tva_tx = $objp->tva_tx;
 						$prod_supplier->fk_supplier_price_expression = $objp->fk_supplier_price_expression;
+
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProductSupplier($prod_supplier);
 						if ($price_result >= 0) {
@@ -3717,6 +3721,8 @@ class Form
 						$prod_supplier->fourn_qty = $objp->quantity;
 						$prod_supplier->fourn_tva_tx = $objp->tva_tx;
 						$prod_supplier->fk_supplier_price_expression = $objp->fk_supplier_price_expression;
+
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProductSupplier($prod_supplier);
 						if ($price_result >= 0) {
