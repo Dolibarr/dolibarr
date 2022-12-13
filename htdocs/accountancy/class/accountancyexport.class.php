@@ -5,13 +5,14 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2016-2021  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2022  Open-DSI      		<support@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
  * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2017       André Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
  * Copyright (C) 2022		Joachim Kueter		<jkueter@gmx.de>
+ * Copyright (C) 2022  		Progiseize         	<a.bisotti@progiseize.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
