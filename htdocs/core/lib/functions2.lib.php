@@ -2853,3 +2853,55 @@ function phpSyntaxError($code)
 	@ini_set('log_errors', $inString);
 	return $code;
 }
+
+
+/**
+ * Check the syntax of some PHP code.
+ *
+ * @return 	int		>0 if OK, 0 if no			Return if we accept link added from the media browser into HTML field for public usage
+ */
+function acceptLocalLinktoMedia()
+{
+	global $user;
+
+	// If $acceptlocallinktomedia is true, we can add link media files int email templates (we already can do this into HTML editor of an email).
+	// Note that local link to a file into medias are replaced with a real link by email in CMailFile.class.php with value $urlwithroot defined like this:
+	// $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	// $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
+	if ($acceptlocallinktomedia) {
+		global $dolibarr_main_url_root;
+		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+
+		// Parse $newUrl
+		$newUrlArray = parse_url($urlwithouturlroot);
+		$hosttocheck = $newUrlArray['host'];
+		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
+
+		if (function_exists('gethostbyname')) {
+			$iptocheck = gethostbyname($hosttocheck);
+		} else {
+			$iptocheck = $hosttocheck;
+		}
+
+		//var_dump($iptocheck.' '.$acceptlocallinktomedia);
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+			// If ip of public url is a private network IP, we do not allow this.
+			$acceptlocallinktomedia = 0;
+			// TODO Show a warning
+		}
+
+		if (preg_match('/http:/i', $urlwithouturlroot)) {
+			// If public url is not a https, we do not allow to add medias link. It will generate security alerts when email will be sent.
+			$acceptlocallinktomedia = 0;
+			// TODO Show a warning
+		}
+
+		if (!empty($user->socid)) {
+			$acceptlocallinktomedia = 0;
+		}
+	}
+
+	//return 1;
+	return $acceptlocallinktomedia;
+}

@@ -271,8 +271,8 @@ print '</div>';
 
 print '</form>';
 
-//if($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 1)
-// Patter for Password Perso
+
+// Pattern for Password Perso
 if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 	print '<br>';
 
@@ -320,10 +320,10 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 
 	print '</table>';
 
-	print '<br>';
 	print '<div class="center">';
 	print '<a class="button button-save" id="linkChangePattern">'.$langs->trans("Save").'</a>';
 	print '</div>';
+
 	print '<br><br>';
 
 	print '<script type="text/javascript">';
@@ -392,7 +392,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td class="center">'.$langs->trans("Activated").'</td>';
-print '<td class="center">'.$langs->trans("Action").'</td>';
+print '<td class="center"></td>';
 print '</tr>';
 
 // Disable clear password in database
