@@ -565,7 +565,10 @@ if ($result) {
 				print '<td>&nbsp;</td>';
 			}
 			print '<td class="center nowrap">';
-			print img_picto($langs->trans("Active"), 'tick');
+			if (!$caneditperms) {
+				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				//print img_picto($langs->trans("Active"), 'tick');
+			}
 			print '</td>';
 		} elseif (in_array($obj->id, $permsuser)) {					// Permission granted by user
 			if ($caneditperms) {
@@ -578,7 +581,10 @@ if ($result) {
 				print '<td>&nbsp;</td>';
 			}
 			print '<td class="center nowrap">';
-			print img_picto($langs->trans("Active"), 'tick');
+			if (!$caneditperms) {
+				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				//print img_picto($langs->trans("Active"), 'tick');
+			}
 			print '</td>';
 		} elseif (isset($permsgroupbyentity[$entity]) && is_array($permsgroupbyentity[$entity])) {
 			if (in_array($obj->id, $permsgroupbyentity[$entity])) {	// Permission granted by group
@@ -590,7 +596,8 @@ if ($result) {
 					print '<td>&nbsp;</td>';
 				}
 				print '<td class="center nowrap">';
-				print img_picto($langs->trans("Active"), 'tick');
+				print img_picto($langs->trans("Active"), 'switch_on', '', false, 0, 0, '', 'opacitymedium');
+				//print img_picto($langs->trans("Active"), 'tick');
 				print '</td>';
 			} else {
 				// Do not own permission
@@ -601,7 +608,9 @@ if ($result) {
 					print img_picto($langs->trans("Add"), 'switch_off');
 					print '</a></td>';
 				} else {
-					print '<td>&nbsp;</td>';
+					print '<td>';
+					print '&nbsp;';
+					print '</td>';
 				}
 				print '<td>&nbsp;</td>';
 			}
@@ -616,7 +625,12 @@ if ($result) {
 			} else {
 				print '<td>&nbsp;</td>';
 			}
-			print '<td>&nbsp;</td>';
+			print '<td class="center">';
+			if (!$caneditperms) {
+				print img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', 'opacitymedium');
+			}
+			//print '&nbsp;';
+			print '</td>';
 		}
 
 		// Description of permission (2 columns)
