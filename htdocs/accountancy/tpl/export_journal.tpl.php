@@ -33,7 +33,7 @@ $siren = getDolGlobalString('MAIN_INFO_SIREN');
 $date_export = "_".dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 $endaccountingperiod = dol_print_date(dol_now(), '%Y%m%d');
 
-if (!isset($withAttachments) || $withAttachments == 1) {
+if (empty($withAttachment)) {
 	header('Content-Type: text/csv');
 }
 
@@ -68,6 +68,6 @@ if (($accountancyexport->getFormatCode($formatexportset) == 'fec' || $accountanc
 	$completefilename = ($code ? $code."_" : "").($prefix ? $prefix."_" : "").$filename.($nodateexport ? "" : $date_export).".".$format;
 }
 
-if (!isset($withAttachments) || $withAttachments == 1) {
+if (empty($withAttachment)) {
 	header('Content-Disposition: attachment;filename=' . $completefilename);
 }
