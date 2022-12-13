@@ -36,6 +36,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 
 /**
@@ -312,9 +313,10 @@ class AccountancyExport
 	 *
 	 * @param 	array	$TData 				Array with data
 	 * @param	int		$formatexportset	Id of export format
-	 * @return 	void
+	 * @param	int		$withAttachment		[=0] Not add files or 1 to have attached in an archive (ex : Quadratus)
+	 * @return 	int		<0 if KO, >0 OK
 	 */
-	public function export(&$TData, $formatexportset)
+	public function export(&$TData, $formatexportset, $withAttachment = 0)
 	{
 		global $conf, $langs;
 		global $search_date_end; // Used into /accountancy/tpl/export_journal.tpl.php
@@ -324,8 +326,44 @@ class AccountancyExport
 		$type_export = 'general_ledger';
 
 		global $db; // The tpl file use $db
+		$completefilename = '';
+		$exportFile = null;
+		$exportFileName = '';
+		$exportFilePath = '';
+		$archiveFileList = array();
+		if ($withAttachment == 1) {
+			// PHP ZIP extension must be enabled
+			if (!extension_loaded('zip')) {
+				$langs->load('install');
+				$this->errors[] = $langs->trans('ErrorPHPDoesNotSupport', 'ZIP');;
+				return -1;
+			}
+		} else {
+			$mimetype = $this->getMimeType($formatexportset);
+			top_httphead($mimetype, 1);
+		}
 		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
+		if ($withAttachment == 1 && !empty($completefilename)) {
+			// create export file
+			$tmpDir = !empty($conf->accounting->multidir_temp[$conf->entity]) ? $conf->accounting->multidir_temp[$conf->entity] : $conf->accounting->dir_temp;
+			$exportFileFullName = $completefilename;
+			$exportFileBaseName = basename($exportFileFullName);
+			$exportFileName = pathinfo($exportFileBaseName, PATHINFO_FILENAME);
+			$exportFilePath = $tmpDir.'/'.$exportFileFullName;
+			$exportFile = fopen($exportFilePath, 'w');
+			if (!$exportFile) {
+				$this->errors[] = $langs->trans('ErrorFileNotFound', $exportFilePath);
+				return -1;
+			}
+			$archiveFileList[0] = array(
+				'path' => $exportFilePath,
+				'name' => $exportFileFullName,
+			);
 
+			// archive name and path
+			$archiveFullName = $exportFileName.'.zip';
+			$archivePath = $tmpDir.'/'.$archiveFullName;
+		}
 
 		switch ($formatexportset) {
 			case self::$EXPORT_TYPE_CONFIGURABLE:
@@ -344,7 +382,7 @@ class AccountancyExport
 				$this->exportCiel($TData);
 				break;
 			case self::$EXPORT_TYPE_QUADRATUS:
-				$this->exportQuadratus($TData);
+				$archiveFileList = $this->exportQuadratus($TData, $exportFile, $archiveFileList, $withAttachment);
 				break;
 			case self::$EXPORT_TYPE_WINFIC:
 				$this->exportWinfic($TData);
@@ -398,6 +436,69 @@ class AccountancyExport
 				}
 				break;
 		}
+
+		// create and download export file or archive
+		if ($withAttachment == 1) {
+			$error = 0;
+
+			// close export file
+			if ($exportFile) {
+				fclose($exportFile);
+			}
+
+			if (!empty($archiveFullName) && !empty($archivePath) && !empty($archiveFileList)) {
+				// archive files
+				$downloadFileMimeType = 'application/zip';
+				$downloadFileFullName = $archiveFullName;
+				$downloadFilePath = $archivePath;
+
+				// create archive
+				$archive = new ZipArchive();
+				$res = $archive->open($archivePath, ZipArchive::OVERWRITE | ZipArchive::CREATE);
+				if ($res !== true) {
+					$error++;
+					$this->errors[] = $langs->trans('ErrorFileNotFound', $archivePath);
+				}
+				if (!$error) {
+					// add files
+					foreach ($archiveFileList as $archiveFileArr) {
+						$res = $archive->addFile($archiveFileArr['path'], $archiveFileArr['name']);
+						if (!$res) {
+							$error++;
+							$this->errors[] = $langs->trans('ErrorArchiveAddFile', $archiveFileArr['name']);
+							break;
+						}
+					}
+				}
+				if (!$error) {
+					// close archive
+					$archive->close();
+				}
+			} elseif (!empty($exportFileFullName) && !empty($exportFilePath)) {
+				// only one file to download
+				$downloadFileMimeType = 'text/csv';
+				$downloadFileFullName = $exportFileFullName;
+				$downloadFilePath = $exportFilePath;
+			}
+
+			if (!$error) {
+				// download export file
+				if (!empty($downloadFileMimeType) && !empty($downloadFileFullName) && !empty($downloadFilePath)) {
+					header('Content-Type: '.$downloadFileMimeType);
+					header('Content-Disposition: attachment; filename='.$downloadFileFullName);
+					header('Cache-Control: Public, must-revalidate');
+					header('Pragma: public');
+					header('Content-Length: '.dol_filesize($downloadFilePath));
+					readfileLowMemory($downloadFilePath);
+				}
+			}
+
+			if ($error) {
+				return -1;
+			}
+		}
+
+		return 1;
 	}
 
 
@@ -609,10 +710,13 @@ class AccountancyExport
 	 * Help : https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
 	 * In QuadraCompta | Use menu : "Outils" > "Suivi des dossiers" > "Import ASCII(Compta)"
 	 *
-	 * @param array $TData data
-	 * @return void
+	 * @param 	array		$TData					Data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
+	 * @param 	bool		$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
-	public function exportQuadratus(&$TData)
+	public function exportQuadratus(&$TData, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
 	{
 		global $conf, $db;
 
@@ -662,7 +766,11 @@ class AccountancyExport
 
 				$Tab['end_line'] = $end_line;
 
-				print implode($Tab);
+				if ($exportFile) {
+					fwrite($exportFile, implode($Tab));
+				} else {
+					print implode($Tab);
+				}
 			}
 
 			$Tab = array();
@@ -733,12 +841,63 @@ class AccountancyExport
 			// We need to keep the 10 lastest number of invoice doc_ref not the beginning part that is the unusefull almost same part
 			// $Tab['num_piece3'] = str_pad(self::trunc($data->piece_num, 10), 10);
 			$Tab['num_piece3'] = substr(self::trunc($data->doc_ref, 20), -10);
-			$Tab['filler4'] = str_repeat(' ', 73);
+			$Tab['reserved'] = str_repeat(' ', 10); // position 159
+			$Tab['currency_amount'] = str_repeat(' ', 13); // position 169
+			// get document file
+			$attachmentFileName = '';
+			if ($withAttachment == 1) {
+				$attachmentFileKey = trim($data->piece_num);
 
+				if (!isset($archiveFileList[$attachmentFileKey])) {
+					$objectDirPath = '';
+					$objectFileName = dol_sanitizeFileName($data->doc_ref);
+					if ($data->doc_type == 'customer_invoice') {
+						$objectDirPath = !empty($conf->facture->multidir_output[$conf->entity]) ? $conf->facture->multidir_output[$conf->entity] : $conf->facture->dir_output;
+					} elseif ($data->doc_type == 'expense_report') {
+						$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->factureexpensereport->dir_output;
+					} elseif ($data->doc_type == 'supplier_invoice') {
+						$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
+					}
+					$arrayofinclusion = array();
+					$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').'\.pdf$';
+					$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
+					if (!empty($fileFoundList)) {
+						$attachmentFileNameTrunc = str_pad(self::trunc($data->piece_num, 8), 8, '0', STR_PAD_LEFT);
+						foreach ($fileFoundList as $fileFound) {
+							if (strstr($fileFound['name'], $objectFileName)) {
+								$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
+								if (file_exists($fileFoundPath)) {
+									$archiveFileList[$attachmentFileKey] = array(
+										'path' => $fileFoundPath,
+										'name' => $attachmentFileNameTrunc.'.pdf',
+									);
+									break;
+								}
+							}
+						}
+					}
+				}
+
+				if (isset($archiveFileList[$attachmentFileKey])) {
+					$attachmentFileName = $archiveFileList[$attachmentFileKey]['name'];
+				}
+			}
+			if (dol_strlen($attachmentFileName) == 12) {
+				$Tab['attachment'] = $attachmentFileName; // position 182
+			} else {
+				$Tab['attachment'] = str_repeat(' ', 12); // position 182
+			}
+			$Tab['filler4'] = str_repeat(' ', 38);
 			$Tab['end_line'] = $end_line;
 
-			print implode($Tab);
+			if ($exportFile) {
+				fwrite($exportFile, implode($Tab));
+			} else {
+				print implode($Tab);
+			}
 		}
+
+		return $archiveFileList;
 	}
 
 	/**
