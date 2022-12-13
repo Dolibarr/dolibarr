@@ -640,6 +640,7 @@ if ($object->id > 0) {
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
+	$sql .= ' ORDER BY id.rowid';
 
 	$cacheOfProducts = array();
 	$cacheOfWarehouses = array();
