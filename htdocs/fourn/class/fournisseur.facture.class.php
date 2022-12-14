@@ -38,12 +38,10 @@
 include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 
@@ -2073,7 +2071,7 @@ class FactureFournisseur extends CommonInvoice
 				if (!empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY)) {
 					// Check quantity is enough
 					dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." qty=".$qty." ref_supplier=".$ref_supplier);
-					$prod = new Product($this->db);
+					$prod = new ProductFournisseur($this->db);
 					if ($prod->fetch($fk_product) > 0) {
 						$product_type = $prod->type;
 						$label = $prod->label;
