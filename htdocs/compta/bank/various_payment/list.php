@@ -504,6 +504,7 @@ if ($resql) {
 
 	print '</tr>';
 
+
 	print '<tr class="liste_titre">';
 
 	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {

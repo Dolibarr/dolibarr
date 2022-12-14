@@ -258,7 +258,7 @@ class pdf_standard_asset extends ModelePDFAsset
 
 						foreach ($objphoto->liste_photos($dir, 1) as $key => $obj)
 						{
-							if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+							if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES'))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 							{
 								if ($obj['photo_vignette'])
 								{

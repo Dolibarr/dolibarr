@@ -1299,10 +1299,13 @@ if (empty($reshook)) {
 		// Edit line
 		$db->begin();
 
-		if (! $object->fetch($id) > 0)	dol_print_error($db);
+		if (! $object->fetch($id) > 0) {
+			dol_print_error($db);
+		}
 		$object->fetch_thirdparty();
 
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
+		$tva_tx = str_replace('*', '', $tva_tx);
 
 		if (GETPOST('price_ht') != '' || GETPOST('multicurrency_subprice') != '') {
 			$up = price2num(GETPOST('price_ht'), '', 2);
@@ -1360,7 +1363,27 @@ if (empty($reshook)) {
 			}
 		}
 
-		$result = $object->updateline(GETPOST('lineid', 'int'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, price2num(GETPOST('qty'), 'MS'), GETPOST('productid', 'int'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, GETPOST('units'), $pu_devise, GETPOST('fourn_ref', 'alpha'));
+		$result = $object->updateline(
+			GETPOST('lineid', 'int'),
+			$label,
+			$up,
+			$tva_tx,
+			$localtax1_tx,
+			$localtax2_tx,
+			price2num(GETPOST('qty'), 'MS'),
+			GETPOST('productid', 'int'),
+			$price_base_type,
+			$info_bits,
+			$type,
+			$remise_percent,
+			0,
+			$date_start,
+			$date_end,
+			$array_options,
+			GETPOST('units', 'alpha'),
+			$pu_devise,
+			GETPOST('fourn_ref', 'alpha')
+		);
 		if ($result >= 0) {
 			unset($_POST['label']);
 			unset($_POST['fourn_ref']);
@@ -2314,7 +2337,7 @@ if ($action == 'create') {
 
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 				$tmp = '<input type="radio" id="radio_creditnote" name="type" value="2"'.(GETPOST('type') == 2 ? ' checked' : '');
-				if (!$optionsav) {
+				if (!$optionsav && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) {
 					$tmp .= ' disabled';
 				}
 				$tmp .= '> ';
@@ -2361,7 +2384,11 @@ if ($action == 'create') {
 			}
 		} else {
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-			$tmp = '<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
+			if (empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) {
+				$tmp = '<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
+			} else {
+				$tmp='<input type="radio" name="type" id="radio_creditnote" value="2"> ';
+			}
 			$text = $tmp.$langs->trans("InvoiceAvoir").' ';
 			$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromSupplierThird").')</span> ';
 			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
@@ -2588,7 +2615,6 @@ if ($action == 'create') {
 		//
 		// View or edit mode
 		//
-
 		$now = dol_now();
 
 		$productstatic = new Product($db);
@@ -2918,15 +2944,15 @@ if ($action == 'create') {
 		if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 			$facreplaced = new FactureFournisseur($db);
 			$facreplaced->fetch($object->fk_facture_source);
-			print ' &nbsp; '.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1));
+			print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).'</span>';
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 			$facusing = new FactureFournisseur($db);
 			if ($object->fk_facture_source > 0) {
 				$facusing->fetch($object->fk_facture_source);
-				print ' &nbsp; '.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1));
+				print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).'</span>';
 			} else {
-				print ' &nbsp; '.$langs->transnoentities("CorrectedInvoiceNotFound");
+				print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("CorrectedInvoiceNotFound").'</span>';
 			}
 		}
 
@@ -2938,12 +2964,13 @@ if ($action == 'create') {
 				$facavoir->fetch($id);
 				$invoicecredits[] = $facavoir->getNomUrl(1);
 			}
-			print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
+			print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits);
+			print '</span>';
 		}
 		if (isset($objectidnext) && $objectidnext > 0) {
 			$facthatreplace = new FactureFournisseur($db);
 			$facthatreplace->fetch($facidnext);
-			print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
+			print ' <span class="opacitymediumbycolor paddingleft">'.str_replace('{s1}', $facthatreplace->getNomUrl(1), $langs->transnoentities("ReplacedByInvoice", '{s1}')).'</span>';
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT) {
 			$discount = new DiscountAbsolute($db);
@@ -3576,7 +3603,7 @@ if ($action == 'create') {
 		/*
 		 * Lines
 		 */
-		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">';
+		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.(($action != 'editline') ? 'addline' : 'updateline').'">';
 		print '<input type="hidden" name="mode" value="">';

@@ -382,6 +382,9 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 						$object->actionmsg = $message; // Long text
 						$object->actionmsg2 = $actionmsg2; // Short text ($langs->transnoentities('MailSentBy')...);
+						if (!empty($conf->global->MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT)) {
+							$object->actionmsg2		= $subject; // Short text
+						}
 
 						$object->trackid = $trackid;
 						$object->fk_element = $object->id;

@@ -531,6 +531,8 @@ if (!empty($object->piece_num)) {
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
+  
+		// List of movements
 		print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
 		if ($optioncss != '') {
@@ -603,7 +605,7 @@ if (!empty($object->piece_num)) {
 			$num_line = 0;
 			foreach ($object->linesmvt as $key => $line) {
 				$num_line++;
-				print '<tr class="oddeven">';
+				print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 				$total_debit += $line->debit;
 				$total_credit += $line->credit;
 
@@ -636,7 +638,7 @@ if (!empty($object->piece_num)) {
 					if ($action == "" || $action == 'add') {
 						print '<!-- td columns in add mode -->';
 						print '<td>';
-						print $formaccounting->select_account('', 'accountingaccount_number['.$key.']', 1, array(), 1, 1, '');
+						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number['.$key.']', 1, array(), 1, 1, 'minwidth200 maxwidth500');
 						print '</td>';
 						print '<td>';
 						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
@@ -644,7 +646,7 @@ if (!empty($object->piece_num)) {
 						// Also, it is not possible to use a value that is not in the list.
 						// Also, the label is not automatically filled when a value is selected.
 						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-							print $formaccounting->select_auxaccount('', 'subledger_account['.$key.']', 1, 'maxwidth250', '', 'subledger_label');
+              print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account['.$key.']', 1, 'maxwidth250', '', 'subledger_label');
 						} else {
 							print '<input type="text" class="maxwidth150" name="subledger_account['.$key.']" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '" />';
 						}
@@ -655,7 +657,7 @@ if (!empty($object->piece_num)) {
 						print '<td class="right"><input type="text" size="6" class="right" name="credit['.$key.']" value="" /></td>';
 						// Add button should not appear twice
 						if ($num_line === $count_line) {
-							print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '" /></td>';
+							print '<td><input type="submit" class="button small" name="save" value="' . $langs->trans("Add") . '" /></td>';
 						} else {
 							print '<td class="right"></td>';
 						}
@@ -676,8 +678,8 @@ if (!empty($object->piece_num)) {
 					}
 					print '</td>';
 					print '<td>'.$line->label_operation.'</td>';
-					print '<td class="right nowraponall amount">'.price($line->debit).'</td>';
-					print '<td class="right nowraponall amount">'.price($line->credit).'</td>';
+					print '<td class="right nowraponall amount">'.($line->debit != 0 ? price($line->debit) : '').'</td>';
+					print '<td class="right nowraponall amount">'.($line->credit != 0 ? price($line->credit) : '').'</td>';
 
 					print '<td class="center nowraponall">';
 					if (empty($line->date_export) && empty($line->date_validation)) {

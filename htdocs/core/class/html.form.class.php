@@ -2868,7 +2868,7 @@ class Form
 	 * This define value for &$opt and &$optJson.
 	 * This function is called by select_produits_list().
 	 *
-	 * @param 	resource	$objp			    Resultset of fetch
+	 * @param 	object		$objp			    Resultset of fetch
 	 * @param 	string		$opt			    Option (var used for returned value in string option format)
 	 * @param 	string		$optJson		    Option (var used for returned value in json format)
 	 * @param 	int			$price_level	    Price level
@@ -4999,7 +4999,7 @@ class Form
 	{
 		global $langs, $conf;
 
-		$more = '<!-- formconfirm before calling page='.dol_escape_htmltag($page).' -->';
+		$more = '<!-- formconfirm - before call, page='.dol_escape_htmltag($page).' -->';
 		$formconfirm = '';
 		$inputok = array();
 		$inputko = array();
@@ -6318,7 +6318,7 @@ class Form
 				// Override/enable VAT for expense report regardless of global setting - needed if expense report used for business expenses instead
 				// of using supplier invoices (this is a very bad idea !)
 				if (empty($conf->global->EXPENSEREPORT_OVERRIDE_VAT)) {
-					$title = ' title="'.$langs->trans('VATIsNotUsed').'"';
+					$title = ' title="'.dol_escape_htmltag($langs->trans('VATIsNotUsed')).'"';
 					$disabled = true;
 				}
 			}
@@ -6357,12 +6357,16 @@ class Form
 					}
 				}
 				$return .= '>';
-				//if (!empty($conf->global->MAIN_VAT_SHOW_POSITIVE_RATES))
+
+				// Show label of VAT
 				if ($mysoc->country_code == 'IN' || !empty($conf->global->MAIN_VAT_LABEL_IS_POSITIVE_RATES)) {
+					// Label with all localtax and code. For example:  x.y / a.b / c.d (CODE)'
 					$return .= $rate['labelpositiverates'];
 				} else {
+					// Simple label
 					$return .= vatrate($rate['label']);
 				}
+
 				//$return.=($rate['code']?' '.$rate['code']:'');
 				$return .= (empty($rate['code']) && $rate['nprtva']) ? ' *' : ''; // We show the *  (old behaviour only if new vat code is not used)
 
@@ -6371,7 +6375,7 @@ class Form
 
 			if (!$options_only) {
 				$return .= '</select>';
-				//$return .= ajax_combobox($htmlname);		// This break for the moment dynamic autoselection of a value when selecting a product in object lines
+				//$return .= ajax_combobox($htmlname);		// This break for the moment the dynamic autoselection of a value when selecting a product in object lines
 			}
 		} else {
 			$return .= $this->error;
@@ -7198,7 +7202,7 @@ class Form
 	 * constructTicketListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param 	resource	$objp			    Result set of fetch
+	 * @param 	object		$objp			    Result set of fetch
 	 * @param 	string		$opt			    Option (var used for returned value in string option format)
 	 * @param 	string		$optJson		    Option (var used for returned value in json format)
 	 * @param 	string		$selected		    Preselected value
@@ -7396,7 +7400,7 @@ class Form
 	 * constructProjectListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param 	resource	$objp			    Result set of fetch
+	 * @param 	object		$objp			    Result set of fetch
 	 * @param 	string		$opt			    Option (var used for returned value in string option format)
 	 * @param 	string		$optJson		    Option (var used for returned value in json format)
 	 * @param 	string		$selected		    Preselected value
@@ -7611,7 +7615,7 @@ class Form
 	 * constructMemberListOption.
 	 * This define value for &$opt and &$optJson.
 	 *
-	 * @param 	resource	$objp			    Result set of fetch
+	 * @param 	object		$objp			    Result set of fetch
 	 * @param 	string		$opt			    Option (var used for returned value in string option format)
 	 * @param 	string		$optJson		    Option (var used for returned value in json format)
 	 * @param 	string		$selected		    Preselected value
@@ -7688,9 +7692,10 @@ class Form
 
 			if ($classname && class_exists($classname)) {
 				$objecttmp = new $classname($this->db);
+
 				// Make some replacement
 				$sharedentities = getEntity(strtolower($classname));
-				$objecttmp->filter = str_replace(
+				$filter = str_replace(
 					array('__ENTITY__', '__SHARED_ENTITIES__', '__USER_ID__'),
 					array($conf->entity, $sharedentities, $user->id),
 					$filter
@@ -7702,7 +7707,7 @@ class Form
 			return 'Error bad setup of type for field '.join(',', $InfoFieldList);
 		}
 
-		//var_dump($objecttmp->filter);
+		//var_dump($filter);
 		$prefixforautocompletemode = $objecttmp->element;
 		if ($prefixforautocompletemode == 'societe') {
 			$prefixforautocompletemode = 'company';
@@ -7712,7 +7717,7 @@ class Form
 		}
 		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
 
-		dol_syslog(get_class($this)."::selectForForms object->filter=".$objecttmp->filter, LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectForForms filter=".$filter, LOG_DEBUG);
 		$out = '';
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->$confkeyforautocompletemode) && !$forcecombo) {
 			// No immediate load of all database
@@ -7727,14 +7732,14 @@ class Form
 			$urlforajaxcall = DOL_URL_ROOT.'/core/ajax/selectobject.php';
 
 			// No immediate load of all database
-			$urloption = 'htmlname='.urlencode($htmlname).'&outjson=1&objectdesc='.urlencode($objectdesc).'&filter='.urlencode($objecttmp->filter).($sortfield ? '&sortfield='.urlencode($sortfield) : '');
+			$urloption = 'htmlname='.urlencode($htmlname).'&outjson=1&objectdesc='.urlencode($objectdesc).'&filter='.urlencode($filter).($sortfield ? '&sortfield='.urlencode($sortfield) : '');
 			// Activate the auto complete using ajax call.
 			$out .= ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
 			$out .= '<style type="text/css">.ui-autocomplete { z-index: 1003; }</style>';
 			$out .= '<input type="text" class="'.$morecss.'"'.($disabled ? ' disabled="disabled"' : '').' name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'"'.($placeholder ? ' placeholder="'.dol_escape_htmltag($placeholder).'"' : '') .' />';
 		} else {
-			// Immediate load of table record. Note: filter is inside $objecttmp->filter
-			$out .= $this->selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, 0, $disabled, $sortfield);
+			// Immediate load of table record.
+			$out .= $this->selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, 0, $disabled, $sortfield, $filter);
 		}
 
 		return $out;
@@ -7785,14 +7790,15 @@ class Form
 	 * @param	int				$outputmode			0=HTML select string, 1=Array
 	 * @param	int				$disabled			1=Html component is disabled
 	 * @param	string			$sortfield			Sort field
+	 * @param	string			$filter				Add more filter
 	 * @return	string|array						Return HTML string
 	 * @see selectForForms()
 	 */
-	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '')
+	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')
 	{
 		global $conf, $langs, $user, $hookmanager;
 
-		//print "$objecttmp->filter, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled";
+		//print "$htmlname, $preselectedvalue, $showempty, $searchkey, $placeholder, $morecss, $moreparams, $forcecombo, $outputmode, $disabled";
 
 		$prefixforautocompletemode = $objecttmp->element;
 		if ($prefixforautocompletemode == 'societe') {
@@ -7878,13 +7884,14 @@ class Form
 			if ($searchkey != '') {
 				$sql .= natural_search(explode(',', $fieldstoshow), $searchkey);
 			}
-			if ($objecttmp->filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-				/*if (! DolibarrApi::_checkFilters($objecttmp->filter))
+
+			if ($filter) {	 // Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+				/*if (! DolibarrApi::_checkFilters($filter))
 				{
-					throw new RestException(503, 'Error when validating parameter sqlfilters '.$objecttmp->filter);
+					throw new RestException(503, 'Error when validating parameter sqlfilters '.$filter);
 				}*/
 				$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^\(\)]+)\)';
-				$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $objecttmp->filter).")";
+				$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'Form::forgeCriteriaCallback', $filter).")";
 			}
 		}
 		$sql .= $this->db->order($sortfield ? $sortfield : $fieldstoshow, "ASC");
@@ -8008,7 +8015,8 @@ class Form
 			}
 		}
 
-		$out .= '<select id="'.preg_replace('/^\./', '', $htmlname).'" '.($disabled ? 'disabled="disabled" ' : '').'class="flat '.(preg_replace('/^\./', '', $htmlname)).($morecss ? ' '.$morecss : '').'"';
+		$idname = str_replace(array('[', ']'), array('', ''), $htmlname);
+		$out .= '<select id="'.preg_replace('/^\./', '', $idname).'" '.($disabled ? 'disabled="disabled" ' : '').'class="flat '.(preg_replace('/^\./', '', $htmlname)).($morecss ? ' '.$morecss : '').'"';
 		$out .= ' name="'.preg_replace('/^\./', '', $htmlname).'" '.($moreparam ? $moreparam : '');
 		$out .= '>';
 
@@ -8070,7 +8078,7 @@ class Form
 					if (empty($nohtmlescape)) {
 						$selectOptionValue = dol_escape_htmltag($maxlen ?dol_trunc($value, $maxlen) : $value);
 					} else {
-						$selectOptionValue = $maxlen ?dol_trunc($value, $maxlen) : $value;
+						$selectOptionValue = $maxlen ? dol_trunc($value, $maxlen) : $value;
 					}
 					if ($value == '' || $value == '-') {
 						$selectOptionValue = '&nbsp;';
@@ -8112,7 +8120,7 @@ class Form
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($show_empty < 0 ? (string) $show_empty : '-1'), $morecss);
+			$out .= ajax_combobox($idname, array(), 0, 0, 'resolve', ($show_empty < 0 ? (string) $show_empty : '-1'), $morecss);
 		}
 
 		return $out;
@@ -9070,7 +9078,7 @@ class Form
 		$resultyesno .= '</select>'."\n";
 
 		if ($addjscombo) {
-			$resultyesno .= ajax_combobox($htmlname);
+			$resultyesno .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($useempty < 0 ? (string) $useempty : '-1'), $morecss);
 		}
 
 		return $resultyesno;
@@ -9579,7 +9587,7 @@ class Form
 	/**
 	 *	Return select list of groups
 	 *
-	 *  @param	string			$selected       Id group preselected
+	 *  @param	string|object	$selected       Id group or group preselected
 	 *  @param  string			$htmlname       Field name in form
 	 *  @param  int				$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
 	 *  @param  string|array	$exclude        Array list of groups id to exclude

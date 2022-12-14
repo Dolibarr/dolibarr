@@ -1761,6 +1761,7 @@ abstract class CommonInvoice extends CommonObject
 		}
 
 		// Header
+		$s = '';
 		$s .= "SPC\n";
 		$s .= "0200\n";
 		$s .= "1\n";

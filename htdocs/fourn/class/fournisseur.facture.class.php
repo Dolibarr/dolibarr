@@ -592,7 +592,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(double) $this->multicurrency_tx;
-		$sql .= ", ".(isset($this->fk_facture_source) ? $this->fk_facture_source : "NULL");
+		$sql .= ", ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null");
 		$sql .= ", ".(isset($this->fk_fac_rec_source) ? $this->fk_fac_rec_source : "NULL");
 		$sql .= ")";
 
@@ -1234,30 +1234,29 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_supplier=".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
-		$sql .= " entity=".(isset($this->entity) ? $this->entity : "null").",";
-		$sql .= " type=".(isset($this->type) ? $this->type : "null").",";
-		$sql .= " fk_soc=".(isset($this->fk_soc) ? $this->fk_soc : "null").",";
+		$sql .= " entity=".(isset($this->entity) ? ((int) $this->entity) : "null").",";
+		$sql .= " type=".(isset($this->type) ? ((int) $this->type) : "null").",";
+		$sql .= " fk_soc=".(isset($this->fk_soc) ? ((int) $this->fk_soc) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " datef=".(dol_strlen($this->date) != 0 ? "'".$this->db->idate($this->date)."'" : 'null').",";
 		if (dol_strlen($this->tms) != 0) {
 			$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		}
 		$sql .= " libelle=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
-		$sql .= " paye=".(isset($this->paye) ? $this->paye : "null").",";
+		$sql .= " paye=".(isset($this->paye) ? ((int) $this->paye) : "null").",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
-		//$sql .= " tva=".(isset($this->tva) ? $this->tva : "null").",";
-		$sql .= " localtax1=".(isset($this->localtax1) ? $this->localtax1 : "null").",";
-		$sql .= " localtax2=".(isset($this->localtax2) ? $this->localtax2 : "null").",";
-		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
-		$sql .= " total_tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
-		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
-		$sql .= " fk_statut=".(isset($this->status) ? $this->status : (isset($this->statut) ? $this->statut : "null")).",";
-		$sql .= " fk_user_author=".(isset($this->author) ? $this->author : "null").",";
-		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? $this->fk_user_valid : "null").",";
-		$sql .= " fk_facture_source=".(isset($this->fk_facture_source) ? $this->fk_facture_source : "null").",";
-		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
-		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
+		$sql .= " localtax1=".(isset($this->localtax1) ? ((float) $this->localtax1) : "null").",";
+		$sql .= " localtax2=".(isset($this->localtax2) ? ((float) $this->localtax2) : "null").",";
+		$sql .= " total_ht=".(isset($this->total_ht) ? ((float) $this->total_ht) : "null").",";
+		$sql .= " total_tva=".(isset($this->total_tva) ? ((float) $this->total_tva) : "null").",";
+		$sql .= " total_ttc=".(isset($this->total_ttc) ? ((float) $this->total_ttc) : "null").",";
+		$sql .= " fk_statut=".(isset($this->status) ? ((int) $this->status) : (isset($this->statut) ? ((int) $this->statut) : "null")).",";
+		$sql .= " fk_user_author=".(isset($this->author) ? ((int) $this->author) : "null").",";
+		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? ((int) $this->fk_user_valid) : "null").",";
+		$sql .= " fk_facture_source=".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
+		$sql .= " fk_projet=".(isset($this->fk_project) ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
 		$sql .= " date_lim_reglement=".(dol_strlen($this->date_echeance) != 0 ? "'".$this->db->idate($this->date_echeance)."'" : 'null').",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";

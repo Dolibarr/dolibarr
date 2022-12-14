@@ -789,6 +789,9 @@ $company_url_list = array();
 $formcompany = new FormCompany($db);
 $projectstatic = new Project($db);
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
 $title = $langs->trans("Orders");
 $help_url = "EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 
@@ -935,11 +938,15 @@ if ($search_country) {
 if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
-if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
-}
-if ($search_company_alias) {
-	$sql .= natural_search('s.name_alias', $search_company_alias);
+if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
+} else {
+	if ($search_company) {
+		$sql .= natural_search('s.nom', $search_company);
+	}
+	if ($search_company_alias) {
+		$sql .= natural_search('s.name_alias', $search_company_alias);
+	}
 }
 if ($search_parent_name) {
 	$sql .= natural_search('s2.nom', $search_parent_name);
@@ -1726,7 +1733,7 @@ if ($resql) {
 			-2=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
 			Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
 		);
-		print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'maxwidth125', 1);
+		print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'maxwidth125 onrightofpage', 1);
 		print '</td>';
 	}
 	// Action column

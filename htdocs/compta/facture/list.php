@@ -558,6 +558,9 @@ $companystatic = new Societe($db);
 $companyparent = new Societe($db);
 $company_url_list = array();
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
 $sql = 'SELECT';
 if ($sall || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
@@ -670,11 +673,15 @@ if ($search_project_ref) {
 if ($search_project) {
 	$sql .= natural_search('p.title', $search_project);
 }
-if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
-}
-if ($search_company_alias) {
-	$sql .= natural_search('s.name_alias', $search_company_alias);
+if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
+} else {
+	if ($search_company) {
+		$sql .= natural_search('s.nom', $search_company);
+	}
+	if ($search_company_alias) {
+		$sql .= natural_search('s.name_alias', $search_company_alias);
+	}
 }
 if ($search_parent_name) {
 	$sql .= natural_search('s2.nom', $search_parent_name);
@@ -1585,7 +1592,7 @@ if ($resql) {
 	if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone right">';
 		$liststatus = array('0'=>$langs->trans("BillShortStatusDraft"), '0,1'=>$langs->trans("BillShortStatusDraft").'+'.$langs->trans("BillShortStatusNotPaid"), '1'=>$langs->trans("BillShortStatusNotPaid"), '1,2'=>$langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
-		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'width100 onrightofpage', 1);
 		print '</td>';
 	}
 	// Action column
@@ -1772,6 +1779,7 @@ if ($resql) {
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
 		$totalarray['val'] = array();
+		$totalarray['val']['f.total_tva'] = 0;
 		$totalarray['val']['f.total_ht'] = 0;
 		$totalarray['val']['f.total_ttc'] = 0;
 
@@ -1867,7 +1875,7 @@ if ($resql) {
 				$remaintopay = 0;
 				$multicurrency_remaintopay = 0;
 			}
-			if ($facturestatic->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1) {		// If credit note closed, we take into account the amount not yet consummed
+			if ($facturestatic->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1) {		// If credit note closed, we take into account the amount not yet consumed
 				$remaincreditnote = $discount->getAvailableDiscounts($companystatic, '', 'rc.fk_facture_source='.$facturestatic->id);
 				$remaintopay = -$remaincreditnote;
 				$totalpay = price2num($facturestatic->total_ttc - $remaintopay);
