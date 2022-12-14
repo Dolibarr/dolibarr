@@ -1277,7 +1277,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (empty($search_user)) {
 				$search_user = $user->id;
 			}
-			if($search_user > 0) $sql .= " AND t.fk_user = ".((int) $search_user);
+			if ($search_user > 0) $sql .= " AND t.fk_user = ".((int) $search_user);
 		}
 
 		if ($search_note) {
