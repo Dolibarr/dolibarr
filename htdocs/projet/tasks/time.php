@@ -470,27 +470,28 @@ if ($action == 'confirm_generateinvoice') {
 		}
 
 		if (!$error) {
-			if ($generateinvoicemode == 'onelineperuser') {
+			if ($generateinvoicemode == 'onelineperuser') {		// 1 line per user (and per product)
 				$arrayoftasks = array();
 				foreach ($toselect as $key => $value) {
 					// Get userid, timepent
-					$object->fetchTimeSpent($value);
+					$object->fetchTimeSpent($value);	// $value is ID of 1 line in timespent table
 					$arrayoftasks[$object->timespent_fk_user][(int) $object->timespent_fk_product]['timespent'] += $object->timespent_duration;
 					$arrayoftasks[$object->timespent_fk_user][(int) $object->timespent_fk_product]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
 				}
 
 				foreach ($arrayoftasks as $userid => $data) {
 					$fuser->fetch($userid);
-					//$pu_ht = $value['timespent'] * $fuser->thm;
+
+					$pu_ht = $fuser->thm;	// Default. However, we should later use the value calculated from timespent data per product
+
 					$username = $fuser->getFullName($langs);
-					foreach ($data as $fk_product=>$timespent_data) {
+					foreach ($data as $fk_product => $timespent_data) {
 						// Define qty per hour
 						$qtyhour = $timespent_data['timespent'] / 3600;
 						$qtyhourtext = convertSecondToTime($timespent_data['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 
-						// If no unit price known
-						if (empty($pu_ht)) {
-							$pu_ht = price2num($timespent_data['totalvaluetodivideby3600'] / 3600, 'MU');
+						if ($timespent_data['timespent']) {
+							$pu_ht = price2num(($timespent_data['totalvaluetodivideby3600'] / $timespent_data['timespent']), 'MU');
 						}
 
 						// Add lines
@@ -501,7 +502,8 @@ if ($action == 'confirm_generateinvoice') {
 						$localtax1line = $localtax1;
 						$localtax2line = $localtax2;
 
-						if (!empty($fk_product) && $fk_product!==$idprod) {
+						// If a particular product/service was defined for the task
+						if (!empty($fk_product) && $fk_product !== $idprod) {
 							if (!array_key_exists($fk_product, $product_data_cache)) {
 								$result = $tmpproduct->fetch($fk_product);
 								if ($result < 0) {
