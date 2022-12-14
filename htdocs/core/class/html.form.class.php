@@ -8309,7 +8309,7 @@ class Form
 							var separ = urlBase.indexOf("?") >= 0 ? "&" : "?";
 							/* console.log("params.term="+params.term); */
 							/* console.log("params.term encoded="+encodeURIComponent(params.term)); */
-							saveRemoteData[data.id].url = urlBase + separ + "sall=" + encodeURIComponent(params.term.replace(/\"/g, ""));';
+							saveRemoteData[data.id].url = urlBase + separ + "search_all=" + encodeURIComponent(params.term.replace(/\"/g, ""));';
 			}
 
 			if (!$disableFiltering) {
