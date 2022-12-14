@@ -462,17 +462,22 @@ if ($action == 'confirm_generateinvoice') {
 
 				foreach ($arrayoftasks as $userid => $value) {
 					$fuser->fetch($userid);
-					//$pu_ht = $value['timespent'] * $fuser->thm;
+					$pu_ht = $fuser->thm;
 					$username = $fuser->getFullName($langs);
 
 					// Define qty per hour
 					$qtyhour = $value['timespent'] / 3600;
 					$qtyhourtext = convertSecondToTime($value['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 
+					/*
 					// If no unit price known
 					if (empty($pu_ht)) {
 						$pu_ht = price2num($value['totalvaluetodivideby3600'] / 3600, 'MU');
 					}
+					*/
+
+					//Unit price
+					$pu_ht = price2num(($value['totalvaluetodivideby3600'] / $value['timespent']), 'MU');
 
 					// Add lines
 					$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username).' : '.$qtyhourtext, $pu_ht, round($qtyhour / $prodDurationHours, 2), $txtva, $localtax1, $localtax2, ($idprod > 0 ? $idprod : 0));
