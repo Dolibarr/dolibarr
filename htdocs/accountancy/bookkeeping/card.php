@@ -531,7 +531,6 @@ if (!empty($object->piece_num)) {
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
-  
 		// List of movements
 		print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
@@ -646,7 +645,7 @@ if (!empty($object->piece_num)) {
 						// Also, it is not possible to use a value that is not in the list.
 						// Also, the label is not automatically filled when a value is selected.
 						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-              print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account['.$key.']', 1, 'maxwidth250', '', 'subledger_label');
+							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account['.$key.']', 1, 'maxwidth250', '', 'subledger_label');
 						} else {
 							print '<input type="text" class="maxwidth150" name="subledger_account['.$key.']" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '" />';
 						}
