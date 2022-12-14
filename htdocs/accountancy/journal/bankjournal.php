@@ -1407,15 +1407,19 @@ function getSourceDocRef($val, $typerecord)
 
 	$sqlmid = '';
 	if ($typerecord == 'payment') {
-		$sqlmid .= "SELECT payfac.fk_facture as id, f.ref as ref";
-		$sqlmid .= " FROM ".$db->prefix()."paiement_facture as payfac";
-		if (getDolGlobalInt('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-			$sqlmid .= " INNER JOIN ".$db->prefix()."societe_remise_except as sre ON sre.fk_facture_source = payfac.fk_facture";
-			$sqlmid .= " INNER JOIN ".$db->prefix()."facture as f ON f.rowid = sre.fk_facture";
+		if (!getDolGlobalInt('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
+			$sqlmid = "SELECT payfac.fk_facture as id, ".$db->ifsql('f1.ref IS NULL', 'f.ref', 'f1.ref')." as ref";
+			$sqlmid .= " FROM ".$db->prefix()."paiement_facture as payfac";
+			$sqlmid .= " LEFT JOIN ".$db->prefix()."facture as f ON f.rowid = payfac.fk_facture";
+			$sqlmid .= " LEFT JOIN ".$db->prefix()."societe_remise_except as sre ON sre.fk_facture_source = payfac.fk_facture";
+			$sqlmid .= " LEFT JOIN ".$db->prefix()."facture as f1 ON f1.rowid = sre.fk_facture";
+			$sqlmid .= " WHERE payfac.fk_paiement=".((int) $val['paymentid']);
 		} else {
+			$sqlmid = "SELECT payfac.fk_facture as id, f.ref as ref";
+			$sqlmid .= " FROM ".$db->prefix()."paiement_facture as payfac";
 			$sqlmid .= " INNER JOIN ".$db->prefix()."facture as f ON f.rowid = payfac.fk_facture";
+			$sqlmid .= " WHERE payfac.fk_paiement=".((int) $val['paymentid']);
 		}
-		$sqlmid .= " WHERE payfac.fk_paiement=".((int) $val['paymentid']);
 		$ref = $langs->transnoentitiesnoconv("Invoice");
 	} elseif ($typerecord == 'payment_supplier') {
 		$sqlmid = 'SELECT payfac.fk_facturefourn as id, f.ref';
