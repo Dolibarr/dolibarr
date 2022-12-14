@@ -1407,8 +1407,8 @@ function getSourceDocRef($val, $typerecord)
 
 	$sqlmid = '';
 	if ($typerecord == 'payment') {
-		if (!getDolGlobalInt('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-			$sqlmid = "SELECT payfac.fk_facture as id, ".$db->ifsql('f1.ref IS NULL', 'f.ref', 'f1.ref')." as ref";
+		if (getDolGlobalInt('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
+			$sqlmid = "SELECT payfac.fk_facture as id, ".$db->ifsql('f1.rowid IS NULL', 'f.ref', 'f1.ref')." as ref";
 			$sqlmid .= " FROM ".$db->prefix()."paiement_facture as payfac";
 			$sqlmid .= " LEFT JOIN ".$db->prefix()."facture as f ON f.rowid = payfac.fk_facture";
 			$sqlmid .= " LEFT JOIN ".$db->prefix()."societe_remise_except as sre ON sre.fk_facture_source = payfac.fk_facture";
