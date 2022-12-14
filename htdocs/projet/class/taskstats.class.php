@@ -223,5 +223,4 @@ class TaskStats extends Stats
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
-
 }
