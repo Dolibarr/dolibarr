@@ -156,8 +156,11 @@ if (isModEnabled('contrat') && empty($conf->global->MAIN_SEARCHFORM_CONTRACT_DIS
 if (isModEnabled('ficheinter') && empty($conf->global->MAIN_SEARCHFORM_FICHINTER_DISABLED) && $user->hasRight('ficheinter', 'lire')) {
 	$arrayresult['searchintointervention'] = array('position'=>140, 'img'=>'object_intervention', 'label'=>$langs->trans("SearchIntoInterventions", $search_boxvalue), 'text'=>img_picto('', 'object_intervention', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoInterventions", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fichinter/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
+if (isModEnabled('knowledgemanagement') && empty($conf->global->MAIN_SEARCHFORM_KNOWLEDGEMANAGEMENT_DISABLED) && $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
+	$arrayresult['searchintoknowledgemanagement'] = array('position'=>145, 'img'=>'object_knowledgemanagement', 'label'=>$langs->trans("SearchIntoKM", $search_boxvalue), 'text'=>img_picto('', 'object_knowledgemanagement', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoKM", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/knowledgemanagement/knowledgerecord_list.php?mainmenu=ticket'.($search_boxvalue ? '&search_all='.urlencode($search_boxvalue) : ''));
+}
 if (isModEnabled('ticket') && empty($conf->global->MAIN_SEARCHFORM_TICKET_DISABLED) && $user->hasRight('ticket', 'read')) {
-	$arrayresult['searchintotickets'] = array('position'=>145, 'img'=>'object_ticket', 'label'=>$langs->trans("SearchIntoTickets", $search_boxvalue), 'text'=>img_picto('', 'object_ticket', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoTickets", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/ticket/list.php?mainmenu=ticket'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintotickets'] = array('position'=>146, 'img'=>'object_ticket', 'label'=>$langs->trans("SearchIntoTickets", $search_boxvalue), 'text'=>img_picto('', 'object_ticket', 'class="pictofixedwidth"').' '.$langs->trans("SearchIntoTickets", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/ticket/list.php?mainmenu=ticket'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
 }
 
 // HR
