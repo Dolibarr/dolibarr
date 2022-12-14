@@ -21,6 +21,18 @@ create table llx_product_perentity
   rowid         				integer AUTO_INCREMENT PRIMARY KEY,
   fk_product	   				integer,
   entity             			integer DEFAULT 1 NOT NULL,      	-- multi company id
+  default_vat_code              varchar(10),                        -- Same code than into table llx_c_tva (but no constraints). Should be used in priority to find default vat, npr, localtaxes for product.
+  tva_tx                        double(7,4),                        -- Default VAT rate of product
+  recuperableonly               integer NOT NULL DEFAULT '0',       -- French NPR VAT
+  localtax1_tx                  double(7,4)  DEFAULT 0,
+  localtax1_type                varchar(10)  NOT NULL DEFAULT '0',
+  localtax2_tx                  double(7,4)  DEFAULT 0,
+  localtax2_type                varchar(10)  NOT NULL DEFAULT '0',
+  tosell                        tinyint      DEFAULT 1,             -- Product you sell
+  tobuy                         tinyint      DEFAULT 1,             -- Product you buy
+  url                           varchar(255),
+  barcode                       varchar(180) DEFAULT NULL,          -- barcode
+  fk_barcode_type               integer      DEFAULT NULL,          -- barcode type
   accountancy_code_sell         varchar(32),                        -- Selling accountancy code
   accountancy_code_sell_intra   varchar(32),                        -- Selling accountancy code for vat intracommunity
   accountancy_code_sell_export  varchar(32),                        -- Selling accountancy code for vat export
