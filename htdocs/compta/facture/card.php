@@ -2930,9 +2930,9 @@ if ($action == 'create') {
 
 				if (!empty($conf->multicurrency->enabled)) {
 					$currency_code 	= (!empty($expesrc->currency_code) ? $expesrc->currency_code : (!empty($soc->currency_code) ? $soc->currency_code : $objectsrc->multicurrency_code));
-					$currency_tx 	= (!empty($expesrc->currency_tx) ? $expesrc->currency_tx : (!empty($soc->currency_tx) ? $soc->currency_tx : $objectsrc->currency_tx));				
+					$currency_tx 	= (!empty($expesrc->currency_tx) ? $expesrc->currency_tx : (!empty($soc->currency_tx) ? $soc->currency_tx : $objectsrc->currency_tx));
 				}
-				
+
 				//Replicate extrafields
 				$expesrc->fetch_optionals();
 				$object->array_options = $expesrc->array_options;
