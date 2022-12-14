@@ -568,7 +568,7 @@ if (empty($reshook)) {
 			$object->volume             	 = GETPOST('volume');
 			$object->volume_units       	 = GETPOST('volume_units'); // This is not the fk_unit but the power of unit
 			$finished = GETPOST('finished', 'int');
-			if ($finished > 0) {
+			if ($finished >= 0) {
 				$object->finished = $finished;
 			} else {
 				$object->finished = null;
