@@ -481,17 +481,27 @@ if ($action == 'confirm_generateinvoice') {
 
 				foreach ($arrayoftasks as $userid => $data) {
 					$fuser->fetch($userid);
-
-					$pu_ht = $fuser->thm;	// Default. However, we should later use the value calculated from timespent data per product
-
 					$username = $fuser->getFullName($langs);
+
 					foreach ($data as $fk_product => $timespent_data) {
 						// Define qty per hour
 						$qtyhour = $timespent_data['timespent'] / 3600;
 						$qtyhourtext = convertSecondToTime($timespent_data['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 
-						if ($timespent_data['timespent']) {
-							$pu_ht = price2num(($timespent_data['totalvaluetodivideby3600'] / $timespent_data['timespent']), 'MU');
+						// Set the unit price we want to sell the time, for this user
+						if (getDolGlobalInt('PROJECT_USE_REAL_COST_FOR_TIME_INVOICING')) {
+							// We set unit price to 0 to force the use of the rate saved during recording
+							$pu_ht = 0;
+						} else {
+							// We want to sell all the time spent with the last hourly rate of user
+							$pu_ht = $fuser->thm;
+						}
+
+						// If no unit price known for user, we use the price recorded when recording timespent.
+						if (empty($pu_ht)) {
+							if ($timespent_data['timespent']) {
+								$pu_ht = price2num(($timespent_data['totalvaluetodivideby3600'] / $timespent_data['timespent']), 'MU');
+							}
 						}
 
 						// Add lines
