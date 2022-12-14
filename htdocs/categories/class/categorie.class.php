@@ -46,21 +46,21 @@ require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class
 class Categorie extends CommonObject
 {
 	// Categories types (we use string because we want to accept any modules/types in a future)
-	const TYPE_PRODUCT   = 'product';
-	const TYPE_SUPPLIER  = 'supplier';
-	const TYPE_CUSTOMER  = 'customer';
-	const TYPE_MEMBER    = 'member';
-	const TYPE_CONTACT   = 'contact';
-	const TYPE_USER      = 'user';
-	const TYPE_PROJECT   = 'project';
-	const TYPE_ACCOUNT   = 'bank_account';
-	const TYPE_BANK_LINE = 'bank_line';
-	const TYPE_WAREHOUSE = 'warehouse';
-	const TYPE_ACTIONCOMM = 'actioncomm';
-	const TYPE_WEBSITE_PAGE = 'website_page';
-	const TYPE_TICKET = 'ticket';
+	const TYPE_PRODUCT             = 'product';
+	const TYPE_SUPPLIER            = 'supplier';
+	const TYPE_CUSTOMER            = 'customer';
+	const TYPE_MEMBER              = 'member';
+	const TYPE_CONTACT             = 'contact';
+	const TYPE_USER                = 'user';
+	const TYPE_PROJECT             = 'project';
+	const TYPE_ACCOUNT             = 'bank_account';
+	const TYPE_BANK_LINE           = 'bank_line';
+	const TYPE_WAREHOUSE           = 'warehouse';
+	const TYPE_ACTIONCOMM          = 'actioncomm';
+	const TYPE_WEBSITE_PAGE        = 'website_page';
+	const TYPE_TICKET              = 'ticket';
 	const TYPE_KNOWLEDGEMANAGEMENT = 'knowledgemanagement';
-	const TYPE_INVOICE = 'invoice';
+	const TYPE_INVOICE             = 'invoice';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -95,16 +95,16 @@ class Categorie extends CommonObject
 	 * @note This array should be removed in future, once previous constants are moved to the string value. Deprecated
 	 */
 	public static $MAP_ID_TO_CODE = array(
-		0 => 'product',
-		1 => 'supplier',
-		2 => 'customer',
-		3 => 'member',
-		4 => 'contact',
-		5 => 'bank_account',
-		6 => 'project',
-		7 => 'user',
-		8 => 'bank_line',
-		9 => 'warehouse',
+		0  => 'product',
+		1  => 'supplier',
+		2  => 'customer',
+		3  => 'member',
+		4  => 'contact',
+		5  => 'bank_account',
+		6  => 'project',
+		7  => 'user',
+		8  => 'bank_line',
+		9  => 'warehouse',
 		10 => 'actioncomm',
 		11 => 'website_page',
 		12 => 'ticket',
@@ -118,9 +118,9 @@ class Categorie extends CommonObject
 	 * @todo Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_CAT_FK = array(
-		'customer' => 'soc',
-		'supplier' => 'soc',
-		'contact'  => 'socpeople',
+		'customer'     => 'soc',
+		'supplier'     => 'soc',
+		'contact'      => 'socpeople',
 		'bank_account' => 'account',
 	);
 
@@ -130,8 +130,8 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_CAT_TABLE = array(
-		'customer' => 'societe',
-		'supplier' => 'fournisseur',
+		'customer'     => 'societe',
+		'supplier'     => 'fournisseur',
 		'bank_account' => 'account',
 	);
 
@@ -141,21 +141,21 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_OBJ_CLASS = array(
-		'product'  => 'Product',
-		'customer' => 'Societe',
-		'supplier' => 'Fournisseur',
-		'member'   => 'Adherent',
-		'contact'  => 'Contact',
-		'user'     => 'User',
-		'account'  => 'Account', // old for bank account
-		'bank_account'  => 'Account',
-		'project'  => 'Project',
-		'warehouse' => 'Entrepot',
-		'actioncomm' => 'ActionComm',
-		'website_page' => 'WebsitePage',
-		'ticket' => 'Ticket',
+		'product'             => 'Product',
+		'customer'            => 'Societe',
+		'supplier'            => 'Fournisseur',
+		'member'              => 'Adherent',
+		'contact'             => 'Contact',
+		'user'                => 'User',
+		'account'             => 'Account', // old for bank account
+		'bank_account'        => 'Account',
+		'project'             => 'Project',
+		'warehouse'           => 'Entrepot',
+		'actioncomm'          => 'ActionComm',
+		'website_page'        => 'WebsitePage',
+		'ticket'              => 'Ticket',
 		'knowledgemanagement' => 'KnowledgeRecord',
-		'invoice' => 'Facture'
+		'invoice'             => 'Facture'
 	);
 
 	/**
@@ -164,19 +164,19 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
-		'product' => 'ProductsCategoriesArea',
-		'customer' => 'CustomersCategoriesArea',
-		'supplier' => 'SuppliersCategoriesArea',
-		'member' => 'MembersCategoriesArea',
-		'contact' => 'ContactsCategoriesArea',
-		'user' => 'UsersCategoriesArea',
-		'account' => 'AccountsCategoriesArea', // old for bank account
+		'product'      => 'ProductsCategoriesArea',
+		'customer'     => 'CustomersCategoriesArea',
+		'supplier'     => 'SuppliersCategoriesArea',
+		'member'       => 'MembersCategoriesArea',
+		'contact'      => 'ContactsCategoriesArea',
+		'user'         => 'UsersCategoriesArea',
+		'account'      => 'AccountsCategoriesArea', // old for bank account
 		'bank_account' => 'AccountsCategoriesArea',
-		'project' => 'ProjectsCategoriesArea',
-		'warehouse' => 'StocksCategoriesArea',
-		'actioncomm' => 'ActioncommCategoriesArea',
+		'project'      => 'ProjectsCategoriesArea',
+		'warehouse'    => 'StocksCategoriesArea',
+		'actioncomm'   => 'ActioncommCategoriesArea',
 		'website_page' => 'WebsitePageCategoriesArea',
-		'invoice' => 'InvoiceCategoriesArea'
+		'invoice'      => 'InvoiceCategoriesArea'
 	);
 
 	/**
@@ -184,15 +184,15 @@ class Categorie extends CommonObject
 	 * 				This array may be completed by external modules with hook "constructCategory"
 	 */
 	public $MAP_OBJ_TABLE = array(
-		'customer' => 'societe',
-		'supplier' => 'societe',
-		'member'   => 'adherent',
-		'contact'  => 'socpeople',
-		'account'  => 'bank_account', // old for bank account
-		'project'  => 'projet',
-		'warehouse' => 'entrepot',
+		'customer'            => 'societe',
+		'supplier'            => 'societe',
+		'member'              => 'adherent',
+		'contact'             => 'socpeople',
+		'account'             => 'bank_account', // old for bank account
+		'project'             => 'projet',
+		'warehouse'           => 'entrepot',
 		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord',
-		'invoice' => 'facture'
+		'invoice'             => 'facture'
 	);
 
 	/**
