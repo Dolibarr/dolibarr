@@ -34,6 +34,8 @@
 	--colortopbordertitle1: rgb(<?php print $colortopbordertitle1; ?>);
 	--listetotal: #888888;
 	--inputbackgroundcolor: #FFF;
+	--inputbackgroundcolordisabled: #eee;
+	--inputcolordisabled: rgb(80, 80, 80);
 	--inputbordercolor: rgba(0,0,0,.15);
 	--tooltipbgcolor: <?php print $toolTipBgColor; ?>;
 	--tooltipfontcolor : <?php print $toolTipFontColor; ?>;
@@ -85,7 +87,9 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colortextbackvmenu: rgb(220,220,220);
 				--tooltipfontcolor : rgb(220,220,220);
 	            --listetotal: rgb(245, 83, 158);
-	            --inputbackgroundcolor: #2b2d2f;
+	            --inputbackgroundcolor: rgb(70, 70, 70);
+				--inputbackgroundcolordisabled: rgb(60, 60, 60);
+				--inputcolordisabled: rgb(140, 140, 140);
 	            --inputbordercolor: rgb(220,220,220);
 	            --oddevencolor: rgb(220,220,220);
 	            --colorboxstatsborder: rgb(65,100,138);
@@ -509,7 +513,8 @@ select:invalid, select.--error {
 }
 input:disabled, textarea:disabled, select[disabled='disabled']
 {
-	background:#eee;
+	background: var(--inputbackgroundcolordisabled);
+	color: var(--inputcolordisabled);
 }
 
 input.liste_titre {
