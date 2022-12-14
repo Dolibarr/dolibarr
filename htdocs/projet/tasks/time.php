@@ -162,7 +162,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_update = '';
 	$search_task_ref = '';
 	$search_task_label = '';
-	$search_user = 0;
+	$search_user = -1;
 	$search_valuebilled = '';
 	$toselect = '';
 	$search_array_options = array();
@@ -1277,7 +1277,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (empty($search_user)) {
 				$search_user = $user->id;
 			}
-			$sql .= " AND t.fk_user = ".((int) $search_user);
+			if($search_user > 0) $sql .= " AND t.fk_user = ".((int) $search_user);
 		}
 
 		if ($search_note) {
