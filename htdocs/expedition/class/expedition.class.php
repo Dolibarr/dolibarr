@@ -740,7 +740,8 @@ class Expedition extends CommonObject
 					} else {
 						$qty = $obj->edbqty;
 					}
-					if ($qty <= 0) {
+
+					if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('SHIPMENT_ALLOW_NEGATIVE_QTY'))) {
 						continue;
 					}
 					dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);

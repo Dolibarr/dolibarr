@@ -1650,7 +1650,7 @@ if ($id > 0) {
 			if ($showfield) {
 				if ($value == 'country') {
 					print '<td class="liste_titre">';
-					print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth150 maxwidthonsmartphone');
+					print $form->select_country($search_country_id, 'search_country_id', '', 28, 'minwidth100 maxwidth150 maxwidthonsmartphone');
 					print '</td>';
 					$filterfound++;
 				} elseif ($value == 'code') {
@@ -2151,7 +2151,7 @@ if ($id > 0) {
 								$class .= ' right';
 							}
 							if (in_array($value, array('type_vat', 'localtax1_type', 'localtax2_type'))) {
-								$class .= ' nowrap';
+								$class .= ' nowraponall';
 							}
 							if (in_array($value, array('use_default', 'fk_parent', 'sortorder'))) {
 								$class .= ' center';
@@ -2296,8 +2296,9 @@ if ($id > 0) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="2">'.$langs->trans("Dictionary").'</td>';
+	print '<td>'.$langs->trans("Dictionary").'</td>';
 	print '<td></td>';
+	print '<td class="hideonsmartphone"></td>';
 	print '</tr>';
 
 	$showemptyline = '';
@@ -2308,13 +2309,13 @@ if ($id > 0) {
 
 		if ($i) {
 			if ($showemptyline) {
-				print '<tr class="oddeven"><td width="50%">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+				print '<tr class="oddeven"><td></td><td></td><td class="hideonsmartphone"></td></tr>';
 				$showemptyline = 0;
 			}
 
 
 			$value = $tabname[$i];
-			print '<tr class="oddeven"><td width="50%">';
+			print '<tr class="oddeven"><td class="minwidth200">';
 			if (!empty($tabcond[$i])) {
 				$tabnamenoprefix = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabname[$i]);
 				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$i.'">';
@@ -2332,7 +2333,7 @@ if ($id > 0) {
 			print img_picto('Edit', 'edit', '');
 			print '</a>';
 			print '</td>';
-			print '<td class="right">';
+			print '<td class="right hideonsmartphone">';
 			print $form->textwithpicto('', $langs->trans("Table").': '.MAIN_DB_PREFIX.$tabname[$i]);
 			print '</td>';
 			print '</tr>';
@@ -2397,7 +2398,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			}	// For state page, we do not show the country input (we link to region, not country)
 			print '<td>';
 			$fieldname = 'country';
-			print $form->select_country((!empty($obj->country_code) ? $obj->country_code : (!empty($obj->country) ? $obj->country : '')), $fieldname, '', 28, 'maxwidth150 maxwidthonsmartphone');
+			print $form->select_country((!empty($obj->country_code) ? $obj->country_code : (!empty($obj->country) ? $obj->country : '')), $fieldname, '', 28, 'minwidth100 maxwidth150 maxwidthonsmartphone');
 			print '</td>';
 		} elseif ($value == 'country_id') {
 			if (!in_array('country', $fieldlist)) {	// If there is already a field country, we don't show country_id (avoid duplicate)

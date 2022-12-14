@@ -297,7 +297,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				}
 
 				dolibarr_install_syslog('step5: remove MAIN_NOT_INSTALLED const');
-				$resql = $db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_NOT_INSTALLED'");
+				$resql = $db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')." = 'MAIN_NOT_INSTALLED'");
 				if (!$resql) {
 					dol_print_error($db, 'Error in setup program');
 				}

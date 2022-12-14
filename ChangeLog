@@ -9,9 +9,8 @@ For users:
 ---------------
 
 NEW: Minimal PHP version is now PHP 7.0 instead of PHP 5.6
-NEW: #21750 Added "Get lines and Post lines from BOM" at the REST Service
 NEW: #21780 Add pid field to Cronjob class and store PID on job execution
-NEW: #19680 Add option PRODUCT_ALLOW_EXTERNAL_DOWNLOAD
+NEW: #19680 Add option PRODUCT_ALLOW_EXTERNAL_DOWNLOAD to automatically have uploaded files shared publicly by a link
 NEW: #20650 can move the checkbox column on left (experimental option)
 NEW: #21000 Added columns 'alias_name' on poject, supplier invoice, supplier order, supplier proposals and taks list
 NEW: #21395 Added option for dark theme mode in display - color and theme
@@ -19,11 +18,9 @@ NEW: #21397 added option to auto define barcode numbers for third-parties in bar
 NEW: #21399
 NEW: #21442 Enhancement of module builder init
 NEW: #21654 add bank account number used on invoices for debit
-NEW: #21775 Template 03 manages send mails
 NEW: #22048 Added notes to productlot module
-NEW: #22298 Bank - Add salaries & vat in tab planned entries
+NEW: #22298 Bank - Add salaries & vat in the tab of planned entries of a bank account
 NEW: #22328
-NEW: #22370 Modulebuilder supports 'alwayseditable' (like extrafields)
 NEW: #22424
 NEW: #22500 member module set up made easier
 NEW: #22527 projects and thirdparties can be viewed as conversation ("Message" view), like events/agenda.
@@ -57,7 +54,6 @@ NEW: Add hidden option MAIN_EMAIL_SUPPORT_ACK to restore Email ack checkbox (fea
 NEW: Add IMAP port setting on email collector module
 NEW: Adding JAPAN Chart-of-Account and regions/departments
 NEW: Adding NIF verification for Algeria
-NEW: Add 4 other templates in website module
 NEW: Add link to create an element from the category page
 NEW: add margin infos to takepos invoice lines
 NEW: Add max size send for "backup and link to mail" option
@@ -98,6 +94,7 @@ NEW: Website Can remove a website template
 NEW: Website can set header "Strict-Transport-Security" in web sites.
 NEW: Website Can switch status of website and page from the website toolbar
 NEW: Website Templates of websites are now directories and not zip into core repo
+NEW: Website Add 4 other templates in website module
 NEW: Can use products categories to make inventory
 NEW: Change filter type on tickets list into a multiselect combo
 NEW: conf TIMESPENT_ALWAYS_UPDATE_THM, when it's on we always check current thm of user to update it in task time line
@@ -129,7 +126,6 @@ NEW: manage no email with thirdparties (better for GDPR)
 NEW: Manage Position (Rank) on Contract Lines
 NEW: Manage VAT on all lines on purchases cycle
 NEW: manage virtual stock at a future date
-NEW: ModuleBuilder can generate code of class from an existing SQL table
 NEW: On a bank reconciled line, we can modify the bank receipt
 NEW: On a form to send an email, we show all emails of all contacts of object
 NEW: Option PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT showing wh on PDF
@@ -163,19 +159,23 @@ NEW: SMTP using oauth2 authentication
 NEW: can substitue project title in mail template
 NEW: Supplier order list - Add column private and public note
 NEW: Support IP type in extrafields
-NEW: support multilang in Civilities API
 NEW: Table of membership types
 NEW: The purge of files can purge only if older than a number of seconds
 NEW: Update ActionComm type_code on email message ticket
 NEW: VAT - Admin - Add information on deadline day for submission of VAT declaration
 NEW: expand/collapse permissions on user permission page
+NEW: Show delivery mode on PDF for proposals
+NEW: Add the target to select attendees of event for emailings
 
 
 For developers or integrators:
 ------------------------------
 
+NEW: ModuleBuilder can generate code of class from an existing SQL table
+NEW: #22370 Modulebuilder supports 'alwayseditable' (like extrafields)
 NEW: #20912 Add trigger to record the event of sending an email from a project
-NEW: Removed completely the need for library adodbtime
+NEW: #21750 Added "Get lines and Post lines from BOM" at the REST Service
+NEW: Removed completely the need for the library adodbtime
 NEW: hook on agenda pages
 NEW: hook to complete payment in TakePOS
 NEW: hook "changeHelpURL" to modify target of the help button
@@ -186,6 +186,7 @@ NEW: Add new hooks for actioncomm
 NEW: conf->global->SYSLOG_FILE_ONEPERSESSION accept a string
 NEW: translate for contact type API, setup/ticket API, shipping method API
 NEW: All ajax pages have now a top_httphead()
+NEW: support multilang in Civilities API
 NEW: Add API for the partnership module
 NEW: Add "Get lines and Post lines from BOM" in the API
 NEW: Replace fk_categories_product with categories_product in inventory

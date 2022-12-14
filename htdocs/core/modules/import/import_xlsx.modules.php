@@ -908,8 +908,8 @@ class ImportXlsx extends ModeleImports
 										$stringtosearch = json_encode($socialnetwork).':'.json_encode($json->$socialnetwork);
 										//var_dump($stringtosearch);
 										//var_dump($this->db->escape($stringtosearch));	// This provide a value for sql string (but not for a like)
-										$where[] = $key." LIKE '%".$this->db->escapeforlike($this->db->escape($stringtosearch))."%'";
-										$filters[] = $col." LIKE '%".$this->db->escapeforlike($this->db->escape($stringtosearch))."%'";
+										$where[] = $key." LIKE '%".$this->db->escape($this->db->escapeforlike($stringtosearch))."%'";
+										$filters[] = $col." LIKE '%".$this->db->escape($this->db->escapeforlike($stringtosearch))."%'";
 										//var_dump($where[1]); // This provide a value for sql string inside a like
 									} else {
 										$where[] = $key.' = '.$data[$key];

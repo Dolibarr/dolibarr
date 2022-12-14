@@ -1882,7 +1882,7 @@ SuppliersInvoiceNumberingModel=Vendor invoices numbering models
 IfSetToYesDontForgetPermission=If set to a non null value, don't forget to provide permissions to groups or users allowed for the second approval
 ##### GeoIPMaxmind #####
 GeoIPMaxmindSetup=GeoIP Maxmind module setup
-PathToGeoIPMaxmindCountryDataFile=Path to file containing Maxmind ip to country translation.<br>Examples:<br>/usr/local/share/GeoIP/GeoIP.dat<br>/usr/share/GeoIP/GeoIP.dat<br>/usr/share/GeoIP/GeoLite2-Country.mmdb
+PathToGeoIPMaxmindCountryDataFile=Path to file containing Maxmind ip to country translation
 NoteOnPathLocation=Note that your ip to country data file must be inside a directory your PHP can read (Check your PHP open_basedir setup and filesystem permissions).
 YouCanDownloadFreeDatFileTo=You can download a <b>free demo version</b> of the Maxmind GeoIP country file at %s.
 YouCanDownloadAdvancedDatFileTo=You can also download a more <b>complete version, with updates,</b> of the Maxmind GeoIP country file at %s.

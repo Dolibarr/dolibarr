@@ -229,7 +229,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status!=2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
+if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conference->status==2  || !empty($project->id) && $project->status == Project::STATUS_VALIDATED)) {
 	$error = 0;
 
 	$urlback = '';
@@ -259,10 +259,12 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		// Check if attendee already exists (by email and for this event)
 		$confattendee = new ConferenceOrBoothAttendee($db);
 
+		$filter = array();
+
 		if ($type == 'global') {
 			$filter = array('t.fk_project'=>((int) $id), 'customsql'=>'t.email="'.$db->escape($email).'"');
 		}
-		if ($action == 'conf') {
+		if ($type == 'conf') {
 			$filter = array('t.fk_actioncomm'=>((int) $id), 'customsql'=>'t.email="'.$db->escape($email).'"');
 		}
 
@@ -281,7 +283,37 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$confattendee->fk_actioncomm = $id;
 			$confattendee->note_public = $note_public;
 
-			$resultconfattendee = $confattendee->create($user);
+			$confattendee->ip = getUserRemoteIP();
+			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
+
+			// Calculate nb of post for IP
+			$nb_post_ip = 0;
+			if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+				$sql = "SELECT COUNT(ref) as nb_attendee";
+				$sql .= " FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
+				$sql .= " WHERE ip = '".$db->escape($confattendee->ip)."'";
+				$resql = $db->query($sql);
+				if ($resql) {
+					$num = $db->num_rows($resql);
+					$i = 0;
+					while ($i < $num) {
+						$i++;
+						$obj = $db->fetch_object($resql);
+						$nb_post_ip = $obj->nb_attendee;
+					}
+				}
+			}
+
+			$resultconforbooth = -1;
+
+			if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+				$error++;
+				$errmsg .= $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
+				array_push($confattendee->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
+				setEventMessage($errmsg, 'errors');
+			} else {
+				$resultconfattendee = $confattendee->create($user);
+			}
 			if ($resultconfattendee < 0) {
 				$error++;
 				$errmsg .= $confattendee->error;
