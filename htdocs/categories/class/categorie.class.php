@@ -86,7 +86,7 @@ class Categorie extends CommonObject
 		'website_page'        => 11,
 		'ticket'              => 12,
 		'knowledgemanagement' => 13,
-		'order'               => 14
+		'order'               => 16
 	);
 
 	/**
@@ -109,7 +109,7 @@ class Categorie extends CommonObject
 		11 => 'website_page',
 		12 => 'ticket',
 		13 => 'knowledgemanagement',
-		14 => 'order'
+		16 => 'order'
 	);
 
 	/**
