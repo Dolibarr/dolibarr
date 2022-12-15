@@ -19,6 +19,7 @@
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
+ * Copyright (C) 2022       Charlene Benke           	<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -9385,6 +9386,17 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						continue;
 					}
 					if ($values[3]) {
+                        if ($filterorigmodule) {	// If a filter of module origin has been requested
+                            if (strpos($values[3], '@')) {	// This is an external module
+                                if ($filterorigmodule != 'external') {
+                                    continue;
+                                }
+                            } else {	// This looks a core module
+                                if ($filterorigmodule != 'core') {
+                                    continue;
+                                }
+                            }
+                        }
 						$langs->load($values[3]);
 					}
 					if (preg_match('/SUBSTITUTION_([^_]+)/i', $values[2], $reg)) {
