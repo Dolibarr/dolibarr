@@ -24,6 +24,7 @@
  *  \brief      Cron Jobs Card
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -140,6 +141,7 @@ if ($action == 'add') {
 	$object->unitfrequency = GETPOST('unitfrequency', 'int');
 	$object->frequency = GETPOST('nbfrequency', 'int');
 	$object->maxrun = GETPOST('maxrun', 'int');
+	$object->email_alert = GETPOST('email_alert');
 
 	// Add cron task
 	$result = $object->create($user);
@@ -174,6 +176,7 @@ if ($action == 'update') {
 	$object->unitfrequency = GETPOST('unitfrequency', 'int');
 	$object->frequency = GETPOST('nbfrequency', 'int');
 	$object->maxrun = GETPOST('maxrun', 'int');
+	$object->email_alert = GETPOST('email_alert');
 
 	// Add cron task
 	$result = $object->update($user);
@@ -337,7 +340,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr><td class="fieldrequired titlefieldcreate">';
 	print $langs->trans('CronLabel')."</td>";
-	print "<td><input type=\"text\" size=\"30\" name=\"label\" value=\"".$object->label."\" /> ";
+	print '<td><input type="text" class="width200" name="label" value="'.dol_escape_htmltag($object->label).'"> ';
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -353,7 +356,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronModule')."</td><td>";
-	print "<input type=\"text\" class=\"width200\" name=\"module_name\" value=\"".$object->module_name."\" /> ";
+	print '<input type="text" class="width200" name="module_name" value="'.dol_escape_htmltag($object->module_name).'"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronModuleHelp"), 1, 'help');
@@ -362,7 +365,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronClassFile')."</td><td>";
-	print '<input type="text" class="minwidth300" name="classesname" value="'.$object->classesname.'" /> ';
+	print '<input type="text" class="minwidth300" name="classesname" value="'.dol_escape_htmltag($object->classesname).'"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronClassFileHelp"), 1, 'help');
@@ -371,7 +374,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronObject')."</td><td>";
-	print "<input type=\"text\" class=\"width200\" name=\"objectname\" value=\"".$object->objectname."\" /> ";
+	print '<input type="text" class="width200" name="objectname" value="'.dol_escape_htmltag($object->objectname).'"> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronObjectHelp"), 1, 'help');
@@ -380,7 +383,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronMethod')."</td><td>";
-	print '<input type="text" class="minwidth300" name="methodename" value="'.$object->methodename.'" /> ';
+	print '<input type="text" class="minwidth300" name="methodename" value="'.dol_escape_htmltag($object->methodename).'" /> ';
 	print "</td>";
 	print "<td>";
 	print $form->textwithpicto('', $langs->trans("CronMethodHelp"), 1, 'help');
@@ -411,6 +414,15 @@ if (($action == "create") || ($action == "edit")) {
 	$doleditor->Create();
 	print "</td>";
 	print "<td>";
+	print "</td>";
+	print "</tr>\n";
+
+	print '<tr class="blockemailalert"><td>';
+	print $langs->trans('EmailIfError')."</td><td>";
+	print '<input type="text" class="minwidth150" name="email_alert" value="'.dol_escape_htmltag($object->email_alert).'" /> ';
+	print "</td>";
+	print "<td>";
+	//print $form->textwithpicto('', $langs->trans("CronCommandHelp"), 1, 'help');
 	print "</td>";
 	print "</tr>\n";
 
@@ -461,6 +473,16 @@ if (($action == "create") || ($action == "edit")) {
 	}
 	$input .= "<label for=\"frequency_semaine\">".$langs->trans('Weeks')."</label>";
 	print $input;
+
+	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"2678400\" id=\"frequency_month\" ";
+	if ($object->unitfrequency == "2678400") {
+		$input .= ' checked />';
+	} else {
+		$input .= ' />';
+	}
+	$input .= "<label for=\"frequency_month\">".$langs->trans('Monthly')."</label>";
+	print $input;
+
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -471,7 +493,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->datestart)) {
 		print $form->selectDate($object->datestart, 'datestart', 1, 1, '', "cronform");
 	} else {
-		print $form->selectDate(-1, 'datestart', 1, 1, '', "cronform");
+		print $form->selectDate(-1, 'datestart', 1, 1, 1, "cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -483,7 +505,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->dateend)) {
 		print $form->selectDate($object->dateend, 'dateend', 1, 1, '', "cronform");
 	} else {
-		print $form->selectDate(-1, 'dateend', 1, 1, '', "cronform");
+		print $form->selectDate(-1, 'dateend', 1, 1, 1, "cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -496,7 +518,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->priority)) {
 		$priority = $object->priority;
 	}
-	print "<td><input type=\"text\" size=\"2\" name=\"priority\" value=\"".$priority."\" /> ";
+	print '<td><input type="text" class="width50" name="priority" value="'.$priority.'" /> ';
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -508,7 +530,7 @@ if (($action == "create") || ($action == "edit")) {
 		$maxrun = $object->maxrun;
 	}
 	print $langs->trans('CronMaxRun')."</td>";
-	print "<td><input type=\"text\" size=\"2\" name=\"maxrun\" value=\"".$maxrun."\" /> ";
+	print '<td><input type="text" class="width50" name="maxrun" value="'.$maxrun.'" /> ';
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -516,12 +538,12 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('CronDtNextLaunch');
-	print ' ('.$langs->trans('CronFrom').')';
+	//print ' ('.$langs->trans('CronFrom').')';
 	print "</td><td>";
 	if (!empty($object->datenextrun)) {
 		print $form->selectDate($object->datenextrun, 'datenextrun', 1, 1, '', "cronform");
 	} else {
-		print $form->selectDate(-1, 'datenextrun', 1, 1, '', "cronform");
+		print $form->selectDate(-1, 'datenextrun', 1, 1, '', "cronform", 1, 1);
 	}
 	print "</td>";
 	print "<td>";
@@ -545,8 +567,15 @@ if (($action == "create") || ($action == "edit")) {
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/cron/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
+	$reg = array();
+	if (preg_match('/:(.*)$/', $object->label, $reg)) {
+		$langs->load($reg[1]);
+	}
+
+	$labeltoshow =  preg_replace('/:.*$/', '', $object->label);
+
 	$morehtmlref = '<div class="refidno">';
-	$morehtmlref .= $langs->trans($object->label);
+	$morehtmlref .= $langs->trans($labeltoshow);
 	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
@@ -570,32 +599,32 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronModule')."</td><td>";
-	print $object->module_name;
+	print dol_escape_htmltag($object->module_name);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronClassFile')."</td><td>";
-	print $object->classesname;
+	print dol_escape_htmltag($object->classesname);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronObject')."</td><td>";
-	print $object->objectname;
+	print dol_escape_htmltag($object->objectname);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronMethod')."</td><td>";
-	print $object->methodename;
+	print dol_escape_htmltag($object->methodename);
 	print "</td></tr>";
 
 	print '<tr class="blockmethod"><td>';
 	print $langs->trans('CronArgs')."</td><td>";
-	print $object->params;
+	print dol_escape_htmltag($object->params);
 	print "</td></tr>";
 
 	print '<tr class="blockcommand"><td>';
 	print $langs->trans('CronCommand')."</td><td>";
-	print $object->command;
+	print dol_escape_htmltag($object->command);
 	print "</td></tr>";
 
 	print '<tr><td>';
@@ -605,7 +634,12 @@ if (($action == "create") || ($action == "edit")) {
 	}
 	print "</td></tr>";
 
-	if (!empty($conf->multicompany->enabled)) {
+	print '<tr class="blockemailalert"><td>';
+	print $langs->trans('EmailIfError')."</td><td>";
+	print dol_escape_htmltag($object->email_alert);
+	print "</td></tr>";
+
+	if (isModEnabled('multicompany')) {
 		print '<tr><td>';
 		print $langs->trans('Entity')."</td><td>";
 		if (empty($object->entity)) {
@@ -639,6 +673,9 @@ if (($action == "create") || ($action == "edit")) {
 	}
 	if ($object->unitfrequency == "604800") {
 		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Weeks');
+	}
+	if ($object->unitfrequency == "2678400") {
+		print $langs->trans('CronEach')." ".($object->frequency)." ".$langs->trans('Month');
 	}
 	print "</td></tr>";
 
@@ -737,7 +774,7 @@ if (($action == "create") || ($action == "edit")) {
 
 	print '<tr><td>';
 	print $langs->trans('CronLastOutput')."</td><td>";
-	print nl2br($object->lastoutput);
+	print '<span class="small">'.nl2br($object->lastoutput).'</span>';
 	print "</td></tr>";
 
 	print '</table>';
@@ -750,7 +787,7 @@ if (($action == "create") || ($action == "edit")) {
 	print dol_get_fiche_end();
 
 
-	print "\n\n<div class=\"tabsAction\">\n";
+	print "\n\n".'<div class="tabsAction">'."\n";
 	if (!$user->rights->cron->create) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("Edit").'</a>';
 	} else {

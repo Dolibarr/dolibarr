@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -64,7 +64,6 @@ class FichinterRec extends Fichinter
 	public $number;
 	public $date;
 	public $amount;
-	public $remise;
 	public $tva;
 	public $total;
 
@@ -222,7 +221,7 @@ class FichinterRec extends Fichinter
 					$result_insert = $this->addline(
 						$fichintsrc->lines[$i]->desc,
 						$fichintsrc->lines[$i]->duration,
-						$fichintsrc->lines[$i]->datei,
+						$fichintsrc->lines[$i]->date,
 						$fichintsrc->lines[$i]->rang,
 						$fichintsrc->lines[$i]->subprice,
 						$fichintsrc->lines[$i]->qty,
@@ -235,7 +234,7 @@ class FichinterRec extends Fichinter
 						0,
 						$fichintsrc->lines[$i]->product_type,
 						$fichintsrc->lines[$i]->special_code,
-						$fichintsrc->lines[$i]->label,
+						!empty($fichintsrc->lines[$i]->label) ? $fichintsrc->lines[$i]->label : "",
 						$fichintsrc->lines[$i]->fk_unit
 					);
 
@@ -305,10 +304,10 @@ class FichinterRec extends Fichinter
 				$this->note_private = $obj->note_private;
 				$this->note_public			= $obj->note_public;
 				$this->user_author			= $obj->fk_user_author;
-				$this->model_pdf			= $obj->model_pdf;
-				$this->modelpdf				= $obj->model_pdf; // deprecated
-				$this->rang = $obj->rang;
-				$this->special_code = $obj->special_code;
+				$this->model_pdf			= !empty($obj->model_pdf) ? $obj->model_pdf : "";
+				$this->modelpdf				= !empty($obj->model_pdf) ? $obj->model_pdf : ""; // deprecated
+				$this->rang = !empty($obj->rang) ? $obj->rang : "";
+				$this->special_code = !empty($obj->special_code) ? $obj->special_code : "";
 				$this->frequency			= $obj->frequency;
 				$this->unit_frequency = $obj->unit_frequency;
 				$this->date_when			= $this->db->jdate($obj->date_when);
@@ -350,8 +349,8 @@ class FichinterRec extends Fichinter
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT l.rowid, l.fk_product, l.product_type as product_type, l.label as custom_label, l.description, ';
-		$sql .= ' l.price, l.qty, l.tva_tx, l.remise_percent, l.subprice, l.duree, ';
+		$sql = 'SELECT l.rowid, l.fk_product, l.product_type as product_type, l.label as custom_label, l.description,';
+		$sql .= ' l.price, l.qty, l.tva_tx, l.remise_percent, l.subprice, l.duree, l.date,';
 		$sql .= ' l.total_ht, l.total_tva, l.total_ttc,';
 		$sql .= ' l.rang, l.special_code,';
 		$sql .= ' l.fk_unit, p.ref as product_ref, p.fk_product_type as fk_product_type,';
@@ -381,19 +380,16 @@ class FichinterRec extends Fichinter
 				$line->qty = $objp->qty;
 				$line->duree = $objp->duree;
 				$line->duration = $objp->duree;
-				$line->datei = $objp->date;
+				$line->date = $objp->date;
 				$line->subprice = $objp->subprice;
 				$line->tva_tx = $objp->tva_tx;
 				$line->remise_percent = $objp->remise_percent;
-				$line->fk_remise_except = $objp->fk_remise_except;
+				$line->fk_remise_except = !empty($objp->fk_remise_except) ? $objp->fk_remise_except : "";
 				$line->fk_product = $objp->fk_product;
-				$line->date_start = $objp->date_start;
-				$line->date_end = $objp->date_end;
-				$line->info_bits = $objp->info_bits;
+				$line->info_bits = !empty($objp->info_bits) ? $objp->info_bits : "";
 				$line->total_ht = $objp->total_ht;
 				$line->total_tva = $objp->total_tva;
 				$line->total_ttc = $objp->total_ttc;
-				$line->code_ventilation = $objp->fk_code_ventilation;
 				$line->rang = $objp->rang;
 				$line->special_code = $objp->special_code;
 				$line->fk_unit = $objp->fk_unit;
@@ -460,7 +456,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *  @param		string		$desc               Description de la ligne
 	 *  @param		integer		$duration           Durée
-	 *  @param		string	    $datei				Date
+	 *  @param		string	    $date				Date
 	 *  @param	    int			$rang			    Position of line
 	 *  @param		double		$pu_ht			    Unit price without tax (> 0 even for credit note)
 	 *  @param		double		$qty			 	Quantity
@@ -477,7 +473,7 @@ class FichinterRec extends Fichinter
 	 *  @param		string		$fk_unit			Unit
 	 *  @return		int			 				    <0 if KO, Id of line if OK
 	 */
-	public function addline($desc, $duration, $datei, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $special_code = 0, $label = '', $fk_unit = null)
+	public function addline($desc, $duration, $date, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $special_code = 0, $label = '', $fk_unit = null)
 	{
 		global $mysoc;
 
@@ -520,6 +516,8 @@ class FichinterRec extends Fichinter
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 
+			$pu_ht = $tabprice[3];
+
 			$product_type = $type;
 			if ($fk_product) {
 				$product = new Product($this->db);
@@ -539,8 +537,7 @@ class FichinterRec extends Fichinter
 			$sql .= ", fk_product";
 			$sql .= ", product_type";
 			$sql .= ", remise_percent";
-			//$sql.= ", subprice";
-			$sql .= ", remise";
+			$sql .= ", subprice";
 			$sql .= ", total_ht";
 			$sql .= ", total_tva";
 			$sql .= ", total_ttc";
@@ -551,7 +548,7 @@ class FichinterRec extends Fichinter
 			$sql .= (int) $this->id;
 			$sql .= ", ".(!empty($label) ? "'".$this->db->escape($label)."'" : "null");
 			$sql .= ", ".(!empty($desc) ? "'".$this->db->escape($desc)."'" : "null");
-			$sql .= ", ".(!empty($datei) ? "'".$this->db->idate($datei)."'" : "null");
+			$sql .= ", ".(!empty($date) ? "'".$this->db->idate($date)."'" : "null");
 			$sql .= ", ".$duration;
 			//$sql.= ", ".price2num($pu_ht);
 			//$sql.= ", ".(!empty($qty)? $qty :(!empty($duration)? $duration :"null"));
@@ -559,8 +556,7 @@ class FichinterRec extends Fichinter
 			$sql .= ", ".(!empty($fk_product) ? $fk_product : "null");
 			$sql .= ", ".$product_type;
 			$sql .= ", ".(!empty($remise_percent) ? $remise_percent : "null");
-			//$sql.= ", '".price2num($pu_ht)."'";
-			$sql .= ", null";
+			$sql.= ", '".price2num($pu_ht)."'";
 			$sql .= ", '".price2num($total_ht)."'";
 			$sql .= ", '".price2num($total_tva)."'";
 			$sql .= ", '".price2num($total_ttc)."'";

@@ -41,12 +41,12 @@ function recruitmentCandidaturePrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
-		$head[$h][0] = dol_buildpath("/recruitment/recruitmentrating_card.php", 1).'?id='.$object->id;
-		$head[$h][1] = $langs->trans("Rating");
-		$head[$h][2] = 'rating';
-		$h++;
-	}
+	//  if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	//      $head[$h][0] = dol_buildpath("/recruitment/recruitmentrating_card.php", 1).'?id='.$object->id;
+	//      $head[$h][1] = $langs->trans("Rating");
+	//      $head[$h][2] = 'rating';
+	//      $h++;
+	//  }
 
 	if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
 		$nbNote = 0;

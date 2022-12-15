@@ -29,7 +29,6 @@ create table llx_reception
   fk_projet             integer  DEFAULT NULL,
   
   ref_ext               varchar(30),					-- reference into an external system (not used by dolibarr)
-  ref_int				varchar(30),					-- reference into an internal system (deprecated)
   ref_supplier          varchar(128),					-- supplier number
   
   date_creation         datetime,						-- date de creation

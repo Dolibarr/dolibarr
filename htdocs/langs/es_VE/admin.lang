@@ -5,7 +5,6 @@ ConfirmPurgeSessions=¿De verdad quieres purgar todas las sesiones? Esto descone
 SetupArea=Parametrizaje
 NotConfigured=Módulo / Aplicación no configurada
 GenericMaskCodes3=Cualquier otro carácter en la máscara se quedará sin cambios. <br>No se permiten espacios <br>
-InitEmptyBarCode=Init value for the %s empty barcodes
 Module1780Desc=Crear etiquetas/Categoría (Productos, clientes, proveedores, contactos y miembros)
 Permission254=Modificar la contraseña de otros usuarios
 Permission255=Eliminar o desactivar otros usuarios
