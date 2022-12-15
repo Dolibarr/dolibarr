@@ -172,6 +172,9 @@ class modCategorie extends DolibarrModules
 		if (!empty($conf->commande->enabled)) {
 			$typeexample .= ($typeexample ? " / " : "")."16=Order";
 		}
+		if (!empty($conf->commande->enabled) && !empty($conf->fournisseur->enabled)) {
+			$typeexample .= ($typeexample ? " / " : "")."17=Supplier order";
+		}
 
 		// Definition of vars
 		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.type'=>"Type", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategoryID", 'pcat.label'=>"ParentCategoryLabel");
@@ -493,6 +496,21 @@ class modCategorie extends DolibarrModules
 			]
 		);
 
+		// 17 Supplier order
+		++$r;
+		$this->exportTagLinks(
+			$r,
+			17,
+			'commande',
+			['commande', 'commande', 'export'],
+			[
+				'rowid' => [
+					'name' => 'OrderID',
+					'type' => 'Numeric'
+				]
+			]
+		);
+
 		// Imports
 		//--------
 
@@ -509,7 +527,7 @@ class modCategorie extends DolibarrModules
 			'ca.label'=>"Label*", 'ca.type'=>"Type*", 'ca.description'=>"Description",
 			'ca.fk_parent' => 'ParentCategory'
 		);
-		$this->import_regex_array[$r] = array('ca.type'=>'^(0|1|2|3|4|5|6|7|8|9|10|11|14|15|16)$');
+		$this->import_regex_array[$r] = array('ca.type'=>'^(0|1|2|3|4|5|6|7|8|9|10|11|14|15|16|17)$');
 		$this->import_convertvalue_array[$r] = array(
 			'ca.fk_parent' => array(
 				'rule'          => 'fetchidfromcodeandlabel',
@@ -706,6 +724,18 @@ class modCategorie extends DolibarrModules
 				'/commande/class/commande.class.php',
 				'Commande',
 				'Commande'
+			);
+		}
+
+		// 17 Supplier order
+		if (!empty($conf->commande->enabled) && !empty($conf->fournisseur->enabled)) {
+			++$r;
+			$this->importTagLinks(
+				$r,
+				17,
+				'/fourn/class/fournisseur.commande.class.php',
+				'CommandeFournisseur',
+				'CommandeFournisseur'
 			);
 		}
 	}
