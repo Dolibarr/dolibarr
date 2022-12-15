@@ -26,6 +26,7 @@
  */
 
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -85,7 +86,7 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</
 
 print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToPayByBankTransfer").'</td>';
 print '<td class="right">';
-print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer">';
+print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer">';
 print $bprev->nbOfInvoiceToPay('bank-transfer');
 print '</a>';
 print '</td></tr>';
@@ -108,7 +109,7 @@ $sql .= " ".MAIN_DB_PREFIX."societe as s";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-$sql .= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 $sql .= " AND f.total_ttc > 0";
@@ -182,7 +183,8 @@ if ($resql) {
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoSupplierInvoiceToWithdraw", $langs->transnoentitiesnoconv("BankTransfer")).'</span></td></tr>';
+		$titlefortab = $langs->transnoentitiesnoconv("BankTransfer");
+		print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoSupplierInvoiceToWithdraw", $titlefortab, $titlefortab).'</span></td></tr>';
 	}
 	print "</table></div><br>";
 } else {

@@ -31,7 +31,7 @@ class mailing_thirdparties extends MailingTargets
 
 	public $require_module = array("societe"); // This module allows to select by categories must be also enabled if category module is not activated
 
-	public $enabled = '$conf->societe->enabled';
+	public $enabled = 'isModEnabled("societe")';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -226,7 +226,7 @@ class mailing_thirdparties extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql .= " WHERE s.email <> ''";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
-
+		$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = s.email and mu.entity = ".((int) $conf->entity).")";
 		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
@@ -316,11 +316,13 @@ class mailing_thirdparties extends MailingTargets
 		$s .= '</select>';
 		$s .= ajax_combobox("filter_status_thirdparties");
 
-		// Choose language
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-		$formadmin = new FormAdmin($this->db);
-		$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
-		$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang_thirdparties', 0, null, 1, 0, 0, '', 0, 0, 0, null, 1);
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
+			// Choose language
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+			$formadmin = new FormAdmin($this->db);
+			$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
+			$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang_thirdparties', 0, null, 1, 0, 0, '', 0, 0, 0, null, 1);
+		}
 
 		return $s;
 	}

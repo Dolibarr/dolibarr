@@ -29,6 +29,7 @@
  *      \brief      Member's type setup
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -80,6 +81,7 @@ $duration_unit = GETPOST('duration_unit', 'alpha');
 $vote = GETPOST("vote", "int");
 $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
+$caneditamount = GETPOSTINT("caneditamount");
 
 // Security check
 $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
@@ -117,16 +119,17 @@ if ($cancel) {
 	}
 }
 
-if ($action == 'add' && $user->rights->adherent->configurer) {
+if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	$object->label = trim($label);
 	$object->morphy = trim($morphy);
 	$object->status = (int) $status;
 	$object->subscription = (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
+	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
-	$object->note = trim($comment);
 	$object->note_public = trim($comment);
+	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
 	$object->vote = (int) $vote;
 
@@ -140,9 +143,10 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	} else {
-		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
+		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle = '".$db->escape($object->label)."'";
 		$sql .= " WHERE entity IN (".getEntity('member_type').")";
 		$result = $db->query($sql);
+		$num = null;
 		if ($result) {
 			$num = $db->num_rows($result);
 		}
@@ -170,16 +174,18 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 if ($action == 'update' && $user->rights->adherent->configurer) {
 	$object->fetch($rowid);
 
-	$object->oldcopy = clone $object;
+	$object->oldcopy = dol_clone($object);
+
 	$object->label= trim($label);
 	$object->morphy	= trim($morphy);
 	$object->status	= (int) $status;
 	$object->subscription = (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
+	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
-	$object->note = trim($comment);
 	$object->note_public = trim($comment);
+	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
 	$object->vote = (boolean) trim($vote);
 
@@ -231,7 +237,7 @@ llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
 if (!$rowid && $action != 'create' && $action != 'edit') {
 	//print dol_get_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.vote, d.statut as status, d.morphy";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.statut as status, d.morphy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
 
@@ -278,6 +284,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<th class="center">'.$langs->trans("MembersNature").'</th>';
 		print '<th class="center">'.$langs->trans("SubscriptionRequired").'</th>';
 		print '<th class="center">'.$langs->trans("Amount").'</th>';
+		print '<th class="center">'.$langs->trans("CanEditAmountShort").'</th>';
 		print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
 		print '<th class="center">'.$langs->trans("Status").'</th>';
 		print '<th>&nbsp;</th>';
@@ -294,6 +301,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$membertype->status = $objp->status;
 			$membertype->subscription = $objp->subscription;
 			$membertype->amount = $objp->amount;
+			$membertype->caneditamount = $objp->caneditamount;
 
 			print '<tr class="oddeven">';
 			print '<td class="nowraponall">';
@@ -312,6 +320,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
+			print '<td class="center">'.yn($objp->caneditamount).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
 			print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 			if ($user->rights->adherent->configurer) {
@@ -380,6 +389,10 @@ if ($action == 'create') {
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>';
 	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : price($amount)).'">';
+	print '</td></tr>';
+
+	print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
+	print $form->selectyesno("caneditamount", GETPOSTISSET('caneditamount') ? GETPOST('caneditamount') : 0, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
@@ -455,6 +468,10 @@ if ($rowid > 0) {
 		print ((is_null($object->amount) || $object->amount === '') ? '' : '<span class="amount">'.price($object->amount).'</span>');
 		print '</tr>';
 
+		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
+		print yn($object->caneditamount);
+		print '</td></tr>';
+
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print yn($object->vote);
 		print '</tr>';
@@ -489,19 +506,19 @@ if ($rowid > 0) {
 		print '<div class="tabsAction">';
 
 		// Edit
-		if ($user->rights->adherent->configurer) {
+		if ($user->hasRight('adherent', 'configurer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		// Add
-		if ($user->rights->adherent->configurer && !empty($object->status)) {
+		if ($user->hasRight('adherent', 'configurer')&& !empty($object->status)) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&token='.newToken().'&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoAddMember")).'">'.$langs->trans("AddMember").'</a></div>';
 		}
 
 		// Delete
-		if ($user->rights->adherent->configurer) {
+		if ($user->hasRight('adherent', 'configurer')) {
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
 		}
 
@@ -705,7 +722,7 @@ if ($rowid > 0) {
 				*/
 
 				// Moral/Physique
-				print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
+				print "<td>".$adh->getmorphylib($objp->morphy, 1)."</td>\n";
 
 				// EMail
 				print "<td>".dol_print_email($objp->email, 0, 0, 1)."</td>\n";
@@ -725,9 +742,9 @@ if ($rowid > 0) {
 					}
 					print '</td>';
 				} else {
-					print '<td class="nowrap left">';
+					print '<td class="nowrap center">';
 					if (!empty($objp->subscription)) {
-						print $langs->trans("SubscriptionNotReceived");
+						print '<span class="opacitymedium">'.$langs->trans("SubscriptionNotReceived").'</span>';
 						if ($objp->status > 0) {
 							print " ".img_warning();
 						}
@@ -739,11 +756,11 @@ if ($rowid > 0) {
 
 				// Actions
 				print '<td class="center">';
-				if ($user->rights->adherent->creer) {
+				if ($user->hasRight('adherent', 'creer')) {
 					print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
 				}
-				if ($user->rights->adherent->supprimer) {
-					print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resign&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
+				if ($user->hasRight('adherent', 'supprimer')) {
+					print '<a class="marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=resiliate&token='.newToken().'">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
 				}
 				print "</td>";
 
@@ -815,6 +832,10 @@ if ($rowid > 0) {
 		print '">';
 		print '</td></tr>';
 
+		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmountDetail")).'</td><td>';
+		print $form->selectyesno("caneditamount", $object->caneditamount, 1);
+		print '</td></tr>';
+
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 		print $form->selectyesno("vote", $object->vote, 1);
 		print '</td></tr>';
@@ -826,7 +847,7 @@ if ($rowid > 0) {
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('comment', $object->note, '', 280, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
+		$doleditor = new DolEditor('comment', $object->note_public, '', 220, 'dolibarr_notes', '', false, true, empty($conf->fckeditor->enabled) ? false : $conf->fckeditor->enabled, 15, '90%');
 		$doleditor->Create();
 		print "</td></tr>";
 

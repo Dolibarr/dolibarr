@@ -107,7 +107,7 @@ class ConferenceOrBooth extends ActionComm
 		'ref' => array('type'=>'integer', 'label'=>'Ref', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>2, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax125', 'help'=>"OrganizationEvenLabelName", 'showoncombobox'=>'1',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"OrganizationEventLinkToThirdParty", 'picto'=>'company', 'css'=>'tdoverflowmax150 maxwidth500'),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:t.usage_organize_event=1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'picto'=>'project', 'css'=>'tdoverflowmax150 maxwidth500'),
+		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:t.usage_organize_event=1', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'picto'=>'project', 'css'=>'tdoverflowmax150 maxwidth500'),
 		'note' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1),
 		'fk_action' => array('type'=>'sellist:c_actioncomm:libelle:id::module LIKE (\'%@eventorganization\')', 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1, 'css'=>'width300'),
 		'datep' => array('type'=>'datetime', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'2',),
@@ -152,7 +152,7 @@ class ConferenceOrBooth extends ActionComm
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['id']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -444,8 +444,8 @@ class ConferenceOrBooth extends ActionComm
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->eventorganization->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->eventorganization->eventorganization_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->eventorganization->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->eventorganization->eventorganization_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -468,8 +468,8 @@ class ConferenceOrBooth extends ActionComm
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->eventorganization->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->eventorganization->eventorganization_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->eventorganization->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->eventorganization->eventorganization_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -492,8 +492,8 @@ class ConferenceOrBooth extends ActionComm
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->eventorganization->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->eventorganization->eventorganization_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->eventorganization->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->eventorganization->eventorganization_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;

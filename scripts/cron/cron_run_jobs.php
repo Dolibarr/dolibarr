@@ -92,7 +92,7 @@ $hookmanager->initHooks(array('cli'));
 $now = dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=".$userlogin." ***** ".dol_print_date($now, 'dayhourrfc')." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc')." *****\n";
 
 // Check module cron is activated
 if (empty($conf->cron->enabled)) {
@@ -164,6 +164,10 @@ $user->getrights();
 if (isset($argv[3]) && $argv[3]) {
 	$id = $argv[3];
 }
+$forcequalified = 0;
+if (isset($argv[4]) && $argv[4] == '--force') {
+	$forcequalified = 1;
+}
 
 // create a jobs object
 $object = new Cronjob($db);
@@ -185,25 +189,17 @@ if ($result < 0) {
 	exit(-1);
 }
 
-$qualifiedjobs = array();
-foreach ($object->lines as $val) {
-	if (!verifCond($val->test)) {
-		continue;
-	}
-	$qualifiedjobs[] = $val;
-}
-
 // TODO Duplicate code. This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
 
-$nbofjobs = count($qualifiedjobs);
+$nbofjobs = count($object->lines);
 $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
-if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
+if (is_array($object->lines) && (count($object->lines) > 0)) {
 	$savconf = dol_clone($conf);
 
 	// Loop over job
-	foreach ($qualifiedjobs as $line) {
+	foreach ($object->lines as $line) {
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
@@ -245,8 +241,12 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 			}
 		}
 
+		if (!verifCond($line->test)) {
+			continue;
+		}
+
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
-		if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now)) {
+		if ($forcequalified || (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))) {
 			echo " - qualified";
 
 			dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
@@ -313,7 +313,7 @@ exit(0);
  */
 function usage($path, $script_file)
 {
-	print "Usage: ".$script_file." securitykey userlogin|'firstadmin' [cronjobid]\n";
+	print "Usage: ".$script_file." securitykey userlogin|'firstadmin' [cronjobid] [--force]\n";
 	print "The script return 0 when everything worked successfully.\n";
 	print "\n";
 	print "On Linux system, you can have cron jobs ran automatically by adding an entry into cron.\n";
@@ -321,4 +321,6 @@ function usage($path, $script_file)
 	print "30 3 * * * ".$path.$script_file." securitykey userlogin > ".DOL_DATA_ROOT."/".$script_file.".log\n";
 	print "For example, to run pending tasks every 5mn, you can add this line:\n";
 	print "*/5 * * * * ".$path.$script_file." securitykey userlogin > ".DOL_DATA_ROOT."/".$script_file.".log\n";
+	print "\n";
+	print "The option --force allow to bypass the check on date of execution so job will be executed even if date is not yet reached.\n";
 }

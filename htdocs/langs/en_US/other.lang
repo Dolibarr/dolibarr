@@ -181,6 +181,7 @@ SizeUnitfoot=foot
 SizeUnitpoint=point
 BugTracker=Bug tracker
 SendNewPasswordDesc=This form allows you to request a new password. It will be sent to your email address.<br>Change will become effective once you click on the confirmation link in the email.<br>Check your inbox.
+EnterNewPasswordHere=Enter your new password here 
 BackToLoginPage=Back to login page
 AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br>Contact your system administrator if you want to change your password.
 EnableGDLibraryDesc=Install or enable GD library on your PHP installation to use this option.
@@ -311,10 +312,10 @@ ExternalSiteURL=External Site URL of HTML iframe content
 ExternalSiteModuleNotComplete=Module ExternalSite was not configured properly.
 ExampleMyMenuEntry=My menu entry
 
-# FTP
+# ftp
 FTPClientSetup=FTP or SFTP Client module setup
-NewFTPClient=New FTP/FTPS connection setup
-FTPArea=FTP/FTPS Area
+NewFTPClient=New FTP/SFTP connection setup
+FTPArea=FTP/SFTP Area
 FTPAreaDesc=This screen shows a view of an FTP et SFTP server.
 SetupOfFTPClientModuleNotComplete=The setup of the FTP or SFTP client module seems to be incomplete
 FTPFeatureNotSupportedByYourPHP=Your PHP does not support FTP or SFTP functions
@@ -325,3 +326,9 @@ FTPFailedToRemoveDir=Failed to remove directory <b>%s</b>: check permissions and
 FTPPassiveMode=Passive mode
 ChooseAFTPEntryIntoMenu=Choose a FTP/SFTP site from the menu...
 FailedToGetFile=Failed to get files %s
+ErrorFTPNodisconnect=Error to disconnect FTP/SFTP server
+FileWasUpload=File <b>%s</b> was uploaded
+FTPFailedToUploadFile=Failed to upload the file <b>%s</b>.
+AddFolder=Create folder
+FileWasCreateFolder=Folder <b>%s</b> has been created
+FTPFailedToCreateFolder=Failed to create folder <b>%s</b>.

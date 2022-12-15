@@ -31,6 +31,7 @@
  *	\brief      Page reporting
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
@@ -301,7 +302,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	if (!empty($date_start) && !empty($date_end)) {
 		$sql .= " AND f.doc_date >= '".$db->idate($date_start)."' AND f.doc_date <= '".$db->idate($date_end)."'";
 	}
-	$sql .= " GROUP BY pcg_type DESC";
+	$sql .= " GROUP BY pcg_type";
 	if ($showaccountdetail == 'no') {
 		$sql .= ", name, socid";	// group by "accounting group" (INCOME/EXPENSE), then "customer".
 	}
@@ -1136,7 +1137,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 */
 	//$conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY = 1;
 
-	if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && isModEnabled('banque') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+	if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && isModEnabled("banque") && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 		$subtotal_ht = 0;
 		$subtotal_ttc = 0;
 
@@ -1165,7 +1166,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			}
 			print '<tr class="oddeven">';
 			print '<td>&nbsp;</td>';
-			print "<td>".$langs->trans("Debit")."</td>\n";
+			print "<td>".$langs->trans("AccountingDebit")."</td>\n";
 			print '<td class="right">';
 			if ($modecompta == 'CREANCES-DETTES') {
 				print '<span class="amount">'.price(-$obj->amount).'</span>';
@@ -1184,7 +1185,7 @@ if ($modecompta == 'BOOKKEEPING') {
 				$total_ttc_income += $obj->amount;
 			}
 			print '<tr class="oddeven"><td>&nbsp;</td>';
-			print "<td>".$langs->trans("Credit")."</td>\n";
+			print "<td>".$langs->trans("AccountingCredit")."</td>\n";
 			print '<td class="right">';
 			if ($modecompta == 'CREANCES-DETTES') {
 				print '<span class="amount">'.price($obj->amount).'</span>';

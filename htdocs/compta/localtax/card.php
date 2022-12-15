@@ -23,6 +23,7 @@
  *		\brief      Page of second or third tax payments (like IRPF for spain, ...)
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -174,10 +175,10 @@ if ($action == 'create') {
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
 
-	if (isModEnabled('banque')) {
+	if (isModEnabled("banque")) {
 		// Type payment
 		print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-		$form->select_types_paiements(GETPOST("paiementtype"), "paiementtype", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx');
+		print $form->select_types_paiements(GETPOST("paiementtype"), "paiementtype", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx', 1);
 		print "</td>\n";
 		print "</tr>";
 
@@ -243,7 +244,7 @@ if ($id) {
 
 	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
-	if (isModEnabled('banque')) {
+	if (isModEnabled("banque")) {
 		if ($object->fk_account > 0) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->fk_bank);

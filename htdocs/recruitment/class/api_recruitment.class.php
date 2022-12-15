@@ -441,7 +441,7 @@ class Recruitment extends DolibarrApi
 		// $this->jobposition->abc = sanitizeVal($this->jobposition->abc, 'alphanohtml');
 
 		if ($this->jobposition->update(DolibarrApiAccess::$user, false) > 0) {
-			return $this->get($id);
+			return $this->getJobPosition($id);
 		} else {
 			throw new RestException(500, $this->jobposition->error);
 		}
@@ -484,7 +484,7 @@ class Recruitment extends DolibarrApi
 		// $this->jobposition->abc = sanitizeVal($this->jobposition->abc, 'alphanohtml');
 
 		if ($this->candidature->update(DolibarrApiAccess::$user, false) > 0) {
-			return $this->get($id);
+			return $this->getCandidature($id);
 		} else {
 			throw new RestException(500, $this->candidature->error);
 		}
