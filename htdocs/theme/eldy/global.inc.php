@@ -6554,6 +6554,10 @@ span.noborderoncategories {
   display: none;
 }
 
+div.multi-select-menu[role="menu"] {
+	min-width: 220px !important;
+}
+
 .multi-select-menu input {
   margin-right: 0.3em;
   vertical-align: 0.1em;
