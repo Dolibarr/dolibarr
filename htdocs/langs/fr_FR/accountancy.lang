@@ -357,6 +357,7 @@ Modelcsv_openconcerto=Export pour OpenConcerto (Test)
 Modelcsv_configurable=Export configurable
 Modelcsv_FEC=Export FEC
 Modelcsv_FEC2=Export FEC (avec dates enregistrement et document inversées)
+Modelcsv_FEC_ZIP=Export FEC + Documents (ZIP)
 Modelcsv_Sage50_Swiss=Export pour Sage 50 Suisse
 Modelcsv_winfic=Export pour Winfic - eWinfic - WinSis Compta
 Modelcsv_Gestinumv3=Export vers Gestinum (v3)

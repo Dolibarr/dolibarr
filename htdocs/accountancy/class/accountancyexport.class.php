@@ -36,6 +36,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 
 /**
@@ -65,6 +66,7 @@ class AccountancyExport
 	// Generic FEC after that
 	public static $EXPORT_TYPE_FEC = 1000;
 	public static $EXPORT_TYPE_FEC2 = 1010;
+	public static $EXPORT_TYPE_FEC_ZIP = 1001;
 
 	/**
 	 * @var DoliDB	Database handler
@@ -133,6 +135,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_GESTIMUMV5 => $langs->trans('Modelcsv_Gestinumv5'),
 			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
 			self::$EXPORT_TYPE_FEC2 => $langs->trans('Modelcsv_FEC2'),
+			self::$EXPORT_TYPE_FEC_ZIP => $langs->trans('Modelcsv_FEC_ZIP'),
 			self::$EXPORT_TYPE_ISUITEEXPERT => 'Export iSuite Expert',
 		);
 
@@ -173,6 +176,7 @@ class AccountancyExport
 			self::$EXPORT_TYPE_GESTIMUMV5 => 'gestimumv5',
 			self::$EXPORT_TYPE_FEC => 'fec',
 			self::$EXPORT_TYPE_FEC2 => 'fec2',
+			self::$EXPORT_TYPE_FEC_ZIP => 'fec_zip',
 			self::$EXPORT_TYPE_ISUITEEXPERT => 'isuiteexpert',
 		);
 
@@ -264,6 +268,10 @@ class AccountancyExport
 					'label' => $langs->trans('Modelcsv_FEC2'),
 					'ACCOUNTING_EXPORT_FORMAT' => 'txt',
 				),
+				self::$EXPORT_TYPE_FEC_ZIP => array(
+					'label' => $langs->trans('Modelcsv_FEC_ZIP'),
+					'ACCOUNTING_EXPORT_FORMAT' => 'zip',
+				),
 				self::$EXPORT_TYPE_ISUITEEXPERT => array(
 					'label' => 'iSuite Expert',
 					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
@@ -299,6 +307,9 @@ class AccountancyExport
 		switch ($formatexportset) {
 			case self::$EXPORT_TYPE_FEC:
 				$mime = 'text/tab-separated-values';
+				break;
+			case self::$EXPORT_TYPE_FEC_ZIP:
+				$mime = 'application/zip';
 				break;
 			default:
 				$mime = 'text/csv';
@@ -385,6 +396,9 @@ class AccountancyExport
 				break;
 			case self::$EXPORT_TYPE_FEC2:
 				$this->exportFEC2($TData);
+				break;
+			case self::$EXPORT_TYPE_FEC_ZIP:
+				$this->exportFECZIP($TData);
 				break;
 			case self::$EXPORT_TYPE_ISUITEEXPERT :
 				$this->exportiSuiteExpert($TData);
@@ -1072,6 +1086,204 @@ class AccountancyExport
 			}
 		}
 	}
+
+
+	/**
+	 * Export format : FEC + Documents as ZIP file
+	 *
+	 * @param array $objectLines data
+	 * @return void
+	 */
+	public function exportFECZIP($objectLines)
+	{
+        global $langs, $conf, $mysoc;
+
+		$datestart = $dateend = '';
+        $separator = "\t";
+        $end_line = "\r\n";
+
+        $dirfortmpfile = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->comptabilite->dir_temp);
+        if (empty($dirfortmpfile)) {
+            setEventMessages($langs->trans("ErrorNoAccountingModuleEnabled"), null, 'errors');
+            return;
+        }
+
+        if (!extension_loaded('zip')) {
+            setEventMessages('PHPZIPExtentionNotLoaded', null, 'errors');
+			return;
+        } else {
+            dol_mkdir($dirfortmpfile);
+            $zipname = $dirfortmpfile.'/'.dol_print_date(dol_now(), 'dayrfc', 'tzuserrel') . '_export.zip';
+            dol_delete_file($zipname);
+
+            $zip = new ZipArchive();
+            $res = $zip->open($zipname, ZipArchive::OVERWRITE | ZipArchive::CREATE);
+            if (! $res) {
+                dol_syslog("exportFECZIP::ZipArchive error", LOG_ERR);
+                return;
+            }
+        }
+
+		$fectxt = "";
+		$fectxt .= "JournalCode".$separator;
+		$fectxt .= "JournalLib".$separator;
+		$fectxt .= "EcritureNum".$separator;
+		$fectxt .= "EcritureDate".$separator;
+		$fectxt .= "CompteNum".$separator;
+		$fectxt .= "CompteLib".$separator;
+		$fectxt .= "CompAuxNum".$separator;
+		$fectxt .= "CompAuxLib".$separator;
+		$fectxt .= "PieceRef".$separator;
+		$fectxt .= "PieceDate".$separator;
+		$fectxt .= "EcritureLib".$separator;
+		$fectxt .= "Debit".$separator;
+		$fectxt .= "Credit".$separator;
+		$fectxt .= "EcritureLet".$separator;
+		$fectxt .= "DateLet".$separator;
+		$fectxt .= "ValidDate".$separator;
+		$fectxt .= "Montantdevise".$separator;
+		$fectxt .= "Idevise".$separator;
+		$fectxt .= "DateLimitReglmt".$separator;
+		$fectxt .= "NumFacture";
+		$fectxt .= $end_line;
+
+		foreach ($objectLines as $line) {
+			if ($line->debit == 0 && $line->credit == 0) {
+				//unset($array[$line]);
+			} else {
+				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
+				$date_document = dol_print_date($line->doc_date, '%Y%m%d');
+				$date_lettering = dol_print_date($line->date_lettering, '%Y%m%d');
+				$date_validation = dol_print_date($line->date_validation, '%Y%m%d');
+				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
+
+				if($date_document < $datestart || $datestart == '') {
+					$datestart = $date_document;
+				}
+				if($date_document > $dateend || $dateend == '') {
+					$dateend = $date_document;
+				}
+
+				$refInvoice = '';
+				$pdfDocumentFullPath = '';
+				if ($line->doc_type == 'customer_invoice') {
+					// Customer invoice
+					require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+					$invoice = new Facture($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref;
+
+					$objectref = dol_sanitizeFileName($invoice->ref);
+					$dir = $conf->facture->dir_output.'/'.get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice');
+					$pdfDocumentFullPath = $dir."/".$objectref.".pdf";
+
+				} elseif ($line->doc_type == 'supplier_invoice') {
+					// Supplier invoice
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+					$invoice = new FactureFournisseur($this->db);
+					$invoice->fetch($line->fk_doc);
+
+					$refInvoice = $invoice->ref_supplier;
+
+					$objectref = dol_sanitizeFileName($invoice->ref);
+					$dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier').$objectref;
+					$pdfDocumentFullPath = $dir."/".$objectref.".pdf";
+				}
+
+				// FEC:JournalCode
+				$fectxt .= $line->code_journal . $separator;
+
+				// FEC:JournalLib
+				$fectxt .= dol_string_unaccent($langs->transnoentities($line->journal_label)) . $separator;
+
+				// FEC:EcritureNum
+				$fectxt .= $line->piece_num . $separator;
+
+				// FEC:EcritureDate
+				$fectxt .= $date_document . $separator;
+
+				// FEC:CompteNum
+				$fectxt .= $line->numero_compte . $separator;
+
+				// FEC:CompteLib
+				$fectxt .= dol_string_unaccent($line->label_compte) . $separator;
+
+				// FEC:CompAuxNum
+				$fectxt .= $line->subledger_account . $separator;
+
+				// FEC:CompAuxLib
+				$fectxt .= dol_string_unaccent($line->subledger_label) . $separator;
+
+				// FEC:PieceRef
+				$fectxt .= $line->doc_ref . $separator;
+
+				// FEC:PieceDate
+				$fectxt .= dol_string_unaccent($date_creation) . $separator;
+
+				// FEC:EcritureLib
+				// Clean label operation to prevent problem on export with tab separator & other character
+				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
+				$fectxt .= dol_string_unaccent($line->label_operation) . $separator;
+
+				// FEC:Debit
+				$fectxt .= price2fec($line->debit) . $separator;
+
+				// FEC:Credit
+				$fectxt .= price2fec($line->credit) . $separator;
+
+				// FEC:EcritureLet
+				$fectxt .= $line->lettering_code . $separator;
+
+				// FEC:DateLet
+				$fectxt .= $date_lettering . $separator;
+
+				// FEC:ValidDate
+				$fectxt .= $date_validation . $separator;
+
+				// FEC:Montantdevise
+				$fectxt .= $line->multicurrency_amount . $separator;
+
+				// FEC:Idevise
+				$fectxt .= $line->multicurrency_code . $separator;
+
+				// FEC_suppl:DateLimitReglmt
+				$fectxt .= $date_limit_payment . $separator;
+
+				// FEC_suppl:NumFacture
+				// Clean ref invoice to prevent problem on export with tab separator & other character
+				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
+				$refInvoiceFEC = dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
+				$fectxt .= $refInvoiceFEC;
+
+				//ajout du fichier dans l'archive
+				dol_syslog("exportFECZIP::ZipArchive add $pdfDocumentFullPath to $refInvoiceFEC ...", LOG_ERR);
+
+                if (file_exists($pdfDocumentFullPath)) {
+                    $zip->addFile($pdfDocumentFullPath, $refInvoiceFEC . '.PDF');
+                }else {
+					dol_syslog("exportFECZIP::ZipArchive add $pdfDocumentFullPath does not exists !", LOG_ERR);
+				}
+
+
+				$fectxt .= $end_line;
+			}
+		}
+
+		$zip->addFromString($mysoc->idprof1 . 'FEC' . $datestart . $dateend . '.TXT', $fectxt);
+		$zip->close();
+
+		// Then download the zipped file.
+		header('Content-Type: application/zip');
+		header('Content-disposition: attachment; filename='.basename($zipname));
+		header('Content-Length: '.filesize($zipname));
+		readfile($zipname);
+
+		dol_delete_file($zipname);
+
+		exit();
+	}
+
 
 	/**
 	 * Export format : FEC2
