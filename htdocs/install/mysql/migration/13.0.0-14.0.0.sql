@@ -727,3 +727,6 @@ ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_
 
 -- Increase size of action params for email collector (v15)
 ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
+
+-- Fix field message must be mediumtext
+ALTER TABLE llx_ticket MODIFY COLUMN message mediumtext;
