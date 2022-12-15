@@ -1460,7 +1460,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			// Categories
 			if (isModEnabled('categorie')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=14", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=15", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
 			}
 		}
 
