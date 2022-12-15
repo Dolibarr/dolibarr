@@ -118,7 +118,7 @@ class Evaluation extends CommonObject
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'default'=>0, 'visible'=>5, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '6' => 'Closed'),),
 		'date_eval' => array('type'=>'date', 'label'=>'DateEval', 'enabled'=>'1', 'position'=>502, 'notnull'=>1, 'visible'=>1,),
-		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'User', 'enabled'=>'1', 'position'=>504, 'notnull'=>1, 'visible'=>1,),
+		'fk_user' => array('type'=>'integer:User:user/class/user.class.php:0', 'label'=>'User', 'enabled'=>'1', 'position'=>504, 'notnull'=>1, 'visible'=>1,),
 		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'Job', 'enabled'=>'1', 'position'=>505, 'notnull'=>1, 'visible'=>1,),
 	);
 	public $rowid;
@@ -182,7 +182,7 @@ class Evaluation extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		$this->db = $db;
 
@@ -192,6 +192,8 @@ class Evaluation extends CommonObject
 		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
+
+		if(empty($user->rights->hrm->evaluation->readall)) $this->fields['fk_user']['type'].= ':rowid IN('.implode(", ", $user->getAllChildIds(1)).')';
 
 		$this->date_eval = dol_now();
 

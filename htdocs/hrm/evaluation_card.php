@@ -82,7 +82,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $permissiontoread = $user->rights->hrm->evaluation->read;
 $permissiontoadd = $user->rights->hrm->evaluation->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontovalidate = $user->rights->hrm->evaluation_advance->validate;
+$permissiontovalidate = (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->hrm->evaluation_advance->validate) || (empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $permissiontoadd);
 $permissiontoClose = $user->rights->hrm->evaluation->write;
 $permissiontodelete = $user->rights->hrm->evaluation->delete/* || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT)*/;
 $permissiondellink = $user->rights->hrm->evaluation->write; // Used by the include of actions_dellink.inc.php

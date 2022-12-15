@@ -131,6 +131,7 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $permissiontoread = $user->rights->hrm->evaluation->read;
+$permissiontoreadall = $user->rights->hrm->evaluation->readall;
 $permissiontoadd = $user->rights->hrm->evaluation->write;
 $permissiontodelete = $user->rights->hrm->evaluation->delete;
 
@@ -146,7 +147,7 @@ if ($user->socid > 0) accessforbidden();
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
 //if (empty($conf->hrm->enabled)) accessforbidden();
-//if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) accessforbidden();
 
 
 
@@ -273,6 +274,11 @@ foreach ($search as $key => $val) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+
+if(empty($permissiontoreadall)) {
+	$sql.= " AND t.fk_user IN(".implode(", ", $user->getAllChildIds(1)).") ";
+}
+
 //$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
