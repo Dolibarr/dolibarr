@@ -44,27 +44,46 @@ class Dolresource extends CommonObject
 	 */
 	public $picto = 'resource';
 
+
+	/**
+	 * @var int ID
+	 */
+	public $fk_code_type_resource;
+
+	public $type_label;
+
+	public $description;
+
+	public $fk_country;
+
+
+	// Variable for a link of resource
+
+	/**
+	 * @var int ID
+	 */
 	public $resource_id;
 	public $resource_type;
 	public $element_id;
 	public $element_type;
 	public $busy;
 	public $mandatory;
-
 	/**
 	 * @var int ID
 	 */
 	public $fk_user_create;
-
-	public $type_label;
 	public $tms = '';
 
+	/**
+	 * @var array	Cache of type of resources. TODO Use $conf->cache['type_of_resources'] instead
+	 */
 	public $cache_code_type_resource = array();
 
 	/**
 	 * @var Dolresource Clone of object before changing it
 	 */
 	public $oldcopy;
+
 
 	/**
 	 *  Constructor
@@ -262,10 +281,9 @@ class Dolresource extends CommonObject
 			$this->country_id = 0;
 		}
 
+		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (empty($this->oldcopy)) {
-			$org = new self($this->db);
-			$org->fetch($this->id);
-			$this->oldcopy = $org;
+			$this->oldcopy = dol_clone($this);
 		}
 
 		// Update request
@@ -340,10 +358,10 @@ class Dolresource extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Load object in memory from database
+	 *    Load data of link in memory from database
 	 *
-	 *    @param      int	$id          id object
-	 *    @return     int         <0 if KO, >0 if OK
+	 *    @param      int	$id         Id of link element_resources
+	 *    @return     int         		<0 if KO, >0 if OK
 	 */
 	public function fetch_element_resource($id)
 	{
@@ -528,7 +546,7 @@ class Dolresource extends CommonObject
 		if ($limit) {
 			$sql .= $this->db->plimit($limit, $offset);
 		}
-		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 
 		$this->lines = array();
 		$resql = $this->db->query($sql);

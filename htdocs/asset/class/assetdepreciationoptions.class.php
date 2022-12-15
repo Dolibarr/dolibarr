@@ -163,8 +163,8 @@ class AssetDepreciationOptions extends CommonObject
 				}
 
 				// Unset required option (notnull) if field disabled
-				if (!empty($mode_info['enabled_field'])) {
-					$info = explode(':', $mode_info['enabled_field']);
+				if (!empty($field_info['enabled_field'])) {
+					$info = explode(':', $field_info['enabled_field']);
 					if ($this->deprecation_options[$info[0]][$info[1]] != $info[2] && isset($this->fields[$field_key]['notnull'])) {
 						unset($this->fields[$field_key]['notnull']);
 					}

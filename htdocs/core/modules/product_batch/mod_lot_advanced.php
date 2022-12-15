@@ -132,7 +132,7 @@ class mod_lot_advanced extends ModeleNumRefBatch
 	 * 	Return next free value
 	 *
 	 *  @param	Societe		$objsoc	    Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
+	 *  @param  Productlot	$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
@@ -143,6 +143,15 @@ class mod_lot_advanced extends ModeleNumRefBatch
 
 		// We get cursor rule
 		$mask = getDolGlobalString('LOT_ADVANCED_MASK');
+		$filter = '';
+		if (getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && !empty($object->fk_product)) {
+			$product = new Product($db);
+			$res = $product->fetch($object->fk_product);
+			if ($res > 0 && !empty($product->batch_mask)) {
+				$mask = $product->batch_mask;
+				$filter = '';
+			}
+		}
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
@@ -151,7 +160,7 @@ class mod_lot_advanced extends ModeleNumRefBatch
 
 		$date = dol_now();
 
-		$numFinal = get_next_value($db, $mask, 'product_lot', 'batch', '', null, $date);
+		$numFinal = get_next_value($db, $mask, 'product_lot', 'batch', $filter, null, $date);
 
 		return  $numFinal;
 	}

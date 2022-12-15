@@ -19,26 +19,34 @@
  */
 
 /**
- *	\file       htdocs/fourn/paiement/card.php
- *	\ingroup    facture, fournisseur
- *	\brief      Tab to show a payment of a supplier invoice
- *	\remarks	Fichier presque identique a compta/paiement/card.php
+ *    \file       htdocs/fourn/paiement/card.php
+ *    \ingroup    facture, fournisseur
+ *    \brief      Tab to show a payment of a supplier invoice
+ *    \remarks    Fichier presque identique a compta/paiement/card.php
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
-$langs->loadLangs(array('bills', 'banks', 'companies', 'suppliers'));
 
-$id = GETPOST('id', 'int');
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'bills', 'companies', 'suppliers'));
+
+
+// Get Parameters
+$id 		= GETPOST('id', 'int');
 $action		= GETPOST('action', 'alpha');
-$confirm	= GETPOST('confirm', 'alpha');
+$confirm 	= GETPOST('confirm', 'alpha');
 
+// Initialize objects
 $object = new PaiementFourn($db);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('supplierpaymentcard', 'globalcard'));
 
@@ -220,7 +228,7 @@ if ($result > 0) {
 
 	$allow_delete = 1;
 	// Bank account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		if ($object->fk_account) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->bank_line);
@@ -366,9 +374,9 @@ if ($result > 0) {
 	if ($user->socid == 0 && $action == '') {
 		if ($user->rights->fournisseur->facture->supprimer) {
 			if ($allow_delete) {
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
+				print dolGetButtonAction($title_button, $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
 			}
 		}
 	}

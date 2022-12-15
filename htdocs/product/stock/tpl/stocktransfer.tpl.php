@@ -93,7 +93,7 @@ print '<tr><td class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td c
 print '</tr>';
 
 // Serial / Eat-by date
-if (!empty($conf->productbatch->enabled) &&
+if (isModEnabled('productbatch') &&
 (($object->element == 'product' && $object->hasbatch())
 || ($object->element == 'stock'))
 ) {
@@ -104,7 +104,7 @@ if (!empty($conf->productbatch->enabled) &&
 		print '<input type="text" name="batch_number_bis" size="40" disabled="disabled" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
 		print '<input type="hidden" name="batch_number" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
 	} else {
-		print '<input type="text" name="batch_number" class="minwidth300" value="'.(GETPOST('batch_number') ? GETPOST('batch_number') : $pdluo->batch).'">';
+		print img_picto('', 'barcode', 'class="pictofixedwidth"').'<input type="text" name="batch_number" class="minwidth300 widthcentpercentminusx maxwidth300" value="'.(GETPOST('batch_number') ? GETPOST('batch_number') : $pdluo->batch).'">';
 	}
 	print '</td>';
 	print '</tr>';

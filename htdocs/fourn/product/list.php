@@ -21,18 +21,24 @@
  */
 
 /**
- *		\file       htdocs/fourn/product/list.php
- *		\ingroup    produit
- *		\brief      Page to list supplier products and services
+ *    \file       htdocs/fourn/product/list.php
+ *    \ingroup    product
+ *    \brief      Page to list supplier products and services
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.class.php';
 
-$langs->loadLangs(array("products", "suppliers"));
 
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'suppliers'));
+
+
+// Get Parameters
 $sref = GETPOST('sref', 'alphanohtml');
 $sRefSupplier = GETPOST('srefsupplier');
 $snom = GETPOST('snom', 'alphanohtml');
@@ -72,7 +78,8 @@ if (empty($user->rights->produit->lire) && empty($user->rights->service->lire)) 
 	accessforbidden();
 }
 
-$permissiontoadd = ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'));
+// Permissions
+$permissiontoadd = ($user->hasRight('product', 'read') || $user->hasRight('service', 'read'));
 
 
 /*
@@ -110,6 +117,7 @@ if (empty($reshook)) {
 		$search_array_options = array();
 	}
 }
+
 
 /*
  * View
@@ -152,6 +160,9 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 $sql .= $hookmanager->resPrint;
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
@@ -186,20 +197,32 @@ if ($reshook < 0) {
 }
 $sql .= $hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
-
-// Count total nb of records without orderby and limit
+// Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 dol_syslog("fourn/product/list.php:", LOG_DEBUG);
 $resql = $db->query($sql);

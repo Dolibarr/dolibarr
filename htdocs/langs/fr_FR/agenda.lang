@@ -87,6 +87,7 @@ SupplierInvoiceSentByEMail=Facture fournisseur %s envoyée par email
 ShippingSentByEMail=Bon d'expédition %s envoyé par email
 ShippingValidated= Expédition %s validée
 InterventionSentByEMail=Intervention %s envoyé par email
+ProjectSentByEMail=Projet %s envoyé par email
 ProposalDeleted=Proposition commerciale supprimée
 OrderDeleted=Commande supprimée
 InvoiceDeleted=Facture supprimée

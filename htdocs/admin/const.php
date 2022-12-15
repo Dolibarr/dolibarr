@@ -24,8 +24,10 @@
  *	\brief      Admin page to define miscellaneous constants
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -185,12 +187,12 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print getTitleFieldOfList('Name', 0, $_SERVER['PHP_SELF'], 'name', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList('Name', 0, $_SERVER['PHP_SELF'], 'name', '', $param, '', $sortfield, $sortorder, '') . "\n";
 print getTitleFieldOfList("Value", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 print getTitleFieldOfList("Comment", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-print getTitleFieldOfList('DateModificationShort', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
-if (!empty($conf->multicompany->enabled) && !$user->entity) {
-	print getTitleFieldOfList('Entity', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
+print getTitleFieldOfList('DateModificationShort', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ') . "\n";
+if (isModEnabled('multicompany') && !$user->entity) {
+	print getTitleFieldOfList('Entity', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ') . "\n";
 }
 print getTitleFieldOfList("", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 print "</tr>\n";
@@ -211,14 +213,14 @@ print '</td>';
 print '<td>';
 print '</td>';
 // Limit to superadmin
-if (!empty($conf->multicompany->enabled) && !$user->entity) {
+if (isModEnabled('multicompany') && !$user->entity) {
 	print '<td>';
-	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
+	print '<input type="text" class="flat" size="1" name="entity" value="' . $conf->entity . '">';
 	print '</td>';
 	print '<td class="center">';
 } else {
 	print '<td class="center">';
-	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+	print '<input type="hidden" name="entity" value="' . $conf->entity . '">';
 }
 print '<input type="submit" class="button button-add small" name="add" value="'.$langs->trans("Add").'">';
 print "</td>\n";
@@ -255,16 +257,18 @@ if ($result) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 
+		$value = dolDecrypt($obj->value);
+
 		print "\n";
 
-		print '<tr class="oddeven" data-checkbox-id="check_'.$i.'"><td>'.$obj->name.'</td>'."\n";
+		print '<tr class="oddeven" data-checkbox-id="check_'.$i.'"><td>'.dol_escape_htmltag($obj->name).'</td>'."\n";
 
 		// Value
 		print '<td>';
 		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
 		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
-		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'">';
+		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.htmlspecialchars($value).'">';
 		print '</td>';
 
 		// Note
@@ -278,14 +282,14 @@ if ($result) {
 		print '</td>';
 
 		// Entity limit to superadmin
-		if (!empty($conf->multicompany->enabled) && !$user->entity) {
+		if (isModEnabled('multicompany') && !$user->entity) {
 			print '<td>';
-			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
+			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 			print '</td>';
 			print '<td class="center">';
 		} else {
 			print '<td class="center">';
-			print '<input type="hidden" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
+			print '<input type="hidden" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 		}
 
 		if ($conf->use_javascript_ajax) {

@@ -69,6 +69,11 @@ class SMTPs
 	private $_smtpsPW = null;
 
 	/**
+	 * Token in case we use OAUTH2
+	 */
+	private $_smtpsToken = null;
+
+	/**
 	 * Who sent the Message
 	 * This can be defined via a INI file or via a setter method
 	 */
@@ -565,13 +570,13 @@ class SMTPs
 			}
 
 			// Default authentication method is LOGIN
-			if (empty($conf->global->MAIL_SMTP_AUTH_TYPE)) {
-				$conf->global->MAIL_SMTP_AUTH_TYPE = 'LOGIN';
+			if (empty($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE)) {
+				$conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE = 'LOGIN';
 			}
 
 			// Send Authentication to Server
 			// Check for errors along the way
-			switch ($conf->global->MAIL_SMTP_AUTH_TYPE) {
+			switch ($conf->global->MAIN_MAIL_SMTPS_AUTH_TYPE) {
 				case 'NONE':
 					// Do not send the 'AUTH type' message. For test purpose, if you don't need authentication, it is better to not enter login/pass into setup.
 					$_retVal = true;
@@ -583,9 +588,10 @@ class SMTPs
 					break;
 				case 'XOAUTH2':
 					// "user=$email\1auth=Bearer $token\1\1"
-					$token = 'xxx';
-					$xxxx = "user=".$this->_smtpsID."\1auth=Bearer ".$token."\1\1";
-					$_retVal = $this->socket_send_str('AUTH XOAUTH2 '.base64_encode($xxxx), '235');
+					$user = $this->_smtpsID;
+					$token = $this->_smtpsToken;
+					$initRes = "user=".$user."\001auth=Bearer ".$token."\001\001";
+					$_retVal = $this->socket_send_str('AUTH XOAUTH2 '.base64_encode($initRes), '235');
 					if (!$_retVal) {
 						$this->_setErr(130, 'Error when asking for AUTH XOAUTH2');
 					}
@@ -631,7 +637,7 @@ class SMTPs
 		// Connect to Server
 		if ($this->socket = $this->_server_connect()) {
 			// If a User ID *and* a password is given, assume Authentication is desired
-			if (!empty($this->_smtpsID) && !empty($this->_smtpsPW)) {
+			if (!empty($this->_smtpsID) && (!empty($this->_smtpsPW) || !empty($this->_smtpsToken))) {
 				// Send the RFC2554 specified EHLO.
 				$_retVal = $this->_server_authenticate();
 			} else {
@@ -921,6 +927,27 @@ class SMTPs
 	public function getPW()
 	{
 		return $this->_smtpsPW;
+	}
+
+	/**
+	 * User token for OAUTH2
+	 *
+	 * @param 	string 	$_strToken 	User token
+	 * @return 	void
+	 */
+	public function setToken($_strToken)
+	{
+		$this->_smtpsToken = $_strToken;
+	}
+
+	/**
+	 * Retrieves the User token for OAUTH2
+	 *
+	 * @return 	string 		User token for OAUTH2
+	 */
+	public function getToken()
+	{
+		return $this->_smtpsToken;
 	}
 
 	/**
@@ -1550,11 +1577,14 @@ class SMTPs
 					// loop through all attachments
 					foreach ($_content as $_file => $_data) {
 						$content .= "--".$this->_getBoundary('mixed')."\r\n"
-						.  'Content-Disposition: attachment; filename="'.$_data['fileName'].'"'."\r\n"
-						.  'Content-Type: '.$_data['mimeType'].'; name="'.$_data['fileName'].'"'."\r\n"
-						.  'Content-Transfer-Encoding: base64'."\r\n"
-						.  'Content-Description: '.$_data['fileName']."\r\n";
-
+						. 'Content-Disposition: attachment; filename="'.$_data['fileName'].'"'."\r\n"
+						. 'Content-Type: '.$_data['mimeType'].'; name="'.$_data['fileName'].'"'."\r\n"
+						. 'Content-Transfer-Encoding: base64'."\r\n"
+						. 'Content-Description: '.$_data['fileName']."\r\n";
+						if (!empty($_data['cid'])) {
+							$content .= "X-Attachment-Id: ".$_data['cid']."\r\n";
+							$content .= "Content-ID: <".$_data['cid'].">\r\n";
+						}
 						if ($this->getMD5flag()) {
 							$content .= 'Content-MD5: '.$_data['md5']."\r\n";
 						}
@@ -1568,9 +1598,9 @@ class SMTPs
 						$content .= "--".$this->_getBoundary('related')."\r\n"; // always related for an inline image
 
 						$content .= 'Content-Type: '.$_data['mimeType'].'; name="'.$_data['imageName'].'"'."\r\n"
-						.  'Content-Transfer-Encoding: base64'."\r\n"
-						.  'Content-Disposition: inline; filename="'.$_data['imageName'].'"'."\r\n"
-						.  'Content-ID: <'.$_data['cid'].'> '."\r\n";
+						. 'Content-Transfer-Encoding: base64'."\r\n"
+						. 'Content-Disposition: inline; filename="'.$_data['imageName'].'"'."\r\n"
+						. 'Content-ID: <'.$_data['cid'].'> '."\r\n";
 
 						if ($this->getMD5flag()) {
 							$content .= 'Content-MD5: '.$_data['md5']."\r\n";
@@ -1637,9 +1667,10 @@ class SMTPs
 	 * @param string $strContent  File data to attach to message
 	 * @param string $strFileName File Name to give to attachment
 	 * @param string $strMimeType File Mime Type of attachment
+	 * @param string $strCid      File Cid of attachment (if defined, to be shown inline)
 	 * @return void
 	 */
-	public function setAttachment($strContent, $strFileName = 'unknown', $strMimeType = 'unknown')
+	public function setAttachment($strContent, $strFileName = 'unknown', $strMimeType = 'unknown', $strCid = '')
 	{
 		if ($strContent) {
 			$strContent = rtrim(chunk_split(base64_encode($strContent), 76, "\r\n")); // 76 max is defined into http://tools.ietf.org/html/rfc2047
@@ -1647,6 +1678,7 @@ class SMTPs
 			$this->_msgContent['attachment'][$strFileName]['mimeType'] = $strMimeType;
 			$this->_msgContent['attachment'][$strFileName]['fileName'] = $strFileName;
 			$this->_msgContent['attachment'][$strFileName]['data']     = $strContent;
+			$this->_msgContent['attachment'][$strFileName]['cid']      = $strCid;		// If defined, it means this attachment must be shown inline
 
 			if ($this->getMD5flag()) {
 				$this->_msgContent['attachment'][$strFileName]['md5'] = dol_hash($strContent, 3);
@@ -1866,7 +1898,7 @@ class SMTPs
 		}
 
 		if (!(substr($server_response, 0, 3) == $response)) {
-			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse: $server_response");
+			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse:".$server_response);
 			$_retVal = false;
 		}
 
