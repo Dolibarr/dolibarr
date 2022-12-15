@@ -20,9 +20,9 @@
  */
 
 /**
- *    \file       skill_card.php
+ *    \file       htdocs/hrm/skill_card.php
  *    \ingroup    hrm
- *    \brief      Page to create/edit/view skill
+ *    \brief      Page to create/edit/view skills
  */
 
 
@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "other", 'products'));
+$langs->loadLangs(array('hrm', 'other', 'products'));  // why products?
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -47,7 +47,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'skillcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-//$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOST('lineid', 'int');
 
 // Initialize technical objects
 $object = new Skill($db);
@@ -77,9 +77,9 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-
-$permissiontoread = $user->rights->hrm->all->read;
-$permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+// Permissions
+$permissiontoread   = $user->rights->hrm->all->read;
+$permissiontoadd    = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->hrm->all->delete;
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1] . '/skill';
 
@@ -332,7 +332,7 @@ if (($id || $ref) && $action == 'edit') {
 				//                  $value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $sk->$key;
 				//              }
 				//var_dump($val.' '.$key.' '.$value);
-				if ($val['noteditable']) {
+				if (!empty($val['noteditable'])) {
 					print $sk->showOutputField($val, $key, $value, '', '', '', 0);
 				} else {
 					/** @var Skilldet $sk */
@@ -577,7 +577,7 @@ if ($action != "create" && $action != "edit") {
 	$title = $langs->transnoentitiesnoconv("Skilldets");
 	$morejs = array();
 	$morecss = array();
-
+	$nbtotalofrecords = 0;
 
 	// Build and execute select
 	// --------------------------------------------------------------------
@@ -626,8 +626,10 @@ if ($action != "create" && $action != "edit") {
 		print '<input type="hidden" name="id" value="' . $id . '">';
 	}
 
-	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . $user->rowid;
+	$param_fk = "&fk_skill=" . $id . "&fk_user_creat=" . (!empty($user->rowid) ? $user->rowid :0);
 	$backtopage = dol_buildpath('/hrm/skill_card.php', 1) . '?id=' . $id;
+	$param = "";
+	$massactionbutton = "";
 	//$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/hrm/skilldet_card.php', 1) . '?action=create&backtopage=' . urlencode($_SERVER['PHP_SELF']) . $param_fk . '&backtopage=' . $backtopage, '', $permissiontoadd);
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_' . $object->picto, 0, "", '', '', 0, 0, 1);
@@ -688,7 +690,7 @@ if ($action != "create" && $action != "edit") {
 		//          $cssforfield .= ($cssforfield ? ' ' : '') . 'right';
 		//      }
 		if (!empty($arrayfields['t.' . $key]['checked'])) {
-			print getTitleFieldOfList($arrayfields['t.' . $key]['label'], 0, $_SERVER['PHP_SELF'], 't.' . $key, '', $param, ($cssforfield ? 'class="' . $cssforfield . '"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield . ' ' : '')) . "\n";
+			print getTitleFieldOfList($arrayfields['t.' . $key]['label'], 0, $_SERVER['PHP_SELF'], 't.' . $key, '', $param, (!empty($cssforfield) ? 'class="' . $cssforfield . '"' : ''), $sortfield, $sortorder, (!empty($cssforfield) ? $cssforfield . ' ' : '')) . "\n";
 		}
 	}
 	print '<td></td>';
@@ -814,8 +816,7 @@ if ($action != "create" && $action != "edit") {
 		print '<tr><td colspan="' . $colspan . '" class="opacitymedium">' . $langs->trans("NoRecordFound") . '</td></tr>';
 	}
 
-
-	$db->free($resql);
+	if (!empty($resql)) $db->free($resql);
 
 	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $objectline); // Note that $action and $objectline may have been modified by hook

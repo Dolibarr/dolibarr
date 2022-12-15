@@ -345,8 +345,8 @@ class Tva extends CommonObject
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->fk_account = $obj->fk_account;
-				$this->fk_type = $obj->fk_type;
-				$this->rappro  = $obj->rappro;
+				$this->fk_type = empty($obj->fk_type) ? "" : $obj->fk_type;
+				$this->rappro  = empty($obj->rappro) ? "" : $obj->rappro;
 			}
 			$this->db->free($resql);
 
@@ -572,11 +572,11 @@ class Tva extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Amount"));
 			return -4;
 		}
-		if (isModEnabled('banque') && (empty($this->accountid) || $this->accountid <= 0)) {
+		if (isModEnabled("banque") && (empty($this->accountid) || $this->accountid <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Account"));
 			return -5;
 		}
-		if (isModEnabled('banque') && (empty($this->type_payment) || $this->type_payment <= 0)) {
+		if (isModEnabled("banque") && (empty($this->type_payment) || $this->type_payment <= 0)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
 			return -5;
 		}
@@ -633,7 +633,7 @@ class Tva extends CommonObject
 
 			if ($this->id > 0) {
 				$ok = 1;
-				if (isModEnabled('banque') && !empty($this->amount)) {
+				if (isModEnabled("banque") && !empty($this->amount)) {
 					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 

@@ -192,7 +192,6 @@ LibraryToBuildPDF=Bibliotheek om PDF bestanden te genereren.
 RefreshPhoneLink=Herladen link
 SetAsDefault=Instellen als standaard
 BarcodeInitForProductsOrServices=Mass barcode init of reset voor producten of diensten
-InitEmptyBarCode=Init value for the %s empty barcodes
 NoDetails=Geen aanvullende details in voettekst
 DisplayCompanyInfo=Bedrijfsadres weergeven
 DisplayCompanyManagers=Namen van beheerders weergeven

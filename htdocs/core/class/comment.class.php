@@ -71,19 +71,19 @@ class Comment extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @var int Entity
+	 * @var int 		Entity
 	 */
 	public $entity;
 
 	/**
-	 * @var string import key
+	 * @var string 		Import key
 	 */
 	public $import_key;
 
 	public $comments = array();
 
 	/**
-	 * @var Comment Object oldcopy
+	 * @var Comment 	Object oldcopy
 	 */
 	public $oldcopy;
 

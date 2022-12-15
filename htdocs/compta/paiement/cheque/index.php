@@ -24,6 +24,7 @@
  *		\brief      Home page for cheque receipts
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -52,7 +53,7 @@ print load_fiche_titre($langs->trans("ChequesArea"), '', $checkdepositstatic->pi
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-$sql = "SELECT count(b.rowid)";
+$sql = "SELECT count(b.rowid) as nb";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= " WHERE ba.rowid = b.fk_account";
@@ -69,13 +70,14 @@ print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
 print "</tr>\n";
 
 if ($resql) {
-	if ($row = $db->fetch_row($resql)) {
-		$num = $row[0];
+	$num = '';
+	if ($obj = $db->fetch_object($resql)) {
+		$num = $obj->nb;
 	}
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
 	print '<td class="right">';
-	print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
+	print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
 	print '</td></tr>';
 	print "</table>\n";
 } else {

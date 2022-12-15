@@ -354,11 +354,31 @@ class Productcustomerprice extends CommonObject
 	 * @param 	int 	$limit 		page
 	 * @param 	int 	$offset 	offset
 	 * @param 	array 	$filter 	Filter for select
+	 * @deprecated since dolibarr v17 use fetchAll
 	 * @return 	int 				<0 if KO, >0 if OK
 	 */
 	public function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
 	{
 		// phpcs:enable
+
+		dol_syslog(get_class($this)."::fetch_all is deprecated, use fetchAll instead", LOG_NOTICE);
+
+		return $this->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
+	}
+
+	/**
+	 * Load all customer prices in memory from database
+	 *
+	 * @param 	string 	$sortorder 	order
+	 * @param 	string 	$sortfield 	field
+	 * @param 	int 	$limit 		page
+	 * @param 	int 	$offset 	offset
+	 * @param 	array 	$filter 	Filter for select
+	 * @return 	int 				<0 if KO, >0 if OK
+	 * @since dolibarr v17
+	 */
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
+	{
 		global $langs;
 
 		if (empty($sortfield)) {
@@ -421,7 +441,7 @@ class Productcustomerprice extends CommonObject
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
 
-		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->lines = array();
@@ -832,7 +852,7 @@ class Productcustomerprice extends CommonObject
 					't.fk_product' => $this->fk_product, 't.fk_soc' => $obj->rowid
 				);
 
-				$result = $prodsocprice->fetch_all('', '', 0, 0, $filter);
+				$result = $prodsocprice->fetchAll('', '', 0, 0, $filter);
 				if ($result < 0) {
 					$error++;
 					$this->error = $prodsocprice->error;

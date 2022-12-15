@@ -22,6 +22,7 @@
  *		\brief      Page to export database
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -168,9 +169,10 @@ print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
 print '</td>';
 print '</tr>';
-print '<tr class="oddeven nohover"><td style="padding-left: 8px" class="nohover">';
+print '<tr class="oddeven nohover"><td style="class="nohover">';
 
 print '<table class="centpercent noborderbottom">';
+
 print '<tr>';
 print '<td class="tdtop nopaddingleftimp">';
 
@@ -195,10 +197,31 @@ print '</fieldset>';
 print '</div>';
 
 print '</td>';
-print '<td class="tdtop nopaddingrightimp">';
+print '</tr>';
 
+print '<tr>';
+print '<td class="tdtop nopaddingleftimp">';
 
-print '<div id="div_container_sub_exportoptions">';
+print '<div class="centpercent center"><a id="lnk" href="javascript:hideoptions()"> '.$langs->trans("ShowAdvancedOptions").'...</a></div>';
+
+print '<script type="text/javascript">
+
+function hideoptions(){
+	const lnk = document.getElementById("lnk");
+	const div = document.getElementById("div_container_sub_exportoptions");
+
+  	if (div.style.display === "none") {
+    	div.style.display = "block";
+		lnk.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("HideAdvancedoptions")).'";
+  	} else {
+    	div.style.display = "none";
+		lnk.innerText="'.dol_escape_js($langs->transnoentitiesnoconv("ShowAdvancedOptions")).'...";
+	}
+}
+</script>';
+
+print '<div id="div_container_sub_exportoptions" style="display: none;">';
+print '<br>';
 if (in_array($type, array('mysql', 'mysqli'))) {
 	print "<!--  Fieldset mysqldump -->\n";
 	print '<fieldset id="mysql_options"><legend>'.$langs->trans("MySqlExportParameters").'</legend>';

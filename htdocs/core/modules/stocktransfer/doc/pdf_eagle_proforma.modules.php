@@ -72,7 +72,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 	 * @var array Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.5 = array(5, 5)
 	 */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -145,10 +145,10 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
-		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
-		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
-		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
+		$this->marge_gauche = getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10);
+		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
+		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
+		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->option_logo = 1; // Display logo
 		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
@@ -227,7 +227,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 
 				$objphoto->fetch($object->lines[$i]->fk_product);
 				//var_dump($objphoto->ref);exit;
-				if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+				if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 					$pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
 					$pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
 				} else {
@@ -241,7 +241,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 						$dir = $conf->product->dir_output.'/'.$midir;
 
 						foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
-							if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES)) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+							if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 								if ($obj['photo_vignette']) {
 									$filename = $obj['photo_vignette'];
 								} else {
@@ -326,7 +326,9 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfOrderTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
+					$pdf->SetCompression(false);
+				}
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
@@ -350,7 +352,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 
 
 				$tab_top = 90 + $top_shift;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 
 				// Incoterm
 				if ($conf->incoterm->enabled) {
@@ -417,7 +419,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 							$pdf->AddPage();
 							$pagenb++;
 							if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 							// $this->_pagefoot($pdf,$object,$outputlangs,1);
 							$pdf->setTopMargin($tab_top_newpage);
 							// The only function to edit the bottom margin of current page to set it.
@@ -471,7 +473,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 						// apply note frame to last page
 						$pdf->setPage($pageposafternote);
 						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 						$height_note = $posyafter - $tab_top_newpage;
 						$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
 					} else // No pagebreak
@@ -489,7 +491,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 							$pageposafternote++;
 							$pdf->setPage($pageposafternote);
 							if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+							if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 
 							$posyafter = $tab_top_newpage;
 						}
@@ -580,7 +582,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 								if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
 									$pdf->AddPage('', '', true);
 									if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-									//if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+									//if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 									$pdf->setPage($pageposafter + 1);
 								}
 							} else {
@@ -682,7 +684,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 
 
 					// Collection of totals by value of vat in $this->tva["rate"] = total_tva
-					if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne = $object->lines[$i]->multicurrency_total_tva;
+					if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) $tvaligne = $object->lines[$i]->multicurrency_total_tva;
 					else $tvaligne = $object->lines[$i]->total_tva;
 
 					$localtax1ligne = $object->lines[$i]->total_localtax1;
@@ -738,7 +740,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
 						if ($pagenb == $pageposafter) {
@@ -751,7 +753,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 						$pdf->AddPage();
 						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 						$pagenb++;
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
 				}
 
@@ -882,7 +884,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 		}
 		*/
 		/* TODO
-		else if (! empty($object->availability_code))
+		else if (!empty($object->availability_code))
 		{
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$pdf->SetTextColor(200,0,0);
@@ -976,7 +978,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 
 		// If payment mode not forced or forced to VIR, show payment with BAN
 		if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR') {
-			if (!empty($object->fk_account) || !empty($object->fk_bank) || !empty($conf->global->FACTURE_RIB_NUMBER)) {
+			if (!empty($object->fk_account) || !empty($object->fk_bank) || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
 				$bankid = (empty($object->fk_account) ? $conf->global->FACTURE_RIB_NUMBER : $object->fk_account);
 				if (!empty($object->fk_bank)) $bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
 				$account = new Account($this->db);
@@ -1035,7 +1037,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 		/*$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHT") : ''), 0, 'L', 1);
-		$total_ht = (($conf->multicurrency->enabled && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
+		$total_ht = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
 		$pdf->SetXY($col2x, $tab2_top + 0);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0), 0, $outputlangs), 0, 'R', 1);*/
 
@@ -1432,8 +1434,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		// phpcs:enable
-		global $conf;
-		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, 'ORDER_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 

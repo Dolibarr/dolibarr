@@ -21,6 +21,7 @@
  *  \brief      Setup page to configure fiscal year
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
@@ -52,7 +53,7 @@ $langs->loadLangs(array("admin", "compta"));
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->fiscalyear->write)) {              // If we can read accounting records, we should be able to see fiscal year.
+if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {              // If we can read accounting records, we should be able to see fiscal year.
 	accessforbidden();
 }
 
@@ -121,7 +122,7 @@ if ($result) {
 	$i = 0;
 
 
-	$addbutton .= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->rights->accounting->fiscalyear->write);
+	$addbutton .= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->hasRight('accounting', 'fiscalyear', 'write'));
 
 
 	$title = $langs->trans('AccountingPeriods');

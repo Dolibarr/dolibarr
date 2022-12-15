@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2021  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,13 @@
  */
 
 /**
- *	\file       htdocs/core/modules/recruitment/doc/doc_generic_recruitmentjobposition_odt.modules.php
+ *	\file       htdocs/recruitment/core/modules/recruitment/doc/doc_generic_recruitmentjobposition_odt.modules.php
  *	\ingroup    recruitment
  *	\brief      File of class to build ODT documents for recruitmentjobpositions
  */
 
-dol_include_once('/recruitment/core/modules/recruitment/modules_recruitmentjobposition.php');
+require_once DOL_DOCUMENT_ROOT.'/recruitment/core/modules/recruitment/modules_recruitmentjobposition.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -48,9 +49,9 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
-	public $phpmin = array(5, 6);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * @var string Dolibarr version of the loaded document
@@ -234,11 +235,11 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->commande->dir_output) {
+		if ($conf->recruitment->dir_output) {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
-				$object = new Commande($this->db);
+				$object = new RecruitmentJobPosition($this->db);
 				$result = $object->fetch($id);
 				if ($result < 0) {
 					dol_print_error($this->db, $object->error);
@@ -246,7 +247,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 				}
 			}
 
-			$dir = $conf->commande->multidir_output[isset($object->entity) ? $object->entity : 1];
+			$dir = $conf->recruitment->multidir_output[isset($object->entity) ? $object->entity : 1].'/recruitmentjobposition/';
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -286,7 +287,11 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
 				dol_mkdir($conf->recruitment->dir_temp);
-
+				if (!is_writable($conf->recruitment->dir_temp)) {
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->recruitment->dir_temp);
+					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If CUSTOMER contact defined on order, we use it
 				$usecontact = false;
@@ -339,7 +344,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->commande->dir_temp,
+							'PATH_TO_TMP'	  => $conf->recruitment->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}'

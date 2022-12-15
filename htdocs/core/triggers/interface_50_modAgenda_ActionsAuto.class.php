@@ -713,7 +713,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "members"));
 
-			$member = $this->context['member'];
+			$member = (isset($this->context['member']) ? $this->context['member'] : null);
 			if (!is_object($member)) {	// This should not happen
 				dol_syslog("Execute a trigger MEMBER_SUBSCRIPTION_CREATE with context key 'member' not an object");
 				include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -731,7 +731,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->actionmsg .= "\n".$langs->transnoentities("Period").': '.dol_print_date($object->dateh, 'day').' - '.dol_print_date($object->datef, 'day');
 
 			$object->sendtoid = 0;
-			if ($object->fk_soc > 0) {
+			if (isset($object->fk_soc) && $object->fk_soc > 0) {
 				$object->socid = $object->fk_soc;
 			}
 		} elseif ($action == 'MEMBER_SUBSCRIPTION_MODIFY') {
@@ -742,7 +742,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			if (!is_object($member)) {	// This should not happen
 				include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 				$member = new Adherent($this->db);
-				$member->fetch($this->fk_adherent);
+				$member->fetch($object->fk_adherent);
 			}
 
 			if (empty($object->actionmsg2)) {
@@ -767,12 +767,12 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 			$object->actionmsg = $langs->transnoentities("MemberSubscriptionDeletedInDolibarr", $object->ref, $object->getFullName($langs));
 			$object->actionmsg .= "\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
-			$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->type;
-			$object->actionmsg .= "\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
-			$object->actionmsg .= "\n".$langs->transnoentities("Period").': '.dol_print_date($object->last_subscription_date_start, 'day').' - '.dol_print_date($object->last_subscription_date_end, 'day');
+			$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->fk_type;
+			$object->actionmsg .= "\n".$langs->transnoentities("Amount").': '.$object->amount;
+			$object->actionmsg .= "\n".$langs->transnoentities("Period").': '.dol_print_date($object->dateh, 'day').' - '.dol_print_date($object->datef, 'day');
 
 			$object->sendtoid = 0;
-			if ($object->fk_soc > 0) {
+			if (isset($object->fk_soc) && $object->fk_soc > 0) {
 				$object->socid = $object->fk_soc;
 			}
 		} elseif ($action == 'MEMBER_RESILIATE') {
@@ -795,6 +795,18 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg2 = $langs->transnoentities("MemberDeletedInDolibarr", $object->getFullName($langs));
 			}
 			$object->actionmsg = $langs->transnoentities("MemberDeletedInDolibarr", $object->getFullName($langs));
+			$object->actionmsg .= "\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
+			$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->type;
+
+			$object->sendtoid = 0;
+		} elseif ($action == 'MEMBER_EXCLUDE') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "members"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("MemberExcludedInDolibarr", $object->getFullName($langs));
+			}
+			$object->actionmsg = $langs->transnoentities("MemberExcludedInDolibarr", $object->getFullName($langs));
 			$object->actionmsg .= "\n".$langs->transnoentities("Member").': '.$object->getFullName($langs);
 			$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->type;
 
@@ -836,6 +848,19 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = 0;
+		} elseif ($action == 'PROJECT_SENTBYMAIL') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "projects"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("ProjectSentByEMail", $object->ref);
+			}
+			if (empty($object->actionmsg)) {
+				$object->actionmsg = $langs->transnoentities("ProjectSentByEMail", $object->ref);
+			}
+
+			// Parameters $object->sendtoid defined by caller
+			//$object->sendtoid=0;
 		} elseif ($action == 'TASK_CREATE') {
 			// Project tasks
 			// Load translation files required by the page
@@ -977,7 +1002,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		*/
 
-		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 		// Add entry in event table
 		$now = dol_now();

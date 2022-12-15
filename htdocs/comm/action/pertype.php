@@ -23,20 +23,21 @@
 
 
 /**
- *  \file       htdocs/comm/action/pertype.php
- *  \ingroup    agenda
- *  \brief      Tab of calendar events per type
+ *    \file       htdocs/comm/action/pertype.php
+ *    \ingroup    agenda
+ *    \brief      Tab of calendar events per type
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
 
 if (!isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) {
@@ -51,28 +52,35 @@ $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha
 $filtert = GETPOST("search_filtert", "int", 3) ? GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
 $usergroup = GETPOST("search_usergroup", "int", 3) ? GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
 //if (! ($usergroup > 0) && ! ($filtert > 0)) $filtert = $user->id;
-//$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
-$showbirthday = 0;
+
+// $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
+$showbirthday = 0;    // will be hidden here
 
 // If not choice done on calendar owner, we filter on user.
 if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
 	$filtert = $user->id;
 }
 
+// Sorting
 $sortfield = GETPOST('sortfield', 'aZ09comma');
+if (!$sortfield) {
+	$sortfield = "a.datec";
+}
+
 $sortorder = GETPOST('sortorder', 'aZ09comma');
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+
+// Page
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
-if (!$sortorder) {
-	$sortorder = "ASC";
-}
-if (!$sortfield) {
-	$sortfield = "a.datec";
-}
+
+
 
 // Security check
 $socid = GETPOST("search_socid", "int") ?GETPOST("search_socid", "int") : GETPOST("socid", "int");
@@ -83,6 +91,7 @@ if ($socid < 0) {
 	$socid = '';
 }
 
+// Permissions
 $canedit = 1;
 if (empty($user->rights->agenda->myactions->read)) {
 	accessforbidden();
@@ -105,6 +114,7 @@ $status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'alpha') : GE
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'alpha') : GETPOST("type", 'alpha');
 $maxprint = ((GETPOST("maxprint", 'int') != '') ? GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array')) {
 	$actioncode = GETPOST('search_actioncode', 'array', 3);
@@ -117,11 +127,12 @@ if (GETPOST('search_actioncode', 'array')) {
 
 $dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'));
 if ($dateselect > 0) {
-	$day = GETPOST('dateselectday', 'int');
+	$day   = GETPOST('dateselectday', 'int');
 	$month = GETPOST('dateselectmonth', 'int');
-	$year = GETPOST('dateselectyear', 'int');
+	$year  = GETPOST('dateselectyear', 'int');
 }
 
+// working hours
 $tmp = empty($conf->global->MAIN_DEFAULT_WORKING_HOURS) ? '9-18' : $conf->global->MAIN_DEFAULT_WORKING_HOURS;
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
@@ -137,6 +148,7 @@ if ($end_h <= $begin_h) {
 	$end_h = $begin_h + 1;
 }
 
+// working days
 $tmp = empty($conf->global->MAIN_DEFAULT_WORKING_DAYS) ? '1-5' : $conf->global->MAIN_DEFAULT_WORKING_DAYS;
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
@@ -150,19 +162,24 @@ if (empty($mode) && !GETPOSTISSET('mode')) {
 	$mode = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
 }
 
+// View by month
 if (GETPOST('viewcal', 'alpha') && $mode != 'show_day' && $mode != 'show_week' && $mode != 'show_peruser') {
 	$mode = 'show_month'; $day = '';
-}                                                   // View by month
+}
+// View by week
 if (GETPOST('viewweek', 'alpha') || $mode == 'show_week') {
 	$mode = 'show_week'; $week = ($week ? $week : date("W")); $day = ($day ? $day : date("d"));
-}  // View by week
+}
+// View by day
 if (GETPOST('viewday', 'alpha') || $mode == 'show_day') {
 	$mode = 'show_day'; $day = ($day ? $day : date("d"));
-}                                  // View by day
+}
+// View by year
 if (GETPOST('viewyear', 'alpha') || $mode == 'show_year') {
 	$mode = 'show_year';
-}                                  // View by year
+}
 
+// Initialize object
 $object = new ActionComm($db);
 
 // Load translation files required by the page
@@ -189,7 +206,7 @@ if ($action == 'delete_action' && $user->rights->agenda->delete) {
 	$event->fetch($actionid);
 	$event->fetch_optionals();
 	$event->fetch_userassigned();
-	$event->oldcopy = clone $event;
+	$event->oldcopy = dol_clone($event);
 
 	$result = $event->delete();
 }
@@ -218,6 +235,7 @@ $parameters = array(
 	'resourceid' => $resourceid,
 	'usergroup' => $usergroup,
 );
+
 $reshook = $hookmanager->executeHooks('beforeAgendaPerType', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -226,14 +244,14 @@ if ($reshook < 0) {
 $form = new Form($db);
 $companystatic = new Societe($db);
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda|DE:Modul_Terminplanung';
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
 $now = dol_now();
 $nowarray = dol_getdate($now);
-$nowyear = $nowarray['year'];
+$nowyear  = $nowarray['year'];
 $nowmonth = $nowarray['mon'];
-$nowday = $nowarray['mday'];
+$nowday   = $nowarray['mday'];
 
 
 // Define list of all external calendars (global setup)
@@ -246,7 +264,7 @@ $first_year  = $year;
 
 $week = $prev['week'];
 
-$day = (int) $day;
+$day  = (int) $day;
 $next = dol_get_next_day($day, $month, $year);
 $next_year  = $year + 1;
 $next_month = $month;
