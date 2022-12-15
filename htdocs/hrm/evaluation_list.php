@@ -275,7 +275,7 @@ if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 
-if(empty($permissiontoreadall)) {
+if (empty($permissiontoreadall)) {
 	$sql.= " AND t.fk_user IN(".implode(", ", $user->getAllChildIds(1)).") ";
 }
 

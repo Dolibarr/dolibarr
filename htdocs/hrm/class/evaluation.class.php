@@ -193,7 +193,7 @@ class Evaluation extends CommonObject
 			$this->fields['entity']['enabled'] = 0;
 		}
 
-		if(empty($user->rights->hrm->evaluation->readall)) $this->fields['fk_user']['type'].= ':rowid IN('.implode(", ", $user->getAllChildIds(1)).')';
+		if (empty($user->rights->hrm->evaluation->readall)) $this->fields['fk_user']['type'].= ':rowid IN('.implode(", ", $user->getAllChildIds(1)).')';
 
 		$this->date_eval = dol_now();
 
