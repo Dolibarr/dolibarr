@@ -1,5 +1,8 @@
 #!/bin/sh
-
+#
+# Count number of different contributors and number of commits for a given year.
+#
+ 
 if [ "x$1" = "x" ]; then
 	echo "Usage: $0 YEAR"
 	exit

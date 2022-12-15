@@ -45,7 +45,7 @@ if (!$user->admin) {
 // Date range
 $year = GETPOST("year");
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
+	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$month_current = strftime("%m", dol_now());
 	$year_start = $year_current;
 } else {

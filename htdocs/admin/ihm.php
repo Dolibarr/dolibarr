@@ -26,6 +26,7 @@
  *       \brief      Page to setup GUI display options
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -103,6 +104,16 @@ if ($action == 'update') {
 
 		dolibarr_set_const($db, "MAIN_THEME", GETPOST("main_theme", 'aZ09'), 'chaine', 0, '', $conf->entity);
 		dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
+
+		if (GETPOSTISSET('THEME_DARKMODEENABLED')) {
+			$val = GETPOST('THEME_DARKMODEENABLED');
+			if (!$val) {
+				dolibarr_del_const($db, "THEME_DARKMODEENABLED", $conf->entity);
+			}
+			if ($val) {
+				dolibarr_set_const($db, "THEME_DARKMODEENABLED", $val, 'chaine', 0, '', $conf->entity);
+			}
+		}
 
 		if (GETPOSTISSET('THEME_TOPMENU_DISABLE_IMAGE')) {
 			$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');

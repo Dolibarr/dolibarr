@@ -398,7 +398,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
  */
 function getListOfGroups($authentication)
 {
-	global $db, $conf;
+	global $db, $conf, $user;
 
 	dol_syslog("Function: getListOfGroups login=".$authentication['login']);
 
@@ -418,7 +418,7 @@ function getListOfGroups($authentication)
 		$sql = "SELECT g.rowid, g.nom as name, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
-		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($fuser->admin && !$fuser->entity))) {
+		if (isModEnabled('multicompany') && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity))) {
 			$sql .= " WHERE g.entity IS NOT NULL";
 		} else {
 			$sql .= " WHERE g.entity IN (0,".$conf->entity.")";

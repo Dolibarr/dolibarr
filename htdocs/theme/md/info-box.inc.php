@@ -48,7 +48,20 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	margin: 2px;
 	border-radius: 3px;
 }
-
+.member-company-back {
+	padding: 2px 7px 2px 7px;
+	background-color: #e4e4e4;
+	color: #666;
+	border-radius: 10px;
+	white-space: nowrap;
+}
+.member-individual-back {
+	padding: 2px 7px 2px 7px;
+	background-color: #e4e4e4;
+	color: #666;
+	border-radius: 10px;
+	white-space: nowrap;
+}
 
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
@@ -195,7 +208,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 }
 
 .info-box-sm .info-box-icon {
-	height: 80px;
+	height: 96px;
 	width: 80px;
 	font-size: 25px;
 	line-height: 92px;
@@ -210,7 +223,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	height: 98px;
 }
 .info-box-icon > img {
-	max-width: 100%;
+	max-width: 85%;
 }
 .info-box-module .info-box-icon > img {
 	max-width: 55%;

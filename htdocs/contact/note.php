@@ -25,6 +25,7 @@
  *   \ingroup    societe
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -86,7 +87,7 @@ if ($id > 0) {
 	/*
 	 * Affichage onglets
 	 */
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 

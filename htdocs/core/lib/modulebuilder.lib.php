@@ -95,7 +95,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		// Edit class files
 		$contentclass = file_get_contents(dol_osencode($pathoffiletoeditsrc), 'r');
 
-		// Update ->fields (add or remove entries)
+		// Update ->fields (to add or remove entries defined into $addfieldentry)
 		if (count($object->fields)) {
 			if (is_array($addfieldentry) && count($addfieldentry)) {
 				$name = $addfieldentry['name'];
@@ -123,7 +123,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				$i++;
 				$texttoinsert .= "\t\t'".$key."' => array('type'=>'".$val['type']."',";
 				$texttoinsert .= " 'label'=>'".$val['label']."',";
-				if ($val['picto']) {
+				if (!empty($val['picto'])) {
 					$texttoinsert .= " 'picto'=>'".$val['picto']."',";
 				}
 				$texttoinsert .= " 'enabled'=>'".($val['enabled'] !== '' ? $val['enabled'] : 1)."',";
@@ -132,6 +132,9 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				$texttoinsert .= " 'visible'=>".($val['visible'] !== '' ? $val['visible'] : -1).",";
 				if (!empty($val['noteditable'])) {
 					$texttoinsert .= " 'noteditable'=>'".$val['noteditable']."',";
+				}
+				if (!empty($val['alwayseditable'])) {
+					$texttoinsert .= " 'alwayseditable'=>'".$val['alwayseditable']."',";
 				}
 				if (!empty($val['default']) || (isset($val['default']) && $val['default'] === '0')) {
 					$texttoinsert .= " 'default'=>'".$val['default']."',";
@@ -189,6 +192,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				}
 
 				$texttoinsert .= "),\n";
+				//print $texttoinsert;
 			}
 		}
 
@@ -212,14 +216,16 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 
 		$texttoinsert .= "\t".'// END MODULEBUILDER PROPERTIES';
 
-		//print($texttoinsert);exit;
+		//print($texttoinsert);
 
 		$contentclass = preg_replace('/\/\/ BEGIN MODULEBUILDER PROPERTIES.*END MODULEBUILDER PROPERTIES/ims', $texttoinsert, $contentclass);
+		//print $contentclass;
 
 		dol_mkdir(dirname($pathoffiletoedittarget));
 
 		//file_put_contents($pathoffiletoedittmp, $contentclass);
 		$result = file_put_contents(dol_osencode($pathoffiletoedittarget), $contentclass);
+
 		if ($result) {
 			@chmod($pathoffiletoedittarget, octdec($newmask));
 		} else {
@@ -350,7 +356,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 					}
 				}
 			}
-			$texttoinsert .= (($val['notnull'] > 0) ? ' NOT NULL' : '');
+			$texttoinsert .= ((!empty($val['notnull']) && $val['notnull'] > 0) ? ' NOT NULL' : '');
 			if ($i < count($object->fields)) {
 				$texttoinsert .= ", ";
 			}

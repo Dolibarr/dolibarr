@@ -515,7 +515,7 @@ class DolGraph
 	/**
 	 * Show pointvalue or not
 	 *
-	 * @param	int		$showpointvalue		1=Show value for each point, as tooltip or inline (default), 0=Hide value
+	 * @param	int		$showpointvalue		1=Show value for each point, as tooltip or inline (default), 0=Hide value, 2=Show values for each serie on same point
 	 * @return	void
 	 */
 	public function setShowPointValue($showpointvalue)
@@ -1299,8 +1299,12 @@ class DolGraph
 				$type = 'line';
 			}
 
+			// Set options
 			$this->stringtoshow .= 'var options = { maintainAspectRatio: false, aspectRatio: 2.5, ';
 			$this->stringtoshow .= $xaxis;
+			if ($this->showpointvalue == 2) {
+				$this->stringtoshow .= 'interaction: { intersect: true, mode: \'index\'}, ';
+			}
 
 			/* For Chartjs v2.9 */
 			/*

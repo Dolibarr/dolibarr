@@ -41,16 +41,20 @@ if ($action == 'presend') {
 
 	$object->fetch_projet();
 
-	if (!in_array($object->element, array('societe', 'user', 'member'))) {
-		// TODO get also the main_lastdoc field of $object. If not found, try to guess with following code
-
-		$ref = dol_sanitizeFileName($object->ref);
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		// Special case
-		if ($object->element == 'invoice_supplier') {
-			$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
+	$ref = dol_sanitizeFileName($object->ref);
+	if (!in_array($object->element, array('user', 'member'))) {
+		//$fileparams['fullname'] can be filled from the card
+		//Get also the main_lastdoc field of $object. If not found, try to guess with following code
+		if (!empty($object->last_main_doc) && is_readable(DOL_DATA_ROOT.'/'.$object->last_main_doc) && is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
+			$fileparams['fullname'] = DOL_DATA_ROOT.'/'.$object->last_main_doc;
 		} else {
-			$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			// Special case
+			if ($object->element == 'invoice_supplier') {
+				$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
+			} else {
+				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
+			}
 		}
 
 		$file = $fileparams['fullname'];
@@ -59,7 +63,7 @@ if ($action == 'presend') {
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 		$newlang = $object->thirdparty->default_lang;
 		if (GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
@@ -82,10 +86,13 @@ if ($action == 'presend') {
 
 	// Build document if it not exists
 	$forcebuilddoc = true;
-	if (in_array($object->element, array('societe', 'user', 'member'))) {
+	if (in_array($object->element, array('user', 'member'))) {
 		$forcebuilddoc = false;
 	}
 	if ($object->element == 'invoice_supplier' && empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)) {
+		$forcebuilddoc = false;
+	}
+	if ($object->element == 'societe' && empty($conf->global->COMPANY_ADDON_PDF)) {
 		$forcebuilddoc = false;
 	}
 	if ($forcebuilddoc) {    // If there is no default value for supplier invoice, we do not generate file, even if modelpdf was set by a manual generation
@@ -143,8 +150,30 @@ if ($action == 'presend') {
 		$formmail->fromname = (!empty($conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME) ? $conf->global->ORDER_SUPPLIER_EMAIL_SENDER_NAME : '');
 		$formmail->fromtype = 'special';
 	}
+	if ($object->element === 'recruitmentcandidature' ) {
+		$formmail->frommail = (!empty($conf->global->RECRUITMENT_EMAIL_SENDER) ? $conf->global->RECRUITMENT_EMAIL_SENDER : $recruitermail);
+		$formmail->fromname = (!empty($conf->global->RECRUITMENT_EMAIL_SENDER_NAME) ? $conf->global->RECRUITMENT_EMAIL_SENDER_NAME : (!empty($recruitername) ? $recruitername : ''));
+		$formmail->fromtype = 'special';
+	}
 
-	$formmail->trackid = $trackid;
+	// Set the default "From"
+	$defaultfrom = '';
+	if (GETPOSTISSET('fromtype')) {
+		$defaultfrom = GETPOST('fromtype');
+	} else {
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('getDefaultFromEmail', $parameters, $formmail);
+		if (empty($reshook)) {
+			$defaultfrom = $formmail->fromtype;
+		}
+		if (!empty($hookmanager->resArray['defaultfrom'])) {
+			$defaultfrom = $hookmanager->resArray['defaultfrom'];
+		}
+	}
+	$formmail->fromtype = $defaultfrom;
+
+	$formmail->trackid = empty($trackid) ? '' : $trackid;
+	$formmail->inreplyto = empty($inreplyto) ? '' : $inreplyto;
 	$formmail->withfrom = 1;
 
 	// Define $liste, a list of recipients with email inside <>.
@@ -199,11 +228,33 @@ if ($action == 'presend') {
 	}
 
 	// Make substitution in email content
-	if ($object) {
+	if (!empty($object)) {
 		// First we set ->substit (useless, it will be erased later) and ->substit_lines
 		$formmail->setSubstitFromObject($object, $langs);
 	}
 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
+
+	// Overwrite __SENDEREMAIL_SIGNATURE__ with value select into form
+	if ($formmail->fromtype) {
+		$reg = array();
+		if (preg_match('/user/', $formmail->fromtype, $reg)) {
+			$emailsendersignature = $user->signature;
+		} elseif (preg_match('/company/', $formmail->fromtype, $reg)) {
+			$emailsendersignature = '';
+		} elseif (preg_match('/senderprofile_(\d+)/', $formmail->fromtype, $reg)) {
+			$sql = "SELECT rowid, label, email, signature FROM ".$db->prefix()."c_email_senderprofile";
+			$sql .= " WHERE rowid = ".((int) $reg[1]);
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				if ($obj) {
+					$emailsendersignature = $obj->signature;
+				}
+			}
+		}
+	}
+	$substitutionarray['__SENDEREMAIL_SIGNATURE__'] = $emailsendersignature;
+
 	$substitutionarray['__CHECK_READ__'] = "";
 	if (is_object($object) && is_object($object->thirdparty)) {
 		$checkRead= '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php';

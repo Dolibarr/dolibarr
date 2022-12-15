@@ -7,7 +7,6 @@ MailmanCreationSuccess=La prueba de suscripción se ha ejecutado correctamente
 MailmanDeletionSuccess=La prueba de desuscripción se ha ejecutado correctamente
 SynchroMailManEnabled=Será realizada una actualización en la lista de envío de correos
 SynchroSpipEnabled=Será realizada una actualización en el módulo SPIP
-DescADHERENT_MAILMAN_ADMINPW=Contraseña de administrador de Envío de Correos
 DescADHERENT_MAILMAN_URL=URL para suscripciones a la lista de envío de correos
 DescADHERENT_MAILMAN_UNSUB_URL=URL para desuscripciones a la lista de envío de correos
 DescADHERENT_MAILMAN_LISTS=Lista(s) para inscripción automática de nuevos miembros (separados por una coma)

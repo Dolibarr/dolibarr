@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,9 +26,6 @@
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIRESOC'))	define('NOREQUIRESOC', '1');
 //if (! defined('NOREQUIRETRAN'))	define('NOREQUIRETRAN', '1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -42,6 +39,7 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -61,6 +59,11 @@ $invoice->fetch($facid);
 $customer = new Societe($db);
 $customer->fetch($invoice->socid);
 
+
+/*
+ * Actions
+ */
+
 if ($action == "send") {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -79,18 +82,24 @@ if ($action == "send") {
 	$sendto = $email;
 	$from = $mysoc->email;
 	$mail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(), '', '', 0, 1);
-	if ($mail->error || $mail->errors) {
+	if ($mail->error || !empty($mail->errors)) {
 		setEventMessages($mail->error, $mail->errors, 'errors');
 	} else {
 		$result = $mail->sendfile();
 	}
 	exit;
 }
+
+
+/*
+ * View
+ */
+
 $arrayofcss = array('/takepos/css/pos.css.php');
 $arrayofjs  = array();
-top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+top_htmlhead($head, '', 0, 0, $arrayofjs, $arrayofcss);
+
 ?>
-</head>
 <body class="center">
 
 <script>
@@ -98,7 +107,7 @@ function SendMail() {
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/send.php?action=send&facid='.$facid.'&email='; ?>" + $("#email"). val(),
+		url: "<?php print DOL_URL_ROOT.'/takepos/send.php?action=send&token='.newToken().'&facid='.$facid.'&email='; ?>" + $("#email"). val(),
 	});
 	parent.$.colorbox.close();
 }

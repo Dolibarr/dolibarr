@@ -18,6 +18,7 @@
 
 // Put here all includes required by your class file
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -26,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
@@ -51,6 +52,10 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+$optioncss = GETPOST('optioncss', 'alpha');
+$param = "";
+$num = 0;
+$totalnboflines = 0;
 
 $result = restrictedArea($user, 'banque');
 
@@ -67,7 +72,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripePayoutList"));
 
-if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -95,12 +100,12 @@ if (!$rowid) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$title = $langs->trans("StripePayoutList");
-	$title .= ($stripeaccount ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
+	$title .= ($stripeacc ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable liste'.(!empty($moreforfilter) ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
@@ -133,7 +138,7 @@ if (!$rowid) {
 			// Save into $tmparray all metadata
 			$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
 			// Load origin object according to metadata
-			if (! empty($tmparray['CUS']))
+			if (!empty($tmparray['CUS']))
 			{
 				$societestatic->fetch($tmparray['CUS']);
 			}
@@ -141,7 +146,7 @@ if (!$rowid) {
 			{
 				$societestatic->id = 0;
 			}
-			if (! empty($tmparray['MEM']))
+			if (!empty($tmparray['MEM']))
 			{
 				$memberstatic->fetch($tmparray['MEM']);
 			}
