@@ -166,6 +166,9 @@ class modCategorie extends DolibarrModules
 		if (!empty($conf->facture->enabled)) {
 			$typeexample .= ($typeexample ? " / " : "")."14=Invoice";
 		}
+		if (!empty($conf->facture->enabled) && !empty($conf->fournisseur->enabled)) {
+			$typeexample .= ($typeexample ? " / " : "")."15=Supplier invoice";
+		}
 
 		// Definition of vars
 		$this->export_fields_array[$r] = array('cat.rowid'=>"CategId", 'cat.label'=>"Label", 'cat.type'=>"Type", 'cat.description'=>"Description", 'cat.fk_parent'=>"ParentCategoryID", 'pcat.label'=>"ParentCategoryLabel");
@@ -457,6 +460,21 @@ class modCategorie extends DolibarrModules
 			]
 		);
 
+		// 15 Supplier Invoices
+		++$r;
+		$this->exportTagLinks(
+			$r,
+			15,
+			'facture',
+			['facture', 'facture', 'export'],
+			[
+				'rowid' => [
+					'name' => 'InvoiceID',
+					'type' => 'Numeric'
+				]
+			]
+		);
+
 		// Imports
 		//--------
 
@@ -473,7 +491,7 @@ class modCategorie extends DolibarrModules
 			'ca.label'=>"Label*", 'ca.type'=>"Type*", 'ca.description'=>"Description",
 			'ca.fk_parent' => 'ParentCategory'
 		);
-		$this->import_regex_array[$r] = array('ca.type'=>'^(0|1|2|3|4|5|6|7|8|9|10|11|14)$');
+		$this->import_regex_array[$r] = array('ca.type'=>'^(0|1|2|3|4|5|6|7|8|9|10|11|14|15)$');
 		$this->import_convertvalue_array[$r] = array(
 			'ca.fk_parent' => array(
 				'rule'          => 'fetchidfromcodeandlabel',
@@ -646,6 +664,18 @@ class modCategorie extends DolibarrModules
 				'/compta/facture/class/facture.class.php',
 				'Facture',
 				'Facture'
+			);
+		}
+
+		// 15 Supplier Invoices
+		if (!empty($conf->facture->enabled) && !empty($conf->fournisseur->enabled)) {
+			++$r;
+			$this->importTagLinks(
+				$r,
+				15,
+				'/fourn/class/fournisseur.facture.class.php',
+				'FactureFournisseur',
+				'FactureFournisseur'
 			);
 		}
 	}
