@@ -276,7 +276,7 @@ if ($search_all) {
 }
 
 if (empty($permissiontoreadall)) {
-	$sql.= " AND t.fk_user IN(".implode(", ", $user->getAllChildIds(1)).") ";
+	$sql.= " AND t.fk_user IN(".$db->sanitize(implode(", ", $user->getAllChildIds(1))).") ";
 }
 
 //$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
