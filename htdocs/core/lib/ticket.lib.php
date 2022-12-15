@@ -221,7 +221,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<body id="mainbody" class="publicnewticketform" style="height: 100%;">';
 	print '<div class="publicnewticketform2" style="min-height: calc(100% - 100px); margin-bottom: 100px; position: relative;">';
-	print '<div class="center">';
+	print '<header class="center" style="width: 100%;">';
 
 	// Define urllogo
 	if (!empty($conf->global->TICKET_SHOW_COMPANY_LOGO) || !empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC)) {
@@ -265,9 +265,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '</div>';
 	}
 
-	print '</div>';
-
-	print '<div class="ticketlargemargin">';
+	print '</header>';
 }
 
 
@@ -284,14 +282,12 @@ function htmlPrintOnlineTicketFooter($fromcompany, $langs)
 	$line1 = $lineList['line1'];
 	$line2 = $lineList['line2'];
 
-	print '</div>'; // end div publicnewticketform from llxHeaderTicket
-	print '</div>'; // end div publicnewticketform2 from llxHeaderTicket
-	print '<div class="center" style="position: relative; float: left; width: 100%;">';
-	print '<div style="font-size: 14px; position: absolute; bottom: 0px; margin-top: 20px; padding-top: 20px; width: 100%; height: 80px;">';
+	print '<footer class="center" style="width: 100%;">';
+	print '<div style="font-size: 14px; bottom: 0px; margin-top: auto; padding-top: 20px; width: 100%; height: 80px;">';
 	print '<hr>';
 	print '<b>'.$fromcompany->name.'</b>';
 	print '<br>'.(!empty($line1) ? $line1.'<br>' : '');
 	print $line2;
 	print '</div>';
-	print '</div>';
+	print '</footer>';
 }
