@@ -7019,14 +7019,11 @@ div.tabsElem a.tab {
 	/* margin-top: 25px !important; */
 }
 .ticketlargemargin {
-	padding-left: 50px;
-	padding-right: 50px;
 	padding-top: 30px;
 }
-@media only screen and (max-width: 767px)
+@media only screen and (max-width: 1180px)
 {
 	.ticketlargemargin {
-		padding-left: 5px; padding-right: 5px;
 		padding-top: 10px;
 	}
 	.ticketpublicarea {

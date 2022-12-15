@@ -220,7 +220,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, 1); // Show html headers
 
 	print '<body id="mainbody" class="publicnewticketform" style="height: 100%;">';
-	print '<div class="publicnewticketform2" style="min-height: calc(100% - 100px); margin-bottom: 100px; position: relative;">';
+	print '<div class="publicnewticketform2 flexcontainer" style="min-height: 100%; min-width: 100%; ; flex-direction: column;">';
 	print '<header class="center" style="width: 100%;">';
 
 	// Define urllogo
@@ -282,8 +282,8 @@ function htmlPrintOnlineTicketFooter($fromcompany, $langs)
 	$line1 = $lineList['line1'];
 	$line2 = $lineList['line2'];
 
-	print '<footer class="center" style="width: 100%;">';
-	print '<div style="font-size: 14px; bottom: 0px; margin-top: auto; padding-top: 20px; width: 100%; height: 80px;">';
+	print '<footer class="center" style="width: 100%; margin-top: auto;">';
+	print '<div style="font-size: 14px; bottom: 0px; padding-top: 20px; width: 100%; height: 80px;">';
 	print '<hr>';
 	print '<b>'.$fromcompany->name.'</b>';
 	print '<br>'.(!empty($line1) ? $line1.'<br>' : '');
