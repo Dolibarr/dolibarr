@@ -5,6 +5,7 @@
  * Copyright (C) 2012-2107 	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2019	   	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2021		Anthony Berton       	<bertonanthony@gmail.com>
+ * Copyright (C) 2022		Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'stocks', 'Trips'));
+$langs->loadLangs(array('admin', 'bills', 'companies', 'languages', 'members', 'other', 'products', 'receptions', 'stocks', 'trips'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -54,6 +55,10 @@ if ($cancel) {
 
 if ($action == 'update') {
 	if (GETPOSTISSET('MAIN_GENERATE_PROPOSALS_WITH_PICTURE')) dolibarr_set_const($db, "MAIN_GENERATE_PROPOSALS_WITH_PICTURE", GETPOST("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), 'chaine', 0, '', $conf->entity);
+
+	if (GETPOSTISSET('INVOICE_CATEGORY_OF_OPERATION')) {
+		dolibarr_set_const($db, "INVOICE_CATEGORY_OF_OPERATION", GETPOST("INVOICE_CATEGORY_OF_OPERATION", 'int'), 'chaine', 0, '', $conf->entity);
+	}
 
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
@@ -118,6 +123,31 @@ print '</td></tr>';
 
 print '</table>';
 print '</div>';
+
+
+if (isModEnabled('facture')) {
+	print load_fiche_titre($langs->trans("Invoices"), '', 'bill');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
+
+	// Mention category of operations
+	// French Decret n°2099-1299 2022-10-07
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("InvoiceOptionCategoryOfOperations"), $langs->trans('InvoiceOptionCategoryOfOperationsHelp'), 1);
+	print '</td><td>';
+	$arrval = array('0'=>$langs->trans("No"),
+		'1'=>$langs->trans("InvoiceOptionCategoryOfOperationsYes1"),
+		'2'=>$langs->trans("InvoiceOptionCategoryOfOperationsYes2")
+	);
+	print $form->selectarray("INVOICE_CATEGORY_OF_OPERATION", $arrval, $conf->global->INVOICE_CATEGORY_OF_OPERATION, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
+	print '</td></tr>';
+
+	print '</table>';
+	print '</div>';
+}
+
 
 /*
 print '<br><div class="center">';

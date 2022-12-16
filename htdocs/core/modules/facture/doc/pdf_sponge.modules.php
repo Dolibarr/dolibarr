@@ -9,6 +9,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1141,6 +1142,16 @@ class pdf_sponge extends ModelePDFFactures
 			$posy = $pdf->GetY() + 3;
 		}
 
+		// Show category of operations
+		if ($conf->global->INVOICE_CATEGORY_OF_OPERATION == 2) {
+			$nbCategoryOfOperations = 0;
+			$categoryOfOperations = $outputlangs->trans("MentionCategoryOfOperations") . ': ' . $outputlangs->trans("MentionCategoryOfOperations" . $nbCategoryOfOperations);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$pdf->writeHTMLCell(80, 5, '', '', $outputlangs->transnoentities($categoryOfOperations), 0, 1);
+
+			$posy = $pdf->GetY() + 1;
+		}
+
 		if ($object->type != 2) {
 			// Check a payment mode is defined
 			if (empty($object->mode_reglement_code)
@@ -1789,9 +1800,10 @@ class pdf_sponge extends ModelePDFFactures
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @param		string		$currency		Currency code
 	 *   @param		Translate	$outputlangsbis	Langs object bis
+	 *   @param		Facture		$object     	Object to show
 	 *   @return	void
 	 */
-	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '', $outputlangsbis = null)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '', $outputlangsbis = null, $object)
 	{
 		global $conf;
 
@@ -1809,6 +1821,21 @@ class pdf_sponge extends ModelePDFFactures
 		$pdf->SetFont('', '', $default_font_size - 2);
 
 		if (empty($hidetop)) {
+			// Show category of operations
+			if ($conf->global->INVOICE_CATEGORY_OF_OPERATION == 1) {
+				$nbCategoryOfOperations = 0;
+				if (count($object->product_type == 0) >= 1) {
+					$nbCategoryOfOperations = 0;
+				} elseif (count($object->product_type == 1) >= 1) {
+					$nbCategoryOfOperations = 1;
+				} elseif (count($object->product_type == 0) >= 1 && count($object->product_type == 1) >= 1) {
+					$nbCategoryOfOperations = 2;
+				}
+				$categoryOfOperations = $outputlangs->trans("MentionCategoryOfOperations") . ': ' . $outputlangs->trans("MentionCategoryOfOperations" . $nbCategoryOfOperations);
+				$pdf->SetXY($this->marge_gauche, $tab_top - 4);
+				$pdf->MultiCell(($pdf->GetStringWidth($categoryOfOperations)) + 4, 2, $categoryOfOperations);
+			}
+
 			$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
 			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
 				$titre .= ' - '.$outputlangsbis->transnoentities("AmountInCurrency", $outputlangsbis->transnoentitiesnoconv("Currency".$currency));
