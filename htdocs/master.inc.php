@@ -218,7 +218,7 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 		// For FR, default value of option to show profid SIRET is on by default. Decret n°2099-1299 2022-10-07
 		$conf->global->MAIN_PROFID1_IN_ADDRESS = 1;
 	}
-	if ($mysoc->country_code == 'FR' && (!isset($conf->global->INVOICE_CATEGORY_OF_OPERATION) || empty($conf->global->INVOICE_CATEGORY_OF_OPERATION))) {
+	if ($mysoc->country_code == 'FR' && !isset($conf->global->INVOICE_CATEGORY_OF_OPERATION)) {
 		// For FR, default value of option to show category of operations is on by default. Decret n°2099-1299 2022-10-07
 		$conf->global->INVOICE_CATEGORY_OF_OPERATION = 1;
 	}
