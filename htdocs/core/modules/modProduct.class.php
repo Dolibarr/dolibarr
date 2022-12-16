@@ -859,7 +859,7 @@ class modProduct extends DolibarrModules
 				));
 			}
 
-			$this->import_updatekeys_array[$r] = array('sp.fk_product'=>'ProductOrService', 'sp.ref_fourn'=>'SupplierRef', 'sp.fk_soc'=>'Supplier');
+			$this->import_updatekeys_array[$r] = array('sp.fk_product'=>'ProductOrService', 'sp.ref_fourn'=>'SupplierRef', 'sp.fk_soc'=>'Supplier', 'sp.quantity'=>"QtyMin");
 		}
 
 		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {

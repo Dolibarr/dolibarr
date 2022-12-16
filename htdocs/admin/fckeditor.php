@@ -99,7 +99,7 @@ foreach ($modules as $const => $desc) {
 		exit;
 	}
 	if ($action == 'disable_'.strtolower($const)) {
-		dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const, $conf->entity);
+		dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, 0, 'chaine', 0, '', $conf->entity);
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
