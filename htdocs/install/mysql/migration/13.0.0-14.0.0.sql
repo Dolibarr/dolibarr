@@ -742,3 +742,9 @@ ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TE
 
 -- Fix field message must be mediumtext
 ALTER TABLE llx_ticket MODIFY COLUMN message mediumtext;
+
+-- Replace MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS by (MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST, MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST and MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST)
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT 'MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST', entity, value, type, visible, note FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT 'MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST', entity, value, type, visible, note FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT 'MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST', entity, value, type, visible, note FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
+DELETE FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
