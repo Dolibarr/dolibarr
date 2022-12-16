@@ -133,6 +133,11 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	public $cols;
 
+	/**
+	 * @var int Category of operation
+	 */
+	public $categoryOfOperation = -1; // unknown by default
+
 
 	/**
 	 *	Constructor
@@ -393,12 +398,35 @@ class pdf_sponge extends ModelePDFFactures
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// Set $this->atleastonediscount if you have at least one discount
+				// and determine category of operation
+				$categoryOfOperation = 0;
+				$nbProduct = 0;
+				$nbService = 0;
 				for ($i = 0; $i < $nblines; $i++) {
 					if ($object->lines[$i]->remise_percent) {
 						$this->atleastonediscount++;
 					}
-				}
 
+					// determine category of operation
+					$lineProductType = $object->lines[$i]->product_type;
+					if ($lineProductType == Product::TYPE_PRODUCT) {
+						$nbProduct++;
+					} elseif ($lineProductType == Product::TYPE_SERVICE) {
+						$nbService++;
+					}
+					if ($nbProduct > 0 && $nbService > 0) {
+						// mixed products and services
+						$categoryOfOperation = 2;
+					}
+				}
+				// determine category of operation
+				if ($categoryOfOperation <= 0) {
+					// only services
+					if ($nbProduct == 0 && $nbService > 0) {
+						$categoryOfOperation = 1;
+					}
+				}
+				$this->categoryOfOperation = $categoryOfOperation;
 
 				// Situation invoice handling
 				if ($object->situation_cycle_ref) {
@@ -1125,6 +1153,10 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		$posxval = 52;
+		$posxend = 110;	// End of x for text on left side
+		if ($this->page_largeur < 210) { // To work with US executive format
+			$posxend -= 10;
+		}
 
 		// Show payments conditions
 		if ($object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement)) {
@@ -1143,13 +1175,18 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		// Show category of operations
-		if ($conf->global->INVOICE_CATEGORY_OF_OPERATION == 2) {
-			$nbCategoryOfOperations = 0;
-			$categoryOfOperations = $outputlangs->trans("MentionCategoryOfOperations") . ': ' . $outputlangs->trans("MentionCategoryOfOperations" . $nbCategoryOfOperations);
+		if (getDolGlobalInt('INVOICE_CATEGORY_OF_OPERATION') == 2 && $this->categoryOfOperation >= 0) {
+			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
-			$pdf->writeHTMLCell(80, 5, '', '', $outputlangs->transnoentities($categoryOfOperations), 0, 1);
+			$categoryOfOperationTitle = $outputlangs->transnoentities("MentionCategoryOfOperations").' : ';
+			$pdf->MultiCell($posxval - $this->marge_gauche, 4, $categoryOfOperationTitle, 0, 'L');
 
-			$posy = $pdf->GetY() + 1;
+			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetXY($posxval, $posy);
+			$categoryOfOperationLabel = $outputlangs->transnoentities("MentionCategoryOfOperations" . $this->categoryOfOperation);
+			$pdf->MultiCell($posxend - $posxval, 4, $categoryOfOperationLabel, 0, 'L');
+
+			$posy = $pdf->GetY() + 3; // for 2 lines
 		}
 
 		if ($object->type != 2) {
@@ -1800,10 +1837,9 @@ class pdf_sponge extends ModelePDFFactures
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @param		string		$currency		Currency code
 	 *   @param		Translate	$outputlangsbis	Langs object bis
-	 *   @param		Facture		$object     	Object to show
 	 *   @return	void
 	 */
-	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '', $outputlangsbis = null, $object)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '', $outputlangsbis = null)
 	{
 		global $conf;
 
@@ -1822,16 +1858,8 @@ class pdf_sponge extends ModelePDFFactures
 
 		if (empty($hidetop)) {
 			// Show category of operations
-			if ($conf->global->INVOICE_CATEGORY_OF_OPERATION == 1) {
-				$nbCategoryOfOperations = 0;
-				if (count($object->product_type == 0) >= 1) {
-					$nbCategoryOfOperations = 0;
-				} elseif (count($object->product_type == 1) >= 1) {
-					$nbCategoryOfOperations = 1;
-				} elseif (count($object->product_type == 0) >= 1 && count($object->product_type == 1) >= 1) {
-					$nbCategoryOfOperations = 2;
-				}
-				$categoryOfOperations = $outputlangs->trans("MentionCategoryOfOperations") . ': ' . $outputlangs->trans("MentionCategoryOfOperations" . $nbCategoryOfOperations);
+			if (getDolGlobalInt('INVOICE_CATEGORY_OF_OPERATION') == 1 && $this->categoryOfOperation >= 0) {
+				$categoryOfOperations = $outputlangs->transnoentities("MentionCategoryOfOperations") . ' : ' . $outputlangs->transnoentities("MentionCategoryOfOperations" . $this->categoryOfOperation);
 				$pdf->SetXY($this->marge_gauche, $tab_top - 4);
 				$pdf->MultiCell(($pdf->GetStringWidth($categoryOfOperations)) + 4, 2, $categoryOfOperations);
 			}
