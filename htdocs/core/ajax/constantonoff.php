@@ -71,7 +71,8 @@ if (!empty($action) && !empty($name)) {
 		if ($action == 'set') {
 			dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);
 		} elseif ($action == 'del') {
-			dolibarr_del_const($db, $name, $entity);
+			// We should save the constant as 0 instead of deleting the constant.
+			dolibarr_set_const($db, $name, 0, 'chaine', 0, '', $entity);
 		}
 	}
 } else {
