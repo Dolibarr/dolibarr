@@ -1542,7 +1542,11 @@ while ($i < $imaxinloop) {
 			//if ($obj->opp_status_code)
 			if (strcmp($obj->opp_amount, '')) {
 				print '<span class="amount">'.price($obj->opp_amount, 1, $langs, 1, -1, -1, '').'</span>';
-				$totalarray['val']['p.opp_amount'] += $obj->opp_amount;
+				if (empty($totalarray['val']['p.opp_amount'])) {
+					$totalarray['val']['p.opp_amount'] = $obj->opp_amount;
+				} else {
+					$totalarray['val']['p.opp_amount'] += $obj->opp_amount;
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -1571,7 +1575,11 @@ while ($i < $imaxinloop) {
 			print '<td align="right">';
 			if ($obj->opp_weighted_amount) {
 				print '<span class="amount">'.price($obj->opp_weighted_amount, 1, $langs, 1, -1, -1, '').'</span>';
-				$totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
+				if (empty($totalarray['val']['opp_weighted_amount'])) {
+					$totalarray['val']['opp_weighted_amount'] = $obj->opp_weighted_amount;
+				} else {
+					$totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -1586,7 +1594,11 @@ while ($i < $imaxinloop) {
 			print '<td class="right">';
 			if ($obj->budget_amount != '') {
 				print '<span class="amount">'.price($obj->budget_amount, 1, $langs, 1, -1, -1).'</span>';
-				$totalarray['val']['p.budget_amount'] += $obj->budget_amount;
+				if (empty($totalarray['val']['p.budget_amount'])) {
+					$totalarray['val']['p.budget_amount'] = $obj->budget_amount;
+				} else {
+					$totalarray['val']['p.budget_amount'] += $obj->budget_amount;
+				}
 			}
 			print '</td>';
 			if (!$i) {
