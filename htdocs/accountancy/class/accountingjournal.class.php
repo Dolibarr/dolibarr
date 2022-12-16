@@ -987,8 +987,8 @@ class AccountingJournal extends CommonObject
 					$langs->transnoentitiesnoconv("LedgerAccount"),
 					$langs->transnoentitiesnoconv("SubledgerAccount"),
 					$langs->transnoentitiesnoconv("Label"),
-					$langs->transnoentitiesnoconv("Debit"),
-					$langs->transnoentitiesnoconv("Credit"),
+					$langs->transnoentitiesnoconv("AccountingDebit"),
+					$langs->transnoentitiesnoconv("AccountingCredit"),
 					$langs->transnoentitiesnoconv("Journal"),
 					$langs->transnoentitiesnoconv("Note"),
 				);
@@ -998,8 +998,8 @@ class AccountingJournal extends CommonObject
 					$langs->transnoentitiesnoconv("Piece"),
 					$langs->transnoentitiesnoconv("AccountAccounting"),
 					$langs->transnoentitiesnoconv("LabelOperation"),
-					$langs->transnoentitiesnoconv("Debit"),
-					$langs->transnoentitiesnoconv("Credit"),
+					$langs->transnoentitiesnoconv("AccountingDebit"),
+					$langs->transnoentitiesnoconv("AccountingCredit"),
 				);
 			} elseif ($this->nature == 1) {
 				$header = array(
@@ -1007,8 +1007,8 @@ class AccountingJournal extends CommonObject
 					$langs->transnoentitiesnoconv("Piece"),
 					$langs->transnoentitiesnoconv("AccountAccounting"),
 					$langs->transnoentitiesnoconv("LabelOperation"),
-					$langs->transnoentitiesnoconv("Debit"),
-					$langs->transnoentitiesnoconv("Credit"),
+					$langs->transnoentitiesnoconv("AccountingDebit"),
+					$langs->transnoentitiesnoconv("AccountingCredit"),
 				);
 			}
 

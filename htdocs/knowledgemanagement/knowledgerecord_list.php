@@ -153,7 +153,7 @@ if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'knowledgemanagement');
+$result = restrictedArea($user, 'knowledgemanagement', 0, '', 'knowledgerecord');
 //if (!$permissiontoread) accessforbidden();
 
 

@@ -162,6 +162,7 @@ ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=This part or ano
 ErrorInvoiceIsNotLastOfSameType=Error: The date of invoice %s  is %s. It must be posterior or equal to last date for same type invoices (%s). Please change the invoice date.
 BillFrom=From
 BillTo=To
+ShippingTo=Shipping to
 ActionsOnBill=Actions on invoice
 RecurringInvoiceTemplate=Template / Recurring invoice
 NoQualifiedRecurringInvoiceTemplateFound=No recurring template invoice qualified for generation.

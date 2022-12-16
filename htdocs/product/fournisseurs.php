@@ -318,6 +318,7 @@ if (empty($reshook)) {
 				} else {
 					if (isModEnabled('dynamicprices') && $price_expression !== '') {
 						//Check the expression validity by parsing it
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($db);
 						$object->fk_supplier_price_expression = $price_expression;
 						$price_result = $priceparser->parseProductSupplier($object);
@@ -791,16 +792,11 @@ END;
 
 					// Barcode type
 					print '<tr>';
-					print '<td>'.$langs->trans('BarcodeType').'</td>';
+					print '<td>'.$langs->trans('GencodBuyPrice').'</td>';
 					print '<td>';
-					print $formbarcode->selectBarcodeType(($rowid ? $object->supplier_fk_barcode_type : getDolGlobalint("PRODUIT_DEFAULT_BARCODE_TYPE")), 'fk_barcode_type', 1);
-					print '</td>';
-					print '</tr>';
-
-					// Barcode value
-					print '<tr>';
-					print '<td>'.$langs->trans('BarcodeValue').'</td>';
-					print '<td>'.img_picto('', 'barcode', 'class="pictofixedwidth"').'<input class="flat" name="barcode"  value="'.($rowid ? $object->supplier_barcode : '').'"></td>';
+					print img_picto('', 'barcode', 'class="pictofixedwidth"');
+					print $formbarcode->selectBarcodeType((GETPOSTISSET('fk_barcode_type') ? GETPOST('fk_barcode_type', 'int') : ($rowid ? $object->supplier_fk_barcode_type : getDolGlobalint("PRODUIT_DEFAULT_BARCODE_TYPE"))), 'fk_barcode_type', 1);
+					print ' <input class="flat" name="barcode"  value="'.(GETPOSTISSET('barcode') ? GETPOST('barcode') : ($rowid ? $object->supplier_barcode : '')).'"></td>';
 					print '</tr>';
 				}
 

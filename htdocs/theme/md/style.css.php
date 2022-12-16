@@ -1442,6 +1442,12 @@ select.flat.selectlimit {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.tdoverflowmax80imp {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 80px !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .tdoverflowmax100 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 100px;
 	overflow: hidden;
@@ -1513,6 +1519,12 @@ select.flat.selectlimit {
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 	height: auto !important;
+}
+.tenlinesmax {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 10;
+	overflow: hidden;
 }
 
 .tablelistofcalendars {
@@ -2453,6 +2465,8 @@ img.photoref, div.photoref {
 img.photokanban, div.photokanban {
 	padding: 0;
 	border: none;
+	box-shadow: none;
+	vertical-align: middle;
 }
 
 div.photoref .fa, div.photoref .fas, div.photoref .far {

@@ -2505,12 +2505,12 @@ if (empty($reshook)) {
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
 			if ($usermustrespectpricemin && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)) {
-				if ($pu_ht && $price_min && ((price2num($pu_ht) * (1 - $remise_percent / 100)) < price2num($price_min))) {
+				if ($pu_ht && $price_min && (((float) price2num($pu_ht) * (1 - (float) $remise_percent / 100)) < (float) price2num($price_min))) {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
-				} elseif ($pu_ttc && $price_min_ttc && ((price2num($pu_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
+				} elseif ($pu_ttc && $price_min_ttc && ((price2num($pu_ttc) * (1 - (float) $remise_percent / 100)) < price2num($price_min_ttc))) {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
@@ -3065,6 +3065,11 @@ if ($action == 'create') {
 				$fk_account         = (!empty($expesrc->fk_account) ? $expesrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
 				$remise_percent 	= (!empty($expesrc->remise_percent) ? $expesrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
 				$remise_absolue 	= (!empty($expesrc->remise_absolue) ? $expesrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
+
+				if (!empty($conf->multicurrency->enabled)) {
+					$currency_code 	= (!empty($expesrc->currency_code) ? $expesrc->currency_code : (!empty($soc->currency_code) ? $soc->currency_code : $objectsrc->multicurrency_code));
+					$currency_tx 	= (!empty($expesrc->currency_tx) ? $expesrc->currency_tx : (!empty($soc->currency_tx) ? $soc->currency_tx : $objectsrc->currency_tx));
+				}
 
 				//Replicate extrafields
 				$expesrc->fetch_optionals();

@@ -6,6 +6,7 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2012-2013  Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
+ * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -754,7 +755,7 @@ print '<input type="hidden" name="action" value="setforcedate" />';
 print '<tr class="oddeven"><td>';
 print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" class="center">';
-print $form->selectyesno("forcedate", $conf->global->FAC_FORCE_DATE_VALIDATION, 1);
+print $form->selectyesno("forcedate", getDolGlobalInt('FAC_FORCE_DATE_VALIDATION', 0), 1);
 print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

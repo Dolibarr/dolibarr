@@ -69,3 +69,4 @@ GenerateInter=Generate intervention
 FichinterNoContractLinked=Intervention %s has been created without a linked contract.
 ErrorFicheinterCompanyDoesNotExist=Company does not exist. Intervention has not been created.
 NextDateToIntervention=Date for next intervention generation
+NoIntervention=No intervention

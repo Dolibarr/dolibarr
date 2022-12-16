@@ -2828,6 +2828,7 @@ class Propal extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
 		$sql .= " SET fk_statut = ".self::STATUS_DRAFT;
+		$sql .= ",  online_sign_ip = NULL , online_sign_name = NULL";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
@@ -4445,8 +4446,8 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ", qty='".price2num($this->qty)."'";
 		$sql .= ", subprice=".price2num($this->subprice)."";
 		$sql .= ", remise_percent=".price2num($this->remise_percent)."";
-		$sql .= ", price=".price2num($this->price).""; // TODO A virer
-		$sql .= ", remise=".price2num($this->remise).""; // TODO A virer
+		$sql .= ", price=".(float) price2num($this->price).""; // TODO A virer
+		$sql .= ", remise=".(float) price2num($this->remise).""; // TODO A virer
 		$sql .= ", info_bits='".$this->db->escape($this->info_bits)."'";
 		if (empty($this->skip_update_total)) {
 			$sql .= ", total_ht=".price2num($this->total_ht)."";

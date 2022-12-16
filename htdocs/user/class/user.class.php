@@ -1522,7 +1522,7 @@ class User extends CommonObject
 			return -1;
 		} elseif (preg_match('/['.preg_quote($badCharUnauthorizedIntoLoginName, '/').']/', $this->login)) {
 			$langs->load("errors");
-			$this->error = $langs->trans("ErrorBadCharIntoLoginName");
+			$this->error = $langs->trans("ErrorBadCharIntoLoginName", $langs->transnoentitiesnoconv("Login"));
 			return -1;
 		}
 
@@ -1918,7 +1918,7 @@ class User extends CommonObject
 			return -1;
 		} elseif (preg_match('/['.preg_quote($badCharUnauthorizedIntoLoginName, '/').']/', $this->login)) {
 			$langs->load("errors");
-			$this->error = $langs->trans("ErrorBadCharIntoLoginName");
+			$this->error = $langs->trans("ErrorBadCharIntoLoginName", $langs->transnoentitiesnoconv("Login"));
 			return -1;
 		}
 

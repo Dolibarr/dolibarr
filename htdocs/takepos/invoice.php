@@ -1550,7 +1550,7 @@ if ($placeid > 0) {
 						$tooltiptext .= $line->desc;
 					}
 				}
-				if ($conf->global->TAKEPOS_SHOW_PRODUCT_REFERENCE == 1) {
+				if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) {
 					$htmlforlines .= $form->textwithpicto($line->product_label ? '<b>' . $line->product_ref . '</b> - ' . $line->product_label : dolGetFirstLineOfText($line->desc, 1), $tooltiptext);
 				} else {
 					$htmlforlines .= $form->textwithpicto($line->product_label ? $line->product_label : ($line->product_ref ? $line->product_ref : dolGetFirstLineOfText($line->desc, 1)), $tooltiptext);

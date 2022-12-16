@@ -73,6 +73,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Init vars
 $errmsg = '';
@@ -199,7 +200,7 @@ if (empty($reshook) && $action == 'add') {
 			$error++;
 			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"))."<br>\n";
 		}
-		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape(GETPOST('login'))."'";
+		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login = '".$db->escape(GETPOST('login'))."'";
 		$result = $db->query($sql);
 		if ($result) {
 			$num = $db->num_rows($result);
@@ -284,12 +285,43 @@ if (empty($reshook) && $action == 'add') {
 		$adh->morphy      = getDolGlobalString("MEMBER_NEWFORM_FORCEMORPHY", GETPOST('morphy'));
 		$adh->birth       = $birthday;
 
+		$adh->ip = getUserRemoteIP();
+
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+		$now = dol_now();
+		$minmonthpost = dol_time_plus_duree($now, -1, "m");
+		// Calculate nb of post for IP
+		$nb_post_ip = 0;
+		if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+			$sql = "SELECT COUNT(ref) as nb_adh";
+			$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
+			$sql .= " WHERE ip = '".$db->escape($adh->ip)."'";
+			$sql .= " AND datec > '".$db->idate($minmonthpost)."'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$i++;
+					$obj = $db->fetch_object($resql);
+					$nb_post_ip = $obj->nb_adh;
+				}
+			}
+		}
+
 
 		// Fill array 'array_options' with data from add form
 		$extrafields->fetch_name_optionals_label($adh->table_element);
 		$ret = $extrafields->setOptionalsFromPost(null, $adh);
 		if ($ret < 0) {
 			$error++;
+			$errmsg .= $adh->error;
+		}
+
+		if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+			$error++;
+			$errmsg .= $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
+			array_push($adh->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
 		}
 
 		if (!$error) {
@@ -747,7 +779,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $caneditamount) {
 			print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$showedamount.'">';
 			print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium"> – ';
-			print $amount>0? $langs->trans("AnyAmountWithAdvisedAmount", $amount, $langs->trans("Currency".$conf->currency)): $langs->trans("AnyAmountWithoutAdvisedAmount");
+			print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)): $langs->trans("AnyAmountWithoutAdvisedAmount");
 			print '</span>';
 		} else {
 			print '<input type="hidden" name="amount" id="amount" class="flat amount" value="'.$showedamount.'">';
@@ -783,12 +815,14 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 
 	$publiccounters = getDolGlobalString("MEMBER_COUNTERS_ARE_PUBLIC");
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut as status, d.morphy, COUNT(a.rowid) AS membercount";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut as status, d.morphy,";
+	$sql .= " COUNT(a.rowid) AS membercount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as a";
-	$sql .= " ON d.rowid = a.fk_adherent_type AND a.statut>0";
+	$sql .= " ON d.rowid = a.fk_adherent_type AND a.statut > 0";
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
-	$sql .= " AND d.statut=1 GROUP BY d.rowid";
+	$sql .= " AND d.statut=1";
+	$sql .= " GROUP BY d.rowid, d.libelle, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut, d.morphy";
 
 	$result = $db->query($sql);
 	if ($result) {

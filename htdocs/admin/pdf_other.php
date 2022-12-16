@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011 	Regis Houssin        	<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2107 	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2019	   	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2021		Anthony Berton       	<bertonanthony@gmail.com>
+ * Copyright (C) 2021-2022	Anthony Berton       	<bertonanthony@gmail.com>
  * Copyright (C) 2022		Alexandre Spangaro      <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,6 +72,10 @@ if ($action == 'update') {
 	}
 	if (GETPOSTISSET('INVOICE_CATEGORY_OF_OPERATION')) {
 		dolibarr_set_const($db, "INVOICE_CATEGORY_OF_OPERATION", GETPOST("INVOICE_CATEGORY_OF_OPERATION", 'int'), 'chaine', 0, '', $conf->entity);
+	}
+	if (GETPOSTISSET('INVOICE_SHOW_SHIPPING_ADDRESS')) {
+		dolibarr_set_const($db, "INVOICE_SHOW_SHIPPING_ADDRESS", GETPOST("INVOICE_SHOW_SHIPPING_ADDRESS", 'int'), 'chaine', 0, '', $conf->entity);
+		dolibarr_del_const($db, "INVOICE_SHOW_SHIPPING_ADDRESS", $conf->entity);
 	}
 
 	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -171,16 +175,14 @@ if (isModEnabled('facture')) {
 	print $form->selectarray("INVOICE_CATEGORY_OF_OPERATION", $arrval, $conf->global->INVOICE_CATEGORY_OF_OPERATION, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td></tr>';
 
-	/*
-	  print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
-	  if ($conf->use_javascript_ajax) {
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING").'</td><td>';
+	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING');
-	  } else {
+	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING", $arrval, $conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING);
-	  }
-	  print '</td></tr>';
-	*/
+		print $form->selectarray("INVOICE_SHOW_SHIPPING_ADDRESS", $arrval, $conf->global->INVOICE_SHOW_SHIPPING_ADDRESS);
+	}
+	print '</td></tr>';
 
 	print '</table>';
 	print '</div>';

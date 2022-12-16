@@ -617,6 +617,7 @@ if ($action == 'create') {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
+			// List of movements
 			print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
 			print '<form action="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'" method="post">';
@@ -644,8 +645,8 @@ if ($action == 'create') {
 				print_liste_field_titre("AccountAccountingShort");
 				print_liste_field_titre("SubledgerAccount");
 				print_liste_field_titre("LabelOperation");
-				print_liste_field_titre("Debit", "", "", "", "", 'class="right"');
-				print_liste_field_titre("Credit", "", "", "", "", 'class="right"');
+				print_liste_field_titre("AccountingDebit", "", "", "", "", 'class="right"');
+				print_liste_field_titre("AccountingCredit", "", "", "", "", 'class="right"');
 				if (empty($object->date_validation)) {
 					print_liste_field_titre("Action", "", "", "", "", 'width="60"', "", "", 'center ');
 				} else {
@@ -664,14 +665,14 @@ if ($action == 'create') {
 				}
 
 				foreach ($object->linesmvt as $line) {
-					print '<tr class="oddeven">';
+					print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
 
 					if ($action == 'update' && $line->id == $id) {
 						print '<!-- td columns in edit mode -->';
 						print '<td>';
-						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, '');
+						print $formaccounting->select_account((GETPOSTISSET("accountingaccount_number") ? GETPOST("accountingaccount_number", "alpha") : $line->numero_compte), 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
 						print '</td>';
 						print '<td>';
 						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
@@ -697,7 +698,7 @@ if ($action == 'create') {
 						if ($action == "" || $action == 'add') {
 							print '<!-- td columns in add mode -->';
 							print '<td>';
-							print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, '');
+							print $formaccounting->select_account('', 'accountingaccount_number', 1, array(), 1, 1, 'minwidth200 maxwidth500');
 							print '</td>';
 							print '<td>';
 							// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
@@ -714,7 +715,7 @@ if ($action == 'create') {
 							print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $label_operation . '"/></td>';
 							print '<td class="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
 							print '<td class="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
-							print '<td class="center"><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
+							print '<td class="center"><input type="submit" class="button small" name="save" value="' . $langs->trans("Add") . '"></td>';
 						}
 					} else {
 						print '<!-- td columns in display mode -->';
@@ -732,8 +733,8 @@ if ($action == 'create') {
 						}
 						print '</td>';
 						print '<td>'.$line->label_operation.'</td>';
-						print '<td class="right nowraponall amount">'.price($line->debit).'</td>';
-						print '<td class="right nowraponall amount">'.price($line->credit).'</td>';
+						print '<td class="right nowraponall amount">'.($line->debit != 0 ? price($line->debit) : '').'</td>';
+						print '<td class="right nowraponall amount">'.($line->credit != 0 ? price($line->credit) : '').'</td>';
 
 						print '<td class="center nowraponall">';
 						if (empty($line->date_export) && empty($line->date_validation)) {
