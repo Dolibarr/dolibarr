@@ -95,7 +95,6 @@ $search_ref = GETPOST("search_ref", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_societe = GETPOST("search_societe", 'alpha');
 $search_societe_alias = GETPOST("search_societe_alias", 'alpha');
-$search_status = GETPOST("search_status", 'int');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
 $search_opp_percent = GETPOST("search_opp_percent", 'alpha');
 $search_opp_amount = GETPOST("search_opp_amount", 'alpha');
@@ -154,8 +153,10 @@ $search_date_end_endday = GETPOST('search_date_end_endday', 'int');
 $search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
 $search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
 
-if ($search_status == '') {
-	$search_status = -1; // -1 or 1
+if (is_array(GETPOST('search_status', 'none'))) {	// 'none' because we want to know type before sanitizing
+	$search_status = join(',', GETPOST('search_status', 'array:intcomma'));
+} else {
+	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : '0,1');
 }
 
 
@@ -509,11 +510,11 @@ if ($search_date_end_end) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
-if ($search_status >= 0) {
+if ($search_status != '' && $search_status != '-1') {
 	if ($search_status == 99) {
-		$sql .= " AND p.fk_statut <> 2";
+		$sql .= " AND p.fk_statut IN (0,1)";
 	} else {
-		$sql .= " AND p.fk_statut = ".((int) $search_status);
+		$sql .= " AND p.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 	}
 }
 if ($search_opp_status) {
@@ -802,8 +803,8 @@ if ($search_societe != '') {
 if ($search_societe_alias != '') {
 	$param .= '&search_societe_alias='.urlencode($search_societe_alias);
 }
-if ($search_status >= 0) {
-	$param .= '&search_status='.urlencode($search_status);
+if ($search_status != '' && $search_status != '-1') {
+	$param .= "&search_status=".urlencode($search_status);
 }
 if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all', 'openedopp', 'notopenedopp', 'none'))) {
 	$param .= '&search_opp_status='.urlencode($search_opp_status);
@@ -1188,13 +1189,7 @@ if (!empty($arrayfields['p.import_key']['checked'])) {
 }
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '<td class="liste_titre nowrap right">';
-	$arrayofstatus = array();
-	foreach ($object->statuts_short as $key => $val) {
-		$arrayofstatus[$key] = $langs->trans($val);
-	}
-	$arrayofstatus['99'] = $langs->trans("NotClosed").' ('.$langs->trans('Draft').' + '.$langs->trans('Opened').')';
-	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'minwidth75imp maxwidth125 selectarrowonleft onrightofpage');
-	print ajax_combobox('search_status');
+	$formproject->selectProjectsStatus($search_status, 1, 'search_status');
 	print '</td>';
 }
 // Action column
