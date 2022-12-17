@@ -796,7 +796,7 @@ class BlockedLog
 	{
 		try {
 			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			$aaa = unserialize($data);
+			$aaa = jsonOrUnserialize($data);
 		} catch (Exception $e) {
 			//print $e->getErrs);
 		}
