@@ -1227,22 +1227,22 @@ if (empty($action) || $action == 'view') {
 					$account_ledger = $k;
 					// Try to force general ledger account depending on type
 					if ($tabtype[$key] == 'payment') {
-						$account_ledger = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
+						$account_ledger = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
 					}
 					if ($tabtype[$key] == 'payment_supplier') {
-						$account_ledger = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
+						$account_ledger = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
 					}
 					if ($tabtype[$key] == 'payment_expensereport') {
-						$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+						$account_ledger = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT');
 					}
 					if ($tabtype[$key] == 'payment_salary') {
-						$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+						$account_ledger = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT');
 					}
 					if ($tabtype[$key] == 'payment_vat') {
-						$account_ledger = $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT;
+						$account_ledger = getDolGlobalString('ACCOUNTING_VAT_PAY_ACCOUNT');
 					}
 					if ($tabtype[$key] == 'member') {
-						$account_ledger = $conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT;
+						$account_ledger = getDolGlobalString('ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT');
 					}
 					if ($tabtype[$key] == 'payment_various') {
 						$account_ledger = $tabpay[$key]["account_various"];
@@ -1281,7 +1281,7 @@ if (empty($action) || $action == 'view') {
 						}
 					}
 					print '<td class="maxwidth300" title="'.dol_escape_htmltag(dol_string_nohtmltag($accounttoshow)).'">';
-					print $accounttoshow;
+					print $accounttoshow;	// This is a HTML string
 					print "</td>";
 
 					// Subledger account
@@ -1310,7 +1310,7 @@ if (empty($action) || $action == 'view') {
 						}
 					}
 					print '<td class="maxwidth300">';
-					print $accounttoshowsubledger;
+					print $accounttoshowsubledger;	// This is a html string
 					print "</td>";
 
 					print "<td>".$reflabel."</td>";
