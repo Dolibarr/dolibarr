@@ -9386,17 +9386,17 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						continue;
 					}
 					if ($values[3]) {
-                        if ($filterorigmodule) {	// If a filter of module origin has been requested
-                            if (strpos($values[3], '@')) {	// This is an external module
-                                if ($filterorigmodule != 'external') {
-                                    continue;
-                                }
-                            } else {	// This looks a core module
-                                if ($filterorigmodule != 'core') {
-                                    continue;
-                                }
-                            }
-                        }
+						if ($filterorigmodule) {	// If a filter of module origin has been requested
+							if (strpos($values[3], '@')) {	// This is an external module
+								if ($filterorigmodule != 'external') {
+									continue;
+								}
+							} else {	// This looks a core module
+								if ($filterorigmodule != 'core') {
+									continue;
+								}
+							}
+						}
 						$langs->load($values[3]);
 					}
 					if (preg_match('/SUBSTITUTION_([^_]+)/i', $values[2], $reg)) {
