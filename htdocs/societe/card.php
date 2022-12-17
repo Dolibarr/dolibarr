@@ -1986,6 +1986,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->town = GETPOST('town', 'alphanohtml');
 				$object->country_id = GETPOST('country_id') ?GETPOST('country_id', 'int') : $mysoc->country_id;
 				$object->state_id = GETPOST('state_id', 'int');
+				$object->parent = GETPOST('parent_company_id', 'int');
 
 				$object->socialnetworks = array();
 				if (isModEnabled('socialnetworks')) {
@@ -2613,6 +2614,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Other attributes
 			$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
+
+			// Parent company
+			if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
+				print '<tr>';
+				print '<td>'.$langs->trans('ParentCompany').'</td>';
+				print '<td colspan="3" class="maxwidthonsmartphone">';
+				print img_picto('', 'company', 'class="paddingrightonly"');
+				print $form->select_company(GETPOST('parent_company_id') ? GETPOST('parent_company_id') : $object->parent, 'parent_company_id', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
+				print '</td></tr>';
+			}
 
 			// Webservices url/key
 			if (!empty($conf->syncsupplierwebservices->enabled)) {

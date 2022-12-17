@@ -84,7 +84,7 @@ class box_activity extends ModeleBoxes
 		$totalnb = 0;
 		$line = 0;
 		$cachetime = 3600;
-		$fileid = '-e'.$conf->entity.'-u'.$user->id.'-s'.$user->socid.'-r'.($user->rights->societe->client->voir ? '1' : '0').'.cache';
+		$fileid = '-e'.$conf->entity.'-u'.$user->id.'-s'.$user->socid.'-r'.($user->hasRight("societe", "client", "voir") ? '1' : '0').'.cache';
 		$now = dol_now();
 		$nbofperiod = 3;
 
@@ -102,7 +102,7 @@ class box_activity extends ModeleBoxes
 
 
 		// list the summary of the propals
-		if (isModEnabled("propal") && $user->rights->propal->lire) {
+		if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$propalstatic = new Propal($this->db);
 
@@ -189,7 +189,7 @@ class box_activity extends ModeleBoxes
 		}
 
 		// list the summary of the orders
-		if (isModEnabled('commande') && $user->rights->commande->lire) {
+		if (isModEnabled('commande') && $user->hasRight("commande", "lire")) {
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$commandestatic = new Commande($this->db);
 
@@ -278,7 +278,7 @@ class box_activity extends ModeleBoxes
 
 
 		// list the summary of the bills
-		if (isModEnabled('facture') && $user->rights->facture->lire) {
+		if (isModEnabled('facture') && $user->hasRight("facture", "lire")) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$facturestatic = new Facture($this->db);
 
