@@ -169,7 +169,7 @@ if ($action == "confirm_update") {
 } elseif ($action == 'add' || $action == 'valid') {
 	$error = 0;
 
-	if (array_sum($debit) != array_sum($credit)){
+	if (array_sum($debit) != array_sum($credit)) {
 		$action = 'add';
 	}
 
@@ -641,7 +641,7 @@ if (!empty($object->piece_num)) {
 					if ($action == "" || $action == 'add') {
 						print '<!-- td columns in add mode -->';
 						print '<td>';
-						print $formaccounting->select_account((is_array($accountingaccount_number) ? $accountingaccount_number[$key] : $accountingaccount_number ) , 'accountingaccount_number['.$key.']', 1, array(), 1, 1, '');
+						print $formaccounting->select_account((is_array($accountingaccount_number) ? $accountingaccount_number[$key] : $accountingaccount_number ), 'accountingaccount_number['.$key.']', 1, array(), 1, 1, '');
 						print '</td>';
 						print '<td>';
 						// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because:
@@ -649,7 +649,7 @@ if (!empty($object->piece_num)) {
 						// Also, it is not possible to use a value that is not in the list.
 						// Also, the label is not automatically filled when a value is selected.
 						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-							print $formaccounting->select_auxaccount((is_array($subledger_account) ? $subledger_account[$key] : $subledger_account ) , 'subledger_account['.$key.']', 1, 'maxwidth250', '', 'subledger_label');
+							print $formaccounting->select_auxaccount((is_array($subledger_account) ? $subledger_account[$key] : $subledger_account ), 'subledger_account['.$key.']', 1, 'maxwidth250', '', 'subledger_label');
 						} else {
 							print '<input type="text" class="maxwidth150" name="subledger_account['.$key.']" value="' . (is_array($subledger_account) ? $subledger_account[$key] : $subledger_account ) . '" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '" />';
 						}
