@@ -1150,7 +1150,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		//pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
 		//Affiche le filigrane brouillon - Print Draft Watermark
-		/*if($object->statut==0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK')) 
+		/*if($object->statut==0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK'))
 		{
 			pdf_watermark($pdf,$outputlangs,$this->page_hauteur,$this->page_largeur,'mm',getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
 		}*/
