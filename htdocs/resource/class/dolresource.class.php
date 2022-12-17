@@ -44,27 +44,46 @@ class Dolresource extends CommonObject
 	 */
 	public $picto = 'resource';
 
+
+	/**
+	 * @var int ID
+	 */
+	public $fk_code_type_resource;
+
+	public $type_label;
+
+	public $description;
+
+	public $fk_country;
+
+
+	// Variable for a link of resource
+
+	/**
+	 * @var int ID
+	 */
 	public $resource_id;
 	public $resource_type;
 	public $element_id;
 	public $element_type;
 	public $busy;
 	public $mandatory;
-
 	/**
 	 * @var int ID
 	 */
 	public $fk_user_create;
-
-	public $type_label;
 	public $tms = '';
 
+	/**
+	 * @var array	Cache of type of resources. TODO Use $conf->cache['type_of_resources'] instead
+	 */
 	public $cache_code_type_resource = array();
 
 	/**
 	 * @var Dolresource Clone of object before changing it
 	 */
 	public $oldcopy;
+
 
 	/**
 	 *  Constructor
@@ -339,10 +358,10 @@ class Dolresource extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Load object in memory from database
+	 *    Load data of link in memory from database
 	 *
-	 *    @param      int	$id          id object
-	 *    @return     int         <0 if KO, >0 if OK
+	 *    @param      int	$id         Id of link element_resources
+	 *    @return     int         		<0 if KO, >0 if OK
 	 */
 	public function fetch_element_resource($id)
 	{

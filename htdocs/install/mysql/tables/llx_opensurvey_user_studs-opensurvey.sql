@@ -22,4 +22,5 @@ CREATE TABLE llx_opensurvey_user_studs (
     reponses VARCHAR(200) NOT NULL,		-- Not used for 'F' surveys
     tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     date_creation datetime NOT NULL, 
+    ip varchar(250),              --ip used to create record (for public submission page)
 ) ENGINE=innodb;

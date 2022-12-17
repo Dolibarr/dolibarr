@@ -93,8 +93,6 @@ UPDATE llx_holiday SET fk_user_approve = fk_user_valid WHERE statut = 3 AND fk_u
 
 ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
 
-ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
-
 ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
 ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN lastresult text;
@@ -122,11 +120,11 @@ ALTER TABLE llx_product ADD COLUMN sell_or_eat_by_mandatory tinyint DEFAULT 0 NO
 
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD email_date datetime after email_msgid;
 
-ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
-
 ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
+
+ALTER TABLE llx_ticket MODIFY COLUMN message mediumtext;
 
 ALTER TABLE llx_cronjob ADD COLUMN pid integer;
 

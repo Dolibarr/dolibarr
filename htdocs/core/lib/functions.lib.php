@@ -19,6 +19,7 @@
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
+ * Copyright (C) 2022       Charlene Benke           	<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,8 +74,9 @@ if (!function_exists('utf8_decode')) {
 
 /**
  * Return dolibarr global constant string value
- * @param string $key key to return value, return '' if not set
- * @param string $default value to return
+ *
+ * @param string $key 		key to return value, return '' if not set
+ * @param string $default 	value to return
  * @return string
  */
 function getDolGlobalString($key, $default = '')
@@ -86,8 +88,9 @@ function getDolGlobalString($key, $default = '')
 
 /**
  * Return dolibarr global constant int value
- * @param string $key key to return value, return 0 if not set
- * @param int $default value to return
+ *
+ * @param string 	$key 		key to return value, return 0 if not set
+ * @param int 		$default 	value to return
  * @return int
  */
 function getDolGlobalInt($key, $default = 0)
@@ -98,7 +101,36 @@ function getDolGlobalInt($key, $default = 0)
 }
 
 /**
+ * Return dolibarr user constant string value
+ *
+ * @param string $key 		key to return value, return '' if not set
+ * @param string $default 	value to return
+ * @return string
+ */
+function getDolUserString($key, $default = '')
+{
+	global $user;
+	// return $conf->global->$key ?? $default;
+	return (string) (empty($user->conf->$key) ? $default : $user->conf->$key);
+}
+
+/**
+ * Return dolibarr user constant int value
+ *
+ * @param string 	$key 			key to return value, return 0 if not set
+ * @param int 		$default 		value to return
+ * @return int
+ */
+function getDolUserInt($key, $default = 0)
+{
+	global $user;
+	// return $conf->global->$key ?? $default;
+	return (int) (empty($user->conf->$key) ? $default : $user->conf->$key);
+}
+
+/**
  * Is Dolibarr module enabled
+ *
  * @param string $module module name to check
  * @return int
  */
@@ -2209,7 +2241,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	if ($object->element == 'societe') {
-		if (!empty($conf->use_javascript_ajax) && $user->rights->societe->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+		if (!empty($conf->use_javascript_ajax) && $user->hasRight('societe', 'creer') && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
 		} else {
 			$morehtmlstatus .= $object->getLibStatut(6);
@@ -3041,7 +3073,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
 		}
 
-		if (($cid || $socid) && isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
+		if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_EMAIL';
 			$link = '';
 			if (!empty($conf->global->AGENDA_ADDACTIONFOREMAIL)) {
@@ -3484,7 +3516,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 
 		//if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
-		if (isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
+		if (isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_TEL';
 			$link = '';
 			if ($addlink == 'AC_FAX') {
@@ -4175,7 +4207,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Add CSS
 			$arrayconvpictotomorcess = array(
 				'action'=>'infobox-action', 'account'=>'infobox-bank_account', 'accounting_account'=>'infobox-bank_account', 'accountline'=>'infobox-bank_account', 'accountancy'=>'infobox-bank_account', 'asset'=>'infobox-bank_account',
-				'bank_account'=>'bg-infobox-bank_account',
+				'bank_account'=>'infobox-bank_account',
 				'bill'=>'infobox-commande', 'billa'=>'infobox-commande', 'billr'=>'infobox-commande', 'billd'=>'infobox-commande',
 				'margin'=>'infobox-bank_account', 'conferenceorbooth'=>'infobox-project',
 				'cash-register'=>'infobox-bank_account', 'contract'=>'infobox-contrat', 'check'=>'font-status4', 'collab'=>'infobox-action', 'conversation'=>'infobox-contrat',
@@ -6285,20 +6317,25 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 		$product = new Product($db);
 		$product->fetch($idprod);
 
-		if ($mysoc->country_code == $thirdpartytouse->country_code) { // If country to consider is ours
+		if ($mysoc->country_code == $thirdpartytouse->country_code) {
+			// If country to consider is ours
 			if ($idprodfournprice > 0) {     // We want vat for product for a "supplier" object
-				$product->get_buyprice($idprodfournprice, 0, 0, 0);
-				$ret = $product->vatrate_supplier;
-				if ($product->default_vat_code) {
-					$ret .= ' ('.$product->default_vat_code.')';
-				}
-			} else {
-				$ret = $product->tva_tx; // Default vat of product we defined
-				if ($product->default_vat_code) {
-					$ret .= ' ('.$product->default_vat_code.')';
+				$result = $product->get_buyprice($idprodfournprice, 0, 0, 0);
+				if ($result > 0) {
+					$ret = $product->vatrate_supplier;
+					if ($product->default_vat_code_supplier) {
+						$ret .= ' ('.$product->default_vat_code_supplier.')';
+					}
+					$found = 1;
 				}
 			}
-			$found = 1;
+			if (!$found) {
+				$ret = $product->tva_tx; 	// Default sales vat of product
+				if ($product->default_vat_code) {
+					$ret .= ' ('.$product->default_vat_code.')';
+				}
+				$found = 1;
+			}
 		} else {
 			// TODO Read default product vat according to product and another countrycode.
 			// Vat for couple anothercountrycode/product is data that is not managed and store yet, so we will fallback on next rule.
@@ -6310,7 +6347,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 			// If vat of product for the country not found or not defined, we return the first rate found (sorting on use_default, then on higher vat of country).
 			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code = '".$db->escape($thirdpartytouse->country_code)."'";
+			$sql .= " WHERE t.active = 1 AND t.fk_pays = c.rowid AND c.code = '".$db->escape($thirdpartytouse->country_code)."'";
 			$sql .= " ORDER BY t.use_default DESC, t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
 
@@ -6328,7 +6365,9 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 				dol_print_error($db);
 			}
 		} else {
-			// Forced value if autodetect fails. MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS can be '1.23' or '1.23 (CODE)'
+			// Forced value if autodetect fails. MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS can be
+			// '1.23'
+			// or '1.23 (CODE)'
 			$defaulttx = '';
 			if ($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS != 'none') {
 				$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
@@ -7801,11 +7840,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$dateplannedstart = '';
 				$datenextexpiration = '';
 				foreach ($object->lines as $line) {
-					if ($line->date_ouverture_prevue > $dateplannedstart) {
-						$dateplannedstart = $line->date_ouverture_prevue;
+					if ($line->date_start > $dateplannedstart) {
+						$dateplannedstart = $line->date_start;
 					}
-					if ($line->statut == 4 && $line->date_fin_prevue && (!$datenextexpiration || $line->date_fin_prevue < $datenextexpiration)) {
-						$datenextexpiration = $line->date_fin_prevue;
+					if ($line->statut == 4 && $line->date_end && (!$datenextexpiration || $line->date_end < $datenextexpiration)) {
+						$datenextexpiration = $line->date_end;
 					}
 				}
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = dol_print_date($dateplannedstart, 'dayrfc');
@@ -9347,6 +9386,17 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						continue;
 					}
 					if ($values[3]) {
+                        if ($filterorigmodule) {	// If a filter of module origin has been requested
+                            if (strpos($values[3], '@')) {	// This is an external module
+                                if ($filterorigmodule != 'external') {
+                                    continue;
+                                }
+                            } else {	// This looks a core module
+                                if ($filterorigmodule != 'core') {
+                                    continue;
+                                }
+                            }
+                        }
 						$langs->load($values[3]);
 					}
 					if (preg_match('/SUBSTITUTION_([^_]+)/i', $values[2], $reg)) {
@@ -11813,7 +11863,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
 					//elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
 					$tododone = '';
-					if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && $obj->datep > $now)) {
+					if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && $obj->dp > $now)) {
 						$tododone = 'todo';
 					}
 

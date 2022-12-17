@@ -440,16 +440,16 @@ if ($result || !($id > 0)) {
 				continue;
 			}
 
-			if ($graphfiles == 'propal' && !$user->rights->propal->lire) {
+			if ($graphfiles == 'propal' && empty($user->rights->propal->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'order' && !$user->rights->commande->lire) {
+			if ($graphfiles == 'order' && empty($user->rights->commande->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'invoices' && !$user->rights->facture->lire) {
+			if ($graphfiles == 'invoices' && empty($user->rights->facture->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'proposals_suppliers' && !$user->rights->supplier_proposal->lire) {
+			if ($graphfiles == 'proposals_suppliers' && empty($user->rights->supplier_proposal->lire)) {
 				continue;
 			}
 			if ($graphfiles == 'invoices_suppliers' && empty($user->rights->fournisseur->facture->lire)) {
@@ -458,7 +458,7 @@ if ($result || !($id > 0)) {
 			if ($graphfiles == 'orders_suppliers' && empty($user->rights->fournisseur->commande->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'mrp' && empty($user->rights->mrp->mo->read)) {
+			if ($graphfiles == 'mrp' && empty($user->rights->mrp->read)) {
 				continue;
 			}
 

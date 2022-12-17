@@ -373,9 +373,11 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 				print "</td>";
 				// Sell price
 				if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-					if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression)) {
+					if (isModEnabled('dynamicprices') && !empty($objp->fk_price_expression)) {
 						$product = new Product($db);
 						$product->fetch($objp->rowid);
+
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($db);
 						$price_result = $priceparser->parseProduct($product);
 						if ($price_result >= 0) {

@@ -410,6 +410,9 @@ if (count($listofprojectcontacttypeexternal) == 0) {
 	$listofprojectcontacttypeexternal[0] = '0'; // To avoid sql syntax error if not found
 }
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
 $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount,";
@@ -451,6 +454,10 @@ if ($search_project_user > 0) {
 if ($search_project_contact > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ecp_contact";
 }
+
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= " WHERE p.entity IN (".getEntity('project').')';
 if (empty($user->rights->projet->all->lire)) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
@@ -465,11 +472,15 @@ if ($search_ref) {
 if ($search_label) {
 	$sql .= natural_search('p.title', $search_label);
 }
-if ($search_societe) {
-	$sql .= natural_search('s.nom', $search_societe);
-}
-if ($search_societe_alias) {
-	$sql .= natural_search('s.name_alias', $search_societe_alias);
+if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+} else {
+	if ($search_societe) {
+		$sql .= natural_search('s.nom', $search_societe);
+	}
+	if ($search_societe_alias) {
+		$sql .= natural_search('s.name_alias', $search_societe_alias);
+	}
 }
 if ($search_opp_amount) {
 	$sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
@@ -1531,7 +1542,11 @@ while ($i < $imaxinloop) {
 			//if ($obj->opp_status_code)
 			if (strcmp($obj->opp_amount, '')) {
 				print '<span class="amount">'.price($obj->opp_amount, 1, $langs, 1, -1, -1, '').'</span>';
-				$totalarray['val']['p.opp_amount'] += $obj->opp_amount;
+				if (empty($totalarray['val']['p.opp_amount'])) {
+					$totalarray['val']['p.opp_amount'] = $obj->opp_amount;
+				} else {
+					$totalarray['val']['p.opp_amount'] += $obj->opp_amount;
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -1560,7 +1575,11 @@ while ($i < $imaxinloop) {
 			print '<td align="right">';
 			if ($obj->opp_weighted_amount) {
 				print '<span class="amount">'.price($obj->opp_weighted_amount, 1, $langs, 1, -1, -1, '').'</span>';
-				$totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
+				if (empty($totalarray['val']['opp_weighted_amount'])) {
+					$totalarray['val']['opp_weighted_amount'] = $obj->opp_weighted_amount;
+				} else {
+					$totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
+				}
 			}
 			print '</td>';
 			if (!$i) {
@@ -1575,7 +1594,11 @@ while ($i < $imaxinloop) {
 			print '<td class="right">';
 			if ($obj->budget_amount != '') {
 				print '<span class="amount">'.price($obj->budget_amount, 1, $langs, 1, -1, -1).'</span>';
-				$totalarray['val']['p.budget_amount'] += $obj->budget_amount;
+				if (empty($totalarray['val']['p.budget_amount'])) {
+					$totalarray['val']['p.budget_amount'] = $obj->budget_amount;
+				} else {
+					$totalarray['val']['p.budget_amount'] += $obj->budget_amount;
+				}
 			}
 			print '</td>';
 			if (!$i) {

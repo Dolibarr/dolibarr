@@ -1433,7 +1433,7 @@ class ActionComm extends CommonObject
 				$response->label = $langs->trans("ActionsToDo");
 				$response->labelShort = $langs->trans("ActionsToDoShort");
 				$response->url = DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&actioncode=0&status=todo&mainmenu=agenda';
-				if ($user->rights->agenda->allactions->read) {
+				if ($user->hasRight("agenda", "allactions", "read")) {
 					$response->url .= '&filtert=-1';
 				}
 				$response->img = img_object('', "action", 'class="inline-block valigntextmiddle"');
