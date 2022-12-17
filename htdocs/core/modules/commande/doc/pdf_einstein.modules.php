@@ -237,8 +237,8 @@ class pdf_einstein extends ModelePDFCommandes
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
 
 		// Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK))) {
-			$this->watermark = $conf->global->COMMANDE_DRAFT_WATERMARK;
+		if ($object->statut == $object::STATUS_DRAFT && getDolGlobalString('COMMANDE_DRAFT_WATERMARK')) {
+			$this->watermark = getDolGlobalString('COMMANDE_DRAFT_WATERMARK');
 		}
 
 		global $outputlangsbis;
