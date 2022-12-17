@@ -1002,7 +1002,8 @@ class Product extends CommonObject
 		$this->ref = dol_string_nospecial(trim($this->ref));
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
-		$this->note = (isset($this->note) ? trim($this->note) : null);
+		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : null);
+		$this->note_public = (isset($this->note_public) ? trim($this->note_public) : null);
 		$this->net_measure = price2num($this->net_measure);
 		$this->net_measure_units = trim($this->net_measure_units);
 		$this->weight = price2num($this->weight);
@@ -1197,7 +1198,8 @@ class Product extends CommonObject
 			$sql .= ", fk_state = ".($this->state_id > 0 ? (int) $this->state_id : 'null');
 			$sql .= ", lifetime = ".($this->lifetime > 0 ? (int) $this->lifetime : 'null');
 			$sql .= ", qc_frequency = ".($this->qc_frequency > 0 ? (int) $this->qc_frequency : 'null');
-			$sql .= ", note = ".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : 'null');
+			$sql .= ", note = ".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : 'null');
+			$sql .= ", note_public = ".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : 'null');
 			$sql .= ", duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."'";
 			if (empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 				$sql .= ", accountancy_code_buy = '" . $this->db->escape($this->accountancy_code_buy) . "'";

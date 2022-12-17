@@ -37,6 +37,7 @@ $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal'
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $socid = GETPOST('socid', 'int');
 $file_manager = GETPOST('file_manager', 'alpha');
@@ -50,6 +51,7 @@ $overwritefile = GETPOST('overwritefile', 'int');
 if (empty($action) && $file_manager) {
 	$action = 'file_manager';
 }
+$pageid  = GETPOST('pageid', 'int');
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');

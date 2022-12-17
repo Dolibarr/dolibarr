@@ -1388,7 +1388,7 @@ GetBarCode=Get barcode
 NumberingModules=Numbering models
 DocumentModules=Document models
 ##### Module password generation
-PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: %s characters containing shared numbers and characters in lowercase.
+PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: %s characters containing shared numbers and characters.
 PasswordGenerationNone=Do not suggest a generated password. Password must be typed in manually.
 PasswordGenerationPerso=Return a password according to your personally defined configuration.
 SetupPerso=According to your configuration
