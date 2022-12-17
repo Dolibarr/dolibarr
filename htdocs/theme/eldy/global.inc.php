@@ -1323,6 +1323,12 @@ select.flat.selectlimit {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.tdoverflowmax80imp {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 80px !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .tdoverflowmax100 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 100px;
 	overflow: hidden;
@@ -2428,6 +2434,9 @@ img.photoref, div.photoref {
 }
 img.photokanban, div.photokanban {
 	padding: 0;
+	border: none;
+	box-shadow: none;
+	vertical-align: middle;
 }
 div.photoref .fa, div.photoref .fas, div.photoref .far {
 	font-size: 2.5em;

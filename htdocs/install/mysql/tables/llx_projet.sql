@@ -57,6 +57,7 @@ create table llx_projet
   price_registration    double(24,8),
   price_booth    double(24,8),
   model_pdf        varchar(255),
+  ip            varchar(250),              --ip used to create record (for public submission page)
   last_main_doc	   varchar(255),				-- relative filepath+filename of last main generated document
   import_key	   varchar(14)					-- Import key
 )ENGINE=innodb;

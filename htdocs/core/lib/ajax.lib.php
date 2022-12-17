@@ -165,7 +165,9 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												 price_unit_ht_locale: item.price_unit_ht_locale,
 												 description : item.description,
 												 ref_customer: item.ref_customer,
-												 tva_tx: item.tva_tx }
+												 tva_tx: item.tva_tx,
+												 default_vat_code: item.default_vat_code
+										}
 									}));
 								} else {
 									console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
@@ -178,7 +180,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						console.log("We will trigger change on input '.$htmlname.' because of the select definition of autocomplete code for input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
-							console.log("Propagate before some properties retrieved by ajax into data-xxx properties");
+							console.log("Propagate before some properties retrieved by ajax into data-xxx properties of #'.$htmlnamejquery.' component");
+							//console.log(ui.item);
 
 							// For supplier price and customer when price by quantity is off
 							$("#'.$htmlnamejquery.'").attr("data-up", ui.item.price_ht);
@@ -189,6 +192,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							$("#'.$htmlnamejquery.'").attr("data-description", ui.item.description);
 							$("#'.$htmlnamejquery.'").attr("data-ref-customer", ui.item.ref_customer);
 							$("#'.$htmlnamejquery.'").attr("data-tvatx", ui.item.tva_tx);
+							$("#'.$htmlnamejquery.'").attr("data-default-vat-code", ui.item.default_vat_code);
 	';
 	if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
 		$script .= '

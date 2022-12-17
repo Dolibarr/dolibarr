@@ -385,7 +385,7 @@ if (empty($reshook)) {
 	$objectlabel = 'ThirdParty';
 	$permissiontoread = $user->hasRight('societe', 'lire');
 	$permissiontodelete = $user->hasRight('societe', 'supprimer');
-	$permissiontoadd = $user->rights->societe->creer;
+	$permissiontoadd = $user->hasRight("societe", "creer");
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
@@ -441,6 +441,9 @@ if ($type == 'p' && (empty($search_type) || ($search_type == '2,3'))) {
 if ($type == 'f' && (empty($search_type) || ($search_type == '4'))) {
 	$title = $langs->trans("Suppliers");
 }
+
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 // Select every potentiels, and note each potentiels which fit in search parameters
 $tab_level = array();
@@ -598,11 +601,16 @@ if (strlen($search_cti)) {
 if ($search_id > 0) {
 	$sql .= natural_search("s.rowid", $search_id, 1);
 }
-if ($search_nom) {
-	$sql .= natural_search("s.nom", $search_nom);
-}
-if ($search_alias) {
-	$sql .= natural_search("s.name_alias", $search_alias);
+if (empty($arrayfields['s.name_alias']['checked']) && $search_nom) {
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_nom);
+} else {
+	if ($search_nom) {
+		$sql .= natural_search("s.nom", $search_nom);
+	}
+
+	if ($search_alias) {
+		$sql .= natural_search("s.name_alias", $search_alias);
+	}
 }
 if ($search_nom_only) {
 	$sql .= natural_search("s.nom", $search_nom_only);
@@ -922,16 +930,16 @@ $arrayofmassactions = array(
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
-if (isModEnabled('category') && $user->rights->societe->creer) {
+if (isModEnabled('category') && $user->hasRight("societe", "creer")) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if ($user->rights->societe->creer) {
+if ($user->hasRight("societe", "creer")) {
 	$arrayofmassactions['preenable'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SetToEnabled");
 }
-if ($user->rights->societe->creer) {
+if ($user->hasRight("societe", "creer")) {
 	$arrayofmassactions['predisable'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SetToDisabled");
 }
-if ($user->rights->societe->creer) {
+if ($user->hasRight("societe", "creer")) {
 	$arrayofmassactions['presetcommercial'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("AllocateCommercial");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
@@ -969,8 +977,8 @@ if ($contextpage != 'poslist') {
 	if (!empty($socid)) {
 		$url .= '&socid='.$socid;
 	}
-	$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->rights->societe->creer);
-} elseif ($user->rights->societe->creer) {
+	$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->hasRight("societe", "creer"));
+} elseif ($user->hasRight("societe", "creer")) {
 	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
 	$label = 'MenuNewCustomer';
 	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);

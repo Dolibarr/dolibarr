@@ -1976,7 +1976,7 @@ class ExtraFields
 		$expand_display = false;
 		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
 			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
+			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? (empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) ? false : true) : ($extrafield_collapse_display_value == 2 ? false : true));
 		}
 		if ($mode == 'create') {
 			$extrafield_collapse_display_value = 0;

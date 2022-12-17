@@ -496,7 +496,7 @@ if ($result) {
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth75imp" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125', 'code2', 1, 0, 1, null, 1);
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100', 'code2', 1, 0, 1);
 	//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="'.dol_escape_htmltag($search_tvaintra).'"></td>';

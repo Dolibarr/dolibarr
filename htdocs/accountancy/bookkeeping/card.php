@@ -535,6 +535,7 @@ if (!empty($object->piece_num)) {
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
+		// List of movements
 		print load_fiche_titre($langs->trans("ListeMvts"), '', '');
 
 		if ($optioncss != '') {
@@ -607,7 +608,7 @@ if (!empty($object->piece_num)) {
 			$num_line = 0;
 			foreach ($object->linesmvt as $key => $line) {
 				$num_line++;
-				print '<tr class="oddeven">';
+				print '<tr class="oddeven" data-lineid="'.((int) $line->id).'">';
 				$total_debit += $line->debit;
 				$total_credit += $line->credit;
 
@@ -659,7 +660,7 @@ if (!empty($object->piece_num)) {
 						print '<td class="right"><input type="text" size="6" class="right" name="credit['.$key.']" value="' . (is_array($credit) ? $credit[$key] : $credit ) . '" /></td>';
 						// Add button should not appear twice
 						if ($num_line === $count_line) {
-							print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '" /></td>';
+							print '<td><input type="submit" class="button small" name="save" value="' . $langs->trans("Add") . '" /></td>';
 						} else {
 							print '<td class="right"></td>';
 						}
@@ -680,8 +681,8 @@ if (!empty($object->piece_num)) {
 					}
 					print '</td>';
 					print '<td>'.$line->label_operation.'</td>';
-					print '<td class="right nowraponall amount">'.price($line->debit).'</td>';
-					print '<td class="right nowraponall amount">'.price($line->credit).'</td>';
+					print '<td class="right nowraponall amount">'.($line->debit != 0 ? price($line->debit) : '').'</td>';
+					print '<td class="right nowraponall amount">'.($line->credit != 0 ? price($line->credit) : '').'</td>';
 
 					print '<td class="center nowraponall">';
 					if (empty($line->date_export) && empty($line->date_validation)) {

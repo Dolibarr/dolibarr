@@ -701,8 +701,7 @@ class PaymentSalary extends CommonObject
 			$link = '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend = '</a>';
 
-			if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
-			if ($withpicto && $withpicto != 2) $result .= ' ';
+			if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip pictofixedwidth"').$linkend);
 			if ($withpicto != 2) $result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 		}
 

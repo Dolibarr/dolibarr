@@ -2345,7 +2345,8 @@ if ($id > 0) {
 
 		if (isModEnabled("societe")) {
 			// Related company
-			print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id ? $object->thirdparty->getNomUrl(1) : ('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
+			print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td>';
+			print '<td>'.(is_object($object->thirdparty) && $object->thirdparty->id ? $object->thirdparty->getNomUrl(1) : ('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
 			if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL') {
 				if ($object->thirdparty->fetch($object->thirdparty->id)) {
 					print "<br>".dol_print_phone($object->thirdparty->phone);

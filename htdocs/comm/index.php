@@ -72,7 +72,12 @@ if ($user->socid > 0) {
 } else {
 	$id = 0;
 }
-restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
+
+//restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
+if (!$user->hasRight('propal', 'read') && !$user->hasRight('supplier_proposal', 'read') && !$user->hasRight('commande', 'read') && !$user->hasRight('fournisseur', 'commande', 'read')
+	&& !$user->hasRight('supplier_order', 'read') && !$user->hasRight('fichinter', 'read')) {
+	accessforbidden();
+}
 
 $maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
 
@@ -517,7 +522,7 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 
 
 /*
- * Draft interventionals
+ * Draft interventions
  */
 if (isModEnabled('ficheinter')) {
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, f.fk_statut";
@@ -546,13 +551,12 @@ if (isModEnabled('ficheinter')) {
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, $maxofloop);
+		startSimpleTable("DraftFichinter", "fichinter/list.php", "search_status=".Fichinter::STATUS_DRAFT, 2, $num);
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
+		//print '<tr class="liste_titre">';
+		//print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
 
-		if ($num) {
+		if ($num > 0) {
 			$i = 0;
 			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
@@ -585,6 +589,10 @@ if (isModEnabled('ficheinter')) {
 				$i++;
 			}
 		}
+
+		addSummaryTableLine(3, $num, $nbofloop, $total, "NoIntervention");
+		finishSimpleTable(true);
+
 		print "</table></div>";
 	}
 }
