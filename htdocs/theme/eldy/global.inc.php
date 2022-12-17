@@ -53,6 +53,7 @@
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
+	--tablevalidbgcolor: rgb(252, 248, 227);
 }
 
 <?php
@@ -103,6 +104,7 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --amountpaymentcomplete:rgb(101,184,77);
 	            --amountremaintopaybackcolor:rbg(245,130,46);
 				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
+				--tablevalidbgcolor: rgb(80, 64, 33); 
 	      }
 
 		body, button {
@@ -5001,7 +5003,7 @@ table.valid {
 	padding-right: 4px;
 	padding-bottom: 4px;
 	margin: 0px 0px;
-	background: #fcf8e3;
+	background: var(--tablevalidbgcolor);
 }
 
 .validtitre {
