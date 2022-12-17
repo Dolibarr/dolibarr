@@ -24,6 +24,7 @@
  *      \brief      Page to list all receptions
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -51,6 +52,22 @@ $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
+$search_date_delivery_startday = GETPOST('search_date_delivery_startday', 'int');
+$search_date_delivery_startmonth = GETPOST('search_date_delivery_startmonth', 'int');
+$search_date_delivery_startyear = GETPOST('search_date_delivery_startyear', 'int');
+$search_date_delivery_endday = GETPOST('search_date_delivery_endday', 'int');
+$search_date_delivery_endmonth = GETPOST('search_date_delivery_endmonth', 'int');
+$search_date_delivery_endyear = GETPOST('search_date_delivery_endyear', 'int');
+$search_date_delivery_start = dol_mktime(0, 0, 0, $search_date_delivery_startmonth, $search_date_delivery_startday, $search_date_delivery_startyear);	// Use tzserver
+$search_date_delivery_end = dol_mktime(23, 59, 59, $search_date_delivery_endmonth, $search_date_delivery_endday, $search_date_delivery_endyear);
+$search_date_create_startday = GETPOST('search_date_create_startday', 'int');
+$search_date_create_startmonth = GETPOST('search_date_create_startmonth', 'int');
+$search_date_create_startyear = GETPOST('search_date_create_startyear', 'int');
+$search_date_create_endday = GETPOST('search_date_create_endday', 'int');
+$search_date_create_endmonth = GETPOST('search_date_create_endmonth', 'int');
+$search_date_create_endyear = GETPOST('search_date_create_endyear', 'int');
+$search_date_create_start = dol_mktime(0, 0, 0, $search_date_create_startmonth, $search_date_create_startday, $search_date_create_startyear);	// Use tzserver
+$search_date_create_end = dol_mktime(23, 59, 59, $search_date_create_endmonth, $search_date_create_endday, $search_date_create_endyear);
 $search_billed = GETPOST("search_billed", 'int');
 $sall = GETPOST('sall', 'alphanohtml');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -160,6 +177,22 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_state = "";
 	$search_country = '';
 	$search_type_thirdparty = '';
+	$search_date_delivery_startday = '';
+	$search_date_delivery_startmonth = '';
+	$search_date_delivery_startyear = '';
+	$search_date_delivery_endday = '';
+	$search_date_delivery_endmonth = '';
+	$search_date_delivery_endyear = '';
+	$search_date_delivery_start = '';
+	$search_date_delivery_end = '';
+	$search_date_create_startday = '';
+	$search_date_create_startmonth = '';
+	$search_date_create_startyear = '';
+	$search_date_create_endday = '';
+	$search_date_create_endmonth = '';
+	$search_date_create_endyear = '';
+	$search_date_create_start = '';
+	$search_date_create_end = '';
 	$search_billed = '';
 	$search_status = '';
 	$search_array_options = array();
@@ -498,6 +531,9 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
@@ -544,6 +580,18 @@ if ($search_country) {
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($search_type_thirdparty).')';
 }
+if ($search_date_delivery_start) {
+	$sql .= " AND e.date_delivery >= '".$db->idate($search_date_delivery_start)."'";
+}
+if ($search_date_delivery_end) {
+	$sql .= " AND e.date_delivery <= '".$db->idate($search_date_delivery_end)."'";
+}
+if ($search_date_create_start) {
+	$sql .= " AND e.date_creation >= '".$db->idate($search_date_create_start)."'";
+}
+if ($search_date_create_end) {
+	$sql .= " AND e.date_creation <= '".$db->idate($search_date_create_end)."'";
+}
 if ($search_ref_rcp) {
 	$sql .= natural_search('e.ref', $search_ref_rcp);
 }
@@ -569,12 +617,29 @@ $sql .= $hookmanager->resPrint;
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+	$db->free($resql);
 }
 
+// Complete request and execute it with limit
 $sql .= $db->order($sortfield, $sortorder);
-$sql .= $db->plimit($limit + 1, $offset);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 //print $sql;
 $resql = $db->query($sql);
@@ -631,6 +696,42 @@ if ($search_country) {
 }
 if ($search_type_thirdparty) {
 	$param .= "&search_type_thirdparty=".urlencode($search_type_thirdparty);
+}
+if ($search_date_delivery_startday) {
+	$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+}
+if ($search_date_delivery_startmonth) {
+	$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+}
+if ($search_date_delivery_startyear) {
+	$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+}
+if ($search_date_delivery_endday) {
+	$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+}
+if ($search_date_delivery_endmonth) {
+	$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+}
+if ($search_date_delivery_endyear) {
+	$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+}
+if ($search_date_create_startday) {
+	$param .= '&search_date_create_startday='.urlencode($search_date_create_startday);
+}
+if ($search_date_create_startmonth) {
+	$param .= '&search_date_create_startmonth='.urlencode($search_date_create_startmonth);
+}
+if ($search_date_create_startyear) {
+	$param .= '&search_date_create_startyear='.urlencode($search_date_create_startyear);
+}
+if ($search_date_create_endday) {
+	$param .= '&search_date_create_endday='.urlencode($search_date_create_endday);
+}
+if ($search_date_create_endmonth) {
+	$param .= '&search_date_create_endmonth='.urlencode($search_date_create_endmonth);
+}
+if ($search_date_create_endyear) {
+	$param .= '&search_date_create_endyear='.urlencode($search_date_create_endyear);
 }
 if ($search_ref_supplier) {
 	$param .= "&search_ref_supplier=".urlencode($search_ref_supplier);
@@ -715,7 +816,7 @@ if ($massaction == 'createbills') {
 	print $langs->trans('ValidateInvoices');
 	print '</td>';
 	print '<td>';
-	if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+	if (isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
 		print $form->selectyesno('validate_invoices', 0, 1, 1);
 		print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
 	} else {
@@ -751,7 +852,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
 $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 
@@ -761,6 +862,13 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
+// Action column
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre middle">';
+	$searchpicto = $form->showFilterButtons('left');
+	print $searchpicto;
+	print '</td>';
+}
 // Ref
 if (!empty($arrayfields['e.ref']['checked'])) {
 	print '<td class="liste_titre">';
@@ -807,12 +915,19 @@ if (!empty($arrayfields['typent.code']['checked'])) {
 }
 // Date delivery planned
 if (!empty($arrayfields['e.date_delivery']['checked'])) {
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_delivery_start ? $search_date_delivery_start : -1, 'search_date_delivery_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_delivery_end ? $search_date_delivery_end : -1, 'search_date_delivery_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	print '</td>';
 }
 if (!empty($arrayfields['l.ref']['checked'])) {
 	// Delivery ref
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="10" type="text" name="search_ref_liv" value="'.$search_ref_liv.'"';
+	print '<input class="flat" type="text" name="search_ref_liv" value="'.dol_escape_htmltag($search_ref_liv).'"';
 	print '</td>';
 }
 if (!empty($arrayfields['l.date_delivery']['checked'])) {
@@ -828,7 +943,13 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // N
 print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['e.datec']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre center">';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_create_start ? $search_date_create_start : -1, 'search_date_create_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrap">';
+	print $form->selectDate($search_date_create_end ? $search_date_create_end : -1, 'search_date_create_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
 	print '</td>';
 }
 // Date modification
@@ -839,7 +960,7 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 // Status
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone right">';
-	print $form->selectarray('search_status', array('0'=>$langs->trans('StatusReceptionDraftShort'), '1'=>$langs->trans('StatusReceptionValidatedShort'), '2'=>$langs->trans('StatusReceptionProcessedShort')), $search_status, 1);
+	print $form->selectarray('search_status', array('0'=>$langs->trans('StatusReceptionDraftShort'), '1'=>$langs->trans('StatusReceptionValidatedShort'), '2'=>$langs->trans('StatusReceptionProcessedShort')), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status onrightofpage');
 	print '</td>';
 }
 // Status billed
@@ -849,13 +970,18 @@ if (!empty($arrayfields['e.billed']['checked'])) {
 	print '</td>';
 }
 // Action column
-print '<td class="liste_titre middle">';
-$searchpicto = $form->showFilterAndCheckAddButtons(0);
-print $searchpicto;
-print '</td>';
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre middle">';
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
+	print $searchpicto;
+	print '</td>';
+}
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 if (!empty($arrayfields['e.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['e.ref']['label'], $_SERVER["PHP_SELF"], "e.ref", "", $param, '', $sortfield, $sortorder);
 }
@@ -907,7 +1033,9 @@ if (!empty($arrayfields['e.fk_statut']['checked'])) {
 if (!empty($arrayfields['e.billed']['checked'])) {
 	print_liste_field_titre($arrayfields['e.billed']['label'], $_SERVER["PHP_SELF"], "e.billed", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 print "</tr>\n";
 
 $i = 0;
@@ -926,6 +1054,19 @@ while ($i < min($num, $limit)) {
 
 	print '<tr class="oddeven">';
 
+	// Action column
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="center">';
+		if ($massactionbutton || $massaction) {
+			// If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+	}
 	// Ref
 	if (!empty($arrayfields['e.ref']['checked'])) {
 		print '<td class="nowraponall">';
@@ -998,10 +1139,12 @@ while ($i < min($num, $limit)) {
 	// Type ent
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="center">';
-		if (count($typenArray) == 0) {
+		if (!isset($typenArray) || empty($typenArray)) {
 			$typenArray = $formcompany->typent_array(1);
 		}
-		print $typenArray[$obj->typent_code];
+		if (isset($typenArray[$obj->typent_code])) {
+			print $typenArray[$obj->typent_code];
+		}
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1085,16 +1228,18 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Action column
-	print '<td class="center">';
-	if ($massactionbutton || $massaction) {
-		// If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		$selected = 0;
-		if (in_array($obj->rowid, $arrayofselected)) {
-			$selected = 1;
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td class="center">';
+		if ($massactionbutton || $massaction) {
+			// If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		print '</td>';
 	}
-	print '</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}

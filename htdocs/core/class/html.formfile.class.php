@@ -71,7 +71,7 @@ class FormFile
 	 *  @param	Object		$object			Object to use (when attachment is done on an element)
 	 *  @param	string		$options		Add an option column
 	 *  @param  integer     $useajax        Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option).
-	 *                                      Deprecated 2 should never be used and if 1 is used, option should no be enabled.
+	 *                                      Deprecated 2 should never be used and if 1 is used, option should not be enabled.
 	 *  @param	string		$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
 	 *  @param	integer		$linkfiles		1=Also add form to link files, 0=Do not show form to link files
 	 *  @param	string		$htmlname		Name and id of HTML form ('formuserfile' by default, 'formuserfileecm' when used to upload a file in ECM)
@@ -104,7 +104,8 @@ class FormFile
 			// TODO: This does not support option savingdocmask
 			// TODO: This break feature to upload links too
 			// TODO: Thisdoes not work when param nooutput=1
-			return $this->_formAjaxFileUpload($object);
+			//return $this->_formAjaxFileUpload($object);
+			return 'Feature too bugged so removed';
 		} else {
 			//If there is no permission and the option to hide unauthorized actions is enabled, then nothing is printed
 			if (!$perm && !empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
@@ -178,7 +179,7 @@ class FormFile
 
 			if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
 				if ($perm) {
-					$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").'-'.$langs->transnoentitiesnoconv("Setup").'-'.$langs->transnoentitiesnoconv("Security");
+					$menudolibarrsetupmax = $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Security");
 					$langs->load('other');
 					$out .= ' ';
 					$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetupAt", $menudolibarrsetupmax, $max, $maxphptoshowparam, $maxphptoshow), 1);
@@ -727,7 +728,7 @@ class FormFile
 			}
 
 			// Language code (if multilang)
-			if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && !empty($conf->global->MAIN_MULTILANGS) && !$forcenomultilang && (!empty($modellist) || $showempty)) {
+			if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && getDolGlobalInt('MAIN_MULTILANGS') && !$forcenomultilang && (!empty($modellist) || $showempty)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 				$formadmin = new FormAdmin($this->db);
 				$defaultlang = ($codelang && $codelang != 'auto') ? $codelang : $langs->getDefaultLang();
@@ -836,18 +837,27 @@ class FormFile
 					}
 
 					// Show file name with link to download
+					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);;
+
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
-					$out .= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
+					if ($imgpreview) {
+						$out .= '<span class="spanoverflow widthcentpercentminusx valignmiddle">';
+					} else {
+						$out .= '<span class="spanoverflow">';
+					}
+					$out .= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 
 					$mime = dol_mimetype($relativepath, '', 0);
 					if (preg_match('/text/', $mime)) {
 						$out .= ' target="_blank" rel="noopener noreferrer"';
 					}
+					$out .= ' title="'.dol_escape_htmltag($file["name"]).'"';
 					$out .= '>';
 					$out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
 					$out .= dol_trunc($file["name"], 150);
-					$out .= '</a>'."\n";
-					$out .= $this->showPreview($file, $modulepart, $relativepath, 0, $param);
+					$out .= '</a>';
+					$out .= '</span>'."\n";
+					$out .= $imgpreview;
 					$out .= '</td>';
 
 					// Show file size
@@ -878,7 +888,7 @@ class FormFile
 
 						$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
-						$out .= img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
+						$out .= '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
 						$out .= '<input type="text" class="quatrevingtpercentminusx width75 nopadding small" id="downloadlink'.$file['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
 						$out .= ajax_autoselect('downloadlink'.$file['rowid']);
 					} else {
@@ -992,7 +1002,7 @@ class FormFile
 		$entity = 1; // Without multicompany
 
 		// Get object entity
-		if (!empty($conf->multicompany->enabled)) {
+		if (isModEnabled('multicompany')) {
 			$regs = array();
 			preg_match('/\/([0-9]+)\/[^\/]+\/'.preg_quote($modulesubdir, '/').'$/', $filedir, $regs);
 			$entity = ((!empty($regs[1]) && $regs[1] > 1) ? $regs[1] : 1); // If entity id not found in $filedir this is entity 1 by default
@@ -1128,7 +1138,7 @@ class FormFile
 
 		if ($disablecrop == -1) {
 			$disablecrop = 1;
-			// Values here must be supported by the photo_resize.php page.
+			// Values here must be supported by the photos_resize.php page.
 			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'facture', 'facture_fournisseur', 'holiday', 'medias', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'tax-vat', 'ticket', 'user'))) {
 				$disablecrop = 0;
 			}
@@ -1145,7 +1155,7 @@ class FormFile
 			}
 		}
 		// For backward compatiblity, we detect file stored into an old path
-		if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $filearray[0]['level1name'] == 'photos') {
+		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO') && $filearray[0]['level1name'] == 'photos') {
 			$relativepath = preg_replace('/^.*\/produit\//', '', $filearray[0]['path']).'/';
 		}
 
@@ -1291,6 +1301,7 @@ class FormFile
 					$nboflines++;
 					print '<!-- Line list_of_documents '.$key.' relativepath = '.$relativepath.' -->'."\n";
 					// Do we have entry into database ?
+
 					print '<!-- In database: position='.(array_key_exists('position', $filearray[$key]) ? $filearray[$key]['position'] : 0).' -->'."\n";
 					print '<tr class="oddeven" id="row-'.((array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) ? $filearray[$key]['rowid'] : 'AFTER'.$lastrowid.'POS'.($i + 1)).'">';
 
@@ -1405,7 +1416,7 @@ class FormFile
 
 								$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
-								print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
+								print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
 								print '<input type="text" class="quatrevingtpercent minwidth200imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
 							} else {
 								//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
@@ -1436,11 +1447,16 @@ class FormFile
 								if ($permtoeditline) {
 									// Link to resize
 									$moreparaminurl = '';
-									if ($object->id > 0) {
-										$moreparaminurl = '&id='.$object->id;
+									if (!empty($object->id) && $object->id > 0) {
+										$moreparaminurl .= '&id='.$object->id;
 									} elseif (GETPOST('website', 'alpha')) {
-										$moreparaminurl = '&website='.GETPOST('website', 'alpha');
+										$moreparaminurl .= '&website='.GETPOST('website', 'alpha');
 									}
+									// Set the backtourl
+									if ($modulepart == 'medias' && !GETPOST('website')) {
+										$moreparaminurl .= '&backtourl='.urlencode(DOL_URL_ROOT.'/ecm/index_medias.php?file_manager=1&modulepart='.$modulepart.'&section_dir='.$relativepath);
+									}
+									//var_dump($moreparaminurl);
 									print '<a class="editfielda" href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode($newmodulepart).$moreparaminurl.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("ResizeOrCrop")).'">'.img_picto($langs->trans("ResizeOrCrop"), 'resize', 'class="paddingrightonly"').'</a>';
 								}
 							}
@@ -1450,6 +1466,7 @@ class FormFile
 								print '<a class="editfielda reposition editfilelink" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&token='.newToken().'&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 							}
 						}
+						// Output link to delete file
 						if ($permonobject) {
 							$useajax = 1;
 							if (!empty($conf->dol_use_jmobile)) {
@@ -1469,10 +1486,10 @@ class FormFile
 							if ($nboffiles > 1 && $conf->browser->layout != 'phone') {
 								print '<td class="linecolmove tdlineupdown center">';
 								if ($i > 0) {
-									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=up&rowid='.$line->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
+									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=up&rowid='.$object->id.'">'.img_up('default', 0, 'imgupforline').'</a>';
 								}
 								if ($i < ($nboffiles - 1)) {
-									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=down&rowid='.$line->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
+									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=down&rowid='.$object->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
 								}
 								print '</td>';
 							} else {
@@ -1483,8 +1500,8 @@ class FormFile
 					} else {
 						print '<td class="right">';
 						print '<input type="hidden" name="ecmfileid" value="'.$filearray[$key]['rowid'].'">';
-						print '<input type="submit" class="button button-save" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-						print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+						print '<input type="submit" class="button button-save smallpaddingimp" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+						print '<input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 						print '</td>';
 						if (empty($disablemove) && count($filearray) > 1) {
 							print '<td class="right"></td>';
@@ -1780,6 +1797,8 @@ class FormFile
 
 					$result = 0;
 					if (is_object($object_instance)) {
+						$object_instance->id = 0;
+						$object_instance->ref = '';
 						if ($id) {
 							$result = $object_instance->fetch($id);
 						} else {
@@ -1888,7 +1907,7 @@ class FormFile
 					print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
 					print '<input type="text" class="quatrevingtpercent width100 nopadding nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 				}
-				//if (! empty($useinecm) && $useinecm != 6)  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+				//if (!empty($useinecm) && $useinecm != 6)  print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 				//if ($forcedownload) print '&attachment=1';
 				//print '&file='.urlencode($relativefile).'">';
 				//print img_view().'</a> &nbsp; ';
@@ -1916,37 +1935,6 @@ class FormFile
 			print '</form>';
 		}
 		// Fin de zone
-	}
-
-	/**
-	 *    Show form to upload a new file with jquery fileupload.
-	 *    This form use the fileupload.php file.
-	 *
-	 *    @param	Object	$object		Object to use
-	 *    @return	void
-	 */
-	private function _formAjaxFileUpload($object)
-	{
-		global $langs, $conf;
-
-		// PHP post_max_size
-		$post_max_size				= ini_get('post_max_size');
-		$mul_post_max_size			= substr($post_max_size, -1);
-		$mul_post_max_size			= ($mul_post_max_size == 'M' ? 1048576 : ($mul_post_max_size == 'K' ? 1024 : ($mul_post_max_size == 'G' ? 1073741824 : 1)));
-		$post_max_size				= $mul_post_max_size * (int) $post_max_size;
-		// PHP upload_max_filesize
-		$upload_max_filesize		= ini_get('upload_max_filesize');
-		$mul_upload_max_filesize	= substr($upload_max_filesize, -1);
-		$mul_upload_max_filesize	= ($mul_upload_max_filesize == 'M' ? 1048576 : ($mul_upload_max_filesize == 'K' ? 1024 : ($mul_upload_max_filesize == 'G' ? 1073741824 : 1)));
-		$upload_max_filesize		= $mul_upload_max_filesize * (int) $upload_max_filesize;
-		// Max file size
-		$max_file_size = (($post_max_size < $upload_max_filesize) ? $post_max_size : $upload_max_filesize);
-
-		// Include main
-		include DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_main.tpl.php';
-
-		// Include template
-		include DOL_DOCUMENT_ROOT.'/core/tpl/ajax/fileupload_view.tpl.php';
 	}
 
 	/**

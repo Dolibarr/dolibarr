@@ -44,6 +44,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
@@ -62,6 +63,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 
 $track_id = GETPOST('track_id', 'alpha');
 $email    = GETPOST('email', 'email');
+$suffix = "";
 
 if (GETPOST('btn_view_ticket')) {
 	unset($_SESSION['email_customer']);
@@ -72,8 +74,8 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new ActionsTicket($db);
 
-if (empty($conf->ticket->enabled)) {
-	accessforbidden('', 0, 0, 1);
+if (!isModEnabled('ticket')) {
+	httponly_accessforbidden('Module Ticket not enabled');
 }
 
 
@@ -169,7 +171,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		if ($object->dao->close($user)) {
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
 
-			$url = 'view.php?action=view_ticket&track_id='.GETPOST('track_id', 'alpha').(!empty($entity) && !empty($conf->multicompany->enabled)?'&entity='.$entity:'');
+			$url = 'view.php?action=view_ticket&track_id='.GETPOST('track_id', 'alpha').(!empty($entity) && isModEnabled('multicompany')?'&entity='.$entity:'');
 			header("Location: ".$url);
 			exit;
 		} else {
@@ -204,7 +206,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 $triggersendname = 'TICKET_SENTBYMAIL';
 $paramname = 'id';
 $autocopy = 'MAIN_MAIL_AUTOCOPY_TICKET_TO'; // used to know the automatic BCC to add
-$trackid = 'tic'.$object->id;
+if (!empty($object->id)) $trackid = 'tic'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
@@ -233,7 +235,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	if ($display_ticket) {
 		// Confirmation close
 		if ($action == 'close') {
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?track_id=".$track_id.(!empty($entity) && !empty($conf->multicompany->enabled)?'&entity='.$entity:''), $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?track_id=".$track_id.(!empty($entity) && isModEnabled('multicompany')?'&entity='.$entity:''), $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
 		}
 
 		print '<div id="form_view_ticket" class="margintoponly">';
@@ -346,7 +348,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			$formticket->id = $object->dao->id;
 
 			$formticket->param = array('track_id' => $object->dao->track_id, 'fk_user_create' => '-1',
-									   'returnurl' => DOL_URL_ROOT.'/public/ticket/view.php'.(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:''));
+									   'returnurl' => DOL_URL_ROOT.'/public/ticket/view.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:''));
 
 			$formticket->withfile = 2;
 			$formticket->withcancel = 1;
@@ -355,7 +357,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 
 		if ($action != 'presend') {
-			print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" action="'.DOL_URL_ROOT.'/public/ticket/list.php'.(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'">';
+			print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" action="'.DOL_URL_ROOT.'/public/ticket/list.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="view_ticketlist">';
 			print '<input type="hidden" name="track_id" value="'.$object->dao->track_id.'">';
@@ -370,11 +372,11 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 
 			if ($object->dao->fk_statut < Ticket::STATUS_CLOSED) {
 				// New message
-				print '<div class="inline-block divButAction"><a  class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=presend&mode=init&track_id='.$object->dao->track_id.(!empty($entity) && !empty($conf->multicompany->enabled)?'&entity='.$entity:'').'">'.$langs->trans('AddMessage').'</a></div>';
+				print '<div class="inline-block divButAction"><a  class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=presend&mode=init&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany')?'&entity='.$entity:'').'">'.$langs->trans('TicketAddMessage').'</a></div>';
 
 				// Close ticket
 				if ($object->dao->fk_statut >= Ticket::STATUS_NOT_READ && $object->dao->fk_statut < Ticket::STATUS_CLOSED) {
-					print '<div class="inline-block divButAction"><a  class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=close&track_id='.$object->dao->track_id.(!empty($entity) && !empty($conf->multicompany->enabled)?'&entity='.$entity:'').'">'.$langs->trans('CloseTicket').'</a></div>';
+					print '<div class="inline-block divButAction"><a  class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=close&track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany')?'&entity='.$entity:'').'">'.$langs->trans('CloseTicket').'</a></div>';
 				}
 			}
 
@@ -385,13 +387,13 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'conversation');
 		$object->viewTicketMessages(false, true, $object->dao);
 	} else {
-		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'" rel="nofollow noopener">'.$langs->trans('Back').'</a></div>';
+		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" rel="nofollow noopener">'.$langs->trans('Back').'</a></div>';
 	}
 } else {
 	print '<div class="center opacitymedium margintoponly marginbottomonly">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';
 
 	print '<div id="form_view_ticket">';
-	print '<form method="post" name="form_view_ticket" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && !empty($conf->multicompany->enabled)?'?entity='.$entity:'').'">';
+	print '<form method="post" name="form_view_ticket" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="view_ticket">';
 
@@ -400,7 +402,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	print '</p>';
 
 	print '<p><label for="email" style="display: inline-block; width: 30%; "><span class="fieldrequired">'.$langs->trans('Email').'</span></label>';
-	print '<input size="30" id="email" name="email" value="'.(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : $_SESSION['customer_email']).'" />';
+	print '<input size="30" id="email" name="email" value="'.(GETPOST('email', 'alpha') ? GETPOST('email', 'alpha') : (!empty($_SESSION['customer_email']) ? $_SESSION['customer_email'] : "")).'" />';
 	print '</p>';
 
 	print '<p style="text-align: center; margin-top: 1.5em;">';

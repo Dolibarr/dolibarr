@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,9 +33,6 @@ if (!defined('NOREQUIRESOC')) {
 }
 if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
 }
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');

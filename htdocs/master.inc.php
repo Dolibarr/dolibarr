@@ -58,10 +58,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 $conf = new Conf();
 
 // Set properties specific to database
-$conf->db->host = $dolibarr_main_db_host;
-$conf->db->port = $dolibarr_main_db_port;
-$conf->db->name = $dolibarr_main_db_name;
-$conf->db->user = $dolibarr_main_db_user;
+$conf->db->host = empty($dolibarr_main_db_host) ? '' : $dolibarr_main_db_host;
+$conf->db->port = empty($dolibarr_main_db_port) ? '' : $dolibarr_main_db_port;
+$conf->db->name = empty($dolibarr_main_db_name) ? '' : $dolibarr_main_db_name;
+$conf->db->user = empty($dolibarr_main_db_user) ? '' : $dolibarr_main_db_user;
 $conf->db->pass = empty($dolibarr_main_db_pass) ? '' : $dolibarr_main_db_pass;
 $conf->db->type = $dolibarr_main_db_type;
 $conf->db->prefix = $dolibarr_main_db_prefix;
@@ -208,9 +208,15 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC')) {
 	$mysoc = new Societe($db);
 	$mysoc->setMysoc($conf);
 
-	// For some countries, we need to invert our address with customer address
+	// We set some specific default values according to country
+
 	if ($mysoc->country_code == 'DE' && !isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+		// For DE, we need to invert our address with customer address
 		$conf->global->MAIN_INVERT_SENDER_RECIPIENT = 1;
+	}
+	if ($mysoc->country_code == 'FR' && !isset($conf->global->MAIN_PROFID1_IN_ADDRESS)) {
+		// For FR, default value of option to show profid SIRET is on by default
+		$conf->global->MAIN_PROFID1_IN_ADDRESS = 1;
 	}
 }
 

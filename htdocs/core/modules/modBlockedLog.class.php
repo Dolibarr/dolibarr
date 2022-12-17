@@ -79,7 +79,7 @@ class modBlockedLog extends DolibarrModules
 
 		// Currently, activation is not automatic because only companies (in France) making invoices to non business customers must
 		// enable this module.
-		/*if (! empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
+		/*if (!empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY))
 		{
 			$tmp=explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY);
 			$this->automatic_activation = array();

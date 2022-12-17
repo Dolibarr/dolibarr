@@ -22,6 +22,7 @@
  *      \brief      Log event setup page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -109,11 +110,11 @@ print dol_get_fiche_head($head, 'audit', '', -1);
 
 print '<br>';
 
-print '<table class="noborder" width="100%">';
-print "<tr class=\"liste_titre\">";
-print getTitleFieldOfList("LogEvents", 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, '')."\n";
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print getTitleFieldOfList("TrackableSecurityEvents", 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
-print "</tr>\n";
+print '</tr>'."\n";
 // Loop on each event type
 foreach ($eventstolog as $key => $arr) {
 	if ($arr['id']) {
@@ -128,11 +129,11 @@ foreach ($eventstolog as $key => $arr) {
 }
 print '</table>';
 
-print dol_get_fiche_end();
-
 print '<div class="center">';
 print '<input type="submit" name="save" class="button button-save" value="'.$langs->trans("Save").'">';
 print '</div>';
+
+print dol_get_fiche_end();
 
 print "</form>\n";
 

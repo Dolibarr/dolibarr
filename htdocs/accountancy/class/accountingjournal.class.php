@@ -231,7 +231,7 @@ class AccountingJournal extends CommonObject
 	 * Return clicable name (with picto eventually)
 	 *
 	 * @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 * @param	int		$withlabel		0=No label, 1=Include label of journal
+	 * @param	int		$withlabel		0=No label, 1=Include label of journal, 2=Include nature of journal
 	 * @param	int  	$nourl			1=Disable url
 	 * @param	string  $moretitle		Add more text to title tooltip
 	 * @param	int  	$notooltip		1=Disable tooltip
@@ -281,8 +281,13 @@ class AccountingJournal extends CommonObject
 		}
 
 		$label_link = $this->code;
-		if ($withlabel && !empty($this->label)) {
+		if ($withlabel != 2 && !empty($this->label)) {
 			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$langs->transnoentities($this->label).($nourl ? '</span>' : '');
+		}
+		if ($withlabel == 2 && !empty($this->nature)) {
+			$key = $langs->trans("AccountingJournalType".strtoupper($this->nature));
+			$transferlabel = ($this->nature && $key != "AccountingJournalType".strtoupper($langs->trans($this->nature)) ? $key : $this->label);
+			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$transferlabel.($nourl ? '</span>' : '');
 		}
 
 		$result .= $linkstart;
@@ -982,8 +987,8 @@ class AccountingJournal extends CommonObject
 					$langs->transnoentitiesnoconv("LedgerAccount"),
 					$langs->transnoentitiesnoconv("SubledgerAccount"),
 					$langs->transnoentitiesnoconv("Label"),
-					$langs->transnoentitiesnoconv("Debit"),
-					$langs->transnoentitiesnoconv("Credit"),
+					$langs->transnoentitiesnoconv("AccountingDebit"),
+					$langs->transnoentitiesnoconv("AccountingCredit"),
 					$langs->transnoentitiesnoconv("Journal"),
 					$langs->transnoentitiesnoconv("Note"),
 				);
@@ -993,8 +998,8 @@ class AccountingJournal extends CommonObject
 					$langs->transnoentitiesnoconv("Piece"),
 					$langs->transnoentitiesnoconv("AccountAccounting"),
 					$langs->transnoentitiesnoconv("LabelOperation"),
-					$langs->transnoentitiesnoconv("Debit"),
-					$langs->transnoentitiesnoconv("Credit"),
+					$langs->transnoentitiesnoconv("AccountingDebit"),
+					$langs->transnoentitiesnoconv("AccountingCredit"),
 				);
 			} elseif ($this->nature == 1) {
 				$header = array(
@@ -1002,8 +1007,8 @@ class AccountingJournal extends CommonObject
 					$langs->transnoentitiesnoconv("Piece"),
 					$langs->transnoentitiesnoconv("AccountAccounting"),
 					$langs->transnoentitiesnoconv("LabelOperation"),
-					$langs->transnoentitiesnoconv("Debit"),
-					$langs->transnoentitiesnoconv("Credit"),
+					$langs->transnoentitiesnoconv("AccountingDebit"),
+					$langs->transnoentitiesnoconv("AccountingCredit"),
 				);
 			}
 

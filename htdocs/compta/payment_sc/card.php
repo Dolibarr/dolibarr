@@ -26,12 +26,13 @@
  *		\remarks	File similar to fourn/paiement/card.php
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if (isModEnabled('banque')) {
+if (isModEnabled("banque")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -141,7 +142,7 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->
 print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->note).'</td></tr>';
 
 // Bank account
-if (isModEnabled('banque')) {
+if (isModEnabled("banque")) {
 	if ($object->bank_account) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);
@@ -237,7 +238,7 @@ if ($resql) {
 print '<div class="tabsAction">';
 
 /*
-if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
+if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
 	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
 	{
@@ -252,9 +253,9 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 if ($action == '') {
 	if ($user->rights->tax->charges->supprimer) {
 		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.GETPOST('id', 'int').'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
+			print dolGetButtonAction($langs->trans("CantRemovePaymentWithOneInvoicePaid"), $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 0);
 		}
 	}
 }

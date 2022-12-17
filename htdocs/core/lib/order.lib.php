@@ -34,7 +34,7 @@
 function commande_prepare_head(Commande $object)
 {
 	global $db, $langs, $conf, $user;
-	if (!empty($conf->expedition->enabled)) {
+	if (isModEnabled("expedition")) {
 		$langs->load("sendings");
 	}
 	$langs->load("orders");
@@ -42,7 +42,7 @@ function commande_prepare_head(Commande $object)
 	$h = 0;
 	$head = array();
 
-	if (!empty($conf->commande->enabled) && $user->rights->commande->lire) {
+	if (isModEnabled('commande') && $user->hasRight('commande', 'lire')) {
 		$head[$h][0] = DOL_URL_ROOT.'/commande/card.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("CustomerOrder");
 		$head[$h][2] = 'order';
@@ -60,28 +60,28 @@ function commande_prepare_head(Commande $object)
 		$h++;
 	}
 
-	if ((isModEnabled('expedition_bon') && $user->rights->expedition->lire)
-	|| ($conf->delivery_note->enabled && $user->rights->expedition->delivery->lire)) {
+	if ((isModEnabled('expedition_bon') && $user->hasRight('expedition', 'lire'))
+	|| (isModEnabled('delivery_note') && $user->hasRight('expedition', 'delivery', 'lire'))) {
 		$nbShipments = $object->getNbOfShipments();
 		$nbReceiption = 0;
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id;
 		$text = '';
-		if ($conf->expedition_bon->enabled) {
+		if (isModEnabled('expedition_bon')) {
 			$text .= $langs->trans("Shipments");
 		}
-		if ($conf->expedition_bon->enabled && $conf->delivery_note->enabled) {
+		if (isModEnabled('expedition_bon') && isModEnabled('delivery_note')) {
 			$text .= ' - ';
 		}
-		if ($conf->delivery_note->enabled) {
+		if (isModEnabled('delivery_note')) {
 			$text .= $langs->trans("Receivings");
 		}
 		if ($nbShipments > 0 || $nbReceiption > 0) {
 			$text .= '<span class="badge marginleftonlyshort">'.($nbShipments ? $nbShipments : 0);
 		}
-		if ($conf->expedition_bon->enabled && $conf->delivery_note->enabled && ($nbShipments > 0 || $nbReceiption > 0)) {
+		if (isModEnabled('expedition_bon') && isModEnabled('delivery_note') && ($nbShipments > 0 || $nbReceiption > 0)) {
 			$text .= ' - ';
 		}
-		if ($conf->expedition_bon->enabled && $conf->delivery_note->enabled && ($nbShipments > 0 || $nbReceiption > 0)) {
+		if (isModEnabled('expedition_bon') && isModEnabled('delivery_note') && ($nbShipments > 0 || $nbReceiption > 0)) {
 			$text .= ($nbReceiption ? $nbReceiption : 0);
 		}
 		if ($nbShipments > 0 || $nbReceiption > 0) {
@@ -96,7 +96,7 @@ function commande_prepare_head(Commande $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'order');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'add', 'core');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -133,6 +133,8 @@ function commande_prepare_head(Commande $object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'add', 'external');
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'remove');
 
 	return $head;
@@ -145,7 +147,11 @@ function commande_prepare_head(Commande $object)
  */
 function order_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('commande');
+	$extrafields->fetch_name_optionals_label('commandedet');
 
 	$h = 0;
 	$head = array();
@@ -159,11 +165,19 @@ function order_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/order_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['commande']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/orderdet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$nbExtrafields = $extrafields->attributes['commandedet']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributeslines';
 	$h++;
 
@@ -175,7 +189,7 @@ function order_admin_prepare_head()
 
 
 /**
- * Return a HTML table that contains a pie chart of customer orders
+ * Return a HTML table that contains a pie chart of sales orders
  *
  * @param	int		$socid		(Optional) Show only results from the customer with this id
  * @return	string				A HTML table that contains a pie chart of customer invoices
@@ -186,7 +200,7 @@ function getCustomerOrderPieChart($socid = 0)
 
 	$result = '';
 
-	if (empty($conf->commande->enabled) || empty($user->rights->commande->lire)) {
+	if (!isModEnabled('commande') || !$user->hasRight('commande', 'lire')) {
 		return '';
 	}
 
@@ -276,7 +290,7 @@ function getCustomerOrderPieChart($socid = 0)
 				$result .= "</tr>\n";
 			}
 		}
-		if ($conf->use_javascript_ajax) {
+		if (!empty($conf->use_javascript_ajax)) {
 			$result .= '<tr class="impair"><td align="center" colspan="2">';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';

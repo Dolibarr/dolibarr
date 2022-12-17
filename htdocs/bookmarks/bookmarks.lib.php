@@ -60,7 +60,7 @@ function printDropdownBookmarksList()
 	if ($sortorder) {
 		$tmpurl .= ($tmpurl ? '&' : '').'sortorder='.urlencode($sortorder);
 	}
-	if (is_array($_POST)) {
+	if (!empty($_POST) && is_array($_POST)) {
 		foreach ($_POST as $key => $val) {
 			if ((preg_match('/^search_/', $key) || in_array($key, $authorized_var))
 				&& $val != ''
@@ -79,11 +79,6 @@ function printDropdownBookmarksList()
 	$searchForm .= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action=""'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? ' onsubmit="return false"' : '').'>';
 	$searchForm .= '<input type="hidden" name="token" value="'.newToken().'">';
 
-
-	// Url to list bookmark
-	$listbtn = '<a class="top-menu-dropdown-link" title="'.dol_escape_htmltag($langs->trans('Bookmarks')).'" href="'.DOL_URL_ROOT.'/bookmarks/list.php">';
-	$listbtn .= img_picto('', 'bookmark', 'class="paddingright"').$langs->trans('Bookmarks').'</a>';
-
 	// Url to go on create new bookmark page
 	$newbtn = '';
 	if (!empty($user->rights->bookmark->creer)) {
@@ -95,6 +90,11 @@ function printDropdownBookmarksList()
 		}
 	}
 
+	// Url to list/edit bookmark
+	$listbtn = '<a class="top-menu-dropdown-link" title="'.dol_escape_htmltag($langs->trans('Bookmarks')).'" href="'.DOL_URL_ROOT.'/bookmarks/list.php">';
+	$listbtn .= img_picto('', 'edit', 'class="paddingright opacitymedium"').$langs->trans('EditBookmarks').'</a>';
+
+	$bookmarkList = '';
 	// Menu with list of bookmarks
 	$sql = "SELECT rowid, title, url, target FROM ".MAIN_DB_PREFIX."bookmark";
 	$sql .= " WHERE (fk_user = ".((int) $user->id)." OR fk_user is NULL OR fk_user = 0)";
@@ -186,27 +186,28 @@ function printDropdownBookmarksList()
 			';
 
 		$html .= '
-			<!-- Menu Body -->
-			<div class="bookmark-body dropdown-body">
-			'.$bookmarkList.'
-			</div>
-			';
-
-		$html .= '
-			<!-- Menu Footer-->
+			<!-- Menu bookmark tools-->
 			<div class="bookmark-footer">
 					'.$newbtn.$listbtn.'
 				<div style="clear:both;"></div>
 			</div>
 		';
 
+		$html .= '
+			<!-- Menu Body -->
+			<div class="bookmark-body dropdown-body">
+			'.$bookmarkList.'
+			<span id="top-bookmark-search-nothing-found" class="hidden-search-result opacitymedium">'.dol_escape_htmltag($langs->trans("NoBookmarkFound")).'</span>
+			</div>
+			';
+
 		$html .= '<!-- script to open/close the popup -->
 				<script>
 				$( document ).on("keyup", "#top-bookmark-search-input", function () {
+					console.log("keyup in bookmark search input");
 
 					var filter = $(this).val(), count = 0;
 					$("#dropdown-bookmarks-list .bookmark-item").each(function () {
-
 						if ($(this).text().search(new RegExp(filter, "i")) < 0) {
 							$(this).addClass("hidden-search-result");
 						} else {
@@ -215,6 +216,11 @@ function printDropdownBookmarksList()
 						}
 					});
 					$("#top-bookmark-search-filter-count").text(count);
+					if (count == 0) {
+						jQuery("#top-bookmark-search-nothing-found").removeClass("hidden-search-result");
+					} else {
+						jQuery("#top-bookmark-search-nothing-found").addClass("hidden-search-result");
+					}
 				});
 				</script>';
 	}

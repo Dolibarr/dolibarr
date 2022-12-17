@@ -293,7 +293,9 @@ class MyModuleApi extends DolibarrApi
 			throw new RestException(401, 'Access to instance id='.$this->myobject->id.' of object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->myobject->delete(DolibarrApiAccess::$user)) {
+		if ($this->myobject->delete(DolibarrApiAccess::$user) == 0) {
+			throw new RestException(409, 'Error when deleting MyObject : '.$this->myobject->error);
+		} elseif ($this->myobject->delete(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error when deleting MyObject : '.$this->myobject->error);
 		}
 

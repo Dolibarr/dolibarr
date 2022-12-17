@@ -60,7 +60,7 @@ class DolEditor
 	 *                       		                    'In' = each window has its own toolbar
 	 *                              		            'Out:name' = share toolbar into the div called 'name'
 	 *  @param  boolean	$toolbarstartexpanded  			Bar is visible or not at start
-	 *  @param	int		$uselocalbrowser				Enabled to add links to local object with local browser. If false, only external images can be added in content.
+	 *  @param	boolean|int		$uselocalbrowser		Enabled to add links to local object with local browser. If false, only external images can be added in content.
 	 *  @param  boolean|string	$okforextendededitor    True=Allow usage of extended editor tool if qualified (like ckeditor). If 'textarea', force use of simple textarea. If 'ace', force use of Ace.
 	 *                                                  Warning: If you use 'ace', don't forget to also include ace.js in page header. Also, the button "save" must have class="buttonforacesave".
 	 *  @param  int		$rows                   		Size of rows for textarea tool
@@ -152,7 +152,7 @@ class DolEditor
 			$out .= htmlspecialchars($this->content);
 			$out .= '</textarea>';
 
-			if ($this->tool == 'ckeditor' && !empty($conf->use_javascript_ajax) && !empty($conf->fckeditor->enabled)) {
+			if ($this->tool == 'ckeditor' && !empty($conf->use_javascript_ajax) && isModEnabled('fckeditor')) {
 				if (!defined('REQUIRE_CKEDITOR')) {
 					define('REQUIRE_CKEDITOR', '1');
 				}
@@ -163,7 +163,7 @@ class DolEditor
 					$skin = 'moono-lisa'; // default with ckeditor 4.6 : moono-lisa
 				}
 
-				$pluginstodisable = 'elementspath,save,flash';
+				$pluginstodisable = 'elementspath,save,flash,div,specialchar,anchor';
 				if (!empty($conf->dol_optimize_smallscreen)) {
 					$pluginstodisable .= ',scayt,wsc,find,undo';
 				}
@@ -198,7 +198,7 @@ class DolEditor
                             		htmlEncodeOutput:'.$htmlencode_force.',
             						allowedContent:'.($disallowAnyContent ? 'false' : 'true').',		/* Advanced Content Filter (ACF) is own when allowedContent is false */
             						extraAllowedContent: \'a[target];div{float,display}\',				/* Add the style float and display into div to default other allowed tags */
-									disallowedContent: '.($disallowAnyContent ? '\'\'' : '\'\'').',	/* Tags that are not allowed */
+									disallowedContent: '.($disallowAnyContent ? '\'\'' : '\'\'').',		/* Tags that are not allowed */
             						fullPage: '.($fullpage ? 'true' : 'false').',						/* if true, the html, header and body tags are kept */
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',

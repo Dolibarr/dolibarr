@@ -66,7 +66,7 @@ class InterfaceNotification extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->notification) || empty($conf->notification->enabled)) {
+		if (empty($conf->notification) || !isModEnabled('notification')) {
 			return 0; // Module not active, we do nothing
 		}
 
@@ -74,7 +74,7 @@ class InterfaceNotification extends DolibarrTriggers
 			return 0;
 		}
 
-		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 		$notify = new Notify($this->db);
 		$notify->send($action, $object);
@@ -90,7 +90,7 @@ class InterfaceNotification extends DolibarrTriggers
 	 */
 	public function getListOfManagedEvents()
 	{
-		global $conf;
+		global $conf, $action;
 		global $hookmanager;
 
 
@@ -100,6 +100,8 @@ class InterfaceNotification extends DolibarrTriggers
 		}
 		$hookmanager->initHooks(array('notification'));
 
+		$parameters = array();
+		$object = new stdClass();
 		$reshook = $hookmanager->executeHooks('notifsupported', $parameters, $object, $action);
 		if (empty($reshook)) {
 			if (!empty($hookmanager->resArray['arrayofnotifsupported'])) {
@@ -133,9 +135,9 @@ class InterfaceNotification extends DolibarrTriggers
 					$element = $obj->elementtype;
 
 					// Exclude events if related module is disabled
-					if ($element == 'order_supplier' && ((empty($conf->fournisseur->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_order->enabled))) {
+					if ($element == 'order_supplier' && ((!isModEnabled('fournisseur') && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_order'))) {
 						$qualified = 0;
-					} elseif ($element == 'invoice_supplier' && ((empty($conf->fournisseur->enabled) && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || empty($conf->supplier_invoice->enabled))) {
+					} elseif ($element == 'invoice_supplier' && ((!isModEnabled('fournisseur') && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_invoice'))) {
 						$qualified = 0;
 					} elseif ($element == 'withdraw' && empty($conf->prelevement->enabled)) {
 						$qualified = 0;
