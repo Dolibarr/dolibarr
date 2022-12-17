@@ -102,8 +102,8 @@ $search_price_level = GETPOST('search_price_level', 'int');
 $search_staff = GETPOST("search_staff", 'int');
 $search_status = GETPOST("search_status", 'int');
 $search_type = GETPOST('search_type', 'alpha');
-$search_level = GETPOST("search_level", "array");
-$search_stcomm = GETPOST('search_stcomm', 'int');
+$search_level = GETPOST("search_level", "array:alpha");
+$search_stcomm = GETPOST('search_stcomm', "array:int");
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 $search_parent_name = trim(GETPOST('search_parent_name', 'alpha'));
 
@@ -704,14 +704,14 @@ if ($search_type_thirdparty && $search_type_thirdparty > 0) {
 if (!empty($search_staff) && $search_staff != '-1') {
 	$sql .= natural_search("s.fk_effectif", $search_staff, 2);
 }
-if ($search_level) {
-	$sql .= natural_search("s.fk_prospectlevel", join(',', $search_level), 3);
-}
 if ($search_parent_name) {
 	$sql .= natural_search("s2.nom", $search_parent_name);
 }
-if ($search_stcomm != '' && $search_stcomm != '-2') {	// -2 is not filter
-	$sql .= natural_search("s.fk_stcomm", $search_stcomm, 1);
+if ($search_level) {
+	$sql .= natural_search("s.fk_prospectlevel", join(',', $search_level), 3);
+}
+if ($search_stcomm) {
+	$sql .= natural_search("s.fk_stcomm", join(',', $search_stcomm), 2);
 }
 if ($search_import_key) {
 	$sql .= natural_search("s.import_key", $search_import_key);
@@ -894,16 +894,18 @@ if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 if ($search_type != '') {
 	$param .= '&search_type='.urlencode($search_type);
 }
+if ($search_status != '') {
+	$param .= '&search_status='.urlencode($search_status);
+}
 if (is_array($search_level) && count($search_level)) {
 	foreach ($search_level as $slevel) {
 		$param .= '&search_level[]='.urlencode($slevel);
 	}
 }
-if ($search_status != '') {
-	$param .= '&search_status='.urlencode($search_status);
-}
-if ($search_stcomm != '' && $search_stcomm != '-2') {		// -2 is no filter
-	$param .= '&search_stcomm='.urlencode($search_stcomm);
+if (is_array($search_stcomm) && count($search_stcomm)) {
+	foreach ($search_stcomm as $slevel) {
+		$param .= '&search_stcomm[]='.urlencode($slevel);
+	}
 }
 if ($search_parent_name != '') {
 	$param .= '&search_parent_name='.urlencode($search_parent_name);
@@ -1280,7 +1282,8 @@ if (!empty($arrayfields['s.fk_stcomm']['checked'])) {
 	foreach ($prospectstatic->cacheprospectstatus as $key => $val) {
 		$arraystcomm[$val['id']] = ($langs->trans("StatusProspect".$val['id']) != "StatusProspect".$val['id'] ? $langs->trans("StatusProspect".$val['id']) : $val['label']);
 	}
-	print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2, 0, 0, '', 0, 0, 0, '', '', 1);
+	//print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2, 0, 0, '', 0, 0, 0, '', '', 1);
+	print $form->multiselectarray('search_stcomm', $arraystcomm, $search_stcomm, 0, 0, 'width100', 0, 0, '', '', '', 2);
 	print '</td>';
 }
 if (!empty($arrayfields['s2.nom']['checked'])) {
