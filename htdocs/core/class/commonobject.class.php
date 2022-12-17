@@ -9455,6 +9455,12 @@ abstract class CommonObject
 			}
 		}
 
+		// Delete linked object
+		$res = $this->deleteObjectLinked();
+		if ($res < 0) {
+			$error++;
+		}
+
 		if (!$error && !empty($this->isextrafieldmanaged)) {
 			$result = $this->deleteExtraFields();
 			if ($result < 0) {
