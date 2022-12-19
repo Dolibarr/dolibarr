@@ -201,7 +201,7 @@ function dolDecrypt($chain, $key = '')
  * 	@param 		string		$chain		String to hash
  * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
- *  @see getRandomPassword()
+ *  @see getRandomPassword(), dol_verifyHash()
  */
 function dol_hash($chain, $type = '0')
 {
@@ -249,6 +249,7 @@ function dol_hash($chain, $type = '0')
  * 	@param 		string		$hash		hash to compare
  * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		bool					True if the computed hash is the same as the given one
+ *  @see dol_hash()
  */
 function dol_verifyHash($chain, $hash, $type = '0')
 {

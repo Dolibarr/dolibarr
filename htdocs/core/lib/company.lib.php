@@ -807,11 +807,11 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 	$i = -1;
 
-	if (isModEnabled('project') && $user->rights->projet->lire) {
+	if (isModEnabled('project') && $user->hasRight('projet', 'lire')) {
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (isModEnabled('project') && $user->rights->projet->creer && empty($nocreatelink)) {
+		if (isModEnabled('project') && $user->hasRight('projet', 'creer') && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 		}
 
@@ -1062,7 +1062,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$arrayfields = dol_sort_array($arrayfields, 'position');
 
 	$newcardbutton = '';
-	if ($user->rights->societe->contact->creer) {
+	if ($user->hasRight('societe', 'contact', 'creer')) {
 		$addcontact = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
 		$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 	}
@@ -1363,14 +1363,14 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			print '<td align="right">';
 
 			// Add to agenda
-			if (isModEnabled('agenda')&& $user->rights->agenda->myactions->create) {
+			if (isModEnabled('agenda')&& $user->hasRight('agenda', 'myactions', 'create')) {
 				print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
 				print img_object($langs->trans("Event"), "action");
 				print '</a> &nbsp; ';
 			}
 
 			// Edit
-			if ($user->rights->societe->contact->creer) {
+			if ($user->hasRight('societe', 'contact', 'creer')) {
 				print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
 				print img_edit();
 				print '</a>';

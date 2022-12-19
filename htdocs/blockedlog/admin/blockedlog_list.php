@@ -176,9 +176,9 @@ if ($action === 'downloadblockchain') {
 
 	if (!$error) {
 		// Now restart request with all data = no limit(1) in sql request
-		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
+		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts, element, fk_object, date_object, ref_object, signature, fk_user, object_data, object_version";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		if (GETPOST('monthtoexport', 'int') > 0 || GETPOST('yeartoexport', 'int') > 0) {
 			$dates = dol_get_first_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ?GETPOST('monthtoexport', 'int') : 1);
 			$datee = dol_get_last_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ?GETPOST('monthtoexport', 'int') : 12);
@@ -204,6 +204,7 @@ if ($action === 'downloadblockchain') {
 				.';'.$langs->transnoentities('Fingerprint')
 				.';'.$langs->transnoentities('Status')
 				.';'.$langs->transnoentities('Note')
+				.';'.$langs->transnoentities('Version')
 				.';'.$langs->transnoentities('FullData')
 				."\n";
 
@@ -226,6 +227,7 @@ if ($action === 'downloadblockchain') {
 				$block_static->fk_user = $obj->fk_user;
 				$block_static->signature = $obj->signature;
 				$block_static->object_data = $block_static->dolDecodeBlockedData($obj->object_data);
+				$block_static->object_version = $obj->object_version;
 
 				$checksignature = $block_static->checkSignature($previoushash); // If $previoushash is not defined, checkSignature will search it
 
@@ -257,6 +259,7 @@ if ($action === 'downloadblockchain') {
 				print ';'.$obj->signature;
 				print ';'.$statusofrecord;
 				print ';'.$statusofrecordnote;
+				print ';'.$obj->object_version;
 				print ';"'.str_replace('"', '""', $obj->object_data).'"';
 				print "\n";
 

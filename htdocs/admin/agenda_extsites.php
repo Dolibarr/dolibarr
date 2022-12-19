@@ -279,13 +279,13 @@ while ($i <= $MAXAGENDA) {
 	print '</td>';
 	// Calendar active by default
 	print '<td class="nowrap right">';
-	if ($conf->use_javascript_ajax) {
+	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('AGENDA_EXT_ACTIVEBYDEFAULT' . $key);
 	} else {
-		if (empty($conf->global->{$default})) {
-			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
-		} else {
+		if (getDolGlobalString($default)) {
 			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
+		} else {
+			print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_AGENDA_EXT_ACTIVEBYDEFAULT' . $key . '&token='.newToken().'">' . img_picto($langs->trans("Enabled"), 'on') . '</a>';
 		}
 	}
 	print '</td>';

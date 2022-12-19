@@ -2828,6 +2828,8 @@ class Form
 					if (isModEnabled('dynamicprices') && !empty($objp->fk_price_expression)) {
 						$price_product = new Product($this->db);
 						$price_product->fetch($objp->rowid, '', '', 1);
+
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProduct($price_product);
 						if ($price_result >= 0) {
@@ -3463,6 +3465,8 @@ class Form
 						$prod_supplier->fourn_qty = $objp->quantity;
 						$prod_supplier->fourn_tva_tx = $objp->tva_tx;
 						$prod_supplier->fk_supplier_price_expression = $objp->fk_supplier_price_expression;
+
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProductSupplier($prod_supplier);
 						if ($price_result >= 0) {
@@ -3717,6 +3721,8 @@ class Form
 						$prod_supplier->fourn_qty = $objp->quantity;
 						$prod_supplier->fourn_tva_tx = $objp->tva_tx;
 						$prod_supplier->fk_supplier_price_expression = $objp->fk_supplier_price_expression;
+
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProductSupplier($prod_supplier);
 						if ($price_result >= 0) {
@@ -4999,7 +5005,7 @@ class Form
 	{
 		global $langs, $conf;
 
-		$more = '<!-- formconfirm before calling page='.dol_escape_htmltag($page).' -->';
+		$more = '<!-- formconfirm - before call, page='.dol_escape_htmltag($page).' -->';
 		$formconfirm = '';
 		$inputok = array();
 		$inputko = array();
@@ -8015,7 +8021,8 @@ class Form
 			}
 		}
 
-		$out .= '<select id="'.preg_replace('/^\./', '', $htmlname).'" '.($disabled ? 'disabled="disabled" ' : '').'class="flat '.(preg_replace('/^\./', '', $htmlname)).($morecss ? ' '.$morecss : '').'"';
+		$idname = str_replace(array('[', ']'), array('', ''), $htmlname);
+		$out .= '<select id="'.preg_replace('/^\./', '', $idname).'" '.($disabled ? 'disabled="disabled" ' : '').'class="flat '.(preg_replace('/^\./', '', $htmlname)).($morecss ? ' '.$morecss : '').'"';
 		$out .= ' name="'.preg_replace('/^\./', '', $htmlname).'" '.($moreparam ? $moreparam : '');
 		$out .= '>';
 
@@ -8119,7 +8126,7 @@ class Form
 		if ($addjscombo && $jsbeautify) {
 			// Enhance with select2
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-			$out .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($show_empty < 0 ? (string) $show_empty : '-1'), $morecss);
+			$out .= ajax_combobox($idname, array(), 0, 0, 'resolve', ($show_empty < 0 ? (string) $show_empty : '-1'), $morecss);
 		}
 
 		return $out;
@@ -8302,7 +8309,7 @@ class Form
 							var separ = urlBase.indexOf("?") >= 0 ? "&" : "?";
 							/* console.log("params.term="+params.term); */
 							/* console.log("params.term encoded="+encodeURIComponent(params.term)); */
-							saveRemoteData[data.id].url = urlBase + separ + "sall=" + encodeURIComponent(params.term.replace(/\"/g, ""));';
+							saveRemoteData[data.id].url = urlBase + separ + "search_all=" + encodeURIComponent(params.term.replace(/\"/g, ""));';
 			}
 
 			if (!$disableFiltering) {

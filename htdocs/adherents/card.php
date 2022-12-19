@@ -620,7 +620,8 @@ if (empty($reshook)) {
 	if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_delete' && $confirm == 'yes') {
 		$result = $object->delete($id, $user);
 		if ($result > 0) {
-			if (!empty($backtopage)) {
+			setEventMessages($langs->trans("RecordDeleted"), null, 'errors');
+			if (!empty($backtopage) && !preg_match('/'.preg_quote($_SERVER["PHP_SELF"], '/').'/', $backtopage)) {
 				header("Location: ".$backtopage);
 				exit;
 			} else {
