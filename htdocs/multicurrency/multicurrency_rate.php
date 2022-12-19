@@ -235,8 +235,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = "CurrencyRate";
 	$uploaddir = $conf->multicurrency->multidir_output; // define only because core/actions_massactions.inc.php want it
-	$permtoread = $user->admin;
-	$permtodelete = $user->admin;
+	$permissiontoread = $user->admin;
+	$permissiontodelete = $user->admin;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 

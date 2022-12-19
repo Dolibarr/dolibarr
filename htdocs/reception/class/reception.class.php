@@ -11,6 +11,7 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,6 +116,9 @@ class Reception extends CommonObject
 	public $meths;
 	public $listmeths; // List of carriers
 
+	/**
+	 * @var CommandeFournisseurDispatch[]
+	 */
 	public $lines = array();
 
 
@@ -1774,7 +1778,7 @@ class Reception extends CommonObject
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
 							$inventorycode = '';
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, '', $obj->fk_origin_stock, $inventorycode);
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionUnClassifyCloseddInDolibarr", $numref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock, $inventorycode);
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;
@@ -1906,7 +1910,7 @@ class Reception extends CommonObject
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
 							$inventorycode = '';
-							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionBackToDraftInDolibarr", $this->ref), $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, '', 0, $inventorycode);
+							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->cost_price, $langs->trans("ReceptionBackToDraftInDolibarr", $this->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, 0, $inventorycode);
 							if ($result < 0) {
 								$this->error = $mouvS->error;
 								$this->errors = $mouvS->errors;

@@ -790,7 +790,7 @@ class Conf
 
 			// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 			if (!isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) {
-				$this->global->MAIN_MODULES_FOR_EXTERNAL = 'user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog'; // '' means 'all'. Note that contact is added here as it should be a module later.
+				$this->global->MAIN_MODULES_FOR_EXTERNAL = 'user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,reception,agenda,resource,adherent,blockedlog'; // '' means 'all'. Note that contact is added here as it should be a module later.
 			}
 			if (!empty($this->modules_parts['moduleforexternal'])) {		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list
 				foreach ($this->modules_parts['moduleforexternal'] as $key => $value) {

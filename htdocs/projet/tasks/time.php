@@ -470,27 +470,38 @@ if ($action == 'confirm_generateinvoice') {
 		}
 
 		if (!$error) {
-			if ($generateinvoicemode == 'onelineperuser') {
+			if ($generateinvoicemode == 'onelineperuser') {		// 1 line per user (and per product)
 				$arrayoftasks = array();
 				foreach ($toselect as $key => $value) {
 					// Get userid, timepent
-					$object->fetchTimeSpent($value);
+					$object->fetchTimeSpent($value);	// $value is ID of 1 line in timespent table
 					$arrayoftasks[$object->timespent_fk_user][(int) $object->timespent_fk_product]['timespent'] += $object->timespent_duration;
 					$arrayoftasks[$object->timespent_fk_user][(int) $object->timespent_fk_product]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
 				}
 
 				foreach ($arrayoftasks as $userid => $data) {
 					$fuser->fetch($userid);
-					//$pu_ht = $value['timespent'] * $fuser->thm;
 					$username = $fuser->getFullName($langs);
-					foreach ($data as $fk_product=>$timespent_data) {
+
+					foreach ($data as $fk_product => $timespent_data) {
 						// Define qty per hour
 						$qtyhour = $timespent_data['timespent'] / 3600;
 						$qtyhourtext = convertSecondToTime($timespent_data['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 
-						// If no unit price known
+						// Set the unit price we want to sell the time, for this user
+						if (getDolGlobalInt('PROJECT_USE_REAL_COST_FOR_TIME_INVOICING')) {
+							// We set unit price to 0 to force the use of the rate saved during recording
+							$pu_ht = 0;
+						} else {
+							// We want to sell all the time spent with the last hourly rate of user
+							$pu_ht = $fuser->thm;
+						}
+
+						// If no unit price known for user, we use the price recorded when recording timespent.
 						if (empty($pu_ht)) {
-							$pu_ht = price2num($timespent_data['totalvaluetodivideby3600'] / 3600, 'MU');
+							if ($timespent_data['timespent']) {
+								$pu_ht = price2num(($timespent_data['totalvaluetodivideby3600'] / $timespent_data['timespent']), 'MU');
+							}
 						}
 
 						// Add lines
@@ -501,7 +512,8 @@ if ($action == 'confirm_generateinvoice') {
 						$localtax1line = $localtax1;
 						$localtax2line = $localtax2;
 
-						if (!empty($fk_product) && $fk_product!==$idprod) {
+						// If a particular product/service was defined for the task
+						if (!empty($fk_product) && $fk_product !== $idprod) {
 							if (!array_key_exists($fk_product, $product_data_cache)) {
 								$result = $tmpproduct->fetch($fk_product);
 								if ($result < 0) {
@@ -1510,6 +1522,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		 */
 		$tasks = array();
 
+		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+
 		$sql = "SELECT t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm,";
 		$sql .= " t.fk_product,";
 		$sql .= " pt.ref, pt.label, pt.fk_projet,";
@@ -1555,11 +1570,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if ($search_task_ref) {
 			$sql .= natural_search('pt.ref', $search_task_ref);
 		}
-		if ($search_company) {
-			$sql .= natural_search('s.nom', $search_company);
-		}
-		if ($search_company_alias) {
-			$sql .= natural_search('s.name_alias', $search_company_alias);
+		if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
+			$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
+		} else {
+			if ($search_company) {
+				$sql .= natural_search('s.nom', $search_company);
+			}
+			if ($search_company_alias) {
+				$sql .= natural_search('s.name_alias', $search_company_alias);
+			}
 		}
 		if ($search_project_ref) {
 			$sql .= natural_search('p.ref', $search_project_ref);

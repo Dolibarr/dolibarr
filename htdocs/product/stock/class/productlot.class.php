@@ -110,10 +110,13 @@ class Productlot extends CommonObject
 	public $entity;
 
 	/**
-	 * @var int ID
+	 * @var int Product ID
 	 */
 	public $fk_product;
 
+	/**
+	 * @var string batch ref
+	 */
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
@@ -126,15 +129,18 @@ class Productlot extends CommonObject
 	public $tms = '';
 
 	/**
-	 * @var int ID
+	 * @var int user ID
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int ID
+	 * @var int user ID
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 
 
@@ -241,9 +247,6 @@ class Productlot extends CommonObject
 			}
 
 			if (!$error && !$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
-
 				// Call triggers
 				$result = $this->call_trigger('PRODUCTLOT_CREATE', $user);
 				if ($result < 0) {

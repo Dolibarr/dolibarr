@@ -258,11 +258,12 @@ if (empty($reshook)) {
 		$psq = empty($newpsq) ? 0 : $newpsq;
 		$maxpricesupplier = $object->min_recommended_price();
 
-		if (!empty($conf->dynamicprices->enabled)) {
+		if (isModEnabled('dynamicprices')) {
 			$object->fk_price_expression = empty($eid) ? 0 : $eid; //0 discards expression
 
 			if ($object->fk_price_expression != 0) {
 				//Check the expression validity by parsing it
+				require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 				$priceparser = new PriceParser($db);
 
 				if ($priceparser->parseProduct($object) < 0) {

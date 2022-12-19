@@ -548,6 +548,9 @@ $companystatic = new Societe($db);
 $projectstatic = new Project($db);
 $formcompany = new FormCompany($db);
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
 $title = $langs->trans('ListOfProposals');
 $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
 llxHeader('', $title, $help_url);
@@ -656,11 +659,15 @@ if ($search_project) {
 if ($search_availability) {
 	$sql .= " AND p.fk_availability IN (".$db->sanitize($db->escape($search_availability)).')';
 }
-if ($search_societe) {
-	$sql .= natural_search('s.nom', $search_societe);
-}
-if ($search_societe_alias) {
-	$sql .= natural_search('s.name_alias', $search_societe_alias);
+if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+} else {
+	if ($search_societe) {
+		$sql .= natural_search('s.nom', $search_societe);
+	}
+	if ($search_societe_alias) {
+		$sql .= natural_search('s.name_alias', $search_societe_alias);
+	}
 }
 if ($search_login) {
 	$sql .= natural_search(array("u.login", "u.firstname", "u.lastname"), $search_login);
@@ -1777,7 +1784,7 @@ if ($resql) {
 		// Thirdparty
 		if (!empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax150">';
-			print $companystatic->getNomUrl(1, 'customer');
+			print $companystatic->getNomUrl(1, 'customer', 0, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

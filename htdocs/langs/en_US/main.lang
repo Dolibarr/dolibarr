@@ -1056,6 +1056,7 @@ SearchIntoContracts=Contracts
 SearchIntoCustomerShipments=Customer shipments
 SearchIntoExpenseReports=Expense reports
 SearchIntoLeaves=Leave
+SearchIntoKM=Knowledge base
 SearchIntoTickets=Tickets
 SearchIntoCustomerPayments=Customer payments
 SearchIntoVendorPayments=Vendor payments
