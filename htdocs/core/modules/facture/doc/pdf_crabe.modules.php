@@ -132,6 +132,11 @@ class pdf_crabe extends ModelePDFFactures
 	 */
 	public $posxprogress;
 
+	/**
+	 * @var int Category of operation
+	 */
+	public $categoryOfOperation = -1; // unknown by default
+
 
 	/**
 	 *	Constructor
@@ -402,11 +407,37 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// Set $this->atleastonediscount if you have at least one discount
+				// and determine category of operation
+				$categoryOfOperation = 0;
+				$nbProduct = 0;
+				$nbService = 0;
 				for ($i = 0; $i < $nblines; $i++) {
 					if ($object->lines[$i]->remise_percent) {
 						$this->atleastonediscount++;
 					}
+
+					// determine category of operation
+					if ($categoryOfOperation < 2) {
+						$lineProductType = $object->lines[$i]->product_type;
+						if ($lineProductType == Product::TYPE_PRODUCT) {
+							$nbProduct++;
+						} elseif ($lineProductType == Product::TYPE_SERVICE) {
+							$nbService++;
+						}
+						if ($nbProduct > 0 && $nbService > 0) {
+							// mixed products and services
+							$categoryOfOperation = 2;
+						}
+					}
 				}
+				// determine category of operation
+				if ($categoryOfOperation <= 0) {
+					// only services
+					if ($nbProduct == 0 && $nbService > 0) {
+						$categoryOfOperation = 1;
+					}
+				}
+				$this->categoryOfOperation = $categoryOfOperation;
 				if (empty($this->atleastonediscount)) {    // retrieve space not used by discount
 					$delta = ($this->posxprogress - $this->posxdiscount);
 					$this->posxpicture += $delta;
@@ -1128,6 +1159,10 @@ class pdf_crabe extends ModelePDFFactures
 		}
 
 		$posxval = 52;
+		$posxend = 110;	// End of x for text on left side
+		if ($this->page_largeur < 210) { // To work with US executive format
+			$posxend -= 10;
+		}
 
 		// Show payments conditions
 		if ($object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement)) {
@@ -1143,6 +1178,21 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->MultiCell(67, 4, $lib_condition_paiement, 0, 'L');
 
 			$posy = $pdf->GetY() + 3;	// We need spaces for 2 lines payment conditions
+		}
+
+		// Show category of operations
+		if (getDolGlobalInt('INVOICE_CATEGORY_OF_OPERATION') == 2 && $this->categoryOfOperation >= 0) {
+			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$categoryOfOperationTitle = $outputlangs->transnoentities("MentionCategoryOfOperations").' : ';
+			$pdf->MultiCell($posxval - $this->marge_gauche, 4, $categoryOfOperationTitle, 0, 'L');
+
+			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetXY($posxval, $posy);
+			$categoryOfOperationLabel = $outputlangs->transnoentities("MentionCategoryOfOperations" . $this->categoryOfOperation);
+			$pdf->MultiCell($posxend - $posxval, 4, $categoryOfOperationLabel, 0, 'L');
+
+			$posy = $pdf->GetY() + 3; // for 2 lines
 		}
 
 		if ($object->type != 2) {
@@ -1659,6 +1709,13 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetFont('', '', $default_font_size - 2);
 
 		if (empty($hidetop)) {
+			// Show category of operations
+			if (getDolGlobalInt('INVOICE_CATEGORY_OF_OPERATION') == 1 && $this->categoryOfOperation >= 0) {
+				$categoryOfOperations = $outputlangs->transnoentities("MentionCategoryOfOperations") . ' : ' . $outputlangs->transnoentities("MentionCategoryOfOperations" . $this->categoryOfOperation);
+				$pdf->SetXY($this->marge_gauche, $tab_top - 4);
+				$pdf->MultiCell(($pdf->GetStringWidth($categoryOfOperations)) + 4, 2, $categoryOfOperations);
+			}
+
 			$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
