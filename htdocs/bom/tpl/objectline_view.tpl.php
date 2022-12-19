@@ -228,7 +228,7 @@ if ($resql) {
 		} else {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
 			print '<td class="linecoluseunit nowrap left">';
-			if($label !== '') print $langs->trans($label);
+			if ($label !== '') print $langs->trans($label);
 			print '</td>';
 			print '</td>';
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">&nbsp;</td>';
