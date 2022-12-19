@@ -516,13 +516,13 @@ while ($i < min($num, $limit)) {
 	$adht->fetch($typeid);
 
 	$adherent->need_subscription = $adht->subscription;
-	
+
 	if ($mode == 'kanban') {
 		if ($i == 0) {
 			print '<tr><td colspan="12">';
 			print '<div class="box-flex-container">';
 		}
-		
+
 		//fetch informations needs on this mode
 		$subscription->fk_adherent = $adherent->getNomUrl(1);
 		$subscription->fk_type = $adht->getNomUrl(1);
@@ -538,9 +538,7 @@ while ($i < min($num, $limit)) {
 			print '</div>';
 			print '</td></tr>';
 		}
-	}
-
-	else {
+	} else {
 		print '<tr class="oddeven">';
 
 		// Ref

@@ -525,7 +525,7 @@ class Subscription extends CommonObject
 		if (property_exists($this, 'dateh') || property_exists($this, 'datef')) {
 			$return .= '<br><span class="info-box-status opacitymedium">'.dol_print_date($this->dateh, 'day').' - '.dol_print_date($this->datef, 'day').'</span>';
 		}
-		
+
 		if (property_exists($this, 'fk_bank')) {
 			$return .= '<br><span class="info-box-label ">'.$this->fk_bank.'</span>';
 		}
