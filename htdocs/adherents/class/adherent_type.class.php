@@ -933,7 +933,7 @@ class AdherentType extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @return 	void				HTML Code for Kanban thumb.
+	 *  @return 	string				HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '')
 	{
@@ -967,6 +967,6 @@ class AdherentType extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
-		print $return;
+		return $return;
 	}
 }
