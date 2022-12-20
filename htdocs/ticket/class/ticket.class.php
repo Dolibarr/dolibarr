@@ -2603,6 +2603,16 @@ class Ticket extends CommonObject
 								$assigned_user_dont_have_email = $assigned_user->getFullName($langs);
 							}
 						}
+						if (!empty($conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_ALSO_CONTRIBUTOR)) {
+							$contactList = $object->liste_contact(-1, 'internal', 0, 'CONTRIBUTOR');
+							if (is_array($contactList)) {
+								foreach ($contactList as $contactArray) {
+									if (!empty($contactArray['email'])) {
+										$sendto[] = dolGetFirstLastname($contactArray['firstname'], $contactArray['lastname']) . " <" . $contactArray['email'] . ">";
+									}
+								}
+							}
+						}
 						if (empty($sendto)) {
 							if (!empty($conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL)) {
 								$sendto[] = $conf->global->TICKET_PUBLIC_NOTIFICATION_NEW_MESSAGE_DEFAULT_EMAIL;
