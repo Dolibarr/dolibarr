@@ -86,129 +86,6 @@ $subscriptionstatic = new Subscription($db);
 print load_fiche_titre($langs->trans("MembersArea"), $resultboxes['selectboxlist'], 'members');
 
 /*
-$MembersValidated = array();
-$MembersToValidate = array();
-$MembersWaitingSubscription = array();
-$MembersUpToDate = array();
-$MembersExpired = array();
-$MembersExcluded = array();
-$MembersResiliated = array();
-
-$AdherentType = array();
-
-// Type of membership
-$sql = "SELECT t.rowid, t.libelle as label, t.subscription,";
-$sql .= " d.statut, count(d.rowid) as somme";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d";
-$sql .= " ON t.rowid = d.fk_adherent_type";
-$sql .= " AND d.entity IN (".getEntity('adherent').")";
-$sql .= " WHERE t.entity IN (".getEntity('member_type').")";
-$sql .= " GROUP BY t.rowid, t.libelle, t.subscription, d.statut";
-
-dol_syslog("index.php::select nb of members per type", LOG_DEBUG);
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$objp = $db->fetch_object($resql);
-
-		$adhtype = new AdherentType($db);
-		$adhtype->id = $objp->rowid;
-		$adhtype->subscription = $objp->subscription;
-		$adhtype->label = $objp->label;
-		$AdherentType[$objp->rowid] = $adhtype;
-
-		if ($objp->statut == -1) {
-			$MembersToValidate[$objp->rowid] = $objp->somme;
-		}
-		if ($objp->statut == 1) {
-			$MembersValidated[$objp->rowid] = $objp->somme;
-		}
-		if ($objp->statut == -2) {
-			$MembersExcluded[$objp->rowid] = $objp->somme;
-		}
-		if ($objp->statut == 0) {
-			$MembersResiliated[$objp->rowid] = $objp->somme;
-		}
-
-		$i++;
-	}
-	$db->free($resql);
-}
-
-$now = dol_now();
-
-// Members waiting subscription
-$sql = "SELECT count(*) as somme , d.fk_adherent_type";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-$sql .= " AND d.statut = 1";	// validated
-$sql .= " AND (d.datefin IS NULL AND t.subscription = '1')";
-$sql .= " AND t.rowid = d.fk_adherent_type";
-$sql .= " GROUP BY d.fk_adherent_type";
-
-dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$objp = $db->fetch_object($resql);
-		$MembersWaitingSubscription[$objp->fk_adherent_type] = $objp->somme;
-		$i++;
-	}
-	$db->free($resql);
-}
-
-// Members up to date list
-// current rule: uptodate = the end date is in future or no subcription required
-// old rule: uptodate = if type does not need payment, that end date is null, if type need payment that end date is in future)
-$sql = "SELECT count(*) as somme , d.fk_adherent_type";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-$sql .= " AND d.statut = 1";	// validated
-$sql .= " AND (d.datefin >= '".$db->idate($now)."' OR t.subscription = '0')";		// end date in future
-$sql .= " AND t.rowid = d.fk_adherent_type";
-$sql .= " GROUP BY d.fk_adherent_type";
-
-dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$objp = $db->fetch_object($resql);
-		$MembersUpToDate[$objp->fk_adherent_type] = $objp->somme;
-		$i++;
-	}
-	$db->free($resql);
-}
-
-// Members expired list
-$sql = "SELECT count(*) as somme , d.fk_adherent_type";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-$sql .= " AND d.statut = 1";	// validated
-$sql .= " AND (d.datefin < '".$db->idate($now)."' AND t.subscription = '1')";
-$sql .= " AND t.rowid = d.fk_adherent_type";
-$sql .= " GROUP BY d.fk_adherent_type";
-
-dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$objp = $db->fetch_object($resql);
-		$MembersExpired[$objp->fk_adherent_type] = $objp->somme;
-		$i++;
-	}
-	$db->free($resql);
-}
-
-/*
  * Statistics
  */
 
@@ -235,7 +112,6 @@ if ($conf->use_javascript_ajax) {
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), $sumMembers['total']['members_resiliated']);
 
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
-	echo "<pre>";var_dump($total); echo "</pre>";
 
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();
