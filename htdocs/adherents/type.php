@@ -44,6 +44,7 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$mode = GETPOST('mode', 'alopha');
 
 $sall = GETPOST("sall", "alpha");
 $filter = GETPOST("filter", 'alpha');
@@ -248,6 +249,9 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		$i = 0;
 
 		$param = '';
+		if (!empty($mode)) {
+			$param .= '&mode'.urlencode($mode);
+		}
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 			$param .= '&contextpage='.$contextpage;
 		}
@@ -256,6 +260,9 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		}
 
 		$newcardbutton = '';
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+
 		if ($user->rights->adherent->configurer) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
 		}
@@ -269,6 +276,8 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+		print '<input type="hidden" name="mode" value="'.$mode.'">';
+
 
 		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -302,32 +311,46 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$membertype->amount = $objp->amount;
 			$membertype->caneditamount = $objp->caneditamount;
 
-			print '<tr class="oddeven">';
-			print '<td class="nowraponall">';
-			print $membertype->getNomUrl(1);
-			//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
-			print '</td>';
-			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
-			print '<td class="center">';
-			if ($objp->morphy == 'phy') {
-				print $langs->trans("Physical");
-			} elseif ($objp->morphy == 'mor') {
-				print $langs->trans("Moral");
+			if ($mode == 'kanban') {
+				if ($i == 0) {
+					print '<tr><td colspan="12">';
+					print '<div class="box-flex-container">';
+				}
+				//output kanban
+				$membertype->label = $objp->label;
+				$membertype->getKanbanView('');
+				if ($i == ($imaxinloop - 1)) {
+					print '</div>';
+					print '</td></tr>';
+				}
 			} else {
-				print $langs->trans("MorAndPhy");
+				print '<tr class="oddeven">';
+				print '<td class="nowraponall">';
+				print $membertype->getNomUrl(1);
+				//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
+				print '</td>';
+				print '<td>'.dol_escape_htmltag($objp->label).'</td>';
+				print '<td class="center">';
+				if ($objp->morphy == 'phy') {
+					print $langs->trans("Physical");
+				} elseif ($objp->morphy == 'mor') {
+					print $langs->trans("Moral");
+				} else {
+					print $langs->trans("MorAndPhy");
+				}
+				print '</td>';
+				print '<td class="center">'.yn($objp->subscription).'</td>';
+				print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
+				print '<td class="center">'.yn($objp->caneditamount).'</td>';
+				print '<td class="center">'.yn($objp->vote).'</td>';
+				print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
+				if ($user->rights->adherent->configurer) {
+					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+				} else {
+					print '<td class="right">&nbsp;</td>';
+				}
+				print "</tr>";
 			}
-			print '</td>';
-			print '<td class="center">'.yn($objp->subscription).'</td>';
-			print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
-			print '<td class="center">'.yn($objp->caneditamount).'</td>';
-			print '<td class="center">'.yn($objp->vote).'</td>';
-			print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
-			if ($user->rights->adherent->configurer) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
-			} else {
-				print '<td class="right">&nbsp;</td>';
-			}
-			print "</tr>";
 			$i++;
 		}
 
