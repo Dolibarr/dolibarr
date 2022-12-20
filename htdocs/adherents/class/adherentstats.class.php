@@ -186,7 +186,7 @@ class AdherentStats extends Stats
 	/**
 	 *	Return count of member by status group by adh type, total and average
 	 *
-	 * 	@return		array					Array with 
+	 * 	@return		array                   Array with
 	 */
 	public function countMembersByTypeAndStatus()
 	{
@@ -208,10 +208,10 @@ class AdherentStats extends Stats
 		$sql .= " AND t.statut = 1";
 		$sql .= " GROUP BY d.fk_adherent_type";
 		$sql .= " WITH ROLLUP;";
-		
+
 		dol_syslog("box_members_by_type::select nb of members per type", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		
+
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
@@ -233,5 +233,4 @@ class AdherentStats extends Stats
 		}
 		return $MembersCountArray;
 	}
-	
 }

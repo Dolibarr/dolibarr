@@ -95,14 +95,14 @@ if ($conf->use_javascript_ajax) {
 	$boxgraph .='<table class="noborder nohover centpercent">';
 	$boxgraph .='<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 	$boxgraph .='<tr><td class="center" colspan="2">';
-	
+
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 	$stats = new AdherentStats($db, 0, $userid);
 
 	// Show array
 	$sumMembers = $stats->countMembersByTypeAndStatus();
 	$total = $sumMembers['total']['members_draft'] + $sumMembers['total']['members_pending'] + $sumMembers['total']['members_uptodate'] + $sumMembers['total']['members_expired'] + $sumMembers['total']['members_excluded'] + $sumMembers['total']['members_resiliated'];
-	
+
 	$dataseries = array();
 	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), $sumMembers['total']['members_draft']);			// Draft, not yet validated
 	$dataseries[] = array($langs->transnoentitiesnoconv("WaitingSubscription"), $sumMembers['total']['members_pending']);

@@ -91,13 +91,11 @@ class box_members_by_type extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType", $max));
 
 		if ($user->rights->adherent->lire) {
-			
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 			$stats = new AdherentStats($this->db, $user->socid, $user->id);
 			// Show array
 			$sumMembers = $stats->countMembersByTypeAndStatus();
 			if ($sumMembers) {
-
 				$line = 0;
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class=""',
@@ -144,7 +142,7 @@ class box_members_by_type extends ModeleBoxes
 					$adhtype = new AdherentType($this->db);
 					$adhtype->id = $key;
 
-					if($key=='total'){
+					if ($key=='total') {
 						break;
 					}
 					$adhtype->label = $data['label'];
