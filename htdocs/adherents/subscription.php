@@ -1142,7 +1142,7 @@ if ($rowid > 0) {
 
 			$tmp = '<input name="sendmail" type="checkbox"'.(GETPOST('sendmail', 'alpha') ? ' checked' : (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? ' checked' : '')).'>';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailTopic").'</b>:<br>'."\n";
 			if ($subjecttosend) {

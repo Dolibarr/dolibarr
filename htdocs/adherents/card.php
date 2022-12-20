@@ -6,7 +6,7 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012-2020  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -305,23 +305,23 @@ if (empty($reshook)) {
 			$object->phone       = trim(GETPOST("phone", 'alpha'));
 			$object->phone_perso = trim(GETPOST("phone_perso", 'alpha'));
 			$object->phone_mobile = trim(GETPOST("phone_mobile", 'alpha'));
-			$object->email       = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
-			$object->url 		 = trim(GETPOST('member_url', 'custom', 0, FILTER_SANITIZE_URL));
+			$object->email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
+			$object->url = trim(GETPOST('member_url', 'custom', 0, FILTER_SANITIZE_URL));
 			$object->socialnetworks = array();
 			foreach ($socialnetworks as $key => $value) {
 				if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {
 					$object->socialnetworks[$key] = trim(GETPOST($key, 'alphanohtml'));
 				}
 			}
-			//$object->skype       = trim(GETPOST("skype", 'alpha'));
-			//$object->twitter     = trim(GETPOST("twitter", 'alpha'));
-			//$object->facebook    = trim(GETPOST("facebook", 'alpha'));
-			//$object->linkedin    = trim(GETPOST("linkedin", 'alpha'));
-			$object->birth		= $birthdate;
+			//$object->skype = trim(GETPOST("skype", 'alpha'));
+			//$object->twitter = trim(GETPOST("twitter", 'alpha'));
+			//$object->facebook = trim(GETPOST("facebook", 'alpha'));
+			//$object->linkedin = trim(GETPOST("linkedin", 'alpha'));
+			$object->birth = $birthdate;
 			$object->default_lang = GETPOST('default_lang', 'alpha');
-			$object->typeid      = GETPOST("typeid", 'int');
-			//$object->note        = trim(GETPOST("comment","alpha"));
-			$object->morphy      = GETPOST("morphy", 'alpha');
+			$object->typeid = GETPOST("typeid", 'int');
+			//$object->note = trim(GETPOST("comment","alpha"));
+			$object->morphy = GETPOST("morphy", 'alpha');
 
 			if (GETPOST('deletephoto', 'alpha')) {
 				$object->photo = '';
@@ -330,8 +330,8 @@ if (empty($reshook)) {
 			}
 
 			// Get status and public property
-			$object->statut      = GETPOST("statut", 'alpha');
-			$object->public      = GETPOST("public", 'alpha');
+			$object->statut = GETPOST("statut", 'alpha');
+			$object->public = GETPOST("public", 'alpha');
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -454,7 +454,7 @@ if (empty($reshook)) {
 		// $facebook=GETPOST("member_facebook", 'alpha');
 		// $linkedin=GETPOST("member_linkedin", 'alpha');
 		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
-		$url   = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
+		$url = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
 		$login = GETPOST("member_login", 'alphanohtml');
 		$pass = GETPOST("password", 'none');	// For password, we use 'none'
 		$photo = GETPOST("photo", 'alphanohtml');
@@ -1524,7 +1524,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 				$subject = $arraydefaultmessage->topic;
-				$msg     = $arraydefaultmessage->content;
+				$msg = $arraydefaultmessage->content;
 			}
 
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -1533,10 +1533,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>'.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp .= '<br>'.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
 			$tmp .= '<br>'.$langs->trans("MailRecipient").': <b>'.$object->email.'</b>';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";
@@ -1596,10 +1596,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnResiliate()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
 			$tmp .= $langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";
@@ -1656,10 +1656,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnExclude()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
 			$tmp .= $langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";

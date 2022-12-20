@@ -425,8 +425,8 @@ class Adherent extends CommonObject
 
 		// Envoi mail confirmation
 		$from = $conf->email_from;
-		if (!empty($conf->global->ADHERENT_MAIL_FROM)) {
-			$from = $conf->global->ADHERENT_MAIL_FROM;
+		if (!empty(getDolGlobalString('ADHERENT_MAIL_FROM'))) {
+			$from = getDolGlobalString('ADHERENT_MAIL_FROM');
 		}
 
 		$trackid = 'mem'.$this->id;
@@ -3015,7 +3015,7 @@ class Adherent extends CommonObject
 
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
-							$from = $conf->global->ADHERENT_MAIL_FROM;
+							$from = getDolGlobalString('ADHERENT_MAIL_FROM');
 							$to = $adherent->email;
 
 							$trackid = 'mem'.$adherent->id;
