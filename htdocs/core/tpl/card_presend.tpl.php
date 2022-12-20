@@ -70,7 +70,7 @@ if ($action == 'presend') {
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($newlang);
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions'));
+		$outputlangs->loadLangs(array('commercial', 'bills', 'orders', 'contracts', 'members', 'propal', 'products', 'supplier_proposal', 'interventions', 'receptions', 'sendings'));
 	}
 
 	$topicmail = '';
