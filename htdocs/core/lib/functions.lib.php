@@ -11440,7 +11440,6 @@ function jsonOrUnserialize($stringtodecode)
 }
 
 
-
 /**
  * Return if a $sqlfilters parameter is valid and will pass the preg_replace_callback() to replace Generic filter string with SQL filter string
  * Example of usage:
