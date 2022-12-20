@@ -274,7 +274,7 @@ if (empty($conf->global->AGENDA_DISABLE_EXT)) {
 		$color = 'AGENDA_EXT_COLOR'.$i;
 		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$i;
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE'.$i;
-		if (!empty($conf->global->$source) && !empty($conf->global->$name)) {
+		if (getDolGlobalString($source) && getDolGlobalString($name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
 				'src' => getDolGlobalString($source),
@@ -299,14 +299,14 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		$enabled = 'AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
 		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
-		if (!empty($user->conf->$source) && !empty($user->conf->$name)) {
+		if (getDolUserString($source) && getDolUserString($name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
-				'src' => $user->conf->$source,
-				'name' => dol_string_nohtmltag($user->conf->$name),
+				'src' => getDolUserString($source),
+				'name' => dol_string_nohtmltag(getDolUserString($name)),
 				'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
-				'color' => dol_string_nohtmltag($user->conf->$color),
-				'default' => dol_string_nohtmltag($user->conf->$default),
+				'color' => dol_string_nohtmltag(getDolUserString($color)),
+				'default' => dol_string_nohtmltag(getDolUserString($default)),
 				'buggedfile' => dol_string_nohtmltag(isset($user->conf->buggedfile) ? $user->conf->buggedfile : '')
 			);
 		}
@@ -1287,7 +1287,7 @@ if (count($listofextcals)) {
 					}
 
 					// Transparency (see https://www.kanzaki.com/docs/ical/transp.html)
-					if ($icalevent['TRANSP']) {
+					if (!empty($icalevent['TRANSP'])) {
 						if ($icalevent['TRANSP'] == "TRANSPARENT") {
 							$event->transparency = 0; // 0 = available / free
 						}

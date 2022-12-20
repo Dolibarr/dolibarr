@@ -73,8 +73,9 @@ if (!function_exists('utf8_decode')) {
 
 /**
  * Return dolibarr global constant string value
- * @param string $key key to return value, return '' if not set
- * @param string $default value to return
+ *
+ * @param string $key 		key to return value, return '' if not set
+ * @param string $default 	value to return
  * @return string
  */
 function getDolGlobalString($key, $default = '')
@@ -86,8 +87,9 @@ function getDolGlobalString($key, $default = '')
 
 /**
  * Return dolibarr global constant int value
- * @param string $key key to return value, return 0 if not set
- * @param int $default value to return
+ *
+ * @param string 	$key 		key to return value, return 0 if not set
+ * @param int 		$default 	value to return
  * @return int
  */
 function getDolGlobalInt($key, $default = 0)
@@ -98,7 +100,36 @@ function getDolGlobalInt($key, $default = 0)
 }
 
 /**
+ * Return dolibarr user constant string value
+ *
+ * @param string $key 		key to return value, return '' if not set
+ * @param string $default 	value to return
+ * @return string
+ */
+function getDolUserString($key, $default = '')
+{
+	global $user;
+	// return $conf->global->$key ?? $default;
+	return (string) (empty($user->conf->$key) ? $default : $user->conf->$key);
+}
+
+/**
+ * Return dolibarr user constant int value
+ *
+ * @param string 	$key 			key to return value, return 0 if not set
+ * @param int 		$default 		value to return
+ * @return int
+ */
+function getDolUserInt($key, $default = 0)
+{
+	global $user;
+	// return $conf->global->$key ?? $default;
+	return (int) (empty($user->conf->$key) ? $default : $user->conf->$key);
+}
+
+/**
  * Is Dolibarr module enabled
+ *
  * @param string $module module name to check
  * @return int
  */
@@ -908,63 +939,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
 		case 'restricthtmlallowunvalid':
-			do {
-				$oldstringtoclean = $out;
-
-				if (!empty($out) && !empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) && $check != 'restricthtmlallowunvalid') {
-					try {
-						$dom = new DOMDocument;
-						// Add a trick to solve pb with text without parent tag
-						// like '<h1>Foo</h1><p>bar</p>' that ends up with '<h1>Foo<p>bar</p></h1>'
-						// like 'abc' that ends up with '<p>abc</p>'
-						$out = '<div class="tricktoremove">'.$out.'</div>';
-
-						$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
-						$out = trim($dom->saveHTML());
-
-						// Remove the trick added to solve pb with text without parent tag
-						$out = preg_replace('/^<div class="tricktoremove">/', '', $out);
-						$out = preg_replace('/<\/div>$/', '', $out);
-					} catch (Exception $e) {
-						//print $e->getMessage();
-						return 'InvalidHTMLString';
-					}
-				}
-
-				// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are
-				// encoded using text entities) so we can then exclude all numeric entities.
-				$out = preg_replace('/&#39;/i', '&apos;', $out);
-
-				// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step (preg_replace).
-				// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
-				// using a non coventionnel way to be encoded, to not have them sanitized just after)
-				//$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $out);
-				$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
-					return realCharForNumericEntities($m); }, $out);
-
-
-				// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
-				$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
-
-				$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
-
-				// We should also exclude non expected HTML attributes and clean content of some attributes.
-				if (!empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
-					// Warning, the function may add a LF so we are forced to trim to compare with old $out without having always a difference and an infinit loop.
-					$out = dol_string_onlythesehtmlattributes($out);
-				}
-
-				// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
-				$out = preg_replace('/&apos;/i', "&#39;", $out);
-			} while ($oldstringtoclean != $out);
-
-			// Check the limit of external links in a Rich text content. We count '<img' and 'url('
-			$reg = array();
-			preg_match_all('/(<img|url\()/i', $out, $reg);
-			if (count($reg[0]) > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
-				return 'TooManyLinksIntoHTMLString';
-			}
-
+			$out = dol_htmlwithnojs($out, 1, $check);
 			break;
 		case 'custom':
 			if (!empty($out)) {
@@ -1310,6 +1285,22 @@ function dol_sanitizeUrl($stringtoclean, $type = 1)
 		// removing '//' should disable links to external url like //aaa or http//)
 		$stringtoclean = preg_replace(array('/^[a-z]*\/\/+/i'), '', $stringtoclean);
 	}
+
+	return $stringtoclean;
+}
+
+/**
+ *  Clean a string to use it as an Email.
+ *
+ *  @param      string		$stringtoclean		String to clean. Example 'abc@mycompany.com <My name>'
+ *  @return     string     		 				Escaped string.
+ */
+function dol_sanitizeEmail($stringtoclean)
+{
+	do {
+		$oldstringtoclean = $stringtoclean;
+		$stringtoclean = str_ireplace(array('"', ':', '[', ']',"\n", "\r", '\\', '\/'), '', $stringtoclean);
+	} while ($oldstringtoclean != $stringtoclean);
 
 	return $stringtoclean;
 }
@@ -2249,7 +2240,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	if ($object->element == 'societe') {
-		if (!empty($conf->use_javascript_ajax) && $user->rights->societe->creer && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+		if (!empty($conf->use_javascript_ajax) && $user->hasRight('societe', 'creer') && !empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
 		} else {
 			$morehtmlstatus .= $object->getLibStatut(6);
@@ -3081,7 +3072,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 			$newemail .= img_warning($langs->trans("ErrorBadEMail", $email));
 		}
 
-		if (($cid || $socid) && isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
+		if (($cid || $socid) && isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_EMAIL';
 			$link = '';
 			if (!empty($conf->global->AGENDA_ADDACTIONFOREMAIL)) {
@@ -3524,7 +3515,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 
 		//if (($cid || $socid) && !empty($conf->agenda->enabled) && $user->rights->agenda->myactions->create)
-		if (isModEnabled('agenda') && $user->rights->agenda->myactions->create) {
+		if (isModEnabled('agenda') && $user->hasRight("agenda", "myactions", "create")) {
 			$type = 'AC_TEL';
 			$link = '';
 			if ($addlink == 'AC_FAX') {
@@ -4110,7 +4101,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'shapes', 'square', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 				'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda',
 				'uncheck', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
-				'conferenceorbooth', 'eventorganization'
+				'conferenceorbooth', 'eventorganization',
+				'stamp', 'signature'
 			))) {
 			$fakey = $pictowithouttext;
 			$facolor = '';
@@ -4214,7 +4206,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Add CSS
 			$arrayconvpictotomorcess = array(
 				'action'=>'infobox-action', 'account'=>'infobox-bank_account', 'accounting_account'=>'infobox-bank_account', 'accountline'=>'infobox-bank_account', 'accountancy'=>'infobox-bank_account', 'asset'=>'infobox-bank_account',
-				'bank_account'=>'bg-infobox-bank_account',
+				'bank_account'=>'infobox-bank_account',
 				'bill'=>'infobox-commande', 'billa'=>'infobox-commande', 'billr'=>'infobox-commande', 'billd'=>'infobox-commande',
 				'margin'=>'infobox-bank_account', 'conferenceorbooth'=>'infobox-project',
 				'cash-register'=>'infobox-bank_account', 'contract'=>'infobox-contrat', 'check'=>'font-status4', 'collab'=>'infobox-action', 'conversation'=>'infobox-contrat',
@@ -6304,10 +6296,10 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
  *	Return vat rate of a product in a particular country, or default country vat if product is unknown.
  *  Function called by get_default_tva().
  *
- *  @param	int			$idprod          	Id of product or 0 if not a predefined product
- *  @param  Societe		$thirdpartytouse  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
- *	@param	int			$idprodfournprice	Id product_fournisseur_price (for "supplier" proposal/order/invoice)
- *  @return float|string   				    Vat rate to use with format 5.0 or '5.0 (XXX)'
+ *  @param	int				$idprod          	Id of product or 0 if not a predefined product
+ *  @param  Societe			$thirdpartytouse  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *	@param	int				$idprodfournprice	Id product_fournisseur_price (for "supplier" proposal/order/invoice)
+ *  @return float|string   					    Vat rate to use with format 5.0 or '5.0 (XXX)'
  *  @see get_product_localtax_for_country()
  */
 function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournprice = 0)
@@ -6322,22 +6314,27 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 	if ($idprod > 0) {
 		// Load product
 		$product = new Product($db);
-		$result = $product->fetch($idprod);
+		$product->fetch($idprod);
 
-		if ($mysoc->country_code == $thirdpartytouse->country_code) { // If country to consider is ours
+		if ($mysoc->country_code == $thirdpartytouse->country_code) {
+			// If country to consider is ours
 			if ($idprodfournprice > 0) {     // We want vat for product for a "supplier" object
-				$product->get_buyprice($idprodfournprice, 0, 0, 0);
-				$ret = $product->vatrate_supplier;
-				if ($product->default_vat_code) {
-					$ret .= ' ('.$product->default_vat_code.')';
-				}
-			} else {
-				$ret = $product->tva_tx; // Default vat of product we defined
-				if ($product->default_vat_code) {
-					$ret .= ' ('.$product->default_vat_code.')';
+				$result = $product->get_buyprice($idprodfournprice, 0, 0, 0);
+				if ($result > 0) {
+					$ret = $product->vatrate_supplier;
+					if ($product->default_vat_code_supplier) {
+						$ret .= ' ('.$product->default_vat_code_supplier.')';
+					}
+					$found = 1;
 				}
 			}
-			$found = 1;
+			if (!$found) {
+				$ret = $product->tva_tx; 	// Default sales vat of product
+				if ($product->default_vat_code) {
+					$ret .= ' ('.$product->default_vat_code.')';
+				}
+				$found = 1;
+			}
 		} else {
 			// TODO Read default product vat according to product and another countrycode.
 			// Vat for couple anothercountrycode/product is data that is not managed and store yet, so we will fallback on next rule.
@@ -6346,11 +6343,11 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 
 	if (!$found) {
 		if (empty($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS)) {
-			// If vat of product for the country not found or not defined, we return the first higher vat of country.
+			// If vat of product for the country not found or not defined, we return the first rate found (sorting on use_default, then on higher vat of country).
 			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-			$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$db->escape($thirdpartytouse->country_code)."'";
-			$sql .= " ORDER BY t.taux DESC, t.code ASC, t.recuperableonly ASC";
+			$sql .= " WHERE t.active = 1 AND t.fk_pays = c.rowid AND c.code = '".$db->escape($thirdpartytouse->country_code)."'";
+			$sql .= " ORDER BY t.use_default DESC, t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
 
 			$resql = $db->query($sql);
@@ -6367,7 +6364,19 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 				dol_print_error($db);
 			}
 		} else {
-			$ret = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS; // Forced value if autodetect fails
+			// Forced value if autodetect fails. MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS can be
+			// '1.23'
+			// or '1.23 (CODE)'
+			$defaulttx = '';
+			if ($conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS != 'none') {
+				$defaulttx = $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+			}
+			/*if (preg_match('/\((.*)\)/', $defaulttx, $reg)) {
+				$defaultcode = $reg[1];
+				$defaulttx = preg_replace('/\s*\(.*\)/', '', $defaulttx);
+			}*/
+
+			$ret = $defaulttx;
 		}
 	}
 
@@ -6938,7 +6947,6 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 
 	$stringtoclean = preg_replace('/&colon;/i', ':', $stringtoclean);
 	$stringtoclean = preg_replace('/&#58;|&#0+58|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have a : encoded like this) to disable 'javascript:...'
-	$stringtoclean = preg_replace('/javascript\s*:/i', '', $stringtoclean);
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);	// Warning: This remove also undesired </> changing string obfuscated with </> that pass injection detection into harmfull string
 
@@ -6952,7 +6960,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	// Remove 'javascript:' that we should not find into a text with
 	// Warning: This is not reliable to fight against obfuscated javascript, there is a lot of other solution to include js into a common html tag (only filtered by a GETPOST(.., powerfullfilter)).
 	if ($cleanalsojavascript) {
-		$temp = preg_replace('/javascript\s*:/i', '', $temp);
+		$temp = preg_replace('/j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:/i', '', $temp);
 	}
 
 	$temp = str_replace('__!DOCTYPE_HTML__', '<!DOCTYPE html>', $temp);	// Restore the DOCTYPE
@@ -7133,6 +7141,91 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 	}
 }
 
+/**
+ * Sanitize a HTML to remove js and dangerous content
+ *
+ * @param	string	$stringtoencode				String to encode
+ * @param	int     $nouseofiframesandbox		Allow use of option MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS for html sanitizing
+ * @param	string	$check						'restricthtml' or 'restricthtmlallowunvalid'
+ * @return	string								HTML sanitized
+ */
+function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = 'restricthtml')
+{
+	global $conf;
+
+	if (empty($nouseofiframesandbox) && !empty($conf->global->MAIN_SECURITY_USE_SANDBOX_FOR_HTMLWITHNOJS)) {
+		// TODO using sandbox on inline html content is not possible yet with current browsers
+		//$s = '<iframe class="iframewithsandbox" sandbox><html><body>';
+		//$s .= $stringtoencode;
+		//$s .= '</body></html></iframe>';
+		return $stringtoencode;
+	} else {
+		$out = $stringtoencode;
+
+		do {
+			$oldstringtoclean = $out;
+
+			if (!empty($out) && !empty($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML) && $check != 'restricthtmlallowunvalid') {
+				try {
+					$dom = new DOMDocument;
+					// Add a trick to solve pb with text without parent tag
+					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up without the trick into '<h1>Foo<p>bar</p></h1>'
+					// like 'abc' that wrongly ends up without the tric into with '<p>abc</p>'
+					$out = '<div class="tricktoremove">'.$out.'</div>';
+
+					$dom->loadHTML($out, LIBXML_ERR_NONE|LIBXML_HTML_NOIMPLIED|LIBXML_HTML_NODEFDTD|LIBXML_NONET|LIBXML_NOWARNING|LIBXML_NOXMLDECL);
+					$out = trim($dom->saveHTML());
+
+					// Remove the trick added to solve pb with text without parent tag
+					$out = preg_replace('/^<div class="tricktoremove">/', '', $out);
+					$out = preg_replace('/<\/div>$/', '', $out);
+				} catch (Exception $e) {
+					// If error, invalid HTML string with no way to clean it
+					//print $e->getMessage();
+					$out = 'InvalidHTMLString';
+				}
+			}
+
+			// Clean some html entities that are useless so text is cleaner
+			$out = preg_replace('/&(tab|newline);/i', ' ', $out);
+
+			// Ckeditor use the numeric entitic for apostrophe so we force it to text entity (all other special chars are
+			// encoded using text entities) so we can then exclude all numeric entities.
+			$out = preg_replace('/&#39;/i', '&apos;', $out);
+
+			// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step (preg_replace).
+			// No need to use a loop here, this step is not to sanitize (this is done at next step, this is to try to save chars, even if they are
+			// using a non coventionnel way to be encoded, to not have them sanitized just after)
+			$out = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
+				return realCharForNumericEntities($m); }, $out);
+
+
+			// Now we remove all remaining HTML entities starting with a number. We don't want such entities.
+			$out = preg_replace('/&#x?[0-9]+/i', '', $out);	// For example if we have j&#x61vascript with an entities without the ; to hide the 'a' of 'javascript'.
+
+			// Keep only some html tags and remove also some 'javascript:' strings
+			$out = dol_string_onlythesehtmltags($out, 0, 1, 1);
+
+			// We should also exclude non expected HTML attributes and clean content of some attributes (keep only alt=, title=...).
+			if (!empty($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES)) {
+				// Warning, the function may add a LF so we are forced to trim to compare with old $out without having always a difference and an infinit loop.
+				$out = dol_string_onlythesehtmlattributes($out);
+			}
+
+			// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
+			$out = preg_replace('/&apos;/i', "&#39;", $out);
+		} while ($oldstringtoclean != $out);
+
+		// Check the limit of external links in a Rich text content. We count '<img' and 'url('
+		$reg = array();
+		preg_match_all('/(<img|url\()/i', $out, $reg);
+		if (count($reg[0]) > getDolGlobalInt("MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT", 1000)) {
+			$out = 'TooManyLinksIntoHTMLString';
+		}
+
+		return $out;
+	}
+}
 
 /**
  *	This function is called to encode a string into a HTML string but differs from htmlentities because
@@ -7746,11 +7839,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$dateplannedstart = '';
 				$datenextexpiration = '';
 				foreach ($object->lines as $line) {
-					if ($line->date_ouverture_prevue > $dateplannedstart) {
-						$dateplannedstart = $line->date_ouverture_prevue;
+					if ($line->date_start > $dateplannedstart) {
+						$dateplannedstart = $line->date_start;
 					}
-					if ($line->statut == 4 && $line->date_fin_prevue && (!$datenextexpiration || $line->date_fin_prevue < $datenextexpiration)) {
-						$datenextexpiration = $line->date_fin_prevue;
+					if ($line->statut == 4 && $line->date_end && (!$datenextexpiration || $line->date_end < $datenextexpiration)) {
+						$datenextexpiration = $line->date_end;
 					}
 				}
 				$substitutionarray['__CONTRACT_HIGHEST_PLANNED_START_DATE__'] = dol_print_date($dateplannedstart, 'dayrfc');
@@ -7969,7 +8062,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	if (empty($exclude) || !in_array('date', $exclude)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-		$tmp = dol_getdate(dol_now(), true);
+		$now = dol_now();
+
+		$tmp = dol_getdate($now, true);
 		$tmp2 = dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
 		$tmp3 = dol_get_prev_month($tmp['mon'], $tmp['year']);
 		$tmp4 = dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
@@ -7978,6 +8073,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$daytext = $outputlangs->trans('Day'.$tmp['wday']);
 
 		$substitutionarray = array_merge($substitutionarray, array(
+			'__NOW_TMS__' => (int) $now,
+			'__NOW_TMS_YMD__' => dol_print_date($now, 'day', 0, $outputlangs),
 			'__DAY__' => (string) $tmp['mday'],
 			'__DAY_TEXT__' => $daytext, // Monday
 			'__DAY_TEXT_SHORT__' => dol_trunc($daytext, 3, 'right', 'UTF-8', 1), // Mon
@@ -9322,7 +9419,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 
 	// No need to make a return $head. Var is modified as a reference
 	if (!empty($hookmanager)) {
-		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head);
+		$parameters = array('object' => $object, 'mode' => $mode, 'head' => &$head, 'filterorigmodule' => $filterorigmodule);
 		$reshook = $hookmanager->executeHooks('completeTabsHead', $parameters);
 		if ($reshook > 0) {		// Hook ask to replace completely the array
 			$head = $hookmanager->resArray;
@@ -11331,7 +11428,6 @@ function jsonOrUnserialize($stringtodecode)
 }
 
 
-
 /**
  * Return if a $sqlfilters parameter is valid and will pass the preg_replace_callback() to replace Generic filter string with SQL filter string
  * Example of usage:
@@ -11754,7 +11850,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 					//if ($donetodo == 'todo') $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
 					//elseif ($donetodo == 'done') $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
 					$tododone = '';
-					if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && $obj->datep > $now)) {
+					if (($obj->percent >= 0 and $obj->percent < 100) || ($obj->percent == -1 && $obj->dp > $now)) {
 						$tododone = 'todo';
 					}
 

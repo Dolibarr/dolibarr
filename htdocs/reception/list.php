@@ -635,8 +635,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	$db->free($resql);
 }
 
+// Complete request and execute it with limit
 $sql .= $db->order($sortfield, $sortorder);
-$sql .= $db->plimit($limit + 1, $offset);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 //print $sql;
 $resql = $db->query($sql);

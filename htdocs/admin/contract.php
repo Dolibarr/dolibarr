@@ -518,7 +518,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnlineSign").'</td>';
 print '<td class="center">';
-if ($conf->global->CONTRACT_ALLOW_ONLINESIGN) {
+if (getDolGlobalString('CONTRACT_ALLOW_ONLINESIGN')) {
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=allowonlinesign&token='.newToken().'&value=0">';
 	print img_picto($langs->trans("Activited"), 'switch_on');
 	print '</a>';

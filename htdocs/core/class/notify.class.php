@@ -71,6 +71,9 @@ class Notify
 		'ORDER_VALIDATE',
 		'PROPAL_VALIDATE',
 		'PROPAL_CLOSE_SIGNED',
+		'PROPAL_CLOSE_SIGNED_WEB',
+		'PROPAL_CLOSE_REFUSED',
+		'PROPAL_CLOSE_REFUSED_WEB',
 		'FICHINTER_VALIDATE',
 		'FICHINTER_ADD_CONTACT',
 		'ORDER_SUPPLIER_VALIDATE',
@@ -502,7 +505,28 @@ class Notify
 								$labeltouse = $conf->global->PROPAL_VALIDATE_TEMPLATE;
 								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalValidated", $link);
 								break;
+							case 'PROPAL_CLOSE_REFUSED':
+								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
+								$object_type = 'propal';
+								$labeltouse = $conf->global->PROPAL_CLOSE_REFUSED_TEMPLATE;
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedRefused", $link);
+								break;
+							case 'PROPAL_CLOSE_REFUSED_WEB':
+								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
+								$object_type = 'propal';
+								$labeltouse = $conf->global->PROPAL_CLOSE_REFUSED_TEMPLATE;
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedRefusedWeb", $link);
+								break;
 							case 'PROPAL_CLOSE_SIGNED':
+								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
+								$object_type = 'propal';
+								$labeltouse = $conf->global->PROPAL_CLOSE_SIGNED_TEMPLATE;
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextProposalClosedSigned", $link);
+								break;
+							case 'PROPAL_CLOSE_SIGNED_WEB':
 								$link = '<a href="'.$urlwithroot.'/comm/propal/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
 								$object_type = 'propal';

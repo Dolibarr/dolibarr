@@ -150,6 +150,7 @@ class Thirdparties extends DolibarrApi
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields AS ef ON ef.fk_object = t.rowid";	// So we will be able to filter on extrafields
 		if ($category > 0) {
 			if ($mode != 4) {
 				$sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c";
@@ -538,7 +539,20 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->company->oldcopy = clone $this->company;
-		return $this->company->delete($id);
+
+		$res = $this->company->delete($id);
+		if ($res < 0) {
+			throw new RestException(500, "Can't delete, error occurs");
+		} elseif ($res == 0) {
+			throw new RestException(409, "Can't delete, that product is probably used");
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Object deleted'
+			)
+		);
 	}
 
 	/**

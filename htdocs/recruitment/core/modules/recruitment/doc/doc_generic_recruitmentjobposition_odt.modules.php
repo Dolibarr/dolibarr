@@ -28,6 +28,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/recruitment/core/modules/recruitment/modules_recruitmentjobposition.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -238,7 +239,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
-				$object = new Commande($this->db);
+				$object = new RecruitmentJobPosition($this->db);
 				$result = $object->fetch($id);
 				if ($result < 0) {
 					dol_print_error($this->db, $object->error);
@@ -286,7 +287,11 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 				//print "conf->societe->dir_temp=".$conf->societe->dir_temp;
 
 				dol_mkdir($conf->recruitment->dir_temp);
-
+				if (!is_writable($conf->recruitment->dir_temp)) {
+					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->recruitment->dir_temp);
+					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
+					return -1;
+				}
 
 				// If CUSTOMER contact defined on order, we use it
 				$usecontact = false;
@@ -339,7 +344,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 					$odfHandler = new odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->commande->dir_temp,
+							'PATH_TO_TMP'	  => $conf->recruitment->dir_temp,
 						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 						'DELIMITER_LEFT'  => '{',
 						'DELIMITER_RIGHT' => '}'

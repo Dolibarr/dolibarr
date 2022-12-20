@@ -40,6 +40,7 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'opensurveylist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
 $id = GETPOST('id', 'alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -175,16 +176,16 @@ $sql .= " WHERE p.entity IN (".getEntity('survey').")";
 if ($search_status != '-1' && $search_status != '') {
 	$sql .= natural_search("p.status", $search_status, 2);
 }
-if ($search_expired == 'expired') {
+if (!empty($search_expired) && $search_expired == 'expired') {
 	$sql .= " AND p.date_fin < '".$db->idate($now)."'";
 }
-if ($search_expired == 'opened') {
+if (!empty($search_expired) && $search_expired == 'opened') {
 	$sql .= " AND p.date_fin >= '".$db->idate($now)."'";
 }
-if ($search_ref) {
+if (!empty($search_ref)) {
 	$sql .= natural_search("p.id_sondage", $search_ref);
 }
-if ($search_title) {
+if (!empty($search_title)) {
 	$sql .= natural_search("p.titre", $search_title);
 }
 // Add where from extra fields
@@ -342,7 +343,7 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 $arraystatus = array('-1'=>'&nbsp;', '0'=>$langs->trans("Draft"), '1'=>$langs->trans("Opened"), '2'=>$langs->trans("Closed"));
-print '<td class="liste_titre" align="center">'.$form->selectarray('search_status', $arraystatus, $search_status).'</td>';
+print '<td class="liste_titre" align="center">'.$form->selectarray('search_status', $arraystatus, $search_status, 0, 0, 0, '', 0, 0, 0, '', 'onroghtofpage').'</td>';
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 

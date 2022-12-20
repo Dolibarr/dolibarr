@@ -408,11 +408,15 @@ if ($search_task_progress) {
 if ($search_task_budget_amount) {
 	$sql .= natural_search('t.budget_amount', $search_task_budget_amount, 1);
 }
-if ($search_societe) {
-	$sql .= natural_search('s.nom', $search_societe);
-}
-if ($search_societe_alias) {
-	$sql .= natural_search('s.name_alias', $search_societe_alias);
+if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+} else {
+	if ($search_societe) {
+		$sql .= natural_search('s.nom', $search_societe);
+	}
+	if ($search_societe_alias) {
+		$sql .= natural_search('s.name_alias', $search_societe_alias);
+	}
 }
 if ($search_date_start) {
 	$sql .= " AND t.dateo >= '".$db->idate($search_date_start)."'";

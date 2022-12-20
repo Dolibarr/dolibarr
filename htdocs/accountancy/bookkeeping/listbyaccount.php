@@ -163,8 +163,8 @@ $arrayfields = array(
 	't.doc_date'=>array('label'=>$langs->trans("Docdate"), 'checked'=>1),
 	't.doc_ref'=>array('label'=>$langs->trans("Piece"), 'checked'=>1),
 	't.label_operation'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-	't.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1),
-	't.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1),
+	't.debit'=>array('label'=>$langs->trans("AccountingDebit"), 'checked'=>1),
+	't.credit'=>array('label'=>$langs->trans("AccountingCredit"), 'checked'=>1),
 	't.lettering_code'=>array('label'=>$langs->trans("LetteringCode"), 'checked'=>1),
 	't.date_export'=>array('label'=>$langs->trans("DateExport"), 'checked'=>1),
 	't.date_validated'=>array('label'=>$langs->trans("DateValidation"), 'checked'=>1, 'enabled'=>!getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
@@ -642,7 +642,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$parameters = array();
+$parameters = array('param' => $param);
 $reshook = $hookmanager->executeHooks('addMoreActionsButtonsList', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -844,7 +844,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 }
 if (!empty($arrayfields['t.piece_num']['checked'])) {
-	print_liste_field_titre($arrayfields['t.piece_num']['label'], $_SERVER['PHP_SELF'], "t.piece_num", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['t.piece_num']['label'], $_SERVER['PHP_SELF'], "t.piece_num", "", $param, '', $sortfield, $sortorder, 'tdoverflowmax80imp ');
 }
 if (!empty($arrayfields['t.code_journal']['checked'])) {
 	print_liste_field_titre($arrayfields['t.code_journal']['label'], $_SERVER['PHP_SELF'], "t.code_journal", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -1024,7 +1024,7 @@ while ($i < min($num, $limit)) {
 		$accountingjournal = new AccountingJournal($db);
 		$result = $accountingjournal->fetch('', $line->code_journal);
 		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
-		print '<td class="center">'.$journaltoshow.'</td>';
+		print '<td class="center tdoverflowmax80">'.$journaltoshow.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1120,7 +1120,7 @@ while ($i < min($num, $limit)) {
 
 	// Amount debit
 	if (!empty($arrayfields['t.debit']['checked'])) {
-		print '<td class="right nowraponall amount">'.($line->debit ? price($line->debit) : '').'</td>';
+		print '<td class="right nowraponall amount">'.($line->debit != 0 ? price($line->debit) : '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1132,7 +1132,7 @@ while ($i < min($num, $limit)) {
 
 	// Amount credit
 	if (!empty($arrayfields['t.credit']['checked'])) {
-		print '<td class="right nowraponall amount">'.($line->credit ? price($line->credit) : '').'</td>';
+		print '<td class="right nowraponall amount">'.($line->credit != 0 ? price($line->credit) : '').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

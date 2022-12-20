@@ -90,7 +90,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'ecm', 0);
 
-$permtouploadfile = ($user->hasRight('ecm', 'setup') || $user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
+$permissiontouploadfile = ($user->hasRight('ecm', 'setup') || $user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
 $diroutput = $conf->medias->multidir_output[$conf->entity];
 
 $relativepath = $section_dir;
@@ -98,7 +98,7 @@ $upload_dir = preg_replace('/\/$/', '', $diroutput).'/'.preg_replace('/^\//', ''
 
 $websitekey = '';
 
-$permissiontoadd = $permtouploadfile;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permissiontoadd = $permissiontouploadfile;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
 
 /*
@@ -123,7 +123,7 @@ if ($action == 'renamefile') {	// Must be after include DOL_DOCUMENT_ROOT.'/core
 
 
 // Add directory
-if ($action == 'add' && $permtouploadfile) {
+if ($action == 'add' && $permissiontouploadfile) {
 	$ecmdir->ref                = 'NOTUSEDYET';
 	$ecmdir->label              = GETPOST("label");
 	$ecmdir->description        = GETPOST("desc");

@@ -107,6 +107,25 @@ abstract class DoliDB implements Database
 		return '';
 	}
 
+
+	/**
+	 *	Format a SQL REGEXP
+	 *
+	 *	@param	string	$subject        string tested
+	 *	@param	string  $pattern        SQL pattern to match
+	 *	@param	string	$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@return	string          		SQL string
+	 */
+	public function regexpsql($subject, $pattern, $sqlstring = false)
+	{
+		if ($sqlstring) {
+			return "(". $subject ." REGEXP '" . $pattern . "')";
+		}
+
+		return "('". $subject ."' REGEXP '" . $pattern . "')";
+	}
+
+
 	/**
 	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica

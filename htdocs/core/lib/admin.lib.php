@@ -1840,10 +1840,12 @@ function showModulesExludedForExternal($modules)
 	global $conf, $langs;
 
 	$text = $langs->trans("OnlyFollowingModulesAreOpenedToExternalUsers");
-	$listofmodules = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	$listofmodules = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);	// List of modules qualified for external user management
+
 	$i = 0;
 	if (!empty($modules)) {
-		foreach ($modules as $module) {
+		$tmpmodules = dol_sort_array($modules, 'module_position');
+		foreach ($tmpmodules as $module) {		// Loop on array of modules
 			$moduleconst = $module->const_name;
 			$modulename = strtolower($module->name);
 			//print 'modulename='.$modulename;
@@ -1860,9 +1862,16 @@ function showModulesExludedForExternal($modules)
 				$text .= ' ';
 			}
 			$i++;
-			$text .= $langs->trans('Module'.$module->numero.'Name');
+
+			$tmptext = $langs->trans('Module'.$module->numero.'Name');
+			if ($tmptext != 'Module'.$module->numero.'Name') {
+				$text .= $langs->trans('Module'.$module->numero.'Name');
+			} else {
+				$text .= $langs->trans($module->name);
+			}
 		}
 	}
+
 	return $text;
 }
 

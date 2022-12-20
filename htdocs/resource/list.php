@@ -33,6 +33,7 @@ $langs->loadLangs(array("resource", "companies", "other"));
 // Get parameters
 $id             = GETPOST('id', 'int');
 $action         = GETPOST('action', 'alpha');
+$massaction     = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 
 $lineid         = GETPOST('lineid', 'int');
 $element        = GETPOST('element', 'alpha');

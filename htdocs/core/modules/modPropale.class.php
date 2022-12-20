@@ -78,7 +78,7 @@ class modPropale extends DolibarrModules
 
 		$this->const[$r][0] = "PROPALE_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "azur";
+		$this->const[$r][2] = "cyan";
 		$this->const[$r][3] = 'Name of the proposal generation manager in PDF format';
 		$this->const[$r][4] = 0;
 		$r++;

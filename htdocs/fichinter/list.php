@@ -249,7 +249,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 }
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sqlfields = $sql; // $sql fields to remove for count total
@@ -575,7 +575,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
 		unset($liststatus[2]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 	}
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1);
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'onrightofpage');
 	print '</td>';
 }
 // Fields of detail line

@@ -60,6 +60,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -246,7 +247,9 @@ if (empty($reshook)) {
 			$object->severity_code = GETPOST("severity_code", 'aZ09');
 			$object->ip = getUserRemoteIP();
 
-			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
+			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+			$now = dol_now();
+			$minmonthpost = dol_time_plus_duree($now, -1, "m");
 
 			// Calculate nb of post for IP
 			$nb_post_ip = 0;
@@ -254,6 +257,7 @@ if (empty($reshook)) {
 				$sql = "SELECT COUNT(ref) as nb_tickets";
 				$sql .= " FROM ".MAIN_DB_PREFIX."ticket";
 				$sql .= " WHERE ip = '".$db->escape($object->ip)."'";
+				$sql .= " AND datec > '".$db->idate($minmonthpost)."'";
 				$resql = $db->query($sql);
 				if ($resql) {
 					$num = $db->num_rows($resql);

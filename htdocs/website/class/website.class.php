@@ -1157,7 +1157,7 @@ class Website extends CommonObject
 	/**
 	 * Open a zip with all data of web site and load it into database.
 	 *
-	 * @param 	string		$pathtofile		Path of zip file
+	 * @param 	string		$pathtofile		Full path of zip file
 	 * @return  int							<0 if KO, Id of new website if OK
 	 */
 	public function importWebSite($pathtofile)
@@ -1165,6 +1165,8 @@ class Website extends CommonObject
 		global $conf, $mysoc;
 
 		$error = 0;
+
+		$pathtofile = dol_sanitizePathName($pathtofile);
 
 		$object = $this;
 		if (empty($object->ref)) {
