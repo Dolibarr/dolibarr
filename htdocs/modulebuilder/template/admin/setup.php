@@ -57,6 +57,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/mymodule.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+
 //require_once "../class/myclass.class.php";
 
 // Translations
