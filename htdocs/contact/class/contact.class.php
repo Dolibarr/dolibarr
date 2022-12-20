@@ -2115,4 +2115,48 @@ class Contact extends CommonObject
 		}
 		return 0;
 	}
+
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		//var_dump($this->photo);exit;
+		if (property_exists($this, 'photo') && !is_null($this->photo)) {
+			$return.= Form::showphoto('contact', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1);
+		} else {
+			$return .= img_picto('', $this->picto);
+		}
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		if (property_exists($this, 'socid') && !is_null($this->socid)) {
+			$return .= '<br><span class="info-box-label">'.$this->socid.'</span>';
+		} else {
+			if (property_exists($this, 'phone_pro')) {
+				$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Phone").'</span>';
+				$return .= '<span class="info-box-label"> : '.$this->phone_pro.'</span>';
+			}
+		}
+
+		if (method_exists($this, 'LibPubPriv')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Visibility").'</span>';
+			$return .= '<span> : '.$this->LibPubPriv($this->priv).'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
+	}
 }
