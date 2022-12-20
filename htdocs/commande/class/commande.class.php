@@ -4331,16 +4331,6 @@ class OrderLine extends CommonOrderLine
 		dol_syslog("OrderLine::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			// Remove extrafields
-			if (!$error) {
-				$this->id = $this->rowid;
-				$result = $this->deleteExtraFields();
-				if ($result < 0) {
-					$error++;
-					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-				}
-			}
-
 			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('LINEORDER_DELETE', $user);
@@ -4348,6 +4338,15 @@ class OrderLine extends CommonOrderLine
 					$error++;
 				}
 				// End call triggers
+			}
+
+			// Remove extrafields
+			if (!$error) {
+				$result = $this->deleteExtraFields();
+				if ($result < 0) {
+					$error++;
+					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+				}
 			}
 
 			if (!$error) {
