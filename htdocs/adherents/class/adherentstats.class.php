@@ -181,4 +181,57 @@ class AdherentStats extends Stats
 
 		return $this->_getAllByYear($sql);
 	}
+
+
+	/**
+	 *	Return count of member by status group by adh type, total and average
+	 *
+	 * 	@return		array					Array with 
+	 */
+	public function countMembersByTypeAndStatus()
+	{
+		global $user;
+
+		$now = dol_now();
+
+		$sql = "SELECT COALESCE(d.fk_adherent_type, 'total') as fk_adherent_type, t.libelle as label";
+		$sql .= ", COUNT(CASE WHEN d.statut = ".Adherent::STATUS_DRAFT." THEN 'members_draft' ELSE NULL END) as members_draft";
+		$sql .= ", COUNT(CASE WHEN d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin IS NULL AND t.subscription = '1') THEN 'members_pending' ELSE NULL END) as members_pending";
+		$sql .= ", COUNT(CASE WHEN d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin >= '".$this->db->idate($now)."' OR t.subscription = 0) THEN 'members_uptodate' ELSE NULL END) as members_uptodate";
+		$sql .= ", COUNT(CASE WHEN d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin < '".$this->db->idate($now)."' AND t.subscription = 1) THEN 'members_expired' ELSE NULL END) as members_expired";
+		$sql .= ", COUNT(CASE WHEN d.statut = ".Adherent::STATUS_EXCLUDED." THEN 'members_excluded' ELSE NULL END) as members_excluded";
+		$sql .= ", COUNT(CASE WHEN d.statut = ".Adherent::STATUS_RESILIATED."  THEN 'members_resiliated' ELSE NULL END) as members_resiliated";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d , ".MAIN_DB_PREFIX."adherent_type as t";
+		$sql .= " WHERE t.rowid = d.fk_adherent_type";
+		$sql .= " AND d.entity IN (" . getEntity('adherent') . ")";
+		$sql .= " AND t.entity IN (".getEntity('member_type').")";
+		$sql .= " AND t.statut = 1";
+		$sql .= " GROUP BY d.fk_adherent_type";
+		$sql .= " WITH ROLLUP;";
+		
+		dol_syslog("box_members_by_type::select nb of members per type", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			$MembersCountArray = [];
+			while ($i < $num) {
+				$objp = $this->db->fetch_object($result);
+				$MembersCountArray[$objp->fk_adherent_type] = array(
+					"label" => $objp->label,
+					"members_draft" => (int) $objp->members_draft,
+					"members_pending" => (int) $objp->members_pending,
+					"members_uptodate" => (int) $objp->members_uptodate,
+					"members_expired" => (int) $objp->members_expired,
+					"members_excluded" => (int) $objp->members_excluded,
+					"members_resiliated" => (int) $objp->members_resiliated
+				);
+				$i++;
+			}
+			$this->db->free($result);
+		}
+		return $MembersCountArray;
+	}
+	
 }

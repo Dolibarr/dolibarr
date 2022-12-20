@@ -85,6 +85,7 @@ $subscriptionstatic = new Subscription($db);
 
 print load_fiche_titre($langs->trans("MembersArea"), $resultboxes['selectboxlist'], 'members');
 
+/*
 $MembersValidated = array();
 $MembersToValidate = array();
 $MembersWaitingSubscription = array();
@@ -217,43 +218,24 @@ if ($conf->use_javascript_ajax) {
 	$boxgraph .='<table class="noborder nohover centpercent">';
 	$boxgraph .='<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 	$boxgraph .='<tr><td class="center" colspan="2">';
+	
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
+	$stats = new AdherentStats($db, 0, $userid);
 
-	$SumToValidate = 0;
-	$SumWaitingSubscription = 0;
-	$SumUpToDate = 0;
-	$SumExpired = 0;
-	$SumResiliated = 0;
-	$SumExcluded = 0;
-
-	$total = 0;
-	$dataval = array();
-	$i = 0;
-	foreach ($AdherentType as $key => $adhtype) {
-		$dataval['draft'][] = array($i, isset($MembersToValidate[$key]) ? $MembersToValidate[$key] : 0);
-		$dataval['waitingsubscription'][] = array($i, isset($MembersWaitingSubscription[$key]) ? $MembersWaitingSubscription[$key] : 0);
-		$dataval['uptodate'][] = array($i, isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0);
-		$dataval['expired'][] = array($i, isset($MembersExpired[$key]) ? $MembersExpired[$key] : 0);
-		$dataval['excluded'][] = array($i, isset($MembersExcluded[$key]) ? $MembersExcluded[$key] : 0);
-		$dataval['resiliated'][] = array($i, isset($MembersResiliated[$key]) ? $MembersResiliated[$key] : 0);
-
-		$SumToValidate += isset($MembersToValidate[$key]) ? $MembersToValidate[$key] : 0;
-		$SumWaitingSubscription += isset($MembersWaitingSubscription[$key]) ? $MembersWaitingSubscription[$key] : 0;
-		$SumUpToDate += isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0;
-		$SumExpired += isset($MembersExpired[$key]) ? $MembersExpired[$key] : 0;
-		$SumExcluded += isset($MembersExcluded[$key]) ? $MembersExcluded [$key] : 0;
-		$SumResiliated += isset($MembersResiliated[$key]) ? $MembersResiliated[$key] : 0;
-		$i++;
-	}
-	$total = $SumToValidate + $SumWaitingSubscription + $SumUpToDate + $SumExpired + $SumExcluded + $SumResiliated;
+	// Show array
+	$sumMembers = $stats->countMembersByTypeAndStatus();
+	$total = $sumMembers['total']['members_draft'] + $sumMembers['total']['members_pending'] + $sumMembers['total']['members_uptodate'] + $sumMembers['total']['members_expired'] + $sumMembers['total']['members_excluded'] + $sumMembers['total']['members_resiliated'];
+	
 	$dataseries = array();
-	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), round($SumToValidate));			// Draft, not yet validated
-	$dataseries[] = array($langs->transnoentitiesnoconv("WaitingSubscription"), round($SumWaitingSubscription));
-	$dataseries[] = array($langs->transnoentitiesnoconv("UpToDate"), round($SumUpToDate));
-	$dataseries[] = array($langs->transnoentitiesnoconv("OutOfDate"), round($SumExpired));
-	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusExcluded"), round($SumExcluded));
-	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), round($SumResiliated));
+	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), $sumMembers['total']['members_draft']);			// Draft, not yet validated
+	$dataseries[] = array($langs->transnoentitiesnoconv("WaitingSubscription"), $sumMembers['total']['members_pending']);
+	$dataseries[] = array($langs->transnoentitiesnoconv("UpToDate"), $sumMembers['total']['members_uptodate']);
+	$dataseries[] = array($langs->transnoentitiesnoconv("OutOfDate"), $sumMembers['total']['members_expired']);
+	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusExcluded"), $sumMembers['total']['members_excluded']);
+	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), $sumMembers['total']['members_resiliated']);
 
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+	echo "<pre>";var_dump($total); echo "</pre>";
 
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();
@@ -268,7 +250,7 @@ if ($conf->use_javascript_ajax) {
 
 	$boxgraph .= '</td></tr>';
 	$boxgraph .= '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
-	$boxgraph .= $SumToValidate + $SumWaitingSubscription + $SumUpToDate + $SumExpired + $SumExcluded + $SumResiliated;
+	$boxgraph .= $total;
 	$boxgraph .= '</td></tr>';
 	$boxgraph .= '</table>';
 	$boxgraph .= '</div>';
