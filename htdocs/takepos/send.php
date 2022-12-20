@@ -81,7 +81,7 @@ if ($action == "send") {
 	$msg = "<html>".$arraydefaultmessage->content."<br>".$receipt."</html>";
 	$sendto = $email;
 	$from = $mysoc->email;
-	$mail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(),'','', 0, 1,'','','','','','',DOL_DOCUMENT_ROOT.'/documents/mailing/temp');
+	$mail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', '', '', '', '', DOL_DOCUMENT_ROOT.'/documents/mailing/temp');
 	if ($mail->error || !empty($mail->errors)) {
 		setEventMessages($mail->error, $mail->errors, 'errors');
 	} else {

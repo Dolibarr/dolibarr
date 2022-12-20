@@ -336,5 +336,5 @@ if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeTe
 </body>
 </html>
 
-<?php 
+	<?php
 }
