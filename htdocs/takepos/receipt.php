@@ -85,10 +85,8 @@ $hookmanager->initHooks(array('takeposfrontend'), $facid);
 $reshook = $hookmanager->executeHooks('TakeposReceipt', $parameters, $object);
 if (!empty($hookmanager->resPrint)) {
 	print $hookmanager->resPrint;
-	exit;
-}
-
-// IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
+} else {
+	// IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
 ?>
 <body>
 <style>
@@ -337,3 +335,6 @@ if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeTe
 
 </body>
 </html>
+
+<?php 
+}
