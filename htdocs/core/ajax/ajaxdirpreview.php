@@ -133,14 +133,19 @@ if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir)) {
 	exit;
 }
 
+if (empty($modulepart)) {
+	$modulepart = $module;
+}
+
 // Check permissions
 if ($modulepart == 'ecm') {
-	if (!$user->rights->ecm->read) {
+	if (!$user->hasRight('ecm', 'read')) {
 		accessforbidden();
 	}
-}
-if ($modulepart == 'medias') {
+} elseif ($modulepart == 'medias' || $modulepart == 'website') {
 	// Always allowed
+} else {
+	accessforbidden();
 }
 
 
@@ -174,7 +179,7 @@ if (!dol_is_dir($upload_dir)) {
 	exit;*/
 }
 
-print '<!-- ajaxdirpreview type='.$type.' -->'."\n";
+print '<!-- ajaxdirpreview type='.$type.' module='.$module.' modulepart='.$modulepart.'-->'."\n";
 //print '<!-- Page called with mode='.dol_escape_htmltag(isset($mode)?$mode:'').' type='.dol_escape_htmltag($type).' module='.dol_escape_htmltag($module).' url='.dol_escape_htmltag($url).' '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 $param = ($sortfield ? '&sortfield='.urlencode($sortfield) : '').($sortorder ? '&sortorder='.urlencode($sortorder) : '');
