@@ -53,7 +53,7 @@ class mod_asset_advanced extends ModeleNumRefAsset
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{
