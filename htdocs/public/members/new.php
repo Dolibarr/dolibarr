@@ -402,7 +402,7 @@ if (empty($reshook) && $action == 'add') {
 					}
 
 					$to = $adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
-					$from = $conf->global->ADHERENT_MAIL_FROM;
+					$from = getDolGlobalString('ADHERENT_MAIL_FROM');
 					$mailfile = new CMailFile(
 						'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
 						$to,
