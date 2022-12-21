@@ -1366,7 +1366,9 @@ class Commande extends CommonOrder
 			}
 
 			if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
-					list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_commande);
+					$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_commande);
+					$this->fk_multicurrency = $tmparray[0];
+					$this->multicurrency_tx = $tmparray[1];
 			} else {
 					$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 			}
