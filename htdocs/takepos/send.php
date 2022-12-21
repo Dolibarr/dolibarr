@@ -69,12 +69,12 @@ if ($action == "send") {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 	$outputlangs = new Translate('', $conf);
-	$model_id = $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE;
+	$model_id = getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE');
 	$arraydefaultmessage = $formmail->getEMailTemplate($db, 'facture_send', $user, $outputlangs, $model_id);
 	$subject = $arraydefaultmessage->topic;
 
 	ob_start(); // turn on output receipt
-	include 'receipt.php';
+	include DOL_DOCUMENT_ROOT.'/takepos/receipt.php';
 	$receipt = ob_get_contents(); // get the contents of the output buffer
 	ob_end_clean();
 
