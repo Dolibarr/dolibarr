@@ -1239,7 +1239,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 
 		// Call Hook formConfirm
-		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid, "projectstatic" => $projectstatic, "withproject" => $withproject);
+		$parameters = array('formConfirm' => $formconfirm, "projectstatic" => $projectstatic, "withproject" => $withproject);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$formconfirm .= $hookmanager->resPrint;
@@ -1265,7 +1265,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		$arrayfields['author'] = array('label'=>$langs->trans("By"), 'checked'=>1);
 		$arrayfields['t.note'] = array('label'=>$langs->trans("Note"), 'checked'=>1);
-		if ($conf->service->enabled && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
+		if (isModEnabled('service') && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 			$arrayfields['t.fk_product'] = array('label' => $langs->trans("Product"), 'checked' => 1);
 		}
 		$arrayfields['t.task_duration'] = array('label'=>$langs->trans("Duration"), 'checked'=>1);
@@ -1971,7 +1971,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		$total = 0;
 		$totalvalue = 0;
-		$totalarray = array();
+		$totalarray = array('nbfield'=>0);
 		foreach ($tasks as $task_time) {
 			if ($i >= $limit) {
 				break;
@@ -2168,11 +2168,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.task_duration';
 				}
-				$totalarray['val']['t.task_duration'] += $task_time->task_duration;
+				if (empty($totalarray['val']['t.task_duration'])) {
+					$totalarray['val']['t.task_duration'] = $task_time->task_duration;
+				} else {
+					$totalarray['val']['t.task_duration'] += $task_time->task_duration;
+				}
 				if (!$i) {
 					$totalarray['totaldurationfield'] = $totalarray['nbfield'];
 				}
-				$totalarray['totalduration'] += $task_time->task_duration;
+				if (empty($totalarray['totalduration'])) {
+					$totalarray['totalduration'] = $task_time->task_duration;
+				} else {
+					$totalarray['totalduration'] += $task_time->task_duration;
+				}
 			}
 
 			//Product
@@ -2208,11 +2216,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 'value';
 				}
-				$totalarray['val']['value'] += $value;
+				if (empty($totalarray['val']['value'])) {
+					$totalarray['val']['value'] = $value;
+				} else {
+					$totalarray['val']['value'] += $value;
+				}
 				if (!$i) {
 					$totalarray['totalvaluefield'] = $totalarray['nbfield'];
 				}
-				$totalarray['totalvalue'] += $value;
+				if (empty($totalarray['totalvalue'])) {
+					$totalarray['totalvalue'] = $value;
+				} else {
+					$totalarray['totalvalue'] += $value;
+				}
 			}
 
 			// Invoiced

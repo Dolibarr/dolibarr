@@ -3,6 +3,16 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 18.0.0 compared to 17.0.0 *****
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The deprecated method escapeunderscore() of database handlers has been removed. You must use escapeforlike instead.
+
+
+
+
 ***** ChangeLog for 17.0.0 compared to 16.0.0 *****
 
 For users:
