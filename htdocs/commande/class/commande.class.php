@@ -1281,6 +1281,7 @@ class Commande extends CommonOrder
 	{
 		global $conf, $hookmanager;
 
+		dol_include_once('/multicurrency/class/multicurrency.class.php');
 		dol_include_once('/core/class/extrafields.class.php');
 
 		$error = 0;
