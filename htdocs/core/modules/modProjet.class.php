@@ -291,6 +291,84 @@ class modProjet extends DolibarrModules
 		}
 		$this->export_sql_end[$r] .= " WHERE p.entity IN (".getEntity('project').")";
 
+		//Import Project
+		++$r;
+		$this->import_code[$r] = $this->rights_class.'_'.$r;
+		$this->import_label[$r] = 'Projects'; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->import_icon[$r] = $this->picto;
+		$this->import_entities_array[$r] = []; // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = [
+			'p'     => MAIN_DB_PREFIX.'projet',
+			'extra' => MAIN_DB_PREFIX.'projet_extrafields'
+		];
+		$this->import_tables_creator_array[$r] = array('p' => 'fk_user_creat'); // Fields to store import user id
+		$this->import_fields_array[$r] = [
+			'p.ref'               => 'ProjectRef*',
+			'p.title'             => 'Title*',
+			'p.usage_opportunity' => 'Follow opportunities?',
+			'p.usage_task'        => 'Follow tasks?',
+			'p.usage_bill_time'   => 'Bill task spend time?',
+			'p.fk_soc'            => 'Thirdparty',
+			'p.datec'             => 'Creation Date',
+			'p.dateo'             => 'Date start',
+			'p.datee'             => 'Date end',
+			'p.fk_statut'         => 'ProjectStatus',
+			'p.opp_percent'       => 'Opportunity probability',
+			'p.opp_amount'        => 'Opportunity amount',
+			'p.description'       => 'Description',
+			'p.budget_amount'     => 'Budget amount'
+		];
+		// Add extra fields
+		$import_extrafield_sample = [];
+		$sql = 'SELECT name, label, fieldrequired FROM '.MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'projet' AND entity IN (0, ".$conf->entity.')';
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+				$import_extrafield_sample[$fieldname] = $fieldlabel;
+			}
+		}
+		// End add extra fields
+		$this->import_fieldshidden_array[$r] = ['extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'projet'];
+		$this->import_regex_array[$r] = [
+			'p.ref' => '(PJ\d{4}-\d{4}|PROV.{1,32}$)'
+		];
+		$import_sample = [
+			'p.ref'               => '(PROV001)',
+			'p.title'             => 'My Project',
+			'p.usage_opportunity' => '1',
+			'p.usage_task'        => '1',
+			'p.usage_bill_time'   => '0',
+			'p.fk_soc'            => 'Thirdparty1',
+			'p.datec'             => '2021-01-01',
+			'p.dateo'             => '2021-01-01',
+			'p.datee'             => '',
+			'p.fk_statut'         => '0',
+			'p.opp_percent'       => '80',
+			'p.opp_amount'        => '1000',
+			'p.description'       => 'My great project',
+			'p.budget_amount'     => '800'
+		];
+		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
+		$this->import_updatekeys_array[$r] = ['p.ref' => 'Ref'];
+		$this->import_convertvalue_array[$r] =[
+			'p.ref' => [
+				'rule'        => 'getrefifauto',
+				'class'       => (empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON),
+				'path'        => '/core/modules/project/'.(empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON).'.php',
+				'classobject' => 'Project',
+				'pathobject'  => '/projet/class/project.class.php',
+			],
+			'p.fk_soc' => [
+				'rule'    => 'fetchidfromref',
+				'file'    => '/societe/class/societe.class.php',
+				'class'   => 'Societe',
+				'method'  => 'fetch',
+				'element' => 'ThirdParty'
+			],
+		];
 
 		// Import list of tasks
 		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
