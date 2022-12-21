@@ -55,7 +55,7 @@ class mod_stocktransfer_advanced extends ModeleNumRefStockTransfer
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descriptif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

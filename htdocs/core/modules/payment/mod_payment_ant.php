@@ -57,7 +57,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descriptif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

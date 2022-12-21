@@ -54,7 +54,7 @@ class mod_partnership_advanced extends ModeleNumRefPartnership
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descriptif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

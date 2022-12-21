@@ -54,7 +54,7 @@ abstract class ModeleNumRefTakepos
 	/**
 	 * Renvoi la description par defaut du modele de numerotation
 	 *
-	 * @return    string      Texte descriptif
+	 * @return    string      Descriptive text
 	 */
 	public function info()
 	{

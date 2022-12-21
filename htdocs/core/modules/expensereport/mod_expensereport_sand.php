@@ -57,7 +57,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descriptif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

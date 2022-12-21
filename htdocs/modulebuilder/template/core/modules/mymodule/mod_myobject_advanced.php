@@ -54,7 +54,7 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descriptif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

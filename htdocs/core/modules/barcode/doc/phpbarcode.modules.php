@@ -58,7 +58,7 @@ class modPhpbarcode extends ModeleBarCode
 	/**
 	 * 	Return description
 	 *
-	 * 	@return     string      Texte descriptif
+	 * 	@return     string      Descriptive text
 	 */
 	public function info()
 	{

@@ -60,7 +60,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	/**
 	 *  Return description of module
 	 *
-	 *  @return     string      Texte descriptif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{
