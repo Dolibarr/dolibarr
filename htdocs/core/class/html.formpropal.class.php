@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2022 Josep Lluís Amador	<joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
