@@ -493,7 +493,7 @@ if (!getDolGlobalInt('PROJECT_USE_OPPORTUNITIES')) {
 	$titleboth = $langs->trans("Projects");
 	$titlenew = $langs->trans("NewProject");
 }
-if (isset($conf->global->PROJECT_USE_OPPORTUNITIES) && $conf->global->PROJECT_USE_OPPORTUNITIES == 2) { // 2 = leads only
+if (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) { // 2 = leads only
 	$titleboth = $langs->trans("Leads");
 	$titlenew = $langs->trans("NewLead");
 }
