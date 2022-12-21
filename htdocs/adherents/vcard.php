@@ -35,14 +35,14 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alphanohtml');
 
 $object = new adherent($db);
-global $user;
+
 // Fetch object
 if ($id > 0 || !empty($ref)) {
 	// Load member
 	$result = $object->fetch($id, $ref);
 
 	// Define variables to know what current user can do on users
-	$canadduser = ($user->admin || $user->rights->user->user->creer);
+	$canadduser = ($user->admin || $user->hasRight('user', 'user', 'creer'));
 	// Define variables to know what current user can do on properties of user linked to edited member
 	if ($object->user_id) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member

@@ -128,7 +128,7 @@ if (empty($user->socid)) {
 		echo '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
 	}
 
-	if (!$this->control->tpl['user_id'] && $user->rights->user->user->creer) {
+	if (!$this->control->tpl['user_id'] && $user->hasRight('user', 'user', 'creer')) {
 		echo '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=create_user&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 	}
 

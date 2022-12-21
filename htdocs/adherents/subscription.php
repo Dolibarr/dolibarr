@@ -151,9 +151,9 @@ if (empty($reshook) && $action == 'confirm_create_thirdparty' && $confirm == 'ye
 	}
 }
 
-if (empty($reshook) && $action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer)) {
+if (empty($reshook) && $action == 'setuserid' && ($user->rights->user->self->creer || $user->hasRight('user', 'user', 'creer'))) {
 	$error = 0;
-	if (empty($user->rights->user->user->creer)) {    // If can edit only itself user, we can link to itself only
+	if (!$user->hasRight('user', 'user', 'creer')) {    // If can edit only itself user, we can link to itself only
 		if (GETPOST("userid", 'int') != $user->id && GETPOST("userid", 'int') != $object->user_id) {
 			$error++;
 			setEventMessages($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"), null, 'errors');

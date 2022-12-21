@@ -342,7 +342,7 @@ if (empty($reshook)) {
 			// Check if we need to also synchronize user information
 			$nosyncuser = 0;
 			if ($object->user_id) {	// If linked to a user
-				if ($user->id != $object->user_id && empty($user->rights->user->user->creer)) {
+				if ($user->id != $object->user_id && !$user->hasRight('user', 'user', 'creer')) {
 					$nosyncuser = 1; // Disable synchronizing
 				}
 			}
@@ -350,7 +350,7 @@ if (empty($reshook)) {
 			// Check if we need to also synchronize password information
 			$nosyncuserpass = 0;
 			if ($object->user_id) {	// If linked to a user
-				if ($user->id != $object->user_id && empty($user->rights->user->user->password)) {
+				if ($user->id != $object->user_id && !$user->hasRight('user', 'user', 'password')) {
 					$nosyncuserpass = 1; // Disable synchronizing
 				}
 			}
