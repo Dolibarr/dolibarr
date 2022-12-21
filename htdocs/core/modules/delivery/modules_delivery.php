@@ -88,7 +88,7 @@ abstract class ModeleNumRefDeliveryOrder
 	}
 
 	/**
-	 * Renvoi la description par defaut du modele de numerotation
+	 * Returns the default description of the numbering pattern
 	 *
 	 * @return     string      Descriptive text
 	 */
