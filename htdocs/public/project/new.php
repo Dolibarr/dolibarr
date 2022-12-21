@@ -338,50 +338,50 @@ if (empty($reshook) && $action == 'add') {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 				$object = $proj;
 
-				if ($object->email) {
-					$subject = '';
-					$msg = '';
+				// if ($object->email) {
+				// 	$subject = '';
+				// 	$msg = '';
 
-					// Send subscription email
-					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-					$formmail = new FormMail($db);
-					// Set output language
-					$outputlangs = new Translate('', $conf);
-					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-					// Load traductions files required by page
-					$outputlangs->loadLangs(array("main", "members", "projects"));
-					// Get email content from template
-					$arraydefaultmessage = null;
-					$labeltouse = $conf->global->PROJECT_EMAIL_TEMPLATE_AUTOLEAD;
+				// 	// Send subscription email
+				// 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+				// 	$formmail = new FormMail($db);
+				// 	// Set output language
+				// 	$outputlangs = new Translate('', $conf);
+				// 	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+				// 	// Load traductions files required by page
+				// 	$outputlangs->loadLangs(array("main", "members", "projects"));
+				// 	// Get email content from template
+				// 	$arraydefaultmessage = null;
+				// 	$labeltouse = $conf->global->PROJECT_EMAIL_TEMPLATE_AUTOLEAD;
 
-					if (!empty($labeltouse)) {
-						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'project', $user, $outputlangs, 0, 1, $labeltouse);
-					}
+				// 	if (!empty($labeltouse)) {
+				// 		$arraydefaultmessage = $formmail->getEMailTemplate($db, 'project', $user, $outputlangs, 0, 1, $labeltouse);
+				// 	}
 
-					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-						$subject = $arraydefaultmessage->topic;
-						$msg     = $arraydefaultmessage->content;
-					}
-					if (empty($labeltosue)) {
-						$labeltouse = '['.$mysoc->name.'] '.$langs->trans("YourMessage");
-						$msg = $langs->trans("YourMessageHasBeenReceived");
-					}
+				// 	if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+				// 		$subject = $arraydefaultmessage->topic;
+				// 		$msg     = $arraydefaultmessage->content;
+				// 	}
+				// 	if (empty($labeltosue)) {
+				// 		$labeltouse = '['.$mysoc->name.'] '.$langs->trans("YourMessage");
+				// 		$msg = $langs->trans("YourMessageHasBeenReceived");
+				// 	}
 
-					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-					complete_substitutions_array($substitutionarray, $outputlangs, $object);
-					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-					$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
+				// 	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+				// 	complete_substitutions_array($substitutionarray, $outputlangs, $object);
+				// 	$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+				// 	$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
 
-					if ($subjecttosend && $texttosend) {
-						$moreinheader = 'X-Dolibarr-Info: send_an_email by public/lead/new.php'."\r\n";
+				// 	if ($subjecttosend && $texttosend) {
+				// 		$moreinheader = 'X-Dolibarr-Info: send_an_email by public/lead/new.php'."\r\n";
 
-						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
-					}
+				// 		$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+				// 	}
 					/*if ($result < 0) {
 						$error++;
 						setEventMessages($object->error, $object->errors, 'errors');
 					}*/
-				}
+				// }
 
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
