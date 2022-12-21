@@ -46,7 +46,6 @@ NEW: Accountancy - Add a way to clean some words when you generate thirdparty ac
 NEW: Accountancy - Added an option during export to export or not the lettering FPC21
 NEW: Accountancy - Manage supplier deposit with specific account
 NEW: Accountancy - Model Digitaria - Add a way to clean some words when you generate thirdparty accounting account FPC22
-NEW: Add a button "Test collect" in email collector
 NEW: Add a constant to disallow modification of the product reference.
 NEW: Add a method doAutoRenewContracts that can be used as a cron task.
 NEW: Add " as enclosure by default for CSV export. Keep removing CR/LF.
@@ -60,9 +59,6 @@ NEW: Add extrafield type "IP" to store IP addresses
 NEW: Add fail2ban rules examples to limit access to /public pages
 NEW: Add filter "Product subject to lot/Serial" in stock per lot/serial
 NEW: Add hidden option MAIN_EMAIL_SUPPORT_ACK to restore Email ack checkbox (feature abandonned by mailers)
-NEW: Add IMAP port setting on email collector module
-NEW: Adding JAPAN Chart-of-Account and regions/departments
-NEW: Adding NIF verification for Algeria
 NEW: Add link to create an element from the category page
 NEW: add margin infos to takepos invoice lines
 NEW: Add max size send for "backup and link to mail" option
@@ -102,16 +98,22 @@ NEW: Change filter type on tickets list into a multiselect combo
 NEW: conf TIMESPENT_ALWAYS_UPDATE_THM, when it's on we always check current thm of user to update it in task time line
 NEW: constant PROPAL_NEW_AS_SIGNED
 NEW: show date delivery planned on orders linked to company and product
-NEW: Default template of contract is not mandatory
 NEW: Default values in extrafields are not more limited to 255 char.
 NEW: display currency in takepos menu
 NEW: Enable online signature for interventions
 NEW: Encrypt all sensitive constants in llx_const
 NEW: extrafield price with currency
 NEW: filter on reception dates (from / to) in cheque paiement card
+NEW: Contracts: Default template of contract is not mandatory
+NEW: Contracts: Manage Position (Rank) on Contract Lines
+NEW: EMail-Collector: add IMAP port setting 
+NEW: EMail-Collector: add a button "Test collect"
 NEW: Members: default_lang for members
 NEW: Members: Table of membership types
 NEW: Members: add free membership amounts at the membership type level
+NEW: Projects: add author on list
+NEW: Proposals: show delivery mode on PDF for proposals
+NEW: Reception: add a from/to on search on date field
 NEW: TakePOS: Header Scroll in TakePOS
 NEW: TakePOS: add price to product box in TakePOS
 NEW: TakePOS: add setup parameters, can setup terminal name
@@ -134,7 +136,6 @@ NEW: The link "add to bookmark" is always on top in the bookmark popup
 NEW: MAIN_SEARCH_CATEGORY_PRODUCT_ON_LISTS const to show category customer filter
 NEW: Make module WebservicesClient deprecated. Use module WebHook instead.
 NEW: manage no email with thirdparties (better for GDPR)
-NEW: Manage Position (Rank) on Contract Lines
 NEW: Manage VAT on all lines on purchases cycle
 NEW: manage virtual stock at a future date
 NEW: On a bank reconciled line, we can modify the bank receipt
@@ -149,9 +150,7 @@ NEW: possibility to select scopes with checkbox for Oauth tokens
 NEW: private and public note on user, thirdparty and contact list
 NEW: product categories filter on inventory list
 NEW: Product supplier price: autofill default supplier VAT
-NEW: Project - Add author on list
 NEW: Public counters feature
-NEW: Reception - Add a from/to on search on date field
 NEW: Start a simple support of recurrent events on agenda
 NEW: Resize parent company column in order list
 NEW: Saved token of OAUTH module are now encrypted into llx_oauth_token
@@ -174,19 +173,23 @@ NEW: The purge of files can purge only if older than a number of seconds
 NEW: Update ActionComm type_code on email message ticket
 NEW: VAT - Admin - Add information on deadline day for submission of VAT declaration
 NEW: expand/collapse permissions on user permission page
-NEW: Show delivery mode on PDF for proposals
 NEW: Add the target to select attendees of event for emailings
+
+ Localisation:
+NEW: adding JAPAN Chart-of-Account and regions/departments
+NEW: adding NIF verification for Algeria
 
  Modules
 NEW: Experimental module Asset
+
 
 For developers or integrators:
 ------------------------------
 
 NEW: ModuleBuilder can generate code of class from an existing SQL table
-NEW: #22370 Modulebuilder supports 'alwayseditable' (like extrafields)
 NEW: #20912 Add trigger to record the event of sending an email from a project
 NEW: #21750 Added "Get lines and Post lines from BOM" at the REST Service
+NEW: #22370 Modulebuilder supports 'alwayseditable' (like extrafields)
 NEW: Removed completely the need for the library adodbtime
 NEW: hook on agenda pages
 NEW: hook to complete payment in TakePOS
