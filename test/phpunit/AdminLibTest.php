@@ -46,6 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  */
 class AdminLibTest extends PHPUnit\Framework\TestCase
 {
+	protected $backupGlobalsBlacklist = array('conf', 'user', 'langs', 'db');
 	protected $savconf;
 	protected $savuser;
 	protected $savlangs;
