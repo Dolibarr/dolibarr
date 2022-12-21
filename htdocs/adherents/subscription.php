@@ -201,7 +201,7 @@ if (empty($reshook) && $action == 'setsocid') {
 	}
 }
 
-if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !$cancel) {
+if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscription' && !$cancel) {
 	$error = 0;
 
 	$langs->load("banks");
@@ -674,7 +674,7 @@ if ($rowid > 0) {
 	 */
 
 	// Button to create a new subscription if member no draft (-1) neither resiliated (0) neither excluded (-2)
-	if ($user->rights->adherent->cotisation->creer) {
+	if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 		if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 			print '<div class="tabsAction">';
 
@@ -814,7 +814,7 @@ if ($rowid > 0) {
 	/*
 	 * Add new subscription form
 	 */
-	if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->rights->adherent->cotisation->creer) {
+	if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->hasRight('adherent', 'cotisation', 'creer')) {
 		print '<br>';
 
 		print load_fiche_titre($langs->trans("NewCotisation"));

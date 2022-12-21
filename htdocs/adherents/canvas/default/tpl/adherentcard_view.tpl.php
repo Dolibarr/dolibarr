@@ -132,8 +132,8 @@ if (empty($user->socid)) {
 		echo '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=create_user&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 	}
 
-	if ($user->rights->adherent->supprimer) {
-		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.$canvas, 'delete', $user->rights->adherent->supprimer);
+	if ($user->hasRight('adherent', 'supprimer')) {
+		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.$canvas, 'delete', $user->hasRight('adherent', 'supprimer'));
 	}
 
 	echo '</div><br>';

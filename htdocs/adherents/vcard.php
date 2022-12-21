@@ -35,7 +35,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alphanohtml');
 
 $object = new adherent($db);
-
+global $user;
 // Fetch object
 if ($id > 0 || !empty($ref)) {
 	// Load member
@@ -46,10 +46,10 @@ if ($id > 0 || !empty($ref)) {
 	// Define variables to know what current user can do on properties of user linked to edited member
 	if ($object->user_id) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
-		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
-			|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
-		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
-			|| (($user->id != $object->user_id) && $user->rights->user->user->password));
+		$caneditfielduser = ((($user->id == $object->user_id) && $user->hasRight('user', 'self', 'creer'))
+			|| (($user->id != $object->user_id) && $user->hasRight('user', 'user', 'creer')));
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->hasRight('user', 'self', 'password'))
+			|| (($user->id != $object->user_id) && $user->hasRight('user', 'user', 'password')));
 	}
 }
 
