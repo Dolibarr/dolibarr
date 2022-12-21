@@ -651,7 +651,7 @@ class Adherent extends CommonObject
 					// auto code
 					$modfile = dol_buildpath('core/modules/member/'.getDolGlobalString('MEMBER_CODEMEMBER_ADDON').'.php', 0);
 					try {
-						require_once($modfile);
+						require_once $modfile;
 						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
 						$modCodeMember = new $modname;
 						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
