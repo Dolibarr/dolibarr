@@ -1355,7 +1355,7 @@ class Commande extends CommonOrder
 		$this->origin = $object->element;
 		$this->origin_id = $object->id;
 
-                // Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
+				// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($conf->multicurrency->enabled)) {
 			if (!empty($object->multicurrency_code)) {
 				$this->multicurrency_code = $object->multicurrency_code;
@@ -1364,16 +1364,16 @@ class Commande extends CommonOrder
 				$this->multicurrency_tx = $object->multicurrency_tx;
 			}
 
-	                if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
-	                        list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_commande);
-	                } else {
-	                        $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
-	                }
-	                if (empty($this->fk_multicurrency)) {
-	                        $this->multicurrency_code = $conf->currency;
-	                        $this->fk_multicurrency = 0;
-	                        $this->multicurrency_tx = 1;
-	                }
+			if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
+					list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_commande);
+			} else {
+					$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
+			}
+			if (empty($this->fk_multicurrency)) {
+					$this->multicurrency_code = $conf->currency;
+					$this->fk_multicurrency = 0;
+					$this->multicurrency_tx = 1;
+			}
 		}
 
 		// get extrafields from original line
