@@ -69,6 +69,8 @@ class AdminLibTest extends PHPUnit\Framework\TestCase
 		$this->savdb=$db;
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		var_dump($GLOBALS);
+
 		//print " - db ".$db->db;
 		print "\n";
 	}
