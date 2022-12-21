@@ -54,7 +54,7 @@ class mod_bom_advanced extends ModeleNumRefboms
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Texte descriptif
 	 */
 	public function info()
 	{

@@ -89,7 +89,7 @@ abstract class ModeleNumRefPropales
 	/**
 	 *  Renvoi la description par defaut du modele de numerotation
 	 *
-	 * 	@return     string      Texte descripif
+	 * 	@return     string      Texte descriptif
 	 */
 	public function info()
 	{

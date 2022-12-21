@@ -111,7 +111,7 @@ abstract class ModeleNumRefSupplierPayments
 	/**
 	 *	Return the default description of numbering module
 	 *
-	 *	@return     string      Texte descripif
+	 *	@return     string      Texte descriptif
 	 */
 	public function info()
 	{

@@ -1302,6 +1302,8 @@ YouMustRunCommandFromCommandLineAfterLoginToUser=You must run this command from 
 YourPHPDoesNotHaveSSLSupport=SSL functions not available in your PHP
 DownloadMoreSkins=More skins to download
 SimpleNumRefModelDesc=Returns the reference number in the format %syymm-nnnn where yy is the year, mm is the month and nnnn is a sequential auto-incrementing number with no reset
+SimpleRefNumRefModelDesc=Returns the reference number in the format n where n is a sequential auto-incrementing number with no reset
+AdvancedNumRefModelDesc=Returns the reference number in the format %syymm-nnnn where yy is the year, mm is the month and nnnn is a sequential auto-incrementing number with no reset
 SimpleNumRefNoDateModelDesc=Returns the reference number in the format %s-nnnn where nnnn is a sequential auto-incrementing number with no reset
 ShowProfIdInAddress=Show professional ID with addresses
 ShowVATIntaInAddress=Hide intra-Community VAT number
@@ -1488,6 +1490,7 @@ WatermarkOnDraftContractCards=Watermark on draft contracts (none if empty)
 ##### Members #####
 MembersSetup=Members module setup
 MemberMainOptions=Main options
+MemberCodeChecker=Options for automatic generation of member codes
 AdherentLoginRequired= Manage a Login for each member
 AdherentMailRequired=Email required to create a new member
 MemberSendInformationByMailByDefault=Checkbox to send mail confirmation to members (validation or new subscription) is on by default

@@ -92,6 +92,7 @@ class Adherent extends CommonObject
 	/**
 	 * @var string company name
 	 * @deprecated
+	 * @see $company
 	 */
 	public $societe;
 
@@ -102,8 +103,14 @@ class Adherent extends CommonObject
 
 	/**
 	 * @var int Thirdparty ID
+	 * @deprecated
+	 * @see $socid
 	 */
 	public $fk_soc;
+
+	/**
+	 * @var int socid
+	 */
 	public $socid;
 
 	/**
@@ -154,24 +161,28 @@ class Adherent extends CommonObject
 	/**
 	 * @var string skype account
 	 * @deprecated
+	 * @see $socialnetworks
 	 */
 	public $skype;
 
 	/**
 	 * @var string twitter account
 	 * @deprecated
+	 * @see $socialnetworks
 	 */
 	public $twitter;
 
 	/**
 	 * @var string facebook account
 	 * @deprecated
+	 * @see $socialnetworks
 	 */
 	public $facebook;
 
 	/**
 	 * @var string linkedin account
 	 * @deprecated
+	 * @see $socialnetworks
 	 */
 	public $linkedin;
 
@@ -259,10 +270,19 @@ class Adherent extends CommonObject
 	 */
 	public $type;
 
+	/**
+	 * @var int need_subscription
+	 */
 	public $need_subscription;
 
+	/**
+	 * @var int user_id
+	 */
 	public $user_id;
 
+	/**
+	 * @var string user_login
+	 */
 	public $user_login;
 
 	public $datefin;
@@ -576,7 +596,7 @@ class Adherent extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $mysoc;
 
 		$error = 0;
 
@@ -624,7 +644,22 @@ class Adherent extends CommonObject
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
 			if ($id > 0) {
 				$this->id = $id;
-				$this->ref = (string) $id;
+				if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON') == '') {
+					// keep old numbering
+					$this->ref = (string) $id;
+				} else {
+					// auto code
+					$modfile = dol_buildpath('core/modules/member/'.getDolGlobalString('MEMBER_CODEMEMBER_ADDON').'.php', 0);
+					try {
+						require_once($modfile);
+						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
+						$modCodeMember = new $modname;
+						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
+					} catch (Exception $e) {
+						dol_syslog($e->getMessage(), LOG_ERR);
+						$error++;
+					}
+				}
 
 				// Update minor fields
 				$result = $this->update($user, 1, 1, 0, 0, 'add'); // nosync is 1 to avoid update data of user
@@ -1505,7 +1540,7 @@ class Adherent extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
-		$sql = "SELECT c.rowid, c.fk_adherent, c.fk_type, c.subscription, c.note, c.fk_bank,";
+		$sql = "SELECT c.rowid, c.fk_adherent, c.fk_type, c.subscription, c.note as note_public, c.fk_bank,";
 		$sql .= " c.tms as datem,";
 		$sql .= " c.datec as datec,";
 		$sql .= " c.dateadh as dateh,";
@@ -1537,7 +1572,8 @@ class Adherent extends CommonObject
 				$subscription->fk_adherent = $obj->fk_adherent;
 				$subscription->fk_type = $obj->fk_type;
 				$subscription->amount = $obj->subscription;
-				$subscription->note = $obj->note;
+				$subscription->note = $obj->note_public;
+				$subscription->note_public = $obj->note_public;
 				$subscription->fk_bank = $obj->fk_bank;
 				$subscription->datem = $this->db->jdate($obj->datem);
 				$subscription->datec = $this->db->jdate($obj->datec);

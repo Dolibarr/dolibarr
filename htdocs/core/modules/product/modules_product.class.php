@@ -107,7 +107,7 @@ abstract class ModeleProductCode
 	/**     Renvoi la description par defaut du modele de numerotation
 	 *
 	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Texte descripif
+	 *      @return string      			Texte descriptif
 	 */
 	public function info($langs)
 	{

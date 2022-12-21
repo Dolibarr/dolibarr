@@ -121,7 +121,7 @@ abstract class ModeleNumRefAsset
 	/**
 	 *	Returns the default description of the numbering template
 	 *
-	 *	@return     string      Texte descripif
+	 *	@return     string      Texte descriptif
 	 */
 	public function info()
 	{

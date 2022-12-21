@@ -63,7 +63,7 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	/**
 	 *   Returns the description of the numbering model
 	 *
-	 *   @return     string      Texte descripif
+	 *   @return     string      Texte descriptif
 	 */
 	public function info()
 	{
