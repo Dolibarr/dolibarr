@@ -86,7 +86,7 @@ install:
   rm $TRAVIS_BUILD_DIR/composer.json
   rm $TRAVIS_BUILD_DIR/composer.lock
   composer -V
-  composer self-update
+  composer self-update 2.4.4
   composer -n init
   composer -n config vendor-dir htdocs/includes
   composer -n config -g vendor-dir htdocs/includes
