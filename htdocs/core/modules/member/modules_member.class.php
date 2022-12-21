@@ -205,7 +205,7 @@ abstract class ModeleNumRefMembers
 		if (empty($nextval)) {
 			$nextval = $langs->trans("Undefined");
 		}
-		$s .= $langs->trans("NextValue").' ('.$langs->trans("Member").')'.': <b>'.$nextval.'</b><br>';
+		$s .= $langs->trans("NextValue").' ('.$langs->trans("Member").'): <b>'.$nextval.'</b><br>';
 
 		return $s;
 	}
