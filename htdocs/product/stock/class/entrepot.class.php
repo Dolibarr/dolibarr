@@ -903,4 +903,35 @@ class Entrepot extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_WAREHOUSE);
 	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<div class="info-box-icon bg-infobox-action" >';
+		$return .= img_picto('', $this->picto);
+		$return .= '</div>';
+		$return .= '<div class="info-box-content" >';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'lieu') && (!empty($this->lieu))) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$this->lieu.'</span>';
+		}
+		if (property_exists($this, 'sellvalue') && $this->sellvalue != 0) {
+			$return .= '<br><span class="info-box-label amount">'.price($this->sellvalue).'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
+	}
 }

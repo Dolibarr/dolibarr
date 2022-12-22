@@ -669,6 +669,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'updateline' && $user->rights->contrat->creer && !GETPOST('cancel', 'alpha')) {
 		$error = 0;
+		$predef = '';
 
 		if (!empty($date_start_update) && !empty($date_end_update) && $date_start_update > $date_end_update) {
 			setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
@@ -744,7 +745,7 @@ if (empty($reshook)) {
 			$objectline->date_end = $date_end_update;
 			$objectline->date_end_real = $date_end_real_update;
 			$objectline->fk_user_cloture = $user->id;
-			$objectline->fk_fournprice = $fk_fournprice;
+			//$objectline->fk_fournprice = $fk_fournprice;
 			$objectline->pa_ht = $pa_ht;
 			$objectline->rang = $objectline->rang;
 
@@ -1634,9 +1635,9 @@ if ($action == 'create') {
 					if ($objp->subprice >= 0) {
 						$colspan = 6;
 
-						if ($conf->margin->enabled && $conf->global->PRODUCT_USE_UNITS) {
+						if ($conf->margin->enabled && getDolGlobalString('PRODUCT_USE_UNITS')) {
 							$colspan = 8;
-						} elseif ($conf->margin->enabled || $conf->global->PRODUCT_USE_UNITS) {
+						} elseif ($conf->margin->enabled || getDolGlobalString('PRODUCT_USE_UNITS')) {
 							$colspan = 7;
 						}
 
@@ -2204,7 +2205,7 @@ if ($action == 'create') {
 			$delallowed = $user->rights->contrat->creer;
 
 
-			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : $conf->global->CONTRACT_ADDON_PDF), 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
+			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : getDolGlobalString('CONTRACT_ADDON_PDF')), 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
 
 
 			// Show links to link elements
@@ -2212,7 +2213,7 @@ if ($action == 'create') {
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			// Show online signature link
-			if ($object->statut != Contrat::STATUS_DRAFT && $conf->global->CONTRACT_ALLOW_ONLINESIGN) {
+			if ($object->statut != Contrat::STATUS_DRAFT && getDolGlobalString('CONTRACT_ALLOW_ONLINESIGN')) {
 				print '<br><!-- Link to sign -->';
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 

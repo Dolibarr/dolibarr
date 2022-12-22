@@ -291,14 +291,14 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
-//if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
+//if ($user->hasRight('adherent', 'supprimer')) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 if (in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = '';
-if ($user->rights->adherent->cotisation->creer) {
+if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewSubscription'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/list.php?status=-1,1');
 }
 

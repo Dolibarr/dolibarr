@@ -281,7 +281,7 @@ if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 
 
 // Last modified supplier invoices
-if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled('supplier_invoice') && $user->rights->supplier_invoice->lire)) {
+if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight("fournisseur", "facture", "lire")) || (isModEnabled('supplier_invoice') && $user->hasRight("supplier_invoice", "lire"))) {
 	$langs->load("boxes");
 	$facstatic = new FactureFournisseur($db);
 
@@ -590,7 +590,7 @@ if (isModEnabled('tax') && !empty($user->rights->tax->charges->lire)) {
 /*
  * Customers orders to be billed
  */
-if (isModEnabled('facture') && isModEnabled('commande') && $user->rights->commande->lire && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
+if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("commande", "lire") && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
 	$commandestatic = new Commande($db);
 	$langs->load("orders");
 

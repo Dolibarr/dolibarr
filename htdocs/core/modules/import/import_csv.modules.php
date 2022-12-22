@@ -994,7 +994,9 @@ class ImportCsv extends ModeleImports
 							if ($sql) {
 								$resql = $this->db->query($sql);
 								if ($resql) {
-									$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+									if (!$is_table_category_link) {
+										$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that child tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+									}
 									$insertdone = true;
 								} else {
 									//print 'E';

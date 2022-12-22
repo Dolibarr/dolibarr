@@ -197,6 +197,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 	if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
 		$script .= '
 							// For customer price when PRODUIT_CUSTOMER_PRICES_BY_QTY is on
+							console.log("PRODUIT_CUSTOMER_PRICES_BY_QTY is on, propagate also prices by quantity into data-pbqxxx properties");
 							$("#'.$htmlnamejquery.'").attr("data-pbq", ui.item.pbq);
 							$("#'.$htmlnamejquery.'").attr("data-pbqup", ui.item.price_ht);
 							$("#'.$htmlnamejquery.'").attr("data-pbqbase", ui.item.pricebasetype);
@@ -594,9 +595,10 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
  *  @param	int		$setzeroinsteadofdel	1 = Set constantto '0' instead of deleting it
  *  @param	string	$suffix					Suffix to use on the name of the switch_on picto. Example: '', '_red'
  *  @param	string	$mode					Add parameter &mode= to the href link (Used for href link)
+ *  @param	string	$morecss				More CSS
  * 	@return	string
  */
-function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '')
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = '')
 {
 	global $conf, $langs, $user;
 
@@ -607,9 +609,9 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 
 	if (empty($conf->use_javascript_ajax) || $forcenoajax) {
 		if (empty($conf->global->$code)) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+			print '<a '.($morecss ? 'class="'.$morecss.'" ' : '').'href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+			print '<a '.($morecss ? 'class="'.$morecss.'" ' : '').' href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	} else {
 		$out = "\n<!-- Ajax code to switch constant ".$code." -->".'

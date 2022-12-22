@@ -796,35 +796,40 @@ class Societe extends CommonObject
 	 */
 	public $bank_account;
 
+
+	const STATUS_CEASED = 0;
+	const STATUS_INACTIVITY = 1;
+
 	/**
-	 * Third party is no customer
+	 * Third party type is no customer
 	 */
 	const NO_CUSTOMER = 0;
 
 	/**
-	 * Third party is a customer
+	 * Third party type is a customer
 	 */
 	const CUSTOMER = 1;
 
 	/**
-	 * Third party is a prospect
+	 * Third party type is a prospect
 	 */
 	const PROSPECT = 2;
 
 	/**
-	 * Third party is a customer and a prospect
+	 * Third party type is a customer and a prospect
 	 */
 	const CUSTOMER_AND_PROSPECT = 3;
 
 	/**
-	 * Third party is no supplier
+	 * Third party supplier flag is not supplier
 	 */
 	const NO_SUPPLIER = 0;
 
 	/**
-	 * Third party is a supplier
+	 * Third party supplier flag is a supplier
 	 */
 	const SUPPLIER = 1;
+
 
 	/**
 	 *    Constructor

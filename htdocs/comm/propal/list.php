@@ -16,6 +16,7 @@
  * Copyright (C) 2019-2021 Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2021	   Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2021      Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2022      Josep Lluís Amador		<joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -548,6 +549,9 @@ $companystatic = new Societe($db);
 $projectstatic = new Project($db);
 $formcompany = new FormCompany($db);
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
 $title = $langs->trans('ListOfProposals');
 $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
 llxHeader('', $title, $help_url);
@@ -607,7 +611,9 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = p.fk_projet";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_availability as ava on (ava.rowid = p.fk_availability)";
 // We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
+if ($search_sale == -2) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON (sc.fk_soc = p.fk_soc)";
+} elseif ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 if ($search_user > 0) {
@@ -656,11 +662,15 @@ if ($search_project) {
 if ($search_availability) {
 	$sql .= " AND p.fk_availability IN (".$db->sanitize($db->escape($search_availability)).')';
 }
-if ($search_societe) {
-	$sql .= natural_search('s.nom', $search_societe);
-}
-if ($search_societe_alias) {
-	$sql .= natural_search('s.name_alias', $search_societe_alias);
+if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+} else {
+	if ($search_societe) {
+		$sql .= natural_search('s.nom', $search_societe);
+	}
+	if ($search_societe_alias) {
+		$sql .= natural_search('s.name_alias', $search_societe_alias);
+	}
 }
 if ($search_login) {
 	$sql .= natural_search(array("u.login", "u.firstname", "u.lastname"), $search_login);
@@ -739,7 +749,9 @@ if ($search_date_delivery_start) {
 if ($search_date_delivery_end) {
 	$sql .= " AND p.date_livraison <= '".$db->idate($search_date_delivery_end)."'";
 }
-if ($search_sale > 0) {
+if ($search_sale == -2) {
+	$sql .= " AND sc.fk_user IS NULL";
+} elseif ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
 }
 if ($search_user > 0) {
@@ -1110,7 +1122,7 @@ if ($resql) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
-		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250 widthcentpercentminusx');
+		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth250 widthcentpercentminusx', 1);
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
@@ -1777,7 +1789,7 @@ if ($resql) {
 		// Thirdparty
 		if (!empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax150">';
-			print $companystatic->getNomUrl(1, 'customer');
+			print $companystatic->getNomUrl(1, 'customer', 0, 0, 1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
