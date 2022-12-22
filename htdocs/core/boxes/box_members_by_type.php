@@ -137,6 +137,12 @@ class box_members_by_type extends ModeleBoxes
 					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus
 				);
+				// Total row
+				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_RESILIATED, 0, 0, 1);
+				$this->info_box_contents[$line][] = array(
+					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($langs->trans("Total")).'"',
+					'text' => $langs->trans("Total")
+				);
 				$line++;
 				foreach ($sumMembers as $key => $data) {
 					$adhtype = new AdherentType($this->db);
@@ -183,6 +189,11 @@ class box_members_by_type extends ModeleBoxes
 						'text' => (isset($data['members_resiliated']) && $data['members_resiliated'] > 0 ? $data['members_resiliated'] : '') . ' ' . $staticmember->LibStatut(Adherent::STATUS_RESILIATED, 1, 0, 3),
 						'asis' => 1,
 					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right"',
+						'text' => (isset($data['total_adhtype']) && $data['total_adhtype'] > 0 ? $data['total_adhtype'] : ''),
+						'asis' => 1,
+					);
 					$line++;
 				}
 
@@ -225,6 +236,11 @@ class box_members_by_type extends ModeleBoxes
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total right"',
 						'text' => $sumMembers['total']['members_resiliated'].' '.$staticmember->LibStatut(Adherent::STATUS_RESILIATED, 1, 0, 3),
+						'asis' => 1
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total right"',
+						'text' => $sumMembers['total']['all'],
 						'asis' => 1
 					);
 				}

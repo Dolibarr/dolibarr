@@ -195,7 +195,7 @@ class AdherentStats extends Stats
 
 		$now = dol_now();
 
-		$sql = "SELECT COALESCE(t.rowid, 'total') as fk_adherent_type, t.libelle as label";
+		$sql = "SELECT t.rowid as fk_adherent_type, t.libelle as label";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_DRAFT,"'members_draft'", 'NULL').") as members_draft";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin IS NULL AND t.subscription = '1')","'members_pending'", 'NULL').") as members_pending";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin >= '".$this->db->idate($now)."' OR t.subscription = 0)","'members_uptodate'", 'NULL').") as members_uptodate";
@@ -207,7 +207,6 @@ class AdherentStats extends Stats
 		$sql .= " WHERE t.entity IN (".getEntity('member_type').")";
 		$sql .= " AND t.statut = 1";
 		$sql .= " GROUP BY t.rowid";
-		$sql .= " WITH ROLLUP;";
 
 		dol_syslog("box_members_by_type::select nb of members per type", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -216,20 +215,39 @@ class AdherentStats extends Stats
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			$MembersCountArray = [];
+			$totalstatus = array(
+				'label' => 'Total',
+				'members_draft' => 0,
+				'members_pending' => 0,
+				'members_uptodate' => 0,
+				'members_expired' => 0,
+				'members_excluded' => 0,
+				'members_resiliated' => 0
+			);
 			while ($i < $num) {
 				$objp = $this->db->fetch_object($result);
 				$MembersCountArray[$objp->fk_adherent_type] = array(
-					"label" => $objp->label,
-					"members_draft" => (int) $objp->members_draft,
-					"members_pending" => (int) $objp->members_pending,
-					"members_uptodate" => (int) $objp->members_uptodate,
-					"members_expired" => (int) $objp->members_expired,
-					"members_excluded" => (int) $objp->members_excluded,
-					"members_resiliated" => (int) $objp->members_resiliated
+					'label' => $objp->label,
+					'members_draft' => (int) $objp->members_draft,
+					'members_pending' => (int) $objp->members_pending,
+					'members_uptodate' => (int) $objp->members_uptodate,
+					'members_expired' => (int) $objp->members_expired,
+					'members_excluded' => (int) $objp->members_excluded,
+					'members_resiliated' => (int) $objp->members_resiliated
 				);
+				$totalrow = 0;
+				foreach ($MembersCountArray[$objp->fk_adherent_type] as $key=>$nb) {
+					if ($key!='label'){
+						$totalrow += $nb;
+						$totalstatus[$key] += $nb;
+					}
+				}
+				$MembersCountArray[$objp->fk_adherent_type]['total_adhtype'] = $totalrow;				
 				$i++;
 			}
 			$this->db->free($result);
+			$MembersCountArray['total'] = $totalstatus;
+			$MembersCountArray['total']['all'] = array_sum($totalstatus);
 		}
 		return $MembersCountArray;
 	}
