@@ -187,7 +187,7 @@ class AdherentStats extends Stats
 	/**
 	 *	Return count of member by status group by adh type, total and average
 	 *
-	 * 	@return		array                   Array with total of draft, pending, uptodate, expired, resiliated for each member type 
+	 * 	@return		array                   Array with total of draft, pending, uptodate, expired, resiliated for each member type
 	 */
 	public function countMembersByTypeAndStatus()
 	{
