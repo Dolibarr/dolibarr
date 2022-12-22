@@ -99,7 +99,8 @@ class box_members_by_type extends ModeleBoxes
 			$MembersResiliated = array();
 
 			$SumToValidate = 0;
-			$SumValidated = 0;
+			$SumPending = 0;
+			$SumExpired = 0;
 			$SumUpToDate = 0;
 			$SumResiliated = 0;
 			$SumExcluded = 0;
@@ -233,6 +234,7 @@ class box_members_by_type extends ModeleBoxes
 					'text' => $labelstatus
 				);
 				$line++;
+
 				foreach ($AdherentType as $key => $adhtype) {
 					$SumToValidate += isset($MembersToValidate[$key]) ? $MembersToValidate[$key] : 0;
 					$SumPending += isset($MembersPending[$key]) ? $MembersPending[$key] : 0;

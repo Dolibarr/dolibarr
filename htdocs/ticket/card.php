@@ -827,9 +827,6 @@ if ($action == 'create' || $action == 'presend') {
 		// Confirmation abandon
 		if ($action == 'abandon') {
 			print $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("AbandonTicket"), $langs->trans("ConfirmAbandonTicket"), "confirm_abandon", '', '', 1);
-			if ($ret == 'html') {
-				print '<br>';
-			}
 		}
 		// Confirmation delete
 		if ($action == 'delete') {
