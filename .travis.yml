@@ -96,10 +96,9 @@ notifications:
 install:
 - |
   echo "Updating Composer (version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
+  composer -V
   #rm $TRAVIS_BUILD_DIR/composer.json
   #rm $TRAVIS_BUILD_DIR/composer.lock
-  composer -V
-  composer self-update 2.4.4
   #composer -n init
   #composer -n config vendor-dir htdocs/includes
   composer -n config -g vendor-dir htdocs/includes
@@ -108,6 +107,7 @@ install:
 - |
   echo "Installing Composer dependencies - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION"
   if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
+    composer self-update 2.2.18
     composer -n require phpunit/phpunit ^6 \
                         php-parallel-lint/php-parallel-lint ^1 \
                         php-parallel-lint/php-console-highlighter ^0 \
@@ -115,6 +115,7 @@ install:
                         squizlabs/php_codesniffer ^3
   fi
   if [ "$TRAVIS_PHP_VERSION" = '7.3' ] || [ "$TRAVIS_PHP_VERSION" = '7.4' ]; then
+    composer self-update 2.2.18
     composer -n require phpunit/phpunit ^7 \
                         php-parallel-lint/php-parallel-lint ^1.2 \
                         php-parallel-lint/php-console-highlighter ^0 \
@@ -123,6 +124,7 @@ install:
   fi
   # phpunit 9 is required for php 8
   if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+      composer self-update 2.4.4
       composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
                                                  php-parallel-lint/php-parallel-lint ^1.2 \
                                                  php-parallel-lint/php-console-highlighter ^0 \
