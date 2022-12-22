@@ -360,21 +360,21 @@ if ($resql) {
 	print '<div style="text-align: right">';
 	print '<h2>';
 
-	print $langs->trans("Cash").($transactionspertype['CASH'] ? ' ('.$transactionspertype['CASH'].')' : '').' : <div class="inline-block amount width100">'.price($cash).'</div>';
+	print $langs->trans("Cash").(!empty($transactionspertype['CASH']) ? ' ('.$transactionspertype['CASH'].')' : '').' : <div class="inline-block amount width100">'.price($cash).'</div>';
 	if ($object->status == $object::STATUS_VALIDATED && $cash != $object->cash) {
 		print ' <> <div class="inline-block amountremaintopay fontsizeunset">'.$langs->trans("Declared").': '.price($object->cash).'</div>';
 	}
 	print "<br>";
 
 	//print '<br>';
-	print $langs->trans("PaymentTypeCHQ").($transactionspertype['CHQ'] ? ' ('.$transactionspertype['CHQ'].')' : '').' : <div class="inline-block amount width100">'.price($cheque).'</div>';
+	print $langs->trans("PaymentTypeCHQ").(!empty($transactionspertype['CHQ']) ? ' ('.$transactionspertype['CHQ'].')' : '').' : <div class="inline-block amount width100">'.price($cheque).'</div>';
 	if ($object->status == $object::STATUS_VALIDATED && $cheque != $object->cheque) {
 		print ' <> <div class="inline-block amountremaintopay fontsizeunset">'.$langs->trans("Declared").' : '.price($object->cheque).'</div>';
 	}
 	print "<br>";
 
 	//print '<br>';
-	print $langs->trans("PaymentTypeCB").($transactionspertype['CB'] ? ' ('.$transactionspertype['CB'].')' : '').' : <div class="inline-block amount width100">'.price($bank).'</div>';
+	print $langs->trans("PaymentTypeCB").(!empty($transactionspertype['CB']) ? ' ('.$transactionspertype['CB'].')' : '').' : <div class="inline-block amount width100">'.price($bank).'</div>';
 	if ($object->status == $object::STATUS_VALIDATED && $bank != $object->card) {
 		print ' <> <div class="inline-block amountremaintopay fontsizeunset">'.$langs->trans("Declared").': '.price($object->card).'</div>';
 	}

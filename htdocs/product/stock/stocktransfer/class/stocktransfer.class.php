@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2022       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -229,7 +229,7 @@ class StockTransfer extends CommonObject
 		// Translate some data of arrayofkeyval
 		if (is_object($langs)) {
 			foreach ($this->fields as $key => $val) {
-				if (is_array($val['arrayofkeyval'])) {
+				if (isset($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
 						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
 					}

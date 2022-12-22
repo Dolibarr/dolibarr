@@ -115,7 +115,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans("NumberOfLinesToShow");
 print '<td colspan="2">';
 $array = array(1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6");
-print $form->selectarray('TAKEPOS_LINES_TO_SHOW', $array, (empty($conf->global->TAKEPOS_LINES_TO_SHOW) ? '2' : $conf->global->TAKEPOS_LINES_TO_SHOW), 0);
+print $form->selectarray('TAKEPOS_LINES_TO_SHOW', $array, getDolGlobalInt('TAKEPOS_LINES_TO_SHOW', 2), 0);
 print "</td></tr>\n";
 
 // D'ont display category

@@ -151,6 +151,7 @@ if (empty($reshook)) {
 	if ($action == 'addline' && $user->rights->bom->write) {
 		$langs->load('errors');
 		$error = 0;
+		$predef = '';
 
 		// Set if we used free entry or predefined product
 		$bom_child_id = (int) GETPOST('bom_id', 'int');
@@ -194,7 +195,18 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null, $fk_unit);
+			// Extrafields
+			$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+			$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
+			// Unset extrafield
+			if (is_array($extralabelsline)) {
+				// Get extra fields
+				foreach ($extralabelsline as $key => $value) {
+					unset($_POST["options_".$key]);
+				}
+			}
+
+			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null, $fk_unit, $array_options);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -231,10 +243,21 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			// Extrafields
+			$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+			$array_options = $extrafields->getOptionalsFromPost($object->table_element_line);
+			// Unset extrafield
+			if (is_array($extralabelsline)) {
+				// Get extra fields
+				foreach ($extralabelsline as $key => $value) {
+					unset($_POST["options_".$key]);
+				}
+			}
+
 			$bomline = new BOMLine($db);
 			$bomline->fetch($lineid);
 
-			$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key, $fk_unit);
+			$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -704,7 +727,7 @@ if (empty($reshook)) {
 
 			// Clone
 			if ($permissiontoadd) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&object=bom&token='.newToken().'">'.$langs->trans("ToClone").'</a>'."\n";
+				print dolGetButtonAction($langs->trans("ToClone"), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : "").'&action=clone&object=bom', 'clone', $permissiontoadd);
 			}
 
 			// Close / Cancel
@@ -726,11 +749,8 @@ if (empty($reshook)) {
 			}
 			*/
 
-			if ($permissiontodelete) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>'."\n";
-			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
-			}
+			// Delete
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 		}
 		print '</div>'."\n";
 	}

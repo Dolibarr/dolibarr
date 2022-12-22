@@ -82,6 +82,7 @@ $usercanread = $user->rights->banque->cheque;
 $usercancreate = $user->rights->banque->cheque;
 $usercandelete = $user->rights->banque->cheque;
 
+$permissiontodelete = $user->rights->banque->cheque;
 
 
 /*
@@ -384,13 +385,14 @@ if ($action == 'new') {
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
+	print '<input type="submit" class="button small" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
 	if ($search_date_start || $search_date_end || $filteraccountid > 0) {
 		print ' &nbsp; ';
-		print '<input type="submit" class="button" name="removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		print '<input type="submit" class="button" name="removefilter small" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	}
 	print '</div>';
 	print '</form>';
+	print '<br>';
 	print '<br>';
 
 	$sql = "SELECT ba.rowid as bid, ba.label,";
@@ -750,7 +752,7 @@ if ($user->socid == 0 && !empty($object->id) && $object->statut == 0 && $user->r
 }
 
 if ($user->socid == 0 && !empty($object->id) && $user->rights->banque->cheque) {
-	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&sortfield='.$sortfield.'&sortorder='.$sortorder.'">'.$langs->trans('Delete').'</a>';
+	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 }
 print '</div>';
 

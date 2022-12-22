@@ -20,3 +20,4 @@ ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choisir si le raccourci doit ouv
 BookmarksManagement=Gestion des marque-pages
 BookmarksMenuShortCut=Ctrl + Maj + m
 NoBookmarks=Aucun marque page enregistré
+NoBookmarkFound=Pas de marque-page trouvé.

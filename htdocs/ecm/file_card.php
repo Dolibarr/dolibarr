@@ -103,11 +103,11 @@ if ($result < 0) {
 }
 
 // Permissions
-$permtoread = $user->rights->ecm->read;
-$permtoadd = $user->rights->ecm->setup;
-$permtoupload = $user->rights->ecm->upload;
+$permissiontoread = $user->rights->ecm->read;
+$permissiontoadd = $user->rights->ecm->setup;
+$permissiontoupload = $user->rights->ecm->upload;
 
-if (!$permtoread) {
+if (!$permissiontoread) {
 	accessforbidden();
 }
 
@@ -128,7 +128,7 @@ if ($cancel) {
 }
 
 // Rename file
-if ($action == 'update' && $permtoadd) {
+if ($action == 'update' && $permissiontoadd) {
 	$error = 0;
 
 	$oldlabel = GETPOST('urlfile', 'alpha');
@@ -424,16 +424,9 @@ if ($action != 'edit') {
 	if ($user->rights->ecm->setup) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.urlencode($section).'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Edit').'</a>';
 	}
-	/*
-	if ($user->rights->ecm->setup)
-	{
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=deletefile&token='.newToken().'&section='.$section.'&urlfile='.urlencode($urlfile).'">'.$langs->trans('Delete').'</a>';
-	}
-	else
-	{
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
-	}
-	*/
+
+	//print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->rights->ecm->setup);
+
 	print '</div>';
 }
 

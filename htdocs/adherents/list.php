@@ -142,31 +142,31 @@ if ($db->type == 'pgsql') {
 	unset($fieldstosearchall['d.rowid']);
 }
 $arrayfields = array(
-	'd.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'd.civility'=>array('label'=>$langs->trans("Civility"), 'checked'=>0),
-	'd.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
-	'd.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
-	'd.gender'=>array('label'=>$langs->trans("Gender"), 'checked'=>0),
-	'd.company'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
-	'd.login'=>array('label'=>$langs->trans("Login"), 'checked'=>1),
-	'd.morphy'=>array('label'=>$langs->trans("MemberNature"), 'checked'=>1),
-	't.libelle'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-	'd.email'=>array('label'=>$langs->trans("Email"), 'checked'=>1),
-	'd.address'=>array('label'=>$langs->trans("Address"), 'checked'=>0),
-	'd.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
-	'd.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
-	'd.phone'=>array('label'=>$langs->trans("Phone"), 'checked'=>0),
-	'd.phone_perso'=>array('label'=>$langs->trans("PhonePerso"), 'checked'=>0),
-	'd.phone_mobile'=>array('label'=>$langs->trans("PhoneMobile"), 'checked'=>0),
-	'state.nom'=>array('label'=>$langs->trans("State"), 'checked'=>0),
-	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
-	/*'d.note_public'=>array('label'=>$langs->trans("NotePublic"), 'checked'=>0),
-	'd.note_private'=>array('label'=>$langs->trans("NotePrivate"), 'checked'=>0),*/
-	'd.datefin'=>array('label'=>$langs->trans("EndSubscription"), 'checked'=>1, 'position'=>500),
-	'd.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	'd.birth'=>array('label'=>$langs->trans("Birthday"), 'checked'=>0, 'position'=>500),
-	'd.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
-	'd.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+	'd.ref'=>array('label'=>"Ref", 'checked'=>1),
+	'd.civility'=>array('label'=>"Civility", 'checked'=>0),
+	'd.lastname'=>array('label'=>"Lastname", 'checked'=>1),
+	'd.firstname'=>array('label'=>"Firstname", 'checked'=>1),
+	'd.gender'=>array('label'=>"Gender", 'checked'=>0),
+	'd.company'=>array('label'=>"Company", 'checked'=>1),
+	'd.login'=>array('label'=>"Login", 'checked'=>1),
+	'd.morphy'=>array('label'=>"MemberNature", 'checked'=>1),
+	't.libelle'=>array('label'=>"Type", 'checked'=>1),
+	'd.email'=>array('label'=>"Email", 'checked'=>1),
+	'd.address'=>array('label'=>"Address", 'checked'=>0),
+	'd.zip'=>array('label'=>"Zip", 'checked'=>0),
+	'd.town'=>array('label'=>"Town", 'checked'=>0),
+	'd.phone'=>array('label'=>"Phone", 'checked'=>0),
+	'd.phone_perso'=>array('label'=>"PhonePerso", 'checked'=>0),
+	'd.phone_mobile'=>array('label'=>"PhoneMobile", 'checked'=>0),
+	'state.nom'=>array('label'=>"State", 'checked'=>0),
+	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
+	/*'d.note_public'=>array('label'=>"NotePublic", 'checked'=>0),
+	'd.note_private'=>array('label'=>"NotePrivate", 'checked'=>0),*/
+	'd.datefin'=>array('label'=>"EndSubscription", 'checked'=>1, 'position'=>500),
+	'd.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>500),
+	'd.birth'=>array('label'=>"Birthday", 'checked'=>0, 'position'=>500),
+	'd.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
+	'd.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 	'd.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
 );
 // Extra fields
@@ -262,7 +262,7 @@ if (empty($reshook)) {
 	}
 
 	// Create external user
-	if ($massaction == 'createexternaluser' && $user->hasRight('adherent', 'creer') && $user->rights->user->user->creer) {
+	if ($massaction == 'createexternaluser' && $user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'creer')) {
 		$tmpmember = new Adherent($db);
 		$error = 0;
 		$nbcreated = 0;
@@ -300,8 +300,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Adherent';
 	$objectlabel = 'Members';
-	$permissiontoread = $user->rights->adherent->lire;
-	$permissiontodelete = $user->rights->adherent->supprimer;
+	$permissiontoread = $user->hasRight('adherent', 'lire');
+	$permissiontodelete = $user->hasRight('adherent', 'supprimer');
 	$permissiontoadd = $user->hasRight('adherent', 'creer');
 	$uploaddir = $conf->adherent->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
@@ -346,31 +346,54 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
-}
-if ((!empty($search_categ) && ($search_categ > 0 || $search_categ == -2)) || !empty($catid)) {
-	// We need this table joined to the select in order to filter by categ
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_member as cm ON d.rowid = cm.fk_member";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = d.country)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = d.state_id)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on (s.rowid = d.fk_soc)";
 $sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid";
-if ($catid > 0) {
-	$sql .= " AND cm.fk_categorie = ".((int) $catid);
+
+if ($catid && empty($search_categ)) {
+	$search_categ = $catid;
 }
-if ($catid == -2) {
-	$sql .= " AND cm.fk_categorie IS NULL";
+
+$searchCategoryContactList = $search_categ ? array($search_categ) : array();
+$searchCategoryContactOperator = 0;
+// Search for tag/category ($searchCategoryContactList is an array of ID)
+if (!empty($searchCategoryContactList)) {
+	$searchCategoryContactSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryContactList as $searchCategoryContact) {
+		if (intval($searchCategoryContact) == -2) {
+			$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member)";
+		} elseif (intval($searchCategoryContact) > 0) {
+			if ($searchCategoryContactOperator == 0) {
+				$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member AND ck.fk_categorie = ".((int) $searchCategoryContact).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_categorie FROM ".MAIN_DB_PREFIX."categorie_member as ck WHERE d.rowid = ck.fk_member AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryContactOperator == 1) {
+		if (!empty($searchCategoryContactSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryContactSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryContactSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryContactSqlList).")";
+		}
+	}
 }
-if ($search_categ > 0) {
-	$sql .= " AND cm.fk_categorie = ".((int) $search_categ);
-}
-if ($search_categ == -2) {
-	$sql .= " AND cm.fk_categorie IS NULL";
-}
+
 $sql .= " AND d.entity IN (".getEntity('adherent').")";
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
@@ -379,7 +402,10 @@ if ($search_type > 0) {
 	$sql .= " AND t.rowid=".((int) $search_type);
 }
 if ($search_filter == 'withoutsubscription') {
-	$sql .= " AND (datefin IS NULL OR t.subscription = '0')";
+	$sql .= " AND (datefin IS NULL)";
+}
+if ($search_filter == 'waitingsubscription') {
+	$sql .= " AND (datefin IS NULL AND t.subscription = '1')";
 }
 if ($search_filter == 'uptodate') {
 	$sql .= " AND (datefin >= '".$db->idate($now)."' OR t.subscription = '0')";
@@ -391,7 +417,7 @@ if ($search_status != '') {
 	// Peut valoir un nombre ou liste de nombre separes par virgules
 	$sql .= " AND d.statut in (".$db->sanitize($db->escape($search_status)).")";
 }
-if ($search_morphy != '') {
+if ($search_morphy != '' && $search_morphy != '-1') {
 	$sql .= natural_search("d.morphy", $search_morphy);
 }
 if ($search_ref) {
@@ -457,9 +483,13 @@ $sql .= $hookmanager->resPrint;
 // Count total nb of records with no order and no limits
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$resql = $db->query($sql);
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
 	if ($resql) {
-		$nbtotalofrecords = $db->num_rows($resql);
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
 	} else {
 		dol_print_error($db);
 	}
@@ -497,35 +527,6 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 llxHeader('', $title, $help_url);
-
-if (GETPOSTISSET("search_status")) {
-	if ($search_status == '-1,1') { // TODO : check this test as -1 == Adherent::STATUS_DRAFT and -2 == Adherent::STATUS_EXLCUDED
-		$title = $langs->trans("MembersListQualified");
-	}
-	if ($search_status == Adherent::STATUS_DRAFT) {
-		$title = $langs->trans("MembersListToValid");
-	}
-	if ($search_status == Adherent::STATUS_VALIDATED && $filter == '') {
-		$title = $langs->trans("MenuMembersValidated");
-	}
-	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'withoutsubscription') {
-		$title = $langs->trans("MembersWithSubscriptionToReceive");
-	}
-	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'uptodate') {
-		$title = $langs->trans("MembersListUpToDate");
-	}
-	if ($search_status == Adherent::STATUS_VALIDATED && $filter == 'outofdate') {
-		$title = $langs->trans("MembersListNotUpToDate");
-	}
-	if ((string) $search_status == (string) Adherent::STATUS_RESILIATED) {	// The cast to string is required to have test false when search_status is ''
-		$title = $langs->trans("MembersListResiliated");
-	}
-	if ($search_status == Adherent::STATUS_EXCLUDED) {
-		$title = $langs->trans("MembersListExcluded");
-	}
-} elseif ($action == 'search') {
-	$title = $langs->trans("MembersListQualified");
-}
 
 if ($search_type > 0) {
 	$membertype = new AdherentType($db);
@@ -620,13 +621,13 @@ $arrayofmassactions = array(
 if ($user->hasRight('adherent', 'creer')) {
 	$arrayofmassactions['close'] = img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Resiliate");
 }
-if ($user->rights->adherent->supprimer) {
+if ($user->hasRight('adherent', 'supprimer')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (isModEnabled('category') && $user->rights->adherent->creer) {
+if (isModEnabled('category') && $user->hasRight('adherent', 'creer')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if ($user->hasRight('adherent', 'creer') && $user->rights->user->user->creer) {
+if ($user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'creer')) {
 	$arrayofmassactions['createexternaluser'] = img_picto('', 'user', 'class="pictofixedwidth"').$langs->trans("CreateExternalUser");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
@@ -667,10 +668,10 @@ if ($sall) {
 
 // Filter on categories
 $moreforfilter = '';
-if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedlength"').$formother->select_categories(Categorie::TYPE_MEMBER, $search_categ, 'search_categ', 1);
+	$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedlength"').$formother->select_categories(Categorie::TYPE_MEMBER, $search_categ, 'search_categ', 1, $langs->trans("MembersCategoriesShort"));
 	$moreforfilter .= '</div>';
 }
 $parameters = array();
@@ -741,10 +742,11 @@ if (!empty($arrayfields['d.login']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'"></td>';
 }
+// Nature
 if (!empty($arrayfields['d.morphy']['checked'])) {
-	print '<td class="liste_titre left">';
+	print '<td class="liste_titre center">';
 	$arraymorphy = array('mor'=>$langs->trans("Moral"), 'phy'=>$langs->trans("Physical"));
-	print $form->selectarray('search_morphy', $arraymorphy, $search_morphy, 1);
+	print $form->selectarray('search_morphy', $arraymorphy, $search_morphy, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 	print '</td>';
 }
 if (!empty($arrayfields['t.libelle']['checked'])) {
@@ -805,7 +807,8 @@ if (!empty($arrayfields['d.email']['checked'])) {
 // End of subscription date
 if (!empty($arrayfields['d.datefin']['checked'])) {
 	print '<td class="liste_titre center">';
-	$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
+	//$selectarray = array('-1'=>'', 'withoutsubscription'=>$langs->trans("WithoutSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
+	$selectarray = array('-1'=>'', 'waitingsubscription'=>$langs->trans("WaitingSubscription"), 'uptodate'=>$langs->trans("UpToDate"), 'outofdate'=>$langs->trans("OutOfDate"));
 	print $form->selectarray('search_filter', $selectarray, $search_filter);
 	print '</td>';
 }
@@ -840,7 +843,7 @@ if (!empty($arrayfields['d.statut']['checked'])) {
 		Adherent::STATUS_RESILIATED => $langs->trans("MemberStatusResiliatedShort"),
 		Adherent::STATUS_EXCLUDED =>$langs->trans("MemberStatusExcludedShort")
 	);
-	print $form->selectarray('search_status', $liststatus, $search_status, -3);
+	print $form->selectarray('search_status', $liststatus, $search_status, -3, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
 	print '</td>';
 }
 if (!empty($arrayfields['d.import_key']['checked'])) {
@@ -919,7 +922,7 @@ if (!empty($arrayfields['d.email']['checked'])) {
 	print_liste_field_titre($arrayfields['d.email']['label'], $_SERVER["PHP_SELF"], 'd.email', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['d.datefin']['checked'])) {
-	print_liste_field_titre($arrayfields['d.datefin']['label'], $_SERVER["PHP_SELF"], 'd.datefin', '', $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['d.datefin']['label'], $_SERVER["PHP_SELF"], 'd.datefin,t.subscription', '', $param, '', $sortfield, $sortorder, 'center ');
 }
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -938,7 +941,7 @@ if (!empty($arrayfields['d.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['d.statut']['checked'])) {
-	print_liste_field_titre($arrayfields['d.statut']['label'], $_SERVER["PHP_SELF"], "d.statut", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['d.statut']['label'], $_SERVER["PHP_SELF"], "d.statut,t.subscription,d.datefin", "", $param, 'class="right"', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['d.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['d.import_key']['label'], $_SERVER["PHP_SELF"], "d.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -955,6 +958,7 @@ while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
 	$datefin = $db->jdate($obj->datefin);
+
 	$memberstatic->id = $obj->rowid;
 	$memberstatic->ref = $obj->ref;
 	$memberstatic->civility_id = $obj->civility;
@@ -970,6 +974,7 @@ while ($i < min($num, $limit)) {
 	$memberstatic->morphy = $obj->morphy;
 	$memberstatic->note_public = $obj->note_public;
 	$memberstatic->note_private = $obj->note_private;
+	$memberstatic->need_subscription = $obj->subscription;
 
 	if (!empty($obj->fk_soc)) {
 		$memberstatic->fetch_thirdparty();
@@ -1070,14 +1075,7 @@ while ($i < min($num, $limit)) {
 	// Nature (Moral/Physical)
 	if (!empty($arrayfields['d.morphy']['checked'])) {
 		print '<td class="center">';
-		$s = '';
-		if ($obj->morphy == 'phy') {
-			$s .= '<span class="customer-back" title="'.$langs->trans("Physical").'">'.dol_substr($langs->trans("Physical"), 0, 1).'</span>';
-		}
-		if ($obj->morphy == 'mor') {
-			$s .= '<span class="vendor-back" title="'.$langs->trans("Moral").'">'.dol_substr($langs->trans("Moral"), 0, 1).'</span>';
-		}
-		print $s;
+		print $memberstatic->getmorphylib('', 2);
 		print "</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
@@ -1183,7 +1181,7 @@ while ($i < min($num, $limit)) {
 			}
 		} else {
 			if (!empty($obj->subscription)) {
-				print $langs->trans("SubscriptionNotReceived");
+				print '<span class="opacitymedium">'.$langs->trans("SubscriptionNotReceived").'</span>';
 				if ($obj->statut > 0) {
 					print " ".img_warning();
 				}

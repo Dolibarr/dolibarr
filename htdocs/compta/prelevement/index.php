@@ -86,7 +86,7 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</
 
 print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td class="right">';
-print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0">';
+print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0">';
 print $bprev->nbOfInvoiceToPay('direct-debit');
 print '</a>';
 print '</td></tr>';
@@ -109,7 +109,7 @@ $sql .= " ".MAIN_DB_PREFIX."societe as s";
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 $sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 $sql .= " AND f.total_ttc > 0";
@@ -184,7 +184,7 @@ if ($resql) {
 		}
 	} else {
 		$titlefortab = $langs->transnoentitiesnoconv("StandingOrders");
-		print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw", $titlefortab, $titlefortab).'</td></tr>';
+		print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw", $titlefortab, $titlefortab).'</span></td></tr>';
 	}
 	print "</table></div><br>";
 } else {

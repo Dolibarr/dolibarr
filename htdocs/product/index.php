@@ -126,7 +126,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be 
 /*
  * Number of products and/or services
  */
-if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	$prodser = array();
 	$prodser[0][0] = $prodser[0][1] = $prodser[0][2] = $prodser[0][3] = 0;
 	$prodser[0]['sell'] = 0;
@@ -284,7 +284,7 @@ print '</div><div class="fichetwothirdright">';
 /*
  * Latest modified products
  */
-if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	$max = 15;
 	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 	$sql .= " p.entity,";
@@ -373,9 +373,11 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->prod
 				print "</td>";
 				// Sell price
 				if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-					if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression)) {
+					if (isModEnabled('dynamicprices') && !empty($objp->fk_price_expression)) {
 						$product = new Product($db);
 						$product->fetch($objp->rowid);
+
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($db);
 						$price_result = $priceparser->parseProduct($product);
 						if ($price_result >= 0) {

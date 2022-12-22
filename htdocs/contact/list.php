@@ -392,6 +392,9 @@ if (isModEnabled('mailing')) {
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
@@ -399,15 +402,6 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcommcontact as st ON st.id = p.fk_stcommcontact";
-if (!empty($search_categ) && $search_categ != '-1') {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cc ON p.rowid = cc.fk_socpeople"; // We need this table joined to the select in order to filter by categ
-}
-if (!empty($search_categ_thirdparty) && $search_categ_thirdparty != '-1') {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc"; // We need this table joined to the select in order to filter by categ
-}
-if (!empty($search_categ_supplier) && $search_categ_supplier != '-1') {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs2 ON s.rowid = cs2.fk_soc"; // We need this table joined to the select in order to filter by categ
-}
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 }
@@ -437,23 +431,95 @@ if ($search_priv != '0' && $search_priv != '1') {
 	}
 }
 
-if ($search_categ > 0) {
-	$sql .= " AND cc.fk_categorie = ".((int) $search_categ);
+$searchCategoryContactList = $search_categ ? array($search_categ) : array();
+$searchCategoryContactOperator = 0;
+// Search for tag/category ($searchCategoryContactList is an array of ID)
+if (!empty($searchCategoryContactList)) {
+	$searchCategoryContactSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryContactList as $searchCategoryContact) {
+		if (intval($searchCategoryContact) == -2) {
+			$searchCategoryContactSqlList[] = "NOT EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE s.rowid = ck.fk_socpeople)";
+		} elseif (intval($searchCategoryContact) > 0) {
+			if ($searchCategoryContactOperator == 0) {
+				$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE s.rowid = ck.fk_socpeople AND ck.fk_categorie = ".((int) $searchCategoryContact).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryContact);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryContactSqlList[] = " EXISTS (SELECT ck.fk_socpeople FROM ".MAIN_DB_PREFIX."categorie_contact as ck WHERE s.rowid = ck.fk_socpeople AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryContactOperator == 1) {
+		if (!empty($searchCategoryContactSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryContactSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryContactSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryContactSqlList).")";
+		}
+	}
 }
-if ($search_categ == -2) {
-	$sql .= " AND cc.fk_categorie IS NULL";
+$searchCategoryCustomerList = $search_categ_thirdparty ? array($search_categ_thirdparty) : array();
+$searchCategoryCustomerOperator = 0;
+// Search for tag/category ($searchCategoryCustomerList is an array of ID)
+if (!empty($searchCategoryCustomerList)) {
+	$searchCategoryCustomerSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc)";
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			if ($searchCategoryCustomerOperator == 0) {
+				$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie = ".((int) $searchCategoryCustomer).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryCustomerSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryCustomerOperator == 1) {
+		if (!empty($searchCategoryCustomerSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryCustomerSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryCustomerSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
+		}
+	}
 }
-if ($search_categ_thirdparty > 0) {
-	$sql .= " AND cs.fk_categorie = ".((int) $search_categ_thirdparty);
-}
-if ($search_categ_thirdparty == -2) {
-	$sql .= " AND cs.fk_categorie IS NULL";
-}
-if ($search_categ_supplier > 0) {
-	$sql .= " AND cs2.fk_categorie = ".((int) $search_categ_supplier);
-}
-if ($search_categ_supplier == -2) {
-	$sql .= " AND cs2.fk_categorie IS NULL";
+$searchCategorySupplierList = $search_categ_supplier ? array($search_categ_supplier) : array();
+$searchCategorySupplierOperator = 0;
+// Search for tag/category ($searchCategorySupplierList is an array of ID)
+if (!empty($searchCategorySupplierList)) {
+	$searchCategorySupplierSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategorySupplierList as $searchCategorySupplier) {
+		if (intval($searchCategorySupplier) == -2) {
+			$searchCategorySupplierSqlList[] = "NOT EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc)";
+		} elseif (intval($searchCategorySupplier) > 0) {
+			if ($searchCategorySupplierOperator == 0) {
+				$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie = ".((int) $searchCategorySupplier).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplier);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategorySupplierSqlList[] = " EXISTS (SELECT ck.fk_soc FROM ".MAIN_DB_PREFIX."categorie_fournisseur as ck WHERE s.rowid = ck.fk_soc AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategorySupplierOperator == 1) {
+		if (!empty($searchCategorySupplierSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategorySupplierSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategorySupplierSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategorySupplierSqlList).")";
+		}
+	}
 }
 
 if ($sall) {
@@ -502,10 +568,19 @@ if (strlen($search_fax)) {
 if (isModEnabled('socialnetworks')) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && strlen($search_[$key])) {
-			$sql .= " AND p.socialnetworks LIKE '%\"".$key."\":\"".$search_[$key]."%'";
+			$searchkeyinjsonformat = preg_replace('/"$/', '', preg_replace('/^"/', '', json_encode($search_[$key])));
+			if (in_array($db->type, array('mysql', 'mysqli'))) {
+				$sql .= " AND p.socialnetworks REGEXP '\"".$db->escape($db->escapeforlike($key))."\":\"[^\"]*".$db->escape($db->escapeforlike($searchkeyinjsonformat))."'";
+			} elseif ($db->type == 'pgsql') {
+				$sql .= " AND p.socialnetworks ~ '\"".$db->escape($db->escapeforlike($key))."\":\"[^\"]*".$db->escape($db->escapeforlike($searchkeyinjsonformat))."'";
+			} else {
+				// Works with all database but not reliable because search only for social network code starting with earched value
+				$sql .= " AND p.socialnetworks LIKE '%\"".$db->escape($db->escapeforlike($key))."\":\"".$db->escape($db->escapeforlike($searchkeyinjsonformat))."%'";
+			}
 		}
 	}
 }
+//print $sql;
 if (strlen($search_email)) {
 	$sql .= natural_search('p.email', $search_email);
 }
@@ -551,25 +626,38 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-// Add order
+//print $sql;
+
+// Count total nb of records
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+	$db->free($resql);
+}
+
+// Complete request and execute it with limit
 if ($view == "recent") {
 	$sql .= $db->order("p.datec", "DESC");
 } else {
 	$sql .= $db->order($sortfield, $sortorder);
 }
-
-// Count total nb of records
-$nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$resql = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
-		$page = 0;
-		$offset = 0;
-	}
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
 }
-
-$sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -938,7 +1026,7 @@ if (!empty($arrayfields['p.tms']['checked'])) {
 // Status
 if (!empty($arrayfields['p.statut']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75');
+	print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75 onrightofpage');
 	print '</td>';
 }
 if (!empty($arrayfields['p.import_key']['checked'])) {
@@ -1222,7 +1310,7 @@ while ($i < min($num, $limit)) {
 	if (isModEnabled('socialnetworks')) {
 		foreach ($socialnetworks as $key => $value) {
 			if ($value['active'] && !empty($arrayfields['p.'.$key]['checked'])) {
-				print '<td class="tdoverflowmax100">'.dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key, $socialnetworks).'</td>';
+				print '<td class="tdoverflowmax100">'.(empty($arraysocialnetworks[$key]) ? '' : dol_print_socialnetworks($arraysocialnetworks[$key], $obj->rowid, $obj->socid, $key, $socialnetworks)).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

@@ -49,7 +49,7 @@ $local = GETPOST('localTaxType', 'int');
 // Date range
 $year = GETPOST("year", "int");
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
+	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
@@ -193,6 +193,9 @@ if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') $description.='<br>'.$lan
 if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') $description.='<br>'.$langs->trans("RulesVATInServices");
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$description.='<br>'.$langs->trans("DepositsAreNotIncluded");
+}
+if (! empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$description.='<br>'.$langs->trans("SupplierDepositsAreNotIncluded");
 }
 */
 if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {

@@ -110,12 +110,13 @@ $permissiontoadd = $user->rights->salaries->write; // Used by the include of act
 $permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 
 
-/**
+/*
  * Actions
  */
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+// Note that $action and $object may be modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -123,14 +124,14 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/salaries/list.php', 1);
+	$backurlforlist = DOL_URL_ROOT.'/salaries/list.php';
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/salaries/card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/salaries/card.php?id='.($id > 0 ? $id : '__ID__');
 			}
 		}
 	}
@@ -444,9 +445,10 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 if (isModEnabled('project')) $formproject = new FormProjets($db);
 
-$title = $langs->trans('Salary')." - ".$langs->trans('Card');
+$title = $langs->trans('Salary')." - ".$object->ref;
 $help_url = "";
-llxHeader("", $title, $help_url);
+
+llxHeader('', $title, $help_url);
 
 
 if ($id > 0) {
@@ -458,8 +460,8 @@ if ($id > 0) {
 }
 
 // Create
-if ($action == 'create') {
-	$year_current = strftime("%Y", dol_now());
+if ($action == 'create' && $permissiontoadd) {
+	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$pastmonth = strftime("%m", dol_now()) - 1;
 	$pastmonthyear = $year_current;
 	if ($pastmonth == 0) {
@@ -480,7 +482,7 @@ if ($action == 'create') {
 		$datesp = dol_get_first_day($pastmonthyear, $pastmonth, false); $dateep = dol_get_last_day($pastmonthyear, $pastmonth, false);
 	}
 
-	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form name="salary" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) {
@@ -522,7 +524,7 @@ if ($action == 'create') {
 		print '</script>'."\n";
 	}
 
-	print dol_get_fiche_head('', '');
+	print dol_get_fiche_head('');
 
 	print '<table class="border centpercent">';
 
@@ -683,7 +685,7 @@ if ($action == 'create') {
 						);
 
 					} else {
-						alert("'.dol_escape_js($langs->trans("FillFieldFirst")).'");
+						alert("'.dol_escape_js($langs->transnoentitiesnoconv("FillFieldFirst")).'");
 					}
 		});
 
@@ -692,13 +694,8 @@ if ($action == 'create') {
 }
 
 
-/* ************************************************************************** */
-/*                                                                            */
-/* View mode                                                                  */
-/*                                                                            */
-/* ************************************************************************** */
-
-if ($id) {
+// View mode
+if ($id > 0) {
 	$head = salaries_prepare_head($object);
 	$formconfirm = '';
 
@@ -711,7 +708,7 @@ if ($id) {
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 240);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
 	}
 
 	if ($action == 'paid') {
@@ -794,34 +791,26 @@ if ($id) {
 		$morehtmlref .= '</form>';
 	}
 
+	$usercancreate = $permissiontoadd;
+
 	// Project
 	if (isModEnabled('project')) {
-		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-		if ($user->rights->salaries->write) {
+		$langs->load("projects");
+		$morehtmlref .= '<br>';
+		if ($usercancreate) {
+			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			if ($action == 'classify') {
-				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects(-1, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
-				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-				$morehtmlref .= '</form>';
-			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-			}
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
-					$morehtmlref .= ' - '.$proj->title;
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 				}
-			} else {
-				$morehtmlref .= '';
 			}
 		}
 	}

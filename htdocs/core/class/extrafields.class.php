@@ -10,6 +10,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1758,7 +1759,12 @@ class ExtraFields
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			$value = $langs->trans($param['options'][$value]);
+			if (!isset($param['options'][$value])) {
+				$langs->load('errors');
+				$value = $langs->trans('ErrorNoValueForRadioType');
+			} else {
+				$value = $langs->trans($param['options'][$value]);
+			}
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
 			$value = '';
@@ -1942,7 +1948,7 @@ class ExtraFields
 	 * Return HTML string to print separator extrafield
 	 *
 	 * @param   string	$key            Key of attribute
-	 * @param	string	$object			Object
+	 * @param	object	$object			Object
 	 * @param	int		$colspan		Value of colspan to use (it must includes the first column with title)
 	 * @param	string	$display_type	"card" for form display, "line" for document line display (extrafields on propal line, order line, etc...)
 	 * @param 	string  $mode           Show output ('view') or input ('create' or 'edit') for extrafield
@@ -1970,7 +1976,7 @@ class ExtraFields
 		$expand_display = false;
 		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
 			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
+			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? (empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) ? false : true) : ($extrafield_collapse_display_value == 2 ? false : true));
 		}
 		if ($mode == 'create') {
 			$extrafield_collapse_display_value = 0;
@@ -2074,14 +2080,21 @@ class ExtraFields
 
 				$visibility = 1;
 				if (isset($this->attributes[$object->table_element]['list'][$key])) {		// 'list' is option for visibility
-					$visibility = dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '1');
+					$visibility = intval(dol_eval($this->attributes[$object->table_element]['list'][$key], 1, 1, '1'));
 				}
 
 				$perms = 1;
 				if (isset($this->attributes[$object->table_element]['perms'][$key])) {
 					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1, 1, '1');
 				}
-				if (empty($enabled)) {
+				if (empty($enabled)
+					|| (
+						$onlykey === '@GETPOSTISSET'
+						&& in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'chkbxlst'))
+						&& in_array(abs($enabled), array(2, 5))
+						&& ! GETPOSTISSET('options_' . $key) // Update hidden checkboxes and multiselect only if they are provided
+					)
+				) {
 					continue;
 				}
 				if (empty($visibility)) {

@@ -227,7 +227,7 @@ if ($resql) {
 /*
  * Open (validated) proposals
  */
-if (isModEnabled("propal") && $user->rights->propale->lire) {
+if (isModEnabled("propal") && $user->rights->propal->lire) {
 	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
 	$sql .= ", p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -312,7 +312,7 @@ if (isModEnabled("propal") && $user->rights->propale->lire) {
  */
 
 /*
-if (!empty($conf->propal->enabled))
+if (isModEnabled('propal'))
 {
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as name, s.rowid as socid";
 	$sql.=" FROM ".MAIN_DB_PREFIX."propal as c";
@@ -387,7 +387,7 @@ if (!empty($conf->propal->enabled))
  */
 
 /*
-if (!empty($conf->propal->enabled))
+if (isModEnabled('propal'))
 {
 	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";

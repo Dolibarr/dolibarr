@@ -31,7 +31,6 @@
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/productfournisseurprice.class.php';
 
 
@@ -419,7 +418,11 @@ class ProductFournisseur extends Product
 							$productfournisseurprice->array_options[$key] = $value;
 						}
 						$res = $productfournisseurprice->update($user);
-						if ($res < 0) $error++;
+						if ($res < 0) {
+							$this->error = $productfournisseurprice->error;
+							$this->errors = $productfournisseurprice->errors;
+							$error++;
+						}
 					}
 				}
 			}
@@ -506,6 +509,7 @@ class ProductFournisseur extends Product
 				if ($resql) {
 					$this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
 				} else {
+					$this->error = $this->db->lasterror();
 					$error++;
 				}
 
@@ -518,7 +522,11 @@ class ProductFournisseur extends Product
 								$productfournisseurprice->array_options[$key] = $value;
 							}
 							$res = $productfournisseurprice->update($user);
-							if ($res < 0) $error++;
+							if ($res < 0) {
+								$this->error = $productfournisseurprice->error;
+								$this->errors = $productfournisseurprice->errors;
+								$error++;
+							}
 						}
 					}
 				}
@@ -629,7 +637,8 @@ class ProductFournisseur extends Product
 				}
 				$this->packaging = $obj->packaging;
 
-				if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) {
+				if (isModEnabled('dynamicprices') && empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) {
+					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 					$priceparser = new PriceParser($this->db);
 					$price_result = $priceparser->parseProductSupplier($this);
 					if ($price_result >= 0) {
@@ -739,6 +748,7 @@ class ProductFournisseur extends Product
 				}
 
 				if (isModEnabled('dynamicprices') && !empty($prodfourn->fk_supplier_price_expression)) {
+					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 					$priceparser = new PriceParser($this->db);
 					$price_result = $priceparser->parseProductSupplier($prodfourn);
 					if ($price_result >= 0) {
@@ -851,6 +861,8 @@ class ProductFournisseur extends Product
 						$prod_supplier->fourn_qty = $record["quantity"];
 						$prod_supplier->fourn_tva_tx = $record["tva_tx"];
 						$prod_supplier->fk_supplier_price_expression = $record["fk_supplier_price_expression"];
+
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProductSupplier($prod_supplier);
 						if ($price_result >= 0) {

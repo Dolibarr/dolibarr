@@ -203,6 +203,7 @@ class modWebsite extends DolibarrModules
 
 		dol_mkdir($destroot);
 
+		// Copy templates in zip format (old)
 		$docs = dol_dir_list($srcroot, 'files', 0, 'website_.*(\.zip|\.jpg)$');
 		foreach ($docs as $cursorfile) {
 			$src = $srcroot.'/'.$cursorfile['name'];
@@ -214,6 +215,24 @@ class modWebsite extends DolibarrModules
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				$this->errors[] = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				$error++;
+			}
+		}
+
+		// Copy templates in dir format (recommended)
+		$docs = dol_dir_list($srcroot, 'directories', 0, 'website_.*$');
+
+		foreach ($docs as $cursorfile) {
+			$src = $srcroot.'/'.$cursorfile['name'];
+			$dest = $destroot.'/'.$cursorfile['name'];
+
+			// Compress it
+			global $errormsg;
+			$errormsg = '';
+			$result = dol_compress_dir($src, $dest.'.zip', 'zip');
+			if ($result < 0) {
+				$error++;
+				$this->error = ($errormsg ? $errormsg : $langs->trans('ErrorFailToCreateZip', $dest));
+				$this->errors[] = ($errormsg ? $errormsg : $langs->trans('ErrorFailToCreateZip', $dest));
 			}
 		}
 

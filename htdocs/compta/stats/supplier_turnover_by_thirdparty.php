@@ -153,7 +153,6 @@ $headerparams['date_startday'] = $date_startday;
 $headerparams['date_endyear'] = $date_endyear;
 $headerparams['date_endmonth'] = $date_endmonth;
 $headerparams['date_endday'] = $date_endday;
-$headerparams['q'] = $q;
 
 $tableparams = array();
 $tableparams['search_categ'] = $selected_cat;
@@ -168,6 +167,7 @@ $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
+$paramslink = '';
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
@@ -229,6 +229,8 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 } else {
 	$periodlink = '';
 }
+
+$exportlink = '';
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
@@ -315,22 +317,29 @@ $sql .= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
 $sql .= " ORDER BY s.rowid";
 //echo $sql;
 
+$catotal_ht = 0;
+$catotal = 0;
+
 dol_syslog("supplier_turnover_by_thirdparty", LOG_DEBUG);
-$result = $db->query($sql);
-if ($result) {
-	$num = $db->num_rows($result);
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
 	$i = 0;
 	while ($i < $num) {
-		$obj = $db->fetch_object($result);
-			$amount_ht[$obj->socid] = $obj->amount;
-			$amount[$obj->socid] = $obj->amount_ttc;
-			$name[$obj->socid] = $obj->name.' '.$obj->firstname;
-			$address_zip[$obj->socid] = $obj->zip;
-			$address_town[$obj->socid] = $obj->town;
-			$address_pays[$obj->socid] = getCountry($obj->fk_pays);
-			$catotal_ht += $obj->amount;
-			$catotal += $obj->amount_ttc;
-			$i++;
+		$obj = $db->fetch_object($resql);
+
+		$amount_ht[$obj->socid] = (empty($obj->amount) ? 0 : $obj->amount);
+		$amount[$obj->socid] = $obj->amount_ttc;
+		//$name[$obj->socid] = $obj->name.' '.$obj->firstname;
+
+		$address_zip[$obj->socid] = $obj->zip;
+		$address_town[$obj->socid] = $obj->town;
+		$address_pays[$obj->socid] = getCountry($obj->fk_pays);
+
+		$catotal_ht +=  (empty($obj->amount) ? 0 : $obj->amount);
+		$catotal += $obj->amount_ttc;
+
+		$i++;
 	}
 } else {
 	dol_print_error($db);

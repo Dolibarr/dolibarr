@@ -1,9 +1,17 @@
 <VirtualHost *:80>
 	#php_admin_value sendmail_path "/usr/sbin/sendmail -t -i"
 	#php_admin_value mail.force_extra_parameters "-f postmaster@mydomain.com"
-	php_admin_value sendmail_path "/usr/sbin/sendmail -t -i -f postmaster@mydomain.com"
-	php_admin_value open_basedir /tmp/:/home/.../htdocs:/home/.../dolibarr_documents:
+	#php_admin_value sendmail_path "/usr/sbin/sendmail -t -i -f postmaster@mydomain.com"
 	
+	php_admin_value open_basedir /tmp/:/home/.../htdocs:/home/.../dolibarr_documents:
+
+	
+	# Add this to use a custom apparmor profile when using apache php handler
+	<IfModule mod_apparmor.c>
+	AADefaultHatName sellyoursaas-instances
+	</IfModule>
+
+    
 	ServerName myvirtualalias
 	ServerAlias myvirtualalias
 	
@@ -28,8 +36,8 @@
        	#AuthUserFile /etc/apache2/.htpasswd
        	#require valid-user
 	</Directory>
-	
-	# Leaving /public and /api, /dav, .well_known but also wrappers for document and viewimage accessible to everyone
+
+	# Leaving /public and /api, /dav, .well_known but also wrappers for document, viewimage and public json/img accessible to everyone
     <Directory /home/admin/wwwroot/dolibarr/htdocs/public/>
         AuthType None
         Require all granted
@@ -82,9 +90,9 @@
 	#   /usr/share/doc/apache2.2-common/README.Debian.gz for more info.
 	#   If both key and certificate are stored in the same file, only the
 	#   SSLCertificateFile directive is needed.
-	SSLCertificateFile    /etc/letsencrypt/live/www.mydomain.com/cert.pem
-	SSLCertificateKeyFile /etc/letsencrypt/live/www.mydomain.com/privkey.pem
-	SSLCertificateChainFile /etc/letsencrypt/live/www.mydomain.com/chain.pem
+	#SSLCertificateFile    /etc/letsencrypt/live/www.mydomain.com/cert.pem
+	#SSLCertificateKeyFile /etc/letsencrypt/live/www.mydomain.com/privkey.pem
+	#SSLCertificateChainFile /etc/letsencrypt/live/www.mydomain.com/chain.pem
 	
 	#RewriteEngine   on
 	#RewriteCond     %{SERVER_PORT} ^80$

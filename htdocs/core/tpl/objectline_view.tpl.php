@@ -49,7 +49,7 @@ global $mysoc;
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 $usemargins = 0;
-if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
+if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 	$usemargins = 1;
 }
 
@@ -213,7 +213,7 @@ if (($line->info_bits & 2) == 2) {
 	}
 
 	// Add description in form
-	if ($line->fk_product > 0 && !empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+	if ($line->fk_product > 0 && getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 		if ($line->element == 'facturedetrec') {
 			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start_fill || $line->date_end_fill) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
 		} elseif ($line->element == 'invoice_supplier_det_rec') {
@@ -234,14 +234,14 @@ if (($line->info_bits & 2) == 2) {
 	}
 }
 
-if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0 && empty($conf->global->SUPPLIER_HIDE_SUPPLIER_OBJECTLINES)) {
+if ($user->hasRight('fournisseur', 'lire') && isset($line->fk_fournprice) && $line->fk_fournprice > 0 && empty($conf->global->SUPPLIER_HIDE_SUPPLIER_OBJECTLINES)) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 	$productfourn = new ProductFournisseur($this->db);
 	$productfourn->fetch_product_fournisseur_price($line->fk_fournprice);
 	print '<div class="clearboth"></div>';
 	print '<span class="opacitymedium">'.$langs->trans('Supplier').' : </span>'.$productfourn->getSocNomUrl(1, 'supplier').' - <span class="opacitymedium">'.$langs->trans('Ref').' : </span>';
 	// Supplier ref
-	if ($user->rights->produit->creer || $user->rights->service->creer) { // change required right here
+	if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) { // change required right here
 		print $productfourn->getNomUrl();
 	} else {
 		print $productfourn->ref_supplier;
@@ -333,7 +333,7 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	print '<td align="right" class="linecolcycleref2 nowrap">'.price($sign * $tmp[0]).'</td>';
 }
 
-if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid)) {
+if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 	if (!empty($user->rights->margins->creer)) { ?>
 		<td class="linecolmargin1 nowrap margininfos right"><?php $coldisplay++; ?><?php print price($line->pa_ht); ?></td>
 	<?php }
@@ -353,19 +353,27 @@ if ($line->special_code == 3) { ?>
 	if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 		$tooltiponprice = $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
 		$tooltiponprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva);
-		if (!$senderissupplier && is_object($object->thirdparty)) {
+		if (is_object($object->thirdparty)) {
+			if ($senderissupplier) {
+				$seller = $object->thirdparty;
+				$buyer = $mysoc;
+			} else {
+				$seller = $mysoc;
+				$buyer = $object->thirdparty;
+			}
+
 			if ($mysoc->useLocalTax(1)) {
-				if (($mysoc->country_code == $object->thirdparty->country_code) || $object->thirdparty->useLocalTax(1)) {
-					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax1);
+				if (($seller->country_code == $buyer->country_code) || $line->total_localtax1 || $seller->useLocalTax(1)) {
+					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'='.price($line->total_localtax1);
 				} else {
-					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'=<span class="opacitymedium">'.$langs->trans("NotUsedForThisCustomer").'</span>';
+					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisSupplier" : "NotUsedForThisCustomer").'</span>';
 				}
 			}
 			if ($mysoc->useLocalTax(2)) {
-				if (($mysoc->country_code == $object->thirdparty->country_code) || $object->thirdparty->useLocalTax(2)) {
-					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax2);
+				if (($seller->country_code == $buyer->thirdparty->country_code) || $line->total_localtax2 || $seller->useLocalTax(2)) {
+					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'='.price($line->total_localtax2);
 				} else {
-					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'=<span class="opacitymedium">'.$langs->trans("NotUsedForThisCustomer").'</span>';
+					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisSupplier" : "NotUsedForThisCustomer").'</span>';
 				}
 			}
 		}
@@ -418,7 +426,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 				print 'Error SQL: ' . $this->db->lasterror();
 			} elseif ($obj = $this->db->fetch_object($resql_asset)) {
 				if (!empty($obj->found)) {
-					print '<a class="reposition" href="' . DOL_URL_ROOT . '/asset/card.php?action=create&supplier_invoice_id=' . $object->id . '&token=' . newToken() . '">';
+					print '<a class="reposition" href="' . DOL_URL_ROOT . '/asset/card.php?action=create&token='.newToken().'&supplier_invoice_id='.$object->id.'">';
 					print img_edit_add() . '</a>';
 				}
 			}
@@ -430,7 +438,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
 	} else { ?>
-		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id.'#line_'.$line->id; ?>">
+		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id; ?>">
 		<?php print img_edit().'</a>';
 	}
 	print '</td>';

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2020  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2020       Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2022       Alexandre Spangaro	<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,10 +63,24 @@ class RecruitmentJobPosition extends CommonObject
 	 */
 	public $picto = 'recruitmentjobposition';
 
-
+	/**
+	 * Draft status
+	 */
 	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated
+	 */
 	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Recruited
+	 */
 	const STATUS_RECRUITED = 3;
+
+	/**
+	 * Canceled
+	 */
 	const STATUS_CANCELED = 9;
 
 
@@ -254,7 +269,7 @@ class RecruitmentJobPosition extends CommonObject
 		// Reset some properties
 		unset($object->id);
 		unset($object->fk_user_creat);
-		unset($object->import_key);
+		$object->import_key = null;
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
@@ -651,7 +666,7 @@ class RecruitmentJobPosition extends CommonObject
 	}
 
 	/**
-	 *	Close the commercial proposal
+	 *	Close the recruitment
 	 *
 	 *	@param      User	$user		Object user that close
 	 *	@param      int		$status		Statut
@@ -683,12 +698,6 @@ class RecruitmentJobPosition extends CommonObject
 			if ($status == self::STATUS_RECRUITED) {
 				$triggerName = 'RECRUITMENTJOB_CLOSE_RECRUITED';
 				$modelpdf = $this->model_pdf;
-
-				if ($result < 0) {
-					$this->error = $this->db->lasterror();
-					$this->db->rollback();
-					return -2;
-				}
 			}
 
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {

@@ -52,9 +52,7 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
+
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -73,6 +71,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Init vars
 $errmsg = '';
@@ -82,7 +81,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other"));
+$langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
 
 // Security check
 if (empty($conf->adherent->enabled)) {
@@ -199,7 +198,7 @@ if (empty($reshook) && $action == 'add') {
 			$error++;
 			$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Login"))."<br>\n";
 		}
-		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape(GETPOST('login'))."'";
+		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login = '".$db->escape(GETPOST('login'))."'";
 		$result = $db->query($sql);
 		if ($result) {
 			$num = $db->num_rows($result);
@@ -256,6 +255,17 @@ if (empty($reshook) && $action == 'add') {
 		}
 	}
 
+	// Check Captcha code if is enabled
+	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		$sessionkey = 'dol_antispam_value';
+		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+		if (!$ok) {
+			$error++;
+			$errmsg .= $langs->trans("ErrorBadValueForCode")."<br>\n";
+			$action = '';
+		}
+	}
+
 	$public = GETPOSTISSET('public') ? 1 : 0;
 
 	if (!$error) {
@@ -277,12 +287,36 @@ if (empty($reshook) && $action == 'add') {
 			$adh->pass        = GETPOST('pass1');
 		}
 		$adh->photo       = GETPOST('photo');
-		$adh->country_id  = $conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE ? $conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE : GETPOST('country_id', 'int');
+		$adh->country_id  = getDolGlobalString("MEMBER_NEWFORM_FORCECOUNTRYCODE", GETPOST('country_id', 'int'));
 		$adh->state_id    = GETPOST('state_id', 'int');
-		$adh->typeid      = $conf->global->MEMBER_NEWFORM_FORCETYPE ? $conf->global->MEMBER_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
+		$adh->typeid      = getDolGlobalString("MEMBER_NEWFORM_FORCETYPE", GETPOST('typeid', 'int'));
 		$adh->note_private = GETPOST('note_private');
-		$adh->morphy      = $conf->global->MEMBER_NEWFORM_FORCEMORPHY ? $conf->global->MEMBER_NEWFORM_FORCEMORPHY : GETPOST('morphy');
+		$adh->morphy      = getDolGlobalString("MEMBER_NEWFORM_FORCEMORPHY", GETPOST('morphy'));
 		$adh->birth       = $birthday;
+
+		$adh->ip = getUserRemoteIP();
+
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+		$now = dol_now();
+		$minmonthpost = dol_time_plus_duree($now, -1, "m");
+		// Calculate nb of post for IP
+		$nb_post_ip = 0;
+		if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+			$sql = "SELECT COUNT(ref) as nb_adh";
+			$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
+			$sql .= " WHERE ip = '".$db->escape($adh->ip)."'";
+			$sql .= " AND datec > '".$db->idate($minmonthpost)."'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$i++;
+					$obj = $db->fetch_object($resql);
+					$nb_post_ip = $obj->nb_adh;
+				}
+			}
+		}
 
 
 		// Fill array 'array_options' with data from add form
@@ -290,139 +324,155 @@ if (empty($reshook) && $action == 'add') {
 		$ret = $extrafields->setOptionalsFromPost(null, $adh);
 		if ($ret < 0) {
 			$error++;
+			$errmsg .= $adh->error;
 		}
 
-		$result = $adh->create($user);
-		if ($result > 0) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$object = $adh;
+		if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+			$error++;
+			$errmsg .= $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
+			array_push($adh->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
+		}
 
-			$adht = new AdherentType($db);
-			$adht->fetch($object->typeid);
+		if (!$error) {
+			$result = $adh->create($user);
+			if ($result > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+				$object = $adh;
 
-			if ($object->email) {
-				$subject = '';
-				$msg = '';
+				$adht = new AdherentType($db);
+				$adht->fetch($object->typeid);
 
-				// Send subscription email
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-				// Set output language
-				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-				// Load traductions files required by page
-				$outputlangs->loadLangs(array("main", "members"));
-				// Get email content from template
-				$arraydefaultmessage = null;
-				$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
+				if ($object->email) {
+					$subject = '';
+					$msg = '';
 
-				if (!empty($labeltouse)) {
-					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+					// Send subscription email
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+					$formmail = new FormMail($db);
+					// Set output language
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					// Load traductions files required by page
+					$outputlangs->loadLangs(array("main", "members"));
+					// Get email content from template
+					$arraydefaultmessage = null;
+					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
+
+					if (!empty($labeltouse)) {
+						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+					}
+
+					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+						$subject = $arraydefaultmessage->topic;
+						$msg     = $arraydefaultmessage->content;
+					}
+
+					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+					$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
+
+					if ($subjecttosend && $texttosend) {
+						$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
+
+						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+					}
+					/*if ($result < 0) {
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}*/
 				}
 
-				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-					$subject = $arraydefaultmessage->topic;
-					$msg     = $arraydefaultmessage->content;
-				}
-
-				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-				complete_substitutions_array($substitutionarray, $outputlangs, $object);
-				$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-				$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
-
-				if ($subjecttosend && $texttosend) {
-					$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
-
-					$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
-				}
-				/*if ($result < 0) {
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
-				}*/
-			}
-
-			// Send email to the foundation to say a new member subscribed with autosubscribe form
-			if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL) && !empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
-				  !empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL)) {
-				// Define link to login card
-				$appli = constant('DOL_APPLICATION_TITLE');
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-					$appli = $conf->global->MAIN_APPLICATION_TITLE;
-					if (preg_match('/\d\.\d/', $appli)) {
-						if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
-							$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
+				// Send email to the foundation to say a new member subscribed with autosubscribe form
+				if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL) && !empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
+					!empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL)) {
+					// Define link to login card
+					$appli = constant('DOL_APPLICATION_TITLE');
+					if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+						$appli = $conf->global->MAIN_APPLICATION_TITLE;
+						if (preg_match('/\d\.\d/', $appli)) {
+							if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
+								$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
+							}
+						} else {
+							$appli .= " ".DOL_VERSION;
 						}
 					} else {
 						$appli .= " ".DOL_VERSION;
 					}
+
+					$to = $adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
+					$from = getDolGlobalString('ADHERENT_MAIL_FROM');
+					$mailfile = new CMailFile(
+						'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
+						$to,
+						$from,
+						$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
+						array(),
+						array(),
+						array(),
+						"",
+						"",
+						0,
+						-1
+					);
+
+					if (!$mailfile->sendfile()) {
+						dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
+					}
+				}
+
+				// Auto-create thirdparty on member creation
+				if (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY)) {
+					$company = new Societe($db);
+					$result = $company->create_from_member($adh);
+					if ($result < 0) {
+						$error++;
+						$errmsg .= join('<br>', $company->errors);
+					}
+				}
+
+				if (!empty($backtopage)) {
+					$urlback = $backtopage;
+				} elseif (!empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)) {
+					$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
+					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
-					$appli .= " ".DOL_VERSION;
+					$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
 				}
 
-				$to = $adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
-				$from = $conf->global->ADHERENT_MAIL_FROM;
-				$mailfile = new CMailFile(
-					'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
-					$to,
-					$from,
-					$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
-					array(),
-					array(),
-					array(),
-					"",
-					"",
-					0,
-					-1
-				);
+				if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
+					if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {			// If edition of amount not allowed
+						// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
+						// It is not so important because a test is done on return of payment validation.
+					}
 
-				if (!$mailfile->sendfile()) {
-					dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
-				}
-			}
+					$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, price2num(GETPOST('amount', 'alpha'), 'MT'), '', 0);
 
-			// Auto-create thirdparty on member creation
-			if (!empty($conf->global->ADHERENT_DEFAULT_CREATE_THIRDPARTY)) {
-				$company = new Societe($db);
-				$result = $company->create_from_member($adh);
-				if ($result < 0) {
-					$error++;
-					$errmsg .= join('<br>', $company->errors);
+					if (GETPOST('email')) {
+						$urlback .= '&email='.urlencode(GETPOST('email'));
+					}
+					if ($conf->global->MEMBER_NEWFORM_PAYONLINE != '-1' && $conf->global->MEMBER_NEWFORM_PAYONLINE != 'all') {
+						$urlback .= '&paymentmethod='.urlencode($conf->global->MEMBER_NEWFORM_PAYONLINE);
+					}
+				} else {
+					if (!empty($entity)) {
+						$urlback .= '&entity='.((int) $entity);
+					}
 				}
 			}
 
 			if (!empty($backtopage)) {
 				$urlback = $backtopage;
+				dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
 			} elseif (!empty($conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)) {
 				$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
 				// TODO Make replacement of __AMOUNT__, etc...
+				dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
 			} else {
-				$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
+				$error++;
+				$errmsg .= join('<br>', $adh->errors);
 			}
-
-			if (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1') {
-				if (empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)) {			// If edition of amount not allowed
-					// TODO Check amount is same than the amount required for the type of member or if not defined as the defeault amount into $conf->global->MEMBER_NEWFORM_AMOUNT
-					// It is not so important because a test is done on return of payment validation.
-				}
-
-				$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, price2num(GETPOST('amount', 'alpha'), 'MT'), '', 0);
-
-				if (GETPOST('email')) {
-					$urlback .= '&email='.urlencode(GETPOST('email'));
-				}
-				if ($conf->global->MEMBER_NEWFORM_PAYONLINE != '-1' && $conf->global->MEMBER_NEWFORM_PAYONLINE != 'all') {
-					$urlback .= '&paymentmethod='.urlencode($conf->global->MEMBER_NEWFORM_PAYONLINE);
-				}
-			} else {
-				if (!empty($entity)) {
-					$urlback .= '&entity='.((int) $entity);
-				}
-			}
-
-			dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
-		} else {
-			$error++;
-			$errmsg .= join('<br>', $adh->errors);
 		}
 	}
 
@@ -433,6 +483,7 @@ if (empty($reshook) && $action == 'add') {
 		exit;
 	} else {
 		$db->rollback();
+		$action = "create";
 	}
 }
 
@@ -483,6 +534,7 @@ if (!empty($conf->global->MEMBER_NEWFORM_TEXT)) {
 print '</div>';
 
 dol_htmloutput_errors($errmsg);
+dol_htmloutput_events();
 
 // Print form
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
@@ -736,13 +788,27 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 		if (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) || $caneditamount) {
 			print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$showedamount.'">';
 			print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium"> – ';
-			print $amount>0? $langs->trans("AnyAmountWithAdvisedAmount", $amount, $langs->trans("Currency".$conf->currency)): $langs->trans("AnyAmountWithoutAdvisedAmount");
+			print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)): $langs->trans("AnyAmountWithoutAdvisedAmount");
 			print '</span>';
 		} else {
 			print '<input type="hidden" name="amount" id="amount" class="flat amount" value="'.$showedamount.'">';
 			print '<input type="text" name="amount" id="amounthidden" class="flat amount width50" disabled value="'.$showedamount.'">';
 			print ' '.$langs->trans("Currency".$conf->currency);
 		}
+		print '</td></tr>';
+	}
+
+	// Display Captcha code if is enabled
+	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
+		print '<span class="span-icon-security inline-block">';
+		print '<input id="securitycode" placeholder="'.$langs->trans("SecurityCode").'" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" />';
+		print '</span>';
+		print '<span class="nowrap inline-block">';
+		print '<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
+		print '<a class="inline-block valignmiddle" href="'.$php_self.'" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
+		print '</span>';
 		print '</td></tr>';
 	}
 
@@ -770,14 +836,16 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 	foreach ($measuringUnits->records as $lines)
 		$units[$lines->short_label] = $langs->trans(ucfirst($lines->label));
 
-	$publiccounters = $conf->global->MEMBER_COUNTERS_ARE_PUBLIC;
+	$publiccounters = getDolGlobalString("MEMBER_COUNTERS_ARE_PUBLIC");
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut as status, d.morphy, COUNT(a.rowid) AS membercount";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut as status, d.morphy,";
+	$sql .= " COUNT(a.rowid) AS membercount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as a";
-	$sql .= " ON d.rowid = a.fk_adherent_type AND a.statut>0";
+	$sql .= " ON d.rowid = a.fk_adherent_type AND a.statut > 0";
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
-	$sql .= " AND d.statut=1 GROUP BY d.rowid";
+	$sql .= " AND d.statut=1";
+	$sql .= " GROUP BY d.rowid, d.libelle, d.subscription, d.amount, d.caneditamount, d.vote, d.note, d.duration, d.statut, d.morphy";
 
 	$result = $db->query($sql);
 	if ($result) {

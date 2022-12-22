@@ -837,18 +837,27 @@ class FormFile
 					}
 
 					// Show file name with link to download
+					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);;
+
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
-					$out .= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
+					if ($imgpreview) {
+						$out .= '<span class="spanoverflow widthcentpercentminusx valignmiddle">';
+					} else {
+						$out .= '<span class="spanoverflow">';
+					}
+					$out .= '<a class="documentdownload paddingright" href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
 
 					$mime = dol_mimetype($relativepath, '', 0);
 					if (preg_match('/text/', $mime)) {
 						$out .= ' target="_blank" rel="noopener noreferrer"';
 					}
+					$out .= ' title="'.dol_escape_htmltag($file["name"]).'"';
 					$out .= '>';
 					$out .= img_mime($file["name"], $langs->trans("File").': '.$file["name"]);
 					$out .= dol_trunc($file["name"], 150);
-					$out .= '</a>'."\n";
-					$out .= $this->showPreview($file, $modulepart, $relativepath, 0, $param);
+					$out .= '</a>';
+					$out .= '</span>'."\n";
+					$out .= $imgpreview;
 					$out .= '</td>';
 
 					// Show file size
@@ -879,7 +888,7 @@ class FormFile
 
 						$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
-						$out .= img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
+						$out .= '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
 						$out .= '<input type="text" class="quatrevingtpercentminusx width75 nopadding small" id="downloadlink'.$file['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
 						$out .= ajax_autoselect('downloadlink'.$file['rowid']);
 					} else {
@@ -1129,7 +1138,7 @@ class FormFile
 
 		if ($disablecrop == -1) {
 			$disablecrop = 1;
-			// Values here must be supported by the photo_resize.php page.
+			// Values here must be supported by the photos_resize.php page.
 			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'facture', 'facture_fournisseur', 'holiday', 'medias', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'tax-vat', 'ticket', 'user'))) {
 				$disablecrop = 0;
 			}
@@ -1146,7 +1155,7 @@ class FormFile
 			}
 		}
 		// For backward compatiblity, we detect file stored into an old path
-		if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $filearray[0]['level1name'] == 'photos') {
+		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO') && $filearray[0]['level1name'] == 'photos') {
 			$relativepath = preg_replace('/^.*\/produit\//', '', $filearray[0]['path']).'/';
 		}
 
@@ -1407,7 +1416,7 @@ class FormFile
 
 								$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
-								print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
+								print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
 								print '<input type="text" class="quatrevingtpercent minwidth200imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
 							} else {
 								//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
@@ -1439,10 +1448,15 @@ class FormFile
 									// Link to resize
 									$moreparaminurl = '';
 									if (!empty($object->id) && $object->id > 0) {
-										$moreparaminurl = '&id='.$object->id;
+										$moreparaminurl .= '&id='.$object->id;
 									} elseif (GETPOST('website', 'alpha')) {
-										$moreparaminurl = '&website='.GETPOST('website', 'alpha');
+										$moreparaminurl .= '&website='.GETPOST('website', 'alpha');
 									}
+									// Set the backtourl
+									if ($modulepart == 'medias' && !GETPOST('website')) {
+										$moreparaminurl .= '&backtourl='.urlencode(DOL_URL_ROOT.'/ecm/index_medias.php?file_manager=1&modulepart='.$modulepart.'&section_dir='.$relativepath);
+									}
+									//var_dump($moreparaminurl);
 									print '<a class="editfielda" href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode($newmodulepart).$moreparaminurl.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("ResizeOrCrop")).'">'.img_picto($langs->trans("ResizeOrCrop"), 'resize', 'class="paddingrightonly"').'</a>';
 								}
 							}
@@ -1452,6 +1466,7 @@ class FormFile
 								print '<a class="editfielda reposition editfilelink" href="'.(($useinecm == 1 || $useinecm == 5) ? '#' : ($url.'?action=editfile&token='.newToken().'&urlfile='.urlencode($filepath).$paramsectiondir.$param)).'" rel="'.$filepath.'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 							}
 						}
+						// Output link to delete file
 						if ($permonobject) {
 							$useajax = 1;
 							if (!empty($conf->dol_use_jmobile)) {
@@ -1485,8 +1500,8 @@ class FormFile
 					} else {
 						print '<td class="right">';
 						print '<input type="hidden" name="ecmfileid" value="'.$filearray[$key]['rowid'].'">';
-						print '<input type="submit" class="button button-save" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-						print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+						print '<input type="submit" class="button button-save smallpaddingimp" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+						print '<input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 						print '</td>';
 						if (empty($disablemove) && count($filearray) > 1) {
 							print '<td class="right"></td>';

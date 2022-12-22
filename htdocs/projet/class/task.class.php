@@ -811,9 +811,10 @@ class Task extends CommonObjectLine
 	 * @param   int     $includebilltime    Calculate also the time to bill and billed
 	 * @param   array   $search_array_options Array of search
 	 * @param   int     $loadextras         Fetch all Extrafields on each task
+	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
 	 * @return 	array						Array of tasks
 	 */
-	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0)
+	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1)
 	{
 		global $conf, $hookmanager;
 
@@ -968,14 +969,16 @@ class Task extends CommonObjectLine
 
 				$obj = $this->db->fetch_object($resql);
 
-				if ((!$obj->public) && (is_object($userp))) {	// If not public project and we ask a filter on project owned by a user
-					if (!$this->getUserRolesForProjectsOrTasks($userp, 0, $obj->projectid, 0)) {
-						$error++;
+				if ($loadRoleMode) {
+					if ((!$obj->public) && (is_object($userp))) {    // If not public project and we ask a filter on project owned by a user
+						if (!$this->getUserRolesForProjectsOrTasks($userp, 0, $obj->projectid, 0)) {
+							$error++;
+						}
 					}
-				}
-				if (is_object($usert)) {							// If we ask a filter on a user affected to a task
-					if (!$this->getUserRolesForProjectsOrTasks(0, $usert, $obj->projectid, $obj->taskid)) {
-						$error++;
+					if (is_object($usert)) {                            // If we ask a filter on a user affected to a task
+						if (!$this->getUserRolesForProjectsOrTasks(0, $usert, $obj->projectid, $obj->taskid)) {
+							$error++;
+						}
 					}
 				}
 
@@ -2200,7 +2203,7 @@ class Task extends CommonObjectLine
 		$sql .= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
 		$sql .= " t.dateo as date_start, t.datee as datee";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 		$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 		$sql .= " WHERE p.entity IN (".getEntity('project', 0).')';
@@ -2223,7 +2226,7 @@ class Task extends CommonObjectLine
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->project->task->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("OpenedTasks");
-			if ($user->rights->projet->all->lire) {
+			if ($user->hasRight("projet", "all", "lire")) {
 				$response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
 			} else {
 				$response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';

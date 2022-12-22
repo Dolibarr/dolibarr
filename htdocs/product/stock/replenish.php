@@ -111,7 +111,7 @@ if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
-	|| !empty($conf->mrp->enabled)) {
+	|| isModEnabled('mrp')) {
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
@@ -459,13 +459,13 @@ if ($usevirtualstock) {
 		$sqlReceptionFourn = '0';
 	}
 
-	if (!empty($conf->mrp->enabled)) {
+	if (isModEnabled('mrp')) {
 		$sqlProductionToConsume = "(SELECT GREATEST(0, ".$db->ifsql("SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').") IS NULL", "0", "SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').")").") as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlProductionToConsume .= " FROM ".MAIN_DB_PREFIX."mrp_mo as mm5,";
 		$sqlProductionToConsume .= " ".MAIN_DB_PREFIX."mrp_production as mp5";
 		$sqlProductionToConsume .= " WHERE mm5.rowid = mp5.fk_mo AND mm5.entity IN (".getEntity(!empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'mo').")";
 		$sqlProductionToConsume .= " AND mp5.fk_product = p.rowid";
-		$sqlProductionToConsume .= " AND mp5.role IN ('toconsume', 'consummed')";
+		$sqlProductionToConsume .= " AND mp5.role IN ('toconsume', 'consumed')";
 		$sqlProductionToConsume .= " AND mm5.status IN (1,2))";
 
 		$sqlProductionToProduce = "(SELECT GREATEST(0, ".$db->ifsql("SUM(".$db->ifsql("mp5.role = 'toproduce'", 'mp5.qty', '- mp5.qty').") IS NULL", "0", "SUM(".$db->ifsql("mp5.role = 'toproduce'", 'mp5.qty', '- mp5.qty').")").") as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
@@ -849,8 +849,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 		$desiredstock = $objp->desiredstock;
 		$alertstock = $objp->seuil_stock_alerte;
-		$desiredstockwarehouse = ($objp->desiredstockpse ? $objp->desiredstockpse : 0);
-		$alertstockwarehouse = ($objp->seuil_stock_alertepse ? $objp->seuil_stock_alertepse : 0);
+		$desiredstockwarehouse = (!empty($objp->desiredstockpse) ? $objp->desiredstockpse : 0);
+		$alertstockwarehouse = (!empty($objp->seuil_stock_alertepse) ? $objp->seuil_stock_alertepse : 0);
 
 		$warning = '';
 		if ($alertstock && ($stock < $alertstock)) {

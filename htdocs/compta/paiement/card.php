@@ -67,12 +67,11 @@ if ($socid && $socid != $object->thirdparty->id) {
 
 $error = 0;
 
-
 /*
  * Actions
  */
 
-if ($action == 'setnote' && $user->rights->facture->paiement) {
+if ($action == 'setnote' && $user->hasRight('facture', 'paiement')) {
 	$db->begin();
 
 	$result = $object->update_note(GETPOST('note', 'restricthtml'));
@@ -142,13 +141,13 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 						$invoice = new Facture($db);
 
 						if ($invoice->fetch($objp->facid) <= 0) {
-							$errors++;
+							$error++;
 							setEventMessages($invoice->error, $invoice->errors, 'errors');
 							break;
 						}
 
 						if ($invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref) < 0) {
-							$errors++;
+							$error++;
 							setEventMessages($invoice->error, $invoice->errors, 'errors');
 							break;
 						}
@@ -159,12 +158,12 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 
 				$db->free($resql);
 			} else {
-				$errors++;
+				$error++;
 				setEventMessages($db->error, $db->errors, 'errors');
 			}
 		}
 
-		if (! $errors) {
+		if (! $error) {
 			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
 			exit;
 		}
@@ -520,13 +519,7 @@ if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 }
 
 if ($user->socid == 0 && $action == '') {
-	if ($user->rights->facture->paiement) {
-		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
-		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
-		}
-	}
+	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->rights->facture->paiement && !$disable_delete);
 }
 
 print '</div>';

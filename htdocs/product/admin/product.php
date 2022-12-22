@@ -133,7 +133,7 @@ if ($action == 'other') {
 	/*$value = GETPOST('PRODUIT_SOUSPRODUITS', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $value, 'chaine', 0, '', $conf->entity);*/
 
-	$value = GETPOST('activate_viewProdDescInForm', 'alpha');
+	$value = GETPOST('PRODUIT_DESC_IN_FORM', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $value, 'chaine', 0, '', $conf->entity);
 
 	$value = GETPOST('activate_viewProdTextsInThirdpartyLanguage', 'alpha');
@@ -148,11 +148,15 @@ if ($action == 'other') {
 	$value = GETPOST('activate_FillProductDescAuto', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_AUTOFILL_DESC", $value, 'chaine', 0, '', $conf->entity);
 
-	$value = GETPOST('PRODUIT_FOURN_TEXTS', 'alpha');
-	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('PRODUIT_FOURN_TEXTS')) {
+		$value = GETPOST('PRODUIT_FOURN_TEXTS', 'alpha');
+		$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
+	}
 
-	$value = GETPOST('PRODUCT_USE_SUPPLIER_PACKAGING', 'alpha');
-	$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('PRODUCT_USE_SUPPLIER_PACKAGING')) {
+		$value = GETPOST('PRODUCT_USE_SUPPLIER_PACKAGING', 'alpha');
+		$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
+	}
 }
 
 
@@ -200,7 +204,7 @@ if ($action == 'set') {
 if ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->PRODUCT_ADDON_PDF == "$value") {
+		if (getDolGlobalString('PRODUCT_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'PRODUCT_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -457,7 +461,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Defaut
 								print '<td class="center">';
-								if ($conf->global->PRODUCT_ADDON_PDF == $name) {
+								if (getDolGlobalString('PRODUCT_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -689,7 +693,8 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td class="right">';
-print $form->selectyesno("activate_viewProdDescInForm", $conf->global->PRODUIT_DESC_IN_FORM, 1);
+$arrayofchoices = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes").' ('.$langs->trans("DesktopsOnly").')', '2' => $langs->trans("Yes").' ('.$langs->trans("DesktopsAndSmartphones").')');
+print $form->selectarray("PRODUIT_DESC_IN_FORM", $arrayofchoices, getDolGlobalInt('PRODUIT_DESC_IN_FORM'), 0);
 print '</td>';
 print '</tr>';
 

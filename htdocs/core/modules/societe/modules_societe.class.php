@@ -75,10 +75,10 @@ abstract class ModeleThirdPartyCode
 	public $errors;
 
 
-	/**     Renvoi la description par defaut du modele de numerotation
+	/**     Returns the default description of the numbering pattern
 	 *
 	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Texte descripif
+	 *      @return string      			Descriptive text
 	 */
 	public function info($langs)
 	{

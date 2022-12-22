@@ -471,7 +471,7 @@ class BankAccounts extends DolibarrApi
 	 * Add a line to an account
 	 *
 	 * @param int    $id               ID of account
-	 * @param int    $date             Payment date (timestamp) {@from body} {@type timestamp}
+	 * @param string $date             Payment date (timestamp) {@from body} {@type timestamp}
 	 * @param string $type             Payment mode (TYP,VIR,PRE,LIQ,VAD,CB,CHQ...) {@from body}
 	 * @param string $label            Label {@from body}
 	 * @param float  $amount           Amount (may be 0) {@from body}
@@ -480,7 +480,7 @@ class BankAccounts extends DolibarrApi
 	 * @param string $cheque_writer    Name of cheque writer {@from body}
 	 * @param string $cheque_bank      Bank of cheque writer {@from body}
 	 * @param string $accountancycode  Accountancy code {@from body}
-	 * @param int    $datev            Payment date value (timestamp) {@from body} {@type timestamp}
+	 * @param string $datev            Payment date value (timestamp) {@from body} {@type timestamp}
 	 * @param string $num_releve       Bank statement numero {@from body}
 	 * @return int  				   ID of line
 	 *

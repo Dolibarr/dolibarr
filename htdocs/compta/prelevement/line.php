@@ -62,7 +62,7 @@ if ($sortfield == "") {
 	$sortfield = "pl.fk_soc";
 }
 
-$type = $object->type;
+
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 } else {
@@ -262,7 +262,7 @@ if ($id) {
 	$sql .= " , s.rowid as socid, s.nom as name";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
 	if ($type == 'bank-transfer') {
 		$sql .= " , ".MAIN_DB_PREFIX."facture_fourn as f";
 	} else {

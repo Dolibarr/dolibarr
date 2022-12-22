@@ -443,6 +443,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 	// Auto section
 	if (count($sectionauto)) {
 		$htmltooltip = $langs->trans("ECMAreaDesc2");
+		$htmltooltip .= '<br>'.$langs->trans("ECMAreaDesc2b");
 
 		$sectionauto = dol_sort_array($sectionauto, 'label', 'ASC', true, false);
 
@@ -476,6 +477,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 			$htmltooltip .= '<b>'.$langs->trans("Description").'</b>: '.$val['desc'];
 			print $form->textwithpicto('', $htmltooltip, 1, 'info');
 			print '</div>';
+
 			print '</li>';
 
 			$nbofentries++;

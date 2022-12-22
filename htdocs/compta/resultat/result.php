@@ -59,7 +59,7 @@ $nbofyear = 1;
 // Date range
 $year = GETPOST('year', 'int');
 if (empty($year)) {
-	$year_current = strftime("%Y", dol_now());
+	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 	$month_current = strftime("%m", dol_now());
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
@@ -205,6 +205,9 @@ if ($modecompta == "CREANCES-DETTES") {
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
+	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
+	}
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
@@ -231,8 +234,6 @@ if ($modecompta == "CREANCES-DETTES") {
 	$exportlink = '';
 	$description = $langs->trans("RulesResultBookkeepingPersonalized");
 	$description .= ' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/categories_list.php?search_country_id='.$mysoc->country_id.'&mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->transnoentitiesnoconv("AccountingCategory")).')';
-	//if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
-	//else  $description.= $langs->trans("DepositsAreIncluded");
 	$builddate = dol_now();
 }
 
