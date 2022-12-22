@@ -270,12 +270,16 @@ class FormAccounting extends Form
 				}
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
+
+					$titletoshowhtml = ($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type).($obj->range_account ? ' <span class="opacitymedium">('.$obj->range_account.')</span>' : '');
+					$titletoshow = ($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type).($obj->range_account ? ' ('.$obj->range_account.')' : '');
+
 					$out .= '<option value="'.$obj->rowid.'"';
 					if ($obj->rowid == $selected) {
 						$out .= ' selected';
 					}
+					$out .= ' data-html="'.dol_escape_htmltag(dol_string_onlythesehtmltags($titletoshowhtml, 1, 1, 0, 0, array('span'))).'"';
 					$out .= '>';
-					$titletoshow = dol_string_nohtmltag(($maxlen ? dol_trunc($obj->type, $maxlen) : $obj->type).' ('.$obj->range_account.')');
 					$out .= dol_escape_htmltag($titletoshow);
 					$out .= '</option>';
 					$i++;
@@ -331,17 +335,18 @@ class FormAccounting extends Form
 	/**
 	 * Return list of accounts with label by chart of accounts
 	 *
-	 * @param string   		$selectid          Preselected id of accounting accounts (depends on $select_in)
-	 * @param string   		$htmlname          Name of HTML field id. If name start with '.', it is name of HTML css class, so several component with same name in different forms can be used.
-	 * @param int|string    $showempty         1=Add an empty field, 2=Add an empty field+'None' field
-	 * @param array    		$event             Event options
-	 * @param int      		$select_in         0=selectid value is a aa.rowid (default) or 1=selectid is aa.account_number
-	 * @param int      		$select_out        Set value returned by select. 0=rowid (default), 1=account_number
-	 * @param string   		$morecss           More css non HTML object
-	 * @param string   		$usecache          Key to use to store result into a cache. Next call with same key will reuse the cache.
-	 * @return string       	               String with HTML select
+	 * @param string   		$selectid          	Preselected id of accounting accounts (depends on $select_in)
+	 * @param string   		$htmlname          	Name of HTML field id. If name start with '.', it is name of HTML css class, so several component with same name in different forms can be used.
+	 * @param int|string    $showempty         	1=Add an empty field, 2=Add an empty field+'None' field
+	 * @param array    		$event             	Event options
+	 * @param int      		$select_in         	0=selectid value is a aa.rowid (default) or 1=selectid is aa.account_number
+	 * @param int      		$select_out        	Set value returned by select. 0=rowid (default), 1=account_number
+	 * @param string   		$morecss           	More css non HTML object
+	 * @param string   		$usecache          	Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @param string		$active				Filter on status active or not: '0', '1' or '' for no filter
+	 * @return string       	               	String with HTML select
 	 */
-	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '')
+	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $active = '1')
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -360,14 +365,18 @@ class FormAccounting extends Form
 			$options = $options + $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
 			$selected = $selectid;
 		} else {
-			$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT) ? 50 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT;
+			$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', 50);
 
 			$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.labelshort, aa.rowid, aa.fk_pcg_version";
 			$sql .= " FROM ".$this->db->prefix()."accounting_account as aa";
 			$sql .= " INNER JOIN ".$this->db->prefix()."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 			$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
-			$sql .= " AND aa.active = 1";
-			$sql .= " AND aa.entity=".$conf->entity;
+			if ($active === '1') {
+				$sql .= " AND aa.active = 1";
+			} elseif ($active === '0') {
+				$sql .= " AND aa.active = 0";
+			}
+			$sql .= " AND aa.entity=".((int) $conf->entity);
 			$sql .= " ORDER BY aa.account_number";
 
 			dol_syslog(get_class($this)."::select_account", LOG_DEBUG);

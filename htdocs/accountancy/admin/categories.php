@@ -110,9 +110,14 @@ print '<table class="border centpercent">';
 // Select the category
 print '<tr><td class="titlefield">'.$langs->trans("AccountingCategory").'</td>';
 print '<td>';
-$formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 1);
-print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
+$formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 0);
+print '<input type="submit" class="button small" value="'.$langs->trans("Select").'">';
 print '</td></tr>';
+
+print '</table>';
+
+print dol_get_fiche_end();
+
 
 // Select the accounts
 if (!empty($cat_id)) {
@@ -120,8 +125,7 @@ if (!empty($cat_id)) {
 	if ($return < 0) {
 		setEventMessages(null, $accountingcategory->errors, 'errors');
 	}
-	print '<tr><td>'.$langs->trans("AddAccountFromBookKeepingWithNoCategories").'</td>';
-	print '<td>';
+	print '<br>';
 
 	$arraykeyvalue = array();
 	foreach ($accountingcategory->lines_cptbk as $key => $val) {
@@ -130,8 +134,9 @@ if (!empty($cat_id)) {
 	}
 
 	if (is_array($accountingcategory->lines_cptbk) && count($accountingcategory->lines_cptbk) > 0) {
-		print $form->multiselectarray('cpt_bk', $arraykeyvalue, GETPOST('cpt_bk', 'array'), null, null, null, null, "90%");
-		print '<br>';
+		print img_picto($langs->trans("AccountingAccount"), 'accounting_account', 'class="pictofixedwith"');
+		print $form->multiselectarray('cpt_bk', $arraykeyvalue, GETPOST('cpt_bk', 'array'), null, null, '', 0, "80%", '', '', $langs->transnoentitiesnoconv("AddAccountFromBookKeepingWithNoCategories"));
+		//print '<br>';
 		/*print '<select class="flat minwidth200" size="8" name="cpt_bk[]" multiple>';
 		foreach ( $accountingcategory->lines_cptbk as $cpt ) {
 			print '<option value="' . length_accountg($cpt->numero_compte) . '">' . length_accountg($cpt->numero_compte) . ' (' . $cpt->label_compte . ' ' . $cpt->doc_ref . ')</option>';
@@ -139,20 +144,16 @@ if (!empty($cat_id)) {
 		print '</select><br>';
 		print ajax_combobox('cpt_bk');
 		*/
-		print '<input type="submit" class="button button-add" id="" class="action-delete" value="'.$langs->trans("Add").'"> ';
+		print '<input type="submit" class="button button-add small" id="" class="action-delete" value="'.$langs->trans("Add").'"> ';
 	}
-	print '</td></tr>';
 }
-
-print '</table>';
-
-print dol_get_fiche_end();
 
 print '</form>';
 
 
 if ($action == 'display' || $action == 'delete') {
-	print "<table class='noborder' width='100%'>\n";
+	print '<br>';
+	print '<table class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">'.$langs->trans("AccountAccounting")."</td>";
 	print '<td class="liste_titre" colspan="2">'.$langs->trans("Label")."</td>";
@@ -177,6 +178,8 @@ if ($action == 'display' || $action == 'delete') {
 				print "</td>";
 				print "</tr>\n";
 			}
+		} else {
+			print '<tr><td colspan="3"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 		}
 	}
 

@@ -81,6 +81,7 @@ $duration_unit = GETPOST('duration_unit', 'alpha');
 $vote = GETPOST("vote", "int");
 $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
+$caneditamount = GETPOSTINT("caneditamount");
 
 // Security check
 $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
@@ -124,11 +125,11 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	$object->status = (int) $status;
 	$object->subscription = (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
-	$object->caneditamount = GETPOSTINT("caneditamount");
+	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
-	$object->note = trim($comment);
 	$object->note_public = trim($comment);
+	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
 	$object->vote = (int) $vote;
 
@@ -142,7 +143,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	} else {
-		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
+		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle = '".$db->escape($object->label)."'";
 		$sql .= " WHERE entity IN (".getEntity('member_type').")";
 		$result = $db->query($sql);
 		$num = null;
@@ -170,7 +171,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	}
 }
 
-if ($action == 'update' && $user->rights->adherent->configurer) {
+if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
 
 	$object->oldcopy = dol_clone($object);
@@ -183,8 +184,8 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
-	$object->note = trim($comment);
 	$object->note_public = trim($comment);
+	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
 	$object->vote = (boolean) trim($vote);
 
@@ -206,7 +207,7 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 	exit;
 }
 
-if ($action == 'confirm_delete' && !empty($user->rights->adherent->configurer)) {
+if ($action == 'confirm_delete' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
 	$res = $object->delete();
 
@@ -256,7 +257,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		}
 
 		$newcardbutton = '';
-		if ($user->rights->adherent->configurer) {
+		if ($user->hasRight('adherent', 'configurer')) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
 		}
 
@@ -322,7 +323,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '<td class="center">'.yn($objp->caneditamount).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
 			print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
-			if ($user->rights->adherent->configurer) {
+			if ($user->hasRight('adherent', 'configurer')) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 			} else {
 				print '<td class="right">&nbsp;</td>';
@@ -390,8 +391,8 @@ if ($action == 'create') {
 	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : price($amount)).'">';
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("CanEditAmount").'</td><td>';
-	print $form->selectyesno("caneditamount", 0, 1);
+	print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
+	print $form->selectyesno("caneditamount", GETPOSTISSET('caneditamount') ? GETPOST('caneditamount') : 0, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
@@ -832,7 +833,7 @@ if ($rowid > 0) {
 		print '</td></tr>';
 
 		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmountDetail")).'</td><td>';
-		print $form->selectyesno("caneditamount", $object->caneditamount);
+		print $form->selectyesno("caneditamount", $object->caneditamount, 1);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';

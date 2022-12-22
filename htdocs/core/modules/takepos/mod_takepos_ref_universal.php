@@ -54,7 +54,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	/**
 	 *  return description of the numbering model
 	 *
-	 * @return     string      Texte descripif
+	 * @return     string      Descriptive text
 	 */
 	public function info()
 	{
