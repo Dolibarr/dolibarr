@@ -408,7 +408,7 @@ class mailing_contacts1 extends MailingTargets
 		}
 
 		// Filter on language
-		if ($filter_lang != '') {
+		if (!empty($filter_lang)) {
 			$sql .= " AND sp.default_lang = '".$this->db->escape($filter_lang)."'";
 		}
 
@@ -439,7 +439,6 @@ class mailing_contacts1 extends MailingTargets
 
 		$sql .= " ORDER BY sp.email";
 		// print "wwwwwwx".$sql;
-
 		// Stocke destinataires dans cibles
 		$result = $this->db->query($sql);
 		if ($result) {
