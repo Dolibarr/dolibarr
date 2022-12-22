@@ -236,7 +236,7 @@ class Ticket extends CommonObject
 	const STATUS_READ = 1;
 	const STATUS_ASSIGNED = 2;
 	const STATUS_IN_PROGRESS = 3;
-	const STATUS_NEED_MORE_INFO = 5;
+	const STATUS_NEED_MORE_INFO = 5;	// waiting requester feedback
 	const STATUS_WAITING = 7;			// on hold
 	const STATUS_CLOSED = 8;			// Closed - Solved
 	const STATUS_CANCELED = 9;			// Closed - Not solved
