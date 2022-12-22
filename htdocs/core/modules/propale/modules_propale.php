@@ -87,9 +87,9 @@ abstract class ModeleNumRefPropales
 	}
 
 	/**
-	 *  Renvoi la description par defaut du modele de numerotation
+	 *  Returns the default description of the numbering pattern
 	 *
-	 * 	@return     string      Texte descripif
+	 * 	@return     string      Descriptive text
 	 */
 	public function info()
 	{

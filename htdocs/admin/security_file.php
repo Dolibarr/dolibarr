@@ -115,15 +115,15 @@ print '<br>';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent nomarginbottom">';
 print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
+print '<td>'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td colspan="2">'.$langs->trans("MaxSizeForUploadedFiles").'.';
+print '<td>'.$langs->trans("MaxSizeForUploadedFiles").'.';
 $max = @ini_get('upload_max_filesize');
 if (isset($max)) {
-	print ' '.$langs->trans("MustBeLowerThanPHPLimit", ((int) $max) * 1024, $langs->trans("Kb")).'.';
+	print '<br><span class="opacitymedium">'.$langs->trans("MustBeLowerThanPHPLimit", ((int) $max) * 1024, $langs->trans("Kb")).'.</span>';
 } else {
 	print ' '.$langs->trans("NoMaxSizeByPHPLimit").'.';
 }
@@ -135,8 +135,8 @@ print '</tr>';
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("UMask").'</td><td class="right">';
-print $form->textwithpicto('', $langs->trans("UMaskExplanation"));
+print '<td>';
+print $form->textwithpicto($langs->trans("UMask"), $langs->trans("UMaskExplanation"));
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.dol_escape_htmltag($conf->global->MAIN_UMASK).'">';
@@ -146,7 +146,7 @@ print '</tr>';
 // Use anti virus
 
 print '<tr class="oddeven">';
-print '<td colspan="2">'.$langs->trans("AntiVirusCommand").'<br>';
+print '<td>'.$langs->trans("AntiVirusCommand").'<br>';
 print '<span class="opacitymedium">'.$langs->trans("AntiVirusCommandExample").'</span>';
 // Check command in inside safe_mode
 print '</td>';
@@ -170,7 +170,7 @@ print '</tr>';
 // Use anti virus
 
 print '<tr class="oddeven">';
-print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
+print '<td>'.$langs->trans("AntiVirusParam").'<br>';
 print '<span class="opacitymedium">'.$langs->trans("AntiVirusParamExample").'</span>';
 print '</td>';
 print '<td>';
@@ -198,7 +198,9 @@ $formfile->form_attach_new_file($_SERVER['PHP_SELF'], $langs->trans("FormToTestF
 
 // List of document
 $filearray = dol_dir_list($upload_dir, "files", 0, '', '', $sortfield, $sortorder == 'desc' ? SORT_DESC : SORT_ASC, 1);
-$formfile->list_of_documents($filearray, null, 'admin_temp', '');
+if (count($filearray) > 0) {
+	$formfile->list_of_documents($filearray, null, 'admin_temp', '');
+}
 
 // End of page
 llxFooter();

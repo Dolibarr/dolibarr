@@ -381,6 +381,11 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
+			if (dol_strlen($this->message) > 65000) {
+				$this->errors[] = 'ErrorFieldTooLong';
+				dol_syslog(get_class($this).'::create error -1 message too long', LOG_ERR);
+				$result = -1;
+			}
 		}
 
 		if (isset($this->fk_statut)) {
@@ -915,6 +920,11 @@ class Ticket extends CommonObject
 
 		if (isset($this->message)) {
 			$this->message = trim($this->message);
+			if (dol_strlen($this->message) > 65000) {
+				$this->errors[] = 'ErrorFieldTooLong';
+				dol_syslog(get_class($this).'::update error -1 message too long', LOG_ERR);
+				return -1;
+			}
 		}
 
 		if (isset($this->fk_statut)) {
@@ -2667,7 +2677,10 @@ class Ticket extends CommonObject
 				}
 
 				// Set status to "answered" if not set yet, but only if internal user and not private message
-				if ($object->status < 3 && !$user->socid && !$private) {
+				// Or set status to "answered" if the client has answered and if the ticket has started
+				if (($object->status < self::STATUS_IN_PROGRESS && !$user->socid && !$private) ||
+					($object->status > self::STATUS_IN_PROGRESS && $public_area)
+				) {
 					$object->setStatut(3);
 				}
 				return 1;

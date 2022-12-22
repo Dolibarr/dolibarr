@@ -8244,7 +8244,7 @@ abstract class CommonObject
 
 						if ($display_type == 'card') {
 							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
-							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'valid' || $action == 'editline')) {
+							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'valid' || $action == 'editline' || $action == 'confirm_valid' || $action == 'confirm_cancel')) {
 								$out .= '<td></td>';
 							}
 							$out .= '<td class="titlefieldcreate wordbreak';
@@ -9600,6 +9600,12 @@ abstract class CommonObject
 			}
 		}
 
+		// Delete linked object
+		$res = $this->deleteObjectLinked();
+		if ($res < 0) {
+			$error++;
+		}
+
 		if (!$error && !empty($this->isextrafieldmanaged)) {
 			$result = $this->deleteExtraFields();
 			if ($result < 0) {
@@ -9723,23 +9729,24 @@ abstract class CommonObject
 		$tmpforobjectclass = get_class($this);
 		$tmpforobjectlineclass = ucfirst($tmpforobjectclass).'Line';
 
+		$this->db->begin();
+
 		// Call trigger
 		$result = $this->call_trigger('LINE'.strtoupper($tmpforobjectclass).'_DELETE', $user);
 		if ($result < 0) {
-			return -1;
+			$error++;
 		}
 		// End call triggers
 
-		$this->db->begin();
+		if (empty($error)) {
+			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element_line;
+			$sql .= " WHERE rowid = ".((int) $idline);
 
-		$sql = "DELETE FROM ".$this->db->prefix().$this->table_element_line;
-		$sql .= " WHERE rowid = ".((int) $idline);
-
-		dol_syslog(get_class($this)."::deleteLineCommon", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$this->error = "Error ".$this->db->lasterror();
-			$error++;
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = "Error ".$this->db->lasterror();
+				$error++;
+			}
 		}
 
 		if (empty($error)) {

@@ -751,6 +751,9 @@ if ($search_billed > 0) {
 //$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 $help_url = '';
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
 $sql = 'SELECT';
 if ($sall) {
 	$sql = 'SELECT DISTINCT';
@@ -814,11 +817,15 @@ if ($search_refsupp) {
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
-if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
-}
-if ($search_company_alias) {
-	$sql .= natural_search('s.name_alias', $search_company_alias);
+if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
+} else {
+	if ($search_company) {
+		$sql .= natural_search('s.nom', $search_company);
+	}
+	if ($search_company_alias) {
+		$sql .= natural_search('s.name_alias', $search_company_alias);
+	}
 }
 if ($search_request_author) {
 	$sql .= natural_search(array('u.lastname', 'u.firstname', 'u.login'), $search_request_author);
@@ -871,12 +878,6 @@ if ($search_country) {
 }
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
-}
-if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
-}
-if ($search_company_alias) {
-	$sql .= natural_search('s.name_alias', $search_company_alias);
 }
 if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);

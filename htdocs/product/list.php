@@ -1143,12 +1143,12 @@ if (!empty($arrayfields['p.tms']['checked'])) {
 }
 if (!empty($arrayfields['p.tosell']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $form->selectarray('search_tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'), '1'=>$langs->trans('ProductStatusOnSellShort')), $search_tosell, 1);
+	print $form->selectarray('search_tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'), '1'=>$langs->trans('ProductStatusOnSellShort')), $search_tosell, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td >';
 }
 if (!empty($arrayfields['p.tobuy']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $form->selectarray('search_tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'), '1'=>$langs->trans('ProductStatusOnBuyShort')), $search_tobuy, 1);
+	print $form->selectarray('search_tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'), '1'=>$langs->trans('ProductStatusOnBuyShort')), $search_tobuy, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
