@@ -190,7 +190,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
 		}
 	}
-	if (!is_numeric(GETPOST('position', 'alpha'))) {
+	if (GETPOST('position') && !is_numeric(GETPOST('position', 'alpha'))) {
 		$langs->loadLangs(array("errors"));
 		$ok = 0;
 		setEventMessages($langs->transnoentities('ErrorFieldMustBeANumeric', $langs->transnoentities("Position")), null, 'errors');
