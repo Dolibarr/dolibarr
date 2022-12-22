@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -195,7 +196,7 @@ class TaskStats extends Stats
 	}
 
 
-		/**
+	/**
 	 * Return the Task amount by month for a year
 	 *
 	 * @param 	int 	$year 		Year to scan
@@ -208,7 +209,7 @@ class TaskStats extends Stats
 		return array();
 	}
 
-		/**
+	/**
 	 * Return average of entity by month
 	 * @param	int     $year           year number
 	 * @return 	int						value
