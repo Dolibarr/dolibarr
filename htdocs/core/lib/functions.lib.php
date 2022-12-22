@@ -6914,24 +6914,27 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 
 /**
  *	Clean a string to keep only desirable HTML tags.
- *  WARNING: This also clean HTML comments (used to obfuscate tag name).
+ *  WARNING: This also clean HTML comments (because they can be used to obfuscate tag name).
  *
  *	@param	string	$stringtoclean			String to clean
  *  @param	int		$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
  *  @param	int		$removeclassattribute	1=Remove the class attribute from tags
  *  @param	int		$cleanalsojavascript	Remove also occurence of 'javascript:'.
  *  @param	int		$allowiframe			Allow iframe tags.
+ *  @param	array	$allowed_tags			List of allowed tags to replace the default list
  *	@return string	    					String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0)
+function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1, $cleanalsojavascript = 0, $allowiframe = 0, $allowed_tags = array())
 {
-	$allowed_tags = array(
-		"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
-		"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6",
-		"comment"	// this tags is added to manage comment <!--...--> that are replaced into <comment>...</comment>
-	);
+	if (empty($allowed_tags)) {
+		$allowed_tags = array(
+			"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
+			"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6"
+		);
+	}
+	$allowed_tags[] = "comment";		// this tags is added to manage comment <!--...--> that are replaced into <comment>...</comment>
 	if ($allowiframe) {
 		$allowed_tags[] = "iframe";
 	}
@@ -6949,7 +6952,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$stringtoclean = preg_replace('/&colon;/i', ':', $stringtoclean);
 	$stringtoclean = preg_replace('/&#58;|&#0+58|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have a : encoded like this) to disable 'javascript:...'
 
-	$temp = strip_tags($stringtoclean, $allowed_tags_string);	// Warning: This remove also undesired </> changing string obfuscated with </> that pass injection detection into harmfull string
+	$temp = strip_tags($stringtoclean, $allowed_tags_string);	// Warning: This remove also undesired </>, so may changes string obfuscated with </> that pass the injection detection into a harmfull string
 
 	if ($cleanalsosomestyles) {	// Clean for remaining html tags
 		$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
@@ -10737,21 +10740,21 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param int|boolean	$userRight  User action right
  * // phpcs:disable
  * @param array 		$params = [ // Various params for future : recommended rather than adding more function arguments
- *                          'attr' => [ // to add or override button attributes
- *                          'xxxxx' => '', // your xxxxx attribute you want
- *                          'class' => 'reposition', // to add more css class to the button class attribute
- *                          'classOverride' => '' // to replace class attribute of the button
- *                          ],
- *                          'confirm' => [
- *                          'url' => 'http://', // Overide Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
- *                          'title' => '', // Overide title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
- *                          'action-btn-label' => '', // Overide label of action button,  if empty default label use "Confirm" lang key
- *                          'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
- *                          'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
- *                          'modal' => true, // true|false to display dialog as a modal (with dark background)
- * 						    'isDropDrown' => false, // true|false to display dialog as a dropdown (with dark background)
- *                          ],
- *                          ]
+ *                              'attr' => [ // to add or override button attributes
+ *                              'xxxxx' => '', // your xxxxx attribute you want
+ *                              'class' => 'reposition', // to add more css class to the button class attribute
+ *                              'classOverride' => '' // to replace class attribute of the button
+ *                              ],
+ *                              'confirm' => [
+ *                              'url' => 'http://', // Overide Url to go when user click on action btn, if empty default url is $url.?confirm=yes, for no js compatibility use $url for fallback confirm.
+ *                              'title' => '', // Overide title of modal,  if empty default title use "ConfirmBtnCommonTitle" lang key
+ *                              'action-btn-label' => '', // Overide label of action button,  if empty default label use "Confirm" lang key
+ *                              'cancel-btn-label' => '', // Overide label of cancel button,  if empty default label use "CloseDialog" lang key
+ *                              'content' => '', // Overide text of content,  if empty default content use "ConfirmBtnCommonContent" lang key
+ *                              'modal' => true, // true|false to display dialog as a modal (with dark background)
+ *                              'isDropDrown' => false, // true|false to display dialog as a dropdown (with dark background)
+ *                              ],
+ *                              ]
  * // phpcs:enable
  * @return string               	html button
  */
@@ -11438,7 +11441,6 @@ function jsonOrUnserialize($stringtodecode)
 
 	return $result;
 }
-
 
 
 /**

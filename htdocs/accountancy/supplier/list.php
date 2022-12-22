@@ -777,6 +777,9 @@ if ($result) {
 		print '</tr>';
 		$i++;
 	}
+	if ($num_lines == 0) {
+		print '<tr><td colspan="14"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
 
 	print '</table>';
 	print "</div>";

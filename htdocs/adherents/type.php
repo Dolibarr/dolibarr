@@ -171,7 +171,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	}
 }
 
-if ($action == 'update' && $user->rights->adherent->configurer) {
+if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
 
 	$object->oldcopy = dol_clone($object);
@@ -207,7 +207,7 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 	exit;
 }
 
-if ($action == 'confirm_delete' && !empty($user->rights->adherent->configurer)) {
+if ($action == 'confirm_delete' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
 	$res = $object->delete();
 
@@ -257,7 +257,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		}
 
 		$newcardbutton = '';
-		if ($user->rights->adherent->configurer) {
+		if ($user->hasRight('adherent', 'configurer')) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
 		}
 
@@ -323,7 +323,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '<td class="center">'.yn($objp->caneditamount).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
 			print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
-			if ($user->rights->adherent->configurer) {
+			if ($user->hasRight('adherent', 'configurer')) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 			} else {
 				print '<td class="right">&nbsp;</td>';

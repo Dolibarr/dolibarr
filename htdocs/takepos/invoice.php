@@ -1094,7 +1094,7 @@ function Print(id, gift){
 function TakeposPrinting(id){
 	var receipt;
 	console.log("TakeposPrinting" + id);
-	$.get("receipt.php?facid="+id, function(data, status){
+	$.get("receipt.php?facid="+id, function(data, status) {
 		receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');
 		$.ajax({
 			type: "POST",
