@@ -369,7 +369,7 @@ if (empty($reshook)) {
 							}
 
 							if (!empty($conf->global->MAILING_DELAY)) {
-								dol_syslog("Wait a delay of MAILING_DELAY=".$conf->global->MAILING_DELAY);
+								dol_syslog("Wait a delay of MAILING_DELAY=".((float) $conf->global->MAILING_DELAY));
 								usleep((float) $conf->global->MAILING_DELAY * 1000000);
 							}
 

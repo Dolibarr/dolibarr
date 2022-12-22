@@ -188,6 +188,10 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
 			if ($result < 0) {
 				$error++;
 			}
+			$result = $object->call_trigger('PROPAL_CLOSE_REFUSED_WEB', $user);
+			if ($result < 0) {
+				$error++;
+			}
 		}
 	} else {
 		$db->rollback();

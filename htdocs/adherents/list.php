@@ -262,7 +262,7 @@ if (empty($reshook)) {
 	}
 
 	// Create external user
-	if ($massaction == 'createexternaluser' && $user->hasRight('adherent', 'creer') && $user->rights->user->user->creer) {
+	if ($massaction == 'createexternaluser' && $user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'creer')) {
 		$tmpmember = new Adherent($db);
 		$error = 0;
 		$nbcreated = 0;

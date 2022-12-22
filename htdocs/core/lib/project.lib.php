@@ -1074,7 +1074,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param   int			$level					Level (start to 0, then increased/decrease by recursive call)
  * @param   string		$projectsrole			Array of roles user has on project
  * @param   string		$tasksrole				Array of roles user has on task
- * @param	string		$mine					Show only task lines I am assigned to                                              <<<<<<<<< Temporary merge branch 1
+ * @param	string		$mine					Show only task lines I am assigned to
  * @param   int			$restricteditformytask	0=No restriction, 1=Enable add time only if task is a task i am affected to
  * @param	int			$preselectedday			Preselected day
  * @param   array       $isavailable			Array with data that say if user is available for several days for morning and afternoon
@@ -2596,7 +2596,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				print '<td class="tdoverflowmax150">';
 				print $projectstatic->getNomUrl(1, '', 0, '', '-', 0, -1, 'nowraponall');
 				if (!in_array('projectlabel', $hiddenfields)) {
-					print '<br><span class="opacitymedium">'.dol_trunc($objp->title, 24).'</span>';
+					print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->title).'</span>';
 				}
 				print '</td>';
 
