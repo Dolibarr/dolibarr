@@ -37,6 +37,7 @@ EndSubscription=End of membership
 SubscriptionId=Contribution ID
 WithoutSubscription=Without membership
 WaitingSubscription=Membership pending
+WaitingSubscriptionShort=Pending
 MemberId=Member Id
 MemberRef=Member Ref
 NewMember=New member
