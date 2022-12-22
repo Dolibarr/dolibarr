@@ -71,7 +71,6 @@ abstract class CommonOrder extends CommonObject
 	 * @var string code
 	 */
 	public $code = "";
-
 }
 
 /**
