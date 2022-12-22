@@ -427,6 +427,13 @@ if ($result) {
 		print "</tr>";
 		$i++;
 	}
+	if ($num_lines == 0) {
+		$colspan=10;
+		if (!empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+			$colspan++;
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
 
 	print "</table>";
 	print "</div>";

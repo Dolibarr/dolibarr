@@ -448,6 +448,7 @@ if (!empty($force_install_noedit)) {
 			<input type="checkbox"
 				   id="db_create_database"
 				   name="db_create_database"
+				   value="on"
 				<?php
 				$checked = 0;
 				if ($force_install_createdatabase) {
@@ -507,6 +508,7 @@ if (!empty($force_install_noedit)) {
 			<input type="checkbox"
 				   id="db_create_user"
 				   name="db_create_user"
+				   value="on"
 				<?php
 				$checked = 0;
 				if (!empty($force_install_createuser)) {
@@ -596,49 +598,12 @@ if (!empty($force_install_noedit)) {
 </div>
 
 <script type="text/javascript">
-jQuery(document).ready(function() {
-
-	var dbtype = jQuery("#db_type");
-
-	dbtype.change(function () {
-		if (dbtype.val() == 'sqlite' || dbtype.val() == 'sqlite3') {
-			jQuery(".hidesqlite").hide();
-		} else {
-			jQuery(".hidesqlite").show();
-		}
-
-		// Automatically set default database ports and admin user
-		if (dbtype.val() == 'mysql' || dbtype.val() == 'mysqli') {
-			jQuery("#db_port").val(3306);
-			jQuery("#db_user_root").val('root');
-		} else if (dbtype.val() == 'pgsql') {
-			jQuery("#db_port").val(5432);
-			jQuery("#db_user_root").val('postgres');
-		} else if (dbtype.val() == 'mssql') {
-			jQuery("#db_port").val(1433);
-			jQuery("#db_user_root").val('sa');
-		}
-
-	});
-
-	init_needroot();
-	jQuery("#db_create_database").click(function() {
-		console.log("click on db_create_database");
-		init_needroot();
-	});
-	jQuery("#db_create_user").click(function() {
-		console.log("click on db_create_user");
-		init_needroot();
-	});
-	<?php if ($force_install_noedit == 2 && empty($force_install_databasepass)) { ?>
-	jQuery("#db_pass").focus();
-	<?php } ?>
-});
-
 function init_needroot()
 {
 	console.log("init_needroot force_install_noedit=<?php echo $force_install_noedit?>");
-	/*alert(jQuery("#db_create_database").prop("checked")); */
+	console.log(jQuery("#db_create_database").is(":checked"));
+	console.log(jQuery("#db_create_user").is(":checked"));
+
 	if (jQuery("#db_create_database").is(":checked") || jQuery("#db_create_user").is(":checked"))
 	{
 		console.log("init_needroot show root section");
@@ -714,6 +679,47 @@ function jscheckparam()
 
 	return ok;
 }
+
+
+jQuery(document).ready(function() {	// TODO Test $( window ).load(function() to see if the init_needroot work better after a back
+
+	var dbtype = jQuery("#db_type");
+
+	dbtype.change(function () {
+		if (dbtype.val() == 'sqlite' || dbtype.val() == 'sqlite3') {
+			jQuery(".hidesqlite").hide();
+		} else {
+			jQuery(".hidesqlite").show();
+		}
+
+		// Automatically set default database ports and admin user
+		if (dbtype.val() == 'mysql' || dbtype.val() == 'mysqli') {
+			jQuery("#db_port").val(3306);
+			jQuery("#db_user_root").val('root');
+		} else if (dbtype.val() == 'pgsql') {
+			jQuery("#db_port").val(5432);
+			jQuery("#db_user_root").val('postgres');
+		} else if (dbtype.val() == 'mssql') {
+			jQuery("#db_port").val(1433);
+			jQuery("#db_user_root").val('sa');
+		}
+
+	});
+
+	jQuery("#db_create_database").click(function() {
+		console.log("click on db_create_database");
+		init_needroot();
+	});
+	jQuery("#db_create_user").click(function() {
+		console.log("click on db_create_user");
+		init_needroot();
+	});
+	<?php if ($force_install_noedit == 2 && empty($force_install_databasepass)) { ?>
+	jQuery("#db_pass").focus();
+	<?php } ?>
+
+	init_needroot();
+});
 </script>
 
 

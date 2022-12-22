@@ -34,6 +34,8 @@
 	--colortopbordertitle1: rgb(<?php print $colortopbordertitle1; ?>);
 	--listetotal: #888888;
 	--inputbackgroundcolor: #FFF;
+	--inputbackgroundcolordisabled: #eee;
+	--inputcolordisabled: rgb(80, 80, 80);
 	--inputbordercolor: rgba(0,0,0,.15);
 	--tooltipbgcolor: <?php print $toolTipBgColor; ?>;
 	--tooltipfontcolor : <?php print $toolTipFontColor; ?>;
@@ -85,7 +87,9 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colortextbackvmenu: rgb(220,220,220);
 				--tooltipfontcolor : rgb(220,220,220);
 	            --listetotal: rgb(245, 83, 158);
-	            --inputbackgroundcolor: #2b2d2f;
+	            --inputbackgroundcolor: rgb(70, 70, 70);
+				--inputbackgroundcolordisabled: rgb(60, 60, 60);
+				--inputcolordisabled: rgb(140, 140, 140);
 	            --inputbordercolor: rgb(220,220,220);
 	            --oddevencolor: rgb(220,220,220);
 	            --colorboxstatsborder: rgb(65,100,138);
@@ -509,7 +513,8 @@ select:invalid, select.--error {
 }
 input:disabled, textarea:disabled, select[disabled='disabled']
 {
-	background:#eee;
+	background: var(--inputbackgroundcolordisabled);
+	color: var(--inputcolordisabled);
 }
 
 input.liste_titre {
@@ -1323,6 +1328,12 @@ select.flat.selectlimit {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.tdoverflowmax80imp {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 80px !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .tdoverflowmax100 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 100px;
 	overflow: hidden;
@@ -1394,6 +1405,12 @@ select.flat.selectlimit {
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 	height: auto !important;
+}
+.tenlinesmax {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 10;
+	overflow: hidden;
 }
 
 .tablelistofcalendars {
@@ -1709,6 +1726,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth200imp, select.minwidth300 {
 		width: calc(100% - 40px) !important;
+		min-width: 100px;
 		display: inline-block;
 	}
 	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
@@ -1966,7 +1984,7 @@ td.showDragHandle {
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
-	z-index: 1001;
+	z-index: 1005;
 }
 <?php } ?>
 <?php if (!empty($conf->global->THEME_DARKMODEENABLED)) {  ?>
@@ -2421,6 +2439,9 @@ img.photoref, div.photoref {
 }
 img.photokanban, div.photokanban {
 	padding: 0;
+	border: none;
+	box-shadow: none;
+	vertical-align: middle;
 }
 div.photoref .fa, div.photoref .fas, div.photoref .far {
 	font-size: 2.5em;
@@ -2534,6 +2555,12 @@ span.mainmenuaspan.tmenudisabled {
 	color: var(--colortextbackhmenu);
 	opacity: 0.5;
 	cursor: not-allowed;
+}
+
+a.disabled {
+	color: #aaa;
+	text-decoration: none !important;
+	cursor: default;
 }
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
@@ -5354,10 +5381,17 @@ td.cal_other_month {
 
 
 /* ============================================================================== */
-/*  Ajax - Liste deroulante de l'autocompletion                                   */
+/*  Ajax - Combo list for autocompletion                                          */
 /* ============================================================================== */
 
-.ui-widget-content { border: solid 1px rgba(0,0,0,.3); background: #fff !important; }
+.ui-widget-content {
+	border: solid 1px rgba(0,0,0,.3);
+	background: var(--colorbackbody) !important;
+	color: var(--colortext) !important;
+}
+/*.ui-widget-header {
+	background: var(--colorbacktitle);
+}*/
 
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif', 1) ?>) right center no-repeat; }
 .ui-autocomplete {
@@ -6453,6 +6487,9 @@ ul.select2-results__options li {
 	.select2-container.select2-container--open .select2-dropdown--below {
 		min-width: 220px !important;
 	}
+	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below {
+		min-width: 140px !important;
+	}
 
 	.select2-container--open .select2-dropdown--below {
 		border-top: 1px solid var(--inputbordercolor);
@@ -6515,6 +6552,10 @@ span.noborderoncategories {
   border: 1px solid #aaa;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   display: none;
+}
+
+div.multi-select-menu[role="menu"] {
+	min-width: 220px !important;
 }
 
 .multi-select-menu input {

@@ -60,7 +60,6 @@ TicketAssigned=Ticket ahora está asignado
 TicketChangeCategory=Cambiar código analítico
 TicketChangeSeverity=Cambiar severidad
 TicketAddMessage=Añade un mensaje
-AddMessage=Añade un mensaje
 MessageSuccessfullyAdded=Ticket agregado
 TicketMessageSuccessfullyAdded=Mensaje agregado con éxito
 TicketMessagesList=Lista de mensajes

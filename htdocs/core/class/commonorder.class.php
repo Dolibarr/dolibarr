@@ -32,6 +32,7 @@ abstract class CommonOrder extends CommonObject
 {
 	use CommonIncoterm;
 
+
 		/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
@@ -65,6 +66,12 @@ abstract class CommonOrder extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
+
+	/**
+	 * @var string code
+	 */
+	public $code = "";
+
 }
 
 /**

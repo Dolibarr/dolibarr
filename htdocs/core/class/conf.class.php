@@ -133,6 +133,7 @@ class Conf
 			'barcode' => array(),
 			'models' => array(),
 			'societe' => array(),
+			'member' => array(),
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array()
@@ -145,22 +146,22 @@ class Conf
 		$this->expedition_bon = new stdClass();
 		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
-		$this->product			= new stdClass();
-		$this->service			= new stdClass();
-		$this->contrat			= new stdClass();
-		$this->actions			= new stdClass();
-		$this->agenda			= new stdClass();
+		$this->product = new stdClass();
+		$this->service = new stdClass();
+		$this->contrat = new stdClass();
+		$this->actions = new stdClass();
+		$this->agenda = new stdClass();
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
-		$this->facture			= new stdClass();
-		$this->contrat			= new stdClass();
+		$this->facture = new stdClass();
+		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
-		$this->adherent			= new stdClass();
+		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
-		$this->notification		= new stdClass();
+		$this->notification = new stdClass();
 		$this->mailing = new stdClass();
-		$this->expensereport	= new stdClass();
-		$this->productbatch		= new stdClass();
+		$this->expensereport = new stdClass();
+		$this->productbatch = new stdClass();
 	}
 
 	/**
@@ -215,22 +216,22 @@ class Conf
 		$this->expedition_bon = new stdClass();
 		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
-		$this->product			= new stdClass();
-		$this->service			= new stdClass();
-		$this->contrat			= new stdClass();
-		$this->actions			= new stdClass();
-		$this->agenda			= new stdClass();
+		$this->product = new stdClass();
+		$this->service = new stdClass();
+		$this->contrat = new stdClass();
+		$this->actions = new stdClass();
+		$this->agenda = new stdClass();
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
-		$this->facture			= new stdClass();
-		$this->contrat			= new stdClass();
+		$this->facture = new stdClass();
+		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
-		$this->adherent			= new stdClass();
+		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
-		$this->notification		= new stdClass();
+		$this->notification = new stdClass();
 		$this->mailing = new stdClass();
-		$this->expensereport	= new stdClass();
-		$this->productbatch		= new stdClass();
+		$this->expensereport = new stdClass();
+		$this->productbatch = new stdClass();
 
 		// Common arrays
 		$this->cache = array();
@@ -249,6 +250,7 @@ class Conf
 			'barcode' => array(),
 			'models' => array(),
 			'societe' => array(),
+			'member' => array(),
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array(),
@@ -790,7 +792,7 @@ class Conf
 
 			// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 			if (!isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) {
-				$this->global->MAIN_MODULES_FOR_EXTERNAL = 'user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog'; // '' means 'all'. Note that contact is added here as it should be a module later.
+				$this->global->MAIN_MODULES_FOR_EXTERNAL = 'user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,reception,agenda,resource,adherent,blockedlog'; // '' means 'all'. Note that contact is added here as it should be a module later.
 			}
 			if (!empty($this->modules_parts['moduleforexternal'])) {		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list
 				foreach ($this->modules_parts['moduleforexternal'] as $key => $value) {
@@ -921,6 +923,10 @@ class Conf
 				// Value 3 makes also CSRF check for all GET requests with a param action or massaction
 				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2;
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
+			}
+
+			if (!isset($this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA)) {
+				$this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA = 1;
 			}
 
 			if (!defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {

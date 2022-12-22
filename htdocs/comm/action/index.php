@@ -274,15 +274,15 @@ if (empty($conf->global->AGENDA_DISABLE_EXT)) {
 		$color = 'AGENDA_EXT_COLOR'.$i;
 		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$i;
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE'.$i;
-		if (!empty($conf->global->$source) && !empty($conf->global->$name)) {
+		if (getDolGlobalString($source) && getDolGlobalString($name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
 				'src' => getDolGlobalString($source),
-				'name' => getDolGlobalString($name),
-				'offsettz' => (!empty($conf->global->$offsettz) ? $conf->global->$offsettz : 0),
-				'color' => getDolGlobalString($color),
-				'default' => getDolGlobalString($default),
-				'buggedfile' => (isset($conf->global->buggedfile) ? $conf->global->buggedfile : 0)
+				'name' => dol_string_nohtmltag(getDolGlobalString($name)),
+				'offsettz' => (int) getDolGlobalInt($offsettz, 0),
+				'color' => dol_string_nohtmltag(getDolGlobalString($color)),
+				'default' => dol_string_nohtmltag(getDolGlobalString($default)),
+				'buggedfile' => dol_string_nohtmltag(getDolGlobalString('buggedfile', ''))
 			);
 		}
 	}
@@ -299,15 +299,15 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		$enabled = 'AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
 		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
-		if (!empty($user->conf->$source) && !empty($user->conf->$name)) {
+		if (getDolUserString($source) && getDolUserString($name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
-				'src' => $user->conf->$source,
-				'name' => $user->conf->$name,
-				'offsettz' => (!empty($user->conf->$offsettz) ? $user->conf->$offsettz : 0),
-				'color' => $user->conf->$color,
-				'default' => $user->conf->$default,
-				'buggedfile' => (isset($user->conf->buggedfile) ? $user->conf->buggedfile : 0)
+				'src' => getDolUserString($source),
+				'name' => dol_string_nohtmltag(getDolUserString($name)),
+				'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
+				'color' => dol_string_nohtmltag(getDolUserString($color)),
+				'default' => dol_string_nohtmltag(getDolUserString($default)),
+				'buggedfile' => dol_string_nohtmltag(isset($user->conf->buggedfile) ? $user->conf->buggedfile : '')
 			);
 		}
 	}
@@ -614,7 +614,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 				$default = '';
 			}
 
-			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'">'.$val['name'].'</label> &nbsp; </div>';
+			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
 		}
 	}
 
@@ -637,8 +637,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 	if (!preg_match('/showbirthday=/i', $newparam)) {
 		$newparam .= '&showbirthday=1';
 	}
-	$link = '<a href="'.dol_escape_htmltag($_SERVER['PHP_SELF']);
-	$link .= '?'.dol_escape_htmltag($newparam);
+	$link = '<a href="'.$_SERVER['PHP_SELF'].'?'.dol_escape_htmltag($newparam);
 	$link .= '">';
 	if (empty($showbirthday)) {
 		$link .= $langs->trans("AgendaShowBirthdayEvents");
@@ -1288,7 +1287,7 @@ if (count($listofextcals)) {
 					}
 
 					// Transparency (see https://www.kanzaki.com/docs/ical/transp.html)
-					if ($icalevent['TRANSP']) {
+					if (!empty($icalevent['TRANSP'])) {
 						if ($icalevent['TRANSP'] == "TRANSPARENT") {
 							$event->transparency = 0; // 0 = available / free
 						}
