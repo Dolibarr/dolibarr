@@ -82,13 +82,13 @@ before_install:
 
 install:
 - |
-  echo "Updating Composer"
+  echo "Updating Composer (version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
   rm $TRAVIS_BUILD_DIR/composer.json
   rm $TRAVIS_BUILD_DIR/composer.lock
   composer -V
-  composer self-update
-  composer -n init
-  composer -n config vendor-dir htdocs/includes
+  composer self-update 2.4.4
+  #composer -n init
+  #composer -n config vendor-dir htdocs/includes
   composer -n config -g vendor-dir htdocs/includes
   echo
 
