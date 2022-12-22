@@ -1103,6 +1103,9 @@ class FormSetupItem
 				$out.= $this->langs->trans("NorProspectNorCustomer");
 			}
 		} elseif ($this->type == 'product') {
+			if (!class_exists("Product")){
+                require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+            }
 			$product = new Product($this->db);
 			$resprod = $product->fetch($this->fieldValue);
 			if ($resprod > 0) {
