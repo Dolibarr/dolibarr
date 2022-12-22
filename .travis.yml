@@ -95,7 +95,7 @@ notifications:
 
 install:
 - |
-  echo "Updating Composer (version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
+  echo "Updating Composer config"
   composer -V
   #rm $TRAVIS_BUILD_DIR/composer.json
   #rm $TRAVIS_BUILD_DIR/composer.lock
@@ -105,7 +105,8 @@ install:
   echo
 
 - |
-  echo "Installing Composer dependencies - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION"
+  echo "Update Composer version and Install tools - PHP Unit, Parallel Lint, PHP CodeSniffer, PHP Vardump check - for $TRAVIS_PHP_VERSION"
+  echo "(version 2.5 is bugged and generate phpunit error Exception: Serialization of 'Closure' is not allowed)"
   if [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ] || [ "$TRAVIS_PHP_VERSION" = '7.2' ]; then
     composer self-update 2.2.18
     composer -n require phpunit/phpunit ^6 \
