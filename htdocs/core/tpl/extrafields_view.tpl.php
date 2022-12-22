@@ -99,7 +99,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			$langs->load($extrafields->attributes[$object->table_element]['langfile'][$tmpkeyextra]);
 		}
 		if ($action == 'edit_extras') {
-			$value = (GETPOSTISSET("options_".$tmpkeyextra) ? GETPOST("options_".$tmpkeyextra) : $object->array_options["options_".$tmpkeyextra]);
+			$value = (GETPOSTISSET("options_".$tmpkeyextra) ? GETPOST("options_".$tmpkeyextra) : (isset($object->array_options["options_".$tmpkeyextra]) ? $object->array_options["options_".$tmpkeyextra] : ''));
 		} else {
 			$value = (isset($object->array_options["options_".$tmpkeyextra]) ? $object->array_options["options_".$tmpkeyextra] : '');
 			//var_dump($tmpkeyextra.' - '.$value);

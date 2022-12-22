@@ -234,7 +234,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 
 	// Can edit
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("CanEditAmount");
+	print $langs->trans("CanEditAmountDetail");
 	print '</td><td>';
 	print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT", (!empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT) ? $conf->global->MEMBER_NEWFORM_EDITAMOUNT : 0), 1);
 	print "</td></tr>\n";

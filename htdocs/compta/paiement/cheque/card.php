@@ -385,13 +385,14 @@ if ($action == 'new') {
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
+	print '<input type="submit" class="button small" name="filter" value="'.dol_escape_htmltag($langs->trans("ToFilter")).'">';
 	if ($search_date_start || $search_date_end || $filteraccountid > 0) {
 		print ' &nbsp; ';
-		print '<input type="submit" class="button" name="removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+		print '<input type="submit" class="button" name="removefilter small" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	}
 	print '</div>';
 	print '</form>';
+	print '<br>';
 	print '<br>';
 
 	$sql = "SELECT ba.rowid as bid, ba.label,";

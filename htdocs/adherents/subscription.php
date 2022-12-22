@@ -101,14 +101,14 @@ if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
 	// Define variables to know what current user can do on users
-	$canadduser = ($user->admin || $user->rights->user->user->creer);
+	$canadduser = ($user->admin || $user->hasRight("user", "user", "creer"));
 	// Define variables to know what current user can do on properties of user linked to edited member
 	if ($object->user_id) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
-		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
-			|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
-		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
-			|| (($user->id != $object->user_id) && $user->rights->user->user->password));
+		$caneditfielduser = ((($user->id == $object->user_id) && $user->hasRight("user", "self", "creer"))
+			|| (($user->id != $object->user_id) && $user->hasRight("user", "user", "creer")));
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->hasRight("user", "self", "password"))
+			|| (($user->id != $object->user_id) && $user->hasRight("user", "user", "password")));
 	}
 }
 
@@ -151,9 +151,9 @@ if (empty($reshook) && $action == 'confirm_create_thirdparty' && $confirm == 'ye
 	}
 }
 
-if (empty($reshook) && $action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer)) {
+if (empty($reshook) && $action == 'setuserid' && ($user->rights->user->self->creer || $user->hasRight('user', 'user', 'creer'))) {
 	$error = 0;
-	if (empty($user->rights->user->user->creer)) {    // If can edit only itself user, we can link to itself only
+	if (!$user->hasRight('user', 'user', 'creer')) {    // If can edit only itself user, we can link to itself only
 		if (GETPOST("userid", 'int') != $user->id && GETPOST("userid", 'int') != $object->user_id) {
 			$error++;
 			setEventMessages($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"), null, 'errors');
@@ -201,7 +201,7 @@ if (empty($reshook) && $action == 'setsocid') {
 	}
 }
 
-if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !$cancel) {
+if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscription' && !$cancel) {
 	$error = 0;
 
 	$langs->load("banks");
@@ -641,7 +641,7 @@ if ($rowid > 0) {
 	print '</td>';
 	if ($action != 'editlogin' && $user->hasRight('adherent', 'creer')) {
 		print '<td class="right">';
-		if ($user->rights->user->user->creer) {
+		if ($user->hasRight("user", "user", "creer")) {
 			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editlogin&token='.newToken().'&rowid='.$object->id.'">'.img_edit($langs->trans('SetLinkToUser'), 1).'</a>';
 		}
 		print '</td>';
@@ -674,7 +674,7 @@ if ($rowid > 0) {
 	 */
 
 	// Button to create a new subscription if member no draft (-1) neither resiliated (0) neither excluded (-2)
-	if ($user->rights->adherent->cotisation->creer) {
+	if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 		if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 			print '<div class="tabsAction">';
 
@@ -814,7 +814,7 @@ if ($rowid > 0) {
 	/*
 	 * Add new subscription form
 	 */
-	if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->rights->adherent->cotisation->creer) {
+	if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->hasRight('adherent', 'cotisation', 'creer')) {
 		print '<br>';
 
 		print load_fiche_titre($langs->trans("NewCotisation"));
@@ -1142,7 +1142,7 @@ if ($rowid > 0) {
 
 			$tmp = '<input name="sendmail" type="checkbox"'.(GETPOST('sendmail', 'alpha') ? ' checked' : (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? ' checked' : '')).'>';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailTopic").'</b>:<br>'."\n";
 			if ($subjecttosend) {
