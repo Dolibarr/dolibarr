@@ -927,7 +927,7 @@ if (!empty($arrayfields['e.date_delivery']['checked'])) {
 if (!empty($arrayfields['l.ref']['checked'])) {
 	// Delivery ref
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="10" type="text" name="search_ref_liv" value="'.$search_ref_liv.'"';
+	print '<input class="flat" type="text" name="search_ref_liv" value="'.dol_escape_htmltag($search_ref_liv).'"';
 	print '</td>';
 }
 if (!empty($arrayfields['l.date_delivery']['checked'])) {
@@ -960,7 +960,7 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 // Status
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone right">';
-	print $form->selectarray('search_status', array('0'=>$langs->trans('StatusReceptionDraftShort'), '1'=>$langs->trans('StatusReceptionValidatedShort'), '2'=>$langs->trans('StatusReceptionProcessedShort')), $search_status, 1);
+	print $form->selectarray('search_status', array('0'=>$langs->trans('StatusReceptionDraftShort'), '1'=>$langs->trans('StatusReceptionValidatedShort'), '2'=>$langs->trans('StatusReceptionProcessedShort')), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status onrightofpage');
 	print '</td>';
 }
 // Status billed

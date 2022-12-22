@@ -67,7 +67,7 @@ $search_date_order_endyear = GETPOST('search_date_order_endyear', 'int');
 $search_date_order_start = dol_mktime(0, 0, 0, $search_date_order_startmonth, $search_date_order_startday, $search_date_order_startyear);	// Use tzserver
 $search_date_order_end = dol_mktime(23, 59, 59, $search_date_order_endmonth, $search_date_order_endday, $search_date_order_endyear);
 
-$search_date_delivery_starvtday = GETPOST('search_date_delivery_startday', 'int');
+$search_date_delivery_startday = GETPOST('search_date_delivery_startday', 'int');
 $search_date_delivery_startmonth = GETPOST('search_date_delivery_startmonth', 'int');
 $search_date_delivery_startyear = GETPOST('search_date_delivery_startyear', 'int');
 $search_date_delivery_endday = GETPOST('search_date_delivery_endday', 'int');

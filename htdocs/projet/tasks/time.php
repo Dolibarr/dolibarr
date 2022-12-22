@@ -191,7 +191,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_project_ref = '';
 	$search_project_label = '';
 	$search_task_label = '';
-	$search_user = 0;
+	$search_user = -1;
 	$search_valuebilled = '';
 	$search_product_ref = '';
 	$toselect = array();
@@ -1239,7 +1239,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 
 		// Call Hook formConfirm
-		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid, "projectstatic" => $projectstatic, "withproject" => $withproject);
+		$parameters = array('formConfirm' => $formconfirm, "projectstatic" => $projectstatic, "withproject" => $withproject);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$formconfirm .= $hookmanager->resPrint;
@@ -1265,7 +1265,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		$arrayfields['author'] = array('label'=>$langs->trans("By"), 'checked'=>1);
 		$arrayfields['t.note'] = array('label'=>$langs->trans("Note"), 'checked'=>1);
-		if ($conf->service->enabled && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
+		if (isModEnabled('service') && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 			$arrayfields['t.fk_product'] = array('label' => $langs->trans("Product"), 'checked' => 1);
 		}
 		$arrayfields['t.task_duration'] = array('label'=>$langs->trans("Duration"), 'checked'=>1);
@@ -1446,7 +1446,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $langs->trans('InvoiceToUse');
 				print '</td>';
 				print '<td>';
-				$form->selectInvoice('invoice', '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
+				$form->selectInvoice($projectstatic->thirdparty->id, '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
 				print '</td>';
 				print '</tr>';
 				/*print '<tr>';
@@ -1561,7 +1561,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (empty($search_user)) {
 				$search_user = $user->id;
 			}
-			$sql .= " AND t.fk_user = ".((int) $search_user);
+			if ($search_user > 0) $sql .= " AND t.fk_user = ".((int) $search_user);
 		}
 
 		if ($search_note) {
@@ -1971,7 +1971,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		$total = 0;
 		$totalvalue = 0;
-		$totalarray = array();
+		$totalarray = array('nbfield'=>0);
 		foreach ($tasks as $task_time) {
 			if ($i >= $limit) {
 				break;
@@ -2168,11 +2168,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.task_duration';
 				}
-				$totalarray['val']['t.task_duration'] += $task_time->task_duration;
+				if (empty($totalarray['val']['t.task_duration'])) {
+					$totalarray['val']['t.task_duration'] = $task_time->task_duration;
+				} else {
+					$totalarray['val']['t.task_duration'] += $task_time->task_duration;
+				}
 				if (!$i) {
 					$totalarray['totaldurationfield'] = $totalarray['nbfield'];
 				}
-				$totalarray['totalduration'] += $task_time->task_duration;
+				if (empty($totalarray['totalduration'])) {
+					$totalarray['totalduration'] = $task_time->task_duration;
+				} else {
+					$totalarray['totalduration'] += $task_time->task_duration;
+				}
 			}
 
 			//Product
@@ -2208,11 +2216,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 'value';
 				}
-				$totalarray['val']['value'] += $value;
+				if (empty($totalarray['val']['value'])) {
+					$totalarray['val']['value'] = $value;
+				} else {
+					$totalarray['val']['value'] += $value;
+				}
 				if (!$i) {
 					$totalarray['totalvaluefield'] = $totalarray['nbfield'];
 				}
-				$totalarray['totalvalue'] += $value;
+				if (empty($totalarray['totalvalue'])) {
+					$totalarray['totalvalue'] = $value;
+				} else {
+					$totalarray['totalvalue'] += $value;
+				}
 			}
 
 			// Invoiced

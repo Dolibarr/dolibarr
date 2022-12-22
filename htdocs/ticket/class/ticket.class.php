@@ -236,7 +236,7 @@ class Ticket extends CommonObject
 	const STATUS_READ = 1;
 	const STATUS_ASSIGNED = 2;
 	const STATUS_IN_PROGRESS = 3;
-	const STATUS_NEED_MORE_INFO = 5;
+	const STATUS_NEED_MORE_INFO = 5;	// waiting requester feedback
 	const STATUS_WAITING = 7;			// on hold
 	const STATUS_CLOSED = 8;			// Closed - Solved
 	const STATUS_CANCELED = 9;			// Closed - Not solved
@@ -2677,7 +2677,10 @@ class Ticket extends CommonObject
 				}
 
 				// Set status to "answered" if not set yet, but only if internal user and not private message
-				if ($object->status < 3 && !$user->socid && !$private) {
+				// Or set status to "answered" if the client has answered and if the ticket has started
+				if (($object->status < self::STATUS_IN_PROGRESS && !$user->socid && !$private) ||
+					($object->status > self::STATUS_IN_PROGRESS && $public_area)
+				) {
 					$object->setStatut(3);
 				}
 				return 1;

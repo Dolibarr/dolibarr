@@ -119,7 +119,7 @@ class box_members_by_type extends ModeleBoxes
 					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus,
 				);
-				// Out of date
+				// Expired
 				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() - 86400, 1);
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',

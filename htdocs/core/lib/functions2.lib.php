@@ -1043,7 +1043,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$regType = array();
 	if (preg_match('/\{(t+)\}/i', $mask, $regType)) {
 		$masktype = $regType[1];
-		$masktype_value = substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1])); // get n first characters of thirdparty typent_code (where n is length in mask)
+		$masktype_value = dol_substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1])); // get n first characters of thirdparty typent_code (where n is length in mask)
 		$masktype_value = str_pad($masktype_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
 	} else {
 		$masktype = '';

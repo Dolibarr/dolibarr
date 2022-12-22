@@ -254,7 +254,7 @@ $formexpensereport = new FormExpenseReport($db);
 
 $fuser = new User($db);
 
-$title = $langs->trans("ListOfTrips");
+$title = $langs->trans("TripsAndExpenses");
 llxHeader('', $title);
 
 $max_year = 5;
