@@ -187,7 +187,7 @@ class AdherentStats extends Stats
 	/**
 	 *	Return count of member by status group by adh type, total and average
 	 *
-	 * 	@return		array                   Array with
+	 * 	@return		array                   Array with total of draft, pending, uptodate, expired, resiliated for each member type 
 	 */
 	public function countMembersByTypeAndStatus()
 	{
@@ -195,19 +195,18 @@ class AdherentStats extends Stats
 
 		$now = dol_now();
 
-		$sql = "SELECT COALESCE(d.fk_adherent_type, 'total') as fk_adherent_type, t.libelle as label";
+		$sql = "SELECT COALESCE(t.rowid, 'total') as fk_adherent_type, t.libelle as label";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_DRAFT,"'members_draft'", 'NULL').") as members_draft";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin IS NULL AND t.subscription = '1')","'members_pending'", 'NULL').") as members_pending";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin >= '".$this->db->idate($now)."' OR t.subscription = 0)","'members_uptodate'", 'NULL').") as members_uptodate";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin < '".$this->db->idate($now)."' AND t.subscription = 1)","'members_expired'", 'NULL').") as members_expired";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_EXCLUDED,"'members_excluded'", 'NULL').") as members_excluded";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_RESILIATED,"'members_resiliated'", 'NULL').") as members_resiliated";
-		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d , ".MAIN_DB_PREFIX."adherent_type as t";
-		$sql .= " WHERE t.rowid = d.fk_adherent_type";
-		$sql .= " AND d.entity IN (" . getEntity('adherent') . ")";
-		$sql .= " AND t.entity IN (".getEntity('member_type').")";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d ON t.rowid = d.fk_adherent_type AND d.entity IN (" . getEntity('adherent') . ")";
+		$sql .= " WHERE t.entity IN (".getEntity('member_type').")";
 		$sql .= " AND t.statut = 1";
-		$sql .= " GROUP BY d.fk_adherent_type";
+		$sql .= " GROUP BY t.rowid";
 		$sql .= " WITH ROLLUP;";
 
 		dol_syslog("box_members_by_type::select nb of members per type", LOG_DEBUG);
