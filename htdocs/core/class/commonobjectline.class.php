@@ -175,7 +175,7 @@ abstract class CommonObjectLine extends CommonObject
 	 */
 	public function getKanbanView($option = '')
 	{
-		global $db, $langs;
+		global $langs;
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -185,7 +185,7 @@ abstract class CommonObjectLine extends CommonObject
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : '').'</span>';
 		if (property_exists($this, 'date_delivery')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.dol_print_date($db->jdate($this->date_delivery), "dayhour").'</span>';
+			$return .= '<br><span class="info-box-label opacitymedium">'.dol_print_date($this->db->jdate($this->date_delivery), "dayhour").'</span>';
 		}
 		if (property_exists($this, 'town') && !empty($this->town)) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Town").'</span>';
