@@ -488,7 +488,7 @@ if (!empty($arrayfields['b.clos']['checked'])) {
 		'opened'=>$langs->trans("Opened"),
 		'closed'=>$langs->trans("Closed")
 	);
-	print $form->selectarray("search_status", $array, $search_status, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+	print $form->selectarray("search_status", $array, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status maxwidth125 onrightofpage', 1);
 	print '</td>';
 }
 // Balance

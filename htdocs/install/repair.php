@@ -915,7 +915,7 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
-				print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehose '.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' (product_stock.reel) != '.($obj->reelbatch ? $obj->reelbatch : '0').' (sum product_batch)';
+				print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehouse '.$obj->fk_entrepot.' (product_stock id '.$obj->psrowid.'): '.$obj->reel.' (Stock product_stock.reel) != '.($obj->reelbatch ? $obj->reelbatch : '0').' (Stock batch sum product_batch)';
 
 				// Fix
 				if ($obj->reel != $obj->reelbatch) {
