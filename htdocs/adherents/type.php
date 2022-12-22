@@ -264,9 +264,8 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-		
-		if ($user->hasRight('adherent', 'configurer')) {
 
+		if ($user->hasRight('adherent', 'configurer')) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
 		}
 
@@ -327,8 +326,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print '</div>';
 					print '</td></tr>';
 				}
-			} 
-      else {
+			} else {
 				print '<tr class="oddeven">';
 				print '<td class="nowraponall">';
 				print $membertype->getNomUrl(1);
