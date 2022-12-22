@@ -875,6 +875,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$stocktobuywarehouse = max(max($desiredstockwarehouse, $alertstockwarehouse) - $stockwarehouse, 0); //ordered is already in $stock in virtual mode
 		}
 
+		$toOrder = ((!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) > 0 ? $stocktobuywarehouse : $stocktobuy);
+
 		$picto = '';
 		if ($ordered > 0) {
 			$stockforcompare = ($usevirtualstock ? $stock : $stock + $ordered);
@@ -888,65 +890,71 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$picto = img_picto($langs->trans("NoPendingReceptionOnSupplierOrder"), 'help');
 		}
 
-		print '<tr class="oddeven">';
+		//Adds only Products/Services at them more than 0 to order.
+		//As example a 0 can a result from "STOCK_REPLENISH_ADD_CHECKBOX_INCLUDE_DRAFT_ORDER" with active checkbox "&draftchecked".
+		if ($toOrder > 0)
+		{
+			print '<tr class="oddeven">';
 
-		// Select field
-		print '<td><input type="checkbox" class="check" name="choose'.$i.'"></td>';
+			// Select field
+			print '<td><input type="checkbox" class="check" name="choose'.$i.'"></td>';
 
-		print '<td class="nowrap">'.$prod->getNomUrl(1, 'stock').'</td>';
+			print '<td class="nowrap">'.$prod->getNomUrl(1, 'stock').'</td>';
 
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->label).'">';
-		print dol_escape_htmltag($objp->label);
-		print '<input type="hidden" name="desc'.$i.'" value="'.dol_escape_htmltag($objp->description).'">'; // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
-		print '</td>';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($objp->label).'">';
+			print dol_escape_htmltag($objp->label);
+			print '<input type="hidden" name="desc'.$i.'" value="'.dol_escape_htmltag($objp->description).'">'; // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
+			print '</td>';
 
-		if (isModEnabled("service") && $type == 1) {
-			$regs = array();
-			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
-				$duration = $regs[1].' '.$langs->trans('DurationYear');
-			} elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
-				$duration = $regs[1].' '.$langs->trans('DurationMonth');
-			} elseif (preg_match('/([0-9]+)d/i', $objp->duration, $regs)) {
-				$duration = $regs[1].' '.$langs->trans('DurationDay');
-			} else {
-				$duration = $objp->duration;
+			if (isModEnabled("service") && $type == 1) {
+				$regs = array();
+				if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
+					$duration = $regs[1].' '.$langs->trans('DurationYear');
+				} elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
+					$duration = $regs[1].' '.$langs->trans('DurationMonth');
+				} elseif (preg_match('/([0-9]+)d/i', $objp->duration, $regs)) {
+					$duration = $regs[1].' '.$langs->trans('DurationDay');
+				} else {
+					$duration = $objp->duration;
+				}
+				print '<td class="center">'.$duration.'</td>';
 			}
-			print '<td class="center">'.$duration.'</td>';
+
+			// Desired stock
+			print '<td class="right">'.((!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) > 0 ? $desiredstockwarehouse : $desiredstock).'</td>';
+
+			// Limit stock for alert
+			print '<td class="right">'.((!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) > 0 ? $alertstockwarehouse : $alertstock).'</td>';
+
+			// Current stock (all warehouses)
+			print '<td class="right">'.$warning.$stock;
+			print '<!-- stock returned by main sql is '.$objp->stock_physique.' -->';
+			print '</td>';
+
+			// Current stock (warehouse selected only)
+			if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
+				print '<td class="right">'.$warningwarehouse.$stockwarehouse.'</td>';
+			}
+
+			// Already ordered
+			print '<td class="right"><a href="replenishorders.php?search_product='.$prod->id.'">'.$ordered.'</a> '.$picto.'</td>';
+
+			// To order
+			print '<td class="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.$toOrder.'"></td>';
+
+			// Supplier
+			print '<td class="right">';
+			print $form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier);
+			print '</td>';
+
+			// Fields from hook
+			$parameters = array('objp'=>$objp);
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
+
+			print '</tr>';
 		}
 
-		// Desired stock
-		print '<td class="right">'.((!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) > 0 ? $desiredstockwarehouse : $desiredstock).'</td>';
-
-		// Limit stock for alert
-		print '<td class="right">'.((!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) > 0 ? $alertstockwarehouse : $alertstock).'</td>';
-
-		// Current stock (all warehouses)
-		print '<td class="right">'.$warning.$stock;
-		print '<!-- stock returned by main sql is '.$objp->stock_physique.' -->';
-		print '</td>';
-
-		// Current stock (warehouse selected only)
-		if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
-			print '<td class="right">'.$warningwarehouse.$stockwarehouse.'</td>';
-		}
-
-		// Already ordered
-		print '<td class="right"><a href="replenishorders.php?search_product='.$prod->id.'">'.$ordered.'</a> '.$picto.'</td>';
-
-		// To order
-		print '<td class="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.((!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) > 0 ? $stocktobuywarehouse : $stocktobuy).'"></td>';
-
-		// Supplier
-		print '<td class="right">';
-		print $form->select_product_fourn_price($prod->id, 'fourn'.$i, $fk_supplier);
-		print '</td>';
-
-		// Fields from hook
-		$parameters = array('objp'=>$objp);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-
-		print '</tr>';
 	}
 	$i++;
 }
