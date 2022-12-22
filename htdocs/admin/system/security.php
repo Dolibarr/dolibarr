@@ -41,7 +41,7 @@ if (GETPOST('action', 'aZ09') == 'donothing') {
 	exit;
 }
 
-$execmethod = empty($conf->global->MAIN_EXEC_USE_POPEN) ? 1 : $conf->global->MAIN_EXEC_USE_POPEN;
+$execmethod = getDolGlobalInt('MAIN_EXEC_USE_POPEN', 1);
 
 
 /*
@@ -52,7 +52,13 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("Security"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("YouMayFindSecurityAdviceHere", 'hhttps://wiki.dolibarr.org/index.php/Security_information').'</span> (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
+print '<span class="opacitymedium">'.$langs->trans("YouMayFindSecurityAdviceHere", 'hhttps://wiki.dolibarr.org/index.php/Security_information').'</span>';
+print ' &nbsp; &nbsp; ';
+print '<a href="'.$_SERVER["PHP_SELF"].'">';
+print img_picto($langs->trans("Reload"), 'refresh').' ';
+print $langs->trans("Reload");
+print '</a>';
+print '<br>';
 print '<br>';
 
 print load_fiche_titre($langs->trans("PHPSetup"), '', 'folder');
@@ -598,7 +604,7 @@ print '</span>';
 print '<br>';
 $urlexamplebase = 'https://github.com/Dolibarr/dolibarr/blob/develop/dev/setup/fail2ban/filter.d/';
 print '- Login process (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-rulesbruteforce.conf">fail2ban example on GitHub</a>)<br>';
-print '- '.DOL_URL_ROOT.'/passwordforgotten.php (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-rulespassgorgotten.conf">fail2ban example on GitHub</a>)<br>';
+print '- '.DOL_URL_ROOT.'/passwordforgotten.php (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-rulespassforgotten.conf">fail2ban example on GitHub</a>)<br>';
 print '- '.DOL_URL_ROOT.'/public/* (see <a target="_blank" rel="noopener" href="'.$urlexamplebase.'web-dolibarr-limitpublic.conf">fail2ban example on GitHub</a>)<br>';
 print '<br>';
 $urlexamplebase = 'https://github.com/Dolibarr/dolibarr/blob/develop/dev/setup/apache/';

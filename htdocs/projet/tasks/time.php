@@ -191,7 +191,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_project_ref = '';
 	$search_project_label = '';
 	$search_task_label = '';
-	$search_user = 0;
+	$search_user = -1;
 	$search_valuebilled = '';
 	$search_product_ref = '';
 	$toselect = array();
@@ -1561,7 +1561,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (empty($search_user)) {
 				$search_user = $user->id;
 			}
-			$sql .= " AND t.fk_user = ".((int) $search_user);
+			if ($search_user > 0) $sql .= " AND t.fk_user = ".((int) $search_user);
 		}
 
 		if ($search_note) {
