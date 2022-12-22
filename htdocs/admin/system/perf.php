@@ -198,7 +198,7 @@ jQuery(document).ready(function() {
       	compphpstring=getphpurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getphpurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compphpstring);*/
-      	if (compphpstring == null || (compphpstring.indexOf("gzip") == -1 && compphpstring.indexOf("deflate") == -1))
+      	if (compphpstring == null || (compphpstring.indexOf("gzip") == -1 && compphpstring.indexOf("deflate") == -1  && compphpstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompphpok").hide();
       		jQuery("#httpcompphpko").show();
@@ -238,7 +238,7 @@ jQuery(document).ready(function() {
       	compcssstring=getcssurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getcssurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compcssstring);*/
-      	if (compcssstring == null || (compcssstring.indexOf("gzip") == -1 && compcssstring.indexOf("deflate") == -1))
+      	if (compcssstring == null || (compcssstring.indexOf("gzip") == -1 && compcssstring.indexOf("deflate") == -1 && compcssstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompcssok").hide();
       		jQuery("#httpcompcssko").show();
@@ -278,7 +278,7 @@ jQuery(document).ready(function() {
       	compcssphpstring=getcssphpurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getcssphpurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compcssphpstring);*/
-      	if (compcssphpstring == null || (compcssphpstring.indexOf("gzip") == -1 && compcssphpstring.indexOf("deflate") == -1))
+      	if (compcssphpstring == null || (compcssphpstring.indexOf("gzip") == -1 && compcssphpstring.indexOf("deflate") == -1 && compcssphpstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompcssphpok").hide();
       		jQuery("#httpcompcssphpko").show();
@@ -318,7 +318,7 @@ jQuery(document).ready(function() {
       	compimgstring=getimgurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getimgurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compimgstring);*/
-      	if (compimgstring == null || (compimgstring.indexOf("gzip") == -1 && compimgstring.indexOf("deflate") == -1))
+      	if (compimgstring == null || (compimgstring.indexOf("gzip") == -1 && compimgstring.indexOf("deflate") == -1 && compimgstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompimgok").hide();
       		jQuery("#httpcompimgko").show();
@@ -358,7 +358,7 @@ jQuery(document).ready(function() {
       	compjsstring=getjsurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'js:\'+getjsurl.getAllResponseHeaders()); */
       	/*alert(\'js:\'+compjsstring);*/
-      	if (compjsstring == null || (compjsstring.indexOf("gzip") == -1 && compjsstring.indexOf("deflate") == -1))
+      	if (compjsstring == null || (compjsstring.indexOf("gzip") == -1 && compjsstring.indexOf("deflate") == -1 && compjsstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompjsok").hide();
       		jQuery("#httpcompjsko").show();
@@ -398,7 +398,7 @@ jQuery(document).ready(function() {
       	compjsphpstring=getjsphpurl.getResponseHeader(\'Content-Encoding\');
       	/* alert(\'php:\'+getjsphpurl.getAllResponseHeaders()); */
       	/*alert(\'php:\'+compjsphpstring);*/
-      	if (compjsphpstring == null || (compjsphpstring.indexOf("gzip") == -1 && compjsphpstring.indexOf("deflate") == -1))
+      	if (compjsphpstring == null || (compjsphpstring.indexOf("gzip") == -1 && compjsphpstring.indexOf("deflate") == -1 && compjsphpstring.indexOf("br") == -1))
       	{
 	      	jQuery("#httpcompjsphpok").hide();
       		jQuery("#httpcompjsphpko").show();
