@@ -306,9 +306,9 @@ class Project extends CommonObject
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModificationShort', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>405),
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserCreation', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>410),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModification', 'enabled'=>1, 'visible'=>0, 'position'=>415),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>0, 'position'=>420),
+		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>420),
 		'email_msgid'=>array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'enabled'=>1, 'visible'=>-1, 'position'=>450, 'help'=>'EmailMsgIDWhenSourceisEmail'),
-		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500)
+		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -435,6 +435,7 @@ class Project extends CommonObject
 		$sql .= ", note_private";
 		$sql .= ", note_public";
 		$sql .= ", entity";
+		$sql .= ", ip";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->escape($this->ref)."'";
 		$sql .= ", '".$this->db->escape($this->title)."'";
@@ -466,6 +467,7 @@ class Project extends CommonObject
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : 'null');
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null');
 		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".(!isset($this->ip) ? 'NULL' : "'".$this->db->escape($this->ip)."'");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -2121,7 +2123,7 @@ class Project extends CommonObject
 
 
 		$projectsListId = null;
-		if (!$user->rights->projet->all->lire) {
+		if (!$user->hasRight("projet", "all", "lire")) {
 			$response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
 			$projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
 			if (empty($projectsListId)) {

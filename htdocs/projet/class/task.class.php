@@ -2203,7 +2203,7 @@ class Task extends CommonObjectLine
 		$sql .= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
 		$sql .= " t.dateo as date_start, t.datee as datee";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 		$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 		$sql .= " WHERE p.entity IN (".getEntity('project', 0).')';
@@ -2226,7 +2226,7 @@ class Task extends CommonObjectLine
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->project->task->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("OpenedTasks");
-			if ($user->rights->projet->all->lire) {
+			if ($user->hasRight("projet", "all", "lire")) {
 				$response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
 			} else {
 				$response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';

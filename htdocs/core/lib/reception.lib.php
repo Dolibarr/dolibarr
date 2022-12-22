@@ -110,8 +110,12 @@ function reception_prepare_head(Reception $object)
  */
 function reception_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
 	$langs->load("receptions");
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('reception');
+	$extrafields->fetch_name_optionals_label('commande_fournisseur_dispatch');
 
 	$h = 0;
 	$head = array();
@@ -126,6 +130,10 @@ function reception_admin_prepare_head()
 	if (!empty($conf->global->MAIN_SUBMODULE_RECEPTION)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/reception_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFields");
+		$nbExtrafields = $extrafields->attributes['reception']['count'];
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		}
 		$head[$h][2] = 'attributes_reception';
 		$h++;
 	}
@@ -133,6 +141,10 @@ function reception_admin_prepare_head()
 	if (!empty($conf->global->MAIN_SUBMODULE_RECEPTION)) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/commande_fournisseur_dispatch_extrafields.php';
 		$head[$h][1] = $langs->trans("ExtraFieldsLines");
+		$nbExtrafields = $extrafields->attributes['commande_fournisseur_dispatch']['count'];
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		}
 		$head[$h][2] = 'attributeslines_reception';
 		$h++;
 	}

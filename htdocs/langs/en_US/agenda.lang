@@ -68,6 +68,7 @@ ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Shipment %s deleted
 ShipmentCanceledInDolibarr=Shipment %s canceled
 ReceptionValidatedInDolibarr=Reception %s validated
+ReceptionDeletedInDolibarr=Reception %s deleted
 ReceptionClassifyClosedInDolibarr=Reception %s classified closed
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Order %s validated

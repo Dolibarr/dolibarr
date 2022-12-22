@@ -267,7 +267,7 @@ class pdf_cyan extends ModelePDFPropales
 						}
 
 						foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
-							if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES)) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+							if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 								if ($obj['photo_vignette']) {
 									$filename = $obj['photo_vignette'];
 								} else {
@@ -1080,8 +1080,33 @@ class pdf_cyan extends ModelePDFPropales
 			$posy = $pdf->GetY() + 1;
 		}
 
+		// Show delivery mode
+		if (empty($conf->global->PROPOSAL_PDF_HIDE_DELIVERYMODE) && $object->shipping_method_id > 0) {
+			$outputlangs->load("sendings");
+
+			$shipping_method_id = $object->shipping_method_id;
+			if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD) && !empty($this->emetteur->shipping_method_id)) {
+				$shipping_method_id = $this->emetteur->shipping_method_id;
+			}
+			$shipping_method_code = dol_getIdFromCode($this->db, $shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+			$shipping_method_label = dol_getIdFromCode($this->db, $shipping_method_id, 'c_shipment_mode', 'rowid', 'libelle');
+
+			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$titre = $outputlangs->transnoentities("SendingMethod").':';
+			$pdf->MultiCell(43, 4, $titre, 0, 'L');
+
+			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetXY($posxval, $posy);
+			$lib_condition_paiement = ($outputlangs->transnoentities("SendingMethod".strtoupper($shipping_method_code)) != "SendingMethod".strtoupper($shipping_method_code)) ? $outputlangs->trans("SendingMethod".strtoupper($shipping_method_code)) : $shipping_method_label;
+			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
+			$pdf->MultiCell(67, 4, $lib_condition_paiement, 0, 'L');
+
+			$posy = $pdf->GetY() + 1;
+		}
+
 		// Show payments conditions
-		if (empty($conf->global->PROPOSAL_PDF_HIDE_PAYMENTTERM) && ($object->cond_reglement_code || $object->cond_reglement)) {
+		if (empty($conf->global->PROPOSAL_PDF_HIDE_PAYMENTTERM) && $object->cond_reglement_code) {
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("PaymentConditions").':';
@@ -1100,22 +1125,6 @@ class pdf_cyan extends ModelePDFPropales
 		}
 
 		if (empty($conf->global->PROPOSAL_PDF_HIDE_PAYMENTMODE)) {
-			// Check a payment mode is defined
-			/* Not required on a proposal
-			if (empty($object->mode_reglement_code)
-			&& ! $conf->global->FACTURE_CHQ_NUMBER
-			&& ! $conf->global->FACTURE_RIB_NUMBER)
-			{
-				$pdf->SetXY($this->marge_gauche, $posy);
-				$pdf->SetTextColor(200,0,0);
-				$pdf->SetFont('','B', $default_font_size - 2);
-				$pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
-				$pdf->SetTextColor(0,0,0);
-
-				$posy=$pdf->GetY()+1;
-			}
-			*/
-
 			// Show payment mode
 			if ($object->mode_reglement_code
 			&& $object->mode_reglement_code != 'CHQ'

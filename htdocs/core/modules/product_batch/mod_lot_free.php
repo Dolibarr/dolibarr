@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2022      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,16 +27,15 @@
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batch.class.php';
 
 /**
- *	\class 		mod_codeproduct_leopard
- *	\brief 		Classe permettant la gestion leopard des codes produits
+ *	\class mod_lot_free
+ *	\brief Class allowing lot_free management of batch numbers
  */
 class mod_lot_free extends ModeleNumRefBatch
 {
 	/*
-	 * Attention ce module est utilise par defaut si aucun module n'a
-	 * ete definit dans la configuration
+	 * Please note this module is used by default if no module has been defined in the configuration
 	 *
-	 * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
+	 * Its operation must therefore remain as open as possible
 	 */
 
 
@@ -44,7 +44,10 @@ class mod_lot_free extends ModeleNumRefBatch
 	 */
 	public $name = 'lot_free';
 
-	public $code_modifiable; // Code modifiable
+	/**
+	 * @var string Code modifiable
+	 */
+	public $code_modifiable;
 
 	public $code_modifiable_invalide; // Code modifiable si il est invalide
 
@@ -94,12 +97,11 @@ class mod_lot_free extends ModeleNumRefBatch
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Societe		$objsoc	    Object thirdparty
-	 * @param   Object		$object		Object we need next value for
+	 * @param   Productlot	$object		Object we need next value for
 	 * @return	string					Return next value
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $langs;
 		return '';
 	}
 }

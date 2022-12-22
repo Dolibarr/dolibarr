@@ -151,10 +151,10 @@ class Website extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  User $user      	User that creates
+	 * @param  bool $notrigger 	false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int 				<0 if KO, 0 if already exists, ID of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -282,8 +282,11 @@ class Website extends CommonObject
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
-
-			return -1 * $error;
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				return 0;
+			} else {
+				return -1 * $error;
+			}
 		} else {
 			$this->db->commit();
 
@@ -1003,10 +1006,14 @@ class Website extends CommonObject
 
 		// Make some replacement into some files
 		$cssindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/styles.css.php';
-		dolReplaceInFile($cssindestdir, $arrayreplacementincss);
+		if (dol_is_file($cssindestdir)) {
+			dolReplaceInFile($cssindestdir, $arrayreplacementincss);
+		}
 
 		$htmldeaderindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/htmlheader.html';
-		dolReplaceInFile($htmldeaderindestdir, $arrayreplacementincss);
+		if (dol_is_file($htmldeaderindestdir)) {
+			dolReplaceInFile($htmldeaderindestdir, $arrayreplacementincss);
+		}
 
 		// Build sql file
 		$filesql = $conf->website->dir_temp.'/'.$website->ref.'/website_pages.sql';
@@ -1150,7 +1157,7 @@ class Website extends CommonObject
 	/**
 	 * Open a zip with all data of web site and load it into database.
 	 *
-	 * @param 	string		$pathtofile		Path of zip file
+	 * @param 	string		$pathtofile		Full path of zip file
 	 * @return  int							<0 if KO, Id of new website if OK
 	 */
 	public function importWebSite($pathtofile)
@@ -1158,6 +1165,8 @@ class Website extends CommonObject
 		global $conf, $mysoc;
 
 		$error = 0;
+
+		$pathtofile = dol_sanitizePathName($pathtofile);
 
 		$object = $this;
 		if (empty($object->ref)) {

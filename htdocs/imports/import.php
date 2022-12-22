@@ -492,7 +492,8 @@ if ($step == 2 && $datatoimport) {
 		$text = $objmodelimport->getDriverDescForKey($key);
 		print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key), $text).'</td>';
 		print '<td style="text-align:center">';
-		print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank" rel="noopener noreferrer">';
+		$filename = $langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$key;
+		print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'&output=file&file='.urlencode($filename).'" target="_blank" rel="noopener noreferrer">';
 		print img_picto('', 'download', 'class="paddingright opacitymedium"');
 		print $langs->trans("DownloadEmptyExampleShort");
 		print '</a>';
@@ -583,7 +584,8 @@ if ($step == 3 && $datatoimport) {
 	$text = $objmodelimport->getDriverDescForKey($format);
 	print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format), $text);
 	print '</td><td style="text-align:right" class="nowrap">';
-	print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank" rel="noopener noreferrer">';
+	$filename = $langs->trans("ExampleOfImportFile").'_'.$datatoimport.'.'.$format;
+	print '<a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'&output=file&file='.urlencode($filename).'" target="_blank" rel="noopener noreferrer">';
 	print img_picto('', 'download', 'class="paddingright opacitymedium"');
 	print $langs->trans("DownloadEmptyExampleShort");
 	print '</a>';
@@ -1066,6 +1068,7 @@ if ($step == 4 && $datatoimport) {
 	print '<div id="left" class="connectedSortable">'."\n";
 
 	// List of source fields
+
 	$var = false;
 	$lefti = 1;
 	foreach ($fieldssource as $key => $val) {
@@ -1088,6 +1091,7 @@ if ($step == 4 && $datatoimport) {
 	print '</td><td width="50%" class="nopaddingrightimp">';
 
 	// Set the list of all possible target fields in Dolibarr.
+
 	$optionsall = array();
 	foreach ($fieldstarget as $code => $line) {
 		//var_dump($line);
@@ -1139,8 +1143,7 @@ if ($step == 4 && $datatoimport) {
 		$entityicon = !empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity; // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
 		$entitylang = $entitytolang[$entity] ? $entitytolang[$entity] : $objimport->array_import_label[0]; // $entitylang must be a translation key to describe object the field is related to, like 'Company', 'Contact', 'MyModyle', ...
 
-		//print '<td class="nowraponall" style="font-weight: normal">=> '.img_object('', $entityicon).' '.$langs->trans($entitylang).'</td>';
-		print '<td class="nowraponall" style="font-weight: normal">=> </td>';
+		print '<td class="nowraponall hideonsmartphone" style="font-weight: normal">=> </td>';
 		print '<td class="nowraponall" style="font-weight: normal">';
 
 		//var_dump($_SESSION['dol_array_match_file_to_database_select']);
@@ -1508,7 +1511,7 @@ if ($step == 4 && $datatoimport) {
 				print '<tr class="oddeven"><td>';
 				print $obj->label;
 				print '</td>';
-				print '<td>';
+				print '<td class="tdoverflowmax150">';
 				if (empty($obj->fk_user)) {
 					print $langs->trans("Everybody");
 				} else {
@@ -2336,7 +2339,7 @@ $db->close();
  */
 function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 {
-	global $langs;
+	global $conf, $langs;
 
 	$height = '32px';
 
@@ -2382,7 +2385,7 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		if (isset($fieldssource[$pos]['imported']) && $fieldssource[$pos]['imported'] == false) {
 			print '<td class="nowraponall boxtdunused" style="font-weight: normal">';
 		} else {
-			print '<td class="nowraponall" style="font-weight: normal">';
+			print '<td class="nowraponall tdoverflowmax500" style="font-weight: normal">';
 		}
 		print $langs->trans("Column").' '.num2Alpha($pos - 1).' (#'.$pos.')';
 		if (empty($fieldssource[$pos]['example1'])) {
@@ -2394,7 +2397,12 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 			if (!utf8_check($example)) {
 				$example = utf8_encode($example);
 			}
-			print ' - ';
+			if (!empty($conf->dol_optimize_smallscreen)) {
+				//print '<br>';
+				print ' - ';
+			} else {
+				print ' - ';
+			}
 			//print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ExampleOnFirstLine").': </span>';
 			print '<i class="opacitymedium">'.$example.'</i>';
 		}

@@ -104,6 +104,10 @@ class Loan extends CommonObject
 	 */
 	public $fk_project;
 
+	/**
+	 * @var int totalpaid
+	 */
+	public $totalpaid;
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;

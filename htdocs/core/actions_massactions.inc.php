@@ -44,6 +44,7 @@ if (empty($objectclass) || empty($uploaddir)) {
 if (empty($massaction)) {
 	$massaction = '';
 }
+$error = 0;
 
 // For backward compatibility
 if (!empty($permtoread) && empty($permissiontoread)) {
@@ -591,6 +592,9 @@ if (!$error && $massaction == 'confirm_presend') {
 								$objectobj2->actionmsg2		= $actionmsg2; // Short text
 								$objectobj2->fk_element		= $objid2;
 								$objectobj2->elementtype	= $objectobj2->element;
+								if (!empty($conf->global->MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT)) {
+									$objectobj2->actionmsg2		= $subjectreplaced; // Short text
+								}
 
 								$triggername = strtoupper(get_class($objectobj2)).'_SENTBYMAIL';
 								if ($triggername == 'SOCIETE_SENTBYMAIL') {
@@ -1045,8 +1049,9 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 			}
 
 			if ($objectclass == 'Holiday' && ! in_array($objecttmp->statut, array(Holiday::STATUS_DRAFT, Holiday::STATUS_CANCELED, Holiday::STATUS_REFUSED))) {
+				$langs->load("errors");
 				$nbignored++;
-				$resaction .= '<div class="error">'.$langs->trans('ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted', $objecttmp->ref).'</div><br>';
+				$TMsg[] = '<div class="error">'.$langs->trans('ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted', $objecttmp->ref).'</div><br>';
 				continue;
 			}
 
@@ -1323,6 +1328,60 @@ if (!$error && ($action == 'setsupervisor' && $confirm == 'yes') && $permissiont
 	}
 }
 
+if (!$error && ($action == 'affectuser' && $confirm == 'yes') && $permissiontoadd) {
+	$db->begin();
+
+	$usertoaffect=GETPOST('usertoaffect');
+	$projectrole=GETPOST('projectrole');
+	$tasksrole=GETPOST('tasksrole');
+	if (!empty($usertoaffect)) {
+		foreach ($toselect as $toselectid) {
+			$result = $object->fetch($toselectid);
+			//var_dump($contcats);exit;
+			if ($result > 0) {
+				$res = $object->add_contact($usertoaffect, $projectrole, 'internal');
+				if ($res >= 0) {
+					$taskstatic = new Task($db);
+					$task_array = $taskstatic->getTasksArray(0, 0, $object->id, 0, 0);
+
+					foreach ($task_array as $task) {
+						$tasksToAffect = new Task($db);
+						$result = $tasksToAffect->fetch($task->id);
+						if ($result > 0) {
+							$res = $tasksToAffect->add_contact($usertoaffect, $tasksrole, 'internal');
+							if ($res < 0) {
+								setEventMessages($tasksToAffect->error, $tasksToAffect->errors, 'errors');
+							}
+						}
+					}
+					$nbok++;
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+	} else {
+		setEventMessage('UserNotFound', 'errors');
+		$error++;
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		} else {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		}
+		$db->commit();
+		$toselect=array();
+	} else {
+		$db->rollback();
+	}
+}
+
 if (!$error && ($massaction == 'enable' || ($action == 'enable' && $confirm == 'yes')) && $permissiontoadd) {
 	$db->begin();
 
@@ -1507,7 +1566,7 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 
 				// If no SQL error, we redirect to the request form
 				if (!$error) {
-					// Calculcate number of days consummed
+					// Calculcate number of days consumed
 					$nbopenedday = num_open_day($objecttmp->date_debut_gmt, $objecttmp->date_fin_gmt, 0, 1, $objecttmp->halfday);
 					$soldeActuel = $objecttmp->getCpforUser($objecttmp->fk_user, $objecttmp->fk_type);
 					$newSolde = ($soldeActuel - $nbopenedday);
