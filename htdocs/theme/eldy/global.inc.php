@@ -3166,7 +3166,7 @@ a.vmenu:link, a.vmenu:visited {
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
 	font-family: <?php print $fontlist ?>;
 	text-align: <?php print $left; ?>;
-	color: #202020;
+	color: var(--colortextbackvmenu);
 	margin: 1px 1px 1px 6px;
 }
 span.vsmenudisabled, font.vsmenudisabled {
