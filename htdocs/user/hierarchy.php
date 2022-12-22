@@ -42,6 +42,9 @@ if ($user->socid > 0) {
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userlist'; // To manage different context of search
 $mode = GETPOST("mode", 'alpha');
+if (empty($mode)) {
+	$mode = 'hierarchy';
+}
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');

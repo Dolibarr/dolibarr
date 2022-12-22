@@ -41,7 +41,7 @@ if (GETPOST('action', 'aZ09') == 'donothing') {
 	exit;
 }
 
-$execmethod = empty($conf->global->MAIN_EXEC_USE_POPEN) ? 1 : $conf->global->MAIN_EXEC_USE_POPEN;
+$execmethod = getDolGlobalInt('MAIN_EXEC_USE_POPEN', 1);
 
 
 /*
@@ -52,7 +52,13 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("Security"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("YouMayFindSecurityAdviceHere", 'hhttps://wiki.dolibarr.org/index.php/Security_information').'</span> (<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Reload").'</a>)<br>';
+print '<span class="opacitymedium">'.$langs->trans("YouMayFindSecurityAdviceHere", 'hhttps://wiki.dolibarr.org/index.php/Security_information').'</span>';
+print ' &nbsp; &nbsp; ';
+print '<a href="'.$_SERVER["PHP_SELF"].'">';
+print img_picto($langs->trans("Reload"), 'refresh').' ';
+print $langs->trans("Reload");
+print '</a>';
+print '<br>';
 print '<br>';
 
 print load_fiche_titre($langs->trans("PHPSetup"), '', 'folder');
