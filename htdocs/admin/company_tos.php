@@ -61,7 +61,6 @@ if ($action == 'uploadtos') {
 		$file_tmp = $_FILES['userfile']['tmp_name'][0];
 		if (isset($_FILES['userfile']) && $_FILES['userfile']['error'][0] == 0) {
 			if ($_FILES['userfile']['size'][0] <= (getDolGlobalInt('MAIN_UPLOAD_DOC') * 1024)) {
-
 				$fileinfos = pathinfo($_FILES['userfile']['name'][0]);
 				$extension_upload = $fileinfos['extension'];
 				$extensions_allowed = array('pdf');
