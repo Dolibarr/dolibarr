@@ -4977,7 +4977,9 @@ class Product extends CommonObject
 		global $conf, $langs, $hookmanager;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
-		$result = ''; $label = '';
+		$result = '';
+
+		$contentinfo = array();
 
 		$newref = $this->ref;
 		if ($maxlength) {
@@ -4987,42 +4989,40 @@ class Product extends CommonObject
 		if (!empty($this->entity)) {
 			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80);
 			if ($this->nbphoto > 0) {
-				$label .= '<div class="photointooltip floatright">';
-				$label .= $tmpphoto;
-				$label .= '</div>';
-				//$label .= '<div style="clear: both;"></div>';
+				$contentinfo['picture'] = '<div class="photointooltip">'.$tmpphoto.'</div>';
+
 			}
 		}
 
 		if ($this->type == Product::TYPE_PRODUCT) {
-			$label .= img_picto('', 'product').' <u class="paddingrightonly">'.$langs->trans("Product").'</u>';
+			$contentinfo['picto'] = img_picto('', 'product').' <u class="paddingrightonly">'.$langs->trans("Product").'</u>';
 		} elseif ($this->type == Product::TYPE_SERVICE) {
-			$label .= img_picto('', 'service').' <u class="paddingrightonly">'.$langs->trans("Service").'</u>';
+			$contentinfo['picto'] = img_picto('', 'service').' <u class="paddingrightonly">'.$langs->trans("Service").'</u>';
 		}
 		if (isset($this->status) && isset($this->status_buy)) {
-			$label .= ' '.$this->getLibStatut(5, 0);
-			$label .= ' '.$this->getLibStatut(5, 1);
+			$contentinfo['status'] = ' '.$this->getLibStatut(5, 0);
+			$contentinfo['statusbuy'] = ' '.$this->getLibStatut(5, 1);
 		}
 
 		if (!empty($this->ref)) {
-			$label .= '<br><b>'.$langs->trans('ProductRef').':</b> '.$this->ref;
+			$contentinfo['ref'] = '<br><b>'.$langs->trans('ProductRef').':</b> '.$this->ref;
 		}
 		if (!empty($this->label)) {
-			$label .= '<br><b>'.$langs->trans('ProductLabel').':</b> '.$this->label;
+			$contentinfo['label'] = '<br><b>'.$langs->trans('ProductLabel').':</b> '.$this->label;
 		}
 		if ($this->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			if (isModEnabled('productbatch')) {
 				$langs->load("productbatch");
-				$label .= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
+				$contentinfo['ManageLotSerial'] = "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
 			}
 		}
 		if (isModEnabled('barcode')) {
-			$label .= '<br><b>'.$langs->trans('BarCode').':</b> '.$this->barcode;
+			$contentinfo['barcode'] = '<br><b>'.$langs->trans('BarCode').':</b> '.$this->barcode;
 		}
 
 		if ($this->type == Product::TYPE_PRODUCT) {
 			if ($this->weight) {
-				$label .= "<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuringUnitString(0, "weight", $this->weight_units);
+				$contentinfo['weight'] = "<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuringUnitString(0, "weight", $this->weight_units);
 			}
 			$labelsize = "";
 			if ($this->length) {
@@ -5035,7 +5035,7 @@ class Product extends CommonObject
 				$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Height").'</b>: '.$this->height.' '.measuringUnitString(0, 'size', $this->height_units);
 			}
 			if ($labelsize) {
-				$label .= "<br>".$labelsize;
+				$contentinfo['size'] = "<br>".$labelsize;
 			}
 
 			$labelsurfacevolume = "";
@@ -5046,29 +5046,29 @@ class Product extends CommonObject
 				$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuringUnitString(0, 'volume', $this->volume_units);
 			}
 			if ($labelsurfacevolume) {
-				$label .= "<br>".$labelsurfacevolume;
+				$contentinfo['surfacevolume'] = "<br>".$labelsurfacevolume;
 			}
 		}
 		if (!empty($this->pmp) && $this->pmp) {
-			$label .= "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
+			$contentinfo['pmp'] = "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
 		}
 
 		if (isModEnabled('accounting')) {
 			if ($this->status && isset($this->accountancy_code_sell)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-				$label .= '<br>';
-				$label .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
-				$label .= '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
-				$label .= '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
+				$contentinfo['ProductAccountancySellCodeSeparator'] = '<br>';
+				$contentinfo['ProductAccountancySellCode'] = '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
+				$contentinfo['ProductAccountancySellIntraCode'] = '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
+				$contentinfo['ProductAccountancySellExportCode'] = '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
 			}
 			if ($this->status_buy && isset($this->accountancy_code_buy)) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 				if (empty($this->status)) {
-					$label .= '<br>';
+					$contentinfo['SeparatorProductAccountancyBuyCode'] = '<br>';
 				}
-				$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
-				$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra);
-				$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
+				$contentinfo['ProductAccountancyBuyCode'] = '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
+				$contentinfo['ProductAccountancyBuyIntraCode'] = '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra);
+				$contentinfo['ProductAccountancyBuyExportCode'] = '<br><b>'.$langs->trans('ProductAccountancyBuyExportCode').':</b> '.length_accountg($this->accountancy_code_buy_export);
 			}
 		}
 
@@ -5077,6 +5077,15 @@ class Product extends CommonObject
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("ShowProduct");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+
+			$hookmanager->initHooks(array('productdao'));
+			$parameters = array('id'=>$this->id, 'contentinfo'=>$contentinfo);
+			$reshook = $hookmanager->executeHooks('getContentInfo', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook > 0) {
+				$label = $hookmanager->resPrint;
+			}else{
+				$label = implode($contentinfo, "");
 			}
 
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
