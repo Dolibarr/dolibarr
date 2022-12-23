@@ -196,7 +196,6 @@ class AdherentStats extends Stats
 		$now = dol_now();
 		$endYear = date('Y');
 		$startYear = $endYear - $numberYears;
-		echo "startYear = endYear - numberYears => $startYear = $endYear - $numberYears";
 
 		$sql = "SELECT t.rowid as fk_adherent_type, t.libelle as label";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_DRAFT, "'members_draft'", 'NULL').") as members_draft";
