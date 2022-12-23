@@ -178,7 +178,7 @@ if (!empty($conf->global->CATEGORY_SHOW_COUNTS)) {
 $data = array();
 $data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
 
-if(!empty($conf->global->CATEGORY_SHOW_COUNTS)){
+if (!empty($conf->global->CATEGORY_SHOW_COUNTS)) {
 	$entry = '<table class="nobordernopadding centpercent">';
 	$entry .=  '<tr class="" >';
 	$entry .=  '<td class=*left* >'.$langs->trans("Label").'</td>';
@@ -210,9 +210,9 @@ foreach ($fulltree as $key => $val) {
 		$active_element = is_array($elements[0]) ? (array_key_exists('status', $elements[0]) ? 'status' : (array_key_exists('statut', $elements[0]) ? 'statut' : (array_key_exists("clos", $elements[0]) ? 'clos' : ''))) : '' ;
 
 		//echo "<pre>";print_r($active_element);echo "</pre>";
-		if (!empty($active_element)){
+		if (!empty($active_element)) {
 			$sum_active = 0;
-			foreach($elements as $row){
+			foreach ($elements as $row) {
 				$sum_active += $row[$active_element] > 0 ? 1 : 0;
 			}
 		}
