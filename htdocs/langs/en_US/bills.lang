@@ -604,3 +604,7 @@ SituationTotalRayToRest=Remainder to pay without taxe
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=Total progress %d %%
 SearchUnpaidInvoicesWithDueDate=Search unpaid invoices with a due date = %s
+MentionCategoryOfOperations=Category of operations
+MentionCategoryOfOperations0=Delivery of goods
+MentionCategoryOfOperations1=Provision of services
+MentionCategoryOfOperations2=Mixed - Delivery of goods & provision of services
