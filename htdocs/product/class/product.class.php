@@ -4990,7 +4990,6 @@ class Product extends CommonObject
 			$tmpphoto = $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 80);
 			if ($this->nbphoto > 0) {
 				$contentinfo['picture'] = '<div class="photointooltip">'.$tmpphoto.'</div>';
-
 			}
 		}
 
@@ -5084,7 +5083,7 @@ class Product extends CommonObject
 			$reshook = $hookmanager->executeHooks('getContentInfo', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 			if ($reshook > 0) {
 				$label = $hookmanager->resPrint;
-			}else{
+			} else {
 				$label = implode($contentinfo, "");
 			}
 
