@@ -1114,7 +1114,7 @@ class AccountancyExport
 			return;
         } else {
             dol_mkdir($dirfortmpfile);
-            $zipname = $dirfortmpfile.'/'.dol_print_date(dol_now(), 'dayrfc', 'tzuserrel') . '_export.zip';
+            $zipname = $dirfortmpfile.'/'.dol_print_date(dol_now(), 'dayrfc', 'tzuserrel') . dol_sanitizeFileName($mysoc->name ? $mysoc->name : 'MyCompany') . '_export.zip';
             dol_delete_file($zipname);
 
             $zip = new ZipArchive();
