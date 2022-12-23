@@ -3336,8 +3336,7 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
 
 				// Delete
-				//print '<input type="submit" class="buttonDelete bordertransp" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage ? '' : ' disabled="disabled"').'>';
-				if ($websitepage->status == $websitepage::STATUS_DRAFT || !$atleastonepage) {
+				if ($websitepage->status != $websitepage::STATUS_DRAFT) {
 					$disabled = ' disabled="disabled"';
 					$title = $langs->trans("WebpageMustBeDisabled", $langs->transnoentitiesnoconv($websitepage->LibStatut(0, 0)));
 					$url = '#';
