@@ -103,3 +103,6 @@ WebsitePagesCategoriesArea=Page-Container Categories
 KnowledgemanagementsCategoriesArea=KM article Categories
 UseOrOperatorForCategories=Use 'OR' operator for categories
 AddObjectIntoCategory=Add object into category
+Active=Active
+Inactive=Inactive
+Total=total

@@ -177,6 +177,22 @@ if (!empty($conf->global->CATEGORY_SHOW_COUNTS)) {
 // Define data (format for treeview)
 $data = array();
 $data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+
+if(!empty($conf->global->CATEGORY_SHOW_COUNTS)){
+	$entry = '<table class="nobordernopadding centpercent">';
+	$entry .=  '<tr class="" >';
+	$entry .=  '<td class=*left* >'.$langs->trans("Label").'</td>';
+	$entry .=  '<td class="left" width="40px">'.$langs->trans("Active").'</td>';
+	$entry .=  '<td class="left" width="40px">'.$langs->trans("Inactive").'</td>';
+	$entry .=  '<td class="left" width="40px">'.$langs->trans("Total").'</td>';
+	$entry .=  '<td class="right" width="20px">&nbsp;</td>';
+	$entry .=  '<td class="right" width="20px">&nbsp;</td>';
+	$entry .=  '<td class="right" width="20px">&nbsp;</td>';
+	$entry .=  '</tr>';
+	$entry .= '</table>';
+	$data[] = array('rowid' => -1, 'fk_menu' => '0', 'entry' => $entry);
+}
+
 foreach ($fulltree as $key => $val) {
 	$categstatic->id = $val['id'];
 	$categstatic->ref = $val['label'];
@@ -188,10 +204,26 @@ foreach ($fulltree as $key => $val) {
 	if (!empty($conf->global->CATEGORY_SHOW_COUNTS)) {
 		// we need only a count of the elements, so it is enough to consume only the id's from the database
 		$elements = $type == Categorie::TYPE_ACCOUNT
-			? $categstatic->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
-			: $categstatic->getObjectsInCateg($type, 1);
+			? $categstatic->getObjectsInCateg("account", 2)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
+			: $categstatic->getObjectsInCateg($type, 2);
+			//echo "<pre>";print_r($elements);echo "</pre>";
+		$active_element = is_array($elements[0]) ? (array_key_exists('status', $elements[0]) ? 'status' : (array_key_exists('statut', $elements[0]) ? 'statut' : (array_key_exists("clos", $elements[0]) ? 'clos' : ''))) : '' ;
 
-		$counter = "<td class='left' width='40px;'>".(is_array($elements) ? count($elements) : '0')."</td>";
+		//echo "<pre>";print_r($active_element);echo "</pre>";
+		if (!empty($active_element)){
+			$sum_active = 0;
+			foreach($elements as $row){
+				$sum_active += $row[$active_element] > 0 ? 1 : 0;
+			}
+		}
+		//echo "<pre>";print_r($sum);echo "</pre>";
+		$sum_total=is_array($elements) ? count($elements) : 0;
+
+		//echo "<pre>";print_r($elements);echo "</pre>";
+		$counter = "<td class='left' width='40px;'>".$sum_active."</td>";
+		$counter .= "<td class='left' width='40px;'>".$sum_total-$sum_active."</td>";
+		$counter .= "<td class='left' width='40px;'>".$sum_total."</td>";
+		//echo "<pre>";print_r($sum);echo "</pre>";
 	}
 
 	$color = $categstatic->color ? ' style="background: #'.sprintf("%06s", $categstatic->color).';"' : ' style="background: #bbb"';
@@ -225,7 +257,7 @@ foreach ($fulltree as $key => $val) {
 
 	$data[] = array('rowid' => $val['rowid'], 'fk_menu' => $val['fk_parent'], 'entry' => $entry);
 }
-
+//echo "<pre>";print_r($data);echo "</pre>";
 
 $nbofentries = (count($data) - 1);
 
