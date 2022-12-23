@@ -91,16 +91,18 @@ print load_fiche_titre($langs->trans("MembersArea"), $resultboxes['selectboxlist
 
 $boxgraph = '';
 if ($conf->use_javascript_ajax) {
+	$year = date('Y');
+	$numberyears = empty(getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH")) ? 2 : getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH");
+
 	$boxgraph .='<div class="div-table-responsive-no-min">';
 	$boxgraph .='<table class="noborder nohover centpercent">';
-	$boxgraph .='<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
+	$boxgraph .='<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' ('.$year-$numberyears.' - '.$year.')</th></tr>';
 	$boxgraph .='<tr><td class="center" colspan="2">';
 
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 	$stats = new AdherentStats($db, 0, $userid);
 
 	// Show array
-	$numberyears = empty(getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH")) ? 2 : getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH");
 	$sumMembers = $stats->countMembersByTypeAndStatus($numberyears);
 	$total = $sumMembers['total']['members_draft'] + $sumMembers['total']['members_pending'] + $sumMembers['total']['members_uptodate'] + $sumMembers['total']['members_expired'] + $sumMembers['total']['members_excluded'] + $sumMembers['total']['members_resiliated'];
 
