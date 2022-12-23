@@ -94,7 +94,8 @@ class box_members_by_type extends ModeleBoxes
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 			$stats = new AdherentStats($this->db, $user->socid, $user->id);
 			// Show array
-			$sumMembers = $stats->countMembersByTypeAndStatus();
+			$numberyears = empty(getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH")) ? 2 : getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH");
+			$sumMembers = $stats->countMembersByTypeAndStatus($numberyears);
 			if ($sumMembers) {
 				$line = 0;
 				$this->info_box_contents[$line][] = array(

@@ -100,7 +100,8 @@ if ($conf->use_javascript_ajax) {
 	$stats = new AdherentStats($db, 0, $userid);
 
 	// Show array
-	$sumMembers = $stats->countMembersByTypeAndStatus();
+	$numberyears = empty(getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH")) ? 2 : getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH");
+	$sumMembers = $stats->countMembersByTypeAndStatus($numberyears);
 	$total = $sumMembers['total']['members_draft'] + $sumMembers['total']['members_pending'] + $sumMembers['total']['members_uptodate'] + $sumMembers['total']['members_expired'] + $sumMembers['total']['members_excluded'] + $sumMembers['total']['members_resiliated'];
 
 	$dataseries = array();
