@@ -90,7 +90,7 @@ class box_members_by_type extends ModeleBoxes
 
 		$year = date('Y');
 		$numberyears = empty(getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH")) ? 2 : getDolGlobalInt("MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH");
-	
+
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType").' ('.$year-$numberyears.' - '.$year.')');
 
 		if ($user->rights->adherent->lire) {
