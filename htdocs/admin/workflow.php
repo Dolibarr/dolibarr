@@ -71,6 +71,12 @@ $workflowcodes = array(
 		'enabled'=>(!empty($conf->commande->enabled) && !empty($conf->facture->enabled)),
 		'picto'=>'bill'
 	),
+	'WORKFLOW_TICKET_CREATE_INTERVENTION' => array (
+        'family'=>'create',
+        'position'=>25,
+        'enabled'=>(!empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled)),
+        'picto'=>'ticket'
+	),
 
 	'separator1'=>array('family'=>'separator', 'position'=>25, 'title'=>''),
 
@@ -139,7 +145,21 @@ $workflowcodes = array(
 		'position' => 66,
 		'enabled' => ! empty($conf->expedition->enabled) && ! empty($conf->facture->enabled),
 		'picto' => 'shipment'
-	)
+	),
+
+	// Automatic link ticket -> contract
+	'WORKFLOW_TICKET_LINK_CONTRACT' => array(
+		'family' => 'link_ticket',
+		'position' => 75,
+		'enabled' => ! empty($conf->ticket->enabled) && ! empty($conf->contract->enabled),
+		'picto' => 'ticket'
+	),
+	'WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS' => array(
+		'family' => 'link_ticket',
+		'position' => 76,
+		'enabled' => ! empty($conf->ticket->enabled) && ! empty($conf->contract->enabled),
+		'picto' => 'ticket'
+	),
 );
 
 if (!empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow'])) {
@@ -214,6 +234,11 @@ foreach ($workflowcodes as $key => $params) {
 			}
 			if ($reg[1] == 'shipping') {
 				$header .= ' - '.$langs->trans('Shipment');
+			}
+		} elseif (preg_match('/link_(.*)/', $params['family'], $reg)) {
+			$header = $langs->trans("AutomaticLinking");
+			if ($reg[1] == 'ticket') {
+				$header .= ' - '.$langs->trans('Ticket');
 			}
 		} else {
 			$header = $langs->trans("Description");

@@ -274,6 +274,9 @@ ErrorExecIdFailed=Can't execute command "id"
 ErrorBadCharIntoLoginName=Unauthorized character in the login name
 ErrorInvoiceLoadThirdParty=Can't load third-party object for invoice "%s"
 ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
+ErrorAttributeIsUsedIntoProduct=This attribute is used in one or more product variants
+ErrorAttributeValueIsUsedIntoProduct=This attribute value is used in one or more product variants
+ErrorAjaxRequestFailed=Request failed
 ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by actual object status
 
 # Warnings

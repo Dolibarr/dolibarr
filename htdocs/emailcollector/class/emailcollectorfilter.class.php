@@ -158,6 +158,7 @@ class EmailCollectorFilter extends CommonObject
 	public function create(User $user, $notrigger = false)
 	{
 		global $langs;
+
 		if (empty($this->type)) {
 			$langs->load("errors");
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
@@ -167,6 +168,12 @@ class EmailCollectorFilter extends CommonObject
 			$langs->load("errors");
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SearchString"));
 			return -2;
+		}
+
+		if (in_array($this->type, array('to')) && strpos($this->rulevalue, '+') != false) {
+			$langs->load("errors");
+			$this->errors[] = $langs->trans("ErrorCharPlusNotSupportedByImapForSearch");
+			return -3;
 		}
 
 		return $this->createCommon($user, $notrigger);
@@ -207,7 +214,8 @@ class EmailCollectorFilter extends CommonObject
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey])) {
-					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+					//var_dump($key);
+					//var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -363,7 +371,7 @@ class EmailCollectorFilter extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('emailcollectorfilterdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

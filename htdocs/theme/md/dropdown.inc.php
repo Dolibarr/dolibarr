@@ -123,7 +123,12 @@ button.dropdown-item.global-search-item {
 
 .dropdown-toggle::after {
 	/* font part */
-	font-family: "Font Awesome 5 Free";
+	/* Easya 2022 - PR19649 - FontAwesome - Add constant to define your own directory and font family */
+	/* Code annulé */
+	/* font-family: "Font Awesome 5 Free"; */
+	/* Code remplacé */
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
+	/* Easya 2022 - PR19649 - Fin */
 	font-size: 0.7em;
 	font-weight: 900;
 	font-style: normal;
@@ -357,7 +362,12 @@ a.top-menu-dropdown-link {
 
 .dropdown-item::before {
 	/* font part */
-	font-family: "Font Awesome 5 Free";
+	/* Easya 2022 - PR19649 - FontAwesome - Add constant to define your own directory and font family */
+	/* Code annulé */
+	/* font-family: "Font Awesome 5 Free"; */
+	/* Code remplacé */
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
+	/* Easya 2022 - PR19649 - Fin */
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;

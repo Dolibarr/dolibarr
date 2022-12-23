@@ -26,6 +26,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/ticket.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formcategory.class.php";
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "ticket"));
@@ -181,6 +182,32 @@ if ($action == 'setvarother') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
+	$param_auto_notify_close = GETPOST('TICKET_NOTIFY_AT_CLOSING', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_NOTIFY_AT_CLOSING', $param_auto_notify_close, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+}
+
+if ($action == 'setvarworkflowother' || $action == 'setvarother') {
+	$param_delay_first_response = GETPOST('delay_first_response', 'int');
+	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', $param_delay_first_response, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$param_delay_between_responses = GETPOST('delay_between_responses', 'int');
+	$res = dolibarr_set_const($db, 'TICKET_DELAY_SINCE_LAST_RESPONSE', $param_delay_between_responses, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$param_ticket_product_category = GETPOST('product_category_id', 'int');
+	$res = dolibarr_set_const($db, 'TICKET_PRODUCT_CATEGORY', $param_ticket_product_category, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 }
 
 
@@ -191,7 +218,7 @@ if ($action == 'setvarother') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-$form = new Form($db);
+$form = new FormCategory($db);
 
 $help_url = "FR:Module_Ticket";
 $page_name = "TicketSetup";
@@ -461,8 +488,7 @@ foreach ($dirmodels as $reldir) {
 print '</table>';
 print '</div><br>';
 
-
-if (!$conf->use_javascript_ajax) {
+if (empty($conf->use_javascript_ajax)) {
 	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setvarother">';
@@ -478,7 +504,8 @@ print '<td></td>';
 print "</tr>\n";
 
 // Auto assign ticket at user who created it
-print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoAssignTicket").'</td>';
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("TicketsAutoAssignTicket").'</td>';
 print '<td class="left">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('TICKET_AUTO_ASSIGN_USER_CREATE');
@@ -492,11 +519,68 @@ print $form->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 
 print '</td>';
 print '</tr>';
 
+// Auto notify contacts when closing the ticket
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsAutoNotifyClose").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_NOTIFY_AT_CLOSING');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("TICKET_NOTIFY_AT_CLOSING", $arrval, $conf->global->TICKET_NOTIFY_AT_CLOSING);
+}
+print '</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Choose which product category is used for tickets
+if ($conf->use_javascript_ajax) {
+	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="setvarworkflowother">';
+}
+
+print '<tr class="oddeven"><td>'.$langs->trans("TicketChooseProductCategory").'</td>';
+print '<td class="left">';
+$form->selectProductCategory($conf->global->TICKET_PRODUCT_CATEGORY, 'product_category_id');
+if ($conf->use_javascript_ajax) {
+	print ajax_combobox('select_'.$htmlname);
+}
+print '</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketChooseProductCategoryHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Define wanted maximum time elapsed before answers to tickets
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("TicketsDelayBeforeFirstAnswer")."</td>";
+print '<td class="left">
+	<input type="number" value="'.$conf->global->TICKET_DELAY_BEFORE_FIRST_RESPONSE.'" name="delay_first_response">
+	</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketsDelayBeforeFirstAnswerHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("TicketsDelayBetweenAnswers")."</td>";
+print '<td class="left">
+	<input type="number" value="'.$conf->global->TICKET_DELAY_SINCE_LAST_RESPONSE.'" name="delay_between_responses">
+	</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswersHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
 print '</table><br>';
 
-if (!$conf->use_javascript_ajax) {
-	print '</form>';
-}
+print '<div class="center">';
+print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
+print '</div>';
+
+print '</form>';
 
 // Admin var of module
 print load_fiche_titre($langs->trans("Notification"), '', '');

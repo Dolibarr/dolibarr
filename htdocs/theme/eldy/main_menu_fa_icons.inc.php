@@ -5,7 +5,12 @@
 
 .mainmenu::before{
 	/* font part */
-	font-family: "Font Awesome 5 Free";
+	/* Easya 2022 - PR19649 - FontAwesome - Add constant to define your own directory and font family */
+	/* Code annulé */
+	/* font-family: "Font Awesome 5 Free"; */
+	/* Code remplacé */
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
+	/* Easya 2022 - PR19649 - Fin */
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;

@@ -1241,6 +1241,7 @@ class SupplierProposal extends CommonObject
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
+				$this->status               = (int) $obj->fk_statut;
 				$this->statut               = (int) $obj->fk_statut;
 				$this->statut_libelle       = $obj->statut_label;
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated

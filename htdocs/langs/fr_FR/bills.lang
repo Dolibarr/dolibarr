@@ -157,6 +157,7 @@ ErrorInvoiceAvoirMustBeNegative=Erreur, une facture de type Avoir doit avoir un 
 ErrorInvoiceOfThisTypeMustBePositive=Erreur, une facture de ce type doit avoir un montant hors taxe positif (ou nul)
 ErrorCantCancelIfReplacementInvoiceNotValidated=Erreur, il n'est pas possible d'annuler une facture qui a été remplacée par une autre qui se trouve toujours à l'état 'brouillon'.
 ErrorThisPartOrAnotherIsAlreadyUsedSoDiscountSerieCantBeRemoved=Cette partie ou une autre est déjà utilisé, aussi la remise ne peut être supprimée.
+ErrorInvoiceIsNotLastOfSameType=Erreur : La facture %s est datée du %s. Elle doit être postérieure ou égale à la date de la dernière facture de même type (%s). Veuillez modifier la date de la facture.
 BillFrom=Émetteur
 BillTo=Adressé à
 ActionsOnBill=Événements sur la facture

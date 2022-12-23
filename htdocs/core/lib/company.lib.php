@@ -168,24 +168,6 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
-		// Tab to accountancy
-		if (!empty($conf->accounting->enabled) && $object->client > 0) {
-			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettering_customer.php?socid='.$object->id;
-			$head[$h][1] = $langs->trans("TabLetteringCustomer");
-			$head[$h][2] = 'lettering_customer';
-			$h++;
-		}
-
-		// Tab to accountancy
-		if (!empty($conf->accounting->enabled) && $object->fournisseur > 0) {
-			$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/thirdparty_lettering_supplier.php?socid='.$object->id;
-			$head[$h][1] = $langs->trans("TabLetteringSupplier");
-			$head[$h][2] = 'lettering_supplier';
-			$h++;
-		}
-	}
-
 	// Related items
 	if ((!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 		&& empty($conf->global->THIRPARTIES_DISABLE_RELATED_OBJECT_TAB)) {
@@ -927,6 +909,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	$search_name    = GETPOST("search_name", 'alpha');
 	$search_address = GETPOST("search_address", 'alpha');
 	$search_poste   = GETPOST("search_poste", 'alpha');
+	$search_note_private = GETPOST('search_note_private', 'alphanohtml');
 	$search_roles = GETPOST("search_roles", 'array');
 
 	$socialnetworks = getArrayOfSocialNetworks();
@@ -975,6 +958,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		'name'      =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
 		'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>2, 'index'=>1, 'position'=>20),
 		'address'   =>array('type'=>'varchar(128)', 'label'=>'Address', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>3, 'index'=>1, 'position'=>30),
+		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'visible'=>3, 'position'=>35),
 		'role'      =>array('type'=>'checkbox', 'label'=>'Role', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>4, 'index'=>1, 'position'=>40),
 		'statut'    =>array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'default'=>0, 'index'=>1, 'position'=>50, 'arrayofkeyval'=>array(0=>$contactstatic->LibStatut(0, 1), 1=>$contactstatic->LibStatut(1, 1))),
 	);
@@ -985,6 +969,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		't.name'=>array('label'=>"Name", 'checked'=>1, 'position'=>10),
 		't.poste'=>array('label'=>"PostOrFunction", 'checked'=>1, 'position'=>20),
 		't.address'=>array('label'=>(empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked'=>1, 'position'=>30),
+		't.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position'=>35),
 		'sc.role'=>array('label'=>"ContactByDefaultFor", 'checked'=>1, 'position'=>40),
 		't.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>50, 'class'=>'center'),
 	);
@@ -1018,6 +1003,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 		$search_roles = array();
 		$search_address = '';
 		$search_poste = '';
+		$search_note_private = '';
 		$search = array();
 		$search_array_options = array();
 
@@ -1071,6 +1057,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	if ($search_address != '') {
 		$param .= '&search_address='.urlencode($search_address);
 	}
+	if ($search_note_private != '') {
+		$param .= '&search_note_private='.urlencode($search_note_private);
+	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
@@ -1081,9 +1070,10 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 
 	$sql = "SELECT t.rowid, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.socialnetworks, t.statut, t.photo,";
 	$sql .= " t.civility as civility_id, t.address, t.zip, t.town";
+	$sql .= ", t.note_private";
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
-	$sql .= " WHERE t.fk_soc = ".$object->id;
+	$sql .= " WHERE t.fk_soc = ".((int) $object->id);
 	if ($search_status != '' && $search_status != '-1') {
 		$sql .= " AND t.statut = ".((int) $search_status);
 	}
@@ -1095,6 +1085,9 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 	}
 	if ($search_address) {
 		$sql .= natural_search($searchAddressPhoneDBFields, $search_address);
+	}
+	if ($search_note_private) {
+		$sql .= natural_search('t.note_private', $search_note_private);
 	}
 	if (count($search_roles) > 0) {
 		$sql .= " AND t.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".$db->sanitize(implode(',', $search_roles))."))";
@@ -1267,6 +1260,15 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
 				print '</td>';
 			}
 
+			// Note private
+			if (!empty($arrayfields['t.note_private']['checked'])) {
+				print '<td>';
+				if ($obj->note_private) {
+					print dol_string_nohtmltag($obj->note_private);
+				}
+				print '</td>';
+			}
+
 			// Role
 			if (!empty($arrayfields['sc.role']['checked'])) {
 				print '<td>';
@@ -1415,6 +1417,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 	$sql = '';
 
 	if (!empty($conf->agenda->enabled)) {
+		require_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		$hookmanager->initHooks(array('agendadao'));
+
 		// Recherche histo sur actioncomm
 		if (is_object($objcon) && $objcon->id > 0) {
 			$sql = "SELECT DISTINCT a.id, a.label as label,";
@@ -1450,6 +1457,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= ", o.ref";
 		}
 
+		// Fields from hook
+		$parameters = array('sql' => &$sql, 'filterobj' => $filterobj, 'objcon' => $objcon);
+		$reshook = $hookmanager->executeHooks('showActionsDoneListSelect', $parameters);    // Note that $action and $object may have been modified by hook
+		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
+
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
@@ -1460,6 +1472,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
 			$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".((int) $objcon->id);
 		}
+
+		// Fields from hook
+		$parameters = array('sql' => &$sql, 'filterobj' => $filterobj, 'objcon' => $objcon);
+		$reshook = $hookmanager->executeHooks('showActionsDoneListFrom', $parameters);    // Note that $action and $object may have been modified by hook
+		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
 
 		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
@@ -1560,6 +1577,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		}
 
 		addOtherFilterSQL($sql, $donetodo, $now, $filters);
+
+		// Fields from hook
+		$parameters = array('sql' => &$sql, 'filterobj' => $filterobj, 'objcon' => $objcon, 'module' => $module);
+		$reshook = $hookmanager->executeHooks('showActionsDoneListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+		if (!empty($hookmanager->resPrint)) $sql.= $hookmanager->resPrint;
 
 		if (is_array($actioncode)) {
 			foreach ($actioncode as $code) {

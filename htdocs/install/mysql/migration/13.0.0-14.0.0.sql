@@ -655,3 +655,96 @@ ALTER TABLE llx_c_socialnetworks DROP INDEX idx_c_socialnetworks_code;
 ALTER TABLE llx_c_socialnetworks ADD UNIQUE INDEX idx_c_socialnetworks_code_entity (code, entity);
 
 ALTER TABLE llx_propaldet ADD COLUMN import_key varchar(14);
+
+-- Easya 2022.5
+
+-- Backport 15.0.0 -> 16.0.0
+ALTER TABLE llx_product_attribute_value MODIFY COLUMN ref VARCHAR(180) NOT NULL;
+ALTER TABLE llx_product_attribute_value MODIFY COLUMN value VARCHAR(255) NOT NULL;
+ALTER TABLE llx_product_attribute_value ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE llx_product_attribute CHANGE rang position INTEGER DEFAULT 0 NOT NULL;
+
+-- Dictionaries - add possibility to manage countries in EEC #20261
+UPDATE llx_c_country SET eec = 0 WHERE code IN ('GB', 'UK', 'IM');
+UPDATE llx_c_country SET eec = 0 WHERE eec IS NULL;
+ALTER TABLE llx_c_country MODIFY COLUMN eec tinyint DEFAULT 0 NOT NULL;
+
+-- Add option for SEPA formatting
+ALTER TABLE llx_bank_account ADD COLUMN pti_in_ctti integer DEFAULT 0 AFTER domiciliation;
+
+-- Keep the last msg sent to display warnings on ticket list
+ALTER TABLE llx_ticket ADD COLUMN date_last_msg_sent datetime AFTER date_read;
+
+-- Rename value to create ficheinter automatically ont tickets
+UPDATE llx_const SET name = 'WORKFLOW_TICKET_CREATE_INTERVENTION' WHERE name = 'TICKET_AUTO_CREATE_FICHINTER_CREATE';
+
+-- Deposit generation helper with specific payment terms
+ALTER TABLE llx_c_payment_term ADD COLUMN deposit_percent real DEFAULT NULL AFTER decalage;
+ALTER TABLE llx_societe ADD COLUMN deposit_percent real DEFAULT NULL AFTER cond_reglement;
+ALTER TABLE llx_propal ADD COLUMN deposit_percent real DEFAULT NULL AFTER fk_cond_reglement;
+ALTER TABLE llx_commande ADD COLUMN deposit_percent real DEFAULT NULL AFTER fk_cond_reglement;
+INSERT INTO llx_c_payment_term(code, sortorder, active, libelle, libelle_facture, type_cdr, nbjour, deposit_percent) values ('DEP30PCTDEL', 13, 0, '__DEPOSIT_PERCENT__% deposit', '__DEPOSIT_PERCENT__% deposit, remainder on delivery', 0, 1, 30);
+
+-- Add products categories field on inventory card
+ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
+
+-- Add input reason on invoice
+ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
+
+-- Add accountancy code general on user / customer / supplier subledger
+ALTER TABLE llx_user ADD COLUMN accountancy_code_user_general varchar(32) DEFAULT NULL AFTER fk_barcode_type;
+ALTER TABLE llx_societe ADD COLUMN accountancy_code_customer_general varchar(32) DEFAULT NULL AFTER code_fournisseur;
+ALTER TABLE llx_societe ADD COLUMN accountancy_code_supplier_general varchar(32) DEFAULT NULL AFTER code_compta;
+ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_customer_general varchar(32) DEFAULT NULL AFTER entity;
+ALTER TABLE llx_societe_perentity ADD COLUMN accountancy_code_supplier_general varchar(32) DEFAULT NULL AFTER accountancy_code_customer;
+
+-- Rename const to hide public and private notes (fix allow notes const was used to hide)
+UPDATE llx_const SET name = 'MAIN_LIST_HIDE_PUBLIC_NOTES' WHERE name = 'MAIN_LIST_ALLOW_PUBLIC_NOTES';
+UPDATE llx_const SET name = 'MAIN_LIST_HIDE_PRIVATE_NOTES' WHERE name = 'MAIN_LIST_ALLOW_PRIVATE_NOTES';
+
+-- Rename prospect level on contact
+ALTER TABLE llx_socpeople CHANGE fk_prospectcontactlevel fk_prospectlevel varchar(12);
+
+-- Add shipment lines dispatcher
+create table llx_expeditiondet_dispatch
+(
+    rowid             integer AUTO_INCREMENT PRIMARY KEY,
+    fk_expeditiondet  integer NOT NULL,
+    fk_product        integer NOT NULL,
+    fk_product_parent integer NOT NULL,
+    fk_entrepot       integer NOT NULL,
+    qty               real
+)ENGINE=innodb;
+
+ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_expeditiondet (fk_expeditiondet);
+ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_product (fk_product);
+ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_product_parent (fk_product_parent);
+ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_entrepot (fk_entrepot);
+ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_expeditiondet FOREIGN KEY (fk_expeditiondet) REFERENCES llx_expeditiondet (rowid);
+ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product_parent FOREIGN KEY (fk_product_parent) REFERENCES llx_product (rowid);
+ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+
+-- Backport 14.0.0 -> 15.0.0
+ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
+
+-- Backport 15.0.0 -> 16.0.0
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+
+-- Backport 16.0.0 -> 17.0.0
+ALTER TABLE llx_emailcollector_emailcollector MODIFY COLUMN lastresult text;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN port varchar(10) DEFAULT '993';
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN acces_type integer DEFAULT 0;
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN oauth_service varchar(128) DEFAULT NULL;
+
+-- Increase size of action params for email collector (v15)
+ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
+
+-- Fix field message must be mediumtext
+ALTER TABLE llx_ticket MODIFY COLUMN message mediumtext;
+
+-- Replace MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS by (MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST, MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST and MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST)
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT 'MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST', entity, value, type, visible, note FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT 'MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST', entity, value, type, visible, note FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT 'MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST', entity, value, type, visible, note FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
+DELETE FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";

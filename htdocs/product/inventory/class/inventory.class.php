@@ -100,7 +100,8 @@ class Inventory extends CommonObject
 		'entity'         => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'index'=>1,),
 		'title'          => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>25, 'css'=>'minwidth300', 'csslist'=>'tdoverflowmax200'),
 		'fk_warehouse'   => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'InventoryForASpecificWarehouse', 'picto'=>'stock', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax200'),
-		'fk_product'     => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'InventoryForASpecificProduct', 'picto'=>'product', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax200'),
+		'fk_product'     => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'get_name_url_params' => '0::0:-1:0::1', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'InventoryForASpecificProduct', 'picto'=>'product', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist'=>'tdoverflowmax200'),
+		'categories_product' => array('type'=>'chkbxlst:categorie:label:rowid::type=0:0:', 'label'=>'OrProductsWithCategories', 'visible'=>3, 'enabled'=>1, 'position'=>33, 'help'=>'', 'picto'=>'category', 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx'),
 		'date_inventory' => array('type'=>'date', 'label'=>'DateValue', 'visible'=>1, 'enabled'=>1, 'position'=>35),
 
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
@@ -138,6 +139,11 @@ class Inventory extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_product;
+
+	/**
+	 * @var string Categories id separated by comma
+	 */
+	public $categories_product;
 
 	public $date_inventory;
 	public $title;
@@ -290,6 +296,21 @@ class Inventory extends CommonObject
 			}
 			if ($this->fk_warehouse > 0) {
 				$sql .= ' AND ps.fk_entrepot = '.$this->fk_warehouse;
+			}
+			if (!empty($this->categories_product)) {
+				$sql .= " AND EXISTS (";
+				$sql .= " SELECT cp.fk_product";
+				$sql .= " FROM ".MAIN_DB_PREFIX."categorie_product AS cp";
+				$sql .= " WHERE cp.fk_product = ps.fk_product";
+				$sql .= " AND cp.fk_categorie IN (".$this->db->sanitize($this->categories_product).")";
+				$sql .= ")";
+			}
+			if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+				$sql .= " AND NOT EXISTS (";
+				$sql .= " SELECT pa.rowid";
+				$sql .= " FROM ".$this->db->prefix()."product_association as pa";
+				$sql .= " WHERE pa.fk_product_pere = ps.fk_product";
+				$sql .= ")";
 			}
 
 			$inventoryline = new InventoryLine($this->db);

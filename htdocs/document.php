@@ -168,6 +168,7 @@ if (!empty($hashp)) {
 			$conf->entity = $entity;
 			$conf->setValues($db);
 		}
+		$fullpath_original_file = DOL_DATA_ROOT . '/' . $ecmfile->filepath . '/' . $ecmfile->filename;
 	} else {
 		$langs->load("errors");
 		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 0, 0, 1);
@@ -218,7 +219,9 @@ if (empty($modulepart)) {
 $check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
-$fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
+if (empty($fullpath_original_file)) {
+	$fullpath_original_file = $check_access['original_file'];
+} // $fullpath_original_file is now a full path name
 //var_dump($fullpath_original_file);exit;
 
 if (!empty($hashp)) {

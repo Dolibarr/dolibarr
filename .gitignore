@@ -56,3 +56,4 @@ package-lock.json
 
 doc/install.lock
 /factory/
+test/phpunit/testvirus.txt

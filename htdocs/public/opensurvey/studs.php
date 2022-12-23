@@ -165,7 +165,16 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 
 						$application = ($conf->global->MAIN_APPLICATION_TITLE ? $conf->global->MAIN_APPLICATION_TITLE : 'Dolibarr ERP/CRM');
 
+						// Easya 2022 - PR18672 - Sondage - Ajout d'un lien cliquable dans les emails envoyés
+						// Code annulé
+						/*
 						$body = str_replace('\n', '<br>', $langs->transnoentities('EmailSomeoneVoted', $nom, getUrlSondage($numsondage, true)));
+						*/
+						// Code remplacé
+						$link = getUrlSondage($numsondage, true);
+						$link = '<a href="'.$link.'">'.$link.'</a>';
+						$body = str_replace('\n', '<br>', $langs->transnoentities('EmailSomeoneVoted', $nom, $link));
+						// Easya 2022 - PR18672 - Fin
 						//var_dump($body);exit;
 
 						$cmailfile = new CMailFile("[".$application."] ".$langs->trans("Poll").': '.$object->title, $email, $conf->global->MAIN_MAIL_EMAIL_FROM, $body, null, null, null, '', '', 0, -1);

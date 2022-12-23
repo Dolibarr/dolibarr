@@ -52,12 +52,34 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'supplierorderlist';
 
+// Easya 2022 - PR18438 - Supplier order - Add From/to input on search date
+// Code annulé
+/*
 $search_orderyear = GETPOST("search_orderyear", "int");
 $search_ordermonth = GETPOST("search_ordermonth", "int");
 $search_orderday = GETPOST("search_orderday", "int");
 $search_deliveryyear = GETPOST("search_deliveryyear", "int");
 $search_deliverymonth = GETPOST("search_deliverymonth", "int");
 $search_deliveryday = GETPOST("search_deliveryday", "int");
+*/
+// Code remplacé
+$search_date_order_startday = GETPOST('search_date_order_startday', 'int');
+$search_date_order_startmonth = GETPOST('search_date_order_startmonth', 'int');
+$search_date_order_startyear = GETPOST('search_date_order_startyear', 'int');
+$search_date_order_endday = GETPOST('search_date_order_endday', 'int');
+$search_date_order_endmonth = GETPOST('search_date_order_endmonth', 'int');
+$search_date_order_endyear = GETPOST('search_date_order_endyear', 'int');
+$search_date_order_start = dol_mktime(0, 0, 0, $search_date_order_startmonth, $search_date_order_startday, $search_date_order_startyear);	// Use tzserver
+$search_date_order_end = dol_mktime(23, 59, 59, $search_date_order_endmonth, $search_date_order_endday, $search_date_order_endyear);
+$search_date_delivery_startday = GETPOST('search_date_delivery_startday', 'int');
+$search_date_delivery_startmonth = GETPOST('search_date_delivery_startmonth', 'int');
+$search_date_delivery_startyear = GETPOST('search_date_delivery_startyear', 'int');
+$search_date_delivery_endday = GETPOST('search_date_delivery_endday', 'int');
+$search_date_delivery_endmonth = GETPOST('search_date_delivery_endmonth', 'int');
+$search_date_delivery_endyear = GETPOST('search_date_delivery_endyear', 'int');
+$search_date_delivery_start = dol_mktime(0, 0, 0, $search_date_delivery_startmonth, $search_date_delivery_startday, $search_date_delivery_startyear);	// Use tzserver
+$search_date_delivery_end = dol_mktime(23, 59, 59, $search_date_delivery_endmonth, $search_date_delivery_endday, $search_date_delivery_endyear);
+// Easya 2022 - PR18438 - Fin
 
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
@@ -235,12 +257,34 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_ttc = '';
 		$search_project_ref = '';
 		$search_status = -1;
+		// Easya 2022 - PR18438 - Supplier order - Add From/to input on search date
+		// Code annulé
+		/*
 		$search_orderyear = '';
 		$search_ordermonth = '';
 		$search_orderday = '';
 		$search_deliveryday = '';
 		$search_deliverymonth = '';
 		$search_deliveryyear = '';
+		*/
+		// Code remplacé
+		$search_date_order_startday = '';
+		$search_date_order_startmonth = '';
+		$search_date_order_startyear = '';
+		$search_date_order_endday = '';
+		$search_date_order_endmonth = '';
+		$search_date_order_endyear = '';
+		$search_date_order_start = '';
+		$search_date_order_end = '';
+		$search_date_delivery_startday = '';
+		$search_date_delivery_startmonth = '';
+		$search_date_delivery_startyear = '';
+		$search_date_delivery_endday = '';
+		$search_date_delivery_endmonth = '';
+		$search_date_delivery_endyear = '';
+		$search_date_delivery_start = '';
+		$search_date_delivery_end = '';
+		// Easya 2022 - PR18438 - Fin
 		$billed = '';
 		$search_billed = '';
 		$toselect = '';
@@ -495,6 +539,9 @@ if (empty($reshook)) {
 			if ($search_status != '') {
 				$param .= '&search_status='.urlencode($search_status);
 			}
+			// Easya 2022 - PR18438 - Supplier order - Add From/to input on search date
+			// Code annulé
+			/*
 			if ($search_orderday) {
 				$param .= '&search_orderday='.urlencode($search_orderday);
 			}
@@ -513,6 +560,45 @@ if (empty($reshook)) {
 			if ($search_deliveryyear) {
 				$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
 			}
+			*/
+			// Code remplacé
+			if ($search_date_order_startday) {
+				$param .= '&search_date_order_startday='.urlencode($search_date_order_startday);
+			}
+			if ($search_date_order_startmonth) {
+				$param .= '&search_date_order_startmonth='.urlencode($search_date_order_startmonth);
+			}
+			if ($search_date_order_startyear) {
+				$param .= '&search_date_order_startyear='.urlencode($search_date_order_startyear);
+			}
+			if ($search_date_order_endday) {
+				$param .= '&search_date_order_endday='.urlencode($search_date_order_endday);
+			}
+			if ($search_date_order_endmonth) {
+				$param .= '&search_date_order_endmonth='.urlencode($search_date_order_endmonth);
+			}
+			if ($search_date_order_endyear) {
+				$param .= '&search_date_order_endyear='.urlencode($search_date_order_endyear);
+			}
+			if ($search_date_delivery_startday) {
+				$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+			}
+			if ($search_date_delivery_startmonth) {
+				$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+			}
+			if ($search_date_delivery_startyear) {
+				$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+			}
+			if ($search_date_delivery_endday) {
+				$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+			}
+			if ($search_date_delivery_endmonth) {
+				$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+			}
+			if ($search_date_delivery_endyear) {
+				$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+			}
+			// Easya 2022 - PR18438 - Fin
 			if ($search_ref) {
 				$param .= '&search_ref='.urlencode($search_ref);
 			}
@@ -681,8 +767,26 @@ if (GETPOST('statut', 'intcomma') !== '') {
 if ($search_status != '' && $search_status != '-1') {
 	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 }
+// Easya 2022 - PR18438 - Supplier order - Add From/to input on search date
+// Code annulé
+/*
 $sql .= dolSqlDateFilter("cf.date_commande", $search_orderday, $search_ordermonth, $search_orderyear);
 $sql .= dolSqlDateFilter("cf.date_livraison", $search_deliveryday, $search_deliverymonth, $search_deliveryyear);
+*/
+// Code remplacé
+if ($search_date_order_start) {
+	$sql .= " AND cf.date_commande >= '".$db->idate($search_date_order_start)."'";
+}
+if ($search_date_order_end) {
+	$sql .= " AND cf.date_commande <= '".$db->idate($search_date_order_end)."'";
+}
+if ($search_date_delivery_start) {
+	$sql .= " AND cf.date_livraison >= '".$db->idate($search_date_delivery_start)."'";
+}
+if ($search_date_delivery_end) {
+	$sql .= " AND cf.date_livraison <= '".$db->idate($search_date_delivery_end)."'";
+}
+// Easya 2022 - PR18438 - Fin
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
 }
@@ -794,6 +898,9 @@ if ($resql) {
 	if ($sall) {
 		$param .= "&search_all=".urlencode($sall);
 	}
+	// Easya 2022 - PR18438 - Supplier order - Add From/to input on search date
+	// Code annulé
+	/*
 	if ($search_orderday) {
 		$param .= '&search_orderday='.urlencode($search_orderday);
 	}
@@ -812,6 +919,45 @@ if ($resql) {
 	if ($search_deliveryyear) {
 		$param .= '&search_deliveryyear='.urlencode($search_deliveryyear);
 	}
+	*/
+	// Code remplacé
+	if ($search_date_order_startday) {
+		$param .= '&search_date_order_startday='.urlencode($search_date_order_startday);
+	}
+	if ($search_date_order_startmonth) {
+		$param .= '&search_date_order_startmonth='.urlencode($search_date_order_startmonth);
+	}
+	if ($search_date_order_startyear) {
+		$param .= '&search_date_order_startyear='.urlencode($search_date_order_startyear);
+	}
+	if ($search_date_order_endday) {
+		$param .= '&search_date_order_endday='.urlencode($search_date_order_endday);
+	}
+	if ($search_date_order_endmonth) {
+		$param .= '&search_date_order_endmonth='.urlencode($search_date_order_endmonth);
+	}
+	if ($search_date_order_endyear) {
+		$param .= '&search_date_order_endyear='.urlencode($search_date_order_endyear);
+	}
+	if ($search_date_delivery_startday) {
+		$param .= '&search_date_delivery_startday='.urlencode($search_date_delivery_startday);
+	}
+	if ($search_date_delivery_startmonth) {
+		$param .= '&search_date_delivery_startmonth='.urlencode($search_date_delivery_startmonth);
+	}
+	if ($search_date_delivery_startyear) {
+		$param .= '&search_date_delivery_startyear='.urlencode($search_date_delivery_startyear);
+	}
+	if ($search_date_delivery_endday) {
+		$param .= '&search_date_delivery_endday='.urlencode($search_date_delivery_endday);
+	}
+	if ($search_date_delivery_endmonth) {
+		$param .= '&search_date_delivery_endmonth='.urlencode($search_date_delivery_endmonth);
+	}
+	if ($search_date_delivery_endyear) {
+		$param .= '&search_date_delivery_endyear='.urlencode($search_date_delivery_endyear);
+	}
+	// Easya 2022 - PR18438 - Fin
 	if ($search_ref) {
 		$param .= '&search_ref='.urlencode($search_ref);
 	}
@@ -1076,6 +1222,9 @@ if ($resql) {
 	}
 	// Date order
 	if (!empty($arrayfields['cf.date_commande']['checked'])) {
+		// Easya 2022 - PR18438 - Supplier order - Add From/to input on search date
+		// Code annulé
+		/*
 		print '<td class="liste_titre nowraponall center">';
 		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
 			print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_orderday" value="'.$search_orderday.'">';
@@ -1083,9 +1232,23 @@ if ($resql) {
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_ordermonth" value="'.$search_ordermonth.'">';
 		$formother->select_year($search_orderyear ? $search_orderyear : -1, 'search_orderyear', 1, 20, 5);
 		print '</td>';
+		*/
+		// Code remplacé
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_order_start ? $search_date_order_start : -1, 'search_date_order_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_order_end ? $search_date_order_end : -1, 'search_date_order_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
+		print '</td>';
+		// Easya 2022 - PR18438 - Fin
 	}
 	// Date delivery
 	if (!empty($arrayfields['cf.date_livraison']['checked'])) {
+		// Easya 2022 - PR18438 - Supplier order - Add From/to input on search date
+		// Code annulé
+		/*
 		print '<td class="liste_titre nowraponall center">';
 		if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
 			print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_deliveryday" value="'.$search_deliveryday.'">';
@@ -1093,6 +1256,17 @@ if ($resql) {
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_deliverymonth" value="'.$search_deliverymonth.'">';
 		$formother->select_year($search_deliveryyear ? $search_deliveryyear : -1, 'search_deliveryyear', 1, 20, 5);
 		print '</td>';
+		*/
+		// Code remplacé
+		print '<td class="liste_titre center">';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_delivery_start ? $search_date_delivery_start : -1, 'search_date_delivery_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrap">';
+		print $form->selectDate($search_date_delivery_end ? $search_date_delivery_end : -1, 'search_date_delivery_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
+		print '</td>';
+		// Easya 2022 - PR18438 - Fin
 	}
 	if (!empty($arrayfields['cf.total_ht']['checked'])) {
 		// Amount

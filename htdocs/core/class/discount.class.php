@@ -559,7 +559,7 @@ class DiscountAbsolute
 
 	/**
 	 *  Return amount (with tax) of all deposits invoices used by invoice as a payment.
-	 *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
+	 *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS or FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
 	 *
 	 *	@param		CommonInvoice	$invoice		Object invoice (customer of supplier)
 	 *  @param 		int 		    $multicurrency 	1=Return multicurrency_amount instead of amount

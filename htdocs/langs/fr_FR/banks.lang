@@ -183,3 +183,6 @@ IfYouDontReconcileDisableProperty=Si vous ne réalisez pas le rapprochement banc
 NoBankAccountDefined=Aucun compte bancaire défini
 NoRecordFoundIBankcAccount=Aucun enregistrement trouvé dans le compte bancaire. Généralement, cela se produit lorsqu'un enregistrement a été supprimé manuellement de la liste des transactions dans le compte bancaire (par exemple lors d'un rapprochement du compte bancaire). Une autre raison est que le paiement a été enregistré lorsque le module "%s" était désactivé.
 AlreadyOneBankAccount=un compte bancaire est déjà défini
+
+SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=transfert SEPA : 'Payment Type' au niveau de 'Credit Transfer'
+SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=XML SEPA : PaymentTypeInformation est obligatoire et peut maintenant être mentionné au niveau CreditTransferTransactionInformation (au lieu du niveau Payment). Nous recommandons avec insistance d’indiquer PaymentTypeInformation au niveau Payment (comme pour les versions précédentes) car toutes les banques ne l’accepteront pas nécessairement au niveau transaction. Contactez votre banque avant d’indiquer PaymentTypeInformation au niveau CreditTransferTransactionInformation.

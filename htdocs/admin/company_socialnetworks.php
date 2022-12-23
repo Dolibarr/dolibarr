@@ -118,7 +118,7 @@ foreach ($listofnetworks as $key => $value) {
 		print '<td><label for="'.$key.'url">'.$langs->trans(ucfirst($key)).'</label></td>';
 		$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($key).'_URL';
 		$networkconstid = 'MAIN_INFO_SOCIETE_'.strtoupper($key);
-		print '<td class="nowraponall"><span class="fa paddingright '.($value['icon'] ? $value['icon'] : 'fa-link').'"></span>';
+		print '<td class="nowraponall"><span class="fab paddingright '.($value['icon'] ? $value['icon'] : 'fa-link').'"></span>';
 		print '<input name="'.$key.'url" id="'.$key.'url" class="minwidth300" value="'.(!empty($conf->global->$networkconstname) ? dol_escape_htmltag($conf->global->$networkconstname) : '').'">';
 		print '</td><td>';
 		print '<input name="'.$key.'" id="'.$key.'" class="minwidth300" value="'.(!empty($conf->global->$networkconstid) ? dol_escape_htmltag($conf->global->$networkconstid) : '').'">';

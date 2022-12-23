@@ -33,4 +33,12 @@ print '<body id="mainbody">'."\n";
 
 top_menu("", "", "_top");
 
+// Force to show menus because it's hidden if the page is inside an iFrame
+print '<script type="text/javascript">'."\n";
+print '$(document).ready(function() {'."\n";
+print 'console.log("External site: Force to show menus because it\'s hidden if the page is inside an iFrame");'."\n";
+print 'jQuery(".side-nav-vert, .side-nav, .websitebar").show();'."\n";
+print '});'."\n";
+print '</script>'."\n";
+
 print '</body>';

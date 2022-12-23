@@ -70,8 +70,8 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new Ticket($db);
 
-
-
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('ticketpubliclist', 'globalcard'));
 
 /*
  * Actions
@@ -350,11 +350,11 @@ if ($action == "view_ticketlist") {
 		}
 		$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
 		$sql .= " AND ((tc.source = 'external'";
-		$sql .= " AND tc.element='".$db->escape($object->dao->element)."'";
-		$sql .= " AND tc.active=1)";
-		$sql .= " OR (sp.email='".$db->escape($_SESSION['email_customer'])."'";
-		$sql .= " OR s.email='".$db->escape($_SESSION['email_customer'])."'";
-		$sql .= " OR t.origin_email='".$db->escape($_SESSION['email_customer'])."'))";
+		$sql .= " AND tc.element='".$db->escape($object->element)."'";
+		$sql .= " AND tc.active=1";
+		$sql .= " AND sp.email='".$db->escape($_SESSION['email_customer'])."')";		// email found into an external contact
+		$sql .= " OR s.email='".$db->escape($_SESSION['email_customer'])."'";			// or email of the linked company
+		$sql .= " OR t.origin_email='".$db->escape($_SESSION['email_customer'])."')";	// or email of the requester
 		// Manage filter
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
@@ -397,6 +397,11 @@ if ($action == "view_ticketlist") {
 
 				$varpage = empty($contextpage) ? $url_page_current : $contextpage;
 				$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
+				// allow to display information before list
+				$parameters=array('arrayfields'=>$arrayfields);
+				$reshook=$hookmanager->executeHooks('printFieldListHeader', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+				print $hookmanager->resPrint;
 
 				print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
@@ -648,7 +653,7 @@ if ($action == "view_ticketlist") {
 								}
 								print '>';
 								$tmpkey = 'options_'.$key;
-								print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+								print $extrafields->showOutputField($key, $obj->$tmpkey, '', $object->table_element);
 								print '</td>';
 							}
 						}
@@ -687,6 +692,8 @@ if ($action == "view_ticketlist") {
                     }
                 </script>';
 			}
+		} else {
+			dol_print_error($db);
 		}
 	} else {
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">'.$langs->trans('Back').'</a></div>';

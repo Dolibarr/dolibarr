@@ -653,7 +653,7 @@ class ImportXlsx extends ModeleImports
 										break;
 									}
 									$classinstance = new $class($this->db);
-									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord));
+									$res = call_user_func_array(array($classinstance, $method), array(&$arrayrecord, $fieldname, $listfields, $listvalues, $key - 1));
 									if ($res < 0) {
 										if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) {
 											$this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
@@ -819,18 +819,20 @@ class ImportXlsx extends ModeleImports
 						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 
-							if (empty($lastinsertid)) {	// No insert done yet for a parent table
-								$sqlSelect = 'SELECT rowid FROM ' . $tablename;
-
-								$data = array_combine($listfields, $listvalues);
-								$where = array();
-								$filters = array();
-								foreach ($updatekeys as $key) {
+							$data = array_combine($listfields, $listvalues);
+							$where = array();
+							$filters = array();
+							foreach ($updatekeys as $key) {
+								if (preg_match('/^'. preg_quote($alias). '\./i', $key)) {
 									$col = $objimport->array_import_updatekeys[0][$key];
 									$key = preg_replace('/^.*\./i', '', $key);
 									$where[] = $key . ' = ' . $data[$key];
 									$filters[] = $col . ' = ' . $data[$key];
 								}
+							}
+
+							if (empty($lastinsertid)) {	// No insert done yet for a parent table
+								$sqlSelect = 'SELECT rowid FROM ' . $tablename;
 								$sqlSelect .= ' WHERE ' . implode(' AND ', $where);
 
 								$resql = $this->db->query($sqlSelect);
@@ -864,6 +866,7 @@ class ImportXlsx extends ModeleImports
 									$keyfield = 'rowid';
 								}
 								$sqlSelect .= ' WHERE ' . $keyfield . ' = ' .((int) $lastinsertid);
+								if (!empty($where)) $sqlSelect .= ' AND ' . implode(' AND ', $where);
 
 								$resql = $this->db->query($sqlSelect);
 								if ($resql) {
@@ -898,6 +901,7 @@ class ImportXlsx extends ModeleImports
 									$keyfield = 'rowid';
 								}
 								$sqlend = ' WHERE ' . $keyfield . ' = '.((int) $lastinsertid);
+								if (!empty($where)) $sqlend .= ' AND ' . implode(' AND ', $where);
 
 								$sql = $sqlstart . $sqlend;
 
