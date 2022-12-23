@@ -107,37 +107,37 @@ class box_members_by_type extends ModeleBoxes
 				// Members Status To Valid
 				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_DRAFT, 0, 0, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus
 				);
 				// Waiting for subscription
 				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, 0, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus,
 				);
 				// Up to date
 				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() + 86400, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus,
 				);
 				// Expired
 				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_VALIDATED, 1, dol_now() - 86400, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus
 				);
 				// Excluded
 				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_EXCLUDED, 0, 0, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus
 				);
 				// Resiliated
 				$labelstatus = $staticmember->LibStatut($staticmember::STATUS_RESILIATED, 0, 0, 1);
 				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+					'td' => 'class="right tdoverflowmax100" width="10%" title="'.dol_escape_htmltag($labelstatus).'"',
 					'text' => $labelstatus
 				);
 				// Total row
