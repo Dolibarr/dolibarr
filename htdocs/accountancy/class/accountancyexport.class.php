@@ -1097,33 +1097,33 @@ class AccountancyExport
 	 */
 	public function exportFECZIP($objectLines)
 	{
-        global $langs, $conf, $mysoc;
+		global $langs, $conf, $mysoc;
 
 		$datestart = $dateend = '';
-        $separator = "\t";
-        $end_line = "\r\n";
+		$separator = "\t";
+		$end_line = "\r\n";
 
-        $dirfortmpfile = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->comptabilite->dir_temp);
-        if (empty($dirfortmpfile)) {
-            setEventMessages($langs->trans("ErrorNoAccountingModuleEnabled"), null, 'errors');
-            return;
-        }
-
-        if (!extension_loaded('zip')) {
-            setEventMessages('PHPZIPExtentionNotLoaded', null, 'errors');
+		$dirfortmpfile = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->comptabilite->dir_temp);
+		if (empty($dirfortmpfile)) {
+			setEventMessages($langs->trans("ErrorNoAccountingModuleEnabled"), null, 'errors');
 			return;
-        } else {
-            dol_mkdir($dirfortmpfile);
-            $zipname = $dirfortmpfile.'/'.dol_print_date(dol_now(), 'dayrfc', 'tzuserrel') . dol_sanitizeFileName($mysoc->name ? $mysoc->name : 'MyCompany') . '_export.zip';
-            dol_delete_file($zipname);
+		}
 
-            $zip = new ZipArchive();
-            $res = $zip->open($zipname, ZipArchive::OVERWRITE | ZipArchive::CREATE);
-            if (! $res) {
-                dol_syslog("exportFECZIP::ZipArchive error", LOG_ERR);
-                return;
-            }
-        }
+		if (!extension_loaded('zip')) {
+			setEventMessages('PHPZIPExtentionNotLoaded', null, 'errors');
+			return;
+		} else {
+			dol_mkdir($dirfortmpfile);
+			$zipname = $dirfortmpfile.'/'.dol_print_date(dol_now(), 'dayrfc', 'tzuserrel') . dol_sanitizeFileName($mysoc->name ? $mysoc->name : 'MyCompany') . '_export.zip';
+			dol_delete_file($zipname);
+
+			$zip = new ZipArchive();
+			$res = $zip->open($zipname, ZipArchive::OVERWRITE | ZipArchive::CREATE);
+			if (! $res) {
+				dol_syslog("exportFECZIP::ZipArchive error", LOG_ERR);
+				return;
+			}
+		}
 
 		$fectxt = "";
 		$fectxt .= "JournalCode".$separator;
@@ -1158,10 +1158,10 @@ class AccountancyExport
 				$date_validation = dol_print_date($line->date_validation, '%Y%m%d');
 				$date_limit_payment = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
-				if($date_document < $datestart || $datestart == '') {
+				if ($date_document < $datestart || $datestart == '') {
 					$datestart = $date_document;
 				}
-				if($date_document > $dateend || $dateend == '') {
+				if ($date_document > $dateend || $dateend == '') {
 					$dateend = $date_document;
 				}
 
@@ -1178,7 +1178,6 @@ class AccountancyExport
 					$objectref = dol_sanitizeFileName($invoice->ref);
 					$dir = $conf->facture->dir_output.'/'.get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice');
 					$pdfDocumentFullPath = $dir."/".$objectref.".pdf";
-
 				} elseif ($line->doc_type == 'supplier_invoice') {
 					// Supplier invoice
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -1260,9 +1259,9 @@ class AccountancyExport
 				//ajout du fichier dans l'archive
 				dol_syslog("exportFECZIP::ZipArchive add $pdfDocumentFullPath to $refInvoiceFEC ...", LOG_ERR);
 
-                if (file_exists($pdfDocumentFullPath)) {
-                    $zip->addFile($pdfDocumentFullPath, $refInvoiceFEC . '.PDF');
-                }else {
+				if (file_exists($pdfDocumentFullPath)) {
+					$zip->addFile($pdfDocumentFullPath, $refInvoiceFEC . '.PDF');
+				} else {
 					dol_syslog("exportFECZIP::ZipArchive add $pdfDocumentFullPath does not exists !", LOG_ERR);
 				}
 
