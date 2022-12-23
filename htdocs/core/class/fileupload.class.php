@@ -137,47 +137,47 @@ class FileUpload
 		}
 
 		$this->options = array(
-				'script_url' => $_SERVER['PHP_SELF'],
-				'upload_dir' => $dir_output.'/'.$object_ref.'/',
-				'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object_ref.'/',
-				'param_name' => 'files',
-				// Set the following option to 'POST', if your server does not support
-				// DELETE requests. This is a parameter sent to the client:
-				'delete_type' => 'DELETE',
-				// The php.ini settings upload_max_filesize and post_max_size
-				// take precedence over the following max_file_size setting:
-				'max_file_size' => null,
-				'min_file_size' => 1,
-				'accept_file_types' => '/.+$/i',
-				// The maximum number of files for the upload directory:
-				'max_number_of_files' => null,
-				// Image resolution restrictions:
-				'max_width' => null,
-				'max_height' => null,
-				'min_width' => 1,
-				'min_height' => 1,
-				// Set the following option to false to enable resumable uploads:
-				'discard_aborted_uploads' => true,
-				'image_versions' => array(
-						// Uncomment the following version to restrict the size of
-						// uploaded images. You can also add additional versions with
-						// their own upload directories:
-						/*
-		'large' => array(
-				'upload_dir' => dirname($_SERVER['SCRIPT_FILENAME']).'/files/',
-				'upload_url' => $this->getFullUrl().'/files/',
-				'max_width' => 1920,
-				'max_height' => 1200,
-				'jpeg_quality' => 95
-		),
-		*/
-						'thumbnail' => array(
-								'upload_dir' => $dir_output.'/'.$object_ref.'/thumbs/',
-								'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object_ref.'/thumbs/',
-								'max_width' => 80,
-								'max_height' => 80
-						)
+			'script_url' => $_SERVER['PHP_SELF'],
+			'upload_dir' => $dir_output.'/'.$object_ref.'/',
+			'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object_ref.'/',
+			'param_name' => 'files',
+			// Set the following option to 'POST', if your server does not support
+			// DELETE requests. This is a parameter sent to the client:
+			'delete_type' => 'DELETE',
+			// The php.ini settings upload_max_filesize and post_max_size
+			// take precedence over the following max_file_size setting:
+			'max_file_size' => null,
+			'min_file_size' => 1,
+			'accept_file_types' => '/.+$/i',
+			// The maximum number of files for the upload directory:
+			'max_number_of_files' => null,
+			// Image resolution restrictions:
+			'max_width' => null,
+			'max_height' => null,
+			'min_width' => 1,
+			'min_height' => 1,
+			// Set the following option to false to enable resumable uploads:
+			'discard_aborted_uploads' => true,
+			'image_versions' => array(
+				// Uncomment the following version to restrict the size of
+				// uploaded images. You can also add additional versions with
+				// their own upload directories:
+				/*
+				'large' => array(
+					'upload_dir' => dirname($_SERVER['SCRIPT_FILENAME']).'/files/',
+					'upload_url' => $this->getFullUrl().'/files/',
+					'max_width' => 1920,
+					'max_height' => 1200,
+					'jpeg_quality' => 95
+				),
+				*/
+				'thumbnail' => array(
+					'upload_dir' => $dir_output.'/'.$object_ref.'/thumbs/',
+					'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object_ref.'/thumbs/',
+					'max_width' => 80,
+					'max_height' => 80
 				)
+			)
 		);
 
 		$hookmanager->executeHooks(
