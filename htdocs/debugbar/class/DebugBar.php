@@ -58,6 +58,7 @@ class DolibarrDebugBar extends DebugBar
 		$renderer->disableVendor('jquery');			// We already have jquery loaded globally by the main.inc.php
 		$renderer->disableVendor('fontawesome');	// We already have fontawesome loaded globally by the main.inc.php
 		$renderer->disableVendor('highlightjs');	// We don't need this
+		$renderer->setEnableJqueryNoConflict(false);	// We don't need no conflict
 		return $renderer;
 	}
 }
