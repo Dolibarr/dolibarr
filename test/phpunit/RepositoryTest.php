@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CodingPhpTest extends PHPUnit\Framework\TestCase
+class RepositoryTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
