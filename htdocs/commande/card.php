@@ -629,14 +629,14 @@ if (empty($reshook)) {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
 		}
-		
+
 		$price_equivalent = $price_ht;
 		$currency_tx = $object->multicurrency_tx;
 
 		// Check if we have a foreing currency
 		// If so, we update the pu_equiv as the equivalent price in base currency
 		if ($price_ht == '' && $price_ht_devise != '' && $currency_tx != '') {
-		 	$price_equivalent = $price_ht_devise * $currency_tx;
+			$price_equivalent = $price_ht_devise * $currency_tx;
 		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
@@ -999,14 +999,14 @@ if (empty($reshook)) {
 		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
 		$vat_rate = (GETPOST('tva_tx') ?GETPOST('tva_tx') : 0);
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
-		
+
 		$pu_equivalent = $pu_ht;
 		$currency_tx = $object->multicurrency_tx;
 
 		// Check if we have a foreing currency
 		// If so, we update the pu_equiv as the equivalent price in base currency
 		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-		 	$pu_equivalent = $pu_ht_devise * $currency_tx;
+			$pu_equivalent = $pu_ht_devise * $currency_tx;
 		}
 
 		// Define info_bits
