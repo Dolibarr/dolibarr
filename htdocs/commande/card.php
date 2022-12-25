@@ -629,6 +629,15 @@ if (empty($reshook)) {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
 		}
+		
+		$price_equivalent = $price_ht;
+		$currency_tx = $object->multicurrency_tx;
+
+		// Check if we have a foreing currency
+		// If so, we update the pu_equiv as the equivalent price in base currency
+		if ($price_ht == '' && $price_ht_devise != '' && $currency_tx != '') {
+		 	$price_equivalent = $price_ht_devise * $currency_tx;
+		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 
@@ -916,7 +925,7 @@ if (empty($reshook)) {
 				$info_bits |= 0x01;
 			}
 
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min)))) {
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && (!empty($price_min) && (price2num($price_equivalent) * (1 - price2num($remise_percent) / 100) < price2num($price_min)))) {
 				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
 				setEventMessages($mesg, null, 'errors');
 			} else {
@@ -990,6 +999,15 @@ if (empty($reshook)) {
 		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
 		$vat_rate = (GETPOST('tva_tx') ?GETPOST('tva_tx') : 0);
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
+		
+		$pu_equivalent = $pu_ht;
+		$currency_tx = $object->multicurrency_tx;
+
+		// Check if we have a foreing currency
+		// If so, we update the pu_equiv as the equivalent price in base currency
+		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
+		 	$pu_equivalent = $pu_ht_devise * $currency_tx;
+		}
 
 		// Define info_bits
 		$info_bits = 0;
@@ -1039,7 +1057,7 @@ if (empty($reshook)) {
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
-			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && ($price_min && (price2num($pu_ht) * (1 - $remise_percent / 100) < price2num($price_min)))) {
+			if (((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->produit->ignore_price_min_advance)) || empty($conf->global->MAIN_USE_ADVANCED_PERMS)) && ($price_min && (price2num($pu_equivalent) * (1 - $remise_percent / 100) < price2num($price_min)))) {
 				setEventMessages($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), null, 'errors');
 				$error++;
 			}
