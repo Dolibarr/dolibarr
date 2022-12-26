@@ -207,7 +207,7 @@ class AdherentStats extends Stats
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_RESILIATED, "'members_resiliated'", 'NULL').") as members_resiliated";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d ON t.rowid = d.fk_adherent_type AND d.entity IN (" . getEntity('adherent') . ")";
-		$sql .= " AND d.datefin BETWEEN '".$this->db->idate(dol_get_first_day($startYear))."' AND '".$this->db->idate(dol_get_last_day($endYear))."'";
+		$sql .= " AND d.datefin > '".$this->db->idate(dol_get_first_day($startYear))."'";
 		$sql .= " WHERE t.entity IN (".getEntity('member_type').")";
 		$sql .= " AND t.statut = 1";
 		$sql .= " GROUP BY t.rowid";
