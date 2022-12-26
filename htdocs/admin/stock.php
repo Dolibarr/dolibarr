@@ -247,7 +247,7 @@ if (isModEnabled('commande')) {
 print "</td>\n</tr>\n";
 $found++;
 
-//if (!empty($conf->expedition->enabled))
+//if (isModEnabled('expedition'))
 //{
 
 print '<tr class="oddeven">';
