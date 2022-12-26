@@ -109,8 +109,9 @@ if ($user->rights->adherent->cotisation->creer && $action == 'update' && !$cance
 			$object->dateh = dol_mktime(GETPOST('datesubhour', 'int'), GETPOST('datesubmin', 'int'), 0, GETPOST('datesubmonth', 'int'), GETPOST('datesubday', 'int'), GETPOST('datesubyear', 'int'));
 			$object->datef = dol_mktime(GETPOST('datesubendhour', 'int'), GETPOST('datesubendmin', 'int'), 0, GETPOST('datesubendmonth', 'int'), GETPOST('datesubendday', 'int'), GETPOST('datesubendyear', 'int'));
 			$object->fk_type = $typeid;
-			$object->note = $note;
+			$object->note_public = $note;
 			$object->note_private = $note;
+
 			$object->amount = $amount;
 
 			$result = $object->update($user);
