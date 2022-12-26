@@ -33,9 +33,7 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
+
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -56,6 +54,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 global $dolibarr_main_url_root;
 
@@ -284,14 +283,16 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$confattendee->note_public = $note_public;
 
 			$confattendee->ip = getUserRemoteIP();
-			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
-
+			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+			$now = dol_now();
+			$minmonthpost = dol_time_plus_duree($now, -1, "m");
 			// Calculate nb of post for IP
 			$nb_post_ip = 0;
 			if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
 				$sql = "SELECT COUNT(ref) as nb_attendee";
 				$sql .= " FROM ".MAIN_DB_PREFIX."eventorganization_conferenceorboothattendee";
 				$sql .= " WHERE ip = '".$db->escape($confattendee->ip)."'";
+				$sql .= " AND date_creation > '".$db->idate($minmonthpost)."'";
 				$resql = $db->query($sql);
 				if ($resql) {
 					$num = $db->num_rows($resql);
@@ -819,7 +820,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		print '</td></tr>';
 
 		// Country
-		print '<tr><td><span class="fieldrequired"' . $langs->trans('Country') . '</span></td><td>';
+		print '<tr><td><span class="fieldrequired">'.$langs->trans('Country').'</span></td><td>';
 		print img_picto('', 'country', 'class="pictofixedwidth"');
 		$country_id = GETPOST('country_id');
 		if (!$country_id && !empty($conf->global->MEMBER_NEWFORM_FORCECOUNTRYCODE)) {

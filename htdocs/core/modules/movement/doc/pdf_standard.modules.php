@@ -314,7 +314,7 @@ class pdf_standard extends ModelePDFMovement
 			$sql .= natural_search('p.label', $search_product);
 		}
 		if ($search_warehouse > 0) {
-			$sql .= " AND e.rowid = ".((int) $this->db->escape($search_warehouse));
+			$sql .= " AND e.rowid = ".((int) $search_warehouse);
 		}
 		if (!empty($search_user)) {
 			$sql .= natural_search('u.login', $search_user);
@@ -961,8 +961,8 @@ class pdf_standard extends ModelePDFMovement
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->COMMANDE_DRAFT_WATERMARK);
+		if ($object->statut == 0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK')) {
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
 		}
 
 		$pdf->SetTextColor(0, 0, 60);

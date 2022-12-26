@@ -35,10 +35,10 @@ $hookmanager->initHooks(array('donationindex'));
 
 $langs->load("donations");
 
+$donation_static = new Don($db);
+
 // Security check
 $result = restrictedArea($user, 'don');
-
-$donation_static = new Don($db);
 
 
 /*

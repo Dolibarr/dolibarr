@@ -376,9 +376,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 if (empty($reshook)) {
 	$objectclass = 'Facture';
 	$objectlabel = 'Invoices';
-	$permissiontoread = $user->rights->facture->lire;
-	$permissiontoadd = $user->rights->facture->creer;
-	$permissiontodelete = $user->rights->facture->supprimer;
+	$permissiontoread = $user->hasRight("facture", "lire");
+	$permissiontoadd = $user->hasRight("facture", "creer");
+	$permissiontodelete = $user->hasRight("facture", "supprimer");
 	$uploaddir = $conf->facture->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -558,6 +558,9 @@ $companystatic = new Societe($db);
 $companyparent = new Societe($db);
 $company_url_list = array();
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
 $sql = 'SELECT';
 if ($sall || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
@@ -670,11 +673,15 @@ if ($search_project_ref) {
 if ($search_project) {
 	$sql .= natural_search('p.title', $search_project);
 }
-if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
-}
-if ($search_company_alias) {
-	$sql .= natural_search('s.name_alias', $search_company_alias);
+if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
+} else {
+	if ($search_company) {
+		$sql .= natural_search('s.nom', $search_company);
+	}
+	if ($search_company_alias) {
+		$sql .= natural_search('s.name_alias', $search_company_alias);
+	}
 }
 if ($search_parent_name) {
 	$sql .= natural_search('s2.nom', $search_parent_name);
@@ -1178,7 +1185,7 @@ if ($resql) {
 		if (!empty($socid)) {
 			$url .= '&socid='.$socid;
 		}
-		$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->rights->facture->creer);
+		$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->hasRight("facture", "creer"));
 	}
 
 	$i = 0;
@@ -1230,7 +1237,7 @@ if ($resql) {
 
 	// If the user can view prospects other than his'
 	$moreforfilter = '';
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight("user", "user", "lire")) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -1238,14 +1245,14 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight("user", "user", "lire")) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
 		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250');
 		$moreforfilter .= '</div>';
 	}
 	// Filter on product tags
-	if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->rights->produit->lire || $user->rights->service->lire)) {
+	if (isModEnabled('categorie') && $user->hasRight("categorie", "lire") && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('IncludingProductWithTag');
@@ -1253,7 +1260,7 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth250', 1);
 		$moreforfilter .= '</div>';
 	}
-	if (isModEnabled('categorie') && $user->rights->categorie->lire) {
+	if (isModEnabled('categorie') && $user->hasRight("categorie", "lire")) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
@@ -1585,7 +1592,7 @@ if ($resql) {
 	if (!empty($arrayfields['f.fk_statut']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone right">';
 		$liststatus = array('0'=>$langs->trans("BillShortStatusDraft"), '0,1'=>$langs->trans("BillShortStatusDraft").'+'.$langs->trans("BillShortStatusNotPaid"), '1'=>$langs->trans("BillShortStatusNotPaid"), '1,2'=>$langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
-		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'width100 onrightofpage', 1);
 		print '</td>';
 	}
 	// Action column
@@ -1772,6 +1779,7 @@ if ($resql) {
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
 		$totalarray['val'] = array();
+		$totalarray['val']['f.total_tva'] = 0;
 		$totalarray['val']['f.total_ht'] = 0;
 		$totalarray['val']['f.total_ttc'] = 0;
 
@@ -1813,10 +1821,10 @@ if ($resql) {
 			$facturestatic->close_code = $obj->close_code;
 			$facturestatic->total_ttc = $obj->total_ttc;
 			$facturestatic->paye = $obj->paye;
-			$facturestatic->fk_soc = $obj->fk_soc;
+			$facturestatic->socid = $obj->fk_soc;
 
 			$facturestatic->date = $db->jdate($obj->datef);
-			$facturestatic->date_valid = $db->jdate($obj->date_valid);
+			$facturestatic->date_validation = $db->jdate($obj->date_valid);
 			$facturestatic->date_lim_reglement = $db->jdate($obj->datelimite);
 
 			$facturestatic->note_public = $obj->note_public;
@@ -1867,7 +1875,7 @@ if ($resql) {
 				$remaintopay = 0;
 				$multicurrency_remaintopay = 0;
 			}
-			if ($facturestatic->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1) {		// If credit note closed, we take into account the amount not yet consummed
+			if ($facturestatic->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1) {		// If credit note closed, we take into account the amount not yet consumed
 				$remaincreditnote = $discount->getAvailableDiscounts($companystatic, '', 'rc.fk_facture_source='.$facturestatic->id);
 				$remaintopay = -$remaincreditnote;
 				$totalpay = price2num($facturestatic->total_ttc - $remaintopay);
@@ -2566,8 +2574,8 @@ if ($resql) {
 		$urlsource .= str_replace('&amp;', '&', $param);
 
 		$filedir = $diroutputmassaction;
-		$genallowed = $user->rights->facture->lire;
-		$delallowed = $user->rights->facture->creer;
+		$genallowed = $user->hasRight("facture", "lire");
+		$delallowed = $user->hasRight("facture", "creer");
 		$title = '';
 
 		print $formfile->showdocuments('massfilesarea_invoices', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);

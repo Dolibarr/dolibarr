@@ -80,7 +80,7 @@ function realCharForNumericEntities($matches)
  * Warning: Such a protection can't be enough. It is not reliable as it will always be possible to bypass this. Good protection can
  * only be guaranted by escaping data during output.
  *
- * @param		string		$val		Brut value found into $_GET, $_POST or PHP_SELF
+ * @param		string		$val		Brute value found into $_GET, $_POST or PHP_SELF
  * @param		string		$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @return		int						>0 if there is an injection, 0 if none
  */
@@ -89,18 +89,22 @@ function testSqlAndScriptInject($val, $type)
 	// Decode string first because a lot of things are obfuscated by encoding or multiple encoding.
 	// So <svg o&#110;load='console.log(&quot;123&quot;)' become <svg onload='console.log(&quot;123&quot;)'
 	// So "&colon;&apos;" become ":'" (due to ENT_HTML5)
+	// So "&Tab;&NewLine;" become ""
+	// So "&lpar;&rpar;" become "()"
+
 	// Loop to decode until no more things to decode.
 	//print "before decoding $val\n";
 	do {
 		$oldval = $val;
-		$val = html_entity_decode($val, ENT_QUOTES | ENT_HTML5);
-		//$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', 'realCharForNumericEntities', $val); // Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
+		$val = html_entity_decode($val, ENT_QUOTES | ENT_HTML5);	// Decode '&colon;', '&apos;', '&Tab;', '&NewLine', ...
+		// Sometimes we have entities without the ; at end so html_entity_decode does not work but entities is still interpreted by browser.
 		$val = preg_replace_callback('/&#(x?[0-9][0-9a-f]+;?)/i', function ($m) {
+			// Decode '&#110;', ...
 			return realCharForNumericEntities($m); }, $val);
 
 		// We clean html comments because some hacks try to obfuscate evil strings by inserting HTML comments. Example: on<!-- -->error=alert(1)
 		$val = preg_replace('/<!--[^>]*-->/', '', $val);
-		$val = preg_replace('/[\r\n]/', '', $val);
+		$val = preg_replace('/[\r\n\t]/', '', $val);
 	} while ($oldval != $val);
 	//print "type = ".$type." after decoding: ".$val."\n";
 
@@ -123,11 +127,12 @@ function testSqlAndScriptInject($val, $type)
 
 	// For SQL Injection (only GET are used to scan for such injection strings)
 	if ($type == 1 || $type == 3) {
-		$inj += preg_match('/delete\s+from/i', $val);
-		$inj += preg_match('/create\s+table/i', $val);
-		$inj += preg_match('/insert\s+into/i', $val);
-		$inj += preg_match('/select\s+from/i', $val);
-		$inj += preg_match('/into\s+(outfile|dumpfile)/i', $val);
+		// Note the \s+ is replaced into \s* because some spaces may have been modified in previous loop
+		$inj += preg_match('/delete\s*from/i', $val);
+		$inj += preg_match('/create\s*table/i', $val);
+		$inj += preg_match('/insert\s*into/i', $val);
+		$inj += preg_match('/select\s*from/i', $val);
+		$inj += preg_match('/into\s*(outfile|dumpfile)/i', $val);
 		$inj += preg_match('/user\s*\(/i', $val); // avoid to use function user() or mysql_user() that return current database login
 		$inj += preg_match('/information_schema/i', $val); // avoid to use request that read information_schema database
 		$inj += preg_match('/<svg/i', $val); // <svg can be allowed in POST
@@ -135,7 +140,8 @@ function testSqlAndScriptInject($val, $type)
 		$inj += preg_match('/union.+select/i', $val);
 	}
 	if ($type == 3) {
-		$inj += preg_match('/select|update|delete|truncate|replace|group\s+by|concat|count|from|union/i', $val);
+		// Note the \s+ is replaced into \s* because some spaces may have been modified in previous loop
+		$inj += preg_match('/select|update|delete|truncate|replace|group\s*by|concat|count|from|union/i', $val);
 	}
 	if ($type != 2) {	// Not common key strings, so we can check them both on GET and POST
 		$inj += preg_match('/updatexml\(/i', $val);
@@ -180,7 +186,7 @@ function testSqlAndScriptInject($val, $type)
 
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
 	$inj += preg_match('/&#58;|&#0000058|&#x3A/i', $val); // refused string ':' encoded (no reason to have it encoded) to lock 'javascript:...'
-	$inj += preg_match('/javascript\s*:/i', $val);
+	$inj += preg_match('/j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:/i', $val);
 	$inj += preg_match('/vbscript\s*:/i', $val);
 	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
 	if ($type == 1 || $type == 3) {
@@ -226,6 +232,10 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 	}
 }
 
+// To disable the WAF for GET and POST and PHP_SELF, uncomment this
+//define('NOSCANPHPSELFFORINJECTION', 1);
+//define('NOSCANGETFORINJECTION', 1);
+//define('NOSCANPOSTFORINJECTION', 1);
 
 // Check consistency of NOREQUIREXXX DEFINES
 if ((defined('NOREQUIREDB') || defined('NOREQUIRETRAN')) && !defined('NOREQUIREMENU')) {
@@ -238,7 +248,7 @@ if (defined('NOREQUIREUSER') && !defined('NOREQUIREMENU')) {
 }
 
 // Sanity check on URL
-if (!empty($_SERVER["PHP_SELF"])) {
+if (!defined('NOSCANPHPSELFFORINJECTION') && !empty($_SERVER["PHP_SELF"])) {
 	$morevaltochecklikepost = array($_SERVER["PHP_SELF"]);
 	analyseVarsForSqlAndScriptsInjection($morevaltochecklikepost, 2);
 }
@@ -259,7 +269,6 @@ if (!defined('NOSCANPOSTFORINJECTION')) {
 if (!empty($_SERVER['DOCUMENT_ROOT']) && substr($_SERVER['DOCUMENT_ROOT'], -6) !== 'htdocs') {
 	set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 }
-
 
 // Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 require_once 'filefunc.inc.php';
@@ -630,11 +639,15 @@ $modulepart = explode("/", $_SERVER["PHP_SELF"]);
 if (is_array($modulepart) && count($modulepart) > 0) {
 	foreach ($conf->modules as $module) {
 		if (in_array($module, $modulepart)) {
-			$conf->modulepart = $module;
+			$modulepart = $module;
 			break;
 		}
 	}
 }
+if (is_array($modulepart)) {
+	$modulepart = '';
+}
+
 
 /*
  * Phase authentication / login
@@ -985,7 +998,7 @@ if (!defined('NOLOGIN')) {
 			$hookmanager->initHooks(array('main'));
 
 			// Code for search criteria persistence.
-			if (!empty($_GET['save_lastsearch_values'])) {    // We must use $_GET here
+			if (!empty($_GET['save_lastsearch_values']) && !empty($_SERVER["HTTP_REFERER"])) {    // We must use $_GET here
 				$relativepathstring = preg_replace('/\?.*$/', '', $_SERVER["HTTP_REFERER"]);
 				$relativepathstring = preg_replace('/^https?:\/\/[^\/]*/', '', $relativepathstring); // Get full path except host server
 				// Clean $relativepathstring
@@ -2350,32 +2363,32 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		$btnUser .= '
         <!-- Code to show/hide the user drop-down -->
         <script>
-        $( document ).ready(function() {
-            $(document).on("click", function(event) {
+        jQuery(document).ready(function() {
+            jQuery(document).on("click", function(event) {
                 if (!$(event.target).closest("#topmenu-login-dropdown").length) {
 					//console.log("close login dropdown");
 					// Hide the menus.
-                    $("#topmenu-login-dropdown").removeClass("open");
+                    jQuery("#topmenu-login-dropdown").removeClass("open");
                 }
             });
 			';
 
 		if ($conf->theme != 'md') {
 			$btnUser .= '
-	            $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
+	            jQuery("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
 					console.log("toggle login dropdown");
 					event.preventDefault();
-	                $("#topmenu-login-dropdown").toggleClass("open");
+	                jQuery("#topmenu-login-dropdown").toggleClass("open");
 	            });
 
-	            $("#topmenulogincompanyinfo-btn").on("click", function() {
+	            jQuery("#topmenulogincompanyinfo-btn").on("click", function() {
 					console.log("Clik on topmenulogincompanyinfo-btn");
-	                $("#topmenulogincompanyinfo").slideToggle();
+	                jQuery("#topmenulogincompanyinfo").slideToggle();
 	            });
 
-	            $("#topmenuloginmoreinfo-btn").on("click", function() {
+	            jQuery("#topmenuloginmoreinfo-btn").on("click", function() {
 					console.log("Clik on topmenuloginmoreinfo-btn");
-	                $("#topmenuloginmoreinfo").slideToggle();
+	                jQuery("#topmenuloginmoreinfo").slideToggle();
 	            });';
 		}
 
@@ -2407,8 +2420,8 @@ function top_menu_quickadd()
 	$html .= '
         <!-- Code to show/hide the user drop-down -->
         <script>
-        $( document ).ready(function() {
-            $(document).on("click", function(event) {
+        jQuery(document).ready(function() {
+            jQuery(document).on("click", function(event) {
                 if (!$(event.target).closest("#topmenu-quickadd-dropdown").length) {
                     // Hide the menus.
                     $("#topmenu-quickadd-dropdown").removeClass("open");
@@ -2652,8 +2665,8 @@ function top_menu_bookmark()
 			$html .= '
 	        <!-- Code to show/hide the bookmark drop-down -->
 	        <script>
-	        $( document ).ready(function() {
-	            $(document).on("click", function(event) {
+	        jQuery(document).ready(function() {
+	            jQuery(document).on("click", function(event) {
 	                if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
 						//console.log("close bookmark dropdown - we click outside");
 	                    // Hide the menus.
@@ -2661,13 +2674,13 @@ function top_menu_bookmark()
 	                }
 	            });
 
-	            $("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
+	            jQuery("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
 					console.log("toggle bookmark dropdown");
 					openBookMarkDropDown();
 	            });
 
 	            // Key map shortcut
-	            $(document).keydown(function(e){
+	            jQuery(document).keydown(function(e){
 	                  if( e.which === 77 && e.ctrlKey && e.shiftKey ){
 	                     console.log(\'control + shift + m : trigger open bookmark dropdown\');
 	                     openBookMarkDropDown();
@@ -2677,8 +2690,8 @@ function top_menu_bookmark()
 
 	            var openBookMarkDropDown = function() {
 	                event.preventDefault();
-	                $("#topmenu-bookmark-dropdown").toggleClass("open");
-	                $("#top-bookmark-search-input").focus();
+	                jQuery("#topmenu-bookmark-dropdown").toggleClass("open");
+	                jQuery("#top-bookmark-search-input").focus();
 	            }
 
 	        });
@@ -2752,10 +2765,10 @@ function top_menu_search()
 	$html .= '
     <!-- Code to show/hide the user drop-down -->
     <script>
-    $( document ).ready(function() {
+    jQuery(document).ready(function() {
 
         // prevent submiting form on press ENTER
-        $("#top-global-search-input").keydown(function (e) {
+        jQuery("#top-global-search-input").keydown(function (e) {
             if (e.keyCode == 13) {
                 var inputs = $(this).parents("form").eq(0).find(":button");
                 if (inputs[inputs.index(this) + 1] != null) {
@@ -2767,7 +2780,7 @@ function top_menu_search()
         });
 
         // arrow key nav
-        $(document).keydown(function(e) {
+        jQuery(document).keydown(function(e) {
 			// Get the focused element:
 			var $focused = $(":focus");
 			if($focused.length && $focused.hasClass("global-search-item")){
@@ -2788,28 +2801,28 @@ function top_menu_search()
 
 
         // submit form action
-        $(".dropdown-global-search-button-list .global-search-item").on("click", function(event) {
-            $("#top-menu-action-search").attr("action", $(this).data("target"));
-            $("#top-menu-action-search").submit();
+        jQuery(".dropdown-global-search-button-list .global-search-item").on("click", function(event) {
+            jQuery("#top-menu-action-search").attr("action", $(this).data("target"));
+            jQuery("#top-menu-action-search").submit();
         });
 
         // close drop down
-        $(document).on("click", function(event) {
+        jQuery(document).on("click", function(event) {
 			if (!$(event.target).closest("#topmenu-global-search-dropdown").length) {
 				console.log("click close search - we click outside");
                 // Hide the menus.
-                $("#topmenu-global-search-dropdown").removeClass("open");
+                jQuery("#topmenu-global-search-dropdown").removeClass("open");
             }
         });
 
         // Open drop down
-        $("#topmenu-global-search-dropdown .dropdown-toggle").on("click", function(event) {
+        jQuery("#topmenu-global-search-dropdown .dropdown-toggle").on("click", function(event) {
 			console.log("toggle search dropdown");
             openGlobalSearchDropDown();
         });
 
         // Key map shortcut
-        $(document).keydown(function(e){
+        jQuery(document).keydown(function(e){
               if( e.which === 70 && e.ctrlKey && e.shiftKey ){
                  console.log(\'control + shift + f : trigger open global-search dropdown\');
                  openGlobalSearchDropDown();
@@ -2818,8 +2831,8 @@ function top_menu_search()
 
 
         var openGlobalSearchDropDown = function() {
-            $("#topmenu-global-search-dropdown").toggleClass("open");
-            $("#top-global-search-input").focus();
+            jQuery("#topmenu-global-search-dropdown").toggleClass("open");
+            jQuery("#top-global-search-input").focus();
         }
 
     });
@@ -3096,7 +3109,7 @@ function main_area($title = '')
 			print '<tbody>';
 			print '<tr><td rowspan="0" class="width20p">';
 			if ($conf->global->MAIN_SHOW_LOGO && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && !empty($conf->global->MAIN_INFO_SOCIETE_LOGO)) {
-				print '<img id="mysoc-info-header-logo" style="max-width:100%" alt="" src="'.DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_LOGO)).'">';
+				print '<img id="mysoc-info-header-logo" style="max-width:100%" alt="" src="'.DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_LOGO)).'">';
 			}
 			print '</td><td  rowspan="0" class="width50p"></td></tr>'."\n";
 			print '<tr><td class="titre bold">'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM).'</td></tr>'."\n";

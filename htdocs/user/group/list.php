@@ -121,7 +121,7 @@ if (empty($reshook)) {
 /*
  * View
  */
-$title = $langs->trans("ListOfGroups");
+$title = $langs->trans("UserGroups");
 $help_url="";
 llxHeader('', $title, $help_url);
 
@@ -156,7 +156,7 @@ if ($resql) {
 		$param .= '&amp;optioncss='.$optioncss;
 	}
 
-	$text = $langs->trans("ListOfGroups");
+	$text = $langs->trans("UserGroups");
 
 	$newcardbutton = '';
 	if ($caneditperms) {

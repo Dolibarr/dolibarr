@@ -44,13 +44,13 @@ $permtoadd = 0;
 $permtoupload = 0;
 $showroot = 0;
 if ($module == 'ecm') {
-	$permtoadd = $user->rights->ecm->setup;
-	$permtoupload = $user->rights->ecm->upload;
+	$permtoadd = $user->hasRight("ecm", "setup");
+	$permtoupload = $user->hasRight("ecm", "upload");
 	$showroot = 0;
 }
 if ($module == 'medias') {
-	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
-	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permtoadd = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
+	$permtoupload = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
 	$showroot = 1;
 }
 

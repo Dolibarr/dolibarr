@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 // Init vars
@@ -98,14 +99,16 @@ if (GETPOST('ajoutcomment', 'alpha')) {
 	}
 
 	$user_ip = getUserRemoteIP();
-	$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
-
+	$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+	$now = dol_now();
+	$minmonthpost = dol_time_plus_duree($now, -1, "m");
 	// Calculate nb of post for IP
 	$nb_post_ip = 0;
 	if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
 		$sql = "SELECT COUNT(id_comment) as nb_comments";
 		$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_comments";
 		$sql .= " WHERE ip = '".$db->escape($user_ip)."'";
+		$sql .= " AND date_creation > '".$db->idate($minmonthpost)."'";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -152,14 +155,16 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 		}
 
 		$user_ip = getUserRemoteIP();
-		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
-
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+		$now = dol_now();
+		$minmonthpost = dol_time_plus_duree($now, -1, "m");
 		// Calculate nb of post for IP
 		$nb_post_ip = 0;
 		if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
 			$sql = "SELECT COUNT(id_users) as nb_records";
 			$sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 			$sql .= " WHERE ip = '".$db->escape($user_ip)."'";
+			$sql .= " AND date_creation > '".$db->idate($minmonthpost)."'";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
@@ -193,8 +198,9 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			setEventMessages($langs->trans("AlreadyTooMuchPostOnThisIPAdress"), null, 'errors');
 			$error++;
 		} else {
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, ip)';
-			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."','".$db->escape($nouveauchoix)."', '".$db->escape($user_ip)."')";
+			$now = dol_now();
+			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, ip, date_creation)';
+			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."','".$db->escape($nouveauchoix)."', '".$db->escape($user_ip)."', '".$db->idate($now)."')";
 			$resql = $db->query($sql);
 
 			if ($resql) {
@@ -319,7 +325,7 @@ $toutsujet = explode(",", $object->sujet);
 $listofanswers = array();
 foreach ($toutsujet as $value) {
 	$tmp = explode('@', $value);
-	$listofanswers[] = array('label'=>$tmp[0], 'format'=>($tmp[1] ? $tmp[1] : 'checkbox'));
+	$listofanswers[] = array('label'=>$tmp[0], 'format'=>(!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
 }
 $toutsujet = str_replace("°", "'", $toutsujet);
 

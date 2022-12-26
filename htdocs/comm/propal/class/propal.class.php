@@ -2828,6 +2828,7 @@ class Propal extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
 		$sql .= " SET fk_statut = ".self::STATUS_DRAFT;
+		$sql .= ",  online_sign_ip = NULL , online_sign_name = NULL";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);

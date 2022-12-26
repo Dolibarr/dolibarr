@@ -33,9 +33,7 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
+
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -56,6 +54,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/paymentterm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 global $dolibarr_main_url_root;
 
@@ -360,7 +359,10 @@ if (empty($reshook) && $action == 'add') {
 			$conforbooth->firstname = $contact->firstname;
 			$conforbooth->lastname = $contact->lastname;
 			$conforbooth->ip = getUserRemoteIP();
-			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 1000);
+
+			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+			$now = dol_now();
+			$minmonthpost = dol_time_plus_duree($now, -1, "m");
 
 			// Calculate nb of post for IP
 			$nb_post_ip = 0;
@@ -368,6 +370,7 @@ if (empty($reshook) && $action == 'add') {
 				$sql = "SELECT COUNT(ref) as nb_confs";
 				$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
 				$sql .= " WHERE ip = '".$db->escape($conforbooth->ip)."'";
+				$sql .= " AND datec > '".$db->idate($minmonthpost)."'";
 				$resql = $db->query($sql);
 				if ($resql) {
 					$num = $db->num_rows($resql);

@@ -38,17 +38,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $TSelectedCats = GETPOST('categories', 'array');
-
-// Security check
-$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
-$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-if (!empty($user->socid)) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
-if (empty($user->rights->margins->liretous)) {
-	accessforbidden();
-}
+$socid = 0;
 
 $mesg = '';
 
@@ -85,6 +75,17 @@ if (GETPOST('enddatemonth')) {
 $object = new Product($db);
 $hookmanager->initHooks(array('marginproductlist'));
 
+// Security check
+$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
+$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+if (empty($user->rights->margins->liretous)) {
+	accessforbidden();
+}
+
 
 /*
  * View
@@ -119,7 +120,7 @@ print img_picto('', 'product').$form->select_produits(($id > 0 ? $id : ''), 'id'
 print '</td></tr>';
 
 // Categories
-$TCats = $form->select_all_categories(0, array(), '', 64, 0, 1);
+$TCats = $form->select_all_categories('product', array(), '', 64, 0, 1);
 
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('Category').'</td>';

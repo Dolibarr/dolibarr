@@ -1642,7 +1642,7 @@ if ($action == 'create') {
 				// Create intervention model
 				if ($conf->global->MAIN_FEATURES_LEVEL >= 1 && $object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer && (count($object->lines) > 0)) {
 					print '<div class="inline-block divButAction">';
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create">'.$langs->trans("ChangeIntoRepeatableIntervention").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans("ChangeIntoRepeatableIntervention").'</a>';
 					print '</div>';
 				}
 
