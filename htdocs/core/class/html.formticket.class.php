@@ -127,12 +127,14 @@ class FormTicket
 	/**
 	 * Show the form to input ticket
 	 *
-	 * @param  	int	 		$withdolfichehead		With dol_get_fiche_head() and dol_get_fiche_end()
-	 * @param	string		$mode					Mode ('create' or 'edit')
-	 * @param	int			$public					1=If we show the form for the public interface
+	 * @param  	int	 			$withdolfichehead		With dol_get_fiche_head() and dol_get_fiche_end()
+	 * @param	string			$mode					Mode ('create' or 'edit')
+	 * @param	int				$public					1=If we show the form for the public interface
+	 * @param	Contact|null	$with_contact			[=NULL] Contact to link to this ticket if exists
+	 * @param	string			$action					[=''] Action in card
 	 * @return 	void
 	 */
-	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0)
+	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, Contact $with_contact = null, $action = '')
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -441,7 +443,7 @@ class FormTicket
 
 		// Other attributes
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $this->action); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			print $ticketstat->showOptionals($extrafields, 'create');
 		}
