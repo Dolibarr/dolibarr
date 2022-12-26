@@ -1341,6 +1341,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
+		print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 		print '<input type="hidden" name="private" value='.$object->particulier.'>';
 		print '<input type="hidden" name="type" value='.GETPOST("type", 'alpha').'>';
 		print '<input type="hidden" name="LastName" value="'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName').'">';
