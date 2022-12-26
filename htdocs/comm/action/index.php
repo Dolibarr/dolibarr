@@ -540,7 +540,7 @@ $viewmode .= '<span class="marginrightonly"></span>';	// To add a space before t
 
 $newcardbutton = '';
 $newparam = '';
-if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create) {
+if ($user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allactions', 'create')) {
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
 
 	$newparam .= '&month='.((int) $month).'&year='.((int) $tmpforcreatebutton['year']).'&mode='.urlencode($mode);
@@ -1703,7 +1703,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	$curtime = dol_mktime(0, 0, 0, $month, $day, $year);
 	$urltoshow = DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year.$newparam;
 	$urltocreate = '';
-	if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create) {
+	if ($user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allactions', 'create')) {
 		$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
 		$hourminsec = '100000';
 		$urltocreate = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $year, $month, $day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
@@ -1722,7 +1722,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 		}
 		print '</a>';
 		print '</div><div class="nowrap floatright inline-block marginrightonly">';
-		if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create) {
+		if ($user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allactions', 'create')) {
 			print '<a class="cursoradd" href="'.$urltocreate.'">'; // Explicit link, usefull for nojs interfaces
 			print img_picto($langs->trans("NewAction"), 'edit_add.png');
 			print '</a>';
@@ -1849,7 +1849,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 							$cssclass .= ' movable cursormove';
 						}
 					} else {
-						if ($user->rights->agenda->allactions->create ||
+						if ($user->hasRight('agenda', 'allactions', 'create') ||
 							(($event->authorid == $user->id || $event->userownerid == $user->id) && $user->rights->agenda->myactions->create)) {
 								$cssclass .= " movable cursormove";
 						} else {

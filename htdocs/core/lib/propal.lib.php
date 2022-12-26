@@ -42,7 +42,7 @@ function propal_prepare_head($object)
 	$head[$h][2] = 'comm';
 	$h++;
 
-	if ((empty($conf->commande->enabled) && ((isModEnabled("expedition") && !empty($conf->expedition_bon->enabled) && $user->rights->expedition->lire)
+	if ((empty($conf->commande->enabled) && ((isModEnabled("expedition") && isModEnabled('expedition_bon') && $user->rights->expedition->lire)
 		|| (isModEnabled("expedition") && !empty($conf->delivery_note->enabled) && $user->rights->expedition->delivery->lire)))) {
 		$langs->load("sendings");
 		$text = '';
