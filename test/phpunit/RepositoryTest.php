@@ -169,14 +169,14 @@ class RepositoryTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 
 		// Scan dir to guarante we don't have library jquery twice
-		$founddirs=dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.js', array('ckeditor'));
-		print __METHOD__." count(founddirs)=".count($founddirs)."\n";
-		$this->assertEquals(1, count($founddirs), 'We found jquery lib (jquery.js) twice');
+		$foundfiles=dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.js', array('ckeditor'));
+		print __METHOD__." count(founddirs)=".count($foundfiles)."\n";
+		$this->assertEquals(1, count($foundfiles), 'We found jquery lib (jquery.js) twice');
 
 		// Scan dir to guarante we don't have library jquery twice
-		$founddirs=dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.min\.js', array('ckeditor'));
-		print __METHOD__." count(founddirs)=".count($founddirs)."\n";
-		$this->assertEquals(1, count($founddirs), 'We found jquery lib (jquery.min.js) twice');
+		$foundfiles=dol_dir_list(DOL_DOCUMENT_ROOT.'/includes/', 'files', 1, '^jquery\.min\.js', array('ckeditor'));
+		print __METHOD__." count(founddirs)=".count($foundfiles)."\n";
+		$this->assertEquals(1, count($foundfiles), 'We found jquery lib (jquery.min.js) twice '.(empty($foundfiles[0]) ? '' : $foundfiles[0]['fullname']).' '.(empty($foundfiles[1]) ? '' : $foundfiles[1]['fullname']));
 	}
 
 

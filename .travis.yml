@@ -132,6 +132,8 @@ install:
                                                  php-parallel-lint/php-var-dump-check ~0.4 \
                                                  squizlabs/php_codesniffer ^3
   fi
+  # Remove non expected files
+  rm -fr /home/travis/build/Dolibarr/dolibarr/htdocs/includes/phpunit/php-code-coverage/src/Report/Html/Renderer/Template/js
   echo
 
 - |

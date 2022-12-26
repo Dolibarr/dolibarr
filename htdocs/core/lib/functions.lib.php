@@ -1718,7 +1718,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *	@param	string	$name				A name for the html component
  *	@param	string	$label 	    		Label shown in Popup title top bar
  *	@param  string	$buttonstring  		button string
- *	@param  string	$url				Relative Url to open
+ *	@param  string	$url				Relative Url to open. For example '/project/card.php'
  *  @param	string	$disabled			Disabled text
  *  @param	string	$morecss			More CSS
  *  @param	string	$backtopagejsfields	The back to page must be managed using javascript instead of a redirect.
@@ -1752,13 +1752,16 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	}
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
-	$out .= '<!-- a link for button to open url into a dialog popup backtopagejsfields = '.$backtopagejsfields.' -->';
+	$out .= '<!-- a link for button to open url into a dialog popup with backtopagejsfields = '.$backtopagejsfields.' -->';
 	$out .= '<a class="cursorpointer classlink button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
 	if (empty($conf->use_javascript_ajax)) {
 		$out .= ' href="'.DOL_URL_ROOT.$url.'" target="_blank"';
 	}
 	$out .= '>'.$buttonstring.'</a>';
+
 	if (!empty($conf->use_javascript_ajax)) {
+		// Add code to open url using the popup. Add also hidden field to retreive the returned variables
+		$out .= '<!-- code to open popup and variables to retreive returned variables -->';
 		$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
 		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
 		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
@@ -4085,7 +4088,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
 				'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'knowledgemanagement',
-				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
+				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lock', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
@@ -4244,7 +4247,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'help'=>'#bbb', 'listlight'=>'#999', 'language'=>'#555',
 				//'dolly'=>'#a69944', 'dollyrevert'=>'#a69944',
-				'lot'=>'#a69944',
+				'lock'=>'#ddd', 'lot'=>'#a69944',
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'inventory'=>'#a69944', 'stock'=>'#a69944', 'movement'=>'#a69944',
 				'other'=>'#ddd', 'world'=>'#986c6a',
 				'partnership'=>'#6c6aa8', 'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'reception'=>'#a69944', 'resize'=>'#444', 'rss'=>'#cba',
