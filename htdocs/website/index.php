@@ -3336,15 +3336,14 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
 
 				// Delete
-				//print '<input type="submit" class="buttonDelete bordertransp" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage ? '' : ' disabled="disabled"').'>';
-				if ($websitepage->status == $websitepage::STATUS_DRAFT || !$atleastonepage) {
+				if ($websitepage->status != $websitepage::STATUS_DRAFT) {
 					$disabled = ' disabled="disabled"';
 					$title = $langs->trans("WebpageMustBeDisabled", $langs->transnoentitiesnoconv($websitepage->LibStatut(0, 0)));
 					$url = '#';
 				} else {
 					$disabled = '';
 					$title = '';
-					$url = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&website='.urlencode($website->ref);
+					$url = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&pageid='.((int) $websitepage->id).'&website='.urlencode($website->ref);	// action=delete for webpage, deletesite for website
 				}
 				print '<a href="'.$url.'" class="buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
 			}

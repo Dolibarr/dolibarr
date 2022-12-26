@@ -34,3 +34,6 @@
 -- v18
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_CLOSE','Project closed','Executed when a project is closed','project',145);
+
+-- amount was removed in v12
+ALTER TABLE llx_facture DROP COLUMN amount;

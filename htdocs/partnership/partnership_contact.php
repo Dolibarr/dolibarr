@@ -51,15 +51,23 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
+$permissiontoread = $user->rights->partnership->read;
+$permission = $user->rights->partnership->write;
+$managedfor = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
+
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'partnership', $object->id);
+if (empty($conf->partnership->enabled)) accessforbidden();
+if (empty($permissiontoread)) accessforbidden();
+if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') accessforbidden();
+if ($object->id > 0 && !($object->fk_soc > 0) && $managedfor == 'thirdparty') accessforbidden();
 
-$permission = $user->rights->partnership->write;
+
 
 /*
- * Add a new contact
+ * Actions
  */
 
 if ($action == 'addcontact' && $permission) {
