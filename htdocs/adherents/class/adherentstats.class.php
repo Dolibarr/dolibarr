@@ -187,10 +187,10 @@ class AdherentStats extends Stats
 	/**
 	 *	Return count of member by status group by adh type, total and average
 	 *
-	 *  @param		int		$numberYears    Years to scan
-	 * 	@return		array 	Array with total of draft, pending, uptodate, expired, resiliated for each member type
+	 * 	@param		int	$numberYears    Years to scan
+	 * 	@return		array 	Array with total of draft, pending, uptodate, expired, resiliated for each member tag
 	 */
-	public function countMembersByTagAndStatus($tag_id, $numberYears = 2)
+	public function countMembersByTagAndStatus($numberYears = 2)
 	{
 		global $user;
 
