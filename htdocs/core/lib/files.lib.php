@@ -1567,7 +1567,9 @@ function dol_meta_create($object)
 		}
 
 		if (is_dir($dir)) {
-			$nblines = count($object->lines);
+			if (is_countable($object->lines) && count($object->lines) > 0) {
+				$nblines = count($object->lines);
+			}
 			$client = $object->thirdparty->name." ".$object->thirdparty->address." ".$object->thirdparty->zip." ".$object->thirdparty->town;
 			$meta = "REFERENCE=\"".$object->ref."\"
 			DATE=\"" . dol_print_date($object->date, '')."\"
