@@ -104,6 +104,8 @@ class AllTests
 		$suite->addTestSuite('XCalLibTest');
 
 		// Rules into source files content
+		require_once dirname(__FILE__).'/RepositoryTest.php';
+		$suite->addTestSuite('RepositoryTest');
 		require_once dirname(__FILE__).'/LangTest.php';
 		$suite->addTestSuite('LangTest');
 		require_once dirname(__FILE__).'/CodingSqlTest.php';
