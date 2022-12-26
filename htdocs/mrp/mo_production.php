@@ -804,6 +804,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($permissiontodelete) {
 				print '<td></td>';
 			}
+			// Split
+			print '<td></td>';
+			// SplitAll
+			print '<td></td>';
 			print '</tr>';
 		}
 
@@ -864,18 +868,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '</td>';
 					// Qty
 					print '<td class="right nowraponall">';
-					$help = '';
+					$help = ''; $picto = 'help';
 					if ($line->qty_frozen) {
-						$help .= ($help ? '<br>' : '').'<strong>'.$langs->trans("QuantityFrozen").'</strong>: '.yn(1).' ('.$langs->trans("QuantityConsumedInvariable").')';
+						$help = ($help ? '<br>' : '').'<strong>'.$langs->trans("QuantityFrozen").'</strong>: '.yn(1).' ('.$langs->trans("QuantityConsumedInvariable").')';
+						print $form->textwithpicto('', $help, -1, 'lock').' ';
 					}
 					if ($line->disable_stock_change) {
-						$help .= ($help ? '<br>' : '').'<strong>'.$langs->trans("DisableStockChange").'</strong>: '.yn(1).' ('.(($tmpproduct->type == Product::TYPE_SERVICE && empty($conf->global->STOCK_SUPPORTS_SERVICES)) ? $langs->trans("NoStockChangeOnServices") : $langs->trans("DisableStockChangeHelp")).')';
+						$help = ($help ? '<br>' : '').'<strong>'.$langs->trans("DisableStockChange").'</strong>: '.yn(1).' ('.(($tmpproduct->type == Product::TYPE_SERVICE && empty($conf->global->STOCK_SUPPORTS_SERVICES)) ? $langs->trans("NoStockChangeOnServices") : $langs->trans("DisableStockChangeHelp")).')';
+						print $form->textwithpicto('', $help, -1, 'help').' ';
 					}
-					if ($help) {
-						print $form->textwithpicto($line->qty, $help, -1);
-					} else {
-						print price2num($line->qty, 'MS');
-					}
+					print price2num($line->qty, 'MS');
 					print '</td>';
 					// Cost price
 					if ($permissiontoupdatecost && !empty($conf->global->MRP_SHOW_COST_FOR_CONSUMPTION)) {
