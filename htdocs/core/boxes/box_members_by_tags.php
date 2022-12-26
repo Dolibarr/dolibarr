@@ -98,8 +98,7 @@ class box_members_by_tags extends ModeleBoxes
 			$stats = new AdherentStats($this->db, $user->socid, $user->id);
 
 			// Show array
-			$sumMembers= $stats->countMembersByTagAndStatus($tag_id, $numberyears);
-			echo "<pre>";print_r($sumMembers);echo "</pre>";
+			$sumMembers= $stats->countMembersByTagAndStatus($numberyears);
 			if ($sumMembers) {
 				$line = 0;
 				$this->info_box_contents[$line][] = array(
