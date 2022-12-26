@@ -353,9 +353,9 @@ class Contact extends CommonObject
 			$this->fields['fk_soc']['searchall'] = 0;
 		}
 
-		if (empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {	// Default behaviour
-			$this->field['fk_stcommcontact']['enabled'] = 0;
-			$this->field['fk_prospectcontactlevel']['enabled'] = 0;
+		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {	// Default behaviour
+			$this->fields['fk_stcommcontact']['enabled'] = 0;
+			$this->fields['fk_prospectlevel']['enabled'] = 0;
 		}
 
 		// Unset fields that are disabled
@@ -608,7 +608,7 @@ class Contact extends CommonObject
 		$sql .= ", phone_perso = ".(isset($this->phone_perso) ? "'".$this->db->escape($this->phone_perso)."'" : "NULL");
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile) ? "'".$this->db->escape($this->phone_mobile)."'" : "NULL");
 		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
-		$sql .= ", fk_prospectcontactlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
+		$sql .= ", fk_prospectlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
 		if (isset($this->stcomm_id)) {
 			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
 		}
@@ -987,7 +987,7 @@ class Contact extends CommonObject
 		$sql .= " c.socialnetworks,";
 		$sql .= " c.photo,";
 		$sql .= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
-		$sql .= " c.fk_prospectcontactlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto,";
+		$sql .= " c.fk_prospectlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto,";
 		$sql .= " c.import_key,";
 		$sql .= " c.datec as date_creation, c.tms as date_modification,";
 		$sql .= " co.label as country, co.code as country_code,";
@@ -1054,7 +1054,7 @@ class Contact extends CommonObject
 				$this->poste			= $obj->poste;
 				$this->statut = $obj->statut;
 
-				$this->fk_prospectlevel = $obj->fk_prospectcontactlevel;
+				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
 				$transcode = $langs->trans('StatusProspect'.$obj->fk_stcommcontact);
 				$libelle = ($transcode != 'StatusProspect'.$obj->fk_stcommcontact ? $transcode : $obj->stcomm);
