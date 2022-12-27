@@ -140,13 +140,19 @@ if (!empty($project_ref) && !empty($withproject)) {
 /*
  * View
  */
-
-llxHeader('', $langs->trans("Task"));
-
 $form = new Form($db);
 $formcompany   = new FormCompany($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
+$result = $projectstatic->fetch($object->fk_project);
+
+$title = $object->ref . ' - ' . $langs->trans("Contacts");
+if (!empty($withproject)) {
+	$title .= ' | ' . $langs->trans("Project") . (!empty($projectstatic->ref) ? ': '.$projectstatic->ref : '')  ;
+}
+$help_url = '';
+
+llxHeader('', $title, $help_url);
 
 
 /* *************************************************************************** */
@@ -162,7 +168,6 @@ if ($id > 0 || !empty($ref)) {
 		}
 		$id = $object->id; // So when doing a search from ref, id is also set correctly.
 
-		$result = $projectstatic->fetch($object->fk_project);
 		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 			$projectstatic->fetchComments();
 		}
@@ -191,7 +196,7 @@ if ($id > 0 || !empty($ref)) {
 			$morehtmlref .= $projectstatic->title;
 			// Thirdparty
 			if ($projectstatic->thirdparty->id > 0) {
-				$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
+				$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');
 			}
 			$morehtmlref .= '</div>';
 
@@ -210,7 +215,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<table class="border tableforfield centpercent">';
 
 			// Usage
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
 				print '<tr><td class="tdtop">';
 				print $langs->trans("Usage");
 				print '</td>';
@@ -233,7 +238,7 @@ if ($id > 0 || !empty($ref)) {
 					print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 					print '<br>';
 				}
-				if (!empty($conf->eventorganization->enabled)) {
+				if (isModEnabled('eventorganization')) {
 					print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 					$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 					print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
@@ -252,8 +257,15 @@ if ($id > 0 || !empty($ref)) {
 			}
 			print '</td></tr>';
 
-			// Date start - end
-			print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+			// Budget
+			print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+			if (strcmp($projectstatic->budget_amount, '')) {
+				print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
+			}
+			print '</td></tr>';
+
+			// Date start - end project
+			print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 			$start = dol_print_date($projectstatic->date_start, 'day');
 			print ($start ? $start : '?');
 			$end = dol_print_date($projectstatic->date_end, 'day');
@@ -261,13 +273,6 @@ if ($id > 0 || !empty($ref)) {
 			print ($end ? $end : '?');
 			if ($projectstatic->hasDelay()) {
 				print img_warning("Late");
-			}
-			print '</td></tr>';
-
-			// Budget
-			print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-			if (strcmp($projectstatic->budget_amount, '')) {
-				print price($projectstatic->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
 			}
 			print '</td></tr>';
 

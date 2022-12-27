@@ -101,7 +101,7 @@ class Productlot extends CommonObject
 		'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510, 'foreignkey'=>'llx_user.rowid'),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
-		'import_key'    => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
+		'import_key'    => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000)
 	);
 
 	/**
@@ -110,10 +110,13 @@ class Productlot extends CommonObject
 	public $entity;
 
 	/**
-	 * @var int ID
+	 * @var int Product ID
 	 */
 	public $fk_product;
 
+	/**
+	 * @var string batch ref
+	 */
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
@@ -126,15 +129,18 @@ class Productlot extends CommonObject
 	public $tms = '';
 
 	/**
-	 * @var int ID
+	 * @var int user ID
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int ID
+	 * @var int user ID
 	 */
 	public $fk_user_modif;
 
+	/**
+	 * @var string import key
+	 */
 	public $import_key;
 
 
@@ -241,9 +247,6 @@ class Productlot extends CommonObject
 			}
 
 			if (!$error && !$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action to call a trigger.
-
 				// Call triggers
 				$result = $this->call_trigger('PRODUCTLOT_CREATE', $user);
 				if ($result < 0) {
@@ -295,7 +298,9 @@ class Productlot extends CommonObject
 		$sql .= " t.tms,";
 		$sql .= " t.fk_user_creat,";
 		$sql .= " t.fk_user_modif,";
-		$sql .= " t.import_key";
+		$sql .= " t.import_key,";
+		$sql .= " t.note_public,";
+		$sql .= " t.note_private";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		if ($product_id > 0 && $batch != '') {
 			$sql .= " WHERE t.batch = '".$this->db->escape($batch)."' AND t.fk_product = ".((int) $product_id);
@@ -329,6 +334,8 @@ class Productlot extends CommonObject
 				$this->fk_user_creat = $obj->fk_user_creat;
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->import_key = $obj->import_key;
+				$this->note_public = $obj->note_public;
+				$this->note_private = $obj->note_private;
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -384,13 +391,9 @@ class Productlot extends CommonObject
 			 $this->import_key = trim($this->import_key);
 		}
 
-		// Check parameters
-		// Put here code to add a control on parameters values
-
+		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (empty($this->oldcopy)) {
-			$org = new self($this->db);
-			$org->fetch($this->id);
-			$this->oldcopy = $org;
+			$this->oldcopy = dol_clone($this);
 		}
 
 		// Update request

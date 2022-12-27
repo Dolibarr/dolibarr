@@ -151,7 +151,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		}
 
 		$date	= dol_now();
-		$yymm	= strftime("%y%m", $date);
+		$yymm	= dol_print_date($date, "%y%m", 'tzuserrel');
 
 		if ($max >= (pow(10, 5) - 1)) {
 			$num = $max + 1; // If counter > 99999, we do not format on 5 chars, we take number as it is

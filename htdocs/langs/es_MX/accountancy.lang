@@ -125,4 +125,3 @@ ExportDraftJournal=Exportar borrador de diario
 SomeMandatoryStepsOfSetupWereNotDone=Algunos pasos obligatorios de la instalación no se realizaron, favor de completar
 ExportNotSupported=El formato de exportación configurado no se admite en esta página
 NoJournalDefined=Ningún diario definido
-InventoryJournal=Diario de inventario

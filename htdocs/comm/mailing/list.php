@@ -22,6 +22,7 @@
  *       \brief      Liste des mailings
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 
@@ -186,7 +187,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	$title = $langs->trans("ListOfEMailings");
+	$title = $langs->trans("EMailings");
 	if ($filteremail) {
 		$title .= ' ('.$langs->trans("SentTo", $filteremail).')';
 	}

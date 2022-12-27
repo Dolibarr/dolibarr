@@ -22,6 +22,7 @@
  *		\brief      Page to administer data tables
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -42,7 +43,7 @@ $rowid = GETPOST('rowid', 'alpha');
 $code = GETPOST('code', 'alpha');
 
 // Security access
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -189,7 +190,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
 		}
 	}
-	if (!is_numeric(GETPOST('position', 'alpha'))) {
+	if (GETPOST('position') && !is_numeric(GETPOST('position', 'alpha'))) {
 		$langs->loadLangs(array("errors"));
 		$ok = 0;
 		setEventMessages($langs->transnoentities('ErrorFieldMustBeANumeric', $langs->transnoentities("Position")), null, 'errors');
@@ -604,7 +605,7 @@ if ($resql) {
 		if ($showfield) {
 			if ($value == 'country') {
 				print '<td class="liste_titre">';
-				print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth200 maxwidthonsmartphone');
+				print $form->select_country($search_country_id, 'search_country_id', '', 28, 'maxwidth150 maxwidthonsmartphone');
 				print '</td>';
 				$filterfound++;
 			} else {
@@ -724,11 +725,11 @@ if ($resql) {
 				print '<td></td>';
 				print '<td></td>';
 				print '<td class="center">';
+				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
 				print '<input type="hidden" name="page" value="'.$page.'">';
 				print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-				print '<input type="submit" class="button button-edit" name="actionmodify" value="'.$langs->trans("Modify").'">';
-				print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-				print '<input type="submit" class="button button-cancel" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+				print '<input type="submit" class="button button-edit smallpaddingimp" name="actionmodify" value="'.$langs->trans("Modify").'">';
+				print '<input type="submit" class="button button-cancel smallpaddingimp" name="actioncancel" value="'.$langs->trans("Cancel").'">';
 				print '</td>';
 				print '<td></td>';
 			} else {
@@ -886,10 +887,10 @@ function fieldListAccountingCategories($fieldlist, $obj = '', $tabname = '', $co
 			if ($context == 'add') {
 				$fieldname = 'country_id';
 				$preselectcountrycode = GETPOSTISSET('country_id') ? GETPOST('country_id', 'int') : $mysoc->country_code;
-				print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
+				print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth150 maxwidthonsmartphone');
 			} else {
 				$preselectcountrycode = (empty($obj->country_code) ? (empty($obj->country) ? $mysoc->country_code : $obj->country) : $obj->country_code);
-				print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth200 maxwidthonsmartphone');
+				print $form->select_country($preselectcountrycode, $fieldname, '', 28, 'maxwidth150 maxwidthonsmartphone');
 			}
 			print '</td>';
 		} elseif ($fieldlist[$field] == 'country_id') {

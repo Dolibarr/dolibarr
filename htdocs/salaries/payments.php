@@ -24,6 +24,7 @@
  *		\brief     	List of salaries payments
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
@@ -443,12 +444,12 @@ print '<input class="flat" type="text" size="6" name="search_user" value="'.$db-
 print '</td>';
 // Type
 print '<td class="liste_titre left">';
-$form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16);
+print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, '', 1);
 print '</td>';
 // Chq number
 print '<td class="liste_titre right"><input name="search_chq_number" class="flat" type="text" size="8" value="'.$db->escape($search_chq_number).'"></td>';
 
-if (isModEnabled('banque')) {
+if (isModEnabled("banque")) {
 	// Bank transaction
 	print '<td class="liste_titre center">';
 	print '<input class="flat" type="text" size="3" name="search_fk_bank" value="'.$db->escape($search_fk_bank).'">';
@@ -489,7 +490,7 @@ print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "s.datep,s.rowid", 
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pst.code", "", $param, 'class="left"', $sortfield, $sortorder);
 print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "s.num_payment", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
-if (isModEnabled('banque')) {
+if (isModEnabled("banque")) {
 	print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "s.fk_bank", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 }
@@ -604,7 +605,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	// Account
-	if (isModEnabled('banque')) {
+	if (isModEnabled("banque")) {
 		// Bank transaction
 		print '<td>';
 		$accountlinestatic->id = $obj->fk_bank;

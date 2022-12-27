@@ -272,7 +272,7 @@ class Documents extends DolibarrApi
 		if ($modulepart == 'societe' || $modulepart == 'thirdparty') {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->societe->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 				throw new RestException(401);
 			}
 

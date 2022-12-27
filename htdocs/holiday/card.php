@@ -29,6 +29,7 @@
  *		\brief      Form and file creation of paid holiday.
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
@@ -254,6 +255,12 @@ if (empty($reshook)) {
 				$error++;
 			}
 
+			$approverslist = $object->fetch_users_approver_holiday();
+			if (!in_array($approverid, $approverslist)) {
+				setEventMessages($langs->transnoentitiesnoconv('InvalidValidator'), null, 'errors');
+				$error++;
+			}
+
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) {
@@ -290,7 +297,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// If this is an update and we are an approver, we can update to change the approver
+	// If this is an update and we are an approver, we can update to change the expected approver with another one (including himself)
 	if ($action == 'update' && GETPOSTISSET('savevalidator') && !empty($user->rights->holiday->approve)) {
 		$object->fetch($id);
 
@@ -438,7 +445,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Action validate (+ send email for approval)
+	// Action validate (+ send email for approval to the expected approver)
 	if ($action == 'confirm_send') {
 		$object->fetch($id);
 
@@ -564,9 +571,10 @@ if (empty($reshook)) {
 		if ($object->statut == Holiday::STATUS_VALIDATED && $user->id == $object->fk_validator) {
 			$object->oldcopy = dol_clone($object);
 
-			$object->date_valid = dol_now();
-			$object->fk_user_valid = $user->id;
+			$object->date_approval = dol_now();
+			$object->fk_user_approve = $user->id;
 			$object->statut = Holiday::STATUS_APPROVED;
+			$object->status = Holiday::STATUS_APPROVED;
 
 			$db->begin();
 
@@ -666,9 +674,10 @@ if (empty($reshook)) {
 
 			// If status pending validation and validator = user
 			if ($object->statut == Holiday::STATUS_VALIDATED && $user->id == $object->fk_validator) {
-				$object->date_refuse = dol_print_date('dayhour', dol_now());
+				$object->date_refuse = dol_now();
 				$object->fk_user_refuse = $user->id;
 				$object->statut = Holiday::STATUS_REFUSED;
+				$object->status = Holiday::STATUS_REFUSED;
 				$object->detail_refuse = GETPOST('detail_refuse', 'alphanohtml');
 
 				$db->begin();
@@ -757,6 +766,7 @@ if (empty($reshook)) {
 
 		$oldstatus = $object->statut;
 		$object->statut = Holiday::STATUS_DRAFT;
+		$object->status = Holiday::STATUS_DRAFT;
 
 		$result = $object->update($user);
 		if ($result < 0) {
@@ -789,6 +799,7 @@ if (empty($reshook)) {
 			$object->date_cancel = dol_now();
 			$object->fk_user_cancel = $user->id;
 			$object->statut = Holiday::STATUS_CANCELED;
+			$object->status = Holiday::STATUS_CANCELED;
 
 			$result = $object->update($user);
 
@@ -916,7 +927,7 @@ $edit = false;
 
 if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 	// If user has no permission to create a leave
-	if ((in_array($fuserid, $childids) && empty($user->rights->holiday->write)) || (!in_array($fuserid, $childids) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->holiday->writeall_advance)))) {
+	if ((in_array($fuserid, $childids) && empty($user->rights->holiday->write)) || (!in_array($fuserid, $childids) && ((!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->holiday->writeall_advance) || empty($user->rights->holiday->writeall))))) {
 		$errors[] = $langs->trans('CantCreateCP');
 	} else {
 		// Form to add a leave request
@@ -1145,7 +1156,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$result = $object->fetch($id, $ref);
 
 			$approverexpected = new User($db);
-			$approverexpected->fetch($object->fk_validator);
+			$approverexpected->fetch($object->fk_validator);	// Use that should be the approver
 
 			$userRequest = new User($db);
 			$userRequest->fetch($object->fk_user);
@@ -1359,21 +1370,23 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '</td>';
 					print '<td>';
 					if ($object->statut == Holiday::STATUS_APPROVED || $object->statut == Holiday::STATUS_CANCELED) {
-						$approverdone = new User($db);
-						$approverdone->fetch($object->fk_user_valid);
-						print $approverdone->getNomUrl(-1);
+						if ($object->fk_user_approve > 0) {
+							$approverdone = new User($db);
+							$approverdone->fetch($object->fk_user_approve);
+							print $approverdone->getNomUrl(-1);
+						}
 					} else {
 						print $approverexpected->getNomUrl(-1);
 					}
 					$include_users = $object->fetch_users_approver_holiday();
 					if (is_array($include_users) && in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED) {
-						print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator&token='.newToken().'">'.img_edit($langs->trans("Edit")).'</a>';
+						print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
 					}
 					print '</td>';
 					print '</tr>';
 				} else {
 					print '<tr>';
-					print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
+					print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';	// Will be approved by
 					print '<td>';
 					$include_users = $object->fetch_users_approver_holiday();
 					if (!in_array($object->fk_validator, $include_users)) {  // Add the current validator to the list to not lose it when editing.
@@ -1401,7 +1414,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				if ($object->statut == Holiday::STATUS_APPROVED || $object->statut == Holiday::STATUS_CANCELED) {
 					print '<tr>';
 					print '<td>'.$langs->trans('DateValidCP').'</td>';
-					print '<td>'.dol_print_date($object->date_valid, 'dayhour', 'tzuser').'</td>'; // warning: date_valid is approval date on holiday module
+					print '<td>'.dol_print_date($object->date_approval, 'dayhour', 'tzuser').'</td>'; // warning: date_valid is approval date on holiday module
 					print '</tr>';
 				}
 				if ($object->statut == Holiday::STATUS_CANCELED) {
@@ -1486,8 +1499,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					if ($object->statut == Holiday::STATUS_VALIDATED) {	// If validated
 						// Button Approve / Refuse
 						if ($user->id == $object->fk_validator) {
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid" class="butAction">'.$langs->trans("Approve").'</a>';
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid&token='.newToken().'" class="butAction">'.$langs->trans("Approve").'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse&token='.newToken().'" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
 						} else {
 							print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("Approve").'</a>';
 							print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("ActionRefuseCP").'</a>';
@@ -1503,8 +1516,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						}
 					}
 					if ($object->statut == Holiday::STATUS_APPROVED) { // If validated and approved
-						if ($user->id == $object->fk_validator || $cancreate || $cancreateall) {
-							if (($object->date_debut > dol_now()) || !empty($user->admin)) {
+						if ($user->id == $object->fk_validator || $user->id == $object->fk_user_approve || $cancreate || $cancreateall) {
+							if (($object->date_debut > dol_now()) || !empty($user->admin) || $user->id == $object->fk_user_approve) {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 							} else {
 								print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'-'.$langs->trans("NotAllowed").'">'.$langs->trans("ActionCancelCP").'</a>';

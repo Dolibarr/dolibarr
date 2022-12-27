@@ -640,6 +640,7 @@ class Translate
 				try {
 					$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
 				} catch (Exception $e) {
+					// No exception managed
 				}
 			}
 
@@ -724,9 +725,9 @@ class Translate
 
 			return $str;
 		} else {
-			if ($key[0] == '$') {
+			/*if ($key[0] == '$') {
 				return dol_eval($key, 1, 1, '1');
-			}
+			}*/
 			return $this->getTradFromKey($key);
 		}
 	}
@@ -1095,7 +1096,7 @@ class Translate
 				if ($obj) {
 					// If a translation exists, we use it lese we use the default label
 					$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $this->trans("Currency".$obj->code_iso) != "Currency".$obj->code_iso ? $this->trans("Currency".$obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
-					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode($obj->unicode, true);
+					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode((empty($obj->unicode) ? '' : $obj->unicode), true);
 					$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
 				}
 				$i++;

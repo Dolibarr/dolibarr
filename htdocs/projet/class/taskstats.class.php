@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
@@ -193,6 +194,7 @@ class TaskStats extends Stats
 		// var_dump($res);print '<br>';
 		return $res;
 	}
+
 
 	/**
 	 * Return the Task amount by month for a year

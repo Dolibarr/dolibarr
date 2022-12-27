@@ -34,7 +34,7 @@ if (!is_object($form)) {
 	$form = new Form($db);
 }
 
-if (!empty($conf->accounting->enabled) && !is_object($formaccounting)) {
+if (isModEnabled('accounting') && !is_object($formaccounting)) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 	$formaccounting = new FormAccounting($db);
 }
@@ -66,7 +66,7 @@ if (empty($reshook)) {
 			$html_name = $mode_key . '_' . $field_key;
 			print '<tr><td class="titlefieldcreate">' . $langs->trans($field_info['label']) . '</td><td colspan="3">';
 			$accountancy_code = GETPOSTISSET($html_name) ? GETPOST($html_name, 'aZ09') : (!empty($assetaccountancycodes->accountancy_codes[$mode_key][$field_key]) ? $assetaccountancycodes->accountancy_codes[$mode_key][$field_key] : '');
-			if (!empty($conf->accounting->enabled)) {
+			if (isModEnabled('accounting')) {
 				print $formaccounting->select_account($accountancy_code, $html_name, 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
 			} else {
 				print '<input name="' . $html_name . '" class="maxwidth200" value="' . dol_escape_htmltag($accountancy_code) . '">';

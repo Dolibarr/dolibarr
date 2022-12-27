@@ -35,6 +35,8 @@ class modGeneratePassNone extends ModeleGenPassword
 	 */
 	public $id;
 
+	public $picto = 'fa-keyboard';
+
 	/**
 	 * Minimum length (text visible by end user)
 	 *

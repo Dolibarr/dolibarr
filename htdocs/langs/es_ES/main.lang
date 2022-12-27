@@ -926,6 +926,7 @@ DirectDownloadInternalLink=Enlace de descarga privado
 PrivateDownloadLinkDesc=Debe iniciar sesión y necesita permisos para ver o descargar el archivo
 Download=Descargar
 DownloadDocument=Descargar el documento
+DownloadSignedDocument=Descargar el documento firmado
 ActualizeCurrency=Actualizar el tipo de cambio
 Fiscalyear=Año fiscal
 ModuleBuilder=Módulo Builder

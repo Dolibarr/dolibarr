@@ -66,7 +66,7 @@ if (empty($user->rights->takepos->run)) {
  * View
  */
 
-top_httphead('text/html');
+top_httphead('text/html', 1);
 
 if ($place > 0) {
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
@@ -85,12 +85,11 @@ $hookmanager->initHooks(array('takeposfrontend'), $facid);
 $reshook = $hookmanager->executeHooks('TakeposReceipt', $parameters, $object);
 if (!empty($hookmanager->resPrint)) {
 	print $hookmanager->resPrint;
-	exit;
+	return;	// Receipt page can be called by the takepos/send.php page that use ob_start/end so we must use return and not exit to stop page
 }
 
 // IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
 ?>
-<html>
 <body>
 <style>
 .right {
@@ -331,7 +330,9 @@ if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeTe
 ?>
 
 <script type="text/javascript">
-	window.print();
+	<?php
+	if ($facid) print 'window.print();'; //Avoid print when is specimen
+	?>
 </script>
 
 </body>

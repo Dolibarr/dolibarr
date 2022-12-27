@@ -38,13 +38,11 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
 	define('NOREQUIREHTML', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
@@ -79,6 +77,8 @@ if ($action == 'fetch' && !empty($id)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
+	top_httphead('application/json');
+
 	$outjson = array();
 
 	$object = new Product($db);
@@ -93,6 +93,7 @@ if ($action == 'fetch' && !empty($id)) {
 		$outprice_ht = null;
 		$outprice_ttc = null;
 		$outpricebasetype = null;
+		$outtva_tx_formated = 0;
 		$outtva_tx = 0;
 		$outdefault_vat_code = '';
 		$outqty = 1;
@@ -106,7 +107,7 @@ if ($action == 'fetch' && !empty($id)) {
 			$thirdpartytemp->fetch($socid);
 
 			//Load translation description and label
-			if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 				$newlang = $thirdpartytemp->default_lang;
 
 				if (!empty($newlang)) {
@@ -140,7 +141,8 @@ if ($action == 'fetch' && !empty($id)) {
 					$outprice_ttc = price($objp->unitprice * (1 + ($object->tva_tx / 100)));
 
 					$outpricebasetype = $object->price_base_type;
-					$outtva_tx = $object->tva_tx;
+					$outtva_tx_formated = price($object->tva_tx);
+					$outtva_tx = price2num($object->tva_tx);
 					$outdefault_vat_code = $object->default_vat_code;
 
 					$outqty = $objp->quantity;
@@ -165,15 +167,17 @@ if ($action == 'fetch' && !empty($id)) {
 				$objp = $db->fetch_object($result);
 				if ($objp) {
 					$found = true;
-					$outprice_ht = price($objp->price);
-					$outprice_ttc = price($objp->price_ttc);
+					$outprice_ht = price($objp->price);			// formated for langage user because is inserted into input field
+					$outprice_ttc = price($objp->price_ttc);	// formated for langage user because is inserted into input field
 					$outpricebasetype = $objp->price_base_type;
 					if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {
-						$outtva_tx = $objp->tva_tx;
+						$outtva_tx_formated = price($objp->tva_tx);	// formated for langage user because is inserted into input field
+						$outtva_tx = price2num($objp->tva_tx);		// international numeric
 						$outdefault_vat_code = $objp->default_vat_code;
 					} else {
 						// The common and default behaviour.
-						$outtva_tx = $object->tva_tx;
+						$outtva_tx_formated = price($object->tva_tx);
+						$outtva_tx = price2num($object->tva_tx);
 						$outdefault_vat_code = $object->default_vat_code;
 					}
 				}
@@ -188,14 +192,15 @@ if ($action == 'fetch' && !empty($id)) {
 
 			$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $socid);
 
-			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
 					$found = true;
 					$outprice_ht = price($prodcustprice->lines[0]->price);
 					$outprice_ttc = price($prodcustprice->lines[0]->price_ttc);
 					$outpricebasetype = $prodcustprice->lines[0]->price_base_type;
-					$outtva_tx = $prodcustprice->lines[0]->tva_tx;
+					$outtva_tx_formated = price($prodcustprice->lines[0]->tva_tx);
+					$outtva_tx = price2num($prodcustprice->lines[0]->tva_tx);
 					$outdefault_vat_code = $prodcustprice->lines[0]->default_vat_code;
 				}
 			}
@@ -205,7 +210,8 @@ if ($action == 'fetch' && !empty($id)) {
 			$outprice_ht = price($object->price);
 			$outprice_ttc = price($object->price_ttc);
 			$outpricebasetype = $object->price_base_type;
-			$outtva_tx = $object->tva_tx;
+			$outtva_tx_formated = price($object->tva_tx);
+			$outtva_tx = price2num($object->tva_tx);
 			$outdefault_vat_code = $object->default_vat_code;
 		}
 
@@ -219,6 +225,7 @@ if ($action == 'fetch' && !empty($id)) {
 			'price_ht' => $outprice_ht,
 			'price_ttc' => $outprice_ttc,
 			'pricebasetype' => $outpricebasetype,
+			'tva_tx_formated' => $outtva_tx_formated,
 			'tva_tx' => $outtva_tx,
 			'default_vat_code' => $outdefault_vat_code,
 			'qty' => $outqty,

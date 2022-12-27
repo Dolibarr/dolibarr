@@ -100,7 +100,7 @@ if (!class_exists('FormSetup')) {
 $formSetup = new FormSetup($db);
 
 
-// Hôte
+// HTTP HOST
 $item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
 $item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
 $item->cssClass = 'minwidth500';
@@ -109,7 +109,7 @@ $item->cssClass = 'minwidth500';
 $item = $formSetup->newItem('MYMODULE_MYPARAM1');
 $item->defaultFieldValue = 'default value';
 
-// Setup conf MYMODULE_MYPARAM1 as a simple textarea input but we replace the text of field title
+// Setup conf MYMODULE_MYPARAM2 as a simple textarea input but we replace the text of field title
 $item = $formSetup->newItem('MYMODULE_MYPARAM2');
 $item->nameText = $item->getNameText().' more html text ';
 

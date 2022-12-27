@@ -24,6 +24,7 @@
  *		\brief     	List of salaries payments
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -402,10 +403,10 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 print '<tr class="liste_titre_filter">';
 // Ref
 print '<td class="liste_titre left">';
-print '<input class="flat" type="text" size="3" name="search_ref" value="'.$db->escape($search_ref).'">';
+print '<input class="flat width50" type="text" name="search_ref" value="'.$db->escape($search_ref).'">';
 print '</td>';
 // Label
-print '<td class="liste_titre"><input type="text" class="flat width150" name="search_label" value="'.$db->escape($search_label).'"></td>';
+print '<td class="liste_titre"><input type="text" class="flat width100" name="search_label" value="'.$db->escape($search_label).'"></td>';
 
 // Date start
 print '<td class="liste_titre center">';
@@ -434,22 +435,23 @@ print '</td>';
 
 // Type
 print '<td class="liste_titre left">';
-$form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16);
+print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, 'maxwidth125', 1);
 print '</td>';
 
 // Bank account
-if (isModEnabled('banque')) {
+if (isModEnabled("banque")) {
 	print '<td class="liste_titre">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1);
+	print $form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth125', 1);
 	print '</td>';
 }
 
 // Amount
 print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$db->escape($search_amount).'"></td>';
 
+//Status
 print '<td class="liste_titre maxwidthonsmartphone right">';
 $liststatus = array('0' => $langs->trans("Unpaid"), '1' => $langs->trans("Paid"));
-print $form->selectarray('search_status', $liststatus, $search_status, 1);
+print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
 print '</td>';
 
 // Extra fields
@@ -476,7 +478,7 @@ print_liste_field_titre("DateStart", $_SERVER["PHP_SELF"], "s.datesp,s.rowid", "
 print_liste_field_titre("DateEnd", $_SERVER["PHP_SELF"], "s.dateep,s.rowid", "", $param, 'align="center"', $sortfield, $sortorder);
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("DefaultPaymentMode", $_SERVER["PHP_SELF"], "type", "", $param, 'class="left"', $sortfield, $sortorder);
-if (isModEnabled('banque')) {
+if (isModEnabled("banque")) {
 	print_liste_field_titre("DefaultBankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 }
 print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "s.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -545,7 +547,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	// Label payment
-	print "<td>".dol_trunc($obj->label, 40)."</td>\n";
+	print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label)."</td>\n";
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
@@ -563,7 +565,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	// Employee
-	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
+	print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(1)."</td>\n";
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}
@@ -577,7 +579,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	// Account
-	if (isModEnabled('banque')) {
+	if (isModEnabled("banque")) {
 		print '<td>';
 		if ($obj->fk_account > 0) {
 			//$accountstatic->fetch($obj->fk_bank);
@@ -663,7 +665,7 @@ if ($num == 0) {
 		}
 	}*/
 	$colspan = 9;
-	if (isModEnabled('banque')) { $colspan++; }
+	if (isModEnabled("banque")) { $colspan++; }
 	print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 }
 

@@ -22,6 +22,7 @@
  *	\brief      Page des marges par client
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -30,18 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
-
-// Security check
-$socid = GETPOST('socid', 'int');
-$TSelectedProducts = GETPOST('products', 'array');
-$TSelectedCats = GETPOST('categories', 'array');
-
-if (!empty($user->socid)) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'societe', '', '');
-$result = restrictedArea($user, 'margins');
-
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -72,6 +61,17 @@ if (GETPOST('enddatemonth')) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Societe($db);
 $hookmanager->initHooks(array('margincustomerlist'));
+
+// Security check
+$socid = GETPOST('socid', 'int');
+$TSelectedProducts = GETPOST('products', 'array');
+$TSelectedCats = GETPOST('categories', 'array');
+
+if (!empty($user->socid)) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'societe', '', '');
+$result = restrictedArea($user, 'margins');
 
 
 /*
@@ -156,7 +156,7 @@ print img_picto('', 'product').$form->multiselectarray('products', $TProducts, $
 print '</td></tr>';
 
 // Categories
-$TCats = $form->select_all_categories(0, array(), '', 64, 0, 1);
+$TCats = $form->select_all_categories('product', array(), '', 64, 0, 1);
 
 print '<tr>';
 print '<td class="titlefield">'.$langs->trans('Category').'</td>';

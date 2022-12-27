@@ -30,13 +30,14 @@
  *  \brief      Home page of calendar events
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
@@ -212,7 +213,7 @@ if (GETPOST("viewperuser", 'alpha') || $mode == 'show_peruser') {
  $event->fetch($actionid);
  $event->fetch_optionals();
  $event->fetch_userassigned();
- $event->oldcopy = clone $event;
+ $event->oldcopy = dol_clone($event);
 
  $result = $event->delete();
  }
@@ -273,7 +274,7 @@ if (empty($conf->global->AGENDA_DISABLE_EXT)) {
 		$color = 'AGENDA_EXT_COLOR'.$i;
 		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT'.$i;
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE'.$i;
-		if (!empty($conf->global->$source) && !empty($conf->global->$name)) {
+		if (getDolGlobalString($source) && getDolGlobalString($name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
 				'src' => getDolGlobalString($source),
@@ -298,14 +299,14 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		$enabled = 'AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
 		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
-		if (!empty($user->conf->$source) && !empty($user->conf->$name)) {
+		if (getDolUserString($source) && getDolUserString($name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
-				'src' => $user->conf->$source,
-				'name' => dol_string_nohtmltag($user->conf->$name),
+				'src' => getDolUserString($source),
+				'name' => dol_string_nohtmltag(getDolUserString($name)),
 				'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
-				'color' => dol_string_nohtmltag($user->conf->$color),
-				'default' => dol_string_nohtmltag($user->conf->$default),
+				'color' => dol_string_nohtmltag(getDolUserString($color)),
+				'default' => dol_string_nohtmltag(getDolUserString($default)),
 				'buggedfile' => dol_string_nohtmltag(isset($user->conf->buggedfile) ? $user->conf->buggedfile : '')
 			);
 		}
@@ -756,9 +757,10 @@ if ($type) {
 	$sql .= " AND ca.id = ".((int) $type);
 }
 if ($status == '0') {
+	// To do (not started)
 	$sql .= " AND a.percent = 0";
 }
-if ($status == '-1' || $status == 'na') {
+if ($status == 'na') {
 	// Not applicable
 	$sql .= " AND a.percent = -1";
 }
@@ -1269,9 +1271,9 @@ if (count($listofextcals)) {
 					$event->datef = $dateend + $usertime;
 
 					if ($icalevent['SUMMARY']) {
-						$event->label = $icalevent['SUMMARY'];
+						$event->label = dol_string_nohtmltag($icalevent['SUMMARY']);
 					} elseif ($icalevent['DESCRIPTION']) {
-						$event->label = dol_nl2br($icalevent['DESCRIPTION'], 1);
+						$event->label = dol_nl2br(dol_string_nohtmltag($icalevent['DESCRIPTION']), 1);
 					} else {
 						$event->label = $langs->trans("ExtSiteNoLabel");
 					}
@@ -1285,7 +1287,7 @@ if (count($listofextcals)) {
 					}
 
 					// Transparency (see https://www.kanzaki.com/docs/ical/transp.html)
-					if ($icalevent['TRANSP']) {
+					if (!empty($icalevent['TRANSP'])) {
 						if ($icalevent['TRANSP'] == "TRANSPARENT") {
 							$event->transparency = 0; // 0 = available / free
 						}
@@ -1909,7 +1911,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					}
 					//print 'background: #'.$colortouse.';';
 					//print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -3).'), to(#'.dol_color_minus($color, -1).'));';
-					//if (! empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
+					//if (!empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
 					//else print 'background-color: transparent !important; background: none; border: 1px solid #bbb;';
 					//print ' -moz-border-radius:4px;"';
 					//print 'border: 1px solid #ccc" width="100%"';
@@ -1982,7 +1984,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
 						// Show title
 						$titletoshow = $daterange;
-						$titletoshow .= ($titletoshow ? ' ' : '').($event->label ? $event->label : $event->libelle);
+						$titletoshow .= ($titletoshow ? ' ' : '').dol_escape_htmltag($event->label ? $event->label : $event->libelle);
 
 						if ($event->type_code != 'ICALEVENT') {
 							$savlabel = $event->label ? $event->label : $event->libelle;

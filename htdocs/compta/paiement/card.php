@@ -27,12 +27,13 @@
  *		\remarks	Nearly same file than fournisseur/paiement/card.php
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-if (isModEnabled('banque')) {
+if (isModEnabled("banque")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
@@ -66,12 +67,11 @@ if ($socid && $socid != $object->thirdparty->id) {
 
 $error = 0;
 
-
 /*
  * Actions
  */
 
-if ($action == 'setnote' && $user->rights->facture->paiement) {
+if ($action == 'setnote' && $user->hasRight('facture', 'paiement')) {
 	$db->begin();
 
 	$result = $object->update_note(GETPOST('note', 'restricthtml'));
@@ -119,8 +119,8 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 				$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
 			}
 
-			$hidedetails = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
-			$hidedesc = ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
+			$hidedetails = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
+			$hidedesc = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
 			$hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
 
 			$sql = 'SELECT f.rowid as facid';
@@ -141,13 +141,13 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 						$invoice = new Facture($db);
 
 						if ($invoice->fetch($objp->facid) <= 0) {
-							$errors++;
+							$error++;
 							setEventMessages($invoice->error, $invoice->errors, 'errors');
 							break;
 						}
 
 						if ($invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref) < 0) {
-							$errors++;
+							$error++;
 							setEventMessages($invoice->error, $invoice->errors, 'errors');
 							break;
 						}
@@ -158,12 +158,12 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 
 				$db->free($resql);
 			} else {
-				$errors++;
+				$error++;
 				setEventMessages($db->error, $db->errors, 'errors');
 			}
 		}
 
-		if (! $errors) {
+		if (! $error) {
 			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
 			exit;
 		}
@@ -285,7 +285,7 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, '', 
 
 $disable_delete = 0;
 // Bank account
-if (isModEnabled('banque')) {
+if (isModEnabled("banque")) {
 	$bankline = new AccountLine($db);
 
 	if ($object->fk_account > 0) {
@@ -327,7 +327,7 @@ print '</td></tr>';
 */
 
 // Bank account
-if (isModEnabled('banque')) {
+if (isModEnabled("banque")) {
 	if ($object->fk_account > 0) {
 		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
@@ -519,13 +519,7 @@ if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
 }
 
 if ($user->socid == 0 && $action == '') {
-	if ($user->rights->facture->paiement) {
-		if (!$disable_delete) {
-			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
-		} else {
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
-		}
-	}
+	print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->rights->facture->paiement && !$disable_delete);
 }
 
 print '</div>';
