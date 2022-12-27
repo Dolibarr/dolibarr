@@ -491,7 +491,7 @@ $listofreferent = array(
 	'lang'=>'sendings',
 	'buttonnew'=>'CreateShipment',
 	'testnew'=>0,
-	'test'=>$conf->expedition->enabled && $user->rights->expedition->lire),
+	'test'=>!empty($conf->expedition->enabled) && $user->hasRight('expedition', 'lire')),
 'mrp'=>array(
 	'name'=>"MO",
 	'title'=>"ListMOAssociatedProject",
@@ -693,7 +693,7 @@ if (!$showdatefilter) {
 	print '<div class="center centpercent">';
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="tablename" value="'.$tablename.'">';
+	print '<input type="hidden" name="tablename" value="'.!empty($tablename).'">';
 	print '<input type="hidden" name="action" value="view">';
 	print '<div class="inline-block">';
 	print $form->selectDate($dates, 'dates', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
@@ -730,7 +730,7 @@ $tooltiponprofitplus = $tooltiponprofitminus = '';
 foreach ($listofreferent as $key => $value) {
 	$name = $langs->trans($value['name']);
 	$qualified = $value['test'];
-	$margin = $value['margin'];
+	$margin = !empty($value['margin']);
 	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 		if ($margin == 'add') {
 			$tooltiponprofitplus .= ' &gt; '.$name." (+)<br>\n";
@@ -777,8 +777,8 @@ foreach ($listofreferent as $key => $value) {
 	$tablename = $value['table'];
 	$datefieldname = $value['datefieldname'];
 	$qualified = $value['test'];
-	$margin = $value['margin'];
-	$project_field = $value['project_field'];
+	$margin = !empty($value['margin']);
+	$project_field = !empty($value['project_field']);
 	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 		$element = new $classname($db);
 
@@ -792,7 +792,7 @@ foreach ($listofreferent as $key => $value) {
 			for ($i = 0; $i < $num; $i++) {
 				$tmp = explode('_', $elementarray[$i]);
 				$idofelement = $tmp[0];
-				$idofelementuser = $tmp[1];
+				$idofelementuser = !empty($tmp[1]);
 
 				$element->fetch($idofelement);
 				if ($idofelementuser) {
@@ -990,11 +990,11 @@ foreach ($listofreferent as $key => $value) {
 	$tablename = $value['table'];
 	$datefieldname = $value['datefieldname'];
 	$qualified = $value['test'];
-	$langtoload = $value['lang'];
-	$urlnew = $value['urlnew'];
-	$buttonnew = $value['buttonnew'];
-	$testnew = $value['testnew'];
-	$project_field = $value['project_field'];
+	$langtoload = !empty($value['lang']);
+	$urlnew = !empty($value['urlnew']);
+	$buttonnew = !empty($value['buttonnew']);
+	$testnew = !empty($value['testnew']);
+	$project_field = !empty($value['project_field']);
 
 	$exclude_select_element = array('payment_various');
 	if (!empty($value['exclude_select_element'])) {
@@ -1167,7 +1167,7 @@ foreach ($listofreferent as $key => $value) {
 			for ($i = 0; $i < $num; $i++) {
 				$tmp = explode('_', $elementarray[$i]);
 				$idofelement = $tmp[0];
-				$idofelementuser = $tmp[1];
+				$idofelementuser = !empty($tmp[1]);
 
 				$element->fetch($idofelement);
 				if ($idofelementuser) {
@@ -1488,7 +1488,7 @@ foreach ($listofreferent as $key => $value) {
 					$total_ht_by_third += $total_ht_by_line;
 					$total_ttc_by_third += $total_ttc_by_line;
 
-					$total_time = $total_time + $total_time_by_line;
+					$total_time = !empty($total_time) + !empty($total_time_by_line);
 				}
 
 				if (canApplySubtotalOn($tablename)) {
