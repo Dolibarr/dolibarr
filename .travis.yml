@@ -455,6 +455,9 @@ script:
   php upgrade.php 16.0.0 17.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade16001700.log
   php upgrade2.php 16.0.0 17.0.0 > $TRAVIS_BUILD_DIR/upgrade16001700-2.log
   php step5.php 16.0.0 17.0.0 > $TRAVIS_BUILD_DIR/upgrade16001700-3.log
+  php upgrade.php 17.0.0 18.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade17001800.log
+  php upgrade2.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-2.log
+  php step5.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-3.log
   ls -alrt $TRAVIS_BUILD_DIR/
 
 - |
