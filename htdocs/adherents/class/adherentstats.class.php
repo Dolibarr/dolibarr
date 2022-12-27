@@ -55,7 +55,7 @@ class AdherentStats extends Stats
 	 */
 	public function __construct($db, $socid = 0, $userid = 0)
 	{
-		global $user, $conf;
+		global $conf;
 
 		$this->db = $db;
 		$this->socid = $socid;
@@ -87,8 +87,6 @@ class AdherentStats extends Stats
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
-		global $user;
-
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, count(*)";
 		$sql .= " FROM ".$this->from;
 		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -107,8 +105,6 @@ class AdherentStats extends Stats
 	 */
 	public function getNbByYear()
 	{
-		global $user;
-
 		$sql = "SELECT date_format(p.dateadh,'%Y') as dm, count(*)";
 		$sql .= " FROM ".$this->from;
 		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -128,8 +124,6 @@ class AdherentStats extends Stats
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
-		global $user;
-
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, sum(p.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		//if (empty($user->rights->societe->client->voir) && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -149,8 +143,6 @@ class AdherentStats extends Stats
 	 */
 	public function getAverageByMonth($year)
 	{
-		global $user;
-
 		$sql = "SELECT date_format(p.dateadh,'%m') as dm, avg(p.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		//if (empty($user->rights->societe->client->voir) && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -170,8 +162,6 @@ class AdherentStats extends Stats
 	 */
 	public function getAllByYear()
 	{
-		global $user;
-
 		$sql = "SELECT date_format(p.dateadh,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
 		//if (empty($user->rights->societe->client->voir) && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
