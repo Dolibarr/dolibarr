@@ -1000,11 +1000,15 @@ foreach ($fieldlist as $field => $value) {
 				$valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, '', $forcenowrap); // Tooltip on hover
 			}
 		}
-		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], ($sortable ? $fieldlist[$field] : ''), ($page ? 'page='.$page.'&' : ''), $param, "align=".$align, $sortfield, $sortorder);
+		$sortfieldtouse = ($sortable ? $fieldlist[$field] : '');
+		if ($sortfieldtouse == 'type_template') {
+			$sortfieldtouse.= ',label';
+		}
+		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $sortfieldtouse, ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $align.' ');
 	}
 }
 
-print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, 'align="center"', $sortfield, $sortorder);
+print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
 print getTitleFieldOfList('');
 print '</tr>';
 

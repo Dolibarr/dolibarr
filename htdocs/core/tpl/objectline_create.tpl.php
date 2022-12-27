@@ -774,7 +774,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 
 						// Now set the VAT
 						var stringforvatrateselection = tva_tx;
-						if (typeof default_vat_code != 'undefined' && default_vat_code != null) {
+						if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 							stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
 						}
 						// Set vat rate if field is an input box
@@ -971,10 +971,11 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		}
 		?>
 
-		// Deal with supplier ref price
+
+		// Deal with supplier ref price (idprodfournprice = int)
 		if (jQuery('#idprodfournprice').val() > 0)
 		{
-			console.log("objectline_create.tpl #idprodfournprice is > 0, so we set some properties into page");
+			console.log("objectline_create.tpl #idprodfournprice is is an ID > 0, so we set some properties into page");
 
 			var up = parseFloat($('option:selected', this).attr('data-up')); 							// When select is done from HTML select
 			if (isNaN(up)) { up = parseFloat(jQuery('#idprodfournprice').attr('data-up'));}				// When select is done from HTML input with ajax autocomplete
@@ -995,7 +996,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
 
 			var stringforvatrateselection = tva_tx;
-			if (typeof default_vat_code != 'undefined' && default_vat_code != null) {
+			if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
 			}
 
@@ -1023,14 +1024,15 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			}
 
 			<?php
-			if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
+			if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
 				?>
 			var description = $('option:selected', this).attr('data-description');
 			if (typeof description == 'undefined') { description = jQuery('#idprodfournprice').attr('data-description');	}
 
 			console.log("Load desciption into text area : "+description);
 				<?php
-				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) {
+					?>
 			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 			{
 				var editor = CKEDITOR.instances['dp_desc'];
@@ -1039,15 +1041,41 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 				}
 			}
 					<?php
-				} else { ?>
+				} else {
+					?>
 			jQuery('#dp_desc').text(description);
 					<?php
 				}
-			}?>
+			}
+			?>
 		} else if (jQuery('#idprodfournprice').length > 0) {
+			console.log("objectline_create.tpl #idprodfournprice is not an int but is a string so we set only few properties into page");
+
+			var tva_tx = parseFloat($('option:selected', this).attr('data-tvatx')); 					// When select is done from HTML select
+			if (isNaN(tva_tx)) { tva_tx = parseFloat(jQuery('#idprodfournprice').attr('data-tvatx'));}	// When select is done from HTML input with ajax autocomplete
+
+			var default_vat_code = $('option:selected', this).attr('data-default-vat-code');							 					// When select is done from HTML select
+			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
+
+			var stringforvatrateselection = tva_tx;
+			if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
+				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
+			}
+
+			console.log("objectline_create.tpl We find data for price : tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+" for product id = "+jQuery('#idprodfournprice').val());
+
+			// Set vat rate if field is an input box
+			$('#tva_tx').val(tva_tx);
+			// Set vat rate by selecting the combo
+			//$('#tva_tx option').val(tva_tx);	// This is bugged, it replaces the vat key of all options
+			$('#tva_tx option').removeAttr('selected');
+			console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
+			$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
+
 			<?php
-			if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
-				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+			if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
+				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) {
+					?>
 			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 			{
 				var editor = CKEDITOR.instances['dp_desc'];
@@ -1056,11 +1084,13 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 				}
 			}
 					<?php
-				} else { ?>
+				} else {
+					?>
 			jQuery('#dp_desc').text('');
 					<?php
 				}
-			}?>
+			}
+			?>
 		}
 
 
@@ -1118,7 +1148,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			jQuery("#multicurrency_price_ttc").val('').hide();
 			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
 		<?php } ?>
-		jQuery("#fourn_ref, #tva_tx, #title_vat").hide();
+		jQuery("#tva_tx, #title_vat").hide();
 		/* jQuery("#title_fourn_ref").hide(); */
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 		jQuery("#buying_price").show();

@@ -34,6 +34,8 @@
 	--colortopbordertitle1: rgb(<?php print $colortopbordertitle1; ?>);
 	--listetotal: #888888;
 	--inputbackgroundcolor: #FFF;
+	--inputbackgroundcolordisabled: #eee;
+	--inputcolordisabled: rgb(80, 80, 80);
 	--inputbordercolor: rgba(0,0,0,.15);
 	--tooltipbgcolor: <?php print $toolTipBgColor; ?>;
 	--tooltipfontcolor : <?php print $toolTipFontColor; ?>;
@@ -51,13 +53,16 @@
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
+	--tablevalidbgcolor: rgb(252, 248, 227);
 }
 
 <?php
 if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	print "/* For dark mode */\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
-		print "@media (prefers-color-scheme: dark) {";
+		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
+	} else {
+		print "@media not print {";
 	}
 	print ":root {
 	            --colorbackhmenu1: #3d3e40;
@@ -85,7 +90,9 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colortextbackvmenu: rgb(220,220,220);
 				--tooltipfontcolor : rgb(220,220,220);
 	            --listetotal: rgb(245, 83, 158);
-	            --inputbackgroundcolor: #2b2d2f;
+	            --inputbackgroundcolor: rgb(70, 70, 70);
+				--inputbackgroundcolordisabled: rgb(60, 60, 60);
+				--inputcolordisabled: rgb(140, 140, 140);
 	            --inputbordercolor: rgb(220,220,220);
 	            --oddevencolor: rgb(220,220,220);
 	            --colorboxstatsborder: rgb(65,100,138);
@@ -99,14 +106,13 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --amountpaymentcomplete:rgb(101,184,77);
 	            --amountremaintopaybackcolor:rbg(245,130,46);
 				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
+				--tablevalidbgcolor: rgb(80, 64, 33);
 	      }
 
 		body, button {
 			color: #bbb;
-		}\n";
-	if ($conf->global->THEME_DARKMODEENABLED != 2) {
-		print "}\n";
-	}
+		}\n
+	}\n";
 }
 ?>
 
@@ -509,7 +515,8 @@ select:invalid, select.--error {
 }
 input:disabled, textarea:disabled, select[disabled='disabled']
 {
-	background:#eee;
+	background: var(--inputbackgroundcolordisabled);
+	color: var(--inputcolordisabled);
 }
 
 input.liste_titre {
@@ -3159,7 +3166,7 @@ a.vmenu:link, a.vmenu:visited {
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
 	font-family: <?php print $fontlist ?>;
 	text-align: <?php print $left; ?>;
-	color: #202020;
+	color: var(--colortextbackvmenu);
 	margin: 1px 1px 1px 6px;
 }
 span.vsmenudisabled, font.vsmenudisabled {
@@ -3231,7 +3238,6 @@ div.blockvmenubookmarks
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend
 {
 	font-family: <?php print $fontlist ?>;
-	color: #000000;
 	text-align: <?php print $left; ?>;
 	text-decoration: none;
 	padding-left: 5px;
@@ -3240,6 +3246,7 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmen
 	padding-bottom: 7px;
 	margin: 0 0 0 2px;
 
+	color: var(--colortext);
 	background: var(--colorbackvmenu1);
 
 	border-left: 1px solid #AAA;
@@ -4176,7 +4183,7 @@ tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
 	border-bottom: 0px !important;
 }
 table.nobottomiftotal tr.liste_total td {
-	background-color: #fff;
+	background-color: var(--inputbackgroundcolor);
 	<?php if (!$userborderontable) { ?>
 	border-bottom: 0px !important;
 	<?php } ?>
@@ -4996,7 +5003,7 @@ table.valid {
 	padding-right: 4px;
 	padding-bottom: 4px;
 	margin: 0px 0px;
-	background: #fcf8e3;
+	background: var(--tablevalidbgcolor);
 }
 
 .validtitre {
@@ -6547,6 +6554,10 @@ span.noborderoncategories {
   border: 1px solid #aaa;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   display: none;
+}
+
+div.multi-select-menu[role="menu"] {
+	min-width: 220px !important;
 }
 
 .multi-select-menu input {

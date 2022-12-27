@@ -213,7 +213,7 @@ if (isModEnabled('contrat')) {
 $now = dol_now();
 
 $help_url = '';
-$title = $langs->trans("ListOfInterventions");
+$title = $langs->trans("Interventions");
 $morejs = array();
 $morecss = array();
 
@@ -249,7 +249,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 }
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sqlfields = $sql; // $sql fields to remove for count total
@@ -498,7 +498,7 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
 // --------------------------------------------------------------------
@@ -864,6 +864,9 @@ while ($i < $imaxinloop) {
 		}
 		if (!$i) {
 			$totalarray['type'][$totalarray['nbfield']] = 'duration';
+		}
+		if (!$i) {
+			$totalarray['pos'][$totalarray['nbfield']] = 'fd.duree';
 		}
 		$totalarray['val']['fd.duree'] += $obj->duree;
 	}

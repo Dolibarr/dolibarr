@@ -191,11 +191,27 @@ class Product extends CommonObject
 	//! French VAT NPR (0 or 1)
 	public $tva_npr = 0;
 
+	//! Default discount percent
+	public $remise_percent;
+
 	//! Other local taxes
 	public $localtax1_tx;
 	public $localtax2_tx;
 	public $localtax1_type;
 	public $localtax2_type;
+
+	// Properties set by get_buyprice() for return
+
+	public $desc_supplier;
+	public $vatrate_supplier;
+	public $default_vat_code_supplier;
+	public $fourn_multicurrency_price;
+	public $fourn_multicurrency_unitprice;
+	public $fourn_multicurrency_tx;
+	public $fourn_multicurrency_id;
+	public $fourn_multicurrency_code;
+	public $packaging;
+
 
 	public $lifetime;
 
@@ -415,6 +431,7 @@ class Product extends CommonObject
 	public $fk_price_expression;
 
 	/* To store supplier price found */
+	public $fourn_qty;
 	public $fourn_pu;
 	public $fourn_price_base_type;
 	public $fourn_socid;
@@ -1957,9 +1974,8 @@ class Product extends CommonObject
 		$result = 0;
 
 		// We do a first search with a select by searching with couple prodfournprice and qty only (later we will search on triplet qty/product_id/fourn_ref)
-		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent,";
-		$sql .= " pfp.fk_product, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression,";
-		$sql .= " pfp.default_vat_code,";
+		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent, pfp.fk_soc,";
+		$sql .= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.desc_fourn as desc_supplier, pfp.tva_tx, pfp.default_vat_code, pfp.fk_supplier_price_expression,";
 		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
 		$sql .= " pfp.packaging";
 		$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price as pfp";
@@ -1974,14 +1990,15 @@ class Product extends CommonObject
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj && $obj->quantity > 0) {        // If we found a supplier prices from the id of supplier price
-				if (!empty($conf->dynamicprices->enabled) && !empty($obj->fk_supplier_price_expression)) {
-					include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+				if (isModEnabled('dynamicprices') && !empty($obj->fk_supplier_price_expression)) {
 					$prod_supplier = new ProductFournisseur($this->db);
 					$prod_supplier->product_fourn_price_id = $obj->rowid;
 					$prod_supplier->id = $obj->fk_product;
 					$prod_supplier->fourn_qty = $obj->quantity;
 					$prod_supplier->fourn_tva_tx = $obj->tva_tx;
 					$prod_supplier->fk_supplier_price_expression = $obj->fk_supplier_price_expression;
+
+					include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 					$priceparser = new PriceParser($this->db);
 					$price_result = $priceparser->parseProductSupplier($prod_supplier);
 					if ($price_result >= 0) {
@@ -1993,12 +2010,12 @@ class Product extends CommonObject
 				$this->fourn_pu = $obj->price / $obj->quantity; // Unit price of product of supplier
 				$this->fourn_price_base_type = 'HT'; // Price base type
 				$this->fourn_socid = $obj->fk_soc; // Company that offer this price
-				$this->ref_fourn = $obj->ref_fourn; // deprecated
-				$this->ref_supplier = $obj->ref_fourn; // Ref supplier
-				$this->desc_supplier = $obj->desc_fourn; // desc supplier
+				$this->ref_fourn = $obj->ref_supplier; // deprecated
+				$this->ref_supplier = $obj->ref_supplier; // Ref supplier
+				$this->desc_supplier = $obj->desc_supplier; // desc supplier
 				$this->remise_percent = $obj->remise_percent; // remise percent if present and not typed
 				$this->vatrate_supplier = $obj->tva_tx; // Vat ref supplier
-				$this->default_vat_code = $obj->default_vat_code; // Vat code supplier
+				$this->default_vat_code_supplier = $obj->default_vat_code; // Vat code supplier
 				$this->fourn_multicurrency_price = $obj->multicurrency_price;
 				$this->fourn_multicurrency_unitprice = $obj->multicurrency_unitprice;
 				$this->fourn_multicurrency_tx = $obj->multicurrency_tx;
@@ -2012,8 +2029,7 @@ class Product extends CommonObject
 			} else { // If not found
 				// We do a second search by doing a select again but searching with less reliable criteria: couple qty/id product, and if set fourn_ref or fk_soc.
 				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent, pfp.fk_soc,";
-				$sql .= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.desc_fourn as desc_supplier, pfp.tva_tx, pfp.fk_supplier_price_expression,";
-				$sql .= " pfp.default_vat_code,";
+				$sql .= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.desc_fourn as desc_supplier, pfp.tva_tx, pfp.default_vat_code, pfp.fk_supplier_price_expression,";
 				$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
 				$sql .= " pfp.packaging";
 				$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price as pfp";
@@ -2038,14 +2054,15 @@ class Product extends CommonObject
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					if ($obj && $obj->quantity > 0) {        // If found
-						if (!empty($conf->dynamicprices->enabled) && !empty($obj->fk_supplier_price_expression)) {
-							include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+						if (isModEnabled('dynamicprices') && !empty($obj->fk_supplier_price_expression)) {
 							$prod_supplier = new ProductFournisseur($this->db);
 							$prod_supplier->product_fourn_price_id = $obj->rowid;
 							$prod_supplier->id = $obj->fk_product;
 							$prod_supplier->fourn_qty = $obj->quantity;
 							$prod_supplier->fourn_tva_tx = $obj->tva_tx;
 							$prod_supplier->fk_supplier_price_expression = $obj->fk_supplier_price_expression;
+
+							include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 							$priceparser = new PriceParser($this->db);
 							$price_result = $priceparser->parseProductSupplier($prod_supplier);
 							if ($result >= 0) {
@@ -2063,7 +2080,7 @@ class Product extends CommonObject
 						$this->desc_supplier = $obj->desc_supplier; // desc supplier
 						$this->remise_percent = $obj->remise_percent; // remise percent if present and not typed
 						$this->vatrate_supplier = $obj->tva_tx; // Vat ref supplier
-						$this->default_vat_code = $obj->default_vat_code; // Vat code supplier
+						$this->default_vat_code_supplier = $obj->default_vat_code; // Vat code supplier
 						$this->fourn_multicurrency_price = $obj->multicurrency_price;
 						$this->fourn_multicurrency_unitprice = $obj->multicurrency_unitprice;
 						$this->fourn_multicurrency_tx = $obj->multicurrency_tx;
@@ -2698,7 +2715,7 @@ class Product extends CommonObject
 					}
 				}
 
-				if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression) && empty($ignore_expression)) {
+				if (isModEnabled('dynamicprices') && !empty($this->fk_price_expression) && empty($ignore_expression)) {
 					include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 					$priceparser = new PriceParser($this->db);
 					$price_result = $priceparser->parseProduct($this);
@@ -5141,11 +5158,7 @@ class Product extends CommonObject
 
 		// Positionne le modele sur le nom du modele a utiliser
 		if (!dol_strlen($modele)) {
-			if (!empty($conf->global->PRODUCT_ADDON_PDF)) {
-				$modele = $conf->global->PRODUCT_ADDON_PDF;
-			} else {
-				$modele = 'strato';
-			}
+			$modele = getDolGlobalString('PRODUCT_ADDON_PDF', 'strato');
 		}
 
 		$modelpath = "core/modules/product/doc/";

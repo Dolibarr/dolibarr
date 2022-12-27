@@ -133,6 +133,7 @@ class Conf
 			'barcode' => array(),
 			'models' => array(),
 			'societe' => array(),
+			'member' => array(),
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array()
@@ -145,22 +146,22 @@ class Conf
 		$this->expedition_bon = new stdClass();
 		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
-		$this->product			= new stdClass();
-		$this->service			= new stdClass();
-		$this->contrat			= new stdClass();
-		$this->actions			= new stdClass();
-		$this->agenda			= new stdClass();
+		$this->product = new stdClass();
+		$this->service = new stdClass();
+		$this->contrat = new stdClass();
+		$this->actions = new stdClass();
+		$this->agenda = new stdClass();
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
-		$this->facture			= new stdClass();
-		$this->contrat			= new stdClass();
+		$this->facture = new stdClass();
+		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
-		$this->adherent			= new stdClass();
+		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
-		$this->notification		= new stdClass();
+		$this->notification = new stdClass();
 		$this->mailing = new stdClass();
-		$this->expensereport	= new stdClass();
-		$this->productbatch		= new stdClass();
+		$this->expensereport = new stdClass();
+		$this->productbatch = new stdClass();
 	}
 
 	/**
@@ -215,22 +216,22 @@ class Conf
 		$this->expedition_bon = new stdClass();
 		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
-		$this->product			= new stdClass();
-		$this->service			= new stdClass();
-		$this->contrat			= new stdClass();
-		$this->actions			= new stdClass();
-		$this->agenda			= new stdClass();
+		$this->product = new stdClass();
+		$this->service = new stdClass();
+		$this->contrat = new stdClass();
+		$this->actions = new stdClass();
+		$this->agenda = new stdClass();
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
-		$this->facture			= new stdClass();
-		$this->contrat			= new stdClass();
+		$this->facture = new stdClass();
+		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
-		$this->adherent			= new stdClass();
+		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
-		$this->notification		= new stdClass();
+		$this->notification = new stdClass();
 		$this->mailing = new stdClass();
-		$this->expensereport	= new stdClass();
-		$this->productbatch		= new stdClass();
+		$this->expensereport = new stdClass();
+		$this->productbatch = new stdClass();
 
 		// Common arrays
 		$this->cache = array();
@@ -249,6 +250,7 @@ class Conf
 			'barcode' => array(),
 			'models' => array(),
 			'societe' => array(),
+			'member' => array(),
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array(),
