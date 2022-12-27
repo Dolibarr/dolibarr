@@ -22,9 +22,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/propale/doc/pdf_azur.modules.php
+ *	\file       htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
  *	\ingroup    propale
- *	\brief      File of the class allowing to generate the supplier propals to the Aurore model
+ *	\brief      File of the class allowing to generate the supplier proposals to the Aurore model
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier_proposal.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';

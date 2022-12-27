@@ -1627,7 +1627,7 @@ if (empty($reshook)) {
 					$productsupplier->fk_unit,
 					0,
 					$pu_devise,
-					$ref_supplier,
+					GETPOST('fourn_ref', 'alpha'),
 					''
 				);
 			}

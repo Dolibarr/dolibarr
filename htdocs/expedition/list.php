@@ -78,6 +78,7 @@ $search_sale = GETPOST('search_sale', 'int');
 $search_categ_cus = GETPOST("search_categ_cus", 'int');
 $search_product_category = GETPOST('search_product_category', 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
+$mode = GETPOST('mode', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -489,6 +490,9 @@ $arrayofselected = is_array($toselect) ? $toselect : array();
 $expedition = new Expedition($db);
 
 $param = '';
+if (!empty($mode)) {
+	$param .= '&mode='.urlencode($mode);
+}
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
@@ -577,7 +581,10 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 // $url = DOL_URL_ROOT.'/expedition/card.php?action=create';
 // if (!empty($socid)) $url .= '&socid='.$socid;
 // $newcardbutton = dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', $url, '', $user->rights->expedition->creer);
-$newcardbutton = dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2', '', $user->rights->expedition->creer);
+$newcardbutton  = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewSending'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/expedition/card.php?action=create2', '', $user->rights->expedition->creer);
 
 $i = 0;
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -589,6 +596,7 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dolly', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -892,213 +900,227 @@ while ($i < min($num, $limit)) {
 	$object = new Expedition($db);
 	$object->fetch($obj->rowid);
 
-	print '<tr class="oddeven">';
+	if ($mode == 'kanban') {
+		if ($i == 0) {
+			print '<tr><td colspan="12">';
+			print '<div class="box-flex-container">';
+		}
+		$object->socid = $companystatic->getNomUrl(1);
+		$object->date_delivery = $obj->delivery_date;
+		$object->town = $obj->town;
+		print $object->getKanbanView('');
+		if ($i == min($num, $limit) - 1) {
+			print '</div>';
+			print '</td></tr>';
+		}
+	} else {
+		print '<tr class="oddeven">';
 
-	// Action column
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-		print '<td class="nowrap" align="center">';
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
+		// Action column
+		if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			print '<td class="nowrap" align="center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
-		print '</td>';
-	}
-	// Ref
-	if (!empty($arrayfields['e.ref']['checked'])) {
-		print '<td class="nowraponall">';
-		print $shipment->getNomUrl(1);
-		print "</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Ref customer
-	if (!empty($arrayfields['e.ref_customer']['checked'])) {
-		print "<td>";
-		print $obj->ref_customer;
-		print "</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Third party
-	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td class="tdoverflowmax150">';
-		print $companystatic->getNomUrl(1);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Town
-	if (!empty($arrayfields['s.town']['checked'])) {
-		print '<td class="nocellnopadd">';
-		print $obj->town;
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Zip
-	if (!empty($arrayfields['s.zip']['checked'])) {
-		print '<td class="nocellnopadd center">';
-		print $obj->zip;
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// State
-	if (!empty($arrayfields['state.nom']['checked'])) {
-		print '<td class="center">'.$obj->state_name."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Country
-	if (!empty($arrayfields['country.code_iso']['checked'])) {
-		print '<td class="center">';
-		$tmparray = getCountry($obj->fk_pays, 'all');
-		print $tmparray['label'];
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Type ent
-	if (!empty($arrayfields['typent.code']['checked'])) {
-		print '<td class="center">';
-		if (isset($typenArray[$obj->typent_code])) {
-			print $typenArray[$obj->typent_code];
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Weight
-	if (!empty($arrayfields['e.weight']['checked'])) {
-		print '<td class="center">';
-		if (empty($object->trueWeight)) {
-			$tmparray = $object->getTotalWeightVolume();
-			print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
-			print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
-		} else {
-			print $object->trueWeight;
-			print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Date delivery planed
-	if (!empty($arrayfields['e.date_delivery']['checked'])) {
-		print '<td class="center">';
-		print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
-		print "</td>\n";
-	}
-	if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
-		// Get code using getLabelFromKey
-		$code=$langs->getLabelFromKey($db, $shipment->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
-		print '<td class="center tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("SendingMethod".strtoupper($code))).'">';
-		if ($shipment->shipping_method_id > 0) print $langs->trans("SendingMethod".strtoupper($code));
-		print '</td>';
-	}
-	// Tracking number
-	if (!empty($arrayfields['e.tracking_number']['checked'])) {
-		$shipment->getUrlTrackingStatus($obj->tracking_number);
-		print '<td class="center">'.$shipment->tracking_url."</td>\n";
-		//print $form->editfieldval("TrackingNumber", 'tracking_number', $obj->tracking_url, $obj, $user->rights->expedition->creer, 'string', $obj->tracking_number);
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	if (!empty($arrayfields['l.ref']['checked']) || !empty($arrayfields['l.date_delivery']['checked'])) {
-		$shipment->fetchObjectLinked($shipment->id, $shipment->element);
-		$receiving = '';
-		if (is_array($shipment->linkedObjects['delivery']) && count($shipment->linkedObjects['delivery']) > 0) {
-			$receiving = reset($shipment->linkedObjects['delivery']);
-		}
-
-		if (!empty($arrayfields['l.ref']['checked'])) {
-			// Ref
-			print '<td>';
-			print !empty($receiving) ? $receiving->getNomUrl($db) : '';
 			print '</td>';
 		}
-
-		if (!empty($arrayfields['l.date_delivery']['checked'])) {
-			// Date received
-			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_reception), "day");
-			print '</td>'."\n";
-		}
-	}
-
-	// Extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
-	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	// Date creation
-	if (!empty($arrayfields['e.datec']['checked'])) {
-		print '<td class="center nowrap">';
-		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Date modification
-	if (!empty($arrayfields['e.tms']['checked'])) {
-		print '<td class="center nowrap">';
-		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Status
-	if (!empty($arrayfields['e.fk_statut']['checked'])) {
-		print '<td class="right nowrap">'.$shipment->LibStatut($obj->fk_statut, 5).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Billed
-	if (!empty($arrayfields['e.billed']['checked'])) {
-		print '<td class="center">'.yn($obj->billed).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Action column
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-		print '<td class="nowrap" align="center">';
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
+		// Ref
+		if (!empty($arrayfields['e.ref']['checked'])) {
+			print '<td class="nowraponall">';
+			print $shipment->getNomUrl(1);
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
 			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		print '</td>';
-	}
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
 
-	print "</tr>\n";
+		// Ref customer
+		if (!empty($arrayfields['e.ref_customer']['checked'])) {
+			print "<td>";
+			print $obj->ref_customer;
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 
+		// Third party
+		if (!empty($arrayfields['s.nom']['checked'])) {
+			print '<td class="tdoverflowmax150">';
+			print $companystatic->getNomUrl(1);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Town
+		if (!empty($arrayfields['s.town']['checked'])) {
+			print '<td class="nocellnopadd">';
+			print $obj->town;
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Zip
+		if (!empty($arrayfields['s.zip']['checked'])) {
+			print '<td class="nocellnopadd center">';
+			print $obj->zip;
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// State
+		if (!empty($arrayfields['state.nom']['checked'])) {
+			print '<td class="center">'.$obj->state_name."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Country
+		if (!empty($arrayfields['country.code_iso']['checked'])) {
+			print '<td class="center">';
+			$tmparray = getCountry($obj->fk_pays, 'all');
+			print $tmparray['label'];
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Type ent
+		if (!empty($arrayfields['typent.code']['checked'])) {
+			print '<td class="center">';
+			if (isset($typenArray[$obj->typent_code])) {
+				print $typenArray[$obj->typent_code];
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Weight
+		if (!empty($arrayfields['e.weight']['checked'])) {
+			print '<td class="center">';
+			if (empty($object->trueWeight)) {
+				$tmparray = $object->getTotalWeightVolume();
+				print showDimensionInBestUnit($tmparray['weight'], 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND) ? $conf->global->MAIN_WEIGHT_DEFAULT_ROUND : -1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT) ? $conf->global->MAIN_WEIGHT_DEFAULT_UNIT : 'no');
+				print $form->textwithpicto('', $langs->trans('EstimatedWeight'), 1);
+			} else {
+				print $object->trueWeight;
+				print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Date delivery planed
+		if (!empty($arrayfields['e.date_delivery']['checked'])) {
+			print '<td class="center">';
+			print dol_print_date($db->jdate($obj->delivery_date), "dayhour");
+			print "</td>\n";
+		}
+		if (!empty($arrayfields['e.fk_shipping_method']['checked'])) {
+			// Get code using getLabelFromKey
+			$code=$langs->getLabelFromKey($db, $shipment->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+			print '<td class="center tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("SendingMethod".strtoupper($code))).'">';
+			if ($shipment->shipping_method_id > 0) print $langs->trans("SendingMethod".strtoupper($code));
+			print '</td>';
+		}
+		// Tracking number
+		if (!empty($arrayfields['e.tracking_number']['checked'])) {
+			$shipment->getUrlTrackingStatus($obj->tracking_number);
+			print '<td class="center">'.$shipment->tracking_url."</td>\n";
+			//print $form->editfieldval("TrackingNumber", 'tracking_number', $obj->tracking_url, $obj, $user->rights->expedition->creer, 'string', $obj->tracking_number);
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		if (!empty($arrayfields['l.ref']['checked']) || !empty($arrayfields['l.date_delivery']['checked'])) {
+			$shipment->fetchObjectLinked($shipment->id, $shipment->element);
+			$receiving = '';
+			if (is_array($shipment->linkedObjects['delivery']) && count($shipment->linkedObjects['delivery']) > 0) {
+				$receiving = reset($shipment->linkedObjects['delivery']);
+			}
+
+			if (!empty($arrayfields['l.ref']['checked'])) {
+				// Ref
+				print '<td>';
+				print !empty($receiving) ? $receiving->getNomUrl($db) : '';
+				print '</td>';
+			}
+
+			if (!empty($arrayfields['l.date_delivery']['checked'])) {
+				// Date received
+				print '<td class="center">';
+				print dol_print_date($db->jdate($obj->date_reception), "day");
+				print '</td>'."\n";
+			}
+		}
+
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+		// Fields from hook
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		// Date creation
+		if (!empty($arrayfields['e.datec']['checked'])) {
+			print '<td class="center nowrap">';
+			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Date modification
+		if (!empty($arrayfields['e.tms']['checked'])) {
+			print '<td class="center nowrap">';
+			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Status
+		if (!empty($arrayfields['e.fk_statut']['checked'])) {
+			print '<td class="right nowrap">'.$shipment->LibStatut($obj->fk_statut, 5).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Billed
+		if (!empty($arrayfields['e.billed']['checked'])) {
+			print '<td class="center">'.yn($obj->billed).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Action column
+		if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+			print '<td class="nowrap" align="center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
+			print '</td>';
+		}
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+
+		print "</tr>\n";
+	}
 	$i++;
 }
 

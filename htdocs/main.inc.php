@@ -3081,7 +3081,7 @@ function main_area($title = '')
 {
 	global $conf, $langs, $hookmanager;
 
-	if (empty($conf->dol_hide_leftmenu)) {
+	if (empty($conf->dol_hide_leftmenu) && !GETPOST('dol_openinpopup')) {
 		print '<div id="id-right">';
 	}
 
@@ -3317,7 +3317,7 @@ if (!function_exists("llxFooter")) {
 
 		print '</div> <!-- End div class="fiche" -->'."\n"; // End div fiche
 
-		if (empty($conf->dol_hide_leftmenu)) {
+		if (empty($conf->dol_hide_leftmenu) && !GETPOST('dol_openinpopup')) {
 			print '</div> <!-- End div id-right -->'."\n"; // End div id-right
 		}
 

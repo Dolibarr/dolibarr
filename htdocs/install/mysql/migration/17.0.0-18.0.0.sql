@@ -37,3 +37,7 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 
 -- amount was removed in v12
 ALTER TABLE llx_facture DROP COLUMN amount;
+
+-- Rename prospect level on contact
+ALTER TABLE llx_socpeople CHANGE fk_prospectcontactlevel fk_prospectlevel varchar(12);
+
