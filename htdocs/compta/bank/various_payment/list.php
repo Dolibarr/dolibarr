@@ -466,7 +466,7 @@ if ($resql) {
 	}
 
 	// Accounting account
-	if ($arrayfields['account']['checked']) {
+	if (!empty($arrayfields['account']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<div class="nowrap">';
 		print $formaccounting->select_account($search_accountancy_account, 'search_accountancy_account', 1, array(), 1, 1, 'maxwidth200');
@@ -475,7 +475,7 @@ if ($resql) {
 	}
 
 	// Subledger account
-	if ($arrayfields['subledger']['checked']) {
+	if (!empty($arrayfields['subledger']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<div class="nowrap">';
 		print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, 'maxwidth200');
@@ -484,7 +484,7 @@ if ($resql) {
 	}
 
 	// Debit
-	if ($arrayfields['debit']['checked']) {
+	if (!empty($arrayfields['debit']['checked'])) {
 		print '<td class="liste_titre right">';
 		print '<input name="search_amount_deb" class="flat maxwidth50" type="text" value="'.dol_escape_htmltag($search_amount_deb).'">';
 		print '</td>';
@@ -535,10 +535,10 @@ if ($resql) {
 	if ($arrayfields['entry']['checked']) {
 		print_liste_field_titre($arrayfields['entry']['label'], $_SERVER["PHP_SELF"], 'ba.label', '', $param, '', $sortfield, $sortorder);
 	}
-	if ($arrayfields['account']['checked']) {
+	if (!empty($arrayfields['account']['checked'])) {
 		print_liste_field_titre($arrayfields['account']['label'], $_SERVER["PHP_SELF"], 'v.accountancy_code', '', $param, '', $sortfield, $sortorder, 'left ');
 	}
-	if ($arrayfields['subledger']['checked']) {
+	if (!empty($arrayfields['subledger']['checked'])) {
 		print_liste_field_titre($arrayfields['subledger']['label'], $_SERVER["PHP_SELF"], 'v.subledger_account', '', $param, '', $sortfield, $sortorder, 'left ');
 	}
 	if ($arrayfields['debit']['checked']) {
@@ -671,7 +671,7 @@ if ($resql) {
 		}
 
 		// Accounting account
-		if ($arrayfields['account']['checked']) {
+		if (!empty($arrayfields['account']['checked'])) {
 			$accountingaccount->fetch('', $obj->accountancy_code, 1);
 
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->accountancy_code.' '.$accountingaccount->label).'">'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
@@ -681,7 +681,7 @@ if ($resql) {
 		}
 
 		// Accounting subledger account
-		if ($arrayfields['subledger']['checked']) {
+		if (!empty($arrayfields['subledger']['checked'])) {
 			print '<td class="tdoverflowmax150">'.length_accounta($obj->subledger_account).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
