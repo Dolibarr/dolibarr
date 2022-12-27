@@ -184,7 +184,7 @@ if (GETPOST("account") || GETPOST("ref")) {
 				$tmpobj->objid = $sqlobj->objid;
 				$tmpobj->ref = $sqlobj->ref;
 				$tmpobj->total_ttc = $sqlobj->total_ttc;
-				$tmpobj->type = $sqlobj->type;
+				$tmpobj->type = !empty($sqlobj->type);
 				$tmpobj->dlr = $db->jdate($sqlobj->dlr);
 				$tmpobj->socid = $sqlobj->socid;
 				$tmpobj->name = $sqlobj->name;
