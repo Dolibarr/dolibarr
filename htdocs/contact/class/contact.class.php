@@ -2137,20 +2137,19 @@ class Contact extends CommonObject
 		}
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		if (property_exists($this, 'socid') && !is_null($this->socid)) {
-			$return .= '<br><span class="info-box-label">'.$this->socid.'</span>';
-		} else {
-			if (property_exists($this, 'phone_pro')) {
-				$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Phone").'</span>';
-				$return .= '<span class="info-box-label"> : '.$this->phone_pro.'</span>';
-			}
-		}
+		$return .= '<div class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</div>';
 
-		if (method_exists($this, 'LibPubPriv')) {
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<div class="info-box-ref opacitymedium tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
+		}
+		/*if (property_exists($this, 'phone_pro') && !empty($this->phone_pro)) {
+			$return .= '<br>'.img_picto($langs->trans("Phone"), 'phone');
+			$return .= ' <span class="info-box-label">'.$this->phone_pro.'</span>';
+		}*/
+		/*if (method_exists($this, 'LibPubPriv')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Visibility").'</span>';
 			$return .= '<span> : '.$this->LibPubPriv($this->priv).'</span>';
-		}
+		}*/
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
 		}
