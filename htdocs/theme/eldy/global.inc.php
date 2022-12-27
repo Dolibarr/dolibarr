@@ -1,6 +1,9 @@
-<?php if (!defined('ISLOADEDBYSTEELSHEET')) {
+<?php
+if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+
+?>
 /* <style type="text/css" > */
 
 /* ============================================================================== */
@@ -289,7 +292,7 @@ section.setupsection {
 	border-radius: 5px;
 }
 
-.field-error-icon { color: #ea1212; !important; }
+.field-error-icon { color: #ea1212 !important; }
 
 /* Focus definitions must be after standard definition */
 div.tabBar textarea:focus {
@@ -3982,9 +3985,7 @@ div.pagination li.pagination span {
   line-height: 1.42857143;
   text-decoration: none;
   background-repeat: repeat-x;
-  <?php if (empty($conf->global->THEME_DARKMODEENABLED)) { ?>
-  color: #000;
-  <?php } ?>
+  color: var(--color-black);
 }
 div.pagination li.pagination span.inactive {
   cursor: default;
@@ -4123,7 +4124,7 @@ table.hidepaginationnext .paginationnext {
 {
 	font-family: <?php print $fontlist ?>;
 	margin-bottom: 1px;
-	color: var(--oddeven);
+	color: var(--oddevencolor);
 }
 .impair, .nohover .impair:hover, tr.impair td.nohover
 {
@@ -5037,12 +5038,30 @@ div.ui-tooltip.mytooltip {
 	-webkit-box-shadow:0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
 	-o-box-shadow:     0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
 	box-shadow:        0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
-	filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
 	background: var(--tooltipbgcolor) !important;
-	color : var(--tooltipfontcolor);
+	color: var(--tooltipfontcolor);
 	line-height: 1.6em;
 	min-width: 550px;
 }
+
+<?php
+if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+	print "/* For dark mode */\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
+	} else {
+		print "@media not print {";
+	}
+	?>
+	div.ui-tooltip.mytooltip {
+		border: 1px solid #bbb !important;
+	}
+	<?php
+	print '}';
+}
+?>
+
 @media only screen and (max-width: 768px)
 {
 	div.ui-tooltip.mytooltip {
