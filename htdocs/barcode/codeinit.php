@@ -48,7 +48,7 @@ $thirdpartytmp = new Societe($db);
 $modBarCodeProduct = '';
 $modBarCodeThirdparty = '';
 
-$maxperinit = 1000;
+$maxperinit = empty($conf->global->BARCODE_INIT_MAX) ? 1000 : $conf->global->BARCODE_INIT_MAX;
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();

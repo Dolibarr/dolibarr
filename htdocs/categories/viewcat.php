@@ -374,7 +374,7 @@ if ($cats < 0) {
 	dol_print_error($db, $object->error, $object->errors);
 } elseif (count($cats) < 1) {
 	print '<tr class="oddeven">';
-	print '<td colspan="3" class="opacitymedium">'.$langs->trans("NoSubCat").'</td>';
+	print '<td colspan="3"><span class="opacitymedium">'.$langs->trans("NoSubCat").'</span></td>';
 	print '</tr>';
 } else {
 	$categstatic = new Categorie($db);
@@ -461,7 +461,7 @@ if ($cats < 0) {
 
 		print '<tr class="nobordernopadding">';
 		print '<td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
-		print '<td valign="middle">'.$langs->trans("NoCategoryYet").'</td>';
+		print '<td class="valignmiddle">'.$langs->trans("NoCategoryYet").'</td>';
 		print '<td>&nbsp;</td>';
 		print '</tr>';
 
