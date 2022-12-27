@@ -114,25 +114,6 @@ ALTER TABLE llx_facture ADD COLUMN close_missing_amount double(24, 8) after clos
 
 ALTER TABLE llx_facture_fourn ADD COLUMN close_missing_amount double(24, 8) after close_code;
 
-CREATE TABLE llx_expeditiondet_dispatch
-(
-    rowid             integer AUTO_INCREMENT PRIMARY KEY,
-    fk_expeditiondet  integer NOT NULL,
-    fk_product        integer NOT NULL,
-    fk_product_parent integer NOT NULL,
-    fk_entrepot       integer NOT NULL,
-    qty               real
-)ENGINE=innodb;
-
-ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_expeditiondet (fk_expeditiondet);
-ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_product (fk_product);
-ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_product_parent (fk_product_parent);
-ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_entrepot (fk_entrepot);
-ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_expeditiondet FOREIGN KEY (fk_expeditiondet) REFERENCES llx_expeditiondet (rowid);
-ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
-ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product_parent FOREIGN KEY (fk_product_parent) REFERENCES llx_product (rowid);
-ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
-
 ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
 
 ALTER TABLE llx_product ADD COLUMN sell_or_eat_by_mandatory tinyint DEFAULT 0 NOT NULL AFTER tobatch;
