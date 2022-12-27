@@ -22,7 +22,9 @@ filter:
         - documents/
         - node_modules/
         - test/
+        - htdocs/custom/
         - htdocs/includes/
+        - htdocs/install/doctemplates/
     #dependency_paths:
     #    - htdocs/includes/
     paths: 
@@ -43,7 +45,9 @@ tools:
                 - dev/
                 - doc/
                 - documents/
+                - htdocs/custom/
                 - htdocs/includes/
+                - htdocs/install/doctemplates/
                 - htdocs/core/class/lessc.class.php
                 - node_modules/
                 - test/
