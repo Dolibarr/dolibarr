@@ -26,6 +26,7 @@
  *       \brief      Page of product statistics
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -374,7 +375,7 @@ if ($result || !($id > 0)) {
 						$morefilters = ' AND d.fk_product IN ('.$db->sanitize((is_array($listofprodids) && count($listofprodids)) ? join(',', $listofprodids) : '0').')';
 					}
 					if ($search_categ == -2) {
-						$morefilters = ' AND d.fk_product NOT IN (SELECT cp.fk_product from '.MAIN_DB_PREFIX.'categorie_product as cp)';
+						$morefilters = ' AND NOT EXISTS (SELECT cp.fk_product FROM '.MAIN_DB_PREFIX.'categorie_product as cp WHERE d.fk_product = cp.fk_product)';
 					}
 
 					if ($key == 'propal') {
@@ -439,16 +440,16 @@ if ($result || !($id > 0)) {
 				continue;
 			}
 
-			if ($graphfiles == 'propal' && !$user->rights->propale->lire) {
+			if ($graphfiles == 'propal' && empty($user->rights->propal->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'order' && !$user->rights->commande->lire) {
+			if ($graphfiles == 'order' && empty($user->rights->commande->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'invoices' && !$user->rights->facture->lire) {
+			if ($graphfiles == 'invoices' && empty($user->rights->facture->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'proposals_suppliers' && !$user->rights->supplier_proposal->lire) {
+			if ($graphfiles == 'proposals_suppliers' && empty($user->rights->supplier_proposal->lire)) {
 				continue;
 			}
 			if ($graphfiles == 'invoices_suppliers' && empty($user->rights->fournisseur->facture->lire)) {
@@ -457,7 +458,7 @@ if ($result || !($id > 0)) {
 			if ($graphfiles == 'orders_suppliers' && empty($user->rights->fournisseur->commande->lire)) {
 				continue;
 			}
-			if ($graphfiles == 'mrp' && empty($user->rights->mrp->mo->read)) {
+			if ($graphfiles == 'mrp' && empty($user->rights->mrp->read)) {
 				continue;
 			}
 

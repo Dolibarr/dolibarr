@@ -367,7 +367,7 @@ class ExpenseReport extends CommonObject
 			}
 
 			if (!$error) {
-				$result = $this->update_price();
+				$result = $this->update_price(1);
 				if ($result > 0) {
 					if (!$notrigger) {
 						// Call trigger
@@ -771,6 +771,7 @@ class ExpenseReport extends CommonObject
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.date_approve as datea,";
 		$sql .= " f.fk_user_creat as fk_user_creation,";
+		$sql .= " f.fk_user_author as fk_user_author,";
 		$sql .= " f.fk_user_modif as fk_user_modification,";
 		$sql .= " f.fk_user_valid,";
 		$sql .= " f.fk_user_approve";
@@ -1857,7 +1858,7 @@ class ExpenseReport extends CommonObject
 
 			$result = $this->line->insert(0, true);
 			if ($result > 0) {
-				$result = $this->update_price(); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+				$result = $this->update_price(1); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
 				if ($result > 0) {
 					$this->db->commit();
 					return $this->line->id;
@@ -2069,6 +2070,7 @@ class ExpenseReport extends CommonObject
 		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_REFUSED) {
 			$this->db->begin();
 
+			$error = 0;
 			$type = 0; // TODO What if type is service ?
 
 			// We don't know seller and buyer for expense reports
@@ -2152,10 +2154,13 @@ class ExpenseReport extends CommonObject
 
 			$this->applyOffset();
 			$this->checkRules();
-			$error = 0;
-			$result = $this->line->update($user);
 
-			if ($result > 0 && !$notrigger) {
+			$result = $this->line->update($user);
+			if ($result < 0) {
+				$error++;
+			}
+
+			if (!$error && !$notrigger) {
 				// Call triggers
 				$result = $this->call_trigger('EXPENSE_REPORT_DET_MODIFY', $user);
 				if ($result < 0) {
@@ -2164,7 +2169,7 @@ class ExpenseReport extends CommonObject
 				// End call triggers
 			}
 
-			if ($result > 0 && $error == 0) {
+			if (!$error) {
 				$this->db->commit();
 				return 1;
 			} else {
@@ -2212,7 +2217,7 @@ class ExpenseReport extends CommonObject
 			return -1;
 		}
 
-		$this->update_price();
+		$this->update_price(1);
 
 		$this->db->commit();
 
@@ -2891,7 +2896,7 @@ class ExpenseReportLine extends CommonObjectLine
 			if (!$fromaddline) {
 				$tmpparent = new ExpenseReport($this->db);
 				$tmpparent->fetch($this->fk_expensereport);
-				$result = $tmpparent->update_price();
+				$result = $tmpparent->update_price(1);
 				if ($result < 0) {
 					$error++;
 					$this->error = $tmpparent->error;
@@ -3018,7 +3023,7 @@ class ExpenseReportLine extends CommonObjectLine
 			$tmpparent = new ExpenseReport($this->db);
 			$result = $tmpparent->fetch($this->fk_expensereport);
 			if ($result > 0) {
-				$result = $tmpparent->update_price();
+				$result = $tmpparent->update_price(1);
 				if ($result < 0) {
 					$error++;
 					$this->error = $tmpparent->error;

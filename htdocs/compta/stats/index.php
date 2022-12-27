@@ -24,6 +24,7 @@
  *	\brief       Page reporting CA
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -269,8 +270,8 @@ if ($result) {
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
-		$cum_ht[$obj->dm] = !empty($obj->amount) ? $obj->amount : 0;
-		$cum[$obj->dm] = $obj->amount_ttc;
+		$cum_ht[$obj->dm] = empty($obj->amount) ? 0 : $obj->amount;
+		$cum[$obj->dm] = empty($obj->amount_ttc) ? 0 : $obj->amount_ttc;
 		if ($obj->amount_ttc) {
 			$minyearmonth = ($minyearmonth ? min($minyearmonth, $obj->dm) : $obj->dm);
 			$maxyearmonth = max($maxyearmonth, $obj->dm);
@@ -302,7 +303,11 @@ if ($modecompta == 'RECETTES-DEPENSES') {
 		$i = 0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
-			$cum[$obj->dm] += $obj->amount_ttc;
+			if (empty($cum[$obj->dm])) {
+				$cum[$obj->dm] = $obj->amount_ttc;
+			} else {
+				$cum[$obj->dm] += $obj->amount_ttc;
+			}
 			if ($obj->amount_ttc) {
 				$minyearmonth = ($minyearmonth ?min($minyearmonth, $obj->dm) : $obj->dm);
 				$maxyearmonth = max($maxyearmonth, $obj->dm);
@@ -366,7 +371,7 @@ print '</tr>';
 $now_show_delta = 0;
 $minyear = substr($minyearmonth, 0, 4);
 $maxyear = substr($maxyearmonth, 0, 4);
-$nowyear = strftime("%Y", dol_now());
+$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $nowyearmonth = strftime("%Y-%m", dol_now());
 $maxyearmonth = max($maxyearmonth, $nowyearmonth);
 $now = dol_now();
@@ -404,12 +409,6 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 		$case = dol_print_date(dol_mktime(1, 1, 1, $mois_modulo, 1, $annee_decalage), "%Y-%m");
 		$caseprev = dol_print_date(dol_mktime(1, 1, 1, $mois_modulo, 1, $annee_decalage - 1), "%Y-%m");
 
-		$total_ht[$annee]=0;
-		$total[$annee]=0;
-		$cum_ht[$case]=0;
-		$cum[$case]=0;
-
-
 		if ($annee >= $year_start) {	// We ignore $annee < $year_start, we loop on it to be able to make delta, nothing is output.
 			if ($modecompta == 'CREANCES-DETTES') {
 				// Value turnover of month w/o VAT
@@ -432,7 +431,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			// Value turnover of month
 			print '<td class="right">';
 			if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
-				if ($cum[$case]) {
+				if (!empty($cum[$case])) {
 					$now_show_delta = 1; // On a trouve le premier mois de la premiere annee generant du chiffre.
 					if ($modecompta != 'BOOKKEEPING') {
 						print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta ? '&modecompta='.$modecompta : '').'">';
@@ -452,26 +451,26 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 			print "</td>";
 
 			// Percentage of month
-			print '<td class="borderrightlight right">';
+			print '<td class="borderrightlight right"><span class="opacitymedium">';
 			//var_dump($annee.' '.$year_end.' '.$mois.' '.$month_end);
 			if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
 				if ($annee_decalage > $minyear && $case <= $casenow) {
-					if ($cum[$caseprev] && $cum[$case]) {
+					if (!empty($cum[$caseprev]) && !empty($cum[$case])) {
 						$percent = (round(($cum[$case] - $cum[$caseprev]) / $cum[$caseprev], 4) * 100);
 						//print "X $cum[$case] - $cum[$caseprev] - $cum[$caseprev] - $percent X";
 						print ($percent >= 0 ? "+$percent" : "$percent").'%';
 					}
-					if ($cum[$caseprev] && !$cum[$case]) {
+					if (!empty($cum[$caseprev]) && empty($cum[$case])) {
 						print '-100%';
 					}
-					if (!$cum[$caseprev] && $cum[$case]) {
+					if (empty($cum[$caseprev]) && !empty($cum[$case])) {
 						//print '<td class="right">+Inf%</td>';
 						print '-';
 					}
-					if (isset($cum[$caseprev]) && !$cum[$caseprev] && !$cum[$case]) {
+					if (isset($cum[$caseprev]) && empty($cum[$caseprev]) && empty($cum[$case])) {
 						print '+0%';
 					}
-					if (!isset($cum[$caseprev]) && !$cum[$case]) {
+					if (!isset($cum[$caseprev]) && empty($cum[$case])) {
 						print '-';
 					}
 				} else {
@@ -482,7 +481,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 					}
 				}
 			}
-			print '</td>';
+			print '</span></td>';
 
 			if ($annee_decalage < $year_end || ($annee_decalage == $year_end && $mois > 12 && $annee < $year_end)) {
 				print '<td width="15">&nbsp;</td>';
@@ -490,8 +489,16 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++) {
 		}
 
 		if ($annee < $year_end || ($annee == $year_end && $mois <= $month_end)) {
-			$total_ht[$annee] += ((!empty($cum_ht[$case])) ? $cum_ht[$case] : 0);
-			$total[$annee] += $cum[$case];
+			if (empty($total_ht[$annee])) {
+				$total_ht[$annee] = (empty($cum_ht[$case]) ? 0 : $cum_ht[$case]);
+			} else {
+				$total_ht[$annee] += (empty($cum_ht[$case]) ? 0 : $cum_ht[$case]);
+			}
+			if (empty($total[$annee])) {
+				$total[$annee] = empty($cum[$case]) ? 0 : $cum[$case];
+			} else {
+				$total[$annee] += empty($cum[$case]) ? 0 : $cum[$case];
+			}
 		}
 	}
 
@@ -578,7 +585,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 	}
 
 	// Total amount
-	if ($total[$annee] || ($annee >= $minyear && $annee <= max($nowyear, $maxyear))) {
+	if (!empty($total[$annee]) || ($annee >= $minyear && $annee <= max($nowyear, $maxyear))) {
 		print '<td class="nowrap right">';
 		print ($total[$annee] ?price($total[$annee]) : "0");
 		print "</td>";
@@ -605,7 +612,7 @@ for ($annee = $year_start; $annee <= $year_end; $annee++) {
 		}
 	} else {
 		print '<td class="borderrightlight right">';
-		if ($total[$annee] || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) {
+		if (!empty($total[$annee]) || ($minyear <= $annee && $annee <= max($nowyear, $maxyear))) {
 			print '-';
 		} else {
 			print '&nbsp;';

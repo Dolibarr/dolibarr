@@ -120,7 +120,7 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 {
 	global $dolibarr_main_instance_unique_id;
 
-	if ($chain === '') {
+	if ($chain === '' || is_null($chain)) {
 		return '';
 	}
 
@@ -146,7 +146,7 @@ function dolEncrypt($chain, $key = '', $ciphering = "AES-256-CTR")
 		}
 		$ivseed = dolGetRandomBytes($ivlen);
 
-		$newchain = openssl_encrypt($chain, $ciphering, $key, null, $ivseed);
+		$newchain = openssl_encrypt($chain, $ciphering, $key, 0, $ivseed);
 		return 'dolcrypt:'.$ciphering.':'.$ivseed.':'.$newchain;
 	} else {
 		return $chain;
@@ -166,7 +166,7 @@ function dolDecrypt($chain, $key = '')
 {
 	global $dolibarr_main_instance_unique_id;
 
-	if ($chain === '') {
+	if ($chain === '' || is_null($chain)) {
 		return '';
 	}
 
@@ -180,9 +180,9 @@ function dolDecrypt($chain, $key = '')
 		if (function_exists('openssl_decrypt')) {
 			$tmpexplode = explode(':', $reg[2]);
 			if (!empty($tmpexplode[1]) && is_string($tmpexplode[0])) {
-				$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $key, null, $tmpexplode[0]);
+				$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $key, 0, $tmpexplode[0]);
 			} else {
-				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, null, null);
+				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, 0, null);
 			}
 		} else {
 			$newchain = 'Error function openssl_decrypt() not available';
@@ -201,7 +201,7 @@ function dolDecrypt($chain, $key = '')
  * 	@param 		string		$chain		String to hash
  * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
- *  @see getRandomPassword()
+ *  @see getRandomPassword(), dol_verifyHash()
  */
 function dol_hash($chain, $type = '0')
 {
@@ -249,6 +249,7 @@ function dol_hash($chain, $type = '0')
  * 	@param 		string		$hash		hash to compare
  * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		bool					True if the computed hash is the same as the given one
+ *  @see dol_hash()
  */
 function dol_verifyHash($chain, $hash, $type = '0')
 {
@@ -318,27 +319,32 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  * 	If GETPOST('action','aZ09') defined, we also check write and delete permission.
  *  This method check permission on module then call checkUserAccessToObject() for permission on object (according to entity and socid of user).
  *
- *	@param	User		$user      	  	User to check
- *	@param  string		$features	    Features to check (it must be module $object->element. Can be a 'or' check with 'levela|levelb'.
- *										Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
- *										This is used to check permission $user->rights->features->...
- *	@param  int			$objectid      	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
- *	@param  string		$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany module. Param not used if objectid is null (optional).
- *	@param  string		$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'sublevela|sublevelb'.
- *										This is used to check permission $user->rights->features->feature2...
- *  @param  string		$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
- *  @param  string		$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
- *  @param	int			$isdraft		1=The object with id=$objectid is a draft
- *  @param	int			$mode			Mode (0=default, 1=return with not die)
- * 	@return	int							If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
+ *	@param	User				$user      	  	User to check
+ *	@param  string				$features	    Features to check (it must be module $object->element. Can be a 'or' check with 'levela|levelb'.
+ *												Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
+ *												This is used to check permission $user->rights->features->...
+ *	@param  int|string|object	$object      	Object or Object ID or list of Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
+ *	@param  string				$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany module. Param not used if objectid is null (optional).
+ *	@param  string				$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'sublevela|sublevelb'.
+ *												This is used to check permission $user->rights->features->feature2...
+ *  @param  string				$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
+ *  @param  string				$dbt_select     Field name for select if not "rowid". Not used if objectid is null (optional)
+ *  @param	int					$isdraft		1=The object with id=$objectid is a draft
+ *  @param	int					$mode			Mode (0=default, 1=return without dieing)
+ * 	@return	int									If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
  *  @see dol_check_secure_access_document(), checkUserAccessToObject()
  */
-function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
+function restrictedArea(User $user, $features, $object = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
 {
 	global $db, $conf;
 	global $hookmanager;
 
-	$objectid = ((int) $objectid);	// For the case value is coming from a non sanitized user input
+	if (is_object($object)) {
+		$objectid = $object->id;
+	} else {
+		$objectid = $object;		// $objectid can be X or 'X,Y,Z'
+	}
+	$objectid = preg_replace('/[^0-9\.\,]/', '', $objectid);	// For the case value is coming from a non sanitized user input
 
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	//print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
@@ -421,7 +427,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		}
 
 		if ($feature == 'societe') {
-			if (empty($user->rights->societe->lire) && empty($user->rights->fournisseur->lire)) {
+			if (!$user->hasRight('societe', 'lire') && !$user->hasRight('fournisseur', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -431,12 +437,12 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				$nbko++;
 			}
 		} elseif ($feature == 'produit|service') {
-			if (!$user->rights->produit->lire && !$user->rights->service->lire) {
+			if (empty($user->rights->produit->lire) && empty($user->rights->service->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'prelevement') {
-			if (!$user->rights->prelevement->bons->lire) {
+			if (empty($user->rights->prelevement->bons->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -446,12 +452,12 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				$nbko++;
 			}
 		} elseif ($feature == 'projet') {
-			if (!$user->rights->projet->lire && empty($user->rights->projet->all->lire)) {
+			if (empty($user->rights->projet->lire) && empty($user->rights->projet->all->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'payment') {
-			if (!$user->rights->facture->lire) {
+			if (empty($user->rights->facture->lire)) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -711,7 +717,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	// If we have a particular object to check permissions on, we check if $user has permission
 	// for this given object (link to company, is contact for project, ...)
 	if (!empty($objectid) && $objectid > 0) {
-		$ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select, $parentfortableentity);
+		$ok = checkUserAccessToObject($user, $featuresarray, $object, $tableandshare, $feature2, $dbt_keyfield, $dbt_select, $parentfortableentity);
 		$params = array('objectid' => $objectid, 'features' => join(',', $featuresarray), 'features2' => $feature2);
 		//print 'checkUserAccessToObject ok='.$ok;
 		if ($mode) {
@@ -732,9 +738,9 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
  * @param 	array				$featuresarray			Features/modules to check. Example: ('user','service','member','project','task',...)
  * @param 	int|string|Object	$object					Full object or object ID or list of object id. For example if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
  * @param 	string				$tableandshare			'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany modume. Param not used if objectid is null (optional).
- * @param 	string				$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
- * @param 	string				$dbt_keyfield			Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
- * @param 	string				$dbt_select				Field name for select if not rowid. Not used if objectid is null (optional)
+ * @param 	array|string		$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+ * @param 	string				$dbt_keyfield			Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
+ * @param 	string				$dbt_select				Field name for select if not rowid. Not used if objectid is null (optional).
  * @param 	string				$parenttableforentity  	Parent table for entity. Example 'fk_website@website'
  * @return	bool										True if user has access, False otherwise
  * @see restrictedArea()
@@ -748,9 +754,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 	} else {
 		$objectid = $object;		// $objectid can be X or 'X,Y,Z'
 	}
+	$objectid = preg_replace('/[^0-9\.\,]/', '', $objectid);	// For the case value is coming from a non sanitized user input
 
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
-	//print "user_id=".$user->id.", features=".join(',', $featuresarray).", feature2=".$feature2.", objectid=".$objectid;
+	//print "user_id=".$user->id.", features=".join(',', $featuresarray).", objectid=".$objectid;
 	//print ", tableandshare=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select."<br>";
 
 	// More parameters
@@ -778,18 +785,24 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 
 		// Array to define rules of checks to do
 		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'payment', 'payment_supplier', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'salaries', 'website', 'recruitment'); // Test on entity only (Objects with no link to company)
-		$checksoc = array('societe'); // Test for societe object
+		$checksoc = array('societe'); // Test for object Societe
 		$checkother = array('contact', 'agenda'); // Test on entity + link to third party on field $dbt_keyfield. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
 		$checktask = array('projet_task'); // Test for task object
-		$checkhierarchy = array('expensereport', 'holiday');
+		$checkhierarchy = array('expensereport', 'holiday');	// check permission among the hierarchy of user
 		$nocheck = array('barcode', 'stock'); // No test
+
 		//$checkdefault = 'all other not already defined'; // Test on entity + link to third party on field $dbt_keyfield. Not allowed if link is empty (Ex: invoice, orders...).
 
 		// If dbtablename not defined, we use same name for table than module name
 		if (empty($dbtablename)) {
 			$dbtablename = $feature;
 			$sharedelement = (!empty($params[1]) ? $params[1] : $dbtablename); // We change dbtablename, so we set sharedelement too.
+		}
+
+		// To avoid an access forbidden with a numeric ref
+		if ($dbt_select != 'rowid' && $dbt_select != 'id') {
+			$objectid = "'".$objectid."'";	// Note: $objectid was already cast into int at begin of this method.
 		}
 
 		// Check permission for objectid on entity only
@@ -831,7 +844,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				if ($user->socid != $objectid) {
 					return false;
 				}
-			} elseif (isModEnabled("societe") && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -857,7 +870,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
-			} elseif (isModEnabled("societe") && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -876,7 +889,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checkproject) && $objectid > 0) {
-			if (!empty($conf->project->enabled) && empty($user->rights->projet->all->lire)) {
+			if (isModEnabled('project') && empty($user->rights->projet->all->lire)) {
 				$projectid = $objectid;
 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -897,7 +910,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checktask) && $objectid > 0) {
-			if (!empty($conf->project->enabled) && empty($user->rights->projet->all->lire)) {
+			if (isModEnabled('project') && empty($user->rights->projet->all->lire)) {
 				$task = new Task($db);
 				$task->fetch($objectid);
 				$projectid = $task->fk_project;
@@ -1016,8 +1029,35 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 	return true;
 }
 
+
 /**
- *	Show a message to say access is forbidden and stop program
+ *	Show a message to say access is forbidden and stop program.
+ *  This includes only HTTP header.
+ *	Calling this function terminate execution of PHP.
+ *
+ *	@param	string		$message					Force error message
+ *	@param	int			$http_response_code			HTTP response code
+ *  @param	int			$stringalreadysanitized		1 if string is already sanitized with HTML entities
+ *  @return	void
+ *  @see accessforbidden()
+ */
+function httponly_accessforbidden($message = 1, $http_response_code = 403, $stringalreadysanitized = 0)
+{
+	top_httphead();
+	http_response_code($http_response_code);
+
+	if ($stringalreadysanitized) {
+		print $message;
+	} else {
+		print htmlentities($message);
+	}
+
+	exit(1);
+}
+
+/**
+ *	Show a message to say access is forbidden and stop program.
+ *  This includes HTTP and HTML header and footer (except if $printheader and $printfooter is  0, use this case inside an already started page).
  *	Calling this function terminate execution of PHP.
  *
  *	@param	string		$message			Force error message
@@ -1026,10 +1066,12 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *  @param  int			$showonlymessage    Show only message parameter. Otherwise add more information.
  *  @param  array|null  $params         	More parameters provided to hook
  *  @return	void
+ *  @see httponly_accessforbidden()
  */
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
 {
 	global $conf, $db, $user, $langs, $hookmanager;
+
 	if (!is_object($langs)) {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 		$langs = new Translate('', $conf);
@@ -1046,10 +1088,10 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		}
 	}
 	print '<div class="error">';
-	if (!$message) {
+	if (empty($message)) {
 		print $langs->trans("ErrorForbidden");
 	} else {
-		print $message;
+		print $langs->trans($message);
 	}
 	print '</div>';
 	print '<br>';
@@ -1077,6 +1119,7 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 	if ($printfooter && function_exists("llxFooter")) {
 		llxFooter();
 	}
+
 	exit(0);
 }
 

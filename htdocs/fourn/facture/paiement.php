@@ -33,6 +33,7 @@
  *	\brief      Payment page for supplier invoices
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -430,7 +431,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             				json["amountPayment"] = $("#amountpayment").attr("value");
 							json["amounts"] = _elemToJson(form.find("input.amount"));
 							json["remains"] = _elemToJson(form.find("input.remain"));
-
+							json["token"] = "'.currentToken().'";
 							if (imgId != null) {
 								json["imgClicked"] = imgId;
 							}
@@ -575,7 +576,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print '<td>'.$langs->trans('RefSupplier').'</td>';
 						print '<td class="center">'.$langs->trans('Date').'</td>';
 						print '<td class="center">'.$langs->trans('DateMaxPayment').'</td>';
-						if (!empty($conf->multicurrency->enabled)) {
+						if (isModEnabled("multicurrency")) {
 							print '<td>'.$langs->trans('Currency').'</td>';
 							print '<td class="right">'.$langs->trans('MulticurrencyAmountTTC').'</td>';
 							print '<td class="right">'.$langs->trans('MulticurrencyAlreadyPaid').'</td>';
@@ -612,7 +613,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 
 							// Multicurrency Price
-							if (!empty($conf->multicurrency->enabled)) {
+							if (isModEnabled("multicurrency")) {
 								$multicurrency_payment = $invoice->getSommePaiement(1);
 								$multicurrency_creditnotes = $invoice->getSumCreditNotesUsed(1);
 								$multicurrency_deposits = $invoice->getSumDepositsUsed(1);
@@ -653,7 +654,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							}
 
 							// Multicurrency
-							if (!empty($conf->multicurrency->enabled)) {
+							if (isModEnabled("multicurrency")) {
 								// Currency
 								print '<td class="center">'.$objp->multicurrency_code."</td>\n";
 
@@ -717,7 +718,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 								$numdirectdebitopen = 0;
 								$totaldirectdebit = 0;
 								$sql = "SELECT COUNT(pfd.rowid) as nb, SUM(pfd.amount) as amount";
-								$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+								$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 								$sql .= " WHERE fk_facture_fourn = ".((int) $objp->facid);
 								$sql .= " AND pfd.traite = 0";
 								$sql .= " AND pfd.ext_payment_id IS NULL";
@@ -767,7 +768,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							// Print total
 							print '<tr class="liste_total">';
 							print '<td colspan="4" class="left">'.$langs->trans('TotalTTC').':</td>';
-							if (!empty($conf->multicurrency->enabled)) {
+							if (isModEnabled("multicurrency")) {
 								print '<td>&nbsp;</td>';
 								print '<td>&nbsp;</td>';
 								print '<td>&nbsp;</td>';

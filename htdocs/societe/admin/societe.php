@@ -25,6 +25,7 @@
  *	\brief      Third party module setup page
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -170,6 +171,20 @@ if ($action == 'setdoc') {
 if ($action == "setaccountancycodecustomerinvoicemandatory") {
 	$setaccountancycodecustomerinvoicemandatory = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "SOCIETE_ACCOUNTANCY_CODE_CUSTOMER_INVOICE_MANDATORY", $setaccountancycodecustomerinvoicemandatory, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
+//Activate Set vat id unique
+if ($action == "setvatintraunique") {
+	$setvatintraunique = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "SOCIETE_VAT_INTRA_UNIQUE", $setvatintraunique, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -713,7 +728,7 @@ foreach ($profid as $key => $val) {
 	$i++;
 }
 
-if (!empty($conf->accounting->enabled)) {
+if (isModEnabled('accounting')) {
 	print '<tr class="oddeven">';
 	print '<td colspan="2">'.$langs->trans('CustomerAccountancyCodeShort')."</td>\n";
 	print '<td colspan="2"></td>';
@@ -729,6 +744,22 @@ if (!empty($conf->accounting->enabled)) {
 	}
 	print "</tr>\n";
 }
+
+// VAT ID
+print '<tr class="oddeven">';
+print '<td colspan="2">'.$langs->trans('VATIntra')."</td>\n";
+
+if (!empty($conf->global->SOCIETE_VAT_INTRA_UNIQUE)) {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatintraunique&token='.newToken().'&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setvatintraunique&token='.newToken().'&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '<td colspan="2"></td>';
+print "</tr>\n";
 
 print "</table>\n";
 print '</div>';

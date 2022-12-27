@@ -2,6 +2,7 @@
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2017 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2022      Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +72,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		// Proposals to order
 		if ($action == 'PROPAL_CLOSE_SIGNED') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			if (!empty($conf->commande->enabled) && !empty($conf->global->WORKFLOW_PROPAL_AUTOCREATE_ORDER)) {
+			if (isModEnabled('commande') && !empty($conf->global->WORKFLOW_PROPAL_AUTOCREATE_ORDER)) {
 				$object->fetchObjectLinked();
 				if (!empty($object->linkedObjectsIds['commande'])) {
 					setEventMessages($langs->trans("OrderExists"), null, 'warnings');
@@ -142,7 +143,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			// First classify billed the order to allow the proposal classify process
-			if (!empty($conf->commande->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) {
+			if (isModEnabled('commande') && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) {
 				$object->fetchObjectLinked('', 'commande', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -180,14 +181,23 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 
 			if (isModEnabled("expedition") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE)) {
-				/** @var Facture $object */
 				$object->fetchObjectLinked('', 'shipping', $object->id, $object->element);
-
 				if (!empty($object->linkedObjects)) {
-					/** @var Expedition $shipment */
-					$shipment = array_shift($object->linkedObjects['shipping']);
-
-					$ret = $shipment->setClosed();
+					$totalonlinkedelements = 0;
+					foreach ($object->linkedObjects['shipping'] as $element) {
+						if ($element->statut == Expedition::STATUS_VALIDATED) {
+							$totalonlinkedelements += $element->total_ht;
+						}
+					}
+					dol_syslog("Amount of linked shipment = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht), LOG_DEBUG);
+					if ($totalonlinkedelements == $object->total_ht) {
+						foreach ($object->linkedObjects['shipping'] as $element) {
+							$ret = $element->setClosed();
+							if ($ret < 0) {
+								return $ret;
+							}
+						}
+					}
 				}
 			}
 
@@ -222,7 +232,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			}
 
 			// Secondly, we set to linked Proposal to "Billed" if WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL is set.
-			if (!empty($conf->supplier_proposal->enabled) && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL)) {
+			if (isModEnabled('supplier_proposal') && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_SUPPLIER_PROPOSAL)) {
 				$object->fetchObjectLinked('', 'supplier_proposal', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -243,8 +253,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 
-			// Then set reception to "Billed" if WORKFLOW_BILL_ON_RECEPTION is set
-			if (isModEnabled("reception") && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION)) {
+			// Then set reception to "Billed" if WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE is set
+			if (isModEnabled("reception") && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE)) {
 				$object->fetchObjectLinked('', 'reception', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -272,7 +282,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		if ($action == 'BILL_PAYED') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if (!empty($conf->commande->enabled) && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER)) {
+			if (isModEnabled('commande') && !empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER)) {
 				$object->fetchObjectLinked('', 'commande', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
@@ -296,7 +306,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		if (($action == 'SHIPPING_VALIDATE') || ($action == 'SHIPPING_CLOSED')) {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if (!empty($conf->commande->enabled) && isModEnabled("expedition") && !empty($conf->workflow->enabled) &&
+			if (isModEnabled('commande') && isModEnabled("expedition") && !empty($conf->workflow->enabled) &&
 				(
 					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING) && ($action == 'SHIPPING_VALIDATE')) ||
 					(!empty($conf->global->WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED) && ($action == 'SHIPPING_CLOSED'))
@@ -433,7 +443,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		if ($action == 'TICKET_CREATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			// Auto link contract
-			if (!empty($conf->contract->enabled) && !empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_LINK_CONTRACT) && !empty($conf->global->TICKET_PRODUCT_CATEGORY) && !empty($object->fk_soc)) {
+			if (!empty($conf->contract->enabled) && isModEnabled('ticket') && isModEnabled('ficheinter') && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_LINK_CONTRACT) && !empty($conf->global->TICKET_PRODUCT_CATEGORY) && !empty($object->fk_soc)) {
 				$societe = new Societe($this->db);
 				$company_ids = (empty($conf->global->WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS)) ? [$object->fk_soc] : $societe->getParentsForCompany($object->fk_soc, [$object->fk_soc]);
 
@@ -445,8 +455,9 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					if (is_array($list) && !empty($list)) {
 						$number_contracts_found = count($list);
 						if ($number_contracts_found == 1) {
-							$contractid = $list[0]->id;
-							$object->setContract($contractid);
+							foreach ($list as $linked_contract) {
+								$object->setContract($linked_contract->id);
+							}
 							break;
 						} elseif ($number_contracts_found > 1) {
 							foreach ($list as $linked_contract) {
@@ -463,7 +474,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 			// Automatically create intervention
-			if (!empty($conf->ficheinter->enabled) && !empty($conf->ticket->enabled) && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION)) {
+			if (isModEnabled('ficheinter') && isModEnabled('ticket') && !empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_TICKET_CREATE_INTERVENTION)) {
 				$fichinter = new Fichinter($this->db);
 				$fichinter->socid = (int) $object->fk_soc;
 				$fichinter->fk_project = $projectid;

@@ -24,6 +24,7 @@
  *		\brief      Tab for notifications of third party
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -201,7 +202,7 @@ if ($result > 0) {
 	$tmparray = $notify->getNotificationsArray('', $object->id, null, 0, array('thirdparty'));
 	foreach($tmparray as $tmpkey => $tmpval)
 	{
-		if (! empty($tmpkey)) $nbofrecipientemails++;
+		if (!empty($tmpkey)) $nbofrecipientemails++;
 	}
 	print $nbofrecipientemails;
 	print '</td></tr>';*/
@@ -305,7 +306,7 @@ if ($result > 0) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
-			$contactstatic->id = $obj->contact_id;
+			$contactstatic->id = $obj->contactid;
 			$contactstatic->lastname = $obj->lastname;
 			$contactstatic->firstname = $obj->firstname;
 

@@ -31,7 +31,6 @@
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/productfournisseurprice.class.php';
 
 
@@ -296,7 +295,7 @@ class ProductFournisseur extends Product
 		// Multicurrency
 		$multicurrency_unitBuyPrice = null;
 		$fk_multicurrency = null;
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			if (empty($multicurrency_tx)) {
 				$multicurrency_tx = 1;
 			}
@@ -419,7 +418,11 @@ class ProductFournisseur extends Product
 							$productfournisseurprice->array_options[$key] = $value;
 						}
 						$res = $productfournisseurprice->update($user);
-						if ($res < 0) $error++;
+						if ($res < 0) {
+							$this->error = $productfournisseurprice->error;
+							$this->errors = $productfournisseurprice->errors;
+							$error++;
+						}
 					}
 				}
 			}
@@ -506,6 +509,7 @@ class ProductFournisseur extends Product
 				if ($resql) {
 					$this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
 				} else {
+					$this->error = $this->db->lasterror();
 					$error++;
 				}
 
@@ -518,7 +522,11 @@ class ProductFournisseur extends Product
 								$productfournisseurprice->array_options[$key] = $value;
 							}
 							$res = $productfournisseurprice->update($user);
-							if ($res < 0) $error++;
+							if ($res < 0) {
+								$this->error = $productfournisseurprice->error;
+								$this->errors = $productfournisseurprice->errors;
+								$error++;
+							}
 						}
 					}
 				}
@@ -578,7 +586,7 @@ class ProductFournisseur extends Product
 		$sql .= " pfp.supplier_reputation, pfp.fk_user, pfp.datec,";
 		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code,";
 		$sql .= " pfp.barcode, pfp.fk_barcode_type, pfp.packaging,";
-		$sql .= " p.ref as product_ref";
+		$sql .= " p.ref as product_ref, p.tosell as status, p.tobuy as status_buy";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product as p";
 		$sql .= " WHERE pfp.rowid = ".(int) $rowid;
 		$sql .= " AND pfp.fk_product = p.rowid";
@@ -594,7 +602,8 @@ class ProductFournisseur extends Product
 				$this->fk_product				= $obj->fk_product;
 				$this->product_id				= $obj->fk_product;
 				$this->product_ref				= $obj->product_ref;
-
+				$this->status					= $obj->status;
+				$this->status_buy				= $obj->status_buy;
 				$this->fourn_id					= $obj->fk_soc;
 				$this->fourn_ref				= $obj->ref_fourn; // deprecated
 				$this->ref_supplier             = $obj->ref_fourn;
@@ -628,7 +637,8 @@ class ProductFournisseur extends Product
 				}
 				$this->packaging = $obj->packaging;
 
-				if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) {
+				if (isModEnabled('dynamicprices') && empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) {
+					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 					$priceparser = new PriceParser($this->db);
 					$price_result = $priceparser->parseProductSupplier($this);
 					if ($price_result >= 0) {
@@ -670,7 +680,7 @@ class ProductFournisseur extends Product
 		// phpcs:enable
 		global $conf;
 
-		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id, p.ref as product_ref,";
+		$sql = "SELECT s.nom as supplier_name, s.rowid as fourn_id, p.ref as product_ref, p.tosell as status, p.tobuy as status_buy, ";
 		$sql .= " pfp.rowid as product_fourn_pri_id, pfp.entity, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_product as product_fourn_id, pfp.fk_supplier_price_expression,";
 		$sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
 		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code, pfp.datec, pfp.tms,";
@@ -699,6 +709,8 @@ class ProductFournisseur extends Product
 
 				$prodfourn->product_ref = $record["product_ref"];
 				$prodfourn->product_fourn_price_id = $record["product_fourn_pri_id"];
+				$prodfourn->status					= $record["status"];
+				$prodfourn->status_buy				= $record["status_buy"];
 				$prodfourn->product_fourn_id = $record["product_fourn_id"];
 				$prodfourn->product_fourn_entity = $record["entity"];
 				$prodfourn->ref_supplier			= $record["ref_fourn"];
@@ -735,7 +747,8 @@ class ProductFournisseur extends Product
 					$prodfourn->supplier_fk_barcode_type = $record["fk_barcode_type"];
 				}
 
-				if (!empty($conf->dynamicprices->enabled) && !empty($prodfourn->fk_supplier_price_expression)) {
+				if (isModEnabled('dynamicprices') && !empty($prodfourn->fk_supplier_price_expression)) {
+					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 					$priceparser = new PriceParser($this->db);
 					$price_result = $priceparser->parseProductSupplier($prodfourn);
 					if ($price_result >= 0) {
@@ -841,13 +854,15 @@ class ProductFournisseur extends Product
 					$fourn_unitprice = $record["unitprice"];
 					$fourn_unitprice_with_discount = $record["unitprice"] * (1 - $record["remise_percent"] / 100);
 
-					if (!empty($conf->dynamicprices->enabled) && !empty($record["fk_supplier_price_expression"])) {
+					if (isModEnabled('dynamicprices') && !empty($record["fk_supplier_price_expression"])) {
 						$prod_supplier = new ProductFournisseur($this->db);
 						$prod_supplier->product_fourn_price_id = $record["product_fourn_price_id"];
 						$prod_supplier->id = $prodid;
 						$prod_supplier->fourn_qty = $record["quantity"];
 						$prod_supplier->fourn_tva_tx = $record["tva_tx"];
 						$prod_supplier->fk_supplier_price_expression = $record["fk_supplier_price_expression"];
+
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProductSupplier($prod_supplier);
 						if ($price_result >= 0) {
@@ -1173,7 +1188,7 @@ class ProductFournisseur extends Product
 		$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 
 		if ($this->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-			if (!empty($conf->productbatch->enabled)) {
+			if (isModEnabled('productbatch')) {
 				$langs->load("productbatch");
 				$label .= "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
 			}
@@ -1212,13 +1227,13 @@ class ProductFournisseur extends Product
 			}
 		}
 
-		if (!empty($conf->accounting->enabled) && $this->status) {
+		if (isModEnabled('accounting') && $this->status) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 			$label .= '<br><b>'.$langs->trans('ProductAccountancySellCode').':</b> '.length_accountg($this->accountancy_code_sell);
 			$label .= '<br><b>'.$langs->trans('ProductAccountancySellIntraCode').':</b> '.length_accountg($this->accountancy_code_sell_intra);
 			$label .= '<br><b>'.$langs->trans('ProductAccountancySellExportCode').':</b> '.length_accountg($this->accountancy_code_sell_export);
 		}
-		if (!empty($conf->accounting->enabled) && $this->status_buy) {
+		if (isModEnabled('accounting') && $this->status_buy) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyCode').':</b> '.length_accountg($this->accountancy_code_buy);
 			$label .= '<br><b>'.$langs->trans('ProductAccountancyBuyIntraCode').':</b> '.length_accountg($this->accountancy_code_buy_intra);

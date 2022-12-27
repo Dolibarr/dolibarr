@@ -25,6 +25,7 @@
  *       \brief      Tab of a user group
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
@@ -417,6 +418,7 @@ if ($action == 'create') {
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="adduser">';
+					print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
 					print '<td class="liste_titre">';
@@ -425,8 +427,10 @@ if ($action == 'create') {
 					print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 					print '<input type="submit" class="button buttongen button-add" value="'.$langs->trans("Add").'">';
 					print '</td></tr>'."\n";
-					print '</table></form>'."\n";
-					print '<br>';
+					print '</table>';
+					print '</div>';
+					print '</form>'."\n";
+					//print '<br>';
 				}
 
 				/*
@@ -448,7 +452,7 @@ if ($action == 'create') {
 						print '<tr class="oddeven">';
 						print '<td class="tdoverflowmax150">';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
-						if ($useringroup->admin && !$useringroup->entity) {
+						if (isModEnabled('multicompany') && $useringroup->admin && empty($useringroup->entity)) {
 							print img_picto($langs->trans("SuperAdministrator"), 'redstar');
 						} elseif ($useringroup->admin) {
 							print img_picto($langs->trans("Administrator"), 'star');

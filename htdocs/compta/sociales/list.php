@@ -28,6 +28,7 @@
  *	\brief		Page to list all social contributions
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -100,7 +101,7 @@ $arrayfields = array(
 	'cs.fk_type'	=>array('label'=>"Type", 'checked'=>1, 'position'=>30),
 	'cs.date_ech'	=>array('label'=>"Date", 'checked'=>1, 'position'=>40),
 	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>50),
-	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(!empty($conf->project->enabled))),
+	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(isModEnabled('project'))),
 	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>70),
 	'cs.fk_mode_reglement'	=>array('checked'=>-1, 'position'=>80, 'label'=>"DefaultPaymentMode"),
 	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>100),
@@ -193,6 +194,9 @@ if (isModEnabled('project')) {
 $sql .= " c.libelle as type_label, c.accountancy_code as type_accountancy_code,";
 $sql .= " ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
 $sql .= " SUM(pc.amount) as alreadypayed, pay.code as payment_code";
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 $sql .= " ".MAIN_DB_PREFIX."chargesociales as cs";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON (cs.fk_account = ba.rowid)";
@@ -250,14 +254,33 @@ $sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.
 if (isModEnabled('project')) {
 	$sql .= ", p.rowid, p.ref, p.title";
 }
-$sql .= $db->order($sortfield, $sortorder);
 
-$totalnboflines = 0;
-$result = $db->query($sql);
-if ($result) {
-	$totalnboflines = $db->num_rows($result);
+// Count total nb of records
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+	$db->free($resql);
 }
-$sql .= $db->plimit($limit + 1, $offset);
+
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -362,7 +385,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $center = '';
 
-print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
 	print '<div class="error">';
@@ -451,13 +474,14 @@ if (!empty($arrayfields['p.ref']['checked'])) {
 if (!empty($arrayfields['cs.fk_user']['checked'])) {
 	// Employee
 	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_users, 'search_users', 1, null, 0, '', '', '0', '0', 0, '', 0, '', '', 0, 0, true);
+	print $form->select_dolusers($search_users, 'search_users', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth150', 0, 0, true);
+	print '</td>';
 }
 
 // Filter: Type
 if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
 	print '<td class="liste_titre">';
-	$form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 0, 1, 'maxwidth150');
+	print $form->select_types_paiements($search_type, 'search_type', '', 0, 1, 1, 0, 1, 'maxwidth150', 1);
 	print '</td>';
 }
 
@@ -479,7 +503,7 @@ if (!empty($arrayfields['cs.amount']['checked'])) {
 if (!empty($arrayfields['cs.paye']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone right">';
 	$liststatus = array('0'=>$langs->trans("Unpaid"), '1'=>$langs->trans("Paid"));
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100', 1);
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100 onrightofpage', 1);
 	print '</td>';
 }
 
@@ -592,7 +616,7 @@ while ($i < min($num, $limit)) {
 		if (isModEnabled('accounting')) {
 			$typelabelpopup .= ' - '.$langs->trans("AccountancyCode").': '.$obj->type_accountancy_code;
 		}
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($typelabelpopup).'">'.dol_escape_htmltag($typelabeltoshow).'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($typelabelpopup).'">'.dol_escape_htmltag($typelabeltoshow).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -600,7 +624,7 @@ while ($i < min($num, $limit)) {
 
 	// Date
 	if (!empty($arrayfields['cs.date_ech']['checked'])) {
-		print '<td class="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -608,7 +632,7 @@ while ($i < min($num, $limit)) {
 
 	// Date end period
 	if (!empty($arrayfields['cs.periode']['checked'])) {
-		print '<td class="center">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -616,7 +640,7 @@ while ($i < min($num, $limit)) {
 
 	// Project ref
 	if (!empty($arrayfields['p.ref']['checked'])) {
-		print '<td class="nowrap">';
+		print '<td class="nowraponall">';
 		if ($obj->project_id > 0) {
 			print $projectstatic->getNomUrl(1);
 		}
@@ -628,7 +652,7 @@ while ($i < min($num, $limit)) {
 
 	if (!empty($arrayfields['cs.fk_user']['checked'])) {
 		// Employee
-		print "<td>";
+		print '<td class="tdoverflowmax150">';
 		if (!empty($obj->fk_user)) {
 			if (!empty($TLoadedUsers[$obj->fk_user])) {
 				$ustatic = $TLoadedUsers[$obj->fk_user];
@@ -647,7 +671,7 @@ while ($i < min($num, $limit)) {
 
 	// Type
 	if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
-		print '<td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("PaymentTypeShort".$obj->payment_code)).'">';
 		if (!empty($obj->payment_code)) {
 			print $langs->trans("PaymentTypeShort".$obj->payment_code);
 		}
@@ -659,7 +683,7 @@ while ($i < min($num, $limit)) {
 
 	// Account
 	if (!empty($arrayfields['cs.fk_account']['checked'])) {
-		print '<td>';
+		print '<td class="toverflowmax150">';
 		if ($obj->fk_account > 0) {
 			$bankstatic->id = $obj->fk_account;
 			$bankstatic->ref = $obj->bref;
@@ -682,7 +706,7 @@ while ($i < min($num, $limit)) {
 
 	// Amount
 	if (!empty($arrayfields['cs.amount']['checked'])) {
-		print '<td class="nowrap amount right">'.price($obj->amount).'</td>';
+		print '<td class="nowraponall amount right">'.price($obj->amount).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -694,7 +718,7 @@ while ($i < min($num, $limit)) {
 
 	// Status
 	if (!empty($arrayfields['cs.paye']['checked'])) {
-		print '<td class="nowrap right">'.$chargesociale_static->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
+		print '<td class="nowraponall right">'.$chargesociale_static->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

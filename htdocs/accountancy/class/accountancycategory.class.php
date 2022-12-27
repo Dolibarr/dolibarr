@@ -453,56 +453,6 @@ class AccountancyCategory // extends CommonObject
 	}
 
 	/**
-	 * Function to fill ->lines_cptbk with accounting account used (into bookkeeping) and not yet into a custom group
-	 *
-	 * @param 	int $id 	Id of custom group
-	 * @return 	int 		<0 if KO, 0 if not found, >0 if OK
-	 */
-	/*
-	public function getCptBK($id)
-	{
-		global $conf;
-
-		$sql = "SELECT DISTINCT t.numero_compte, t.label_operation, t.doc_ref";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as t";
-		$sql .= " WHERE t.numero_compte NOT IN (";	// account not into a custom group
-		$sql .= " SELECT t.account_number";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t";
-		$sql .= " WHERE t.fk_accounting_category = ".((int) $id)." AND t.entity = ".$conf->entity.")";
-		$sql .= " AND t.numero_compte IN (";		// account into current chart of account
-		$sql .= " SELECT DISTINCT aa.account_number";
-		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
-		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-		$sql .= " AND asy.rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
-		$sql .= " AND aa.active = 1";
-		$sql .= " AND aa.entity = ".$conf->entity.")";
-		$sql .= " GROUP BY t.numero_compte, t.label_operation, t.doc_ref";
-		$sql .= " ORDER BY t.numero_compte";
-
-		$this->lines_cptbk = array();
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-			if ($num) {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$this->lines_cptbk[] = $obj;
-				}
-			}
-
-			return $num;
-		} else {
-			$this->error = "Error ".$this->db->lasterror();
-			$this->errors[] = $this->error;
-			dol_syslog(__METHOD__." ".implode(','.$this->errors), LOG_ERR);
-
-			return -1;
-		}
-	}
-	*/
-
-	/**
 	 * Function to fill ->lines_cptbk with accounting account (defined in chart of account) and not yet into a custom group
 	 *
 	 * @param 	int $id     Id of category to know which account to exclude
@@ -743,7 +693,7 @@ class AccountancyCategory // extends CommonObject
 				}
 				$listofaccount .= "'".$cptcursor."'";
 			}
-			$sql .= " AND t.numero_compte IN (".$this->db->sanitize($listofaccount).")";
+			$sql .= " AND t.numero_compte IN (".$this->db->sanitize($listofaccount, 1).")";
 		} else {
 			$sql .= " AND t.numero_compte = '".$this->db->escape($cpt)."'";
 		}
@@ -785,12 +735,13 @@ class AccountancyCategory // extends CommonObject
 	}
 
 	/**
-	 * Return list of custom groups that are active
+	 * Return list of custom groups.
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
+	 * @param	int			$active				1= active, 0=not active
 	 * @return	array|int						Array of groups or -1 if error
 	 */
-	public function getCats($categorytype = -1)
+	public function getCats($categorytype = -1, $active = 1)
 	{
 		global $conf, $mysoc;
 
@@ -801,7 +752,7 @@ class AccountancyCategory // extends CommonObject
 
 		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type, c.sens";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
-		$sql .= " WHERE c.active = 1";
+		$sql .= " WHERE c.active = " . (int) $active;
 		$sql .= " AND c.entity = ".$conf->entity;
 		if ($categorytype >= 0) {
 			$sql .= " AND c.category_type = 1";

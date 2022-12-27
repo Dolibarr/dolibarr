@@ -104,10 +104,10 @@ $entity = GETPOST('entity', 'int') ?GETPOST('entity', 'int') : $conf->entity;
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
-	accessforbidden('Bad link. Bad value for parameter modulepart', 0, 0, 1);
+	httponly_accessforbidden('Bad link. Bad value for parameter modulepart', 400);
 }
 if (empty($original_file) && empty($hashp)) {
-	accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 0, 0, 1);
+	httponly_accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 400);
 }
 if ($modulepart == 'fckeditor') {
 	$modulepart = 'medias'; // For backward compatibility
@@ -158,7 +158,7 @@ if (!empty($hashp)) {
 				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 				//var_dump($original_file); exit;
 			} else {
-				accessforbidden('Bad link. File is from another module part.', 0, 0, 1);
+				httponly_accessforbidden('Bad link. File is from another module part.', 403);
 			}
 		} else {
 			$modulepart = $moduleparttocheck;
@@ -171,7 +171,7 @@ if (!empty($hashp)) {
 		}
 	} else {
 		$langs->load("errors");
-		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 0, 0, 1);
+		httponly_accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 403, 1);
 	}
 }
 

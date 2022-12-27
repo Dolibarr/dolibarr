@@ -22,6 +22,7 @@
  * \brief   Asset setup page.
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
@@ -67,16 +68,14 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
  * Actions
  */
 
-if ((float) DOL_VERSION >= 6) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstorder = GETPOST('maskconstorder', 'alpha');
-	$maskorder = GETPOST('maskorder', 'alpha');
+	$maskconst = GETPOST('maskconst', 'alpha');
+	$mask = GETPOST('mask', 'alpha');
 
-	if ($maskconstorder) {
-		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
+	if ($maskconst) {
+		$res = dolibarr_set_const($db, $maskconst, $mask, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
@@ -205,7 +204,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	}
 	if ($myTmpObjectArray['includerefgeneration']) {
 		/*
-		 * Orders Numbering model
+		 * Assets Numbering model
 		 */
 		$setupnotempty++;
 
@@ -530,7 +529,7 @@ if ($action == 'edit') {
 				}
 			} elseif ($val['type'] == 'accountancy_code') {
 				$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 					$formaccounting = new FormAccounting($db);
 					print $formaccounting->select_account($selected, $constname, 1, null, 1, 1, 'minwidth150 maxwidth300', 1);
@@ -539,7 +538,7 @@ if ($action == 'edit') {
 				}
 			} elseif ($val['type'] == 'accountancy_category') {
 				$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					print '<input type="text" name="' . $constname . '" list="pcg_type_datalist" value="' . $selected . '">';
 					// autosuggest from existing account types if found
 					print '<datalist id="pcg_type_datalist">';
@@ -636,7 +635,7 @@ if ($action == 'edit') {
 						setEventMessages(null, $object->errors, "errors");
 					}
 				} elseif ($val['type'] == 'accountancy_code') {
-					if (!empty($conf->accounting->enabled)) {
+					if (isModEnabled('accounting')) {
 						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 						$accountingaccount = new AccountingAccount($db);
 						$accountingaccount->fetch('', $conf->global->{$constname}, 1);

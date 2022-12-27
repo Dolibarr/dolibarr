@@ -232,7 +232,6 @@ class StockTransferLine extends CommonObjectLine
 
 		// Reset some properties
 		unset($object->id);
-		unset($object->fk_user_creat);
 		unset($object->import_key);
 
 
@@ -562,8 +561,8 @@ class StockTransferLine extends CommonObjectLine
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->stocktransferline->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->stocktransferline->stocktransferline_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->stocktransferline->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->stocktransferline->stocktransferline_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -672,8 +671,8 @@ class StockTransferLine extends CommonObjectLine
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->stocktransfer_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->stocktransfer_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -696,8 +695,8 @@ class StockTransferLine extends CommonObjectLine
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->stocktransfer_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->stocktransfer_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -720,8 +719,8 @@ class StockTransferLine extends CommonObjectLine
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->stocktransfer->stocktransfer_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->stocktransfer->stocktransfer_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;

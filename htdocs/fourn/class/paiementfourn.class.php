@@ -349,7 +349,7 @@ class PaiementFourn extends Paiement
 							if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 								$newlang = '';
 								$outputlangs = $langs;
-								if (!empty($conf->global->MAIN_MULTILANGS) && empty($newlang)) {
+								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
 									$newlang = $invoice->thirdparty->default_lang;
 								}
 								if (!empty($newlang)) {
@@ -862,7 +862,7 @@ class PaiementFourn extends Paiement
 		global $conf;
 
 		$way = 'dolibarr';
-		if (!empty($conf->multicurrency->enabled)) {
+		if (isModEnabled("multicurrency")) {
 			foreach ($this->multicurrency_amounts as $value) {
 				if (!empty($value)) { // one value found then payment is in invoice currency
 					$way = 'customer';

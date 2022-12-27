@@ -26,6 +26,7 @@
  *   \ingroup    societe
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -53,13 +54,13 @@ $permissionnote = $user->rights->produit->creer; // Used by the include of actio
 
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
-		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
+		restrictedArea($user, 'product', $object->id, 'product&product', '', '');
 	}
 	if ($object->type == $object::TYPE_SERVICE) {
 		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
 	}
 } else {
-	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
+	restrictedArea($user, 'product|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
 
 
@@ -109,7 +110,7 @@ if ($id > 0 || !empty($ref)) {
 	/*
 	 * Affichage onglets
 	 */
-	if (!empty($conf->notification->enabled)) {
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 

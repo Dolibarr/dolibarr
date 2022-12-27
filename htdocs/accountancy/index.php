@@ -44,7 +44,7 @@ if ($user->socid > 0) {
 if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 */
@@ -79,7 +79,7 @@ if (GETPOST('addbox')) {
  * View
  */
 
-$help_url = '';
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup';
 
 llxHeader('', $langs->trans("AccountancyArea"), $help_url);
 
@@ -113,15 +113,17 @@ if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_S
 	    </script>';
 	}
 
-
 	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
+
+	if (!empty($conf->global->INVOICE_USE_SITUATION) && $conf->global->INVOICE_USE_SITUATION == 1) {
+		print info_admin($langs->trans("SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices"));
+		print "<br>";
+	}
 
 	print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; // hideobject is to start hidden
 	print "<br>\n";
 	print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
 	if ($user->hasRight('accounting', 'chartofaccount')) {
-		print "<br>\n"; print "<br>\n";
-
 		print load_fiche_titre('<span class="fa fa-calendar-check-o"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '')."\n";
 		print '<hr>';
 		print "<br>\n";

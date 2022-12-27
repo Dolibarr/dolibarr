@@ -21,9 +21,6 @@
  *	\brief      Ajax search component for TakePos. It search products of a category.
  */
 
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -40,6 +37,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
@@ -86,6 +84,10 @@ if ($action == 'getProducts') {
 				}
 				unset($prod->fields);
 				unset($prod->db);
+
+				$prod->price_formated = price(price2num($prod->price, 'MT'), 1, $langs, 1, -1, -1, $conf->currency);
+				$prod->price_ttc_formated = price(price2num($prod->price_ttc, 'MT'), 1, $langs, 1, -1, -1, $conf->currency);
+
 				$res[] = $prod;
 			}
 		}
@@ -159,7 +161,7 @@ if ($action == 'getProducts') {
 
 			if (isset($barcode_value_list['ref'])) {
 				// search product from reference
-				$sql  = "SELECT rowid, ref, label, tosell, tobuy, barcode, price";
+				$sql  = "SELECT rowid, ref, label, tosell, tobuy, barcode, price, price_ttc";
 				$sql .= " FROM " . $db->prefix() . "product as p";
 				$sql .= " WHERE entity IN (" . getEntity('product') . ")";
 				$sql .= " AND ref = '" . $db->escape($barcode_value_list['ref']) . "'";
@@ -208,6 +210,7 @@ if ($action == 'getProducts') {
 							'tobuy' => $obj->tobuy,
 							'barcode' => $obj->barcode,
 							'price' => $obj->price,
+							'price_ttc' => $obj->price_ttc,
 							'object' => 'product',
 							'img' => $ig,
 							'qty' => $qty,
@@ -224,7 +227,7 @@ if ($action == 'getProducts') {
 		}
 	}
 
-	$sql = 'SELECT p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price' ;
+	$sql = 'SELECT p.rowid, p.ref, p.label, p.tosell, p.tobuy, p.barcode, p.price, p.price_ttc' ;
 	if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
 		$sql .= ', ps.reel';
 	}
@@ -300,10 +303,12 @@ if ($action == 'getProducts') {
 				'tobuy' => $obj->tobuy,
 				'barcode' => $obj->barcode,
 				'price' => $obj->price,
+				'price_ttc' => $obj->price_ttc,
 				'object' => 'product',
 				'img' => $ig,
 				'qty' => 1,
-				//'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
+				'price_formated' => price(price2num($obj->price, 'MT'), 1, $langs, 1, -1, -1, $conf->currency),
+				'price_ttc_formated' => price(price2num($obj->price_ttc, 'MT'), 1, $langs, 1, -1, -1, $conf->currency)
 			);
 			// Add entries to row from hooks
 			$parameters=array();

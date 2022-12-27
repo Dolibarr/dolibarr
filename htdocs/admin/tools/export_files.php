@@ -27,6 +27,7 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -127,7 +128,7 @@ $result = dol_mkdir($outputdir);
 
 $utils = new Utils($db);
 
-if ($export_type == 'externalmodule' && ! empty($what)) {
+if ($export_type == 'externalmodule' && !empty($what)) {
 	$fulldirtocompress = DOL_DOCUMENT_ROOT.'/custom/'.dol_sanitizeFileName($what);
 } else {
 	$fulldirtocompress = DOL_DATA_ROOT;

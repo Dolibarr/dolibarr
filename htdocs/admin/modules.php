@@ -33,6 +33,7 @@ if (!defined('CSRFCHECK_WITH_TOKEN') && (empty($_GET['action']) || $_GET['action
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Force use of CSRF protection with tokens even for GET
 }
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -640,11 +641,11 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 		// We discard showing according to filters
 		if ($search_keyword) {
 			$qualified = 0;
-			if (preg_match('/'.preg_quote($search_keyword).'/i', $modulename)
-				|| preg_match('/'.preg_quote($search_keyword).'/i', $moduletechnicalname)
-				|| preg_match('/'.preg_quote($search_keyword).'/i', $moduledesc)
-				|| preg_match('/'.preg_quote($search_keyword).'/i', $moduledesclong)
-				|| preg_match('/'.preg_quote($search_keyword).'/i', $moduleauthor)
+			if (preg_match('/'.preg_quote($search_keyword, '/').'/i', $modulename)
+				|| preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduletechnicalname)
+				|| ($moduledesc && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduledesc))
+				|| ($moduledesclong && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduledesclong))
+				|| ($moduleauthor && preg_match('/'.preg_quote($search_keyword, '/').'/i', $moduleauthor))
 				) {
 				$qualified = 1;
 			}
@@ -1117,7 +1118,13 @@ if ($mode == 'deploy') {
 			}
 		}
 	} else {
-		$message = info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'));
+		if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
+			// Show clean message
+			$message = info_admin($langs->trans('InstallModuleFromWebHasBeenDisabledContactUs'));
+		} else {
+			// Show technical message
+			$message = info_admin($langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock'));
+		}
 		$allowfromweb = 0;
 	}
 

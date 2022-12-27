@@ -126,7 +126,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be 
 /*
  * Number of products and/or services
  */
-if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	$prodser = array();
 	$prodser[0][0] = $prodser[0][1] = $prodser[0][2] = $prodser[0][3] = 0;
 	$prodser[0]['sell'] = 0;
@@ -215,7 +215,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->prod
 }
 
 
-if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS)) {
+if (isModEnabled('categorie') && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS)) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	print '<br>';
 	print '<div class="div-table-responsive-no-min">';
@@ -284,7 +284,7 @@ print '</div><div class="fichetwothirdright">';
 /*
  * Latest modified products
  */
-if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->produit->lire || $user->rights->service->lire)) {
+if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	$max = 15;
 	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 	$sql .= " p.entity,";
@@ -341,8 +341,13 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->prod
 				$product_static->status_buy = $objp->tobuy;
 				$product_static->status_batch = $objp->tobatch;
 
+				$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'read');
+				if ($product_static->isService()) {
+					$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'read');
+				}
+
 				// Multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$sql = "SELECT label";
 					$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 					$sql .= " WHERE fk_product = ".((int) $objp->rowid);
@@ -368,9 +373,11 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->prod
 				print "</td>";
 				// Sell price
 				if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-					if (!empty($conf->dynamicprices->enabled) && !empty($objp->fk_price_expression)) {
+					if (isModEnabled('dynamicprices') && !empty($objp->fk_price_expression)) {
 						$product = new Product($db);
 						$product->fetch($objp->rowid);
+
+						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($db);
 						$price_result = $priceparser->parseProduct($product);
 						if ($price_result >= 0) {
@@ -378,10 +385,12 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->prod
 						}
 					}
 					print '<td class="nowraponall amount right">';
-					if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') {
-						print price($objp->price_ttc).' '.$langs->trans("TTC");
-					} else {
-						print price($objp->price).' '.$langs->trans("HT");
+					if ($usercancreadprice) {
+						if (isset($objp->price_base_type) && $objp->price_base_type == 'TTC') {
+							print price($objp->price_ttc).' '.$langs->trans("TTC");
+						} else {
+							print price($objp->price).' '.$langs->trans("HT");
+						}
 					}
 					print '</td>';
 				}
@@ -410,7 +419,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->rights->prod
 // TODO Move this into a page that should be available into menu "accountancy - report - turnover - per quarter"
 // Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover":
 // "commitment engagment" method and "cash accounting" method
-if (!empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM)) {
+if (isModEnabled("invoice") && $user->hasRight('facture', 'lire') && getDolGlobalString('MAIN_SHOW_PRODUCT_ACTIVITY_TRIM')) {
 	if (isModEnabled("product")) {
 		activitytrim(0);
 	}

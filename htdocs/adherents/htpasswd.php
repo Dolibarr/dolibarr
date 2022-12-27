@@ -23,6 +23,7 @@
  *      \brief      Export page htpasswd of the membership file
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
@@ -36,7 +37,7 @@ $sortorder = GETPOST('sortorder', 'aZ09');
 if (!isModEnabled('adherent')) {
 	accessforbidden();
 }
-if (empty($user->rights->adherent->export)) {
+if (!$user->hasRight('adherent', 'export')) {
 	accessforbidden();
 }
 

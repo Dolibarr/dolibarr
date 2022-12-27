@@ -22,6 +22,7 @@
  *  \brief      Page of various expenses
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -409,7 +410,7 @@ if ($action == 'create') {
 	// Amount
 	print '<tr><td>';
 	print $form->editfieldkey('Amount', 'amount', '', $object, 0, 'string', '', 1).'</td><td>';
-	print '<input name="amount" id="amount" class="minwidth100 maxwidth150onsmartphone" value="'.$amount.'">';
+	print '<input name="amount" id="amount" class="minwidth50 maxwidth100" value="'.$amount.'">';
 	print '</td></tr>';
 
 	// Bank

@@ -27,6 +27,7 @@
  *		\brief      Page to show a bank statement report
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -60,6 +61,9 @@ $oldbankreceipt = GETPOST('oldbankreceipt', 'alpha');
 $newbankreceipt = GETPOST('newbankreceipt', 'alpha');
 $rel = GETPOST("rel", 'alphanohtml');
 $backtopage = GETPOST('backtopage', 'alpha');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('bankaccountstatement', 'globalcard'));
 
 // Security check
 $fieldid = (!empty($ref) ? $ref : $id);

@@ -24,6 +24,7 @@
  *		\brief      Home page of propest area
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
@@ -118,7 +119,7 @@ if ($resql) {
 /*
  * Liste des propal brouillons
  */
-if (isModEnabled("propal") && $user->rights->propale->lire) {
+if (isModEnabled("propal") && $user->rights->propal->lire) {
 	$sql = "SELECT p.rowid, p.ref, p.price, s.nom as sname";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -176,7 +177,7 @@ if (isModEnabled('agenda')) {
 /*
  * Dernieres propales ouvertes
  */
-if (isModEnabled("propal") && $user->rights->propale->lire) {
+if (isModEnabled("propal") && $user->rights->propal->lire) {
 	$sql = "SELECT s.nom as name, s.rowid as socid, s.client, s.canvas,";
 	$sql .= " p.rowid as propalid, p.total_ttc, p.ref, p.datep as dp, c.label as statut, c.id as statutid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";

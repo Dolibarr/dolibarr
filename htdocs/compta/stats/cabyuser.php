@@ -25,6 +25,7 @@
  *      \brief       Page reporting Salesover by user
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
@@ -294,11 +295,13 @@ if ($result) {
 	$num = $db->num_rows($result);
 	$i = 0;
 	while ($i < $num) {
-		 $obj = $db->fetch_object($result);
-		$amount_ht[$obj->rowid] = $obj->amount;
+		$obj = $db->fetch_object($result);
+
+		$amount_ht[$obj->rowid] = (empty($obj->amount) ? 0 : $obj->amount);
 		$amount[$obj->rowid] = $obj->amount_ttc;
 		$name[$obj->rowid] = $obj->name.' '.$obj->firstname;
-		$catotal_ht += $obj->amount;
+
+		$catotal_ht += (empty($obj->amount) ? 0 : $obj->amount);
 		$catotal += $obj->amount_ttc;
 		$i++;
 	}
