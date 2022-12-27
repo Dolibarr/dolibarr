@@ -2447,7 +2447,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		}
 	} elseif (isset($object->country_code) && in_array($object->country_code, array('ES', 'TR'))) {
 		// ES: title firstname name \n address lines \n zip town \n state \n country
-		$ret .= ($ret ? $sep : '').$object->zip;
+		$ret .= ($ret ? $sep : '').!empty($object->zip);
 		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= ($town ? (($object->zip ? ' ' : '').$town) : '');
 		if (!empty($object->state)) {
