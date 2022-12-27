@@ -651,7 +651,7 @@ print $hookmanager->resPrint;
 if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 	print getTitleFieldOfList(($mode != 'kanban' ? $selectedfields : ''), 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 }
-$totalarray['nbfield']++;
+$totalarray['nbfield']++;	// For the column action
 print '</tr>'."\n";
 
 
