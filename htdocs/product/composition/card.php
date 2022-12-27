@@ -96,8 +96,7 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 	for ($i = 0; $i < $maxprod; $i++) {
 		$qty = price2num(GETPOST("prod_qty_".$i, 'alpha'), 'MS');
 		if ($qty > 0) {
-			if ($object->add_sousproduit($id, GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int')) > 0) {
-				//var_dump($i.' '.GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int'));
+			if ($object->add_sousproduit($id, GETPOST("prod_id_".$i, 'int'), $qty) > 0) {
 				$action = 'edit';
 			} else {
 				$error++;
@@ -128,7 +127,7 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 	if (!empty($TProduct)) {
 		foreach ($TProduct as $id_product => $row) {
 			if ($row['qty'] > 0) {
-				$object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0);
+				$object->update_sousproduit($id, $id_product, $row['qty']);
 			} else {
 				$object->del_sousproduit($id, $id_product);
 			}
@@ -374,8 +373,6 @@ if ($id > 0 || !empty($ref)) {
 		}
 		// Qty in kit
 		print '<td class="center">'.$langs->trans('Qty').'</td>';
-		// Stoc inc/dev
-		print '<td class="center">'.$langs->trans('ComposedProductIncDecStock').'</td>';
 		// Move
 		print '<td class="linecolmove" style="width: 10px"></td>';
 		print '</tr>'."\n";
@@ -451,10 +448,8 @@ if ($id > 0 || !empty($ref)) {
 					// Qty + IncDec
 					if ($user->rights->produit->creer || $user->rights->service->creer) {
 						print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" class="right" /></td>';
-						print '<td class="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec'] == 1 ? 'checked' : '').' /></td>';
 					} else {
 						print '<td>'.$nb_of_subproduct.'</td>';
-						print '<td>'.($value['incdec'] == 1 ? 'x' : '').'</td>';
 					}
 
 					// Move action
@@ -553,8 +548,6 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="liste_total right">&nbsp;</td>';
 			}
 
-			print '<td></td>';
-
 			print '<td class="center">';
 			if ($user->rights->produit->creer || $user->rights->service->creer) {
 				print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
@@ -631,7 +624,6 @@ if ($id > 0 || !empty($ref)) {
 			print '<th class="liste_titre">'.$langs->trans("Label").'</td>';
 			//print '<th class="liste_titre center">'.$langs->trans("IsInPackage").'</td>';
 			print '<th class="liste_titre right">'.$langs->trans("Qty").'</td>';
-			print '<th class="center">'.$langs->trans('ComposedProductIncDecStock').'</th>';
 			print '</tr>';
 			if ($resql) {
 				$num = $db->num_rows($resql);
@@ -692,28 +684,15 @@ if ($id > 0 || !empty($ref)) {
 						if ($object->is_sousproduit($id, $objp->rowid)) {
 							//$addchecked = ' checked';
 							$qty = $object->is_sousproduit_qty;
-							$incdec = $object->is_sousproduit_incdec;
 						} else {
 							//$addchecked = '';
 							$qty = 0;
-							$incdec = 0;
 						}
 						// Contained into package
 						/*print '<td class="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'">';
 						print '<input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';*/
 						// Qty
 						print '<td class="right"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'"><input type="text" size="2" name="prod_qty_'.$i.'" value="'.($qty ? $qty : '').'"></td>';
-
-						// Inc Dec
-						print '<td class="center">';
-						if ($qty) {
-							print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" '.($incdec ? 'checked' : '').'>';
-						} else {
-							// TODO Hide field and show it when setting a qty
-							print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" checked>';
-							//print '<input type="checkbox" disabled name="prod_incdec_'.$i.'" value="1" checked>';
-						}
-						print '</td>';
 
 						print '</tr>';
 					}
@@ -722,7 +701,6 @@ if ($id > 0 || !empty($ref)) {
 				if ($num > $MAX) {
 					print '<tr class="oddeven">';
 					print '<td><span class="opacitymedium">'.$langs->trans("More").'...</span></td>';
-					print '<td></td>';
 					print '<td></td>';
 					print '<td></td>';
 					print '</tr>';

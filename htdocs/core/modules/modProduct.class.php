@@ -415,7 +415,7 @@ class modProduct extends DolibarrModules
 			if (isModEnabled('barcode')) {
 				$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
 			}
-			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('pa.qty'=>'Qty', 'pa.incdec'=>'ComposedProductIncDecStock'));
+			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('pa.qty'=>'Qty'));
 			$this->export_TypeFields_array[$r] = array(
 				'p.ref'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.url'=>"Text",
 				$alias_product_perentity . '.accountancy_code_sell'=>"Text", $alias_product_perentity . '.accountancy_code_sell_intra'=>"Text", $alias_product_perentity . '.accountancy_code_sell_export'=>"Text",
@@ -447,7 +447,7 @@ class modProduct extends DolibarrModules
 			if (isModEnabled('barcode')) {
 				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'virtualproduct'));
 			}
-			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('pa.qty'=>"subproduct", 'pa.incdec'=>'subproduct'));
+			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('pa.qty'=>"subproduct"));
 			$keyforselect = 'product';
 			$keyforelement = 'product';
 			$keyforaliasextra = 'extra';
