@@ -71,7 +71,7 @@ if ($action == 'setproductionmode') {
 }
 
 // Disable compression mode
-if ($action == 'setdisablecomprssion') {
+if ($action == 'setdisablecompression') {
 	$status = GETPOST('status', 'alpha');
 
 	if (dolibarr_set_const($db, 'API_DISABLE_COMPRESSION', $status, 'chaine', 0, '', 0) > 0) {
@@ -118,11 +118,11 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ApiProductionMode").'</td>';
 $production_mode = (empty($conf->global->API_PRODUCTION_MODE) ?false:true);
 if ($production_mode) {
-	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&value='.($i + 1).'&status=0">';
+	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&status=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&value='.($i + 1).'&status=1">';
+	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&status=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
@@ -133,11 +133,11 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("API_DISABLE_COMPRESSION").'</td>';
 $disable_compression = (empty($conf->global->API_DISABLE_COMPRESSION) ?false:true);
 if ($disable_compression) {
-	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablecomprssion&token='.newToken().'&value='.($i + 1).'&status=0">';
+	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablecompression&token='.newToken().'&status=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
 } else {
-	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablecomprssion&token='.newToken().'&value='.($i + 1).'&status=1">';
+	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablecompression&token='.newToken().'&status=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
