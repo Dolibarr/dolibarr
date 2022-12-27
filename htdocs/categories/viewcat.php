@@ -1145,7 +1145,7 @@ if ($type == Categorie::TYPE_USER) {
 
 // List of warehouses
 if ($type == Categorie::TYPE_WAREHOUSE) {
-	if ($user->hasRight("warehouse", "read")) {
+	if ($user->hasRight("stock", "read")) {
 		$permission = $user->rights->stock->creer;
 
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
