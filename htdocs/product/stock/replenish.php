@@ -892,8 +892,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 		//Adds only Products/Services at them more than 0 to order.
 		//As example a 0 can a result from "STOCK_REPLENISH_ADD_CHECKBOX_INCLUDE_DRAFT_ORDER" with active checkbox "&draftchecked".
-		if ($toOrder > 0)
-		{
+		if ($toOrder > 0) {
 			print '<tr class="oddeven">';
 
 			// Select field
