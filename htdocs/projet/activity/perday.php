@@ -222,7 +222,8 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 					$listofprojcontact = $project->liste_type_contact('internal');
 
 					if (count($listofprojcontact)) {
-						$typeforprojectcontact = reset(array_keys($listofprojcontact));
+						$tmparray = array_keys($listofprojcontact);
+						$typeforprojectcontact = reset($tmparray);
 						$result = $project->add_contact($idfortaskuser, $typeforprojectcontact, 'internal');
 					}
 				}
