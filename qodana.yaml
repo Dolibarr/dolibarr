@@ -34,4 +34,9 @@ exclude:
   - name: PhpDeprecationInspection
   - name: PhpStatementHasEmptyBodyInspection
   - name: PhpConditionAlreadyCheckedInspection
+  - name: PhpExpressionResultUnusedInspection
+  - name: PhpUndefinedClassInspection
+  - name: RegExpSimplifiable
+  
+
   

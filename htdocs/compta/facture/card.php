@@ -2763,7 +2763,7 @@ if (empty($reshook)) {
 					}
 
 					if (!$errors) {
-						setEventMessages($langs->trans('Updated'), '', 'mesgs');
+						setEventMessages($langs->trans('Updated'), null, 'mesgs');
 						header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 					} else {
 						setEventMessages($langs->trans('ErrorOutingSituationInvoiceCreditNote'), array(), 'errors');

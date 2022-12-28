@@ -1022,7 +1022,7 @@ class FormTicket
 							}
 							$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 							if (empty($tabscript[$groupcodefather])) {
-								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").val() == "'.dol_escape_js($groupcodefather).'"){
+								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").val() == "'.dol_escape_js($groupcodefather).'"){
 									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").show()
 									console.log("We show childs tickets of '.$groupcodefather.' group ticket")
 								}else{
@@ -1040,7 +1040,7 @@ class FormTicket
 
 				$stringtoprint .='<script>';
 				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';	// when the last visible combo list is number x, this is the array of group
-				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").val())){
+				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").val())){
 					console.log("'.$htmlname.'_child_'.$levelid.'")
 					if($("#'.$htmlname.'_child_'.$levelid.'").val() == "" && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")>'.$child_id.')){
 						$("#'.$htmlname.'_child_'.$levelid.'").hide();
@@ -1052,7 +1052,7 @@ class FormTicket
 						console.log("We choose '.$htmlname.' input and reload hidden input");
 					}
 				}
-				$("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").change(function() {
+				$("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").change(function() {
 					child_id = $("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid:'').'").attr("child_id");
 
 					/* Change of value to select this value*/

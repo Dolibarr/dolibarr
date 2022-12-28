@@ -1751,7 +1751,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 							if ($allowoverwrite) {
 								// Do not show error message. We can have an error due to DB_ERROR_RECORD_ALREADY_EXISTS
 							} else {
-								setEventMessages('WarningFailedToAddFileIntoDatabaseIndex', '', 'warnings');
+								setEventMessages('WarningFailedToAddFileIntoDatabaseIndex', null, 'warnings');
 							}
 						}
 					}
@@ -2420,7 +2420,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
  * @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
  * @param	int			$nohook			Disable all hooks
  * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
- * @return	string						Full path to most recent file
+ * @return	array						Array with properties (full path, date, ...) of to most recent file
  */
 function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(\.meta|_preview.*\.png)$', '^\.'), $nohook = false, $mode = '')
 {

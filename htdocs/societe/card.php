@@ -1105,7 +1105,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$object->fournisseur		= GETPOST('fournisseur') ? GETPOST('fournisseur', 'int') : $object->fournisseur;
 			$object->code_fournisseur = GETPOST('supplier_code', 'alpha');
 		} else {
-			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'), '', 'warnings');
+			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'), null, 'warnings');
 		}
 
 		$object->address = GETPOST('address', 'alphanohtml');

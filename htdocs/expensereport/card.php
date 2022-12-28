@@ -971,7 +971,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
-			setEventMessages("NOT_AUTHOR", '', 'errors');
+			setEventMessages("NOT_AUTHOR", null, 'errors');
 		}
 	}
 
