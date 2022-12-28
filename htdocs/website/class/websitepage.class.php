@@ -116,8 +116,8 @@ class WebsitePage extends CommonObject
 	 */
 	public $fk_object;
 
-	const STATUS_DRAFT = 0;
-	const STATUS_VALIDATED = 1;
+	const STATUS_DRAFT = 0;			// offline
+	const STATUS_VALIDATED = 1;		// online
 
 
 	/**
@@ -612,6 +612,8 @@ class WebsitePage extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
+		global $conf;
+
 		$error = 0;
 
 		// Delete all child tables
@@ -630,7 +632,7 @@ class WebsitePage extends CommonObject
 		}
 
 		if (!$error) {
-			$result = $this->deleteCommon($user, $trigger);
+			$result = $this->deleteCommon($user, $notrigger);
 			if ($result <= 0) {
 				$error++;
 			}
@@ -642,7 +644,7 @@ class WebsitePage extends CommonObject
 
 			if ($result > 0) {
 				global $dolibarr_main_data_root;
-				$pathofwebsite = $dolibarr_main_data_root.'/website/'.$websiteobj->ref;
+				$pathofwebsite = $dolibarr_main_data_root.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$websiteobj->ref;
 
 				$filealias = $pathofwebsite.'/'.$this->pageurl.'.php';
 				$filetpl = $pathofwebsite.'/page'.$this->id.'.tpl.php';
@@ -725,6 +727,7 @@ class WebsitePage extends CommonObject
 			$object->fk_website = $newwebsite;
 		}
 		$object->import_key = '';
+		$object->status = self::STATUS_DRAFT;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -835,10 +838,10 @@ class WebsitePage extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Offline');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Online');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Offline');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Online');
 		}
 
 		$statusType = 'status5';

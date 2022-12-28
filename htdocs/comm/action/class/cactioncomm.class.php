@@ -198,22 +198,27 @@ class CActionComm
 						//var_dump($obj->type.' '.$obj->module.' '); var_dump($user->rights->facture->lire);
 						$qualified = 0;
 						// Special cases
-						if ($obj->module == 'invoice' && !empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
+						if ($obj->module == 'invoice' && isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'order' && !empty($conf->commande->enabled) && empty($user->rights->commande->lire)) {
+						if ($obj->module == 'order' && isModEnabled('commande') && empty($user->rights->commande->lire)) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'propal' && !empty($conf->propal->enabled) && !empty($user->rights->propale->lire)) {
+						if ($obj->module == 'propal' && isModEnabled("propal") && !empty($user->rights->propal->lire)) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'invoice_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->facture->lire)) || (!empty($conf->rights->supplier_invoice->enabled) && !empty($user->rights->supplier_invoice->lire)))) {
+						if ($obj->module == 'invoice_supplier' && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->facture->lire)) || (isModEnabled('supplier_invoice') && !empty($user->rights->supplier_invoice->lire)))) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'order_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->commande->lire)) || (empty($conf->rights->supplier_order->enabled) && !empty($user->rights->supplier_order->lire)))) {
+						if ($obj->module == 'order_supplier' && ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && !empty($user->rights->fournisseur->commande->lire)) || (!isModEnabled('supplier_order') && !empty($user->rights->supplier_order->lire)))) {
 							$qualified = 1;
 						}
-						if ($obj->module == 'shipping' && !empty($conf->expedition->enabled) && !empty($user->rights->expedition->lire)) {
+						if ($obj->module == 'shipping' && isModEnabled("expedition") && !empty($user->rights->expedition->lire)) {
+							$qualified = 1;
+						}
+						// For case module = 'myobject@eventorganization'
+						$tmparray = preg_split("/@/", $obj->module, -1);
+						if (count($tmparray) > 1 && $tmparray[1] == 'eventorganization' && isModEnabled('eventorganization')) {
 							$qualified = 1;
 						}
 						// For the generic case with type = 'module...' and module = 'myobject@mymodule'
@@ -223,7 +228,7 @@ class CActionComm
 								$tmpobject = $regs[1];
 								$tmpmodule = $regs[2];
 								//var_dump($user->$tmpmodule);
-								if ($tmpmodule && isset($conf->$tmpmodule) && !empty($conf->$tmpmodule->enabled) && (!empty($user->rights->$tmpmodule->read) || !empty($user->rights->$tmpmodule->lire) || !empty($user->rights->$tmpmodule->$tmpobject->read) || !empty($user->rights->$tmpmodule->$tmpobject->lire))) {
+								if ($tmpmodule && isset($conf->$tmpmodule) && isModEnabled($tmpmodule) && (!empty($user->rights->$tmpmodule->read) || !empty($user->rights->$tmpmodule->lire) || !empty($user->rights->$tmpmodule->$tmpobject->read) || !empty($user->rights->$tmpmodule->$tmpobject->lire))) {
 									$qualified = 1;
 								}
 							}
@@ -232,7 +237,7 @@ class CActionComm
 						if (! in_array($obj->type, array('system', 'systemauto', 'module', 'moduleauto'))) {
 							$tmpmodule = $obj->module;
 							//var_dump($tmpmodule);
-							if ($tmpmodule && isset($conf->$tmpmodule) && !empty($conf->$tmpmodule->enabled)) {
+							if ($tmpmodule && isset($conf->$tmpmodule) && isModEnabled($tmpmodule)) {
 								$qualified = 1;
 							}
 						}

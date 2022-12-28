@@ -131,8 +131,10 @@ class HookManager
 			dol_syslog(get_class($this)."::initHooks Loading hooks: ".join(', ', $arraytolog), LOG_DEBUG);
 		}
 
-		if (!empty($this->hooks[$context])) {
-			ksort($this->hooks[$context], SORT_NATURAL);
+		foreach ($arraycontext as $context) {
+			if (!empty($this->hooks[$context])) {
+				ksort($this->hooks[$context], SORT_NATURAL);
+			}
 		}
 
 		return 1;
@@ -195,6 +197,7 @@ class HookManager
 				'getFormatedSupplierRef',
 				'getIdProfUrl',
 				'getInputIdProf',
+				'menuDropdownQuickaddItems',
 				'menuLeftMenuItems',
 				'moveUploadedFile',
 				'moreHtmlStatus',

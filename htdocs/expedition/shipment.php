@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2018-2022  Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
  *  \brief      Tab shipments/delivery receipts on the order
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
@@ -33,17 +34,17 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
+if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
 
@@ -112,7 +113,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setdatedelivery' && $user->rights->commande->creer) {
-		//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 		$datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 		$object->fetch($id);
@@ -161,7 +161,7 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled)) {
+	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 		if ($result < 0) {
@@ -228,11 +228,11 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
-$title = $langs->trans('Order')." - ".$langs->trans('Shipments');
+$title = $object->ref." - ".$langs->trans('Shipments');
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
 llxHeader('', $title, $help_url);
 
@@ -283,39 +283,28 @@ if ($id > 0 || !empty($ref)) {
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer
-		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_customer', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_customer', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', null, null, '', 1);
 		// Thirdparty
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$soc->getNomUrl(1);
+		$morehtmlref .= '<br>'.$soc->getNomUrl(1);
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (isModEnabled('project')) {
 			$langs->load("projects");
-			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->commande->creer) {
+			$morehtmlref .= '<br>';
+			if (0) {	// Do not change on shipment
+				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				if ($action == 'classify') {
-					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-					$morehtmlref .= '</form>';
-				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-				}
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
 			} else {
-				if (!empty($object->fk_project)) {
+				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 					$proj = new Project($db);
-					$proj->fetch($object->fk_project);
-					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					$proj->fetch($objectsrc->fk_project);
+					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
-						$morehtmlref .= ' - '.$proj->title;
+						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 					}
-				} else {
-					$morehtmlref .= '';
 				}
 			}
 		}
@@ -431,7 +420,7 @@ if ($id > 0 || !empty($ref)) {
 		print '</tr>';
 
 		// Warehouse
-		if (!empty($conf->stock->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+		if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
 			print '<tr><td>';
@@ -523,7 +512,7 @@ if ($id > 0 || !empty($ref)) {
 		// TODO How record was recorded OrderMode (llx_c_input_method)
 
 		// Incoterms
-		if (!empty($conf->incoterm->enabled)) {
+		if (isModEnabled('incoterm')) {
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
 			print $langs->trans('IncotermLabel');
@@ -559,7 +548,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<table class="border centpercent tableforfield">';
 
-		if (!empty($conf->multicurrency->enabled) && ($object->multicurrency_code != $conf->currency)) {
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code != $conf->currency)) {
 			// Multicurrency Amount HT
 			print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
 			print '<td class="nowrap">'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
@@ -642,7 +631,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<th class="center">'.$langs->trans("QtyOrdered").'</th>';
 			print '<th class="center">'.$langs->trans("QtyShipped").'</th>';
 			print '<th class="center">'.$langs->trans("KeepToShip").'</th>';
-			if (!empty($conf->stock->enabled)) {
+			if (isModEnabled('stock')) {
 				print '<th class="center">'.$langs->trans("RealStock").'</th>';
 			} else {
 				print '<th>&nbsp;</th>';
@@ -679,7 +668,7 @@ if ($id > 0 || !empty($ref)) {
 					// Product label
 					if ($objp->fk_product > 0) {
 						// Define output language
-						if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 							$object->fetch_thirdparty();
 
 							$prod = new Product($db);
@@ -733,7 +722,7 @@ if ($id > 0 || !empty($ref)) {
 
 						$text = $product_static->getNomUrl(1);
 						$text .= ' - '.$label;
-						$description = ($conf->global->PRODUIT_DESC_IN_FORM ? '' : dol_htmlentitiesbr($objp->description)).'<br>';
+						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description)).'<br>';
 						$description .= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity], 1, 1, 0, 0, 0, 80);
 						print $form->textwithtooltip($text, $description, 3, '', '', $i);
 
@@ -741,7 +730,7 @@ if ($id > 0 || !empty($ref)) {
 						print_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
 
 						// Add description in form
-						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
+						if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 							print ($objp->description && $objp->description != $objp->product_label) ? '<br>'.dol_htmlentitiesbr($objp->description) : '';
 						}
 
@@ -794,11 +783,15 @@ if ($id > 0 || !empty($ref)) {
 						$product->load_stock('warehouseopen');
 					}
 
-					if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && !empty($conf->stock->enabled)) {
+					if ($objp->fk_product > 0 && ($type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && isModEnabled('stock')) {
 						print '<td class="center">';
 						print $product->stock_reel;
 						if ($product->stock_reel < $toBeShipped[$objp->fk_product]) {
 							print ' '.img_warning($langs->trans("StockTooLow"));
+							if (!empty($conf->global->STOCK_CORRECT_STOCK_IN_SHIPMENT)) {
+								$nbPiece = $toBeShipped[$objp->fk_product] - $product->stock_reel;
+								print ' &nbsp; '.$langs->trans("GoTo").' <a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.((int) $product->id).'&action=correction&nbpiece='.urlencode($nbPiece).'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.((int) $object->id)).'">'.$langs->trans("CorrectStock").'</a>';
+							}
 						}
 						print '</td>';
 					} else {
@@ -854,7 +847,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<div class="tabsAction">';
 
 			// Bouton expedier sans gestion des stocks
-			if (empty($conf->stock->enabled) && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
+			if (!isModEnabled('stock') && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
 				if ($user->rights->expedition->creer) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create&amp;origin=commande&amp;object_id='.$id.'">'.$langs->trans("CreateShipment").'</a>';
 					if ($toBeShippedTotal <= 0) {
@@ -870,11 +863,11 @@ if ($id > 0 || !empty($ref)) {
 
 		// Bouton expedier avec gestion des stocks
 
-		if (!empty($conf->stock->enabled) && $object->statut == Commande::STATUS_DRAFT) {
+		if (isModEnabled('stock') && $object->statut == Commande::STATUS_DRAFT) {
 			print $langs->trans("ValidateOrderFirstBeforeShipment");
 		}
 
-		if (!empty($conf->stock->enabled) && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
+		if (isModEnabled('stock') && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
 			if ($user->rights->expedition->creer) {
 				//print load_fiche_titre($langs->trans("CreateShipment"));
 				print '<div class="tabsAction">';
@@ -892,7 +885,7 @@ if ($id > 0 || !empty($ref)) {
 
 				//print '<tr>';
 
-				if (!empty($conf->stock->enabled)) {
+				if (isModEnabled('stock')) {
 					//print '<td>';
 					print $langs->trans("WarehouseSource");
 					//print '</td>';

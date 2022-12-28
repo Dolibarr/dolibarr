@@ -122,7 +122,7 @@ class modRecruitment extends DolibarrModules
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 		$this->langfiles = array("recruitment");
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -177,7 +177,7 @@ class modRecruitment extends DolibarrModules
 		// 'invoice_supplier' to add a tab in supplier invoice view
 		// 'member'           to add a tab in fundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -190,29 +190,6 @@ class modRecruitment extends DolibarrModules
 
 		// Dictionaries
 		$this->dictionaries = array();
-		/* Example:
-		$this->dictionaries=array(
-			'langs'=>'recruitment',
-			// List of tables we want to see into dictonnary editor
-			'tabname'=>array(MAIN_DB_PREFIX."table1", MAIN_DB_PREFIX."table2", MAIN_DB_PREFIX."table3"),
-			// Label of tables
-			'tablib'=>array("Table1", "Table2", "Table3"),
-			// Request to select fields
-			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f', 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f', 'SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),
-			// Sort order
-			'tabsqlsort'=>array("label ASC", "label ASC", "label ASC"),
-			// List of fields (result of select to show dictionary)
-			'tabfield'=>array("code,label", "code,label", "code,label"),
-			// List of fields (list of fields to edit a record)
-			'tabfieldvalue'=>array("code,label", "code,label", "code,label"),
-			// List of fields (list of fields for insert)
-			'tabfieldinsert'=>array("code,label", "code,label", "code,label"),
-			// Name of columns with primary key (try to always name it 'rowid')
-			'tabrowid'=>array("rowid", "rowid", "rowid"),
-			// Condition to show each dictionary
-			'tabcond'=>array($conf->recruitment->enabled, $conf->recruitment->enabled, $conf->recruitment->enabled)
-		);
-		*/
 
 		// Boxes/Widgets
 		// Add here list of php file(s) stored in recruitment/core/boxes that contains a class to show a widget.
@@ -284,7 +261,7 @@ class modRecruitment extends DolibarrModules
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'hrm',
 			'leftmenu'=>'recruitmentjobposition',
-			'url'=>'/recruitment/recruitmentindex.php',
+			'url'=>'/recruitment/index.php',
 			'langs'=>'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled.
@@ -413,6 +390,11 @@ class modRecruitment extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf, $langs;
+
+		$result = $this->_load_tables('/install/mysql/', 'recruitment');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
 		// Create extrafields during init
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';

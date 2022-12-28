@@ -93,11 +93,11 @@ if ((float) DOL_VERSION >= 6) {
 }
 
 if ($action == 'updateMask') {
-	$maskconstorder = GETPOST('maskconstorder', 'alpha');
-	$maskorder = GETPOST('maskorder', 'alpha');
+	$maskconstcand = GETPOST('maskconstcand', 'alpha');
+	$maskcand = GETPOST('maskcand', 'alpha');
 
-	if ($maskconstorder) {
-		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
+	if ($maskconstcand) {
+		$res = dolibarr_set_const($db, $maskconstcand, $maskcand, 'chaine', 0, '', $conf->entity);
 	}
 
 	if (!($res > 0)) {
@@ -226,7 +226,7 @@ if ($action == 'edit') {
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
 		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'"></td></tr>';
+		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.getDolGlobalString($key).'"></td></tr>';
 	}
 	print '</table>';
 
@@ -247,7 +247,7 @@ if ($action == 'edit') {
 			print '<tr class="oddeven"><td>';
 			$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
 			print $form->textwithpicto($langs->trans($key), $tooltiphelp);
-			print '</td><td>'.$conf->global->$key.'</td></tr>';
+			print '</td><td>'.getDolGlobalString($key).'</td></tr>';
 		}
 
 		print '</table>';
@@ -328,7 +328,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 								print '<td class="center">';
 								$constforvar = 'RECRUITMENT_'.strtoupper($myTmpObjectKey).'_ADDON';
-								if ($conf->global->$constforvar == $file) {
+								if (getDolGlobalString($constforvar) == $file) {
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';
@@ -471,7 +471,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										// Default
 										print '<td class="center">';
 										$constforvar = 'RECRUITMENT_'.strtoupper($myTmpObjectKey).'_ADDON';
-										if ($conf->global->$constforvar == $name) {
+										if (getDolGlobalString($constforvar) == $name) {
 											//print img_picto($langs->trans("Default"), 'on');
 											// Even if choice is the default value, we allow to disable it. Replace this with previous line if you need to disable unset
 											print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetdoc&token='.newToken().'&object='.urlencode(strtolower($myTmpObjectKey)).'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&type='.urlencode($type).'" alt="'.$langs->trans("Disable").'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';

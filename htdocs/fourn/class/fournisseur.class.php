@@ -106,7 +106,7 @@ class Fournisseur extends Societe
 	public function load_state_board()
 	{
 		// phpcs:enable
-		global $conf, $user;
+		global $conf, $user, $hookmanager;
 
 		$this->nb = array();
 		$clause = "WHERE";
@@ -120,6 +120,12 @@ class Fournisseur extends Societe
 		}
 		$sql .= " ".$clause." s.fournisseur = 1";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
+		// Add where from hooks
+		if (is_object($hookmanager)) {
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
+		}
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

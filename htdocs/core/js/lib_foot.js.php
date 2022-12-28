@@ -110,6 +110,7 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
                   	  console.log("toggle dropdown dt a");
 
                       //$(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
+                      $(".ulselectedfields").removeClass("open");
 					  $(this).parent().parent().find(\'dd ul\').toggleClass("open");
 
 					  if ($(this).parent().parent().find(\'dd ul\').hasClass("open")) {
@@ -230,34 +231,42 @@ print '
 					}
 				);
 
-				jQuery(\'.clipboardCPButton, .clipboardCPValueToPrint\').click(function() {
-					/* console.log(this.parentNode); */
+				jQuery(\'.clipboardCPValue, .clipboardCPButton, .clipboardCPValueToPrint\').click(function() {
 					console.log("We click on a clipboardCPButton or clipboardCPValueToPrint class and we want to copy content of clipboardCPValue class");
 
 					if (window.getSelection) {
-						range = document.createRange();
-
-						/* We select value to print using the parent. */
-						/* We should use the class clipboardCPValue but it may have several element with copy/paste so class to select is not enough */
-						range.selectNodeContents(this.parentNode.firstChild);
+						jqobj=$(this).parent().children(".clipboardCPValue");
+						console.log(jqobj.html());
 
 						selection = window.getSelection();	/* get the object used for selection */
 						selection.removeAllRanges();		/* clear current selection */
+
+						/* We select the value to print using the parentNode.firstChild */
+						/* We should use the class clipboardCPValue but it may have several element with copy/paste so class to select is not enough */
+						range = document.createRange();
+						range.selectNodeContents(this.parentNode.firstChild);
 						selection.addRange(range);			/* make the new selection with the value to copy */
+
+						/* copy selection into clipboard */
+						var succeed;
+					    try {
+							console.log("We set the style display to unset for the span so the copy will work");
+							jqobj.css("display", "unset");	/* Because copy does not work on "block" object */
+
+							succeed = document.execCommand(\'copy\');
+
+							console.log("We set the style display back to inline-block");
+							jqobj.css("display", "inline-block");
+					    } catch(e) {
+					        succeed = false;
+					    }
+
+						/* Remove the selection to avoid to see the hidden field to copy selected */
+						window.getSelection().removeAllRanges();
 					}
 
-					/* copy selection into clipboard */
-					var succeed;
-				    try {
-				    	succeed = document.execCommand(\'copy\');
-				    } catch(e) {
-				        succeed = false;
-				    }
-
-					/* Remove the selection to avoid to see the hidden field to copy selected */
-					window.getSelection().removeAllRanges();
-
 					/* Show message */
+					/* TODO Show message into a top left corner or center of screen */
 					var lastchild = this.parentNode.lastChild;		/* .parentNode is clipboardCP and last child is clipboardCPText */
 					var tmp = lastchild.innerHTML
 					if (succeed) {

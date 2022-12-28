@@ -90,10 +90,10 @@ TicketPublicAccess=Antarmuka publik yang tidak memerlukan identifikasi tersedia 
 TicketSetupDictionaries=Jenis tiket, keparahan dan kode analitik dapat dikonfigurasi dari kamus
 TicketParamModule=Pengaturan variabel modul
 TicketParamMail=Penyiapan email
-TicketEmailNotificationFrom=Email pemberitahuan dari
-TicketEmailNotificationFromHelp=Digunakan untuk menjawab pesan tiket dengan contoh
-TicketEmailNotificationTo=Email pemberitahuan ke
-TicketEmailNotificationToHelp=Kirim pemberitahuan email ke alamat ini.
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Pesan teks dikirim setelah membuat tiket
 TicketNewEmailBodyHelp=Teks yang ditentukan di sini akan dimasukkan ke dalam email yang mengkonfirmasikan pembuatan tiket baru dari antarmuka publik. Informasi tentang konsultasi tiket ditambahkan secara otomatis.
 TicketParamPublicInterface=Penyiapan antarmuka publik
@@ -136,6 +136,18 @@ TicketsPublicNotificationNewMessage=Kirim email ketika pesan/komentar baru ditam
 TicketsPublicNotificationNewMessageHelp=Kirim email ketika pesan baru ditambahkan dari antarmuka publik (ke pengguna yang ditetapkan atau email notifikasi ke (pembaruan) dan/atau email notifikasi ke)
 TicketPublicNotificationNewMessageDefaultEmail=Email pemberitahuan ke (perbarui)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Kirim email ke alamat ini untuk setiap pemberitahuan pesan baru jika tiket tidak memiliki pengguna yang ditetapkan atau jika pengguna tidak memiliki email yang dikenal.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -151,6 +163,8 @@ OrderByDateAsc=Urutkan berdasarkan tanggal kenaikan
 OrderByDateDesc=Urutkan berdasarkan tanggal turun
 ShowAsConversation=Tampilkan sebagai daftar percakapan
 MessageListViewType=Tampilkan sebagai daftar tabel
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -205,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=Penerima kosong. Tidak ada email y
 TicketGoIntoContactTab=Buka tab "Kontak" untuk memilihnya
 TicketMessageMailIntro=pengantar
 TicketMessageMailIntroHelp=Teks ini hanya ditambahkan di awal email dan tidak akan disimpan.
-TicketMessageMailIntroLabelAdmin=Pengantar pesan saat mengirim email
-TicketMessageMailIntroText=Halo,<br>Respons baru terkirim pada tiket yang Anda hubungi. Ini pesannya:<br>
-TicketMessageMailIntroHelpAdmin=Teks ini akan dimasukkan sebelum teks respons terhadap tiket.
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=Tanda tangan
 TicketMessageMailSignatureHelp=Teks ini hanya ditambahkan di akhir email dan tidak akan disimpan.
-TicketMessageMailSignatureText= <p> Hormat kami, </p> <p> - </p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=Tanda tangan email respons
 TicketMessageMailSignatureHelpAdmin=Teks ini akan dimasukkan setelah pesan respons.
 TicketMessageHelp=Hanya teks ini yang akan disimpan dalam daftar pesan di kartu tiket.
@@ -238,9 +252,16 @@ TicketChangeStatus=Merubah status
 TicketConfirmChangeStatus=Konfirmasikan perubahan status: %s?
 TicketLogStatusChanged=Status berubah: %s menjadi %s
 TicketNotNotifyTiersAtCreate=Tidak memberi tahu perusahaan saat membuat
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=Belum dibaca
 TicketNotCreatedFromPublicInterface=Tidak tersedia. Tiket tidak dibuat dari antarmuka publik.
 ErrorTicketRefRequired=Diperlukan nama referensi tiket
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -268,8 +289,9 @@ TicketNewEmailBody=Ini adalah email otomatis untuk mengonfirmasi bahwa Anda tela
 TicketNewEmailBodyCustomer=Ini adalah email otomatis untuk mengonfirmasi bahwa tiket baru baru saja dibuat ke akun Anda.
 TicketNewEmailBodyInfosTicket=Informasi untuk memantau tiket
 TicketNewEmailBodyInfosTrackId=Nomor pelacakan tiket: %s
-TicketNewEmailBodyInfosTrackUrl=Anda dapat melihat progres tiket dengan mengklik tautan di atas.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=Anda dapat melihat kemajuan tiket di antarmuka spesifik dengan mengklik tautan berikut
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Tolong jangan balas langsung ke email ini! Gunakan tautan untuk membalas ke antarmuka.
 TicketPublicInfoCreateTicket=Formulir ini memungkinkan Anda untuk merekam tiket dukungan dalam sistem manajemen kami.
 TicketPublicPleaseBeAccuratelyDescribe=Tolong jelaskan masalahnya secara akurat. Berikan sebanyak mungkin informasi untuk memungkinkan kami mengidentifikasi permintaan Anda dengan benar.
@@ -291,6 +313,10 @@ NewUser=Pengguna Baru
 NumberOfTicketsByMonth=Jumlah tiket per bulan
 NbOfTickets=Jumlah tiket
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=Tiket %s diperbarui
 TicketNotificationEmailBody=Ini adalah pesan otomatis untuk memberi tahu Anda bahwa tiket %s baru saja diperbarui
 TicketNotificationRecipient=Penerima pemberitahuan

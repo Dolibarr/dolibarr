@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2017-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +44,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'knowledgerecordcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-//$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOST('lineid', 'int');
 
 // Initialize technical objects
 $object = new KnowledgeRecord($db);
@@ -86,8 +85,8 @@ $upload_dir = $conf->knowledgemanagement->multidir_output[isset($object->entity)
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-//restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, '', 'rowid', $isdraft);
 //if (empty($conf->knowledgemanagement->enabled)) accessforbidden();
 //if (empty($permissiontoread)) accessforbidden();
 
@@ -119,7 +118,7 @@ if (empty($reshook)) {
 
 	$triggermodname = 'KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_MODIFY'; // Name of trigger action code to execute when we modify record
 
-	// Upadate / add for lang
+	// Update / add for lang
 	if (($action == 'update' || $action == 'add') && !empty($permissiontoadd)) {
 		$object->lang = (GETPOSTISSET('langkm') ? GETPOST('langkm', 'aZ09') : $object->lang);
 	}
@@ -176,24 +175,23 @@ if ($action == 'create') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
-	if ($backtopage) {
+	if (!empty($backtopage)) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
-	if ($backtopageforcancel) {
+	if (!empty($backtopageforcancel)) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 
-	print dol_get_fiche_head(array(), '');
-
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
+	print dol_get_fiche_head(array(), '', '', -3);
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Common attributes
+	$object->fields['answer']['enabled'] = 0;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
+	$object->fields['answer']['enabled'] = 1;
 
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
 
 		if (count($cate_arbo)) {
@@ -208,6 +206,14 @@ if ($action == 'create') {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 
 	print '</table>'."\n";
+
+	// Add field answer
+	print '<br>';
+	print $langs->trans($object->fields['answer']['label']).'<br>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%');
+	$out = $doleditor->Create(1);
+	print $out;
 
 	print dol_get_fiche_end();
 
@@ -226,21 +232,23 @@ if (($id || $ref) && $action == 'edit') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	if ($backtopage) {
+	if (!empty($backtopage)) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
-	if ($backtopageforcancel) {
+	if (!empty($backtopageforcancel)) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
 
-	print dol_get_fiche_head();
+	print dol_get_fiche_head(array(), '', '', -3);
 
 	print '<table class="border centpercent tableforfieldedit">'."\n";
 
 	// Common attributes
+	$object->fields['answer']['enabled'] = 0;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
+	$object->fields['answer']['enabled'] = 1;
 
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
 
 		if (count($cate_arbo)) {
@@ -263,6 +271,14 @@ if (($id || $ref) && $action == 'edit') {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 	print '</table>';
+
+	// Add field answer
+	print '<br>';
+	print $langs->trans($object->fields['answer']['label']).'<br>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%');
+	$out = $doleditor->Create(1);
+	print $out;
 
 	print dol_get_fiche_end();
 
@@ -295,6 +311,56 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
+	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
+	if ($action == 'close') {
+		$text = $langs->trans('ConfirmCloseKM', $object->ref);
+		/*if (isModEnabled('notification'))
+		 {
+		 require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+		 $notify = new Notify($db);
+		 $text .= '<br>';
+		 $text .= $notify->confirmMessage('MYOBJECT_CLOSE', $object->socid, $object);
+		 }*/
+
+		$formquestion = array();
+		/*
+		 $forcecombo=0;
+		 if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
+		 $formquestion = array(
+		 // 'text' => $langs->trans("ConfirmClone"),
+		 // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+		 // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+		 // array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+		 );
+		 */
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetObsolete'), $text, 'confirm_close', $formquestion, 0, 1, 220);
+	}
+
+	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
+	if ($action == 'reopen') {
+		$text = $langs->trans('ConfirmReopenKM', $object->ref);
+		/*if (isModEnabled('notification'))
+		 {
+		 require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+		 $notify = new Notify($db);
+		 $text .= '<br>';
+		 $text .= $notify->confirmMessage('MYOBJECT_CLOSE', $object->socid, $object);
+		 }*/
+
+		$formquestion = array();
+		/*
+		 $forcecombo=0;
+		 if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
+		 $formquestion = array(
+		 // 'text' => $langs->trans("ConfirmClone"),
+		 // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+		 // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+		 // array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+		 );
+		 */
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Re-Open'), $text, 'confirm_reopen', $formquestion, 0, 1, 220);
+	}
+
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -320,7 +386,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->projet->enabled)) {
+	 if (isModEnabled('project')) {
 	 $langs->load("projects");
 	 $morehtmlref .= '<br>'.$langs->trans('Project') . ' ';
 	 if ($permissiontoadd) {
@@ -338,7 +404,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 	 }
 	 } else {
-	 if (! empty($object->fk_project)) {
+	 if (!empty($object->fk_project)) {
 	 $proj = new Project($db);
 	 $proj->fetch($object->fk_project);
 	 $morehtmlref .= ': '.$proj->getNomUrl();
@@ -362,11 +428,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$keyforbreak='fk_c_ticket_category';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
+	$object->fields['answer']['enabled'] = 0;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+	$object->fields['answer']['enabled'] = 1;
 
 	// Categories
-	if ($conf->categorie->enabled) {
-		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
+	if (isModEnabled('categorie')) {
+		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_KNOWLEDGEMANAGEMENT, 1);
 		print "</td></tr>";
 	}
@@ -375,10 +443,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
+
 	print '</div>';
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
+
+	// Add field answer
+	print '<br>';
+	print $langs->trans($object->fields['answer']['label']).'<br>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%', 1);
+	$out = $doleditor->Create(1);
+	print $out;
 
 	print dol_get_fiche_end();
 
@@ -396,20 +473,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				//print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle');
+				//print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle');
 			}
 
 			// Back to draft
 			if ($object->status == $object::STATUS_VALIDATED) {
-				print dolGetButtonAction($langs->trans('SetToDraft'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes', '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('SetToDraft'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
 			}
 			if (($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_VALIDATED) && $permissiontovalidate) {
-				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 			}
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
 				if ((empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0)) && $permissiontovalidate) {
-					print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&token='.newToken().'&confirm=yes', '', $permissiontoadd);
+					print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&token='.newToken().'&confirm=yes', '', $permissiontoadd);
 				} else {
 					$langs->load("errors");
 					//print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes', '', 0);
@@ -418,7 +495,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Clone
-			print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&object=scrumsprint', '', $permissiontoadd);
+			print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'&object=scrumsprint', '', $permissiontoadd);
 
 			/*
 			if ($permissiontoadd) {
@@ -428,14 +505,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
 				}
 			}
+			*/
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_VALIDATED) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken().'">'.$langs->trans("Cancel").'</a>'."\n";
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close&token='.newToken().'">'.$langs->trans("SetObsolete").'</a>'."\n";
 				} else {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("Re-Open").'</a>'."\n";
 				}
 			}
-			*/
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));
@@ -475,7 +552,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/knowledgemanagement/knowledgerecord_agenda.php?id='.$object->id);
+		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/knowledgemanagement/knowledgerecord_agenda.php?id='.$object->id);
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

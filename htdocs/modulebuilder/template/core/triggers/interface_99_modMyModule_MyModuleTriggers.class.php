@@ -155,7 +155,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'MYECMDIR_MODIFY':
 			//case 'MYECMDIR_DELETE':
 
-			// Customer orders
+			// Sales orders
 			//case 'ORDER_CREATE':
 			//case 'ORDER_MODIFY':
 			//case 'ORDER_VALIDATE':
@@ -177,7 +177,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			//case 'ORDER_SUPPLIER_REFUSE':
 			//case 'ORDER_SUPPLIER_CANCEL':
 			//case 'ORDER_SUPPLIER_SENTBYMAIL':
-			//case 'ORDER_SUPPLIER_DISPATCH':
+			//case 'ORDER_SUPPLIER_RECEIVE':
 			//case 'LINEORDER_SUPPLIER_DISPATCH':
 			//case 'LINEORDER_SUPPLIER_CREATE':
 			//case 'LINEORDER_SUPPLIER_UPDATE':
@@ -314,7 +314,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			// and more...
 
 			default:
-				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 				break;
 		}
 

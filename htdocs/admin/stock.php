@@ -180,13 +180,13 @@ $formproduct = new FormProduct($db);
 
 
 $disabled = '';
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 	$disabled = ' disabled';
 	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
 }
 
-//if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
+//if (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
 //{
 print info_admin($langs->trans("IfYouUsePointOfSaleCheckModule"));
 print '<br>';
@@ -209,7 +209,7 @@ $found = 0;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnBill").'</td>';
 print '<td class="right">';
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_BILL', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -226,7 +226,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnValidateOrder").'</td>';
 print '<td class="right">';
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -239,13 +239,13 @@ if (!empty($conf->commande->enabled)) {
 print "</td>\n</tr>\n";
 $found++;
 
-//if (! empty($conf->expedition->enabled))
+//if (!empty($conf->expedition->enabled))
 //{
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipment").'</td>';
 print '<td class="right">';
-if (!empty($conf->expedition->enabled)) {
+if (isModEnabled("expedition")) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -262,7 +262,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipmentOnClosing").'</td>';
 print '<td class="right">';
-if (!empty($conf->expedition->enabled)) {
+if (isModEnabled("expedition")) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT_CLOSE', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -293,7 +293,7 @@ $found = 0;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnBill").'</td>';
 print '<td class="right">';
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_BILL', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -311,7 +311,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnValidateOrder").'</td>';
 print '<td class="right">';
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	if ($conf->use_javascript_ajax) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', array(), null, 0, 0, 0, 2, 1);
 	} else {
@@ -324,7 +324,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 print "</td>\n</tr>\n";
 $found++;
 
-if (!empty($conf->reception->enabled)) {
+if (isModEnabled("reception")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockOnReception").'</td>';
 	print '<td class="right">';
@@ -356,7 +356,7 @@ if (!empty($conf->reception->enabled)) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
 	print '<td class="right">';
-	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
+	if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
 		if ($conf->use_javascript_ajax) {
 			print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', array(), null, 0, 0, 0, 2, 1);
 		} else {
@@ -394,7 +394,7 @@ print "</td>\n";
 print "</tr>\n";
 
 // Option to force stock to be enough before adding a line into document
-if ($conf->invoice->enabled) {
+if (isModEnabled('facture')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
 	print '<td class="right">';
@@ -408,7 +408,7 @@ if ($conf->invoice->enabled) {
 	print "</tr>\n";
 }
 
-if ($conf->order->enabled) {
+if (isModEnabled('commande')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
 	print '<td class="right">';
@@ -422,7 +422,7 @@ if ($conf->order->enabled) {
 	print "</tr>\n";
 }
 
-if ($conf->expedition->enabled) {
+if (isModEnabled("expedition")) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
 	print '<td class="right">';
@@ -445,7 +445,7 @@ if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
 	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
-	|| !empty($conf->mrp->enabled)) {
+	|| isModEnabled('mrp')) {
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
@@ -643,7 +643,7 @@ print '</tr>'."\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MainDefaultWarehouse").'</td>';
 print '<td class="right">';
-print $formproduct->selectWarehouses($conf->global->MAIN_DEFAULT_WAREHOUSE, 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
+print $formproduct->selectWarehouses(!empty($conf->global->MAIN_DEFAULT_WAREHOUSE) ? $conf->global->MAIN_DEFAULT_WAREHOUSE : -1, 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
 print '<input type="submit" class="button button-edit small" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print "</tr>\n";
@@ -763,7 +763,7 @@ print "</td>\n";
 print "</tr>\n";
 
 /* Disabled. Would be better to be managed with a user cookie
-if (!empty($conf->productbatch->enabled)) {
+if (isModEnabled('productbatch')) {
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("ShowAllBatchByDefault") . '</td>';
 	print '<td class="right">';

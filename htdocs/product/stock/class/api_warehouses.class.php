@@ -104,9 +104,9 @@ class Warehouses extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as t";
+		$sql .= " FROM ".$this->db->prefix()."entrepot as t";
 		if ($category > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c";
+			$sql .= ", ".$this->db->prefix()."categorie_societe as c";
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('stock').')';
 		// Select warehouses of given category

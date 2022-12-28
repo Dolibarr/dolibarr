@@ -81,7 +81,7 @@ class FormPropal
 		} else {
 			$prefix = "PropalStatus";
 
-			$sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
+			$sql = "SELECT id, code, label, active FROM ".$this->db->prefix()."c_propalst";
 			$sql .= " WHERE active = 1";
 			dol_syslog(get_class($this)."::selectProposalStatus", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -134,6 +134,6 @@ class FormPropal
 		}
 		print '</select>';
 
-		print ajax_combobox($htmlname);
+		print ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($showempty < 0 ? (string) $showempty : '-1'), $morecss);
 	}
 }

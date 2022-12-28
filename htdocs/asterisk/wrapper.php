@@ -34,9 +34,6 @@ if (!defined('NOREQUIRESOC')) {
 if (!defined('NOREQUIRETRAN')) {
 	define('NOREQUIRETRAN', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -74,7 +71,6 @@ function llxFooter()
 {
 	print "\n".'</html>'."\n";
 }
-
 
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';

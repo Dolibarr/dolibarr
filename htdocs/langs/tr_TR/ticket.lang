@@ -90,10 +90,10 @@ TicketPublicAccess=Kimlik gerektirmeyen herkese açık bir arayüz şu url'de ad
 TicketSetupDictionaries=Destek bildirimi, önem ve analitik kodlarının türleri sözlüklerden yapılandırılabilir
 TicketParamModule=Modül değişken kurulumu
 TicketParamMail=E-posta kurulumu
-TicketEmailNotificationFrom=Notification email from
-TicketEmailNotificationFromHelp=Used into ticket message answer by example
-TicketEmailNotificationTo=Notifications email to
-TicketEmailNotificationToHelp=E-posta bildirimlerini bu adrese gönder.
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Bir destek bildirimi oluşturulduktan sonra metin mesajı gönderildi
 TicketNewEmailBodyHelp=Burada belirtilen metin, ortak arayüzden yeni bir destek bildiriminin oluşturulmasını onaylayan e-postaya eklenecektir. Destek bildiriminin danışmanlığına ilişkin bilgiler otomatik olarak eklenir.
 TicketParamPublicInterface=Genel arayüz kurulumu
@@ -136,6 +136,18 @@ TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is 
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -151,6 +163,8 @@ OrderByDateAsc=Sort by ascending date
 OrderByDateDesc=Sort by descending date
 ShowAsConversation=Show as conversation list
 MessageListViewType=Show as table list
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -205,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=Alıcı boş. E-posta gönderilmed
 TicketGoIntoContactTab=Onları seçmek için lütfen "Kişiler" sekmesine gidin
 TicketMessageMailIntro=Introduction
 TicketMessageMailIntroHelp=This text is added only at the beginning of the email and will not be saved.
-TicketMessageMailIntroLabelAdmin=E-posta gönderirken mesaja giriş
-TicketMessageMailIntroText=Merhaba,<br>Bağlantılı olduğunuz bir destek bildirimine yeni bir yanıt gönderildi. Mesajınız şu şekilde:<br>
-TicketMessageMailIntroHelpAdmin=Bu metin bir destek bildirimine cevap metninden önce eklenecektir.
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=İmza
 TicketMessageMailSignatureHelp=Bu metin sadece e-postanın sonuna eklenir ve saklanmayacaktır.
-TicketMessageMailSignatureText=<p>Saygılarımla,</p><p>--</p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=Yanıt e-postasının imzası
 TicketMessageMailSignatureHelpAdmin=Bu metin cevap mesajının sonuna eklenecektir.
 TicketMessageHelp=Destek bildirimi kartı üzerindeki mesaj listesinde sadece bu metin kaydedilecektir.
@@ -238,9 +252,16 @@ TicketChangeStatus=Durumu değiştir
 TicketConfirmChangeStatus=Durum değişikliğini onayla: %s?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=Okunmamış
 TicketNotCreatedFromPublicInterface=Mevcut değil. Destek bildirimi genel arayüzden oluşturulmadı.
 ErrorTicketRefRequired=Destek bildirimi referans adı gerekli
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -268,8 +289,9 @@ TicketNewEmailBody=Yeni bir destek bildirim kaydınızı onaylamak için bu e-po
 TicketNewEmailBodyCustomer=Bu, hesabınızda yeni bir destek bildiriminin oluşturulduğunu onaylamak için otomatik olarak gönderilen bir e-postadır.
 TicketNewEmailBodyInfosTicket=Destek bildiriminin izlenmesi için bilgiler
 TicketNewEmailBodyInfosTrackId=Destek bildirim takip numarası: %s
-TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the link above.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=Aşağıdaki bağlantıya tıklayarak destek bildiriminin ilerlemesini belirli bir arayüzde görebilirsiniz
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Lütfen doğrudan bu e-postayı yanıtlamayın! Arayüzde cevap vermek için bağlantıyı kullanın.
 TicketPublicInfoCreateTicket=Bu form yönetim sistemimizde bir destek bildirimi kaydetmenizi sağlar
 TicketPublicPleaseBeAccuratelyDescribe=Lütfen sorunu açıklayıcı bir şekilde tanımlayın. Talebinizi tam olarak saptayabilmemiz için mümkün oldukça tüm bilgiyi girin.
@@ -291,6 +313,10 @@ NewUser=Yeni Kullanıcı
 NumberOfTicketsByMonth=Aylık destek bildirim sayısı
 NbOfTickets=Destek bildirim sayısı
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=%s destek bildirimi güncellendi
 TicketNotificationEmailBody=%s destek bildiriminin güncellendiği konusunda sizi bilgilendirmek için bu e-posta otomatik olarak gönderilmiştir
 TicketNotificationRecipient=Bildirim alıcısı

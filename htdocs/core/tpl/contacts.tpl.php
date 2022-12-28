@@ -41,7 +41,7 @@ $module = $object->element;
 
 // Special cases
 if ($module == 'propal') {
-	$permission = $user->rights->propale->creer;
+	$permission = $user->rights->propal->creer;
 } elseif ($module == 'fichinter') {
 	$permission = $user->rights->ficheinter->creer;
 } elseif ($module == 'order_supplier') {
@@ -259,7 +259,7 @@ $arrayfields = array(
 	'rowid' 		=> array('label'=>$langs->trans("Id"), 'checked'=>1),
 	'nature' 		=> array('label'=>$langs->trans("NatureOfContact"), 'checked'=>1),
 	'thirdparty' 	=> array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
-	'contact' 		=> array('label'=>$langs->trans("Users").'/'.$langs->trans("Contacts"), 'checked'=>1),
+	'contact' 		=> array('label'=>$langs->trans("Users").' | '.$langs->trans("Contacts"), 'checked'=>1),
 	'type' 			=> array('label'=>$langs->trans("ContactType"), 'checked'=>1),
 	'status' 		=> array('label'=>$langs->trans("Status"), 'checked'=>1),
 	'link' 			=> array('label'=>$langs->trans("Link"), 'checked'=>1),

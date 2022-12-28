@@ -29,7 +29,6 @@ create table llx_societe
   entity                   integer DEFAULT 1 NOT NULL,                  -- multi company id
 
   ref_ext                  varchar(255),                                -- reference into an external system (not used by dolibarr)
-  ref_int                  varchar(255),                                -- reference into an internal system (deprecated)
 
   statut                   tinyint        DEFAULT 0,            		-- statut
   parent                   integer,
@@ -45,7 +44,7 @@ create table llx_societe
   town                     varchar(50),                         		-- town
   fk_departement           integer        DEFAULT 0,            		--
   fk_pays                  integer        DEFAULT 0,            		--
-  fk_account               integer        DEFAULT 0,            		--
+  fk_account               integer        DEFAULT 0,            		-- default bank account
   phone                    varchar(20),                         		-- phone number
   fax                      varchar(20),                         		-- fax number
   url                      varchar(255),                        		--
@@ -68,7 +67,8 @@ create table llx_societe
   fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial status
   note_private             text,                                		--
   note_public              text,                                        --
-  model_pdf				   varchar(255),
+  model_pdf				         varchar(255),
+  last_main_doc			       varchar(255),					-- relative filepath+filename of last main generated document
   prefix_comm              varchar(5),                          		-- prefix commercial (deprecated)
   client                   tinyint        DEFAULT 0,            		-- client 0/1/2
   fournisseur              tinyint        DEFAULT 0,            		-- fournisseur 0/1
@@ -83,6 +83,7 @@ create table llx_societe
   remise_supplier          real           DEFAULT 0,            		-- discount by default granted by this supplier
   mode_reglement           tinyint,                             		-- payment mode customer
   cond_reglement           tinyint,                             		-- payment term customer
+  deposit_percent          varchar(63) DEFAULT NULL,                    -- default deposit % if payment term needs it
   transport_mode           tinyint,                             		-- transport mode customer (Intracomm report)
   mode_reglement_supplier  tinyint,                             		-- payment mode supplier
   cond_reglement_supplier  tinyint,                             		-- payment term supplier

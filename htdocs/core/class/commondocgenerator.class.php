@@ -61,6 +61,32 @@ abstract class CommonDocGenerator
 	public $update_main_doc_field;
 
 	/**
+	 * @var string	The name of constant to use to scan ODT files (Exemple: 'COMMANDE_ADDON_PDF_ODT_PATH')
+	 */
+	public $scandir;
+
+	public $page_hauteur;
+	public $page_largeur;
+	public $marge_gauche;
+	public $marge_droite;
+	public $marge_haute;
+	public $marge_basse;
+
+	public $option_logo;
+	public $option_tva;
+	public $option_multilang;
+	public $option_freetext;
+	public $option_draft_watermark;
+
+	public $option_modereg;
+	public $option_condreg;
+	public $option_escompte;
+	public $option_credit_note;
+
+	public $emetteur;
+
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -655,7 +681,7 @@ abstract class CommonDocGenerator
 
 				if ($columns != "") {
 					$columns = substr($columns, 0, strlen($columns) - 2);
-					$resql = $this->db->query("SELECT ".$columns." FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields AS ex INNER JOIN ".MAIN_DB_PREFIX."product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = '".$this->db->escape($line->ref_supplier)."'");
+					$resql = $this->db->query("SELECT ".$columns." FROM ".$this->db->prefix()."product_fournisseur_price_extrafields AS ex INNER JOIN ".$this->db->prefix()."product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = '".$this->db->escape($line->ref_supplier)."'");
 
 					if ($this->db->num_rows($resql) > 0) {
 						$resql = $this->db->fetch_object($resql);
@@ -869,7 +895,12 @@ abstract class CommonDocGenerator
 					//Add value to store price with currency
 					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
 				} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'select') {
-					$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]];
+					$valueofselectkey = $object->array_options['options_'.$key];
+					if (array_key_exists($valueofselectkey, $extrafields->attributes[$object->table_element]['param'][$key]['options'])) {
+						$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$valueofselectkey];
+					} else {
+						$object->array_options['options_'.$key] = '';
+					}
 				} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox') {
 					$valArray = explode(',', $object->array_options['options_'.$key]);
 					$output = array();
@@ -919,7 +950,11 @@ abstract class CommonDocGenerator
 					}
 				}
 
-				$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
+				if (array_key_exists('options_'.$key, $object->array_options)) {
+					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
+				} else {
+					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => ''));
+				}
 			}
 		}
 

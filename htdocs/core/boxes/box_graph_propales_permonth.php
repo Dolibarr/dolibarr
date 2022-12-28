@@ -56,7 +56,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->propale->lire);
+		$this->hidden = empty($user->rights->propal->lire);
 	}
 
 	/**
@@ -105,7 +105,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 			$prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
 		}
 
-		if ($user->rights->propale->lire) {
+		if ($user->rights->propal->lire) {
 			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
 			$param_shownb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
 			$param_showtot = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';

@@ -88,7 +88,7 @@ class PriceExpression
 		}
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
+		$sql = "INSERT INTO ".$this->db->prefix().$this->table_element." (";
 		$sql .= "title, expression";
 		$sql .= ") VALUES (";
 		$sql .= " ".(isset($this->title) ? "'".$this->db->escape($this->title)."'" : "''").",";
@@ -104,18 +104,7 @@ class PriceExpression
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-
-			//if (! $notrigger)
-			//{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-			//}
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 		}
 
 		// Commit or rollback
@@ -148,7 +137,7 @@ class PriceExpression
 		}
 
 		$sql = "SELECT title, expression";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		dol_syslog(__METHOD__);
@@ -179,7 +168,7 @@ class PriceExpression
 	{
 		// phpcs:enable
 		$sql = "SELECT rowid, title, expression";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " ORDER BY title";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -215,7 +204,7 @@ class PriceExpression
 	{
 		// phpcs:enable
 		$sql = "SELECT rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE title = '".$this->db->escape($title)."'";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -254,7 +243,7 @@ class PriceExpression
 		}
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= " title = ".(isset($this->title) ? "'".$this->db->escape($this->title)."'" : "''").",";
 		$sql .= " expression = ".(isset($this->expression) ? "'".$this->db->escape($this->expression)."'" : "''")."";
 		$sql .= " WHERE rowid = ".((int) $this->id);
@@ -266,20 +255,6 @@ class PriceExpression
 		if (!$resql) {
 			$error++; $this->errors[] = "Error ".$this->db->lasterror();
 		}
-
-		// if (! $error)
-		// {
-		//     if (! $notrigger)
-		//     {
-		//         // Uncomment this and change MYOBJECT to your own tag if you
-		//         // want this action calls a trigger.
-
-		//         //// Call triggers
-		//         //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-		//         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-		//         //// End call triggers
-		//     }
-		// }
 
 		// Commit or rollback
 		if ($error) {
@@ -311,22 +286,8 @@ class PriceExpression
 
 		$this->db->begin();
 
-		//if (! $error)
-		//{
-		//    if (! $notrigger)
-		//    {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-		//    }
-		//}
-
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
 			$sql .= " WHERE rowid = ".((int) $rowid);
 
 			dol_syslog(__METHOD__);

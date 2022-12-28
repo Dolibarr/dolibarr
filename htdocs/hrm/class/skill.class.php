@@ -76,7 +76,7 @@ class Skill extends CommonObject
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
-	const DEFAULT_MAX_RANK_PER_SKILL = 5;
+	const DEFAULT_MAX_RANK_PER_SKILL = 3;
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -119,7 +119,7 @@ class Skill extends CommonObject
 		'required_level' => array('type'=>'integer', 'label'=>'requiredLevel', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>0,),
 		'date_validite' => array('type'=>'integer', 'label'=>'date_validite', 'enabled'=>'1', 'position'=>52, 'notnull'=>1, 'visible'=>0,),
 		'temps_theorique' => array('type'=>'double(24,8)', 'label'=>'temps_theorique', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>0,),
-		'skill_type' => array('type'=>'integer', 'label'=>'SkillType', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'knowHow', '1'=>'HowToBe', '9'=>'knowledge'), 'default'=>0),
+		'skill_type' => array('type'=>'integer', 'label'=>'SkillType', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'css'=>'minwidth200', 'arrayofkeyval'=>array('0'=>'TypeKnowHow', '1'=>'TypeHowToBe', '9'=>'TypeKnowledge'), 'default'=>0),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>0,),
 	);
@@ -189,7 +189,7 @@ class Skill extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
@@ -251,7 +251,7 @@ class Skill extends CommonObject
 		global $conf, $user, $langs;
 
 		$MaxNumberSkill = isset($conf->global->HRM_MAXRANK) ? $conf->global->HRM_MAXRANK : self::DEFAULT_MAX_RANK_PER_SKILL;
-		$defaultSkillDesc = !empty($conf->global->HRM_DEFAULT_SKILL_DESCRIPTION) ? $conf->global->HRM_DEFAULT_SKILL_DESCRIPTION : 'no Description';
+		$defaultSkillDesc = !empty($conf->global->HRM_DEFAULT_SKILL_DESCRIPTION) ? $conf->global->HRM_DEFAULT_SKILL_DESCRIPTION : $langs->trans("NoDescription");
 
 		$error = 0;
 
@@ -521,7 +521,7 @@ class Skill extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		return $this->deleteCommon($user, $notrigger);;
+		return $this->deleteCommon($user, $notrigger);
 	}
 
 	/**
@@ -564,8 +564,8 @@ class Skill extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->skill->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->skill->skill_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->skill->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->skill->skill_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -682,8 +682,8 @@ class Skill extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->hrm_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->hrm_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -706,8 +706,8 @@ class Skill extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->hrm_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->hrm_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -730,8 +730,8 @@ class Skill extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->hrm->hrm_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->hrm_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -853,8 +853,8 @@ class Skill extends CommonObject
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
 		global $action, $hookmanager;
-		$hookmanager->initHooks(array('jobdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$hookmanager->initHooks(array('skilldao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -924,27 +924,11 @@ class Skill extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 
 			$this->db->free($result);
@@ -977,7 +961,7 @@ class Skill extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectline = new SkillLine($this->db);
+		$objectline = new Skilldet($this->db);
 		$result = $objectline->fetchAll('ASC', 'rankorder', 0, 0, array('customsql'=>'fk_skill = '.$this->id));
 
 		if (is_numeric($result)) {
@@ -1123,9 +1107,9 @@ class Skill extends CommonObject
 		global $langs;
 		$result = '';
 		switch ($code) {
-			case 0 : $result = $langs->trans("knowHow"); break; //"Savoir Faire"
-			case 1 : $result = $langs->trans("HowToBe"); break; // "Savoir être"
-			case 9 : $result = $langs->trans("knowledge"); break; //"Savoir"
+			case 0 : $result = $langs->trans("TypeKnowHow"); break; //"Savoir Faire"
+			case 1 : $result = $langs->trans("TypeHowToBe"); break; // "Savoir être"
+			case 9 : $result = $langs->trans("TypeKnowledge"); break; //"Savoir"
 		}
 		return $result;
 	}

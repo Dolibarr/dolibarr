@@ -30,6 +30,7 @@
  *  \brief       Page to show predefined fichinter
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinterrec.class.php';
@@ -37,11 +38,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcontract.class.php';
 }
@@ -51,7 +52,12 @@ $langs->loadLangs(array("interventions", "admin", "compta", "bills"));
 
 // Security check
 $id = (GETPOST('fichinterid', 'int') ?GETPOST('fichinterid', 'int') : GETPOST('id', 'int'));
+$ref = GETPOST('ref', 'alpha');
+$date_next_execution = GETPOST('date_next_execution', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+$socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -61,12 +67,19 @@ if ($action == "create" || $action == "add") {
 }
 $result = restrictedArea($user, 'ficheinter', $id, $objecttype);
 
-if ($page == -1) {
+// Load variable for pagination
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
-
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -101,6 +114,17 @@ $arrayfields = array(
  * Actions
  */
 
+if ($cancel) {
+	/*var_dump($cancel);var_dump($backtopage);var_dump($backtopageforcancel);exit;*/
+	if (!empty($backtopageforcancel)) {
+		header("Location: ".$backtopageforcancel);
+		exit;
+	} elseif (!empty($backtopage)) {
+		header("Location: ".$backtopage);
+		exit;
+	}
+	$action = '';
+}
 
 // Create predefined intervention
 if ($action == 'add') {
@@ -129,6 +153,8 @@ if ($action == 'add') {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 			$action = "create";
 			$error++;
+		} else {
+			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		}
 		if ($nb_gen_max === '') {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("MaxPeriodNumber")), null, 'errors');
@@ -150,7 +176,6 @@ if ($action == 'add') {
 		$object->nb_gen_max = $nb_gen_max;
 		$object->auto_validate = GETPOST('auto_validate', 'int');
 
-		$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		$object->date_when = $date_next_execution;
 
 		if ($object->create($user) > 0) {
@@ -178,7 +203,6 @@ if ($action == 'add') {
 
 	$newinter->entity = $object->entity;
 	$newinter->duree = $object->duree;
-	$newinter->datei = $object->date;
 
 	$newinter->description = $object->description;
 	$newinter->note_private = $object->note_private;
@@ -242,10 +266,10 @@ llxHeader('', $langs->trans("RepeatableIntervention"), $help_url);
 
 $form = new Form($db);
 $companystatic = new Societe($db);
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	$contratstatic = new Contrat($db);
 }
-if (!empty($conf->projet->enabled)) {
+if (isModEnabled('project')) {
 	$projectstatic = new Project($db);
 }
 
@@ -268,15 +292,16 @@ if ($action == 'create') {
 		print '<form action="card-rec.php" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="fichinterid" value="'.$object->id.'">';
 
 		print dol_get_fiche_head();
 
 		$rowspan = 4;
-		if (!empty($conf->projet->enabled) && $object->fk_project > 0) {
+		if (isModEnabled('project') && $object->fk_project > 0) {
 			$rowspan++;
 		}
-		if (!empty($conf->contrat->enabled) && $object->fk_contrat > 0) {
+		if (isModEnabled('contrat') && $object->fk_contrat > 0) {
 			$rowspan++;
 		}
 
@@ -315,7 +340,7 @@ if ($action == 'create') {
 		}
 
 		// Project
-		if (!empty($conf->projet->enabled)) {
+		if (isModEnabled('project')) {
 			$formproject = new FormProjets($db);
 			print "<tr><td>".$langs->trans("Project")."</td><td>";
 			$projectid = GETPOST('projectid') ?GETPOST('projectid') : $object->fk_project;
@@ -329,10 +354,10 @@ if ($action == 'create') {
 		}
 
 		// Contrat
-		if (!empty($conf->contrat->enabled)) {
+		if (isModEnabled('contrat')) {
 			$formcontract = new FormContract($db);
 			print "<tr><td>".$langs->trans("Contract")."</td><td>";
-			$contractid = GETPOST('contractid') ?GETPOST('contractid') : $object->fk_contract;
+			$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contract) ? $object->fk_contract : 0) ;
 			$numcontract = $formcontract->select_contract($object->thirdparty->id, $contractid, 'contracttid');
 			print "</td></tr>";
 		}
@@ -357,7 +382,7 @@ if ($action == 'create') {
 
 		// First date of execution for cron
 		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
-		if ($date_next_execution != "") {
+		if (empty($date_next_execution)) {
 			$date_next_execution = (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
 		}
 		print $form->selectDate($date_next_execution, '', 1, 1, '', "add", 1, 1);
@@ -485,7 +510,7 @@ if ($action == 'create') {
 
 			$morehtmlref .= $langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 			// Project
-			if (!empty($conf->projet->enabled)) {
+			if (isModEnabled('project')) {
 				$formproject = new FormProjets($db);
 				$langs->load("projects");
 				$morehtmlref .= '<br>'.$langs->trans('Project').' ';
@@ -540,7 +565,7 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($object->description)."</td></tr>";
 
 			// Contract
-			if (!empty($conf->contrat->enabled)) {
+			if (isModEnabled('contrat')) {
 				$langs->load('contracts');
 				print '<tr>';
 				print '<td>';
@@ -741,11 +766,9 @@ if ($action == 'create') {
 				print $langs->trans("AddIntervention").'</a></div>';
 			}
 
-			if ($user->rights->ficheinter->supprimer) {
-				print '<div class="inline-block divButAction">';
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&id='.$object->id.'">';
-				print $langs->trans('Delete').'</a></div>';
-			}
+			// Delete
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $user->rights->ficheinter->supprimer);
+
 			print '</div>';
 		} else {
 			print $langs->trans("ErrorRecordNotFound");
@@ -765,22 +788,22 @@ if ($action == 'create') {
 		}
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND f.entity = ".$conf->entity;
-		if ($socid) {
+		if (!empty($socid)) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
 		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
-		if ($search_ref) {
+		if (!empty($search_ref)) {
 			$sql .= natural_search('f.titre', $search_ref);
 		}
-		if ($search_societe) {
+		if (!empty($search_societe)) {
 			$sql .= natural_search('s.nom', $search_societe);
 		}
-		if ($search_frequency == '1') {
+		if (!empty($search_frequency) && $search_frequency == '1') {
 			$sql .= ' AND f.frequency > 0';
 		}
-		if ($search_frequency == '0') {
+		if (isset($search_frequency) && (string) $search_frequency == '0') {
 			$sql .= ' AND (f.frequency IS NULL or f.frequency = 0)';
 		}
 
@@ -801,10 +824,10 @@ if ($action == 'create') {
 			print '<tr class="liste_titre">';
 			print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.titre", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
 			print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "s.nom", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
-			if (!empty($conf->contrat->enabled)) {
+			if (isModEnabled('contrat')) {
 				print_liste_field_titre("Contract", $_SERVER['PHP_SELF'], "f.fk_contrat", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
 			}
-			if (!empty($conf->projet->enabled)) {
+			if (isModEnabled('project')) {
 				print_liste_field_titre("Project", $_SERVER['PHP_SELF'], "f.fk_project", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
 			}
 			print_liste_field_titre("Duration", $_SERVER['PHP_SELF'], 'f.duree', '', '', 'width="50px"', $sortfield, $sortorder, 'right ');
@@ -835,7 +858,7 @@ if ($action == 'create') {
 						print '<td>'.$langs->trans("None").'</td>';
 					}
 
-					if (!empty($conf->contrat->enabled)) {
+					if (isModEnabled('contrat')) {
 						print '<td>';
 						if ($objp->fk_contrat > 0) {
 							$contratstatic->fetch($objp->fk_contrat);
@@ -843,7 +866,7 @@ if ($action == 'create') {
 						}
 						print '</td>';
 					}
-					if (!empty($conf->projet->enabled)) {
+					if (isModEnabled('project')) {
 						print '<td>';
 						if ($objp->fk_project > 0) {
 							$projectstatic->fetch($objp->fk_project);

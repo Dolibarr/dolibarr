@@ -5,6 +5,7 @@
  * Copyright (C) 2013-2021	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	  	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016	  	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2021      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
+$default_account = GETPOST('default_account', 'int');
 
 // Select Box
 $mesCasesCochees = GETPOST('toselect', 'array');
@@ -102,13 +104,13 @@ $accountingAccount = new AccountingAccount($db);
 $chartaccountcode = dol_getIdFromCode($db, $conf->global->CHARTOFACCOUNTS, 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -156,8 +158,8 @@ if (empty($reshook)) {
 
 	// Mass actions
 	$objectclass = 'AccountingAccount';
-	$permissiontoread = $user->rights->accounting->read;
-	$permissiontodelete = $user->rights->accounting->delete;
+	$permissiontoread = $user->hasRight('accounting', 'read');
+	$permissiontodelete = $user->hasRight('accounting', 'delete');
 	$uploaddir = $conf->accounting->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
@@ -227,7 +229,7 @@ if (empty($chartaccountcode)) {
 }
 
 // Customer Invoice lines
-$sql = "SELECT f.rowid as facid, f.ref, f.datef, f.type as ftype,";
+$sql = "SELECT f.rowid as facid, f.ref, f.datef, f.type as ftype, f.fk_facture_source,";
 $sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
@@ -434,12 +436,15 @@ if ($result) {
 
 	$arrayofmassactions = array(
 		'ventil'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
+		,'set_default_account'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
 	//if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
-	$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
+	if ($massaction !== 'set_default_account') {
+		$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
+	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -454,9 +459,17 @@ if ($result) {
 
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
 
+	if ($massaction == 'set_default_account') {
+		$formquestion[]=array('type' => 'other',
+			'name' => 'set_default_account',
+			'label' => $langs->trans("AccountancyCode"),
+			'value' => $formaccounting->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone'));
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmPreselectAccount"), $langs->trans("ConfirmPreselectAccountQuestion", count($toselect)), "confirm_set_default_account", $formquestion, 1, 0, 200, 500, 1);
+	}
+
 	print '<span class="opacitymedium">'.$langs->trans("DescVentilTodoCustomer").'</span></br><br>';
 
-	if ($msg) {
+	if (!empty($msg)) {
 		print $msg.'<br>';
 	}
 
@@ -483,7 +496,7 @@ if ($result) {
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth75imp" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125', 'code2', 1, 0, 1, null, 1);
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100', 'code2', 1, 0, 1);
 	//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="'.dol_escape_htmltag($search_tvaintra).'"></td>';
@@ -566,6 +579,7 @@ if ($result) {
 		$facture_static->id = $objp->facid;
 		$facture_static->type = $objp->ftype;
 		$facture_static->date = $db->jdate($objp->datef);
+		$facture_static->fk_facture_source = $objp->fk_facture_source;
 
 		$facture_static_det->id = $objp->rowid;
 		$facture_static_det->total_ht = $objp->total_ht;
@@ -637,7 +651,7 @@ if ($result) {
 
 		// Description
 		print '<td class="tdoverflowonsmartphone small">';
-		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facture_static_det->desc));
+		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facture_static_det->desc, 1));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facture_static_det->desc);
 		print '</td>';
@@ -712,7 +726,7 @@ if ($result) {
 
 		// Suggested accounting account
 		print '<td>';
-		print $formaccounting->select_account($suggestedid, 'codeventil'.$facture_static_det->id, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print $formaccounting->select_account(($default_account > 0 && $confirm === 'yes' && in_array($objp->rowid."_".$i, $toselect)) ? $default_account : $suggestedid, 'codeventil'.$facture_static_det->id, 1, array(), 0, 0, 'codeventil maxwidth150 maxwidthonsmartphone', 'cachewithshowemptyone');
 		print '</td>';
 
 		// Column with checkbox
@@ -721,12 +735,24 @@ if ($result) {
 		if (!empty($suggestedid) && $suggestedaccountingaccountfor != '' && $suggestedaccountingaccountfor != 'eecwithoutvatnumber') {
 			$ischecked = 1;
 		}
+
+		if (!empty($toselect)) {
+			$ischecked = 0;
+			if (in_array($objp->rowid."_".$i, $toselect)) {
+				$ischecked=1;
+			}
+		}
+
 		print '<input type="checkbox" class="flat checkforselect checkforselect'.$facture_static_det->id.'" name="toselect[]" value="'.$facture_static_det->id."_".$i.'"'.($ischecked ? " checked" : "").'/>';
 		print '</td>';
 
 		print '</tr>';
 		$i++;
 	}
+	if ($num_lines == 0) {
+		print '<tr><td colspan="13"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
+
 	print '</table>';
 	print "</div>";
 

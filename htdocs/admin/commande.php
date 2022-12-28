@@ -31,6 +31,7 @@
  *	\brief      Setup page of module Order
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -46,6 +47,8 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'order';
@@ -179,7 +182,39 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_ORDER') {
+} elseif (preg_match('/set_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$value = (GETPOST($code) ? GETPOST($code) : 1);
+
+	$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if ($error) {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	} else {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit();
+	}
+} elseif (preg_match('/del_(.*)/', $action, $reg)) {
+	$code = $reg[1];
+	$res = dolibarr_del_const($db, $code, $conf->entity);
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if ($error) {
+		setEventMessages($langs->trans('Error'), null, 'errors');
+	} else {
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
+		header("Location: " . $_SERVER["PHP_SELF"]);
+		exit();
+	}
+}
+/*elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_ORDER') {
 	// Activate ask for payment bank
 	$res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_ORDER", $value, 'chaine', 0, '', $conf->entity);
 
@@ -205,7 +240,8 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-}
+} */
+
 
 
 /*
@@ -300,6 +336,7 @@ foreach ($dirmodels as $reldir) {
 						$htmltooltip = '';
 						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$commande->type = 0;
+
 						$nextval = $module->getNextValue($mysoc, $commande);
 						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
@@ -504,7 +541,7 @@ print '<tr class="oddeven">';
 print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
 print "<td>";
 if (empty($conf->facture->enabled)) {
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		$sql = "SELECT rowid, label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql .= " WHERE clos = 0";
@@ -609,10 +646,10 @@ print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnOrders"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'ORDER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
-	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
 	print $doleditor->Create();
 }
 print '</td><td class="right">';
@@ -622,26 +659,34 @@ print '</form>';
 
 //Use draft Watermark
 
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print "<input type=\"hidden\" name=\"action\" value=\"set_COMMANDE_DRAFT_WATERMARK\">";
+print '<input type="hidden" name="action" value="set_COMMANDE_DRAFT_WATERMARK">';
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftOrders"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
-print '<input class="flat minwidth200" type="text" name="COMMANDE_DRAFT_WATERMARK" value="'.$conf->global->COMMANDE_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="COMMANDE_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('COMMANDE_DRAFT_WATERMARK')).'">';
 print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
+
+// Allow external download
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
+print '<td class="center" colspan="2">';
+print ajax_constantonoff('ORDER_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
 print '</form>';
 
 /*
 // Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
+// TODO Must be implemented by PDF templates
 // Ask for payment bank during order
 if ($conf->banque->enabled) {
 
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BANK_ASK_PAYMENT_BANK_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
-	if (! empty($conf->use_javascript_ajax)) {
+	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('BANK_ASK_PAYMENT_BANK_DURING_ORDER');
 	} else {
 		if (empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER)) {
@@ -658,10 +703,10 @@ if ($conf->banque->enabled) {
 }
 
 // Ask for warehouse during order
-if ($conf->stock->enabled) {
+if (isModEnabled('stock')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td class="center">';
-	if (! empty($conf->use_javascript_ajax)) {
+	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER');
 	} else {
 		if (empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {

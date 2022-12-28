@@ -20,11 +20,10 @@
  */
 
 /**
- *    \file       skill_tab.php
- *        \ingroup    hrm
- *        \brief      Page to add/delete/view skill to jobs/users
+ *    \file       htdocs/hrm/skill_tab.php
+ *    \ingroup    hrm
+ *    \brief      Page to add/delete/view skill to jobs/users
  */
-
 
 
 // Load Dolibarr environment
@@ -39,8 +38,9 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "other"));
+$langs->loadLangs(array('hrm', 'other'));
 
+// Get Parameters
 $id = GETPOST('id', 'int');
 $TSkillsToAdd = GETPOST('fk_skill', 'array');
 $objecttype = GETPOST('objecttype', 'alpha');
@@ -64,15 +64,18 @@ if (in_array($objecttype, $TAuthorizedObjects)) {
 	} elseif ($objecttype == "user") {
 		$object = new User($db);
 	}
-} else accessforbidden($langs->trans('ErrorBadObjectType'));
+} else {
+	accessforbidden('ErrorBadObjectType');
+}
 
 $hookmanager->initHooks(array('skilltab', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
-$permissiontoread = $user->rights->hrm->all->read;
-$permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+// Permissions
+$permissiontoread = $user->hasRight('hrm', 'all', 'read');
+$permissiontoadd  = $user->hasRight('hrm', 'all', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) accessforbidden();
@@ -120,9 +123,10 @@ if (empty($reshook)) {
 				$skillAdded->fk_object = $id;
 				$skillAdded->objecttype = $objecttype;
 				$ret = $skillAdded->create($user);
-				if ($ret < 0) setEventMessage($skillAdded->error, 'errors');
+				if ($ret < 0) setEventMessages($skillAdded->error, null, 'errors');
 				//else unset($TSkillsToAdd);
 			}
+			if ($ret > 0) setEventMessages($langs->trans("SaveAddSkill"), null);
 		}
 	} elseif ($action == 'saveSkill') {
 		if (!empty($TNote)) {
@@ -135,10 +139,14 @@ if (empty($reshook)) {
 					}
 				}
 			}
+			setEventMessages($langs->trans("SaveLevelSkill"), null);
+			header("Location: " . DOL_URL_ROOT.'/hrm/skill_tab.php?id=' . $id. '&objecttype=job');
+			exit;
 		}
 	} elseif ($action == 'confirm_deleteskill' && $confirm == 'yes') {
 		$skillToDelete = new SkillRank($db);
 		$ret = $skillToDelete->fetch($lineid);
+		setEventMessages($langs->trans("DeleteSkill"), null);
 		if ($ret > 0) {
 			$skillToDelete->delete($user);
 		}
@@ -147,8 +155,6 @@ if (empty($reshook)) {
 
 /*
  * View
- *
- * Put here all code to build page
  */
 
 $form = new Form($db);
@@ -211,9 +217,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// ------------------------------------------------------------
 	$linkback = '<a href="' . $listLink . '?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
-	$morehtmlref = '<div class="refid">';
-	$morehtmlref.= $object->label;
-	$morehtmlref .= '</div>';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+	$morehtmlref .= '</a>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'rowid', $morehtmlref, '&objecttype='.$objecttype);
 
@@ -242,12 +248,67 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
+
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent tableforfield">' . "\n";
+	print '<table class="border centpercent tableforfield">';
+
+	// Login
+	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
+	if (!empty($object->ldap_sid) && $object->statut == 0) {
+		print '<td class="error">';
+		print $langs->trans("LoginAccountDisableInDolibarr");
+		print '</td>';
+	} else {
+		print '<td>';
+		$addadmin = '';
+		if (property_exists($object, 'admin')) {
+			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
+				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+			} elseif (!empty($object->admin)) {
+				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+			}
+		}
+		print showValueWithClipboardCPButton(!empty($object->login) ? $object->login : '').$addadmin;
+		print '</td>';
+	}
+	print '</tr>'."\n";
+
 	$object->fields['label']['visible']=0; // Already in banner
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
+	$object->fields['firstname']['visible']=0; // Already in banner
+	$object->fields['lastname']['visible']=0; // Already in banner
+	//include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
+
+	// Ref employee
+	print '<tr><td class="titlefield">'.$langs->trans("RefEmployee").'</td>';
+	print '<td class="error">';
+	print showValueWithClipboardCPButton(!empty($object->ref_employee) ? $object->ref_employee : '');
+	print '</td>';
+	print '</tr>'."\n";
+
+	// National Registration Number
+	print '<tr><td class="titlefield">'.$langs->trans("NationalRegistrationNumber").'</td>';
+	print '<td class="error">';
+	print showValueWithClipboardCPButton(!empty($object->national_registration_number) ? $object->national_registration_number : '');
+	print '</td>';
+	print '</tr>'."\n";
+
+	/*print '<tr><td class="titlefield">'.$langs->trans("NbOfActiveNotifications").'</td>';   // Notification for this thirdparty
+	 print '<td colspan="3">';
+	 $nbofrecipientemails=0;
+	 $notify=new Notify($db);
+	 $tmparray = $notify->getNotificationsArray('', 0, null, $object->id, array('user'));
+	 foreach($tmparray as $tmpkey => $tmpval)
+	 {
+	 $nbofrecipientemails++;
+	 }
+	 print $nbofrecipientemails;
+	 print '</td></tr>';*/
+
 	print '</table>';
+
 	print '</div>';
+	print '</div>';
+
 
 	print '<div class="clearboth"></div><br>';
 
@@ -257,6 +318,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<input type="hidden" name="objecttype" value="' . $objecttype . '">';
 		print '<input type="hidden" name="id" value="' . $id . '">';
 		print '<input type="hidden" name="action" value="addSkill">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<div class="div-table-responsive-no-min">';
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 		print '<tr><td style="width:90%">' . $langs->trans('AddSkill') . '</td><td style="width:10%"></td></tr>';
@@ -276,6 +338,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<form name="saveSkill" method="post" action="' . $_SERVER['PHP_SELF'] . '">';
 		print '<input type="hidden" name="objecttype" value="' . $objecttype . '">';
 		print '<input type="hidden" name="id" value="' . $id . '">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="saveSkill">';
 	}
 	print '<div class="div-table-responsive-no-min">';
@@ -291,7 +354,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 	print '</tr>';
 	if (!is_array($TSkillsJob) || empty($TSkillsJob)) {
-		print '<tr><td>' . $langs->trans("NoRecordFound") . '</td></tr>';
+		print '<tr><td><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 	} else {
 		$sk = new Skill($db);
 		foreach ($TSkillsJob as $skillElement) {

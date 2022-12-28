@@ -25,6 +25,7 @@
  *   \brief      Page list of cheque deposits
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -58,11 +59,13 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 if (!$sortfield) {
-	$sortfield = "dp";
+	$sortfield = "bc.date_bordereau";
 }
 
 $year = GETPOST("year");
 $month = GETPOST("month");
+$optioncss = GETPOST('optioncss', 'alpha');
+$view = GETPOST("view", 'alpha');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -91,9 +94,12 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 
 llxHeader('', $langs->trans("ChequesReceipts"));
 
-$sql = "SELECT bc.rowid, bc.ref as ref, bc.date_bordereau as dp,";
+$sql = "SELECT bc.rowid, bc.ref, bc.date_bordereau,";
 $sql .= " bc.nbcheque, bc.amount, bc.statut,";
 $sql .= " ba.rowid as bid, ba.label";
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
 $sql .= " ".MAIN_DB_PREFIX."bank_account as ba";
 $sql .= " WHERE bc.fk_bank_account = ba.rowid";
@@ -111,19 +117,31 @@ if ($search_amount) {
 }
 $sql .= dolSqlDateFilter('bc.date_bordereau', 0, $month, $year);
 
-$sql .= $db->order($sortfield, $sortorder);
-
+// Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 //print "$sql";
 
 $resql = $db->query($sql);
@@ -172,7 +190,7 @@ if ($resql) {
 		print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
 	}
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-	$formother->select_year($year ? $year : -1, 'year', 1, 20, 5);
+	print $formother->selectyear($year ? $year : -1, 'year', 1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre">';
 	$form->select_comptes($search_account, 'search_account', 0, '', 1);
@@ -190,7 +208,7 @@ if ($resql) {
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "bc.ref", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "dp", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "bc.date_bordereau", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("NbOfCheques", $_SERVER["PHP_SELF"], "bc.nbcheque", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "bc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -213,7 +231,7 @@ if ($resql) {
 			print '</td>';
 
 			// Date
-			print '<td class="center">'.dol_print_date($db->jdate($objp->dp), 'day').'</td>'; // TODO Use date hour
+			print '<td class="center">'.dol_print_date($db->jdate($objp->date_bordereau), 'day').'</td>'; // TODO Use date hour
 
 			// Bank
 			print '<td>';

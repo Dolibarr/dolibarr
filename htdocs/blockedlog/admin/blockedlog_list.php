@@ -18,11 +18,13 @@
  */
 
 /**
- *	\file       htdocs/blockedlog/admin/blockedlog_list.php
- *  \ingroup    blockedlog
- *  \brief      Page setup for blockedlog module
+ *    \file       htdocs/blockedlog/admin/blockedlog_list.php
+ *    \ingroup    blockedlog
+ *    \brief      Page setup for blockedlog module
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
@@ -31,16 +33,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
+$langs->loadLangs(array('admin', 'bills', 'blockedlog', 'other'));
 
+// Access Control
 if ((!$user->admin && empty($user->rights->blockedlog->read)) || empty($conf->blockedlog->enabled)) {
 	accessforbidden();
 }
 
-$action = GETPOST('action', 'aZ09');
+// Get Parameters
+$action      = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'blockedloglist'; // To manage different context of search
-$backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
-$optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
+$optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $search_showonlyerrors = GETPOST('search_showonlyerrors', 'int');
 if ($search_showonlyerrors < 0) {
@@ -95,7 +99,7 @@ $block_static->loadTrackedEvents();
 
 $result = restrictedArea($user, 'blockedlog', 0, '');
 
-
+// Execution Time
 $max_execution_time_for_importexport = (empty($conf->global->EXPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 $max_time = @ini_get("max_execution_time");
 if ($max_time && $max_time < $max_execution_time_for_importexport) {
@@ -118,7 +122,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_ref = '';
 	$search_amount = '';
 	$search_showonlyerrors = 0;
-	$toselect = '';
+	$toselect = array();
 	$search_array_options = array();
 }
 
@@ -444,8 +448,8 @@ print '<td class="liste_titre"></td>';
 
 // Status
 print '<td class="liste_titre">';
-$array = array("1"=>$langs->trans("OnlyNonValid"));
-print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors, 1);
+$array = array("1" => "OnlyNonValid");
+print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors, 1, 0, 0, '', 1, 0, 0, 'ASC', 'search_status maxwidth200 onrightofpage', 1);
 print '</td>';
 
 // Status note
@@ -523,19 +527,19 @@ if (is_array($blocks)) {
 			print '<tr class="oddeven">';
 
 			// ID
-			print '<td>'.$block->id.'</td>';
+			print '<td>'.dol_escape_htmltag($block->id).'</td>';
 
 			// Date
-			print '<td>'.dol_print_date($block->date_creation, 'dayhour').'</td>';
+			print '<td class="nowraponall">'.dol_print_date($block->date_creation, 'dayhour').'</td>';
 
 			// User
 			print '<td>';
 			//print $block->getUser()
-			print $block->user_fullname;
+			print dol_escape_htmltag($block->user_fullname);
 			print '</td>';
 
 			// Action
-			print '<td>'.$langs->trans('log'.$block->action).'</td>';
+			print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($langs->trans('log'.$block->action)).'">'.$langs->trans('log'.$block->action).'</td>';
 
 			// Ref
 			print '<td class="nowraponall">';

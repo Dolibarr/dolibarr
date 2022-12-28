@@ -17,27 +17,29 @@
  */
 
 /**
- *   	\file       htdocs/eventorganization/conferenceorbooth_card.php
- *		\ingroup    eventorganization
- *		\brief      Page to create/edit/view conferenceorbooth
+ *    \file       htdocs/eventorganization/conferenceorbooth_card.php
+ *    \ingroup    eventorganization
+ *    \brief      Page to create/edit/view conferenceorbooth
  */
 
-require '../main.inc.php';
 
+// Load Dolibarr environment
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 global $dolibarr_main_url_root;
 
 // Load translation files required by the page
-$langs->loadLangs(array("eventorganization", "projects"));
+$langs->loadLangs(array('eventorganization', 'projects'));
 
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
@@ -45,7 +47,6 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'co
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-// Get parameters
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $withproject = GETPOST('withproject', 'int');
@@ -79,6 +80,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+// Permissions
 $permissiontoread = $user->rights->eventorganization->read;
 $permissiontoadd = $user->rights->eventorganization->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->eventorganization->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
@@ -185,7 +187,9 @@ if (!empty($withproject)) {
 	// Tabs for project
 	$tab = 'eventorganisation';
 	$withProjectUrl = "&withproject=1";
+
 	$head = project_prepare_head($projectstatic);
+
 	print dol_get_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'), 0, '', '');
 
 	$param = ($mode == 'mine' ? '&mode=mine' : '');
@@ -199,7 +203,7 @@ if (!empty($withproject)) {
 	$morehtmlref .= $projectstatic->title;
 	// Thirdparty
 	if (isset($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$projectstatic->thirdparty->getNomUrl(1, 'project');
+		$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
 
@@ -218,7 +222,7 @@ if (!empty($withproject)) {
 	print '<table class="border tableforfield centpercent">';
 
 	// Usage
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
 		print '<tr><td class="tdtop">';
 		print $langs->trans("Usage");
 		print '</td>';
@@ -241,7 +245,7 @@ if (!empty($withproject)) {
 			print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 			print '<br>';
 		}
-		if (!empty($conf->eventorganization->enabled)) {
+		if (isModEnabled('eventorganization')) {
 			print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 			print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
@@ -299,7 +303,7 @@ if (!empty($withproject)) {
 	print '</td></tr>';
 
 	// Categories
-	if ($conf->categorie->enabled) {
+	if (isModEnabled('categorie')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($projectstatic->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
@@ -468,6 +472,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = conferenceorboothPrepareHead($object, $withproject);
+
 	print dol_get_fiche_head($head, 'card', $langs->trans("ConferenceOrBooth"), -1, $object->picto);
 
 	$formconfirm = '';
@@ -560,13 +565,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
 			}
 
-			print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl.'&action=edit&token='.newToken().'', '', $permissiontoadd);
+			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.$withProjectUrl.'&action=edit&token='.newToken().'', '', $permissiontoadd);
 
 			// Clone
-			print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.$withProjectUrl.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=scrumsprint', '', $permissiontoadd);
+			print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.$withProjectUrl.'&socid='.$object->socid.'&action=clone&token='.newToken().'&object=scrumsprint', '', $permissiontoadd);
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.$withProjectUrl.'&action=delete&token='.newToken().'', '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));

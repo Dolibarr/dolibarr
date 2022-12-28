@@ -24,6 +24,7 @@
  *  \brief      Page to check Dolibarr files integrity
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
@@ -100,6 +101,10 @@ if (empty($xmlremote)) {
 if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
 	$langs->load("errors");
 	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), '', 'errors');
+	$error++;
+} elseif ($xmlremote && !preg_match('/\.xml$/', $xmlremote)) {
+	$langs->load("errors");
+	setEventMessages($langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'), '', 'errors');
 	$error++;
 }
 
@@ -205,8 +210,8 @@ if (empty($error) && !empty($xml)) {
 			$constvalue = (empty($constvalue) ? '0' : $constvalue);
 			// Value found
 			$value = '';
-			if ($constname && $conf->global->$constname != '') {
-				$value = $conf->global->$constname;
+			if ($constname && getDolGlobalString($constname) != '') {
+				$value = getDolGlobalString($constname);
 			}
 			$valueforchecksum = (empty($value) ? '0' : $value);
 
@@ -388,7 +393,9 @@ if (empty($error) && !empty($xml)) {
 		$out .= '</table>';
 		$out .= '</div>';
 	} else {
-		print 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile;
+		print '<div class="error">';
+		print 'Error: Failed to found <b>dolibarr_htdocs_dir</b> into content of XML file:<br>'.dol_escape_htmltag(dol_trunc($xmlfile, 500));
+		print '</div><br>';
 		$error++;
 	}
 
@@ -407,10 +414,10 @@ if (empty($error) && !empty($xml)) {
 	$checksumget = md5(join(',', $checksumconcat));
 	$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 
-	/*var_dump(count($file_list['added']));
-	var_dump($checksumget);
-	var_dump($checksumtoget);
-	var_dump($checksumget == $checksumtoget);*/
+	//var_dump(count($file_list['added']));
+	//var_dump($checksumget);
+	//var_dump($checksumtoget);
+	//var_dump($checksumget == $checksumtoget);
 
 	$resultcomment = '';
 

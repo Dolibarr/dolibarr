@@ -124,11 +124,11 @@ abstract class ModeleNumRefSupplierProposal
 	/**
 	 * 	Renvoi prochaine valeur attribuee
 	 *
-	 *	@param		Societe		$objsoc     Object third party
-	 *	@param		Propal		$propal		Object commercial proposal
-	 *	@return     string      Valeur
+	 *	@param	Societe				$objsoc     			Object third party
+	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
+	 *	@return string      								Valeur
 	 */
-	public function getNextValue($objsoc, $propal)
+	public function getNextValue($objsoc, $supplier_proposal)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

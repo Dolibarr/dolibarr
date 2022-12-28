@@ -30,6 +30,7 @@
  *  \brief      Setup page of product module
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
@@ -132,7 +133,7 @@ if ($action == 'other') {
 	/*$value = GETPOST('PRODUIT_SOUSPRODUITS', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $value, 'chaine', 0, '', $conf->entity);*/
 
-	$value = GETPOST('activate_viewProdDescInForm', 'alpha');
+	$value = GETPOST('PRODUIT_DESC_IN_FORM', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $value, 'chaine', 0, '', $conf->entity);
 
 	$value = GETPOST('activate_viewProdTextsInThirdpartyLanguage', 'alpha');
@@ -144,15 +145,20 @@ if ($action == 'other') {
 	$value = GETPOST('activate_usesearchtoselectproduct', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $value, 'chaine', 0, '', $conf->entity);
 
-	$value = GETPOST('activate_useProdFournDesc', 'alpha');
-	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
-
 	$value = GETPOST('activate_FillProductDescAuto', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_AUTOFILL_DESC", $value, 'chaine', 0, '', $conf->entity);
 
-	$value = GETPOST('activate_useProdSupplierPackaging', 'alpha');
-	$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('PRODUIT_FOURN_TEXTS')) {
+		$value = GETPOST('PRODUIT_FOURN_TEXTS', 'alpha');
+		$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
+	}
+
+	if (GETPOSTISSET('PRODUCT_USE_SUPPLIER_PACKAGING')) {
+		$value = GETPOST('PRODUCT_USE_SUPPLIER_PACKAGING', 'alpha');
+		$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
+	}
 }
+
 
 if ($action == 'specimen') { // For products
 	$modele = GETPOST('module', 'alpha');
@@ -198,7 +204,7 @@ if ($action == 'set') {
 if ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->PRODUCT_ADDON_PDF == "$value") {
+		if (getDolGlobalString('PRODUCT_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'PRODUCT_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -233,12 +239,22 @@ if ($action == 'set') {
 	}
 }
 
-//if ($action == 'other')
-//{
-//    $value = GETPOST('activate_units', 'alpha');
-//    $res = dolibarr_set_const($db, "PRODUCT_USE_UNITS", $value, 'chaine', 0, '', $conf->entity);
-//	if (! $res > 0) $error++;
-//}
+// To enable a constant whithout javascript
+if (preg_match('/set_(.+)/', $action, $reg)) {
+	$keyforvar = $reg[1];
+	if ($keyforvar) {
+		$value = 1;
+		$res = dolibarr_set_const($db, $keyforvar, $value, 'chaine', 0, '', $conf->entity);
+	}
+}
+
+// To disable a constant whithout javascript
+if (preg_match('/del_(.+)/', $action, $reg)) {
+	$keyforvar = $reg[1];
+	if ($keyforvar) {
+		$res = dolibarr_del_const($db, $keyforvar, $conf->entity);
+	}
+}
 
 if ($action) {
 	if (!$error) {
@@ -327,7 +343,7 @@ foreach ($dirproduct as $dirroot) {
 					print "</td>\n";
 				} else {
 					$disabled = false;
-					if (!empty($conf->multicompany->enabled) && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true) {
+					if (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true) {
 					}
 					print '<td class="center">';
 					if (!$disabled) {
@@ -445,7 +461,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Defaut
 								print '<td class="center">';
-								if ($conf->global->PRODUCT_ADDON_PDF == $name) {
+								if (getDolGlobalString('PRODUCT_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -533,7 +549,7 @@ print '<td>'.$langs->trans("VariantsAbility").'</td>';
 print '<td class="right">';
 //print ajax_constantonoff("PRODUIT_SOUSPRODUITS", array(), $conf->entity, 0, 0, 1, 0);
 //print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
-if (empty($conf->variants->enabled)) {
+if (!isModEnabled('variants')) {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabled", $langs->transnoentitiesnoconv("Module610Name")).'</span>';
 } else {
 	print yn(1).' <span class="opacitymedium">('.$langs->trans("ModuleIsEnabled", $langs->transnoentitiesnoconv("Module610Name")).')</span>';
@@ -545,7 +561,7 @@ print '</tr>';
 // Rule for price
 
 print '<tr class="oddeven">';
-if (empty($conf->multicompany->enabled)) {
+if (!isModEnabled('multicompany')) {
 	print '<td>'.$langs->trans("PricingRule").'</td>';
 } else {
 	print '<td>'.$form->textwithpicto($langs->trans("PricingRule"), $langs->trans("SamePriceAlsoForSharedCompanies"), 1).'</td>';
@@ -573,7 +589,7 @@ print '</tr>';
 if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
-	print '<td class="right"><input size="3" type="text" class="flat" name="value_PRODUIT_MULTIPRICES_LIMIT" value="'.$conf->global->PRODUIT_MULTIPRICES_LIMIT.'"></td>';
+	print '<td class="right"><input size="3" type="text" class="flat right" name="value_PRODUIT_MULTIPRICES_LIMIT" value="'.$conf->global->PRODUIT_MULTIPRICES_LIMIT.'"></td>';
 	print '</tr>';
 }
 
@@ -585,18 +601,21 @@ print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_
 print '</td>';
 print '</tr>';
 
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
+// Use conditionnement in buying
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
-	print '<td class="right">';
-	print $form->selectyesno("activate_useProdFournDesc", (!empty($conf->global->PRODUIT_FOURN_TEXTS) ? $conf->global->PRODUIT_FOURN_TEXTS : 0), 1);
+	print '<td>'.$form->textwithpicto($langs->trans("UseProductSupplierPackaging"), $langs->trans("PackagingForThisProductDesc")).'</td>';
+	print '<td align="right">';
+	print ajax_constantonoff("PRODUCT_USE_SUPPLIER_PACKAGING", array(), $conf->entity, 0, 0, 0, 0);
+	//print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
 	print '</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("UseProductSupplierPackaging").'</td>';
-	print '<td align="right">';
-	print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
+	print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
+	print '<td class="right">';
+	print ajax_constantonoff("PRODUIT_FOURN_TEXTS", array(), $conf->entity, 0, 0, 0, 0);
+	//print $form->selectyesno("activate_useProdFournDesc", (!empty($conf->global->PRODUIT_FOURN_TEXTS) ? $conf->global->PRODUIT_FOURN_TEXTS : 0), 1);
 	print '</td>';
 	print '</tr>';
 }
@@ -674,7 +693,8 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td class="right">';
-print $form->selectyesno("activate_viewProdDescInForm", $conf->global->PRODUIT_DESC_IN_FORM, 1);
+$arrayofchoices = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes").' ('.$langs->trans("DesktopsOnly").')', '2' => $langs->trans("Yes").' ('.$langs->trans("DesktopsAndSmartphones").')');
+print $form->selectarray("PRODUIT_DESC_IN_FORM", $arrayofchoices, getDolGlobalInt('PRODUIT_DESC_IN_FORM'), 0);
 print '</td>';
 print '</tr>';
 
@@ -701,7 +721,7 @@ print '</tr>';
 */
 
 // View product description in thirdparty language
-if (!empty($conf->global->MAIN_MULTILANGS)) {
+if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td class="right">';

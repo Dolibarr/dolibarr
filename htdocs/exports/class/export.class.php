@@ -175,21 +175,21 @@ class Export
 									$this->array_export_perms[$i] = $bool;
 									// Icon
 									$this->array_export_icon[$i] = (isset($module->export_icon[$r]) ? $module->export_icon[$r] : $module->picto);
-									// Code du dataset export
+									// Code of the export dataset / Code du dataset export
 									$this->array_export_code[$i] = $module->export_code[$r];
 									// Define a key for sort
 									$this->array_export_code_for_sort[$i] = $module->module_position.'_'.$module->export_code[$r]; // Add a key into the module
-									// Libelle du dataset export
+									// Export Dataset Label / Libelle du dataset export
 									$this->array_export_label[$i] = $module->getExportDatasetLabel($r);
-									// Tableau des champ a exporter (cle=champ, valeur=libelle)
+									// Table of fields to export / Tableau des champ a exporter (cle=champ, valeur=libelle)
 									$this->array_export_fields[$i] = $module->export_fields_array[$r];
-									// Tableau des champs a filtrer (cle=champ, valeur1=type de donnees) on verifie que le module a des filtres
+									// Table of fields to be filtered / Tableau des champs a filtrer (cle=champ, valeur1=type de donnees) on verifie que le module a des filtres
 									$this->array_export_TypeFields[$i] = (isset($module->export_TypeFields_array[$r]) ? $module->export_TypeFields_array[$r] : '');
-									// Tableau des entites a exporter (cle=champ, valeur=entite)
+									// Table of entities for export / Tableau des entites a exporter (cle=champ, valeur=entite)
 									$this->array_export_entities[$i] = $module->export_entities_array[$r];
 									// Tableau des entites qui requiert abandon du DISTINCT (cle=entite, valeur=champ id child records)
 									$this->array_export_dependencies[$i] = (!empty($module->export_dependencies_array[$r]) ? $module->export_dependencies_array[$r] : '');
-									// Tableau des operations speciales sur champ
+									// Table of special field operations / Tableau des operations speciales sur champ
 									$this->array_export_special[$i] = (!empty($module->export_special_array[$r]) ? $module->export_special_array[$r] : '');
 									// Array of examples
 									$this->array_export_examplevalues[$i] = (!empty($module->export_examplevalues_array[$r]) ? $module->export_examplevalues_array[$r] : null);
@@ -268,7 +268,7 @@ class Export
 					continue;
 				}
 				if ($value != '') {
-					$sqlWhere .= " and ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+					$sqlWhere .= " AND ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
 				}
 			}
 			$sql .= $sqlWhere;
@@ -302,7 +302,7 @@ class Export
 	public function build_filterQuery($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
-		$NameField = checkVal($NameField, 'aZ09');
+		$NameField = sanitizeVal($NameField, 'aZ09');
 		$szFilterQuery = '';
 
 		//print $TypeField." ".$NameField." ".$ValueField;
@@ -349,6 +349,13 @@ class Export
 				break;
 			case 'Boolean':
 				$szFilterQuery = " ".$NameField."=".(is_numeric($ValueField) ? $ValueField : ($ValueField == 'yes' ? 1 : 0));
+				break;
+			case 'FormSelect':
+				if (is_numeric($ValueField) && $ValueField > 0) {
+					$szFilterQuery = " ".$NameField." = ".((float) $ValueField);
+				} else {
+					$szFilterQuery = " 1=1";	// Test always true
+				}
 				break;
 			case 'Status':
 			case 'List':
@@ -402,7 +409,7 @@ class Export
 	public function build_filterField($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $form;
 
 		$szFilterField = '';
 		$InfoFieldList = explode(":", $TypeField);
@@ -443,10 +450,20 @@ class Export
 				$szFilterField .= ' value="0">'.yn(0).'</option>';
 				$szFilterField .= "</select>";
 				break;
+			case 'FormSelect':
+				//var_dump($NameField);
+				if ($InfoFieldList[1] == 'select_company') {
+					$szFilterField .= $form->select_company('', $NameField, '', 1);
+				} elseif ($InfoFieldList[1] == 'selectcontacts') {
+					$szFilterField .= $form->selectcontacts(0, '', $NameField, '&nbsp;');
+				} elseif ($InfoFieldList[1] == 'select_dolusers') {
+					$szFilterField .= $form->select_dolusers('', $NameField, 1);
+				}
+				break;
 			case 'List':
-				// 0 : Type du champ
-				// 1 : Nom de la table
-				// 2 : Nom du champ contenant le libelle
+				// 0 : Type of the field / Type du champ
+				// 1 : Name of the table / Nom de la table
+				// 2 : Name of the field containing the label / Nom du champ contenant le libelle
 				// 3 : Name of field with key (if it is not "rowid"). Used this field as key for combo list.
 				// 4 : Name of element for getEntity().
 
@@ -615,6 +632,9 @@ class Export
 			} else {
 				$filename = "export_".$datatoexport;
 			}
+			if (!empty($conf->global->EXPORT_NAME_WITH_DT)) {
+				$filename .= dol_print_date(dol_now(), '%Y%m%d%_%H%M');
+			}
 			$filename .= '.'.$objmodel->getDriverExtension();
 			$dirname = $conf->export->dir_temp.'/'.$user->id;
 
@@ -680,7 +700,7 @@ class Export
 								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
 								// Also the formula may contains objects of class that are not loaded.
 								$computestring = $this->array_export_special[$indice][$key];
-								//$tmp = dol_eval($computestring, 1, 0);
+								//$tmp = dol_eval($computestring, 1, 0, '1');
 								//$obj->$alias = $tmp;
 
 								$this->error = "ERROPNOTSUPPORTED. Operation ".$computestring." not supported. Export of 'computed' extrafields is not yet supported, please remove field.";

@@ -21,6 +21,7 @@
  *		\brief      Page to administer web sites
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -95,7 +96,7 @@ $tabfield[1] = "ref,description,virtualhost,position,date_creation";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue = array();
-$tabfieldvalue[1] = "ref,description,virtualhost,position";
+$tabfieldvalue[1] = "ref,description,virtualhost,position,entity";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert = array();
@@ -109,11 +110,11 @@ $tabrowid[1] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[1] = (!empty($conf->website->enabled));
+$tabcond[1] = (isModEnabled('website'));
 
 // List of help for fields
 $tabhelp = array();
-$tabhelp[1] = array('ref'=>$langs->trans("EnterAnyCode"), 'virtualhost'=>$langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.'/website/<i>websiteref</i>'));
+$tabhelp[1] = array('ref'=>$langs->trans("EnterAnyCode"), 'virtualhost'=>$langs->trans("SetHereVirtualHost", DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/<i>websiteref</i>'));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck = array();
@@ -198,15 +199,15 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($value == 'ref') {
-				$_POST[$listfieldvalue[$i]] = strtolower($_POST[$listfieldvalue[$i]]);
+				$_POST[$listfieldvalue[$i]] = strtolower(GETPOST($listfieldvalue[$i]));
 			}
 			if ($i) {
 				$sql .= ",";
 			}
-			if ($_POST[$listfieldvalue[$i]] == '') {
+			if (GETPOST($listfieldvalue[$i]) == '') {
 				$sql .= "null";
 			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
 			$i++;
 		}
@@ -259,7 +260,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			if ($_POST[$listfieldvalue[$i]] == '') {
 				$sql .= "null";
 			} else {
-				$sql .= "'".$db->escape($_POST[$listfieldvalue[$i]])."'";
+				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
 			}
 			$i++;
 		}
@@ -271,8 +272,8 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		if ($resql) {
 			$newname = dol_sanitizeFileName(GETPOST('ref', 'aZ09'));
 			if ($newname != $website->ref) {
-				$srcfile = DOL_DATA_ROOT.'/website/'.$website->ref;
-				$destfile = DOL_DATA_ROOT.'/website/'.$newname;
+				$srcfile = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$website->ref;
+				$destfile = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$newname;
 
 				if (dol_is_dir($destfile)) {
 					$error++;

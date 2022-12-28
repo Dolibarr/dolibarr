@@ -102,7 +102,7 @@ class MenuManager
 			// Show/Hide vertical menu
 			if ($mode != 'jmobile' && $mode != 'topnb' && $usemenuhider && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$showmode = 1;
-				$classname = 'class="tmenu menuhider"';
+				$classname = 'class="tmenu menuhider nohover"';
 				$idsel = 'menu';
 
 				$this->menu->add('#', '', 0, $showmode, $atarget, "xxx", '', 0, $id, $idsel, $classname);
@@ -208,8 +208,12 @@ class MenuManager
 					$submenu->add("/admin/dict.php?mainmenu=home", $langs->trans("DictionarySetup"), 1);
 					$submenu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"), 1);
 
-					//if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu); exit; }
-					//if ($tmpmainmenu=='accountancy') { var_dump($submenu->liste); exit; }
+					//if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') {
+					//var_dump($submenu); exit;
+					//}
+					//if ($tmpmainmenu=='accountancy') {
+					//var_dump($submenu->liste); exit;
+					//}
 					$nexturl = dol_buildpath($submenu->liste[0]['url'], 1);
 
 					$canonrelurl = preg_replace('/\?.*$/', '', $relurl);
@@ -513,19 +517,32 @@ function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $class
 {
 	global $conf, $langs;
 
+	$classnameimg = str_replace('class="', 'class="tmenuimage ', $classname);
+	$classnametxt = str_replace('class="', 'class="tmenulabel ', $classname);
+
 	if ($showmode == 1) {
-		print '<a class="tmenuimage" tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').'>';
-		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.' tmenuimage" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<a '.$classnameimg.' tabindex="-1" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').' title="'.dol_escape_htmltag($text).'">';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage"><span class="'.$id.' tmenuimageforpng" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '</a>';
-		print '<a '.$classname.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').'>';
-		print '<span class="mainmenuaspan">';
-		print $text;
-		print '</span>';
-		print '</a>';
+		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
+			print '<a '.$classnametxt.' id="mainmenua_'.$idsel.'" href="'.$url.'"'.($atarget ? ' target="'.$atarget.'"' : '').'>';
+			print '<span class="mainmenuaspan">';
+			print $text;
+			print '</span>';
+			print '</a>';
+		}
 	}
 	if ($showmode == 2) {
-		print '<div class="'.$id.' '.$idsel.' tmenudisabled"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
-		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
+		print '<div '.$classnameimg.' title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';
+		print '<div class="'.$id.' '.$idsel.' topmenuimage tmenudisabled"><span class="'.$id.' tmenuimageforpng tmenudisabled" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '</div>';
+		if (empty($conf->global->THEME_TOPMENU_DISABLE_TEXT)) {
+			print '<span '.$classnametxt.' id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($text.' - '.$langs->trans("NotAllowed")).'">';
+			print '<span class="mainmenuaspan">';
+			print $text;
+			print '</span>';
+			print '</span>';
+		}
 	}
 }
 

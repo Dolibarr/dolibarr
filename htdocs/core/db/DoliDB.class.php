@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
  */
 abstract class DoliDB implements Database
 {
-	/** @var bool|resource|SQLite3 Database handler */
+	/** @var bool|resource|SQLite3|PgSql\connection Database handler */
 	public $db;
 	/** @var string Database type */
 	public $type;
@@ -97,6 +97,36 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 * Return SQL string to force an index
+	 *
+	 * @param	string	$nameofindex	Name of index
+	 * @return	string					SQL string
+	 */
+	public function hintindex($nameofindex)
+	{
+		return '';
+	}
+
+
+	/**
+	 *	Format a SQL REGEXP
+	 *
+	 *	@param	string	$subject        string tested
+	 *	@param	string  $pattern        SQL pattern to match
+	 *	@param	string	$sqlstring      whether or not the string being tested is an SQL expression
+	 *	@return	string          		SQL string
+	 */
+	public function regexpsql($subject, $pattern, $sqlstring = false)
+	{
+		if ($sqlstring) {
+			return "(". $subject ." REGEXP '" . $pattern . "')";
+		}
+
+		return "('". $subject ."' REGEXP '" . $pattern . "')";
+	}
+
+
+	/**
 	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
@@ -106,7 +136,7 @@ abstract class DoliDB implements Database
 	 */
 	public function idate($param, $gm = 'tzserver')
 	{
-		// TODO $param should be gmt, so we should add $gm to 'gmt' instead of default 'tzserver'
+		// TODO $param should be gmt, so we should have default $gm to 'gmt' instead of default 'tzserver'
 		return dol_print_date($param, "%Y-%m-%d %H:%M:%S", $gm);
 	}
 
@@ -125,29 +155,27 @@ abstract class DoliDB implements Database
 	 *
 	 * @param   string 	$stringtosanitize 	String to escape
 	 * @param   int		$allowsimplequote 	1=Allow simple quotes in string. When string is used as a list of SQL string ('aa', 'bb', ...)
+	 * @param	string	$allowsequals		1=Allow equals sign
 	 * @return  string                      String escaped
 	 */
-	public function sanitize($stringtosanitize, $allowsimplequote = 0)
+	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0)
 	{
-		if ($allowsimplequote) {
-			return preg_replace('/[^a-z0-9_\-\.,\']/i', '', $stringtosanitize);
-		} else {
-			return preg_replace('/[^a-z0-9_\-\.,]/i', '', $stringtosanitize);
-		}
+		return preg_replace('/[^a-z0-9_\-\.,'.($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').']/i', '', $stringtosanitize);
 	}
 
 	/**
 	 * Start transaction
 	 *
-	 * @return	    int         1 if transaction successfuly opened or already opened, 0 if error
+	 * @param	string	$textinlog		Add a small text into log. '' by default.
+	 * @return	int         			1 if transaction successfuly opened or already opened, 0 if error
 	 */
-	public function begin()
+	public function begin($textinlog = '')
 	{
 		if (!$this->transaction_opened) {
 			$ret = $this->query("BEGIN");
 			if ($ret) {
 				$this->transaction_opened++;
-				dol_syslog("BEGIN Transaction", LOG_DEBUG);
+				dol_syslog("BEGIN Transaction".($textinlog ? ' '.$textinlog : ''), LOG_DEBUG);
 				dol_syslog('', 0, 1);
 			}
 			return $ret;

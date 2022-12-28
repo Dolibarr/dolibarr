@@ -104,6 +104,10 @@ class Loan extends CommonObject
 	 */
 	public $fk_project;
 
+	/**
+	 * @var int totalpaid
+	 */
+	public $totalpaid;
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
@@ -129,7 +133,7 @@ class Loan extends CommonObject
 	public function fetch($id)
 	{
 		$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.nbterm, l.rate, l.note_private, l.note_public, l.insurance_amount,";
-		$sql .= " l.paid, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
+		$sql .= " l.paid, l.fk_bank, l.accountancy_account_capital, l.accountancy_account_insurance, l.accountancy_account_interest, l.fk_projet as fk_project";
 		$sql .= " FROM ".MAIN_DB_PREFIX."loan as l";
 		$sql .= " WHERE l.rowid = ".((int) $id);
 
@@ -151,6 +155,7 @@ class Loan extends CommonObject
 				$this->note_public = $obj->note_public;
 				$this->insurance_amount = $obj->insurance_amount;
 				$this->paid = $obj->paid;
+				$this->fk_bank = $obj->fk_bank;
 
 				$this->account_capital = $obj->accountancy_account_capital;
 				$this->account_insurance	= $obj->accountancy_account_insurance;
@@ -219,19 +224,19 @@ class Loan extends CommonObject
 		}
 
 		// Check parameters
-		if (!$newcapital > 0 || empty($this->datestart) || empty($this->dateend)) {
+		if (!($newcapital > 0) || empty($this->datestart) || empty($this->dateend)) {
 			$this->error = "ErrorBadParameter";
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_capital)) {
+		if (isModEnabled('accounting') && empty($this->account_capital)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyCapitalCode"));
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_insurance)) {
+		if (isModEnabled('accounting') && empty($this->account_insurance)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyInsuranceCode"));
 			return -2;
 		}
-		if (($conf->accounting->enabled) && empty($this->account_interest)) {
+		if (isModEnabled('accounting') && empty($this->account_interest)) {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("LoanAccountancyInterestCode"));
 			return -2;
 		}
@@ -556,7 +561,7 @@ class Loan extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$result = '';
 
@@ -606,6 +611,15 @@ class Loan extends CommonObject
 		}
 		$result .= $linkend;
 
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -680,7 +694,7 @@ class Loan extends CommonObject
 	public function info($id)
 	{
 		$sql = 'SELECT l.rowid, l.datec, l.fk_user_author, l.fk_user_modif,';
-		$sql .= ' l.tms';
+		$sql .= ' l.tms as datem';
 		$sql .= ' WHERE l.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
@@ -690,21 +704,11 @@ class Loan extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
-				$this->date_creation = $this->db->jdate($obj->datec);
-				if (empty($obj->fk_user_modif)) {
-					$obj->tms = "";
-				}
-				$this->date_modification = $this->db->jdate($obj->tms);
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 
 				$this->db->free($result);
 				return 1;

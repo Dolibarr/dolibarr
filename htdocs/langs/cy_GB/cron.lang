@@ -1,0 +1,93 @@
+# Dolibarr language file - Source file is en_US - cron
+# About page
+# Right
+Permission23101 = Darllenwch Swydd wedi'i Amserlennu
+Permission23102 = Creu/diweddaru swydd a drefnwyd
+Permission23103 = Dileu swydd a drefnwyd
+Permission23104 = Cyflawni swydd a drefnwyd
+# Admin
+CronSetup=Trefniant rheoli swydd wedi'i drefnu
+URLToLaunchCronJobs=URL i wirio a lansio swyddi cron cymwys o borwr
+OrToLaunchASpecificJob=Neu i wirio a lansio swydd benodol o borwr
+KeyForCronAccess=Allwedd ddiogelwch ar gyfer URL i lansio swyddi cron
+FileToLaunchCronJobs=Llinell orchymyn i wirio a lansio swyddi cron cymwys
+CronExplainHowToRunUnix=Ar amgylchedd Unix dylech ddefnyddio'r cofnod crontab canlynol i redeg y llinell orchymyn bob 5 munud
+CronExplainHowToRunWin=Ar amgylchedd Microsoft(tm) Windows gallwch ddefnyddio offer Tasg wedi'i Drefnu i redeg y llinell orchymyn bob 5 munud
+CronMethodDoesNotExists=Nid yw dosbarth %s yn cynnwys unrhyw ddull %s
+CronMethodNotAllowed=Mae dull %s o ddosbarth %s ar y rhestr ddu o ddulliau gwaharddedig
+CronJobDefDesc=Mae proffiliau swyddi Cron yn cael eu diffinio yn ffeil disgrifydd y modiwl. Pan fydd modiwl wedi'i actifadu, maen nhw'n cael eu llwytho ac ar gael fel y gallwch chi weinyddu'r swyddi o'r ddewislen offer gweinyddol %s.
+CronJobProfiles=Rhestr o broffiliau swyddi cron rhagosodedig
+# Menu
+EnabledAndDisabled=Wedi'i alluogi a'i analluogi
+# Page list
+CronLastOutput=Allbwn rhedeg diweddaraf
+CronLastResult=Cod canlyniad diweddaraf
+CronCommand=Gorchymyn
+CronList=Swyddi wedi'u hamserlennu
+CronDelete=Dileu swyddi a drefnwyd
+CronConfirmDelete=A ydych yn siŵr eich bod am ddileu'r swyddi hyn sydd wedi'u hamserlennu?
+CronExecute=Lansio swydd a drefnwyd
+CronConfirmExecute=A ydych yn siŵr eich bod am gyflawni'r swyddi hyn sydd wedi'u hamserlennu nawr?
+CronInfo=Mae modiwl swydd wedi'i amserlennu yn caniatáu amserlennu swyddi i'w gweithredu'n awtomatig. Gellir cychwyn swyddi â llaw hefyd.
+CronTask=Job
+CronNone=Dim
+CronDtStart=Nid o'r blaen
+CronDtEnd=Nid ar ôl
+CronDtNextLaunch=Dienyddiad nesaf
+CronDtLastLaunch=Dyddiad dechrau gweithredu diweddaraf
+CronDtLastResult=Dyddiad gorffen y gweithredu diweddaraf
+CronFrequency=Amlder
+CronClass=Dosbarth
+CronMethod=Dull
+CronModule=Modiwl
+CronNoJobs=Dim swyddi wedi'u cofrestru
+CronPriority=Blaenoriaeth
+CronLabel=Label
+CronNbRun=Nifer o lansiadau
+CronMaxRun=Uchafswm nifer y lansiadau
+CronEach=Pob
+JobFinished=Lansio a gorffen swydd
+Scheduled=Wedi'i drefnu
+#Page card
+CronAdd= Ychwanegu swyddi
+CronEvery=Cyflawni swydd yr un
+CronObject=Enghraifft / Gwrthrych i'w greu
+CronArgs=Paramedrau
+CronSaveSucess=Arbed yn llwyddiannus
+CronNote=Sylw
+CronFieldMandatory=Mae meysydd %s yn orfodol
+CronErrEndDateStartDt=Ni all y dyddiad gorffen fod cyn y dyddiad dechrau
+StatusAtInstall=Statws wrth osod modiwl
+CronStatusActiveBtn=Atodlen
+CronStatusInactiveBtn=Analluogi
+CronTaskInactive=Mae'r swydd hon wedi'i hanalluogi (ddim wedi'i hamserlennu)
+CronId=Id
+CronClassFile=Enw ffeil gyda dosbarth
+CronModuleHelp=Enw cyfeiriadur modiwl Dolibarr (hefyd yn gweithio gyda modiwl allanol Dolibarr). <BR> Er enghraifft i alw'r dull nôl gwrthrych Cynnyrch Dolibarr /htdocs/ <u> cynnyrch </u> /class/product.class.php, y gwerth ar gyfer modiwl yw <br>ccze7180 a0478fdca4dz0 /class/product.class.php
+CronClassFileHelp=Y llwybr cymharol ac enw'r ffeil i'w llwytho (mae'r llwybr yn gymharol â chyfeiriadur gwraidd gweinydd gwe). <BR> Er enghraifft i alw'r dull nôl o gwrthrych cynnyrch Dolibarr htdocs/product/class/ <u> product.class.php </u> , y gwerth ar gyfer enw ffeil dosbarth yw a0342fccfda19bz71080 a0342fccfda19bz71080 a0342fccfda19bz71080 a0342fccfda19bz7130 a0342fccfda19bz71080 a0342fccfda19bz7180 a0342fccfda19bz7180 a0342fccfda19bz7180 a0342fccfda19bz71080804 a0342fccfda19bz7180 a0342fccfda19bz7180 a0342fccfda.
+CronObjectHelp=Enw'r gwrthrych i'w lwytho. <BR> Er enghraifft i alw'r dull nôl gwrthrych Cynnyrch Dolibarr /htdocs/product/class/product.class.php, y gwerth ar gyfer enw ffeil dosbarth yw <br> <i> Cynnyrch </i>
+CronMethodHelp=Y dull gwrthrych i'w lansio. <BR> Er enghraifft i alw'r dull nôl o gwrthrych Cynnyrch Dolibarr /htdocs/product/class/product.class.php, gwerth y dull yw <br> <i> fetch </i>
+CronArgsHelp=Mae'r dadleuon dull. <BR> Er enghraifft i alw'r dull nôl gwrthrych Cynnyrch Dolibarr /htdocs/product/class/product.class.php, gall y gwerth ar gyfer paramedrau fod yn <br> <i> 0, ProductRef a0bae63758
+CronCommandHelp=Llinell orchymyn y system i'w gweithredu.
+CronCreateJob=Creu Swydd Restredig newydd
+CronFrom=Oddiwrth
+# Info
+# Common
+CronType=Math o swydd
+CronType_method=Dull galw Dosbarth PHP
+CronType_command=Gorchymyn cregyn
+CronCannotLoadClass=Methu llwytho ffeil dosbarth %s (i ddefnyddio dosbarth %s)
+CronCannotLoadObject=Cafodd ffeil dosbarth %s ei llwytho, ond ni ddaethpwyd o hyd i wrthrych %s ynddi
+UseMenuModuleToolsToAddCronJobs=Ewch i'r ddewislen " <a href="%s"> Cartref - Offer gweinyddol - Swyddi wedi'u hamserlennu </a> " i weld a golygu swyddi sydd wedi'u hamserlennu.
+JobDisabled=Swydd yn anabl
+MakeLocalDatabaseDumpShort=Cronfa ddata wrth gefn leol
+MakeLocalDatabaseDump=Creu dympio cronfa ddata leol. Paramedrau yw: cywasgu ('gz' neu 'bz' neu 'dim'), math wrth gefn ('mysql', 'pgsql', 'auto'), 1, 'auto' neu enw ffeil i'w hadeiladu, nifer y ffeiliau wrth gefn i'w cadw
+MakeSendLocalDatabaseDumpShort=Anfon copi wrth gefn o gronfa ddata leol
+MakeSendLocalDatabaseDump=Anfon copi wrth gefn o gronfa ddata leol trwy e-bost. Paramedrau yw: i, o, pwnc, neges, enw ffeil (Enw'r ffeil a anfonwyd), hidlydd ('sql' ar gyfer copi wrth gefn o'r gronfa ddata yn unig)
+WarningCronDelayed=Sylw, at ddiben perfformiad, beth bynnag yw'r dyddiad nesaf ar gyfer cyflawni swyddi wedi'u galluogi, efallai y bydd eich swyddi'n cael eu gohirio hyd at uchafswm o %s awr, cyn cael eu rhedeg.
+DATAPOLICYJob=Glanhawr data ac anonymizer
+JobXMustBeEnabled=Rhaid galluogi Job %s
+# Cron Boxes
+LastExecutedScheduledJob=Y swydd a drefnwyd ddiwethaf a gyflawnwyd
+NextScheduledJobExecute=Y dasg nesaf i'w chyflawni
+NumberScheduledJobError=Nifer y swyddi a drefnwyd mewn camgymeriad

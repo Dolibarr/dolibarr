@@ -27,6 +27,7 @@
  *		\brief      Page to setup usergroup module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -42,6 +43,8 @@ $extrafields = new ExtraFields($db);
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $type = 'group';
 
 /*
@@ -56,7 +59,7 @@ if ($action == 'set_default') {
 } elseif ($action == 'del_default') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->USERGROUP_ADDON_PDF_ODT == "$value") {
+		if (getDolGlobalString('USERGROUP_ADDON_PDF_ODT') == "$value") {
 			dolibarr_del_const($db, 'USERGROUP_ADDON_PDF_ODT', $conf->entity);
 		}
 	}
@@ -200,7 +203,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Defaut
 								print '<td class="center">';
-								if ($conf->global->USERGROUP_ADDON_PDF == $name) {
+								if (getDolGlobalString('USERGROUP_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scandir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';

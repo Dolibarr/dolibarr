@@ -23,6 +23,7 @@
  *      \brief      Page to add payment of a salary
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
@@ -77,7 +78,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$error++;
 		$action = 'create';
 	}
-	if (!empty($conf->banque->enabled) && !(GETPOST("accountid", 'int') > 0)) {
+	if (isModEnabled("banque") && !(GETPOST("accountid", 'int') > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
 		$error++;
 		$action = 'create';
@@ -87,7 +88,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 	foreach ($_POST as $key => $value) {
 		if (substr($key, 0, 7) == 'amount_') {
 			$other_chid = substr($key, 7);
-			$amounts[$other_chid] = price2num($_POST[$key]);
+			$amounts[$other_chid] = price2num(GETPOST($key));
 		}
 	}
 

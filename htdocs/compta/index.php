@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2020 Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2015-2020 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
@@ -31,6 +31,8 @@
  *	\brief      Main page of accountancy area
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -50,10 +52,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$langs->load("orders");
 }
 
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 $bid = GETPOST('bid', 'int');
 
@@ -102,21 +105,31 @@ print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-//print getCustomerInvoicePieChart($socid);
-print getNumberInvoicesPieChart('customers');
-print '<br>';
-print getNumberInvoicesPieChart('fourn');
-//print getPurchaseInvoicePieChart($socid);
-print '<br>';
-print getCustomerInvoiceDraftTable($max, $socid);
-print '<br>';
-print getDraftSupplierTable($max, $socid);
+if (isModEnabled('facture')) {
+	print getNumberInvoicesPieChart('customers');
+	print '<br>';
+}
+
+if (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) {
+	print getNumberInvoicesPieChart('fourn');
+	print '<br>';
+}
+
+if (isModEnabled('facture')) {
+	print getCustomerInvoiceDraftTable($max, $socid);
+	print '<br>';
+}
+
+if (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) {
+	print getDraftSupplierTable($max, $socid);
+	print '<br>';
+}
 
 print '</div><div class="fichetwothirdright">';
 
 
 // Latest modified customer invoices
-if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
+if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
 	$langs->load("boxes");
 	$tmpinvoice = new Facture($db);
 
@@ -210,11 +223,11 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 				print '<td class="nobordernopadding nowraponall">';
 				print $tmpinvoice->getNomUrl(1, '');
 				print '</td>';
-				print '<td width="20" class="nobordernopadding nowrap">';
 				if ($tmpinvoice->hasDelay()) {
+					print '<td width="20" class="nobordernopadding nowrap">';
 					print img_warning($langs->trans("Late"));
+					print '</td>';
 				}
-				print '</td>';
 				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
@@ -232,7 +245,7 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 				}
 				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
 
-				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
+				print '<td class="right" title="'.dol_escape_htmltag($langs->trans("DateModificationShort").' : '.dol_print_date($db->jdate($obj->tms), 'dayhour', 'tzuserrel')).'">'.dol_print_date($db->jdate($obj->tms), 'day', 'tzuserrel').'</td>';
 
 				print '<td>'.$tmpinvoice->getLibStatut(3, $obj->am).'</td>';
 
@@ -268,7 +281,7 @@ if (!empty($conf->facture->enabled) && !empty($user->rights->facture->lire)) {
 
 
 // Last modified supplier invoices
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
+if ((isModEnabled('fournisseur') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight("fournisseur", "facture", "lire")) || (isModEnabled('supplier_invoice') && $user->hasRight("supplier_invoice", "lire"))) {
 	$langs->load("boxes");
 	$facstatic = new FactureFournisseur($db);
 
@@ -362,7 +375,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 					print '<td class="right"><span class="amount">'.price($obj->total_ht).'</span></td>';
 				}
 				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
-				print '<td class="right">'.dol_print_date($db->jdate($obj->tms), 'day').'</td>';
+				print '<td class="right" title="'.dol_escape_htmltag($langs->trans("DateModificationShort").' : '.dol_print_date($db->jdate($obj->tms), 'dayhour', 'tzuserrel')).'">'.dol_print_date($db->jdate($obj->tms), 'day', 'tzuserrel').'</td>';
 				$alreadypaid = $facstatic->getSommePaiement();
 				print '<td>'.$facstatic->getLibStatut(3, $alreadypaid).'</td>';
 				print '</tr>';
@@ -395,7 +408,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 
 
 // Latest donations
-if (!empty($conf->don->enabled) && !empty($user->rights->don->lire)) {
+if (isModEnabled('don') && !empty($user->rights->don->lire)) {
 	include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 	$langs->load("boxes");
@@ -432,7 +445,7 @@ if (!empty($conf->don->enabled) && !empty($user->rights->don->lire)) {
 			$total_ttc = $totalam = $total_ht = 0;
 
 			while ($i < $num && $i < $max) {
-				$objp = $db->fetch_object($result);
+				$obj = $db->fetch_object($result);
 
 				if ($i >= $max) {
 					$othernb += 1;
@@ -442,24 +455,24 @@ if (!empty($conf->don->enabled) && !empty($user->rights->don->lire)) {
 					continue;
 				}
 
-				$donationstatic->id = $objp->rowid;
-				$donationstatic->ref = $objp->rowid;
-				$donationstatic->lastname = $objp->lastname;
-				$donationstatic->firstname = $objp->firstname;
-				$donationstatic->date = $objp->date;
-				$donationstatic->statut = $objp->status;
-				$donationstatic->status = $objp->status;
+				$donationstatic->id = $obj->rowid;
+				$donationstatic->ref = $obj->rowid;
+				$donationstatic->lastname = $obj->lastname;
+				$donationstatic->firstname = $obj->firstname;
+				$donationstatic->date = $db->jdate($obj->date);
+				$donationstatic->statut = $obj->status;
+				$donationstatic->status = $obj->status;
 
 				$label = $donationstatic->getFullName($langs);
-				if ($objp->societe) {
-					$label .= ($label ? ' - ' : '').$objp->societe;
+				if ($obj->societe) {
+					$label .= ($label ? ' - ' : '').$obj->societe;
 				}
 
 				print '<tr class="oddeven tdoverflowmax100">';
 				print '<td>'.$donationstatic->getNomUrl(1).'</td>';
 				print '<td>'.$label.'</td>';
-				print '<td class="nowrap right"><span class="amount">'.price($objp->amount).'</span></td>';
-				print '<td class="right">'.dol_print_date($db->jdate($objp->dm), 'day').'</td>';
+				print '<td class="nowrap right"><span class="amount">'.price($obj->amount).'</span></td>';
+				print '<td class="right" title="'.dol_escape_htmltag($langs->trans("DateModificationShort").' : '.dol_print_date($db->jdate($obj->dm), 'dayhour', 'tzuserrel')).'">'.dol_print_date($db->jdate($obj->dm), 'day', 'tzuserrel').'</td>';
 				print '<td>'.$donationstatic->getLibStatut(3).'</td>';
 				print '</tr>';
 
@@ -485,7 +498,7 @@ if (!empty($conf->don->enabled) && !empty($user->rights->don->lire)) {
 /**
  * Social contributions to pay
  */
-if (!empty($conf->tax->enabled) && !empty($user->rights->tax->charges->lire)) {
+if (isModEnabled('tax') && !empty($user->rights->tax->charges->lire)) {
 	if (!$socid) {
 		$chargestatic = new ChargeSociales($db);
 
@@ -527,9 +540,8 @@ if (!empty($conf->tax->enabled) && !empty($user->rights->tax->charges->lire)) {
 
 					if ($i >= $max) {
 						$othernb += 1;
+						$tot_ttc += $obj->amount;
 						$i++;
-						$total_ht += $obj->total_ht;
-						$total_ttc += $obj->total_ttc;
 						continue;
 					}
 
@@ -578,7 +590,7 @@ if (!empty($conf->tax->enabled) && !empty($user->rights->tax->charges->lire)) {
 /*
  * Customers orders to be billed
  */
-if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user->rights->commande->lire && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
+if (isModEnabled('facture') && isModEnabled('commande') && $user->hasRight("commande", "lire") && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER)) {
 	$commandestatic = new Commande($db);
 	$langs->load("orders");
 

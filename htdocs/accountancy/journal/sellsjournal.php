@@ -30,6 +30,7 @@
  * \brief		Page with sells journal
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -63,7 +64,7 @@ $hookmanager->initHooks(array('sellsjournal'));
 $parameters = array();
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
@@ -310,9 +311,7 @@ if ($action == 'writebookkeeping') {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
 		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
-		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
-		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->client = 3;
 
 		$invoicestatic->id = $key;
@@ -390,6 +389,12 @@ if ($action == 'writebookkeeping') {
 						$errorforinvoice[$key] = 'other';
 						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 					}
+				} else {
+					if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
+						$lettering_static = new Lettering($db);
+						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id));
+					}
 				}
 			}
 		}
@@ -412,8 +417,18 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_client;
 
-					$bookkeeping->subledger_account = '';
-					$bookkeeping->subledger_label = '';
+					if (!empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT)) {
+						if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT')) {
+							$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
+							$bookkeeping->subledger_label = $tabcompany[$key]['name'];
+						} else {
+							$bookkeeping->subledger_account = '';
+							$bookkeeping->subledger_label = '';
+						}
+					} else {
+						$bookkeeping->subledger_account = '';
+						$bookkeeping->subledger_label = '';
+					}
 
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->label_compte = $label_account;
@@ -584,9 +599,7 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
 		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
-		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
-		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->client = 3;
 
 		$invoicestatic->id = $key;
@@ -686,9 +699,11 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 
 
 if (empty($action) || $action == 'view') {
-	llxHeader('', $langs->trans("SellsJournal"));
+	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
 
-	$nom = $langs->trans("SellsJournal").' | '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
+	llxHeader('', dol_string_nohtmltag($title));
+
+	$nom = $title;
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
@@ -761,8 +776,8 @@ if (empty($action) || $action == 'view') {
 	print "<td>".$langs->trans("AccountAccounting")."</td>";
 	print "<td>".$langs->trans("SubledgerAccount")."</td>";
 	print "<td>".$langs->trans("LabelOperation")."</td>";
-	print '<td class="center">'.$langs->trans("Debit")."</td>";
-	print '<td class="center">'.$langs->trans("Credit")."</td>";
+	print '<td class="center">'.$langs->trans("AccountingDebit")."</td>";
+	print '<td class="center">'.$langs->trans("AccountingCredit")."</td>";
 	print "</tr>\n";
 
 	$r = '';
@@ -774,9 +789,7 @@ if (empty($action) || $action == 'view') {
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
 		$companystatic->code_compta = $tabcompany[$key]['code_compta'];
-		$companystatic->code_compta_fournisseur = $tabcompany[$key]['code_compta_fournisseur'];
 		$companystatic->code_client = $tabcompany[$key]['code_client'];
-		$companystatic->code_fournisseur = $tabcompany[$key]['code_fournisseur'];
 		$companystatic->client = 3;
 
 		$invoicestatic->id = $key;
@@ -886,6 +899,13 @@ if (empty($action) || $action == 'view') {
 			print "</td>";
 			// Subledger account
 			print "<td>";
+			if (!empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT)) {
+				if ($k == getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT')) {
+					print length_accounta($tabcompany[$key]['code_compta']);
+				}
+			} elseif (($accountoshow == "") || $accountoshow == 'NotDefined') {
+				print '<span class="error">' . $langs->trans("ThirdpartyAccountNotDefined") . '</span>';
+			}
 			print '</td>';
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];

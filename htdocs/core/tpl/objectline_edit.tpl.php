@@ -1,11 +1,12 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2022	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ if (empty($object) || !is_object($object)) {
 
 
 $usemargins = 0;
-if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
+if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 	$usemargins = 1;
 }
 
@@ -66,12 +67,17 @@ $colspan = 3; // Col total ht + col edit + col delete
 if (!empty($inputalsopricewithtax)) {
 	$colspan++; // We add 1 if col total ttc
 }
-if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier'))) {
+if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier', 'invoice_supplier_rec'))) {
 	$colspan++; // With this, there is a column move button
 }
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
 	$colspan += 2;
 }
+if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
+	$colspan++;
+}
+
+
 
 print "<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->\n";
 
@@ -84,7 +90,7 @@ $coldisplay = 0;
 
 $coldisplay++;
 ?>
-	<td>
+	<td class="linecoldesc minwidth250onall">
 	<div id="line_<?php echo $line->id; ?>"></div>
 
 	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
@@ -170,7 +176,11 @@ $coldisplay++;
 	}
 
 	// Show autofill date for recuring invoices
-	if (!empty($conf->service->enabled) && $line->product_type == 1 && $line->element == 'facturedetrec') {
+	if (isModEnabled("service") && $line->product_type == 1 && ($line->element == 'facturedetrec' || $line->element == 'invoice_supplier_det_rec')) {
+		if ($line->element == 'invoice_supplier_det_rec') {
+			$line->date_start_fill = $line->date_start;
+			$line->date_end_fill = $line->date_end;
+		}
 		echo '<br>';
 		echo $langs->trans('AutoFillDateFrom').' ';
 		echo $form->selectyesno('date_start_fill', GETPOSTISSET('date_start_fill') ? GETPOST('date_start_fill', 'int') : $line->date_start_fill, 1);
@@ -183,16 +193,20 @@ $coldisplay++;
 	</td>
 
 	<?php
-	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {	// We must have same test in printObjectLines
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 		$coldisplay++;
 		?>
-		<td class="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth150" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
+		<td class="right linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth100 maxwidth125onsmartphone" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 		<?php
+		print '<input type="hidden" id="fournprice" name="fournprice"  class="" value="'.$line->fk_fournprice.'">';
 	}
 
+	// VAT Rate
 	$coldisplay++;
 	if (!$situationinvoicelinewithparent) {
-		print '<td class="right">'.$form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1).'</td>';
+		print '<td class="right">';
+		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1);
+		print '</td>';
 	} else {
 		print '<td class="right"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';
 	}
@@ -204,7 +218,7 @@ $coldisplay++;
 	}
 	print '></td>';
 
-	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
+	if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
 		$coldisplay++;
 		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
 	}
@@ -255,32 +269,37 @@ $coldisplay++;
 	}
 	?>
 
-	<td class="nowrap right">
-	<?php $coldisplay++;
+	<td class="nowraponall right linecoldiscount">
+	<?php
+	// Discount
+	$coldisplay++;
 	if (($line->info_bits & 2) != 2) {
-		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="'.(GETPOSTISSET('remise_percent') ? GETPOST('remise_percent') : $line->remise_percent).'"';
+		print '<input type="text" class="flat right width40" name="remise_percent" id="remise_percent" value="'.(GETPOSTISSET('remise_percent') ? GETPOST('remise_percent') : ($line->remise_percent ? $line->remise_percent : '')).'"';
 		if ($situationinvoicelinewithparent) {
 			print ' readonly';
 		}
-		print '>%';
+		print '><span class="hideonsmartphone opacitymedium">%</span>';
 	} else { ?>
 		&nbsp;
 	<?php } ?>
 	</td>
+
 	<?php
+	// Progession for situation invoices
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
 		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.(GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent).'" name="progress">%</td>';
 		$coldisplay++;
 		print '<td></td>';
 	}
+
 	if (!empty($usemargins)) {
 		if (!empty($user->rights->margins->creer)) {
 			$coldisplay++;
 			?>
 		<td class="margininfos right">
 			<!-- For predef product -->
-			<?php if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { ?>
+			<?php if (isModEnabled("product") || isModEnabled("service")) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp right" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
@@ -293,9 +312,9 @@ $coldisplay++;
 				$margin_rate = (GETPOSTISSET("np_marginRate") ? GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0) {
-					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
+					echo '<td class="right nowrap margininfos">'.$margin_rate.'<span class="opacitymedium hideonsmartphone">%</span></td>';
 				} else {
-					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
+					echo '<td class="right nowrap margininfos"><input class="right maxwidth40" type="text" name="np_marginRate" value="'.$margin_rate.'"><span class="opacitymedium hideonsmartphone">%</span></td>';
 				}
 				$coldisplay++;
 			}
@@ -303,9 +322,9 @@ $coldisplay++;
 				$mark_rate = (GETPOSTISSET("np_markRate") ? GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0) {
-					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
+					echo '<td class="right nowrap margininfos">'.$mark_rate.'<span class="opacitymedium hideonsmartphone">%</span></td>';
 				} else {
-					echo '<td class="right nowrap margininfos"><input class="right maxwidth75" type="text" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
+					echo '<td class="right nowrap margininfos"><input class="right maxwidth40" type="text" name="np_markRate" value="'.$mark_rate.'"><span class="opacitymedium hideonsmartphone">%</span></td>';
 				}
 				$coldisplay++;
 			}
@@ -315,12 +334,12 @@ $coldisplay++;
 
 	<!-- colspan for this td because it replace total_ht+3 td for buttons+... -->
 	<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay += $colspan; ?>
-		<input type="submit" class="button buttongen marginbottomonly button-save" id="savelinebutton marginbottomonly" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
-		<input type="submit" class="button buttongen marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+		<input type="submit" class="reposition button buttongen marginbottomonly button-save" id="savelinebutton marginbottomonly" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
+		<input type="submit" class="reposition button buttongen marginbottomonly button-cancel" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
 </tr>
 
-<?php if (!empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector) { ?>
+<?php if (isModEnabled("service") && $line->product_type == 1 && $dateSelector) { ?>
 <tr id="service_duration_area" class="treditedlinefordate">
 	<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 		<td class="linecolnum center"></td>
@@ -482,7 +501,7 @@ jQuery(document).ready(function()
 		<?php
 	}
 
-	if (!empty($conf->margin->enabled)) {
+	if (isModEnabled('margin')) {
 		?>
 		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
 		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */

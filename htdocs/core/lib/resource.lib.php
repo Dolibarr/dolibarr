@@ -55,7 +55,7 @@ function resource_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'resource');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'resource', 'add', 'core');
 
 	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
 		$nbNote = 0;
@@ -87,7 +87,7 @@ function resource_prepare_head($object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/resource/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 	}
@@ -98,6 +98,8 @@ function resource_prepare_head($object)
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;*/
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'resource', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'resource', 'remove');
 

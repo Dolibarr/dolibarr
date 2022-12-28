@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2021       Anthony Berton          <bertonanthony@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,6 +69,8 @@ $fontsizesmaller = '11';
 $topMenuFontSize = '1.1em';
 $toolTipBgColor = 'rgba(255, 255, 255, 0.96)';
 $toolTipFontColor = '#333';
+$butactionbg = '150, 110, 162, 0.95';
+$textbutaction = '255, 255, 255, 255';
 
 // text color
 $textSuccess   = '#28a745';

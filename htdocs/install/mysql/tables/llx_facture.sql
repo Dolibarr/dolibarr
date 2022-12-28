@@ -26,11 +26,10 @@ create table llx_facture
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
 
-  ref				varchar(30)        NOT NULL,			-- invoice reference number
+  ref					varchar(30)        NOT NULL,			-- invoice reference number
   entity				integer  DEFAULT 1 NOT NULL,			-- multi company id
 
   ref_ext				varchar(255),							-- reference into an external system (not used by dolibarr)
-  ref_int				varchar(255),							-- reference into an internal system (used by dolibarr to store extern id like paypal info)
   ref_client			varchar(255),							-- reference for customer
 
   type					smallint DEFAULT 0 NOT NULL,			-- type of invoice
@@ -48,6 +47,7 @@ create table llx_facture
   remise				real     DEFAULT 0,						-- remise totale calculee
 
   close_code			varchar(16),							-- Code motif cloture sans paiement complet
+  close_missing_amount	double(24,8),							-- Amount missing when closing with a not complete payment
   close_note			varchar(128),							-- Commentaire cloture sans paiement complet
 
   total_tva				double(24,8)     DEFAULT 0,				-- amount total tva apres remise totale

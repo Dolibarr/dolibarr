@@ -358,7 +358,7 @@ class Subscription extends CommonObject
 					$result = $member->update_end_date($user);
 
 					if ($this->fk_bank > 0 && is_object($accountline) && $accountline->id > 0) {	// If we found bank account line (this means this->fk_bank defined)
-						$result = $accountline->delete($user); // Return false if refused because line is conciliated
+						$result = $accountline->delete($user); // Return false if refused because line is reconciled
 						if ($result > 0) {
 							$this->db->commit();
 							return 1;
@@ -490,17 +490,17 @@ class Subscription extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
-		$result = $this->db->query($sql);
-		if ($result) {
-			if ($this->db->num_rows($result)) {
-				$obj = $this->db->fetch_object($result);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);
 				$this->id = $obj->rowid;
 
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
 			}
 
-			$this->db->free($result);
+			$this->db->free($resql);
 		} else {
 			dol_print_error($this->db);
 		}

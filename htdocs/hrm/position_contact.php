@@ -20,22 +20,23 @@
  */
 
 /**
- *  \file       position_contact.php
- *  \ingroup    hrm
- *  \brief      Tab for contacts linked to Position
+ *    \file       htdocs/hrm/position_contact.php
+ *    \ingroup    hrm
+ *    \brief      Tab for contacts linked to Job Position
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
 
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/position.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_position.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("hrm", "companies", "other", "mails"));
 
+// Get Parameters
 $id     = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
@@ -47,12 +48,14 @@ $object = new Position($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->hrm->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('positioncontact', 'globalcard')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
+// Permissions
 $permission = $user->rights->hrm->position->write;
 
 // Security check (enable the most restrictive one)
@@ -125,7 +128,7 @@ if ($object->id) {
 	/*
 	 * Show tabs
 	 */
-	$head = PositionCardPrepareHead($object);
+	$head = positionCardPrepareHead($object);
 
 	print dol_get_fiche_head($head, 'contact', '', -1, $object->picto);
 
@@ -139,7 +142,7 @@ if ($object->id) {
 	 // Thirdparty
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	 // Project
-	 if (! empty($conf->projet->enabled))
+	 if (isModEnabled('project'))
 	 {
 	 $langs->load("projects");
 	 $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
@@ -160,7 +163,7 @@ if ($object->id) {
 	 $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 	 }
 	 } else {
-	 if (! empty($object->fk_project)) {
+	 if (!empty($object->fk_project)) {
 	 $proj = new Project($db);
 	 $proj->fetch($object->fk_project);
 	 $morehtmlref .= ': '.$proj->getNomUrl();

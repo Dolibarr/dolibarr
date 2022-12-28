@@ -20,9 +20,9 @@
  */
 
 /**
- *    \file       position.php
- *        \ingroup    hrm
- *        \brief      Page to create/edit/view position
+ *    \file       htdocs/hrm/position.php
+ *    \ingroup    hrm
+ *    \brief      Page to create/edit/view position
  */
 
 //if (! defined('NOREQUIREDB'))              define('NOREQUIREDB', '1');				// Do not create database handler $db
@@ -31,7 +31,6 @@
 //if (! defined('NOREQUIRETRAN'))            define('NOREQUIRETRAN', '1');				// Do not load object $langs
 //if (! defined('NOSCANGETFORINJECTION'))    define('NOSCANGETFORINJECTION', '1');		// Do not check injection attack on GET parameters
 //if (! defined('NOSCANPOSTFORINJECTION'))   define('NOSCANPOSTFORINJECTION', '1');		// Do not check injection attack on POST parameters
-//if (! defined('NOCSRFCHECK'))              define('NOCSRFCHECK', '1');				// Do not check CSRF attack (test on referer + on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on).
 //if (! defined('NOTOKENRENEWAL'))           define('NOTOKENRENEWAL', '1');				// Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
 //if (! defined('NOSTYLECHECK'))             define('NOSTYLECHECK', '1');				// Do not check style html tag into posted data
 //if (! defined('NOREQUIREMENU'))            define('NOREQUIREMENU', '1');				// If there is no need to load and show top and left menu
@@ -41,7 +40,6 @@
 //if (! defined('NOIPCHECK'))                define('NOIPCHECK', '1');					// Do not check IP defined into conf $dolibarr_main_restrict_ip
 //if (! defined("MAIN_LANG_DEFAULT"))        define('MAIN_LANG_DEFAULT', 'auto');					// Force lang to a particular value
 //if (! defined("MAIN_AUTHENTICATION_MODE")) define('MAIN_AUTHENTICATION_MODE', 'aloginmodule');	// Force authentication handler
-//if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN', 1);		// The main.inc.php does not make a redirect if not logged, instead show simple error message
 //if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');		// Force use of CSRF protection with tokens even for GET
 //if (! defined('NOBROWSERNOTIF'))     		 define('NOBROWSERNOTIF', '1');				// Disable browser notification
 
@@ -88,10 +86,6 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_position.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_job.lib.php';
 
-$action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
-$backtopage = GETPOST('backtopage', 'alpha');
-$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$fk_job 	= GETPOST('fk_job', 'int');
 
 // Get parameters
 $id 	 = GETPOST('fk_job', 'int');
@@ -105,12 +99,18 @@ $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'positioncard'; // To manage different context of search
 
+$action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
+$backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+$fk_job 	= GETPOST('fk_job', 'int');
+
 // Initialize technical objects
 $object = new Job($db);
 
 $extrafields = new ExtraFields($db);
 
 $diroutputmassaction = $conf->hrm->dir_output . '/temp/massgeneration/' . $user->id;
+
 $hookmanager->initHooks(array('positiontab', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
@@ -130,6 +130,7 @@ foreach ($object->fields as $key => $val) {
 // Load object
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+// Permissions
 $permissiontoread = $user->rights->hrm->all->read;
 $permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->rights->hrm->all->delete;
@@ -160,9 +161,9 @@ if (empty($reshook)) {
 	$backurlforlist = dol_buildpath('/hrm/position_list.php', 1);
 	//$backtopage = dol_buildpath('/hrm/position.php', 1) . '?fk_job=' . ($fk_job > 0 ? $fk_job : '__ID__');
 
-	if (empty($backtopage) || ($cancel && empty($fk_job))) {
+	if (empty($backtopage) || ($cancel && $fk_job <= 0)) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
-			if (empty($fk_job) && (($action != 'add' && $action != 'create') || $cancel)) {
+			if ($fk_job == -1 && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
 				if ($fk_job > 0) {
@@ -631,7 +632,7 @@ function DisplayPositionList()
 	print '<input type="hidden" name="page" value="' . $page . '">';
 	print '<input type="hidden" name="contextpage" value="' . $contextpage . '">';
 
-	$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/hrm/position.php', 1) . '?action=create&backtopage=' . urlencode($_SERVER['PHP_SELF'].'?fk_job=' . $fk_job).'&fk_job=' . $fk_job, '', $permissiontoadd);
+	$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/hrm/position.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']).'&fk_job='.((int) $fk_job), '', $permissiontoadd);
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_' . $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -900,6 +901,8 @@ function DisplayPositionList()
 // Part to create
 if ($action == 'create') {
 	$object = new Position($db);
+	// Fetch optionals attributes and labels
+	$extrafields->fetch_name_optionals_label($object->table_element);
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Position")), '', 'object_' . $object->picto);
 
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
@@ -914,9 +917,6 @@ if ($action == 'create') {
 	}
 
 	print dol_get_fiche_head(array(), '');
-
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">' . "\n";
 

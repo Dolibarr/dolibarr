@@ -173,14 +173,14 @@ class pdf_standard extends CommonStickerGenerator
 		$widthtouse = $maxwidthtouse;
 		$heighttouse = 0; // old value for image
 		$tmp = dol_getImageSize($photo, false);
-		if ($tmp['height']) {
+		if (isset($tmp['height'])) {
 			$imgratio = $tmp['width'] / $tmp['height'];
 			if ($imgratio >= $defaultratio) {
 				$widthtouse = $maxwidthtouse;
 				$heighttouse = round($widthtouse / $imgratio);
 			} else {
-				$heightouse = $maxheighttouse;
-				$widthtouse = round($heightouse * $imgratio);
+				$heighttouse = $maxheighttouse;
+				$widthtouse = round($heighttouse * $imgratio);
 			}
 		}
 		//var_dump($this->_Width.'x'.$this->_Height.' with border and scale '.$imgscale.' => max '.$maxwidthtouse.'x'.$maxheighttouse.' => We use '.$widthtouse.'x'.$heighttouse);exit;
@@ -314,10 +314,10 @@ class pdf_standard extends CommonStickerGenerator
 			complete_substitutions_array($substitutionarray, $langs);
 
 			// For business cards
-			$textleft = make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray);
-			$textheader = make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray);
-			$textfooter = make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray);
-			$textright = make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray);
+			$textleft = make_substitutions(getDolGlobalString("ADHERENT_CARD_TEXT"), $substitutionarray);
+			$textheader = make_substitutions(getDolGlobalString("ADHERENT_CARD_HEADER_TEXT"), $substitutionarray);
+			$textfooter = make_substitutions(getDolGlobalString("ADHERENT_CARD_FOOTER_TEXT"), $substitutionarray);
+			$textright = make_substitutions(getDolGlobalString("ADHERENT_CARD_TEXT_RIGHT"), $substitutionarray);
 
 			$nb = $_Avery_Labels[$this->code]['NX'] * $_Avery_Labels[$this->code]['NY'];
 			if ($nb <= 0) {
@@ -330,8 +330,8 @@ class pdf_standard extends CommonStickerGenerator
 					'textheader'=>$textheader,
 					'textfooter'=>$textfooter,
 					'textright'=>$textright,
-					'id'=>$object->rowid,
-					'photo'=>$object->photo
+					'id'=>(isset($object->rowid) ? $object->rowid : ""),
+					'photo'=>(isset($object->photo) ? $object->photo : "")
 				);
 			}
 
@@ -412,7 +412,7 @@ class pdf_standard extends CommonStickerGenerator
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 		$pdf->SetKeyWords($keywords);
-		if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
 		}
 

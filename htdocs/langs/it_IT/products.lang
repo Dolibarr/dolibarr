@@ -410,4 +410,4 @@ DefaultBOMDesc=La distinta base predefinita consigliata per la fabbricazione di 
 Rank=Rango
 SwitchOnSaleStatus=Attiva lo stato di vendita
 SwitchOnPurchaseStatus=Attiva lo stato di acquisto
-StockMouvementExtraFields= Campi Extra (movimento stock)
+StockMouvementExtraFields=Campi Extra (movimento stock)

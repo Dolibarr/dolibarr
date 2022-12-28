@@ -37,10 +37,8 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
@@ -50,7 +48,8 @@ $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id', 'int');
 $excludeids = GETPOST('excludeids', 'intcomma');
-$showtype = GETPOST('showtype', 'int');
+$showtype = GETPOSTINT('showtype');
+$showcode = GETPOSTINT('showcode');
 
 $object = new Societe($db);
 if ($id > 0) {
@@ -109,7 +108,6 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ?GETPOST($htmlname, 'alpha') : ''));
-
 	if (!$searchkey) {
 		return;
 	}
@@ -124,7 +122,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		$excludeids = array();
 	}
 
-	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson, 0, 'minwidth100', '', false, $excludeids);
+	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson, 0, 'minwidth100', '', false, $excludeids, $showcode);
 
 	$db->close();
 

@@ -20,26 +20,27 @@
  */
 
 /**
- *  \file       position_note.php
- *  \ingroup    hrm
- *  \ingroup    hrm
- *  \brief      Tab for notes on Position
+ *    \file       htdocs/hrm/position_note.php
+ *    \ingroup    hrm
+ *    \brief      Tab for notes on Position
  */
 
 
 // Load Dolibarr environment
 require '../main.inc.php';
 
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';;
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/position.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_position.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';;
+
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "companies"));
+$langs->loadLangs(array('hrm', 'companies'));
+
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$ref        = GETPOST('ref', 'alpha');
+$id     = GETPOST('id', 'int');
+$ref    = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -55,10 +56,11 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->hrm->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = $conf->hrm->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
-$permissionnote = $user->rights->hrm->all->write;
+// Permissions
+$permissionnote   = $user->rights->hrm->all->write;
 $permissiontoread = $user->rights->hrm->all->read; // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
@@ -96,7 +98,7 @@ llxHeader('', $langs->trans('Position'), $help_url);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
-	$head = PositionCardPrepareHead($object);
+	$head = positionCardPrepareHead($object);
 
 	print dol_get_fiche_head($head, 'note', $langs->trans("Notes"), -1, $object->picto);
 

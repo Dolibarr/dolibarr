@@ -272,7 +272,7 @@ class Documents extends DolibarrApi
 		if ($modulepart == 'societe' || $modulepart == 'thirdparty') {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-			if (!DolibarrApiAccess::$user->rights->societe->lire) {
+			if (!DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
 				throw new RestException(401);
 			}
 
@@ -458,6 +458,20 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
+		} elseif ($modulepart == 'knowledgemanagement') {
+			require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
+
+			if (!DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read && !DolibarrApiAccess::$user->rights->knowledgemanagement->knowledgerecord->read) {
+				throw new RestException(401);
+			}
+
+			$object = new KnowledgeRecord($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'KM article not found');
+			}
+
+			$upload_dir = $conf->knowledgemanagement->dir_output.'/knowledgerecord/'.dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'categorie' || $modulepart == 'category') {
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
@@ -492,6 +506,11 @@ class Documents extends DolibarrApi
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}
 
+		$objectType = $modulepart;
+		if (! empty($object->id) && ! empty($object->table_element)) {
+			$objectType = $object->table_element;
+		}
+
 		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 		if (empty($filearray)) {
 			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(!empty($object->ref) ? ' or Ref '.$object->ref : '').' does not return any document.');
@@ -499,11 +518,14 @@ class Documents extends DolibarrApi
 			if (($object->id) > 0 && !empty($modulepart)) {
 				require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 				$ecmfile = new EcmFiles($this->db);
-				$result = $ecmfile->fetchAll('', '', 0, 0, array('t.src_object_type' => $modulepart, 't.src_object_id' => $object->id));
+				$result = $ecmfile->fetchAll('', '', 0, 0, array('t.src_object_type' => $objectType, 't.src_object_id' => $object->id));
 				if ($result < 0) {
 					throw new RestException(503, 'Error when retrieve ecm list : '.$this->db->lasterror());
 				} elseif (is_array($ecmfile->lines) && count($ecmfile->lines) > 0) {
-					$filearray['ecmfiles_infos'] = $ecmfile->lines;
+					$count = count($filearray);
+					for ($i = 0 ; $i < $count ; $i++) {
+						if ($filearray[$i]['name'] == $ecmfile->lines[$i]->filename) $filearray[$i] = array_merge($filearray[$i], (array) $ecmfile->lines[0]);
+					}
 				}
 			}
 		}
@@ -554,10 +576,9 @@ class Documents extends DolibarrApi
 	{
 		global $db, $conf;
 
-		/*var_dump($modulepart);
-		var_dump($filename);
-		var_dump($filecontent);
-		exit;*/
+		//var_dump($modulepart);
+		//var_dump($filename);
+		//var_dump($filecontent);exit;
 
 		if (empty($modulepart)) {
 			throw new RestException(400, 'Modulepart not provided.');
