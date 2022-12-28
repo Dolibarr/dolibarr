@@ -25,4 +25,11 @@ exclude:
   - name: PhpUnnecessaryLocalVariableInspection
   - name: PhpUnusedParameterInspection
   - name: PhpUnusedLocalVariableInspection
+  - name: PhpTernaryExpressionCanBeReplacedWithConditionInspection
+  - name: PhpSwitchStatementWitSingleBranchInspection
+  - name: PhpArrayAccessCanBeReplacedWithForeachValueInspection
+  - name: PhpArrayPushWithOneElementInspection
+  - name: PhpCastIsUnnecessaryInspection
+  - name: PhpDeprecationInspection
+  - name: PhpConditionAlreadyCheckedInspection
   
