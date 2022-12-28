@@ -58,7 +58,7 @@ ALTER TABLE llx_opensurvey_user_studs MODIFY reponses VARCHAR(200) NOT NULL;
 
 -- v17
 
-ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_type varchar(32);
+ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_type varchar(32); 
 
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_percent (percent);
 
