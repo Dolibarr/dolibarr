@@ -60,4 +60,5 @@ exclude:
   - name: PhpRegExpRedundantModifierInspection
   - name: PhpClassConstantAccessedViaChildClassInspection
   - name: RegExpUnnecessaryNonCapturingGroup
- 
+  - name: PhpPregMatchReplaceWithComparisonInspection
+  - name: PhpArrayWriteIsNotUsedInspection
