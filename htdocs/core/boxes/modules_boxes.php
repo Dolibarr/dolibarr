@@ -464,7 +464,7 @@ class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" box
 				closedir($handle);
 			}
 		}
-		echo "<pre>";print_r($modules);echo "</pre>";
+		//echo "<pre>";print_r($modules);echo "</pre>";
 
 		asort($orders);
 
