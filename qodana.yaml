@@ -52,9 +52,12 @@ exclude:
   - name: PhpInArrayCanBeReplacedWithComparisonInspection
   - name: PhpUnusedAliasInspection
   - name: PhpPossiblePolymorphicInvocationInspection
+  - name: PhpReturnValueOfMethodIsNeverUsedInspection
   - name: PhpPregReplaceWithEmptyReplacementInspection
-  - name: PhpFieldImmediatelyRewrittenInspection 
-  - name: PhpIllegalStringOffsetInspection   
+  - name: PhpFieldImmediatelyRewrittenInspection
+  - name: PhpIllegalStringOffsetInspection
+  - name: PhpWrongForeachArgumentTypeInspection
   - name: PhpRegExpRedundantModifierInspection
- 
+  - name: PhpClassConstantAccessedViaChildClassInspection
+  - name: RegExpUnnecessaryNonCapturingGroup
  

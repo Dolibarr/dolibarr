@@ -2530,7 +2530,7 @@ class Form
 	 *										    'warehouseclosed' = count products from closed warehouses,
 	 *										    'warehouseinternal' = count products from warehouses for internal correct/transfer only
 	 *  @param		int		$status_purchase	Purchase status -1=Return all products, 0=Products not on purchase, 1=Products on purchase
-	 *  @return     array    				    Array of keys for json
+	 *  @return     array|string			    Array of keys for json
 	 */
 	public function select_produits_list($selected = '', $htmlname = 'productid', $filtertype = '', $limit = 20, $price_level = 0, $filterkey = '', $status = 1, $finished = 2, $outputmode = 0, $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $hidepriceinlabel = 0, $warehouseStatus = '', $status_purchase = -1)
 	{
@@ -2859,10 +2859,13 @@ class Form
 			if (empty($outputmode)) {
 				return $out;
 			}
+
 			return $outarray;
 		} else {
 			dol_print_error($this->db);
 		}
+
+		return '';
 	}
 
 	/**
@@ -3665,8 +3668,9 @@ class Form
 			return $outarray;
 		} else {
 			dol_print_error($this->db);
-			return '';
 		}
+
+		return '';
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

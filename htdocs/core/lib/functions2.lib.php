@@ -1301,7 +1301,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	}
 
 	//print $sql.'<br>';
-	dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
+	dol_syslog("functions2::get_next_value mode=".$mode, LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -1360,7 +1360,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$sql .= " AND ".$sqlwhere;
 		}
 
-		dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
+		dol_syslog("functions2::get_next_value mode=".$mode, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
