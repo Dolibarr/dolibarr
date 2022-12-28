@@ -117,7 +117,7 @@ class Cstate // extends CommonObject
 		$sql .= " ".(!isset($this->rowid) ? 'NULL' : "'".$this->db->escape($this->rowid)."'").",";
 		$sql .= " ".(!isset($this->code_departement) ? 'NULL' : "'".$this->db->escape($this->code_departement)."'").",";
 		$sql .= " ".(!isset($this->nom) ? 'NULL' : "'".$this->db->escape($this->nom)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'")."";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -208,22 +208,23 @@ class Cstate // extends CommonObject
 		if (isset($this->code_departement)) {
 			$this->code_departement = trim($this->code_departement);
 		}
-		if (isset($this->nom)) {
-			$this->nom = trim($this->nom);
+		if (isset($this->name)) {
+			$this->name = trim($this->name);
 		}
 		if (isset($this->active)) {
 			$this->active = trim($this->active);
 		}
 
-
 		// Check parameters
-		// Put here code to add control on parameters values
+		if (empty($this->name) && !empty($this->nom)) {
+			$this->name = $this->nom;
+		}
 
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix()."c_departements SET";
 		$sql .= " code_departement=".(isset($this->code_departement) ? "'".$this->db->escape($this->code_departement)."'" : "null").",";
-		$sql .= " nom=".(isset($this->nom) ? "'".$this->db->escape($this->nom)."'" : "null").",";
-		$sql .= " active=".(isset($this->active) ? $this->active : "null")."";
+		$sql .= " nom=".(isset($this->name) ? "'".$this->db->escape($this->name)."'" : "null").",";
+		$sql .= " active=".(isset($this->active) ? ((int) $this->active) : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();

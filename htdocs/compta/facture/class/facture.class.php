@@ -6375,11 +6375,11 @@ class FactureLigne extends CommonInvoiceLine
 
 		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
-		$sql .= " total_ht=".price2num($this->total_ht)."";
-		$sql .= ",total_tva=".price2num($this->total_tva)."";
-		$sql .= ",total_localtax1=".price2num($this->total_localtax1)."";
-		$sql .= ",total_localtax2=".price2num($this->total_localtax2)."";
-		$sql .= ",total_ttc=".price2num($this->total_ttc)."";
+		$sql .= " total_ht=".price2num($this->total_ht);
+		$sql .= ",total_tva=".price2num($this->total_tva);
+		$sql .= ",total_localtax1=".price2num($this->total_localtax1);
+		$sql .= ",total_localtax2=".price2num($this->total_localtax2);
+		$sql .= ",total_ttc=".price2num($this->total_ttc);
 		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
