@@ -412,3 +412,4 @@ SwitchOnSaleStatus=Basculer le statut En Vente
 SwitchOnPurchaseStatus=Basculer le statut En Achat
 PuttingPricesUpToDate=Mettre à jour les prix
 OrProductsWithCategories=Ou produits avec tags/categories
+WhenProductVirtualOnOptionAreForced=Quand l'option des kits est activée, le mode de décrémentation automatique des stocks est forcé sur 'Décrémenter les stocks réel sur validation d'expédition' et le mode d'incrémentation automatique de stocks est forcé sur 'Incrémenter les stocks réels sur ventilation manuels dans les entrepôts' et ne peut pas être édité. Les autres options peuvent être définies comme vous le voulez.
