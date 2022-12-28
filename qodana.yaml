@@ -37,7 +37,11 @@ exclude:
   - name: PhpExpressionResultUnusedInspection
   - name: PhpUndefinedClassInspection
   - name: RegExpSimplifiable
+  - name: PhpConcatenationWithEmptyStringCanBeInlinedInspection
   - name: PhpConditionCanBeReplacedWithMinMaxCallInspection
+  - name: PhpArrayIsAlwaysEmptyInspection
+  - name: PhpParameterByRefIsNotUsedAsReferenceInspection
   - name: PhpWrongStringConcatenationInspection
+  - name: PhpExpressionAlwaysNullInspection
   - name: PhpIfWithCommonPartsInspection  
 
