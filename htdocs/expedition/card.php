@@ -1807,7 +1807,13 @@ if ($action == 'create') {
 																print img_picto('', 'split.png');
 																$out_js_line .= 'jQuery("td[name=\"' . $dispatcher_prefix . 'action_' . $dispatcher_suffix_with_line . '\"]").click(function(){';
 																$out_js_line .= '	var expeditionDetDispatcher = new ExpeditionLineDispatcher(jQuery);';
-																$out_js_line .= ' 	expeditionDetDispatcher.addLine("' . $dispatcher_prefix . '", "' . $component_dispatch_line['id'] . '", "' . $dispatcher_suffix_id . '");';
+																$out_js_line .= ' 	expeditionDetDispatcher.addLine("' . $dispatcher_prefix . '", "' . $component_dispatch_line['id'] . '", "' . $dispatcher_suffix_id . '", "' . dol_escape_js(img_picto('', 'delete')) . '");';
+																$out_js_line .= '});';
+															} else {
+																// remove a dispatched line
+																print img_picto('', 'delete');
+																$out_js_line .= 'jQuery("td[name=\"' . $dispatcher_prefix . 'action_' . $dispatcher_suffix_with_line . '\"]").click(function() {';
+																$out_js_line .= '	jQuery(this).parent("tr").remove();';
 																$out_js_line .= '});';
 															}
 														}
