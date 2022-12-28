@@ -22,3 +22,7 @@ exclude:
   - name: HtmlWrongAttributeValue
   - name: PhpUndefinedClassConstantInspection
   - name: RegExpRedundantEscape
+  - name: PhpUnnecessaryLocalVariableInspection
+  - name: PhpUnusedParameterInspection
+  - name: PhpUnusedLocalVariableInspection
+  
