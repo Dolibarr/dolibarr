@@ -180,9 +180,15 @@ $formproduct = new FormProduct($db);
 
 
 $disabled = '';
+if (getDolGlobalInt('PRODUIT_SOUSPRODUITS') || isModEnabled('productbatch')) {
+	$disabled = ' disabled';
+}
+if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+	$langs->load('products');
+	print info_admin($langs->trans('WhenProductVirtualOnOptionAreForced'));
+}
 if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
-	$disabled = ' disabled';
 	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
 }
 

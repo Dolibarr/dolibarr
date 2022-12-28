@@ -429,3 +429,4 @@ ConfirmEditExtrafield = Select the extrafield you want modify
 ConfirmEditExtrafieldQuestion = Are you sure you want to modify this extrafield?
 ModifyValueExtrafields = Modify value of an extrafield
 OrProductsWithCategories=Or products with tags/categories
+WhenProductVirtualOnOptionAreForced=When virtual products option is on, automatic stock decrease is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
