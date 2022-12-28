@@ -2763,7 +2763,7 @@ if (empty($reshook)) {
 					}
 
 					if (!$errors) {
-						setEventMessages($langs->trans('Updated'), '', 'mesgs');
+						setEventMessages($langs->trans('Updated'), null, 'mesgs');
 						header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 					} else {
 						setEventMessages($langs->trans('ErrorOutingSituationInvoiceCreditNote'), array(), 'errors');
@@ -3066,7 +3066,7 @@ if ($action == 'create') {
 				$remise_percent 	= (!empty($expesrc->remise_percent) ? $expesrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
 				$remise_absolue 	= (!empty($expesrc->remise_absolue) ? $expesrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
-				if (!empty($conf->multicurrency->enabled)) {
+				if (isModEnabled('multicurrency')) {
 					$currency_code 	= (!empty($expesrc->currency_code) ? $expesrc->currency_code : (!empty($soc->currency_code) ? $soc->currency_code : $objectsrc->multicurrency_code));
 					$currency_tx 	= (!empty($expesrc->currency_tx) ? $expesrc->currency_tx : (!empty($soc->currency_tx) ? $soc->currency_tx : $objectsrc->currency_tx));
 				}

@@ -496,7 +496,7 @@ if (!empty($id) || !empty($ref)) {
 		}
 
 		if ($action == 'add') {
-			$prodattr_all = $prodattr->fetchAll(1);
+			$prodattr_all = $prodattr->fetchAll();
 
 			if (!$selected) {
 				$selected = $prodattr_all[key($prodattr_all)]->id;

@@ -142,7 +142,7 @@ class FormActions
 				$canedit = 0;
 			}
 
-			print ajax_combobox('select'.$htmlname);
+			print ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve', '-1', $morecss);
 
 			if (empty($onlyselect)) {
 				print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';

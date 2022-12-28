@@ -353,7 +353,7 @@ class AccountancyCategory // extends CommonObject
 		$sql .= " formula=".(isset($this->formula) ? "'".$this->db->escape($this->formula)."'" : "null").",";
 		$sql .= " position=".(isset($this->position) ? $this->position : "null").",";
 		$sql .= " fk_country=".(isset($this->fk_country) ? $this->fk_country : "null").",";
-		$sql .= " active=".(isset($this->active) ? $this->active : "null")."";
+		$sql .= " active=".(isset($this->active) ? $this->active : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();

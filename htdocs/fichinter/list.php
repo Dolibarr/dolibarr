@@ -213,7 +213,7 @@ if (isModEnabled('contrat')) {
 $now = dol_now();
 
 $help_url = '';
-$title = $langs->trans("ListOfInterventions");
+$title = $langs->trans("Interventions");
 $morejs = array();
 $morecss = array();
 

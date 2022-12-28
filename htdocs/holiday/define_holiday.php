@@ -188,7 +188,7 @@ if (empty($reshook)) {
 			$db->commit();
 
 			if ($nbok > 0) {
-				setEventMessages('UpdateConfCPOK', '', 'mesgs');
+				setEventMessages('UpdateConfCPOK', null, 'mesgs');
 			}
 		} else {
 			$db->rollback();

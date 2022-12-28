@@ -125,12 +125,7 @@ if ($id > 0 || !empty($ref)) {
 		dol_print_error($db, $object->error);
 	}
 } elseif (!empty($socid) && $socid > 0) {
-	$fourn = new Fournisseur($db);
-	$ret = $fourn->fetch($socid);
-	if ($ret < 0) {
-		dol_print_error($db, $object->error);
-	}
-	$object->socid = $fourn->id;
+	$object->socid = $socid;
 	$ret = $object->fetch_thirdparty();
 	if ($ret < 0) {
 		dol_print_error($db, $object->error);
@@ -1874,18 +1869,12 @@ if ($action == 'create') {
 	print "</form>\n";
 } elseif (!empty($object->id)) {
 	$result = $object->fetch($id, $ref);
+	$object->fetch_thirdparty();
 
-	$societe = new Fournisseur($db);
-	$result = $societe->fetch($object->socid);
-	if ($result < 0) {
-		dol_print_error($db);
-	}
+	$societe = $object->thirdparty;
 
 	$author = new User($db);
 	$author->fetch($object->user_author_id);
-
-	$res = $object->fetch_optionals();
-
 
 	$head = ordersupplier_prepare_head($object);
 
@@ -2415,7 +2404,7 @@ if ($action == 'create') {
 
 	// Show object lines
 	if (!empty($object->lines)) {
-		$ret = $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
+		$ret = $object->printObjectLines($action, $object->thirdparty, $mysoc, $lineid, 1);
 	}
 
 	$num = count($object->lines);
@@ -2665,7 +2654,8 @@ if ($action == 'create') {
 			$formorder->selectInputMethod(GETPOST('methodecommande'), "methodecommande", 1);
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment" value="'.GETPOST('comment').'"></td></tr>';
+			print '<tr><td>'.$langs->trans("Comment").'</td><td><input class="quatrevingtpercent" type="text" name="comment" value="'.GETPOST('comment').'"></td></tr>';
+
 			print '<tr><td class="center" colspan="2">';
 			print '<input type="submit" name="makeorder" class="button" value="'.$langs->trans("ToOrder").'">';
 			print ' &nbsp; &nbsp; ';
@@ -2731,7 +2721,7 @@ if ($action == 'create') {
 					print $form->selectarray("type", $liv);
 
 					print '</td></tr>';
-					print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment"></td></tr>';
+					print '<tr><td>'.$langs->trans("Comment").'</td><td><input class="quatrevingtpercent" type="text" name="comment"></td></tr>';
 					print '<tr><td class="center" colspan="2">';
 					print '<input type="submit" name="receive" class="button" value="'.$langs->trans("Receive").'">';
 					print ' &nbsp; &nbsp; ';
@@ -2795,13 +2785,12 @@ if ($action == 'create') {
 					print "<br>".$langs->trans("ErrorOccurredReviseAndRetry")."<br>";
 					print '<input class="button button-cancel" type="submit" id="cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				} else {
-					$textinput_size = "50";
 					// Webservice url
 					print '<tr><td>'.$langs->trans("WebServiceURL").'</td><td colspan="3">'.dol_print_url($ws_url).'</td></tr>';
 					//Remote User
-					print '<tr><td>'.$langs->trans("User").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_user"></td></tr>';
+					print '<tr><td>'.$langs->trans("User").'</td><td><input class="width100" type="text" name="ws_user"></td></tr>';
 					//Remote Password
-					print '<tr><td>'.$langs->trans("Password").'</td><td><input size="'.$textinput_size.'" type="text" name="ws_password"></td></tr>';
+					print '<tr><td>'.$langs->trans("Password").'</td><td><input class="width100" type="text" name="ws_password"></td></tr>';
 					//Submit button
 					print '<tr><td class="center" colspan="2">';
 					print '<input type="submit" class="button" id="ws_submit" name="ws_submit" value="'.$langs->trans("CreateRemoteOrder").'">';

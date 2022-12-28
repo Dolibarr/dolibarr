@@ -459,7 +459,7 @@ if (isModEnabled('don') && !empty($user->rights->don->lire)) {
 				$donationstatic->ref = $obj->rowid;
 				$donationstatic->lastname = $obj->lastname;
 				$donationstatic->firstname = $obj->firstname;
-				$donationstatic->date = $obj->date;
+				$donationstatic->date = $db->jdate($obj->date);
 				$donationstatic->statut = $obj->status;
 				$donationstatic->status = $obj->status;
 

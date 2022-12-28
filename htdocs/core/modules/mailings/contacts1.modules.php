@@ -409,7 +409,7 @@ class mailing_contacts1 extends MailingTargets
 		}
 
 		// Filter on language
-		if ($filter_lang != '') {
+		if (!empty($filter_lang)) {
 			$sql .= " AND sp.default_lang LIKE '".$this->db->escape($filter_lang)."%'";
 		}
 
@@ -418,7 +418,7 @@ class mailing_contacts1 extends MailingTargets
 
 		//print "xx".$key;
 		if ($key == 'prospects') {
-			$sql .= " AND s.client=2";
+			$sql .= " AND s.client = 2";
 		}
 		foreach ($prospectlevel as $codelevel => $valuelevel) {
 			if ($key == 'prospectslevel'.$codelevel) {
@@ -426,10 +426,10 @@ class mailing_contacts1 extends MailingTargets
 			}
 		}
 		if ($key == 'customers') {
-			$sql .= " AND s.client=1";
+			$sql .= " AND s.client = 1";
 		}
 		if ($key == 'suppliers') {
-			$sql .= " AND s.fournisseur=1";
+			$sql .= " AND s.fournisseur = 1";
 		}
 
 		// Filter on job position
@@ -440,7 +440,6 @@ class mailing_contacts1 extends MailingTargets
 
 		$sql .= " ORDER BY sp.email";
 		// print "wwwwwwx".$sql;
-
 		// Stocke destinataires dans cibles
 		$result = $this->db->query($sql);
 		if ($result) {

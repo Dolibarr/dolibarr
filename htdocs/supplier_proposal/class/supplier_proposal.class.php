@@ -3263,15 +3263,15 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= " , localtax1_type='".$this->db->escape($this->localtax1_type)."'";
 		$sql .= " , localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= " , qty='".price2num($this->qty)."'";
-		$sql .= " , subprice=".price2num($this->subprice)."";
-		$sql .= " , remise_percent=".price2num($this->remise_percent)."";
+		$sql .= " , subprice=".price2num($this->subprice);
+		$sql .= " , remise_percent=".price2num($this->remise_percent);
 		$sql .= " , info_bits='".$this->db->escape($this->info_bits)."'";
 		if (empty($this->skip_update_total)) {
-			$sql .= " , total_ht=".price2num($this->total_ht)."";
-			$sql .= " , total_tva=".price2num($this->total_tva)."";
-			$sql .= " , total_ttc=".price2num($this->total_ttc)."";
-			$sql .= " , total_localtax1=".price2num($this->total_localtax1)."";
-			$sql .= " , total_localtax2=".price2num($this->total_localtax2)."";
+			$sql .= " , total_ht=".price2num($this->total_ht);
+			$sql .= " , total_tva=".price2num($this->total_tva);
+			$sql .= " , total_ttc=".price2num($this->total_ttc);
+			$sql .= " , total_localtax1=".price2num($this->total_localtax1);
+			$sql .= " , total_localtax2=".price2num($this->total_localtax2);
 		}
 		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
 		$sql .= " , buy_price_ht=".price2num($this->pa_ht);
@@ -3286,10 +3286,10 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= " , fk_unit=".($this->fk_unit ? $this->fk_unit : 'null');
 
 		// Multicurrency
-		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
+		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
+		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
 
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

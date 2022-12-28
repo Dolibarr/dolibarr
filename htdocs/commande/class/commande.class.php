@@ -3352,7 +3352,7 @@ class Commande extends CommonOrder
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -4331,16 +4331,6 @@ class OrderLine extends CommonOrderLine
 		dol_syslog("OrderLine::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			// Remove extrafields
-			if (!$error) {
-				$this->id = $this->rowid;
-				$result = $this->deleteExtraFields();
-				if ($result < 0) {
-					$error++;
-					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
-				}
-			}
-
 			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('LINEORDER_DELETE', $user);
@@ -4348,6 +4338,15 @@ class OrderLine extends CommonOrderLine
 					$error++;
 				}
 				// End call triggers
+			}
+
+			// Remove extrafields
+			if (!$error) {
+				$result = $this->deleteExtraFields();
+				if ($result < 0) {
+					$error++;
+					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
+				}
 			}
 
 			if (!$error) {
@@ -4626,14 +4625,14 @@ class OrderLine extends CommonOrderLine
 		$sql .= " , localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= " , qty=".price2num($this->qty);
 		$sql .= " , ref_ext='".$this->db->escape($this->ref_ext)."'";
-		$sql .= " , subprice=".price2num($this->subprice)."";
-		$sql .= " , remise_percent=".price2num($this->remise_percent)."";
-		$sql .= " , price=".price2num($this->price).""; // TODO A virer
-		$sql .= " , remise=".price2num($this->remise).""; // TODO A virer
+		$sql .= " , subprice=".price2num($this->subprice);
+		$sql .= " , remise_percent=".price2num($this->remise_percent);
+		$sql .= " , price=".price2num($this->price); // TODO A virer
+		$sql .= " , remise=".price2num($this->remise); // TODO A virer
 		if (empty($this->skip_update_total)) {
-			$sql .= " , total_ht=".price2num($this->total_ht)."";
-			$sql .= " , total_tva=".price2num($this->total_tva)."";
-			$sql .= " , total_ttc=".price2num($this->total_ttc)."";
+			$sql .= " , total_ht=".price2num($this->total_ht);
+			$sql .= " , total_tva=".price2num($this->total_tva);
+			$sql .= " , total_ttc=".price2num($this->total_ttc);
 			$sql .= " , total_localtax1=".price2num($this->total_localtax1);
 			$sql .= " , total_localtax2=".price2num($this->total_localtax2);
 		}
@@ -4651,10 +4650,10 @@ class OrderLine extends CommonOrderLine
 		$sql .= " , fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 
 		// Multicurrency
-		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
+		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
+		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
 
 		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
