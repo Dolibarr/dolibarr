@@ -875,7 +875,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$stocktobuywarehouse = max(max($desiredstockwarehouse, $alertstockwarehouse) - $stockwarehouse, 0); //ordered is already in $stock in virtual mode
 		}
 
-		$toOrder = ((!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) > 0 ? $stocktobuywarehouse : $stocktobuy);
+		$toOrder = !empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0 ? $stocktobuywarehouse : $stocktobuy;
 
 		$picto = '';
 		if ($ordered > 0) {
