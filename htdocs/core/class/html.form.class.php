@@ -3256,7 +3256,7 @@ class Form
 	 *  @param	string	$morecss			Add more CSS
 	 *  @param	int		$showstockinlist	Show stock information (slower).
 	 *  @param	string	$placeholder		Placeholder
-	 *  @return array           			Array of keys for json
+	 *  @return array|string       			Array of keys for json
 	 */
 	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0, $placeholder = '')
 	{
@@ -3665,6 +3665,7 @@ class Form
 			return $outarray;
 		} else {
 			dol_print_error($this->db);
+			return '';
 		}
 	}
 
@@ -3773,6 +3774,7 @@ class Form
 			return $form;
 		} else {
 			dol_print_error($this->db);
+			return '';
 		}
 	}
 
@@ -3820,6 +3822,7 @@ class Form
 			return $num;
 		} else {
 			dol_print_error($this->db);
+			return;
 		}
 	}
 
@@ -4826,6 +4829,7 @@ class Form
 			}
 		} else {
 			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
@@ -5471,7 +5475,7 @@ class Form
 	 *										0 : use default deposit percentage from entry
 	 *										> 0 : force deposit percentage (for example, from company object)
 	 *  @param  int     $nooutput           No print is done. String is returned.
-	 *  @return	void
+	 *  @return	string						HTML output or ''
 	 */
 	public function form_conditions_reglement($page, $selected = '', $htmlname = 'cond_reglement_id', $addempty = 0, $type = '', $filtertype = -1, $deposit_percent = -1, $nooutput = 0)
 	{
@@ -5681,7 +5685,7 @@ class Form
 	 *    @param   	int     $addempty       1=Add empty entry
 	 *    @param	string	$type			Type ('direct-debit' or 'bank-transfer')
 	 *    @param	int		$nooutput		1=Return string, no output
-	 *    @return	void
+	 *    @return	string					HTML output or ''
 	 */
 	public function form_modes_reglement($page, $selected = '', $htmlname = 'mode_reglement_id', $filtertype = '', $active = 1, $addempty = 0, $type = '', $nooutput = 0)
 	{
@@ -5713,6 +5717,7 @@ class Form
 		} else {
 			print $out;
 		}
+		return '';
 	}
 
 	/**
@@ -5968,7 +5973,7 @@ class Form
 	 *  @param  int     $nooutput       		No print output. Return it only.
 	 *  @param	array	$excludeids				Exclude IDs from the select combo
 	 *  @param	string	$textifnothirdparty		Text to show if no thirdparty
-	 *  @return	void|string
+	 *  @return	string							HTML output or ''
 	 */
 	public function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0, $excludeids = array(), $textifnothirdparty = '')
 	{
@@ -5999,6 +6004,8 @@ class Form
 		} else {
 			print $out;
 		}
+
+		return '';
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -7064,7 +7071,7 @@ class Form
 	 *  @param      string      $morecss                Add more css on select
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @param		string		$nooutput				No print, return the output into a string
-	 *  @return		void|string
+	 *  @return		string
 	 */
 	public function selectTickets($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
 	{
@@ -7104,8 +7111,12 @@ class Form
 			$out .= $this->selectTicketsList($selected, $htmlname, $filtertype, $limit, $status, 0, $socid, $showempty, $forcecombo, $morecss);
 		}
 
-		if (empty($nooutput)) print $out;
-		else return $out;
+		if (empty($nooutput)) {
+			print $out;
+		} else {
+			return $out;
+		}
+		return '';
 	}
 
 
@@ -7212,6 +7223,7 @@ class Form
 			return $outarray;
 		} else {
 			dol_print_error($this->db);
+			return array();
 		}
 	}
 
@@ -7264,7 +7276,7 @@ class Form
 	 *  @param      string      $morecss                Add more css on select
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @param		string		$nooutput				No print, return the output into a string
-	 *  @return		void|string
+	 *  @return		string
 	 */
 	public function selectProjects($selected = '', $htmlname = 'projectid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
 	{
@@ -7303,8 +7315,12 @@ class Form
 			$out .= $this->selectProjectsList($selected, $htmlname, $filtertype, $limit, $status, 0, $socid, $showempty, $forcecombo, $morecss);
 		}
 
-		if (empty($nooutput)) print $out;
-		else return $out;
+		if (empty($nooutput)) {
+			print $out;
+		} else {
+			return $out;
+		}
+		return '';
 	}
 
 	/**
@@ -7410,6 +7426,7 @@ class Form
 			return $outarray;
 		} else {
 			dol_print_error($this->db);
+			return array();
 		}
 	}
 
@@ -7469,7 +7486,7 @@ class Form
 	 *  @param      string      $morecss                Add more css on select
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @param		string		$nooutput				No print, return the output into a string
-	 *  @return		void|string
+	 *  @return		string
 	 */
 	public function selectMembers($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
 	{
@@ -7513,8 +7530,12 @@ class Form
 			$out .= $this->selectMembersList($selected, $htmlname, $filtertype, $limit, $filterkey, $status, 0, $showempty, $forcecombo, $morecss);
 		}
 
-		if (empty($nooutput)) print $out;
-		else return $out;
+		if (empty($nooutput)) {
+			print $out;
+		} else {
+			return $out;
+		}
+		return '';
 	}
 
 	/**
@@ -7625,6 +7646,7 @@ class Form
 			return $outarray;
 		} else {
 			dol_print_error($this->db);
+			return array();
 		}
 	}
 
@@ -9077,7 +9099,6 @@ class Form
 			$no = "0";
 		}
 
-
 		$disabled = ($disabled ? ' disabled' : '');
 
 		$resultyesno = '<select class="flat width75'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
@@ -9390,6 +9411,7 @@ class Form
 		$url = DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($object->barcode_type_coder).'&code='.urlencode($object->barcode).'&encoding='.urlencode($object->barcode_type_code);
 		$out = '<!-- url barcode = '.$url.' -->';
 		$out .= '<img src="'.$url.'"'.($morecss ? ' class="'.$morecss.'"' : '').'>';
+
 		return $out;
 	}
 
