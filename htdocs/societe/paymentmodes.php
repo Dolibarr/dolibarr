@@ -1480,20 +1480,22 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print $string;
 			print '</td>';
 			// IBAN
-			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->iban).'">'.dol_escape_htmltag($rib->iban);
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->iban).'">';
 			if (!empty($rib->iban)) {
 				if (!checkIbanForAccount($rib)) {
-					print ' '.img_picto($langs->trans("IbanNotValid"), 'warning');
+					print img_picto($langs->trans("IbanNotValid"), 'warning').' ';
 				}
 			}
+			print dol_escape_htmltag($rib->iban);
 			print '</td>';
 			// BIC
-			print '<td>'.$rib->bic;
+			print '<td>';
 			if (!empty($rib->bic)) {
 				if (!checkSwiftForAccount($rib)) {
-					print ' '.img_picto($langs->trans("SwiftNotValid"), 'warning');
+					print img_picto($langs->trans("SwiftNotValid"), 'warning').' ';
 				}
 			}
+			print dol_escape_htmltag($rib->bic);
 			print '</td>';
 
 			if (!empty($conf->prelevement->enabled)) {
