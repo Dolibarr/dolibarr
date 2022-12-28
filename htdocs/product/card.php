@@ -444,7 +444,7 @@ if (empty($reshook)) {
 			}
 
 			$error++;
-			setEventMessages($errors, null, 'errors');
+			setEventMessages('', $errors, 'errors');
 		}
 	}
 

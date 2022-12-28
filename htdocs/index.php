@@ -683,12 +683,12 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			if ($board->nbtodolate > 0) {
 				$boxwork .= '<div class="dashboardlinelatecoin nowrap">';
 				$boxwork .= '<a title="'.dol_escape_htmltag($textlate).'" class="valignmiddle dashboardlineindicatorlate'.($board->nbtodolate > 0 ? ' dashboardlineko' : ' dashboardlineok').'" href="'.((!$board->url_late) ? $board->url : $board->url_late).'">';
-				//$boxwork .= img_picto($textlate, "warning_white", 'class="valigntextbottom"').'';
+				//$boxwork .= img_picto($textlate, "warning_white", 'class="valigntextbottom"');
 				$boxwork .= img_picto(
 					$textlate,
 					"warning_white",
 					'class="inline-block hideonsmartphone valigntextbottom"'
-				).'';
+				);
 				$boxwork .= '<span class="dashboardlineindicatorlate'.($board->nbtodolate > 0 ? ' dashboardlineko' : ' dashboardlineok').'">';
 				$boxwork .= $board->nbtodolate;
 				$boxwork .= '</span>';

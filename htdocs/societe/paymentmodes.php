@@ -1129,7 +1129,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								print '....'.$companypaymentmodetemp->last_four;
 							}
 							if ($companypaymentmodetemp->exp_date_month || $companypaymentmodetemp->exp_date_year) {
-								print ' - '.sprintf("%02d", $companypaymentmodetemp->exp_date_month).'/'.$companypaymentmodetemp->exp_date_year.'';
+								print ' - '.sprintf("%02d", $companypaymentmodetemp->exp_date_month).'/'.$companypaymentmodetemp->exp_date_year;
 							}
 							print '</td><td>';
 							if ($companypaymentmodetemp->country_code) {
@@ -1236,7 +1236,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				// Information
 				print '<td valign="middle">';
 				if ($src->object == 'card') {
-					print '....'.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year.'';
+					print '....'.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year;
 					print '</td><td>';
 					if ($src->country) {
 						$img = picto_from_langcode($src->country);
@@ -1246,7 +1246,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
 				} elseif ($src->object == 'source' && $src->type == 'card') {
-					print '<span class="opacitymedium">'.$src->owner->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print '<span class="opacitymedium">'.$src->owner->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year;
 					print '</td><td>';
 
 					if ($src->card->country) {
@@ -1267,7 +1267,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
 				} elseif ($src->object == 'payment_method' && $src->type == 'card') {
-					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year;
 					print '</td><td>';
 
 					if ($src->card->country) {
