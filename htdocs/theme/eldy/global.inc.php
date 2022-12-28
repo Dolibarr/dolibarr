@@ -4617,6 +4617,9 @@ table.noborder.boxtable tr td {
 .boxtablenobottom {
 	border-bottom-width: 0 !important;
 }
+.boxtablenomarginbottom {
+	margin-bottom: 0 !important;
+}
 .boxtable .fichehalfright, .boxtable .fichehalfleft {
 	min-width: 275px;	/* increasing this, make chart on box not side by side on laptops */
 }

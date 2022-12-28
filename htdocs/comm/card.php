@@ -651,7 +651,7 @@ if ($object->id > 0) {
 
 		// Level of prospection
 		print '<tr><td class="titlefield nowrap">';
-		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('ProspectLevel');
 		print '<td>';
 		if ($action != 'editlevel' && $user->rights->societe->creer) {
@@ -686,7 +686,7 @@ if ($object->id > 0) {
 
 		print '<br>';
 	} else {
-		print '<div class="underbanner underbanner-before-box clearboth"></div>';
+		print '<div class="underbanner underbanner-before-box clearboth"></div><br>';
 	}
 
 	$boxstat = '';
@@ -696,7 +696,7 @@ if ($object->id > 0) {
 
 	// Lien recap
 	$boxstat .= '<div class="box box-halfright">';
-	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
+	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop boxtablenomarginbottom centpercent">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
 
 	if (isModEnabled("propal") && $user->rights->propal->lire) {
