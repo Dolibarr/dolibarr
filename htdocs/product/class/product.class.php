@@ -3091,9 +3091,9 @@ class Product extends CommonObject
 					// For every order having invoice already validated we need to decrease stock cause it's in physical stock
 					$adeduire = 0;
 					$sql = 'SELECT sum(fd.qty) as count FROM '.MAIN_DB_PREFIX.'facturedet fd ';
-					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON fd.fk_facture = f.rowid ';
-					$sql .= ' JOIN '.MAIN_DB_PREFIX."element_element el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
-					$sql .= ' JOIN '.MAIN_DB_PREFIX.'commande c ON el.fk_source = c.rowid ';
+					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture as f ON fd.fk_facture = f.rowid ';
+					$sql .= ' JOIN '.MAIN_DB_PREFIX."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
+					$sql .= ' JOIN '.MAIN_DB_PREFIX.'commande as c ON el.fk_source = c.rowid ';
 					$sql .= ' WHERE c.fk_statut IN ('.$this->db->sanitize($filtrestatut).') AND f.fk_statut > '.Facture::STATUS_DRAFT.' AND fd.fk_product = '.((int) $this->id);
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
 					$resql = $this->db->query($sql);
