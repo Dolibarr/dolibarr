@@ -175,8 +175,10 @@ print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("ConstDesc")."</span><br>\n";
 print "<br>\n";
+print '<span style="opacity: 0.5;"><i class="fa fa-warning"></i>&nbsp;'.$langs->trans('ConstLinkWarning').'</span>';
+print "<br><br>\n";
 print '<span class="opacitymedium">'. $langs->trans('ConstLink') . " <a href='https://wiki.dolibarr.org/index.php?title=Setup_Other' target='_blank'>https://wiki.dolibarr.org/index.php?title=Setup_Other</a></span><br>\n";
-print "<br>\n";
+print "<br><br>\n";
 
 $param = '';
 
