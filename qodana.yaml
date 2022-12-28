@@ -46,10 +46,11 @@ exclude:
   - name: PhpUnusedPrivateMethodInspection
   - name: PhpUnusedPrivateFieldInspection
   - name: PhpExpressionAlwaysNullInspection
-  - name: PhpIfWithCommonPartsInspection 
+  - name: PhpIfWithCommonPartsInspection
   - name: PhpTernaryExpressionCanBeReducedToShortVersionInspection
-  - name: PhpExpressionWithSameOperandsInspection  
+  - name: PhpExpressionWithSameOperandsInspection
   - name: PhpInArrayCanBeReplacedWithComparisonInspection
   - name: PhpUnusedAliasInspection
   - name: PhpPossiblePolymorphicInvocationInspection
+  - name: PhpRegExpRedundantModifierInspection
   

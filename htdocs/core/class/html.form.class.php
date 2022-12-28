@@ -3618,7 +3618,7 @@ class Form
 				// Add new entry
 				// "key" value of json key array is used by jQuery automatically as selected value. Example: 'type' = product or service, 'price_ht' = unit price without tax
 				// "label" value of json key array is used by jQuery automatically as text for combo box
-				$out .= $optstart . ' data-html="'.dol_escape_htmltag($optlabel).'">' . $optlabel . "</option>\n";;
+				$out .= $optstart . ' data-html="'.dol_escape_htmltag($optlabel).'">' . $optlabel . "</option>\n";
 				array_push(
 					$outarray,
 					array('key'=>$outkey,
@@ -7219,12 +7219,15 @@ class Form
 
 			$this->db->free($result);
 
-			if (empty($outputmode)) return $out;
+			if (empty($outputmode)) {
+				return $out;
+			}
 			return $outarray;
 		} else {
 			dol_print_error($this->db);
-			return array();
 		}
+
+		return array();
 	}
 
 	/**
@@ -7422,12 +7425,15 @@ class Form
 
 			$this->db->free($result);
 
-			if (empty($outputmode)) return $out;
+			if (empty($outputmode)) {
+				return $out;
+			}
 			return $outarray;
 		} else {
 			dol_print_error($this->db);
-			return array();
 		}
+
+		return array();
 	}
 
 	/**
@@ -7444,9 +7450,7 @@ class Form
 	protected function constructProjectListOption(&$objp, &$opt, &$optJson, $selected, $filterkey = '')
 	{
 		$outkey = '';
-		$outval = '';
 		$outref = '';
-		$outlabel = '';
 		$outtype = '';
 
 		$label = $objp->label;
@@ -7462,7 +7466,6 @@ class Form
 		$opt .= $objp->ref;
 		$objRef = $objp->ref;
 		if (!empty($filterkey) && $filterkey != '') $objRef = preg_replace('/('.preg_quote($filterkey, '/').')/i', '<strong>$1</strong>', $objRef, 1);
-		$outval .= $objRef;
 
 		$opt .= "</option>\n";
 		$optJson = array('key'=>$outkey, 'value'=>$outref, 'type'=>$outtype);
@@ -7642,12 +7645,15 @@ class Form
 
 			$this->db->free($result);
 
-			if (empty($outputmode)) return $out;
+			if (empty($outputmode)) {
+				return $out;
+			}
 			return $outarray;
 		} else {
 			dol_print_error($this->db);
-			return array();
 		}
+
+		return array();
 	}
 
 	/**

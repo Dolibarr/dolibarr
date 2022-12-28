@@ -2388,7 +2388,7 @@ class pdf_sponge extends ModelePDFFactures
 					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, $object->contact, $usecontact, 'target', $object);
 				} else {
 					$carac_client_name_shipping=pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
-					$carac_client_shipping=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);;
+					$carac_client_shipping=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
 				}
 				if (!empty($carac_client_shipping) && (isset($object->contact->socid) && $object->contact->socid != $object->socid)) {
 					$posy += $hautcadre;
