@@ -642,10 +642,10 @@ if ($object->id > 0) {
 
 	print "</table>";
 
+	print '</div><div class="fichehalfright">';
+
 	// Prospection level and status
 	if ($object->client == 2 || $object->client == 3) {
-		print '<br>';
-
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
 
@@ -683,10 +683,11 @@ if ($object->id > 0) {
 		}
 		print '</div></td></tr>';
 		print "</table>";
-	}
 
-	print '</div><div class="fichehalfright">';
-	print '<div class="underbanner underbanner-before-box clearboth"></div>';
+		print '<br>';
+	} else {
+		print '<div class="underbanner underbanner-before-box clearboth"></div>';
+	}
 
 	$boxstat = '';
 
