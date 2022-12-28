@@ -258,6 +258,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $import_label;
 
+	public $import_icon;
+
+	public $import_entities_array;
+	public $import_tables_array;
+	public $import_fields_array;
+	public $import_fieldshidden_array;
+	public $import_convertvalue_array;
+	public $import_regex_array;
+	public $import_examplevalues_array;
+	public $import_updatekeys_array;
+
 
 	/**
 	 * @var string Module constant name
