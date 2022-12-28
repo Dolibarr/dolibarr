@@ -485,13 +485,6 @@ if ($action == 'new') {
 
 		if (count($lines[$bid])) {
 			foreach ($lines[$bid] as $lid => $value) {
-				//$account_id = $bid; FIXME not used
-
-				// FIXME $accounts[$bid] is a label !
-				/*if (! isset($accounts[$bid]))
-					$accounts[$bid]=0;
-				$accounts[$bid] += 1;*/
-
 				print '<tr class="oddeven">';
 				print '<td>'.dol_print_date($value["date"], 'day').'</td>';
 				print '<td>'.$value["numero"]."</td>\n";
@@ -525,8 +518,6 @@ if ($action == 'new') {
 				print '<input id="'.$value["id"].'" class="flat checkforremise_'.$bid.'" checked type="checkbox" name="toRemise[]" value="'.$value["id"].'">';
 				print '</td>';
 				print '</tr>';
-
-				$i++;
 			}
 		}
 		print "</table>";
