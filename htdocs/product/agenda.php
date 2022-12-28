@@ -43,7 +43,7 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
@@ -194,10 +194,10 @@ if ($id > 0 || $ref) {
 			if (get_class($objproduct) == 'Product') {
 				$out .= '&amp;prodid='.$objproduct->id.'&origin=product&originid='.$id;
 			}
-			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage='.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;percentage=-1';
+			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;backtopage='.$_SERVER["PHP_SELF"].'?id='.$object->id;
 		}
 
-		$linktocreatetimeBtnStatus = !empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create);
+		$linktocreatetimeBtnStatus = !empty($user->rights->agenda->myactions->create) || $user->hasRight('agenda', 'allactions', 'create');
 		$morehtmlcenter = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out, '', $linktocreatetimeBtnStatus);
 	}
 

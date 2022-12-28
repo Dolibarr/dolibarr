@@ -761,7 +761,7 @@ if ($action == 'create') {
 
 			if ($user->rights->ficheinter->creer) {
 				print '<div class="inline-block divButAction">';
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel&token='.newToken().'';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel&token='.newToken();
 				print '&socid='.$object->thirdparty->id.'&id='.$object->id.'">';
 				print $langs->trans("AddIntervention").'</a></div>';
 			}

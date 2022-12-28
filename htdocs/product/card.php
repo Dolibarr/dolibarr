@@ -444,7 +444,7 @@ if (empty($reshook)) {
 			}
 
 			$error++;
-			setEventMessages($errors, null, 'errors');
+			setEventMessages('', $errors, 'errors');
 		}
 	}
 
@@ -2406,7 +2406,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="setbarcode">';
 					print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
-					print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
+					print '<input class="width300" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
 					print '&nbsp;<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 					print '</form>';
 				} else {

@@ -196,7 +196,7 @@ $warehouse = new Entrepot($db);
 $now = dol_now();
 
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-$title = $langs->trans("ListOfWarehouses");
+$title = $langs->trans("Warehouses");
 
 $totalarray = array();
 $totalarray['nbfield'] = 0;

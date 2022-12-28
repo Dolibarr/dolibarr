@@ -515,6 +515,7 @@ if ($action == 'create') {
 		// Show fields of bank account
 		$sizecss = '';
 		foreach ($object->getFieldsToShow() as $val) {
+			$content = '';
 			if ($val == 'BankCode') {
 				$name = 'code_banque';
 				$sizecss = 'minwidth100';
@@ -534,7 +535,7 @@ if ($action == 'create') {
 			}
 
 			print '<td>'.$langs->trans($val).'</td>';
-			print '<td><input type="text" class="flat '.$sizecss.'" name="'.$name.'" value="'.(GETPOST($name) ?GETPOST($name, 'alpha') : $content).'"></td>';
+			print '<td><input type="text" class="flat '.$sizecss.'" name="'.$name.'" value="'.(GETPOSTISSET($name) ? GETPOST($name, 'alpha') : $content).'"></td>';
 			print '</tr>';
 		}
 		$ibankey = FormBank::getIBANLabel($object);
@@ -545,10 +546,10 @@ if ($action == 'create') {
 
 		// IBAN
 		print '<tr><td>'.$langs->trans($ibankey).'</td>';
-		print '<td><input maxlength="34" type="text" class="flat minwidth300" name="iban" value="'.(GETPOST('iban') ?GETPOST('iban', 'alpha') : $object->iban).'"></td></tr>';
+		print '<td><input maxlength="34" type="text" class="flat minwidth300" name="iban" value="'.(GETPOSTISSET('iban') ?GETPOST('iban', 'alpha') : $object->iban).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans($bickey).'</td>';
-		print '<td><input maxlength="11" type="text" class="flat minwidth150" name="bic" value="'.(GETPOST('bic') ?GETPOST('bic', 'alpha') : $object->bic).'"></td></tr>';
+		print '<td><input maxlength="11" type="text" class="flat minwidth150" name="bic" value="'.(GETPOSTISSET('bic') ?GETPOST('bic', 'alpha') : $object->bic).'"></td></tr>';
 
 		if (isModEnabled('paymentbybanktransfer')) {
 			print '<tr><td>'.$langs->trans("SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation").'</td>';
@@ -559,7 +560,7 @@ if ($action == 'create') {
 
 		print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 		print '<textarea class="flat quatrevingtpercent" name="domiciliation" rows="'.ROWS_2.'">';
-		print (GETPOST('domiciliation') ?GETPOST('domiciliation') : $object->domiciliation);
+		print (GETPOSTISSET('domiciliation') ?GETPOST('domiciliation') : $object->domiciliation);
 		print "</textarea></td></tr>";
 
 		print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
@@ -730,6 +731,7 @@ if ($action == 'create') {
 
 			// Show fields of bank account
 			foreach ($object->getFieldsToShow() as $val) {
+				$content = '';
 				if ($val == 'BankCode') {
 					$content = $object->code_banque;
 				} elseif ($val == 'DeskCode') {
@@ -1034,31 +1036,32 @@ if ($action == 'create') {
 
 			// If bank account
 			print '<tr class="liste_titre_add"><td class="titlefieldcreate">'.$langs->trans("BankName").'</td>';
-			print '<td><input size="30" type="text" class="flat" name="bank" value="'.$object->bank.'"></td>';
+			print '<td><input type="text" class="flat width300" name="bank" value="'.$object->bank.'"></td>';
 			print '</tr>';
 
 			// Show fields of bank account
 			foreach ($object->getFieldsToShow() as $val) {
+				$content = '';
 				if ($val == 'BankCode') {
 					$name = 'code_banque';
-					$size = 8;
+					$css = 'with100';
 					$content = $object->code_banque;
 				} elseif ($val == 'DeskCode') {
 					$name = 'code_guichet';
-					$size = 8;
+					$css = 'with100';
 					$content = $object->code_guichet;
 				} elseif ($val == 'BankAccountNumber') {
 					$name = 'number';
-					$size = 18;
+					$css = 'with200';
 					$content = $object->number;
 				} elseif ($val == 'BankAccountNumberKey') {
 					$name = 'cle_rib';
-					$size = 3;
+					$css = 'with50';
 					$content = $object->cle_rib;
 				}
 
 				print '<tr><td>'.$langs->trans($val).'</td>';
-				print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
+				print '<td><input type="text" class="flat '.$css.'" name="'.$name.'" value="'.dol_escape_htmltag($content).'"></td>';
 				print '</tr>';
 			}
 

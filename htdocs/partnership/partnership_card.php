@@ -81,6 +81,10 @@ $permissiondellink 		= $user->rights->partnership->write; // Used by the include
 $upload_dir 			= $conf->partnership->multidir_output[isset($object->entity) ? $object->entity : 1];
 $managedfor 			= getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
+// Security check - Protection if external user
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$result = restrictedArea($user, 'partnership', $object->id);
 if (empty($conf->partnership->enabled)) accessforbidden();
 if (empty($permissiontoread)) accessforbidden();
 if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') accessforbidden();

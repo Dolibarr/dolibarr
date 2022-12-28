@@ -2167,18 +2167,18 @@ class Project extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
+	 * @param DoliDB $dbs 		Database handler
+	 * @param int $origin_id 	Old thirdparty id
+	 * @param int $dest_id 		New thirdparty id
 	 * @return bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'projet'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 
@@ -2265,7 +2265,7 @@ class Project extends CommonObject
 					$this->user_creation = $cuser;
 				}
 
-				if ($obj->fk_user_cloture) {
+				if (!empty($obj->fk_user_cloture)) {
 					$cluser = new User($this->db);
 					$cluser->fetch($obj->fk_user_cloture);
 					$this->user_cloture = $cluser;

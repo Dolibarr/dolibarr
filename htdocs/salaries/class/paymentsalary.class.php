@@ -323,9 +323,9 @@ class PaymentSalary extends CommonObject
 		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? $this->fk_typepayment : "null").",";
 		$sql .= " num_payment=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
 		$sql .= " note=".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : "null").",";
-		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
-		$sql .= " fk_user_author=".(isset($this->fk_user_author) ? $this->fk_user_author : "null").",";
-		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
+		$sql .= " fk_bank=".(isset($this->fk_bank) ? ((int) $this->fk_bank) : "null").",";
+		$sql .= " fk_user_author=".(isset($this->fk_user_author) ? ((int) $this->fk_user_author) : "null").",";
+		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? ((int) $this->fk_user_modif) : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();

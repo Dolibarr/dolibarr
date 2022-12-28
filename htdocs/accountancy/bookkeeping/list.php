@@ -999,7 +999,7 @@ if ($massactionbutton && $contextpage != 'poslist') {
 $moreforfilter = '';
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {

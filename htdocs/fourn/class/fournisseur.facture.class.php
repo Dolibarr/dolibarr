@@ -1259,7 +1259,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -3154,18 +3154,18 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'facture_fourn'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -3692,10 +3692,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 
 		// Multicurrency
-		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
+		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
+		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
 
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

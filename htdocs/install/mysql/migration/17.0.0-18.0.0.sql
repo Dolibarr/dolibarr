@@ -34,3 +34,11 @@
 -- v18
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_CLOSE','Project closed','Executed when a project is closed','project',145);
+
+-- amount was removed in v12
+ALTER TABLE llx_facture DROP COLUMN amount;
+
+-- Rename prospect level on contact
+ALTER TABLE llx_socpeople CHANGE fk_prospectcontactlevel fk_prospectlevel varchar(12);
+
+ALTER TABLE llx_facture ADD COLUMN prorata_discount	real DEFAULT NULL;

@@ -296,7 +296,7 @@ class Projects extends DolibarrApi
 			$userp = new User($this->db);
 			$userp->fetch($userid);
 		}
-		$this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, 0, $id, 0);
+		$this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, null, $id, 0);
 		$result = array();
 		foreach ($this->project->roles as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));

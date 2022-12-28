@@ -22,9 +22,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/propale/doc/pdf_azur.modules.php
+ *	\file       htdocs/core/modules/supplier_proposal/doc/pdf_aurore.modules.php
  *	\ingroup    propale
- *	\brief      File of the class allowing to generate the supplier propals to the Aurore model
+ *	\brief      File of the class allowing to generate the supplier proposals to the Aurore model
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier_proposal.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -1253,13 +1253,13 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		if (empty($conf->global->PDF_DISABLE_MYCOMPANY_LOGO)) {
+		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
 				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 					$logodir = $conf->mycompany->multidir_output[$object->entity];
 				}
-				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO)) {
+				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
 				} else {
 					$logo = $logodir.'/logos/'.$this->emetteur->logo;

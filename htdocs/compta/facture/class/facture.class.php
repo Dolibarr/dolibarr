@@ -5190,18 +5190,18 @@ class Facture extends CommonInvoice
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param  DoliDB  $db             Database handler
-	 * @param  int     $origin_id      Old third-party id
-	 * @param  int     $dest_id        New third-party id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'facture'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -6375,11 +6375,11 @@ class FactureLigne extends CommonInvoiceLine
 
 		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
-		$sql .= " total_ht=".price2num($this->total_ht)."";
-		$sql .= ",total_tva=".price2num($this->total_tva)."";
-		$sql .= ",total_localtax1=".price2num($this->total_localtax1)."";
-		$sql .= ",total_localtax2=".price2num($this->total_localtax2)."";
-		$sql .= ",total_ttc=".price2num($this->total_ttc)."";
+		$sql .= " total_ht=".price2num($this->total_ht);
+		$sql .= ",total_tva=".price2num($this->total_tva);
+		$sql .= ",total_localtax1=".price2num($this->total_localtax1);
+		$sql .= ",total_localtax2=".price2num($this->total_localtax2);
+		$sql .= ",total_ttc=".price2num($this->total_ttc);
 		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);

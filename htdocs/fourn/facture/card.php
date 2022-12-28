@@ -1627,7 +1627,7 @@ if (empty($reshook)) {
 					$productsupplier->fk_unit,
 					0,
 					$pu_devise,
-					$ref_supplier,
+					GETPOST('fourn_ref', 'alpha'),
 					''
 				);
 			}
@@ -2649,6 +2649,7 @@ if ($action == 'create') {
 		$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 		// Multicurrency
+		$multicurrency_resteapayer = 0;
 		if (isModEnabled("multicurrency")) {
 			$multicurrency_totalpaid = $object->getSommePaiement(1);
 			$multicurrency_totalcreditnotes = $object->getSumCreditNotesUsed(1);
@@ -2694,6 +2695,7 @@ if ($action == 'create') {
 
 		// Confirmation de la conversion de l'avoir en reduc
 		if ($action == 'converttoreduc') {
+			$type_fac = '';
 			if ($object->type == FactureFournisseur::TYPE_STANDARD) {
 				$type_fac = 'ExcessPaid';
 			} elseif ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {

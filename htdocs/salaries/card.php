@@ -308,7 +308,7 @@ if ($action == 'add' && empty($cancel)) {
 			$db->commit();
 
 			if (GETPOST('saveandnew', 'alpha')) {
-				setEventMessages($langs->trans("RecordSaved"), '', 'mesgs');
+				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 				header("Location: card.php?action=create&fk_project=" . urlencode($projectid) . "&accountid=" . urlencode($accountid) . '&paymenttype=' . urlencode(GETPOST('paymenttype', 'az09')) . '&datepday=' . GETPOST("datepday", 'int') . '&datepmonth=' . GETPOST("datepmonth", 'int') . '&datepyear=' . GETPOST("datepyear", 'int'));
 				exit;
 			} else {

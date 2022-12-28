@@ -774,7 +774,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 
 						// Now set the VAT
 						var stringforvatrateselection = tva_tx;
-						if (typeof default_vat_code != 'undefined' && default_vat_code != null) {
+						if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 							stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
 						}
 						// Set vat rate if field is an input box
@@ -996,7 +996,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
 
 			var stringforvatrateselection = tva_tx;
-			if (typeof default_vat_code != 'undefined' && default_vat_code != null) {
+			if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
 			}
 
@@ -1058,7 +1058,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
 
 			var stringforvatrateselection = tva_tx;
-			if (typeof default_vat_code != 'undefined' && default_vat_code != null) {
+			if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
 				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
 			}
 
@@ -1148,7 +1148,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			jQuery("#multicurrency_price_ttc").val('').hide();
 			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
 		<?php } ?>
-		jQuery("#fourn_ref, #tva_tx, #title_vat").hide();
+		jQuery("#tva_tx, #title_vat").hide();
 		/* jQuery("#title_fourn_ref").hide(); */
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 		jQuery("#buying_price").show();

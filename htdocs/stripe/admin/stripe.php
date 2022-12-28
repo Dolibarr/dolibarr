@@ -525,7 +525,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
-print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
+print '<input class="width500" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': http://mysite/mycss.css</span>';
 print '</td></tr>';
 

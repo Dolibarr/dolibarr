@@ -210,7 +210,7 @@ $alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ?
 $arrayfields = array(
 	'p.rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
 	'p.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>10),
-	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(!empty($conf->barcode->enabled))),
+	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(isModEnabled('barcode'))),
 	'thumbnail'=>array('label'=>'Photo', 'checked'=>0, 'position'=>10),
 	'p.label'=>array('label'=>"Label", 'checked'=>1, 'position'=>10),
 	'p.fk_product_type'=>array('label'=>"Type", 'checked'=>0, 'enabled'=>(isModEnabled("product") && isModEnabled("service")), 'position'=>11),
