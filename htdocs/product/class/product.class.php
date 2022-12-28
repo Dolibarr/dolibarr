@@ -3065,7 +3065,7 @@ class Product extends CommonObject
 			}
 
 			// If stock decrease is on invoice validation, the theorical stock continue to
-			// count the orders to ship in theorical stock when some are already removed b invoice validation.
+			// count the orders to ship in theorical stock when some are already removed by invoice validation.
 			// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is on, we make a compensation.
 			if (!empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
 				if (!empty($conf->global->DECREASE_ONLY_UNINVOICEDPRODUCTS)) {
