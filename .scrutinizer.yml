@@ -8,10 +8,9 @@ build:
                 override:
                     - command: php-scrutinizer-run
                       idle_timeout: 8000
-                    - php-scrutinizer-run --sub-project-dir=htdocs/admin
+                    #- php-scrutinizer-run --sub-project-dir=htdocs/admin
 
 imports:
-    - javascript
     - php
 
 filter:
