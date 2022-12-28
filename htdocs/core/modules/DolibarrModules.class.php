@@ -232,10 +232,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $export_label;
 
+	public $export_icon;
+
 	public $export_permission;
 	public $export_fields_array;
 	public $export_TypeFields_array; // Array of key=>type where type can be 'Numeric', 'Date', 'Text', 'Boolean', 'Status', 'List:xxx:login:rowid'
 	public $export_entities_array;
+	public $export_help_array;
 	public $export_special_array; // special or computed field
 	public $export_dependencies_array;
 	public $export_sql_start;
@@ -254,6 +257,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * @var string Module import label
 	 */
 	public $import_label;
+
+	public $import_icon;
+
+	public $import_entities_array;
+	public $import_tables_array;
+	public $import_fields_array;
+	public $import_fieldshidden_array;
+	public $import_convertvalue_array;
+	public $import_regex_array;
+	public $import_examplevalues_array;
+	public $import_updatekeys_array;
 
 
 	/**

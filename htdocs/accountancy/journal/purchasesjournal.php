@@ -756,9 +756,11 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 }
 
 if (empty($action) || $action == 'view') {
-	llxHeader('', $langs->trans("PurchasesJournal"));
+	$title = $langs->trans("GenerationOfAccountingEntries").' - '.$accountingjournalstatic->getNomUrl(0, 2, 1, '', 1);
 
-	$nom = $langs->trans("PurchasesJournal").' | '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
+	llxHeader('', dol_string_nohtmltag($title));
+
+	$nom = $title;
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
@@ -831,8 +833,8 @@ if (empty($action) || $action == 'view') {
 	print "<td>".$langs->trans("AccountAccounting")."</td>";
 	print "<td>".$langs->trans("SubledgerAccount")."</td>";
 	print "<td>".$langs->trans("LabelOperation")."</td>";
-	print '<td class="center">'.$langs->trans("Debit")."</td>";
-	print '<td class="center">'.$langs->trans("Credit")."</td>";
+	print '<td class="center">'.$langs->trans("AccountingDebit")."</td>";
+	print '<td class="center">'.$langs->trans("AccountingCredit")."</td>";
 	print "</tr>\n";
 
 	$r = '';

@@ -55,7 +55,7 @@ class MembersTypes extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -92,7 +92,7 @@ class MembersTypes extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->adherent->lire) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
 			throw new RestException(401);
 		}
 
@@ -151,7 +151,7 @@ class MembersTypes extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->configurer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'configurer')) {
 			throw new RestException(401);
 		}
 		// Check mandatory fields
@@ -176,7 +176,7 @@ class MembersTypes extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->configurer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'configurer')) {
 			throw new RestException(401);
 		}
 
@@ -216,7 +216,7 @@ class MembersTypes extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->adherent->configurer) {
+		if (!DolibarrApiAccess::$user->hasRight('adherent', 'configurer')) {
 			throw new RestException(401);
 		}
 		$membertype = new AdherentType($this->db);
@@ -229,14 +229,17 @@ class MembersTypes extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$membertype->delete()) {
-			throw new RestException(401, 'error when deleting member type');
+		$res = $membertype->delete();
+		if ($res < 0) {
+			throw new RestException(500, "Can't delete, error occurs");
+		} elseif ($res == 0) {
+			throw new RestException(409, "Can't delete, that product is probably used");
 		}
 
 		return array(
 			'success' => array(
 				'code' => 200,
-				'message' => 'member type deleted'
+				'message' => 'Member type deleted'
 			)
 		);
 	}

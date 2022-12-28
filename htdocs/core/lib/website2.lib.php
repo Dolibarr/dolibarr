@@ -722,10 +722,30 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 		setEventMessages($langs->trans("DynamicPHPCodeContainsAForbiddenInstruction", '$...('), null, 'errors');
 	}
 
-	if (!$error && empty($user->rights->website->writephp)) {
-		if ($phpfullcodestringold != $phpfullcodestring) {
+	if ($phpfullcodestringold != $phpfullcodestring) {
+		if (!$error && empty($user->rights->website->writephp)) {
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
+		}
+		if (!$error) {
+			$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
+			$allowimportsite = true;
+			if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
+				$allowimportsite = false;
+			}
+
+			if (!$allowimportsite) {
+				$error++;
+				// Blocked by installmodules.lock
+				if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
+					// Show clean corporate message
+					$message = $langs->trans('InstallModuleFromWebHasBeenDisabledContactUs');
+				} else {
+					// Show technical generic message
+					$message = $langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock');
+				}
+				setEventMessages($message, null, 'errors');
+			}
 		}
 	}
 

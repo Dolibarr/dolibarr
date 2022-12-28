@@ -148,11 +148,15 @@ if ($action == 'other') {
 	$value = GETPOST('activate_FillProductDescAuto', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_AUTOFILL_DESC", $value, 'chaine', 0, '', $conf->entity);
 
-	$value = GETPOST('PRODUIT_FOURN_TEXTS', 'alpha');
-	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('PRODUIT_FOURN_TEXTS')) {
+		$value = GETPOST('PRODUIT_FOURN_TEXTS', 'alpha');
+		$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value, 'chaine', 0, '', $conf->entity);
+	}
 
-	$value = GETPOST('PRODUCT_USE_SUPPLIER_PACKAGING', 'alpha');
-	$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
+	if (GETPOSTISSET('PRODUCT_USE_SUPPLIER_PACKAGING')) {
+		$value = GETPOST('PRODUCT_USE_SUPPLIER_PACKAGING', 'alpha');
+		$res = dolibarr_set_const($db, "PRODUCT_USE_SUPPLIER_PACKAGING", $value, 'chaine', 0, '', $conf->entity);
+	}
 }
 
 
@@ -200,7 +204,7 @@ if ($action == 'set') {
 if ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->PRODUCT_ADDON_PDF == "$value") {
+		if (getDolGlobalString('PRODUCT_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'PRODUCT_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -457,7 +461,7 @@ foreach ($dirmodels as $reldir) {
 
 								// Defaut
 								print '<td class="center">';
-								if ($conf->global->PRODUCT_ADDON_PDF == $name) {
+								if (getDolGlobalString('PRODUCT_ADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';

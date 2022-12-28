@@ -54,6 +54,11 @@ class Propal extends CommonObject
 	use CommonIncoterm;
 
 	/**
+	 * @var string code
+	 */
+	public $code = "";
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'propal';
@@ -1747,7 +1752,7 @@ class Propal extends CommonObject
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -2642,10 +2647,10 @@ class Propal extends CommonObject
 		if ($resql) {
 			// Status self::STATUS_REFUSED by default
 			$modelpdf = !empty($conf->global->PROPALE_ADDON_PDF_ODT_CLOSED) ? $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED : $this->model_pdf;
-			$trigger_name = 'PROPAL_CLOSE_REFUSED';
+			$trigger_name = 'PROPAL_CLOSE_REFUSED';		// used later in call_trigger()
 
 			if ($status == self::STATUS_SIGNED) {	// Status self::STATUS_SIGNED
-				$trigger_name = 'PROPAL_CLOSE_SIGNED';
+				$trigger_name = 'PROPAL_CLOSE_SIGNED';	// used later in call_trigger()
 				$modelpdf = !empty($conf->global->PROPALE_ADDON_PDF_ODT_TOBILL) ? $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL : $this->model_pdf;
 
 				// The connected company is classified as a client
@@ -2823,6 +2828,7 @@ class Propal extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
 		$sql .= " SET fk_statut = ".self::STATUS_DRAFT;
+		$sql .= ",  online_sign_ip = NULL , online_sign_name = NULL";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
@@ -3347,7 +3353,7 @@ class Propal extends CommonObject
 	public function LibStatut($status, $mode = 1)
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf, $hookmanager;
 
 		// Init/load array of translation of status
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
@@ -3376,6 +3382,14 @@ class Propal extends CommonObject
 			$statusType = 'status9';
 		} elseif ($status == self::STATUS_BILLED) {
 			$statusType = 'status6';
+		}
+
+
+		$parameters = array('status' => $status, 'mode' => $mode);
+		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
+
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
@@ -4430,17 +4444,17 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
 		$sql .= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= ", qty='".price2num($this->qty)."'";
-		$sql .= ", subprice=".price2num($this->subprice)."";
-		$sql .= ", remise_percent=".price2num($this->remise_percent)."";
-		$sql .= ", price=".price2num($this->price).""; // TODO A virer
-		$sql .= ", remise=".price2num($this->remise).""; // TODO A virer
+		$sql .= ", subprice=".price2num($this->subprice);
+		$sql .= ", remise_percent=".price2num($this->remise_percent);
+		$sql .= ", price=".(float) price2num($this->price); // TODO A virer
+		$sql .= ", remise=".(float) price2num($this->remise); // TODO A virer
 		$sql .= ", info_bits='".$this->db->escape($this->info_bits)."'";
 		if (empty($this->skip_update_total)) {
-			$sql .= ", total_ht=".price2num($this->total_ht)."";
-			$sql .= ", total_tva=".price2num($this->total_tva)."";
-			$sql .= ", total_ttc=".price2num($this->total_ttc)."";
-			$sql .= ", total_localtax1=".price2num($this->total_localtax1)."";
-			$sql .= ", total_localtax2=".price2num($this->total_localtax2)."";
+			$sql .= ", total_ht=".price2num($this->total_ht);
+			$sql .= ", total_tva=".price2num($this->total_tva);
+			$sql .= ", total_ttc=".price2num($this->total_ttc);
+			$sql .= ", total_localtax1=".price2num($this->total_localtax1);
+			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
 		}
 		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
 		$sql .= ", buy_price_ht=".price2num($this->pa_ht);
@@ -4456,10 +4470,10 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ", fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 
 		// Multicurrency
-		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-		$sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		$sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
+		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
+		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
 
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -4506,9 +4520,9 @@ class PropaleLigne extends CommonObjectLine
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
-		$sql .= " total_ht=".price2num($this->total_ht, 'MT')."";
-		$sql .= ",total_tva=".price2num($this->total_tva, 'MT')."";
-		$sql .= ",total_ttc=".price2num($this->total_ttc, 'MT')."";
+		$sql .= " total_ht=".price2num($this->total_ht, 'MT');
+		$sql .= ",total_tva=".price2num($this->total_tva, 'MT');
+		$sql .= ",total_ttc=".price2num($this->total_ttc, 'MT');
 		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog("PropaleLigne::update_total", LOG_DEBUG);

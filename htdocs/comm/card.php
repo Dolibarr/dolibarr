@@ -158,7 +158,7 @@ if (empty($reshook)) {
 		$action = "";
 	}
 
-	// set accountancy code
+	// Set accountancy code
 	if ($action == 'setcustomeraccountancycode') {
 		$result = $object->fetch($id);
 		$object->code_compta_client = GETPOST("customeraccountancycode");
@@ -169,7 +169,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// terms of the settlement
+	// Payment terms of the settlement
 	if ($action == 'setconditions' && $user->rights->societe->creer) {
 		$object->fetch($id);
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOST('cond_reglement_id_deposit_percent', 'alpha'));
@@ -178,7 +178,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// mode de reglement
+	// Payment mode
 	if ($action == 'setmode' && $user->rights->societe->creer) {
 		$object->fetch($id);
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
@@ -187,7 +187,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// transport mode
+	// Transport mode
 	if ($action == 'settransportmode' && $user->rights->societe->creer) {
 		$object->fetch($id);
 		$result = $object->setTransportMode(GETPOST('transport_mode_id', 'alpha'));
@@ -421,7 +421,7 @@ if ($object->id > 0) {
 	print "</td>";
 	print '</tr>';
 
-	// Mode de reglement par defaut
+	// Default payment mode
 	print '<tr><td class="nowrap">';
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('PaymentMode');
@@ -440,7 +440,7 @@ if ($object->id > 0) {
 	print '</tr>';
 
 	if (isModEnabled("banque")) {
-		// Compte bancaire par défaut
+		// Default bank account for payments
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentBankAccount');
@@ -642,16 +642,16 @@ if ($object->id > 0) {
 
 	print "</table>";
 
+	print '</div><div class="fichehalfright">';
+
 	// Prospection level and status
 	if ($object->client == 2 || $object->client == 3) {
-		print '<br>';
-
 		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent tableforfield">';
 
 		// Level of prospection
 		print '<tr><td class="titlefield nowrap">';
-		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('ProspectLevel');
 		print '<td>';
 		if ($action != 'editlevel' && $user->rights->societe->creer) {
@@ -683,10 +683,11 @@ if ($object->id > 0) {
 		}
 		print '</div></td></tr>';
 		print "</table>";
-	}
 
-	print '</div><div class="fichehalfright">';
-	print '<div class="underbanner underbanner-before-box clearboth"></div>';
+		print '<br>';
+	} else {
+		print '<div class="underbanner underbanner-before-box clearboth"></div><br>';
+	}
 
 	$boxstat = '';
 
@@ -695,7 +696,7 @@ if ($object->id > 0) {
 
 	// Lien recap
 	$boxstat .= '<div class="box box-halfright">';
-	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
+	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop boxtablenomarginbottom centpercent">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
 
 	if (isModEnabled("propal") && $user->rights->propal->lire) {

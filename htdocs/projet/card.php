@@ -51,7 +51,11 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'aZ09');
-$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
+
+if (!empty($backtopagejsfields)) {
+	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
+	$dol_openinpopup = $tmpbacktopagejsfields[0];
+}
 
 $status = GETPOST('status', 'int');
 $opp_status = GETPOST('opp_status', 'int');
@@ -500,11 +504,11 @@ llxHeader("", $title, $help_url);
 
 $titleboth = $langs->trans("LeadsOrProjects");
 $titlenew = $langs->trans("NewLeadOrProject"); // Leads and opportunities by default
-if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+if (!getDolGlobalInt('PROJECT_USE_OPPORTUNITIES')) {
 	$titleboth = $langs->trans("Projects");
 	$titlenew = $langs->trans("NewProject");
 }
-if ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+if (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) { // 2 = leads only
 	$titleboth = $langs->trans("Leads");
 	$titlenew = $langs->trans("NewLead");
 }
@@ -527,6 +531,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
+	print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 
 	print dol_get_fiche_head();
 
@@ -567,7 +572,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("ProjectLabel").'</span></td><td><input class="width500 maxwidth150onsmartphone" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'" autofocus></td></tr>';
+	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input class="width500 maxwidth150onsmartphone" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'" autofocus></td></tr>';
 
 	// Usage (opp, task, bill time, ...)
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
@@ -602,12 +607,46 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print '<input type="checkbox" id="usage_task" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
 			$htmltext = $langs->trans("ProjectFollowTasks");
 			print '<label for="usage_task">'.$form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext).'</label>';
+			print '<script>';
+			print '$( document ).ready(function() {
+					jQuery("#usage_task").change(function() {
+						if (jQuery("#usage_task").prop("checked")) {
+							console.log("Show task fields");
+							jQuery(".classusetask").show();
+						} else {
+							console.log("Hide tasks fields "+jQuery("#usage_task").prop("checked"));
+							jQuery(".classusetask").hide();
+						}
+					});
+					';
+			if (GETPOSTISSET('usage_task') && !GETPOST('usage_task')) {
+				print 'jQuery(".classusetask").hide();';
+			}
+			print '});';
+			print '</script>';
 			print '<br>';
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
 			print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') ? ' checked="checked"' : '') : '').'"> ';
 			$htmltext = $langs->trans("ProjectBillTimeDescription");
 			print '<label for="usage_bill_time">'.$form->textwithpicto($langs->trans("BillTime"), $htmltext).'</label>';
+			print '<script>';
+			print '$( document ).ready(function() {
+					jQuery("#usage_bill_time").change(function() {
+						if (jQuery("#usage_bill_time").prop("checked")) {
+							console.log("Show bill time fields");
+							jQuery(".classusebilltime").show();
+						} else {
+							console.log("Hide bill time fields "+jQuery("#usage_bill_time").prop("checked"));
+							jQuery(".classusebilltime").hide();
+						}
+					});
+					';
+			if (GETPOSTISSET('usage_bill_time') && !GETPOST('usage_bill_time')) {
+				print 'jQuery(".classusebilltime").hide();';
+			}
+			print '});';
+			print '</script>';
 			print '<br>';
 		}
 		if (isModEnabled('eventorganization')) {
@@ -706,24 +745,26 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityStatus").'</td>';
 		print '<td class="maxwidthonsmartphone">';
 		print $formproject->selectOpportunityStatus('opp_status', GETPOSTISSET('opp_status') ? GETPOST('opp_status') : $object->opp_status, 1, 0, 0, 0, '', 0, 1);
-		print '</tr>';
 
 		// Opportunity probability
-		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityProbability").'</td>';
-		print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.dol_escape_htmltag(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : '').'"><span class="hideonsmartphone"> %</span>';
+		print ' <input class="width50 right" type="text" id="opp_percent" name="opp_percent" title="'.dol_escape_htmltag($langs->trans("OpportunityProbability")).'" value="'.dol_escape_htmltag(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : '').'"><span class="hideonsmartphone"> %</span>';
 		print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.dol_escape_htmltag(GETPOSTISSET('opp_percent') ? '0' : '1').'">';
 		print '</td>';
 		print '</tr>';
 
 		// Opportunity amount
 		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityAmount").'</td>';
-		print '<td><input size="5" type="text" name="opp_amount" value="'.dol_escape_htmltag(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : '').'"></td>';
+		print '<td><input class="width75 right" type="text" name="opp_amount" value="'.dol_escape_htmltag(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : '').'">';
+		print ' '.$langs->getCurrencySymbol($conf->currency);
+		print '</td>';
 		print '</tr>';
 	}
 
 	// Budget
-	print '<tr><td>'.$langs->trans("Budget").'</td>';
-	print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : '').'"></td>';
+	print '<tr class="classusetask classusebilltime"><td>'.$langs->trans("Budget").'</td>';
+	print '<td><input class="width75 right" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : '').'">';
+	print ' '.$langs->getCurrencySymbol($conf->currency);
+	print '</td>';
 	print '</tr>';
 
 	// Date project
@@ -780,6 +821,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print '</form>';
 
 	// Change probability from status or role of project
+	// Set also dependencies between use taks and bill time
 	print '<script type="text/javascript">
         jQuery(document).ready(function() {
         	function change_percent()
@@ -886,7 +928,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '</td></tr>';
 
 		// Label
-		print '<tr><td class="fieldrequired">'.$langs->trans("ProjectLabel").'</td>';
+		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
 		print '<td><input class="quatrevingtpercent" name="title" value="'.dol_escape_htmltag($object->title).'"></td></tr>';
 
 		// Status
@@ -911,7 +953,14 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print '<label for="usage_opportunity">'.$form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext).'</label>';
 				print '<script>';
 				print '$( document ).ready(function() {
-				jQuery("#usage_opportunity").change(function() {
+					jQuery("#usage_opportunity").change(function() {
+						set_usage_opportunity();
+					});
+
+					set_usage_opportunity();
+
+					function set_usage_opportunity() {
+						console.log("set_usage_opportunity");
 						if (jQuery("#usage_opportunity").prop("checked")) {
 							console.log("Show opportunities fields");
 							jQuery(".classuseopportunity").show();
@@ -919,9 +968,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 							console.log("Hide opportunities fields "+jQuery("#usage_opportunity").prop("checked"));
 							jQuery(".classuseopportunity").hide();
 						}
-					});
-				';
-				print '
+					};
 				});';
 				print '</script>';
 				print '<br>';
@@ -930,12 +977,52 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print '<input type="checkbox" id="usage_task" name="usage_task"' . (GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')) . '"> ';
 				$htmltext = $langs->trans("ProjectFollowTasks");
 				print '<label for="usage_task">'.$form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext).'</label>';
+				print '<script>';
+				print '$( document ).ready(function() {
+					jQuery("#usage_task").change(function() {
+						set_usage_task();
+					});
+
+					set_usage_task();
+
+					function set_usage_task() {
+						console.log("set_usage_task");
+						if (jQuery("#usage_task").prop("checked")) {
+							console.log("Show task fields");
+							jQuery(".classusetask").show();
+						} else {
+							console.log("Hide task fields "+jQuery("#usage_task").prop("checked"));
+							jQuery(".classusetask").hide();
+						}
+					};
+				});';
+				print '</script>';
 				print '<br>';
 			}
 			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
 				print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"' . (GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')) . '"> ';
 				$htmltext = $langs->trans("ProjectBillTimeDescription");
 				print '<label for="usage_bill_time">'.$form->textwithpicto($langs->trans("BillTime"), $htmltext).'</label>';
+				print '<script>';
+				print '$( document ).ready(function() {
+					jQuery("#usage_bill_time").change(function() {
+						set_usage_bill_time();
+					});
+
+					set_usage_bill_time();
+
+					function set_usage_bill_time() {
+						console.log("set_usage_bill_time");
+						if (jQuery("#usage_bill_time").prop("checked")) {
+							console.log("Show bill time fields");
+							jQuery(".classusebilltime").show();
+						} else {
+							console.log("Hide bill time fields "+jQuery("#usage_bill_time").prop("checked"));
+							jQuery(".classusebilltime").hide();
+						}
+					};
+				});';
+				print '</script>';
 				print '<br>';
 			}
 			if (isModEnabled('eventorganization')) {
@@ -944,7 +1031,14 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print '<label for="usage_organize_event">'.$form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext).'</label>';
 				print '<script>';
 				print '$( document ).ready(function() {
-				jQuery("#usage_organize_event").change(function() {
+					jQuery("#usage_organize_event").change(function() {
+						set_usage_event();
+					});
+
+					set_usage_event();
+
+					function set_usage_event() {
+						console.log("set_usage_event");
 						if (jQuery("#usage_organize_event").prop("checked")) {
 							console.log("Show organize event fields");
 							jQuery(".classuseorganizeevent").show();
@@ -952,9 +1046,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 							console.log("Hide organize event fields "+jQuery("#usage_organize_event").prop("checked"));
 							jQuery(".classuseorganizeevent").hide();
 						}
-					});
-				';
-				print '
+					};
 				});';
 				print '</script>';
 			}
@@ -1013,32 +1105,34 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			// Opportunity status
 			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityStatus").'</td>';
 			print '<td>';
-			print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1, 0, 0, 0, 'inline-block valignmiddle', 0, 1);
-			print '<div id="divtocloseproject" class="inline-block valign" style="display: none;"> &nbsp; &nbsp; ';
-			print '<input type="checkbox" id="inputcloseproject" name="closeproject" />';
-			print '<label for="inputcloseproject">'.$langs->trans("AlsoCloseAProject").'</label>';
-			print '</div>';
-			print '</td>';
-			print '</tr>';
+			print '<div>';
+			print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1, 0, 0, 0, 'inline-block valignmiddle', 1, 1);
 
 			// Opportunity probability
-			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityProbability").'</td>';
-			print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
-			print '<span id="oldopppercent"></span>';
+			print ' <input class="width50 right" type="text" id="opp_percent" name="opp_percent" title="'.dol_escape_htmltag($langs->trans("OpportunityProbability")).'" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
+			print '<span id="oldopppercent" class="opacitymedium"></span>';
+			print '</div>';
+
+			print '<div id="divtocloseproject" class="inline-block valign clearboth paddingtop" style="display: none;">';
+			print '<input type="checkbox" id="inputcloseproject" name="closeproject" />';
+			print '<label for="inputcloseproject">';
+			print $form->textwithpicto($langs->trans("AlsoCloseAProject"), $langs->trans("AlsoCloseAProjectTooltip")).'</label>';
+			print ' </div>';
+
 			print '</td>';
 			print '</tr>';
 
 			// Opportunity amount
 			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityAmount").'</td>';
-			print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'">';
+			print '<td><input class="width75 right" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'">';
 			print $langs->getCurrencySymbol($conf->currency);
 			print '</td>';
 			print '</tr>';
 		}
 
 		// Budget
-		print '<tr><td>'.$langs->trans("Budget").'</td>';
-		print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'">';
+		print '<tr class="classusetask classusebilltime"><td>'.$langs->trans("Budget").'</td>';
+		print '<td><input class="width75 right" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'">';
 		print $langs->getCurrencySymbol($conf->currency);
 		print '</td>';
 		print '</tr>';
@@ -1180,14 +1274,13 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			if ($code) {
 				print $langs->trans("OppStatus".$code);
 			}
-			print '</td></tr>';
 
 			// Opportunity percent
-			print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
+			print ' <span title="'.$langs->trans("OpportunityProbability").'"> / ';
 			if (strcmp($object->opp_percent, '')) {
 				print price($object->opp_percent, 0, $langs, 1, 0).' %';
 			}
-			print '</td></tr>';
+			print '</span></td></tr>';
 
 			// Opportunity Amount
 			print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
@@ -1268,6 +1361,25 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 	print '</form>';
 
+	// Set also dependencies between use taks and bill time
+	print '<script type="text/javascript">
+        jQuery(document).ready(function() {
+        	jQuery("#usage_task").change(function() {
+        		console.log("We click on usage task "+jQuery("#usage_task").is(":checked"));
+                if (! jQuery("#usage_task").is(":checked")) {
+                    jQuery("#usage_bill_time").prop("checked", false);
+                }
+        	});
+
+        	jQuery("#usage_bill_time").change(function() {
+        		console.log("We click on usage to bill time");
+                if (jQuery("#usage_bill_time").is(":checked")) {
+                    jQuery("#usage_task").prop("checked", true);
+                }
+        	});
+        });
+        </script>';
+
 	// Change probability from status
 	if (!empty($conf->use_javascript_ajax) && !empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 		// Default value to close or not when we set opp to 'WON'.
@@ -1308,19 +1420,23 @@ if ($action == 'create' && $user->rights->projet->creer) {
                     }
 
                     /* Change percent with default percent (defaultpercent) if new status (defaultpercent) is higher than current (jQuery("#opp_percent").val()) */
-                    console.log("oldpercent="+oldpercent);
                     if (oldpercent != \'\' && (parseFloat(defaultpercent) < parseFloat(oldpercent)))
                     {
-                        if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+oldpercent+\' %\');
-                        if (parseFloat(oldpercent) != 100) { jQuery("#opp_percent").val(oldpercent); }
-                        else { jQuery("#opp_percent").val(defaultpercent); }
+	                    console.log("oldpercent="+oldpercent+" defaultpercent="+defaultpercent+" def < old");
+                        if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') {
+							jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
+						}
+
+						if (parseFloat(oldpercent) != 100 && elemcode != \'LOST\') { jQuery("#opp_percent").val(oldpercent); }
+                        else { jQuery("#opp_percent").val(price2numjs(defaultpercent)); }
                     }
                     else
                     {
+	                    console.log("oldpercent="+oldpercent+" defaultpercent="+defaultpercent);
                     	if ((parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent)));
                     	{
-                        	if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+oldpercent+\' %\');
-                        	jQuery("#opp_percent").val(defaultpercent);
+                        	if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+price2numjs(oldpercent)+\' %\');
+                        	jQuery("#opp_percent").val(price2numjs(defaultpercent));
                     	}
                     }
             	}

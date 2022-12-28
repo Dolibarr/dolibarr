@@ -1043,7 +1043,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$regType = array();
 	if (preg_match('/\{(t+)\}/i', $mask, $regType)) {
 		$masktype = $regType[1];
-		$masktype_value = substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1])); // get n first characters of thirdparty typent_code (where n is length in mask)
+		$masktype_value = dol_substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1])); // get n first characters of thirdparty typent_code (where n is length in mask)
 		$masktype_value = str_pad($masktype_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
 	} else {
 		$masktype = '';
@@ -1215,7 +1215,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		} elseif ($yearlen == 2) {
 			$yearcomp = sprintf("%02d", date("y", $date) + $yearoffset);
 		} elseif ($yearlen == 1) {
-			$yearcomp = substr(date("y", $date), 2, 1) + $yearoffset;
+			$yearcomp = substr(date('y', $date), 1, 1) + $yearoffset;
 		}
 		if ($monthcomp > 1 && empty($resetEveryMonth)) {	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1) (regis: $monthcomp can't equal 0)
 			if ($yearlen == 4) {
@@ -1282,6 +1282,12 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$sql .= " FROM ".MAIN_DB_PREFIX.$table;
 	$sql .= " WHERE ".$field." LIKE '".$db->escape($maskLike)."'";
 	$sql .= " AND ".$field." NOT LIKE '(PROV%)'";
+
+	// To ensure that all variables within the MAX() brackets are integers
+	if (getDolGlobalInt('MAIN_NUMBERING_FILTER_ON_INT_ONLY')) {
+		$sql .= " AND ". $db->regexpsql($sqlstring, '^[0-9]+$', true);
+	}
+
 	if ($bentityon) { // only if entity enable
 		$sql .= " AND entity IN (".getEntity($sharetable).")";
 	} elseif (!empty($forceentity)) {
@@ -1755,6 +1761,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
 	 *  weigh_convert(320, $f, 0) retournera 0.32
 	 *
 	 */
+	$weight = is_numeric($weight) ? $weight : 0;
 	while ($from_unit <> $to_unit) {
 		if ($from_unit > $to_unit) {
 			$weight = $weight * 10;
@@ -2233,7 +2240,11 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'compta/facture/class';
 		$classfile = 'facture-rec';
 		$classname = 'FactureRec';
-		$module='facture';
+		$module = 'facture';
+	} elseif ($objecttype == 'mailing') {
+		$classpath = 'comm/mailing/class';
+		$classfile = 'mailing';
+		$classname = 'Mailing';
 	}
 
 	if (isModEnabled($module)) {
@@ -2841,4 +2852,56 @@ function phpSyntaxError($code)
 	@ini_set('display_errors', $token);
 	@ini_set('log_errors', $inString);
 	return $code;
+}
+
+
+/**
+ * Check the syntax of some PHP code.
+ *
+ * @return 	int		>0 if OK, 0 if no			Return if we accept link added from the media browser into HTML field for public usage
+ */
+function acceptLocalLinktoMedia()
+{
+	global $user;
+
+	// If $acceptlocallinktomedia is true, we can add link media files int email templates (we already can do this into HTML editor of an email).
+	// Note that local link to a file into medias are replaced with a real link by email in CMailFile.class.php with value $urlwithroot defined like this:
+	// $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	// $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
+	if ($acceptlocallinktomedia) {
+		global $dolibarr_main_url_root;
+		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+
+		// Parse $newUrl
+		$newUrlArray = parse_url($urlwithouturlroot);
+		$hosttocheck = $newUrlArray['host'];
+		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
+
+		if (function_exists('gethostbyname')) {
+			$iptocheck = gethostbyname($hosttocheck);
+		} else {
+			$iptocheck = $hosttocheck;
+		}
+
+		//var_dump($iptocheck.' '.$acceptlocallinktomedia);
+		if (!filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+			// If ip of public url is a private network IP, we do not allow this.
+			$acceptlocallinktomedia = 0;
+			// TODO Show a warning
+		}
+
+		if (preg_match('/http:/i', $urlwithouturlroot)) {
+			// If public url is not a https, we do not allow to add medias link. It will generate security alerts when email will be sent.
+			$acceptlocallinktomedia = 0;
+			// TODO Show a warning
+		}
+
+		if (!empty($user->socid)) {
+			$acceptlocallinktomedia = 0;
+		}
+	}
+
+	//return 1;
+	return $acceptlocallinktomedia;
 }

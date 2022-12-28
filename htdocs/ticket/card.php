@@ -71,7 +71,7 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
@@ -299,6 +299,7 @@ if (empty($reshook)) {
 			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'create';
 		}
 	}
 
@@ -439,10 +440,10 @@ if (empty($reshook)) {
 		$action = 'view';
 	}
 
-	// Action to add an action (not a message).
+	// Action to add a message (private or not, with email or not).
 	// This may also send an email (concatenated with email_intro and email footer if checkbox was selected)
 	if ($action == 'add_message' && GETPOSTISSET('btn_add_message') && $user->rights->ticket->read) {
-		$ret = $object->newMessage($user, $action, (GETPOST('private_message', 'alpha') == "on" ? 1 : 0));
+		$ret = $object->newMessage($user, $action, (GETPOST('private_message', 'alpha') == "on" ? 1 : 0), 0);
 
 		if ($ret > 0) {
 			if (!empty($backtopage)) {
@@ -738,7 +739,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	$formticket->withcancel = 1;
 
-	$formticket->showForm(1, 'create', 0);
+	$formticket->showForm(1, 'create', 0, null, $action);
 	/*} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
 	$formticket = new FormTicket($db);
 
@@ -826,9 +827,6 @@ if ($action == 'create' || $action == 'presend') {
 		// Confirmation abandon
 		if ($action == 'abandon') {
 			print $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("AbandonTicket"), $langs->trans("ConfirmAbandonTicket"), "confirm_abandon", '', '', 1);
-			if ($ret == 'html') {
-				print '<br>';
-			}
 		}
 		// Confirmation delete
 		if ($action == 'delete') {
@@ -1405,12 +1403,12 @@ if ($action == 'create' || $action == 'presend') {
 			if (empty($reshook)) {
 				// Email
 				if (isset($object->status) && $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage") {
-					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend_addmessage&send_email=1&private_message=0&mode=init&token='.newToken().'&track_id='.$object->track_id, '');
+					print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend_addmessage&send_email=1&private_message=0&mode=init&token='.newToken().'&track_id='.$object->track_id.'#formmailbeforetitle', '');
 				}
 
 				// Show link to add a message (if read and not closed)
 				if (isset($object->status) && $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage") {
-					print dolGetButtonAction('', $langs->trans('TicketAddMessage'), 'default', $_SERVER["PHP_SELF"].'?action=presend_addmessage&mode=init&token='.newToken().'&track_id='.$object->track_id, '');
+					print dolGetButtonAction('', $langs->trans('TicketAddMessage'), 'default', $_SERVER["PHP_SELF"].'?action=presend_addmessage&mode=init&token='.newToken().'&track_id='.$object->track_id.'#formmailbeforetitle', '');
 				}
 
 				// Link to create an intervention

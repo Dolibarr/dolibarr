@@ -971,12 +971,12 @@ class Task extends CommonObjectLine
 
 				if ($loadRoleMode) {
 					if ((!$obj->public) && (is_object($userp))) {    // If not public project and we ask a filter on project owned by a user
-						if (!$this->getUserRolesForProjectsOrTasks($userp, 0, $obj->projectid, 0)) {
+						if (!$this->getUserRolesForProjectsOrTasks($userp, null, $obj->projectid, 0)) {
 							$error++;
 						}
 					}
 					if (is_object($usert)) {                            // If we ask a filter on a user affected to a task
-						if (!$this->getUserRolesForProjectsOrTasks(0, $usert, $obj->projectid, $obj->taskid)) {
+						if (!$this->getUserRolesForProjectsOrTasks(null, $usert, $obj->projectid, $obj->taskid)) {
 							$error++;
 						}
 					}
@@ -1056,12 +1056,12 @@ class Task extends CommonObjectLine
 	/**
 	 * Return list of roles for a user for each projects or each tasks (or a particular project or a particular task).
 	 *
-	 * @param	User	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
-	 * @param	User	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
-	 * @param 	int		$projectid		      Project id list separated with , to filter on project
-	 * @param 	int		$taskid			      Task id to filter on a task
-	 * @param	integer	$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
-	 * @return 	array					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
+	 * @param	User|null	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
+	 * @param	User|null	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
+	 * @param 	int			$projectid		      Project id list separated with , to filter on project
+	 * @param 	int			$taskid			      Task id to filter on a task
+	 * @param	integer		$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
+	 * @return 	array						      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
 	 */
 	public function getUserRolesForProjectsOrTasks($userp, $usert, $projectid = '', $taskid = 0, $filteronprojstatus = -1)
 	{
@@ -2203,7 +2203,7 @@ class Task extends CommonObjectLine
 		$sql .= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
 		$sql .= " t.dateo as date_start, t.datee as datee";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 		$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 		$sql .= " WHERE p.entity IN (".getEntity('project', 0).')';
@@ -2226,7 +2226,7 @@ class Task extends CommonObjectLine
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->project->task->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("OpenedTasks");
-			if ($user->rights->projet->all->lire) {
+			if ($user->hasRight("projet", "all", "lire")) {
 				$response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
 			} else {
 				$response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';

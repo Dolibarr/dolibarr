@@ -385,7 +385,7 @@ if ($nolinesbefore) {
 		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 			$coldisplay++;
 			?>
-	<td class="nobottom linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth125 maxwidth125onsmartphone" value="<?php echo (GETPOSTISSET("fourn_ref") ? GETPOST("fourn_ref", 'alpha', 2) : ''); ?>"></td>
+	<td class="nobottom linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth100 maxwidth125onsmartphone" value="<?php echo (GETPOSTISSET("fourn_ref") ? GETPOST("fourn_ref", 'alpha', 2) : ''); ?>"></td>
 		<?php }
 		print '<td class="nobottom linecolvat right">';
 		$coldisplay++;
@@ -718,7 +718,8 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 	{
 		console.log("objectline_create.tpl Call method change() after change on #idprod or #idprodfournprice (senderissupplier=<?php echo $senderissupplier; ?>). this.val = "+$(this).val());
 
-		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
+		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva(product)
+
 		jQuery('#trlinefordates').show();
 
 		<?php
@@ -734,7 +735,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 				<?php if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) { ?>
 					if (isNaN(pbq)) { console.log("We use experimental option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY but we could not get the id of pbq from product combo list, so load of price may be 0 if product has differet prices"); }
 				<?php } ?>
-				// Get the HT price for the product and display it
+				// Get the price for the product and display it
 				console.log("Load unit price without tax and set it into #price_ht for product id="+$(this).val()+" socid=<?php print $object->socid; ?>");
 				$.post('<?php echo DOL_URL_ROOT; ?>/product/ajax/products.php?action=fetch',
 					{ 'id': $(this).val(), 'socid': <?php print $object->socid; ?>, 'token': '<?php print currentToken(); ?>' },
@@ -755,7 +756,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 						if (data.mandatory_period == 1 && data.type == 1) {
 							jQuery('#date_start').addClass('inputmandatory');
 							jQuery('#date_end').addClass('inputmandatory');
-						}else{
+						} else {
 							jQuery('#date_start').removeClass('inputmandatory');
 							jQuery('#date_end').removeClass('inputmandatory');
 						}
@@ -767,6 +768,23 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 							console.log("objectline_create.tpl set content of price_ht");
 							jQuery("#price_ht").val(data.price_ht);
 						}
+
+						var tva_tx = data.tva_tx;
+						var default_vat_code = data.default_vat_code;
+
+						// Now set the VAT
+						var stringforvatrateselection = tva_tx;
+						if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
+							stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
+						}
+						// Set vat rate if field is an input box
+						$('#tva_tx').val(tva_tx);
+						// Set vat rate by selecting the combo
+						//$('#tva_tx option').val(tva_tx);	// This is bugged, it replaces the vat key of all options
+						$('#tva_tx option').removeAttr('selected');
+						console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
+						$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
+
 						<?php
 						if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
 							if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) { ?>
@@ -919,42 +937,45 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		?>
 
 		<?php
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {?>
-		/* To process customer price per quantity (PRODUIT_CUSTOMER_PRICES_BY_QTY works only if combo product is not an ajax after x key pressed) */
-		var pbq = parseInt($('option:selected', this).attr('data-pbq'));				// When select is done from HTML select
-		if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq');	}					// When select is done from HTML input with autocomplete
-		var pbqup = parseFloat($('option:selected', this).attr('data-pbqup'));
-		if (isNaN(pbqup)) { pbqup = jQuery('#idprod').attr('data-pbqup');	}
-		var pbqbase = $('option:selected', this).attr('data-pbqbase');
-		if (isNaN(pbqbase)) { pbqbase = jQuery('#idprod').attr('data-pbqbase');	}
-		var pbqqty = parseFloat($('option:selected', this).attr('data-pbqqty'));
-		if (isNaN(pbqqty)) { pbqqty = jQuery('#idprod').attr('data-pbqqty');	}
-		var pbqpercent = parseFloat($('option:selected', this).attr('data-pbqpercent'));
-		if (isNaN(pbqpercent)) { pbqpercent = jQuery('#idprod').attr('data-pbqpercent');	}
+		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
+			?>
+			/* To process customer price per quantity (PRODUIT_CUSTOMER_PRICES_BY_QTY works only if combo product is not an ajax after x key pressed) */
+			var pbq = parseInt($('option:selected', this).attr('data-pbq'));				// When select is done from HTML select
+			if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq');	}					// When select is done from HTML input with autocomplete
+			var pbqup = parseFloat($('option:selected', this).attr('data-pbqup'));
+			if (isNaN(pbqup)) { pbqup = jQuery('#idprod').attr('data-pbqup');	}
+			var pbqbase = $('option:selected', this).attr('data-pbqbase');
+			if (isNaN(pbqbase)) { pbqbase = jQuery('#idprod').attr('data-pbqbase');	}
+			var pbqqty = parseFloat($('option:selected', this).attr('data-pbqqty'));
+			if (isNaN(pbqqty)) { pbqqty = jQuery('#idprod').attr('data-pbqqty');	}
+			var pbqpercent = parseFloat($('option:selected', this).attr('data-pbqpercent'));
+			if (isNaN(pbqpercent)) { pbqpercent = jQuery('#idprod').attr('data-pbqpercent');	}
 
-		if ((jQuery('#idprod').val() > 0) && ! isNaN(pbq) && pbq > 0)
-		{
-			var pbqupht = pbqup;	/* TODO support of price per qty TTC not yet available */
+			if ((jQuery('#idprod').val() > 0) && ! isNaN(pbq) && pbq > 0)
+			{
+				var pbqupht = pbqup;	/* TODO support of price per qty TTC not yet available */
 
-			console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty upht = "+pbqupht+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
-			jQuery("#pbq").val(pbq);
-			jQuery("#price_ht").val(pbqupht);
-			if (jQuery("#qty").val() < pbqqty)
-			{
-				jQuery("#qty").val(pbqqty);
-			}
-			if (jQuery("#remise_percent").val() < pbqpercent)
-			{
-				jQuery("#remise_percent").val(pbqpercent);
-			}
-		} else { jQuery("#pbq").val(''); }
+				console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty upht = "+pbqupht+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
+				jQuery("#pbq").val(pbq);
+				jQuery("#price_ht").val(pbqupht);
+				if (jQuery("#qty").val() < pbqqty)
+				{
+					jQuery("#qty").val(pbqqty);
+				}
+				if (jQuery("#remise_percent").val() < pbqpercent)
+				{
+					jQuery("#remise_percent").val(pbqpercent);
+				}
+			} else { jQuery("#pbq").val(''); }
 			<?php
 		}
 		?>
-		// Deal with supplier
+
+
+		// Deal with supplier ref price (idprodfournprice = int)
 		if (jQuery('#idprodfournprice').val() > 0)
 		{
-			console.log("objectline_create.tpl #idprodfournprice is > 0, so we set some properties into page");
+			console.log("objectline_create.tpl #idprodfournprice is is an ID > 0, so we set some properties into page");
 
 			var up = parseFloat($('option:selected', this).attr('data-up')); 							// When select is done from HTML select
 			if (isNaN(up)) { up = parseFloat(jQuery('#idprodfournprice').attr('data-up'));}				// When select is done from HTML input with ajax autocomplete
@@ -971,7 +992,15 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			var tva_tx = parseFloat($('option:selected', this).attr('data-tvatx')); 					// When select is done from HTML select
 			if (isNaN(tva_tx)) { tva_tx = parseFloat(jQuery('#idprodfournprice').attr('data-tvatx'));}	// When select is done from HTML input with ajax autocomplete
 
-			console.log("objectline_create.tpl We find supplier price : up = "+up+", up_locale = "+up_locale+", qty = "+qty+", tva_tx = "+tva_tx+", discount = "+discount+" for product "+jQuery('#idprodfournprice').val());
+			var default_vat_code = $('option:selected', this).attr('data-default-vat-code');							 					// When select is done from HTML select
+			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
+
+			var stringforvatrateselection = tva_tx;
+			if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
+				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
+			}
+
+			console.log("objectline_create.tpl We find supplier price : up = "+up+", up_locale = "+up_locale+", qty = "+qty+", tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+", discount = "+discount+" for product supplier ref id = "+jQuery('#idprodfournprice').val());
 
 			if (typeof up_locale === 'undefined') {
 				jQuery("#price_ht").val(up);
@@ -979,8 +1008,13 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 				jQuery("#price_ht").val(up_locale);
 			}
 
-			/* $('#tva_tx option').removeAttr('selected').filter('[value='+tva_tx+']').prop('selected', true); */
-			$('#tva_tx option').val(tva_tx);
+			// Set vat rate if field is an input box
+			$('#tva_tx').val(tva_tx);
+			// Set vat rate by selecting the combo
+			//$('#tva_tx option').val(tva_tx);	// This is bugged, it replaces the vat key of all options
+			$('#tva_tx option').removeAttr('selected');
+			console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
+			$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
 
 			if (jQuery("#qty").val() < qty)	{
 				jQuery("#qty").val(qty);
@@ -990,14 +1024,15 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			}
 
 			<?php
-			if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
+			if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
 				?>
 			var description = $('option:selected', this).attr('data-description');
 			if (typeof description == 'undefined') { description = jQuery('#idprodfournprice').attr('data-description');	}
 
 			console.log("Load desciption into text area : "+description);
 				<?php
-				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) {
+					?>
 			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 			{
 				var editor = CKEDITOR.instances['dp_desc'];
@@ -1006,15 +1041,41 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 				}
 			}
 					<?php
-				} else { ?>
+				} else {
+					?>
 			jQuery('#dp_desc').text(description);
 					<?php
 				}
-			}?>
+			}
+			?>
 		} else if (jQuery('#idprodfournprice').length > 0) {
+			console.log("objectline_create.tpl #idprodfournprice is not an int but is a string so we set only few properties into page");
+
+			var tva_tx = parseFloat($('option:selected', this).attr('data-tvatx')); 					// When select is done from HTML select
+			if (isNaN(tva_tx)) { tva_tx = parseFloat(jQuery('#idprodfournprice').attr('data-tvatx'));}	// When select is done from HTML input with ajax autocomplete
+
+			var default_vat_code = $('option:selected', this).attr('data-default-vat-code');							 					// When select is done from HTML select
+			if (typeof default_vat_code === 'undefined') { default_vat_code = jQuery('#idprodfournprice').attr('data-default-vat-code');}	// When select is done from HTML input with ajax autocomplete
+
+			var stringforvatrateselection = tva_tx;
+			if (typeof default_vat_code != 'undefined' && default_vat_code != null && default_vat_code != '') {
+				stringforvatrateselection = stringforvatrateselection+' ('+default_vat_code+')';
+			}
+
+			console.log("objectline_create.tpl We find data for price : tva_tx = "+tva_tx+", default_vat_code = "+default_vat_code+", stringforvatrateselection="+stringforvatrateselection+" for product id = "+jQuery('#idprodfournprice').val());
+
+			// Set vat rate if field is an input box
+			$('#tva_tx').val(tva_tx);
+			// Set vat rate by selecting the combo
+			//$('#tva_tx option').val(tva_tx);	// This is bugged, it replaces the vat key of all options
+			$('#tva_tx option').removeAttr('selected');
+			console.log("stringforvatrateselection="+stringforvatrateselection+" -> value of option label for this key="+$('#tva_tx option[value="'+stringforvatrateselection+'"]').val());
+			$('#tva_tx option[value="'+stringforvatrateselection+'"]').prop('selected', true);
+
 			<?php
-			if (!empty($conf->global->PRODUIT_AUTOFILL_DESC) && $conf->global->PRODUIT_AUTOFILL_DESC == 1) {
-				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
+			if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
+				if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) {
+					?>
 			if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined")
 			{
 				var editor = CKEDITOR.instances['dp_desc'];
@@ -1023,11 +1084,13 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 				}
 			}
 					<?php
-				} else { ?>
+				} else {
+					?>
 			jQuery('#dp_desc').text('');
 					<?php
 				}
-			}?>
+			}
+			?>
 		}
 
 
@@ -1085,7 +1148,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			jQuery("#multicurrency_price_ttc").val('').hide();
 			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
 		<?php } ?>
-		jQuery("#fourn_ref, #tva_tx, #title_vat").hide();
+		jQuery("#tva_tx, #title_vat").hide();
 		/* jQuery("#title_fourn_ref").hide(); */
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 		jQuery("#buying_price").show();

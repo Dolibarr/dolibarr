@@ -576,7 +576,7 @@ if (empty($reshook)) {
 			$object->volume             	 = GETPOST('volume');
 			$object->volume_units       	 = GETPOST('volume_units'); // This is not the fk_unit but the power of unit
 			$finished = GETPOST('finished', 'int');
-			if ($finished > 0) {
+			if ($finished >= 0) {
 				$object->finished = $finished;
 			} else {
 				$object->finished = null;
@@ -2382,7 +2382,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="setbarcode">';
 					print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
-					print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
+					print '<input class="width300" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
 					print '&nbsp;<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 					print '</form>';
 				} else {
@@ -2528,7 +2528,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td>';
 			}
 
-			if ($object->isService() && $conf->workstation->enabled) {
+			if ($object->isService() && isModEnabled('workstation')) {
 				$workstation = new Workstation($db);
 				$res = $workstation->fetch($object->fk_default_workstation);
 

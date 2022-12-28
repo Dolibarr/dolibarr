@@ -40,7 +40,7 @@
  *	\brief      File of class to manage invoices
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
@@ -136,7 +136,7 @@ class Facture extends CommonInvoice
 	/**
 	 * @var int	Date expected for delivery
 	 * @deprecated
-	 * @see delivery_date
+	 * @see $delivery_date
 	 */
 	public $date_livraison;
 
@@ -148,7 +148,7 @@ class Facture extends CommonInvoice
 	/**
 	 * @var string customer ref
 	 * @deprecated
-	 * @see ref_customer
+	 * @see $ref_customer
 	 */
 	public $ref_client;
 
@@ -170,6 +170,8 @@ class Facture extends CommonInvoice
 	public $total_localtax2;
 	public $total_ttc;
 	public $revenuestamp;
+
+	public $resteapayer;
 
 	/**
 	 * ! Closing after partial payment: discount_vat, badcustomer or badsupplier, bankcharge, other
@@ -5428,12 +5430,13 @@ class Facture extends CommonInvoice
 	 *  Send reminders by emails for ivoices that are due
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	int			$nbdays			Delay after due date (or before if delay is negative)
-	 *  @param	string		$paymentmode	'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
-	 *  @param	int|string	$template		Name (or id) of email template (Must be a template of type 'facture_send')
-	 *  @return int         				0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 *  @param	int			$nbdays				Delay after due date (or before if delay is negative)
+	 *  @param	string		$paymentmode		'' or 'all' by default (no filter), or 'LIQ', 'CHQ', CB', ...
+	 *  @param	int|string	$template			Name (or id) of email template (Must be a template of type 'facture_send')
+	 *  @param	string		$forcerecipient		Force email of recipient (for example to send the email to an accountant supervisor instead of the customer)
+	 *  @return int         					0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function sendEmailsRemindersOnInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '')
+	public function sendEmailsRemindersOnInvoiceDueDate($nbdays = 0, $paymentmode = 'all', $template = '', $forcerecipient = '')
 	{
 		global $conf, $langs, $user;
 
@@ -5476,11 +5479,11 @@ class Facture extends CommonInvoice
 		$sql .= " WHERE f.paye = 0";
 		$sql .= " AND f.fk_statut = ".self::STATUS_VALIDATED;
 		$sql .= " AND f.date_lim_reglement = '".$this->db->idate($tmpidate, 'gmt')."'";
-		$sql .= " AND f.entity IN (".getEntity('facture').")";
+		$sql .= " AND f.entity IN (".getEntity('facture', 0).")";	// One batch process only one company (no sharing)
 		if (!empty($paymentmode) && $paymentmode != 'all') {
 			$sql .= " AND f.fk_mode_reglement = cp.id AND cp.code = '".$this->db->escape($paymentmode)."'";
 		}
-		// TODO Add filter to check there is no payment started
+		// TODO Add a filter to check there is no payment started yet
 		$sql .= $this->db->order("date_lim_reglement", "ASC");
 
 		$resql = $this->db->query($sql);
@@ -5534,30 +5537,37 @@ class Facture extends CommonInvoice
 
 						// Recipient
 						$to = array();
-						$res = $tmpinvoice->fetch_thirdparty();
-						$recipient = $tmpinvoice->thirdparty;
-						if ($res > 0) {
-							$tmparraycontact = $tmpinvoice->liste_contact(-1, 'external', 0, 'BILLING');
-							if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
-								foreach ($tmparraycontact as $data_email) {
-									if (!empty($data_email['email'])) {
-										$to[] = $tmpinvoice->thirdparty->contact_get_property($data_email['id'], 'email');
+						if ($forcerecipient) {	// If a recipient was forced
+							$to = array($forcerecipient);
+						} else {
+							$res = $tmpinvoice->fetch_thirdparty();
+							$recipient = $tmpinvoice->thirdparty;
+							if ($res > 0) {
+								$tmparraycontact = $tmpinvoice->liste_contact(-1, 'external', 0, 'BILLING');
+								if (is_array($tmparraycontact) && count($tmparraycontact) > 0) {
+									foreach ($tmparraycontact as $data_email) {
+										if (!empty($data_email['email'])) {
+											$to[] = $tmpinvoice->thirdparty->contact_get_property($data_email['id'], 'email');
+										}
 									}
 								}
-							}
-							if (empty($to) && !empty($recipient->email)) {
-								$to[] = $recipient->email;
+								if (empty($to) && !empty($recipient->email)) {
+									$to[] = $recipient->email;
+								} else {
+									$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for user.";
+									$error++;
+								}
 							} else {
-								$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->socid.". No email defined for user.";
+								$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->socid;
 								$error++;
 							}
-						} else {
-							$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->socid;
-							$error++;
 						}
 
 						// Sender
-						$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+						if (!empty($arraymessage->email_from)) {	// If a sender is defined into template, we use it in priority
+							$from = $arraymessage->email_from;
+						}
 						if (empty($from)) {
 							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
 							$error++;
@@ -5567,6 +5577,9 @@ class Facture extends CommonInvoice
 							$this->db->begin();
 
 							$to = implode(',', $to);
+							if (!empty($arraymessage->email_to)) {	// If a recipient is defined into template, we add it
+								$to = $to.','.$arraymessage->email_to;
+							}
 
 							// Errors Recipient
 							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
@@ -5574,8 +5587,18 @@ class Facture extends CommonInvoice
 							$trackid = 'inv'.$tmpinvoice->id;
 							$sendcontext = 'standard';
 
+							$email_tocc = '';
+							if (!empty($arraymessage->email_tocc)) {	// If a CC is defined into template, we use it
+								$email_tocc = $arraymessage->email_tocc;
+							}
+
+							$email_tobcc = '';
+							if (!empty($arraymessage->email_tobcc)) {	// If a BCC is defined into template, we use it
+								$email_tobcc = $arraymessage->email_tobcc;
+							}
+
 							// Mail Creation
-							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
+							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), $email_tocc, $email_tobcc, 0, 1, $errors_to, '', $trackid, '', $sendcontext, '');
 
 							// Sending Mail
 							if ($cMailFile->sendfile()) {
@@ -6359,11 +6382,11 @@ class FactureLigne extends CommonInvoiceLine
 
 		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
-		$sql .= " total_ht=".price2num($this->total_ht)."";
-		$sql .= ",total_tva=".price2num($this->total_tva)."";
-		$sql .= ",total_localtax1=".price2num($this->total_localtax1)."";
-		$sql .= ",total_localtax2=".price2num($this->total_localtax2)."";
-		$sql .= ",total_ttc=".price2num($this->total_ttc)."";
+		$sql .= " total_ht=".price2num($this->total_ht);
+		$sql .= ",total_tva=".price2num($this->total_tva);
+		$sql .= ",total_localtax1=".price2num($this->total_localtax1);
+		$sql .= ",total_localtax2=".price2num($this->total_localtax2);
+		$sql .= ",total_ttc=".price2num($this->total_ttc);
 		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);

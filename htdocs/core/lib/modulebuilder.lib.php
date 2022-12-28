@@ -356,7 +356,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 					}
 				}
 			}
-			$texttoinsert .= (($val['notnull'] > 0) ? ' NOT NULL' : '');
+			$texttoinsert .= ((!empty($val['notnull']) && $val['notnull'] > 0) ? ' NOT NULL' : '');
 			if ($i < count($object->fields)) {
 				$texttoinsert .= ", ";
 			}

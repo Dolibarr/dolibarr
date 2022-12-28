@@ -118,13 +118,13 @@ class modTicket extends DolibarrModules
 			10 => array('TICKET_MESSAGE_MAIL_INTRO', 'chaine', $langs->trans('TicketMessageMailIntroText'), 'Introduction text of ticket replies sent from Dolibarr', 0),
 			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_footer, 'Signature to use by default for messages sent from Dolibarr', 0),
 			12 => array('MAIN_EMAILCOLLECTOR_MAIL_WITHOUT_HEADER', 'chaine', "1", 'Disable the rendering of headers in tickets', 0),
-			13 => array('MAIN_SECURITY_ENABLECAPTCHA_TICKET', 'chaine', getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET'), 'Enable captcha code by default', 0)
+			13 => array('MAIN_SECURITY_ENABLECAPTCHA_TICKET', 'chaine', getDolGlobalInt('MAIN_SECURITY_ENABLECAPTCHA_TICKET'), 'Enable captcha code by default', 0),
+			14 => array('TICKET_SHOW_COMPANY_LOGO', 'chaine', getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO'), 'Enable logo header on ticket public page', 0)
 		);
 
 
 		$this->tabs = array(
 			'thirdparty:+ticket:Tickets:ticket:$user->rights->ticket->read:/ticket/list.php?socid=__ID__',
-			'project:+ticket:Tickets:ticket:$user->rights->ticket->read:/ticket/list.php?projectid=__ID__',
 		);
 
 		// Dictionaries

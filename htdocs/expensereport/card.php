@@ -971,7 +971,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
-			setEventMessages("NOT_AUTHOR", '', 'errors');
+			setEventMessages("NOT_AUTHOR", null, 'errors');
 		}
 	}
 
@@ -2297,7 +2297,7 @@ if ($action == 'create') {
 							}
 						}
 
-						$tredited = 'tredited';
+						$tredited = 'tredited';	// Case the addfile and linkto file is used for edit (used by following tpl)
 						include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
 						include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
 
@@ -2427,12 +2427,14 @@ if ($action == 'create') {
                             } else {
                                 jQuery("input[name=\"senditdisabled\"]").prop("name", "sendit");
                             }
+							// TODO Switch css fa-chevron-dow and add fa-chevron-up
                             return false;
                         });
 				        $( ".aattachtodoc" ).click(function() {
 							console.log("We click on toggle of aattachtodoc");
 				            jQuery(".trattachnewfilenow").toggle();
                             jQuery(".truploadnewfilenow").hide();
+							// TODO Switch css fa-chevron-dow and add fa-chevron-up
                             return false;
                         });'."\n";
 				if (is_array(GETPOST('attachfile', 'array')) && count(GETPOST('attachfile', 'array')) && $action != 'updateline') {
@@ -2455,6 +2457,7 @@ if ($action == 'create') {
 				print '</script>'."\n";
 				print '</td></tr>';
 
+				$tredited = '';	// Case the addfile and linkto file is used for edit (used by following tpl)
 				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_linktofile.tpl.php';
 				include DOL_DOCUMENT_ROOT.'/expensereport/tpl/expensereport_addfile.tpl.php';
 
@@ -2517,6 +2520,7 @@ if ($action == 'create') {
 				print '<td class="right inputvat">';
 				$defaultvat = -1;
 				if (!empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) {
+					// If option to have no default VAT on expense report is on, we force MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
 					$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 				}
 				print $form->load_tva('vatrate', (!empty($vatrate) ? $vatrate : $defaultvat), $mysoc, '', 0, 0, '', false, 1);

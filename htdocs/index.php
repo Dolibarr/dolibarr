@@ -106,8 +106,8 @@ if (!empty($conf->global->MAIN_MOTD)) {
  * Show security warnings
  */
 
-// Security warning repertoire install existe (si utilisateur admin)
-if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
+// Security warning if install.lock file is missing or if conf file is writable
+if (empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 	$message = '';
 
 	// Check if install lock file is present
@@ -512,23 +512,6 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				if (!empty($groupElement['globalStatsKey']) && empty($groupElement['globalStats'])) { // can be filled by hook
 					$globalStatsKey = $groupElement['globalStatsKey'];
 					$groupElement['globalStats'] = array();
-
-					if (isset($keys) && is_array($keys) && in_array($globalStatsKey, $keys)) {
-						// get key index of stats used in $includes, $classes, $keys, $icons, $titres, $links
-						$keyIndex = array_search($globalStatsKey, $keys);
-
-						$classe = (!empty($classes[$keyIndex]) ? $classes[$keyIndex] : '');
-						if (isset($boardloaded[$classe]) && is_object($boardloaded[$classe])) {
-							$groupElement['globalStats']['total'] = $boardloaded[$classe]->nb[$globalStatsKey] ? $boardloaded[$classe]->nb[$globalStatsKey] : 0;
-							$nbTotal = floatval($groupElement['globalStats']['total']);
-							if ($nbTotal >= 10000) {
-								$nbTotal = round($nbTotal / 1000, 2).'k';
-							}
-							$groupElement['globalStats']['text'] = $langs->trans('Total').' : '.$langs->trans($titres[$keyIndex]).' ('.$groupElement['globalStats']['total'].')';
-							$groupElement['globalStats']['total'] = $nbTotal;
-							//$groupElement['globalStats']['link'] = $links[$keyIndex];
-						}
-					}
 				}
 
 				$openedDashBoard .= '<div class="box-flex-item"><div class="box-flex-item-with-margin">'."\n";

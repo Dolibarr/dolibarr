@@ -38,12 +38,10 @@
 include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 
@@ -592,7 +590,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(double) $this->multicurrency_tx;
-		$sql .= ", ".(isset($this->fk_facture_source) ? $this->fk_facture_source : "NULL");
+		$sql .= ", ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null");
 		$sql .= ", ".(isset($this->fk_fac_rec_source) ? $this->fk_fac_rec_source : "NULL");
 		$sql .= ")";
 
@@ -809,7 +807,7 @@ class FactureFournisseur extends CommonInvoice
 
 
 			// Update total price
-			$result = $this->update_price();
+			$result = $this->update_price(1);
 			if ($result > 0) {
 				// Actions on extra fields
 				if (!$error) {
@@ -1234,35 +1232,34 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_supplier=".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
-		$sql .= " entity=".(isset($this->entity) ? $this->entity : "null").",";
-		$sql .= " type=".(isset($this->type) ? $this->type : "null").",";
-		$sql .= " fk_soc=".(isset($this->fk_soc) ? $this->fk_soc : "null").",";
+		$sql .= " entity=".(isset($this->entity) ? ((int) $this->entity) : "null").",";
+		$sql .= " type=".(isset($this->type) ? ((int) $this->type) : "null").",";
+		$sql .= " fk_soc=".(isset($this->fk_soc) ? ((int) $this->fk_soc) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " datef=".(dol_strlen($this->date) != 0 ? "'".$this->db->idate($this->date)."'" : 'null').",";
 		if (dol_strlen($this->tms) != 0) {
 			$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		}
 		$sql .= " libelle=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
-		$sql .= " paye=".(isset($this->paye) ? $this->paye : "null").",";
+		$sql .= " paye=".(isset($this->paye) ? ((int) $this->paye) : "null").",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
-		//$sql .= " tva=".(isset($this->tva) ? $this->tva : "null").",";
-		$sql .= " localtax1=".(isset($this->localtax1) ? $this->localtax1 : "null").",";
-		$sql .= " localtax2=".(isset($this->localtax2) ? $this->localtax2 : "null").",";
-		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
-		$sql .= " total_tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
-		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
-		$sql .= " fk_statut=".(isset($this->status) ? $this->status : (isset($this->statut) ? $this->statut : "null")).",";
-		$sql .= " fk_user_author=".(isset($this->author) ? $this->author : "null").",";
-		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? $this->fk_user_valid : "null").",";
-		$sql .= " fk_facture_source=".(isset($this->fk_facture_source) ? $this->fk_facture_source : "null").",";
-		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
-		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
+		$sql .= " localtax1=".(isset($this->localtax1) ? ((float) $this->localtax1) : "null").",";
+		$sql .= " localtax2=".(isset($this->localtax2) ? ((float) $this->localtax2) : "null").",";
+		$sql .= " total_ht=".(isset($this->total_ht) ? ((float) $this->total_ht) : "null").",";
+		$sql .= " total_tva=".(isset($this->total_tva) ? ((float) $this->total_tva) : "null").",";
+		$sql .= " total_ttc=".(isset($this->total_ttc) ? ((float) $this->total_ttc) : "null").",";
+		$sql .= " fk_statut=".(isset($this->status) ? ((int) $this->status) : (isset($this->statut) ? ((int) $this->statut) : "null")).",";
+		$sql .= " fk_user_author=".(isset($this->author) ? ((int) $this->author) : "null").",";
+		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? ((int) $this->fk_user_valid) : "null").",";
+		$sql .= " fk_facture_source=".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
+		$sql .= " fk_projet=".(isset($this->fk_project) ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
 		$sql .= " date_lim_reglement=".(dol_strlen($this->date_echeance) != 0 ? "'".$this->db->idate($this->date_echeance)."'" : 'null').",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -2074,7 +2071,7 @@ class FactureFournisseur extends CommonInvoice
 				if (!empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY)) {
 					// Check quantity is enough
 					dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." qty=".$qty." ref_supplier=".$ref_supplier);
-					$prod = new Product($this->db);
+					$prod = new ProductFournisseur($this->db);
 					if ($prod->fetch($fk_product) > 0) {
 						$product_type = $prod->type;
 						$label = $prod->label;
@@ -2425,7 +2422,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->errors[] = $line->error;
 		} else {
 			// Update total price into invoice record
-			$res = $this->update_price('', 'auto', 0, $this->thirdparty);
+			$res = $this->update_price('1', 'auto', 0, $this->thirdparty);
 		}
 
 		return $res;
@@ -2472,7 +2469,7 @@ class FactureFournisseur extends CommonInvoice
 			$this->db->rollback();
 			return -3;
 		} else {
-			$res = $this->update_price();
+			$res = $this->update_price(1);
 
 			if ($res > 0) {
 				$this->db->commit();
@@ -3695,10 +3692,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 
 		// Multicurrency
-		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
+		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
+		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
 
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

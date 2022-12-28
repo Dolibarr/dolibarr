@@ -368,15 +368,15 @@ class Cronjob extends CommonObject
 		$sql .= " ".(!isset($this->datelastresult) || dol_strlen($this->datelastresult) == 0 ? 'NULL' : "'".$this->db->idate($this->datelastresult)."'").",";
 		$sql .= " ".(!isset($this->lastoutput) ? 'NULL' : "'".$this->db->escape($this->lastoutput)."'").",";
 		$sql .= " ".(!isset($this->unitfrequency) ? 'NULL' : "'".$this->db->escape($this->unitfrequency)."'").",";
-		$sql .= " ".(!isset($this->frequency) ? '0' : $this->frequency).",";
-		$sql .= " ".(!isset($this->status) ? '0' : $this->status).",";
-		$sql .= " ".$user->id.",";
-		$sql .= " ".$user->id.",";
+		$sql .= " ".(!isset($this->frequency) ? '0' : ((int) $this->frequency)).",";
+		$sql .= " ".(!isset($this->status) ? '0' : ((int) $this->status)).",";
+		$sql .= " ".((int) $user->id).",";
+		$sql .= " ".((int) $user->id).",";
 		$sql .= " ".(!isset($this->note_private) ? 'NULL' : "'".$this->db->escape($this->note_private)."'").",";
-		$sql .= " ".(!isset($this->nbrun) ? '0' : $this->db->escape($this->nbrun)).",";
-		$sql .= " ".(empty($this->maxrun) ? '0' : $this->db->escape($this->maxrun)).",";
+		$sql .= " ".(!isset($this->nbrun) ? '0' : ((int) $this->nbrun)).",";
+		$sql .= " ".(empty($this->maxrun) ? '0' : ((int) $this->maxrun)).",";
 		$sql .= " ".(!isset($this->libname) ? 'NULL' : "'".$this->db->escape($this->libname)."'").",";
-		$sql .= " ".(!isset($this->test) ? 'NULL' : "'".$this->db->escape($this->test)."'")."";
+		$sql .= " ".(!isset($this->test) ? 'NULL' : "'".$this->db->escape($this->test)."'");
 		$sql .= ")";
 
 		$this->db->begin();
@@ -1262,13 +1262,13 @@ class Cronjob extends CommonObject
 					dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$errmsg, LOG_ERR);
 
 					$this->error = $errmsg;
-					$this->lastoutput = ($object->output ? $object->output."\n" : "").$errmsg;
+					$this->lastoutput = (!empty($object->output) ? $object->output."\n" : "").$errmsg;
 					$this->lastresult = is_numeric($result) ? $result : -1;
 					$retval = $this->lastresult;
 					$error++;
 				} else {
 					dol_syslog(get_class($this)."::run_jobs END");
-					$this->lastoutput = $object->output;
+					$this->lastoutput = (!empty($object->output) ? $object->output : "");
 					$this->lastresult = var_export($result, true);
 					$retval = $this->lastresult;
 				}

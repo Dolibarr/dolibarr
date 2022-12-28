@@ -113,6 +113,44 @@ if ($massaction == 'presetsupervisor') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmSetSupervisor"), $langs->trans("ConfirmSetSupervisorQuestion", count($toselect)), "setsupervisor", $formquestion, 1, 0, 200, 500, 1);
 }
 
+if ($massaction == 'preaffectuser') {
+	$formquestion = array();
+
+	$valuefielduser = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 165px; padding-bottom: 6px; gap: 5px">';
+	$valuefielduser .= img_picto('', 'user').' ';
+	$valuefielduser .= $form->select_dolusers('', 'usertoaffect', 1, $arrayofselected, 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+	$valuefielduser .= '</div>';
+
+	$valuefieldprojrole = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px; padding-bottom: 6px">';
+	$valuefieldprojrole .= $formcompany->selectTypeContact($object, '', 'projectrole', 'internal', 'position', 0, 'widthcentpercentminusx maxwidth300', 0);
+	$valuefieldprojrole .= '</div>';
+
+	$valuefieldtasksrole = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
+	$valuefieldtasksrole .= $formcompany->selectTypeContact($taskstatic, '', 'tasksrole', 'internal', 'position', 0, 'widthcentpercentminusx maxwidth300', 0);
+	$valuefieldtasksrole .= '</div>';
+
+	$formquestion[] = array(
+				'type' => 'other',
+				'name' => 'usertoaffect',
+				'label' => $langs->trans("User"),
+				'value' => $valuefielduser
+			);
+	$formquestion[] = array(
+		'type' => 'other',
+		'name' => 'projectrole',
+		'label' => $langs->trans("ProjectRole"),
+		'value' => $valuefieldprojrole
+	);
+
+	$formquestion[] = array(
+		'type' => 'other',
+		'name' => 'tasksrole',
+		'label' => $langs->trans("TasksRole"),
+		'value' => $valuefieldtasksrole
+	);
+
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAffectUser"), $langs->trans("ConfirmAffectUserQuestion", count($toselect)), "affectuser", $formquestion, 1, 0, 200, 500, 1);
+}
 
 if ($massaction == 'presend') {
 	$langs->load("mails");
@@ -129,8 +167,9 @@ if ($massaction == 'presend') {
 				$thirdpartyid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);	// For proposal, order, invoice, conferenceorbooth, ...
 				if (in_array($objecttmp->element, array('societe', 'conferenceorboothattendee'))) {
 					$thirdpartyid = $objecttmp->id;
-				}
-				if ($objecttmp->element == 'expensereport') {
+				} elseif ($objecttmp->element == 'contact') {
+					$thirdpartyid = $objecttmp->id;
+				} elseif ($objecttmp->element == 'expensereport') {
 					$thirdpartyid = $objecttmp->fk_user_author;
 				}
 				if (empty($thirdpartyid)) {
@@ -167,6 +206,10 @@ if ($massaction == 'presend') {
 			$fuser = new User($db);
 			$fuser->fetch($thirdpartyid);
 			$liste['thirdparty'] = $fuser->getFullName($langs)." &lt;".$fuser->email."&gt;";
+		} elseif ($objecttmp->element == 'contact') {
+			$fcontact = new Contact($db);
+			$fcontact->fetch($thirdpartyid);
+			$liste['contact'] = $fcontact->getFullName($langs)." &lt;".$fcontact->email."&gt;";
 		} elseif ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 			$fadherent = new Adherent($db);
 			$fadherent->fetch($objecttmp->fk_member);
@@ -198,17 +241,23 @@ if ($massaction == 'presend') {
 	} else {
 		$formmail->withtopic = 1;
 	}
-	$formmail->withfile = 1;	// $formmail->withfile = 2 to allow to upload files is not yet supported in mass action
-	// Add a checkbox "Attach also main document"
-	if (isset($withmaindocfilemail)) {
-		$formmail->withmaindocfile = $withmaindocfilemail;
-	} else {	// Do an automatic definition of $formmail->withmaindocfile
-		$formmail->withmaindocfile = 1;
-		if ($objecttmp->element != 'societe') {
-			$formmail->withfile = '<span class="hideonsmartphone opacitymedium">'.$langs->trans("OnlyPDFattachmentSupported").'</span>';
-			$formmail->withmaindocfile = -1; // Add a checkbox "Attach also main document" but not checked by default
+	if ($objecttmp->element == 'contact') {
+		$formmail->withfile = 0;
+		$formmail->withmaindocfile = 0; // Add a checkbox "Attach also main document"
+	} else {
+		$formmail->withfile = 1;    // $formmail->withfile = 2 to allow to upload files is not yet supported in mass action
+		// Add a checkbox "Attach also main document"
+		if (isset($withmaindocfilemail)) {
+			$formmail->withmaindocfile = $withmaindocfilemail;
+		} else {    // Do an automatic definition of $formmail->withmaindocfile
+			$formmail->withmaindocfile = 1;
+			if ($objecttmp->element != 'societe') {
+				$formmail->withfile = '<span class="hideonsmartphone opacitymedium">' . $langs->trans("OnlyPDFattachmentSupported") . '</span>';
+				$formmail->withmaindocfile = -1; // Add a checkbox "Attach also main document" but not checked by default
+			}
 		}
 	}
+
 	$formmail->withbody = 1;
 	$formmail->withdeliveryreceipt = 1;
 	$formmail->withcancel = 1;
@@ -322,7 +371,8 @@ if ($massaction == 'preapproveleave') {
 // Allow Pre-Mass-Action hook (eg for confirmation dialog)
 $parameters = array(
 	'toselect' => isset($toselect) ? $toselect : array(),
-	'uploaddir' => isset($uploaddir) ? $uploaddir : null
+	'uploaddir' => isset($uploaddir) ? $uploaddir : null,
+	'massaction' => $massaction
 );
 
 $reshook = $hookmanager->executeHooks('doPreMassActions', $parameters, $object, $action);

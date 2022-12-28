@@ -204,6 +204,7 @@ class BlockedLog
 		}
 
 		// Add more action to track from a conf variable
+		// For example: STOCK_MOVEMENT,...
 		if (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)) {
 			$tmparrayofmoresupportedevents = explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED);
 			foreach ($tmparrayofmoresupportedevents as $val) {
@@ -305,6 +306,15 @@ class BlockedLog
 			} else {
 				$this->error++;
 			}
+		} elseif ($this->element === 'stockmouvement') {
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+			$object = new MouvementStock($this->db);
+			if ($object->fetch($this->fk_object) > 0) {
+				return $object->getNomUrl(1);
+			} else {
+				$this->error++;
+			}
 		} elseif ($this->action == 'MODULE_SET') {
 			return '<i class="opacitymedium">'.$langs->trans("BlockedLogEnabled").'</i>';
 		} elseif ($this->action == 'MODULE_RESET') {
@@ -378,9 +388,14 @@ class BlockedLog
 			$this->date_object = $object->dateh;
 		} elseif ($object->element == 'cashcontrol') {
 			$this->date_object = $object->date_creation;
-		} else {
+		} elseif (property_exists($object, 'date')) {
+			// Generic case
 			$this->date_object = $object->date;
+		} elseif (property_exists($object, 'datem')) {
+			// Generic case (second chance, for example for stock movement)
+			$this->date_object = $object->datem;
 		}
+
 		// ref
 		$this->ref_object = ((!empty($object->newref)) ? $object->newref : $object->ref); // newref is set when validating a draft, ref is set in other cases
 		// type of object
@@ -395,11 +410,18 @@ class BlockedLog
 		$arrayoffieldstoexclude = array(
 			'table_element', 'fields', 'ref_previous', 'ref_next', 'origin', 'origin_id', 'oldcopy', 'picto', 'error', 'errors', 'model_pdf', 'modelpdf', 'last_main_doc', 'civility_id', 'contact', 'contact_id',
 			'table_element_line', 'ismultientitymanaged', 'isextrafieldmanaged',
+			'array_languages',
+			'childtables',
+			'contact_ids',
+			'context',
+			'labelStatus',
+			'labelStatusShort',
 			'linkedObjectsIds',
 			'linkedObjects',
 			'fk_delivery_address',
-			'context',
-			'projet'          // There is already ->fk_project
+			'projet',          // There is already ->fk_project
+			'restrictiononfksoc',
+			'specimen',
 		);
 		// Add more fields to exclude depending on object type
 		if ($this->element == 'cashcontrol') {
@@ -428,7 +450,7 @@ class BlockedLog
 					continue; // Discard if not into a dedicated list
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->thirdparty->{$key} = $value;
+					$this->object_data->thirdparty->$key = $value;
 				}
 			}
 		}
@@ -448,7 +470,7 @@ class BlockedLog
 					continue; // Discard if not into a dedicated list
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->mycompany->{$key} = $value;
+					$this->object_data->mycompany->$key = $value;
 				}
 			}
 		}
@@ -486,12 +508,12 @@ class BlockedLog
 							}
 
 							if (!is_object($valueline) && !is_null($valueline) && $valueline !== '') {
-								$this->object_data->invoiceline[$lineid]->{$keyline} = $valueline;
+								$this->object_data->invoiceline[$lineid]->$keyline = $valueline;
 							}
 						}
 					}
 				} elseif (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->{$key} = $value;
+					$this->object_data->$key = $value;
 				}
 			}
 
@@ -509,7 +531,7 @@ class BlockedLog
 					continue; // Discard if not into a dedicated list
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->{$key} = $value;
+					$this->object_data->$key = $value;
 				}
 			}
 
@@ -601,7 +623,7 @@ class BlockedLog
 								continue; // Discard if not into a dedicated list
 							}
 							if (!is_object($value) && !is_null($value) && $value !== '') {
-								$paymentpart->thirdparty->{$key} = $value;
+								$paymentpart->thirdparty->$key = $value;
 							}
 						}
 					}
@@ -625,11 +647,11 @@ class BlockedLog
 							}
 							if (!is_object($value) && !is_null($value) && $value !== '') {
 								if ($this->element == 'payment_donation') {
-									$paymentpart->donation->{$key} = $value;
+									$paymentpart->donation->$key = $value;
 								} elseif ($this->element == 'payment_various') {
-									$paymentpart->various->{$key} = $value;
+									$paymentpart->various->$key = $value;
 								} else {
-									$paymentpart->invoice->{$key} = $value;
+									$paymentpart->invoice->$key = $value;
 								}
 							}
 						}
@@ -664,21 +686,30 @@ class BlockedLog
 					continue; // Discard if not into a dedicated list
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->{$key} = $value;
+					$this->object_data->$key = $value;
 				}
 			}
 
 			if (!empty($object->newref)) {
 				$this->object_data->ref = $object->newref;
 			}
-		} else // Generic case
-		{
+		} elseif ($this->element == 'stockmouvement') {
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
 					continue; // Discard some properties
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->{$key} = $value;
+					$this->object_data->$key = $value;
+				}
+			}
+		} else {
+			// Generic case
+			foreach ($object as $key => $value) {
+				if (in_array($key, $arrayoffieldstoexclude)) {
+					continue; // Discard some properties
+				}
+				if (!is_object($value) && !is_null($value) && $value !== '') {
+					$this->object_data->$key = $value;
 				}
 			}
 
@@ -686,6 +717,10 @@ class BlockedLog
 				$this->object_data->ref = $object->newref;
 			}
 		}
+
+		// A trick to be sure all the object_data is an associative array
+		// json_encode and json_decode are not able to manage mixed object (with array/object, only full arrays or full objects)
+		$this->object_data = json_decode(json_encode($this->object_data, JSON_FORCE_OBJECT), false);
 
 		return 1;
 	}
@@ -755,20 +790,41 @@ class BlockedLog
 
 
 	/**
+	 * Encode data
+	 *
+	 * @param	string	$data	Data to serialize
+	 * @param	string	$mode	0=serialize, 1=json_encode
+	 * @return 	string			Value serialized, an object (stdClass)
+	 */
+	public function dolEncodeBlockedData($data, $mode = 0)
+	{
+		try {
+			$aaa = json_encode($data);
+		} catch (Exception $e) {
+			//print $e->getErrs);
+		}
+		//var_dump($aaa);
+
+		return $aaa;
+	}
+
+
+	/**
 	 * Decode data
 	 *
 	 * @param	string	$data	Data to unserialize
 	 * @param	string	$mode	0=unserialize, 1=json_decode
-	 * @return 	string			Value unserialized
+	 * @return 	object			Value unserialized, an object (stdClass)
 	 */
 	public function dolDecodeBlockedData($data, $mode = 0)
 	{
 		try {
-			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-			$aaa = unserialize($data);
+			$aaa = (object) jsonOrUnserialize($data);
 		} catch (Exception $e) {
 			//print $e->getErrs);
 		}
+		//var_dump($aaa);
+
 		return $aaa;
 	}
 
@@ -833,6 +889,9 @@ class BlockedLog
 
 		$this->date_creation = dol_now();
 
+		$this->object_version = ((float) DOL_VERSION);
+
+
 		$this->db->begin();
 
 		$previoushash = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done
@@ -874,13 +933,21 @@ class BlockedLog
 		$sql .= $this->fk_object.",";
 		$sql .= "'".$this->db->idate($this->date_object)."',";
 		$sql .= "'".$this->db->escape($this->ref_object)."',";
-		$sql .= "'".$this->db->escape(serialize($this->object_data))."',";
+		$sql .= "'".$this->db->escape($this->dolEncodeBlockedData($this->object_data))."',";
 		$sql .= "'".$this->db->escape($this->object_version)."',";
 		$sql .= "0,";
 		$sql .= $this->fk_user.",";
 		$sql .= "'".$this->db->escape($this->user_fullname)."',";
 		$sql .= ($this->entity ? $this->entity : $conf->entity);
 		$sql .= ")";
+
+		/*
+		$a = serialize($this->object_data); $a2 = unserialize($a); $a4 = print_r($a2, true);
+		$b = json_encode($this->object_data); $b2 = json_decode($b); $b4 = print_r($b2, true);
+		var_dump($a4 == print_r($this->object_data, true) ? 'a=a' : 'a not = a');
+		var_dump($b4 == print_r($this->object_data, true) ? 'b=b' : 'b not = b');
+		exit;
+		*/
 
 		$res = $this->db->query($sql);
 		if ($res) {
@@ -921,7 +988,7 @@ class BlockedLog
 		$keyforsignature = $this->buildKeyForSignature();
 
 		//$signature_line = dol_hash($keyforsignature, '5'); // Not really usefull
-		$signature = dol_hash($previoushash.$keyforsignature, '5');
+		$signature = dol_hash($previoushash.$keyforsignature, 'sha256');
 		//var_dump($previoushash); var_dump($keyforsignature); var_dump($signature_line); var_dump($signature);
 
 		$res = ($signature === $this->signature);
@@ -953,8 +1020,8 @@ class BlockedLog
 	private function buildKeyForSignature()
 	{
 		//print_r($this->object_data);
-		if (((int) $this->object_version) > 12) {
-			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname.'|'.print_r($this->object_data, true);
+		if (((int) $this->object_version) >= 18) {
+			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname.'|'.json_encode($this->object_data, JSON_FORCE_OBJECT);
 		} else {
 			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname.'|'.print_r($this->object_data, true);
 		}
@@ -975,7 +1042,7 @@ class BlockedLog
 		$previoussignature = '';
 
 		$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity=".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		if ($beforeid) {
 			$sql .= " AND rowid < ".(int) $beforeid;
 		}
@@ -1036,7 +1103,7 @@ class BlockedLog
 			 WHERE entity=".$conf->entity." AND certified = 1";
 		} else {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
-			 WHERE entity=".$conf->entity." AND element='".$this->db->escape($element)."'";
+			 WHERE entity=".$conf->entity." AND element = '".$this->db->escape($element)."'";
 		}
 
 		if ($fk_object) {

@@ -98,41 +98,6 @@ $mesg = '';
  * ACTIONS
  */
 
-// Submit file
-if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC)) {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	$result = $ecmdir->fetch(GETPOST("section", 'int'));
-	if (!($result > 0)) {
-		dol_print_error($db, $ecmdir->error);
-		exit;
-	}
-	$relativepath = $ecmdir->getRelativePath();
-	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-
-	if (dol_mkdir($upload_dir) >= 0) {
-		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir."/".dol_unescapefile($_FILES['userfile']['name']), 0);
-		if (is_numeric($resupload) && $resupload > 0) {
-			$result = $ecmdir->changeNbOfFiles('+');
-		} else {
-			$langs->load("errors");
-			if ($resupload < 0) {	// Unknown error
-				setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
-			} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {
-				// Files infected by a virus
-				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-			} else // Known error
-			{
-				setEventMessages($langs->trans($resupload), null, 'errors');
-			}
-		}
-	} else {
-		// Transfer failure (file exceeding the limit ?)
-		$langs->load("errors");
-		setEventMessages($langs->trans("ErrorFailToCreateDir", $upload_dir), null, 'errors');
-	}
-}
-
 if ($action == 'uploadfile') {
 	// set up a connection or die
 	if (!$conn_id) {
@@ -661,6 +626,7 @@ if (!function_exists('ftp_connect')) {
 		print '</div>';
 
 		print "</form>";
+
 		if ($user->hasRight('ftp', 'write')) {
 			print load_fiche_titre($langs->trans("AttachANewFile"), null, null);
 			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -672,6 +638,9 @@ if (!function_exists('ftp_connect')) {
 			print '<td></td>';
 			print '<td align="center"><button type="submit" class="butAction" name="uploadfile" value="'.$langs->trans("Save").'">'.$langs->trans("Upload").'</button></td>';
 			print '</form>';
+
+			print '<br><br>';
+
 			print load_fiche_titre($langs->trans("AddFolder"), null, null);
 			print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';

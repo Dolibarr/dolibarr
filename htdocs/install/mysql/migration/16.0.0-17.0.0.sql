@@ -52,8 +52,15 @@ ALTER TABLE llx_user DROP COLUMN idpers1;
 ALTER TABLE llx_user DROP COLUMN idpers2;
 ALTER TABLE llx_user DROP COLUMN idpers3;
 
+UPDATE llx_c_actioncomm SET type = 'system' WHERE code = 'AC_OTH';
+
+ALTER TABLE llx_opensurvey_user_studs MODIFY reponses VARCHAR(200) NOT NULL;
 
 -- v17
+
+ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_type varchar(32);
+
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_percent (percent);
 
 UPDATE llx_c_paiement SET code = 'BANCON' WHERE code = 'BAN' AND libelle = 'Bancontact';
 
@@ -62,6 +69,11 @@ UPDATE llx_c_paiement SET code = 'BANCON' WHERE code = 'BAN' AND libelle = 'Banc
 
 ALTER TABLE llx_partnership ADD COLUMN ip varchar(250);
 ALTER TABLE llx_adherent ADD COLUMN ip varchar(250);
+ALTER TABLE llx_projet ADD COLUMN ip varchar(250);
+ALTER TABLE llx_actioncomm ADD COLUMN ip varchar(250);
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN ip varchar(250);
+ALTER TABLE llx_opensurvey_user_studs ADD COLUMN ip varchar(250);
+ALTER TABLE llx_opensurvey_comments ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_fichinterdet_rec DROP COLUMN remise;
 ALTER TABLE llx_fichinterdet_rec DROP COLUMN fk_export_commpta;
@@ -80,8 +92,6 @@ UPDATE llx_holiday SET date_approval = date_valid WHERE statut = 3 AND date_appr
 UPDATE llx_holiday SET fk_user_approve = fk_user_valid WHERE statut = 3 AND fk_user_approve IS NULL;
 
 ALTER TABLE llx_inventory ADD COLUMN categories_product VARCHAR(255) DEFAULT NULL AFTER fk_product;
-
-ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
 
@@ -110,11 +120,11 @@ ALTER TABLE llx_product ADD COLUMN sell_or_eat_by_mandatory tinyint DEFAULT 0 NO
 
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD email_date datetime after email_msgid;
 
-ALTER TABLE llx_societe ADD last_main_doc VARCHAR(255) NULL AFTER model_pdf;
-
 ALTER TABLE llx_ticket ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
+
+ALTER TABLE llx_ticket MODIFY COLUMN message mediumtext;
 
 ALTER TABLE llx_cronjob ADD COLUMN pid integer;
 
@@ -226,7 +236,9 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_MODIFY','Customer proposal modified','Executed when a customer proposal is modified','propal',2);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_SENTBYMAIL','Commercial proposal sent by mail','Executed when a commercial proposal is sent by mail','propal',3);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLOSE_SIGNED','Customer proposal closed signed','Executed when a customer proposal is closed signed','propal',2);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLOSE_SIGNED_WEB','Customer proposal closed signed on portal','Executed when a customer proposal is closed signed on portal','propal',2);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLOSE_REFUSED','Customer proposal closed refused','Executed when a customer proposal is closed refused','propal',2);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLOSE_REFUSED_WEB','Customer proposal closed refused on portal','Executed when a customer proposal is closed refused on portal','propal',2);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_CLASSIFY_BILLED','Customer proposal set billed','Executed when a customer proposal is set to billed','propal',2);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROPAL_DELETE','Customer proposal deleted','Executed when a customer proposal is deleted','propal',2);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_VALIDATE','Customer order validate','Executed when a customer order is validated','commande',4);
@@ -372,7 +384,9 @@ ALTER TABLE llx_prelevement_facture_demande RENAME TO llx_prelevement_demande;
 ALTER TABLE llx_prelevement ADD COLUMN fk_salary INTEGER NULL AFTER fk_facture_fourn;
 ALTER TABLE llx_prelevement_demande ADD COLUMN fk_salary INTEGER NULL AFTER fk_facture_fourn;
 
-
 ALTER TABLE llx_user ADD COLUMN birth_place varchar(64);
 
-ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
+ALTER TABLE llx_opensurvey_user_studs ADD COLUMN date_creation datetime NULL;
+ALTER TABLE llx_opensurvey_comments ADD COLUMN date_creation datetime NULL;
+
+ALTER TABLE llx_c_tva ADD COLUMN use_default tinyint DEFAULT 0;

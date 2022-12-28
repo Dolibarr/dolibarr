@@ -267,11 +267,14 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					if (!$resql) {
 						dol_print_error($db, 'Error in setup program');
 					}
+					// The install.lock file is created few lines later if version is last one or if option MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE is on
+					/* No need to enable this
 					$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_REMOVE_INSTALL_WARNING').", ".$db->encrypt(1).", 'chaine', 1, 'Disable install warnings', 0)");
 					if (!$resql) {
 						dol_print_error($db, 'Error in setup program');
 					}
 					$conf->global->MAIN_REMOVE_INSTALL_WARNING = 1;
+					*/
 				}
 
 				// If we ask to force some modules to be enabled
@@ -297,7 +300,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				}
 
 				dolibarr_install_syslog('step5: remove MAIN_NOT_INSTALLED const');
-				$resql = $db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_NOT_INSTALLED'");
+				$resql = $db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')." = 'MAIN_NOT_INSTALLED'");
 				if (!$resql) {
 					dol_print_error($db, 'Error in setup program');
 				}

@@ -35,11 +35,12 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
-require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+
 
 /**
  *	Class to manage predefined suppliers products
@@ -1593,7 +1594,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1820,10 +1821,10 @@ class CommandeFournisseur extends CommonOrder
 			$label = '';	// deprecated
 
 			if ($fk_product > 0) {
-				if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY)) {
+				if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY)) {	// Not the common case
 					// Check quantity is enough
 					dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
-					$prod = new Product($this->db);
+					$prod = new ProductFournisseur($this->db);
 					if ($prod->fetch($fk_product) > 0) {
 						$product_type = $prod->type;
 						$label = $prod->label;
@@ -1882,7 +1883,7 @@ class CommandeFournisseur extends CommonOrder
 						if (!empty($prod->packaging) && ($qty % $prod->packaging) > 0) {
 							$coeff = intval($qty / $prod->packaging) + 1;
 							$qty = $prod->packaging * $coeff;
-							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 						}
 					}
 				}
@@ -1895,6 +1896,7 @@ class CommandeFournisseur extends CommonOrder
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
 
 			// Clean vat code
+			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
 				$vat_src_code = $reg[1];
@@ -2138,7 +2140,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			if ($line->delete($notrigger) > 0) {
-				$this->update_price();
+				$this->update_price(1);
 				return 1;
 			} else {
 				$this->error = $line->error;
@@ -2641,7 +2643,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= ", ".price2num($comclient->lines[$i]->qty, 'MS').", ".price2num($comclient->lines[$i]->tva_tx, 5).", ".price2num($comclient->lines[$i]->localtax1_tx, 5).", ".price2num($comclient->lines[$i]->localtax2_tx, 5).", ".price2num($comclient->lines[$i]->remise_percent, 3);
 			$sql .= ", '".price2num($comclient->lines[$i]->subprice, 'MT')."','0', '".$this->db->escape($ref)."');";
 			if ($this->db->query($sql)) {
-				$this->update_price();
+				$this->update_price(1);
 			}
 		}
 
@@ -2894,7 +2896,7 @@ class CommandeFournisseur extends CommonOrder
 
 			// Mise a jour info denormalisees au niveau facture
 			if ($result >= 0) {
-				$this->update_price('', 'auto');
+				$this->update_price('1', 'auto');
 				$this->db->commit();
 				return $result;
 			} else {
@@ -3917,10 +3919,10 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ($this->fk_unit ? ", fk_unit='".$this->db->escape($this->fk_unit)."'" : ", fk_unit=null");
 
 		// Multicurrency
-		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-		$sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		$sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
+		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
+		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
 
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

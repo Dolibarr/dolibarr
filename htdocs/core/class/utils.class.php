@@ -173,6 +173,7 @@ class Utils
 		}
 
 		if ($count > 0) {
+			$langs->load("admin");
 			$this->output = $langs->trans("PurgeNDirectoriesDeleted", $countdeleted);
 			if ($count > $countdeleted) {
 				$this->output .= '<br>'.$langs->trans("PurgeNDirectoriesFailed", ($count - $countdeleted));
@@ -202,9 +203,10 @@ class Utils
 	 *  @param  string      $file              'auto' or filename to build
 	 *  @param  int         $keeplastnfiles    Keep only last n files (not used yet)
 	 *  @param	int		    $execmethod		   0=Use default method (that is 1 by default), 1=Use the PHP 'exec' - need size of dump in memory, but low memory method is used if GETPOST('lowmemorydump') is set, 2=Use the 'popen' method (low memory method)
+	 *  @param	int			$lowmemorydump	   1=Use the low memory method. If $lowmemorydump is set, it means we want to make the compression using an external pipe instead retreiving the content of the dump in PHP memory array $output_arr and then print it into the PHP pipe open with xopen().
 	 *  @return	int						       0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0)
+	public function dumpDatabase($compression = 'none', $type = 'auto', $usedefault = 1, $file = 'auto', $keeplastnfiles = 0, $execmethod = 0, $lowmemorydump = 0)
 	{
 		global $db, $conf, $langs, $dolibarr_main_data_root;
 		global $dolibarr_main_db_name, $dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_port, $dolibarr_main_db_pass;
@@ -357,10 +359,6 @@ class Utils
 
 			$handle = '';
 
-			// If $lowmemorydump is set, it means we want to make the compression using an external pipe instead retreiving the
-			// content of the dump in PHP memory array $output_arr and then print it into the PHP pipe open with xopen().
-			$lowmemorydump = GETPOSTISSET("lowmemorydump") ? GETPOST("lowmemorydump") : getDolGlobalString('MAIN_LOW_MEMORY_DUMP');
-
 			// Start call method to execute dump
 			$fullcommandcrypted = $command." ".$paramcrypted." 2>&1";
 			$fullcommandclear = $command." ".$paramclear." 2>&1";
@@ -376,23 +374,23 @@ class Utils
 				}
 			} else {
 				if ($compression == 'none') {
-					$fullcommandclear .= ' > "'.dol_sanitizePathName($outputfile).'"';
-					$fullcommandcrypted .= ' > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." > "'.dol_sanitizePathName($outputfile).'"';
 					$handle = 1;
 				} elseif ($compression == 'gz') {
-					$fullcommandclear .= ' | gzip > "'.dol_sanitizePathName($outputfile).'"';
-					$fullcommandcrypted .= ' | gzip > "'.dol_sanitizePathName($outputfile).'"';
-					$paramcrypted .= ' | gzip';
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | gzip';
 					$handle = 1;
 				} elseif ($compression == 'bz') {
-					$fullcommandclear .= ' | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
-					$fullcommandcrypted .= ' | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
-					$paramcrypted .= ' | bzip2';
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2 > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | bzip2';
 					$handle = 1;
 				} elseif ($compression == 'zstd') {
-					$fullcommandclear .= ' | zstd > "'.dol_sanitizePathName($outputfile).'"';
-					$fullcommandcrypted .= ' | zstd > "'.dol_sanitizePathName($outputfile).'"';
-					$paramcrypted .= ' | zstd';
+					$fullcommandclear .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd > "'.dol_sanitizePathName($outputfile).'"';
+					$fullcommandcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd > "'.dol_sanitizePathName($outputfile).'"';
+					$paramcrypted .= ' | grep -v "Warning: Using a password on the command line interface can be insecure." | zstd';
 					$handle = 1;
 				}
 			}
@@ -648,12 +646,14 @@ class Utils
 		if (!$errormsg && $keeplastnfiles > 0) {
 			$tmpfiles = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '(\.err|\.old|\.sav)$', 'date', SORT_DESC);
 			$i = 0;
-			foreach ($tmpfiles as $key => $val) {
-				$i++;
-				if ($i <= $keeplastnfiles) {
-					continue;
+			if (is_array($tmpfiles)) {
+				foreach ($tmpfiles as $key => $val) {
+					$i++;
+					if ($i <= $keeplastnfiles) {
+						continue;
+					}
+					dol_delete_file($val['fullname'], 0, 0, 0, null, false, 0);
 				}
-				dol_delete_file($val['fullname'], 0, 0, 0, null, false, 0);
 			}
 		}
 
@@ -666,11 +666,11 @@ class Utils
 	 * Execute a CLI command.
 	 *
 	 * @param 	string	$command			Command line to execute.
-	 * 										Warning: The command line is sanitize so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
+	 * 										Warning: The command line is sanitize by escapeshellcmd(), except if $noescapecommand set, so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
 	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
 	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
 	 * @param	string	$redirectionfile	If defined, a redirection of output to this file is added.
-	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you alreay have sanitized the command. if not, it will lead to security vulnerability.
+	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you alreay have sanitized the $command parameter. If not, it will lead to security vulnerability.
 	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
 	 * @param	string	$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
 	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
@@ -1292,6 +1292,7 @@ class Utils
 			$message = dol_escape_htmltag($langs->trans('MakeSendLocalDatabaseDumpShort'));
 		}
 
+		$tmpfiles = array();
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		if ($filename) {
 			if (dol_is_file($conf->admin->dir_output.'/backup/'.$filename)) {
@@ -1300,7 +1301,7 @@ class Utils
 		} else {
 			$tmpfiles = dol_most_recent_file($conf->admin->dir_output.'/backup', $filter);
 		}
-		if ($tmpfiles) {
+		if ($tmpfiles && is_array($tmpfiles)) {
 			foreach ($tmpfiles as $key => $val) {
 				if ($key  == 'fullname') {
 					$filepath = array($val);

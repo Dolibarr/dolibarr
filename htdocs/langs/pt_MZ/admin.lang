@@ -1329,7 +1329,6 @@ ActivateFCKeditor=Editor avançado ativo por:
 FCKeditorForNotePublic=Usar editor WYSIWIG nos campos de "notas públicas" dos elementos
 FCKeditorForNotePrivate=Usar editor WYSIWIG nos campos de "notas privadas" dos elementos
 FCKeditorForCompany=Usar editor WYSIWIG nos campos de descrição dos elementos (exceto produtos/serviços)
-FCKeditorForProduct=Usar editor WYSIWIG nos campos de descrição de produtos/serviços
 FCKeditorForProductDetails=Criação / edição WYSIWIG de linhas de detalhes de produtos para todas as entidades (propostas, encomendas, facturas, etc ...). <span class="warning">Aviso: O uso desta opção neste caso não é recomendado, pois pode criar problemas com caracteres especiais e formatação de página ao construir arquivos PDF.</span>
 FCKeditorForMailing=Criação/edição do WYSIWIG nos E-Mails massivos (ferramentas->emailing)
 FCKeditorForUserSignature=criação/edição do WYSIWIG nas assinaturas de usuários

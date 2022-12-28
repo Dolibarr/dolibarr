@@ -592,7 +592,7 @@ class Lettering extends BookKeeping
 					$sql .= "  WHERE bpn.entity IN (" . getEntity('accountancy') . ")";
 					$sql .= "  AND bpn.doc_type = 'bank'";
 					$sql .= "  AND bpn.fk_doc IN (" . $this->db->sanitize(implode(',', $bank_ids)) . ")";
-					$sql .= "  AND bpn ON bpn.piece_num = ab.piece_num";
+					$sql .= "  AND bpn.piece_num = ab.piece_num";
 					$sql .= " ) OR ";
 				}
 				$sql .= " EXISTS (";

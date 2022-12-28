@@ -401,8 +401,8 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 /**
  * Fast compare of 2 files identified by their properties ->name, ->date and ->size
  *
- * @param	string 	$a		File 1
- * @param 	string	$b		File 2
+ * @param	object 	$a		File 1
+ * @param 	object	$b		File 2
  * @return 	int				1, 0, 1
  */
 function dol_compare_file($a, $b)
@@ -639,6 +639,12 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 	$destexists = dol_is_file($destfile);
 	if (($destfile != $srcfile) && $destexists) {
 		return 0;
+	}
+
+	$srcexists = dol_is_file($srcfile);
+	if (!$srcexists) {
+		dol_syslog("files.lib.php::dolReplaceInFile failed to read src file", LOG_WARNING);
+		return -3;
 	}
 
 	$tmpdestfile = $destfile.'.tmp';
@@ -1561,7 +1567,9 @@ function dol_meta_create($object)
 		}
 
 		if (is_dir($dir)) {
-			$nblines = count($object->lines);
+			if (is_countable($object->lines) && count($object->lines) > 0) {
+				$nblines = count($object->lines);
+			}
 			$client = $object->thirdparty->name." ".$object->thirdparty->address." ".$object->thirdparty->zip." ".$object->thirdparty->town;
 			$meta = "REFERENCE=\"".$object->ref."\"
 			DATE=\"" . dol_print_date($object->date, '')."\"
@@ -1645,13 +1653,19 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  */
 function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesession = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
 {
+
 	global $db, $user, $conf, $langs;
 
 	$res = 0;
 
 	if (!empty($_FILES[$varfiles])) { // For view $_FILES[$varfiles]['error']
 		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
-
+		$maxfilesinform = getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10);
+		if (is_array($_FILES[$varfiles]["name"]) && count($_FILES[$varfiles]["name"]) > $maxfilesinform) {
+			$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+			setEventMessages($langs->trans("ErrorTooMuchFileInForm", $maxfilesinform), null, "errors");
+			return -1;
+		}
 		$result = dol_mkdir($upload_dir);
 		//      var_dump($result);exit;
 		if ($result >= 0) {
@@ -1737,7 +1751,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 							if ($allowoverwrite) {
 								// Do not show error message. We can have an error due to DB_ERROR_RECORD_ALREADY_EXISTS
 							} else {
-								setEventMessages('WarningFailedToAddFileIntoDatabaseIndex', '', 'warnings');
+								setEventMessages('WarningFailedToAddFileIntoDatabaseIndex', null, 'warnings');
 							}
 						}
 					}
@@ -2406,7 +2420,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
  * @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
  * @param	int			$nohook			Disable all hooks
  * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
- * @return	string						Full path to most recent file
+ * @return	array						Array with properties (full path, date, ...) of to most recent file
  */
 function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(\.meta|_preview.*\.png)$', '^\.'), $nohook = false, $mode = '')
 {
@@ -2467,7 +2481,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	if (empty($refname)) {
 		$refname = basename(dirname($original_file)."/");
 		if ($refname == 'thumbs') {
-			// If we get the thumbns directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
+			// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
 			$refname = basename(dirname(dirname($original_file))."/");
 		}
 	}

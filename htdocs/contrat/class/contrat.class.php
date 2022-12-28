@@ -718,7 +718,7 @@ class Contrat extends CommonObject
 					$this->socid = $obj->fk_soc;
 					$this->fk_soc = $obj->fk_soc;
 					$this->last_main_doc = $obj->last_main_doc;
-					$this->extraparams = (array) json_decode($obj->extraparams, true);
+					$this->extraparams = (isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : null);
 
 					$this->db->free($resql);
 
@@ -1368,8 +1368,8 @@ class Contrat extends CommonObject
 		$sql .= " fk_commercial_suivi=".(isset($this->fk_commercial_suivi) ? $this->fk_commercial_suivi : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
-		//$sql.= " extraparams=".(isset($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		//$sql.= " extraparams=".(isset($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -2865,23 +2865,6 @@ class ContratLigne extends CommonObjectLine
 	public $date_start_real; // date start real
 	public $date_end; // date end planned
 	public $date_end_real; // date end real
-	// For backward compatibility
-	/**
-	 * @deprecated	Use date_start
-	 */
-	//public $date_ouverture_prevue; // date start planned
-	/**
-	 * @deprecated	Use date_start_real
-	 */
-	//public $date_ouverture; // date start real
-	/**
-	 * @deprecated	Use date_end
-	 */
-	//public $date_fin_validite; // date end planned
-	/**
-	 * @deprecated	Use date_end_real
-	 */
-	//public $date_cloture; // date end real
 
 	public $tva_tx;
 	public $vat_src_code;
@@ -3303,15 +3286,11 @@ class ContratLigne extends CommonObjectLine
 			$this->date_end_real = $this->date_end_real;
 		}
 
-
-		// Check parameters
-		// Put here code to add control on parameters values
-
 		// Calcul du total TTC et de la TVA pour la ligne a partir de
 		// qty, pu, remise_percent et txtva
 		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-		$localtaxes_type = getLocalTaxesFromRate($this->txtva, 0, $this->societe, $mysoc);
+		$localtaxes_type = getLocalTaxesFromRate($this->txtva, 0, $this->thirdparty, $mysoc);
 
 		$tabprice = calcul_price_total($this->qty, $this->price_ht, $this->remise_percent, $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, 'HT', 0, 1, $mysoc, $localtaxes_type);
 		$this->total_ht  = $tabprice[0];
@@ -3455,11 +3434,11 @@ class ContratLigne extends CommonObjectLine
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
-		$sql .= " total_ht=".price2num($this->total_ht, 'MT')."";
-		$sql .= ",total_tva=".price2num($this->total_tva, 'MT')."";
-		$sql .= ",total_localtax1=".price2num($this->total_localtax1, 'MT')."";
-		$sql .= ",total_localtax2=".price2num($this->total_localtax2, 'MT')."";
-		$sql .= ",total_ttc=".price2num($this->total_ttc, 'MT')."";
+		$sql .= " total_ht=".price2num($this->total_ht, 'MT');
+		$sql .= ",total_tva=".price2num($this->total_tva, 'MT');
+		$sql .= ",total_localtax1=".price2num($this->total_localtax1, 'MT');
+		$sql .= ",total_localtax2=".price2num($this->total_localtax2, 'MT');
+		$sql .= ",total_ttc=".price2num($this->total_ttc, 'MT');
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
@@ -3645,6 +3624,7 @@ class ContratLigne extends CommonObjectLine
 
 		// Update object
 		$this->date_cloture = $date_end_real;
+		$this->date_end_real = $date_end_real;
 		$this->fk_user_cloture = $user->id;
 		$this->commentaire = $comment;
 

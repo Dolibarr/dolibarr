@@ -1,6 +1,9 @@
-<?php if (!defined('ISLOADEDBYSTEELSHEET')) {
+<?php
+if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+
+?>
 /* <style type="text/css" > */
 
 /* ============================================================================== */
@@ -34,6 +37,8 @@
 	--colortopbordertitle1: rgb(<?php print $colortopbordertitle1; ?>);
 	--listetotal: #888888;
 	--inputbackgroundcolor: #FFF;
+	--inputbackgroundcolordisabled: #eee;
+	--inputcolordisabled: rgb(80, 80, 80);
 	--inputbordercolor: rgba(0,0,0,.15);
 	--tooltipbgcolor: <?php print $toolTipBgColor; ?>;
 	--tooltipfontcolor : <?php print $toolTipFontColor; ?>;
@@ -51,13 +56,18 @@
 	--productlinestockod: #002200;
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
+	--tablevalidbgcolor: rgb(252, 248, 227);
+	--colorblack: #000;
+	--colorwhite: #fff;
 }
 
 <?php
 if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	print "/* For dark mode */\n";
 	if ($conf->global->THEME_DARKMODEENABLED != 2) {
-		print "@media (prefers-color-scheme: dark) {";
+		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
+	} else {
+		print "@media not print {";
 	}
 	print ":root {
 	            --colorbackhmenu1: #3d3e40;
@@ -85,7 +95,9 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --colortextbackvmenu: rgb(220,220,220);
 				--tooltipfontcolor : rgb(220,220,220);
 	            --listetotal: rgb(245, 83, 158);
-	            --inputbackgroundcolor: #2b2d2f;
+	            --inputbackgroundcolor: rgb(70, 70, 70);
+				--inputbackgroundcolordisabled: rgb(60, 60, 60);
+				--inputcolordisabled: rgb(140, 140, 140);
 	            --inputbordercolor: rgb(220,220,220);
 	            --oddevencolor: rgb(220,220,220);
 	            --colorboxstatsborder: rgb(65,100,138);
@@ -99,14 +111,15 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --amountpaymentcomplete:rgb(101,184,77);
 	            --amountremaintopaybackcolor:rbg(245,130,46);
 				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
+				--tablevalidbgcolor: rgb(80, 64, 33);
+				--colorblack: #fff;
+				--colorwhite: #000;
 	      }
 
 		body, button {
 			color: #bbb;
-		}\n";
-	if ($conf->global->THEME_DARKMODEENABLED != 2) {
-		print "}\n";
-	}
+		}\n
+	}\n";
 }
 ?>
 
@@ -279,7 +292,7 @@ section.setupsection {
 	border-radius: 5px;
 }
 
-.field-error-icon { color: #ea1212; !important; }
+.field-error-icon { color: #ea1212 !important; }
 
 /* Focus definitions must be after standard definition */
 div.tabBar textarea:focus {
@@ -486,13 +499,13 @@ input.pageplusone {
 	opacity: 0;
 }
 .colorwhite {
-	color: #fff;
+	color: var(--colorwhite);
 }
 .colorgrey {
 	color: #888 !important;
 }
 .colorblack {
-	color: #000;
+	color: var(--colorblack);
 }
 .fontsizeunset {
 	font-size: unset !important;
@@ -509,7 +522,8 @@ select:invalid, select.--error {
 }
 input:disabled, textarea:disabled, select[disabled='disabled']
 {
-	background:#eee;
+	background: var(--inputbackgroundcolordisabled);
+	color: var(--inputcolordisabled);
 }
 
 input.liste_titre {
@@ -1323,6 +1337,12 @@ select.flat.selectlimit {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.tdoverflowmax80imp {			/* For tdoverflow, the max-midth become a minimum ! */
+	max-width: 80px !important;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .tdoverflowmax100 {			/* For tdoverflow, the max-midth become a minimum ! */
 	max-width: 100px;
 	overflow: hidden;
@@ -1394,6 +1414,12 @@ select.flat.selectlimit {
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 	height: auto !important;
+}
+.tenlinesmax {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 10;
+	overflow: hidden;
 }
 
 .tablelistofcalendars {
@@ -1709,6 +1735,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 
 	select.minwidth100imp, select.minwidth100, select.minwidth200, select.minwidth200imp, select.minwidth300 {
 		width: calc(100% - 40px) !important;
+		min-width: 100px;
 		display: inline-block;
 	}
 	select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-selection), input.widthcentpercentminusxx {
@@ -1966,7 +1993,7 @@ td.showDragHandle {
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
-	z-index: 1001;
+	z-index: 1005;
 }
 <?php } ?>
 <?php if (!empty($conf->global->THEME_DARKMODEENABLED)) {  ?>
@@ -2421,6 +2448,9 @@ img.photoref, div.photoref {
 }
 img.photokanban, div.photokanban {
 	padding: 0;
+	border: none;
+	box-shadow: none;
+	vertical-align: middle;
 }
 div.photoref .fa, div.photoref .fas, div.photoref .far {
 	font-size: 2.5em;
@@ -2534,6 +2564,12 @@ span.mainmenuaspan.tmenudisabled {
 	color: var(--colortextbackhmenu);
 	opacity: 0.5;
 	cursor: not-allowed;
+}
+
+a.disabled {
+	color: #aaa;
+	text-decoration: none !important;
+	cursor: default;
 }
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
@@ -3137,7 +3173,7 @@ a.vmenu:link, a.vmenu:visited {
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
 	font-family: <?php print $fontlist ?>;
 	text-align: <?php print $left; ?>;
-	color: #202020;
+	color: var(--colortextbackvmenu);
 	margin: 1px 1px 1px 6px;
 }
 span.vsmenudisabled, font.vsmenudisabled {
@@ -3209,7 +3245,6 @@ div.blockvmenubookmarks
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend
 {
 	font-family: <?php print $fontlist ?>;
-	color: #000000;
 	text-align: <?php print $left; ?>;
 	text-decoration: none;
 	padding-left: 5px;
@@ -3218,6 +3253,7 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmen
 	padding-bottom: 7px;
 	margin: 0 0 0 2px;
 
+	color: var(--colortext);
 	background: var(--colorbackvmenu1);
 
 	border-left: 1px solid #AAA;
@@ -3949,9 +3985,7 @@ div.pagination li.pagination span {
   line-height: 1.42857143;
   text-decoration: none;
   background-repeat: repeat-x;
-  <?php if (empty($conf->global->THEME_DARKMODEENABLED)) { ?>
-  color: #000;
-  <?php } ?>
+  color: var(--color-black);
 }
 div.pagination li.pagination span.inactive {
   cursor: default;
@@ -4090,7 +4124,7 @@ table.hidepaginationnext .paginationnext {
 {
 	font-family: <?php print $fontlist ?>;
 	margin-bottom: 1px;
-	color: var(--oddeven);
+	color: var(--oddevencolor);
 }
 .impair, .nohover .impair:hover, tr.impair td.nohover
 {
@@ -4154,7 +4188,7 @@ tr.pair td .nobordernopadding tr td, tr.impair td .nobordernopadding tr td {
 	border-bottom: 0px !important;
 }
 table.nobottomiftotal tr.liste_total td {
-	background-color: #fff;
+	background-color: var(--inputbackgroundcolor);
 	<?php if (!$userborderontable) { ?>
 	border-bottom: 0px !important;
 	<?php } ?>
@@ -4583,6 +4617,9 @@ table.noborder.boxtable tr td {
 .boxtablenobottom {
 	border-bottom-width: 0 !important;
 }
+.boxtablenomarginbottom {
+	margin-bottom: 0 !important;
+}
 .boxtable .fichehalfright, .boxtable .fichehalfleft {
 	min-width: 275px;	/* increasing this, make chart on box not side by side on laptops */
 }
@@ -4974,7 +5011,7 @@ table.valid {
 	padding-right: 4px;
 	padding-bottom: 4px;
 	margin: 0px 0px;
-	background: #fcf8e3;
+	background: var(--tablevalidbgcolor);
 }
 
 .validtitre {
@@ -5004,12 +5041,30 @@ div.ui-tooltip.mytooltip {
 	-webkit-box-shadow:0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
 	-o-box-shadow:     0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
 	box-shadow:        0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
-	filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
 	background: var(--tooltipbgcolor) !important;
-	color : var(--tooltipfontcolor);
+	color: var(--tooltipfontcolor);
 	line-height: 1.6em;
 	min-width: 550px;
 }
+
+<?php
+if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+	print "/* For dark mode */\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
+	} else {
+		print "@media not print {";
+	}
+	?>
+	div.ui-tooltip.mytooltip {
+		border: 1px solid #bbb !important;
+	}
+	<?php
+	print '}';
+}
+?>
+
 @media only screen and (max-width: 768px)
 {
 	div.ui-tooltip.mytooltip {
@@ -5354,10 +5409,17 @@ td.cal_other_month {
 
 
 /* ============================================================================== */
-/*  Ajax - Liste deroulante de l'autocompletion                                   */
+/*  Ajax - Combo list for autocompletion                                          */
 /* ============================================================================== */
 
-.ui-widget-content { border: solid 1px rgba(0,0,0,.3); background: #fff !important; }
+.ui-widget-content {
+	border: solid 1px rgba(0,0,0,.3);
+	background: var(--colorbackbody) !important;
+	color: var(--colortext) !important;
+}
+/*.ui-widget-header {
+	background: var(--colorbacktitle);
+}*/
 
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif', 1) ?>) right center no-repeat; }
 .ui-autocomplete {
@@ -6450,8 +6512,13 @@ ul.select2-results__options li {
 	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
 		min-width: 220px !important;
 	}
-	.select2-container.select2-container--open .select2-dropdown--below {
+	.select2-container.select2-container--open .select2-dropdown--below,
+	.select2-container.select2-container--open .select2-dropdown--above {
 		min-width: 220px !important;
+	}
+	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
+	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above{
+		min-width: 140px !important;
 	}
 
 	.select2-container--open .select2-dropdown--below {
@@ -6515,6 +6582,10 @@ span.noborderoncategories {
   border: 1px solid #aaa;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   display: none;
+}
+
+div.multi-select-menu[role="menu"] {
+	min-width: 220px !important;
 }
 
 .multi-select-menu input {

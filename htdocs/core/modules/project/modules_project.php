@@ -128,6 +128,11 @@ abstract class ModeleNumRefProjects
 	public $error = '';
 
 	/**
+	 * @var string $version
+	 */
+	public $version;
+
+	/**
 	 *  Return if a module can be used or not
 	 *
 	 *  @return		boolean     true if module can be used
@@ -138,9 +143,9 @@ abstract class ModeleNumRefProjects
 	}
 
 	/**
-	 *  Renvoi la description par defaut du modele de numerotation
+	 *  Returns the default description of the numbering pattern
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

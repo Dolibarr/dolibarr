@@ -358,6 +358,7 @@ if (empty($reshook)) {
 				$batch = "batch".$i;
 				$cost_price = "cost_price".$i;
 
+				//if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && getDolGlobalString('RECEPTION_GETS_ALL_ORDER_PRODUCTS')) || (GETPOST($qty, 'int') < 0 && getDolGlobalString('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 				if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && $conf->global->RECEPTION_GETS_ALL_ORDER_PRODUCTS)) {
 					$ent = "entl".$i;
 
@@ -1241,10 +1242,15 @@ if ($action == 'create') {
 				// Display lines for extrafields of the Reception line
 				// $line is a 'CommandeFournisseurLigne', $dispatchLines contains values of Reception lines so properties of CommandeFournisseurDispatch
 				if (!empty($extrafields)) {
-					//var_dump($line);
 					$colspan = 5;
 					if (isModEnabled('productbatch')) {
-						$colspan += 3;
+						$colspan += 2;
+						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+							$colspan += 1;
+						}
+						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							$colspan += 1;
+						}
 					}
 					$recLine = new CommandeFournisseurDispatch($db);
 
@@ -1285,7 +1291,7 @@ if ($action == 'create') {
 	$lines = $object->lines;
 
 	$num_prod = count($lines);
-
+	$indiceAsked = 0;
 	if ($object->id > 0) {
 		if (!empty($object->origin) && $object->origin_id > 0) {
 			$object->origin = 'CommandeFournisseur';
@@ -1945,23 +1951,27 @@ if ($action == 'create') {
 				if (isModEnabled('productbatch')) {
 					if (isset($lines[$i]->batch)) {
 						print '<!-- Detail of lot -->';
-						print '<td class="linecolbatch">';
-						$detail = '';
-						if ($lines[$i]->product->status_batch) {
-							$detail .= $langs->trans("Batch").': '.$lines[$i]->batch;
-							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-								$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby, "day");
+						print '<td class="linecolbatch nowrap">';
+						$detail = $langs->trans("NA");
+						if ($lines[$i]->product->status_batch && $lines[$i]->fk_product > 0) {
+							require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+							$productlot = new Productlot($db);
+							$reslot = $productlot->fetch(0, $lines[$i]->fk_product, $lines[$i]->batch);
+							if ($reslot > 0) {
+								$detail = $productlot->getNomUrl(1);
+							} else {
+								// lot is not created and info is only in reception lines
+								$batchinfo = $langs->trans("Batch").': '.$lines[$i]->batch;
+								if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+									$batchinfo .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby, "day");
+								}
+								if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+									$batchinfo .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby, "day");
+								}
+								$detail = $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $batchinfo);
 							}
-							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-								$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby, "day");
-							}
-							$detail .= '<br>';
-
-							print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $detail);
-						} else {
-							print $langs->trans("NA");
 						}
-						print '</td>';
+						print $detail . '</td>';
 					} else {
 						print '<td></td>';
 					}

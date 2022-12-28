@@ -210,7 +210,7 @@ print dol_get_fiche_end();
 
 print '</form>';
 
-
+$listinsetup = [];
 // Define $listinsetup
 foreach ($conf->global as $key => $val) {
 	if (!empty($val) && preg_match('/^OAUTH_.*_ID$/', $key)) {

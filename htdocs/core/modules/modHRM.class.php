@@ -56,7 +56,7 @@ class modHRM extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "HRM";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -264,6 +264,14 @@ class modHRM extends DolibarrModules
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'write_personal_information';
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->write_personal_information->write)
+		$r++;
+
+		// Evaluation
+		$this->rights[$r][0] = 4033; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read all evaluations'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'evaluation';
+		$this->rights[$r][5] = 'readall'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->read)
 		$r++;
 	}
 

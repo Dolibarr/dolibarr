@@ -53,11 +53,19 @@ function product_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (!empty($object->status) && $usercancreadprice) {
-		$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
-		$head[$h][1] = $langs->trans("SellingPrices");
-		$head[$h][2] = 'price';
-		$h++;
+	if (!empty($object->status)) {
+		if ($usercancreadprice) {
+			$head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$object->id;
+			$head[$h][1] = $langs->trans("SellingPrices");
+			$head[$h][2] = 'price';
+			$h++;
+		} else {
+			$head[$h][0] = '#';
+			$head[$h][1] = $langs->trans("SellingPrices");
+			$head[$h][2] = 'price';
+			$head[$h][5] = 'disabled';
+			$h++;
+		}
 	}
 
 	if (!empty($object->status_buy) || (isModEnabled('margin') && !empty($object->status))) {   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
@@ -68,6 +76,12 @@ function product_prepare_head($object)
 				$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$object->id;
 				$head[$h][1] = $langs->trans("BuyingPrices");
 				$head[$h][2] = 'suppliers';
+				$h++;
+			} else {
+				$head[$h][0] = '#';
+				$head[$h][1] = $langs->trans("BuyingPrices");
+				$head[$h][2] = 'suppliers';
+				$head[$h][5] = 'disabled';
 				$h++;
 			}
 		}
@@ -360,7 +374,10 @@ function product_admin_prepare_head()
  */
 function product_lot_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('product_lot');
 
 	$h = 0;
 	$head = array();
@@ -378,6 +395,10 @@ function product_lot_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_lot_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = $extrafields->attributes['product_lot']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
