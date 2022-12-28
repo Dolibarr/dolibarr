@@ -15,4 +15,10 @@ exclude:
       - htdocs/custom
       - htdocs/includes
       - htdocs/install/doctemplates
-
+  - name: PhpIssetCanBeReplacedWithCoalesceInspection
+  - name: PhpRedundantOptionalArgumentInspection
+  - name: PhpLanguageLevelInspection
+  - name: PhpIncludeInspection
+  - name: HtmlWrongAttributeValue
+  - name: PhpUndefinedClassConstantInspection
+  - name: RegExpRedundantEscape
