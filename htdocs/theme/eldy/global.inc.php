@@ -1,6 +1,9 @@
-<?php if (!defined('ISLOADEDBYSTEELSHEET')) {
+<?php
+if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
+}
+
+?>
 /* <style type="text/css" > */
 
 /* ============================================================================== */
@@ -54,6 +57,8 @@
 	--productlinestocktoolow: #884400;
 	--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 	--tablevalidbgcolor: rgb(252, 248, 227);
+	--colorblack: #000;
+	--colorwhite: #fff;
 }
 
 <?php
@@ -107,6 +112,8 @@ if (!empty($conf->global->THEME_DARKMODEENABLED)) {
 	            --amountremaintopaybackcolor:rbg(245,130,46);
 				--infoboxmoduleenabledbgcolor : linear-gradient(0.4turn, #000, #000, #000, #274231);
 				--tablevalidbgcolor: rgb(80, 64, 33);
+				--colorblack: #fff;
+				--colorwhite: #000;
 	      }
 
 		body, button {
@@ -285,7 +292,7 @@ section.setupsection {
 	border-radius: 5px;
 }
 
-.field-error-icon { color: #ea1212; !important; }
+.field-error-icon { color: #ea1212 !important; }
 
 /* Focus definitions must be after standard definition */
 div.tabBar textarea:focus {
@@ -492,13 +499,13 @@ input.pageplusone {
 	opacity: 0;
 }
 .colorwhite {
-	color: #fff;
+	color: var(--colorwhite);
 }
 .colorgrey {
 	color: #888 !important;
 }
 .colorblack {
-	color: #000;
+	color: var(--colorblack);
 }
 .fontsizeunset {
 	font-size: unset !important;
@@ -3978,9 +3985,7 @@ div.pagination li.pagination span {
   line-height: 1.42857143;
   text-decoration: none;
   background-repeat: repeat-x;
-  <?php if (empty($conf->global->THEME_DARKMODEENABLED)) { ?>
-  color: #000;
-  <?php } ?>
+  color: var(--color-black);
 }
 div.pagination li.pagination span.inactive {
   cursor: default;
@@ -4119,7 +4124,7 @@ table.hidepaginationnext .paginationnext {
 {
 	font-family: <?php print $fontlist ?>;
 	margin-bottom: 1px;
-	color: var(--oddeven);
+	color: var(--oddevencolor);
 }
 .impair, .nohover .impair:hover, tr.impair td.nohover
 {
@@ -4612,6 +4617,9 @@ table.noborder.boxtable tr td {
 .boxtablenobottom {
 	border-bottom-width: 0 !important;
 }
+.boxtablenomarginbottom {
+	margin-bottom: 0 !important;
+}
 .boxtable .fichehalfright, .boxtable .fichehalfleft {
 	min-width: 275px;	/* increasing this, make chart on box not side by side on laptops */
 }
@@ -5033,12 +5041,30 @@ div.ui-tooltip.mytooltip {
 	-webkit-box-shadow:0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
 	-o-box-shadow:     0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
 	box-shadow:        0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
-	filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
+	filter: progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
 	background: var(--tooltipbgcolor) !important;
-	color : var(--tooltipfontcolor);
+	color: var(--tooltipfontcolor);
 	line-height: 1.6em;
 	min-width: 550px;
 }
+
+<?php
+if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+	print "/* For dark mode */\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
+	} else {
+		print "@media not print {";
+	}
+	?>
+	div.ui-tooltip.mytooltip {
+		border: 1px solid #bbb !important;
+	}
+	<?php
+	print '}';
+}
+?>
+
 @media only screen and (max-width: 768px)
 {
 	div.ui-tooltip.mytooltip {
@@ -6486,10 +6512,12 @@ ul.select2-results__options li {
 	.select2-container.select2-container--open .select2-dropdown.ui-dialog {
 		min-width: 220px !important;
 	}
-	.select2-container.select2-container--open .select2-dropdown--below {
+	.select2-container.select2-container--open .select2-dropdown--below,
+	.select2-container.select2-container--open .select2-dropdown--above {
 		min-width: 220px !important;
 	}
-	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below {
+	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
+	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above{
 		min-width: 140px !important;
 	}
 
