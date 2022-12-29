@@ -182,7 +182,7 @@ if ((empty($action) || $action == 'display' || $action == 'delete') && $cat_id >
 		}
 
 		if (is_array($accountingcategory->lines_display) && count($accountingcategory->lines_display) > 0) {
-			$accountingcategory->lines_display = dol_sort_array($accountingcategory->lines_display, $sortfield, $sortorder, 1, 0, 1);
+			$accountingcategory->lines_display = dol_sort_array($accountingcategory->lines_display, $sortfield, $sortorder, -1, 0, 1);
 
 			foreach ($accountingcategory->lines_display as $cpt) {
 				print '<tr class="oddeven">';
