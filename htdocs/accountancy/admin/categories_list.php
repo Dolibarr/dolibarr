@@ -444,15 +444,37 @@ if ($search_country_id > 0) {
 if ($sortfield == 'country') {
 	$sortfield = 'country_code';
 }
+if (empty($sortfield)) {
+	$sortfield = 'position';
+}
+
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($listlimit + 1, $offset);
 //print $sql;
 
 $fieldlist = explode(',', $tabfield[$id]);
 
+$param = '&id='.$id;
+if ($search_country_id > 0) {
+	$param .= '&search_country_id='.urlencode($search_country_id);
+}
+$paramwithsearch = $param;
+if ($sortorder) {
+	$paramwithsearch .= '&sortorder='.urlencode($sortorder);
+}
+if ($sortfield) {
+	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
+}
+if (GETPOST('from', 'alpha')) {
+	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
+}
+
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
+print '<input type="hidden" name="sortfield" value="'.dol_escape_htmltag($sortfield).'">';
+print '<input type="hidden" name="sortorder" value="'.dol_escape_htmltag($sortorder).'">';
+
 
 print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
@@ -571,20 +593,6 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	$param = '&id='.$id;
-	if ($search_country_id > 0) {
-		$param .= '&search_country_id='.urlencode($search_country_id);
-	}
-	$paramwithsearch = $param;
-	if ($sortorder) {
-		$paramwithsearch .= '&sortorder='.$sortorder;
-	}
-	if ($sortfield) {
-		$paramwithsearch .= '&sortfield='.$sortfield;
-	}
-	if (GETPOST('from', 'alpha')) {
-		$paramwithsearch .= '&from='.GETPOST('from', 'alpha');
-	}
 	// There is several pages
 	if ($num > $listlimit) {
 		print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
@@ -822,7 +830,7 @@ if ($resql) {
 				}
 
 				// Link to setup the group
-				print '<td class="center">';
+				print '<td>';
 				if (empty($obj->formula)) {
 					print '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories.php?action=display&save_lastsearch_values=1&account_category='.$obj->rowid.'">';
 					print $langs->trans("ListOfAccounts");

@@ -477,7 +477,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Now output columns for row $code ('VTE', 'MAR', ...)
 
-				print '<tr class="trforbreak">';
+				print '<tr'.($showaccountdetail != 'no' ? ' class="trforbreak"' : '').'>';
 
 				// Column group
 				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($cat['code']).'">';
