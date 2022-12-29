@@ -339,60 +339,81 @@ if ($modecompta == 'CREANCES-DETTES') {
 				}
 
 				$result = strtr($formula, $vars);
+				$result = str_replace('--', '+', $result);
 
-				//var_dump($result);
-				//$r = $AccCat->calculate($result);
-				$r = dol_eval($result, 1, 1, '1');
-				//var_dump($r);
-
-				print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
-
-				// Year N
-				$code = $cat['code']; // code of categorie ('VTE', 'MAR', ...)
-				$sommes[$code]['NP'] += $r;
-
-				// Current fiscal year (N)
-				if (is_array($sommes) && !empty($sommes)) {
-					foreach ($sommes as $code => $det) {
-						$vars[$code] = $det['N'];
-					}
-				}
-
-				$result = strtr($formula, $vars);
-
-				//$r = $AccCat->calculate($result);
-				$r = dol_eval($result, 1, 1, 1);
-
-				print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
-				$sommes[$code]['N'] += $r;
-
-				// Detail by month
-				foreach ($months as $k => $v) {
-					if (($k + 1) >= $date_startmonth) {
-						foreach ($sommes as $code => $det) {
-							$vars[$code] = $det['M'][$k];
+				if (preg_match('/[a-z]/i', $result)) {
+					$r = 'Error bad formula: '.$result;
+					$rshort = 'Err';
+					print '<td class="liste_total right"><span class="amount" title="'.dol_escape_htmltag($r).'">'.$rshort.'</span></td>';
+					print '<td class="liste_total right"><span class="amount" title="'.dol_escape_htmltag($r).'">'.$rshort.'</span></td>';
+					// Detail by month
+					foreach ($months as $k => $v) {
+						if (($k + 1) >= $date_startmonth) {
+							print '<td class="liste_total right"><span class="amount" title="'.dol_escape_htmltag($r).'">'.$rshort.'</span></td>';
 						}
-						$result = strtr($formula, $vars);
-
-						//$r = $AccCat->calculate($result);
-						$r = dol_eval($result, 1, 1, 1);
-
-						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
-						$sommes[$code]['M'][$k] += $r;
 					}
-				}
-				foreach ($months as $k => $v) {
-					if (($k + 1) < $date_startmonth) {
-						foreach ($sommes as $code => $det) {
-							$vars[$code] = $det['M'][$k];
+					foreach ($months as $k => $v) {
+						if (($k + 1) < $date_startmonth) {
+							print '<td class="liste_total right"><span class="amount" title="'.dol_escape_htmltag($r).'">'.$rshort.'</span></td>';
 						}
-						$result = strtr($formula, $vars);
+					}
+				} else {
+					//var_dump($result);
+					//$r = $AccCat->calculate($result);
+					$r = dol_eval($result, 1, 1, '1');
+					//var_dump($r);
 
-						//$r = $AccCat->calculate($result);
-						$r = dol_eval($result, 1, 1, 1);
+					print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 
-						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
-						$sommes[$code]['M'][$k] += $r;
+					// Year N
+					$code = $cat['code']; // code of categorie ('VTE', 'MAR', ...)
+					$sommes[$code]['NP'] += $r;
+
+					// Current fiscal year (N)
+					if (is_array($sommes) && !empty($sommes)) {
+						foreach ($sommes as $code => $det) {
+							$vars[$code] = $det['N'];
+						}
+					}
+
+					$result = strtr($formula, $vars);
+
+					//$r = $AccCat->calculate($result);
+					$r = dol_eval($result, 1, 1, 1);
+
+					print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
+					$sommes[$code]['N'] += $r;
+
+					// Detail by month
+					foreach ($months as $k => $v) {
+						if (($k + 1) >= $date_startmonth) {
+							foreach ($sommes as $code => $det) {
+								$vars[$code] = $det['M'][$k];
+							}
+							$result = strtr($formula, $vars);
+
+							//$r = $AccCat->calculate($result);
+							$r = dol_eval($result, 1, 1, 1);
+
+							print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
+							$sommes[$code]['M'][$k] += $r;
+						}
+					}
+
+
+					foreach ($months as $k => $v) {
+						if (($k + 1) < $date_startmonth) {
+							foreach ($sommes as $code => $det) {
+								$vars[$code] = $det['M'][$k];
+							}
+							$result = strtr($formula, $vars);
+
+							//$r = $AccCat->calculate($result);
+							$r = dol_eval($result, 1, 1, 1);
+
+							print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
+							$sommes[$code]['M'][$k] += $r;
+						}
 					}
 				}
 
