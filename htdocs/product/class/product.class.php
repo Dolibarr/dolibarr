@@ -5517,6 +5517,7 @@ class Product extends CommonObject
 		$stock_sending_client = 0;
 		$stock_reception_fournisseur = 0;
 		$stock_inproduction = 0;
+		$stock_commande_draft_client = 0;
 
 		//dol_syslog("load_virtual_stock");
 
@@ -5590,7 +5591,13 @@ class Product extends CommonObject
 		if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
 			$this->stock_theorique -= ($stock_commande_client - $stock_sending_client);
 		} elseif (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)) {
-			$this->stock_theorique += 0;
+			$result = $this->load_stats_commande( 0, '0', 1) ;
+			if ($result < 0) {
+				dol_print_error($this->db, $this->error);
+			}
+			
+			$stock_commande_draft_client = $this->stats_commande['qty'];
+			$this->stock_theorique -= $stock_commande_draft_client;
 		} elseif (!empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
 			$this->stock_theorique -= $stock_commande_client;
 		}
