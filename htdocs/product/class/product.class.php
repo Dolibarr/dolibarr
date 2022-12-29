@@ -5591,11 +5591,11 @@ class Product extends CommonObject
 		if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
 			$this->stock_theorique -= ($stock_commande_client - $stock_sending_client);
 		} elseif (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)) {
-			$result = $this->load_stats_commande( 0, '0', 1) ;
+			$result = $this->load_stats_commande(0, '0', 1);
 			if ($result < 0) {
 				dol_print_error($this->db, $this->error);
 			}
-			
+
 			$stock_commande_draft_client = $this->stats_commande['qty'];
 			$this->stock_theorique -= $stock_commande_draft_client;
 		} elseif (!empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
