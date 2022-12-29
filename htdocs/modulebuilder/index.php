@@ -1344,12 +1344,12 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
             // 0=Menu for internal users, 1=external users, 2=both
             'user'=>2
         );\n";
-			$stringtoadd = preg_replace('/MyObject/', $objectnameloop, $stringtoadd);
+			$stringtoadd = preg_replace('/MyObject/', $objectname, $stringtoadd);
 			$stringtoadd = preg_replace('/mymodule/', strtolower($module), $stringtoadd);
-			$stringtoadd = preg_replace('/myobject/', strtolower($objectnameloop), $stringtoadd);
+			$stringtoadd = preg_replace('/myobject/', strtolower($objectname), $stringtoadd);
 
 			$moduledescriptorfile = $destdir.'/core/modules/mod'.$module.'.class.php';
-
+		}
 			// TODO Allow a replace with regex using dolReplaceInFile with param arryreplacementisregex to 1
 			// TODO Avoid duplicate addition
 
@@ -1357,7 +1357,6 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 
 			// Add module descriptor to list of files to replace "MyObject' string with real name of object.
 			$filetogenerate[] = 'core/modules/mod'.$module.'.class.php';
-		}
 	}
 
 	if (!$error) {
@@ -1377,7 +1376,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				'htdocs/modulebuilder/template/'=>strtolower($modulename),
 				'myobject'=>strtolower($objectname),
 				'MyObject'=>$objectname,
-				'MYOBJECT'=>strtoupper($objectname),
+				//'MYOBJECT'=>strtoupper($objectname),
 				'---Put here your own copyright and developer email---'=>dol_print_date($now, '%Y').' '.$user->getFullName($langs).($user->email ? ' <'.$user->email.'>' : '')
 			);
 
@@ -1729,6 +1728,55 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 			'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php'=>'core/modules/'.strtolower($module).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php',
 			'core/modules/mymodule/doc/pdf_standard_myobject.modules.php'=>'core/modules/'.strtolower($module).'/doc/pdf_standard_'.strtolower($objectname).'.modules.php'
 		);
+
+		//menu for the object selected
+		$stringtoedit = "\$this->menu[\$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=".strtolower($module)."',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'List ".ucfirst($objectname)."',
+            'mainmenu'=>'".strtolower($module)."',
+            'leftmenu'=>'".strtolower($module)."_".strtolower($objectname)."',
+            'url'=>'/".strtolower($module)."/".strtolower($objectname)."_list.php',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'".strtolower($module)."@".strtolower($module)."',
+            'position'=>1100+\$r,
+            // Define condition to show or hide menu entry. Use '\$conf->".strtolower($module)."->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'\$conf->".strtolower($module)."->enabled',
+            // Use 'perms'=>'\$user->rights->".strtolower($module)."->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2,
+        );
+        \$this->menu[\$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=".strtolower($module).",fk_leftmenu=".strtolower($module)."_".strtolower($objectname)."',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'New ".ucfirst($objectname)."',
+            'mainmenu'=>'".strtolower($module)."',
+            'leftmenu'=>'".strtolower($module)."_".strtolower($objectname)."',
+            'url'=>'/".strtolower($module)."/".strtolower($objectname)."_card.php?action=create',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'".strtolower($module)."@".strtolower($module)."',
+            'position'=>1100+\$r,
+            // Define condition to show or hide menu entry. Use '\$conf->".strtolower($module)."->enabled' if entry must be visible if module is enabled. Use '\$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'\$conf->".strtolower($module)."->enabled',
+            // Use 'perms'=>'\$user->rights->".strtolower($module)."->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2
+        );";
+
+		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+
+		$check = dolReplaceInFile($moduledescriptorfile, array($stringtoedit => ''));
+		if ($check > 0) {
+			dolReplaceInFile($moduledescriptorfile, array('/*'.strtoupper($objectname).'*/' => ''));
+		}
 
 		$resultko = 0;
 		foreach ($filetodelete as $filetodelete) {
