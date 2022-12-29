@@ -56,6 +56,8 @@ if ($object->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_SE
 	$eatByCss = 'fieldrequired';
 }
 
+$disableSellBy = getDolGlobalInt('PRODUCT_DISABLE_SELLBY');
+$disableEatBy = getDolGlobalInt('PRODUCT_DISABLE_EATBY');
 print '<script type="text/javascript" language="javascript">
 		jQuery(document).ready(function() {
 			function init_price()
@@ -66,9 +68,29 @@ print '<script type="text/javascript" language="javascript">
 			init_price();
 			jQuery("#mouvement").change(function() {
 				init_price();
-			});
-		});
-		</script>';
+			});';
+
+	if ($disableSellBy == 0 || $disableEatBy == 0) {
+		print '
+			var disableSellBy = '.$disableSellBy.';
+			var disableEatBy = '.$disableSellBy.';
+			jQuery("#batch_number").change(function(event) {
+				var batch = jQuery(this).val();
+				jQuery.getJSON("'.DOL_URL_ROOT.'/product/ajax/product_lot.php?action=search&token='.newToken().'&product_id='.$id.'&batch="+batch, function(data) {
+					if (data.length > 0) {
+						var productLot = data[0];
+						if (disableSellBy == 0) {
+							jQuery("#sellby").val(productLot.sellby);
+						}
+						if (disableEatBy == 0) {
+							jQuery("#eatby").val(productLot.eatby);
+						}
+					}
+				});
+			});';
+	}
+print  '});';
+print '</script>';
 
 
 print load_fiche_titre($langs->trans("StockCorrection"), '', 'generic');
@@ -131,7 +153,7 @@ if (!empty($conf->productbatch->enabled) &&
 ) {
 	print '<tr>';
 	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
-	print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
+	print '<input type="text" id="batch_number" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
