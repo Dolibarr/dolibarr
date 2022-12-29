@@ -837,7 +837,7 @@ class FormFile
 					}
 
 					// Show file name with link to download
-					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);;
+					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);
 
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
 					if ($imgpreview) {

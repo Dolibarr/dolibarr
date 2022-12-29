@@ -1671,7 +1671,7 @@ class Product extends CommonObject
 		$sql .= "$field = '".$this->db->escape($value)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(__METHOD__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -3065,7 +3065,7 @@ class Product extends CommonObject
 			}
 
 			// If stock decrease is on invoice validation, the theorical stock continue to
-			// count the orders to ship in theorical stock when some are already removed b invoice validation.
+			// count the orders to ship in theorical stock when some are already removed by invoice validation.
 			// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is on, we make a compensation.
 			if (!empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
 				if (!empty($conf->global->DECREASE_ONLY_UNINVOICEDPRODUCTS)) {
@@ -6103,19 +6103,19 @@ class Product extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param  DoliDB $db        Database handler
-	 * @param  int    $origin_id Old thirdparty id
-	 * @param  int    $dest_id   New thirdparty id
+	 * @param  DoliDB $dbs        	Database handler
+	 * @param  int    $origin_id 	Old thirdparty id
+	 * @param  int    $dest_id   	New thirdparty id
 	 * @return bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'product_customer_price',
 			'product_customer_price_log'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**

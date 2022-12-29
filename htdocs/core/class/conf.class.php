@@ -235,7 +235,7 @@ class Conf
 
 		// Common arrays
 		$this->cache = array();
-		$this->modules = array();;
+		$this->modules = array();
 		$this->modules_parts = array(
 			'css' => array(),
 			'js' => array(),

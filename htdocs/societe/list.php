@@ -533,7 +533,7 @@ if ($search_sale == -2) {
 } elseif ($search_sale > 0) {
 	$sql .= " AND sc.fk_user = ".((int) $search_sale);
 }
-$searchCategoryCustomerList = $search_categ_cus ? array($search_categ_cus) : array();;
+$searchCategoryCustomerList = $search_categ_cus ? array($search_categ_cus) : array();
 $searchCategoryCustomerOperator = 0;
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
 if (!empty($searchCategoryCustomerList)) {

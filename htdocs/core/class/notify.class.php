@@ -225,7 +225,7 @@ class Notify
 					$sql .= " AND s.rowid = ".((int) $socid);
 				}
 
-				dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
+				dol_syslog(__METHOD__." ".$notifcode.", ".$socid, LOG_DEBUG);
 
 				$resql = $this->db->query($sql);
 				if ($resql) {
@@ -263,7 +263,7 @@ class Notify
 					$sql .= " AND c.rowid = ".((int) $userid);
 				}
 
-				dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
+				dol_syslog(__METHOD__." ".$notifcode.", ".$socid, LOG_DEBUG);
 
 				$resql = $this->db->query($sql);
 				if ($resql) {

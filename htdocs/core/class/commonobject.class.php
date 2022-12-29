@@ -8431,19 +8431,19 @@ abstract class CommonObject
 	 * This function is meant to be called from replaceThirdparty with the appropriate tables
 	 * Column name fk_soc MUST be used to identify thirdparties
 	 *
-	 * @param  DoliDB 	   $db 			  Database handler
+	 * @param  DoliDB 	   $dbs			  Database handler
 	 * @param  int 		   $origin_id     Old thirdparty id (the thirdparty to delete)
 	 * @param  int 		   $dest_id       New thirdparty id (the thirdparty that will received element of the other)
 	 * @param  string[]    $tables        Tables that need to be changed
 	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old thirdparty may already exists on new one)
 	 * @return bool						  True if success, False if error
 	 */
-	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
+	public static function commonReplaceThirdparty(DoliDB $dbs, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
 	{
 		foreach ($tables as $table) {
-			$sql = 'UPDATE '.$db->prefix().$table.' SET fk_soc = '.((int) $dest_id).' WHERE fk_soc = '.((int) $origin_id);
+			$sql = 'UPDATE '.$dbs->prefix().$table.' SET fk_soc = '.((int) $dest_id).' WHERE fk_soc = '.((int) $origin_id);
 
-			if (!$db->query($sql)) {
+			if (!$dbs->query($sql)) {
 				if ($ignoreerrors) {
 					return true; // TODO Not enough. If there is A-B on kept thirdparty and B-C on old one, we must get A-B-C after merge. Not A-B.
 				}
@@ -8460,19 +8460,19 @@ abstract class CommonObject
 	 * This function is meant to be called from replaceProduct with the appropriate tables
 	 * Column name fk_product MUST be used to identify products
 	 *
-	 * @param  DoliDB 	   $db 			  Database handler
+	 * @param  DoliDB 	   $dbs			  Database handler
 	 * @param  int 		   $origin_id     Old product id (the product to delete)
 	 * @param  int 		   $dest_id       New product id (the product that will received element of the other)
 	 * @param  string[]    $tables        Tables that need to be changed
 	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old product may already exists on new one)
 	 * @return bool						  True if success, False if error
 	 */
-	public static function commonReplaceProduct(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
+	public static function commonReplaceProduct(DoliDB $dbs, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
 	{
 		foreach ($tables as $table) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_product = '.((int) $dest_id).' WHERE fk_product = '.((int) $origin_id);
 
-			if (!$db->query($sql)) {
+			if (!$dbs->query($sql)) {
 				if ($ignoreerrors) {
 					return true; // TODO Not enough. If there is A-B on kept product and B-C on old one, we must get A-B-C after merge. Not A-B.
 				}

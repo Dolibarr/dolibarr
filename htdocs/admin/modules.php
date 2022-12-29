@@ -65,9 +65,9 @@ $search_version = GETPOST('search_version', 'alpha');
 // For dolistore search
 $options              = array();
 $options['per_page']  = 20;
-$options['categorie'] = ((GETPOST('categorie', 'int') ?GETPOST('categorie', 'int') : 0) + 0);
-$options['start']     = ((GETPOST('start', 'int') ?GETPOST('start', 'int') : 0) + 0);
-$options['end']       = ((GETPOST('end', 'int') ?GETPOST('end', 'int') : 0) + 0);
+$options['categorie'] = ((int) (GETPOST('categorie', 'int') ? GETPOST('categorie', 'int') : 0));
+$options['start']     = ((int) (GETPOST('start', 'int') ?GETPOST('start', 'int') : 0));
+$options['end']       = ((int) (GETPOST('end', 'int') ?GETPOST('end', 'int') : 0));
 $options['search']    = GETPOST('search_keyword', 'alpha');
 $dolistore            = new Dolistore(false);
 

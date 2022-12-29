@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016       Jamal Elbaz         <jamelbaz@gmail.pro>
  * Copyright (C) 2017-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2022       Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 $error = 0;
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "accountancy"));
+$langs->loadLangs(array("bills", "accountancy", "compta"));
 
 $id = GETPOST('id', 'int');
 $cancel = GETPOST('cancel', 'alpha');

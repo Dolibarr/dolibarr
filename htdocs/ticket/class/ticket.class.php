@@ -291,7 +291,7 @@ class Ticket extends CommonObject
 		'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>520, 'notnull'=>1),
 		'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1,),
-		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc'),
+		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc', 'csslist'=>'tdoverflowmax100'),
 		'email_date' => array('type'=>'datetime', 'label'=>'EmailDate', 'visible'=>-2, 'enabled'=>1, 'position'=>541),
 		'progress' => array('type'=>'integer', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>2, 'csslist'=>'width50'),
 		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>'$conf->global->TICKET_ENABLE_RESOLUTION', 'position'=>550, 'notnull'=>1),

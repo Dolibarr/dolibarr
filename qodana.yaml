@@ -42,6 +42,23 @@ exclude:
   - name: PhpArrayIsAlwaysEmptyInspection
   - name: PhpParameterByRefIsNotUsedAsReferenceInspection
   - name: PhpWrongStringConcatenationInspection
+  - name: PhpUnusedAliasInspection
+  - name: PhpUnusedPrivateMethodInspection
+  - name: PhpUnusedPrivateFieldInspection
   - name: PhpExpressionAlwaysNullInspection
-  - name: PhpIfWithCommonPartsInspection  
-
+  - name: PhpIfWithCommonPartsInspection
+  - name: PhpTernaryExpressionCanBeReducedToShortVersionInspection
+  - name: PhpExpressionWithSameOperandsInspection
+  - name: PhpInArrayCanBeReplacedWithComparisonInspection
+  - name: PhpUnusedAliasInspection
+  - name: PhpPossiblePolymorphicInvocationInspection
+  - name: PhpReturnValueOfMethodIsNeverUsedInspection
+  - name: PhpPregReplaceWithEmptyReplacementInspection
+  - name: PhpFieldImmediatelyRewrittenInspection
+  - name: PhpIllegalStringOffsetInspection
+  - name: PhpWrongForeachArgumentTypeInspection
+  - name: PhpRegExpRedundantModifierInspection
+  - name: PhpClassConstantAccessedViaChildClassInspection
+  - name: RegExpUnnecessaryNonCapturingGroup
+  - name: PhpPregMatchReplaceWithComparisonInspection
+  - name: PhpArrayWriteIsNotUsedInspection
