@@ -102,7 +102,9 @@ if (GETPOST("button_export_file_x") || GETPOST("button_export_file.x") || GETPOS
 	$action = 'export_file';
 }
 
-$search_accountancy_code = GETPOST("search_accountancy_code");
+$search_account_category = GETPOST('search_account_category', 'int');
+
+$search_accountancy_code = GETPOST("search_accountancy_code", 'alpha');
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
 if ($search_accountancy_code_start == - 1) {
 	$search_accountancy_code_start = '';
@@ -253,6 +255,7 @@ if (empty($reshook)) {
 		$search_doc_type = '';
 		$search_doc_ref = '';
 		$search_doc_date = '';
+		$search_account_category = '';
 		$search_accountancy_code = '';
 		$search_accountancy_code_start = '';
 		$search_accountancy_code_end = '';
@@ -334,6 +337,20 @@ if (empty($reshook)) {
 	if (!empty($search_doc_ref)) {
 		$filter['t.doc_ref'] = $search_doc_ref;
 		$param .= '&search_doc_ref='.urlencode($search_doc_ref);
+	}
+	if ($search_account_category != '-1' && !empty($search_account_category)) {
+		require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
+		$accountingcategory = new AccountancyCategory($db);
+
+		$listofaccountsforgroup = $accountingcategory->getCptsCat(0, 'fk_accounting_category = '.((int) $search_account_category));
+		$listofaccountsforgroup2 = array();
+		if (is_array($listofaccountsforgroup)) {
+			foreach ($listofaccountsforgroup as $tmpval) {
+				$listofaccountsforgroup2[] = $tmpval['id'];
+			}
+		}
+		$filter['t.search_accounting_code_in'] = join(',', $listofaccountsforgroup2);
+		$param .= '&search_account_category='.urlencode($search_account_category);
 	}
 	if (!empty($search_accountancy_code)) {
 		$filter['t.numero_compte'] = $search_accountancy_code;
@@ -642,6 +659,9 @@ $sql .= " t.tms as date_modification,";
 $sql .= " t.date_export,";
 $sql .= " t.date_validated as date_validation,";
 $sql .= " t.import_key";
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= ' FROM '.MAIN_DB_PREFIX.$object->table_element.' as t';
 // Manage filter
 $sqlwhere = array();
@@ -672,7 +692,13 @@ if (count($filter) > 0) {
 		} elseif ($key == 't.reconciled_option') {
 			$sqlwhere[] = 't.lettering_code IS NULL';
 		} elseif ($key == 't.code_journal' && !empty($value)) {
-			$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+			if (is_array($value)) {
+				$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+			} else {
+				$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
+			}
+		} elseif ($key == 't.search_accounting_code_in' && !empty($value)) {
+			$sqlwhere[] = 't.numero_compte IN ('.$value.')';
 		} else {
 			$sqlwhere[] = natural_search($key, $value, 0, 1);
 		}
@@ -684,9 +710,6 @@ if (empty($conf->global->ACCOUNTING_REEXPORT)) {
 }
 if (count($sqlwhere) > 0) {
 	$sql .= ' AND '.implode(' AND ', $sqlwhere);
-}
-if (!empty($sortfield)) {
-	$sql .= $db->order($sortfield, $sortorder);
 }
 //print $sql;
 
@@ -783,27 +806,37 @@ $title_page = $langs->trans("Operations").' - '.$langs->trans("Journals");
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$resql = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
-// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
-	$num = $nbtotalofrecords;
-} else {
+
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
-
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-		exit;
-	}
-
-	$num = $db->num_rows($resql);
 }
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$num = $db->num_rows($resql);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -997,6 +1030,12 @@ if ($massactionbutton && $contextpage != 'poslist') {
 }
 
 $moreforfilter = '';
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= $langs->trans('AccountingCategory').': ';
+$moreforfilter .= '<div class="nowrap inline-block">';
+$moreforfilter .= $formaccounting->select_accounting_category($search_account_category, 'search_account_category', 1, 0, 0, 0);
+$moreforfilter .= '</div>';
+$moreforfilter .= '</div>';
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1005,6 +1044,10 @@ if (empty($reshook)) {
 } else {
 	$moreforfilter = $hookmanager->resPrint;
 }
+
+print '<div class="liste_titre liste_titre_bydiv centpercent">';
+print $moreforfilter;
+print '</div>';
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste centpercent">';
