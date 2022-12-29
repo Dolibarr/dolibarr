@@ -100,7 +100,7 @@ print '<script type="text/javascript">
 				}
 			});';
 
-	if ($disableSellBy == 0 || $disableEatBy == 0) {
+if ($disableSellBy == 0 || $disableEatBy == 0) {
 		print '
 			var disableSellBy = '.$disableSellBy.';
 			var disableEatBy = '.$disableSellBy.';
@@ -118,7 +118,7 @@ print '<script type="text/javascript">
 					}
 				});
 			});';
-	}
+}
 print  '});';
 print '</script>';
 
