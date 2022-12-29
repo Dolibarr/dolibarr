@@ -57,7 +57,7 @@ restrictedArea($user, 'salaries', $object->id, 'salary', '');
  * Actions
  */
 
-if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
+if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $user->hasRight('salaries', 'write')) {
 	$error = 0;
 
 	if ($cancel) {
