@@ -427,10 +427,9 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 	$sqlCommandesFourn .= " WHERE c3.rowid = cd3.fk_commande";
 	$sqlCommandesFourn .= " AND c3.entity IN (".getEntity(!empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'supplier_order').")";
 	$sqlCommandesFourn .= " AND cd3.fk_product = p.rowid";
-	if(isset($drafttoacceptedchecked)) {
+	if (isset($drafttoacceptedchecked)) {
 		$sqlCommandesFourn .= " AND c3.fk_statut IN (0,1,2,3,4))";
-	}
-	else {
+	} else {
 		$sqlCommandesFourn .= " AND c3.fk_statut IN (3,4))";
 	}
 	$sqlReceptionFourn = "(SELECT ".$db->ifsql("SUM(fd4.qty) IS NULL", "0", "SUM(fd4.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
