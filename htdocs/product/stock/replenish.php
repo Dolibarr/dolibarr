@@ -490,7 +490,7 @@ $sql .= ' HAVING (';
 $sql .= " (".$sqldesiredtock." >= 0 AND (".$sqldesiredtock." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel");
 $sql .= " + (".$sqlCommandesFourn." - ".$sqlReceptionFourn.")";
 $sql .= " + (".$sqlProductionToProduce." - ".$sqlProductionToConsume.")";
-if ($usevirtualstock){
+if ($usevirtualstock) {
 	$sql .= " - (".$sqlCommandesCli." - ".$sqlExpeditionsCli.")";
 }
 $sql .= '))) OR';
@@ -501,18 +501,18 @@ if ($includeproductswithoutdesiredqty == 'on') {
 }
 $sql .= " + (".$sqlCommandesFourn." - ".$sqlReceptionFourn.")";
 $sql .= " + (".$sqlProductionToProduce." - ".$sqlProductionToConsume.")";
-if ($usevirtualstock){
+if ($usevirtualstock) {
 	$sql .= " - (".$sqlCommandesCli." - ".$sqlExpeditionsCli.")";
 }
 $sql .= "))))";
 
 if ($salert == 'on') {	// Option to see when stock is lower than alert
 	$sql .= ' AND (';
-		if ($includeproductswithoutdesiredqty == 'on') {
-			$sql .= "(".$sqlalertstock." >= 0 OR ".$sqlalertstock." IS NULL) AND (".$db->ifsql($sqlalertstock." IS NULL", "0", $sqlalertstock)." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").")";
-		} else {
-			$sql .= $sqlalertstock." >= 0 AND (".$sqlalertstock." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").")";
-		}
+	if ($includeproductswithoutdesiredqty == 'on') {
+		$sql .= "(".$sqlalertstock." >= 0 OR ".$sqlalertstock." IS NULL) AND (".$db->ifsql($sqlalertstock." IS NULL", "0", $sqlalertstock)." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").")";
+	} else {
+		$sql .= $sqlalertstock." >= 0 AND (".$sqlalertstock." > SUM(".$db->ifsql("s.reel IS NULL", "0", "s.reel").")";
+	}
 
 	if ($usevirtualstock) {
 		$sql .= " - (".$sqlCommandesCli." - ".$sqlExpeditionsCli.")";
