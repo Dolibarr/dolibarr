@@ -624,6 +624,22 @@ class AccountancyCategory // extends CommonObject
 		$this->sdc = 0;
 		$this->sdcpermonth = array();
 
+		if (is_array($cpt)) {
+			$listofaccount = '';
+			foreach ($cpt as $cptcursor) {
+				if (! is_null($cptcursor)) {
+					if ($listofaccount) {
+						$listofaccount .= ",";
+					}
+					$listofaccount .= "'".$cptcursor."'";
+				}
+			}
+			if (empty($listofaccount)) {
+				// List of account is empty, so we do no try sql request, we can say result is empty.
+				return 0;
+			}
+		}
+
 		$sql = "SELECT SUM(t.debit) as debit, SUM(t.credit) as credit";
 		if (is_array($cpt)) {
 			$sql .= ", t.numero_compte as accountancy_account";
@@ -632,13 +648,6 @@ class AccountancyCategory // extends CommonObject
 		//if (in_array($this->db->type, array('mysql', 'mysqli'))) $sql.=' USE INDEX idx_accounting_bookkeeping_doc_date';
 		$sql .= " WHERE t.entity = ".$conf->entity;
 		if (is_array($cpt)) {
-			$listofaccount = '';
-			foreach ($cpt as $cptcursor) {
-				if ($listofaccount) {
-					$listofaccount .= ",";
-				}
-				$listofaccount .= "'".$cptcursor."'";
-			}
 			$sql .= " AND t.numero_compte IN (".$this->db->sanitize($listofaccount, 1).")";
 		} else {
 			$sql .= " AND t.numero_compte = '".$this->db->escape($cpt)."'";
@@ -655,22 +664,28 @@ class AccountancyCategory // extends CommonObject
 		if (is_array($cpt)) {
 			$sql .= " GROUP BY t.numero_compte";
 		}
-		//print $sql;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 			if ($num) {
-				$obj = $this->db->fetch_object($resql);
-				if ($sens == 1) {
-					$this->sdc = $obj->debit - $obj->credit;
-				} else {
-					$this->sdc = $obj->credit - $obj->debit;
-				}
-				if (is_array($cpt)) {
-					$this->sdcperaccount[$obj->accountancy_account] = $this->sdc;
+				$i = 0;
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+					if ($obj) {
+						if ($sens == 1) {
+							$this->sdc = $obj->debit - $obj->credit;
+						} else {
+							$this->sdc = $obj->credit - $obj->debit;
+						}
+						if (is_array($cpt)) {
+							$this->sdcperaccount[$obj->accountancy_account] = $this->sdc;
+						}
+					}
+					$i++;
 				}
 			}
+
 			return $num;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
