@@ -73,7 +73,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('salarie
 }
 
 if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('salaries', 'write')) {
-	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));	// field is a date in database, not a datetime, so we must use 'gmt' not 'tzuserrel'
+	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'), 'tzuserrel');
 	$res = $object->updatePaymentDate($datepaye);
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
@@ -147,9 +147,9 @@ print '</td></tr>';*/
 
 // Date
 print '<tr><td>';
-print $form->editfieldkey("Date", 'datep', $object->datep, $object, 1, 'datepicker');
+print $form->editfieldkey("Date", 'datep', $object->datep, $object, 1, 'datehourpicker');
 print '</td><td>';
-print $form->editfieldval("Date", 'datep', $object->datep, $object, 1, 'datepicker');
+print $form->editfieldval("Date", 'datep', $object->datep, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel');
 print "</td>";
 print '</tr>';
 

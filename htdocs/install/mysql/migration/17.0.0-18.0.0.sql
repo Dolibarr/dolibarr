@@ -42,3 +42,6 @@ ALTER TABLE llx_facture DROP COLUMN amount;
 ALTER TABLE llx_socpeople CHANGE fk_prospectcontactlevel fk_prospectlevel varchar(12);
 
 ALTER TABLE llx_facture ADD COLUMN prorata_discount	real DEFAULT NULL;
+
+ALTER TABLE llx_payment_salary MODIFY COLUMN datep datetime;
+
