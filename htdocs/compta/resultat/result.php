@@ -320,9 +320,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 				print '<tr class="liste_total">';
 
 				// Year NP
-				print '<td class="liste_total width200">';
+				print '<td class="liste_total tdoverflowmax100" title="'.dol_escape_htmltag($cat['code']).'">';
 				print dol_escape_htmltag($cat['code']);
-				print '</td><td>';
+				print '</td><td class="tdoverflowmax150" title="'.dol_escape_htmltag($cat['label']).'">';
 				print dol_escape_htmltag($cat['label']);
 				print '</td>';
 
@@ -399,8 +399,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				print "</tr>\n";
 
 				//var_dump($sommes);
-			} else // normal category
-			{
+			} else { // normal category
 				$code = $cat['code']; // Category code we process
 
 				$totCat = array();
@@ -478,37 +477,38 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Now output columns for row $code ('VTE', 'MAR', ...)
 
-				print "<tr>";
+				print '<tr class="trforbreak">';
 
 				// Column group
-				print '<td class="width200">';
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($cat['code']).'">';
 				print dol_escape_htmltag($cat['code']);
 				print '</td>';
 
 				// Label of group
-				print '<td>';
-				print dol_escape_htmltag($cat['label']);
+				$labeltoshow = dol_escape_htmltag($cat['label']);
 				if (count($cpts) > 0 && !empty($cpts[0])) {    // Show example of 5 first accounting accounts
 					$i = 0;
 					foreach ($cpts as $cpt) {
 						if ($i > 5) {
-							print '...)';
+							$labeltoshow .= '...)';
 							break;
 						}
 						if ($i > 0) {
-							print ', ';
+							$labeltoshow .= ', ';
 						} else {
-							print ' (';
+							$labeltoshow .= ' (';
 						}
-						print dol_escape_htmltag($cpt['account_number']);
+						$labeltoshow .= dol_escape_htmltag($cpt['account_number']);
 						$i++;
 					}
 					if ($i <= 5) {
-						print ')';
+						$labeltoshow .= ')';
 					}
 				} else {
-					print ' - <span class="warning">'.$langs->trans("GroupIsEmptyCheckSetup").'</span>';
+					$labeltoshow .= ' - <span class="warning">'.$langs->trans("GroupIsEmptyCheckSetup").'</span>';
 				}
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag(dol_string_nohtmltag($labeltoshow)).'">';
+				print $labeltoshow;
 				print '</td>';
 
 				print '<td class="right"><span class="amount">'.price($totCat['NP']).'</span></td>';
