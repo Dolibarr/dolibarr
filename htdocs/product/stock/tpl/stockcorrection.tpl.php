@@ -70,7 +70,7 @@ print '<script type="text/javascript" language="javascript">
 				init_price();
 			});';
 
-	if ($disableSellBy == 0 || $disableEatBy == 0) {
+if ($disableSellBy == 0 || $disableEatBy == 0) {
 		print '
 			var disableSellBy = '.$disableSellBy.';
 			var disableEatBy = '.$disableSellBy.';
@@ -88,7 +88,7 @@ print '<script type="text/javascript" language="javascript">
 					}
 				});
 			});';
-	}
+}
 print  '});';
 print '</script>';
 
