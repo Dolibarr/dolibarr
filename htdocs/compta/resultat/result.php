@@ -322,7 +322,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				// Year NP
 				print '<td class="liste_total tdoverflowmax100" title="'.dol_escape_htmltag($cat['code']).'">';
 				print dol_escape_htmltag($cat['code']);
-				print '</td><td class="tdoverflowmax150" title="'.dol_escape_htmltag($cat['label']).'">';
+				print '</td><td class="tdoverflowmax250" title="'.dol_escape_htmltag($cat['label']).'">';
 				print dol_escape_htmltag($cat['label']);
 				print '</td>';
 
@@ -507,7 +507,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				} else {
 					$labeltoshow .= ' - <span class="warning">'.$langs->trans("GroupIsEmptyCheckSetup").'</span>';
 				}
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag(dol_string_nohtmltag($labeltoshow)).'">';
+				print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag(dol_string_nohtmltag($labeltoshow)).'">';
 				print $labeltoshow;
 				print '</td>';
 
@@ -537,7 +537,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 						if ($showaccountdetail == 'all' || $resultN != 0) {
 							print '<tr>';
 							print '<td></td>';
-							print '<td class="tdoverflowmax200">';
+							print '<td class="tdoverflowmax250">';
 							print ' &nbsp; &nbsp; '.length_accountg($cpt['account_number']);
 							print ' - ';
 							print $cpt['account_label'];
