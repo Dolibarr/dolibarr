@@ -43,6 +43,8 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 if ($user->socid) $socid = $user->socid;
 
+$salary = new Salary($db);
+
 $object = new PaymentSalary($db);
 if ($id > 0) {
 	$result = $object->fetch($id);
@@ -71,7 +73,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('salarie
 }
 
 if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('salaries', 'write')) {
-	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'), 'tzuserrel');
+	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));	// field is a date in database, not a datetime, so we must use 'gmt' not 'tzuserrel'
 	$res = $object->updatePaymentDate($datepaye);
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
@@ -85,11 +87,9 @@ if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('salaries', 
  * View
  */
 
-llxHeader();
-
-$salary = new Salary($db);
-
 $form = new Form($db);
+
+llxHeader('', $langs->trans("SalaryPayment"));
 
 $h = 0;
 
