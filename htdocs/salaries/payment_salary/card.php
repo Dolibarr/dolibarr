@@ -149,7 +149,7 @@ print '</td></tr>';*/
 print '<tr><td>';
 print $form->editfieldkey("Date", 'datep', $object->datep, $object, 1, 'datehourpicker');
 print '</td><td>';
-print $form->editfieldval("Date", 'datep', $object->datep, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel');
+print $form->editfieldval("Date", 'datep', $object->datep, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel', array('addnowlink'=>1));
 print "</td>";
 print '</tr>';
 
