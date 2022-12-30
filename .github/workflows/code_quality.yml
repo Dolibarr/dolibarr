@@ -4,8 +4,7 @@ on:
   pull_request:
   push:
     branches:
-      - main
-      - 'releases/*'
+      - develop
 
 jobs:
   qodana:
