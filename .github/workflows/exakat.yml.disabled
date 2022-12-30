@@ -4,6 +4,9 @@ name: "Exakat analysis"
 on:
   schedule:
   - cron: "0 20 * * *"
+  workflow_dispatch:
+    branches:
+      - develop
 
 permissions:
   contents: read
