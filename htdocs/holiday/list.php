@@ -582,7 +582,9 @@ if ($resql) {
 		if ($user->rights->holiday->readall) {
 			print '<td class="liste_titre maxwidthonsmartphone left">';
 			$validator = new UserGroup($db);
-			$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
+			// Admin or with permission to approve
+			$approvers = $object->fetch_users_approver_holiday();
+			$excludefilter = $user->admin ? '' : 'u.rowid IN ('. implode(',', $approvers) . ')';
 			$valideurobjects = $validator->listUsersForGroup($excludefilter);
 			$valideurarray = array();
 			foreach ($valideurobjects as $val) {
