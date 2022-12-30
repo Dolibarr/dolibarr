@@ -751,7 +751,8 @@ if ($resql) {
 					foreach ($fieldlist as $field => $value) {
 						$showfield = 1;
 						$class = "left";
-						$valuetoshow = $obj->{$fieldlist[$field]};
+						$tmpvar = $fieldlist[$field];
+						$valuetoshow = $obj->$tmpvar;
 						if ($value == 'category_type') {
 							$valuetoshow = yn($valuetoshow);
 						} elseif ($valuetoshow == 'all') {

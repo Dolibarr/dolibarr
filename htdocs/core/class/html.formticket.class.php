@@ -362,7 +362,7 @@ class FormTicket
 			print '<!-- Script to manage change of ticket group -->
 			<script>
 			jQuery(document).ready(function() {
-				function groupticketchange(){
+				function groupticketchange() {
 					console.log("We called groupticketchange, so we try to load list KM linked to event");
 					$("#KWwithajax").html("");
 					idgroupticket = $("#selectcategory_code").val();
@@ -1095,7 +1095,7 @@ class FormTicket
 				$levelid++;
 				foreach ($tabscript as $script) {
 					$stringtoprint .= $script;
-				};
+				}
 				$stringtoprint .='})';
 				$stringtoprint .='</script>';
 			}

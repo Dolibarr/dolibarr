@@ -1025,7 +1025,8 @@ class Task extends CommonObjectLine
 					if (!empty($extrafields->attributes['projet']['label'])) {
 						foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
 							if ($extrafields->attributes['projet']['type'][$key] != 'separate') {
-								$tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
+								$tmpvar = 'options_'.$key;
+								$tasks[$i]->{'options_'.$key} = $obj->$tmpvar;
 							}
 						}
 					}
@@ -1033,7 +1034,8 @@ class Task extends CommonObjectLine
 					if (!empty($extrafields->attributes['projet_task']['label'])) {
 						foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
 							if ($extrafields->attributes['projet_task']['type'][$key] != 'separate') {
-								$tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
+								$tmpvar = 'options_'.$key;
+								$tasks[$i]->{'options_'.$key} = $obj->$tmpvar;
 							}
 						}
 					}

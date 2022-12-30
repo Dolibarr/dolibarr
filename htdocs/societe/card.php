@@ -1381,12 +1381,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				  data: function (params) {
 						return {
 							newcompany: params.term // search term
-						};
+						}
 				  },
 				  processResults: function (data, params) {
 					  return {
 						results: data
-					  };
+					  }
 				  },
 				  cache: true
 				},
@@ -2150,7 +2150,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					{
 						jQuery(".visibleifsupplier").show();
 					}
-				};
+				}
 
        			$("#selectcountry_id").change(function() {
        				document.formsoc.action.value="edit";

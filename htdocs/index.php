@@ -806,23 +806,15 @@ function getWeatherStatus($totallate)
 
 	$used_conf = empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'MAIN_METEO_LEVEL' : 'MAIN_METEO_PERCENTAGE_LEVEL';
 
-	$level0 = $offset;
 	$weather->level = 0;
-	if (!empty($conf->global->{$used_conf.'0'})) {
-		$level0 = $conf->global->{$used_conf.'0'};
-	}
+	$level0 = $offset;
+	$level0 = getDolGlobalString($used_conf.'0', $level0);
 	$level1 = $offset + 1 * $factor;
-	if (!empty($conf->global->{$used_conf.'1'})) {
-		$level1 = $conf->global->{$used_conf.'1'};
-	}
+	$level1 = getDolGlobalString($used_conf.'1', $level1);
 	$level2 = $offset + 2 * $factor;
-	if (!empty($conf->global->{$used_conf.'2'})) {
-		$level2 = $conf->global->{$used_conf.'2'};
-	}
+	$level2 = getDolGlobalString($used_conf.'2', $level2);
 	$level3 = $offset + 3 * $factor;
-	if (!empty($conf->global->{$used_conf.'3'})) {
-		$level3 = $conf->global->{$used_conf.'3'};
-	}
+	$level3 = getDolGlobalString($used_conf.'3', $level3);
 
 	if ($totallate <= $level0) {
 		$weather->picto = 'weather-clear.png';

@@ -3371,24 +3371,36 @@ class User extends CommonObject
 
 		$socialnetworks = getArrayOfSocialNetworks();
 
-		$this->firstname = $ldapuser->{$conf->global->LDAP_FIELD_FIRSTNAME};
-		$this->lastname = $ldapuser->{$conf->global->LDAP_FIELD_NAME};
-		$this->login = $ldapuser->{$conf->global->LDAP_FIELD_LOGIN};
-		$this->pass = $ldapuser->{$conf->global->LDAP_FIELD_PASSWORD};
-		$this->pass_indatabase_crypted = $ldapuser->{$conf->global->LDAP_FIELD_PASSWORD_CRYPTED};
+		$tmpvar = getDolGlobalString('LDAP_FIELD_FIRSTNAME');
+		$this->firstname = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_NAME');
+		$this->lastname = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_LOGIN');
+		$this->login = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_PASSWORD');
+		$this->pass = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED');
+		$this->pass_indatabase_crypted = $ldapuser->$tmpvar;
 
-		$this->office_phone = $ldapuser->{$conf->global->LDAP_FIELD_PHONE};
-		$this->user_mobile = $ldapuser->{$conf->global->LDAP_FIELD_MOBILE};
-		$this->office_fax = $ldapuser->{$conf->global->LDAP_FIELD_FAX};
-		$this->email = $ldapuser->{$conf->global->LDAP_FIELD_MAIL};
+		$tmpvar = getDolGlobalString('LDAP_FIELD_PHONE');
+		$this->office_phone = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_MOBILE');
+		$this->user_mobile = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_FAX');
+		$this->office_fax = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_MAIL');
+		$this->email = $ldapuser->$tmpvar;
 		foreach ($socialnetworks as $key => $value) {
-			$tmpkey = 'LDAP_FIELD_'.strtoupper($value['label']);
-			$this->socialnetworks[$value['label']] = $ldapuser->{$conf->global->$tmpkey};
+			$tmpvar = getDolGlobalString('LDAP_FIELD_'.strtoupper($value['label']));
+			$this->socialnetworks[$value['label']] = $ldapuser->$tmpvar;
 		}
-		$this->ldap_sid = $ldapuser->{$conf->global->LDAP_FIELD_SID};
+		$tmpvar = getDolGlobalString('LDAP_FIELD_SID');
+		$this->ldap_sid = $ldapuser->$tmpvar;
 
-		$this->job = $ldapuser->{$conf->global->LDAP_FIELD_TITLE};
-		$this->note_public = $ldapuser->{$conf->global->LDAP_FIELD_DESCRIPTION};
+		$tmpvar = getDolGlobalString('LDAP_FIELD_TITLE');
+		$this->job = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_DESCRIPTION');
+		$this->note_public = $ldapuser->$tmpvar;
 
 		$result = $this->update($user);
 

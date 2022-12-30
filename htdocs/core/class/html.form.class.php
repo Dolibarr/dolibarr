@@ -8228,7 +8228,7 @@ class Form
 					    		return {
 							    	q: params.term, 	// search term
 					    			page: params.page
-					    		};
+					    		}
 				    		},
 				    		processResults: function (data) {
 				    			// parse the results into the format expected by Select2.
@@ -8480,14 +8480,14 @@ class Form
 				$out .= 'function formatResult(record, container) {'."\n";
 				$out .= '	if ($(record.element).attr("data-html") != undefined) return htmlEntityDecodeJs($(record.element).attr("data-html"));		// If property html set, we decode html entities and use this'."\n";
 				$out .= '	return record.text;';
-				$out .= '};'."\n";
+				$out .= '}'."\n";
 				$out .= 'function formatSelection(record) {'."\n";
 				if ($elemtype == 'category') {
 					$out .= 'return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png"> \'+record.text+\'</span>\';';
 				} else {
 					$out .= 'return record.text;';
 				}
-				$out .= '};'."\n";
+				$out .= '}'."\n";
 				$out .= '$(document).ready(function () {
 							$(\'#'.$htmlname.'\').'.$tmpplugin.'({';
 				if ($placeholder) {

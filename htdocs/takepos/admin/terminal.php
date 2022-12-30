@@ -268,7 +268,7 @@ if (isModEnabled('stock')) {
 	}
 	print '</td></tr>';
 
-	$disabled = $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal};
+	$disabled = getDolGlobalString('CASHDESK_NO_DECREASE_STOCK'.$terminal);
 
 
 	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskIdWareHouse").'</td>'; // Force warehouse (this is not a default value)

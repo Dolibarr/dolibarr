@@ -1216,10 +1216,10 @@ if ($mode == 'deploy') {
 				print '<script type="text/javascript">
 				$(document).ready(function() {
 					jQuery("#fileinstall").on("change", function() {
-						if(this.files[0].size > '.($maxmin * 1024).'){
+						if(this.files[0].size > '.($maxmin * 1024).') {
 							alert("'.dol_escape_js($langs->trans("ErrorFileSizeTooLarge")).'");
 							this.value = "";
-						};
+						}
 					});
 				});
 				</script>'."\n";

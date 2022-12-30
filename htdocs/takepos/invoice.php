@@ -174,12 +174,12 @@ if (empty($reshook)) {
 			$bankaccount = GETPOST('accountid', 'int');
 		} else {
 			if ($pay == 'LIQ') {
-				$bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
+				$bankaccount = getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]);            // For backward compatibility
 			} elseif ($pay == "CHQ") {
-				$bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
+				$bankaccount = getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]);    // For backward compatibility
 			} else {
 				$accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
-				$bankaccount = $conf->global->$accountname;
+				$bankaccount = getDolGlobalString($accountname);
 			}
 		}
 
@@ -216,13 +216,6 @@ if (empty($reshook)) {
 			$invoice->fk_facture_source = $fk_source;
 			$invoice->update($user);
 		}
-
-		//$sav_FACTURE_ADDON = '';
-		//if (!empty($conf->global->TAKEPOS_ADDON)) {
-		//	$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
-		//	if ($conf->global->TAKEPOS_ADDON == "terminal") $conf->global->FACTURE_ADDON = $conf->global->{'TAKEPOS_ADDON'.$_SESSION["takeposterminal"]};
-		//	else $conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
-		//}
 
 		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 		if ($error) {

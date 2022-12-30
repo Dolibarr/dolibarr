@@ -1134,7 +1134,8 @@ if ($num) {
 						$align = "";
 						$class = "tddict";
 						$title = '';
-						$valuetoshow = $obj->{$fieldlist[$field]};
+						$tmpvar = $fieldlist[$field];
+						$valuetoshow = $obj->$tmpvar;
 						if ($value == 'label' || $value == 'topic') {
 							if ($langs->trans($valuetoshow) != $valuetoshow) {
 								$valuetoshow = $langs->trans($valuetoshow);
@@ -1282,19 +1283,19 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 		if ($value == 'fk_user') {
 			print '<td>';
 			if ($user->admin) {
-				print $form->select_dolusers(empty($obj->{$value}) ? '' : $obj->{$value}, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth150 maxwidth200');
+				print $form->select_dolusers(empty($obj->$value) ? '' : $obj->$value, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth150 maxwidth200');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
 					print $user->getNomUrl(1); // Me
 					$forcedvalue = $user->id;
 				} else {
-					if ($obj && !empty($obj->{$value}) && $obj->{$value} > 0) {
+					if ($obj && !empty($obj->$value) && $obj->$value > 0) {
 						$fuser = new User($db);
-						$fuser->fetch($obj->{$value});
+						$fuser->fetch($obj->$value);
 						print $fuser->getNomUrl(1);
 						$forcedvalue = $fuser->id;
 					} else {
-						$forcedvalue = $obj->{$value};
+						$forcedvalue = $obj->$value;
 					}
 				}
 				$keyname = $value;
