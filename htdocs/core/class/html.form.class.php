@@ -4203,7 +4203,7 @@ class Form
 		if ($deposit_percent >= 0) {
 			$out .= ' <span id="'.$htmlname.'_deposit_percent_container"' . (empty($selectedDepositPercent) ? ' style="display: none"' : '') . '>';
 			$out .= $langs->trans('DepositPercent') . ' : ';
-			$out .= '<input id="'.$htmlname.'_deposit_percent" name="'.$htmlname.'_deposit_percent" class="maxwidth50" value="' . strval($deposit_percent) . '" />';
+			$out .= '<input id="'.$htmlname.'_deposit_percent" name="'.$htmlname.'_deposit_percent" class="maxwidth50" value="' . $deposit_percent . '" />';
 			$out .= '</span>';
 			$out .= '
 				<script>

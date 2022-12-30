@@ -3025,13 +3025,14 @@ class EmailCollector extends CommonObject
 			 * Check if the same file name already exists in the upload folder,
 			 * append increment number to the original filename
 			 */
-			while (file_exists($destdir."/" . $file_name . "." . $extension)) {
-				$file_name = (string) $file_name_original . ' (' . $num . ')';
+			while (file_exists($destdir."/".$file_name.".".$extension)) {
+				$file_name = $file_name_original . ' (' . $num . ')';
 				$file_name_complete = $file_name . "." . $extension;
 				$destination = $destdir.'/'.$file_name_complete;
 				$num++;
 			}
 
+			$destination = dol_sanitizePathName($destination);
 
 			file_put_contents($destination, $data);
 		}

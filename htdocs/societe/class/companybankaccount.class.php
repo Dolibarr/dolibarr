@@ -349,7 +349,7 @@ class CompanyBankAccount extends Account
 				$rib = $this->label." : ";
 			}
 
-			$rib .= (string) $this;
+			$rib .= (string) $this->iban;
 		}
 
 		return $rib;
