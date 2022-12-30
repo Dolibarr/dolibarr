@@ -1,10 +1,11 @@
 name: Qodana
 on:
-  workflow_dispatch:
-  pull_request:
-  push:
-    branches:
-      - develop
+  schedule:
+  - cron: "0 20 * * *"
+#  workflow_dispatch:
+#  push:
+#    branches:
+#      - develop
 
 jobs:
   qodana:
