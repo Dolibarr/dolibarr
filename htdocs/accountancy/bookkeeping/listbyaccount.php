@@ -962,8 +962,8 @@ while ($i < min($num, $limit)) {
 			} else {
 				print '<td class="right" colspan="' . $colspan . '">' . $langs->trans("TotalForAccount") . ' ' . length_accountg($displayed_account_number) . ':</td>';
 			}
-			print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
-			print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
+			print '<td class="nowrap right">'.price(price2num($sous_total_debit, 'MT')).'</td>';
+			print '<td class="nowrap right">'.price(price2num($sous_total_credit, 'MT')).'</td>';
 			print '<td colspan="'.$colspanend.'"></td>';
 			print '</tr>';
 			// Show balance of last shown account
@@ -972,13 +972,13 @@ while ($i < min($num, $limit)) {
 			print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("Balance").':</td>';
 			if ($balance > 0) {
 				print '<td class="nowraponall right">';
-				print price($sous_total_debit - $sous_total_credit);
+				print price(price2num($sous_total_debit - $sous_total_credit, 'MT'));
 				print '</td>';
 				print '<td></td>';
 			} else {
 				print '<td></td>';
 				print '<td class="nowraponall right">';
-				print price($sous_total_credit - $sous_total_debit);
+				print price(price2num($sous_total_credit - $sous_total_debit, 'MT'));
 				print '</td>';
 			}
 			print '<td colspan="'.$colspanend.'"></td>';
@@ -1233,8 +1233,8 @@ while ($i < min($num, $limit)) {
 if ($num > 0 && $colspan > 0) {
 	print '<tr class="liste_total">';
 	print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("TotalForAccount").' '.$accountg.':</td>';
-	print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
-	print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
+	print '<td class="nowrap right">'.price(price2num($sous_total_debit, 'MT')).'</td>';
+	print '<td class="nowrap right">'.price(price2num($sous_total_credit, 'MT')).'</td>';
 	print '<td colspan="'.$colspanend.'"></td>';
 	print '</tr>';
 	// Show balance of last shown account
@@ -1243,18 +1243,28 @@ if ($num > 0 && $colspan > 0) {
 	print '<td class="right" colspan="'.$colspan.'">'.$langs->trans("Balance").':</td>';
 	if ($balance > 0) {
 		print '<td class="nowraponall right">';
-		print price($sous_total_debit - $sous_total_credit);
+		print price(price2num($sous_total_debit - $sous_total_credit, 'MT'));
 		print '</td>';
 		print '<td></td>';
 	} else {
 		print '<td></td>';
 		print '<td class="nowraponall right">';
-		print price($sous_total_credit - $sous_total_debit);
+		print price(price2num($sous_total_credit - $sous_total_debit, 'MT'));
 		print '</td>';
 	}
 	print '<td colspan="'.$colspanend.'"></td>';
 	print '</tr>';
 }
+
+
+// Clean total values to round them
+if (!empty($totalarray['val']['totaldebit'])) {
+	$totalarray['val']['totaldebit'] = price2num($totalarray['val']['totaldebit'], 'MT');
+}
+if (!empty($totalarray['val']['totalcredit'])) {
+	$totalarray['val']['totalcredit'] = price2num($totalarray['val']['totalcredit'], 'MT');
+}
+
 
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
