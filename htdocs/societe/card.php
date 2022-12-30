@@ -574,11 +574,11 @@ if (empty($reshook)) {
 				if (!empty($object->email) && !isValidEMail($object->email)) {
 					$langs->load("errors");
 					$error++;
-					setEventMessages('', $langs->trans("ErrorBadEMail", $object->email), 'errors');
+					setEventMessages($langs->trans("ErrorBadEMail", $object->email), null, 'errors');
 				}
 				if (!empty($object->url) && !isValidUrl($object->url)) {
 					$langs->load("errors");
-					setEventMessages('', $langs->trans("ErrorBadUrl", $object->url), 'errors');
+					setEventMessages($langs->trans("ErrorBadUrl", $object->url), null, 'errors');
 				}
 				if (!empty($object->webservices_url)) {
 					//Check if has transport, without any the soap client will give error

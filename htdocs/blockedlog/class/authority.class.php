@@ -304,7 +304,7 @@ class BlockedLogAuthority
 				$url = $conf->global->BLOCKEDLOG_AUTHORITY_URL.'/blockedlog/ajax/authority.php?s='.$signature.'&b='.$block->signature;
 
 				$res = getURLContent($url);
-				echo $block->signature.' '.$url.' '.$res.'<br>';
+				echo $block->signature.' '.$url.' '.$res['content'].'<br>';
 				if ($res === 'blockalreadyadded' || $res === 'blockadded') {
 					$block->setCertified();
 				} else {

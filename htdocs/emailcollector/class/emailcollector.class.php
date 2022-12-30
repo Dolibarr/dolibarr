@@ -2322,7 +2322,7 @@ class EmailCollector extends CommonObject
 									'class' => 'compta/facture/class/facture.class.php',
 									'object' => 'Facture'),
 								'fournisseur/facture' => array('table' => 'facture_fourn',
-									'fields' => array('ref', ref_client),
+									'fields' => array('ref', 'ref_client'),
 									'class' => 'fourn/class/fournisseur.facture.class.php',
 									'object' => 'FactureFournisseur'),
 								'produit' => array('table' => 'product',

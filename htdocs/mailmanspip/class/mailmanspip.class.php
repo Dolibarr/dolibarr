@@ -77,7 +77,7 @@ class MailmanSpip
 	 */
 	public function isSpipEnabled()
 	{
-		if (defined("ADHERENT_USE_SPIP") && (ADHERENT_USE_SPIP == 1)) {
+		if (getDolGlobalInt("ADHERENT_USE_SPIP") == 1) {
 			return true;
 		}
 
@@ -91,10 +91,8 @@ class MailmanSpip
 	 */
 	public function checkSpipConfig()
 	{
-		if (defined('ADHERENT_SPIP_SERVEUR') && defined('ADHERENT_SPIP_USER') && defined('ADHERENT_SPIP_PASS') && defined('ADHERENT_SPIP_DB')) {
-			if (ADHERENT_SPIP_SERVEUR != '' && ADHERENT_SPIP_USER != '' && ADHERENT_SPIP_PASS != '' && ADHERENT_SPIP_DB != '') {
-				return true;
-			}
+		if (getDolGlobalString('ADHERENT_SPIP_SERVEUR') != '' && getDolGlobalString('ADHERENT_SPIP_USER') != '' && getDolGlobalString('ADHERENT_SPIP_PASS') != '' && getDolGlobalString('ADHERENT_SPIP_DB') != '') {
+			return true;
 		}
 
 		return false;
