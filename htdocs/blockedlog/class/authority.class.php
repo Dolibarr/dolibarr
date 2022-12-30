@@ -305,7 +305,7 @@ class BlockedLogAuthority
 
 				$res = getURLContent($url);
 				echo $block->signature.' '.$url.' '.$res['content'].'<br>';
-				if ($res === 'blockalreadyadded' || $res === 'blockadded') {
+				if ($res['content'] === 'blockalreadyadded' || $res['content'] === 'blockadded') {
 					$block->setCertified();
 				} else {
 					$this->error = $langs->trans('ImpossibleToContactAuthority ', $url);
