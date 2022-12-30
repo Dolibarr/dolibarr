@@ -174,12 +174,12 @@ if (empty($reshook)) {
 			$bankaccount = GETPOST('accountid', 'int');
 		} else {
 			if ($pay == 'LIQ') {
-				$bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
+				$bankaccount = getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]);            // For backward compatibility
 			} elseif ($pay == "CHQ") {
-				$bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
+				$bankaccount = getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]);    // For backward compatibility
 			} else {
 				$accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
-				$bankaccount = $conf->global->$accountname;
+				$bankaccount = getDolGlobalString($accountname);
 			}
 		}
 
