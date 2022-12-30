@@ -96,7 +96,7 @@ class MultiCurrencies extends DolibarrApi
 		if (!count($obj_ret)) {
 			throw new RestException(404, 'No currencies found');
 		}
-    
+
 		return $obj_ret;
 	}
 
@@ -111,16 +111,15 @@ class MultiCurrencies extends DolibarrApi
 	{
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
-    
-    	// Clear all fields out of interrest
-    	foreach($object as $key => $value){
-        	if ($key == "rate") $object->$key = $this->_cleanObjectDatas($object->$key);
-        	if ($key == "id" || $key == "code" || $key == "rate" || $key == "date_sync")
-            	continue;
-    		unset($object->$key);
+
+		// Clear all fields out of interrest
+		foreach ($object as $key => $value) {
+			if ($key == "rate") $object->$key = $this->_cleanObjectDatas($object->$key);
+			if ($key == "id" || $key == "code" || $key == "rate" || $key == "date_sync")
+				continue;
+			unset($object->$key);
 		}
-		
+
 		return $object;
 	}
-
 }
