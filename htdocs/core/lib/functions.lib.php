@@ -2647,12 +2647,6 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$format = str_replace('%A', '__A__', $format);
 	}
 
-	$useadodb = getDolGlobalInt('MAIN_USE_LEGACY_ADODB_FOR_DATE', 0);
-	//$useadodb = 1;	// To switch to adodb
-	if (!empty($useadodb)) {
-		include_once DOL_DOCUMENT_ROOT.'/includes/adodbtime/adodb-time.inc.php';
-	}
-
 	// Analyze date
 	$reg = array();
 	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg)) {	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
@@ -2671,14 +2665,37 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$ssec	= (!empty($reg[6]) ? $reg[6] : '');
 
 		$time = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
-		if (empty($useadodb)) {
+
+		if ($to_gmt) {
+			$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
+		} else {
+			$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
+		}
+		$dtts = new DateTime();
+		$dtts->setTimestamp($time);
+		$dtts->setTimezone($tzo);
+		$newformat = str_replace(
+			array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+			array('Y', 'y', 'm', 'd', 'H', 'h', 'i', 's', 'A', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+			$format);
+		$ret = $dtts->format($newformat);
+		$ret = str_replace(
+			array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+			array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+			$ret
+		);
+	} else {
+		// Date is a timestamps
+		if ($time < 100000000000) {	// Protection against bad date values
+			$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
+
 			if ($to_gmt) {
 				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
 			} else {
 				$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
 			}
 			$dtts = new DateTime();
-			$dtts->setTimestamp($time);
+			$dtts->setTimestamp($timetouse);
 			$dtts->setTimezone($tzo);
 			$newformat = str_replace(
 				array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
@@ -2688,36 +2705,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			$ret = str_replace(
 				array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
 				array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
-				$ret);
-		} else {
-			$ret = adodb_strftime($format, $time + $offsettz + $offsetdst, $to_gmt);
-		}
-	} else {
-		// Date is a timestamps
-		if ($time < 100000000000) {	// Protection against bad date values
-			$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
-
-			if (empty($useadodb)) {
-				if ($to_gmt) {
-					$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
-				} else {
-					$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
-				}
-				$dtts = new DateTime();
-				$dtts->setTimestamp($timetouse);
-				$dtts->setTimezone($tzo);
-				$newformat = str_replace(
-					array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
-					array('Y', 'y', 'm', 'd', 'H', 'h', 'i', 's', 'A', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
-					$format);
-				$ret = $dtts->format($newformat);
-				$ret = str_replace(
-					array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
-					array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
-					$ret);
-			} else {
-				$ret = adodb_strftime($format, $timetouse, $to_gmt);	// If to_gmt = false then adodb_strftime use TZ of server
-			}
+				$ret
+			);
 			//var_dump($ret);exit;
 		} else {
 			$ret = 'Bad value '.$time.' for date';
@@ -2727,20 +2716,15 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	if (preg_match('/__b__/i', $format)) {
 		$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
 
-		if (empty($useadodb)) {
-			if ($to_gmt) {
-				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
-			} else {
-				$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
-			}
-			$dtts = new DateTime();
-			$dtts->setTimestamp($timetouse);
-			$dtts->setTimezone($tzo);
-			$month = $dtts->format("m");
+		if ($to_gmt) {
+			$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
 		} else {
-			// After this ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-			$month = adodb_strftime('%m', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+			$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
 		}
+		$dtts = new DateTime();
+		$dtts->setTimestamp($timetouse);
+		$dtts->setTimezone($tzo);
+		$month = $dtts->format("m");
 		$month = sprintf("%02d", $month); // $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput) {
 			$monthtext = $outputlangs->transnoentities('Month'.$month);
@@ -2759,19 +2743,15 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		//print "time=$time offsettz=$offsettz offsetdst=$offsetdst offsettzstring=$offsettzstring";
 		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-		if (empty($useadodb)) {
-			if ($to_gmt) {
-				$tzo = new DateTimeZone('UTC');
-			} else {
-				$tzo = new DateTimeZone(date_default_timezone_get());
-			}
-			$dtts = new DateTime();
-			$dtts->setTimestamp($timetouse);
-			$dtts->setTimezone($tzo);
-			$w = $dtts->format("w");
+		if ($to_gmt) {
+			$tzo = new DateTimeZone('UTC');
 		} else {
-			$w = adodb_strftime('%w', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+			$tzo = new DateTimeZone(date_default_timezone_get());
 		}
+		$dtts = new DateTime();
+		$dtts->setTimestamp($timetouse);
+		$dtts->setTimezone($tzo);
+		$w = $dtts->format("w");
 		$dayweek = $outputlangs->transnoentitiesnoconv('Day'.$w);
 
 		$ret = str_replace('__A__', $dayweek, $ret);
