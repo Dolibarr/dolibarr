@@ -126,7 +126,6 @@ $fieldstosearchall = array(
 	'd.login'=>'Login',
 	'd.lastname'=>'Lastname',
 	'd.firstname'=>'Firstname',
-	'd.login'=>'Login',
 	'd.societe'=>"Company",
 	'd.email'=>'EMail',
 	'd.address'=>'Address',
