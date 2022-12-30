@@ -346,7 +346,7 @@ if (empty($reshook)) {
 		$listofaccountsforgroup2 = array();
 		if (is_array($listofaccountsforgroup)) {
 			foreach ($listofaccountsforgroup as $tmpval) {
-				$listofaccountsforgroup2[] = $tmpval['id'];
+				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['id'])."'";
 			}
 		}
 		$filter['t.search_accounting_code_in'] = join(',', $listofaccountsforgroup2);
@@ -698,7 +698,7 @@ if (count($filter) > 0) {
 				$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 			}
 		} elseif ($key == 't.search_accounting_code_in' && !empty($value)) {
-			$sqlwhere[] = 't.numero_compte IN ('.$value.')';
+			$sqlwhere[] = 't.numero_compte IN ('.$db->sanitize($value, 1).')';
 		} else {
 			$sqlwhere[] = natural_search($key, $value, 0, 1);
 		}
