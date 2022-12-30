@@ -164,6 +164,7 @@ class Canvas
 	 */
 	public function displayCanvasExists($action)
 	{
+		// template_dir should be '/'.$this->dirmodule.'/canvas/'.$this->canvas.'/tpl/', for example '/mymodule/canvas/product/tpl'
 		if (empty($this->template_dir)) {
 			return 0;
 		}
