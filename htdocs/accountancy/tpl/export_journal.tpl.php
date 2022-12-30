@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2015-2022  Open-DSI      		<support@open-dsi.fr>
+/* Copyright (C) 2015-2022  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2022  		Lionel Vessiller    <lvessiller@open-dsi.fr>
  * Copyright (C) 2016       Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2022  		Progiseize         	<a.bisotti@progiseize.fr>
  *
