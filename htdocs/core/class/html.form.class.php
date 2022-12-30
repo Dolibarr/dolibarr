@@ -7720,7 +7720,7 @@ class Form
 			}
 		}
 		if (!is_object($objecttmp)) {
-			dol_syslog('Error bad setup of type for field '.$InfoFieldList, LOG_WARNING);
+			dol_syslog('Error bad setup of type for field '.join(',', $InfoFieldList), LOG_WARNING);
 			return 'Error bad setup of type for field '.join(',', $InfoFieldList);
 		}
 
@@ -9870,7 +9870,7 @@ class Form
 											method: "POST",
 											dataType: "json",
 											data: { fk_c_exp_tax_cat: $(this).val(), token: \''.currentToken().'\' },
-											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php?'.$params).'",
+											url: "'.(DOL_URL_ROOT.'/expensereport/ajax/ajaxik.php?'.join('&', $params)).'",
 										}).done(function( data, textStatus, jqXHR ) {
 											console.log(data);
 											if (typeof data.up != "undefined") {
