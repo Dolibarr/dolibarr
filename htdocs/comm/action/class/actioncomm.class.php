@@ -477,8 +477,8 @@ class ActionComm extends CommonObject
 			$this->elementtype = 'contract';
 		}
 
-		if (!is_array($this->userassigned) && !empty($this->userassigned)) {	// For backward compatibility when userassigned was an int instead fo array
-			$tmpid = $this->userassigned;
+		if (!is_array($this->userassigned) && !empty($this->userassigned)) {	// For backward compatibility when userassigned was an int instead of an array
+			$tmpid = (int) $this->userassigned;
 			$this->userassigned = array();
 			$this->userassigned[$tmpid] = array('id'=>$tmpid, 'transparency'=>$this->transparency);
 		}
