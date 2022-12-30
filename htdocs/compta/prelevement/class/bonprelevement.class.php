@@ -72,6 +72,7 @@ class BonPrelevement extends CommonObject
 
 	public $date_trans;
 	public $user_trans;
+	public $method_trans;
 
 	public $total;
 	public $fetched;
@@ -82,6 +83,15 @@ class BonPrelevement extends CommonObject
 
 	public $invoice_in_error = array();
 	public $thirdparty_in_error = array();
+
+	public $amount;
+	public $note;
+	public $datec;
+
+	public $date_credit;
+	public $user_credit;
+
+	public $type;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_TRANSFERED = 1;
