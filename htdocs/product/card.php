@@ -541,7 +541,7 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				$error++;
 				$mesg = 'Failed to get bar code type information ';
-				setEventMessages($mesg.$stdobject->error, $mesg.$stdobject->errors, 'errors');
+				setEventMessages($mesg.$stdobject->error, $stdobject->errors, 'errors');
 			}
 			$object->barcode_type_code      = $stdobject->barcode_type_code;
 			$object->barcode_type_coder     = $stdobject->barcode_type_coder;
@@ -780,7 +780,7 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					$error++;
 					$mesg = 'Failed to get bar code type information ';
-					setEventMessages($mesg.$stdobject->error, $mesg.$stdobject->errors, 'errors');
+					setEventMessages($mesg.$stdobject->error, $stdobject->errors, 'errors');
 				}
 				$object->barcode_type_code      = $stdobject->barcode_type_code;
 				$object->barcode_type_coder     = $stdobject->barcode_type_coder;
