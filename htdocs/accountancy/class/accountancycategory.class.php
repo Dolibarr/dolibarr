@@ -446,7 +446,7 @@ class AccountancyCategory // extends CommonObject
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			$this->errors[] = $this->error;
-			dol_syslog(__METHOD__." ".implode(','.$this->errors), LOG_ERR);
+			dol_syslog(__METHOD__." ".implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -488,7 +488,7 @@ class AccountancyCategory // extends CommonObject
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			$this->errors[] = $this->error;
-			dol_syslog(__METHOD__." ".implode(','.$this->errors), LOG_ERR);
+			dol_syslog(__METHOD__." ".implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
