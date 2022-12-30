@@ -5058,7 +5058,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		} elseif (is_array($errors)) {
 			$errors = array_merge(array($error), $errors);
 		} else {
-			$errors = array_merge(array($error));
+			$errors = array_merge(array($error), array($errors));
 		}
 
 		foreach ($errors as $msg) {
