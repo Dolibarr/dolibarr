@@ -5100,7 +5100,7 @@ abstract class CommonObject
 			print '<td class="linecoluht_currency right">'.$langs->trans('PriceUHTCurrency').'</td>';
 		}
 		print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 		}
 		print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
@@ -5238,7 +5238,7 @@ abstract class CommonObject
 		$this->tpl['total_ht'] = price($line->total_ht);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->tpl['unit'] = $langs->transnoentities($line->getLabelOfUnit('long'));
 		}
 		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
