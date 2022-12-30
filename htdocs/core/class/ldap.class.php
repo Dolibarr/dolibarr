@@ -1239,10 +1239,10 @@ class Ldap
 	/**
 	 * 		Load all attribute of a LDAP user
 	 *
-	 * 		@param	User	$user		User to search for. Not used if a filter is provided.
-	 *      @param  string	$filter		Filter for search. Must start with &.
-	 *                       	       	Examples: &(objectClass=inetOrgPerson) &(objectClass=user)(objectCategory=person) &(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com)
-	 *		@return	int					>0 if OK, <0 if KO
+	 * 		@param	User|string	$user		Not used.
+	 *      @param  string		$filter		Filter for search. Must start with &.
+	 *                       		       	Examples: &(objectClass=inetOrgPerson) &(objectClass=user)(objectCategory=person) &(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com)
+	 *		@return	int						>0 if OK, <0 if KO
 	 */
 	public function fetch($user, $filter)
 	{
