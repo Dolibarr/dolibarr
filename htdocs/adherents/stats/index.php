@@ -74,7 +74,7 @@ $stats = new AdherentStats($db, $socid, $userid);
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
-//var_dump($data);
+//echo"<pre>";print_r($data);echo "</pre>";
 // $data = array(array('Lib',val1,val2,val3),...)
 
 

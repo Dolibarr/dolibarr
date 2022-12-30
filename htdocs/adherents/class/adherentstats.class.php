@@ -89,7 +89,7 @@ class AdherentStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(p.dateadh,'%m') as dm, count(*)";
+		$sql = "SELECT date_format(p.datec,'%m') as dm, count(*)";
 		$sql .= " FROM ".$this->from;
 		//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".dolSqlDateFilter('p.dateadh', 0, 0, (int) $year, 1);
@@ -130,7 +130,7 @@ class AdherentStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(p.dateadh,'%m') as dm, sum(p.".$this->field.")";
+		$sql = "SELECT date_format(p.datec,'%m') as dm, sum(p.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		//if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql .= " WHERE ".dolSqlDateFilter('p.dateadh', 0, 0, (int) $year, 1);
