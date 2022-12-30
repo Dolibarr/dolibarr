@@ -93,9 +93,6 @@ class PropaleStats extends Stats
 		}
 		//$this->where.= " AND p.fk_soc = s.rowid AND p.entity = ".$conf->entity;
 		$this->where .= ($this->where ? ' AND ' : '')."p.entity IN (".getEntity('propal').")";
-		if (!$user->rights->societe->client->voir && !$this->socid) {
-			$this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-		}
 		if ($this->socid) {
 			$this->where .= " AND p.fk_soc = ".((int) $this->socid);
 		}
@@ -130,7 +127,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$user->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -155,7 +152,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(".$this->field_date.",'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
@@ -179,7 +176,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, SUM(p.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -204,7 +201,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, AVG(p.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -227,7 +224,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(".$this->field_date.",'%Y') as year, COUNT(*) as nb, SUM(".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
@@ -253,7 +250,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
 		$sql .= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
 		if (!$user->rights->societe->client->voir && !$user->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
