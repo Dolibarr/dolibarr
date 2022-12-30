@@ -3796,7 +3796,7 @@ abstract class CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Add objects linked in llx_element_element.
+	 *	Add an object link into llx_element_element.
 	 *
 	 *	@param		string	$origin		Linked element type
 	 *	@param		int		$origin_id	Linked element id
@@ -4116,6 +4116,21 @@ abstract class CommonObject
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 *	Clear the cache saying that all linked object were already loaded. So next fetchObjectLinked will reload all links.
+	 *
+	 *	@return int						<0 if KO, >0 if OK
+	 *  @see	fetchObjectLinked()
+	 */
+	public function clearObjectLinkedCache()
+	{
+		if ($this->id > 0 && !empty($this->linkedObjectsFullLoaded[$this->id])) {
+			unset($this->linkedObjectsFullLoaded[$this->id]);
+		}
+
+		return 1;
 	}
 
 	/**

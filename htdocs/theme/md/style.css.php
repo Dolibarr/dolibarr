@@ -1771,7 +1771,9 @@ table[summary="list_of_modules"] .fa-cog {
 .linkedcol-element {
 	min-width: 100px;
 }
-
+.linkedcol-amount {
+	white-space: nowrap;
+}
 .linkedcol-date {
 	text-align: center;
 }

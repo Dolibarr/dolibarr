@@ -51,7 +51,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->mrp->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = $conf->mrp->multidir_output[empty($object->entity) ? $conf->entity : $object->entity]."/".$object->id;
 }
 
 // Security check - Protection if external user
@@ -105,14 +105,18 @@ if ($id > 0 || !empty($ref)) {
 	//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 	//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
-	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+	if (is_object($object->thirdparty)) {
+		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
+		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+		}
 	}
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
-		$morehtmlref .= '<br>';
+		if (is_object($object->thirdparty)) {
+			$morehtmlref .= '<br>';
+		}
 		if (0) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
