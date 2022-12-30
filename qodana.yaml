@@ -62,4 +62,5 @@ exclude:
   - name: RegExpUnnecessaryNonCapturingGroup
   - name: PhpPregMatchReplaceWithComparisonInspection
   - name: PhpArrayWriteIsNotUsedInspection
-  - name: PhpUndefinedNamespaceInspection  
+  - name: PhpUndefinedNamespaceInspection
+  - name: PhpArraySearchInBooleanContextInspection
