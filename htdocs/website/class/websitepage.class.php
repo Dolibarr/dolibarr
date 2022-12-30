@@ -56,6 +56,8 @@ class WebsitePage extends CommonObject
 	 */
 	public $fk_website;
 
+	public $fk_page;		// If translation of another page
+
 	public $pageurl;
 	public $aliasalt;
 	public $type_container;
