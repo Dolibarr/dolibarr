@@ -72,7 +72,7 @@ exclude:
   - name: PhpConditionCheckedByNextConditionInspection
   - name: RegExpSingleCharAlternation
   - name: PhpSuspiciousNameCombinationInspection
-  - name: PhpObjectFieldsAreOnlyWrittenInspection  
+  - name: PhpObjectFieldsAreOnlyWrittenInspection
   - name: PhpWriteAccessToReferencedArrayValueWithoutUnsetInspection
   
   

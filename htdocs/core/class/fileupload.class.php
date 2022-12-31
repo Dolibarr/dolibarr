@@ -259,7 +259,7 @@ class FileUpload
 	/**
 	 * getFileObjects
 	 *
-	 * @return	void
+	 * @return	array	Array of objects
 	 */
 	protected function getFileObjects()
 	{
