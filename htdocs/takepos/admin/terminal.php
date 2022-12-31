@@ -219,8 +219,8 @@ if (isModEnabled("banque")) {
 
 		$reader = array();
 		$reader[""] = $langs->trans("NoReader");
-		foreach ($readers as $readers) {
-			$reader[$reader->id] = $readers->label.' ('.$readers->status.')';
+		foreach ($readers as $tmpreader) {
+			$reader[$tmpreader->id] = $tmpreader->label.' ('.$tmpreader->status.')';
 		}
 		print $form->selectarray('CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse, $reader, $conf->global->{'CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL'.$terminaltouse});
 		print '</td></tr>';

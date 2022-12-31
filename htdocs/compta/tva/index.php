@@ -389,16 +389,6 @@ if ($refresh === true) {
 		$hookmanager->initHooks(array('externalbalance'));
 		$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
-		if (!is_array($x_coll) && $coll_listbuy == -1) {
-			$langs->load("errors");
-			print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
-			break;
-		}
-		if (!is_array($x_paye) && $coll_listbuy == -2) {
-			print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
-			break;
-		}
-
 
 		print '<tr class="oddeven">';
 		print '<td class="nowrap"><a href="' . DOL_URL_ROOT . '/compta/tva/quadri_detail.php?leftmenu=tax_vat&month=' . $m . '&year=' . $y . '">' . dol_print_date(dol_mktime(0, 0, 0, $m, 1, $y), "%b %Y") . '</a></td>';

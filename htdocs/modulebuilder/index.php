@@ -1731,9 +1731,9 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname) {
 		);
 
 		$resultko = 0;
-		foreach ($filetodelete as $filetodelete) {
-			$resulttmp = dol_delete_file($dir.'/'.$filetodelete, 0, 0, 1);
-			$resulttmp = dol_delete_file($dir.'/'.$filetodelete.'.back', 0, 0, 1);
+		foreach ($filetodelete as $tmpfiletodelete) {
+			$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete, 0, 0, 1);
+			$resulttmp = dol_delete_file($dir.'/'.$tmpfiletodelete.'.back', 0, 0, 1);
 			if (!$resulttmp) {
 				$resultko++;
 			}
