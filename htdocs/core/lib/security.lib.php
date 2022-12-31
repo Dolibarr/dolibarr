@@ -723,7 +723,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		if ($mode) {
 			return $ok ? 1 : 0;
 		} else {
-			return $ok ? 1 : accessforbidden('', 1, 1, 0, $params);
+			if ($ok) {
+				return 1;
+			} else {
+				accessforbidden('', 1, 1, 0, $params);
+			}
 		}
 	}
 
