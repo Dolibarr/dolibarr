@@ -281,14 +281,8 @@ if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('strip
 }
 
 // Initialize $validpaymentmethod
+// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()
 $validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
-
-// This hook is used to push to $validpaymentmethod by external payment modules (ie Payzen, ...)
-$parameters = [
-	'paymentmethod' => $paymentmethod,
-	'validpaymentmethod' => &$validpaymentmethod
-];
-$reshook = $hookmanager->executeHooks('doValidatePayment', $parameters, $object, $action);
 
 // Check security token
 $tmpsource = $source;
