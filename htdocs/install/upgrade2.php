@@ -4485,7 +4485,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @return	void
+ * @return	int						<0 if KO, >0 if OK
  */
 function migrate_reload_menu($db, $langs, $conf)
 {
@@ -4515,6 +4515,8 @@ function migrate_reload_menu($db, $langs, $conf)
 
 		print '</td></tr>';
 	}
+
+	return 1;
 }
 
 /**

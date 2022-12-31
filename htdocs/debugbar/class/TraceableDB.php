@@ -661,7 +661,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function free($resultset = null)
 	{
-		return $this->db->free($resultset);
+		$this->db->free($resultset);
 	}
 
 	/**
