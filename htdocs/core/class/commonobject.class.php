@@ -6457,9 +6457,9 @@ abstract class CommonObject
 							return -1;
 						} elseif ($value == '') {
 							$new_array_languages[$key] = null;
+						} else {
+							$new_array_languages[$key] = $value;
 						}
-						//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
-						$new_array_languages[$key] = $value;
 						break;
 						/*case 'select':	// Not required, we chosed value='0' for undefined values
 						 if ($value=='-1')
