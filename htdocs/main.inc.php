@@ -1077,7 +1077,7 @@ if (!defined('NOLOGIN')) {
 		}
 
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"]." Session id=".session_id());
-		
+
 		if (is_object($db)) {
 			$db->begin();
 		}
