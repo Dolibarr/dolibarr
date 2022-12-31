@@ -64,4 +64,6 @@ exclude:
   - name: PhpArrayWriteIsNotUsedInspection
   - name: PhpUndefinedNamespaceInspection
   - name: PhpArraySearchInBooleanContextInspection
+  - name: PhpLoopCanBeReplacedWithStrRepeatInspection  
   - name: PhpPropertyOnlyWrittenInspection
+  - name: PhpCoveredCharacterInClassInspection  

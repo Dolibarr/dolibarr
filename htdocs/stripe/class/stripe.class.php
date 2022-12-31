@@ -279,9 +279,9 @@ class Stripe extends CommonObject
 			global $stripearrayofkeysbyenv;
 			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
-				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'');
+				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve((string) $paymentmethod->id);
 			} else {
-				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'', array("stripe_account" => $key));
+				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve((string) $paymentmethod->id, array("stripe_account" => $key));
 			}
 		} catch (Exception $e) {
 			$this->error = $e->getMessage();
@@ -307,9 +307,9 @@ class Stripe extends CommonObject
 			global $stripearrayofkeysbyenv;
 			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
-				$selectedreader = \Stripe\Terminal\Reader::retrieve(''.$reader.'');
+				$selectedreader = \Stripe\Terminal\Reader::retrieve((string) $reader);
 			} else {
-				$stripepaymentmethod = \Stripe\Terminal\Reader::retrieve(''.$reader.'', array("stripe_account" => $key));
+				$stripepaymentmethod = \Stripe\Terminal\Reader::retrieve((string) $reader, array("stripe_account" => $key));
 			}
 		} catch (Exception $e) {
 			$this->error = $e->getMessage();

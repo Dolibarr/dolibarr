@@ -751,7 +751,7 @@ class Form
 		// If info or help with smartphone, show only text (tooltip on click does not works with dialog on smaprtphone)
 		//if (!empty($conf->dol_no_mouse_hover) && !empty($tooltiptrigger))
 		//{
-		//if ($type == 'info' || $type == 'help') return '<a href="'..'">'.$text.''</a>';
+		//if ($type == 'info' || $type == 'help') return '<a href="'..'">'.$text.'</a>';
 		//}
 
 		$img = '';
@@ -3041,7 +3041,7 @@ class Form
 			$sql .= " ORDER BY date_price DESC, rowid DESC"; // Warning DESC must be both on date_price and rowid.
 			$sql .= " LIMIT 1";
 
-			dol_syslog(get_class($this).'::constructProductListOption search price for product '.$objp->rowid.' AND level '.$price_level.'', LOG_DEBUG);
+			dol_syslog(get_class($this).'::constructProductListOption search price for product '.$objp->rowid.' AND level '.$price_level, LOG_DEBUG);
 			$result2 = $this->db->query($sql);
 			if ($result2) {
 				$objp2 = $this->db->fetch_object($result2);

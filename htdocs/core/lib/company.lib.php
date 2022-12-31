@@ -1988,7 +1988,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
 				$out .= '<td class="valignmiddle">';
 				$contact = new Contact($db);
-				foreach ($histo[$key]['socpeopleassigned'] as $cid => $value) {
+				foreach ($histo[$key]['socpeopleassigned'] as $cid => $cvalue) {
 					$result = $contact->fetch($cid);
 
 					if ($result < 0) {

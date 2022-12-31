@@ -281,7 +281,7 @@ if ($dirins && $action == 'initmodule' && $modulename) {
 		// Delete dir and files that can be generated in sub tabs later if we need them (we want a minimal module first)
 		dol_delete_dir_recursive($destdir.'/build/doxygen');
 		dol_delete_dir_recursive($destdir.'/core/modules/mailings');
-		dol_delete_dir_recursive($destdir.'/core/modules/'.strtolower($modulename).'');
+		dol_delete_dir_recursive($destdir.'/core/modules/'.strtolower($modulename));
 		dol_delete_dir_recursive($destdir.'/core/tpl');
 		dol_delete_dir_recursive($destdir.'/core/triggers');
 		dol_delete_dir_recursive($destdir.'/doc');
