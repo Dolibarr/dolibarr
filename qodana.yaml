@@ -64,3 +64,4 @@ exclude:
   - name: PhpArrayWriteIsNotUsedInspection
   - name: PhpUndefinedNamespaceInspection
   - name: PhpArraySearchInBooleanContextInspection
+  - name: PhpPropertyOnlyWrittenInspection

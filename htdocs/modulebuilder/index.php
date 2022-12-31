@@ -135,13 +135,13 @@ if ($dirread != DOL_DOCUMENT_ROOT && ($conf->global->MAIN_FEATURES_LEVEL >= 2 ||
 $textforlistofdirs = '<!-- Directory scanned -->'."\n";
 $listofmodules = array();
 $i = 0;
-foreach ($dirsrootforscan as $dirread) {
+foreach ($dirsrootforscan as $tmpdirread) {
 	$moduletype = 'external';
-	if ($dirread == DOL_DOCUMENT_ROOT) {
+	if ($tmpdirread == DOL_DOCUMENT_ROOT) {
 		$moduletype = 'internal';
 	}
 
-	$dirsincustom = dol_dir_list($dirread, 'directories');
+	$dirsincustom = dol_dir_list($tmpdirread, 'directories');
 	if (is_array($dirsincustom) && count($dirsincustom) > 0) {
 		foreach ($dirsincustom as $dircustomcursor) {
 			$fullname = $dircustomcursor['fullname'];
@@ -170,7 +170,7 @@ foreach ($dirsrootforscan as $dirread) {
 						'modulenamewithcase'=>$modulenamewithcase,
 						'moduledescriptorrelpath'=> $moduledescriptorrelpath,
 						'moduledescriptorfullpath'=>$moduledescriptorfullpath,
-						'moduledescriptorrootpath'=>$dirread,
+						'moduledescriptorrootpath'=>$tmpdirread,
 						'moduletype'=>$moduletype
 					);
 				}
@@ -200,8 +200,8 @@ foreach ($dirsrootforscan as $dirread) {
 	} else {
 		$textforlistofdirs .= ', ';
 	}
-	$textforlistofdirs .= '<strong class="wordbreakimp">'.$dirread.'</strong>';
-	if ($dirread == DOL_DOCUMENT_ROOT) {
+	$textforlistofdirs .= '<strong class="wordbreakimp">'.$tmpdirread.'</strong>';
+	if ($tmpdirread == DOL_DOCUMENT_ROOT) {
 		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 			$textforlistofdirs .= $form->textwithpicto('', $langs->trans("ConstantIsOn", "MAIN_FEATURES_LEVEL"));
 		}
