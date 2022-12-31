@@ -340,13 +340,13 @@ function getBrowserInfo($user_agent)
 	$reg = array();
 	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
 		$name = 'firefox';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/edge(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
 		$name = 'edge';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $user_agent, $reg)) {
 		$name = 'chrome';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/chrome/i', $user_agent, $reg)) {
 		// we can have 'chrome (Mozilla...) chrome x.y' in one string
 		$name = 'chrome';
@@ -356,11 +356,11 @@ function getBrowserInfo($user_agent)
 		$name = 'epiphany';
 	} elseif (preg_match('/safari(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
 		$name = 'safari';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
 		// Safari is often present in string for mobile but its not.
 		$name = 'opera';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg)) {
 		$name = 'ie';
 		$version = end($reg);
@@ -368,10 +368,10 @@ function getBrowserInfo($user_agent)
 		// MS products at end
 		$name = 'ie';
 		$version = end($reg);
-	} elseif (preg_match('/l(i|y)n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) {
+	} elseif (preg_match('/l[iy]n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) {
 		// MS products at end
 		$name = 'lynxlinks';
-		$version = $reg[4];
+		$version = empty($reg[3]) ? '' : $reg[3];
 	}
 
 	if ($tablet) {
