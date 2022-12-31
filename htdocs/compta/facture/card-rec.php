@@ -1635,7 +1635,7 @@ if ($action == 'create') {
 		// Show object lines
 		if (!empty($object->lines)) {
 			$canchangeproduct = 1;
-			$ret = $object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 0); // No date selector for template invoice
+			$object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 0); // No date selector for template invoice
 		}
 
 		// Form to add new line

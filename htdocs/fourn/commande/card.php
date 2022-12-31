@@ -2404,7 +2404,7 @@ if ($action == 'create') {
 
 	// Show object lines
 	if (!empty($object->lines)) {
-		$ret = $object->printObjectLines($action, $object->thirdparty, $mysoc, $lineid, 1);
+		$object->printObjectLines($action, $object->thirdparty, $mysoc, $lineid, 1);
 	}
 
 	$num = count($object->lines);

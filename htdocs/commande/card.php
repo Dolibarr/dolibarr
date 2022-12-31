@@ -2737,7 +2737,7 @@ if ($action == 'create' && $usercancreate) {
 
 		// Show object lines
 		if (!empty($object->lines)) {
-			$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+			$object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 		}
 
 		$numlines = count($object->lines);

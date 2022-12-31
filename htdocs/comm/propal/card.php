@@ -2776,7 +2776,7 @@ if ($action == 'create') {
 	}
 
 	if (!empty($object->lines)) {
-		$ret = $object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 1);
+		$object->printObjectLines($action, $mysoc, $object->thirdparty, $lineid, 1);
 	}
 
 	// Form to add new line

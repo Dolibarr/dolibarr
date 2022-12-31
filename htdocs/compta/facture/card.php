@@ -5423,7 +5423,7 @@ if ($action == 'create') {
 
 	// Show object lines
 	if (!empty($object->lines)) {
-		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+		$object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 	}
 
 	// Form to add new line
