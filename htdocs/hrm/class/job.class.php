@@ -600,30 +600,27 @@ class Job extends CommonObject
 	}
 
 	/**
-	 * 		Get last job for user
+	 * Get the last occupied position for a user
 	 *
-	 * 			@param int $fk_user id of user we need to get last job
-	 * 			@return mixed|string|null
+	 * @param 	int 				$fk_user 	Id of user we need to get last job
+	 * @return	Position|string					Last occupied position
 	 */
 	public function getLastJobForUser($fk_user)
 	{
-		global $db;
-
-		$j = new Job($db);
-		$Tab = $j->getForUser($fk_user);
+		$Tab = $this->getForUser($fk_user);
 
 		if (empty($Tab)) return '';
 
-		$job = array_shift($Tab);
+		$lastpos = array_shift($Tab);
 
-		return $job;
+		return $lastpos;
 	}
 
 	/**
-	 * 		Get jobs for user
+	 * 	Get array of occupied positions for a user
 	 *
-	 * 			@param int $userid id of user we need to get job list
-	 * 			@return array of jobs
+	 * @param 	int 		$userid 	Id of user we need to get job list
+	 * @return 	Position[] 				Array of occupied positions
 	 */
 	public function getForUser($userid)
 	{
