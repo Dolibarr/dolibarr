@@ -1203,7 +1203,7 @@ if ($resql) {
 
 	$topicmail = "SendOrderRef";
 	$modelmail = "order_supplier_send";
-	$objecttmp = new CommandeFournisseur($db);
+	$objecttmp = new CommandeFournisseur($db);	// in case $object is not the good object
 	$trackid = 'sord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 

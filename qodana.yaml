@@ -68,7 +68,10 @@ exclude:
   - name: PhpPropertyOnlyWrittenInspection
   - name: PhpCoveredCharacterInClassInspection
   - name: PhpSameParameterValueInspection  
+  - name: PhpSillyAssignmentInspection
   - name: PhpConditionCheckedByNextConditionInspection
-  - name: RegExpSingleCharAlternation  
+  - name: RegExpSingleCharAlternation
   - name: PhpSuspiciousNameCombinationInspection
+  - name: PhpWriteAccessToReferencedArrayValueWithoutUnsetInspection
+  
   
