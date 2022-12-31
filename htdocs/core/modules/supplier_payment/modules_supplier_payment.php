@@ -17,6 +17,8 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+
+
 /**
  *	Parent class for supplier invoices models
  */
@@ -85,8 +87,9 @@ abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 }
 
 /**
- *  \class      ModeleNumRefSupplierPayments
- *  \brief      Payment numbering references mother class
+ *  ModeleNumRefSupplierPayments
+ *
+ *  Payment numbering references mother class
  */
 
 abstract class ModeleNumRefSupplierPayments

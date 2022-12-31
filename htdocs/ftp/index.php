@@ -282,7 +282,7 @@ if ($action == 'download') {
 
 		$newsection = $section;
 
-		$result = dol_ftp_get($connect_id, $localfile, $file, $newsection);
+		$result = dol_ftp_get($conn_id, $localfile, $file, $newsection);
 
 
 		if ($result) {
@@ -306,9 +306,9 @@ if ($action == 'download') {
 				header('Content-Type: '.$type);
 			}
 			if ($attachment) {
-				header('Content-Disposition: attachment; filename="'.$filename.'"');
+				header('Content-Disposition: attachment; filename="'.$file.'"');
 			} else {
-				header('Content-Disposition: inline; filename="'.$filename.'"');
+				header('Content-Disposition: inline; filename="'.$file.'"');
 			}
 
 			// Ajout directives pour resoudre bug IE
@@ -319,7 +319,7 @@ if ($action == 'download') {
 
 			exit;
 		} else {
-			setEventMessages($langs->transnoentitiesnoconv('FailedToGetFile', $remotefile), null, 'errors');
+			setEventMessages($langs->transnoentitiesnoconv('FailedToGetFile', $file), null, 'errors');
 		}
 	} else {
 		dol_print_error('', $mesg);

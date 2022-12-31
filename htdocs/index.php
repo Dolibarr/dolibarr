@@ -119,7 +119,7 @@ if (empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 	}
 
 	// Conf files must be in read only mode
-	if (is_writable($conffile)) {
+	if (is_writable($conffile)) {	// $conffile is defined into filefunc.inc.php
 		$langs->load("errors");
 		//$langs->load("other");
 		//if (!empty($message)) $message.='<br>';

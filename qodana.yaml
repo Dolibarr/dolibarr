@@ -73,6 +73,7 @@ exclude:
   - name: RegExpSingleCharAlternation
   - name: PhpSuspiciousNameCombinationInspection
   - name: PhpObjectFieldsAreOnlyWrittenInspection
+  - name: PhpMissingParentConstructorInspection  
   - name: PhpWriteAccessToReferencedArrayValueWithoutUnsetInspection
-  
+
   
