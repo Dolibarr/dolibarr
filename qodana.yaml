@@ -69,5 +69,6 @@ exclude:
   - name: PhpCoveredCharacterInClassInspection
   - name: PhpSameParameterValueInspection  
   - name: PhpConditionCheckedByNextConditionInspection
+  - name: RegExpSingleCharAlternation  
   - name: PhpSuspiciousNameCombinationInspection
   
