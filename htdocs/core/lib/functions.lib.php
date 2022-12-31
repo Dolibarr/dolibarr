@@ -368,7 +368,7 @@ function getBrowserInfo($user_agent)
 		// MS products at end
 		$name = 'ie';
 		$version = end($reg);
-	} elseif (preg_match('/l(i|y)n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) {
+	} elseif (preg_match('/l[iy]n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) {
 		// MS products at end
 		$name = 'lynxlinks';
 		$version = $reg[4];
@@ -3804,7 +3804,7 @@ function isValidMXRecord($domain)
 		}
 	}
 
-	// function idn_to_ascii or checkdnsrr does not exists
+	// function idn_to_ascii or checkdnsrr or getmxrr does not exists
 	return -1;
 }
 
@@ -10208,12 +10208,12 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$imgmime = 'mdb.png';
 		$famime = 'file-o';
 	}
-	if (preg_match('/\.doc(x|m)?$/i', $tmpfile)) {
+	if (preg_match('/\.doc[xm]?$/i', $tmpfile)) {
 		$mime = 'application/msword';
 		$imgmime = 'doc.png';
 		$famime = 'file-word-o';
 	}
-	if (preg_match('/\.dot(x|m)?$/i', $tmpfile)) {
+	if (preg_match('/\.dot[xm]?$/i', $tmpfile)) {
 		$mime = 'application/msword';
 		$imgmime = 'doc.png';
 		$famime = 'file-word-o';
@@ -10233,17 +10233,17 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$imgmime = 'xls.png';
 		$famime = 'file-excel-o';
 	}
-	if (preg_match('/\.xls(b|m|x)$/i', $tmpfile)) {
+	if (preg_match('/\.xls[bmx]$/i', $tmpfile)) {
 		$mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 		$imgmime = 'xls.png';
 		$famime = 'file-excel-o';
 	}
-	if (preg_match('/\.pps(m|x)?$/i', $tmpfile)) {
+	if (preg_match('/\.pps[mx]?$/i', $tmpfile)) {
 		$mime = 'application/vnd.ms-powerpoint';
 		$imgmime = 'ppt.png';
 		$famime = 'file-powerpoint-o';
 	}
-	if (preg_match('/\.ppt(m|x)?$/i', $tmpfile)) {
+	if (preg_match('/\.ppt[mx]?$/i', $tmpfile)) {
 		$mime = 'application/x-mspowerpoint';
 		$imgmime = 'ppt.png';
 		$famime = 'file-powerpoint-o';

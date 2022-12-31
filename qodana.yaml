@@ -66,4 +66,8 @@ exclude:
   - name: PhpArraySearchInBooleanContextInspection
   - name: PhpLoopCanBeReplacedWithStrRepeatInspection  
   - name: PhpPropertyOnlyWrittenInspection
-  - name: PhpCoveredCharacterInClassInspection  
+  - name: PhpCoveredCharacterInClassInspection
+  - name: PhpSameParameterValueInspection  
+  - name: PhpConditionCheckedByNextConditionInspection
+  - name: PhpSuspiciousNameCombinationInspection
+  

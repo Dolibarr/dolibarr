@@ -1624,8 +1624,10 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 				// Duration
 				print '<td class="center duration'.($cssonholiday ? ' '.$cssonholiday : '').($cssweekend ? ' '.$cssweekend : '').'">';
-				$dayWorkLoad = !empty($projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id]) ? $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id] : 0;
-				if (!isset($totalforeachday[$preselectedday])) $totalforeachday[$preselectedday] = 0;
+				$dayWorkLoad = empty($projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id]) ? 0 : $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id];
+				if (!isset($totalforeachday[$preselectedday])) {
+					$totalforeachday[$preselectedday] = 0;
+				}
 				$totalforeachday[$preselectedday] += $dayWorkLoad;
 
 				$alreadyspent = '';
