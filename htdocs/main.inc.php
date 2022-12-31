@@ -1077,8 +1077,10 @@ if (!defined('NOLOGIN')) {
 		}
 
 		dol_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"]." Session id=".session_id());
-
-		$db->begin();
+		
+		if (is_object($db)) {
+			$db->begin();
+		}
 
 		$user->update_last_login_date();
 
@@ -1104,12 +1106,16 @@ if (!defined('NOLOGIN')) {
 		}
 
 		if ($error) {
-			$db->rollback();
+			if (is_object($db)) {
+				$db->rollback();
+			}
 			session_destroy();
 			dol_print_error($db, 'Error in some triggers USER_LOGIN or in some hooks afterLogin');
 			exit;
 		} else {
-			$db->commit();
+			if (is_object($db)) {
+				$db->close();
+			}
 		}
 
 		// Change landing page if defined.
