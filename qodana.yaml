@@ -75,5 +75,5 @@ exclude:
   - name: PhpObjectFieldsAreOnlyWrittenInspection
   - name: PhpMissingParentConstructorInspection  
   - name: PhpWriteAccessToReferencedArrayValueWithoutUnsetInspection
-
+  - name: PhpArrayUsedOnlyForWriteInspection
   
