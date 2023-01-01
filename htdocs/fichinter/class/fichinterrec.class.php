@@ -411,16 +411,13 @@ class FichinterRec extends Fichinter
 	/**
 	 * 	Delete template fichinter rec
 	 *
-	 *	@param	 	int		$rowid	  	    Id of fichinter rec to delete. If empty, we delete current instance of fichinter rec
-	 *	@param		int		$notrigger	    1=Does not execute triggers, 0= execute triggers
-	 *	@param		int		$idwarehouse    Id warehouse to use for stock change.
+	 *	@param      User	$user			Object user who delete
+	 *	@param		int		$notrigger		Disable trigger
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function delete($rowid = 0, $notrigger = 0, $idwarehouse = -1)
+	public function delete(User $user, $notrigger = 0)
 	{
-		if (empty($rowid)) {
-			$rowid = $this->id;
-		}
+		$rowid = $this->id;
 
 		dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
 

@@ -234,7 +234,7 @@ if ($action == 'add') {
 } elseif ($action == 'delete' && $user->rights->ficheinter->supprimer) {
 	// delete modele
 	$object->fetch($id);
-	$object->delete();
+	$object->delete($user);
 	$id = 0;
 	header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;

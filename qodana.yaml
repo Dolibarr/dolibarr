@@ -76,4 +76,7 @@ exclude:
   - name: PhpMissingParentConstructorInspection  
   - name: PhpWriteAccessToReferencedArrayValueWithoutUnsetInspection
   - name: PhpArrayUsedOnlyForWriteInspection
+  - name: PhpArrayIndexImmediatelyRewrittenInspection
+  - name: PhpParameterNameChangedDuringInheritanceInspection
+  - name: PhpDuplicateSwitchCaseBodyInspection
   
