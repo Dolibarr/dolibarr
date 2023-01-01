@@ -105,13 +105,13 @@ class MailmanSpip
 	 */
 	public function connectSpip()
 	{
-		$resource = getDoliDBInstance('mysql', ADHERENT_SPIP_SERVEUR, ADHERENT_SPIP_USER, ADHERENT_SPIP_PASS, ADHERENT_SPIP_DB, ADHERENT_SPIP_PORT);
+		$resource = getDoliDBInstance('mysql', getDolGlobalString('ADHERENT_SPIP_SERVEUR'), getDolGlobalString('ADHERENT_SPIP_USER'), getDolGlobalString('ADHERENT_SPIP_PASS'), getDolGlobalString('ADHERENT_SPIP_DB'), getDolGlobalString('ADHERENT_SPIP_PORT'));
 
 		if ($resource->ok) {
 			return $resource;
 		}
 
-		dol_syslog('Error when connecting to SPIP '.ADHERENT_SPIP_SERVEUR.' '.ADHERENT_SPIP_USER.' '.ADHERENT_SPIP_PASS.' '.ADHERENT_SPIP_DB, LOG_ERR);
+		dol_syslog('Error when connecting to SPIP '.getDolGlobalString('ADHERENT_SPIP_SERVEUR').' '.getDolGlobalString('ADHERENT_SPIP_USER').' '.getDolGlobalString('ADHERENT_SPIP_PASS').' '.getDolGlobalString('ADHERENT_SPIP_DB'), LOG_ERR);
 
 		return false;
 	}
