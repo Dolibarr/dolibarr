@@ -18,14 +18,14 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
-          folder: docs/html
+          folder: build/html
           config_file: build/doxygen/dolibarr-doxygen.doxyfile
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: docs/html # The folder the action should deploy.
+          folder: build/html # The folder the action should deploy.
           target-folder: docs/html2
           
 #jobs:
