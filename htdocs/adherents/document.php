@@ -25,6 +25,7 @@
  *  \ingroup    societe
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -44,8 +45,8 @@ $confirm = GETPOST('confirm', 'alpha');
 
 // Get parameters
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -75,22 +76,22 @@ if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
 	// Define variables to know what current user can do on users
-	$canadduser = ($user->admin || $user->rights->user->user->creer);
+	$canadduser = ($user->admin || $user->hasRight('user', 'user', 'creer'));
 	// Define variables to know what current user can do on properties of user linked to edited member
 	if ($object->user_id) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
-		$caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
-			|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
-		$caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
-			|| (($user->id != $object->user_id) && $user->rights->user->user->password));
+		$caneditfielduser = ((($user->id == $object->user_id) && $$user->hasRight('user', 'self', 'creer'))
+			|| (($user->id != $object->user_id) && $user->hasRight('user', 'user', 'creer')));
+		$caneditpassworduser = ((($user->id == $object->user_id) && $user->hasRight('user', 'self', 'password'))
+			|| (($user->id != $object->user_id) && $user->hasRight('user', 'user', 'password')));
 	}
 }
 
 // Define variables to determine what the current user can do on the members
-$canaddmember = $user->rights->adherent->creer;
+$canaddmember = $user->hasRight('adherent', 'creer');
 // Define variables to determine what the current user can do on the properties of a member
 if ($id) {
-	$caneditfieldmember = $user->rights->adherent->creer;
+	$caneditfieldmember = $user->hasRight('adherent', 'creer');
 }
 
 $permissiontoadd = $canaddmember;
@@ -128,7 +129,7 @@ if ($id > 0) {
 			$totalsize += $file['size'];
 		}
 
-		if (!empty($conf->notification->enabled)) {
+		if (isModEnabled('notification')) {
 			$langs->load("mails");
 		}
 
@@ -138,7 +139,11 @@ if ($id > 0) {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		dol_banner_tab($object, 'rowid', $linkback);
+		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/adherents/vcard.php?id='.$object->id.'" class="refid">';
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= '</a>';
+
+		dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
 		print '<div class="fichecenter">';
 
@@ -149,21 +154,20 @@ if ($id > 0) {
 
 		// Login
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
-			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.dol_escape_htmltag($object->login).'</td></tr>';
 		}
 
 		// Type
-		print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$membert->getNomUrl(1)."</td></tr>\n";
+		print '<tr><td>'.$langs->trans("Type").'</td>';
+		print '<td class="valeur">'.$membert->getNomUrl(1)."</td></tr>\n";
 
 		// Morphy
-		print '<tr><td class="titlefield">'.$langs->trans("MemberNature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
-		/*print '<td rowspan="'.$rowspan.'" class="center" valign="middle" width="25%">';
-		print $form->showphoto('memberphoto',$object);
-		print '</td>';*/
+		print '<tr><td class="titlefield">'.$langs->trans("MemberNature").'</td>';
+		print '<td class="valeur" >'.$object->getmorphylib('', 1).'</td>';
 		print '</tr>';
 
 		// Company
-		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->company.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.dol_escape_htmltag($object->company).'</td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
@@ -182,8 +186,8 @@ if ($id > 0) {
 		print dol_get_fiche_end();
 
 		$modulepart = 'member';
-		$permissiontoadd = $user->rights->adherent->creer;
-		$permtoedit = $user->rights->adherent->creer;
+		$permissiontoadd = $user->hasRight('adherent', 'creer');
+		$permtoedit = $user->hasRight('adherent', 'creer');
 		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 		print "<br><br>";

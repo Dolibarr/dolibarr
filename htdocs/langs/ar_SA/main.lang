@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=rtl
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -67,6 +73,7 @@ ErrorNoVATRateDefinedForSellerCountry=خطأ ، لم يتم تحديد معدل�
 ErrorNoSocialContributionForSellerCountry=خطأ ، لم يتم تحديد نوع الضرائب الاجتماعية | المالية للبلد "%s".
 ErrorFailedToSaveFile=خطأ، فشل في حفظ الملف.
 ErrorCannotAddThisParentWarehouse=أنت تحاول إضافة مستودع رئيسي هو بالفعل تابع لمستودع موجود
+FieldCannotBeNegative=لا يمكن أن يكون الحقل "%s" سالبًا
 MaxNbOfRecordPerPage=عدد السجلات الاعلى في الصفحة الواحدة
 NotAuthorized=غير مصرح لك ان تفعل ذلك.
 SetDate=تحديد التاريخ
@@ -87,7 +94,7 @@ FileWasNotUploaded=تم تحديد ملف للإرفاق ولكن لم يتم ت
 NbOfEntries=عدد الإدخالات
 GoToWikiHelpPage=قراءة التعليمات عبر الإنترنت (يلزم الاتصال بالإنترنت)
 GoToHelpPage=قراءة المساعدة
-DedicatedPageAvailable=هناك صفحة تعليمات مخصصة تتعلق بشاشتك الحالية
+DedicatedPageAvailable=صفحة مساعدة مخصصة تتعلق بشاشتك الحالية
 HomePage=الصفحة الرئيسية
 RecordSaved=تم حفظ سجل
 RecordDeleted=سجل محذوف
@@ -114,7 +121,7 @@ ReturnCodeLastAccessInError=إرجاع الكود لأحدث خطأ في طلب 
 InformationLastAccessInError=معلومات عن خطأ طلب الوصول إلى قاعدة البيانات الأخيرة
 DolibarrHasDetectedError=Dolibarr اكتشف خطأ تقني
 YouCanSetOptionDolibarrMainProdToZero=يمكنك قراءة ملف السجل أو تعيين الخيار $ dolibarr_main_prod إلى "0" في (config file) للحصول على مزيد من المعلومات.
-InformationToHelpDiagnose=يمكن أن تكون هذه المعلومات مفيدة لأغراض التشخيص (يمكنك تعيين الخيار $ dolibarr_main_prod على "1" لإزالة هذه الإشعارات)
+InformationToHelpDiagnose=يمكن أن تكون هذه المعلومات مفيدة لأغراض التشخيص (يمكنك تعيين الخيار $ dolibarr_main_prod على "1" لإخفاء المعلومات الحساسة)
 MoreInformation=المزيد من المعلومات
 TechnicalInformation=المعلومات التقنية
 TechnicalID=ID الفني
@@ -180,7 +187,7 @@ SaveAndNew=حفظ وجديد
 TestConnection=اختبار الاتصال
 ToClone=استنساخ
 ConfirmCloneAsk=هل أنت متأكد أنك تريد استنساخ الكائن <b> %s </b>؟
-ConfirmClone=Choose the data you want to clone:
+ConfirmClone=اختر البيانات التي تريد نسخها:
 NoCloneOptionsSpecified=لا توجد بيانات لاستنساخ محددة.
 Of=من
 Go=اذهب
@@ -211,6 +218,8 @@ User=المستعمل
 Users=المستخدمين
 Group=مجموعة
 Groups=المجموعات
+UserGroup=مجموعة المستخدمين
+UserGroups=مجموعات الاعضاء
 NoUserGroupDefined=لم يتم تحديد مجموعة مستخدمين
 Password=كلمة المرور
 PasswordRetype=أعد كتابة كلمة المرور
@@ -241,12 +250,13 @@ Designation=الوصف
 DescriptionOfLine=وصف البند
 DateOfLine=تاريخ البند
 DurationOfLine=مدة البند
+ParentLine=معرف خط الأصل
 Model=قالب المستند
 DefaultModel=قالب المستند الافتراضي
 Action=حدث
 About=حول
 Number=عدد
-NumberByMonth=Total reports by month
+NumberByMonth=إجمالي التقارير حسب الشهر
 AmountByMonth=المبلغ بالشهر
 Numero=عدد
 Limit=الحد
@@ -341,8 +351,8 @@ KiloBytes=كيلو بايت
 MegaBytes=ميغابايت
 GigaBytes=غيغا بايت
 TeraBytes=تيرابايت
-UserAuthor=Ceated by
-UserModif=Updated by
+UserAuthor=تم الإنشاء بواسطة
+UserModif=تم التحديث بواسطة
 b=بايت
 Kb=كيلوبايت
 Mb=ميغابايت
@@ -430,7 +440,7 @@ LT1IN=CGST
 LT2IN=SGST
 LT1GC=Additionnal cents
 VATRate=معدل الضريبة
-RateOfTaxN=Rate of tax %s
+RateOfTaxN=معدل الضريبة %s
 VATCode=كود معدل الضريبة
 VATNPR=معدل ضريبة NPR
 DefaultTaxRate=معدل الضريبة الافتراضي
@@ -514,6 +524,7 @@ or=أو
 Other=آخر
 Others=آخرون
 OtherInformations=معلومات أخرى
+Workflow=سير العمل
 Quantity=كمية
 Qty=الكمية
 ChangedBy=تغيير من قبل
@@ -616,6 +627,7 @@ MonthVeryShort11=11
 MonthVeryShort12=12
 AttachedFiles=الملفات والمستندات المرفقة
 JoinMainDoc=ضم إلى المستند الرئيسي
+JoinMainDocOrLastGenerated=أرسل المستند الرئيسي أو آخر مستند تم إنشاؤه إذا لم يتم العثور عليه
 DateFormatYYYYMM=YYYY-MM
 DateFormatYYYYMMDD=YYYY-MM-DD
 DateFormatYYYYMMDDHHMM=YYYY-MM-DD HH: SS
@@ -706,6 +718,7 @@ FeatureDisabled=ميزة معطلة
 MoveBox=نقل البريمج
 Offered=معروض
 NotEnoughPermissions=ليس لديك إذن بهذا الإجراء
+UserNotInHierachy=هذا الإجراء محجوز لمشرفي هذا المستخدم
 SessionName=اسم الجلسة
 Method=الطريقة
 Receive=استقبال
@@ -730,7 +743,7 @@ MenuMembers=أعضاء
 MenuAgendaGoogle=أجندة غوغل
 MenuTaxesAndSpecialExpenses=الضرائب | مصاريف خاصة
 ThisLimitIsDefinedInSetup=حدود دوليبار (Menu home-setup-security): %s كيلوبايت ، حد PHP: %s كيلوبايت
-ThisLimitIsDefinedInSetupAt=Dolibarr limit (Menu %s): %s Kb, PHP limit (Param %s): %s Kb
+ThisLimitIsDefinedInSetupAt=حد Dolibarr (القائمة %s): %s كيلوبايت ، حد PHP (Param %s): %s كيلوبايت
 NoFileFound=لم يتم رفع مستند
 CurrentUserLanguage=اللغة الحالية
 CurrentTheme=الواجهة الحالية
@@ -804,7 +817,7 @@ LinkToSupplierInvoice=ربط مع فاتورة المورد
 LinkToContract=ربط مع العقد
 LinkToIntervention=ربط مع التداخل
 LinkToTicket=ربط مع التذكرة
-LinkToMo=Link to Mo
+LinkToMo=رابط إلى Mo
 CreateDraft=إنشاء مسودة
 SetToDraft=العودة إلى المسودة
 ClickToEdit=انقر للتحرير
@@ -848,7 +861,7 @@ XMoreLines=%s بند (بنود) مخفي
 ShowMoreLines=عرض المزيد | أقل من البنود
 PublicUrl=URL العام
 AddBox=إضافة مربع
-SelectElementAndClick=Select an element and click on %s
+SelectElementAndClick=حدد عنصرًا وانقر فوق %s
 PrintFile=طباعة الملف %s
 ShowTransaction=عرض الإدخال في الحساب المصرفي
 ShowIntervention=عرض التدخل
@@ -859,8 +872,8 @@ Denied=مرفوض
 ListOf=قائمة %s
 ListOfTemplates=قائمة القوالب
 Gender=جنس
-Genderman=Male
-Genderwoman=Female
+Genderman=ذكر
+Genderwoman=أنثى
 Genderother=الآخر
 ViewList=عرض القائمة
 ViewGantt=عرض Gantt
@@ -906,7 +919,7 @@ ViewFlatList=عرض قائمة مسطحة
 ViewAccountList=عرض دفتر الأستاذ
 ViewSubAccountList=عرض دفتر الأستاذ الفرعي
 RemoveString=Remove string '%s'
-SomeTranslationAreUncomplete=قد تكون بعض اللغات المعروضة مترجمة جزئيًا فقط أو قد تحتوي على أخطاء. الرجاء المساعدة في تصحيح لغتك بالتسجيل في <a href="https://transifex.com/projects/p/dolibarr/" target="_blank"> https://transifex.com/projects/p/dolibarr/ </a> لإضافة تحسيناتك.
+SomeTranslationAreUncomplete=قد تكون بعض اللغات المعروضة مترجمة جزئيًا فقط أو قد تحتوي على أخطاء. الرجاء المساعدة في تصحيح لغتك بالتسجيل في <a href="https://transifex.com/projects/p/dolibarr/" target="_blank" rel="noopener noreferrer external"> https://transifex.com/projects/p/dolibarr/ </a> لإضافة تحسيناتك.
 DirectDownloadLink=رابط التحميل العام
 PublicDownloadLinkDesc=فقط مطلوب الرابط لتنزيل الملف
 DirectDownloadInternalLink=رابط التحميل الخاص
@@ -1075,7 +1088,7 @@ ValidFrom=صالح من
 ValidUntil=صالح حتى
 NoRecordedUsers=لايوجد مستخدمين
 ToClose=لغلق
-ToRefuse=To refuse
+ToRefuse=رفض
 ToProcess=لعملية
 ToApprove=للموافقة
 GlobalOpenedElemView=نظرة شاملة
@@ -1130,32 +1143,47 @@ UpdateForAllLines=تحديث لجميع البنود
 OnHold=في الانتظار
 Civility=Civility
 AffectTag=Affect Tag
-CreateExternalUser=Create external user
+CreateExternalUser=إنشاء مستخدم خارجي
 ConfirmAffectTag=Bulk Tag Affect
 ConfirmAffectTagQuestion=Are you sure you want to affect tags to the %s selected record(s)?
 CategTypeNotFound=لا يوجد ملصق لنوع السجل
 CopiedToClipboard=تم النسخ الى الحافظة
 InformationOnLinkToContract=هذا المبلغ هو مجموع بنود العقد . دون مراعاة قيمة الزمن
-ConfirmCancel=Are you sure you want to cancel
+ConfirmCancel=هل أنت متأكد أنك تريد إلغاء
 EmailMsgID=Email MsgID
-SetToEnabled=Set to enabled
-SetToDisabled=Set to disabled
-ConfirmMassEnabling=mass enabling confirmation
-ConfirmMassEnablingQuestion=Are you sure you want to enable the %s selected record(s)?
-ConfirmMassDisabling=mass disabling confirmation
-ConfirmMassDisablingQuestion=Are you sure you want to disable the %s selected record(s)?
-RecordsEnabled=%s record(s) enabled
-RecordsDisabled=%s record(s) disabled
-RecordEnabled=Record enabled
-RecordDisabled=Record disabled
-Forthcoming=Forthcoming
-Currently=Currently
-ConfirmMassLeaveApprovalQuestion=Are you sure you want to approve the %s selected record(s)?
-ConfirmMassLeaveApproval=Mass leave approval confirmation
-RecordAproved=Record approved
-RecordsApproved=%s Record(s) approved
-Properties=Properties
-hasBeenValidated=%s has been validated
+SetToEnabled=تعيين على تمكين
+SetToDisabled=تعيين إلى معطل
+ConfirmMassEnabling=تأكيد التمكين الشامل
+ConfirmMassEnablingQuestion=هل أنت متأكد من أنك تريد تمكين السجل (السجلات) المحدد %s؟
+ConfirmMassDisabling=تأكيد التعطيل الشامل
+ConfirmMassDisablingQuestion=هل أنت متأكد من أنك تريد تعطيل السجل (السجلات) المحدد %s؟
+RecordsEnabled=تم تمكين سجل (سجلات) %s
+RecordsDisabled=سجل (سجلات) %s معطل
+RecordEnabled=تم تمكين التسجيل
+RecordDisabled=سجل معطل
+Forthcoming=قادم، صريح، يظهر
+Currently=حالياً
+ConfirmMassLeaveApprovalQuestion=هل أنت متأكد من أنك تريد الموافقة على السجل (السجلات) المحددة %s؟
+ConfirmMassLeaveApproval=تأكيد الموافقة على الإجازة الجماعية
+RecordAproved=تمت الموافقة على السجل
+RecordsApproved=%s تمت الموافقة على السجلات
+Properties=الخصائص
+hasBeenValidated=تم التحقق من صحة %s
 ClientTZ=المنطقة الزمنية للعميل (المستخدم)
-NotClosedYet=Not yet closed
-ClearSignature=Signature reset
+NotClosedYet=لم تغلق بعد
+ClearSignature=إعادة تعيين التوقيع
+CanceledHidden=إلغاء المخفية
+CanceledShown=أظهرت ملغاة
+Terminate=تعطيل
+Terminated=تم إنهاؤه
+AddLineOnPosition=أضف سطرًا في الموضع (في النهاية إذا كان فارغًا)
+ConfirmAllocateCommercial=تعيين تأكيد مندوب المبيعات
+ConfirmAllocateCommercialQuestion=هل أنت متأكد من أنك تريد تعيين السجل (السجلات) المحددة %s؟
+CommercialsAffected=مندوبي المبيعات يتأثرون
+CommercialAffected=مندوب المبيعات يتأثر
+YourMessage=رسالتك
+YourMessageHasBeenReceived=وقد وردت الرسالة. سنقوم بالرد أو الاتصال بك في أقرب وقت ممكن.
+UrlToCheck=عنوان Url المراد التحقق منه
+Automation=أتمتة
+CreatedByEmailCollector=Created by Email collector
+CreatedByPublicPortal=Created from Public portal

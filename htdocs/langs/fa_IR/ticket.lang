@@ -90,10 +90,10 @@ TicketPublicAccess=یک رابط عمومی که بدون نیاز به تائی
 TicketSetupDictionaries=نوع برگه، حساسیت آن و کدهای تحلیلی از طریق واژه‌نامه‌ها قابل پیگربندی است
 TicketParamModule=برپاسازی متغیرهای واحد
 TicketParamMail=برپاسازی رایانامه
-TicketEmailNotificationFrom=رایانامۀ اطلاع‌رسانی از
-TicketEmailNotificationFromHelp=برای مثال استفاده شده برای پاسخ به برگه
-TicketEmailNotificationTo=رایانامۀ اطلاع‌رسانی به
-TicketEmailNotificationToHelp=ارسال رایانامۀ اطلاع‌رسانی به این نشانی.
+TicketEmailNotificationFrom=Sender e-mail for ticket answers
+TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationTo=Notify ticket creation to this e-mail address
+TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=پیام متنی ارسال شده پس از ساخت یک برگه
 TicketNewEmailBodyHelp=نوشته‌ای که اینجا وارد می‌شود، در رایانامه درج می‌شود تا تائید کنندۀ ساخت یک برگه از رابط عمومی باشد. اطلاعات مربوط به مشاوره‌های برگه به طور خودکار اضافه می‌شود.
 TicketParamPublicInterface=برپاسازی رابط عمومی
@@ -136,6 +136,18 @@ TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is 
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
+TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
+TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
+TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
+TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
+TicketChooseProductCategory=Product category for ticket support
+TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
+
 #
 # Index & list page
 #
@@ -151,6 +163,8 @@ OrderByDateAsc=Sort by ascending date
 OrderByDateDesc=Sort by descending date
 ShowAsConversation=Show as conversation list
 MessageListViewType=Show as table list
+ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
+ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 
 #
 # Ticket card
@@ -205,12 +219,12 @@ ErrorMailRecipientIsEmptyForSendTicketMessage=گیرنده خالی است. را
 TicketGoIntoContactTab=به زبانۀ "طرف‌های تماس" رفته تا آنان را انتخاب کنید
 TicketMessageMailIntro=مقدمه
 TicketMessageMailIntroHelp=این نوشته تنها در ابتدای رایانامه اضافه خواهد شد و قابل ذخیره نیست
-TicketMessageMailIntroLabelAdmin=مقدمۀ پیام در هنگام ارسال رایانامه
-TicketMessageMailIntroText=سلام، <br> یک پاسخ جدید به برگۀ‌پشتیبانی مربوط به شما ارسال شده است. پیام به شرح زیر است:<br>
-TicketMessageMailIntroHelpAdmin=نوشته قبل از متن پاسخ به یک برگۀ‌پشتیبانی اضافه خواهد شد
+TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
+TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
 TicketMessageMailSignature=امضا
 TicketMessageMailSignatureHelp=این نوشته در انتهای متن رایانامه آمده و ذخیره نخواهد شد.
-TicketMessageMailSignatureText=<p>با احترام،</p><p>--</p>
+TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailSignatureLabelAdmin=امضای نامۀ پاسخ
 TicketMessageMailSignatureHelpAdmin=این نوشته پس از پیام پاسخ درج خواهد شد
 TicketMessageHelp=تنها این نوشته در فهرست پیام در کارت برگۀ‌پشتیبانی ذخیره خواهد شد
@@ -238,9 +252,16 @@ TicketChangeStatus=تغییر وضعیت
 TicketConfirmChangeStatus=تائید تغییر وضعیت به: %s ؟
 TicketLogStatusChanged=وضعیت تغییر پیدا کرد: %s به %s
 TicketNotNotifyTiersAtCreate=عدم اطلاع‌رسانی به شرکت در هنگام ساخت
+NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
+TicketNotifyAllTiersAtClose=All related contacts
+TicketNotNotifyTiersAtClose=No related contact
 Unread=خوانده نشده
 TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
 ErrorTicketRefRequired=Ticket reference name is required
+TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
+TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
+TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
+TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 
 #
 # Logs
@@ -268,8 +289,9 @@ TicketNewEmailBody=این یک رایانامۀ خودکار است که به ش
 TicketNewEmailBodyCustomer=این یک رایانامۀ خودکار است که تاکید می‌کند که یک برگۀ‌پشتیبانی در حساب‌کاربری شما ساخته شده است. 
 TicketNewEmailBodyInfosTicket=اطلاعات برای زیرنظرگرفتن برگۀ‌پشتیبانی
 TicketNewEmailBodyInfosTrackId=شمارۀ رهگیری برگه: %s
-TicketNewEmailBodyInfosTrackUrl=شما می‌توانید میزان پیش‌رفت برگه را با کلیک بر روی پیوند فوق ببینید.
+TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
 TicketNewEmailBodyInfosTrackUrlCustomer=شما می‌توانید میزان پیش‌رفت برگه را در یک رابط اختصاصی با کلیک بر روی پیوند خود مشاهده کنید
+TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=لطفا این رایانامه را مستقیما جواب ندهید! برای پاسخ دادن در رابط اختصاصی، روی پیوند کلیک نمائید
 TicketPublicInfoCreateTicket=این برگه به شما امکان ثبت یک برگۀ پشتیبانی در سامانۀ مدیریت ما را می‌دهد.
 TicketPublicPleaseBeAccuratelyDescribe=لطفا مشکل را با دقت توضیح دهید. حداکثر اطلاعاتی که ممکن است درج کنید تا ما بتوانیم درخواست شما را به‌درستی تشخیص دهیم.
@@ -291,6 +313,10 @@ NewUser=کاربر جدید
 NumberOfTicketsByMonth=تعداد برگه‌های پشتیبانی در ماه
 NbOfTickets=تعداد برگه‌های پشتیبانی
 # notifications
+TicketCloseEmailSubjectCustomer=Ticket closed
+TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
+TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
+TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
 TicketNotificationEmailSubject=برگۀ‌پشتیبانی %s روزآمد شد
 TicketNotificationEmailBody=این پیام خودکار جهت اطلاع شما در خصوص روزآمد شدن برگۀ %s است
 TicketNotificationRecipient=گیرندۀ آگاهی‌رسانی

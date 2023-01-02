@@ -25,6 +25,7 @@
 
 if (! defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
@@ -66,8 +67,8 @@ if ($module == 'ecm') {
 }
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -85,25 +86,25 @@ if (!$sortfield) {
 $ecmdir = new EcmDirectory($db);
 if (!empty($section)) {
 	$result = $ecmdir->fetch($section);
-	if (!$result > 0) {
+	if (!($result > 0)) {
 		dol_print_error($db, $ecmdir->error);
 		exit;
 	}
 }
 
 // Permissions
-$permtoadd = 0;
-$permtoupload = 0;
+$permissiontoadd = 0;
+$permissiontoupload = 0;
 if ($module == 'ecm') {
-	$permtoadd = $user->rights->ecm->setup;
-	$permtoupload = $user->rights->ecm->upload;
+	$permissiontoadd = $user->rights->ecm->setup;
+	$permissiontoupload = $user->rights->ecm->upload;
 }
 if ($module == 'medias') {
-	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
-	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permissiontoadd = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permissiontoupload = ($user->rights->mailing->creer || $user->rights->website->write);
 }
 
-if (!$permtoadd) {
+if (!$permissiontoadd) {
 	accessforbidden();
 }
 
@@ -114,7 +115,7 @@ if (!$permtoadd) {
  */
 
 // Action ajout d'un produit ou service
-if ($action == 'add' && $permtoadd) {
+if ($action == 'add' && $permissiontoadd) {
 	if ($cancel) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
@@ -188,7 +189,7 @@ if ($action == 'add' && $permtoadd) {
 			exit;
 		}
 	}
-} elseif ($action == 'confirm_deletesection' && $confirm == 'yes' && $permtoadd) {
+} elseif ($action == 'confirm_deletesection' && $confirm == 'yes' && $permissiontoadd) {
 	// Deleting file
 	$result = $ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
@@ -230,7 +231,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 
 	// Label
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth100" maxlength="32" value="'.$ecmdir->label.'" autofocus></td></tr>'."\n";
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth100" maxlength="32" value="'.(GETPOST("label", 'alpha') ? GETPOST("label", 'alpha') : $ecmdir->label).'" autofocus></td></tr>'."\n";
 
 	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 	print $formecm->selectAllSections((GETPOST("catParent", 'alpha') ? GETPOST("catParent", 'alpha') : $ecmdir->fk_parent), 'catParent', $module);
@@ -282,11 +283,10 @@ if (empty($action) || $action == 'delete_section') {
 
 	// Actions buttons
 	print '<div class="tabsAction">';
-	if ($user->rights->ecm->setup) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_section&token='.newToken().'">'.$langs->trans('Delete').'</a>';
-	} else {
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
-	}
+
+	// Delete
+	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->ecm->setup);
+
 	print '</div>';
 }
 

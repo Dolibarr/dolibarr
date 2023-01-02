@@ -527,7 +527,7 @@ function createProductOrService($authentication, $product)
 		$newobject->label = empty($product['label']) ? '' : $product['label'];
 		$newobject->description = empty($product['description']) ? '' : $product['description'];
 		$newobject->note_public = empty($product['note_public']) ? '' : $product['note_public'];
-		$newobject->note_private = empty($product['note_private']) ? '' :$product['note_private'];
+		$newobject->note_private = empty($product['note_private']) ? '' : $product['note_private'];
 		$newobject->status = empty($product['status_tosell']) ? 0 : $product['status_tosell'];
 		$newobject->status_buy = empty($product['status_tobuy']) ? 0 : $product['status_tobuy'];
 		$newobject->price = isset($product['price_net']) ? $product['price_net'] : 0;
@@ -962,7 +962,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
  * Get list of products for a category
  *
  * @param	array		$authentication		Array of authentication information
- * @param	array		$id					Category id
+ * @param	int			$id					Category id
  * @param	Translate	$lang				Force lang
  * @return	array							Array result
  */

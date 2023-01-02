@@ -77,8 +77,8 @@ class mailing_xinputfile extends MailingTargets
 	 *	For example if this selector is used to extract 500 different
 	 *	emails from a text file, this function must return 500.
 	 *
-	 *  @param      string	$sql        Sql request to count
-	 *	@return		string				'' means NA
+	 *  @param      string			$sql        Sql request to count
+	 *  @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
@@ -110,6 +110,11 @@ class mailing_xinputfile extends MailingTargets
 		global $langs;
 
 		$s = '';
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxmin = $maxfilesizearray['maxmin'];
+		if ($maxmin > 0) {
+			$s .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
 		$s .= '<input type="file" name="username" class="flat">';
 		return $s;
 	}
@@ -151,10 +156,12 @@ class mailing_xinputfile extends MailingTargets
 						$cpt++;
 						$buffer = trim(fgets($handle));
 						$tab = explode(';', $buffer, 4);
-						$email = $tab[0];
-						$name = $tab[1];
-						$firstname = $tab[2];
-						$other = $tab[3];
+
+						$email = dol_string_nohtmltag($tab[0]);
+						$name = dol_string_nohtmltag(empty($tab[1]) ? '' : $tab[1]);
+						$firstname = dol_string_nohtmltag(empty($tab[2]) ? '' : $tab[2]);
+						$other = dol_string_nohtmltag(empty($tab[3]) ? '' : $tab[3]);
+
 						if (!empty($buffer)) {
 							//print 'xx'.dol_strlen($buffer).empty($buffer)."<br>\n";
 							if (isValidEMail($email)) {

@@ -23,6 +23,7 @@
  *  \brief      Card of accounting account
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
@@ -32,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 $error = 0;
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "accountancy", "compta"));
+$langs->loadLangs(array('accountancy', 'bills', 'compta'));
 
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -48,7 +49,7 @@ $label = GETPOST('label', 'alpha');
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->rights->accounting->chartofaccount) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -61,12 +62,12 @@ $object = new AccountingAccount($db);
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$urltogo = $backtopage ? $backtopage : dol_buildpath('/accountancy/admin/account.php', 1);
+	$urltogo = $backtopage ? $backtopage : DOL_URL_ROOT.'/accountancy/admin/account.php';
 	header("Location: ".$urltogo);
 	exit;
 }
 
-if ($action == 'add' && $user->rights->accounting->chartofaccount) {
+if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 	if (!$cancel) {
 		if (!$account_number) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
@@ -75,7 +76,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 			$action = 'create';
 		} else {
-			$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid='.((int) $conf->global->CHARTOFACCOUNTS);
+			$sql = "SELECT pcg_version FROM " . MAIN_DB_PREFIX . "accounting_system WHERE rowid = ".((int) $conf->global->CHARTOFACCOUNTS);
 
 			dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
 			$result = $db->query($sql);
@@ -84,7 +85,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount) {
 			// Clean code
 
 			// To manage zero or not at the end of the accounting account
-			if ($conf->global->ACCOUNTING_MANAGE_ZERO == 1) {
+			if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
 				$account_number = $account_number;
 			} else {
 				$account_number = clean_account($account_number);
@@ -121,13 +122,13 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount) {
 			}
 			if (!$error) {
 				setEventMessages("RecordCreatedSuccessfully", null, 'mesgs');
-				$urltogo = $backtopage ? $backtopage : dol_buildpath('/accountancy/admin/account.php', 1);
+				$urltogo = $backtopage ? $backtopage : DOL_URL_ROOT.'/accountancy/admin/account.php';
 				header("Location: " . $urltogo);
 				exit;
 			}
 		}
 	}
-} elseif ($action == 'edit' && $user->rights->accounting->chartofaccount) {
+} elseif ($action == 'edit' && $user->hasRight('accounting', 'chartofaccount')) {
 	if (!$cancel) {
 		if (!$account_number) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountNumber")), null, 'errors');
@@ -138,7 +139,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount) {
 		} else {
 			$result = $object->fetch($id);
 
-			$sql = 'SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid='.((int) $conf->global->CHARTOFACCOUNTS);
+			$sql = "SELECT pcg_version FROM ".MAIN_DB_PREFIX."accounting_system WHERE rowid=".((int) $conf->global->CHARTOFACCOUNTS);
 
 			dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
 			$result2 = $db->query($sql);
@@ -147,7 +148,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount) {
 			// Clean code
 
 			// To manage zero or not at the end of the accounting account
-			if (isset($conf->global->ACCOUNTING_MANAGE_ZERO) && $conf->global->ACCOUNTING_MANAGE_ZERO == 1) {
+			if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
 				$account_number = $account_number;
 			} else {
 				$account_number = clean_account($account_number);
@@ -168,10 +169,13 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount) {
 			$object->labelshort = GETPOST('labelshort', 'alpha');
 
 			$result = $object->update($user);
+
 			if ($result > 0) {
 				$urltogo = $backtopage ? $backtopage : ($_SERVER["PHP_SELF"] . "?id=" . $id);
 				header("Location: " . $urltogo);
 				exit();
+			} elseif ($result == -2) {
+				setEventMessages($langs->trans("ErrorAccountNumberAlreadyExists", $object->account_number), null, 'errors');
 			} else {
 				setEventMessages($object->error, null, 'errors');
 			}
@@ -181,7 +185,7 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount) {
 		header("Location: ".$urltogo);
 		exit();
 	}
-} elseif ($action == 'delete' && $user->rights->accounting->chartofaccount) {
+} elseif ($action == 'delete' && $user->hasRight('accounting', 'chartofaccount')) {
 	$result = $object->fetch($id);
 
 	if (!empty($object->id)) {
@@ -257,7 +261,20 @@ if ($action == 'create') {
 	print $form->textwithpicto($langs->trans("Pcgtype"), $langs->transnoentitiesnoconv("PcgtypeDesc"));
 	print '</td>';
 	print '<td>';
-	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+	print '<input type="text" name="pcg_type" list="pcg_type_datalist" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+	// autosuggest from existing account types if found
+	print '<datalist id="pcg_type_datalist">';
+	$sql = "SELECT DISTINCT pcg_type FROM " . MAIN_DB_PREFIX . "accounting_account";
+	$sql .= " WHERE fk_pcg_version = '" . $db->escape($accountsystem->ref) . "'";
+	$sql .= ' AND entity in ('.getEntity('accounting_account', 0).')';		// Always limit to current entity. No sharing in accountancy.
+	$sql .= ' LIMIT 50000'; // just as a sanity check
+	$resql = $db->query($sql);
+	if ($resql) {
+		while ($obj = $db->fetch_object($resql)) {
+			print '<option value="' . dol_escape_htmltag($obj->pcg_type) . '">';
+		}
+	}
+	print '</datalist>';
 	print '</td></tr>';
 
 	// Category
@@ -287,7 +304,7 @@ if ($action == 'create') {
 
 		// Edit mode
 		if ($action == 'update') {
-			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
+			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'accounting_account');
 
 			print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -312,7 +329,8 @@ if ($action == 'create') {
 			// Account parent
 			print '<tr><td>'.$langs->trans("Accountparent").'</td>';
 			print '<td>';
-			print $formaccounting->select_account($object->account_parent, 'account_parent', 1);
+			// Note: We accept disabled account as parent account so we can build a hierarchy and use only childs
+			print $formaccounting->select_account($object->account_parent, 'account_parent', 1, array(), 0, 0, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1, '');
 			print '</td></tr>';
 
 			// Chart of accounts type
@@ -320,7 +338,20 @@ if ($action == 'create') {
 			print $form->textwithpicto($langs->trans("Pcgtype"), $langs->transnoentitiesnoconv("PcgtypeDesc"));
 			print '</td>';
 			print '<td>';
-			print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+			print '<input type="text" name="pcg_type" list="pcg_type_datalist" value="'.dol_escape_htmltag(GETPOSTISSET('pcg_type') ? GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
+			// autosuggest from existing account types if found
+			print '<datalist id="pcg_type_datalist">';
+			$sql = 'SELECT DISTINCT pcg_type FROM ' . MAIN_DB_PREFIX . 'accounting_account';
+			$sql .= " WHERE fk_pcg_version = '" . $db->escape($accountsystem->ref) . "'";
+			$sql .= ' AND entity in ('.getEntity('accounting_account', 0).')';		// Always limit to current entity. No sharing in accountancy.
+			$sql .= ' LIMIT 50000'; // just as a sanity check
+			$resql = $db->query($sql);
+			if ($resql) {
+				while ($obj = $db->fetch_object($resql)) {
+					print '<option value="' . dol_escape_htmltag($obj->pcg_type) . '">';
+				}
+			}
+			print '</datalist>';
 			print '</td></tr>';
 
 			// Category
@@ -335,18 +366,14 @@ if ($action == 'create') {
 
 			print dol_get_fiche_end();
 
-			print '<div class="center">';
-			print '<input type="submit" class="button button-save" value="'.$langs->trans("Save").'">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-			print '<input type="submit" name="cancel" class="button button-cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
+			print $form->buttonsSaveCancel();
 
 			print '</form>';
 		} else {
 			// View mode
 			$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), -1, 'billr');
+			print dol_get_fiche_head($head, 'card', $langs->trans('AccountAccounting'), -1, 'accounting_account');
 
 			dol_banner_tab($object, 'ref', $linkback, 1, 'account_number', 'ref');
 
@@ -394,17 +421,15 @@ if ($action == 'create') {
 			 */
 			print '<div class="tabsAction">';
 
-			if (!empty($user->rights->accounting->chartofaccount)) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=update&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
+			if ($user->hasRight('accounting', 'chartofaccount')) {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=update&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
 			}
 
-			if (!empty($user->rights->accounting->chartofaccount)) {
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$id.'">'.$langs->trans('Delete').'</a>';
-			} else {
-				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Delete').'</a>';
-			}
+			// Delete
+			$permissiontodelete = $user->hasRight('accounting', 'chartofaccount');
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 
 			print '</div>';
 		}

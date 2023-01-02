@@ -24,10 +24,15 @@
  *	\brief      Page with info about salaries contribution
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm"));
@@ -36,28 +41,79 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-$object = new Salary($db);
-if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref);
-}
+$label = GETPOST('label', 'alphanohtml');
+$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+$object = new Salary($db);
+$extrafields = new ExtraFields($db);
+
+$childids = $user->getAllChildIds(1);
+
+// fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('salaryinfo', 'globalcard'));
+
+$object = new Salary($db);
+if ($id > 0 || !empty($ref)) {
+	$object->fetch($id, $ref);
+
+	// Check current user can read this salary
+	$canread = 0;
+	if (!empty($user->rights->salaries->readall)) {
+		$canread = 1;
+	}
+	if (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if (!$canread) {
+		accessforbidden();
+	}
+}
+
 restrictedArea($user, 'salaries', $object->id, 'salary', '');
+
+$permissiontoread = $user->rights->salaries->read;
+$permissiontoadd = $user->rights->salaries->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
+$permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+
+
+/*
+ * Actions
+ */
+
+// Link to a project
+if ($action == 'classin' && $user->rights->banque->modifier) {
+	$object->fetch($id);
+	$object->setProject($projectid);
+}
+
+// set label
+if ($action == 'setlabel' && $user->rights->salaries->write) {
+	$object->fetch($id);
+	$object->label = $label;
+	$object->update($user);
+}
+
 
 
 /*
  * View
  */
 
+if (isModEnabled('project')) $formproject = new FormProjets($db);
+
 $title = $langs->trans('Salary')." - ".$langs->trans('Info');
 $help_url = "";
 llxHeader("", $title, $help_url);
 
-$object = new Salary($db);
 $object->fetch($id);
 $object->info($id);
 
@@ -72,7 +128,47 @@ $morehtmlref = '<div class="refidno">';
 $userstatic = new User($db);
 $userstatic->fetch($object->fk_user);
 
-$morehtmlref .= $langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+
+// Label
+if ($action != 'editlabel') {
+	$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+	$morehtmlref .= $object->label;
+} else {
+	$morehtmlref .= $langs->trans('Label').' :&nbsp;';
+	$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	$morehtmlref .= '<input type="hidden" name="action" value="setlabel">';
+	$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+	$morehtmlref .= '<input type="text" name="label" value="'.$object->label.'"/>';
+	$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+	$morehtmlref .= '</form>';
+}
+
+$morehtmlref .= '<br>'.$langs->trans('Employee').' : '.$userstatic->getNomUrl(-1);
+
+$usercancreate = $permissiontoadd;
+
+// Project
+if (isModEnabled('project')) {
+	$langs->load("projects");
+	$morehtmlref .= '<br>';
+	if ($usercancreate) {
+		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
+		if ($action != 'classify') {
+			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+		}
+		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+	} else {
+		if (!empty($object->fk_project)) {
+			$proj = new Project($db);
+			$proj->fetch($object->fk_project);
+			$morehtmlref .= $proj->getNomUrl(1);
+			if ($proj->title) {
+				$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+			}
+		}
+	}
+}
+
 $morehtmlref .= '</div>';
 
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
@@ -82,7 +178,7 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<br>';
 
-print '<table width="100%"><tr><td>';
+print '<table class="centpercent"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 

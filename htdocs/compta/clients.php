@@ -23,6 +23,7 @@
  *	\brief      Show list of customers to add an new invoice
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -45,8 +46,8 @@ $langs->load("companies");
 $mode = GETPOST("mode");
 
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -94,16 +95,16 @@ if ($mode == 'search') {
 
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea";
 $sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", sc.fk_soc, sc.fk_user ";
 }
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE s.fk_stcomm = st.id AND s.client in (1, 3)";
 $sql .= " AND s.entity IN (".getEntity('societe').")";
-if (!$user->rights->societe->client->voir && !$socid) {
+if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if (dol_strlen($stcomm)) {
@@ -132,7 +133,7 @@ if ($resql) {
 
 	$langs->load('commercial');
 
-	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
+	print_barre_liste($langs->trans("Customers"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 

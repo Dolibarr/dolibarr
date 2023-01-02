@@ -484,9 +484,9 @@ ALTER TABLE llx_delivery DROP FOREIGN KEY  fk_livraison_fk_user_author;
 ALTER TABLE llx_delivery DROP FOREIGN KEY  fk_livraison_fk_user_valid;
 
 -- add constraint
-ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_soc			FOREIGN KEY (fk_soc)			REFERENCES llx_societe (rowid);
-ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_author	FOREIGN KEY (fk_user_author)	REFERENCES llx_user (rowid);
-ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_valid	FOREIGN KEY (fk_user_valid)	REFERENCES llx_user (rowid);
+ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_author FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
+ALTER TABLE llx_delivery ADD CONSTRAINT fk_delivery_fk_user_valid FOREIGN KEY (fk_user_valid) REFERENCES llx_user (rowid);
 
 ALTER TABLE llx_deliverydet DROP FOREIGN KEY  fk_livraisondet_fk_livraison;
 ALTER TABLE llx_deliverydet DROP INDEX idx_livraisondet_fk_expedition;
@@ -568,6 +568,7 @@ INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES
 
 ALTER TABLE llx_product_fournisseur_price ADD COLUMN packaging varchar(64) DEFAULT NULL;
 ALTER TABLE llx_product_fournisseur_price MODIFY COLUMN packaging varchar(64) DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product_fournisseur_price ALTER COLUMN packaging DROP DEFAULT;
 
 ALTER TABLE llx_projet ADD COLUMN fk_opp_status_end integer DEFAULT NULL;
 

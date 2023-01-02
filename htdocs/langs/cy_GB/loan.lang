@@ -1,0 +1,34 @@
+# Dolibarr language file - Source file is en_US - loan
+Loan=Benthyciad
+Loans=Benthyciadau
+NewLoan=Benthyciad Newydd
+ShowLoan=Benthyciad Dangos
+PaymentLoan=Taliad benthyciad
+LoanPayment=Taliad benthyciad
+ShowLoanPayment=Dangos Taliad Benthyciad
+LoanCapital=Cyfalaf
+Insurance=Yswiriant
+Interest=Llog
+Nbterms=Nifer y termau
+Term=Tymor
+LoanAccountancyCapitalCode=Cyfalaf cyfrif cyfrifo
+LoanAccountancyInsuranceCode=Yswiriant cyfrif cyfrifeg
+LoanAccountancyInterestCode=Llog cyfrif cyfrifeg
+ConfirmDeleteLoan=Cadarnhewch ddileu'r benthyciad hwn
+LoanDeleted=Benthyciad wedi'i Dileu'n Llwyddiannus
+ConfirmPayLoan=Cadarnhewch y talwyd y benthyciad hwn gan y dosbarth
+LoanPaid=Benthyciad a Dalwyd
+ListLoanAssociatedProject=Rhestr o fenthyciadau sy'n gysylltiedig â'r prosiect
+AddLoan=Creu benthyciad
+FinancialCommitment=Ymrwymiad ariannol
+InterestAmount=Llog
+CapitalRemain=Cyfalaf yn aros
+TermPaidAllreadyPaid = Mae'r tymor hwn eisoes wedi'i dalu
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantModifyInterestIfScheduleIsUsed = Ni allwch addasu llog os ydych yn defnyddio amserlen
+# Admin
+ConfigLoan=Ffurfwedd y benthyciad modiwl
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cyfalaf cyfrif cyfrifo yn ddiofyn
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Llog cyfrif cyfrifeg yn ddiofyn
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Yswiriant cyfrif cyfrifo yn ddiofyn
+CreateCalcSchedule=Golygu ymrwymiad ariannol

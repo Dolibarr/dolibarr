@@ -23,6 +23,7 @@
  *  \ingroup    cron
  *  \brief      Execute pendings jobs
  */
+
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1'); // Disables token renewal
 }
@@ -40,6 +41,11 @@ if (!defined('NOLOGIN')) {
 }
 if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+
+// So log file will have a suffix
+if (!defined('USESUFFIXINLOG')) {
+	define('USESUFFIXINLOG', '_cron');
 }
 
 // For MultiCompany module.
@@ -67,6 +73,10 @@ global $langs, $conf;
 // Language Management
 $langs->loadLangs(array("admin", "cron", "dict"));
 
+// Security check
+if (empty($conf->cron->enabled)) {
+	httponly_accessforbidden('Module Cron not enabled');
+}
 
 
 
@@ -83,7 +93,7 @@ if (empty($key)) {
 	echo 'Securitykey is required. Check setup of cron jobs module.';
 	exit;
 }
-if ($key != $conf->global->CRON_KEY) {
+if ($key != getDolGlobalString('CRON_KEY')) {
 	echo 'Securitykey is wrong.';
 	exit;
 }
@@ -125,7 +135,7 @@ if (!empty($id)) {
 	$filter['t.rowid'] = $id;
 }
 
-$result = $object->fetch_all('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
+$result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result < 0) {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php fetch Error".$object->error, LOG_ERR);

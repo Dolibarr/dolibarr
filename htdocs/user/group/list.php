@@ -25,6 +25,7 @@
  *      \brief      Page of user groups
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
@@ -38,10 +39,10 @@ $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choi
 $contextpage = GETPOST('optioncss', 'aZ09');
 
 // Defini si peux lire/modifier utilisateurs et permisssions
-$caneditperms = ($user->admin || $user->rights->user->user->creer);
+$caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
 // Advanced permissions
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$caneditperms = ($user->admin || $user->rights->user->group_advance->write);
+	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
 }
 
 // Load variable for pagination
@@ -70,17 +71,17 @@ $fieldstosearchall = array(
 );
 
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	if (!$user->rights->user->group_advance->read && !$user->admin) {
+	if (!$user->hasRight("user", "group_advance", "read") && !$user->admin) {
 		accessforbidden();
 	}
 }
 
 // Users/Groups management only in master entity if transverse mode
-if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
+if (isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
 	accessforbidden();
 }
 
-if (!$user->rights->user->user->lire && !$user->admin) {
+if (!$user->hasRight("user", "user", "read") && !$user->admin) {
 	accessforbidden();
 }
 
@@ -92,7 +93,7 @@ if (!$user->rights->user->user->lire && !$user->admin) {
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list'; $massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
@@ -120,14 +121,15 @@ if (empty($reshook)) {
 /*
  * View
  */
-
-llxHeader();
+$title = $langs->trans("UserGroups");
+$help_url="";
+llxHeader('', $title, $help_url);
 
 $sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, g.tms as datem, COUNT(DISTINCT ugu.fk_user) as nb, COUNT(DISTINCT ugr.fk_id) as nbpermissions";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_rights as ugr ON ugr.fk_usergroup = g.rowid";
-if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity))) {
+if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
 	$sql .= " WHERE g.entity IS NOT NULL";
 } else {
 	$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
@@ -154,7 +156,7 @@ if ($resql) {
 		$param .= '&amp;optioncss='.$optioncss;
 	}
 
-	$text = $langs->trans("ListOfGroups");
+	$text = $langs->trans("UserGroups");
 
 	$newcardbutton = '';
 	if ($caneditperms) {
@@ -191,7 +193,7 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Group", $_SERVER["PHP_SELF"], "g.nom", $param, "", "", $sortfield, $sortorder);
 	//multicompany
-	if (!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
+	if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
 		print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], "g.entity", $param, "", '', $sortfield, $sortorder, 'center ');
 	}
 	print_liste_field_titre("NbOfUsers", $_SERVER["PHP_SELF"], "nb", $param, "", '', $sortfield, $sortorder, 'center ');
@@ -213,14 +215,14 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		print '<td>';
 		print $grouptemp->getNomUrl(1);
-		if (!$obj->entity) {
+		if (isModEnabled('multicompany') && !$obj->entity) {
 			print img_picto($langs->trans("GlobalGroup"), 'redstar');
 		}
 		print "</td>";
 		//multicompany
-		if (!empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
+		if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
 			$mc->getInfo($obj->entity);
-			print '<td class="center">'.$mc->label.'</td>';
+			print '<td class="center">'.dol_escape_htmltag($mc->label).'</td>';
 		}
 		print '<td class="center">'.$obj->nb.'</td>';
 		print '<td class="center">';

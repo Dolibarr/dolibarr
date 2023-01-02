@@ -60,7 +60,7 @@ class box_birthdays_members extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->adherent->lire && empty($user->socid));
+		$this->hidden = !($user->hasRight("adherent", "lire") && empty($user->socid));
 	}
 
 	/**
@@ -104,7 +104,6 @@ class box_birthdays_members extends ModeleBoxes
 					$memberstatic->id = $objp->rowid;
 					$memberstatic->firstname = $objp->firstname;
 					$memberstatic->lastname = $objp->lastname;
-					$memberstatic->email = $objp->email;
 					$dateb = $this->db->jdate($objp->birth);
 					$age = date('Y', dol_now()) - date('Y', $dateb);
 
@@ -128,7 +127,7 @@ class box_birthdays_members extends ModeleBoxes
 				}
 
 				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"', 'text'=>$langs->trans("None"));
+					$this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text' => '<span class="opacitymedium">'.$langs->trans("None").'</span>');
 				}
 
 				$this->db->free($result);
@@ -141,8 +140,8 @@ class box_birthdays_members extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

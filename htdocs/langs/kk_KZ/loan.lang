@@ -24,7 +24,7 @@ FinancialCommitment=Қаржылық міндеттеме
 InterestAmount=Қызығушылық
 CapitalRemain=Капитал қалады
 TermPaidAllreadyPaid = Бұл мерзім толығымен төленген
-CantUseScheduleWithLoanStartedToPaid = Төлем басталған кезде несие үшін жоспарлаушыны пайдалану мүмкін емес
+CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
 CantModifyInterestIfScheduleIsUsed = Егер сіз кестені қолдансаңыз, қызығушылықты өзгерте алмайсыз
 # Admin
 ConfigLoan=Кредиттік модульді конфигурациялау

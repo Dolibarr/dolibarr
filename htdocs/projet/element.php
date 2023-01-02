@@ -29,6 +29,7 @@
  *		\brief      Page of project referrers
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
@@ -36,93 +37,93 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 }
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
-if (!empty($conf->supplier_proposal->enabled)) {
+if (isModEnabled('supplier_proposal')) {
 	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 }
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_invoice->enabled)) {
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_invoice")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 }
-if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_order->enabled)) {
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
-if (!empty($conf->contrat->enabled)) {
+if (isModEnabled('contrat')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
-if (!empty($conf->expedition->enabled)) {
+if (isModEnabled("expedition")) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
-if (!empty($conf->deplacement->enabled)) {
+if (isModEnabled('deplacement')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 }
-if (!empty($conf->expensereport->enabled)) {
+if (isModEnabled('expensereport')) {
 	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 }
-if (!empty($conf->agenda->enabled)) {
+if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
-if (!empty($conf->don->enabled)) {
+if (isModEnabled('don')) {
 	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 }
 if (!empty($conf->loan->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 }
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 }
-if (!empty($conf->tax->enabled)) {
+if (isModEnabled('tax')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 }
-if (!empty($conf->banque->enabled)) {
+if (isModEnabled("banque")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 }
 if (!empty($conf->salaries->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 }
-if (!empty($conf->categorie->enabled)) {
+if (isModEnabled('categorie')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
-if (!empty($conf->mrp->enabled)) {
+if (isModEnabled('mrp')) {
 	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
-if (!empty($conf->facture->enabled)) {
+if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
-if (!empty($conf->commande->enabled)) {
+if (isModEnabled('commande')) {
 	$langs->load("orders");
 }
-if (!empty($conf->propal->enabled)) {
+if (isModEnabled("propal")) {
 	$langs->load("propal");
 }
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	$langs->load("interventions");
 }
-if (!empty($conf->deplacement->enabled)) {
+if (isModEnabled('deplacement')) {
 	$langs->load("trips");
 }
-if (!empty($conf->expensereport->enabled)) {
+if (isModEnabled('expensereport')) {
 	$langs->load("trips");
 }
-if (!empty($conf->don->enabled)) {
+if (isModEnabled('don')) {
 	$langs->load("donations");
 }
 if (!empty($conf->loan->enabled)) {
@@ -131,10 +132,10 @@ if (!empty($conf->loan->enabled)) {
 if (!empty($conf->salaries->enabled)) {
 	$langs->load("salaries");
 }
-if (!empty($conf->mrp->enabled)) {
+if (isModEnabled('mrp')) {
 	$langs->load("mrp");
 }
-if (!empty($conf->eventorganization->enabled)) {
+if (isModEnabled('eventorganization')) {
 	$langs->load("eventorganization");
 }
 
@@ -216,13 +217,13 @@ $morehtmlref = '<div class="refidno">';
 // Title
 $morehtmlref .= $object->title;
 // Thirdparty
-if ($object->thirdparty->id > 0) {
-	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
+	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'project');
 }
 $morehtmlref .= '</div>';
 
 // Define a complementary filter for search of next/prev ref.
-if (!$user->rights->projet->all->lire) {
+if (empty($user->rights->projet->all->lire)) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 	$object->next_prev_filter = " te.rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 }
@@ -237,7 +238,7 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border tableforfield centpercent">';
 
 // Usage
-if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || !empty($conf->eventorganization->enabled)) {
+if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
 	print '<tr><td class="tdtop">';
 	print $langs->trans("Usage");
 	print '</td>';
@@ -260,7 +261,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PRO
 		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
 		print '<br>';
 	}
-	if (!empty($conf->eventorganization->enabled)) {
+	if (isModEnabled('eventorganization')) {
 		print '<input type="checkbox" disabled name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_organize_event ? ' checked="checked"' : '')).'"> ';
 		$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 		print $form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext);
@@ -271,8 +272,10 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PRO
 // Visibility
 print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 if ($object->public) {
+	print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 	print $langs->trans('SharedProject');
 } else {
+	print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
 	print $langs->trans('PrivateProject');
 }
 print '</td></tr>';
@@ -296,13 +299,23 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
 	// Opportunity Amount
 	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
 	if (strcmp($object->opp_amount, '')) {
-		print price($object->opp_amount, '', $langs, 1, 0, 0, $conf->currency);
+		print '<span class="amount">'.price($object->opp_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
+		if (strcmp($object->opp_percent, '')) {
+			print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+		}
 	}
 	print '</td></tr>';
 }
 
-// Date start - end
-print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+// Budget
+print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+if (strcmp($object->budget_amount, '')) {
+	print '<span class="amount">'.price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency).'</span>';
+}
+print '</td></tr>';
+
+// Date start - end project
+print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 $start = dol_print_date($object->date_start, 'day');
 print ($start ? $start : '?');
 $end = dol_print_date($object->date_end, 'day');
@@ -310,13 +323,6 @@ print ' - ';
 print ($end ? $end : '?');
 if ($object->hasDelay()) {
 	print img_warning("Late");
-}
-print '</td></tr>';
-
-// Budget
-print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-if (strcmp($object->budget_amount, '')) {
-	print price($object->budget_amount, '', $langs, 1, 0, 0, $conf->currency);
 }
 print '</td></tr>';
 
@@ -328,10 +334,9 @@ print '</table>';
 
 print '</div>';
 print '<div class="fichehalfright">';
-print '<div class="ficheaddleft">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border tableforfield" width="100%">';
+print '<table class="border tableforfield centpercent">';
 
 // Description
 print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
@@ -339,7 +344,7 @@ print nl2br($object->description);
 print '</td></tr>';
 
 // Categories
-if ($conf->categorie->enabled) {
+if (isModEnabled('categorie')) {
 	print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 	print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 	print "</td></tr>";
@@ -347,7 +352,6 @@ if ($conf->categorie->enabled) {
 
 print '</table>';
 
-print '</div>';
 print '</div>';
 print '</div>';
 
@@ -372,8 +376,8 @@ $listofreferent = array(
 	'lang'=>'entrepot',
 	'buttonnew'=>'AddWarehouse',
 	'project_field'=>'fk_project',
-	'testnew'=>$user->rights->stock->creer,
-	'test'=>$conf->stock->enabled && $user->rights->stock->lire && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT)),
+	'testnew'=>$user->hasRight('stock', 'creer'),
+	'test'=>!empty($conf->stock->enabled) && $user->hasRight('stock', 'lire') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT)),
 'propal'=>array(
 	'name'=>"Proposals",
 	'title'=>"ListProposalsAssociatedProject",
@@ -383,8 +387,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/comm/propal/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'propal',
 	'buttonnew'=>'AddProp',
-	'testnew'=>$user->rights->propal->creer,
-	'test'=>$conf->propal->enabled && $user->rights->propale->lire),
+	'testnew'=>$user->hasRight('propal', 'creer'),
+	'test'=>!empty($conf->propal->enabled) && $user->hasRight('propal', 'lire')),
 'order'=>array(
 	'name'=>"CustomersOrders",
 	'title'=>"ListOrdersAssociatedProject",
@@ -394,8 +398,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/commande/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'orders',
 	'buttonnew'=>'CreateOrder',
-	'testnew'=>$user->rights->commande->creer,
-	'test'=>$conf->commande->enabled && $user->rights->commande->lire),
+	'testnew'=>$user->hasRight('commande', 'creer'),
+	'test'=>!empty($conf->commande->enabled) && $user->hasRight('commande', 'lire')),
 'invoice'=>array(
 	'name'=>"CustomersInvoices",
 	'title'=>"ListInvoicesAssociatedProject",
@@ -406,8 +410,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/compta/facture/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'bills',
 	'buttonnew'=>'CreateBill',
-	'testnew'=>$user->rights->facture->creer,
-	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
+	'testnew'=>$user->hasRight('facture', 'creer'),
+	'test'=>!empty($conf->facture->enabled) && $user->hasRight('facture', 'lire')),
 'invoice_predefined'=>array(
 	'name'=>"PredefinedInvoices",
 	'title'=>"ListPredefinedInvoicesAssociatedProject",
@@ -417,8 +421,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/compta/facture/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'bills',
 	'buttonnew'=>'CreateBill',
-	'testnew'=>$user->rights->facture->creer,
-	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
+	'testnew'=>$user->hasRight('facture', 'creer'),
+	'test'=>!empty($conf->facture->enabled) && $user->hasRight('facture', 'lire')),
 'proposal_supplier'=>array(
 	'name'=>"SuppliersProposals",
 	'title'=>"ListSupplierProposalsAssociatedProject",
@@ -428,8 +432,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id), // No socid parameter here, the socid is often the customer and we create a supplier object
 	'lang'=>'supplier_proposal',
 	'buttonnew'=>'AddSupplierProposal',
-	'testnew'=>$user->rights->supplier_proposal->creer,
-	'test'=>$conf->supplier_proposal->enabled && $user->rights->supplier_proposal->lire),
+	'testnew'=>$user->hasRight('supplier_proposal', 'creer'),
+	'test'=>!empty($conf->supplier_proposal->enabled) && $user->hasRight('supplier_proposal', 'lire')),
 'order_supplier'=>array(
 	'name'=>"SuppliersOrders",
 	'title'=>"ListSupplierOrdersAssociatedProject",
@@ -439,8 +443,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id), // No socid parameter here, the socid is often the customer and we create a supplier object
 	'lang'=>'suppliers',
 	'buttonnew'=>'AddSupplierOrder',
-	'testnew'=>($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer),
-	'test'=>$conf->supplier_order->enabled && ($user->rights->fournisseur->commande->lire || $user->rights->supplier_order->lire)),
+	'testnew'=>$user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'),
+	'test'=>!empty($conf->supplier_order->enabled) && $user->hasRight('fournisseur', 'commande', 'lire') || $user->hasRight('supplier_order', 'lire')),
 'invoice_supplier'=>array(
 	'name'=>"BillsSuppliers",
 	'title'=>"ListSupplierInvoicesAssociatedProject",
@@ -451,8 +455,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id), // No socid parameter here, the socid is often the customer and we create a supplier object
 	'lang'=>'suppliers',
 	'buttonnew'=>'AddSupplierInvoice',
-	'testnew'=>($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer),
-	'test'=>$conf->supplier_invoice->enabled && ($user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire)),
+	'testnew'=>$user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer'),
+	'test'=>!empty($conf->supplier_invoice->enabled) && $user->hasRight('fournisseur', 'facture', 'lire') || $user->hasRight('supplier_invoice', 'lire')),
 'contract'=>array(
 	'name'=>"Contracts",
 	'title'=>"ListContractAssociatedProject",
@@ -462,8 +466,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/contrat/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'contracts',
 	'buttonnew'=>'AddContract',
-	'testnew'=>$user->rights->contrat->creer,
-	'test'=>$conf->contrat->enabled && $user->rights->contrat->lire),
+	'testnew'=>$user->hasRight('contrat', 'creer'),
+	'test'=>!empty($conf->contrat->enabled) && $user->hasRight('contrat', 'lire')),
 'intervention'=>array(
 	'name'=>"Interventions",
 	'title'=>"ListFichinterAssociatedProject",
@@ -475,8 +479,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/fichinter/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'interventions',
 	'buttonnew'=>'AddIntervention',
-	'testnew'=>$user->rights->ficheinter->creer,
-	'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
+	'testnew'=>$user->hasRight('ficheinter', 'creer'),
+	'test'=>!empty($conf->ficheinter->enabled) && $user->hasRight('ficheinter', 'lire')),
 'shipping'=>array(
 	'name'=>"Shippings",
 	'title'=>"ListShippingAssociatedProject",
@@ -497,9 +501,9 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/mrp/mo_card.php?action=create&origin=project&originid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'mrp',
 	'buttonnew'=>'CreateMO',
-	'testnew'=>'$user->rights->mrp->write',
+	'testnew'=>$user->hasRight('mrp', 'write'),
 	'project_field'=>'fk_project',
-	'test'=>$conf->mrp->enabled && $user->rights->mrp->read),
+	'test'=>!empty($conf->mrp->enabled) && $user->hasRight('mrp', 'read')),
 'trip'=>array(
 	'name'=>"TripsAndExpenses",
 	'title'=>"ListExpenseReportsAssociatedProject",
@@ -511,8 +515,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/deplacement/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'trips',
 	'buttonnew'=>'AddTrip',
-	'testnew'=>$user->rights->deplacement->creer,
-	'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire),
+	'testnew'=>$user->hasRight('deplacement', 'creer'),
+	'test'=>!empty($conf->deplacement->enabled) && $user->hasRight('deplacement', 'lire')),
 'expensereport'=>array(
 	'name'=>"ExpenseReports",
 	'title'=>"ListExpenseReportsAssociatedProject",
@@ -524,8 +528,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/expensereport/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'trips',
 	'buttonnew'=>'AddTrip',
-	'testnew'=>$user->rights->expensereport->creer,
-	'test'=>$conf->expensereport->enabled && $user->rights->expensereport->lire),
+	'testnew'=>$user->hasRight('expensereport', 'creer'),
+	'test'=>!empty($conf->expensereport->enabled) && $user->hasRight('expensereport', 'lire')),
 'donation'=>array(
 	'name'=>"Donation",
 	'title'=>"ListDonationsAssociatedProject",
@@ -537,8 +541,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/don/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'donations',
 	'buttonnew'=>'AddDonation',
-	'testnew'=>$user->rights->don->creer,
-	'test'=>$conf->don->enabled && $user->rights->don->lire),
+	'testnew'=>$user->hasRight('don', 'creer'),
+	'test'=>!empty($conf->don->enabled) && $user->hasRight('don', 'lire')),
 'loan'=>array(
 	'name'=>"Loan",
 	'title'=>"ListLoanAssociatedProject",
@@ -550,8 +554,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/loan/card.php?action=create&projectid='.$id.'&socid='.$socid.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'loan',
 	'buttonnew'=>'AddLoan',
-	'testnew'=>$user->rights->loan->write,
-	'test'=>$conf->loan->enabled && $user->rights->loan->read),
+	'testnew'=>$user->hasRight('loan', 'write'),
+	'test'=>!empty($conf->loan->enabled) && $user->hasRight('loan', 'read')),
 'chargesociales'=>array(
 	'name'=>"SocialContribution",
 	'title'=>"ListSocialContributionAssociatedProject",
@@ -563,8 +567,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/compta/sociales/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'compta',
 	'buttonnew'=>'AddSocialContribution',
-	'testnew'=>$user->rights->tax->charges->lire,
-	'test'=>$conf->tax->enabled && $user->rights->tax->charges->lire),
+	'testnew'=>$user->hasRight('tax', 'charges', 'lire'),
+	'test'=>!empty($conf->tax->enabled) && $user->hasRight('tax', 'charges', 'lire')),
 'project_task'=>array(
 	'name'=>"TaskTimeSpent",
 	'title'=>"ListTaskTimeUserProject",
@@ -575,8 +579,8 @@ $listofreferent = array(
 	'disableamount'=>0,
 	'urlnew'=>DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&action=createtime&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'buttonnew'=>'AddTimeSpent',
-	'testnew'=>$user->rights->projet->creer,
-	'test'=>($conf->projet->enabled && $user->rights->projet->lire && empty($conf->global->PROJECT_HIDE_TASKS))),
+	'testnew'=>$user->hasRight('project', 'creer'),
+	'test'=>!empty($conf->project->enabled) && $user->hasRight('projet', 'lire') && !empty($conf->global->PROJECT_HIDE_TASKS)),
 'stock_mouvement'=>array(
 	'name'=>"MouvementStockAssociated",
 	'title'=>"ListMouvementStockProject",
@@ -585,7 +589,7 @@ $listofreferent = array(
 	'table'=>'stock_mouvement',
 	'datefieldname'=>'datem',
 	'disableamount'=>0,
-	'test'=>($conf->stock->enabled && $user->rights->stock->mouvement->lire && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))),
+	'test'=>!empty($conf->stock->enabled) && $user->hasRight('stock', 'mouvement', 'lire') && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW)),
 'salaries'=>array(
 	'name'=>"Salaries",
 	'title'=>"ListSalariesAssociatedProject",
@@ -597,8 +601,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/salaries/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'salaries',
 	'buttonnew'=>'AddSalary',
-	'testnew'=>$user->rights->salaries->write,
-	'test'=>$conf->salaries->enabled && $user->rights->salaries->read),
+	'testnew'=>$user->hasRight('salaries', 'write'),
+	'test'=>!empty($conf->salaries->enabled) && $user->hasRight('salaries', 'read')),
 'variouspayment'=>array(
 	'name'=>"VariousPayments",
 	'title'=>"ListVariousPaymentsAssociatedProject",
@@ -610,8 +614,8 @@ $listofreferent = array(
 	'urlnew'=>DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&projectid='.$id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$id),
 	'lang'=>'banks',
 	'buttonnew'=>'AddVariousPayment',
-	'testnew'=>$user->rights->banque->modifier,
-	'test'=>$conf->banque->enabled && $user->rights->banque->lire && empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)),
+	'testnew'=>$user->hasRight('banque', 'modifier'),
+	'test'=>!empty($conf->banque->enabled) && $user->hasRight('banque', 'lire') && !empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT)),
 /* No need for this, available on dedicated tab "Agenda/Events"
 'agenda'=>array(
 	'name'=>"Agenda",
@@ -698,7 +702,7 @@ if (!$showdatefilter) {
 	print $form->selectDate($datee, 'datee', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '<div class="inline-block">';
-	print '<input type="submit" name="refresh" value="'.$langs->trans("Refresh").'" class="button">';
+	print '<input type="submit" name="refresh" value="'.$langs->trans("Refresh").'" class="button small">';
 	print '</div>';
 	print '</form>';
 	print '</div>';
@@ -712,7 +716,7 @@ if (!$showdatefilter) {
 
 $langs->loadLangs(array("suppliers", "bills", "orders", "proposals", "margins"));
 
-if (!empty($conf->stock->enabled)) {
+if (isModEnabled('stock')) {
 	$langs->load('stocks');
 }
 
@@ -882,7 +886,7 @@ foreach ($listofreferent as $key => $value) {
 				}
 
 				// Add total if we have to
-				if ($qualifiedfortotal)	{
+				if ($qualifiedfortotal) {
 					$total_ht = $total_ht + $total_ht_by_line;
 					$total_ttc = $total_ttc + $total_ttc_by_line;
 				}
@@ -1018,8 +1022,11 @@ foreach ($listofreferent as $key => $value) {
 			}
 		}
 
+		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
+
+
 		if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element)) {
-			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, !empty($project_field) ? $project_field : 'fk_projet');
+			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, empty($project_field) ? 'fk_projet' : $project_field, $langs->trans("SelectElement"));
 			if ($selectList < 0) {
 				setEventMessages($formproject->error, $formproject->errors, 'errors');
 			} elseif ($selectList) {
@@ -1031,9 +1038,10 @@ foreach ($listofreferent as $key => $value) {
 				$addform .= '<input type="hidden" name="action" value="addelement">';
 				$addform .= '<input type="hidden" name="datesrfc" value="'.dol_print_date($dates, 'dayhourrfc').'">';
 				$addform .= '<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
-				$addform .= '<table><tr><td><span class="hideonsmartphone opacitymedium">'.$langs->trans("SelectElement").'</span></td>';
+				$addform .= '<table><tr>';
+				//$addform .= '<td><span class="hideonsmartphone opacitymedium">'.$langs->trans("SelectElement").'</span></td>';
 				$addform .= '<td>'.$selectList.'</td>';
-				$addform .= '<td><input type="submit" class="button smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("LinkToElementShort")).'"></td>';
+				$addform .= '<td><input type="submit" class="button button-linkto smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("LinkToElementShort")).'"></td>';
 				$addform .= '</tr></table>';
 				$addform .= '</form>';
 				$addform .= '</div>';
@@ -1042,11 +1050,36 @@ foreach ($listofreferent as $key => $value) {
 		if (empty($conf->global->PROJECT_CREATE_ON_OVERVIEW_DISABLED) && $urlnew) {
 			$addform .= '<div class="inline-block valignmiddle">';
 			if ($testnew) {
-				$addform .= '<a class="buttonxxx marginleftonly" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+				$addform .= '<a class="buttonxxx marginleftonly" href="'.$urlnew.'" title="'.dol_escape_htmltag($langs->trans($buttonnew)).'"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			} elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
-				$addform .= '<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+				$addform .= '<span title="'.dol_escape_htmltag($langs->trans($buttonnew)).'"><a class="buttonxxx marginleftonly buttonRefused" disabled="disabled" href="#"><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a></span>';
 			}
 			$addform .= '<div>';
+		}
+
+		if (is_array($elementarray) && count($elementarray) > 0 && $key == "order_supplier") {
+			$addform = '<div class="inline-block valignmiddle"><a id="btnShow" class="buttonxxx marginleftonly" href="#" onClick="return false;">
+						 <span id="textBtnShow" class="valignmiddle text-plus-circle hideonsmartphone">'.$langs->trans("CanceledShown").'</span><span id="minus-circle" class="fa fa-eye valignmiddle paddingleft"></span>
+						 </a>
+						 <script>
+						 $("#btnShow").on("click", function () {
+							console.log("We click to show or hide the canceled lines");
+							var attr = $(this).attr("data-canceledarehidden");
+							if (typeof attr !== "undefined" && attr !== false) {
+								console.log("Show canceled");
+								$(".tr_canceled").show();
+								$("#textBtnShow").text("'.dol_escape_js($langs->transnoentitiesnoconv("CanceledShown")).'");
+								$("#btnShow").removeAttr("data-canceledarehidden");
+								$("#minus-circle").removeClass("fa-eye-slash").addClass("fa-eye");
+							} else {
+								console.log("Hide canceled");
+								$(".tr_canceled").hide();
+								$("#textBtnShow").text("'.dol_escape_js($langs->transnoentitiesnoconv("CanceledHidden")).'");
+								$("#btnShow").attr("data-canceledarehidden", 1);
+								$("#minus-circle").removeClass("fa-eye").addClass("fa-eye-slash");
+							}
+						 });
+						 </script></div> '.$addform;
 		}
 
 		print load_fiche_titre($langs->trans($title), $addform, '');
@@ -1115,7 +1148,6 @@ foreach ($listofreferent as $key => $value) {
 		}
 		print '</tr>';
 
-		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
 		if (is_array($elementarray) && count($elementarray) > 0) {
 			$total_ht = 0;
 			$total_ttc = 0;
@@ -1170,9 +1202,16 @@ foreach ($listofreferent as $key => $value) {
 					if (!empty($element->close_code) && $element->close_code == 'replaced') {
 						$qualifiedfortotal = false; // Replacement invoice, do not include into total
 					}
+				} elseif ($key == 'order_supplier' && $element->status == 7) {
+					$qualifiedfortotal = false; // It makes no sense to include canceled orders in the total
 				}
 
-				print '<tr class="oddeven">';
+				if ($key == "order_supplier" && $element->status == 7) {
+					print '<tr class="oddeven tr_canceled" style=display:none>';
+				} else {
+					print '<tr class="oddeven" >';
+				}
+
 
 				// Remove link
 				print '<td style="width: 24px">';
@@ -1358,7 +1397,7 @@ foreach ($listofreferent as $key => $value) {
 						if (!$qualifiedfortotal) {
 							print '<strike>';
 						}
-						print price($total_ht_by_line);
+						print '<span class="amount">'.price($total_ht_by_line).'</span>';
 						if (!$qualifiedfortotal) {
 							print '</strike>';
 						}
@@ -1409,7 +1448,7 @@ foreach ($listofreferent as $key => $value) {
 						if (!$qualifiedfortotal) {
 							print '<strike>';
 						}
-						print price($total_ttc_by_line);
+						print '<span class="amount">'.price($total_ttc_by_line).'</span>';
 						if (!$qualifiedfortotal) {
 							print '</strike>';
 						}
@@ -1482,6 +1521,7 @@ foreach ($listofreferent as $key => $value) {
 			if (in_array($tablename, array('projet_task'))) {
 				$colspan = 2;
 			}
+
 			print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Number").': '.$i.'</td>';
 			if (in_array($tablename, array('projet_task'))) {
 				print '<td class="center">';
@@ -1520,7 +1560,16 @@ foreach ($listofreferent as $key => $value) {
 			print '</tr>';
 		} else {
 			if (!is_array($elementarray)) {	// error
-				print $elementarray;
+				print '<tr><td>'.$elementarray.'</td></tr>';
+			} else {
+				$colspan = 7;
+				if (in_array($tablename, array('projet_task'))) {
+					$colspan = 5;
+				}
+				if ($tablename == 'fichinter') {
+					$colspan++;
+				}
+				print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 		}
 		print "</table>";

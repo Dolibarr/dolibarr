@@ -67,9 +67,9 @@ class pdf_strato extends ModelePDFContract
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
-	public $phpmin = array(5, 6);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -145,16 +145,15 @@ class pdf_strato extends ModelePDFContract
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = $formatarray['height'];
 		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
-		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
-		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
-		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
+		$this->marge_gauche = getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10);
+		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
+		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
+		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->option_logo = 1; // Display logo
 		$this->option_tva = 0; // Manage the vat option FACTURE_TVAOPTION
 		$this->option_modereg = 0; // Display payment mode
 		$this->option_condreg = 0; // Display payment terms
-		$this->option_codeproduitservice = 0; // Display product-service code
 		$this->option_multilang = 0; // Available in several languages
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 
@@ -257,7 +256,7 @@ class pdf_strato extends ModelePDFContract
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("ContractCard")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -275,7 +274,7 @@ class pdf_strato extends ModelePDFContract
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 90;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
 
 				// Display notes
 				if (!empty($object->note_public)) {
@@ -321,28 +320,28 @@ class pdf_strato extends ModelePDFContract
 
 						// Description of product line
 
-						if ($objectligne->date_ouverture_prevue) {
-							$datei = dol_print_date($objectligne->date_ouverture_prevue, 'day', false, $outputlangs, true);
+						if (!empty($objectligne->date_start)) {
+							$datei = dol_print_date((int) $objectligne->date_start, 'day', false, $outputlangs, true);
 						} else {
 							$datei = $langs->trans("Unknown");
 						}
 
-						if ($objectligne->date_fin_validite) {
-							$durationi = convertSecondToTime($objectligne->date_fin_validite - $objectligne->date_ouverture_prevue, 'allwithouthour');
-							$datee = dol_print_date($objectligne->date_fin_validite, 'day', false, $outputlangs, true);
+						if (!empty($objectligne->date_end)) {
+							$durationi = convertSecondToTime((int) $objectligne->date_end - (int) $objectligne->date_start, 'allwithouthour');
+							$datee = dol_print_date($objectligne->date_end, 'day', false, $outputlangs, true);
 						} else {
 							$durationi = $langs->trans("Unknown");
 							$datee = $langs->trans("Unknown");
 						}
 
-						if ($objectligne->date_ouverture) {
-							$daters = dol_print_date($objectligne->date_ouverture, 'day', false, $outputlangs, true);
+						if (!empty($objectligne->date_start_real)) {
+							$daters = dol_print_date((int) $objectligne->date_start_real, 'day', false, $outputlangs, true);
 						} else {
 							$daters = $langs->trans("Unknown");
 						}
 
-						if ($objectligne->date_cloture) {
-							$datere = dol_print_date($objectligne->date_cloture, 'day', false, $outputlangs, true);
+						if (!empty($objectligne->date_end_real)) {
+							$datere = dol_print_date((int) $objectligne->date_end_real, 'day', false, $outputlangs, true);
 						} else {
 							$datere = $langs->trans("Unknown");
 						}
@@ -355,7 +354,12 @@ class pdf_strato extends ModelePDFContract
 
 						$desc = dol_htmlentitiesbr($objectligne->desc, 1); // Desc (not empty for free lines)
 						$txt = '';
-						$txt .= $outputlangs->transnoentities("Quantity").' : <strong>'.$objectligne->qty.'</strong> - '.$outputlangs->transnoentities("UnitPrice").' : <strong>'.price($objectligne->subprice).'</strong>'; // Desc (not empty for free lines)
+						if (empty($conf->global->CONTRACT_HIDE_QTY_ON_PDF)) {
+							$txt .= $outputlangs->transnoentities("Quantity") . ' : <strong>' . $objectligne->qty . '</strong>';
+						}
+						if (empty($conf->global->CONTRACT_HIDE_PRICE_ON_PDF)) {
+							$txt .= ' - ' . $outputlangs->transnoentities("UnitPrice") . ' : <strong>' . price($objectligne->subprice) . '</strong>';
+						}
 						if (empty($conf->global->CONTRACT_HIDE_PLANNED_DATE_ON_PDF)) {
 							$txt .= '<br>';
 							$txt .= $outputlangs->transnoentities("DateStartPlannedShort")." : <strong>".$datei."</strong> - ".$outputlangs->transnoentities("DateEndPlanned")." : <strong>".$datee.'</strong>';
@@ -363,7 +367,7 @@ class pdf_strato extends ModelePDFContract
 						if (empty($conf->global->CONTRACT_HIDE_REAL_DATE_ON_PDF)) {
 							$txt .= '<br>';
 							$txt .= $outputlangs->transnoentities("DateStartRealShort")." : <strong>".$daters.'</strong>';
-							if ($objectligne->date_cloture) {
+							if (!empty($objectligne->date_end_real)) {
 								$txt .= " - ".$outputlangs->transnoentities("DateEndRealShort")." : '<strong>'".$datere.'</strong>';
 							}
 						}
@@ -386,7 +390,7 @@ class pdf_strato extends ModelePDFContract
 									if (!empty($tplidx)) {
 										$pdf->useTemplate($tplidx);
 									}
-									if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) {
+									if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 										$this->_pagehead($pdf, $object, 0, $outputlangs);
 									}
 									$pdf->setPage($pageposafter + 1);
@@ -433,6 +437,9 @@ class pdf_strato extends ModelePDFContract
 							$pagenb++;
 							$pdf->setPage($pagenb);
 							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+							if (!empty($tplidx)) {
+								$pdf->useTemplate($tplidx);
+							}
 						}
 
 						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
@@ -657,7 +664,7 @@ class pdf_strato extends ModelePDFContract
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : ".dol_print_date($object->date_contrat, "day", false, $outputlangs, true), '', 'R');
 
-		if ($object->thirdparty->code_client) {
+		if (empty($conf->global->MAIN_PDF_HIDE_CUSTOMER_CODE) && $object->thirdparty->code_client) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
@@ -685,19 +692,23 @@ class pdf_strato extends ModelePDFContract
 			$hautcadre = 40;
 
 			// Show sender frame
-			$pdf->SetTextColor(0, 0, 0);
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($posx, $posy - 5);
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetFillColor(230, 230, 230);
-			$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+			if (empty($conf->global->MAIN_PDF_NO_SENDER_FRAME)) {
+				$pdf->SetTextColor(0, 0, 0);
+				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetXY($posx, $posy - 5);
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetFillColor(230, 230, 230);
+				$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+			}
 
 			// Show sender name
-			$pdf->SetXY($posx + 2, $posy + 3);
-			$pdf->SetTextColor(0, 0, 60);
-			$pdf->SetFont('', 'B', $default_font_size);
-			$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
-			$posy = $pdf->getY();
+			if (empty($conf->global->MAIN_PDF_HIDE_SENDER_NAME)) {
+				$pdf->SetXY($posx + 2, $posy + 3);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->SetFont('', 'B', $default_font_size);
+				$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($this->emetteur->name), 0, 'L');
+				$posy = $pdf->getY();
+			}
 
 			// Show sender information
 			$pdf->SetFont('', '', $default_font_size - 1);
@@ -738,11 +749,13 @@ class pdf_strato extends ModelePDFContract
 			}
 
 			// Show recipient frame
-			$pdf->SetTextColor(0, 0, 0);
-			$pdf->SetFont('', '', $default_font_size - 2);
-			$pdf->SetXY($posx + 2, $posy - 5);
-			$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
-			$pdf->SetTextColor(0, 0, 0);
+			if (empty($conf->global->MAIN_PDF_NO_RECIPENT_FRAME)) {
+				$pdf->SetTextColor(0, 0, 0);
+				$pdf->SetFont('', '', $default_font_size - 2);
+				$pdf->SetXY($posx + 2, $posy - 5);
+				$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+				$pdf->SetTextColor(0, 0, 0);
+			}
 
 			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
@@ -770,8 +783,7 @@ class pdf_strato extends ModelePDFContract
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
-		global $conf;
-		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, 'CONTRACT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }

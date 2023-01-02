@@ -42,12 +42,12 @@ EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categorie om toe te voegen aan derden,
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categorie om toe te voegen aan derden, automatisch aangemaakt wanneer ze een stand voorstellen
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Sjabloon van e-mail om te verzenden na ontvangst van een suggestie van een conferentie.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Sjabloon van e-mail om te verzenden na ontvangst van een suggestie van een stand.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send  after a registration to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Sjabloon van e-mail van massage aan aanwezigen
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Sjabloon van e-mail van massage aan sprekers
-EVENTORGANIZATION_FILTERATTENDEES_CAT = Filter de selectielijst van derden in de kaart/formulier voor het maken van deelnemers met categorie
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = Filter de selectielijst van derden in de kaart/formulier voor het maken van deelnemers met het klanttype
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
+EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
 
 #
 # Object
@@ -71,6 +71,7 @@ EventOrganizationEmailBoothPayment = Payment of your booth
 EventOrganizationEmailRegistrationPayment = Registration for an event
 EventOrganizationMassEmailAttendees = Communicatie naar deelnemers
 EventOrganizationMassEmailSpeakers = Communicatie naar sprekers
+ToSpeakers=To speakers
 
 #
 # Event
@@ -83,14 +84,14 @@ PriceOfRegistration=Prijs van registratie
 PriceOfRegistrationHelp=Price to pay to register or participate in the event
 PriceOfBooth=Abonnementsprijs om een stand te staan
 PriceOfBoothHelp=Abonnementsprijs om een stand te staan
-EventOrganizationICSLink=Link ICS voor evenementen
+EventOrganizationICSLink=Link ICS for conferences
 ConferenceOrBoothInformation=Informatie over conferentie of stand Or
 Attendees=deelnemers
 ListOfAttendeesOfEvent=List of attendees of the event project
 DownloadICSLink = ICS-link downloaden
-EVENTORGANIZATION_SECUREKEY = Beveiligde sleutel van de openbare registratielink naar een conferentie
+EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
 SERVICE_BOOTH_LOCATION = Service gebruikt voor de factuurregel over een standlocatie
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service die wordt gebruikt voor de factuurrij over een deelnemersabonnement op een conferentie
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
 NbVotes=Aantal stemmen
 #
 # Status

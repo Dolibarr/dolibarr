@@ -27,6 +27,7 @@
  *      \brief      Page to show a cash fence
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -46,8 +47,8 @@ $smonth = (GETPOSTISSET('closemonth') ?GETPOST('closemonth', 'int') : dol_print_
 $sday = (GETPOSTISSET('closeday') ?GETPOST('closeday', 'int') : dol_print_date($now, "%d"));
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
@@ -70,10 +71,10 @@ if ($contextpage == 'takepos') {
 $arrayofpaymentmode = array('cash'=>'Cash', 'cheque'=>'Cheque', 'card'=>'CreditCard');
 
 $arrayofposavailable = array();
-if (!empty($conf->cashdesk->enabled)) {
+if (isModEnabled('cashdesk')) {
 	$arrayofposavailable['cashdesk'] = $langs->trans('CashDesk').' (cashdesk)';
 }
-if (!empty($conf->takepos->enabled)) {
+if (isModEnabled('takepos')) {
 	$arrayofposavailable['takepos'] = $langs->trans('TakePOS').' (takepos)';
 }
 // TODO Add hook here to allow other POS to add themself
@@ -95,7 +96,7 @@ if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-if (!$user->rights->cashdesk->run && !$user->rights->takepos->run) {
+if (!$user->hasRight("cashdesk", "run") && !$user->hasRight("takepos", "run")) {
 	accessforbidden();
 }
 
@@ -104,12 +105,12 @@ if (!$user->rights->cashdesk->run && !$user->rights->takepos->run) {
  * Actions
  */
 
-$permissiontoadd = ($user->rights->cashdesk->run || $user->rights->takepos->run);
-$permissiontodelete = ($user->rights->cashdesk->run || $user->rights->takepos->run) || ($permissiontoadd && $object->status == 0);
+$permissiontoadd = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run"));
+$permissiontodelete = ($user->hasRight("cashdesk", "run") || $user->hasRight("takepos", "run")) || ($permissiontoadd && $object->status == 0);
 if (empty($backtopage)) {
-	$backtopage = dol_buildpath('/compta/cashcontrol/cashcontrol_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
+	$backtopage = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.(!empty($id) && $id > 0 ? $id : '__ID__');
 }
-$backurlforlist = dol_buildpath('/compta/cashcontrol/cashcontrol_list.php', 1);
+$backurlforlist = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_list.php';
 $triggermodname = 'CACHCONTROL_MODIFY'; // Name of trigger action code to execute when we modify record
 
 if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) && empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH1)) {
@@ -128,7 +129,7 @@ if (GETPOST('cancel', 'alpha')) {
 if ($action == "reopen") {
 	$result = $object->setStatut($object::STATUS_DRAFT, null, '', 'CASHFENCE_REOPEN');
 	if ($result < 0) {
-		dol_print_error($db, $object->error, $object->error);
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	$action = 'view';
@@ -265,6 +266,10 @@ $initialbalanceforterminal = array();
 $theoricalamountforterminal = array();
 $theoricalnbofinvoiceforterminal = array();
 
+
+llxHeader('', $langs->trans("CashControl"));
+
+
 if ($action == "create" || $action == "start" || $action == 'close') {
 	if ($action == 'close') {
 		$posmodule = $object->posmodule;
@@ -312,7 +317,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 				} elseif ($syear && $smonth && $sday) {
 					$sql .= " AND dateo < '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."'";
 				} else {
-					dol_print_error('', 'Year not defined');
+					setEventMessages($langs->trans('YearNotDefined'), null, 'errors');
 				}
 
 				$resql = $db->query($sql);
@@ -356,7 +361,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			} elseif ($syear && $smonth && $sday) {
 				$sql .= " AND datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $smonth, $sday, $syear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $smonth, $sday, $syear))."'";
 			} else {
-				dol_print_error('', 'Year not defined');
+				setEventMessages($langs->trans('YearNotDefined'), null, 'errors');
 			}
 
 			$resql = $db->query($sql);
@@ -376,8 +381,6 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 
 	//var_dump($theoricalamountforterminal); var_dump($theoricalnbofinvoiceforterminal);
 	if ($action != 'close') {
-		llxHeader('', $langs->trans("NewCashFence"));
-
 		print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -597,8 +600,6 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 if (empty($action) || $action == "view" || $action == "close") {
 	$result = $object->fetch($id);
 
-	llxHeader('', $langs->trans("CashControl"));
-
 	if ($result <= 0) {
 		print $langs->trans("ErrorRecordNotFound");
 	} else {
@@ -647,9 +648,10 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print '</table>';
 		print '</div>';
 
-		print '<div class="fichehalfright"><div class="ficheaddleft">';
+		print '<div class="fichehalfright">';
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+
+		print '<table class="border tableforfield centpercent">';
 
 		print '<tr><td class="titlefield nowrap">';
 		print $langs->trans("DateCreationShort");
@@ -658,16 +660,16 @@ if (empty($action) || $action == "view" || $action == "close") {
 		print '</td></tr>';
 
 		print '<tr><td valign="middle">'.$langs->trans("InitialBankBalance").' - '.$langs->trans("Cash").'</td><td>';
-		print price($object->opening, 0, $langs, 1, -1, -1, $conf->currency);
+		print '<span class="amount">'.price($object->opening, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		print "</td></tr>";
 		foreach ($arrayofpaymentmode as $key => $val) {
 			print '<tr><td valign="middle">'.$langs->trans($val).'</td><td>';
-			print price($object->$key, 0, $langs, 1, -1, -1, $conf->currency);
+			print '<span class="amount">'.price($object->$key, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 			print "</td></tr>";
 		}
 
 		print "</table>\n";
-		print '</div>';
+
 		print '</div></div>';
 		print '<div style="clear:both"></div>';
 
@@ -676,14 +678,14 @@ if (empty($action) || $action == "view" || $action == "close") {
 		if ($action != 'close') {
 			print '<div class="tabsAction">';
 
-			print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="report.php?id='.$id.'">'.$langs->trans('PrintTicket').'</a></div>';
+			print '<div class="inline-block divButAction"><a target="_blank" rel="noopener noreferrer" class="butAction" href="report.php?id='.((int) $id).'">'.$langs->trans('PrintTicket').'</a></div>';
 
 			if ($object->status == CashControl::STATUS_DRAFT) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=close&amp;contextpage='.$contextpage.'">'.$langs->trans('Close').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=close&token='.newToken().'&contextpage='.$contextpage.'">'.$langs->trans('Close').'</a></div>';
 
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=confirm_delete">'.$langs->trans('Delete').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=confirm_delete&token='.newToken().'">'.$langs->trans('Delete').'</a></div>';
 			} else {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
 			}
 
 			print '</div>';

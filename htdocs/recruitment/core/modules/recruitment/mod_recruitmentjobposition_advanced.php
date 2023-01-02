@@ -30,7 +30,7 @@ dol_include_once('/recruitment/core/modules/recruitment/modules_recruitmentjobpo
 
 
 /**
- *	Class to manage customer Bom numbering rules advanced
+ *	Class to manage the Advanced numbering rule for Job position
  */
 class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosition
 {
@@ -68,7 +68,7 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconstBom" value="RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK">';
+		$texte .= '<input type="hidden" name="maskconstjob" value="RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("RecruitmentJobPosition"), $langs->transnoentities("RecruitmentJobPosition"));
@@ -79,9 +79,9 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskRecruitmentJobPosition" value="'.$conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskjob" value="'.getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -98,20 +98,15 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 	 */
 	public function getExample()
 	{
-		global $conf, $db, $langs, $mysoc;
+		global $conf, $langs, $mysoc;
 
-		$object = new RecruitmentJobPosition($db);
-		$object->initAsSpecimen();
-
-		/*$old_code_client = $mysoc->code_client;
+		$old_code_client = $mysoc->code_client;
 		$old_code_type = $mysoc->typent_code;
 		$mysoc->code_client = 'CCCCCCCCCC';
-		$mysoc->typent_code = 'TTTTTTTTTT';*/
-
-		$numExample = $this->getNextValue($object);
-
-		/*$mysoc->code_client = $old_code_client;
-		$mysoc->typent_code = $old_code_type;*/
+		$mysoc->typent_code = 'TTTTTTTTTT';
+		$numExample = $this->getNextValue($mysoc);
+		$mysoc->code_client = $old_code_client;
+		$mysoc->typent_code = $old_code_type;
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
@@ -132,7 +127,7 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK;
+		$mask = getDolGlobalString('RECRUITMENT_RECRUITMENTJOBPOSITION_ADVANCED_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

@@ -21,7 +21,11 @@
 
 define('NOTOKENRENEWAL', 1); // Disables token renewal
 
+// Load Dolibarr environment
 require '../../../../main.inc.php';
+
+top_httphead();
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
@@ -50,6 +54,24 @@ require '../../../../main.inc.php';
 <head>
 	<title>Resources</title>
 	<link href="browser.css" type="text/css" rel="stylesheet">
+<?php
+print '<!-- Includes CSS for Dolibarr theme -->'."\n";
+// Output style sheets (optioncss='print' or ''). Note: $conf->css looks like '/theme/eldy/style.css.php'
+$themepath = dol_buildpath($conf->css, 1);
+$themesubdir = '';
+if (!empty($conf->modules_parts['theme'])) {	// This slow down
+	foreach ($conf->modules_parts['theme'] as $reldir) {
+		if (file_exists(dol_buildpath($reldir.$conf->css, 0))) {
+			$themepath = dol_buildpath($reldir.$conf->css, 1);
+			$themesubdir = $reldir;
+			break;
+		}
+	}
+}
+
+//print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
+print '<link rel="stylesheet" type="text/css" href="'.$themepath.'">'."\n";
+?>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<script type="text/javascript" src="js/common.js"></script>
 	<script type="text/javascript">
