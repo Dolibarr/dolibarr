@@ -1991,7 +1991,6 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
  */
 function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = '')
 {
-	global $langs;
 	if (class_exists('Imagick')) {
 		$image = new Imagick();
 		try {
