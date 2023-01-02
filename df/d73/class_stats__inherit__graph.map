@@ -1,0 +1,17 @@
+<map id="Stats" name="Stats">
+<area shape="rect" id="node1" title="Parent class of statistics class." alt="" coords="5,335,60,361"/>
+<area shape="rect" id="node2" href="$d4/d65/class_adherent_stats.html" title="Class to manage statistics of members." alt="" coords="127,5,242,32"/>
+<area shape="rect" id="node3" href="$d0/d9d/class_commande_stats.html" title="Class to manage order statistics (customer and supplier)" alt="" coords="119,56,250,83"/>
+<area shape="rect" id="node4" href="$da/dd5/class_deplacement_stats.html" title="Classe permettant la gestion des stats des deplacements et notes de frais." alt="" coords="113,107,256,133"/>
+<area shape="rect" id="node5" href="$da/dc8/class_donation_stats.html" title="Class to manage donations statistics." alt="" coords="127,157,242,184"/>
+<area shape="rect" id="node6" href="$dd/d0f/class_expedition_stats.html" title="Class to manage shipment statistics." alt="" coords="123,208,247,235"/>
+<area shape="rect" id="node7" href="$d5/d9d/class_expense_report_stats.html" title="Classe permettant la gestion des stats des expensereports et notes de frais." alt="" coords="108,259,261,285"/>
+<area shape="rect" id="node8" href="$d0/de6/class_facture_stats.html" title="Class to manage stats for invoices (customer and supplier)" alt="" coords="133,309,236,336"/>
+<area shape="rect" id="node9" href="$d1/d08/class_fichinter_stats.html" title="Class to manage intervention statistics." alt="" coords="129,360,240,387"/>
+<area shape="rect" id="node10" href="$db/d43/class_project_stats.html" title="Class to manage statistics on projects." alt="" coords="135,411,235,437"/>
+<area shape="rect" id="node11" href="$d4/dfa/class_propale_stats.html" title="Class to manage proposals statistics." alt="" coords="133,461,237,488"/>
+<area shape="rect" id="node12" href="$d5/d3a/class_reception_stats.html" title="Class to manage reception statistics." alt="" coords="125,512,245,539"/>
+<area shape="rect" id="node13" href="$de/d0d/class_salaries_stats.html" title="Classe permettant la gestion des stats des salaires." alt="" coords="131,563,238,589"/>
+<area shape="rect" id="node14" href="$d4/d60/class_task_stats.html" title="Class to manage statistics on project tasks." alt="" coords="143,613,227,640"/>
+<area shape="rect" id="node15" href="$d8/d79/class_ticket_stats.html" title="Classe permettant la gestion des stats des deplacements et notes de frais." alt="" coords="137,664,232,691"/>
+</map>

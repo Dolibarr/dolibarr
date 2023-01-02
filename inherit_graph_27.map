@@ -1,0 +1,168 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="5,2944,128,2971"/>
+<area shape="rect" id="node2" href="$db/d22/class_account.html" title="Class to manage bank accounts." alt="" coords="243,31,317,57"/>
+<area shape="rect" id="node5" href="$d0/d18/class_account_line.html" title="Class to manage bank transaction lines." alt="" coords="229,81,331,108"/>
+<area shape="rect" id="node6" href="$df/df7/class_accounting_account.html" title="Class to manage accounting accounts." alt="" coords="207,132,353,159"/>
+<area shape="rect" id="node7" href="$d1/d8c/class_accounting_journal.html" title="Class to manage accounting accounts." alt="" coords="211,183,349,209"/>
+<area shape="rect" id="node8" href="$d8/de7/class_action_comm.html" title="Class to manage agenda events (actions)" alt="" coords="227,233,333,260"/>
+<area shape="rect" id="node10" href="$d6/dcf/class_action_comm_reminder.html" title="Class for ActionCommReminder." alt="" coords="195,284,365,311"/>
+<area shape="rect" id="node11" href="$d5/df9/class_adherent.html" title="Class to manage members of a foundation." alt="" coords="239,335,321,361"/>
+<area shape="rect" id="node12" href="$df/d15/class_adherent_type.html" title="Class to manage members type." alt="" coords="225,385,335,412"/>
+<area shape="rect" id="node13" href="$d2/df5/class_advance_targeting_mailing.html" title="Class to manage advanced emailing target selector." alt="" coords="187,436,373,463"/>
+<area shape="rect" id="node14" href="$dd/d11/class_asset.html" title="Class for Asset." alt="" coords="251,487,309,513"/>
+<area shape="rect" id="node15" href="$df/da7/class_asset_accountancy_codes.html" title="Class for AssetAccountancyCodes." alt="" coords="189,537,371,564"/>
+<area shape="rect" id="node16" href="$d7/dcb/class_asset_depreciation_options.html" title="Class for AssetDepreciationOptions." alt="" coords="185,588,375,615"/>
+<area shape="rect" id="node17" href="$da/d92/class_asset_model.html" title="Class for AssetModel." alt="" coords="231,639,329,665"/>
+<area shape="rect" id="node18" href="$df/de6/class_availabilities.html" title="Class for Availabilities." alt="" coords="227,689,333,716"/>
+<area shape="rect" id="node19" href="$d2/df5/class_b_o_m.html" title="Class for BOM." alt="" coords="253,740,307,767"/>
+<area shape="rect" id="node20" href="$d6/d94/class_bon_prelevement.html" title="Class to manage withdrawal receipts." alt="" coords="215,791,345,817"/>
+<area shape="rect" id="node21" href="$d0/dfa/class_book_keeping.html" title="Class to manage Ledger (General Ledger and Subledger)" alt="" coords="227,841,333,868"/>
+<area shape="rect" id="node23" href="$d8/d38/class_booking.html" title="Class for Booking." alt="" coords="243,892,317,919"/>
+<area shape="rect" id="node24" href="$d2/d72/class_bookmark.html" title="Class to manage bookmarks." alt="" coords="235,943,325,969"/>
+<area shape="rect" id="node25" href="$da/d01/class_c_ticket_category.html" title="Class for MyObject." alt="" coords="215,993,345,1020"/>
+<area shape="rect" id="node26" href="$dc/d8e/class_cash_control.html" title="Class to manage cash fence." alt="" coords="229,1044,331,1071"/>
+<area shape="rect" id="node27" href="$db/dc1/class_categorie.html" title="Class to manage categories." alt="" coords="237,1095,323,1121"/>
+<area shape="rect" id="node28" href="$dd/d70/class_charge_sociales.html" title="Classe permettant la gestion des paiements des charges La tva collectee n&#39;est calculee que sur les fa..." alt="" coords="219,1145,341,1172"/>
+<area shape="rect" id="node29" href="$dc/de6/class_comment.html" title="Class to manage comment." alt="" coords="237,1196,323,1223"/>
+<area shape="rect" id="node30" href="$d6/dc8/class_common_invoice.html" title="Superclass for invoices classes." alt="" coords="216,1247,344,1273"/>
+<area shape="rect" id="node35" href="$dc/d3c/class_common_object_line.html" title="Parent class for class inheritance lines of business objects This class is useless for the moment so ..." alt="" coords="205,1297,355,1324"/>
+<area shape="rect" id="node69" href="$d0/dd0/class_common_order.html" title="Superclass for orders classes." alt="" coords="221,1348,339,1375"/>
+<area shape="rect" id="node72" href="$d8/d2c/class_company_payment_mode.html" title="Class for CompanyPaymentMode." alt="" coords="191,1399,369,1425"/>
+<area shape="rect" id="node73" href="$d3/d35/class_conference_or_booth_attendee.html" title="Class for ConferenceOrBoothAttendee." alt="" coords="176,1449,384,1476"/>
+<area shape="rect" id="node74" href="$dd/d2a/class_contact.html" title="Class to manage contact/addresses." alt="" coords="244,1500,316,1527"/>
+<area shape="rect" id="node75" href="$d8/dbb/class_contrat.html" title="Class to manage contracts." alt="" coords="245,1551,315,1577"/>
+<area shape="rect" id="node76" href="$d6/db3/class_cronjob.html" title="Cron Job class." alt="" coords="244,1601,316,1628"/>
+<area shape="rect" id="node77" href="$d1/d21/class_default_values.html" title="Class for MyObject." alt="" coords="223,1652,337,1679"/>
+<area shape="rect" id="node78" href="$d3/d07/class_delivery.html" title="Class to manage receptions." alt="" coords="241,1703,319,1729"/>
+<area shape="rect" id="node79" href="$d9/d45/class_deplacement.html" title="Class to manage trips and working credit notes." alt="" coords="225,1753,335,1780"/>
+<area shape="rect" id="node80" href="$df/d70/class_dolresource.html" title="DAO Resource object." alt="" coords="230,1804,330,1831"/>
+<area shape="rect" id="node81" href="$d1/d70/class_don.html" title="Class to manage donations." alt="" coords="256,1855,304,1881"/>
+<area shape="rect" id="node82" href="$d3/ddc/class_ecm_directory.html" title="Class to manage ECM directories." alt="" coords="225,1905,335,1932"/>
+<area shape="rect" id="node83" href="$d5/d62/class_ecm_files.html" title="Class to manage ECM files." alt="" coords="240,1956,320,1983"/>
+<area shape="rect" id="node84" href="$d7/d49/class_email_collector.html" title="Class for EmailCollector." alt="" coords="221,2007,339,2033"/>
+<area shape="rect" id="node85" href="$d5/dbc/class_email_collector_action.html" title="Class for EmailCollectorAction." alt="" coords="201,2057,359,2084"/>
+<area shape="rect" id="node86" href="$db/d0d/class_email_collector_filter.html" title="Class for EmailCollectorFilter." alt="" coords="205,2108,355,2135"/>
+<area shape="rect" id="node87" href="$d2/da4/class_email_sender_profile.html" title="Class for EmailSenderProfile." alt="" coords="207,2159,353,2185"/>
+<area shape="rect" id="node88" href="$db/de4/class_entrepot.html" title="Class to manage warehouses." alt="" coords="241,2209,319,2236"/>
+<area shape="rect" id="node89" href="$d3/d2d/class_establishment.html" title="Class to manage establishments." alt="" coords="223,2260,337,2287"/>
+<area shape="rect" id="node90" href="$d0/d54/class_evaluation.html" title="Class for Evaluation." alt="" coords="235,2311,325,2337"/>
+<area shape="rect" id="node91" href="$d2/db3/class_evaluationline.html" title="Class for Evaluationline." alt="" coords="223,2361,337,2388"/>
+<area shape="rect" id="node92" href="$de/d38/class_expedition.html" title="Class to manage shipments." alt="" coords="235,2412,325,2439"/>
+<area shape="rect" id="node93" href="$d2/d5f/class_expedition_line_batch.html" title="CRUD class for batch number management within shipment." alt="" coords="203,2463,357,2489"/>
+<area shape="rect" id="node94" href="$d6/da6/class_expense_report.html" title="Class to manage Trips and Expenses." alt="" coords="220,2513,340,2540"/>
+<area shape="rect" id="node95" href="$d3/db5/class_expense_report_ik.html" title="Class to manage inventories." alt="" coords="214,2564,346,2591"/>
+<area shape="rect" id="node96" href="$df/dfd/class_expense_report_rule.html" title="Class to manage inventories." alt="" coords="205,2615,355,2641"/>
+<area shape="rect" id="node97" href="$dd/d32/class_fichinter.html" title="Class to manage interventions." alt="" coords="241,2665,319,2692"/>
+<area shape="rect" id="node99" href="$d4/d57/class_fiscalyear.html" title="Class to manage fiscal year." alt="" coords="236,2716,324,2743"/>
+<area shape="rect" id="node100" href="$dc/d50/class_generic_object.html" title="Class of a generic business object." alt="" coords="223,2767,337,2793"/>
+<area shape="rect" id="node101" href="$dd/d46/class_holiday.html" title="Class of the module paid holiday." alt="" coords="244,2817,316,2844"/>
+<area shape="rect" id="node102" href="$d2/d40/class_hook.html" title="Class for Hook." alt="" coords="252,2868,308,2895"/>
+<area shape="rect" id="node103" href="$d2/d6c/class_intracomm_report.html" title="Class to manage intracomm report." alt="" coords="212,2919,348,2945"/>
+<area shape="rect" id="node104" href="$da/d71/class_inventory.html" title="Class for Inventory." alt="" coords="238,2969,322,2996"/>
+<area shape="rect" id="node105" href="$d6/dba/class_job.html" title="Class for Job." alt="" coords="259,3020,301,3047"/>
+<area shape="rect" id="node106" href="$d8/d15/class_knowledge_record.html" title="Class for KnowledgeRecord." alt="" coords="211,3071,349,3097"/>
+<area shape="rect" id="node107" href="$d5/d25/class_link.html" title="Class to manage links." alt="" coords="255,3121,305,3148"/>
+<area shape="rect" id="node108" href="$d0/df4/class_loan.html" title="Loan." alt="" coords="253,3172,307,3199"/>
+<area shape="rect" id="node109" href="$d4/d63/class_loan_schedule.html" title="Class to manage Schedule of loans." alt="" coords="224,3223,336,3249"/>
+<area shape="rect" id="node110" href="$dd/d90/class_localtax.html" title="Class to manage local tax." alt="" coords="241,3273,319,3300"/>
+<area shape="rect" id="node111" href="$da/d21/class_mailing.html" title="Class to manage emailings module." alt="" coords="245,3324,315,3351"/>
+<area shape="rect" id="node112" href="$d5/dd4/class_mo.html" title="Class for Mo." alt="" coords="259,3375,301,3401"/>
+<area shape="rect" id="node113" href="$db/de0/class_mouvement_stock.html" title="Class to manage stock movements." alt="" coords="212,3425,348,3452"/>
+<area shape="rect" id="node114" href="$d3/df0/class_multi_currency.html" title="Class Currency." alt="" coords="223,3476,337,3503"/>
+<area shape="rect" id="node115" href="$dd/d52/class_my_object.html" title="Class for MyObject." alt="" coords="238,3527,322,3553"/>
+<area shape="rect" id="node116" href="$d7/db2/class_opensurveysondage.html" title="Put here description of your class." alt="" coords="203,3577,357,3604"/>
+<area shape="rect" id="node117" href="$d4/dde/class_paiement.html" title="Class to manage payments of customer invoices." alt="" coords="239,3628,321,3655"/>
+<area shape="rect" id="node119" href="$d6/d1f/class_partnership.html" title="Class for Partnership." alt="" coords="233,3679,327,3705"/>
+<area shape="rect" id="node120" href="$da/da5/class_partnership_type.html" title="Class to manage partnership type." alt="" coords="217,3729,343,3756"/>
+<area shape="rect" id="node121" href="$d6/dfe/class_payment_donation.html" title="Class to manage payments of donations." alt="" coords="211,3780,349,3807"/>
+<area shape="rect" id="node122" href="$df/d28/class_payment_expense_report.html" title="Class to manage payments of expense report." alt="" coords="191,3831,369,3857"/>
+<area shape="rect" id="node123" href="$df/d90/class_payment_loan.html" title="Class to manage payments of loans." alt="" coords="225,3881,335,3908"/>
+<area shape="rect" id="node124" href="$d4/dcb/class_payment_salary.html" title="Class to manage payments of salaries." alt="" coords="220,3932,340,3959"/>
+<area shape="rect" id="node125" href="$d1/dac/class_payment_social_contribution.html" title="Class to manage payments of social contributions." alt="" coords="181,3983,379,4009"/>
+<area shape="rect" id="node126" href="$d1/da6/class_payment_v_a_t.html" title="Class to manage payments of social contributions." alt="" coords="229,4033,331,4060"/>
+<area shape="rect" id="node127" href="$da/d1b/class_payment_various.html" title="Class to manage various payments." alt="" coords="217,4084,343,4111"/>
+<area shape="rect" id="node128" href="$d7/d3b/class_position.html" title="Class for Position." alt="" coords="243,4135,317,4161"/>
+<area shape="rect" id="node129" href="$dc/d42/class_product.html" title="Class to manage products or services." alt="" coords="245,4185,315,4212"/>
+<area shape="rect" id="node132" href="$d8/d26/class_product_attribute.html" title="Class ProductAttribute Used to represent a product attribute." alt="" coords="216,4236,344,4263"/>
+<area shape="rect" id="node133" href="$dd/dd6/class_product_fournisseur_price.html" title="Class for ProductFournisseurPrice." alt="" coords="191,4287,369,4313"/>
+<area shape="rect" id="node134" href="$da/d8c/class_product_stock_entrepot.html" title="Class ProductStockEntrepot." alt="" coords="199,4337,361,4364"/>
+<area shape="rect" id="node135" href="$df/d73/class_productbatch.html" title="Manage record for batch number management." alt="" coords="227,4388,333,4415"/>
+<area shape="rect" id="node136" href="$db/da4/class_productcustomerprice.html" title="File of class to manage predefined price products or services by customer." alt="" coords="198,4439,362,4465"/>
+<area shape="rect" id="node137" href="$d1/d07/class_productlot.html" title="Class with list of lots and properties." alt="" coords="236,4489,324,4516"/>
+<area shape="rect" id="node138" href="$d9/d6e/class_project.html" title="Class to manage projects." alt="" coords="247,4540,313,4567"/>
+<area shape="rect" id="node139" href="$d1/d5c/class_propal.html" title="Class to manage proposals." alt="" coords="249,4591,311,4617"/>
+<area shape="rect" id="node140" href="$d7/df0/class_propalmergepdfproduct.html" title="Put here description of your class." alt="" coords="193,4641,367,4668"/>
+<area shape="rect" id="node141" href="$d4/dcf/class_reception.html" title="Class to manage receptions." alt="" coords="237,4692,323,4719"/>
+<area shape="rect" id="node142" href="$df/dab/class_recruitment_candidature.html" title="Class for RecruitmentCandidature." alt="" coords="189,4743,371,4769"/>
+<area shape="rect" id="node143" href="$dd/dd8/class_recruitment_job_position.html" title="Class for RecruitmentJobPosition." alt="" coords="193,4793,367,4820"/>
+<area shape="rect" id="node144" href="$dd/d77/class_remise_cheque.html" title="Class to manage cheque delivery receipts." alt="" coords="220,4844,340,4871"/>
+<area shape="rect" id="node145" href="$dd/d5a/class_salary.html" title="Class to manage salary payments." alt="" coords="249,4895,311,4921"/>
+<area shape="rect" id="node146" href="$db/de8/class_skill.html" title="Class for Skill." alt="" coords="255,4945,305,4972"/>
+<area shape="rect" id="node147" href="$db/d4b/class_skill_rank.html" title="Class for SkillRank." alt="" coords="239,4996,321,5023"/>
+<area shape="rect" id="node148" href="$d2/d0b/class_skilldet.html" title="Class for Skilldet." alt="" coords="245,5047,315,5073"/>
+<area shape="rect" id="node149" href="$dc/dbc/class_societe.html" title="Class to manage third parties objects (customers, suppliers, prospects...)" alt="" coords="245,5097,315,5124"/>
+<area shape="rect" id="node152" href="$d9/d27/class_societe_account.html" title="Class for SocieteAccount." alt="" coords="219,5148,341,5175"/>
+<area shape="rect" id="node153" href="$d6/d34/class_stock_transfer.html" title="Class for StockTransfer." alt="" coords="225,5199,335,5225"/>
+<area shape="rect" id="node154" href="$db/dd2/class_stripe.html" title="Stripe class." alt="" coords="250,5249,310,5276"/>
+<area shape="rect" id="node155" href="$d0/d2a/class_subscription.html" title="Class to manage subscriptions of foundation members." alt="" coords="229,5300,331,5327"/>
+<area shape="rect" id="node156" href="$de/d69/class_supplier_proposal.html" title="Class to manage price ask supplier." alt="" coords="215,5351,345,5377"/>
+<area shape="rect" id="node157" href="$d2/db8/class_target.html" title="Class for Target." alt="" coords="249,5401,311,5428"/>
+<area shape="rect" id="node158" href="$d0/d2a/class_ticket.html" title="Class to manage ticket." alt="" coords="249,5452,311,5479"/>
+<area shape="rect" id="node159" href="$d7/d80/class_tva.html" title="Put here description of your class." alt="" coords="257,5503,303,5529"/>
+<area shape="rect" id="node160" href="$d7/d23/class_user.html" title="Class to manage Dolibarr users." alt="" coords="254,5553,306,5580"/>
+<area shape="rect" id="node161" href="$d8/d7e/class_user_group.html" title="Class to manage user groups." alt="" coords="235,5604,325,5631"/>
+<area shape="rect" id="node162" href="$da/d53/class_website.html" title="Class Website." alt="" coords="243,5655,317,5681"/>
+<area shape="rect" id="node163" href="$df/df9/class_website_page.html" title="Class Websitepage." alt="" coords="227,5705,333,5732"/>
+<area shape="rect" id="node164" href="$dc/de4/class_workstation.html" title="Class for Workstation." alt="" coords="230,5756,330,5783"/>
+<area shape="rect" id="node165" href="$d1/dbd/class_workstation_resource.html" title="Class to link resource with Workstations." alt="" coords="200,5807,360,5833"/>
+<area shape="rect" id="node166" href="$da/dfb/class_workstation_user_group.html" title="Class to link User groups and Workstations." alt="" coords="195,5857,365,5884"/>
+<area shape="rect" id="node3" href="$d0/d9b/class_company_bank_account.html" title="Class to manage bank accounts description of third parties." alt="" coords="465,5,634,32"/>
+<area shape="rect" id="node4" href="$db/dd9/class_user_bank_account.html" title="Class to manage bank accounts description of users." alt="" coords="481,56,618,83"/>
+<area shape="rect" id="node9" href="$d4/d7d/class_conference_or_booth.html" title="Class for ConferenceOrBooth." alt="" coords="475,233,624,260"/>
+<area shape="rect" id="node22" href="$d4/d7b/class_lettering.html" title="Class Lettering." alt="" coords="509,411,589,437"/>
+<area shape="rect" id="node31" href="$d3/d75/class_facture.html" title="Class to manage invoices." alt="" coords="515,461,584,488"/>
+<area shape="rect" id="node32" href="$df/d8a/class_facture_fournisseur.html" title="Class to manage suppliers invoices." alt="" coords="477,512,621,539"/>
+<area shape="rect" id="node33" href="$d0/d79/class_facture_fournisseur_rec.html" title="Class to manage invoice templates." alt="" coords="465,563,633,589"/>
+<area shape="rect" id="node34" href="$d4/d01/class_facture_rec.html" title="Class to manage invoice templates." alt="" coords="503,613,596,640"/>
+<area shape="rect" id="node36" href="$d7/d56/class_availabilities_line.html" title="Class AvailabilitiesLine." alt="" coords="483,664,616,691"/>
+<area shape="rect" id="node37" href="$dc/d3d/class_b_o_m_line.html" title="Class for BOMLine." alt="" coords="509,715,589,741"/>
+<area shape="rect" id="node38" href="$d1/d3b/class_booking_line.html" title="Class BookingLine." alt="" coords="498,765,601,792"/>
+<area shape="rect" id="node39" href="$d1/d1d/class_commande_fournisseur_dispatch.html" title="Class to manage table commandefournisseurdispatch." alt="" coords="435,816,664,843"/>
+<area shape="rect" id="node40" href="$de/d18/class_common_invoice_line.html" title="Parent class of all other business classes for details of elements (invoices, contracts,..." alt="" coords="472,867,627,893"/>
+<area shape="rect" id="node43" href="$d4/d9b/class_common_order_line.html" title="Superclass for orders classes." alt="" coords="477,917,621,944"/>
+<area shape="rect" id="node46" href="$da/d82/class_conference_or_booth_attendee_line.html" title="Class ConferenceOrBoothAttendeeLine." alt="" coords="432,968,667,995"/>
+<area shape="rect" id="node47" href="$d2/d6d/class_contrat_ligne.html" title="Class to manage lines of contracts." alt="" coords="497,1019,602,1045"/>
+<area shape="rect" id="node48" href="$d9/dc1/class_currency_rate.html" title="Class CurrencyRate." alt="" coords="494,1069,605,1096"/>
+<area shape="rect" id="node49" href="$de/d8d/class_delivery_line.html" title="Management class of delivery note lines." alt="" coords="497,1120,601,1147"/>
+<area shape="rect" id="node50" href="$dd/de8/class_expedition_ligne.html" title="Classe to manage lines of shipment." alt="" coords="486,1171,613,1197"/>
+<area shape="rect" id="node51" href="$d2/d1f/class_expense_report_line.html" title="Class of expense report details lines." alt="" coords="476,1221,623,1248"/>
+<area shape="rect" id="node52" href="$d3/d52/class_facture_fournisseur_ligne_rec.html" title="Class to manage supplier invoice lines of templates." alt="" coords="448,1272,651,1299"/>
+<area shape="rect" id="node53" href="$d4/d24/class_fichinter_ligne.html" title="Class to manage intervention lines." alt="" coords="493,1323,606,1349"/>
+<area shape="rect" id="node54" href="$d8/d83/class_inventory_line.html" title="Class InventoryLine." alt="" coords="494,1373,605,1400"/>
+<area shape="rect" id="node55" href="$d4/d36/class_job_line.html" title="Class JobLine." alt="" coords="515,1424,584,1451"/>
+<area shape="rect" id="node56" href="$de/d60/class_knowledge_record_line.html" title="Class KnowledgeRecordLine." alt="" coords="466,1475,633,1501"/>
+<area shape="rect" id="node57" href="$da/d96/class_mo_line.html" title="Class MoLine." alt="" coords="515,1525,584,1552"/>
+<area shape="rect" id="node58" href="$d4/d0b/class_my_object_line.html" title="Class MyObjectLine." alt="" coords="494,1576,605,1603"/>
+<area shape="rect" id="node59" href="$d0/d77/class_partnership_line.html" title="Class PartnershipLine." alt="" coords="488,1627,611,1653"/>
+<area shape="rect" id="node60" href="$d9/d71/class_position_line.html" title="Class PositionLine." alt="" coords="499,1677,600,1704"/>
+<area shape="rect" id="node61" href="$d2/d6b/class_product_attribute_value.html" title="Class ProductAttributeValue Used to represent a product attribute value." alt="" coords="467,1728,631,1755"/>
+<area shape="rect" id="node62" href="$d4/de0/class_propale_ligne.html" title="Class to manage commercial proposal lines." alt="" coords="496,1779,603,1805"/>
+<area shape="rect" id="node63" href="$d4/d93/class_recruitment_candidature_line.html" title="Class RecruitmentCandidatureLine." alt="" coords="445,1829,653,1856"/>
+<area shape="rect" id="node64" href="$d3/d4a/class_stock_transfer_line.html" title="Class for StockTransferLine." alt="" coords="481,1880,618,1907"/>
+<area shape="rect" id="node65" href="$d4/db0/class_supplier_invoice_line.html" title="Class to manage line invoices." alt="" coords="475,1931,624,1957"/>
+<area shape="rect" id="node66" href="$df/de7/class_supplier_proposal_line.html" title="Class to manage supplier_proposal lines." alt="" coords="470,1981,629,2008"/>
+<area shape="rect" id="node67" href="$d1/da8/class_target_line.html" title="Class TargetLine." alt="" coords="505,2032,594,2059"/>
+<area shape="rect" id="node68" href="$d7/d6d/class_task.html" title="Class to manage tasks." alt="" coords="524,2083,575,2109"/>
+<area shape="rect" id="node41" href="$d3/d13/class_facture_ligne.html" title="Class to manage invoice lines." alt="" coords="766,816,870,843"/>
+<area shape="rect" id="node42" href="$dc/d37/class_facture_ligne_rec.html" title="Class to manage invoice lines of templates." alt="" coords="754,867,882,893"/>
+<area shape="rect" id="node44" href="$de/d16/class_commande_fournisseur_ligne.html" title="Class to manage line orders." alt="" coords="715,917,921,944"/>
+<area shape="rect" id="node45" href="$df/de6/class_order_line.html" title="Class to manage order lines." alt="" coords="775,968,861,995"/>
+<area shape="rect" id="node70" href="$da/de7/class_commande.html" title="Class to manage customers orders." alt="" coords="501,2133,598,2160"/>
+<area shape="rect" id="node71" href="$d7/d70/class_commande_fournisseur.html" title="Class to manage predefined suppliers products." alt="" coords="463,2184,635,2211"/>
+<area shape="rect" id="node98" href="$db/da4/class_fichinter_rec.html" title="Classe de gestion des factures recurrentes/Modeles." alt="" coords="498,2665,601,2692"/>
+<area shape="rect" id="node118" href="$de/d4c/class_paiement_fourn.html" title="Class to manage payments for supplier invoices." alt="" coords="490,3628,609,3655"/>
+<area shape="rect" id="node130" href="$db/da3/class_product_fournisseur.html" title="Class to manage predefined suppliers products." alt="" coords="476,4160,623,4187"/>
+<area shape="rect" id="node131" href="$df/d1e/class_product_service.html" title="Class to manage products or services." alt="" coords="490,4211,609,4237"/>
+<area shape="rect" id="node150" href="$d3/d7a/class_client.html" title="Class to manage customers or prospects." alt="" coords="519,5072,579,5099"/>
+<area shape="rect" id="node151" href="$de/d1a/class_fournisseur.html" title="Class to manage suppliers." alt="" coords="501,5123,598,5149"/>
+</map>

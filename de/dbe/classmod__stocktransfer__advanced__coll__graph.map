@@ -1,0 +1,4 @@
+<map id="mod_stocktransfer_advanced" name="mod_stocktransfer_advanced">
+<area shape="rect" id="node1" title="Class to manage customer Bom numbering rules advanced." alt="" coords="5,80,220,107"/>
+<area shape="rect" id="node2" href="$da/d8a/class_modele_num_ref_stock_transfer.html" title="Parent class to manage numbering of StockTransfer." alt="" coords="7,5,218,32"/>
+</map>

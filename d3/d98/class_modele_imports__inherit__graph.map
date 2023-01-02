@@ -1,0 +1,5 @@
+<map id="ModeleImports" name="ModeleImports">
+<area shape="rect" id="node1" title="Parent class for import file readers." alt="" coords="47,5,167,32"/>
+<area shape="rect" id="node2" href="$d4/d9d/class_import_csv.html" title="Class to import CSV files." alt="" coords="5,80,95,107"/>
+<area shape="rect" id="node3" href="$d4/d28/class_import_xlsx.html" title="Class to import Excel files." alt="" coords="119,80,213,107"/>
+</map>

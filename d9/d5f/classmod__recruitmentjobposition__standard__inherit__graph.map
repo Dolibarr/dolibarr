@@ -1,0 +1,4 @@
+<map id="mod_recruitmentjobposition_standard" name="mod_recruitmentjobposition_standard">
+<area shape="rect" id="node1" title="Class to manage the Standard numbering rule for Job positions." alt="" coords="13,95,220,136"/>
+<area shape="rect" id="node2" href="$d2/d67/class_modele_num_ref_recruitment_job_position.html" title="Parent class to manage numbering of RecruitmentJobPosition." alt="" coords="5,5,228,47"/>
+</map>

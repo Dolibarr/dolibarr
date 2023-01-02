@@ -1,0 +1,7 @@
+<map id="OrderLine" name="OrderLine">
+<area shape="rect" id="node1" title="Class to manage order lines." alt="" coords="38,323,123,349"/>
+<area shape="rect" id="node2" href="$d4/d9b/class_common_order_line.html" title="Superclass for orders classes." alt="" coords="9,247,153,273"/>
+<area shape="rect" id="node3" href="$dc/d3c/class_common_object_line.html" title="Parent class for class inheritance lines of business objects This class is useless for the moment so ..." alt="" coords="5,171,156,197"/>
+<area shape="rect" id="node4" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="19,95,142,121"/>
+<area shape="rect" id="node5" title=" " alt="" coords="52,5,109,32"/>
+</map>

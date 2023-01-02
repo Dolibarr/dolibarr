@@ -1,0 +1,5 @@
+<map id="pdf_eratosthene" name="pdf_eratosthene">
+<area shape="rect" id="node1" title="Class to generate PDF orders with template Eratosthene." alt="" coords="31,155,159,181"/>
+<area shape="rect" id="node2" href="$d1/d7d/class_modele_p_d_f_commandes.html" title="Parent class for orders models." alt="" coords="5,80,184,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="9,5,180,32"/>
+</map>

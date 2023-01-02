@@ -1,0 +1,5 @@
+<map id="mod_syslog_file" name="mod_syslog_file">
+<area shape="rect" id="node1" title="Class to manage logging to a file." alt="" coords="65,80,191,107"/>
+<area shape="rect" id="node2" href="$dd/d7a/class_log_handler.html" title="Parent class for log handlers." alt="" coords="5,5,101,32"/>
+<area shape="rect" id="node3" href="$d1/db5/interface_log_handler_interface.html" title="LogHandlerInterface." alt="" coords="125,5,280,32"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$de/dca/class_modele_accountancy_code.html" title="Parent class for third parties accountancy code generators." alt="" coords="5,56,192,83"/>
+<area shape="rect" id="node2" href="$de/d83/classmod__codecompta__aquarium.html" title="Class to manage accountancy code of thirdparties with Aquarium rules." alt="" coords="240,5,447,32"/>
+<area shape="rect" id="node3" href="$de/dcf/classmod__codecompta__digitaria.html" title="Class to manage accountancy code of thirdparties with Digitaria rules." alt="" coords="244,56,443,83"/>
+<area shape="rect" id="node4" href="$d2/d2f/classmod__codecompta__panicum.html" title="Class to manage accountancy code of thirdparties with Panicum rules." alt="" coords="243,107,444,133"/>
+</map>

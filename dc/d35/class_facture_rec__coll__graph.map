@@ -1,0 +1,6 @@
+<map id="FactureRec" name="FactureRec">
+<area shape="rect" id="node1" title="Class to manage invoice templates." alt="" coords="5,424,99,451"/>
+<area shape="rect" id="node2" href="$d6/dc8/class_common_invoice.html" title="Superclass for invoices classes." alt="" coords="161,348,289,375"/>
+<area shape="rect" id="node3" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="395,162,517,189"/>
+<area shape="rect" id="node4" title=" " alt="" coords="197,5,254,32"/>
+</map>

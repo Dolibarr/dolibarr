@@ -1,0 +1,6 @@
+<map id="Product" name="Product">
+<area shape="rect" id="node1" title="Class to manage products or services." alt="" coords="122,80,193,107"/>
+<area shape="rect" id="node3" href="$db/da3/class_product_fournisseur.html" title="Class to manage predefined suppliers products." alt="" coords="5,155,152,181"/>
+<area shape="rect" id="node4" href="$df/d1e/class_product_service.html" title="Class to manage products or services." alt="" coords="177,155,295,181"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="96,5,219,32"/>
+</map>

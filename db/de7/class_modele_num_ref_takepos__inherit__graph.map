@@ -1,0 +1,5 @@
+<map id="ModeleNumRefTakepos" name="ModeleNumRefTakepos">
+<area shape="rect" id="node1" title="Classe mere des modeles de numerotation des tickets de caisse." alt="" coords="119,5,293,32"/>
+<area shape="rect" id="node2" href="$d9/dc6/classmod__takepos__ref__simple.html" title="Class to manage ref numbering of takepos cards with rule Simple." alt="" coords="5,80,191,107"/>
+<area shape="rect" id="node3" href="$da/df1/classmod__takepos__ref__universal.html" title="Class to manage ref numbering of takepos cards with rule universal." alt="" coords="215,80,416,107"/>
+</map>

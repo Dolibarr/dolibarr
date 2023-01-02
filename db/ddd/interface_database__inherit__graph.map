@@ -1,0 +1,8 @@
+<map id="Database" name="Database">
+<area shape="rect" id="node1" title="Class to manage Dolibarr database access for an SQL database." alt="" coords="215,5,299,32"/>
+<area shape="rect" id="node2" href="$db/d98/class_doli_d_b.html" title="Class to manage Dolibarr database access." alt="" coords="223,80,290,107"/>
+<area shape="rect" id="node3" href="$df/d61/class_doli_d_b_mysqli.html" title="Class to manage Dolibarr database access for a MySQL database using the MySQLi extension." alt="" coords="5,155,116,181"/>
+<area shape="rect" id="node4" href="$d5/d89/class_doli_d_b_pgsql.html" title="Class to drive a Postgresql database for Dolibarr." alt="" coords="140,155,243,181"/>
+<area shape="rect" id="node5" href="$de/da9/class_doli_d_b_sqlite3.html" title="Class to manage Dolibarr database access for a SQLite database." alt="" coords="267,155,379,181"/>
+<area shape="rect" id="node6" href="$d6/d06/class_traceable_d_b.html" title="TraceableDB class." alt="" coords="404,155,507,181"/>
+</map>

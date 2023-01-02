@@ -1,0 +1,7 @@
+<map id="ModelePDFPropales" name="ModelePDFPropales">
+<area shape="rect" id="node1" title="Classe mere des modeles de propale." alt="" coords="183,80,335,107"/>
+<area shape="rect" id="node3" href="$d9/d69/classdoc__generic__proposal__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="5,155,196,181"/>
+<area shape="rect" id="node4" href="$da/d3c/classpdf__azur.html" title="Class to generate PDF proposal Azur." alt="" coords="220,155,299,181"/>
+<area shape="rect" id="node5" href="$d8/dc3/classpdf__cyan.html" title="Class to generate PDF proposal Cyan." alt="" coords="323,155,404,181"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="174,5,345,32"/>
+</map>

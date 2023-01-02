@@ -1,0 +1,4 @@
+<map id="ChargeSociales" name="ChargeSociales">
+<area shape="rect" id="node1" title="Classe permettant la gestion des paiements des charges La tva collectee n&#39;est calculee que sur les fa..." alt="" coords="5,80,128,107"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="5,5,128,32"/>
+</map>

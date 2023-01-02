@@ -1,0 +1,4 @@
+<map id="box_graph_invoices_permonth" name="box_graph_invoices_permonth">
+<area shape="rect" id="node1" title="Class to manage the box to show last invoices." alt="" coords="5,80,156,121"/>
+<area shape="rect" id="node2" href="$df/dd0/class_modele_boxes.html" title="Class ModeleBoxes." alt="" coords="26,5,135,32"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="FormMail" name="FormMail">
+<area shape="rect" id="node1" title="Classe permettant la generation du formulaire html d&#39;envoi de mail unitaire Usage: $formail = new For..." alt="" coords="5,80,88,107"/>
+<area shape="rect" id="node2" href="$df/d08/class_form.html" title="Class to manage generation of HTML components Only common components must be here." alt="" coords="19,5,74,32"/>
+</map>

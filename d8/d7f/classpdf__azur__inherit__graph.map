@@ -1,0 +1,5 @@
+<map id="pdf_azur" name="pdf_azur">
+<area shape="rect" id="node1" title="Class to generate PDF proposal Azur." alt="" coords="51,155,130,181"/>
+<area shape="rect" id="node2" href="$d1/d3f/class_modele_p_d_f_propales.html" title="Classe mere des modeles de propale." alt="" coords="15,80,167,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="5,5,176,32"/>
+</map>

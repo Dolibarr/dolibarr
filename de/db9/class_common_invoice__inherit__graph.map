@@ -1,0 +1,8 @@
+<map id="CommonInvoice" name="CommonInvoice">
+<area shape="rect" id="node1" title="Superclass for invoices classes." alt="" coords="196,80,324,107"/>
+<area shape="rect" id="node3" href="$d3/d75/class_facture.html" title="Class to manage invoices." alt="" coords="5,155,75,181"/>
+<area shape="rect" id="node4" href="$df/d8a/class_facture_fournisseur.html" title="Class to manage suppliers invoices." alt="" coords="99,155,243,181"/>
+<area shape="rect" id="node5" href="$d0/d79/class_facture_fournisseur_rec.html" title="Class to manage invoice templates." alt="" coords="267,155,435,181"/>
+<area shape="rect" id="node6" href="$d4/d01/class_facture_rec.html" title="Class to manage invoice templates." alt="" coords="459,155,552,181"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="199,5,321,32"/>
+</map>

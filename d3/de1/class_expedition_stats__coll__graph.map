@@ -1,0 +1,4 @@
+<map id="ExpeditionStats" name="ExpeditionStats">
+<area shape="rect" id="node1" title="Class to manage shipment statistics." alt="" coords="5,80,129,107"/>
+<area shape="rect" id="node2" href="$df/d1b/class_stats.html" title="Parent class of statistics class." alt="" coords="40,5,95,32"/>
+</map>

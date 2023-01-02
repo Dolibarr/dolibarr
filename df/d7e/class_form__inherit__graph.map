@@ -1,0 +1,11 @@
+<map id="Form" name="Form">
+<area shape="rect" id="node1" title="Class to manage generation of HTML components Only common components must be here." alt="" coords="5,183,60,209"/>
+<area shape="rect" id="node2" href="$db/dfc/class_form_accounting.html" title="Class to manage generation of HTML components for accounting management." alt="" coords="133,5,260,32"/>
+<area shape="rect" id="node3" href="$d4/d48/class_form_adv_target_emailing.html" title="Class to manage building of HTML components." alt="" coords="108,56,285,83"/>
+<area shape="rect" id="node4" href="$db/dd6/class_form_category.html" title="Class to manage forms for categories." alt="" coords="139,107,254,133"/>
+<area shape="rect" id="node5" href="$d2/d52/class_form_company.html" title="Class to build HTML component for third parties management Only common components are here." alt="" coords="138,157,255,184"/>
+<area shape="rect" id="node6" href="$d7/dd1/class_form_cron.html" title="Class to manage building of HTML components." alt="" coords="154,208,239,235"/>
+<area shape="rect" id="node7" href="$d8/d6b/class_form_mail.html" title="Classe permettant la generation du formulaire html d&#39;envoi de mail unitaire Usage: $formail = new For..." alt="" coords="155,259,238,285"/>
+<area shape="rect" id="node8" href="$d6/d4e/class_form_mailing.html" title="Class to offer components to list and upload files." alt="" coords="145,309,248,336"/>
+<area shape="rect" id="node9" href="$d2/d8c/class_form_order.html" title="Class to manage HTML output components for orders Before adding component here, check they are not in..." alt="" coords="151,360,242,387"/>
+</map>

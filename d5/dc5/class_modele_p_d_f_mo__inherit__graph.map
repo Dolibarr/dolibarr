@@ -1,0 +1,6 @@
+<map id="ModelePDFMo" name="ModelePDFMo">
+<area shape="rect" id="node1" title="Parent class for mos models." alt="" coords="96,80,212,107"/>
+<area shape="rect" id="node3" href="$d7/dce/classdoc__generic__mo__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="5,155,161,181"/>
+<area shape="rect" id="node4" href="$df/d88/classpdf__vinci.html" title="Class to generate the manufacturing orders with the vinci model." alt="" coords="185,155,267,181"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="69,5,239,32"/>
+</map>

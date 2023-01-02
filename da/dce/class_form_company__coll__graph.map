@@ -1,0 +1,4 @@
+<map id="FormCompany" name="FormCompany">
+<area shape="rect" id="node1" title="Class to build HTML component for third parties management Only common components are here." alt="" coords="5,80,123,107"/>
+<area shape="rect" id="node2" href="$df/d08/class_form.html" title="Class to manage generation of HTML components Only common components must be here." alt="" coords="37,5,91,32"/>
+</map>

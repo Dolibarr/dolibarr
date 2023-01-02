@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$d0/d36/class_modele_bar_code.html" title="Parent class for barcode document models." alt="" coords="5,31,131,57"/>
+<area shape="rect" id="node2" href="$d5/ddc/classmod_phpbarcode.html" title="Class to generate barcode images using php barcode generator." alt="" coords="184,5,311,32"/>
+<area shape="rect" id="node3" href="$dd/ddb/classmod_tcpdfbarcode.html" title="Class to generate barcode images using tcpdf barcode generator." alt="" coords="179,56,316,83"/>
+</map>

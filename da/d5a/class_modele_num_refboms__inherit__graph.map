@@ -1,0 +1,5 @@
+<map id="ModeleNumRefboms" name="ModeleNumRefboms">
+<area shape="rect" id="node1" title=" " alt="" coords="94,5,253,32"/>
+<area shape="rect" id="node2" href="$db/d6a/classmod__bom__advanced.html" title="Class to manage customer Bom numbering rules advanced." alt="" coords="5,80,163,107"/>
+<area shape="rect" id="node3" href="$dc/d87/classmod__bom__standard.html" title="Class to manage the Standard numbering rule for BOM." alt="" coords="187,80,338,107"/>
+</map>

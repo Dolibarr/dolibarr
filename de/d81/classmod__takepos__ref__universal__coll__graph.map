@@ -1,0 +1,4 @@
+<map id="mod_takepos_ref_universal" name="mod_takepos_ref_universal">
+<area shape="rect" id="node1" title="Class to manage ref numbering of takepos cards with rule universal." alt="" coords="5,80,207,107"/>
+<area shape="rect" id="node2" href="$dc/db5/class_modele_num_ref_takepos.html" title="Classe mere des modeles de numerotation des tickets de caisse." alt="" coords="19,5,193,32"/>
+</map>

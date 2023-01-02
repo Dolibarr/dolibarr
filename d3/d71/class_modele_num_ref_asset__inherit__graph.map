@@ -1,0 +1,5 @@
+<map id="ModeleNumRefAsset" name="ModeleNumRefAsset">
+<area shape="rect" id="node1" title="Parent class to manage numbering of Asset." alt="" coords="99,5,258,32"/>
+<area shape="rect" id="node2" href="$df/d89/classmod__asset__advanced.html" title="Class to manage customer Bom numbering rules advanced." alt="" coords="5,80,168,107"/>
+<area shape="rect" id="node3" href="$d1/d5b/classmod__asset__standard.html" title="Class to manage the Standard numbering rule for Asset." alt="" coords="192,80,349,107"/>
+</map>

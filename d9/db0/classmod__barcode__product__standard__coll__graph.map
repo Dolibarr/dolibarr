@@ -1,0 +1,4 @@
+<map id="mod_barcode_product_standard" name="mod_barcode_product_standard">
+<area shape="rect" id="node1" title="Class to manage barcode with standard rule." alt="" coords="11,80,178,121"/>
+<area shape="rect" id="node2" href="$d2/d69/class_modele_num_ref_bar_code.html" title="Parent class for barcode numbering models." alt="" coords="5,5,184,32"/>
+</map>

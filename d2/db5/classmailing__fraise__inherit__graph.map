@@ -1,0 +1,4 @@
+<map id="mailing_fraise" name="mailing_fraise">
+<area shape="rect" id="node1" title="Class to generate target according to rule Fraise." alt="" coords="7,80,121,107"/>
+<area shape="rect" id="node2" href="$d7/d9c/class_mailing_targets.html" title="Parent class of emailing target selectors modules." alt="" coords="5,5,123,32"/>
+</map>

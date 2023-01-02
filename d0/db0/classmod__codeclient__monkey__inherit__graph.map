@@ -1,0 +1,4 @@
+<map id="mod_codeclient_monkey" name="mod_codeclient_monkey">
+<area shape="rect" id="node1" title="Classe permettant la gestion monkey des codes tiers." alt="" coords="5,80,189,107"/>
+<area shape="rect" id="node2" href="$da/d70/class_modele_third_party_code.html" title="Parent class for third parties code generators." alt="" coords="13,5,182,32"/>
+</map>

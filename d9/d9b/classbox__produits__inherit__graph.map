@@ -1,0 +1,4 @@
+<map id="box_produits" name="box_produits">
+<area shape="rect" id="node1" title="Class to manage the box to show last products." alt="" coords="7,80,113,107"/>
+<area shape="rect" id="node2" href="$df/dd0/class_modele_boxes.html" title="Class ModeleBoxes." alt="" coords="5,5,115,32"/>
+</map>

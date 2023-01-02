@@ -1,0 +1,6 @@
+<map id="ModeleBankAccountDoc" name="ModeleBankAccountDoc">
+<area shape="rect" id="node1" title="Parent class for bank account models." alt="" coords="18,80,198,107"/>
+<area shape="rect" id="node3" href="$dc/d82/classpdf__ban.html" title="Classe permettant de generer les projets au modele Ban." alt="" coords="5,155,80,181"/>
+<area shape="rect" id="node4" href="$d8/d9b/classpdf__sepamandate.html" title="Class to generate SEPA mandate." alt="" coords="104,155,243,181"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="23,5,193,32"/>
+</map>

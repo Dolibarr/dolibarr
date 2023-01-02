@@ -1,0 +1,5 @@
+<map id="doc_generic_supplier_order_odt" name="doc_generic_supplier_order_odt">
+<area shape="rect" id="node1" title="Class to build documents using ODF templates generator." alt="" coords="25,155,184,196"/>
+<area shape="rect" id="node2" href="$d1/daa/class_modele_p_d_f_suppliers_orders.html" title="Parent class for supplier orders models." alt="" coords="5,80,204,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="19,5,190,32"/>
+</map>

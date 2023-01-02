@@ -1,0 +1,5 @@
+<map id="PaymentExpenseReport" name="PaymentExpenseReport">
+<area shape="rect" id="node1" title="Class to manage payments of expense report." alt="" coords="5,171,183,197"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="33,95,155,121"/>
+<area shape="rect" id="node3" title=" " alt="" coords="65,5,123,32"/>
+</map>

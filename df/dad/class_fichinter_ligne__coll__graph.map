@@ -1,0 +1,6 @@
+<map id="FichinterLigne" name="FichinterLigne">
+<area shape="rect" id="node1" title="Class to manage intervention lines." alt="" coords="24,247,137,273"/>
+<area shape="rect" id="node2" href="$dc/d3c/class_common_object_line.html" title="Parent class for class inheritance lines of business objects This class is useless for the moment so ..." alt="" coords="5,171,156,197"/>
+<area shape="rect" id="node3" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="19,95,142,121"/>
+<area shape="rect" id="node4" title=" " alt="" coords="52,5,109,32"/>
+</map>

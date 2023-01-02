@@ -1,0 +1,5 @@
+<map id="ActionsCardCommon" name="ActionsCardCommon">
+<area shape="rect" id="node1" title="Classe permettant la gestion des tiers par defaut." alt="" coords="101,5,259,32"/>
+<area shape="rect" id="node2" href="$da/d77/class_actions_card_company.html" title="ActionsCardCompany." alt="" coords="5,80,168,107"/>
+<area shape="rect" id="node3" href="$dc/d3a/class_actions_card_individual.html" title="ActionsCardIndividual." alt="" coords="193,80,357,107"/>
+</map>

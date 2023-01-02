@@ -1,0 +1,4 @@
+<map id="mod_expedition_safor" name="mod_expedition_safor">
+<area shape="rect" id="node1" title="Class to manage expedition numbering rules Safor." alt="" coords="14,80,181,107"/>
+<area shape="rect" id="node2" href="$d1/db4/class_model_num_ref_expedition.html" title="Parent Class of numbering models of sending receipts references." alt="" coords="5,5,189,32"/>
+</map>

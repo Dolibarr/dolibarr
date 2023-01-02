@@ -1,0 +1,5 @@
+<map id="pdf_squille" name="pdf_squille">
+<area shape="rect" id="node1" title="Classe permettant de generer les borderaux envoi au modele Squille." alt="" coords="44,155,137,181"/>
+<area shape="rect" id="node2" href="$d1/d17/class_modele_pdf_reception.html" title="Parent class of sending receipts models." alt="" coords="13,80,169,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="5,5,176,32"/>
+</map>

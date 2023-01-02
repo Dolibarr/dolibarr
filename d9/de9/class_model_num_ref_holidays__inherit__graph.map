@@ -1,0 +1,5 @@
+<map id="ModelNumRefHolidays" name="ModelNumRefHolidays">
+<area shape="rect" id="node1" title="Parent class for all holidays numbering modules." alt="" coords="117,5,289,32"/>
+<area shape="rect" id="node2" href="$db/df6/classmod__holiday__immaculate.html" title="Class to manage contract numbering rules Magre." alt="" coords="5,80,196,107"/>
+<area shape="rect" id="node3" href="$d7/db0/classmod__holiday__madonna.html" title="Class to manage contract numbering rules madonna." alt="" coords="220,80,395,107"/>
+</map>

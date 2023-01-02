@@ -1,0 +1,4 @@
+<map id="PartnershipType" name="PartnershipType">
+<area shape="rect" id="node1" title="Class to manage partnership type." alt="" coords="5,80,131,107"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="7,5,129,32"/>
+</map>

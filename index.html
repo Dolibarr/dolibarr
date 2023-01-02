@@ -1,192 +1,103 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <title>Dolibarr by Dolibarr</title>
-  </head>
-
-  <body>
-    <header>
-      <div class="inner">
-        <h1>Dolibarr</h1>
-        <h2>Dolibarr ERP/CRM is a modern software to manage your company or foundation activity (contacts, suppliers, invoices, orders, stocks, agenda, ...).It's an opensource software (wrote with PHP language) designed for small and medium companies, foundation and freelances. You can freely install, use and distribute it as a standalone application or as a web application to use it from every internet access and media.</h2>
-        <a href="https://github.com/Dolibarr/dolibarr" class="button"><small>View project on</small>GitHub</a>
-      </div>
-    </header>
-
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h1>
-<a name="dolibarr-erp--crm" class="anchor" href="#dolibarr-erp--crm"><span class="octicon octicon-link"></span></a>DOLIBARR ERP &amp; CRM</h1>
-
-<p>Dolibarr ERP &amp; CRM is a modern software to manage your company or foundation activity (contacts, suppliers, invoices, orders, stocks, agenda, ...).It's an opensource software (wrote with PHP language) designed for small and medium companies, foundation and freelances. You can freely install, use and distribute it as a standalone application or as a web application to use it from every internet access and media.</p>
-
-<h2>
-<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>LICENSE</h2>
-
-<p>Dolibarr is released under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version (GPL-3+).</p>
-
-<h2>
-<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>INSTALL</h2>
-
-<p>If you have no technical knowledge, and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows), DoliDeb (the all-in-one package of Dolibarr for Debian or Ubuntu) or DoliRpm (the all-in-one package of Dolibarr for Fedora, Redhat, Opensue, Mandriva or Mageia).</p>
-
-<p>You can download this at: <a href="http://www.dolibarr.org/downloads/">Official website</a></p>
-
-<p>If you already have installed a Web server and a Mysql database, you can install the standard version like this:</p>
-
-<ul>
-<li><p>Uncompress the downloaded archive.</p></li>
-<li><p>Copy directory "dolibarr" and all its files inside your web server root, or copy directory anywhere and set up your web server to use "dolibarr/htdocs" as root for a new web server virtual host (second choice need to be server administrator).</p></li>
-<li><p>Create an empty file "htdocs/conf/conf.php" and set permissions for your web server user (write permissions will be removed once install is finished).</p></li>
-<li><p>From your browser, call the dolibarr "install/" page.</p></li>
-</ul><p>Url depends on choice made on first step:</p>
-
-<pre><code>http://localhost/dolibarr/htdocs/install/
-</code></pre>
-
-<p>or</p>
-
-<pre><code>http://localhost/dolibarr/install/
-</code></pre>
-
-<p>or</p>
-
-<pre><code>http://yourdolibarrvirtualhost/install/
-</code></pre>
-
-<ul>
-<li>Follow instructions provided by installer...</li>
-</ul><h2>
-<a name="upgrade" class="anchor" href="#upgrade"><span class="octicon octicon-link"></span></a>UPGRADE</h2>
-
-<p>To upgrade Dolibarr from an old version to this one:</p>
-
-<ul>
-<li><p>Overwrite all old files inside old 'dolibarr' directory by files provided into new version package.</p></li>
-<li><p>If you came from version x.y.z to x.y.w (only third number differ), there is no need to run any migrate process.</p></li>
-<li><p>If you came from a beta version or from any version x.y.z to any other where x or y number differs, you must call the Dolibarr "install/" page in your browser (this should be done automatically at first dolibarr access).</p></li>
-</ul><p>This URL should looks like:</p>
-
-<pre><code>http://localhost/dolibarr/htdocs/install/
-</code></pre>
-
-<p>or</p>
-
-<pre><code>http://localhost/dolibarr/install/
-</code></pre>
-
-<p>or</p>
-
-<pre><code>http://yourdolibarrhost/install/
-</code></pre>
-
-<p>Then choose the "update" option according to your case.
-Note: Migrate process can be ran safely several times.</p>
-
-<h2>
-<a name="whats-new" class="anchor" href="#whats-new"><span class="octicon octicon-link"></span></a>WHAT'S NEW</h2>
-
-<p>See ChangeLog file found into package.</p>
-
-<h2>
-<a name="what-dolibarr-can-do" class="anchor" href="#what-dolibarr-can-do"><span class="octicon octicon-link"></span></a>WHAT DOLIBARR CAN DO</h2>
-
-<h3>
-<a name="main-modulesfeatures" class="anchor" href="#main-modulesfeatures"><span class="octicon octicon-link"></span></a>Main modules/features:</h3>
-
-<ul>
-<li>Customers, Prospects or Suppliers directory</li>
-<li>Products and services catalog</li>
-<li>Stock management</li>
-<li>Bank accounts management</li>
-<li>Orders management with PDF export</li>
-<li>Commercial proposals management</li>
-<li>Contracts management</li>
-<li>Invoices management</li>
-<li>Payments management</li>
-<li>Standing orders management</li>
-<li>Shipping management</li>
-<li>Agenda with ical,vcal export for third tools integration</li>
-<li>ECM (Electronic Content Management)</li>
-<li>Foundations members management</li>
-<li>Employee's holidays management</li>
-<li>Mass emailing</li>
-<li>Realize surveys</li>
-<li>Point of Sale</li>
-</ul><h3>
-<a name="other-modules" class="anchor" href="#other-modules"><span class="octicon octicon-link"></span></a>Other modules:</h3>
-
-<ul>
-<li>Bookmarks management</li>
-<li>Donations management</li>
-<li>Reporting</li>
-<li>Data export/import tools</li>
-<li>LDAP connectivity</li>
-<li>Third parties or products categories </li>
-<li>ClickToDial phone numbers</li>
-<li>RSS integration</li>
-</ul><h3>
-<a name="miscellaneous" class="anchor" href="#miscellaneous"><span class="octicon octicon-link"></span></a>Miscellaneous:</h3>
-
-<ul>
-<li>Multi-user, with several permissions levels for each feature.</li>
-<li>Serveral menu managers (can be used by internal users, as a back-office, with a particular menu, or by external users, as a front-office, with another menu and permissions).</li>
-<li>Very user friendly and easy to use.</li>
-<li>Optional WYSIWYG forms, optional Ajax forms.</li>
-<li>Several skins.</li>
-<li>Code is highly customizable (a lot of use of modules and submodules).</li>
-<li>Works with Mysql 4.1 or higher, or PostgreSql 8.14 or higher.</li>
-<li>Works with PHP 5.0 or higher.</li>
-<li>An easy to understand and maintain code (PHP with no heavy frameworks).</li>
-<li>A trigger architecture to allow you to make Dolibarr business events run PHP code to update your own information system.</li>
-<li>"NPR VAT Rate" (French particularity for managing VAT in DOM-TOM called "Non Perçue Récupérable").</li>
-</ul><h2>
-<a name="what-dolibarr-cant-do-yet-todo-list" class="anchor" href="#what-dolibarr-cant-do-yet-todo-list"><span class="octicon octicon-link"></span></a>WHAT DOLIBARR CAN'T DO YET (TODO LIST)</h2>
-
-<p>This is features that Dolibarr does not support completely yet:</p>
-
-<ul>
-<li>No double party accountancy (only bank management).</li>
-<li>Dolibarr manage one currency at once (mono-currency).</li>
-<li>Dolibarr manage one master company/foundation (mono-company). If you want to manage several companies or foundations, you must install several time the software (on same server or not). Another solution is to extend Dolibarr with the addon Module MultiCompany that allows to manage several companies in one Dolibarr instance (one database but with a logical isolation of datas).</li>
-<li>Does not support double VAT (Federal / provincial) for Canada.</li>
-<li>Dolibarr does not contains Payroll module.</li>
-<li>Tasks on module project can't have dependencies between each other.</li>
-<li>Dolibarr does not include any Webmail.</li>
-<li>Dolibarr can't do coffee (not yet).</li>
-</ul>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/Dolibarr/dolibarr/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/Dolibarr/dolibarr/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/Dolibarr/dolibarr"></a> is maintained by <a href="https://github.com/Dolibarr">Dolibarr</a>.</p>
-
-          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
-    </div>
-
-  
-  </body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>dolibarr: Dolibarr project</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+  $(document).ready(function() {
+    if ($('.searchresults').length > 0) { searchBox.DOMSearchField().focus(); }
+  });
+  /* @license-end */
+</script>
+<link rel="search" href="search_opensearch.php?v=opensearch.xml" type="application/opensearchdescription+xml" title="dolibarr"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">dolibarr
+   &#160;<span id="projectnumber">x.y.z</span>
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generated by Doxygen 1.9.1 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+var searchBox = new SearchBox("searchBox", "search",false,'Search','.html');
+/* @license-end */
+</script>
+  <div id="navrow1" class="tabs">
+    <ul class="tablist">
+      <li class="current"><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
+      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="files.html"><span>Files</span></a></li>
+      <li><a href="examples.html"><span>Examples</span></a></li>
+      <li>
+        <div id="MSearchBox" class="MSearchBoxInactive">
+          <div class="left">
+            <form id="FSearchBox" action="search.php" method="get">
+              <img id="MSearchSelect" src="search/mag.svg" alt=""/>
+              <input type="text" id="MSearchField" name="query" value="Search" size="20" accesskey="S" 
+                     onfocus="searchBox.OnSearchFieldFocus(true)" 
+                     onblur="searchBox.OnSearchFieldFocus(false)"/>
+            </form>
+          </div><div class="right"></div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div><!-- top -->
+<div class="PageDoc"><div class="header">
+  <div class="headertitle">
+<div class="title">Dolibarr project </div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p>This is source documentation for Dolibarr ERP/CRM.<br  />
+ This documentation can be built or updated running the script <b>dolibarr-doxygen-build.pl</b> or from Eclipse with Doxygen plugin.<br  />
+ <br  />
+ Dolibarr official web site: <a href="https://www.dolibarr.org">www.dolibarr.org</a><br  />
+ <br  />
+ Dolibarr french portal: <a href="https://www.dolibarr.fr">www.dolibarr.fr</a><br  />
+ Dolibarr spanish portal: <a href="https://www.dolibarr.es">www.dolibarr.es</a><br  />
+ Dolibarr italian portal: <a href="https://www.dolibarr.it">www.dolibarr.it</a><br  />
+ Dolibarr greek portal: <a href="https://www.dolibarr.gr">www.dolibarr.gr</a><br  />
+ Dolibarr german portal: <a href="https://www.dolibarr.de">www.dolibarr.de</a><br  />
+ <br  />
+ </p>
+</div></div><!-- PageDoc -->
+</div><!-- contents -->
+<!-- 
+File added into doxygen generated documentation
+-->
+<hr class="footer" />
+<address class="footer"><small>Generated on Mon Jan 2 2023 03:18:37 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<br>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-9049390-16');
+</script>
+</body>
 </html>

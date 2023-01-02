@@ -1,0 +1,5 @@
+<map id="pdf_standard_recruitmentjobposition" name="pdf_standard_recruitmentjobposition">
+<area shape="rect" id="node1" title="Class to manage PDF template standard_recruitmentjobposition." alt="" coords="5,155,268,181"/>
+<area shape="rect" id="node2" href="$da/d57/class_modele_p_d_f_recruitment_job_position.html" title="Parent class for documents models." alt="" coords="13,80,261,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="51,5,222,32"/>
+</map>

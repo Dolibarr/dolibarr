@@ -1,0 +1,5 @@
+<map id="ExpeditionLineBatch" name="ExpeditionLineBatch">
+<area shape="rect" id="node1" title="CRUD class for batch number management within shipment." alt="" coords="5,171,160,197"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="21,95,144,121"/>
+<area shape="rect" id="node3" title=" " alt="" coords="54,5,111,32"/>
+</map>

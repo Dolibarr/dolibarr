@@ -1,0 +1,5 @@
+<map id="pdf_standard_asset" name="pdf_standard_asset">
+<area shape="rect" id="node1" title="Class to manage PDF template standard_asset." alt="" coords="16,155,165,181"/>
+<area shape="rect" id="node2" href="$d3/dce/class_modele_p_d_f_asset.html" title="Parent class for documents models." alt="" coords="25,80,156,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="5,5,176,32"/>
+</map>

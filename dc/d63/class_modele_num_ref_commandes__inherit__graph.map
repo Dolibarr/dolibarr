@@ -1,0 +1,5 @@
+<map id="ModeleNumRefCommandes" name="ModeleNumRefCommandes">
+<area shape="rect" id="node1" title="Parent class to manage numbering of Sale Orders." alt="" coords="98,5,303,32"/>
+<area shape="rect" id="node2" href="$df/d20/classmod__commande__marbre.html" title="Class to manage Sales Order numbering rules Marbre." alt="" coords="5,80,191,107"/>
+<area shape="rect" id="node3" href="$de/dbc/classmod__commande__saphir.html" title="Class to manage Sales Order numbering rules Saphir." alt="" coords="215,80,394,107"/>
+</map>

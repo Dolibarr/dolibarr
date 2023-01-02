@@ -1,0 +1,5 @@
+<map id="pdf_soleil" name="pdf_soleil">
+<area shape="rect" id="node1" title="Class to build interventions documents with model Soleil." alt="" coords="48,155,133,181"/>
+<area shape="rect" id="node2" href="$d8/d75/class_modele_p_d_f_ficheinter.html" title="Parent class to manage intervention document templates." alt="" coords="11,80,171,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="5,5,176,32"/>
+</map>

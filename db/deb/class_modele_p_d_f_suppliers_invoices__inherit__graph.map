@@ -1,0 +1,6 @@
+<map id="ModelePDFSuppliersInvoices" name="ModelePDFSuppliersInvoices">
+<area shape="rect" id="node1" title="Parent class for supplier invoices models." alt="" coords="56,80,265,107"/>
+<area shape="rect" id="node3" href="$dc/dff/classdoc__generic__supplier__invoice__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="5,155,164,196"/>
+<area shape="rect" id="node4" href="$d4/d6c/classpdf__canelle.html" title="Class to generate the supplier invoices PDF with the template canelle." alt="" coords="188,162,285,189"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="75,5,246,32"/>
+</map>

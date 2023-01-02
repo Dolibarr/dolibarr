@@ -1,0 +1,4 @@
+<map id="pdf_paiement_fourn" name="pdf_paiement_fourn">
+<area shape="rect" id="node1" title="Classe permettant de generer les rapports de paiement." alt="" coords="5,80,159,107"/>
+<area shape="rect" id="node2" href="$db/d79/classpdf__paiement.html" title="Classe permettant de generer les rapports de paiement." alt="" coords="26,5,138,32"/>
+</map>

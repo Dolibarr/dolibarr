@@ -1,0 +1,5 @@
+<map id="ModeleNumRefPayments" name="ModeleNumRefPayments">
+<area shape="rect" id="node1" title="Payment numbering references mother class." alt="" coords="73,5,260,32"/>
+<area shape="rect" id="node2" href="$dd/dfe/classmod__payment__ant.html" title="Class to manage customer payment numbering rules Ant." alt="" coords="5,80,149,107"/>
+<area shape="rect" id="node3" href="$dd/d70/classmod__payment__cicada.html" title="Class to manage customer payment numbering rules Cicada." alt="" coords="173,80,339,107"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="mod_facture_terre" name="mod_facture_terre">
+<area shape="rect" id="node1" title="Class of numbering module Terre for invoices." alt="" coords="23,80,165,107"/>
+<area shape="rect" id="node2" href="$da/df7/class_modele_num_ref_factures.html" title="Parent class of invoice reference numbering templates." alt="" coords="5,5,183,32"/>
+</map>

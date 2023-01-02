@@ -1,0 +1,5 @@
+<map id="ModelePDFMovement" name="ModelePDFMovement">
+<area shape="rect" id="node1" title="Parent class to manage warehouse mouvement document templates." alt="" coords="7,80,174,107"/>
+<area shape="rect" id="node3" href="$de/d7c/classpdf__standard.html" title="Class to generate expense report based on standard model." alt="" coords="37,155,144,181"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="5,5,176,32"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="mailing_eventorganization" name="mailing_eventorganization">
+<area shape="rect" id="node1" title="Class to manage a list of personalised recipients for mailing feature." alt="" coords="5,80,201,107"/>
+<area shape="rect" id="node2" href="$d7/d9c/class_mailing_targets.html" title="Parent class of emailing target selectors modules." alt="" coords="45,5,162,32"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="ModelePDFRecruitmentJobPosition" name="ModelePDFRecruitmentJobPosition">
+<area shape="rect" id="node1" title="Parent class for documents models." alt="" coords="171,80,419,107"/>
+<area shape="rect" id="node3" href="$dd/dc1/classdoc__generic__recruitmentjobposition__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="5,155,288,181"/>
+<area shape="rect" id="node4" href="$d7/d1c/classpdf__standard__recruitmentjobposition.html" title="Class to manage PDF template standard_recruitmentjobposition." alt="" coords="313,155,575,181"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="209,5,380,32"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="mod_myobject_standard" name="mod_myobject_standard">
+<area shape="rect" id="node1" title="Class to manage the Standard numbering rule for MyObject." alt="" coords="7,80,189,107"/>
+<area shape="rect" id="node2" href="$d3/d64/class_modele_num_ref_my_object.html" title="Parent class to manage numbering of MyObject." alt="" coords="5,5,191,32"/>
+</map>

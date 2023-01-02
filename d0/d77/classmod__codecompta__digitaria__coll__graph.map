@@ -1,0 +1,4 @@
+<map id="mod_codecompta_digitaria" name="mod_codecompta_digitaria">
+<area shape="rect" id="node1" title="Class to manage accountancy code of thirdparties with Digitaria rules." alt="" coords="5,80,204,107"/>
+<area shape="rect" id="node2" href="$de/dca/class_modele_accountancy_code.html" title="Parent class for third parties accountancy code generators." alt="" coords="11,5,198,32"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="PaiementFourn" name="PaiementFourn">
+<area shape="rect" id="node1" title="Class to manage payments for supplier invoices." alt="" coords="7,247,126,273"/>
+<area shape="rect" id="node2" href="$d4/dde/class_paiement.html" title="Class to manage payments of customer invoices." alt="" coords="25,171,108,197"/>
+<area shape="rect" id="node3" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="5,95,128,121"/>
+<area shape="rect" id="node4" title=" " alt="" coords="38,5,95,32"/>
+</map>

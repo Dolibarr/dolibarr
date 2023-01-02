@@ -1,0 +1,4 @@
+<map id="modPhpbarcode" name="modPhpbarcode">
+<area shape="rect" id="node1" title="Class to generate barcode images using php barcode generator." alt="" coords="5,80,132,107"/>
+<area shape="rect" id="node2" href="$d0/d36/class_modele_bar_code.html" title="Parent class for barcode document models." alt="" coords="6,5,131,32"/>
+</map>

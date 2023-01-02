@@ -1,0 +1,6 @@
+<map id="ModeleThirdPartyCode" name="ModeleThirdPartyCode">
+<area shape="rect" id="node1" title="Parent class for third parties code generators." alt="" coords="225,5,394,32"/>
+<area shape="rect" id="node2" href="$d7/d90/classmod__codeclient__elephant.html" title="Class to manage third party code with elephant rule." alt="" coords="5,80,195,107"/>
+<area shape="rect" id="node3" href="$d8/d66/classmod__codeclient__leopard.html" title="Class to manage numbering of thirdparties code." alt="" coords="219,80,400,107"/>
+<area shape="rect" id="node4" href="$dc/d74/classmod__codeclient__monkey.html" title="Classe permettant la gestion monkey des codes tiers." alt="" coords="424,80,608,107"/>
+</map>

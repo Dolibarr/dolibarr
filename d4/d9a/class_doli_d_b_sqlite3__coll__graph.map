@@ -1,0 +1,6 @@
+<map id="DoliDBSqlite3" name="DoliDBSqlite3">
+<area shape="rect" id="node1" title="Class to manage Dolibarr database access for a SQLite database." alt="" coords="34,229,146,256"/>
+<area shape="rect" id="node2" href="$db/d98/class_doli_d_b.html" title="Class to manage Dolibarr database access." alt="" coords="14,81,81,108"/>
+<area shape="rect" id="node3" href="$d8/d5b/interface_database.html" title="Class to manage Dolibarr database access for an SQL database." alt="" coords="5,5,89,32"/>
+<area shape="rect" id="node4" title=" " alt="" coords="105,81,163,108"/>
+</map>

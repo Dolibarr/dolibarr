@@ -1,0 +1,40 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$da/de4/class_dolibarr_api.html" title="Class for API REST v1." alt="" coords="5,917,100,944"/>
+<area shape="rect" id="node2" href="$d8/d2a/class_agenda_events.html" title=" " alt="" coords="181,5,295,32"/>
+<area shape="rect" id="node3" href="$dd/da5/class_bank_accounts.html" title=" " alt="" coords="181,56,295,83"/>
+<area shape="rect" id="node4" href="$d7/d6f/class_boms.html" title=" " alt="" coords="209,107,267,133"/>
+<area shape="rect" id="node5" href="$d1/df4/class_categories.html" title=" " alt="" coords="192,157,284,184"/>
+<area shape="rect" id="node6" href="$de/d29/class_contacts.html" title=" " alt="" coords="199,208,277,235"/>
+<area shape="rect" id="node7" href="$d1/d39/class_contracts.html" title=" " alt="" coords="196,259,280,285"/>
+<area shape="rect" id="node8" href="$db/df8/class_documents.html" title="API class for receive files." alt="" coords="190,309,286,336"/>
+<area shape="rect" id="node9" href="$da/dfb/class_donations.html" title=" " alt="" coords="194,360,282,387"/>
+<area shape="rect" id="node10" href="$db/dfd/class_expense_reports.html" title=" " alt="" coords="175,411,301,437"/>
+<area shape="rect" id="node11" href="$d0/dd8/class_interventions.html" title=" " alt="" coords="184,461,292,488"/>
+<area shape="rect" id="node12" href="$d7/d1b/class_invoices.html" title=" " alt="" coords="200,512,276,539"/>
+<area shape="rect" id="node13" href="$d3/db2/class_knowledge_management.html" title=" " alt="" coords="148,563,328,589"/>
+<area shape="rect" id="node14" href="$df/dfc/class_members.html" title=" " alt="" coords="197,613,279,640"/>
+<area shape="rect" id="node15" href="$d6/d20/class_members_types.html" title=" " alt="" coords="178,664,298,691"/>
+<area shape="rect" id="node16" href="$d2/d22/class_mos.html" title=" " alt="" coords="213,715,263,741"/>
+<area shape="rect" id="node17" href="$d0/d1f/class_multi_currencies.html" title=" " alt="" coords="176,765,300,792"/>
+<area shape="rect" id="node18" href="$d1/d63/class_my_module_api.html" title=" " alt="" coords="183,816,293,843"/>
+<area shape="rect" id="node19" href="$de/d8f/class_orders.html" title=" " alt="" coords="205,867,271,893"/>
+<area shape="rect" id="node20" href="$de/d27/class_partnership_api.html" title=" " alt="" coords="180,917,296,944"/>
+<area shape="rect" id="node21" href="$df/d55/class_products.html" title=" " alt="" coords="199,968,277,995"/>
+<area shape="rect" id="node22" href="$dd/d2a/class_projects.html" title=" " alt="" coords="201,1019,275,1045"/>
+<area shape="rect" id="node23" href="$d1/dca/class_proposals.html" title=" " alt="" coords="195,1069,281,1096"/>
+<area shape="rect" id="node24" href="$da/d0d/class_receptions.html" title=" " alt="" coords="191,1120,285,1147"/>
+<area shape="rect" id="node25" href="$d6/de3/class_recruitment.html" title=" " alt="" coords="187,1171,289,1197"/>
+<area shape="rect" id="node26" href="$da/d01/class_setup.html" title=" " alt="" coords="209,1221,267,1248"/>
+<area shape="rect" id="node27" href="$d8/d53/class_shipments.html" title=" " alt="" coords="193,1272,283,1299"/>
+<area shape="rect" id="node28" href="$de/dfe/class_stock_movements.html" title=" " alt="" coords="171,1323,305,1349"/>
+<area shape="rect" id="node29" href="$d4/da4/class_subscriptions.html" title=" " alt="" coords="183,1373,293,1400"/>
+<area shape="rect" id="node30" href="$db/d24/class_supplier_invoices.html" title=" " alt="" coords="173,1424,303,1451"/>
+<area shape="rect" id="node31" href="$d4/df1/class_supplier_orders.html" title=" " alt="" coords="179,1475,297,1501"/>
+<area shape="rect" id="node32" href="$d7/d8a/class_supplierproposals.html" title=" " alt="" coords="169,1525,307,1552"/>
+<area shape="rect" id="node33" href="$dc/d2a/class_tasks.html" title=" " alt="" coords="209,1576,267,1603"/>
+<area shape="rect" id="node34" href="$dc/d18/class_thirdparties.html" title=" " alt="" coords="188,1627,288,1653"/>
+<area shape="rect" id="node35" href="$d3/d47/class_tickets.html" title=" " alt="" coords="204,1677,272,1704"/>
+<area shape="rect" id="node36" href="$db/d7f/class_users.html" title=" " alt="" coords="209,1728,267,1755"/>
+<area shape="rect" id="node37" href="$d3/d9f/class_warehouses.html" title=" " alt="" coords="187,1779,289,1805"/>
+<area shape="rect" id="node38" href="$dd/d04/class_zapier.html" title=" " alt="" coords="206,1829,270,1856"/>
+</map>

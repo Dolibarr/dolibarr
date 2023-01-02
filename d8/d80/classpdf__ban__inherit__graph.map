@@ -1,0 +1,5 @@
+<map id="pdf_ban" name="pdf_ban">
+<area shape="rect" id="node1" title="Classe permettant de generer les projets au modele Ban." alt="" coords="58,155,133,181"/>
+<area shape="rect" id="node2" href="$dc/d8c/class_modele_bank_account_doc.html" title="Parent class for bank account models." alt="" coords="5,80,185,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="10,5,181,32"/>
+</map>

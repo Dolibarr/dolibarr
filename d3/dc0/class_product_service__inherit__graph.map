@@ -1,0 +1,5 @@
+<map id="ProductService" name="ProductService">
+<area shape="rect" id="node1" title="Class to manage products or services." alt="" coords="7,155,126,181"/>
+<area shape="rect" id="node2" href="$dc/d42/class_product.html" title="Class to manage products or services." alt="" coords="31,80,102,107"/>
+<area shape="rect" id="node3" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="5,5,128,32"/>
+</map>

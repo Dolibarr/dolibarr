@@ -1,0 +1,5 @@
+<map id="pdf_storm" name="pdf_storm">
+<area shape="rect" id="node1" title="Class to build Delivery Order documents with storm model." alt="" coords="55,155,143,181"/>
+<area shape="rect" id="node2" href="$db/d6e/class_modele_p_d_f_delivery_order.html" title="Classe mere des modeles de bon de livraison." alt="" coords="5,80,192,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="13,5,184,32"/>
+</map>

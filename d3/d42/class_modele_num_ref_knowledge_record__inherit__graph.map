@@ -1,0 +1,5 @@
+<map id="ModeleNumRefKnowledgeRecord" name="ModeleNumRefKnowledgeRecord">
+<area shape="rect" id="node1" title="Parent class to manage numbering of KnowledgeRecord." alt="" coords="68,5,308,32"/>
+<area shape="rect" id="node2" href="$d3/d66/classmod__knowledgerecord__advanced.html" title="Class to manage customer Bom numbering rules advanced." alt="" coords="5,80,176,121"/>
+<area shape="rect" id="node3" href="$d4/d9b/classmod__knowledgerecord__standard.html" title="Class to manage the knowledgerecord numbering rules standard." alt="" coords="200,80,371,121"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="ModelePDFCommandes" name="ModelePDFCommandes">
+<area shape="rect" id="node1" title="Parent class for orders models." alt="" coords="262,80,441,107"/>
+<area shape="rect" id="node3" href="$df/d78/classdoc__generic__order__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="5,155,175,181"/>
+<area shape="rect" id="node4" href="$d2/d7a/classpdf__eagle__proforma.html" title="Class to generate PDF orders with template Eagle." alt="" coords="199,155,352,181"/>
+<area shape="rect" id="node5" href="$dc/d69/classpdf__einstein.html" title="Class to generate PDF orders with template Einstein." alt="" coords="376,155,479,181"/>
+<area shape="rect" id="node6" href="$d0/d3e/classpdf__eratosthene.html" title="Class to generate PDF orders with template Eratosthene." alt="" coords="503,155,631,181"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="266,5,437,32"/>
+<area shape="rect" id="node7" href="$d4/d1f/classpdf__proforma.html" title="Class to generate PDF orders with template Proforma." alt="" coords="512,229,623,256"/>
+</map>

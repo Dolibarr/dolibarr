@@ -1,0 +1,5 @@
+<map id="ModeleNumRefTicket" name="ModeleNumRefTicket">
+<area shape="rect" id="node1" title="Classe mere des modeles de numerotation des references de projets." alt="" coords="85,5,247,32"/>
+<area shape="rect" id="node2" href="$d1/da0/classmod__ticket__simple.html" title="Class to manage the numbering module Simple for ticket references." alt="" coords="5,80,151,107"/>
+<area shape="rect" id="node3" href="$d7/ddc/classmod__ticket__universal.html" title="Classe du modele de numerotation de reference de projet Universal." alt="" coords="175,80,336,107"/>
+</map>

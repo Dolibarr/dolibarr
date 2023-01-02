@@ -1,0 +1,4 @@
+<map id="mod_asset_advanced" name="mod_asset_advanced">
+<area shape="rect" id="node1" title="Class to manage customer Bom numbering rules advanced." alt="" coords="5,80,168,107"/>
+<area shape="rect" id="node2" href="$df/dcd/class_modele_num_ref_asset.html" title="Parent class to manage numbering of Asset." alt="" coords="7,5,166,32"/>
+</map>

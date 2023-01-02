@@ -1,0 +1,4 @@
+<map id="mod_arctic" name="mod_arctic">
+<area shape="rect" id="node1" title="Class to manage numbering of intervention cards with rule Artic." alt="" coords="51,80,146,107"/>
+<area shape="rect" id="node2" href="$db/d57/class_modele_num_ref_ficheinter.html" title="Parent class numbering models of intervention sheet references." alt="" coords="5,5,192,32"/>
+</map>

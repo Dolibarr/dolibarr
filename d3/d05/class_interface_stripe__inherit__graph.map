@@ -1,0 +1,4 @@
+<map id="InterfaceStripe" name="InterfaceStripe">
+<area shape="rect" id="node1" title="Class of triggers for stripe module." alt="" coords="9,80,127,107"/>
+<area shape="rect" id="node2" href="$de/ddf/class_dolibarr_triggers.html" title="Class that all the triggers must extend." alt="" coords="5,5,131,32"/>
+</map>

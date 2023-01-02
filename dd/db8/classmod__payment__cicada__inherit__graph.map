@@ -1,0 +1,4 @@
+<map id="mod_payment_cicada" name="mod_payment_cicada">
+<area shape="rect" id="node1" title="Class to manage customer payment numbering rules Cicada." alt="" coords="16,80,181,107"/>
+<area shape="rect" id="node2" href="$d6/d62/class_modele_num_ref_payments.html" title="Payment numbering references mother class." alt="" coords="5,5,192,32"/>
+</map>

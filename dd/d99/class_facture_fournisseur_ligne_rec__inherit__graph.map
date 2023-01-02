@@ -1,0 +1,5 @@
+<map id="FactureFournisseurLigneRec" name="FactureFournisseurLigneRec">
+<area shape="rect" id="node1" title="Class to manage supplier invoice lines of templates." alt="" coords="5,155,208,181"/>
+<area shape="rect" id="node2" href="$dc/d3c/class_common_object_line.html" title="Parent class for class inheritance lines of business objects This class is useless for the moment so ..." alt="" coords="31,80,182,107"/>
+<area shape="rect" id="node3" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="45,5,168,32"/>
+</map>

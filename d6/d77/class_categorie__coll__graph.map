@@ -1,0 +1,6 @@
+<map id="Categorie" name="Categorie">
+<area shape="rect" id="node1" title="Class to manage categories." alt="" coords="283,333,368,360"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="264,162,387,189"/>
+<area shape="rect" id="node3" title=" " alt="" coords="12,5,69,32"/>
+<area shape="rect" id="node4" title=" " alt="" coords="411,162,470,189"/>
+</map>

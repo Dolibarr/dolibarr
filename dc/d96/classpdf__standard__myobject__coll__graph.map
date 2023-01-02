@@ -1,0 +1,5 @@
+<map id="pdf_standard_myobject" name="pdf_standard_myobject">
+<area shape="rect" id="node1" title="Class to manage PDF template standard_myobject." alt="" coords="5,155,180,181"/>
+<area shape="rect" id="node2" href="$d7/deb/class_modele_p_d_f_my_object.html" title="Parent class for documents models." alt="" coords="13,80,172,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="7,5,178,32"/>
+</map>

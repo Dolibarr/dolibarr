@@ -1,0 +1,6 @@
+<map id="Societe" name="Societe">
+<area shape="rect" id="node1" title="Class to manage third parties objects (customers, suppliers, prospects...)" alt="" coords="51,80,121,107"/>
+<area shape="rect" id="node3" href="$d3/d7a/class_client.html" title="Class to manage customers or prospects." alt="" coords="5,155,65,181"/>
+<area shape="rect" id="node4" href="$de/d1a/class_fournisseur.html" title="Class to manage suppliers." alt="" coords="89,155,187,181"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="25,5,147,32"/>
+</map>

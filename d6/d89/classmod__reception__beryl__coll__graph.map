@@ -1,0 +1,4 @@
+<map id="mod_reception_beryl" name="mod_reception_beryl">
+<area shape="rect" id="node1" title="Class to manage reception numbering rules Beryl." alt="" coords="16,80,175,107"/>
+<area shape="rect" id="node2" href="$d4/dc7/class_model_num_ref_reception.html" title="Parent Class of numbering models of sending receipts references." alt="" coords="5,5,185,32"/>
+</map>

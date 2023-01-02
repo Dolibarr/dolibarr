@@ -1,0 +1,5 @@
+<map id="ModeleChequeReceipts" name="ModeleChequeReceipts">
+<area shape="rect" id="node1" title="Class parent for templates of document generation." alt="" coords="11,80,186,107"/>
+<area shape="rect" id="node3" href="$d2/d1a/class_bordereau_cheque_blochet.html" title="Class of file to build cheque deposit receipts." alt="" coords="5,155,192,181"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="13,5,184,32"/>
+</map>

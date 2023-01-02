@@ -1,0 +1,4 @@
+<map id="InterfaceEventOrganization" name="InterfaceEventOrganization">
+<area shape="rect" id="node1" title="Class of triggered functions for agenda module." alt="" coords="5,80,205,107"/>
+<area shape="rect" id="node2" href="$de/ddf/class_dolibarr_triggers.html" title="Class that all the triggers must extend." alt="" coords="43,5,168,32"/>
+</map>

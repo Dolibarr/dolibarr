@@ -1,0 +1,4 @@
+<map id="mod_facture_mars" name="mod_facture_mars">
+<area shape="rect" id="node1" title="Class to manage invoice numbering rules Mars." alt="" coords="22,80,166,107"/>
+<area shape="rect" id="node2" href="$da/df7/class_modele_num_ref_factures.html" title="Parent class of invoice reference numbering templates." alt="" coords="5,5,183,32"/>
+</map>

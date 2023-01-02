@@ -1,0 +1,5 @@
+<map id="Tva" name="Tva">
+<area shape="rect" id="node1" title="Put here description of your class." alt="" coords="45,173,92,200"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="143,96,266,123"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,5,63,32"/>
+</map>

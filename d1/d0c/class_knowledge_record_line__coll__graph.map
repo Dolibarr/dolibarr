@@ -1,0 +1,6 @@
+<map id="KnowledgeRecordLine" name="KnowledgeRecordLine">
+<area shape="rect" id="node1" title="Class KnowledgeRecordLine." alt="" coords="5,247,172,273"/>
+<area shape="rect" id="node2" href="$dc/d3c/class_common_object_line.html" title="Parent class for class inheritance lines of business objects This class is useless for the moment so ..." alt="" coords="13,171,164,197"/>
+<area shape="rect" id="node3" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="27,95,150,121"/>
+<area shape="rect" id="node4" title=" " alt="" coords="60,5,117,32"/>
+</map>
