@@ -160,7 +160,7 @@ print dol_get_fiche_end();
  * List of expense report paid
  */
 
-$sql = 'SELECT er.rowid as eid, er.paid, er.total_ttc, per.amount';
+$sql = 'SELECT er.rowid as eid, er.paid, er.total_ttc, per.amount, er.fk_user_author';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'payment_expense_report as per,'.MAIN_DB_PREFIX.'expensereport as er';
 $sql .= ' WHERE per.fk_expensereport = er.rowid';
 $sql .= ' AND er.entity IN ('.getEntity('expensereport').')';
@@ -180,6 +180,7 @@ if ($resql) {
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('ExpenseReport').'</td>';
+	print '<td>'.$langs->trans('User').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
@@ -187,9 +188,11 @@ if ($resql) {
 	print "</tr>\n";
 
 	if ($num > 0) {
+		$u_author = new User($db);
 		while ($i < $num) {
-			$objp = $db->fetch_object($resql);
 
+			$objp = $db->fetch_object($resql);
+			if(empty($u_author->id)) $u_author->fetch($objp->fk_user_author);
 
 			$expensereport = new ExpenseReport($db);
 			$expensereport->fetch($objp->eid);
@@ -200,6 +203,11 @@ if ($resql) {
 			// Expense report
 			print '<td>';
 			print $expensereport->getNomUrl(1);
+			print "</td>\n";
+
+			// User author
+			print '<td>';
+			print $u_author->getNomUrl(1);
 			print "</td>\n";
 
 			// Expected to pay

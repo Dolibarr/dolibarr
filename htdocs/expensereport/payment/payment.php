@@ -237,6 +237,7 @@ if ($action == 'create' || $action == 'add_payment') {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("ExpenseReport").'</td>';
+	print '<td>'.$langs->trans("User").'</td>';
 	print '<td class="right">'.$langs->trans("Amount").'</td>';
 	print '<td class="right">'.$langs->trans("AlreadyPaid").'</td>';
 	print '<td class="right">'.$langs->trans("RemainderToPay").'</td>';
@@ -259,16 +260,22 @@ if ($action == 'create' || $action == 'add_payment') {
 	$sql.= ' GROUP BY e.rowid, e.ref, e.total_ttc';
 	$resql = $db->query($sql);
 
+	$fk_user_author = $expensereport->fk_user_author;
+
 	if (!empty($resql)) {
+		$u_author = new User($db);
 		while ($objp = $db->fetch_object($resql)) {
 			$expensereport = new ExpenseReport($db);
 			$expensereport->id = $objp->rowid;
 			$expensereport->ref = $objp->ref;
 			$sumpaid = $objp->total_amount;
 
+			if(empty($u_author->id)) $u_author->fetch($fk_user_author);
+
 			print '<tr class="oddeven">';
 
 			print '<td>' . $expensereport->getNomUrl(1) . "</td>";
+			print '<td>' . $u_author->getNomUrl(1) . "</td>";
 			print '<td class="right">' . price($objp->total_ttc) . "</td>";
 			print '<td class="right">' . price($sumpaid) . "</td>";
 			print '<td class="right">' . price($objp->total_ttc - $sumpaid) . "</td>";
