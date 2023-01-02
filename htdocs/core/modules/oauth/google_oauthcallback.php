@@ -42,7 +42,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 $action = GETPOST('action', 'aZ09');
 $backtourl = GETPOST('backtourl', 'alpha');
 $keyforprovider = GETPOST('keyforprovider', 'aZ09');
-if (empty($keyforprovider) && !empty($_SESSION["oauthkeyforproviderbeforeoauthjump"]) && (GETPOST('code') || $action == 'delete')) {
+if (!GETPOSTISSET('keyforprovider', 'aZ09') && !empty($_SESSION["oauthkeyforproviderbeforeoauthjump"]) && (GETPOST('code') || $action == 'delete')) {
 	// If we are coming from the Oauth page
 	$keyforprovider = $_SESSION["oauthkeyforproviderbeforeoauthjump"];
 }
