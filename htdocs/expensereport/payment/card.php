@@ -190,9 +190,8 @@ if ($resql) {
 	if ($num > 0) {
 		$u_author = new User($db);
 		while ($i < $num) {
-
 			$objp = $db->fetch_object($resql);
-			if(empty($u_author->id)) $u_author->fetch($objp->fk_user_author);
+			if (empty($u_author->id)) $u_author->fetch($objp->fk_user_author);
 
 			$expensereport = new ExpenseReport($db);
 			$expensereport->fetch($objp->eid);

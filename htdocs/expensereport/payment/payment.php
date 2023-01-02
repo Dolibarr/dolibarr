@@ -270,7 +270,7 @@ if ($action == 'create' || $action == 'add_payment') {
 			$expensereport->ref = $objp->ref;
 			$sumpaid = $objp->total_amount;
 
-			if(empty($u_author->id)) $u_author->fetch($fk_user_author);
+			if (empty($u_author->id)) $u_author->fetch($fk_user_author);
 
 			print '<tr class="oddeven">';
 
