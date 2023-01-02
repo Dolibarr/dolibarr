@@ -420,8 +420,8 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 
 	$location = array();
 	$location[""] = $langs->trans("NotDefined");
-	foreach ($locations as $locations) {
-		$location[$locations->id] = $locations->display_name;
+	foreach ($locations as $tmplocation) {
+		$location[$tmplocation->id] = $tmplocation->display_name;
 	}
 	print $form->selectarray("STRIPE_LOCATION", $location, getDolGlobalString('STRIPE_LOCATION'));
 	print '</td></tr>';
@@ -525,7 +525,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {	// TODO Not used by current code
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
-print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
+print '<input class="width500" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.$conf->global->ONLINE_PAYMENT_CSS_URL.'">';
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': http://mysite/mycss.css</span>';
 print '</td></tr>';
 

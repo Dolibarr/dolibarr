@@ -367,7 +367,7 @@ class ExpenseReport extends CommonObject
 			}
 
 			if (!$error) {
-				$result = $this->update_price();
+				$result = $this->update_price(1);
 				if ($result > 0) {
 					if (!$notrigger) {
 						// Call trigger
@@ -1553,7 +1553,7 @@ class ExpenseReport extends CommonObject
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET fk_statut = ".self::STATUS_CANCELED.", fk_user_cancel = ".((int) $fuser->id);
 			$sql .= ", date_cancel='".$this->db->idate($this->date_cancel)."'";
-			$sql .= " ,detail_cancel='".$this->db->escape($detail)."'";
+			$sql .= ", detail_cancel='".$this->db->escape($detail)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::set_cancel", LOG_DEBUG);
@@ -1585,6 +1585,7 @@ class ExpenseReport extends CommonObject
 		} else {
 			dol_syslog(get_class($this)."::set_cancel expensereport already with cancel status", LOG_WARNING);
 		}
+		return 0;
 	}
 
 	/**
@@ -1858,7 +1859,7 @@ class ExpenseReport extends CommonObject
 
 			$result = $this->line->insert(0, true);
 			if ($result > 0) {
-				$result = $this->update_price(); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+				$result = $this->update_price(1); // This method is designed to add line from user input so total calculation must be done using 'auto' mode.
 				if ($result > 0) {
 					$this->db->commit();
 					return $this->line->id;
@@ -2179,6 +2180,8 @@ class ExpenseReport extends CommonObject
 				return -2;
 			}
 		}
+
+		return 0;
 	}
 
 	/**
@@ -2217,7 +2220,7 @@ class ExpenseReport extends CommonObject
 			return -1;
 		}
 
-		$this->update_price();
+		$this->update_price(1);
 
 		$this->db->commit();
 
@@ -2572,14 +2575,13 @@ class ExpenseReport extends CommonObject
 	 *  \brief Compute the cost of the kilometers expense based on the number of kilometers and the vehicule category
 	 *
 	 *  @param     int		$fk_cat           Category of the vehicule used
-	 *  @param     real		$qty              Number of kilometers
-	 *  @param     real		$tva              VAT rate
+	 *  @param     float	$qty              Number of kilometers
+	 *  @param     float	$tva              VAT rate
 	 *  @return    int              		  <0 if KO, total ttc if OK
 	 */
 	public function computeTotalKm($fk_cat, $qty, $tva)
 	{
-		global $langs,$user,$db,$conf;
-
+		global $langs, $db, $conf;
 
 		$cumulYearQty = 0;
 		$ranges = array();
@@ -2814,8 +2816,11 @@ class ExpenseReportLine extends CommonObjectLine
 			$this->rule_warning_message = $objp->rule_warning_message;
 
 			$this->db->free($result);
+
+			return $this->id;
 		} else {
 			dol_print_error($this->db);
+			return -1;
 		}
 	}
 
@@ -2828,7 +2833,7 @@ class ExpenseReportLine extends CommonObjectLine
 	 */
 	public function insert($notrigger = 0, $fromaddline = false)
 	{
-		global $langs, $user, $conf;
+		global $user, $conf;
 
 		$error = 0;
 
@@ -2896,7 +2901,7 @@ class ExpenseReportLine extends CommonObjectLine
 			if (!$fromaddline) {
 				$tmpparent = new ExpenseReport($this->db);
 				$tmpparent->fetch($this->fk_expensereport);
-				$result = $tmpparent->update_price();
+				$result = $tmpparent->update_price(1);
 				if ($result < 0) {
 					$error++;
 					$this->error = $tmpparent->error;
@@ -3023,7 +3028,7 @@ class ExpenseReportLine extends CommonObjectLine
 			$tmpparent = new ExpenseReport($this->db);
 			$result = $tmpparent->fetch($this->fk_expensereport);
 			if ($result > 0) {
-				$result = $tmpparent->update_price();
+				$result = $tmpparent->update_price(1);
 				if ($result < 0) {
 					$error++;
 					$this->error = $tmpparent->error;

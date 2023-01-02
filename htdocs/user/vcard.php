@@ -99,18 +99,23 @@ if ($company->id) {
 	} elseif (empty(trim($user2->email))) {
 		// when user e-mail is empty, use only company e-mail
 		$v->setEmail($company->email, "TYPE=WORK");
-	} elseif (strtolower(end(explode("@", $user2->email))) == strtolower(end(explode("@", $company->email)))) {
-		// when e-mail domain of user and company are the same, use user e-mail at first (and company e-mail at second)
-		$v->setEmail($user2->email, "TYPE=WORK");
-
-		// support by Microsoft Outlook (2019 and possible earlier)
-		$v->setEmail($company->email, 'INTERNET');
 	} else {
-		// when e-mail of user and company complete different use company e-mail at first (and user e-mail at second)
-		$v->setEmail($company->email, "TYPE=WORK");
+		$tmpuser2 = explode("@", trim($user2->email));
+		$tmpcompany = explode("@", trim($company->email));
 
-		// support by Microsoft Outlook (2019 and possible earlier)
-		$v->setEmail($user2->email, 'INTERNET');
+		if (strtolower(end($tmpuser2)) == strtolower(end($tmpcompany))) {
+			// when e-mail domain of user and company are the same, use user e-mail at first (and company e-mail at second)
+			$v->setEmail($user2->email, "TYPE=WORK");
+
+			// support by Microsoft Outlook (2019 and possible earlier)
+			$v->setEmail($company->email, 'INTERNET');
+		} else {
+			// when e-mail of user and company complete different use company e-mail at first (and user e-mail at second)
+			$v->setEmail($company->email, "TYPE=WORK");
+
+			// support by Microsoft Outlook (2019 and possible earlier)
+			$v->setEmail($user2->email, 'INTERNET');
+		}
 	}
 
 	// Si user lie a un tiers non de type "particulier"

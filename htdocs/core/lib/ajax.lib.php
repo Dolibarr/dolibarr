@@ -130,7 +130,10 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 											$("#search_'.$htmlnamejquery.'").val(item.value);
 											$("#'.$htmlnamejquery.'").val(item.key).trigger("change");
 										}
-										var label = item.label.toString();
+										var label = "";
+										if (item.label != null) {
+											label = item.label.toString();
+										}
 										var update = {};
 										if (options.update) {
 											$.each(options.update, function(key, value) {
@@ -162,7 +165,9 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												 price_unit_ht_locale: item.price_unit_ht_locale,
 												 description : item.description,
 												 ref_customer: item.ref_customer,
-												 tva_tx: item.tva_tx }
+												 tva_tx: item.tva_tx,
+												 default_vat_code: item.default_vat_code
+										}
 									}));
 								} else {
 									console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
@@ -175,7 +180,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						console.log("We will trigger change on input '.$htmlname.' because of the select definition of autocomplete code for input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
-							console.log("Propagate before some properties retrieved by ajax into data-xxx properties");
+							console.log("Propagate before some properties retrieved by ajax into data-xxx properties of #'.$htmlnamejquery.' component");
+							//console.log(ui.item);
 
 							// For supplier price and customer when price by quantity is off
 							$("#'.$htmlnamejquery.'").attr("data-up", ui.item.price_ht);
@@ -186,10 +192,12 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							$("#'.$htmlnamejquery.'").attr("data-description", ui.item.description);
 							$("#'.$htmlnamejquery.'").attr("data-ref-customer", ui.item.ref_customer);
 							$("#'.$htmlnamejquery.'").attr("data-tvatx", ui.item.tva_tx);
+							$("#'.$htmlnamejquery.'").attr("data-default-vat-code", ui.item.default_vat_code);
 	';
 	if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
 		$script .= '
 							// For customer price when PRODUIT_CUSTOMER_PRICES_BY_QTY is on
+							console.log("PRODUIT_CUSTOMER_PRICES_BY_QTY is on, propagate also prices by quantity into data-pbqxxx properties");
 							$("#'.$htmlnamejquery.'").attr("data-pbq", ui.item.pbq);
 							$("#'.$htmlnamejquery.'").attr("data-pbqup", ui.item.price_ht);
 							$("#'.$htmlnamejquery.'").attr("data-pbqbase", ui.item.pricebasetype);
@@ -587,9 +595,10 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
  *  @param	int		$setzeroinsteadofdel	1 = Set constantto '0' instead of deleting it
  *  @param	string	$suffix					Suffix to use on the name of the switch_on picto. Example: '', '_red'
  *  @param	string	$mode					Add parameter &mode= to the href link (Used for href link)
+ *  @param	string	$morecss				More CSS
  * 	@return	string
  */
-function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '')
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = '')
 {
 	global $conf, $langs, $user;
 
@@ -600,9 +609,9 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 
 	if (empty($conf->use_javascript_ajax) || $forcenoajax) {
 		if (empty($conf->global->$code)) {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+			print '<a '.($morecss ? 'class="'.$morecss.'" ' : '').'href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		} else {
-			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+			print '<a '.($morecss ? 'class="'.$morecss.'" ' : '').' href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&token='.newToken().'&entity='.$entity.($mode ? '&mode='.$mode : '').($forcereload ? '&dol_resetcache=1' : '').'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	} else {
 		$out = "\n<!-- Ajax code to switch constant ".$code." -->".'

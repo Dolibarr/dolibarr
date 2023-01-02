@@ -1,0 +1,23 @@
+name: Qodana
+on:
+  schedule:
+  - cron: "0 20 * * *"
+  workflow_dispatch:
+    branches:
+      - develop
+#  push:
+#    branches:
+#      - develop
+
+jobs:
+  qodana:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          php-version: '7.1'
+      - name: 'Qodana Scan'
+        uses: JetBrains/qodana-action@v2022.3.0
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}

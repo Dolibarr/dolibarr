@@ -9,6 +9,7 @@
  * Copyright (C) 2015		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2017-2018	Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -579,7 +580,8 @@ class pdf_crabe extends ModelePDFFactures
 							$pdf->useTemplate($tplidx);
 						}
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-							$this->_pagehead($pdf, $object, 0, $outputlangs);
+							$top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);
+							$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 						}
 						$pdf->setPage($pageposbefore + 1);
 
@@ -622,7 +624,8 @@ class pdf_crabe extends ModelePDFFactures
 									$pdf->useTemplate($tplidx);
 								}
 								if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-									$this->_pagehead($pdf, $object, 0, $outputlangs);
+									$top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);
+									$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 								}
 								$pdf->setPage($pageposafter + 1);
 							}
@@ -749,10 +752,18 @@ class pdf_crabe extends ModelePDFFactures
 
 					// retrieve global local tax
 					if ($localtax1_type && $localtax1ligne != 0) {
-						$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
+						if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {
+							$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;
+						} else {
+							$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
+						}
 					}
 					if ($localtax2_type && $localtax2ligne != 0) {
-						$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
+						if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {
+							$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;
+						} else {
+							$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
+						}
 					}
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
@@ -798,7 +809,8 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-							$this->_pagehead($pdf, $object, 0, $outputlangs);
+							$top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);
+							$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 						}
 						if (!empty($tplidx)) {
 							$pdf->useTemplate($tplidx);
@@ -818,7 +830,8 @@ class pdf_crabe extends ModelePDFFactures
 						}
 						$pagenb++;
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-							$this->_pagehead($pdf, $object, 0, $outputlangs);
+							$top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);
+							$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 						}
 					}
 				}
@@ -943,7 +956,8 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->useTemplate($tplidx);
 					}
 					if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-						$this->_pagehead($pdf, $object, 0, $outputlangs);
+						$top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);
+						$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 					}
 					$pdf->setPage($current_page);
 					$this->_tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top + $y - 3, $tab3_width, $tab3_height);
@@ -1005,7 +1019,8 @@ class pdf_crabe extends ModelePDFFactures
 						$pdf->useTemplate($tplidx);
 					}
 					if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-						$this->_pagehead($pdf, $object, 0, $outputlangs);
+						$top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);
+						$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 + $top_shift : 10);
 					}
 					$pdf->setPage($current_page);
 					$this->_tableau_versements_header($pdf, $object, $outputlangs, $default_font_size, $tab3_posx, $tab3_top + $y - 3, $tab3_width, $tab3_height);
@@ -1180,7 +1195,7 @@ class pdf_crabe extends ModelePDFFactures
 			// Decret n°2099-1299 2022-10-07
 			// French mention : "Option pour le paiement de la taxe d'après les débits"
 			if ($this->emetteur->country_code == 'FR') {
-				if ($conf->global->TAX_MODE == 1) {
+				if (isset($conf->global->TAX_MODE) && $conf->global->TAX_MODE == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->writeHTMLCell(80, 5, '', '', $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
 
@@ -1332,11 +1347,11 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
-		$pdf->SetXY($col1x, $tab2_top + 0);
+		$pdf->SetXY($col1x, $tab2_top);
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities(empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) ? "TotalHT" : "Total").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities(empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) ? "TotalHT" : "Total") : ''), 0, 'L', 1);
 
 		$total_ht = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
-		$pdf->SetXY($col2x, $tab2_top + 0);
+		$pdf->SetXY($col2x, $tab2_top);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($total_ht + (!empty($object->remise) ? $object->remise : 0)), 0, $outputlangs), 0, 'R', 1);
 
 		// Show VAT by rates and total
@@ -1762,13 +1777,13 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		if (empty($conf->global->PDF_DISABLE_MYCOMPANY_LOGO)) {
+		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
 				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 					$logodir = $conf->mycompany->multidir_output[$object->entity];
 				}
-				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO)) {
+				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
 				} else {
 					$logo = $logodir.'/logos/'.$this->emetteur->logo;
@@ -2056,6 +2071,43 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetXY($posx + 2, $posy);
 			$pdf->MultiCell($widthrecbox - 2, 4, $carac_client, 0, $ltrdirection);
+
+			// Show shipping address
+			if (getDolGlobalInt('INVOICE_SHOW_SHIPPING_ADDRESS')) {
+				$idaddressshipping = $object->getIdContact('external', 'SHIPPING');
+
+				if (!empty($idaddressshipping)) {
+					$contactshipping = $object->fetch_Contact($idaddressshipping[0]);
+					$object->fetch_thirdparty($object->contact->fk_soc);
+					$carac_client_name_shipping=pdfBuildThirdpartyName($object->contact, $outputlangs);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, $object->contact, $usecontact, 'target', $object);
+				} else {
+					$carac_client_name_shipping=pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
+					$carac_client_shipping=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
+				}
+				if (!empty($carac_client_shipping) && (isset($object->contact->socid) && $object->contact->socid != $object->socid)) {
+					$posy += $hautcadre;
+
+					// Show shipping frame
+					$pdf->SetXY($posx + 2, $posy - 5);
+					$pdf->SetFont('', '', $default_font_size - 2);
+					$pdf->MultiCell($widthrecbox, '', $langs->trans('ShippingTo'), 0, 'L', 0);
+					$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
+
+					// Show shipping name
+					$pdf->SetXY($posx + 2, $posy + 3);
+					$pdf->SetFont('', 'B', $default_font_size);
+					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_name_shipping, '', 'L');
+
+					$posy = $pdf->getY();
+
+					// Show shipping information
+					$pdf->SetXY($posx+2, $posy);
+					$pdf->SetFont('', '', $default_font_size - 1);
+					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_shipping, '', 'L');
+					$top_shift += $hautcadre;
+				}
+			}
 		}
 
 		$pdf->SetTextColor(0, 0, 0);

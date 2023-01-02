@@ -72,6 +72,7 @@ class BonPrelevement extends CommonObject
 
 	public $date_trans;
 	public $user_trans;
+	public $method_trans;
 
 	public $total;
 	public $fetched;
@@ -82,6 +83,15 @@ class BonPrelevement extends CommonObject
 
 	public $invoice_in_error = array();
 	public $thirdparty_in_error = array();
+
+	public $amount;
+	public $note;
+	public $datec;
+
+	public $date_credit;
+	public $user_credit;
+
+	public $type;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_TRANSFERED = 1;
@@ -1209,7 +1219,7 @@ class BonPrelevement extends CommonObject
 		$result = '';
 
 		$labeltoshow = 'PaymentByDirectDebit';
-		if ($this->type == 'bank-transfer') {
+		if (!empty($this->type) && $this->type == 'bank-transfer') {
 			$labeltoshow = 'PaymentByBankTransfer';
 		}
 
@@ -1221,7 +1231,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
-		if ($this->type == 'bank-transfer') {
+		if (!empty($this->type) && $this->type == 'bank-transfer') {
 			$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
 		}
 

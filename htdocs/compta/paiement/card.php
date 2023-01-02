@@ -67,12 +67,11 @@ if ($socid && $socid != $object->thirdparty->id) {
 
 $error = 0;
 
-
 /*
  * Actions
  */
 
-if ($action == 'setnote' && $user->rights->facture->paiement) {
+if ($action == 'setnote' && $user->hasRight('facture', 'paiement')) {
 	$db->begin();
 
 	$result = $object->update_note(GETPOST('note', 'restricthtml'));
@@ -85,7 +84,7 @@ if ($action == 'setnote' && $user->rights->facture->paiement) {
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->paiement) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('facture', 'paiement')) {
 	$db->begin();
 
 	$result = $object->delete();
@@ -106,7 +105,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
 	}
 }
 
-if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture->paiement) {
+if ($action == 'confirm_validate' && $confirm == 'yes' && $user->hasRight('facture', 'paiement')) {
 	$db->begin();
 
 	if ($object->validate($user) > 0) {
@@ -142,13 +141,13 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 						$invoice = new Facture($db);
 
 						if ($invoice->fetch($objp->facid) <= 0) {
-							$errors++;
+							$error++;
 							setEventMessages($invoice->error, $invoice->errors, 'errors');
 							break;
 						}
 
 						if ($invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref) < 0) {
-							$errors++;
+							$error++;
 							setEventMessages($invoice->error, $invoice->errors, 'errors');
 							break;
 						}
@@ -159,12 +158,12 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 
 				$db->free($resql);
 			} else {
-				$errors++;
+				$error++;
 				setEventMessages($db->error, $db->errors, 'errors');
 			}
 		}
 
-		if (! $errors) {
+		if (! $error) {
 			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
 			exit;
 		}
@@ -176,7 +175,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->facture
 	}
 }
 
-if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
+if ($action == 'setnum_paiement' && GETPOST('num_paiement') && $user->hasRight('facture', 'paiement')) {
 	$res = $object->update_num(GETPOST('num_paiement'));
 	if ($res === 0) {
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
@@ -185,7 +184,7 @@ if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
 	}
 }
 
-if ($action == 'setdatep' && GETPOST('datepday')) {
+if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('facture', 'paiement')) {
 	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
 	$res = $object->update_date($datepaye);
 	if ($res === 0) {
@@ -194,7 +193,8 @@ if ($action == 'setdatep' && GETPOST('datepday')) {
 		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
 	}
 }
-if ($action == 'createbankpayment' && !empty($user->rights->facture->paiement)) {
+
+if ($action == 'createbankpayment' && $user->hasRight('facture', 'paiement')) {
 	$db->begin();
 
 	// Create the record into bank for the amount of payment $object
@@ -416,8 +416,6 @@ if ($resql) {
 	$i = 0;
 	$total = 0;
 
-	$moreforfilter = '';
-
 	print '<br>';
 
 	print '<div class="div-table-responsive">';
@@ -512,9 +510,9 @@ if ($resql) {
 print '<div class="tabsAction">';
 
 if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
-	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '') {
+	if ($user->socid == 0 && $object->statut == 0 && $action == '') {
 		if ($user->rights->facture->paiement) {
-			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&facid='.$objp->facid.'&action=valide&token='.newToken().'">'.$langs->trans('Valid').'</a>';
+			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=valide&token='.newToken().'">'.$langs->trans('Valid').'</a>';
 		}
 	}
 }

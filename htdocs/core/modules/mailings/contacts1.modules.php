@@ -38,7 +38,7 @@ class mailing_contacts1 extends MailingTargets
 	public $require_module = array("societe"); // Module mailing actif si modules require_module actifs
 	public $require_admin = 0; // Module mailing actif pour user admin ou non
 
-	public $enabled = '$conf->societe->enabled';
+	public $enabled = 'isModEnabled("societe")';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -99,8 +99,6 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
-		global $conf;
-
 		$sql = "SELECT count(distinct(c.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
@@ -388,6 +386,7 @@ class mailing_contacts1 extends MailingTargets
 		}
 		$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 		$sql .= " AND sp.email <> ''";
+
 		$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = sp.email) = 0";
 		// Exclude unsubscribed email adresses
 		$sql .= " AND sp.statut = 1";
@@ -408,8 +407,8 @@ class mailing_contacts1 extends MailingTargets
 		}
 
 		// Filter on language
-		if ($filter_lang != '') {
-			$sql .= " AND sp.default_lang = '".$this->db->escape($filter_lang)."'";
+		if (!empty($filter_lang)) {
+			$sql .= " AND sp.default_lang LIKE '".$this->db->escape($filter_lang)."%'";
 		}
 
 		// Filter on nature
@@ -417,7 +416,7 @@ class mailing_contacts1 extends MailingTargets
 
 		//print "xx".$key;
 		if ($key == 'prospects') {
-			$sql .= " AND s.client=2";
+			$sql .= " AND s.client = 2";
 		}
 		foreach ($prospectlevel as $codelevel => $valuelevel) {
 			if ($key == 'prospectslevel'.$codelevel) {
@@ -425,10 +424,10 @@ class mailing_contacts1 extends MailingTargets
 			}
 		}
 		if ($key == 'customers') {
-			$sql .= " AND s.client=1";
+			$sql .= " AND s.client = 1";
 		}
 		if ($key == 'suppliers') {
-			$sql .= " AND s.fournisseur=1";
+			$sql .= " AND s.fournisseur = 1";
 		}
 
 		// Filter on job position
@@ -439,7 +438,6 @@ class mailing_contacts1 extends MailingTargets
 
 		$sql .= " ORDER BY sp.email";
 		// print "wwwwwwx".$sql;
-
 		// Stocke destinataires dans cibles
 		$result = $this->db->query($sql);
 		if ($result) {

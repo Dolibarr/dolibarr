@@ -485,7 +485,7 @@ if ($step == 2 && $datatoimport) {
 	print '<tr class="liste_titre"><td colspan="5">';
 	print $langs->trans("FileMustHaveOneOfFollowingFormat");
 	print '</td></tr>';
-	$list = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->listOfAvailableImportFormat($db);
 	foreach ($list as $key) {
 		print '<tr class="oddeven">';
 		print '<td width="16">'.img_picto_common($key, $objmodelimport->getPictoForKey($key)).'</td>';
@@ -529,7 +529,7 @@ if ($step == 3 && $datatoimport) {
 		$param .= '&enclosure='.urlencode($enclosure);
 	}
 
-	$list = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	llxHeader('', $langs->trans("NewImport"), $help_url);
 
@@ -763,7 +763,7 @@ if ($step == 4 && $datatoimport) {
 	//var_dump($array_match_file_to_database);
 
 	$model = $format;
-	$list = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	if (empty($separator)) {
 		$separator = (empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE);
@@ -1354,7 +1354,7 @@ if ($step == 4 && $datatoimport) {
 		print '				$("select.targetselectchange").find(\'option[value="\'+value+\'"]:not(:selected)\').prop("disabled", true);'."\n";	// Set to disabled except if currently selected
 		print '         }'."\n";
 		print '     });'."\n";
-		print '};'."\n";
+		print '}'."\n";
 
 		// Function to save the selection in database
 		print 'function saveSelection() {'."\n";
@@ -1402,7 +1402,7 @@ if ($step == 4 && $datatoimport) {
 					}
 		";
 
-		print '};'."\n";
+		print '}'."\n";
 
 		// If we make a change on a selectbox
 		print '$(".targetselectchange").change(function(){'."\n";
@@ -1547,7 +1547,7 @@ if ($step == 5 && $datatoimport) {
 	}
 
 	$model = $format;
-	$list = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	// Create classe to use for import
 	$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
@@ -2010,7 +2010,7 @@ if ($step == 6 && $datatoimport) {
 	}
 
 	$model = $format;
-	$list = $objmodelimport->liste_modeles($db);
+	$list = $objmodelimport->listOfAvailableImportFormat($db);
 	$importid = GETPOST("importid", 'alphanohtml');
 
 

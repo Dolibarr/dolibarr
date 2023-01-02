@@ -126,7 +126,6 @@ $fieldstosearchall = array(
 	'd.login'=>'Login',
 	'd.lastname'=>'Lastname',
 	'd.firstname'=>'Firstname',
-	'd.login'=>'Login',
 	'd.societe'=>"Company",
 	'd.email'=>'EMail',
 	'd.address'=>'Address',
@@ -262,7 +261,7 @@ if (empty($reshook)) {
 	}
 
 	// Create external user
-	if ($massaction == 'createexternaluser' && $user->hasRight('adherent', 'creer') && $user->rights->user->user->creer) {
+	if ($massaction == 'createexternaluser' && $user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'creer')) {
 		$tmpmember = new Adherent($db);
 		$error = 0;
 		$nbcreated = 0;
@@ -346,6 +345,9 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (d.rowid = ef.fk_object)";
@@ -480,9 +482,13 @@ $sql .= $hookmanager->resPrint;
 // Count total nb of records with no order and no limits
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$resql = $db->query($sql);
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
 	if ($resql) {
-		$nbtotalofrecords = $db->num_rows($resql);
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
 	} else {
 		dol_print_error($db);
 	}
@@ -836,7 +842,7 @@ if (!empty($arrayfields['d.statut']['checked'])) {
 		Adherent::STATUS_RESILIATED => $langs->trans("MemberStatusResiliatedShort"),
 		Adherent::STATUS_EXCLUDED =>$langs->trans("MemberStatusExcludedShort")
 	);
-	print $form->selectarray('search_status', $liststatus, $search_status, -3);
+	print $form->selectarray('search_status', $liststatus, $search_status, -3, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
 	print '</td>';
 }
 if (!empty($arrayfields['d.import_key']['checked'])) {

@@ -9,6 +9,7 @@
  * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
+ * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -852,7 +853,7 @@ class Account extends CommonObject
 
 		$sql .= ",min_allowed = ".($this->min_allowed != '' ? price2num($this->min_allowed) : "null");
 		$sql .= ",min_desired = ".($this->min_desired != '' ? price2num($this->min_desired) : "null");
-		$sql .= ",comment     = '".$this->db->escape($this->comment)."'";
+		$sql .= ",comment = '".$this->db->escape($this->comment)."'";
 
 		$sql .= ",state_id = ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
 		$sql .= ",fk_pays = ".($this->country_id > 0 ? ((int) $this->country_id) : "null");
@@ -1059,8 +1060,8 @@ class Account extends CommonObject
 	 * Adds it to non existing supplied categories.
 	 * Existing categories are left untouch.
 	 *
-	 * @param int[]|int $categories Category or categories IDs
-	 * @return void
+	 * @param 	int[]|int 	$categories 	Category or categories IDs
+	 * @return 	int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -1926,18 +1927,18 @@ class AccountLine extends CommonObject
 			$obj = $this->db->fetch_object($result);
 			if ($obj) {
 				$this->id = $obj->rowid;
-				$this->rowid			= $obj->rowid;
+				$this->rowid = $obj->rowid;
 				$this->ref = $obj->rowid;
 
-				$this->datec			= $obj->datec;
-				$this->datev			= $obj->datev;
-				$this->dateo			= $obj->dateo;
+				$this->datec = $obj->datec;
+				$this->datev = $obj->datev;
+				$this->dateo = $obj->dateo;
 				$this->amount = $obj->amount;
-				$this->label			= $obj->label;
-				$this->note				= $obj->note;
+				$this->label = $obj->label;
+				$this->note = $obj->note;
 
-				$this->fk_user_author	= $obj->fk_user_author;
-				$this->fk_user_rappro	= $obj->fk_user_rappro;
+				$this->fk_user_author = $obj->fk_user_author;
+				$this->fk_user_rappro = $obj->fk_user_rappro;
 
 				$this->fk_type = $obj->fk_type; // Type of transaction
 				$this->rappro = $obj->rappro;
@@ -1948,8 +1949,12 @@ class AccountLine extends CommonObject
 				$this->fk_bordereau = $obj->fk_bordereau;
 
 				$this->fk_account = $obj->fk_account;
-				$this->bank_account_ref   = $obj->bank_account_ref;
+				$this->bank_account_ref = $obj->bank_account_ref;
 				$this->bank_account_label = $obj->bank_account_label;
+
+				// Retrieve all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 
 				$ret = 1;
 			}
@@ -1967,6 +1972,10 @@ class AccountLine extends CommonObject
 	 */
 	public function insert()
 	{
+		$error = 0;
+
+		$this->db->begin();
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (";
 		$sql .= "datec";
 		$sql .= ", dateo";
@@ -2002,15 +2011,26 @@ class AccountLine extends CommonObject
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-
-		if (!$resql) {
+		if ($resql) {
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'bank');
+			// Actions on extra fields (by external module or standard code)
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
+			}
+		} else {
+			$error++;
 			$this->error = $this->db->lasterror();
-			return -1;
+			dol_print_error($this->db);
 		}
 
-		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'bank');
-
-		return $this->id;
+		if (!$error) {
+			$this->db->commit();
+			return $this->id;
+		} else {
+			$this->db->rollback();
+			return -1 * $error;
+		}
 	}
 
 	/**
@@ -2059,6 +2079,12 @@ class AccountLine extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=".(int) $this->rowid;
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if (!$result) {
+			$nbko++;
+		}
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_extrafields WHERE fk_object=".(int) $this->rowid;
 		$result = $this->db->query($sql);
 		if (!$result) {
 			$nbko++;

@@ -111,7 +111,7 @@ class ActionsTicket
 	 * @param	int		$id				ID of ticket
 	 * @param	string	$ref			Reference of ticket
 	 * @param	string	$track_id		Track ID of ticket (for public area)
-	 * @return 	void
+	 * @return int              		<0 if KO, >0 if OK
 	 */
 	public function fetch($id = 0, $ref = '', $track_id = '')
 	{
@@ -206,9 +206,9 @@ class ActionsTicket
 
 		print '<tr>';
 		print '<td colspan="2">';
-		if (!empty($user->rights->ticket->manage) && $action == 'edit_message_init') {
+		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
 			// MESSAGE
-			$msg = GETPOST('message_initial', 'alpha') ? GETPOST('message_initial', 'alpha') : $object->message;
+			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
 			$ckeditorenabledforticket = $conf->global->FCKEDITOR_ENABLE_TICKET;
@@ -218,7 +218,7 @@ class ActionsTicket
 			// Deal with format differences (text / HTML)
 			if (dol_textishtml($object->message)) {
 				print '<div class="longmessagecut">';
-				print $object->message;
+				print dol_htmlwithnojs($object->message);
 				print '</div>';
 				/*print '<div class="clear center">';
 				print $langs->trans("More").'...';

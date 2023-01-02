@@ -158,7 +158,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 	}
 
 	/**
-	 * testSql
+	 * testPHP
 	 *
 	 * @return string
 	 */
@@ -171,8 +171,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 		$db=$this->savdb;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname', SORT_ASC, 0, 0, '', 1);
-		//$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname');
+		$filesarray = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, '\.php', null, 'fullname', SORT_ASC, 0, 1, '', 1);
 
 		foreach ($filesarray as $key => $file) {
 			if (preg_match('/\/htdocs\/includes\//', $file['fullname'])) {
@@ -415,7 +414,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$matches=array();
 			preg_match_all('/(\$sql|SET\s|WHERE\s|INSERT\s|VALUES\s|VALUES\().+\s*\'\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if (! in_array($val[2], array('this->db-', 'db->prefi', 'db->sanit', 'conf->ent', 'key : \'\')', 'key])."\')', 'excludefi', 'regexstri', ''))) {
+				if (! in_array($val[2], array('this->db-', 'db->prefi', 'db->sanit', 'dbs->pref', 'dbs->sani', 'conf->ent', 'key : \'\')', 'key])."\')', 'excludefi', 'regexstri', ''))) {
 					$ok=false;
 					var_dump($matches);
 					break;

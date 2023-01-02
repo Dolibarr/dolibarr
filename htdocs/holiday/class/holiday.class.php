@@ -1470,7 +1470,7 @@ class Holiday extends CommonObject
 		$sql .= " value = '".$this->db->escape($value)."'";
 		$sql .= " WHERE name = '".$this->db->escape($name)."'";
 
-		dol_syslog(get_class($this).'::updateConfCP name='.$name.'', LOG_DEBUG);
+		dol_syslog(get_class($this).'::updateConfCP name='.$name, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			return true;

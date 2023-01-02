@@ -225,22 +225,22 @@ class ActionComm extends CommonObject
 	public $transparency;
 
 	/**
-	 * @var int (0 By default)
+	 * @var int 	(0 By default)
 	 */
 	public $priority;
 
 	/**
-	 * @var int[] Array of user ids
+	 * @var int[] 	Array of user ids
 	 */
 	public $userassigned = array();
 
 	/**
-	 * @var int Id of user owner = fk_user_action into table
+	 * @var int 	Id of user owner = fk_user_action into table
 	 */
 	public $userownerid;
 
 	/**
-	 * @var int Id of user that has done the event. Used only if AGENDA_ENABLE_DONEBY is set.
+	 * @var int 	Id of user that has done the event. Used only if AGENDA_ENABLE_DONEBY is set.
 	 */
 	public $userdoneid;
 
@@ -423,13 +423,13 @@ class ActionComm extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		global $langs, $conf, $hookmanager;
+		global $langs, $conf;
 
 		$error = 0;
 		$now = dol_now();
 
 		// Check parameters
-		if (!isset($this->userownerid) || $this->userownerid === '') {	// $this->userownerid may be 0 (anonymous event) of > 0
+		if (!isset($this->userownerid) || (string) $this->userownerid === '') {	// $this->userownerid may be 0 (anonymous event) or > 0
 			dol_syslog("You tried to create an event but mandatory property ownerid was not defined", LOG_WARNING);
 			$this->errors[] = 'ErrorActionCommPropertyUserowneridNotDefined';
 			return -1;
@@ -477,8 +477,8 @@ class ActionComm extends CommonObject
 			$this->elementtype = 'contract';
 		}
 
-		if (!is_array($this->userassigned) && !empty($this->userassigned)) {	// For backward compatibility when userassigned was an int instead fo array
-			$tmpid = $this->userassigned;
+		if (!is_array($this->userassigned) && !empty($this->userassigned)) {	// For backward compatibility when userassigned was an int instead of an array
+			$tmpid = (int) $this->userassigned;
 			$this->userassigned = array();
 			$this->userassigned[$tmpid] = array('id'=>$tmpid, 'transparency'=>$this->transparency);
 		}
@@ -555,7 +555,8 @@ class ActionComm extends CommonObject
 		$sql .= "recurdateend,";
 		$sql .= "num_vote,";
 		$sql .= "event_paid,";
-		$sql .= "status";
+		$sql .= "status,";
+		$sql .= "ip";
 		$sql .= ") VALUES (";
 		$sql .= "'(PROV)', ";
 		$sql .= "'".$this->db->idate($now)."', ";
@@ -596,7 +597,8 @@ class ActionComm extends CommonObject
 		$sql .= (!empty($this->recurdateend) ? "'".$this->db->idate($this->recurdateend)."'" : "null").", ";
 		$sql .= (!empty($this->num_vote) ? (int) $this->num_vote : "null").", ";
 		$sql .= (!empty($this->event_paid) ? (int) $this->event_paid : 0).", ";
-		$sql .= (!empty($this->status) ? (int) $this->status : "0");
+		$sql .= (!empty($this->status) ? (int) $this->status : "0").", ";
+		$sql .= (!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::add", LOG_DEBUG);
@@ -705,10 +707,9 @@ class ActionComm extends CommonObject
 	 */
 	public function createFromClone(User $fuser, $socid)
 	{
-		global $db, $conf, $hookmanager;
+		global $hookmanager;
 
 		$error = 0;
-		$now = dol_now();
 
 		$this->db->begin();
 
@@ -1160,12 +1161,8 @@ class ActionComm extends CommonObject
 		$userownerid = ($this->userownerid ? $this->userownerid : 0);
 		$userdoneid = ($this->userdoneid ? $this->userdoneid : 0);
 
-		$this->db->begin();
-
-		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
-		$sql .= " SET percent = '".$this->db->escape($this->percentage)."'";
+		// If a type_id is set, we must also have the type_code set
 		if ($this->type_id > 0) {
-			$sql .= ", fk_action = ".(int) $this->type_id;
 			if (empty($this->type_code)) {
 				$cactioncomm = new CActionComm($this->db);
 				$result = $cactioncomm->fetch($this->type_id);
@@ -1174,7 +1171,18 @@ class ActionComm extends CommonObject
 				}
 			}
 		}
-		$sql .= ", code = " . (isset($this->type_code)? "'".$this->db->escape($this->type_code) . "'":"null");
+
+		$code = $this->code;
+		if (empty($code) || (!empty($this->oldcopy) && $this->oldcopy->type_code != $this->type_code)) {	// If code unknown or if we change the type, we reset $code too
+			$code = $this->type_code;
+		}
+
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm";
+		$sql .= " SET percent = '".$this->db->escape($this->percentage)."'";
+		$sql .= ", fk_action = ".(int) $this->type_id;
+		$sql .= ", code = " . ($code ? "'".$this->db->escape($code)."'" : "null");
 		$sql .= ", label = ".($this->label ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", datep = ".(strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : 'null');
 		$sql .= ", datep2 = ".(strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : 'null');
@@ -1205,7 +1213,7 @@ class ActionComm extends CommonObject
 		if (!empty($this->status)) {
 			$sql .= ", status=".($this->status ? (int) $this->status : 0);
 		}
-		$sql .= " WHERE id=".$this->id;
+		$sql .= " WHERE id=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		if ($this->db->query($sql)) {
@@ -1425,7 +1433,7 @@ class ActionComm extends CommonObject
 				$response->label = $langs->trans("ActionsToDo");
 				$response->labelShort = $langs->trans("ActionsToDoShort");
 				$response->url = DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&actioncode=0&status=todo&mainmenu=agenda';
-				if ($user->rights->agenda->allactions->read) {
+				if ($user->hasRight("agenda", "allactions", "read")) {
 					$response->url .= '&filtert=-1';
 				}
 				$response->img = img_object('', "action", 'class="inline-block valigntextmiddle"');
@@ -1761,11 +1769,11 @@ class ActionComm extends CommonObject
 					$imgpicto = img_picto('', 'object_phoning', $color, false, 0, 0, '', 'paddingright');
 				} elseif ($this->type_code == 'AC_FAX') {
 					$imgpicto = img_picto('', 'object_phoning_fax', $color, false, 0, 0, '', 'paddingright');
-				} elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN') {
+				} elseif ($this->type_code == 'AC_EMAIL' || $this->type_code == 'AC_EMAIL_IN' || preg_match('/_SENTBYMAIL/', $this->code)) {
 					$imgpicto = img_picto('', 'object_email', $color, false, 0, 0, '', 'paddingright');
 				} elseif ($this->type_code == 'AC_INT') {
 					$imgpicto = img_picto('', 'object_intervention', $color, false, 0, 0, '', 'paddingright');
-				} elseif ($this->type_code == 'AC_OTH' && $this->code == 'TICKET_MSG') {
+				} elseif (preg_match('/^TICKET_MSG/', $this->code)) {
 					$imgpicto = img_picto('', 'object_conversation', $color, false, 0, 0, '', 'paddingright');
 				} elseif ($this->type != 'systemauto') {
 					$imgpicto = img_picto('', 'user-cog', $color, false, 0, 0, '', 'paddingright');
@@ -1792,8 +1800,8 @@ class ActionComm extends CommonObject
 	 * Adds it to non existing supplied categories.
 	 * Existing categories are left untouch.
 	 *
-	 * @param  int[]|int $categories Category or categories IDs
-	 * @return void
+	 * @param  int[]|int 	$categories 	Category or categories IDs
+	 * @return int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -1827,7 +1835,7 @@ class ActionComm extends CommonObject
 				$c->add_type($this, Categorie::TYPE_ACTIONCOMM);
 			}
 		}
-		return;
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2253,18 +2261,18 @@ class ActionComm extends CommonObject
 	/**
 	 *  Function used to replace a thirdparty id with another one.
 	 *
-	 *  @param DoliDB $db Database handler
-	 *  @param int $origin_id Old thirdparty id
-	 *  @param int $dest_id New thirdparty id
-	 *  @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'actioncomm'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**

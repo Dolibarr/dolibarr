@@ -188,6 +188,7 @@ $allparams = array_merge($commonparams, $headerparams, $tableparams);
 $headerparams = array_merge($commonparams, $headerparams);
 $tableparams = array_merge($commonparams, $tableparams);
 
+$paramslink = '';
 foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
@@ -251,7 +252,9 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 	$periodlink = '';
 }
 
-report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
+$exportlink = '';
+
+report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
 	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
@@ -309,20 +312,23 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= $db->order($sortfield, $sortorder);
 
 	dol_syslog("supplier_turnover_by_prodserv", LOG_DEBUG);
-	$result = $db->query($sql);
-	if ($result) {
-		$num = $db->num_rows($result);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
 		$i = 0;
 		while ($i < $num) {
-			$obj = $db->fetch_object($result);
+			$obj = $db->fetch_object($resql);
+
 			$amount_ht[$obj->rowid] = $obj->amount;
 			$amount[$obj->rowid] = $obj->amount_ttc;
 			$qty[$obj->rowid] = $obj->qty;
 			$name[$obj->rowid] = $obj->ref.'&nbsp;-&nbsp;'.$obj->label;
 			$type[$obj->rowid] = $obj->product_type;
+
 			$catotal_ht += $obj->amount;
 			$catotal += $obj->amount_ttc;
 			$qtytotal += $obj->qty;
+
 			$i++;
 		}
 	} else {
@@ -407,7 +413,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$_SERVER["PHP_SELF"],
 		"amount",
 		"",
-		$classslink,
+		$paramslink,
 		'class="right"',
 		$sortfield,
 		$sortorder

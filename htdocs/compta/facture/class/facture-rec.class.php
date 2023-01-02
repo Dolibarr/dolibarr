@@ -188,13 +188,12 @@ class FactureRec extends CommonInvoice
 		'note_private' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>105),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>110),
 		'modelpdf' =>array('type'=>'varchar(255)', 'label'=>'Modelpdf', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
-		'date_last_gen' =>array('type'=>'varchar(7)', 'label'=>'Last gen', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
-		'unit_frequency' =>array('type'=>'varchar(2)', 'label'=>'Unit frequency', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
 		'date_when' =>array('type'=>'datetime', 'label'=>'Date when', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'date_last_gen' =>array('type'=>'datetime', 'label'=>'Date last gen', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
 		'nb_gen_done' =>array('type'=>'integer', 'label'=>'Nb gen done', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
 		'nb_gen_max' =>array('type'=>'integer', 'label'=>'Nb gen max', 'enabled'=>1, 'visible'=>-1, 'position'=>145),
 		'frequency' =>array('type'=>'integer', 'label'=>'Frequency', 'enabled'=>1, 'visible'=>-1, 'position'=>150),
+		'unit_frequency' =>array('type'=>'varchar(2)', 'label'=>'UnitFrequency', 'enabled'=>1, 'visible'=>-1, 'position'=>152),
 		'usenewprice' =>array('type'=>'integer', 'label'=>'UseNewPrice', 'enabled'=>1, 'visible'=>0, 'position'=>155),
 		'revenuestamp' =>array('type'=>'double(24,8)', 'label'=>'RevenueStamp', 'enabled'=>1, 'visible'=>-1, 'position'=>160, 'isameasure'=>1),
 		'auto_validate' =>array('type'=>'integer', 'label'=>'Auto validate', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
@@ -1024,7 +1023,7 @@ class FactureRec extends CommonInvoice
 			if ($this->db->query($sql)) {
 				$lineId = $this->db->last_insert_id(MAIN_DB_PREFIX."facturedet_rec");
 				$this->id = $facid;
-				$this->update_price();
+				$this->update_price(1);
 				return $lineId;
 			} else {
 				$this->error = $this->db->lasterror();
@@ -1198,7 +1197,7 @@ class FactureRec extends CommonInvoice
 			dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 			if ($this->db->query($sql)) {
 				$this->id = $facid;
-				$this->update_price();
+				$this->update_price(1);
 				return 1;
 			} else {
 				$this->error = $this->db->lasterror();
@@ -1771,35 +1770,35 @@ class FactureRec extends CommonInvoice
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'facture_rec'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
 	 * Function used to replace a product id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old product id
-	 * @param int $dest_id New product id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old product id
+	 * @param 	int 	$dest_id 	New product id
+	 * @return 	bool
 	 */
-	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceProduct(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'facturedet_rec'
 		);
 
-		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceProduct($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**

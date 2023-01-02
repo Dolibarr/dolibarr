@@ -531,6 +531,9 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (e.rowid = ef.fk_object)";
@@ -614,12 +617,29 @@ $sql .= $hookmanager->resPrint;
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+	$db->free($resql);
 }
 
+// Complete request and execute it with limit
 $sql .= $db->order($sortfield, $sortorder);
-$sql .= $db->plimit($limit + 1, $offset);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 
 //print $sql;
 $resql = $db->query($sql);
@@ -907,7 +927,7 @@ if (!empty($arrayfields['e.date_delivery']['checked'])) {
 if (!empty($arrayfields['l.ref']['checked'])) {
 	// Delivery ref
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="10" type="text" name="search_ref_liv" value="'.$search_ref_liv.'"';
+	print '<input class="flat" type="text" name="search_ref_liv" value="'.dol_escape_htmltag($search_ref_liv).'"';
 	print '</td>';
 }
 if (!empty($arrayfields['l.date_delivery']['checked'])) {
@@ -940,7 +960,7 @@ if (!empty($arrayfields['e.tms']['checked'])) {
 // Status
 if (!empty($arrayfields['e.fk_statut']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone right">';
-	print $form->selectarray('search_status', array('0'=>$langs->trans('StatusReceptionDraftShort'), '1'=>$langs->trans('StatusReceptionValidatedShort'), '2'=>$langs->trans('StatusReceptionProcessedShort')), $search_status, 1);
+	print $form->selectarray('search_status', array('0'=>$langs->trans('StatusReceptionDraftShort'), '1'=>$langs->trans('StatusReceptionValidatedShort'), '2'=>$langs->trans('StatusReceptionProcessedShort')), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status onrightofpage');
 	print '</td>';
 }
 // Status billed

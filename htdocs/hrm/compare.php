@@ -319,11 +319,11 @@ function rate(&$TMergedSkills, $field)
 	foreach ($TMergedSkills as $id => &$sk) {
 		$class = "note";
 		$how_many = 0;
-		if (empty($sk->{$field})) {
+		if (empty($sk->$field)) {
 			$note = 'x';
 			$class .= ' none';
 		} else {
-			$note = $sk->{$field};
+			$note = $sk->$field;
 			$how_many = ($field === 'rate1') ? $sk->how_many_max1 : $sk->how_many_max2;
 		}
 

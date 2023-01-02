@@ -42,7 +42,7 @@ class mailing_advthirdparties extends MailingTargets
 	 */
 	public $db;
 
-	public $enabled = '$conf->societe->enabled';
+	public $enabled = 'isModEnabled("societe")';
 
 
 	/**

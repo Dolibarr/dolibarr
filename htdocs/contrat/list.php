@@ -38,6 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+if (!empty($conf->categorie->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('contracts', 'products', 'companies', 'compta'));
@@ -76,6 +79,13 @@ $search_date_endmonth = GETPOST('search_date_endmonth', 'int');
 $search_date_endyear = GETPOST('search_date_endyear', 'int');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
+$searchCategoryCustomerOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator', 'int');
+} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+	$searchCategoryCustomerOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+}
+$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
 
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -206,6 +216,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_status = "";
 	$toselect = array();
 	$search_type_thirdparty = '';
+	$searchCategoryCustomerList = array();
 	$search_array_options = array();
 }
 
@@ -347,6 +358,50 @@ if (!empty($searchCategoryProductList)) {
 		if (!empty($searchCategoryProductSqlList)) {
 			$sql .= " AND (".implode(' AND ', $searchCategoryProductSqlList).")";
 		}
+	}
+}
+$searchCategoryCustomerSqlList = array();
+if ($searchCategoryCustomerOperator == 1) {
+	$existsCategoryCustomerList = array();
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$sqlCategoryCustomerNotExists  = " NOT EXISTS (";
+			$sqlCategoryCustomerNotExists .= " SELECT cat_cus.fk_soc";
+			$sqlCategoryCustomerNotExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
+			$sqlCategoryCustomerNotExists .= " WHERE cat_cus.fk_soc = s.rowid";
+			$sqlCategoryCustomerNotExists .= " )";
+			$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerNotExists;
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			$existsCategoryCustomerList[] = $db->escape($searchCategoryCustomer);
+		}
+	}
+	if (!empty($existsCategoryCustomerList)) {
+		$sqlCategoryCustomerExists = " EXISTS (";
+		$sqlCategoryCustomerExists .= " SELECT cat_cus.fk_soc";
+		$sqlCategoryCustomerExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
+		$sqlCategoryCustomerExists .= " WHERE cat_cus.fk_soc = s.rowid";
+		$sqlCategoryCustomerExists .= " AND cat_cus.fk_categorie IN (".$db->sanitize(implode(',', $existsCategoryCustomerList)).")";
+		$sqlCategoryCustomerExists .= " )";
+		$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerExists;
+	}
+	if (!empty($searchCategoryCustomerSqlList)) {
+		$sql .= " AND (".implode(' OR ', $searchCategoryCustomerSqlList).")";
+	}
+} else {
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$sqlCategoryCustomerNotExists = " NOT EXISTS (";
+			$sqlCategoryCustomerNotExists .= " SELECT cat_cus.fk_soc";
+			$sqlCategoryCustomerNotExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
+			$sqlCategoryCustomerNotExists .= " WHERE cat_cus.fk_soc = s.rowid";
+			$sqlCategoryCustomerNotExists .= " )";
+			$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerNotExists;
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			$searchCategoryCustomerSqlList[] = "s.rowid IN (SELECT fk_soc FROM ".$db->prefix()."categorie_societe WHERE fk_categorie = ".((int) $searchCategoryCustomer).")";
+		}
+	}
+	if (!empty($searchCategoryCustomerSqlList)) {
+		$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
 	}
 }
 // Add where from extra fields
@@ -527,6 +582,9 @@ if ($show_files) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+	$param .= "&search_category_customer_list[]=".urlencode($searchCategoryCustomer);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -561,7 +619,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contract', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($langs->trans("Contracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contract', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "SendContractRef";
 $modelmail = "contract";
@@ -600,6 +658,18 @@ if (isModEnabled('categorie') && $user->rights->categorie->lire && ($user->right
 	$tmptitle = $langs->trans('IncludingProductWithTag');
 	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'widthcentpercentminusx maxwidth300', 1);
+	$moreforfilter .= '</div>';
+}
+// Filter on customer categories
+if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_CONTRACT_LIST) && !empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
+	$categoriesArr = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 1);
+	$categoriesArr[-2] = '- '.$langs->trans('NotCategorized').' -';
+	$moreforfilter .= Form::multiselectarray('search_category_customer_list', $categoriesArr, $searchCategoryCustomerList, 0, 0, 'minwidth300', 0, 0, '', 'category', $tmptitle);
+	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_customer_operator" name="search_category_customer_operator" value="1"'.($searchCategoryCustomerOperator == 1 ? ' checked="checked"' : '').'/>';
+	$moreforfilter .= $form->textwithpicto('', $langs->trans('UseOrOperatorForCategories') . ' : ' . $tmptitle, 1, 'help', '', 0, 2, 'tooltip_cat_cus'); // Tooltip on click
 	$moreforfilter .= '</div>';
 }
 

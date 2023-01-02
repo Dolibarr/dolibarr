@@ -10,6 +10,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1140,24 +1141,24 @@ class ExtraFields
 
 				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 				$out .= '<option value="0">&nbsp;</option>';
-				foreach ($param['options'] as $key => $val) {
-					if ((string) $key == '') {
+				foreach ($param['options'] as $key2 => $val2) {
+					if ((string) $key2 == '') {
 						continue;
 					}
-					$valarray = explode('|', $val);
-					$val = $valarray[0];
+					$valarray = explode('|', $val2);
+					$val2 = $valarray[0];
 					$parent = '';
 					if (!empty($valarray[1])) {
 						$parent = $valarray[1];
 					}
-					$out .= '<option value="'.$key.'"';
-					$out .= (((string) $value == (string) $key) ? ' selected' : '');
+					$out .= '<option value="'.$key2.'"';
+					$out .= (((string) $value == (string) $key2) ? ' selected' : '');
 					$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
 					$out .= '>';
-					if ($langfile && $val) {
-						$out .= $langs->trans($val);
+					if ($langfile && $val2) {
+						$out .= $langs->trans($val2);
 					} else {
-						$out .= $val;
+						$out .= $val2;
 					}
 					$out .= '</option>';
 				}
@@ -1758,7 +1759,12 @@ class ExtraFields
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			$value = $langs->trans($param['options'][$value]);
+			if (!isset($param['options'][$value])) {
+				$langs->load('errors');
+				$value = $langs->trans('ErrorNoValueForRadioType');
+			} else {
+				$value = $langs->trans($param['options'][$value]);
+			}
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
 			$value = '';
@@ -1970,7 +1976,7 @@ class ExtraFields
 		$expand_display = false;
 		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
 			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? ($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key] ? true : false) : ($extrafield_collapse_display_value == 2 ? false : true));
+			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? (empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) ? false : true) : ($extrafield_collapse_display_value == 2 ? false : true));
 		}
 		if ($mode == 'create') {
 			$extrafield_collapse_display_value = 0;
@@ -2031,13 +2037,13 @@ class ExtraFields
 	/**
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
-	 * @param   array	$extralabels    	Deprecated (old $array of extrafields, now set this to null)
-	 * @param   object	$object         	Object
-	 * @param	string	$onlykey			Only some keys are filled:
-	 *                                  	'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
-	 *                                  	'@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
-	 * @param	int		$todefaultifmissing 1=Set value to the default value in database if value is mandatory and missing
-	 * @return	int							1 if array_options set, 0 if no value, -1 if error (field required missing for example)
+	 * @param   array|null	$extralabels    	Deprecated (old $array of extrafields, now set this to null)
+	 * @param   object		$object         	Object
+	 * @param	string		$onlykey			Only some keys are filled:
+	 *                      	            	'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
+	 *                          	        	'@GETPOSTISSET' => When we make update of several extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
+	 * @param	int			$todefaultifmissing 1=Set value to the default value in database if value is mandatory and missing
+	 * @return	int								1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
 	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '', $todefaultifmissing = 0)
 	{

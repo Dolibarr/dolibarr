@@ -56,6 +56,8 @@ class WebsitePage extends CommonObject
 	 */
 	public $fk_website;
 
+	public $fk_page;		// If translation of another page
+
 	public $pageurl;
 	public $aliasalt;
 	public $type_container;
@@ -116,8 +118,8 @@ class WebsitePage extends CommonObject
 	 */
 	public $fk_object;
 
-	const STATUS_DRAFT = 0;
-	const STATUS_VALIDATED = 1;
+	const STATUS_DRAFT = 0;			// offline
+	const STATUS_VALIDATED = 1;		// online
 
 
 	/**

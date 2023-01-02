@@ -572,7 +572,23 @@ if ($massaction == 'delcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && $usercanedit) {
 	$replacestring = GETPOST('replacestring', 'none');
 
-	if (empty($user->rights->website->writephp)) {
+	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
+	$allowimportsite = true;
+	if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
+		$allowimportsite = false;
+	}
+
+	if (!$allowimportsite) {
+		// Blocked by installmodules.lock
+		if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
+			// Show clean corporate message
+			$message = $langs->trans('InstallModuleFromWebHasBeenDisabledContactUs');
+		} else {
+			// Show technical generic message
+			$message = $langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock');
+		}
+		setEventMessages($message, null, 'errors');
+	} elseif (empty($user->rights->website->writephp)) {
 		setEventMessages("NotAllowedToAddDynamicContent", null, 'errors');
 	} elseif (!$replacestring) {
 		setEventMessages("ErrorReplaceStringEmpty", null, 'errors');
@@ -2377,76 +2393,101 @@ if ($action == 'regeneratesite' && $usercanedit) {
 
 // Import site
 if ($action == 'importsiteconfirm' && $usercanedit) {
-	if (empty($_FILES) && !GETPOSTISSET('templateuserfile')) {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
-		$action = 'importsite';
-	} else {
-		if (!empty($_FILES) || GETPOSTISSET('templateuserfile')) {
-			// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
-			$pathtomedias = DOL_DATA_ROOT.'/medias';
-			$pathtomediasinwebsite = $pathofwebsite.'/medias';
-			if (!is_link(dol_osencode($pathtomediasinwebsite))) {
-				dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
-				dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
-				$result = symlink($pathtomedias, $pathtomediasinwebsite);
-				if (!$result) {
-					setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
-					$action = 'importsite';
-				}
-			}
+	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
+	$allowimportsite = true;
+	if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
+		$allowimportsite = false;
+	}
 
-			$fileofzip = '';
-			if (GETPOSTISSET('templateuserfile')) {
-				$fileofzip = DOL_DATA_ROOT.'/doctemplates/websites/'.GETPOST('templateuserfile', 'alpha');
-			} elseif (!empty($_FILES)) {
-				if (is_array($_FILES['userfile']['tmp_name'])) {
-					$userfiles = $_FILES['userfile']['tmp_name'];
-				} else {
-					$userfiles = array($_FILES['userfile']['tmp_name']);
+	if ($allowimportsite) {
+		if (empty($_FILES) && !GETPOSTISSET('templateuserfile')) {
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+			$action = 'importsite';
+		} else {
+			if (!empty($_FILES) || GETPOSTISSET('templateuserfile')) {
+				// Check symlink to medias and restore it if ko. Recreate also dir of website if not found.
+				$pathtomedias = DOL_DATA_ROOT.'/medias';
+				$pathtomediasinwebsite = $pathofwebsite.'/medias';
+				if (!is_link(dol_osencode($pathtomediasinwebsite))) {
+					dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+					dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure dir for website exists
+					$result = symlink($pathtomedias, $pathtomediasinwebsite);
+					if (!$result) {
+						setEventMessages($langs->trans("ErrorFieldToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+						$action = 'importsite';
+					}
 				}
 
-				foreach ($userfiles as $key => $userfile) {
-					if (empty($_FILES['userfile']['tmp_name'][$key])) {
-						$error++;
-						if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2) {
-							setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
-							$action = 'importsite';
-						} else {
-							setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
-							$action = 'importsite';
+				$fileofzip = '';
+				if (GETPOSTISSET('templateuserfile')) {
+					// Case we selected one template
+					$fileofzip = DOL_DATA_ROOT.'/doctemplates/websites/'.GETPOST('templateuserfile', 'alpha');	// $fileofzip will be sanitized later into the importWebSite()
+				} elseif (!empty($_FILES)) {
+					// Case we upload a new template
+					if (is_array($_FILES['userfile']['tmp_name'])) {
+						$userfiles = $_FILES['userfile']['tmp_name'];
+					} else {
+						$userfiles = array($_FILES['userfile']['tmp_name']);
+					}
+
+					// Check if $_FILES is ok
+					foreach ($userfiles as $key => $userfile) {
+						if (empty($_FILES['userfile']['tmp_name'][$key])) {
+							$error++;
+							if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2) {
+								setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
+								$action = 'importsite';
+							} else {
+								setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+								$action = 'importsite';
+							}
 						}
 					}
-				}
 
-				if (!$error) {
-					$upload_dir = $conf->website->dir_temp;
-					$result = dol_add_file_process($upload_dir, 1, -1, 'userfile', '');
-				}
-
-				// Get name of file (take last one if several name provided)
-				$fileofzip = $upload_dir.'/unknown';
-				foreach ($_FILES as $key => $ifile) {
-					foreach ($ifile['name'] as $key2 => $ifile2) {
-						$fileofzip = $upload_dir.'/'.$ifile2;
+					if (!$error) {
+						//$upload_dir = $conf->website->dir_temp;
+						$upload_dir = DOL_DATA_ROOT.'/doctemplates/websites/';
+						$result = dol_add_file_process($upload_dir, 1, -1, 'userfile', '');
 					}
-				}
-			}
 
-			if (!$error) {
-				$result = $object->importWebSite($fileofzip);
+					// Get name of file (take last one if several name provided)
+					/*
+					$fileofzip = $upload_dir.'/unknown';
+					foreach ($_FILES as $key => $ifile) {
+						foreach ($ifile['name'] as $key2 => $ifile2) {
+							$fileofzip = $upload_dir.'/'.$ifile2;
+						}
+					}
+					*/
 
-				if ($result < 0) {
-					setEventMessages($object->error, $object->errors, 'errors');
 					$action = 'importsite';
-				} else {
-					// Force mode dynamic on
-					dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1, 'chaine', 0, '', $conf->entity);
+				}
 
-					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$object->ref);
-					exit();
+				if (!$error && GETPOSTISSET('templateuserfile')) {
+					$result = $object->importWebSite($fileofzip);
+
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+						$action = 'importsite';
+					} else {
+						// Force mode dynamic on
+						dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1, 'chaine', 0, '', $conf->entity);
+
+						header("Location: ".$_SERVER["PHP_SELF"].'?website='.$object->ref);
+						exit();
+					}
 				}
 			}
 		}
+	} else {
+		if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
+			// Show clean corporate message
+			$message = $langs->trans('InstallModuleFromWebHasBeenDisabledContactUs');
+		} else {
+			// Show technical generic message
+			$message = $langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock');
+		}
+		setEventMessages($message, null, 'errors');
 	}
 }
 
@@ -2620,12 +2661,8 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 		dol_print_error($db);
 	}
 
-	// Add the entry Sitemap: into the robot file.
+	// Add the entry Sitemap: into the robot.txt file.
 	$robotcontent = @file_get_contents($filerobot);
-	$result = preg_replace('/<?php // BEGIN PHP[^?]END PHP ?>\n/ims', '', $robotcontent);
-	if ($result) {
-		$robotcontent = $result;
-	}
 	$robotsitemap = "Sitemap: ".$domainname."/".$xmlname;
 	$result = strpos($robotcontent, 'Sitemap: ');
 	if ($result) {
@@ -2682,7 +2719,7 @@ $moreheadjs .= '<script type="text/javascript">'."\n";
 $moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
 $moreheadjs .= '</script>'."\n";
 
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("WebsiteSetup"), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("Website").(empty($website->ref) ? '' : ' - '.$website->ref), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n";
 print '<!-- Open form for all page -->'."\n";
@@ -3257,7 +3294,7 @@ if (!GETPOST('hide_websitemenu')) {
 									}
 									isEditingEnabled = false;
 								}
-							};
+							}
 						});
 						</script>';
 				print $langs->trans("EditInLine");
@@ -3295,15 +3332,14 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
 
 				// Delete
-				//print '<input type="submit" class="buttonDelete bordertransp" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage ? '' : ' disabled="disabled"').'>';
-				if ($websitepage->status == $websitepage::STATUS_DRAFT || !$atleastonepage) {
+				if ($websitepage->status != $websitepage::STATUS_DRAFT) {
 					$disabled = ' disabled="disabled"';
 					$title = $langs->trans("WebpageMustBeDisabled", $langs->transnoentitiesnoconv($websitepage->LibStatut(0, 0)));
 					$url = '#';
 				} else {
 					$disabled = '';
 					$title = '';
-					$url = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&website='.urlencode($website->ref);
+					$url = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&pageid='.((int) $websitepage->id).'&website='.urlencode($website->ref);	// action=delete for webpage, deletesite for website
 				}
 				print '<a href="'.$url.'" class="buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
 			}
@@ -3847,16 +3883,33 @@ if ($action == 'importsite') {
 
 	print '<span class="opacitymedium">'.$langs->trans("ZipOfWebsitePackageToImport").'</span><br><br>';
 
-	$maxfilesizearray = getMaxFileSizeArray();
-	$maxmin = $maxfilesizearray['maxmin'];
-	if ($maxmin > 0) {
-		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
-	}
-	print '<input class="flat minwidth400" type="file" name="userfile[]" accept=".zip">';
-	print '<input type="submit" class="button small" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
-	print '<input type="submit" class="button button-cancel small" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 
-	print '<br><br><br>';
+	$dolibarrdataroot = preg_replace('/([\\/]+)$/i', '', DOL_DATA_ROOT);
+	$allowimportsite = true;
+	if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
+		$allowimportsite = false;
+	}
+
+	if ($allowimportsite) {
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxmin = $maxfilesizearray['maxmin'];
+		if ($maxmin > 0) {
+			print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
+		print '<input class="flat minwidth400" type="file" name="userfile[]" accept=".zip">';
+		print '<input type="submit" class="button small" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
+		print '<input type="submit" class="button button-cancel small" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+		print '<br><br><br>';
+	} else {
+		if (getDolGlobalString('MAIN_MESSAGE_INSTALL_MODULES_DISABLED_CONTACT_US')) {
+			// Show clean corporate message
+			$message = $langs->trans('InstallModuleFromWebHasBeenDisabledContactUs');
+		} else {
+			// Show technical generic message
+			$message = $langs->trans("InstallModuleFromWebHasBeenDisabledByFile", $dolibarrdataroot.'/installmodules.lock');
+		}
+		print info_admin($message).'<br><br>';
+	}
 
 
 	print '<span class="opacitymedium">'.$langs->trans("ZipOfWebsitePackageToLoad").'</span><br><br>';

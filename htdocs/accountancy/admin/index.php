@@ -430,7 +430,7 @@ foreach ($list_binding as $key) {
 		print $form->selectDate((!empty($conf->global->$key) ? $db->idate($conf->global->$key) : -1), $key, 0, 0, 1);
 	} elseif ($key == 'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER') {
 		$array = array(0=>$langs->trans("PreviousMonth"), 1=>$langs->trans("CurrentMonth"), 2=>$langs->trans("Fiscalyear"));
-		print $form->selectarray($key, $array, (isset($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER) ? $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER : 0));
+		print $form->selectarray($key, $array, (isset($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER) ? $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER : 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
 	} else {
 		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	}

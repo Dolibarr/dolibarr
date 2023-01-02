@@ -5,6 +5,7 @@
  * Copyright (C) 2013		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes			<bafbes@gmail.com>
+ * Copyright (C) 2022		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -742,7 +743,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			if (!is_object($member)) {	// This should not happen
 				include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 				$member = new Adherent($this->db);
-				$member->fetch($this->fk_adherent);
+				$member->fetch($object->fk_adherent);
 			}
 
 			if (empty($object->actionmsg2)) {
@@ -861,6 +862,16 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			// Parameters $object->sendtoid defined by caller
 			//$object->sendtoid=0;
+		} elseif ($action == 'PROJECT_CLOSE') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "projects"));
+
+			if (empty($object->actionmsg2)) {
+				$object->actionmsg2 = $langs->transnoentities("ProjectClosedInDolibarr", $object->ref);
+			}
+			$object->actionmsg = $langs->transnoentities("ProjectClosedInDolibarr", $object->ref);
+
+			$object->sendtoid = 0;
 		} elseif ($action == 'TASK_CREATE') {
 			// Project tasks
 			// Load translation files required by the page

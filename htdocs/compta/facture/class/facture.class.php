@@ -171,6 +171,8 @@ class Facture extends CommonInvoice
 	public $total_ttc;
 	public $revenuestamp;
 
+	public $resteapayer;
+
 	/**
 	 * ! Closing after partial payment: discount_vat, badcustomer or badsupplier, bankcharge, other
 	 * ! Closing when no payment: replaced, abandoned
@@ -5188,18 +5190,18 @@ class Facture extends CommonInvoice
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param  DoliDB  $db             Database handler
-	 * @param  int     $origin_id      Old third-party id
-	 * @param  int     $dest_id        New third-party id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'facture'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -6262,7 +6264,7 @@ class FactureLigne extends CommonInvoiceLine
 			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
 		}
 		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
-		$sql .= ", buy_price_ht=".(($this->pa_ht || $this->pa_ht === 0 || $this->pa_ht === '0') ? price2num($this->pa_ht) : "null"); // $this->pa_ht should always be defined (set to 0 or to sell price depending on option)
+		$sql .= ", buy_price_ht=".(($this->pa_ht || (string) $this->pa_ht === '0') ? price2num($this->pa_ht) : "null"); // $this->pa_ht should always be defined (set to 0 or to sell price depending on option)
 		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang=".((int) $this->rang);
@@ -6373,11 +6375,11 @@ class FactureLigne extends CommonInvoiceLine
 
 		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
-		$sql .= " total_ht=".price2num($this->total_ht)."";
-		$sql .= ",total_tva=".price2num($this->total_tva)."";
-		$sql .= ",total_localtax1=".price2num($this->total_localtax1)."";
-		$sql .= ",total_localtax2=".price2num($this->total_localtax2)."";
-		$sql .= ",total_ttc=".price2num($this->total_ttc)."";
+		$sql .= " total_ht=".price2num($this->total_ht);
+		$sql .= ",total_tva=".price2num($this->total_tva);
+		$sql .= ",total_localtax1=".price2num($this->total_localtax1);
+		$sql .= ",total_localtax2=".price2num($this->total_localtax2);
+		$sql .= ",total_ttc=".price2num($this->total_ttc);
 		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);

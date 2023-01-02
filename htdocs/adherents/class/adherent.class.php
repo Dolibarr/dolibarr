@@ -92,6 +92,7 @@ class Adherent extends CommonObject
 	/**
 	 * @var string company name
 	 * @deprecated
+	 * @see $company
 	 */
 	public $societe;
 
@@ -102,8 +103,14 @@ class Adherent extends CommonObject
 
 	/**
 	 * @var int Thirdparty ID
+	 * @deprecated
+	 * @see $socid
 	 */
 	public $fk_soc;
+
+	/**
+	 * @var int socid
+	 */
 	public $socid;
 
 	/**
@@ -154,24 +161,28 @@ class Adherent extends CommonObject
 	/**
 	 * @var string skype account
 	 * @deprecated
+	 * @see $socialnetworks
 	 */
 	public $skype;
 
 	/**
 	 * @var string twitter account
 	 * @deprecated
+	 * @see $socialnetworks
 	 */
 	public $twitter;
 
 	/**
 	 * @var string facebook account
 	 * @deprecated
+	 * @see $socialnetworks
 	 */
 	public $facebook;
 
 	/**
 	 * @var string linkedin account
 	 * @deprecated
+	 * @see $socialnetworks
 	 */
 	public $linkedin;
 
@@ -259,10 +270,19 @@ class Adherent extends CommonObject
 	 */
 	public $type;
 
+	/**
+	 * @var int need_subscription
+	 */
 	public $need_subscription;
 
+	/**
+	 * @var int user_id
+	 */
 	public $user_id;
 
+	/**
+	 * @var string user_login
+	 */
 	public $user_login;
 
 	public $datefin;
@@ -425,8 +445,8 @@ class Adherent extends CommonObject
 
 		// Envoi mail confirmation
 		$from = $conf->email_from;
-		if (!empty($conf->global->ADHERENT_MAIL_FROM)) {
-			$from = $conf->global->ADHERENT_MAIL_FROM;
+		if (!empty(getDolGlobalString('ADHERENT_MAIL_FROM'))) {
+			$from = getDolGlobalString('ADHERENT_MAIL_FROM');
 		}
 
 		$trackid = 'mem'.$this->id;
@@ -576,7 +596,7 @@ class Adherent extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $mysoc;
 
 		$error = 0;
 
@@ -605,7 +625,7 @@ class Adherent extends CommonObject
 
 		// Insert member
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
-		$sql .= " (ref, datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key)";
+		$sql .= " (ref, datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key, ip)";
 		$sql .= " VALUES (";
 		$sql .= " '(PROV)'";
 		$sql .= ", '".$this->db->idate($this->datec)."'";
@@ -615,6 +635,7 @@ class Adherent extends CommonObject
 		$sql .= ", ".((int) $this->typeid);
 		$sql .= ", ".$conf->entity;
 		$sql .= ", ".(!empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		$sql .= ", ".(!empty($this->ip) ? "'".$this->db->escape($this->ip)."'" : "null");
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -623,7 +644,22 @@ class Adherent extends CommonObject
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
 			if ($id > 0) {
 				$this->id = $id;
-				$this->ref = (string) $id;
+				if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON') == '') {
+					// keep old numbering
+					$this->ref = (string) $id;
+				} else {
+					// auto code
+					$modfile = dol_buildpath('core/modules/member/'.getDolGlobalString('MEMBER_CODEMEMBER_ADDON').'.php', 0);
+					try {
+						require_once $modfile;
+						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
+						$modCodeMember = new $modname;
+						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
+					} catch (Exception $e) {
+						dol_syslog($e->getMessage(), LOG_ERR);
+						$error++;
+					}
+				}
 
 				// Update minor fields
 				$result = $this->update($user, 1, 1, 0, 0, 'add'); // nosync is 1 to avoid update data of user
@@ -1504,7 +1540,7 @@ class Adherent extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
-		$sql = "SELECT c.rowid, c.fk_adherent, c.fk_type, c.subscription, c.note, c.fk_bank,";
+		$sql = "SELECT c.rowid, c.fk_adherent, c.fk_type, c.subscription, c.note as note_public, c.fk_bank,";
 		$sql .= " c.tms as datem,";
 		$sql .= " c.datec as datec,";
 		$sql .= " c.dateadh as dateh,";
@@ -1536,7 +1572,8 @@ class Adherent extends CommonObject
 				$subscription->fk_adherent = $obj->fk_adherent;
 				$subscription->fk_type = $obj->fk_type;
 				$subscription->amount = $obj->subscription;
-				$subscription->note = $obj->note;
+				$subscription->note = $obj->note_public;
+				$subscription->note_public = $obj->note_public;
 				$subscription->fk_bank = $obj->fk_bank;
 				$subscription->datem = $this->db->jdate($obj->datem);
 				$subscription->datec = $this->db->jdate($obj->datec);
@@ -2374,7 +2411,7 @@ class Adherent extends CommonObject
 			$labelStatus = $langs->trans("MemberStatusDraft");
 			$labelStatusShort = $langs->trans("MemberStatusDraftShort");
 		} elseif ($status >= self::STATUS_VALIDATED) {
-			if ($need_subscription == 0) {
+			if ($need_subscription === 0) {
 				$statusType = 'status4';
 				$labelStatus = $langs->trans("MemberStatusNoSubscription");
 				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
@@ -2870,8 +2907,8 @@ class Adherent extends CommonObject
 	 * Adds it to non existing supplied categories.
 	 * Existing categories are left untouch.
 	 *
-	 * @param int[]|int $categories Category or categories IDs
-	 * @return void
+	 * @param 	int[]|int 	$categories 	Category or categories IDs
+	 * @return 	int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -3014,7 +3051,7 @@ class Adherent extends CommonObject
 
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
-							$from = $conf->global->ADHERENT_MAIL_FROM;
+							$from = getDolGlobalString('ADHERENT_MAIL_FROM');
 							$to = $adherent->email;
 
 							$trackid = 'mem'.$adherent->id;
@@ -3135,7 +3172,8 @@ class Adherent extends CommonObject
 				if ($listofids) {
 					$listofids .= ']';
 				}
-				$this->output .= ' ids='.$listofids;
+
+				$this->output .= ($listofids ? ' ids='.$listofids : '');
 			}
 			if ($nbko) {
 				$this->output .= ' - Canceled for '.$nbko.' member (no email or email sending error)';
@@ -3158,7 +3196,7 @@ class Adherent extends CommonObject
 					if ($listofids) {
 						$listofids .= ']';
 					}
-					$this->output .= $listofids;
+					$this->output .= ($listofids ? ' ids='.$listofids : '');
 				}
 			}
 		}

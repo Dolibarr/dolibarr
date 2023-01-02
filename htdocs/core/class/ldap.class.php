@@ -1058,12 +1058,12 @@ class Ldap
 		if (is_array($attributeArray)) {
 			// Return list with required fields
 			$attributeArray = array_values($attributeArray); // This is to force to have index reordered from 0 (not make ldap_search fails)
-			dol_syslog(get_class($this)."::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter." attributeArray=(".join(',', $attributeArray).")");
+			dol_syslog(get_class($this)."::getRecords connection=".$this->connectedServer.":".$this->serverPort." userDn=".$userDn." filter=".$filter." attributeArray=(".join(',', $attributeArray).")");
 			//var_dump($attributeArray);
 			$this->result = @ldap_search($this->connection, $userDn, $filter, $attributeArray);
 		} else {
 			// Return list with fields selected by default
-			dol_syslog(get_class($this)."::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter);
+			dol_syslog(get_class($this)."::getRecords connection=".$this->connectedServer.":".$this->serverPort." userDn=".$userDn." filter=".$filter);
 			$this->result = @ldap_search($this->connection, $userDn, $filter);
 		}
 		if (!$this->result) {
@@ -1239,10 +1239,10 @@ class Ldap
 	/**
 	 * 		Load all attribute of a LDAP user
 	 *
-	 * 		@param	User	$user		User to search for. Not used if a filter is provided.
-	 *      @param  string	$filter		Filter for search. Must start with &.
-	 *                       	       	Examples: &(objectClass=inetOrgPerson) &(objectClass=user)(objectCategory=person) &(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com)
-	 *		@return	int					>0 if OK, <0 if KO
+	 * 		@param	User|string	$user		Not used.
+	 *      @param  string		$filter		Filter for search. Must start with &.
+	 *                       		       	Examples: &(objectClass=inetOrgPerson) &(objectClass=user)(objectCategory=person) &(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com)
+	 *		@return	int						>0 if OK, <0 if KO
 	 */
 	public function fetch($user, $filter)
 	{

@@ -42,18 +42,6 @@ if (empty($objectclass) || empty($uploaddir)) {
 	exit;
 }
 
-// For backward compatibility
-if (!empty($permtoread) && empty($permissiontoread)) {
-	$permissiontoread = $permtoread;
-}
-if (!empty($permtocreate) && empty($permissiontoadd)) {
-	$permissiontoadd = $permtocreate;
-}
-if (!empty($permtodelete) && empty($permissiontodelete)) {
-	$permissiontodelete = $permtodelete;
-}
-
-
 // Mass actions. Controls on number of lines checked.
 $maxformassaction = (empty($conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS) ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
 if (!empty($massaction) && is_array($toselect) && count($toselect) < 1) {

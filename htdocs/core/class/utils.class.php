@@ -646,12 +646,14 @@ class Utils
 		if (!$errormsg && $keeplastnfiles > 0) {
 			$tmpfiles = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '(\.err|\.old|\.sav)$', 'date', SORT_DESC);
 			$i = 0;
-			foreach ($tmpfiles as $key => $val) {
-				$i++;
-				if ($i <= $keeplastnfiles) {
-					continue;
+			if (is_array($tmpfiles)) {
+				foreach ($tmpfiles as $key => $val) {
+					$i++;
+					if ($i <= $keeplastnfiles) {
+						continue;
+					}
+					dol_delete_file($val['fullname'], 0, 0, 0, null, false, 0);
 				}
-				dol_delete_file($val['fullname'], 0, 0, 0, null, false, 0);
 			}
 		}
 
@@ -664,11 +666,11 @@ class Utils
 	 * Execute a CLI command.
 	 *
 	 * @param 	string	$command			Command line to execute.
-	 * 										Warning: The command line is sanitize so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
+	 * 										Warning: The command line is sanitize by escapeshellcmd(), except if $noescapecommand set, so can't contains any redirection char '>'. Use param $redirectionfile if you need it.
 	 * @param 	string	$outputfile			A path for an output file (used only when method is 2). For example: $conf->admin->dir_temp.'/out.tmp';
 	 * @param	int		$execmethod			0=Use default method (that is 1 by default), 1=Use the PHP 'exec', 2=Use the 'popen' method
 	 * @param	string	$redirectionfile	If defined, a redirection of output to this file is added.
-	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you alreay have sanitized the command. if not, it will lead to security vulnerability.
+	 * @param	int		$noescapecommand	1=Do not escape command. Warning: Using this parameter needs you alreay have sanitized the $command parameter. If not, it will lead to security vulnerability.
 	 * 										This parameter is provided for backward compatibility with external modules. Always use 0 in core.
 	 * @param	string	$redirectionfileerr	If defined, a redirection of error is added to this file instead of to channel 1.
 	 * @return	array						array('result'=>...,'output'=>...,'error'=>...). result = 0 means OK.
@@ -1290,6 +1292,7 @@ class Utils
 			$message = dol_escape_htmltag($langs->trans('MakeSendLocalDatabaseDumpShort'));
 		}
 
+		$tmpfiles = array();
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		if ($filename) {
 			if (dol_is_file($conf->admin->dir_output.'/backup/'.$filename)) {
@@ -1298,7 +1301,7 @@ class Utils
 		} else {
 			$tmpfiles = dol_most_recent_file($conf->admin->dir_output.'/backup', $filter);
 		}
-		if ($tmpfiles) {
+		if ($tmpfiles && is_array($tmpfiles)) {
 			foreach ($tmpfiles as $key => $val) {
 				if ($key  == 'fullname') {
 					$filepath = array($val);

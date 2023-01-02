@@ -454,7 +454,19 @@ class Products extends DolibarrApi
 		global $user;
 		$user = DolibarrApiAccess::$user;
 
-		return $this->product->delete(DolibarrApiAccess::$user);
+		$res = $this->product->delete(DolibarrApiAccess::$user);
+		if ($res < 0) {
+			throw new RestException(500, "Can't delete, error occurs");
+		} elseif ($res == 0) {
+			throw new RestException(409, "Can't delete, that product is probably used");
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Object deleted'
+			)
+		);
 	}
 
 	/**
@@ -583,7 +595,7 @@ class Products extends DolibarrApi
 		}
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.array_merge(array($categories->error), $categories->errors));
+			throw new RestException(503, 'Error when retrieve category list : '.join(',', array_merge(array($categories->error), $categories->errors)));
 		}
 
 		return $result;
@@ -616,7 +628,7 @@ class Products extends DolibarrApi
 		}
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve prices list : '.array_merge(array($this->product->error), $this->product->errors));
+			throw new RestException(503, 'Error when retrieve prices list : '.join(',', array_merge(array($this->product->error), $this->product->errors)));
 		}
 
 		return array(
@@ -707,7 +719,7 @@ class Products extends DolibarrApi
 		}
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve prices list : '.array_merge(array($this->product->error), $this->product->errors));
+			throw new RestException(503, 'Error when retrieve prices list : '.join(',', array_merge(array($this->product->error), $this->product->errors)));
 		}
 
 		return array(

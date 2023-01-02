@@ -332,7 +332,7 @@ if (($id || $ref) && $action == 'edit') {
 				//                  $value = GETPOSTISSET($key) ? GETPOST($key, 'alpha') : $sk->$key;
 				//              }
 				//var_dump($val.' '.$key.' '.$value);
-				if ($val['noteditable']) {
+				if (!empty($val['noteditable'])) {
 					print $sk->showOutputField($val, $key, $value, '', '', '', 0);
 				} else {
 					/** @var Skilldet $sk */

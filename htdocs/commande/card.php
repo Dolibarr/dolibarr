@@ -1106,7 +1106,7 @@ if (empty($reshook)) {
 			$special_code = 3;
 		}
 
-		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
+		$remise_percent = GETPOST('remise_percent') != '' ? price2num(GETPOST('remise_percent'), '', 2) : 0;
 
 		// Check minimum price
 		$productid = GETPOST('productid', 'int');
@@ -1833,7 +1833,8 @@ if ($action == 'create' && $usercancreate) {
 	// Shipping Method
 	if (isModEnabled('expedition')) {
 		print '<tr><td>'.$langs->trans('SendingMethod').'</td><td>';
-		print img_picto('', 'object_dolly', 'class="pictofixedwidth"').$form->selectShippingMethod($shipping_method_id, 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
+		print img_picto('', 'object_dolly', 'class="pictofixedwidth"');
+		$form->selectShippingMethod($shipping_method_id, 'shipping_method_id', '', 1, '', 0, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 	}
 
@@ -1868,7 +1869,7 @@ if ($action == 'create' && $usercancreate) {
 	// Incoterms
 	if (isModEnabled('incoterm')) {
 		print '<tr>';
-		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->label_incoterms, 1).'</label></td>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), !empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : $soc->fk_incoterms, 1).'</label></td>';
 		print '<td class="maxwidthonsmartphone">';
 		$incoterm_id = GETPOST('incoterm_id');
 		$incoterm_location = GETPOST('location_incoterms');
@@ -1898,7 +1899,7 @@ if ($action == 'create' && $usercancreate) {
 			if ($soc->fetch_optionals() > 0) {
 				$object->array_options = array_merge($object->array_options, $soc->array_options);
 			}
-		};
+		}
 
 		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
@@ -2736,7 +2737,7 @@ if ($action == 'create' && $usercancreate) {
 
 		// Show object lines
 		if (!empty($object->lines)) {
-			$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+			$object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 		}
 
 		$numlines = count($object->lines);

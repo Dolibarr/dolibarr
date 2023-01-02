@@ -972,7 +972,7 @@ if (empty($reshook)) {
 			}
 
 			$ttc = price2num(GETPOST('price_ttc'), '', 2);
-			$ht = $ttc / (1 + ($vatratecleaned / 100));
+			$ht = (float) $ttc / (1 + ((float) $vatratecleaned / 100));
 			$price_base_type = 'HT';
 		}
 
@@ -1322,7 +1322,8 @@ if ($action == 'create') {
 	// Shipping Method
 	if (isModEnabled("expedition")) {
 		print '<tr><td>'.$langs->trans('SendingMethod').'</td><td colspan="2">';
-		print $form->selectShippingMethod(GETPOST('shipping_method_id') > 0 ? GETPOST('shipping_method_id', 'int') : "", 'shipping_method_id', '', 1);
+		print img_picto('', 'object_dollyrevert', 'class="pictofixedwidth"');
+		$form->selectShippingMethod(GETPOST('shipping_method_id') > 0 ? GETPOST('shipping_method_id', 'int') : "", 'shipping_method_id', '', 1);
 		print '</td></tr>';
 	}
 
@@ -1879,7 +1880,7 @@ if ($action == 'create') {
 	// Show object lines
 	$result = $object->getLinesArray();
 
-	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '').'" method="POST">
 	<input type="hidden" name="token" value="' . newToken().'">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">
@@ -1902,7 +1903,7 @@ if ($action == 'create') {
 	}
 
 	if (!empty($object->lines)) {
-		$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, $dateSelector);
+		$object->printObjectLines($action, $soc, $mysoc, $lineid, $dateSelector);
 	}
 
 	// Form to add new line

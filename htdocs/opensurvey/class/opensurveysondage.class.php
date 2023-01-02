@@ -83,6 +83,8 @@ class Opensurveysondage extends CommonObject
 
 	public $date_fin = '';
 
+	public $date_m;
+
 	/**
 	 * @var int status
 	 */
@@ -274,7 +276,7 @@ class Opensurveysondage extends CommonObject
 				$this->sujet = $obj->sujet;
 				$this->fk_user_creat = $obj->fk_user_creat;
 
-				$this->date_m = $this->db->jdate($obj->tls);
+				$this->date_m = $this->db->jdate(!empty($obj->tls) ? $obj->tls : "");
 				$ret = 1;
 			} else {
 				$sondage = ($id ? 'id='.$id : 'sondageid='.$numsurvey);
@@ -571,12 +573,14 @@ class Opensurveysondage extends CommonObject
 	 *
 	 * @param string $comment Comment content
 	 * @param string $comment_user Comment author
+	 * @param string $user_ip Comment author IP
 	 * @return boolean False in case of the query fails, true if it was successful
 	 */
-	public function addComment($comment, $comment_user)
+	public function addComment($comment, $comment_user, $user_ip = '')
 	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment)";
-		$sql .= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."')";
+		$now = dol_now();
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment, date_creation, ip)";
+		$sql .= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."','".$this->db->idate($now)."'".($user_ip ? ",'".$this->db->escape($user_ip)."'" : '').")";
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {
@@ -685,7 +689,7 @@ class Opensurveysondage extends CommonObject
 	{
 		$result = 0;
 
-		$sql .= " SELECT COUNT(id_users) as nb FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
+		$sql = " SELECT COUNT(id_users) as nb FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql .= " WHERE id_sondage = '".$this->db->escape($this->ref)."'";
 
 		$resql = $this->db->query($sql);

@@ -279,9 +279,9 @@ class Stripe extends CommonObject
 			global $stripearrayofkeysbyenv;
 			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
-				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'');
+				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve((string) $paymentmethod->id);
 			} else {
-				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'', array("stripe_account" => $key));
+				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve((string) $paymentmethod->id, array("stripe_account" => $key));
 			}
 		} catch (Exception $e) {
 			$this->error = $e->getMessage();
@@ -307,9 +307,9 @@ class Stripe extends CommonObject
 			global $stripearrayofkeysbyenv;
 			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
-				$selectedreader = \Stripe\Terminal\Reader::retrieve(''.$reader.'');
+				$selectedreader = \Stripe\Terminal\Reader::retrieve((string) $reader);
 			} else {
-				$stripepaymentmethod = \Stripe\Terminal\Reader::retrieve(''.$reader.'', array("stripe_account" => $key));
+				$stripepaymentmethod = \Stripe\Terminal\Reader::retrieve((string) $reader, array("stripe_account" => $key));
 			}
 		} catch (Exception $e) {
 			$this->error = $e->getMessage();
@@ -1087,13 +1087,13 @@ class Stripe extends CommonObject
 		$ipaddress = getUserRemoteIP();
 
 		$metadata = array(
-			"dol_id" => "".$item."",
-			"dol_type" => "".$origin."",
-			"dol_thirdparty_id" => "".$societe->id."",
+			"dol_id" => (string) $item,
+			"dol_type" => (string) $origin,
+			"dol_thirdparty_id" => (string) $societe->id,
 			'dol_thirdparty_name' => $societe->name,
-			'dol_version'=>DOL_VERSION,
-			'dol_entity'=>$conf->entity,
-			'ipaddress'=>$ipaddress
+			'dol_version' => DOL_VERSION,
+			'dol_entity' => $conf->entity,
+			'ipaddress' => $ipaddress
 		);
 		$return = new Stripe($this->db);
 		try {
@@ -1233,7 +1233,7 @@ class Stripe extends CommonObject
 					$return->message = $charge->source->card->brand." ....".$charge->source->card->last4;
 				} elseif ($charge->source->type == 'three_d_secure') {
 					$stripe = new Stripe($this->db);
-					$src = \Stripe\Source::retrieve("".$charge->source->three_d_secure->card."", array(
+					$src = \Stripe\Source::retrieve("".$charge->source->three_d_secure->card, array(
 					"stripe_account" => $stripe->getStripeAccount($service)
 					));
 					$return->message = $src->card->brand." ....".$src->card->last4;
