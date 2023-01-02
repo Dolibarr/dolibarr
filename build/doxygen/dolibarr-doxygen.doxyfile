@@ -1501,7 +1501,7 @@ DOT_NUM_THREADS = 0
 # DOTFONTPATH environment variable or by setting DOT_FONTPATH to the directory
 # containing the font.
 
-DOT_FONTNAME = FreeSans.ttf
+#DOT_FONTNAME = FreeSans.ttf
 
 # The DOT_FONTSIZE tag can be used to set the size of the font of dot graphs.
 # The default size is 10pt.
