@@ -1235,7 +1235,7 @@ if (empty($reshook)) {
 
 			// Prepare a price equivalent for minimum price check
 			$pu_equivalent = $pu_ht;
-      $pu_equivalent_ttc = $pu_ttc;
+			$pu_equivalent_ttc = $pu_ttc;
 			$currency_tx = $object->multicurrency_tx;
 
 			// Check if we have a foreing currency
@@ -1243,7 +1243,7 @@ if (empty($reshook)) {
 			if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
 				$pu_equivalent = $pu_ht_devise * $currency_tx;
 			}
-      if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
+			if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
 				$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
 			}
 
@@ -1364,18 +1364,18 @@ if (empty($reshook)) {
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 
 		// Prepare a price equivalent for minimum price check
-    $pu_equivalent = $pu_ht;
-    $pu_equivalent_ttc = $pu_ttc;
-    $currency_tx = $object->multicurrency_tx;
+		$pu_equivalent = $pu_ht;
+		$pu_equivalent_ttc = $pu_ttc;
+		$currency_tx = $object->multicurrency_tx;
 
-    // Check if we have a foreing currency
-    // If so, we update the pu_equiv as the equivalent price in base currency
-    if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-      $pu_equivalent = $pu_ht_devise * $currency_tx;
-    }
-    if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-      $pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
-    }
+		// Check if we have a foreing currency
+		// If so, we update the pu_equiv as the equivalent price in base currency
+		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
+			$pu_equivalent = $pu_ht_devise * $currency_tx;
+		}
+		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
+			$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
+		}
 
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);

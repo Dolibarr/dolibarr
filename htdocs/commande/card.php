@@ -684,18 +684,18 @@ if (empty($reshook)) {
 
 
 		// Prepare a price equivalent for minimum price check
-    $pu_equivalent = $pu_ht;
-    $pu_equivalent_ttc = $pu_ttc;
-    $currency_tx = $object->multicurrency_tx;
+		$pu_equivalent = $pu_ht;
+		$pu_equivalent_ttc = $pu_ttc;
+		$currency_tx = $object->multicurrency_tx;
 
-    // Check if we have a foreing currency
-    // If so, we update the pu_equiv as the equivalent price in base currency
-    if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-      $pu_equivalent = $pu_ht_devise * $currency_tx;
-    }
-    if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-      $pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
-    }
+		// Check if we have a foreing currency
+		// If so, we update the pu_equiv as the equivalent price in base currency
+		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
+			$pu_equivalent = $pu_ht_devise * $currency_tx;
+		}
+		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
+			$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
+		}
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
 
@@ -1013,7 +1013,6 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-
 				// Insert line
 				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, min($rank, count($object->lines) + 1), 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, $fk_unit, '', 0, $pu_ht_devise);
 
@@ -1093,18 +1092,18 @@ if (empty($reshook)) {
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 
 		// Prepare a price equivalent for minimum price check
-    $pu_equivalent = $pu_ht;
-    $pu_equivalent_ttc = $pu_ttc;
-    $currency_tx = $object->multicurrency_tx;
+		$pu_equivalent = $pu_ht;
+		$pu_equivalent_ttc = $pu_ttc;
+		$currency_tx = $object->multicurrency_tx;
 
-    // Check if we have a foreing currency
-    // If so, we update the pu_equiv as the equivalent price in base currency
-    if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
-      $pu_equivalent = $pu_ht_devise * $currency_tx;
-    }
-    if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
-      $pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
-    }
+		// Check if we have a foreing currency
+		// If so, we update the pu_equiv as the equivalent price in base currency
+		if ($pu_ht == '' && $pu_ht_devise != '' && $currency_tx != '') {
+			$pu_equivalent = $pu_ht_devise * $currency_tx;
+		}
+		if ($pu_ttc == '' && $pu_ttc_devise != '' && $currency_tx != '') {
+			$pu_equivalent_ttc = $pu_ttc_devise * $currency_tx;
+		}
 
 		// Define info_bits
 		$info_bits = 0;
