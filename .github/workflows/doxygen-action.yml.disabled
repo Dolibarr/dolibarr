@@ -1,0 +1,17 @@
+# See syntax file on https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions
+name: Doxygen
+on:
+  schedule:
+  - cron: "0 15 * * *"
+  workflow_dispatch:
+    branches:
+      - develop
+
+jobs:
+  doxygen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Doxygen'
+        uses: mattnotmitt/doxygen-action@1.9.5
+        with:
+          doxyfile-path: build/doxygen
