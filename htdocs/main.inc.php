@@ -3211,7 +3211,7 @@ if (!function_exists("llxFooter")) {
 		global $contextpage, $page, $limit, $mode;
 		global $dolibarr_distrib;
 
-		$ext = 'layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
+		$ext = 'layout='.urlencode($conf->browser->layout).'&version='.urlencode(DOL_VERSION);
 
 		// Hook to add more things on all pages within fiche DIV
 		$llxfooter = '';
@@ -3222,7 +3222,9 @@ if (!function_exists("llxFooter")) {
 		} elseif ($reshook > 0) {
 			$llxfooter = $hookmanager->resPrint;
 		}
-		print $llxfooter;
+		if ($llxfooter) {
+			print $llxfooter;
+		}
 
 		// Global html output events ($mesgs, $errors, $warnings)
 		dol_htmloutput_events($disabledoutputofmessages);
