@@ -2198,7 +2198,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 						// If the preview file is found
 						if (file_exists($fileimage)) {
 							$phototoshow = '<div class="photoref">';
-							$phototoshow .= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+							$phototoshow .= '<img height="'.$heightforphotref.'" class="photo photowithborder" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
 							$phototoshow .= '</div>';
 						}
 					}
