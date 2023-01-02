@@ -21,7 +21,7 @@ For users:
 NEW: Minimal PHP version is now PHP 7.0 instead of PHP 5.6
 NEW: #21780 Add pid field to Cronjob class and store PID on job execution
 NEW: #19680 Add option PRODUCT_ALLOW_EXTERNAL_DOWNLOAD to automatically have uploaded files shared publicly by a link
-NEW: #20650 can move the checkbox column on left (experimental option)
+NEW: #20650 can move the checkbox column on left (experimental option MAIN_CHECKBOX_LEFT_COLUMN)
 NEW: #21000 Added columns 'alias_name' on project, supplier invoice, supplier order, supplier proposals and task list
 NEW: #21395 Added option for dark theme mode in display - color and theme
 NEW: #21397 added option to auto define barcode numbers for third-parties in barcode module setup
