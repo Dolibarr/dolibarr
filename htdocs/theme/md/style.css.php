@@ -486,7 +486,7 @@ th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), td.wrapcolumntitle.list
 	text-overflow: ellipsis;
 }
 th.wrapcolumntitle dl dt a span.fas.fa-list {
-	padding-bottom: 0;
+	padding-bottom: 1px;
 	vertical-align: bottom;
 }
 
