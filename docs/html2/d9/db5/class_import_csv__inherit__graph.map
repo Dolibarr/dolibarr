@@ -1,0 +1,4 @@
+<map id="ImportCsv" name="ImportCsv">
+<area shape="rect" id="node1" title="Class to import CSV files." alt="" coords="21,80,110,107"/>
+<area shape="rect" id="node2" href="$d9/d99/class_modele_imports.html" title="Parent class for import file readers." alt="" coords="5,5,125,32"/>
+</map>

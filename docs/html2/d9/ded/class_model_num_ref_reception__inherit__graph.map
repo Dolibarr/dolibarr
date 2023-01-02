@@ -1,0 +1,5 @@
+<map id="ModelNumRefReception" name="ModelNumRefReception">
+<area shape="rect" id="node1" title="Parent Class of numbering models of sending receipts references." alt="" coords="96,5,276,32"/>
+<area shape="rect" id="node2" href="$de/d05/classmod__reception__beryl.html" title="Class to manage reception numbering rules Beryl." alt="" coords="5,80,164,107"/>
+<area shape="rect" id="node3" href="$dd/d0e/classmod__reception__moonstone.html" title="Class to manage reception numbering rules Moonstone." alt="" coords="188,80,387,107"/>
+</map>

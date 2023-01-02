@@ -1,0 +1,5 @@
+<map id="Account" name="Account">
+<area shape="rect" id="node1" title="Class to manage bank accounts." alt="" coords="33,217,107,244"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="150,118,273,145"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,5,63,32"/>
+</map>

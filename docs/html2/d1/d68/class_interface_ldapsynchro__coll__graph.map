@@ -1,0 +1,5 @@
+<map id="InterfaceLdapsynchro" name="InterfaceLdapsynchro">
+<area shape="rect" id="node1" title="Class of triggers for ldap module." alt="" coords="5,200,168,227"/>
+<area shape="rect" id="node2" href="$de/ddf/class_dolibarr_triggers.html" title="Class that all the triggers must extend." alt="" coords="24,124,149,151"/>
+<area shape="rect" id="node3" title=" " alt="" coords="58,5,115,32"/>
+</map>

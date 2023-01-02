@@ -1,0 +1,5 @@
+<map id="pdf_vinci" name="pdf_vinci">
+<area shape="rect" id="node1" title="Class to generate the manufacturing orders with the vinci model." alt="" coords="50,155,131,181"/>
+<area shape="rect" id="node2" href="$d7/d42/class_modele_p_d_f_mo.html" title="Parent class for mos models." alt="" coords="33,80,149,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="5,5,176,32"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="FormOrder" name="FormOrder">
+<area shape="rect" id="node1" title="Class to manage HTML output components for orders Before adding component here, check they are not in..." alt="" coords="5,80,96,107"/>
+<area shape="rect" id="node2" href="$df/d08/class_form.html" title="Class to manage generation of HTML components Only common components must be here." alt="" coords="23,5,78,32"/>
+</map>

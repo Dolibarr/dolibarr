@@ -1,0 +1,6 @@
+<map id="ModelePDFSupplierProposal" name="ModelePDFSupplierProposal">
+<area shape="rect" id="node1" title="Classe mere des modeles de propale." alt="" coords="57,80,261,107"/>
+<area shape="rect" id="node3" href="$d0/df1/classdoc__generic__supplier__proposal__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="5,155,164,196"/>
+<area shape="rect" id="node4" href="$d0/df2/classpdf__aurore.html" title="Class to generate PDF supplier proposal Aurore." alt="" coords="188,162,280,189"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="74,5,245,32"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="pdf_canelle" name="pdf_canelle">
+<area shape="rect" id="node1" title="Class to generate the supplier invoices PDF with the template canelle." alt="" coords="61,155,159,181"/>
+<area shape="rect" id="node2" href="$d0/d02/class_modele_p_d_f_suppliers_invoices.html" title="Parent class for supplier invoices models." alt="" coords="5,80,215,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="25,5,195,32"/>
+</map>

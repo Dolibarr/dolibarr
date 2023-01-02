@@ -1,0 +1,10 @@
+<map id="pdf_standard" name="pdf_standard">
+<area shape="rect" id="node1" title="Class to generate expense report based on standard model." alt="" coords="491,132,597,159"/>
+<area shape="rect" id="node2" href="$d9/d10/class_modele_expense_report.html" title="Parent class for trips and expenses templates." alt="" coords="249,5,417,32"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="5,107,176,133"/>
+<area shape="rect" id="node5" href="$d4/d68/class_modele_p_d_f_movement.html" title="Parent class to manage warehouse mouvement document templates." alt="" coords="250,56,417,83"/>
+<area shape="rect" id="node6" href="$de/dba/class_modele_p_d_f_product.html" title="Parent class to manage intervention document templates." alt="" coords="261,107,406,133"/>
+<area shape="rect" id="node7" href="$dd/dcf/class_modele_p_d_f_stock.html" title="Parent class for stock models of doc generators." alt="" coords="268,157,399,184"/>
+<area shape="rect" id="node8" href="$d9/d36/class_modele_p_d_f_suppliers_payments.html" title="Parent class for supplier invoices models." alt="" coords="224,208,443,235"/>
+<area shape="rect" id="node4" href="$d9/d5c/class_common_sticker_generator.html" title="Class to generate stick sheet with format Avery or other personalised." alt="" coords="238,259,429,285"/>
+</map>

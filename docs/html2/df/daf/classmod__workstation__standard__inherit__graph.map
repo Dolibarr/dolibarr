@@ -1,0 +1,4 @@
+<map id="mod_workstation_standard" name="mod_workstation_standard">
+<area shape="rect" id="node1" title="Class to manage the Standard numbering rule for Workstation." alt="" coords="7,80,205,107"/>
+<area shape="rect" id="node2" href="$d3/d93/class_modele_num_ref_workstation.html" title="Parent class to manage numbering of Workstation." alt="" coords="5,5,207,32"/>
+</map>

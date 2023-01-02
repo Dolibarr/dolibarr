@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$da/df7/class_modele_num_ref_factures.html" title="Parent class of invoice reference numbering templates." alt="" coords="5,56,183,83"/>
+<area shape="rect" id="node2" href="$d4/db9/classmod__facture__mars.html" title="Class to manage invoice numbering rules Mars." alt="" coords="241,5,385,32"/>
+<area shape="rect" id="node3" href="$d2/d32/classmod__facture__mercure.html" title="Class of numbering module Mercure for invoices." alt="" coords="231,56,396,83"/>
+<area shape="rect" id="node4" href="$dd/d4c/classmod__facture__terre.html" title="Class of numbering module Terre for invoices." alt="" coords="242,107,385,133"/>
+</map>

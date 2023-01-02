@@ -1,0 +1,5 @@
+<map id="doc_generic_shipment_odt" name="doc_generic_shipment_odt">
+<area shape="rect" id="node1" title="Class to build documents using ODF templates generator." alt="" coords="5,155,201,181"/>
+<area shape="rect" id="node2" href="$d5/d9a/class_modele_pdf_expedition.html" title="Parent class of sending receipts models." alt="" coords="23,80,183,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="18,5,189,32"/>
+</map>

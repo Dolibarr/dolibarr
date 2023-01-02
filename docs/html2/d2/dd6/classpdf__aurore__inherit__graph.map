@@ -1,0 +1,5 @@
+<map id="pdf_aurore" name="pdf_aurore">
+<area shape="rect" id="node1" title="Class to generate PDF supplier proposal Aurore." alt="" coords="61,155,153,181"/>
+<area shape="rect" id="node2" href="$d2/d10/class_modele_p_d_f_supplier_proposal.html" title="Classe mere des modeles de propale." alt="" coords="5,80,209,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="22,5,193,32"/>
+</map>

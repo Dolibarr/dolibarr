@@ -1,0 +1,5 @@
+<map id="pdf_espadon" name="pdf_espadon">
+<area shape="rect" id="node1" title="Class to build sending documents with model espadon." alt="" coords="38,155,143,181"/>
+<area shape="rect" id="node2" href="$d5/d9a/class_modele_pdf_expedition.html" title="Parent class of sending receipts models." alt="" coords="11,80,171,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="5,5,176,32"/>
+</map>

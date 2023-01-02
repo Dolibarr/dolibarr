@@ -1,0 +1,9 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$d6/da4/class_modele_num_ref_batch.html" title="Parent class to manage numbering of batch products." alt="" coords="5,132,165,159"/>
+<area shape="rect" id="node2" href="$d4/dd2/classmod__lot__advanced.html" title="Class to manage Batch numbering rules advanced." alt="" coords="213,5,359,32"/>
+<area shape="rect" id="node3" href="$d8/d05/classmod__lot__free.html" title="Class allowing lot_free management of batch numbers." alt="" coords="232,56,340,83"/>
+<area shape="rect" id="node4" href="$da/d80/classmod__lot__standard.html" title="Class to manage MO numbering rules standard." alt="" coords="217,107,355,133"/>
+<area shape="rect" id="node5" href="$d0/d17/classmod__sn__advanced.html" title="Class to manage Batch numbering rules advanced." alt="" coords="215,157,357,184"/>
+<area shape="rect" id="node6" href="$dd/d37/classmod__sn__free.html" title=" " alt="" coords="233,208,339,235"/>
+<area shape="rect" id="node7" href="$d1/dc8/classmod__sn__standard.html" title="Class to manage MO numbering rules standard." alt="" coords="217,259,355,285"/>
+</map>

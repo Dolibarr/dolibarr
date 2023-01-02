@@ -1,0 +1,4 @@
+<map id="mod_lot_standard" name="mod_lot_standard">
+<area shape="rect" id="node1" title="Class to manage MO numbering rules standard." alt="" coords="16,80,155,107"/>
+<area shape="rect" id="node2" href="$d6/da4/class_modele_num_ref_batch.html" title="Parent class to manage numbering of batch products." alt="" coords="5,5,165,32"/>
+</map>

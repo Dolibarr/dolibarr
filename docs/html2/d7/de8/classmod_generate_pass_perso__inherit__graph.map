@@ -1,0 +1,4 @@
+<map id="modGeneratePassPerso" name="modGeneratePassPerso">
+<area shape="rect" id="node1" title="Class to generate a password according to personal rules." alt="" coords="5,80,181,107"/>
+<area shape="rect" id="node2" href="$de/df8/class_modele_gen_password.html" title="Parent class for password rules/management modules." alt="" coords="15,5,172,32"/>
+</map>

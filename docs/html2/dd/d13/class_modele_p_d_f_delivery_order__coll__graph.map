@@ -1,0 +1,4 @@
+<map id="ModelePDFDeliveryOrder" name="ModelePDFDeliveryOrder">
+<area shape="rect" id="node1" title="Classe mere des modeles de bon de livraison." alt="" coords="5,80,192,107"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="13,5,184,32"/>
+</map>

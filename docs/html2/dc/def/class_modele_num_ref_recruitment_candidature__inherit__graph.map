@@ -1,0 +1,5 @@
+<map id="ModeleNumRefRecruitmentCandidature" name="ModeleNumRefRecruitmentCandidature">
+<area shape="rect" id="node1" title="Parent class to manage numbering of RecruitmentCandidature." alt="" coords="87,5,369,32"/>
+<area shape="rect" id="node2" href="$d3/d07/classmod__recruitmentcandidature__advanced.html" title="Class to manage the Advanced numbering rule for Job application." alt="" coords="5,80,216,121"/>
+<area shape="rect" id="node3" href="$da/d91/classmod__recruitmentcandidature__standard.html" title="Class to manage the Standard numbering rule for Job application." alt="" coords="240,80,451,121"/>
+</map>

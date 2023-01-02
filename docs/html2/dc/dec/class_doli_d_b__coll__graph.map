@@ -1,0 +1,4 @@
+<map id="DoliDB" name="DoliDB">
+<area shape="rect" id="node1" title="Class to manage Dolibarr database access." alt="" coords="14,80,81,107"/>
+<area shape="rect" id="node2" href="$d8/d5b/interface_database.html" title="Class to manage Dolibarr database access for an SQL database." alt="" coords="5,5,89,32"/>
+</map>

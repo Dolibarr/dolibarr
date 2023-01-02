@@ -1,0 +1,6 @@
+<map id="CommonOrder" name="CommonOrder">
+<area shape="rect" id="node1" title="Superclass for orders classes." alt="" coords="74,80,191,107"/>
+<area shape="rect" id="node3" href="$da/de7/class_commande.html" title="Class to manage customers orders." alt="" coords="5,155,103,181"/>
+<area shape="rect" id="node4" href="$d7/d70/class_commande_fournisseur.html" title="Class to manage predefined suppliers products." alt="" coords="127,155,299,181"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="71,5,194,32"/>
+</map>

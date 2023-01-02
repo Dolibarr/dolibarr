@@ -1,0 +1,5 @@
+<map id="PropaleLigne" name="PropaleLigne">
+<area shape="rect" id="node1" title="Class to manage commercial proposal lines." alt="" coords="27,155,134,181"/>
+<area shape="rect" id="node2" href="$dc/d3c/class_common_object_line.html" title="Parent class for class inheritance lines of business objects This class is useless for the moment so ..." alt="" coords="5,80,156,107"/>
+<area shape="rect" id="node3" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="19,5,142,32"/>
+</map>

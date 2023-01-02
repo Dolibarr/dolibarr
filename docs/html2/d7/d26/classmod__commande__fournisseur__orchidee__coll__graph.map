@@ -1,0 +1,4 @@
+<map id="mod_commande_fournisseur_orchidee" name="mod_commande_fournisseur_orchidee">
+<area shape="rect" id="node1" title="Classe du modele de numerotation de reference de commande fournisseur Orchidee." alt="" coords="13,80,224,121"/>
+<area shape="rect" id="node2" href="$d5/dff/class_modele_num_ref_suppliers_orders.html" title="Parent Class of numbering models of suppliers orders references." alt="" coords="5,5,232,32"/>
+</map>

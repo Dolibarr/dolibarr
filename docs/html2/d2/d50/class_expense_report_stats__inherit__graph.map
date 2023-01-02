@@ -1,0 +1,4 @@
+<map id="ExpenseReportStats" name="ExpenseReportStats">
+<area shape="rect" id="node1" title="Classe permettant la gestion des stats des expensereports et notes de frais." alt="" coords="5,80,159,107"/>
+<area shape="rect" id="node2" href="$df/d1b/class_stats.html" title="Parent class of statistics class." alt="" coords="55,5,109,32"/>
+</map>

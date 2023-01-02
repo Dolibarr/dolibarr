@@ -1,0 +1,37 @@
+<map id="CommonObjectLine" name="CommonObjectLine">
+<area shape="rect" id="node1" title="Parent class for class inheritance lines of business objects This class is useless for the moment so ..." alt="" coords="176,715,327,741"/>
+<area shape="rect" id="node3" href="$d7/d56/class_availabilities_line.html" title="Class AvailabilitiesLine." alt="" coords="425,5,559,32"/>
+<area shape="rect" id="node4" href="$dc/d3d/class_b_o_m_line.html" title="Class for BOMLine." alt="" coords="452,56,532,83"/>
+<area shape="rect" id="node5" href="$d1/d3b/class_booking_line.html" title="Class BookingLine." alt="" coords="441,107,543,133"/>
+<area shape="rect" id="node6" href="$d1/d1d/class_commande_fournisseur_dispatch.html" title="Class to manage table commandefournisseurdispatch." alt="" coords="377,157,607,184"/>
+<area shape="rect" id="node7" href="$de/d18/class_common_invoice_line.html" title="Parent class of all other business classes for details of elements (invoices, contracts,..." alt="" coords="415,208,569,235"/>
+<area shape="rect" id="node10" href="$d4/d9b/class_common_order_line.html" title="Superclass for orders classes." alt="" coords="420,259,564,285"/>
+<area shape="rect" id="node13" href="$da/d82/class_conference_or_booth_attendee_line.html" title="Class ConferenceOrBoothAttendeeLine." alt="" coords="375,309,609,336"/>
+<area shape="rect" id="node14" href="$d2/d6d/class_contrat_ligne.html" title="Class to manage lines of contracts." alt="" coords="439,360,545,387"/>
+<area shape="rect" id="node15" href="$d9/dc1/class_currency_rate.html" title="Class CurrencyRate." alt="" coords="437,411,547,437"/>
+<area shape="rect" id="node16" href="$de/d8d/class_delivery_line.html" title="Management class of delivery note lines." alt="" coords="440,461,544,488"/>
+<area shape="rect" id="node17" href="$dd/de8/class_expedition_ligne.html" title="Classe to manage lines of shipment." alt="" coords="429,512,555,539"/>
+<area shape="rect" id="node18" href="$d2/d1f/class_expense_report_line.html" title="Class of expense report details lines." alt="" coords="419,563,565,589"/>
+<area shape="rect" id="node19" href="$d3/d52/class_facture_fournisseur_ligne_rec.html" title="Class to manage supplier invoice lines of templates." alt="" coords="391,613,593,640"/>
+<area shape="rect" id="node20" href="$d4/d24/class_fichinter_ligne.html" title="Class to manage intervention lines." alt="" coords="435,664,549,691"/>
+<area shape="rect" id="node21" href="$d8/d83/class_inventory_line.html" title="Class InventoryLine." alt="" coords="437,715,547,741"/>
+<area shape="rect" id="node22" href="$d4/d36/class_job_line.html" title="Class JobLine." alt="" coords="457,765,527,792"/>
+<area shape="rect" id="node23" href="$de/d60/class_knowledge_record_line.html" title="Class KnowledgeRecordLine." alt="" coords="409,816,575,843"/>
+<area shape="rect" id="node24" href="$da/d96/class_mo_line.html" title="Class MoLine." alt="" coords="457,867,527,893"/>
+<area shape="rect" id="node25" href="$d4/d0b/class_my_object_line.html" title="Class MyObjectLine." alt="" coords="437,917,547,944"/>
+<area shape="rect" id="node26" href="$d0/d77/class_partnership_line.html" title="Class PartnershipLine." alt="" coords="431,968,553,995"/>
+<area shape="rect" id="node27" href="$d9/d71/class_position_line.html" title="Class PositionLine." alt="" coords="441,1019,543,1045"/>
+<area shape="rect" id="node28" href="$d2/d6b/class_product_attribute_value.html" title="Class ProductAttributeValue Used to represent a product attribute value." alt="" coords="410,1069,574,1096"/>
+<area shape="rect" id="node29" href="$d4/de0/class_propale_ligne.html" title="Class to manage commercial proposal lines." alt="" coords="439,1120,545,1147"/>
+<area shape="rect" id="node30" href="$d4/d93/class_recruitment_candidature_line.html" title="Class RecruitmentCandidatureLine." alt="" coords="388,1171,596,1197"/>
+<area shape="rect" id="node31" href="$d3/d4a/class_stock_transfer_line.html" title="Class for StockTransferLine." alt="" coords="423,1221,561,1248"/>
+<area shape="rect" id="node32" href="$d4/db0/class_supplier_invoice_line.html" title="Class to manage line invoices." alt="" coords="417,1272,567,1299"/>
+<area shape="rect" id="node33" href="$df/de7/class_supplier_proposal_line.html" title="Class to manage supplier_proposal lines." alt="" coords="413,1323,571,1349"/>
+<area shape="rect" id="node34" href="$d1/da8/class_target_line.html" title="Class TargetLine." alt="" coords="447,1373,537,1400"/>
+<area shape="rect" id="node35" href="$d7/d6d/class_task.html" title="Class to manage tasks." alt="" coords="467,1424,517,1451"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="5,715,128,741"/>
+<area shape="rect" id="node8" href="$d3/d13/class_facture_ligne.html" title="Class to manage invoice lines." alt="" coords="709,157,813,184"/>
+<area shape="rect" id="node9" href="$dc/d37/class_facture_ligne_rec.html" title="Class to manage invoice lines of templates." alt="" coords="697,208,825,235"/>
+<area shape="rect" id="node11" href="$de/d16/class_commande_fournisseur_ligne.html" title="Class to manage line orders." alt="" coords="657,259,864,285"/>
+<area shape="rect" id="node12" href="$df/de6/class_order_line.html" title="Class to manage order lines." alt="" coords="718,309,803,336"/>
+</map>

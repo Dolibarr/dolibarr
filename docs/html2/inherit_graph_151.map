@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$da/d70/class_modele_third_party_code.html" title="Parent class for third parties code generators." alt="" coords="5,56,175,83"/>
+<area shape="rect" id="node2" href="$d7/d90/classmod__codeclient__elephant.html" title="Class to manage third party code with elephant rule." alt="" coords="223,5,412,32"/>
+<area shape="rect" id="node3" href="$d8/d66/classmod__codeclient__leopard.html" title="Class to manage numbering of thirdparties code." alt="" coords="227,56,408,83"/>
+<area shape="rect" id="node4" href="$dc/d74/classmod__codeclient__monkey.html" title="Classe permettant la gestion monkey des codes tiers." alt="" coords="225,107,409,133"/>
+</map>

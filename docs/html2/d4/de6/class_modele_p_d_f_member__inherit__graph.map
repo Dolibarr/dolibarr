@@ -1,0 +1,5 @@
+<map id="ModelePDFMember" name="ModelePDFMember">
+<area shape="rect" id="node1" title="Parent class to manage intervention document templates." alt="" coords="25,80,176,107"/>
+<area shape="rect" id="node3" href="$d1/df0/classdoc__generic__member__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="5,155,196,181"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="15,5,186,32"/>
+</map>

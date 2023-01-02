@@ -1,0 +1,6 @@
+<map id="CommonStickerGenerator" name="CommonStickerGenerator">
+<area shape="rect" id="node1" title="Class to generate stick sheet with format Avery or other personalised." alt="" coords="110,5,301,32"/>
+<area shape="rect" id="node2" href="$de/d7c/classpdf__standard.html" title="Class to generate expense report based on standard model." alt="" coords="5,80,112,107"/>
+<area shape="rect" id="node3" href="$dc/d21/classpdf__standardlabel.html" title="Class to generate stick sheet with format Avery or other personalised." alt="" coords="136,80,275,107"/>
+<area shape="rect" id="node4" href="$d2/d36/classpdf__tcpdflabel.html" title="Class to generate stick sheet with format Avery or other personalised." alt="" coords="299,80,413,107"/>
+</map>

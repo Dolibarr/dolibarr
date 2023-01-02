@@ -1,0 +1,4 @@
+<map id="mod_asset_standard" name="mod_asset_standard">
+<area shape="rect" id="node1" title="Class to manage the Standard numbering rule for Asset." alt="" coords="6,80,163,107"/>
+<area shape="rect" id="node2" href="$df/dcd/class_modele_num_ref_asset.html" title="Parent class to manage numbering of Asset." alt="" coords="5,5,164,32"/>
+</map>

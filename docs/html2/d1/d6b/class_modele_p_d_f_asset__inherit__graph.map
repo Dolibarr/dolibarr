@@ -1,0 +1,6 @@
+<map id="ModelePDFAsset" name="ModelePDFAsset">
+<area shape="rect" id="node1" title="Parent class for documents models." alt="" coords="117,80,248,107"/>
+<area shape="rect" id="node3" href="$dd/dda/classdoc__generic__asset__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="5,155,176,181"/>
+<area shape="rect" id="node4" href="$de/d0c/classpdf__standard__asset.html" title="Class to manage PDF template standard_asset." alt="" coords="200,155,349,181"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="97,5,268,32"/>
+</map>

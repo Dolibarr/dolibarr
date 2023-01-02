@@ -1,0 +1,4 @@
+<map id="mod_commande_saphir" name="mod_commande_saphir">
+<area shape="rect" id="node1" title="Class to manage Sales Order numbering rules Saphir." alt="" coords="19,80,197,107"/>
+<area shape="rect" id="node2" href="$dd/dae/class_modele_num_ref_commandes.html" title="Parent class to manage numbering of Sale Orders." alt="" coords="5,5,211,32"/>
+</map>

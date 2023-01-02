@@ -1,0 +1,102 @@
+<map id="CommonDocGenerator" name="CommonDocGenerator">
+<area shape="rect" id="node1" title="Parent class for documents generators." alt="" coords="5,1323,176,1349"/>
+<area shape="rect" id="node2" href="$d0/dc3/class_modele_action.html" title="Parent class for product models of doc generators." alt="" coords="296,5,407,32"/>
+<area shape="rect" id="node3" href="$dc/d8c/class_modele_bank_account_doc.html" title="Parent class for bank account models." alt="" coords="261,56,441,83"/>
+<area shape="rect" id="node6" href="$d3/da9/class_modele_cheque_receipts.html" title="Class parent for templates of document generation." alt="" coords="264,107,439,133"/>
+<area shape="rect" id="node8" href="$da/d8b/class_modele_don.html" title="Parent class of subscription templates." alt="" coords="303,157,399,184"/>
+<area shape="rect" id="node10" href="$d9/d10/class_modele_expense_report.html" title="Parent class for trips and expenses templates." alt="" coords="267,208,435,235"/>
+<area shape="rect" id="node12" href="$d5/d32/class_modele_exports.html" title="Parent class for export modules." alt="" coords="292,461,411,488"/>
+<area shape="rect" id="node16" href="$d3/dce/class_modele_p_d_f_asset.html" title="Parent class for documents models." alt="" coords="286,563,417,589"/>
+<area shape="rect" id="node19" href="$d8/d99/class_modele_p_d_f_bom.html" title="Parent class for boms models." alt="" coords="288,664,415,691"/>
+<area shape="rect" id="node21" href="$d1/d7d/class_modele_p_d_f_commandes.html" title="Parent class for orders models." alt="" coords="262,765,441,792"/>
+<area shape="rect" id="node27" href="$da/d8c/class_modele_p_d_f_contract.html" title="Parent class to manage intervention document templates." alt="" coords="276,917,427,944"/>
+<area shape="rect" id="node30" href="$db/d6e/class_modele_p_d_f_delivery_order.html" title="Classe mere des modeles de bon de livraison." alt="" coords="258,1019,445,1045"/>
+<area shape="rect" id="node33" href="$dd/d7a/class_modele_p_d_f_evaluation.html" title="Parent class for documents models." alt="" coords="269,1069,434,1096"/>
+<area shape="rect" id="node34" href="$d3/dd4/class_modele_p_d_f_factures.html" title="Parent class of invoice document generators." alt="" coords="276,1120,427,1147"/>
+<area shape="rect" id="node38" href="$d8/d75/class_modele_p_d_f_ficheinter.html" title="Parent class to manage intervention document templates." alt="" coords="271,1171,431,1197"/>
+<area shape="rect" id="node40" href="$d0/d78/class_modele_p_d_f_holiday.html" title="Parent class to manage holidays document templates." alt="" coords="278,1221,425,1248"/>
+<area shape="rect" id="node41" href="$dc/d9b/class_modele_p_d_f_knowledge_record.html" title="Parent class for documents models." alt="" coords="245,1272,458,1299"/>
+<area shape="rect" id="node42" href="$d7/d6a/class_modele_p_d_f_member.html" title="Parent class to manage intervention document templates." alt="" coords="276,1323,427,1349"/>
+<area shape="rect" id="node44" href="$d7/d42/class_modele_p_d_f_mo.html" title="Parent class for mos models." alt="" coords="293,1373,409,1400"/>
+<area shape="rect" id="node47" href="$d4/d68/class_modele_p_d_f_movement.html" title="Parent class to manage warehouse mouvement document templates." alt="" coords="268,259,435,285"/>
+<area shape="rect" id="node48" href="$d7/deb/class_modele_p_d_f_my_object.html" title="Parent class for documents models." alt="" coords="272,1424,431,1451"/>
+<area shape="rect" id="node51" href="$d8/dfb/class_modele_p_d_f_partnership.html" title="Parent class for documents models." alt="" coords="267,1475,436,1501"/>
+<area shape="rect" id="node52" href="$de/dba/class_modele_p_d_f_product.html" title="Parent class to manage intervention document templates." alt="" coords="279,360,424,387"/>
+<area shape="rect" id="node54" href="$d6/d04/class_modele_p_d_f_product_batch.html" title="Parent class to manage intervention document templates." alt="" coords="260,1525,443,1552"/>
+<area shape="rect" id="node55" href="$d3/dfa/class_modele_p_d_f_projects.html" title="Parent class for projects models." alt="" coords="277,1576,425,1603"/>
+<area shape="rect" id="node60" href="$d1/d3f/class_modele_p_d_f_propales.html" title="Classe mere des modeles de propale." alt="" coords="275,1728,427,1755"/>
+<area shape="rect" id="node64" href="$d6/d95/class_modele_p_d_f_recruitment_candidature.html" title="Parent class for documents models." alt="" coords="224,1779,479,1805"/>
+<area shape="rect" id="node65" href="$da/d57/class_modele_p_d_f_recruitment_job_position.html" title="Parent class for documents models." alt="" coords="227,1855,475,1881"/>
+<area shape="rect" id="node68" href="$dd/dcf/class_modele_p_d_f_stock.html" title="Parent class for stock models of doc generators." alt="" coords="286,411,417,437"/>
+<area shape="rect" id="node70" href="$d7/dc1/class_modele_p_d_f_stock_transfer.html" title="Parent class for documents models." alt="" coords="260,1905,443,1932"/>
+<area shape="rect" id="node71" href="$d2/d10/class_modele_p_d_f_supplier_proposal.html" title="Classe mere des modeles de propale." alt="" coords="249,1981,453,2008"/>
+<area shape="rect" id="node74" href="$d0/d02/class_modele_p_d_f_suppliers_invoices.html" title="Parent class for supplier invoices models." alt="" coords="247,2099,456,2125"/>
+<area shape="rect" id="node77" href="$d1/daa/class_modele_p_d_f_suppliers_orders.html" title="Parent class for supplier orders models." alt="" coords="252,2223,451,2249"/>
+<area shape="rect" id="node81" href="$d9/d36/class_modele_p_d_f_suppliers_payments.html" title="Parent class for supplier invoices models." alt="" coords="242,309,461,336"/>
+<area shape="rect" id="node82" href="$df/d00/class_modele_p_d_f_task.html" title="Parent class for projects models." alt="" coords="289,2273,413,2300"/>
+<area shape="rect" id="node84" href="$d5/d6f/class_modele_p_d_f_ticket.html" title="Parent class for documents models." alt="" coords="284,2324,419,2351"/>
+<area shape="rect" id="node86" href="$d6/de2/class_modele_p_d_f_user.html" title="Parent class to manage intervention document templates." alt="" coords="288,2375,415,2401"/>
+<area shape="rect" id="node88" href="$db/ddb/class_modele_p_d_f_user_group.html" title="Parent class to manage intervention document templates." alt="" coords="269,2425,434,2452"/>
+<area shape="rect" id="node90" href="$dd/deb/class_modele_p_d_f_workstation.html" title="Parent class for documents models." alt="" coords="264,2476,439,2503"/>
+<area shape="rect" id="node91" href="$d5/d9a/class_modele_pdf_expedition.html" title="Parent class of sending receipts models." alt="" coords="271,2636,431,2663"/>
+<area shape="rect" id="node96" href="$d1/d17/class_modele_pdf_reception.html" title="Parent class of sending receipts models." alt="" coords="273,2788,429,2815"/>
+<area shape="rect" id="node99" href="$d2/d05/class_modele_third_party_doc.html" title="Parent class for third parties models of doc generators." alt="" coords="271,2864,432,2891"/>
+<area shape="rect" id="node4" href="$dc/d82/classpdf__ban.html" title="Classe permettant de generer les projets au modele Ban." alt="" coords="631,56,705,83"/>
+<area shape="rect" id="node5" href="$d8/d9b/classpdf__sepamandate.html" title="Class to generate SEPA mandate." alt="" coords="599,5,737,32"/>
+<area shape="rect" id="node7" href="$d2/d1a/class_bordereau_cheque_blochet.html" title="Class of file to build cheque deposit receipts." alt="" coords="575,107,761,133"/>
+<area shape="rect" id="node9" href="$de/dd4/classhtml__cerfafr.html" title="Class to generate document for subscriptions." alt="" coords="617,157,719,184"/>
+<area shape="rect" id="node11" href="$de/d7c/classpdf__standard.html" title="Class to generate expense report based on standard model." alt="" coords="615,208,721,235"/>
+<area shape="rect" id="node13" href="$d3/d8b/class_export_csv.html" title="Class to build export files with format CSV." alt="" coords="624,360,712,387"/>
+<area shape="rect" id="node14" href="$d9/d79/class_export_excel2007.html" title="Class to build export files with Excel format." alt="" coords="603,411,733,437"/>
+<area shape="rect" id="node15" href="$d5/d5b/class_export_tsv.html" title="Class to build export files with format TSV." alt="" coords="625,461,711,488"/>
+<area shape="rect" id="node17" href="$dd/dda/classdoc__generic__asset__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="583,563,753,589"/>
+<area shape="rect" id="node18" href="$de/d0c/classpdf__standard__asset.html" title="Class to manage PDF template standard_asset." alt="" coords="593,512,743,539"/>
+<area shape="rect" id="node20" href="$da/d18/classdoc__generic__bom__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="586,613,750,640"/>
+<area shape="rect" id="node22" href="$df/d78/classdoc__generic__order__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="583,816,753,843"/>
+<area shape="rect" id="node23" href="$d2/d7a/classpdf__eagle__proforma.html" title="Class to generate PDF orders with template Eagle." alt="" coords="591,664,745,691"/>
+<area shape="rect" id="node24" href="$dc/d69/classpdf__einstein.html" title="Class to generate PDF orders with template Einstein." alt="" coords="617,715,719,741"/>
+<area shape="rect" id="node25" href="$d0/d3e/classpdf__eratosthene.html" title="Class to generate PDF orders with template Eratosthene." alt="" coords="604,765,732,792"/>
+<area shape="rect" id="node26" href="$d4/d1f/classpdf__proforma.html" title="Class to generate PDF orders with template Proforma." alt="" coords="857,765,968,792"/>
+<area shape="rect" id="node28" href="$d4/dc6/classdoc__generic__contract__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="574,917,762,944"/>
+<area shape="rect" id="node29" href="$d9/d5b/classpdf__strato.html" title="Class to build contracts documents with model Strato." alt="" coords="624,867,712,893"/>
+<area shape="rect" id="node31" href="$d1/d3a/classpdf__storm.html" title="Class to build Delivery Order documents with storm model." alt="" coords="624,1019,712,1045"/>
+<area shape="rect" id="node32" href="$dd/d32/classpdf__typhon.html" title="Class to build Delivery Order documents with typhon model." alt="" coords="621,968,715,995"/>
+<area shape="rect" id="node35" href="$d1/daf/classdoc__generic__invoice__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="577,1069,759,1096"/>
+<area shape="rect" id="node36" href="$d0/d4a/classpdf__crabe.html" title="Class to generate the customer invoice PDF with template Crabe." alt="" coords="625,1120,711,1147"/>
+<area shape="rect" id="node37" href="$da/d6e/classpdf__sponge.html" title="Class to manage PDF invoice template sponge." alt="" coords="619,1171,717,1197"/>
+<area shape="rect" id="node39" href="$de/d81/classpdf__soleil.html" title="Class to build interventions documents with model Soleil." alt="" coords="625,1221,711,1248"/>
+<area shape="rect" id="node43" href="$d1/df0/classdoc__generic__member__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="573,1272,763,1299"/>
+<area shape="rect" id="node45" href="$d7/dce/classdoc__generic__mo__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="590,1373,746,1400"/>
+<area shape="rect" id="node46" href="$df/d88/classpdf__vinci.html" title="Class to generate the manufacturing orders with the vinci model." alt="" coords="627,1323,709,1349"/>
+<area shape="rect" id="node49" href="$dd/d8b/classdoc__generic__myobject__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="570,1475,766,1501"/>
+<area shape="rect" id="node50" href="$df/dd0/classpdf__standard__myobject.html" title="Class to manage PDF template standard_myobject." alt="" coords="581,1424,755,1451"/>
+<area shape="rect" id="node53" href="$d2/dcd/classdoc__generic__product__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="576,259,760,285"/>
+<area shape="rect" id="node56" href="$de/dac/classdoc__generic__project__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="578,1677,758,1704"/>
+<area shape="rect" id="node57" href="$de/df0/classpdf__baleine.html" title="Class to manage generation of project document Baleine." alt="" coords="619,1525,717,1552"/>
+<area shape="rect" id="node58" href="$d3/d7c/classpdf__beluga.html" title="Class to manage generation of project document Beluga." alt="" coords="621,1576,715,1603"/>
+<area shape="rect" id="node59" href="$d7/d07/classpdf__timespent.html" title="Class to manage generation of project document Timespent." alt="" coords="610,1627,726,1653"/>
+<area shape="rect" id="node61" href="$d9/d69/classdoc__generic__proposal__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="573,1728,763,1755"/>
+<area shape="rect" id="node62" href="$da/d3c/classpdf__azur.html" title="Class to generate PDF proposal Azur." alt="" coords="629,1779,707,1805"/>
+<area shape="rect" id="node63" href="$d8/dc3/classpdf__cyan.html" title="Class to generate PDF proposal Cyan." alt="" coords="627,1829,709,1856"/>
+<area shape="rect" id="node66" href="$dd/dc1/classdoc__generic__recruitmentjobposition__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="527,1931,809,1957"/>
+<area shape="rect" id="node67" href="$d7/d1c/classpdf__standard__recruitmentjobposition.html" title="Class to manage PDF template standard_recruitmentjobposition." alt="" coords="537,1880,799,1907"/>
+<area shape="rect" id="node69" href="$dd/d1c/classdoc__generic__stock__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="583,309,753,336"/>
+<area shape="rect" id="node72" href="$d0/df1/classdoc__generic__supplier__proposal__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="589,2033,747,2074"/>
+<area shape="rect" id="node73" href="$d0/df2/classpdf__aurore.html" title="Class to generate PDF supplier proposal Aurore." alt="" coords="622,1981,714,2008"/>
+<area shape="rect" id="node75" href="$dc/dff/classdoc__generic__supplier__invoice__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="589,2150,747,2191"/>
+<area shape="rect" id="node76" href="$d4/d6c/classpdf__canelle.html" title="Class to generate the supplier invoices PDF with the template canelle." alt="" coords="619,2099,717,2125"/>
+<area shape="rect" id="node78" href="$db/d55/classdoc__generic__supplier__order__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="589,2215,747,2257"/>
+<area shape="rect" id="node79" href="$d2/d99/classpdf__cornas.html" title="Class to generate the supplier orders with the cornas model." alt="" coords="621,2281,715,2308"/>
+<area shape="rect" id="node80" href="$d5/d92/classpdf__muscadet.html" title="Class to generate the supplier orders with the muscadet model." alt="" coords="611,2332,725,2359"/>
+<area shape="rect" id="node83" href="$d2/deb/classdoc__generic__task__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="587,2383,749,2409"/>
+<area shape="rect" id="node85" href="$d8/d78/classdoc__generic__ticket__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="583,2433,753,2460"/>
+<area shape="rect" id="node87" href="$d4/d4f/classdoc__generic__user__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="587,2484,749,2511"/>
+<area shape="rect" id="node89" href="$d7/db5/classdoc__generic__usergroup__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="568,2535,768,2561"/>
+<area shape="rect" id="node92" href="$dc/dce/classdoc__generic__shipment__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="570,2737,766,2764"/>
+<area shape="rect" id="node93" href="$d5/d3b/classpdf__espadon.html" title="Class to build sending documents with model espadon." alt="" coords="615,2585,721,2612"/>
+<area shape="rect" id="node94" href="$d5/d71/classpdf__merou.html" title="Class to build sending documents with model Merou." alt="" coords="622,2636,714,2663"/>
+<area shape="rect" id="node95" href="$d8/d5d/classpdf__rouget.html" title="Class to build sending documents with model Rouget." alt="" coords="622,2687,714,2713"/>
+<area shape="rect" id="node97" href="$d9/d35/classdoc__generic__reception__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="570,2839,766,2865"/>
+<area shape="rect" id="node98" href="$d6/d04/classpdf__squille.html" title="Classe permettant de generer les borderaux envoi au modele Squille." alt="" coords="621,2788,715,2815"/>
+<area shape="rect" id="node100" href="$d1/d4a/classdoc__generic__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="604,2889,732,2916"/>
+</map>

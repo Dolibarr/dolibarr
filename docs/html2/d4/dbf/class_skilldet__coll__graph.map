@@ -1,0 +1,5 @@
+<map id="Skilldet" name="Skilldet">
+<area shape="rect" id="node1" title="Class for Skilldet." alt="" coords="39,188,109,215"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="167,103,290,130"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,5,63,32"/>
+</map>

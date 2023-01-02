@@ -1,0 +1,5 @@
+<map id="PaymentDonation" name="PaymentDonation">
+<area shape="rect" id="node1" title="Class to manage payments of donations." alt="" coords="5,171,144,197"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="13,95,136,121"/>
+<area shape="rect" id="node3" title=" " alt="" coords="46,5,103,32"/>
+</map>

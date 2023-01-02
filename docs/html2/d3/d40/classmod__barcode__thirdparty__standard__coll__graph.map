@@ -1,0 +1,4 @@
+<map id="mod_barcode_thirdparty_standard" name="mod_barcode_thirdparty_standard">
+<area shape="rect" id="node1" title="Class to manage barcode with standard rule." alt="" coords="5,80,187,121"/>
+<area shape="rect" id="node2" href="$d2/d69/class_modele_num_ref_bar_code.html" title="Parent class for barcode numbering models." alt="" coords="7,5,185,32"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="mod_takepos_ref_simple" name="mod_takepos_ref_simple">
+<area shape="rect" id="node1" title="Class to manage ref numbering of takepos cards with rule Simple." alt="" coords="5,80,191,107"/>
+<area shape="rect" id="node2" href="$dc/db5/class_modele_num_ref_takepos.html" title="Classe mere des modeles de numerotation des tickets de caisse." alt="" coords="11,5,185,32"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$dd/d7a/class_log_handler.html" title="Parent class for log handlers." alt="" coords="35,5,131,32"/>
+<area shape="rect" id="node2" href="$da/da1/classmod__syslog__file.html" title="Class to manage logging to a file." alt="" coords="219,5,346,32"/>
+<area shape="rect" id="node3" href="$d0/d44/classmod__syslog__syslog.html" title="Class to manage logging to syslog." alt="" coords="208,56,357,83"/>
+<area shape="rect" id="node4" href="$d1/db5/interface_log_handler_interface.html" title="LogHandlerInterface." alt="" coords="5,56,160,83"/>
+</map>

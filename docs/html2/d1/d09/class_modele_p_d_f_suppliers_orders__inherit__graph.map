@@ -1,0 +1,7 @@
+<map id="ModelePDFSuppliersOrders" name="ModelePDFSuppliersOrders">
+<area shape="rect" id="node1" title="Parent class for supplier orders models." alt="" coords="136,80,335,107"/>
+<area shape="rect" id="node3" href="$db/d55/classdoc__generic__supplier__order__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="5,155,164,196"/>
+<area shape="rect" id="node4" href="$d2/d99/classpdf__cornas.html" title="Class to generate the supplier orders with the cornas model." alt="" coords="189,162,282,189"/>
+<area shape="rect" id="node5" href="$d5/d92/classpdf__muscadet.html" title="Class to generate the supplier orders with the muscadet model." alt="" coords="306,162,421,189"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="150,5,321,32"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="AccountingJournal" name="AccountingJournal">
+<area shape="rect" id="node1" title="Class to manage accounting accounts." alt="" coords="83,213,221,240"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="5,95,128,121"/>
+<area shape="rect" id="node3" title=" " alt="" coords="38,5,95,32"/>
+<area shape="rect" id="node4" title=" " alt="" coords="152,95,211,121"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="pdf_crabe" name="pdf_crabe">
+<area shape="rect" id="node1" title="Class to generate the customer invoice PDF with template Crabe." alt="" coords="47,155,134,181"/>
+<area shape="rect" id="node2" href="$d3/dd4/class_modele_p_d_f_factures.html" title="Parent class of invoice document generators." alt="" coords="15,80,166,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="5,5,176,32"/>
+</map>

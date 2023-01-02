@@ -1,0 +1,5 @@
+<map id="doc_generic_usergroup_odt" name="doc_generic_usergroup_odt">
+<area shape="rect" id="node1" title="Class to build documents using ODF templates generator." alt="" coords="5,155,205,181"/>
+<area shape="rect" id="node2" href="$db/ddb/class_modele_p_d_f_user_group.html" title="Parent class to manage intervention document templates." alt="" coords="23,80,188,107"/>
+<area shape="rect" id="node3" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="20,5,191,32"/>
+</map>

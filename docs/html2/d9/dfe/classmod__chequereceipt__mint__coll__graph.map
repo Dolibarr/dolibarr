@@ -1,0 +1,4 @@
+<map id="mod_chequereceipt_mint" name="mod_chequereceipt_mint">
+<area shape="rect" id="node1" title="Class to manage cheque receipts numbering rules Mint." alt="" coords="26,80,213,107"/>
+<area shape="rect" id="node2" href="$de/df1/class_modele_num_ref_cheque_receipts.html" title="Cheque Receipts numbering references mother class." alt="" coords="5,5,233,32"/>
+</map>

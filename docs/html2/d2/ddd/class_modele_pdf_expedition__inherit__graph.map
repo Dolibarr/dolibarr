@@ -1,0 +1,8 @@
+<map id="ModelePdfExpedition" name="ModelePdfExpedition">
+<area shape="rect" id="node1" title="Parent class of sending receipts models." alt="" coords="259,80,419,107"/>
+<area shape="rect" id="node3" href="$dc/dce/classdoc__generic__shipment__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="5,155,201,181"/>
+<area shape="rect" id="node4" href="$d5/d3b/classpdf__espadon.html" title="Class to build sending documents with model espadon." alt="" coords="225,155,331,181"/>
+<area shape="rect" id="node5" href="$d5/d71/classpdf__merou.html" title="Class to build sending documents with model Merou." alt="" coords="355,155,447,181"/>
+<area shape="rect" id="node6" href="$d8/d5d/classpdf__rouget.html" title="Class to build sending documents with model Rouget." alt="" coords="471,155,563,181"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="254,5,425,32"/>
+</map>

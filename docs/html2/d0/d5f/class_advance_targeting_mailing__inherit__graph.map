@@ -1,0 +1,4 @@
+<map id="AdvanceTargetingMailing" name="AdvanceTargetingMailing">
+<area shape="rect" id="node1" title="Class to manage advanced emailing target selector." alt="" coords="5,80,192,107"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="37,5,160,32"/>
+</map>

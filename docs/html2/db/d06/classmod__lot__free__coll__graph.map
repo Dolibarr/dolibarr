@@ -1,0 +1,4 @@
+<map id="mod_lot_free" name="mod_lot_free">
+<area shape="rect" id="node1" title="Class allowing lot_free management of batch numbers." alt="" coords="31,80,139,107"/>
+<area shape="rect" id="node2" href="$d6/da4/class_modele_num_ref_batch.html" title="Parent class to manage numbering of batch products." alt="" coords="5,5,165,32"/>
+</map>

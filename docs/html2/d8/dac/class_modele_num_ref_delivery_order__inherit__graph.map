@@ -1,0 +1,5 @@
+<map id="ModeleNumRefDeliveryOrder" name="ModeleNumRefDeliveryOrder">
+<area shape="rect" id="node1" title="Classe mere des modeles de numerotation des references de bon de livraison." alt="" coords="59,5,274,32"/>
+<area shape="rect" id="node2" href="$d8/d7b/classmod__delivery__jade.html" title="Classe du modele de numerotation de reference de bon de livraison Jade." alt="" coords="5,80,152,107"/>
+<area shape="rect" id="node3" href="$dc/d79/classmod__delivery__saphir.html" title="Classe du modele de numerotation de reference de livraison Saphir." alt="" coords="177,80,335,107"/>
+</map>

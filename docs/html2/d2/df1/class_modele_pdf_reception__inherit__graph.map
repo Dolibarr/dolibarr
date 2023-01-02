@@ -1,0 +1,6 @@
+<map id="ModelePdfReception" name="ModelePdfReception">
+<area shape="rect" id="node1" title="Parent class of sending receipts models." alt="" coords="109,80,265,107"/>
+<area shape="rect" id="node3" href="$d9/d35/classdoc__generic__reception__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="5,155,201,181"/>
+<area shape="rect" id="node4" href="$d6/d04/classpdf__squille.html" title="Classe permettant de generer les borderaux envoi au modele Squille." alt="" coords="226,155,319,181"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="102,5,273,32"/>
+</map>

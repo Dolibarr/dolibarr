@@ -1,0 +1,4 @@
+<map id="modGeneratePassStandard" name="modGeneratePassStandard">
+<area shape="rect" id="node1" title="Class to generate a password according to a dolibarr standard rule (12 random chars)" alt="" coords="5,80,204,107"/>
+<area shape="rect" id="node2" href="$de/df8/class_modele_gen_password.html" title="Parent class for password rules/management modules." alt="" coords="26,5,183,32"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="box_graph_orders_permonth" name="box_graph_orders_permonth">
+<area shape="rect" id="node1" title="Class to manage the box to show last orders." alt="" coords="5,80,213,107"/>
+<area shape="rect" id="node2" href="$df/dd0/class_modele_boxes.html" title="Class ModeleBoxes." alt="" coords="55,5,164,32"/>
+</map>

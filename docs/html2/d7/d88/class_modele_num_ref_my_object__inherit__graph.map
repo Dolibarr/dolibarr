@@ -1,0 +1,5 @@
+<map id="ModeleNumRefMyObject" name="ModeleNumRefMyObject">
+<area shape="rect" id="node1" title="Parent class to manage numbering of MyObject." alt="" coords="113,5,298,32"/>
+<area shape="rect" id="node2" href="$d5/d75/classmod__myobject__advanced.html" title="Class to manage the Advanced numbering rule for MyObject." alt="" coords="5,80,195,107"/>
+<area shape="rect" id="node3" href="$d4/dbc/classmod__myobject__standard.html" title="Class to manage the Standard numbering rule for MyObject." alt="" coords="219,80,402,107"/>
+</map>

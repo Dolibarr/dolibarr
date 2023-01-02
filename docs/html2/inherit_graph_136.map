@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$d0/d23/class_modele_num_ref_recruitment_candidature.html" title="Parent class to manage numbering of RecruitmentCandidature." alt="" coords="5,46,288,73"/>
+<area shape="rect" id="node2" href="$d3/d07/classmod__recruitmentcandidature__advanced.html" title="Class to manage the Advanced numbering rule for Job application." alt="" coords="336,5,547,47"/>
+<area shape="rect" id="node3" href="$da/d91/classmod__recruitmentcandidature__standard.html" title="Class to manage the Standard numbering rule for Job application." alt="" coords="336,71,547,112"/>
+</map>

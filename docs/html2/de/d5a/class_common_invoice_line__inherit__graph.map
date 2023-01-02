@@ -1,0 +1,7 @@
+<map id="CommonInvoiceLine" name="CommonInvoiceLine">
+<area shape="rect" id="node1" title="Parent class of all other business classes for details of elements (invoices, contracts,..." alt="" coords="49,155,204,181"/>
+<area shape="rect" id="node4" href="$d3/d13/class_facture_ligne.html" title="Class to manage invoice lines." alt="" coords="5,229,109,256"/>
+<area shape="rect" id="node5" href="$dc/d37/class_facture_ligne_rec.html" title="Class to manage invoice lines of templates." alt="" coords="133,229,261,256"/>
+<area shape="rect" id="node2" href="$dc/d3c/class_common_object_line.html" title="Parent class for class inheritance lines of business objects This class is useless for the moment so ..." alt="" coords="51,80,202,107"/>
+<area shape="rect" id="node3" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="65,5,188,32"/>
+</map>

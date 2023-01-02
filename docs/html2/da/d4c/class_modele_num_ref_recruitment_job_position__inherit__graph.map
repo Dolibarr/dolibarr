@@ -1,0 +1,5 @@
+<map id="ModeleNumRefRecruitmentJobPosition" name="ModeleNumRefRecruitmentJobPosition">
+<area shape="rect" id="node1" title="Parent class to manage numbering of RecruitmentJobPosition." alt="" coords="112,5,335,47"/>
+<area shape="rect" id="node2" href="$d8/dad/classmod__recruitmentjobposition__advanced.html" title="Class to manage the Advanced numbering rule for Job position." alt="" coords="5,95,212,136"/>
+<area shape="rect" id="node3" href="$db/d4c/classmod__recruitmentjobposition__standard.html" title="Class to manage the Standard numbering rule for Job positions." alt="" coords="236,95,443,136"/>
+</map>

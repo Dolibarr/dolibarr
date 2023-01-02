@@ -1,0 +1,5 @@
+<map id="ModelePDFBom" name="ModelePDFBom">
+<area shape="rect" id="node1" title="Parent class for boms models." alt="" coords="27,80,154,107"/>
+<area shape="rect" id="node3" href="$da/d18/classdoc__generic__bom__odt.html" title="Class to build documents using ODF templates generator." alt="" coords="9,155,173,181"/>
+<area shape="rect" id="node2" href="$d8/d6e/class_common_doc_generator.html" title="Parent class for documents generators." alt="" coords="5,5,176,32"/>
+</map>

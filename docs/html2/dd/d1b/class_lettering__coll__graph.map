@@ -1,0 +1,7 @@
+<map id="Lettering" name="Lettering">
+<area shape="rect" id="node1" title="Class Lettering." alt="" coords="107,260,187,287"/>
+<area shape="rect" id="node2" href="$d0/dfa/class_book_keeping.html" title="Class to manage Ledger (General Ledger and Subledger)" alt="" coords="13,171,120,197"/>
+<area shape="rect" id="node3" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="5,95,128,121"/>
+<area shape="rect" id="node4" title=" " alt="" coords="38,5,95,32"/>
+<area shape="rect" id="node5" title=" " alt="" coords="144,171,203,197"/>
+</map>

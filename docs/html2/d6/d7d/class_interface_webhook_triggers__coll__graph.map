@@ -1,0 +1,5 @@
+<map id="InterfaceWebhookTriggers" name="InterfaceWebhookTriggers">
+<area shape="rect" id="node1" title="Class of triggers for Webhook module." alt="" coords="5,200,196,227"/>
+<area shape="rect" id="node2" href="$de/ddf/class_dolibarr_triggers.html" title="Class that all the triggers must extend." alt="" coords="38,124,163,151"/>
+<area shape="rect" id="node3" title=" " alt="" coords="72,5,129,32"/>
+</map>

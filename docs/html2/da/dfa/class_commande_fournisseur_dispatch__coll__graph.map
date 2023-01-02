@@ -1,0 +1,6 @@
+<map id="CommandeFournisseurDispatch" name="CommandeFournisseurDispatch">
+<area shape="rect" id="node1" title="Class to manage table commandefournisseurdispatch." alt="" coords="5,247,235,273"/>
+<area shape="rect" id="node2" href="$dc/d3c/class_common_object_line.html" title="Parent class for class inheritance lines of business objects This class is useless for the moment so ..." alt="" coords="45,171,195,197"/>
+<area shape="rect" id="node3" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="59,95,181,121"/>
+<area shape="rect" id="node4" title=" " alt="" coords="91,5,149,32"/>
+</map>

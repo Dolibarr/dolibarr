@@ -1,0 +1,4 @@
+<map id="InterfaceLogevents" name="InterfaceLogevents">
+<area shape="rect" id="node1" title="Class of triggers for security audit events." alt="" coords="5,80,152,107"/>
+<area shape="rect" id="node2" href="$de/ddf/class_dolibarr_triggers.html" title="Class that all the triggers must extend." alt="" coords="16,5,141,32"/>
+</map>

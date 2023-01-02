@@ -1,0 +1,5 @@
+<map id="ConferenceOrBoothAttendeeLine" name="ConferenceOrBoothAttendeeLine">
+<area shape="rect" id="node1" title="Class ConferenceOrBoothAttendeeLine." alt="" coords="5,155,240,181"/>
+<area shape="rect" id="node2" href="$dc/d3c/class_common_object_line.html" title="Parent class for class inheritance lines of business objects This class is useless for the moment so ..." alt="" coords="47,80,198,107"/>
+<area shape="rect" id="node3" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="61,5,184,32"/>
+</map>

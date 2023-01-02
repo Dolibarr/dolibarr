@@ -1,0 +1,4 @@
+<map id="SalariesStats" name="SalariesStats">
+<area shape="rect" id="node1" title="Classe permettant la gestion des stats des salaires." alt="" coords="5,80,112,107"/>
+<area shape="rect" id="node2" href="$df/d1b/class_stats.html" title="Parent class of statistics class." alt="" coords="31,5,86,32"/>
+</map>

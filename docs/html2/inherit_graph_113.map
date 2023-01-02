@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$de/df8/class_modele_gen_password.html" title="Parent class for password rules/management modules." alt="" coords="5,56,163,83"/>
+<area shape="rect" id="node2" href="$df/d59/classmod_generate_pass_none.html" title="Class to generate a password according to rule &#39;no password&#39;." alt="" coords="223,5,397,32"/>
+<area shape="rect" id="node3" href="$dd/df3/classmod_generate_pass_perso.html" title="Class to generate a password according to personal rules." alt="" coords="222,56,398,83"/>
+<area shape="rect" id="node4" href="$d6/d7e/classmod_generate_pass_standard.html" title="Class to generate a password according to a dolibarr standard rule (12 random chars)" alt="" coords="211,107,409,133"/>
+</map>

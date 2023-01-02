@@ -1,0 +1,4 @@
+<map id="modReceiptPrinter" name="modReceiptPrinter">
+<area shape="rect" id="node1" title="Class to describe and activate module Receipt Printer." alt="" coords="5,80,148,107"/>
+<area shape="rect" id="node2" href="$d0/d8f/class_dolibarr_modules.html" title="Class DolibarrModules." alt="" coords="12,5,141,32"/>
+</map>

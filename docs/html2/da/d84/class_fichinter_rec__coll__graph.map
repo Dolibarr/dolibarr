@@ -1,0 +1,6 @@
+<map id="FichinterRec" name="FichinterRec">
+<area shape="rect" id="node1" title="Classe de gestion des factures recurrentes/Modeles." alt="" coords="23,279,125,305"/>
+<area shape="rect" id="node2" href="$dd/d32/class_fichinter.html" title="Class to manage interventions." alt="" coords="35,203,113,229"/>
+<area shape="rect" id="node3" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="166,111,289,137"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,5,63,32"/>
+</map>

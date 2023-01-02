@@ -1,0 +1,4 @@
+<map id="mod_delivery_jade" name="mod_delivery_jade">
+<area shape="rect" id="node1" title="Classe du modele de numerotation de reference de bon de livraison Jade." alt="" coords="39,80,186,107"/>
+<area shape="rect" id="node2" href="$d0/d86/class_modele_num_ref_delivery_order.html" title="Classe mere des modeles de numerotation des references de bon de livraison." alt="" coords="5,5,220,32"/>
+</map>

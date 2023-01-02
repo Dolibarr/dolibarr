@@ -1,0 +1,4 @@
+<map id="mod_expensereport_jade" name="mod_expensereport_jade">
+<area shape="rect" id="node1" title="Class to manage expensereport numbering rules Jade." alt="" coords="23,80,209,107"/>
+<area shape="rect" id="node2" href="$d2/d88/class_modele_num_ref_expense_report.html" title="Parent class for numbering masks of expense reports." alt="" coords="5,5,227,32"/>
+</map>

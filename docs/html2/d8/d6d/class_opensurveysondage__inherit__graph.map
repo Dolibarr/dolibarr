@@ -1,0 +1,4 @@
+<map id="Opensurveysondage" name="Opensurveysondage">
+<area shape="rect" id="node1" title="Put here description of your class." alt="" coords="5,80,160,107"/>
+<area shape="rect" id="node2" href="$db/d09/class_common_object.html" title="Parent class of all other business classes (invoices, contracts, proposals, orders,..." alt="" coords="21,5,144,32"/>
+</map>

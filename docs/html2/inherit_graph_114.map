@@ -1,0 +1,5 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$d9/d99/class_modele_imports.html" title="Parent class for import file readers." alt="" coords="5,31,125,57"/>
+<area shape="rect" id="node2" href="$d4/d9d/class_import_csv.html" title="Class to import CSV files." alt="" coords="175,5,265,32"/>
+<area shape="rect" id="node3" href="$d4/d28/class_import_xlsx.html" title="Class to import Excel files." alt="" coords="173,56,267,83"/>
+</map>

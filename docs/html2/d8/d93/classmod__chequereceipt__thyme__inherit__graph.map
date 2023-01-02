@@ -1,0 +1,4 @@
+<map id="mod_chequereceipt_thyme" name="mod_chequereceipt_thyme">
+<area shape="rect" id="node1" title="Class to manage cheque receipts numbering rules Thyme." alt="" coords="20,80,219,107"/>
+<area shape="rect" id="node2" href="$de/df1/class_modele_num_ref_cheque_receipts.html" title="Cheque Receipts numbering references mother class." alt="" coords="5,5,233,32"/>
+</map>
