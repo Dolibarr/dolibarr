@@ -165,7 +165,7 @@ NEW: show product label on inventory
 NEW: show sell-by and eat-by dates only if not empty
 NEW: show SellBy/EatBy dates for each batch product in shipment card
 NEW: skip accept/refuse process for proposals (option PROPAL_SKIP_ACCEPT_REFUSE)
-NEW: SMTP using oauth2 authentication
+NEW: experimental SMTP using PhpImap allowing OAuth2 authentication (need to add option MAIN_IMAP_USE_PHPIMAP)
 NEW: can substitue project title in mail template
 NEW: Supplier order list - Add column private and public note
 NEW: Support IP type in extrafields
