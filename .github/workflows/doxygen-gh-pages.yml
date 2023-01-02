@@ -21,12 +21,12 @@ jobs:
           folder: build/html
           config_file: build/doxygen/dolibarr-doxygen.doxyfile
 
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: gh-pages
-          folder: build/html # The folder the action should deploy.
-          target-folder: docs/html2
+#      - name: Deploy
+#        uses: JamesIves/github-pages-deploy-action@v4
+#        with:
+#          branch: gh-pages
+#          folder: build/html # The folder the action should deploy.
+#          target-folder: docs/html2
           
 #jobs:
 #  doxygen:
