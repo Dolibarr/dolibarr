@@ -2652,6 +2652,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'commande';
 	} elseif ($moduleobject == 'shipments') {
 		$moduledirforclass = 'expedition';
+	} elseif ($moduleobject == 'multicurrencies') {
+		$moduledirforclass = 'multicurrency';
 	} elseif ($moduleobject == 'facture' || $moduleobject == 'invoice' || $moduleobject == 'invoices') {
 		$moduledirforclass = 'compta/facture';
 	} elseif ($moduleobject == 'project' || $moduleobject == 'projects' || $moduleobject == 'task' || $moduleobject == 'tasks') {

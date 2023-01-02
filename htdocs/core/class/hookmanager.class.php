@@ -198,6 +198,7 @@ class HookManager
 				'getIdProfUrl',
 				'getInputIdProf',
 				'isPaymentOK',
+				'llxFooter',
 				'menuDropdownQuickaddItems',
 				'menuLeftMenuItems',
 				'moveUploadedFile',
