@@ -1098,7 +1098,7 @@ SEARCHENGINE = YES
 # full text search. The disadvances is that it is more difficult to setup
 # and does not have live searching capabilities.
 
-SERVER_BASED_SEARCH = YES
+SERVER_BASED_SEARCH = NO
 
 #---------------------------------------------------------------------------
 # configuration options related to the LaTeX output
@@ -1650,3 +1650,7 @@ GENERATE_LEGEND = YES
 # the various graphs.
 
 DOT_CLEANUP = YES
+
+
+FULL_SIDEBAR = NO
+HTML_EXTRA_STYLESHEET = build/doxygen/doxygen-awesome.css
