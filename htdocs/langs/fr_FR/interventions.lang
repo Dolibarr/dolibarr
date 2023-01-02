@@ -47,6 +47,7 @@ PrintProductsOnFichinterDetails=interventions générées à partir des commande
 UseServicesDurationOnFichinter=Utiliser la durée des services dans les interventions créées depuis des commandes
 UseDurationOnFichinter=Masque le champ de durée pour les enregistrements d'intervention
 UseDateWithoutHourOnFichinter=Masque les heures et les minutes du champ de la date pour les enregistrements d'intervention
+CurrentTimeOnNewLinesOnFichinter=Propose l'heure courante sur la ligne de création
 InterventionStatistics=Statistiques des interventions
 NbOfinterventions=Nb de fiches d'intervention
 NumberOfInterventionsByMonth=Nb de fiches d'intervention par mois (date de validation)

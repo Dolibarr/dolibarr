@@ -1542,7 +1542,7 @@ if ($action == 'create') {
 				$now = dol_now();
 				$timearray = dol_getdate($now);
 				if (!GETPOST('diday', 'int')) {
-					$timewithnohour = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
+					$timewithnohour = empty($conf->global->FICHINTER_CURRENT_TIME_ON_NEW_LINE) ? dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']) : dol_mktime($timearray['hours'], $timearray['minutes'], 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
 				} else {
 					$timewithnohour = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
 				}
