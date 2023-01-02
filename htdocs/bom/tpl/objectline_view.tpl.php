@@ -247,13 +247,13 @@ if ($resql) {
 		// Cost
 		if (!empty($sub_bom->id)) {
 			$sub_bom->calculateCosts();
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price2num($sub_bom->total_cost * $sub_bom_line->qty * $line->qty, 'MT').'</span></td>';
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom->total_cost * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
 			$total_cost+= $sub_bom->total_cost * $sub_bom_line->qty * $line->qty;
 		} elseif ($sub_bom_product->cost_price > 0) {
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price2num($sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty, 'MT').'</span></td>';
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
 			$total_cost+= $sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty;
 		} elseif ($sub_bom_product->pmp > 0) {	// PMP if cost price isn't defined
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price2num($sub_bom_product->pmp * $sub_bom_line->qty * $line->qty, 'MT').'</span></td>';
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_product->pmp * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
 			$total_cost.= $sub_bom_product->pmp * $sub_bom_line->qty * $line->qty;
 		} else {	// Minimum purchase price if cost price and PMP aren't defined
 			$sql_supplier_price = 'SELECT MIN(price) AS min_price, quantity AS qty FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
