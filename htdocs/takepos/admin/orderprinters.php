@@ -33,11 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->loadLangs(array("main"), "categories", "takepos", "printing");
-
-if (!$user->rights->categorie->lire) {
-	accessforbidden();
-}
+$langs->loadLangs(array("main", "categories", "takepos", "printing"));
 
 $id = GETPOST('id', 'int');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
@@ -51,9 +47,15 @@ if (is_numeric($type)) {
 	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 }
 
+if (!$user->rights->categorie->lire) {
+	accessforbidden();
+}
+
+
 /*
  * Actions
  */
+
 if ($action == "SavePrinter1") {
 	$printedcategories = ";";
 	if (is_array($printer1)) {
