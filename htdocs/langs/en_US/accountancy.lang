@@ -218,6 +218,7 @@ JournalLabel=Journal label
 NumPiece=Piece number
 TransactionNumShort=Num. transaction
 AccountingCategory=Custom group of accounts
+AccountingCategories=Custom groups of accounts
 GroupByAccountAccounting=Group by general ledger account
 GroupBySubAccountAccounting=Group by subledger account
 AccountingAccountGroupsDesc=You can define here some groups of accounting account. They will be used for personalized accounting reports.
@@ -265,6 +266,7 @@ ShowSubtotalByGroup=Show subtotal by level
 
 Pcgtype=Group of account
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 
 Reconcilable=Reconcilable
 
