@@ -31,6 +31,14 @@
 -- To rebuild sequence for postgresql after insert by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
+
+-- v17
+
+-- VMYSQL4.3 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN `rank` rankorder integer;
+-- VPGSQL8.2 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN rank rankorder integer;
+
+
+
 -- v18
 
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_CLOSE','Project closed','Executed when a project is closed','project',145);
@@ -44,4 +52,5 @@ ALTER TABLE llx_socpeople CHANGE fk_prospectcontactlevel fk_prospectlevel varcha
 ALTER TABLE llx_facture ADD COLUMN prorata_discount	real DEFAULT NULL;
 
 ALTER TABLE llx_payment_salary MODIFY COLUMN datep datetime;
+
 
