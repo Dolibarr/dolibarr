@@ -338,6 +338,35 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 				$propal_object = $object->linkedObjects['propal'][0];
 
+				// and determine category of operation
+				$categoryOfOperation = 0;
+				$nbProduct = 0;
+				$nbService = 0;
+				foreach ($object->lines as $line) {
+					
+					// determine category of operation
+					if ($categoryOfOperation < 2) {
+						$lineProductType = $line->product_type;
+						if ($lineProductType == Product::TYPE_PRODUCT) {
+							$nbProduct++;
+						} elseif ($lineProductType == Product::TYPE_SERVICE) {
+							$nbService++;
+						}
+						if ($nbProduct > 0 && $nbService > 0) {
+							// mixed products and services
+							$categoryOfOperation = 2;
+						}
+					}
+				}
+
+				// determine category of operation
+				if ($categoryOfOperation <= 0) {
+					// only services
+					if ($nbProduct == 0 && $nbService > 0) {
+						$categoryOfOperation = 1;
+					}
+				}
+
 				// Make substitution
 				$substitutionarray = array(
 				'__FROM_NAME__' => $this->emetteur->name,
@@ -420,6 +449,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$tmparray['object_PREVIOUS_YEAR'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'y'), '%Y');
 				$tmparray['object_YEAR'] = dol_print_date($this->date, '%Y');
 				$tmparray['object_NEXT_YEAR'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'y'), '%Y');
+				$tmparray['object_category_operation'] = $outputlangs->transnoentities("MentionCategoryOfOperations" . $categoryOfOperation);
 
 				// Call the ODTSubstitution hook
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
