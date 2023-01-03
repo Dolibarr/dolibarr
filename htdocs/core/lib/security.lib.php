@@ -466,6 +466,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$readok = 0;
 				$nbko++;
 			}
+		} elseif ($feature == 'payment_sc') {
+			if (empty($user->rights->tax->charges->lire)) {
+				$readok = 0;
+				$nbko++;
+			}
 		} elseif (!empty($feature2)) { 													// This is for permissions on 2 levels
 			$tmpreadok = 1;
 			foreach ($feature2 as $subfeature) {
@@ -647,6 +652,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 			} elseif ($feature == 'payment') {
 				if (!$user->rights->facture->paiement) {
 						$deleteok = 0;
+				}
+			} elseif ($feature == 'payment_sc') {
+				if (!$user->rights->tax->charges->creer) {
+					$deleteok = 0;
 				}
 			} elseif ($feature == 'banque') {
 				if (empty($user->rights->banque->modifier)) {
