@@ -2755,7 +2755,7 @@ class lessc_parser
 
 			// media
 			if ($this->literal('@media')) {
-				if (($this->mediaQueryList($mediaQueries) || true)
+				if ($this->mediaQueryList($mediaQueries)
 					&& $this->literal('{')
 					) {
 						$media = $this->pushSpecialBlock("media");
@@ -2769,7 +2769,7 @@ class lessc_parser
 
 			if ($this->literal("@", false) && $this->keyword($dirName)) {
 				if ($this->isDirective($dirName, $this->blockDirectives)) {
-					if (($this->openString("{", $dirValue, null, array(";")) || true) &&
+					if ($this->openString("{", $dirValue, null, array(";")) &&
 						$this->literal("{")
 						) {
 							$dir = $this->pushSpecialBlock("directive");
@@ -2807,7 +2807,7 @@ class lessc_parser
 
 				// opening parametric mixin
 		if ($this->tag($tag, true) && $this->argumentDef($args, $isVararg) &&
-					($this->guards($guards) || true) &&
+					$this->guards($guards) &&
 					$this->literal('{')
 					) {
 				$block = $this->pushBlock($this->fixTags(array($tag)));
@@ -2870,8 +2870,8 @@ class lessc_parser
 
 					// mixin
 		if ($this->mixinTags($tags) &&
-						($this->argumentDef($argv, $isVararg) || true) &&
-						($this->keyword($suffix) || true) && $this->end()
+						$this->argumentDef($argv, $isVararg) &&
+						$this->keyword($suffix) && $this->end()
 						) {
 				$tags = $this->fixTags($tags);
 				$this->append(array('mixin', $tags, $argv, $suffix), $s);
@@ -3165,7 +3165,7 @@ class lessc_parser
 		$expressions = null;
 		$parts = array();
 
-		if (($this->literal("only") && ($only = true) || $this->literal("not") && ($not = true) || true) && $this->keyword($mediaType)) {
+		if ((($this->literal("only") && ($only = true)) || ($this->literal("not") && ($not = true))) && $this->keyword($mediaType)) {
 			$prop = array("mediaType");
 			if (isset($only)) {
 				$prop[] = "only";

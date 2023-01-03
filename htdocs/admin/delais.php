@@ -325,7 +325,7 @@ if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METE
 	if (!empty($conf->global->MAIN_METEO_LEVEL0)) {
 		$level0 = $conf->global->MAIN_METEO_LEVEL0;
 	}
-	$level1 = $offset + 1 * $cursor;
+	$level1 = $offset + $cursor;
 	if (!empty($conf->global->MAIN_METEO_LEVEL1)) {
 		$level1 = $conf->global->MAIN_METEO_LEVEL1;
 	}

@@ -809,7 +809,7 @@ function getWeatherStatus($totallate)
 	$weather->level = 0;
 	$level0 = $offset;
 	$level0 = getDolGlobalString($used_conf.'0', $level0);
-	$level1 = $offset + 1 * $factor;
+	$level1 = $offset + $factor;
 	$level1 = getDolGlobalString($used_conf.'1', $level1);
 	$level2 = $offset + 2 * $factor;
 	$level2 = getDolGlobalString($used_conf.'2', $level2);

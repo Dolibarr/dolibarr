@@ -5049,7 +5049,7 @@ class Societe extends CommonObject
 		$sql .= $field." = '".$this->db->escape($value)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this)."::".__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {

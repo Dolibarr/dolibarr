@@ -444,14 +444,14 @@ class AccountancyExport
 			print $date.$separator;
 			print $line->piece_num.$separator;
 			print length_accountg($line->numero_compte).$separator;
-			print ''.$separator;
+			print $separator;
 			print $line->label_operation.$separator;
 			print $date.$separator;
 			if ($line->sens == 'D') {
 				print price($line->debit).$separator;
-				print ''.$separator;
+				print $separator;
 			} elseif ($line->sens == 'C') {
-				print ''.$separator;
+				print $separator;
 				print price($line->credit).$separator;
 			}
 			print $line->doc_ref.$separator;
