@@ -3212,7 +3212,7 @@ class lessc_parser
 		$value = null;
 		if ($this->literal("(") &&
 			$this->keyword($feature) &&
-			($this->literal(":") && $this->expression($value) || true) &&
+			($this->literal(":") && $this->expression($value)) &&
 			$this->literal(")")
 			) {
 				$out = array("mediaExp", $feature);
