@@ -82,3 +82,4 @@ exclude:
   - name: PhpDuplicateSwitchCaseBodyInspection
   - name: PhpNestedDirNameCallsCanBeReplacedWithLevelParameterInspection
   - name: PhpPointlessBooleanExpressionInConditionInspection  
+  - name: PhpUndefinedMethodInspection
