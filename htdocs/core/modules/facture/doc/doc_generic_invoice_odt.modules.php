@@ -343,7 +343,6 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$nbProduct = 0;
 				$nbService = 0;
 				foreach ($object->lines as $line) {
-					
 					// determine category of operation
 					if ($categoryOfOperation < 2) {
 						$lineProductType = $line->product_type;
