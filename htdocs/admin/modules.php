@@ -1075,7 +1075,7 @@ if ($mode == 'marketplace') {
 			<div id="listing-content">
 				<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
 					<tbody id="listOfModules">
-						<?php echo $dolistore->get_products(!empty($categorie) ? $categorie: ''); ?>
+						<?php echo $dolistore->get_products(); ?>
 					</tbody>
 				</table>
 			</div>
