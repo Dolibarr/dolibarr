@@ -852,15 +852,18 @@ class FactureFournisseur extends CommonInvoice
 	}
 
 	/**
-	 *    Load object in memory from database
+	 *  Load object in memory from database
 	 *
-	 *    @param	int		$id         Id supplier invoice
-	 *    @param	string	$ref		Ref supplier invoice
-	 *    @return   int        			<0 if KO, >0 if OK, 0 if not found
+	 *  @param	int		$id         Id supplier invoice
+	 *  @param	string	$ref		Ref supplier invoice
+	 * 	@param	string	$ref_ext	External reference of invoice
+	 *  @return int  	   			<0 if KO, >0 if OK, 0 if not found
 	 */
-	public function fetch($id = '', $ref = '')
+	public function fetch($id = '', $ref = '', $ref_ext = '')
 	{
-		global $langs;
+		if (empty($id) && empty($ref) && empty($ref_ext)) {
+			return -1;
+		}
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -911,10 +914,15 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON t.fk_mode_reglement = p.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON t.fk_incoterms = i.rowid';
 		if ($id) {
-			$sql .= " WHERE t.rowid=".((int) $id);
-		}
-		if ($ref) {
-			$sql .= " WHERE t.ref='".$this->db->escape($ref)."' AND t.entity IN (".getEntity('supplier_invoice').")";
+			$sql .= " WHERE t.rowid = ".((int) $id);
+		} else {
+			$sql .= ' WHERE t.entity IN ('.getEntity('supplier_invoice').')'; // Don't use entity if you use rowid
+			if ($ref) {
+				$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
+			}
+			if ($ref_ext) {
+				$sql .= " AND t.ref_ext = '".$this->db->escape($ref_ext)."'";
+			}
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);

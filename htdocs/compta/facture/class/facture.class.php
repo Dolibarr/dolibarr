@@ -1956,14 +1956,14 @@ class Facture extends CommonInvoice
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON f.fk_incoterms = i.rowid';
 
 		if ($rowid) {
-			$sql .= " WHERE f.rowid=".((int) $rowid);
+			$sql .= " WHERE f.rowid = ".((int) $rowid);
 		} else {
 			$sql .= ' WHERE f.entity IN ('.getEntity('invoice').')'; // Don't use entity if you use rowid
 			if ($ref) {
-				$sql .= " AND f.ref='".$this->db->escape($ref)."'";
+				$sql .= " AND f.ref = '".$this->db->escape($ref)."'";
 			}
 			if ($ref_ext) {
-				$sql .= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
+				$sql .= " AND f.ref_ext = '".$this->db->escape($ref_ext)."'";
 			}
 		}
 

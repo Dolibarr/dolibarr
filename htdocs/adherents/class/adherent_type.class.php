@@ -472,7 +472,7 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *  Function that retrieves the status of the member
+	 *  Function that retrieves the properties of a membership type
 	 *
 	 *  @param 		int		$rowid			Id of member type to load
 	 *  @return		int						<0 if KO, >0 if OK

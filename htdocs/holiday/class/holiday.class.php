@@ -1580,7 +1580,7 @@ class Holiday extends CommonObject
 					// We add a log for each user
 					$this->addLogCP($user->id, $userCounter['rowid'], $langs->trans('HolidaysMonthlyUpdate'), $newSolde, $userCounter['type']);
 
-					$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type'], $langs->trans('HolidaysMonthlyUpdate'));
+					$result = $this->updateSoldeCP($userCounter['rowid'], $newSolde, $userCounter['type']);
 
 					if ($result < 0) {
 						$error++;
