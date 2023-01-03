@@ -1011,6 +1011,7 @@ class Lessc
 		if ($list[0] == "list" && isset($list[2][$idx - 1])) {
 			return $list[2][$idx - 1];
 		}
+		return;
 	}
 
 	protected function lib_isnumber($value)
@@ -1305,6 +1306,7 @@ class Lessc
 		if (!is_null($color = $this->coerceColor($value))) {
 			return isset($color[4]) ? $color[4] : 1;
 		}
+		return;
 	}
 
 	// set the alpha of the color
@@ -1835,6 +1837,7 @@ class Lessc
 				}
 				return null;
 		}
+		return null;
 	}
 
 	// make something string like into a string
@@ -1930,6 +1933,8 @@ class Lessc
 			array_unshift($strRight[2], $left);
 			return $strRight;
 		}
+
+		return '';
 	}
 
 
@@ -1953,6 +1958,7 @@ class Lessc
 		if ($op == '+' || $op == '*') {
 			return $this->op_color_number($op, $rgt, $lft);
 		}
+		return;
 	}
 
 	protected function op_color_number($op, $lft, $rgt)
@@ -3133,7 +3139,7 @@ class lessc_parser
 	}
 
 		// an import statement
-	protected function import(&$out)
+	protected function import(&$out, $value = '')
 	{
 		if (!$this->literal('@import')) {
 			return false;
@@ -3147,6 +3153,8 @@ class lessc_parser
 			$out = array("import", $value);
 			return true;
 		}
+
+		return false;
 	}
 
 	protected function mediaQueryList(&$out)
