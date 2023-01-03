@@ -150,7 +150,7 @@ class FichinterRec extends Fichinter
 		$fichintsrc = new Fichinter($this->db);
 
 		$result = $fichintsrc->fetch($this->id_origin);
-		$result = $fichintsrc->fetch_lines(1); // to get all lines
+		$result = $fichintsrc->fetch_lines(); // to get all lines
 
 
 		if ($result > 0) {

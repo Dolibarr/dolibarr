@@ -1383,7 +1383,7 @@ class FactureFournisseur extends CommonInvoice
 				$result = $this->update_price(1);
 				if ($result > 0) {
 					// Create link between discount and invoice line
-					$result = $remise->link_to_invoice($lineid, 0, 'supplier');
+					$result = $remise->link_to_invoice($lineid, 0);
 					if ($result < 0) {
 						$this->error = $remise->error;
 						$this->db->rollback();

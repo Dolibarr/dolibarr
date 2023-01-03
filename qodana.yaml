@@ -79,4 +79,5 @@ exclude:
   - name: PhpArrayIndexImmediatelyRewrittenInspection
   - name: PhpParameterNameChangedDuringInheritanceInspection
   - name: PhpDuplicateSwitchCaseBodyInspection
+  - name: PhpNestedDirNameCallsCanBeReplacedWithLevelParameterInspection
   

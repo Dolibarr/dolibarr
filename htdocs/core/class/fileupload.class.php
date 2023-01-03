@@ -180,6 +180,8 @@ class FileUpload
 				)
 		);
 
+		global $action;
+
 		$hookmanager->executeHooks(
 			'overrideUploadOptions',
 			array(
@@ -187,8 +189,7 @@ class FileUpload
 				'element' => $element
 			),
 			$object,
-			$action,
-			$hookmanager
+			$action
 		);
 
 		if ($options) {

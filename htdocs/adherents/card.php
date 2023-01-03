@@ -1046,7 +1046,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Website
 		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
-		print '<td>'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url', 'alpha') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
+		print '<td>'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
 
 		// Address
 		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';

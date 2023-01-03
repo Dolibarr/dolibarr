@@ -45,7 +45,7 @@ class DolGeoIP
 	{
 		global $conf;
 
-		$geoipversion = '2'; // 'php', or '2'
+		$geoipversion = '2'; // 'php', or geoip version '2'
 		if (!empty($conf->global->GEOIP_VERSION)) {
 			$geoipversion = $conf->global->GEOIP_VERSION;
 		}
@@ -181,7 +181,7 @@ class DolGeoIP
 				return '';
 			}
 		} else {
-			return geoip_country_code_by_name($this->gi, $name);
+			return strtolower(geoip_country_code_by_name($name));
 		}
 	}
 
