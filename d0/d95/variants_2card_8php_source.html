@@ -398,7 +398,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    <span class="comment">// Show object lines</span></div>
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    $result = $object-&gt;getLinesArray();</div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160; </div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    print <a class="code" href="../../d9/d69/functions_8lib_8php.html#a168314b0e32aa117705996cb0e1601b4">load_fiche_titre</a>($langs-&gt;trans(<span class="stringliteral">&quot;PossibleValues&quot;</span>) . (!empty($object-&gt;lines) ? <span class="stringliteral">&#39; (&#39;</span> . count($object-&gt;lines) . <span class="charliteral">&#39;)&#39;</span> : <span class="stringliteral">&#39;&#39;</span>));</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    print <a class="code" href="../../d9/d69/functions_8lib_8php.html#a168314b0e32aa117705996cb0e1601b4">load_fiche_titre</a>($langs-&gt;trans(<span class="stringliteral">&quot;PossibleValues&quot;</span>) . (!empty($object-&gt;lines) ? <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium colorblack paddingleft&quot;&gt;(&#39;</span> . count($object-&gt;lines) . <span class="stringliteral">&#39;)&lt;/span&gt;&#39;</span> : <span class="stringliteral">&#39;&#39;</span>));</div>
 <div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160; </div>
 <div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    print <span class="stringliteral">&#39; &lt;form name=&quot;addproduct&quot; id=&quot;addproduct&quot; action=&quot;&#39;</span> . $_SERVER[<span class="stringliteral">&quot;PHP_SELF&quot;</span>] . <span class="stringliteral">&#39;?id=&#39;</span> . $object-&gt;id . (($action != <span class="stringliteral">&#39;editline&#39;</span>) ? <span class="stringliteral">&#39;&#39;</span> : <span class="stringliteral">&#39;#line_&#39;</span> . <a class="code" href="../../d9/d69/functions_8lib_8php.html#a97dc8c4d4db97a060f48e220a1f9f293">GETPOST</a>(<span class="stringliteral">&#39;lineid&#39;</span>, <span class="stringliteral">&#39;int&#39;</span>)) . <span class="stringliteral">&#39;&quot; method=&quot;POST&quot;&gt;</span></div>
 <div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;<span class="stringliteral">    &lt;input type=&quot;hidden&quot; name=&quot;token&quot; value=&quot;&#39;</span> . <a class="code" href="../../d9/d69/functions_8lib_8php.html#a6d79bb77d4de9606546ddfccacf358f9">newToken</a>() . <span class="stringliteral">&#39;&quot;&gt;</span></div>
@@ -469,7 +469,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Mon Jan 2 2023 15:01:38 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Tue Jan 3 2023 15:01:56 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>

@@ -388,7 +388,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    }</div>
 <div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160; </div>
 <div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="keywordflow">if</span> (!$error &amp;&amp; empty($conf-&gt;global-&gt;EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS)) {</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;      $overlappingExpenseReportID = $object-&gt;periode_existe($fuser, $object-&gt;date_debut, $object-&gt;date_fin, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;      $overlappingExpenseReportID = $object-&gt;periode_existe($fuser, $object-&gt;date_debut, $object-&gt;date_fin);</div>
 <div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160; </div>
 <div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;      <span class="keywordflow">if</span> ($overlappingExpenseReportID &gt; 0) {</div>
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;        $error++;</div>
@@ -3013,7 +3013,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Mon Jan 2 2023 15:01:36 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Tue Jan 3 2023 15:01:51 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>

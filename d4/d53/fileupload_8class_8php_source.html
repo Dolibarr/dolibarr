@@ -264,313 +264,314 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        )</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    );</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    $hookmanager-&gt;executeHooks(</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;      <span class="stringliteral">&#39;overrideUploadOptions&#39;</span>,</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;      array(</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        <span class="stringliteral">&#39;options&#39;</span> =&gt; &amp;$options,</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;        <span class="stringliteral">&#39;element&#39;</span> =&gt; $element</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;      ),</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;      $object,</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;      $action,</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;      $hookmanager</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    );</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keywordflow">if</span> ($options) {</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;      $this-&gt;options = array_replace_recursive($this-&gt;options, $options);</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    }</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;  }</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160; </div>
-<div class="line"><a name="l00204"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#ad00b20760e55e963be3f696380d0c472">  204</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#ad00b20760e55e963be3f696380d0c472">getFullUrl</a>()</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;  {</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    $https = !empty($_SERVER[<span class="stringliteral">&#39;HTTPS&#39;</span>]) &amp;&amp; $_SERVER[<span class="stringliteral">&#39;HTTPS&#39;</span>] !== <span class="stringliteral">&#39;off&#39;</span>;</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    <span class="keywordflow">return</span></div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    ($https ? <span class="stringliteral">&#39;https://&#39;</span> : <span class="stringliteral">&#39;http://&#39;</span>).</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    (!empty($_SERVER[<span class="stringliteral">&#39;REMOTE_USER&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;REMOTE_USER&#39;</span>].<span class="charliteral">&#39;@&#39;</span> : <span class="stringliteral">&#39;&#39;</span>).</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    (isset($_SERVER[<span class="stringliteral">&#39;HTTP_HOST&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;HTTP_HOST&#39;</span>] : ($_SERVER[<span class="stringliteral">&#39;SERVER_NAME&#39;</span>].</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        ($https &amp;&amp; $_SERVER[<span class="stringliteral">&#39;SERVER_PORT&#39;</span>] === 443 ||</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;            $_SERVER[<span class="stringliteral">&#39;SERVER_PORT&#39;</span>] === 80 ? <span class="stringliteral">&#39;&#39;</span> : <span class="charliteral">&#39;:&#39;</span>.$_SERVER[<span class="stringliteral">&#39;SERVER_PORT&#39;</span>]))).</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;            substr($_SERVER[<span class="stringliteral">&#39;SCRIPT_NAME&#39;</span>], 0, strrpos($_SERVER[<span class="stringliteral">&#39;SCRIPT_NAME&#39;</span>], <span class="charliteral">&#39;/&#39;</span>));</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;  }</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160; </div>
-<div class="line"><a name="l00222"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a2209973aa5302af7dfb0ca9efe446d2e">  222</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#a2209973aa5302af7dfb0ca9efe446d2e">setFileDeleteUrl</a>($file)</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;  {</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    $file-&gt;delete_url = $this-&gt;options[<span class="stringliteral">&#39;script_url&#39;</span>]</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    .<span class="stringliteral">&#39;?file=&#39;</span>.urlencode($file-&gt;name).<span class="stringliteral">&#39;&amp;fk_element=&#39;</span>.urlencode($this-&gt;fk_element).<span class="stringliteral">&#39;&amp;element=&#39;</span>.urlencode($this-&gt;element);</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    $file-&gt;delete_type = $this-&gt;options[<span class="stringliteral">&#39;delete_type&#39;</span>];</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    <span class="keywordflow">if</span> ($file-&gt;delete_type !== <span class="stringliteral">&#39;DELETE&#39;</span>) {</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;      $file-&gt;delete_url .= <span class="stringliteral">&#39;&amp;_method=DELETE&#39;</span>;</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    }</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;  }</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160; </div>
-<div class="line"><a name="l00238"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a99a6ce54ce558664dbcdee73ff1138c4">  238</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#a99a6ce54ce558664dbcdee73ff1138c4">getFileObject</a>($file_name)</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;  {</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    $file_path = $this-&gt;options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file_name;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <span class="keywordflow">if</span> (is_file($file_path) &amp;&amp; $file_name[0] !== <span class="charliteral">&#39;.&#39;</span>) {</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;      $file = <span class="keyword">new</span> stdClass();</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;      $file-&gt;name = $file_name;</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;      $file-&gt;mime = <a class="code" href="../../d9/d69/functions_8lib_8php.html#a1e3738fdabd2e908a7bbece2e702485b">dol_mimetype</a>($file_name, <span class="stringliteral">&#39;&#39;</span>, 2);</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;      $file-&gt;size = filesize($file_path);</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;      $file-&gt;url = $this-&gt;options[<span class="stringliteral">&#39;upload_url&#39;</span>].rawurlencode($file-&gt;name);</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;      <span class="keywordflow">foreach</span> ($this-&gt;options[<span class="stringliteral">&#39;image_versions&#39;</span>] as $version =&gt; $options) {</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        <span class="keywordflow">if</span> (is_file($options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file_name)) {</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;          $tmp = explode(<span class="charliteral">&#39;.&#39;</span>, $file-&gt;name);</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;          $file-&gt;{$version.<span class="stringliteral">&#39;_url&#39;</span>} = $options[<span class="stringliteral">&#39;upload_url&#39;</span>].rawurlencode($tmp[0].<span class="stringliteral">&#39;_mini.&#39;</span>.$tmp[1]);</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        }</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;      }</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;      $this-&gt;<a class="code" href="../../d3/dde/class_file_upload.html#a2209973aa5302af7dfb0ca9efe446d2e">setFileDeleteUrl</a>($file);</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;      <span class="keywordflow">return</span> $file;</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    }</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;  }</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160; </div>
-<div class="line"><a name="l00264"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a1c8bb9ad8c2e90b284447937cab29248">  264</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#a1c8bb9ad8c2e90b284447937cab29248">getFileObjects</a>()</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;  {</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="keywordflow">return</span> array_values(array_filter(array_map(array($this, <span class="stringliteral">&#39;getFileObject&#39;</span>), scandir($this-&gt;options[<span class="stringliteral">&#39;upload_dir&#39;</span>]))));</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;  }</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160; </div>
-<div class="line"><a name="l00276"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#abd45147563311c4baa48a20ec1c2182a">  276</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#abd45147563311c4baa48a20ec1c2182a">createScaledImage</a>($file_name, $options)</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  {</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    global $maxwidthmini, $maxheightmini;</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160; </div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    $file_path = $this-&gt;options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file_name;</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    $new_file_path = $options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file_name;</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160; </div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="../../d9/d69/functions_8lib_8php.html#af6f6a291f41b6ef2a3e11a6be1e1256c">dol_mkdir</a>($options[<span class="stringliteral">&#39;upload_dir&#39;</span>]) &gt;= 0) {</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;      list($img_width, $img_height) = @getimagesize($file_path);</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;      <span class="keywordflow">if</span> (!$img_width || !$img_height) {</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;      }</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160; </div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;      $res = <a class="code" href="../../dc/d48/images_8lib_8php.html#a107aad0b67356ccddb3520fae5f0f809">vignette</a>($file_path, $maxwidthmini, $maxheightmini, <span class="stringliteral">&#39;_mini&#39;</span>); <span class="comment">// We don&#39;t use -&gt;addThumbs here because there is no object and we don&#39;t need all thumbs, only the &quot;mini&quot;.</span></div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160; </div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;      <span class="keywordflow">if</span> (preg_match(<span class="stringliteral">&#39;/error/i&#39;</span>, $res)) {</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;      }</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    }</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;  }</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160; </div>
-<div class="line"><a name="l00309"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#afe0ab8aa607bb2574ee3f58a43a6dc80">  309</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#afe0ab8aa607bb2574ee3f58a43a6dc80">validate</a>($uploaded_file, $file, $error, $index)</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;  {</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="keywordflow">if</span> ($error) {</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;      $file-&gt;error = $error;</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    }</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="keywordflow">if</span> (!$file-&gt;name) {</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;      $file-&gt;error = <span class="stringliteral">&#39;missingFileName&#39;</span>;</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    }</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    <span class="keywordflow">if</span> (!preg_match($this-&gt;options[<span class="stringliteral">&#39;accept_file_types&#39;</span>], $file-&gt;name)) {</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;      $file-&gt;error = <span class="stringliteral">&#39;acceptFileTypes&#39;</span>;</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    }</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <span class="keywordflow">if</span> ($uploaded_file &amp;&amp; is_uploaded_file($uploaded_file)) {</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;      $file_size = filesize($uploaded_file);</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;      $file_size = $_SERVER[<span class="stringliteral">&#39;CONTENT_LENGTH&#39;</span>];</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    }</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;options[<span class="stringliteral">&#39;max_file_size&#39;</span>] &amp;&amp; (</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;        $file_size &gt; $this-&gt;options[<span class="stringliteral">&#39;max_file_size&#39;</span>] ||</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;        $file-&gt;size &gt; $this-&gt;options[<span class="stringliteral">&#39;max_file_size&#39;</span>])</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    ) {</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;      $file-&gt;error = <span class="stringliteral">&#39;maxFileSize&#39;</span>;</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    }</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;options[<span class="stringliteral">&#39;min_file_size&#39;</span>] &amp;&amp;</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;        $file_size &lt; $this-&gt;options[<span class="stringliteral">&#39;min_file_size&#39;</span>]) {</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;      $file-&gt;error = <span class="stringliteral">&#39;minFileSize&#39;</span>;</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    }</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    <span class="keywordflow">if</span> (is_numeric($this-&gt;options[<span class="stringliteral">&#39;max_number_of_files&#39;</span>]) &amp;&amp; (</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;        count($this-&gt;getFileObjects()) &gt;= $this-&gt;options[<span class="stringliteral">&#39;max_number_of_files&#39;</span>])</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    ) {</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;      $file-&gt;error = <span class="stringliteral">&#39;maxNumberOfFiles&#39;</span>;</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    }</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    list($img_width, $img_height) = @getimagesize($uploaded_file);</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    <span class="keywordflow">if</span> (is_numeric($img_width)) {</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;      <span class="keywordflow">if</span> ($this-&gt;options[<span class="stringliteral">&#39;max_width&#39;</span>] &amp;&amp; $img_width &gt; $this-&gt;options[<span class="stringliteral">&#39;max_width&#39;</span>] ||</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;          $this-&gt;options[<span class="stringliteral">&#39;max_height&#39;</span>] &amp;&amp; $img_height &gt; $this-&gt;options[<span class="stringliteral">&#39;max_height&#39;</span>]) {</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;        $file-&gt;error = <span class="stringliteral">&#39;maxResolution&#39;</span>;</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;      }</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;      <span class="keywordflow">if</span> ($this-&gt;options[<span class="stringliteral">&#39;min_width&#39;</span>] &amp;&amp; $img_width &lt; $this-&gt;options[<span class="stringliteral">&#39;min_width&#39;</span>] ||</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;          $this-&gt;options[<span class="stringliteral">&#39;min_height&#39;</span>] &amp;&amp; $img_height &lt; $this-&gt;options[<span class="stringliteral">&#39;min_height&#39;</span>]) {</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        $file-&gt;error = <span class="stringliteral">&#39;minResolution&#39;</span>;</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;      }</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    }</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;  }</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160; </div>
-<div class="line"><a name="l00368"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#abbc8a7ff102eff307e883674b4b47733">  368</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#abbc8a7ff102eff307e883674b4b47733">upcountNameCallback</a>($matches)</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;  {</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    $index = isset($matches[1]) ? intval($matches[1]) + 1 : 1;</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    $ext = isset($matches[2]) ? $matches[2] : <span class="stringliteral">&#39;&#39;</span>;</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;    <span class="keywordflow">return</span> <span class="stringliteral">&#39; (&#39;</span>.$index.<span class="charliteral">&#39;)&#39;</span>.$ext;</div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;  }</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160; </div>
-<div class="line"><a name="l00381"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a905430c24ae3d7014c96af258b6f035e">  381</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#a905430c24ae3d7014c96af258b6f035e">upcountName</a>($name)</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;  {</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    <span class="keywordflow">return</span> preg_replace_callback(<span class="stringliteral">&#39;/(?:(?: \&zwj;(([\d]+)\&zwj;))?(\.[^.]+))?$/&#39;</span>, array($this, <span class="stringliteral">&#39;upcountNameCallback&#39;</span>), $name, 1);</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;  }</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160; </div>
-<div class="line"><a name="l00394"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#ae3adf44a00b182e77a8c9db35a5751de">  394</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#ae3adf44a00b182e77a8c9db35a5751de">trimFileName</a>($name, $type, $index)</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;  {</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    <span class="comment">// Remove path information and dots around the filename, to prevent uploading</span></div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    <span class="comment">// into different directories or replacing hidden system files.</span></div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="comment">// Also remove control characters and spaces (\x00..\x20) around the filename:</span></div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    $file_name = trim(basename(stripslashes($name)), <span class="stringliteral">&quot;.\x00..\x20&quot;</span>);</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    <span class="comment">// Add missing file extension for known image types:</span></div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    <span class="keywordflow">if</span> (strpos($file_name, <span class="charliteral">&#39;.&#39;</span>) === <span class="keyword">false</span> &amp;&amp;</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;        preg_match(<span class="stringliteral">&#39;/^image\/(gif|jpe?g|png)/&#39;</span>, $type, $matches)) {</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;      $file_name .= <span class="charliteral">&#39;.&#39;</span>.$matches[1];</div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    }</div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;options[<span class="stringliteral">&#39;discard_aborted_uploads&#39;</span>]) {</div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;      <span class="keywordflow">while</span> (is_file($this-&gt;options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file_name)) {</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;        $file_name = $this-&gt;upcountName($file_name);</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;      }</div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    }</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    <span class="keywordflow">return</span> $file_name;</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;  }</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160; </div>
-<div class="line"><a name="l00424"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a53c9d9e21f2bd7253284f8cda2e5257e">  424</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#a53c9d9e21f2bd7253284f8cda2e5257e">handleFileUpload</a>($uploaded_file, $name, $size, $type, $error, $index)</div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;  {</div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;    $file = <span class="keyword">new</span> stdClass();</div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;    $file-&gt;name = $this-&gt;trimFileName($name, $type, $index);</div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;    $file-&gt;mime = <a class="code" href="../../d9/d69/functions_8lib_8php.html#a1e3738fdabd2e908a7bbece2e702485b">dol_mimetype</a>($file-&gt;name, <span class="stringliteral">&#39;&#39;</span>, 2);</div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;    $file-&gt;size = intval($size);</div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;    $file-&gt;type = $type;</div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;validate($uploaded_file, $file, $error, $index) &amp;&amp; <a class="code" href="../../d9/d69/functions_8lib_8php.html#af6f6a291f41b6ef2a3e11a6be1e1256c">dol_mkdir</a>($this-&gt;options[<span class="stringliteral">&#39;upload_dir&#39;</span>]) &gt;= 0) {</div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;      $file_path = $this-&gt;options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file-&gt;name;</div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;      $append_file = !$this-&gt;options[<span class="stringliteral">&#39;discard_aborted_uploads&#39;</span>] &amp;&amp; is_file($file_path) &amp;&amp; $file-&gt;size &gt; filesize($file_path);</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;      clearstatcache();</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;      <span class="keywordflow">if</span> ($uploaded_file &amp;&amp; is_uploaded_file($uploaded_file)) {</div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;        <span class="comment">// multipart/formdata uploads (POST method uploads)</span></div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;        <span class="keywordflow">if</span> ($append_file) {</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;          file_put_contents($file_path, fopen($uploaded_file, <span class="charliteral">&#39;r&#39;</span>), FILE_APPEND);</div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;          <a class="code" href="../../de/d28/files_8lib_8php.html#a6eae215d9ae3264e6ea5bb31c388e6d1">dol_move_uploaded_file</a>($uploaded_file, $file_path, 1, 0, 0, 0, <span class="stringliteral">&#39;userfile&#39;</span>);</div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;        }</div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;        <span class="comment">// Non-multipart uploads (PUT method support)</span></div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;        file_put_contents($file_path, fopen(<span class="stringliteral">&#39;php://input&#39;</span>, <span class="charliteral">&#39;r&#39;</span>), $append_file ? FILE_APPEND : 0);</div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;      }</div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;      $file_size = filesize($file_path);</div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;      <span class="keywordflow">if</span> ($file_size === $file-&gt;size) {</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;        $file-&gt;url = $this-&gt;options[<span class="stringliteral">&#39;upload_url&#39;</span>].rawurlencode($file-&gt;name);</div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;        <span class="keywordflow">foreach</span> ($this-&gt;options[<span class="stringliteral">&#39;image_versions&#39;</span>] as $version =&gt; $options) {</div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;          <span class="keywordflow">if</span> ($this-&gt;createScaledImage($file-&gt;name, $options)) {</div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;            $tmp = explode(<span class="charliteral">&#39;.&#39;</span>, $file-&gt;name);</div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;            $file-&gt;{$version.<span class="stringliteral">&#39;_url&#39;</span>} = $options[<span class="stringliteral">&#39;upload_url&#39;</span>].rawurlencode($tmp[0].<span class="stringliteral">&#39;_mini.&#39;</span>.$tmp[1]);</div>
-<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;          }</div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;        }</div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;      } elseif ($this-&gt;options[<span class="stringliteral">&#39;discard_aborted_uploads&#39;</span>]) {</div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;        unlink($file_path);</div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;        $file-&gt;error = <span class="stringliteral">&#39;abort&#39;</span>;</div>
-<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;      }</div>
-<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;      $file-&gt;size = $file_size;</div>
-<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;      $this-&gt;setFileDeleteUrl($file);</div>
-<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;    }</div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;    <span class="keywordflow">return</span> $file;</div>
-<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;  }</div>
-<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160; </div>
-<div class="line"><a name="l00470"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a48ebbe89d63f78bcafa335d6b071be55">  470</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <span class="keyword">get</span>()</div>
-<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;  {</div>
-<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;    $file_name = isset($_REQUEST[<span class="stringliteral">&#39;file&#39;</span>]) ?</div>
-<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;    basename(stripslashes($_REQUEST[<span class="stringliteral">&#39;file&#39;</span>])) : <span class="keyword">null</span>;</div>
-<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;    <span class="keywordflow">if</span> ($file_name) {</div>
-<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;      $info = $this-&gt;getFileObject($file_name);</div>
-<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;      $info = $this-&gt;getFileObjects();</div>
-<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;    }</div>
-<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;    header(<span class="stringliteral">&#39;Content-type: application/json&#39;</span>);</div>
-<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;    echo json_encode($info);</div>
-<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;  }</div>
-<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160; </div>
-<div class="line"><a name="l00488"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a4dab3435d071bb6d9586a6465c8d364a">  488</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#a4dab3435d071bb6d9586a6465c8d364a">post</a>()</div>
-<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;  {</div>
-<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;    <span class="keywordflow">if</span> (isset($_REQUEST[<span class="stringliteral">&#39;_method&#39;</span>]) &amp;&amp; $_REQUEST[<span class="stringliteral">&#39;_method&#39;</span>] === <span class="stringliteral">&#39;DELETE&#39;</span>) {</div>
-<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;      <span class="keywordflow">return</span> $this-&gt;<span class="keyword">delete</span>();</div>
-<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;    }</div>
-<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;    $upload = isset($_FILES[$this-&gt;options[<span class="stringliteral">&#39;param_name&#39;</span>]]) ?</div>
-<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;    $_FILES[$this-&gt;options[<span class="stringliteral">&#39;param_name&#39;</span>]] : <span class="keyword">null</span>;</div>
-<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;    $info = array();</div>
-<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;    <span class="keywordflow">if</span> ($upload &amp;&amp; is_array($upload[<span class="stringliteral">&#39;tmp_name&#39;</span>])) {</div>
-<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;      <span class="comment">// param_name is an array identifier like &quot;files[]&quot;,</span></div>
-<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;      <span class="comment">// $_FILES is a multi-dimensional array:</span></div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;      <span class="keywordflow">foreach</span> ($upload[<span class="stringliteral">&#39;tmp_name&#39;</span>] as $index =&gt; $value) {</div>
-<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;        $info[] = $this-&gt;handleFileUpload(</div>
-<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;          $upload[<span class="stringliteral">&#39;tmp_name&#39;</span>][$index],</div>
-<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;          isset($_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_NAME&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_NAME&#39;</span>] : $upload[<span class="stringliteral">&#39;name&#39;</span>][$index],</div>
-<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;          isset($_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_SIZE&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_SIZE&#39;</span>] : $upload[<span class="stringliteral">&#39;size&#39;</span>][$index],</div>
-<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;          isset($_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_TYPE&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_TYPE&#39;</span>] : $upload[<span class="stringliteral">&#39;type&#39;</span>][$index],</div>
-<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;          $upload[<span class="stringliteral">&#39;error&#39;</span>][$index],</div>
-<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;          $index</div>
-<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;        );</div>
-<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;      }</div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;    } elseif ($upload || isset($_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_NAME&#39;</span>])) {</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;      <span class="comment">// param_name is a single object identifier like &quot;file&quot;,</span></div>
-<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;      <span class="comment">// $_FILES is a one-dimensional array:</span></div>
-<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;      $info[] = $this-&gt;handleFileUpload(</div>
-<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;        isset($upload[<span class="stringliteral">&#39;tmp_name&#39;</span>]) ? $upload[<span class="stringliteral">&#39;tmp_name&#39;</span>] : <span class="keyword">null</span>,</div>
-<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;        isset($_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_NAME&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_NAME&#39;</span>] : (isset($upload[<span class="stringliteral">&#39;name&#39;</span>]) ? $upload[<span class="stringliteral">&#39;name&#39;</span>] : <span class="keyword">null</span>),</div>
-<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;        isset($_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_SIZE&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_SIZE&#39;</span>] : (isset($upload[<span class="stringliteral">&#39;size&#39;</span>]) ? $upload[<span class="stringliteral">&#39;size&#39;</span>] : <span class="keyword">null</span>),</div>
-<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;        isset($_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_TYPE&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_TYPE&#39;</span>] : (isset($upload[<span class="stringliteral">&#39;type&#39;</span>]) ? $upload[<span class="stringliteral">&#39;type&#39;</span>] : <span class="keyword">null</span>),</div>
-<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;        isset($upload[<span class="stringliteral">&#39;error&#39;</span>]) ? $upload[<span class="stringliteral">&#39;error&#39;</span>] : <span class="keyword">null</span>,</div>
-<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;        0</div>
-<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;      );</div>
-<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;    }</div>
-<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;    header(<span class="stringliteral">&#39;Vary: Accept&#39;</span>);</div>
-<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;    $json = json_encode($info);</div>
-<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;    $redirect = isset($_REQUEST[<span class="stringliteral">&#39;redirect&#39;</span>]) ?</div>
-<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;    stripslashes($_REQUEST[<span class="stringliteral">&#39;redirect&#39;</span>]) : <span class="keyword">null</span>;</div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;    <span class="keywordflow">if</span> ($redirect) {</div>
-<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;      header(<span class="stringliteral">&#39;Location: &#39;</span>.sprintf($redirect, rawurlencode($json)));</div>
-<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;      <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;    }</div>
-<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;    <span class="keywordflow">if</span> (isset($_SERVER[<span class="stringliteral">&#39;HTTP_ACCEPT&#39;</span>]) &amp;&amp;</div>
-<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;        (strpos($_SERVER[<span class="stringliteral">&#39;HTTP_ACCEPT&#39;</span>], <span class="stringliteral">&#39;application/json&#39;</span>) !== <span class="keyword">false</span>)) {</div>
-<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;      header(<span class="stringliteral">&#39;Content-type: application/json&#39;</span>);</div>
-<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;      header(<span class="stringliteral">&#39;Content-type: text/plain&#39;</span>);</div>
-<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;    }</div>
-<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;    echo $json;</div>
-<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;  }</div>
-<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160; </div>
-<div class="line"><a name="l00543"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a1d9649f33a5d40a0794957d3aba08ec7">  543</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <span class="keyword">delete</span>()</div>
-<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;  {</div>
-<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;    $file_name = isset($_REQUEST[<span class="stringliteral">&#39;file&#39;</span>]) ?</div>
-<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;    basename(stripslashes($_REQUEST[<span class="stringliteral">&#39;file&#39;</span>])) : <span class="keyword">null</span>;</div>
-<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;    $file_path = $this-&gt;options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file_name;</div>
-<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;    $success = is_file($file_path) &amp;&amp; $file_name[0] !== <span class="charliteral">&#39;.&#39;</span> &amp;&amp; unlink($file_path);</div>
-<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;    <span class="keywordflow">if</span> ($success) {</div>
-<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;      <span class="keywordflow">foreach</span> ($this-&gt;options[<span class="stringliteral">&#39;image_versions&#39;</span>] as $version =&gt; $options) {</div>
-<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;        $file = $options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file_name;</div>
-<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;        <span class="keywordflow">if</span> (is_file($file)) {</div>
-<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;          unlink($file);</div>
-<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;        }</div>
-<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;      }</div>
-<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;    }</div>
-<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;    header(<span class="stringliteral">&#39;Content-type: application/json&#39;</span>);</div>
-<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;    echo json_encode($success);</div>
-<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;  }</div>
-<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;}</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    global $action;</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    $hookmanager-&gt;executeHooks(</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;      <span class="stringliteral">&#39;overrideUploadOptions&#39;</span>,</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;      array(</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        <span class="stringliteral">&#39;options&#39;</span> =&gt; &amp;$options,</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        <span class="stringliteral">&#39;element&#39;</span> =&gt; $element</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;      ),</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;      $object,</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;      $action</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    );</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="keywordflow">if</span> ($options) {</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;      $this-&gt;options = array_replace_recursive($this-&gt;options, $options);</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    }</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;  }</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160; </div>
+<div class="line"><a name="l00205"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#ad00b20760e55e963be3f696380d0c472">  205</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#ad00b20760e55e963be3f696380d0c472">getFullUrl</a>()</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;  {</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    $https = !empty($_SERVER[<span class="stringliteral">&#39;HTTPS&#39;</span>]) &amp;&amp; $_SERVER[<span class="stringliteral">&#39;HTTPS&#39;</span>] !== <span class="stringliteral">&#39;off&#39;</span>;</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keywordflow">return</span></div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    ($https ? <span class="stringliteral">&#39;https://&#39;</span> : <span class="stringliteral">&#39;http://&#39;</span>).</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    (!empty($_SERVER[<span class="stringliteral">&#39;REMOTE_USER&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;REMOTE_USER&#39;</span>].<span class="charliteral">&#39;@&#39;</span> : <span class="stringliteral">&#39;&#39;</span>).</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    (isset($_SERVER[<span class="stringliteral">&#39;HTTP_HOST&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;HTTP_HOST&#39;</span>] : ($_SERVER[<span class="stringliteral">&#39;SERVER_NAME&#39;</span>].</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        ($https &amp;&amp; $_SERVER[<span class="stringliteral">&#39;SERVER_PORT&#39;</span>] === 443 ||</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;            $_SERVER[<span class="stringliteral">&#39;SERVER_PORT&#39;</span>] === 80 ? <span class="stringliteral">&#39;&#39;</span> : <span class="charliteral">&#39;:&#39;</span>.$_SERVER[<span class="stringliteral">&#39;SERVER_PORT&#39;</span>]))).</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;            substr($_SERVER[<span class="stringliteral">&#39;SCRIPT_NAME&#39;</span>], 0, strrpos($_SERVER[<span class="stringliteral">&#39;SCRIPT_NAME&#39;</span>], <span class="charliteral">&#39;/&#39;</span>));</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;  }</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160; </div>
+<div class="line"><a name="l00223"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a2209973aa5302af7dfb0ca9efe446d2e">  223</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#a2209973aa5302af7dfb0ca9efe446d2e">setFileDeleteUrl</a>($file)</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;  {</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    $file-&gt;delete_url = $this-&gt;options[<span class="stringliteral">&#39;script_url&#39;</span>]</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    .<span class="stringliteral">&#39;?file=&#39;</span>.urlencode($file-&gt;name).<span class="stringliteral">&#39;&amp;fk_element=&#39;</span>.urlencode($this-&gt;fk_element).<span class="stringliteral">&#39;&amp;element=&#39;</span>.urlencode($this-&gt;element);</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    $file-&gt;delete_type = $this-&gt;options[<span class="stringliteral">&#39;delete_type&#39;</span>];</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    <span class="keywordflow">if</span> ($file-&gt;delete_type !== <span class="stringliteral">&#39;DELETE&#39;</span>) {</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;      $file-&gt;delete_url .= <span class="stringliteral">&#39;&amp;_method=DELETE&#39;</span>;</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    }</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;  }</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160; </div>
+<div class="line"><a name="l00239"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a99a6ce54ce558664dbcdee73ff1138c4">  239</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#a99a6ce54ce558664dbcdee73ff1138c4">getFileObject</a>($file_name)</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;  {</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    $file_path = $this-&gt;options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file_name;</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    <span class="keywordflow">if</span> (is_file($file_path) &amp;&amp; $file_name[0] !== <span class="charliteral">&#39;.&#39;</span>) {</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;      $file = <span class="keyword">new</span> stdClass();</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;      $file-&gt;name = $file_name;</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;      $file-&gt;mime = <a class="code" href="../../d9/d69/functions_8lib_8php.html#a1e3738fdabd2e908a7bbece2e702485b">dol_mimetype</a>($file_name, <span class="stringliteral">&#39;&#39;</span>, 2);</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;      $file-&gt;size = filesize($file_path);</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;      $file-&gt;url = $this-&gt;options[<span class="stringliteral">&#39;upload_url&#39;</span>].rawurlencode($file-&gt;name);</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;      <span class="keywordflow">foreach</span> ($this-&gt;options[<span class="stringliteral">&#39;image_versions&#39;</span>] as $version =&gt; $options) {</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        <span class="keywordflow">if</span> (is_file($options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file_name)) {</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;          $tmp = explode(<span class="charliteral">&#39;.&#39;</span>, $file-&gt;name);</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;          $file-&gt;{$version.<span class="stringliteral">&#39;_url&#39;</span>} = $options[<span class="stringliteral">&#39;upload_url&#39;</span>].rawurlencode($tmp[0].<span class="stringliteral">&#39;_mini.&#39;</span>.$tmp[1]);</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        }</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;      }</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;      $this-&gt;<a class="code" href="../../d3/dde/class_file_upload.html#a2209973aa5302af7dfb0ca9efe446d2e">setFileDeleteUrl</a>($file);</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;      <span class="keywordflow">return</span> $file;</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    }</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;  }</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160; </div>
+<div class="line"><a name="l00265"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a1c8bb9ad8c2e90b284447937cab29248">  265</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#a1c8bb9ad8c2e90b284447937cab29248">getFileObjects</a>()</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;  {</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    <span class="keywordflow">return</span> array_values(array_filter(array_map(array($this, <span class="stringliteral">&#39;getFileObject&#39;</span>), scandir($this-&gt;options[<span class="stringliteral">&#39;upload_dir&#39;</span>]))));</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;  }</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
+<div class="line"><a name="l00277"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#abd45147563311c4baa48a20ec1c2182a">  277</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#abd45147563311c4baa48a20ec1c2182a">createScaledImage</a>($file_name, $options)</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;  {</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    global $maxwidthmini, $maxheightmini;</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160; </div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    $file_path = $this-&gt;options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file_name;</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    $new_file_path = $options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file_name;</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160; </div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="../../d9/d69/functions_8lib_8php.html#af6f6a291f41b6ef2a3e11a6be1e1256c">dol_mkdir</a>($options[<span class="stringliteral">&#39;upload_dir&#39;</span>]) &gt;= 0) {</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;      list($img_width, $img_height) = @getimagesize($file_path);</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;      <span class="keywordflow">if</span> (!$img_width || !$img_height) {</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;      }</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160; </div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;      $res = <a class="code" href="../../dc/d48/images_8lib_8php.html#a107aad0b67356ccddb3520fae5f0f809">vignette</a>($file_path, $maxwidthmini, $maxheightmini, <span class="stringliteral">&#39;_mini&#39;</span>); <span class="comment">// We don&#39;t use -&gt;addThumbs here because there is no object and we don&#39;t need all thumbs, only the &quot;mini&quot;.</span></div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160; </div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;      <span class="keywordflow">if</span> (preg_match(<span class="stringliteral">&#39;/error/i&#39;</span>, $res)) {</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;      }</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    }</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;  }</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
+<div class="line"><a name="l00310"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#afe0ab8aa607bb2574ee3f58a43a6dc80">  310</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#afe0ab8aa607bb2574ee3f58a43a6dc80">validate</a>($uploaded_file, $file, $error, $index)</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;  {</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    <span class="keywordflow">if</span> ($error) {</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;      $file-&gt;error = $error;</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    }</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    <span class="keywordflow">if</span> (!$file-&gt;name) {</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;      $file-&gt;error = <span class="stringliteral">&#39;missingFileName&#39;</span>;</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    }</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="keywordflow">if</span> (!preg_match($this-&gt;options[<span class="stringliteral">&#39;accept_file_types&#39;</span>], $file-&gt;name)) {</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;      $file-&gt;error = <span class="stringliteral">&#39;acceptFileTypes&#39;</span>;</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    }</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    <span class="keywordflow">if</span> ($uploaded_file &amp;&amp; is_uploaded_file($uploaded_file)) {</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;      $file_size = filesize($uploaded_file);</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;      $file_size = $_SERVER[<span class="stringliteral">&#39;CONTENT_LENGTH&#39;</span>];</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    }</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;options[<span class="stringliteral">&#39;max_file_size&#39;</span>] &amp;&amp; (</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;        $file_size &gt; $this-&gt;options[<span class="stringliteral">&#39;max_file_size&#39;</span>] ||</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        $file-&gt;size &gt; $this-&gt;options[<span class="stringliteral">&#39;max_file_size&#39;</span>])</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    ) {</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;      $file-&gt;error = <span class="stringliteral">&#39;maxFileSize&#39;</span>;</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    }</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;options[<span class="stringliteral">&#39;min_file_size&#39;</span>] &amp;&amp;</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;        $file_size &lt; $this-&gt;options[<span class="stringliteral">&#39;min_file_size&#39;</span>]) {</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;      $file-&gt;error = <span class="stringliteral">&#39;minFileSize&#39;</span>;</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    }</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;    <span class="keywordflow">if</span> (is_numeric($this-&gt;options[<span class="stringliteral">&#39;max_number_of_files&#39;</span>]) &amp;&amp; (</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;        count($this-&gt;getFileObjects()) &gt;= $this-&gt;options[<span class="stringliteral">&#39;max_number_of_files&#39;</span>])</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    ) {</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;      $file-&gt;error = <span class="stringliteral">&#39;maxNumberOfFiles&#39;</span>;</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    }</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    list($img_width, $img_height) = @getimagesize($uploaded_file);</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    <span class="keywordflow">if</span> (is_numeric($img_width)) {</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;      <span class="keywordflow">if</span> ($this-&gt;options[<span class="stringliteral">&#39;max_width&#39;</span>] &amp;&amp; $img_width &gt; $this-&gt;options[<span class="stringliteral">&#39;max_width&#39;</span>] ||</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;          $this-&gt;options[<span class="stringliteral">&#39;max_height&#39;</span>] &amp;&amp; $img_height &gt; $this-&gt;options[<span class="stringliteral">&#39;max_height&#39;</span>]) {</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;        $file-&gt;error = <span class="stringliteral">&#39;maxResolution&#39;</span>;</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;      }</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;      <span class="keywordflow">if</span> ($this-&gt;options[<span class="stringliteral">&#39;min_width&#39;</span>] &amp;&amp; $img_width &lt; $this-&gt;options[<span class="stringliteral">&#39;min_width&#39;</span>] ||</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;          $this-&gt;options[<span class="stringliteral">&#39;min_height&#39;</span>] &amp;&amp; $img_height &lt; $this-&gt;options[<span class="stringliteral">&#39;min_height&#39;</span>]) {</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        $file-&gt;error = <span class="stringliteral">&#39;minResolution&#39;</span>;</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;      }</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    }</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;  }</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160; </div>
+<div class="line"><a name="l00369"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#abbc8a7ff102eff307e883674b4b47733">  369</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#abbc8a7ff102eff307e883674b4b47733">upcountNameCallback</a>($matches)</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;  {</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    $index = isset($matches[1]) ? intval($matches[1]) + 1 : 1;</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;    $ext = isset($matches[2]) ? $matches[2] : <span class="stringliteral">&#39;&#39;</span>;</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    <span class="keywordflow">return</span> <span class="stringliteral">&#39; (&#39;</span>.$index.<span class="charliteral">&#39;)&#39;</span>.$ext;</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;  }</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160; </div>
+<div class="line"><a name="l00382"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a905430c24ae3d7014c96af258b6f035e">  382</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#a905430c24ae3d7014c96af258b6f035e">upcountName</a>($name)</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;  {</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    <span class="keywordflow">return</span> preg_replace_callback(<span class="stringliteral">&#39;/(?:(?: \&zwj;(([\d]+)\&zwj;))?(\.[^.]+))?$/&#39;</span>, array($this, <span class="stringliteral">&#39;upcountNameCallback&#39;</span>), $name, 1);</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;  }</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160; </div>
+<div class="line"><a name="l00395"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#ae3adf44a00b182e77a8c9db35a5751de">  395</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#ae3adf44a00b182e77a8c9db35a5751de">trimFileName</a>($name, $type, $index)</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;  {</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    <span class="comment">// Remove path information and dots around the filename, to prevent uploading</span></div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="comment">// into different directories or replacing hidden system files.</span></div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    <span class="comment">// Also remove control characters and spaces (\x00..\x20) around the filename:</span></div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    $file_name = trim(basename(stripslashes($name)), <span class="stringliteral">&quot;.\x00..\x20&quot;</span>);</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    <span class="comment">// Add missing file extension for known image types:</span></div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    <span class="keywordflow">if</span> (strpos($file_name, <span class="charliteral">&#39;.&#39;</span>) === <span class="keyword">false</span> &amp;&amp;</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;        preg_match(<span class="stringliteral">&#39;/^image\/(gif|jpe?g|png)/&#39;</span>, $type, $matches)) {</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;      $file_name .= <span class="charliteral">&#39;.&#39;</span>.$matches[1];</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    }</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;options[<span class="stringliteral">&#39;discard_aborted_uploads&#39;</span>]) {</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;      <span class="keywordflow">while</span> (is_file($this-&gt;options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file_name)) {</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;        $file_name = $this-&gt;upcountName($file_name);</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;      }</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    }</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;    <span class="keywordflow">return</span> $file_name;</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;  }</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160; </div>
+<div class="line"><a name="l00425"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a53c9d9e21f2bd7253284f8cda2e5257e">  425</a></span>&#160;  <span class="keyword">protected</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#a53c9d9e21f2bd7253284f8cda2e5257e">handleFileUpload</a>($uploaded_file, $name, $size, $type, $error, $index)</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;  {</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;    $file = <span class="keyword">new</span> stdClass();</div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;    $file-&gt;name = $this-&gt;trimFileName($name, $type, $index);</div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;    $file-&gt;mime = <a class="code" href="../../d9/d69/functions_8lib_8php.html#a1e3738fdabd2e908a7bbece2e702485b">dol_mimetype</a>($file-&gt;name, <span class="stringliteral">&#39;&#39;</span>, 2);</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;    $file-&gt;size = intval($size);</div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;    $file-&gt;type = $type;</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;validate($uploaded_file, $file, $error, $index) &amp;&amp; <a class="code" href="../../d9/d69/functions_8lib_8php.html#af6f6a291f41b6ef2a3e11a6be1e1256c">dol_mkdir</a>($this-&gt;options[<span class="stringliteral">&#39;upload_dir&#39;</span>]) &gt;= 0) {</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;      $file_path = $this-&gt;options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file-&gt;name;</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;      $append_file = !$this-&gt;options[<span class="stringliteral">&#39;discard_aborted_uploads&#39;</span>] &amp;&amp; is_file($file_path) &amp;&amp; $file-&gt;size &gt; filesize($file_path);</div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;      clearstatcache();</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;      <span class="keywordflow">if</span> ($uploaded_file &amp;&amp; is_uploaded_file($uploaded_file)) {</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;        <span class="comment">// multipart/formdata uploads (POST method uploads)</span></div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;        <span class="keywordflow">if</span> ($append_file) {</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;          file_put_contents($file_path, fopen($uploaded_file, <span class="charliteral">&#39;r&#39;</span>), FILE_APPEND);</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;          <a class="code" href="../../de/d28/files_8lib_8php.html#a6eae215d9ae3264e6ea5bb31c388e6d1">dol_move_uploaded_file</a>($uploaded_file, $file_path, 1, 0, 0, 0, <span class="stringliteral">&#39;userfile&#39;</span>);</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;        }</div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;      } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;        <span class="comment">// Non-multipart uploads (PUT method support)</span></div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;        file_put_contents($file_path, fopen(<span class="stringliteral">&#39;php://input&#39;</span>, <span class="charliteral">&#39;r&#39;</span>), $append_file ? FILE_APPEND : 0);</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;      }</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;      $file_size = filesize($file_path);</div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;      <span class="keywordflow">if</span> ($file_size === $file-&gt;size) {</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;        $file-&gt;url = $this-&gt;options[<span class="stringliteral">&#39;upload_url&#39;</span>].rawurlencode($file-&gt;name);</div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;        <span class="keywordflow">foreach</span> ($this-&gt;options[<span class="stringliteral">&#39;image_versions&#39;</span>] as $version =&gt; $options) {</div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;          <span class="keywordflow">if</span> ($this-&gt;createScaledImage($file-&gt;name, $options)) {</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;            $tmp = explode(<span class="charliteral">&#39;.&#39;</span>, $file-&gt;name);</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;            $file-&gt;{$version.<span class="stringliteral">&#39;_url&#39;</span>} = $options[<span class="stringliteral">&#39;upload_url&#39;</span>].rawurlencode($tmp[0].<span class="stringliteral">&#39;_mini.&#39;</span>.$tmp[1]);</div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;          }</div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;        }</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;      } elseif ($this-&gt;options[<span class="stringliteral">&#39;discard_aborted_uploads&#39;</span>]) {</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;        unlink($file_path);</div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;        $file-&gt;error = <span class="stringliteral">&#39;abort&#39;</span>;</div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;      }</div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;      $file-&gt;size = $file_size;</div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;      $this-&gt;setFileDeleteUrl($file);</div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;    }</div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;    <span class="keywordflow">return</span> $file;</div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;  }</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160; </div>
+<div class="line"><a name="l00471"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a48ebbe89d63f78bcafa335d6b071be55">  471</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <span class="keyword">get</span>()</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;  {</div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;    $file_name = isset($_REQUEST[<span class="stringliteral">&#39;file&#39;</span>]) ?</div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;    basename(stripslashes($_REQUEST[<span class="stringliteral">&#39;file&#39;</span>])) : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;    <span class="keywordflow">if</span> ($file_name) {</div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;      $info = $this-&gt;getFileObject($file_name);</div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;      $info = $this-&gt;getFileObjects();</div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;    }</div>
+<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;    header(<span class="stringliteral">&#39;Content-type: application/json&#39;</span>);</div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;    echo json_encode($info);</div>
+<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;  }</div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160; </div>
+<div class="line"><a name="l00489"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a4dab3435d071bb6d9586a6465c8d364a">  489</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="../../d3/dde/class_file_upload.html#a4dab3435d071bb6d9586a6465c8d364a">post</a>()</div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;  {</div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;    <span class="keywordflow">if</span> (isset($_REQUEST[<span class="stringliteral">&#39;_method&#39;</span>]) &amp;&amp; $_REQUEST[<span class="stringliteral">&#39;_method&#39;</span>] === <span class="stringliteral">&#39;DELETE&#39;</span>) {</div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;      <span class="keywordflow">return</span> $this-&gt;<span class="keyword">delete</span>();</div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;    }</div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;    $upload = isset($_FILES[$this-&gt;options[<span class="stringliteral">&#39;param_name&#39;</span>]]) ?</div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;    $_FILES[$this-&gt;options[<span class="stringliteral">&#39;param_name&#39;</span>]] : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;    $info = array();</div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;    <span class="keywordflow">if</span> ($upload &amp;&amp; is_array($upload[<span class="stringliteral">&#39;tmp_name&#39;</span>])) {</div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;      <span class="comment">// param_name is an array identifier like &quot;files[]&quot;,</span></div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;      <span class="comment">// $_FILES is a multi-dimensional array:</span></div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;      <span class="keywordflow">foreach</span> ($upload[<span class="stringliteral">&#39;tmp_name&#39;</span>] as $index =&gt; $value) {</div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;        $info[] = $this-&gt;handleFileUpload(</div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;          $upload[<span class="stringliteral">&#39;tmp_name&#39;</span>][$index],</div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;          isset($_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_NAME&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_NAME&#39;</span>] : $upload[<span class="stringliteral">&#39;name&#39;</span>][$index],</div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;          isset($_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_SIZE&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_SIZE&#39;</span>] : $upload[<span class="stringliteral">&#39;size&#39;</span>][$index],</div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;          isset($_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_TYPE&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_TYPE&#39;</span>] : $upload[<span class="stringliteral">&#39;type&#39;</span>][$index],</div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;          $upload[<span class="stringliteral">&#39;error&#39;</span>][$index],</div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;          $index</div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;        );</div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;      }</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;    } elseif ($upload || isset($_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_NAME&#39;</span>])) {</div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;      <span class="comment">// param_name is a single object identifier like &quot;file&quot;,</span></div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;      <span class="comment">// $_FILES is a one-dimensional array:</span></div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;      $info[] = $this-&gt;handleFileUpload(</div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;        isset($upload[<span class="stringliteral">&#39;tmp_name&#39;</span>]) ? $upload[<span class="stringliteral">&#39;tmp_name&#39;</span>] : <span class="keyword">null</span>,</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;        isset($_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_NAME&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_NAME&#39;</span>] : (isset($upload[<span class="stringliteral">&#39;name&#39;</span>]) ? $upload[<span class="stringliteral">&#39;name&#39;</span>] : <span class="keyword">null</span>),</div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;        isset($_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_SIZE&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_SIZE&#39;</span>] : (isset($upload[<span class="stringliteral">&#39;size&#39;</span>]) ? $upload[<span class="stringliteral">&#39;size&#39;</span>] : <span class="keyword">null</span>),</div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;        isset($_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_TYPE&#39;</span>]) ? $_SERVER[<span class="stringliteral">&#39;HTTP_X_FILE_TYPE&#39;</span>] : (isset($upload[<span class="stringliteral">&#39;type&#39;</span>]) ? $upload[<span class="stringliteral">&#39;type&#39;</span>] : <span class="keyword">null</span>),</div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;        isset($upload[<span class="stringliteral">&#39;error&#39;</span>]) ? $upload[<span class="stringliteral">&#39;error&#39;</span>] : <span class="keyword">null</span>,</div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;        0</div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;      );</div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;    }</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;    header(<span class="stringliteral">&#39;Vary: Accept&#39;</span>);</div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;    $json = json_encode($info);</div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;    $redirect = isset($_REQUEST[<span class="stringliteral">&#39;redirect&#39;</span>]) ?</div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;    stripslashes($_REQUEST[<span class="stringliteral">&#39;redirect&#39;</span>]) : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;    <span class="keywordflow">if</span> ($redirect) {</div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;      header(<span class="stringliteral">&#39;Location: &#39;</span>.sprintf($redirect, rawurlencode($json)));</div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;    }</div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;    <span class="keywordflow">if</span> (isset($_SERVER[<span class="stringliteral">&#39;HTTP_ACCEPT&#39;</span>]) &amp;&amp;</div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;        (strpos($_SERVER[<span class="stringliteral">&#39;HTTP_ACCEPT&#39;</span>], <span class="stringliteral">&#39;application/json&#39;</span>) !== <span class="keyword">false</span>)) {</div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;      header(<span class="stringliteral">&#39;Content-type: application/json&#39;</span>);</div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;      header(<span class="stringliteral">&#39;Content-type: text/plain&#39;</span>);</div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;    }</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;    echo $json;</div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;  }</div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160; </div>
+<div class="line"><a name="l00544"></a><span class="lineno"><a class="line" href="../../d3/dde/class_file_upload.html#a1d9649f33a5d40a0794957d3aba08ec7">  544</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <span class="keyword">delete</span>()</div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;  {</div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;    $file_name = isset($_REQUEST[<span class="stringliteral">&#39;file&#39;</span>]) ?</div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;    basename(stripslashes($_REQUEST[<span class="stringliteral">&#39;file&#39;</span>])) : <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;    $file_path = $this-&gt;options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file_name;</div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;    $success = is_file($file_path) &amp;&amp; $file_name[0] !== <span class="charliteral">&#39;.&#39;</span> &amp;&amp; unlink($file_path);</div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;    <span class="keywordflow">if</span> ($success) {</div>
+<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;      <span class="keywordflow">foreach</span> ($this-&gt;options[<span class="stringliteral">&#39;image_versions&#39;</span>] as $version =&gt; $options) {</div>
+<div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;        $file = $options[<span class="stringliteral">&#39;upload_dir&#39;</span>].$file_name;</div>
+<div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;        <span class="keywordflow">if</span> (is_file($file)) {</div>
+<div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;          unlink($file);</div>
+<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;        }</div>
+<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;      }</div>
+<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;    }</div>
+<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;    header(<span class="stringliteral">&#39;Content-type: application/json&#39;</span>);</div>
+<div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;    echo json_encode($success);</div>
+<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;  }</div>
+<div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;}</div>
 <div class="ttc" id="aclass_file_upload_html"><div class="ttname"><a href="../../d3/dde/class_file_upload.html">FileUpload</a></div><div class="ttdoc">This class is used to manage file upload using ajax.</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00031">fileupload.class.php:32</a></div></div>
-<div class="ttc" id="aclass_file_upload_html_a1c8bb9ad8c2e90b284447937cab29248"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#a1c8bb9ad8c2e90b284447937cab29248">FileUpload\getFileObjects</a></div><div class="ttdeci">getFileObjects()</div><div class="ttdoc">getFileObjects</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00264">fileupload.class.php:264</a></div></div>
-<div class="ttc" id="aclass_file_upload_html_a2209973aa5302af7dfb0ca9efe446d2e"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#a2209973aa5302af7dfb0ca9efe446d2e">FileUpload\setFileDeleteUrl</a></div><div class="ttdeci">setFileDeleteUrl($file)</div><div class="ttdoc">Set delete url.</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00222">fileupload.class.php:222</a></div></div>
+<div class="ttc" id="aclass_file_upload_html_a1c8bb9ad8c2e90b284447937cab29248"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#a1c8bb9ad8c2e90b284447937cab29248">FileUpload\getFileObjects</a></div><div class="ttdeci">getFileObjects()</div><div class="ttdoc">getFileObjects</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00265">fileupload.class.php:265</a></div></div>
+<div class="ttc" id="aclass_file_upload_html_a2209973aa5302af7dfb0ca9efe446d2e"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#a2209973aa5302af7dfb0ca9efe446d2e">FileUpload\setFileDeleteUrl</a></div><div class="ttdeci">setFileDeleteUrl($file)</div><div class="ttdoc">Set delete url.</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00223">fileupload.class.php:223</a></div></div>
 <div class="ttc" id="aclass_file_upload_html_a4d4d27e404ad4f27a0142b6a4f0d8deb"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#a4d4d27e404ad4f27a0142b6a4f0d8deb">FileUpload\__construct</a></div><div class="ttdeci">__construct($options=null, $fk_element=null, $element=null)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00044">fileupload.class.php:44</a></div></div>
-<div class="ttc" id="aclass_file_upload_html_a4dab3435d071bb6d9586a6465c8d364a"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#a4dab3435d071bb6d9586a6465c8d364a">FileUpload\post</a></div><div class="ttdeci">post()</div><div class="ttdoc">Output data.</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00488">fileupload.class.php:488</a></div></div>
-<div class="ttc" id="aclass_file_upload_html_a53c9d9e21f2bd7253284f8cda2e5257e"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#a53c9d9e21f2bd7253284f8cda2e5257e">FileUpload\handleFileUpload</a></div><div class="ttdeci">handleFileUpload($uploaded_file, $name, $size, $type, $error, $index)</div><div class="ttdoc">handleFileUpload</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00424">fileupload.class.php:424</a></div></div>
-<div class="ttc" id="aclass_file_upload_html_a905430c24ae3d7014c96af258b6f035e"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#a905430c24ae3d7014c96af258b6f035e">FileUpload\upcountName</a></div><div class="ttdeci">upcountName($name)</div><div class="ttdoc">Enter description here ...</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00381">fileupload.class.php:381</a></div></div>
-<div class="ttc" id="aclass_file_upload_html_a99a6ce54ce558664dbcdee73ff1138c4"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#a99a6ce54ce558664dbcdee73ff1138c4">FileUpload\getFileObject</a></div><div class="ttdeci">getFileObject($file_name)</div><div class="ttdoc">getFileObject</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00238">fileupload.class.php:238</a></div></div>
-<div class="ttc" id="aclass_file_upload_html_abbc8a7ff102eff307e883674b4b47733"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#abbc8a7ff102eff307e883674b4b47733">FileUpload\upcountNameCallback</a></div><div class="ttdeci">upcountNameCallback($matches)</div><div class="ttdoc">Enter description here ...</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00368">fileupload.class.php:368</a></div></div>
-<div class="ttc" id="aclass_file_upload_html_abd45147563311c4baa48a20ec1c2182a"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#abd45147563311c4baa48a20ec1c2182a">FileUpload\createScaledImage</a></div><div class="ttdeci">createScaledImage($file_name, $options)</div><div class="ttdoc">Create thumbs of a file uploaded.</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00276">fileupload.class.php:276</a></div></div>
-<div class="ttc" id="aclass_file_upload_html_ad00b20760e55e963be3f696380d0c472"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#ad00b20760e55e963be3f696380d0c472">FileUpload\getFullUrl</a></div><div class="ttdeci">getFullUrl()</div><div class="ttdoc">Return full URL.</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00204">fileupload.class.php:204</a></div></div>
-<div class="ttc" id="aclass_file_upload_html_ae3adf44a00b182e77a8c9db35a5751de"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#ae3adf44a00b182e77a8c9db35a5751de">FileUpload\trimFileName</a></div><div class="ttdeci">trimFileName($name, $type, $index)</div><div class="ttdoc">trimFileName</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00394">fileupload.class.php:394</a></div></div>
-<div class="ttc" id="aclass_file_upload_html_afe0ab8aa607bb2574ee3f58a43a6dc80"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#afe0ab8aa607bb2574ee3f58a43a6dc80">FileUpload\validate</a></div><div class="ttdeci">validate($uploaded_file, $file, $error, $index)</div><div class="ttdoc">Enter description here ...</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00309">fileupload.class.php:309</a></div></div>
+<div class="ttc" id="aclass_file_upload_html_a4dab3435d071bb6d9586a6465c8d364a"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#a4dab3435d071bb6d9586a6465c8d364a">FileUpload\post</a></div><div class="ttdeci">post()</div><div class="ttdoc">Output data.</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00489">fileupload.class.php:489</a></div></div>
+<div class="ttc" id="aclass_file_upload_html_a53c9d9e21f2bd7253284f8cda2e5257e"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#a53c9d9e21f2bd7253284f8cda2e5257e">FileUpload\handleFileUpload</a></div><div class="ttdeci">handleFileUpload($uploaded_file, $name, $size, $type, $error, $index)</div><div class="ttdoc">handleFileUpload</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00425">fileupload.class.php:425</a></div></div>
+<div class="ttc" id="aclass_file_upload_html_a905430c24ae3d7014c96af258b6f035e"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#a905430c24ae3d7014c96af258b6f035e">FileUpload\upcountName</a></div><div class="ttdeci">upcountName($name)</div><div class="ttdoc">Enter description here ...</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00382">fileupload.class.php:382</a></div></div>
+<div class="ttc" id="aclass_file_upload_html_a99a6ce54ce558664dbcdee73ff1138c4"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#a99a6ce54ce558664dbcdee73ff1138c4">FileUpload\getFileObject</a></div><div class="ttdeci">getFileObject($file_name)</div><div class="ttdoc">getFileObject</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00239">fileupload.class.php:239</a></div></div>
+<div class="ttc" id="aclass_file_upload_html_abbc8a7ff102eff307e883674b4b47733"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#abbc8a7ff102eff307e883674b4b47733">FileUpload\upcountNameCallback</a></div><div class="ttdeci">upcountNameCallback($matches)</div><div class="ttdoc">Enter description here ...</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00369">fileupload.class.php:369</a></div></div>
+<div class="ttc" id="aclass_file_upload_html_abd45147563311c4baa48a20ec1c2182a"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#abd45147563311c4baa48a20ec1c2182a">FileUpload\createScaledImage</a></div><div class="ttdeci">createScaledImage($file_name, $options)</div><div class="ttdoc">Create thumbs of a file uploaded.</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00277">fileupload.class.php:277</a></div></div>
+<div class="ttc" id="aclass_file_upload_html_ad00b20760e55e963be3f696380d0c472"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#ad00b20760e55e963be3f696380d0c472">FileUpload\getFullUrl</a></div><div class="ttdeci">getFullUrl()</div><div class="ttdoc">Return full URL.</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00205">fileupload.class.php:205</a></div></div>
+<div class="ttc" id="aclass_file_upload_html_ae3adf44a00b182e77a8c9db35a5751de"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#ae3adf44a00b182e77a8c9db35a5751de">FileUpload\trimFileName</a></div><div class="ttdeci">trimFileName($name, $type, $index)</div><div class="ttdoc">trimFileName</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00395">fileupload.class.php:395</a></div></div>
+<div class="ttc" id="aclass_file_upload_html_afe0ab8aa607bb2574ee3f58a43a6dc80"><div class="ttname"><a href="../../d3/dde/class_file_upload.html#afe0ab8aa607bb2574ee3f58a43a6dc80">FileUpload\validate</a></div><div class="ttdeci">validate($uploaded_file, $file, $error, $index)</div><div class="ttdoc">Enter description here ...</div><div class="ttdef"><b>Definition:</b> <a href="../../d4/d53/fileupload_8class_8php_source.html#l00310">fileupload.class.php:310</a></div></div>
 <div class="ttc" id="afiles_8lib_8php_html_a6eae215d9ae3264e6ea5bb31c388e6d1"><div class="ttname"><a href="../../de/d28/files_8lib_8php.html#a6eae215d9ae3264e6ea5bb31c388e6d1">dol_move_uploaded_file</a></div><div class="ttdeci">dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan=0, $uploaderrorcode=0, $nohook=0, $varfiles='addedfile', $upload_dir='')</div><div class="ttdoc">Make control on an uploaded file from an GUI page and move it to final destination.</div><div class="ttdef"><b>Definition:</b> <a href="../../de/d28/files_8lib_8php_source.html#l01111">files.lib.php:1111</a></div></div>
 <div class="ttc" id="afunctions_8lib_8php_html_a1e3738fdabd2e908a7bbece2e702485b"><div class="ttname"><a href="../../d9/d69/functions_8lib_8php.html#a1e3738fdabd2e908a7bbece2e702485b">dol_mimetype</a></div><div class="ttdeci">dol_mimetype($file, $default='application/octet-stream', $mode=0)</div><div class="ttdoc">Return MIME type of a file from its name with extension.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d69/functions_8lib_8php_source.html#l10038">functions.lib.php:10038</a></div></div>
 <div class="ttc" id="afunctions_8lib_8php_html_a5b2b52738954b2638dc9aa54bf019bd6"><div class="ttname"><a href="../../d9/d69/functions_8lib_8php.html#a5b2b52738954b2638dc9aa54bf019bd6">dol_include_once</a></div><div class="ttdeci">if(!function_exists('dol_getprefix')) dol_include_once($relpath, $classname='')</div><div class="ttdoc">Make an include_once using default root and alternate root if it fails.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d69/functions_8lib_8php_source.html#l01023">functions.lib.php:1023</a></div></div>
@@ -583,7 +584,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Mon Jan 2 2023 15:01:53 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Tue Jan 3 2023 15:02:25 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>

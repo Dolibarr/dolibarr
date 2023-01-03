@@ -1361,26 +1361,36 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l01269"></a><span class="lineno"> 1269</span>&#160;<span class="comment">// Show total line</span></div>
 <div class="line"><a name="l01270"></a><span class="lineno"> 1270</span>&#160;include DOL_DOCUMENT_ROOT.<span class="stringliteral">&#39;/core/tpl/list_print_total.tpl.php&#39;</span>;</div>
 <div class="line"><a name="l01271"></a><span class="lineno"> 1271</span>&#160; </div>
-<div class="line"><a name="l01272"></a><span class="lineno"> 1272</span>&#160; </div>
-<div class="line"><a name="l01273"></a><span class="lineno"> 1273</span>&#160;$parameters = array(<span class="stringliteral">&#39;arrayfields&#39;</span>=&gt;$arrayfields, <span class="stringliteral">&#39;sql&#39;</span>=&gt;$sql);</div>
-<div class="line"><a name="l01274"></a><span class="lineno"> 1274</span>&#160;$reshook = $hookmanager-&gt;executeHooks(<span class="stringliteral">&#39;printFieldListFooter&#39;</span>, $parameters, $object, $action); <span class="comment">// Note that $action and $object may have been modified by hook</span></div>
-<div class="line"><a name="l01275"></a><span class="lineno"> 1275</span>&#160;print $hookmanager-&gt;resPrint;</div>
-<div class="line"><a name="l01276"></a><span class="lineno"> 1276</span>&#160; </div>
-<div class="line"><a name="l01277"></a><span class="lineno"> 1277</span>&#160;print <span class="stringliteral">&quot;&lt;/table&gt;&quot;</span>;</div>
-<div class="line"><a name="l01278"></a><span class="lineno"> 1278</span>&#160;print <span class="stringliteral">&#39;&lt;/div&gt;&#39;</span>;</div>
-<div class="line"><a name="l01279"></a><span class="lineno"> 1279</span>&#160; </div>
-<div class="line"><a name="l01280"></a><span class="lineno"> 1280</span>&#160;<span class="comment">// TODO Replace this with mass delete action</span></div>
-<div class="line"><a name="l01281"></a><span class="lineno"> 1281</span>&#160;<span class="comment">//if ($user-&gt;rights-&gt;accounting-&gt;mouvements-&gt;supprimer_tous) {</span></div>
-<div class="line"><a name="l01282"></a><span class="lineno"> 1282</span>&#160;<span class="comment">//  print &#39;&lt;div class=&quot;tabsAction tabsActionNoBottom&quot;&gt;&#39;.&quot;\n&quot;;</span></div>
-<div class="line"><a name="l01283"></a><span class="lineno"> 1283</span>&#160;<span class="comment">//  print &#39;&lt;a class=&quot;butActionDelete&quot; name=&quot;button_delmvt&quot; href=&quot;&#39;.$_SERVER[&quot;PHP_SELF&quot;].&#39;?action=delbookkeepingyear&amp;token=&#39;.newToken().($param ? &#39;&amp;&#39;.$param : &#39;&#39;).&#39;&quot;&gt;&#39;.$langs-&gt;trans(&quot;DeleteMvt&quot;).&#39;&lt;/a&gt;&#39;;</span></div>
-<div class="line"><a name="l01284"></a><span class="lineno"> 1284</span>&#160;<span class="comment">//  print &#39;&lt;/div&gt;&#39;;</span></div>
-<div class="line"><a name="l01285"></a><span class="lineno"> 1285</span>&#160;<span class="comment">//}</span></div>
+<div class="line"><a name="l01272"></a><span class="lineno"> 1272</span>&#160;<span class="comment">// If no record found</span></div>
+<div class="line"><a name="l01273"></a><span class="lineno"> 1273</span>&#160;<span class="keywordflow">if</span> ($num == 0) {</div>
+<div class="line"><a name="l01274"></a><span class="lineno"> 1274</span>&#160;  $colspan = 1;</div>
+<div class="line"><a name="l01275"></a><span class="lineno"> 1275</span>&#160;  <span class="keywordflow">foreach</span> ($arrayfields as $key =&gt; $val) {</div>
+<div class="line"><a name="l01276"></a><span class="lineno"> 1276</span>&#160;    <span class="keywordflow">if</span> (!empty($val[<span class="stringliteral">&#39;checked&#39;</span>])) {</div>
+<div class="line"><a name="l01277"></a><span class="lineno"> 1277</span>&#160;      $colspan++;</div>
+<div class="line"><a name="l01278"></a><span class="lineno"> 1278</span>&#160;    }</div>
+<div class="line"><a name="l01279"></a><span class="lineno"> 1279</span>&#160;  }</div>
+<div class="line"><a name="l01280"></a><span class="lineno"> 1280</span>&#160;  print <span class="stringliteral">&#39;&lt;tr&gt;&lt;td colspan=&quot;&#39;</span>.$colspan.<span class="stringliteral">&#39;&quot;&gt;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;NoRecordFound&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&#39;</span>;</div>
+<div class="line"><a name="l01281"></a><span class="lineno"> 1281</span>&#160;}</div>
+<div class="line"><a name="l01282"></a><span class="lineno"> 1282</span>&#160; </div>
+<div class="line"><a name="l01283"></a><span class="lineno"> 1283</span>&#160;$parameters = array(<span class="stringliteral">&#39;arrayfields&#39;</span>=&gt;$arrayfields, <span class="stringliteral">&#39;sql&#39;</span>=&gt;$sql);</div>
+<div class="line"><a name="l01284"></a><span class="lineno"> 1284</span>&#160;$reshook = $hookmanager-&gt;executeHooks(<span class="stringliteral">&#39;printFieldListFooter&#39;</span>, $parameters, $object, $action); <span class="comment">// Note that $action and $object may have been modified by hook</span></div>
+<div class="line"><a name="l01285"></a><span class="lineno"> 1285</span>&#160;print $hookmanager-&gt;resPrint;</div>
 <div class="line"><a name="l01286"></a><span class="lineno"> 1286</span>&#160; </div>
-<div class="line"><a name="l01287"></a><span class="lineno"> 1287</span>&#160;print <span class="stringliteral">&#39;&lt;/form&gt;&#39;</span>;</div>
-<div class="line"><a name="l01288"></a><span class="lineno"> 1288</span>&#160; </div>
-<div class="line"><a name="l01289"></a><span class="lineno"> 1289</span>&#160;<span class="comment">// End of page</span></div>
-<div class="line"><a name="l01290"></a><span class="lineno"> 1290</span>&#160;<a class="code" href="../../d6/d7c/asterisk_2wrapper_8php.html#aebbb85b0adc465834787866f31885fc5">llxFooter</a>();</div>
-<div class="line"><a name="l01291"></a><span class="lineno"> 1291</span>&#160;$db-&gt;close();</div>
+<div class="line"><a name="l01287"></a><span class="lineno"> 1287</span>&#160;print <span class="stringliteral">&quot;&lt;/table&gt;&quot;</span>;</div>
+<div class="line"><a name="l01288"></a><span class="lineno"> 1288</span>&#160;print <span class="stringliteral">&#39;&lt;/div&gt;&#39;</span>;</div>
+<div class="line"><a name="l01289"></a><span class="lineno"> 1289</span>&#160; </div>
+<div class="line"><a name="l01290"></a><span class="lineno"> 1290</span>&#160;<span class="comment">// TODO Replace this with mass delete action</span></div>
+<div class="line"><a name="l01291"></a><span class="lineno"> 1291</span>&#160;<span class="comment">//if ($user-&gt;rights-&gt;accounting-&gt;mouvements-&gt;supprimer_tous) {</span></div>
+<div class="line"><a name="l01292"></a><span class="lineno"> 1292</span>&#160;<span class="comment">//  print &#39;&lt;div class=&quot;tabsAction tabsActionNoBottom&quot;&gt;&#39;.&quot;\n&quot;;</span></div>
+<div class="line"><a name="l01293"></a><span class="lineno"> 1293</span>&#160;<span class="comment">//  print &#39;&lt;a class=&quot;butActionDelete&quot; name=&quot;button_delmvt&quot; href=&quot;&#39;.$_SERVER[&quot;PHP_SELF&quot;].&#39;?action=delbookkeepingyear&amp;token=&#39;.newToken().($param ? &#39;&amp;&#39;.$param : &#39;&#39;).&#39;&quot;&gt;&#39;.$langs-&gt;trans(&quot;DeleteMvt&quot;).&#39;&lt;/a&gt;&#39;;</span></div>
+<div class="line"><a name="l01294"></a><span class="lineno"> 1294</span>&#160;<span class="comment">//  print &#39;&lt;/div&gt;&#39;;</span></div>
+<div class="line"><a name="l01295"></a><span class="lineno"> 1295</span>&#160;<span class="comment">//}</span></div>
+<div class="line"><a name="l01296"></a><span class="lineno"> 1296</span>&#160; </div>
+<div class="line"><a name="l01297"></a><span class="lineno"> 1297</span>&#160;print <span class="stringliteral">&#39;&lt;/form&gt;&#39;</span>;</div>
+<div class="line"><a name="l01298"></a><span class="lineno"> 1298</span>&#160; </div>
+<div class="line"><a name="l01299"></a><span class="lineno"> 1299</span>&#160;<span class="comment">// End of page</span></div>
+<div class="line"><a name="l01300"></a><span class="lineno"> 1300</span>&#160;<a class="code" href="../../d6/d7c/asterisk_2wrapper_8php.html#aebbb85b0adc465834787866f31885fc5">llxFooter</a>();</div>
+<div class="line"><a name="l01301"></a><span class="lineno"> 1301</span>&#160;$db-&gt;close();</div>
 <div class="ttc" id="aaccounting_8lib_8php_html_a17be54c297b75f0f7dabf34d928a0cb7"><div class="ttname"><a href="../../d5/d82/accounting_8lib_8php.html#a17be54c297b75f0f7dabf34d928a0cb7">length_accountg</a></div><div class="ttdeci">length_accountg($account)</div><div class="ttdoc">Return General accounting account with defined length (used for product and miscellaneous)</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d82/accounting_8lib_8php_source.html#l00094">accounting.lib.php:94</a></div></div>
 <div class="ttc" id="aaccounting_8lib_8php_html_ac3d30927502f7d9deafaed2dbf83f405"><div class="ttname"><a href="../../d5/d82/accounting_8lib_8php.html#ac3d30927502f7d9deafaed2dbf83f405">length_accounta</a></div><div class="ttdeci">length_accounta($accounta)</div><div class="ttdoc">Return Auxiliary accounting account of thirdparties with defined length.</div><div class="ttdef"><b>Definition:</b> <a href="../../d5/d82/accounting_8lib_8php_source.html#l00133">accounting.lib.php:133</a></div></div>
 <div class="ttc" id="aasterisk_2wrapper_8php_html_a3e1c89b902a5beaa3d5476a09cd591ae"><div class="ttname"><a href="../../d6/d7c/asterisk_2wrapper_8php.html#a3e1c89b902a5beaa3d5476a09cd591ae">llxHeader</a></div><div class="ttdeci">if(!defined('NOREQUIRESOC')) if(!defined('NOREQUIRETRAN')) if(!defined('NOTOKENRENEWAL')) if(!defined('NOREQUIREMENU')) if(!defined('NOREQUIREHTML')) if(!defined('NOREQUIREAJAX')) llxHeader()</div><div class="ttdoc">Empty header.</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d7c/asterisk_2wrapper_8php_source.html#l00056">wrapper.php:56</a></div></div>
@@ -1426,7 +1436,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Mon Jan 2 2023 15:01:42 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Tue Jan 3 2023 15:02:04 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>
