@@ -2277,7 +2277,7 @@ class EmailCollector extends CommonObject
 									'fields' => array('ref'),
 									'class' => 'recruitment/class/recruitmentjobposition.class.php',
 									'object' => 'RecruitmentJobPosition'),
-								'recruitment/recruitmentjobposition' => array('table' => 'recruitment_recruitmentcandidature',
+								'recruitment/recruitmentcandidature' => array('table' => 'recruitment_recruitmentcandidature',
 									'fields' => array('ref'),
 									'class' => 'recruitment/class/recruitmentcandidature.class.php',
 									'object' => ' RecruitmentCandidature'),

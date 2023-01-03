@@ -158,14 +158,16 @@ foreach ($fulltree as $key => $val) {
 	$categstatic->ref = $val['label'];
 	$categstatic->color = $val['color'];
 	$categstatic->type = $type;
+
 	$li = $categstatic->getNomUrl(1, '', 60);
+
 	$desc = dol_htmlcleanlastbr($val['description']);
 
 	$data[] = array(
-	'rowid'=>$val['rowid'],
-	'fk_menu'=>$val['fk_menu'],
-	'fk_menu'=>$val['fk_parent'],
-	'label'=>$val['label']
+		'rowid'=>$val['rowid'],
+		'fk_menu'=>$val['fk_menu'],
+		'fk_parent'=>$val['fk_parent'],
+		'label'=>$val['label']
 	);
 }
 
