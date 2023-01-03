@@ -207,6 +207,8 @@ ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_tx double(24,8) N
 
 -- VMYSQL4.3 ALTER TABLE llx_hrm_evaluationdet CHANGE COLUMN `rank` rankorder integer;
 -- VPGSQL8.2 ALTER TABLE llx_hrm_evaluationdet CHANGE COLUMN rank rankorder integer;
+-- VMYSQL4.3 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN `rank` rankorder integer;
+-- VPGSQL8.2 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN rank rankorder integer;
 
 
 -- Rename const to hide public and private notes (fix allow notes const was used to hide)
@@ -388,4 +390,3 @@ ALTER TABLE llx_opensurvey_user_studs ADD COLUMN date_creation datetime NULL;
 ALTER TABLE llx_opensurvey_comments ADD COLUMN date_creation datetime NULL;
 
 ALTER TABLE llx_c_tva ADD COLUMN use_default tinyint DEFAULT 0;
-
