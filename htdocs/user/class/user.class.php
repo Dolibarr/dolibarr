@@ -436,7 +436,7 @@ class User extends CommonObject
 		$sql .= " u.admin, u.login, u.note_private, u.note_public,";
 		$sql .= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
 		$sql .= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.fk_user_expense_validator, u.fk_user_holiday_validator,";
-		$sql .= " u.statut, u.lang, u.entity,";
+		$sql .= " u.statut as status, u.lang, u.entity,";
 		$sql .= " u.datec as datec,";
 		$sql .= " u.tms as datem,";
 		$sql .= " u.datelastlogin as datel,";
@@ -553,7 +553,10 @@ class User extends CommonObject
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->note			= $obj->note_private;	// deprecated
-				$this->statut		= $obj->statut;
+
+				$this->statut		= $obj->status;			// deprecated
+				$this->status		= $obj->status;
+
 				$this->photo		= $obj->photo;
 				$this->openid		= $obj->openid;
 				$this->lang			= $obj->lang;
@@ -1350,7 +1353,10 @@ class User extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if ($this->statut == $status) {
+		if (isset($this->statut) && $this->statut == $status) {
+			return 0;
+		}
+		if (isset($this->status) && $this->status == $status) {
 			return 0;
 		}
 
