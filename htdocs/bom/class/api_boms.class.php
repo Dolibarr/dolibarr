@@ -206,7 +206,7 @@ class Boms extends DolibarrApi
 			$this->bom->$field = $value;
 		}
 
-		$this->CheckRefNumbering();
+		$this->checkRefNumbering();
 
 		if (!$this->bom->create(DolibarrApiAccess::$user)) {
 			throw new RestException(500, "Error creating BOM", array_merge(array($this->bom->error), $this->bom->errors));
@@ -244,7 +244,7 @@ class Boms extends DolibarrApi
 			$this->bom->$field = $value;
 		}
 
-		$this->CheckRefNumbering();
+		$this->checkRefNumbering();
 
 		if ($this->bom->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
@@ -547,7 +547,7 @@ class Boms extends DolibarrApi
 	 *
 	 * @return void
 	 */
-	private function CheckRefNumbering(): void
+	private function checkRefNumbering(): void
 	{
 		$ref = substr($this->bom->ref, 1, 4);
 		if ($this->bom->status > 0 && (empty($this->bom->ref) || $ref == 'PROV')) {
