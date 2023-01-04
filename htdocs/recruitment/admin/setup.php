@@ -92,11 +92,11 @@ if ((float) DOL_VERSION >= 6) {
 }
 
 if ($action == 'updateMask') {
-	$maskconstjob = GETPOST('maskconstjob', 'aZ09');
-	$maskjob = GETPOST('maskjob', 'alpha');
+	$maskconst = GETPOST('maskconstjob', 'alpha');
+	$maskvalue = GETPOST('maskjob', 'alpha');
 
-	if ($maskconstjob && preg_match('/_MASK$/', $maskconstjob)) {
-		$res = dolibarr_set_const($db, $maskconstjob, $maskjob, 'chaine', 0, '', $conf->entity);
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
+		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 
 	if (!($res > 0)) {

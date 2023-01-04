@@ -91,11 +91,11 @@ if ($action == 'update') {
 		}
 	}
 } elseif ($action == 'updateMask') {
-	$maskconstorder = GETPOST('maskconstorder', 'aZ09');
-	$maskorder = GETPOST('maskorder', 'alpha');
+	$maskconst = GETPOST('maskconstEvaluation', 'aZ09');
+	$maskvalue = GETPOST('maskEvaluation', 'alpha');
 
-	if ($maskconstorder && preg_match('/_MASK$/', $maskconstorder)) {
-		$res = dolibarr_set_const($db, $maskconstorder, $maskorder, 'chaine', 0, '', $conf->entity);
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
+		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
