@@ -692,7 +692,7 @@ if ($action == 'create') {
 					$objp = $db->fetch_object($resql);
 
 					// Multilangs
-					if (!empty($conf->global->MAIN_MULTILANGS)) { // si l'option est active
+					if (getDolGlobalInt('MAIN_MULTILANGS')) { // si l'option est active
 						$sql = "SELECT label";
 						$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
 						$sql .= " WHERE fk_product = ".((int) $objp->rowid);
@@ -789,6 +789,7 @@ if ($action == 'create') {
 						print $langs->trans("CorrectStock");
 						print "</a></td>";
 					}
+
 					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 						if ($i == 0) {
 							$units = $productstatic->fk_unit;
@@ -796,11 +797,13 @@ if ($action == 'create') {
 							$sameunits = false;
 						}
 					}
+
 					print "</tr>";
 					$i++;
 				}
 				$db->free($resql);
 
+				// Total
 				print '<tr class="liste_total"><td class="liste_total" colspan="2">'.$langs->trans("Total").'</td>';
 				print '<td class="liste_total right">';
 				$valtoshow = price2num($totalunit, 'MS');
@@ -818,9 +821,15 @@ if ($action == 'create') {
 					print '<td class="liste_total">&nbsp;</td>';
 					print '<td class="liste_total right">'.price(price2num($totalvaluesell, 'MT')).'</td>';
 				}
-				print '<td class="liste_total">&nbsp;</td>';
-				print '<td class="liste_total">&nbsp;</td>';
-				print '<td class="liste_total">&nbsp;</td>';
+
+				if ($user->rights->stock->mouvement->creer) {
+					print '<td class="liste_total">&nbsp;</td>';
+				}
+
+				if ($user->rights->stock->creer) {
+					print '<td class="liste_total">&nbsp;</td>';
+				}
+
 				print '</tr>';
 			} else {
 				dol_print_error($db);

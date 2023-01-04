@@ -483,6 +483,20 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				migrate_user_photospath();
 				migrate_user_photospath2();
 			}
+
+			// Scripts for 17.0
+			$afterversionarray = explode('.', '16.0.9');
+			$beforeversionarray = explode('.', '17.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_contractdet_rank();
+			}
+
+			// Scripts for 18.0
+			$afterversionarray = explode('.', '170.9');
+			$beforeversionarray = explode('.', '18.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_contractdet_rank();
+			}
 		}
 
 
@@ -4478,7 +4492,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @return	void
+ * @return	int						<0 if KO, >0 if OK
  */
 function migrate_reload_menu($db, $langs, $conf)
 {
@@ -4508,6 +4522,8 @@ function migrate_reload_menu($db, $langs, $conf)
 
 		print '</td></tr>';
 	}
+
+	return 1;
 }
 
 /**
@@ -5134,6 +5150,64 @@ function migrate_export_import_profiles($mode = 'export')
 	if ($resultstring) {
 		print $resultstring;
 	} else {
+		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+	}
+}
+
+/**
+ * Migrate Rank into contract  line
+ *
+ * @return  void
+ */
+function migrate_contractdet_rank()
+{
+
+	global $db, $langs;
+
+	$error = 0;
+	$resultstring = '';
+
+	$db->begin();
+	print '<tr class="trforrunsql"><td colspan="4">';
+	print '<b>'.$langs->trans('MigrationContractLineRank')."</b><br>\n";
+
+	$sql = "SELECT c.rowid as cid ,cd.rowid as cdid,cd.rang FROM ".$db->prefix()."contratdet as cd INNER JOIN ".$db->prefix()."contrat as c ON c.rowid=cd.fk_contrat AND cd.rang=0";
+	$sql .=" ORDER BY c.rowid,cd.rowid";
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$currentRank=0;
+		$current_contract=0;
+		while ($obj = $db->fetch_object($resql)) {
+			if (empty($current_contract) || $current_contract==$obj->cid) {
+				$currentRank++;
+			} else {
+				$currentRank=1;
+			}
+
+			$sqlUpd = "UPDATE ".$db->prefix()."contratdet SET rang=".(int) $currentRank." WHERE rowid=".(int) $obj->cdid;
+			$resultstring = '.';
+			print $resultstring;
+			$resqlUpd = $db->query($sqlUpd);
+			if (!$resqlUpd) {
+				dol_print_error($db);
+				$error++;
+			}
+
+			$current_contract =  $obj->cid;
+		}
+	} else {
+		$error++;
+	}
+	if (!$error) {
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+
+	print '</td></tr>';
+
+	if (!$resultstring) {
 		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
 	}
 }

@@ -198,7 +198,7 @@ if (!empty($array_query['cust_prospect_status'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
 print '</td><td>';
-print $formadvtargetemaling->multiselectProspectionStatus($array_query['cust_prospect_status'], 'cust_prospect_status', 1);
+print $formadvtargetemaling->multiselectProspectionStatus($array_query['cust_prospect_status'], 'cust_prospect_status');
 print '</td><td>'."\n";
 print '</td></tr>'."\n";
 
@@ -243,7 +243,7 @@ print '</td><td>'."\n";
 print '</td></tr>'."\n";
 
 // Customer Default Langauge
-if (!empty($conf->global->MAIN_MULTILANGS)) {
+if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	print '<tr><td>'.$langs->trans("DefaultLang");
 	if (!empty($array_query['cust_language'])) {
 		print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');

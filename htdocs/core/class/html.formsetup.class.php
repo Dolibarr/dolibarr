@@ -662,7 +662,7 @@ class FormSetupItem
 	{
 		global $conf;
 		if (isset($conf->global->{$this->confKey})) {
-			$this->fieldValue = $conf->global->{$this->confKey};
+			$this->fieldValue = getDolGlobalString($this->confKey);
 			return true;
 		} else {
 			$this->fieldValue = null;
@@ -758,6 +758,8 @@ class FormSetupItem
 				$val = GETPOST($this->confKey, 'array');
 				if ($val && is_array($val)) {
 					$val_const = implode(',', $val);
+				} else {
+					$val_const = '';
 				}
 			} elseif ($this->type == 'html') {
 				$val_const = GETPOST($this->confKey, 'restricthtml');
@@ -1077,7 +1079,7 @@ class FormSetupItem
 			$tmp = explode(':', $this->type);
 
 			$template = $formmail->getEMailTemplate($this->db, $tmp[1], $user, $this->langs, $this->fieldValue);
-			if ($template<0) {
+			if (is_numeric($template) && $template < 0) {
 				$this->setErrors($formmail->errors);
 			}
 			$out.= $this->langs->trans($template->label);

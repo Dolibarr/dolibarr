@@ -353,10 +353,10 @@ if (GETPOST("account") || GETPOST("ref")) {
 				print "<td>".$refcomp."</td>";
 				if ($tmpobj->total_ttc < 0) {
 					print '<td class="nowrap right">'.price(abs($total_ttc))."</td><td>&nbsp;</td>";
-				};
+				}
 				if ($tmpobj->total_ttc >= 0) {
 					print '<td>&nbsp;</td><td class="nowrap right">'.price($total_ttc)."</td>";
-				};
+				}
 				print '<td class="nowrap right">'.price($solde).'</td>';
 				print "</tr>";
 			}

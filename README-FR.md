@@ -56,6 +56,10 @@ Vous pouvez aussi utiliser un serveur Web et une base de données prise en charg
 
 Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
 
+- Faites une sauvegarde de votre instance [voir ce tutorial](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
+
+- Vérifiez que la nouvelle version est compatible avec la version PHP de votre serveur [voir PHP support](https://wiki.dolibarr.org/index.php/Releases).
+
 - Ecrasez les vieux fichiers dans le vieux répertoire 'dolibarr' par les fichiers
   fournis dans ce nouveau package.
 

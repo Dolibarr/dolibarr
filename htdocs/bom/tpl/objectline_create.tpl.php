@@ -73,7 +73,7 @@ if ($nolinesbefore) {
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 
 	if ($filtertype != 1) {
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="linecoluseunit left">';
 			print '<span id="title_units">';
 			print $langs->trans('Unit');
@@ -84,7 +84,7 @@ if ($nolinesbefore) {
 		print '<td class="linecollost right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
 	} else {
 		print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
-		if ($conf->workstation->enabled) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
+		if (isModEnabled('workstation')) print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
 		print '<td class="linecoltotalcost right">' .  $form->textwithpicto($langs->trans('TotalCost'), '') . '</td>';
 	}
 
@@ -126,6 +126,17 @@ if (!empty($conf->global->BOM_SUB_BOM) && $filtertype!=1) {
 	// TODO Add component to select a BOM
 	$form->select_bom();
 }
+
+if (is_object($objectline)) {
+	$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', 1, 'line');
+
+	if (!empty($temps)) {
+		print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';
+		print $temps;
+		print '</div>';
+	}
+}
+
 print '</td>';
 
 
@@ -134,7 +145,7 @@ print '<td class="bordertop nobottom linecolqty right"><input type="text" size="
 print '</td>';
 
 if ($filtertype != 1) {
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
 		print '</td>';

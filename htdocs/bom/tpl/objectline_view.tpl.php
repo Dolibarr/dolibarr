@@ -100,6 +100,17 @@ if ($tmpbom->id > 0) {
 	print $tmpproduct->getNomUrl(1);
 	print ' - '.$tmpproduct->label;
 }
+
+// Line extrafield
+if (!empty($extrafields)) {
+	$temps = $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
+	if (!empty($temps)) {
+		print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+		print $temps;
+		print '</div>';
+	}
+}
+
 print '</td>';
 
 print '<td class="linecolqty nowrap right">';
@@ -108,7 +119,7 @@ echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but 
 print '</td>';
 
 if ($filtertype != 1) {
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		print '<td class="linecoluseunit nowrap left">';
 		$label = $tmpproduct->getLabelOfUnit('long');
 		if ($label !== '') {
@@ -144,8 +155,8 @@ if ($filtertype != 1) {
 
 	print '</td>';
 
-	//Poste de travail
-	if ($conf->workstation->enabled) {
+	// Work station
+	if (isModEnabled('workstation')) {
 		$workstation = new Workstation($object->db);
 		$res = $workstation->fetch($tmpproduct->fk_default_workstation);
 
@@ -307,12 +318,6 @@ if ($total_cost > 0) {
 		$('#costline_<?php echo $line->id?>').html('<?php echo "<span class=\"amount\">".price($total_cost)."</span>"; ?>');
 	</script>
 	<?php
-}
-
-
-//Line extrafield
-if (!empty($extrafields)) {
-	print $line->showOptionals($extrafields, 'view', array('style'=>'class="drag drop oddeven"', 'colspan'=>$coldisplay), '', '', 1, 'line');
 }
 
 print "<!-- END PHP TEMPLATE objectline_view.tpl.php -->\n";

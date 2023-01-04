@@ -41,6 +41,7 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$type = GETPOST('type', 'aZ');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -61,7 +62,7 @@ $search_company = GETPOST('search_company', 'alpha');
 $search_name = GETPOST('search_name', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
-
+$moreforfilter = GETPOST('moreforfilter', 'alpha');
 if (!$user->rights->don->lire) {
 	accessforbidden();
 }
@@ -86,6 +87,11 @@ $fieldstosearchall = array(
 	'd.lastname'=>'Lastname',
 	'd.firstname'=>'Firstname',
 );
+
+// Security check
+$result = restrictedArea($user, 'don');
+
+
 
 
 /*
@@ -198,7 +204,7 @@ if ($resql) {
 	}
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable liste'.(!empty($moreforfilter) ? " listwithfilterbefore" : "").'">'."\n";
 
 	// Filters lines
 	print '<tr class="liste_titre_filter">';
@@ -233,7 +239,7 @@ if ($resql) {
 		Don::STATUS_PAID=>$langs->trans("DonationStatusPaid"),
 		Don::STATUS_CANCELED=>$langs->trans("Canceled")
 	);
-	print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+	print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100 onrightofpage');
 	print '</td>';
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(0);

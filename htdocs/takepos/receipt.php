@@ -81,11 +81,11 @@ $object->fetch($facid);
 
 // Call to external receipt modules if exist
 $parameters = array();
-$hookmanager->initHooks(array('takeposfrontend'), $facid);
+$hookmanager->initHooks(array('takeposfrontend'));
 $reshook = $hookmanager->executeHooks('TakeposReceipt', $parameters, $object);
 if (!empty($hookmanager->resPrint)) {
 	print $hookmanager->resPrint;
-	exit;
+	return;	// Receipt page can be called by the takepos/send.php page that use ob_start/end so we must use return and not exit to stop page
 }
 
 // IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
@@ -330,7 +330,9 @@ if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeTe
 ?>
 
 <script type="text/javascript">
-	window.print();
+	<?php
+	if ($facid) print 'window.print();'; //Avoid print when is specimen
+	?>
 </script>
 
 </body>

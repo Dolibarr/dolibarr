@@ -83,7 +83,7 @@ if ($id > 0 || !empty($ref)) {
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartydocument', 'globalcard'));
 
-$permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoadd = $user->hasRight('societe', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 // Security check
 if ($user->socid > 0) {
@@ -118,7 +118,7 @@ $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $help_url);
 
 // Show tabs
-if (!empty($conf->notification->enabled)) {
+if (isModEnabled('notification')) {
 	$langs->load("mails");
 }
 $head = societe_prepare_head($object);
@@ -187,8 +187,8 @@ print '</div>';
 print dol_get_fiche_end();
 
 $modulepart = 'societe';
-$permissiontoadd = $user->rights->societe->creer;
-$permtoedit = $user->rights->societe->creer;
+$permissiontoadd = $user->hasRight('societe', 'creer');
+$permtoedit = $user->hasRight('societe', 'creer');
 $param = '&id='.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 

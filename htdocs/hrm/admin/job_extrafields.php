@@ -67,7 +67,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject = $langs->transnoentitiesnoconv("Job");
+$textobject = $langs->transnoentitiesnoconv("JobPosition");
 
 $help_url = '';
 $page_name = "HrmSetup";
@@ -86,14 +86,6 @@ print dol_get_fiche_head($head, 'jobsAttributes', $langs->trans($page_name), -1,
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
-
-
-// Buttons
-if ($action != 'create' && $action != 'edit') {
-	print '<div class="tabsAction">';
-	print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
-	print "</div>";
-}
 
 
 /*

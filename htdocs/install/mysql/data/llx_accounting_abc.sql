@@ -55,7 +55,6 @@ INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES 
 INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'InventoryJournal',                 8, 1, 1);
 
 
-
 -- Accounting Charts / Plans (Templates) for Countries
 
 -- Description of chart of account FR PCG99-ABREGE

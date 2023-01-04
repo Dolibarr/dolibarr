@@ -35,6 +35,9 @@ $langs->loadLangs(array('banks', 'categories'));
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width', 768);
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 200);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('bankstats', 'globalcard'));
+
 // Security check
 if (GETPOST('account') || GETPOST('ref')) {
 	$id = GETPOST('account') ? GETPOST('account') : GETPOST('ref');
@@ -455,7 +458,7 @@ if ($result < 0) {
 			if ($day > ($max + 86400)) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			} else {
-				$datas[$i] = 0 + $solde + $subtotal;
+				$datas[$i] = $solde + $subtotal;
 			}
 			$datamin[$i] = $object->min_desired;
 			$dataall[$i] = $object->min_allowed;

@@ -420,7 +420,7 @@ if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) {
 	$text .= $langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS);
 }
 print info_admin($text);
-print '<br>';
+//print '<br>';
 
 //$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = '';
@@ -447,8 +447,8 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre center"><input type="text" class="width50" name="search_lastresult" value="'.$search_lastresult.'"></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre" align="center">';
-print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Scheduled")), $search_status, 1);
+print '<td class="liste_titre center">';
+print $form->selectarray('search_status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Scheduled")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
 print '</td><td class="liste_titre right">';
 $searchpicto = $form->showFilterButtons();
 print $searchpicto;
@@ -460,18 +460,18 @@ print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "t.rowid", "", $param, '', 
 print_liste_field_titre("CronLabel", $_SERVER["PHP_SELF"], "t.label", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Prority", $_SERVER["PHP_SELF"], "t.priority", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("CronModule", $_SERVER["PHP_SELF"], "t.module_name", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("CronType", '', '', "", $param, '', $sortfield, $sortorder);
+print_liste_field_titre("CronType", '', '', "", $param, '', $sortfield, $sortorder, 'tdoverflowmax100 ');
 print_liste_field_titre("CronFrequency", '', "", "", $param, '', $sortfield, $sortorder);
 //print_liste_field_titre("CronDtStart", $_SERVER["PHP_SELF"], "t.datestart", "", $param, 'align="center"', $sortfield, $sortorder);
 //print_liste_field_titre("CronDtEnd", $_SERVER["PHP_SELF"], "t.dateend", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("CronNbRun", $_SERVER["PHP_SELF"], "t.nbrun", "", $param, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre("CronDtLastLaunch", $_SERVER["PHP_SELF"], "t.datelastrun", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("CronLastResult", $_SERVER["PHP_SELF"], "t.lastresult", "", $param, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre("CronNbRun", $_SERVER["PHP_SELF"], "t.nbrun", "", $param, '', $sortfield, $sortorder, 'right tdoverflowmax50');
+print_liste_field_titre("CronDtLastLaunch", $_SERVER["PHP_SELF"], "t.datelastrun", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("CronLastResult", $_SERVER["PHP_SELF"], "t.lastresult", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("CronLastOutput", $_SERVER["PHP_SELF"], "t.lastoutput", "", $param, '', $sortfield, $sortorder);
-print_liste_field_titre("CronDtNextLaunch", $_SERVER["PHP_SELF"], "t.datenextrun", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "t.status,t.priority", "", $param, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+print_liste_field_titre("CronDtNextLaunch", $_SERVER["PHP_SELF"], "t.datenextrun", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "t.status,t.priority", "", $param, '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>\n";
 
 
@@ -560,19 +560,20 @@ if ($num > 0) {
 		print $form->textwithpicto($text, $texttoshow, 1);
 		print '</td>';
 
-		print '<td>';
+		$s = '';
 		if ($obj->unitfrequency == "60") {
-			print $langs->trans('CronEach')." ".($obj->frequency)." ".$langs->trans('Minutes');
+			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('Minutes') : $langs->trans('Minute'));
+		} elseif ($obj->unitfrequency == "3600") {
+			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('Hours') : $langs->trans('Hour'));
+		} elseif ($obj->unitfrequency == "86400") {
+			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('Days') : $langs->trans('Day'));
+		} elseif ($obj->unitfrequency == "604800") {
+			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('Weeks') : $langs->trans('Week'));
+		} elseif ($obj->unitfrequency == "2678400") {
+			$s = ($obj->frequency)." ".($obj->frequency > 1 ? $langs->trans('Months') : $langs->trans('Month'));
 		}
-		if ($obj->unitfrequency == "3600") {
-			print $langs->trans('CronEach')." ".($obj->frequency)." ".$langs->trans('Hours');
-		}
-		if ($obj->unitfrequency == "86400") {
-			print $langs->trans('CronEach')." ".($obj->frequency)." ".$langs->trans('Days');
-		}
-		if ($obj->unitfrequency == "604800") {
-			print $langs->trans('CronEach')." ".($obj->frequency)." ".$langs->trans('Weeks');
-		}
+		print '<td class="tdoverflowmax125" title="'.$s.'">';
+		print $s;
 		print '</td>';
 
 		/*

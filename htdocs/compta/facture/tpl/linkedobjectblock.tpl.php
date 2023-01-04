@@ -67,18 +67,14 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 			break;
 	}
 	print '</td>';
-	print '<td class="linkedcol-name nowraponall">'.$objectlink->getNomUrl(1).'</td>';
-	print '<td class="linkedcol-ref left">'.$objectlink->ref_client.'</td>';
+	print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
+	print '<td class="linkedcol-ref tdoverflowmax150" title="'.dol_escape_htmltag($objectlink->ref_client).'">'.dol_escape_htmltag($objectlink->ref_client).'</td>';
 	print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
-	print '<td class="linkedcol-amount right">';
+	print '<td class="linkedcol-amount right nowraponall">';
 	if (!empty($objectlink) && $objectlink->element == 'facture' && $user->hasRight('facture', 'lire')) {
-		$sign = 1;
-		if ($objectlink->type == Facture::TYPE_CREDIT_NOTE) {
-			$sign = -1;
-		}
 		if ($objectlink->statut != 3) {
 			// If not abandonned
-			$total = $total + $sign * $objectlink->total_ht;
+			$total += $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} else {
 			echo '<strike>'.price($objectlink->total_ht).'</strike>';

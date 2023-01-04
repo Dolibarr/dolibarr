@@ -72,7 +72,7 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripePayoutList"));
 
-if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox', 'alpha'))) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
@@ -215,15 +215,15 @@ if (!$rowid) {
 			// Status
 			print "<td class='right'>";
 			if ($payout->status == 'paid') {
-				print img_picto($langs->trans("".$payout->status.""), 'statut4');
+				print img_picto($langs->trans($payout->status), 'statut4');
 			} elseif ($payout->status == 'pending') {
-				print img_picto($langs->trans("".$payout->status.""), 'statut7');
+				print img_picto($langs->trans($payout->status), 'statut7');
 			} elseif ($payout->status == 'in_transit') {
-				print img_picto($langs->trans("".$payout->status.""), 'statut7');
+				print img_picto($langs->trans($payout->status), 'statut7');
 			} elseif ($payout->status == 'failed') {
-				print img_picto($langs->trans("".$payout->status.""), 'statut7');
+				print img_picto($langs->trans($payout->status), 'statut7');
 			} elseif ($payout->status == 'canceled') {
-				print img_picto($langs->trans("".$payout->status.""), 'statut8');
+				print img_picto($langs->trans($payout->status), 'statut8');
 			}
 			print '</td>';
 			print "</tr>\n";

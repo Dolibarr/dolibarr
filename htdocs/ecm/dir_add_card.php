@@ -93,18 +93,18 @@ if (!empty($section)) {
 }
 
 // Permissions
-$permtoadd = 0;
-$permtoupload = 0;
+$permissiontoadd = 0;
+$permissiontoupload = 0;
 if ($module == 'ecm') {
-	$permtoadd = $user->rights->ecm->setup;
-	$permtoupload = $user->rights->ecm->upload;
+	$permissiontoadd = $user->rights->ecm->setup;
+	$permissiontoupload = $user->rights->ecm->upload;
 }
 if ($module == 'medias') {
-	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
-	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permissiontoadd = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permissiontoupload = ($user->rights->mailing->creer || $user->rights->website->write);
 }
 
-if (!$permtoadd) {
+if (!$permissiontoadd) {
 	accessforbidden();
 }
 
@@ -115,7 +115,7 @@ if (!$permtoadd) {
  */
 
 // Action ajout d'un produit ou service
-if ($action == 'add' && $permtoadd) {
+if ($action == 'add' && $permissiontoadd) {
 	if ($cancel) {
 		if (!empty($backtopage)) {
 			header("Location: ".$backtopage);
@@ -189,7 +189,7 @@ if ($action == 'add' && $permtoadd) {
 			exit;
 		}
 	}
-} elseif ($action == 'confirm_deletesection' && $confirm == 'yes' && $permtoadd) {
+} elseif ($action == 'confirm_deletesection' && $confirm == 'yes' && $permissiontoadd) {
 	// Deleting file
 	$result = $ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');
@@ -283,11 +283,10 @@ if (empty($action) || $action == 'delete_section') {
 
 	// Actions buttons
 	print '<div class="tabsAction">';
-	if ($user->rights->ecm->setup) {
-		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_section&token='.newToken().'">'.$langs->trans('Delete').'</a>';
-	} else {
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
-	}
+
+	// Delete
+	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->ecm->setup);
+
 	print '</div>';
 }
 

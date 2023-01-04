@@ -47,7 +47,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->bind->write)) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -84,7 +84,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->mouvements->lire)) {
+if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 	accessforbidden();
 }
 
@@ -93,7 +93,7 @@ if (empty($user->rights->accounting->mouvements->lire)) {
  * Actions
  */
 
-if (($action == 'clean' || $action == 'validatehistory') && $user->rights->accounting->bind->write) {
+if (($action == 'clean' || $action == 'validatehistory') && $user->hasRight('accounting', 'bind', 'write')) {
 	// Clean database by removing binding done on non existing or no more existing accounts
 	$db->begin();
 	$sql1 = "UPDATE ".MAIN_DB_PREFIX."facturedet as fd";
@@ -142,7 +142,7 @@ if ($action == 'validatehistory') {
 	}*/
 
 	// Customer Invoice lines (must be same request than into page list.php for manual binding)
-	$sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype,";
+	$sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype, f.fk_facture_source,";
 	$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
 	if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
@@ -207,37 +207,38 @@ if ($action == 'validatehistory') {
 		while ($i < min($num_lines, 10000)) {	// No more than 10000 at once
 			$objp = $db->fetch_object($result);
 
-			$thirdpartystatic->id = $objp->socid;
-			$thirdpartystatic->name = $objp->name;
-			$thirdpartystatic->client = $objp->client;
-			$thirdpartystatic->fournisseur = $objp->fournisseur;
-			$thirdpartystatic->code_client = $objp->code_client;
-			$thirdpartystatic->code_compta_client = $objp->code_compta_client;
-			$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
-			$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
-			$thirdpartystatic->email = $objp->email;
-			$thirdpartystatic->country_code = $objp->country_code;
-			$thirdpartystatic->tva_intra = $objp->tva_intra;
-			$thirdpartystatic->code_compta_product = $objp->company_code_sell;		// The accounting account for product stored on thirdparty object (for level3 suggestion)
+			$thirdpartystatic->id = !empty($objp->socid) ? $objp->socid : 0;
+			$thirdpartystatic->name = !empty($objp->name) ? $objp->name : "";
+			$thirdpartystatic->client = !empty($objp->client) ? $objp->client : "";
+			$thirdpartystatic->fournisseur = !empty($objp->fournisseur) ? $objp->fournisseur : "";
+			$thirdpartystatic->code_client = !empty($objp->code_client) ? $objp->code_client : "";
+			$thirdpartystatic->code_compta_client = !empty($objp->code_compta_client) ? $objp->code_compta_client : "";
+			$thirdpartystatic->code_fournisseur = !empty($objp->code_fournisseur) ? $objp->code_fournisseur : "";
+			$thirdpartystatic->code_compta_fournisseur = !empty($objp->code_compta_fournisseur) ? $objp->code_compta_fournisseur : "";
+			$thirdpartystatic->email = !empty($objp->email) ? $objp->email : "";
+			$thirdpartystatic->country_code = !empty($objp->country_code) ? $objp->country_code : "";
+			$thirdpartystatic->tva_intra = !empty($objp->tva_intra) ? $objp->tva_intra : "";
+			$thirdpartystatic->code_compta_product = !empty($objp->company_code_sell) ? $objp->company_code_sell : "";		// The accounting account for product stored on thirdparty object (for level3 suggestion)
 
 			$product_static->ref = $objp->product_ref;
 			$product_static->id = $objp->product_id;
 			$product_static->type = $objp->type;
 			$product_static->label = $objp->product_label;
-			$product_static->status = $objp->status;
-			$product_static->status_buy = $objp->status_buy;
+			$product_static->status = !empty($objp->status) ? $objp->status : 0;
+			$product_static->status_buy = !empty($objp->status_buy) ? $objp->status_buy : 0;
 			$product_static->accountancy_code_sell = $objp->code_sell;
 			$product_static->accountancy_code_sell_intra = $objp->code_sell_intra;
 			$product_static->accountancy_code_sell_export = $objp->code_sell_export;
-			$product_static->accountancy_code_buy = $objp->code_buy;
-			$product_static->accountancy_code_buy_intra = $objp->code_buy_intra;
-			$product_static->accountancy_code_buy_export = $objp->code_buy_export;
+			$product_static->accountancy_code_buy = !empty($objp->code_buy) ? $objp->code_buy : "";
+			$product_static->accountancy_code_buy_intra = !empty($objp->code_buy_intra) ? $objp->code_buy_intra : "";
+			$product_static->accountancy_code_buy_export = !empty($objp->code_buy_export) ? $objp->code_buy_export : "";
 			$product_static->tva_tx = $objp->tva_tx_prod;
 
 			$facture_static->ref = $objp->ref;
 			$facture_static->id = $objp->facid;
 			$facture_static->type = $objp->ftype;
-			$facture_static->date = $objp->datef;
+			$facture_static->date = $db->jdate($objp->datef);
+			$facture_static->fk_facture_source = $objp->fk_facture_source;
 
 			$facture_static_det->id = $objp->rowid;
 			$facture_static_det->total_ht = $objp->total_ht;

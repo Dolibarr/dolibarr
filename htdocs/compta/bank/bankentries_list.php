@@ -1561,6 +1561,7 @@ if ($resql) {
 
 			$companylinked_id = 0;
 			$userlinked_id = 0;
+			$type_link = "";
 
 			//payment line type to define user display and user or company linked
 			foreach ($links as $key => $value) {

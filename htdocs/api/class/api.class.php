@@ -113,9 +113,8 @@ class DolibarrApi
 		unset($object->pass);
 		unset($object->pass_indatabase);
 
-		// Remove linkedObjects. We should already have linkedObjectsIds that avoid huge responses
+		// Remove linkedObjects. We should already have and keep only linkedObjectsIds that avoid huge responses
 		unset($object->linkedObjects);
-		unset($object->linkedObjectsFullLoaded);
 		//unset($object->lines[$i]->linked_objects);		// This is the array to create linked object during create
 
 		unset($object->fields);
@@ -127,7 +126,6 @@ class DolibarrApi
 
 		unset($object->ref_previous);
 		unset($object->ref_next);
-		unset($object->ref_int);
 		unset($object->imgWidth);
 		unset($object->imgHeight);
 		unset($object->barcode_type_code);

@@ -88,12 +88,12 @@ if ($idprod > 0) {
 				$label .= ' ('.$productSupplier->fourn_ref.')';
 			}
 
-			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price2num($price, 0, '', 0), "label" => $label, "title" => $title); // For price field, we must use price2num(), for label or title, price()
+			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price2num($price, '', 0), "label" => $label, "title" => $title); // For price field, we must use price2num(), for label or title, price()
 		}
 	}
 
 	// After best supplier prices and before costprice
-	if (!empty($conf->stock->enabled)) {
+	if (isModEnabled('stock')) {
 		// Add price for pmp
 		$price = $producttmp->pmp;
 		if (empty($price) && !empty($conf->global->PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY)) {

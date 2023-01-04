@@ -901,6 +901,8 @@ function DisplayPositionList()
 // Part to create
 if ($action == 'create') {
 	$object = new Position($db);
+	// Fetch optionals attributes and labels
+	$extrafields->fetch_name_optionals_label($object->table_element);
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Position")), '', 'object_' . $object->picto);
 
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
