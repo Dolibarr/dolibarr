@@ -1630,7 +1630,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 
 		if (!empty($arrayfields['t.task_duration']['checked'])) {
-
 			if ($search_timespent_starthour || $search_timespent_startmin) {
 				$timespent_duration_start = $search_timespent_starthour * 60 * 60; // We store duration in seconds
 				$timespent_duration_start += ($search_timespent_startmin ? $search_timespent_startmin : 0) * 60; // We store duration in seconds
@@ -1642,7 +1641,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				$timespent_duration_end += ($search_timespent_endmin ? $search_timespent_endmin : 0) * 60; // We store duration in seconds
 				$sql .= " AND t.task_duration <= " . $timespent_duration_end;
 			}
-			
 		}
 
 		$sql .= dolSqlDateFilter('t.task_datehour', $search_day, $search_month, $search_year);
