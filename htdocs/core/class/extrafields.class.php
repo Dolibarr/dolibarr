@@ -1254,7 +1254,7 @@ class ExtraFields
 					dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if ($resql) {
-						$out .= '<option value="0">&nbsp;</option>';
+						if (!$required) $out .= '<option value="0">&nbsp;</option>';
 						$num = $this->db->num_rows($resql);
 						$i = 0;
 						while ($i < $num) {
@@ -1310,13 +1310,11 @@ class ExtraFields
 				} else {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
-					$out .= '<option value="0">&nbsp;</option>';
-					if (is_array($data)) {
-						foreach ($data as $data_key => $data_value) {
-							$out .= '<option value="'.$data_key.'"';
-							$out .= ($value == $data_key ? ' selected' : '');
-							$out .= '>'.$data_value.'</option>';
-						}
+					if ($required) $out .= '<option value="0">&nbsp;</option>';
+					foreach ($data as $data_key => $data_value) {
+						$out .= '<option value="'.$data_key.'"';
+						$out .= ($value == $data_key ? ' selected' : '');
+						$out .= '>'.$data_value.'</option>';
 					}
 				}
 			}

@@ -547,7 +547,7 @@ if ($object->id > 0) {
 	if (isModEnabled("product") || isModEnabled("service")) {
 		$langs->load("products");
 		//Query from product/liste.php
-		$sql = 'SELECT p.rowid, p.ref, p.label, p.fk_product_type, p.entity, p.tosell as status, p.tobuy as status_buy, p.tobatch as status_batch,';
+		$sql = 'SELECT distinct(p.rowid), p.ref, p.label, p.fk_product_type, p.entity, p.tosell as status, p.tobuy as status_buy, p.tobatch as status_batch,';
 		$sql .= ' pfp.tms, pfp.ref_fourn as supplier_ref, pfp.price, pfp.quantity, pfp.unitprice';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
