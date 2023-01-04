@@ -49,7 +49,7 @@ $search_societe = GETPOST('search_societe', 'alpha');
 $search_lineid = GETPOST('search_lineid', 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_invoice = GETPOST('search_invoice', 'alpha');
-$search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
+//$search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
@@ -113,7 +113,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_lineid = '';
 	$search_ref = '';
 	$search_invoice = '';
-	$search_ref_supplier = '';
+	//$search_ref_supplier = '';
 	$search_label = '';
 	$search_desc = '';
 	$search_amount = '';
@@ -194,9 +194,9 @@ print '<script type="text/javascript">
 /*
  * Supplier Invoice lines
  */
-$sql = "SELECT f.rowid as facid, f.ref as ref, f.ref_supplier, f.libelle as invoice_label, f.datef, f.fk_soc,";
+$sql = "SELECT f.rowid as facid, f.ref as ref, f.ref_supplier, f.type as ftype, f.libelle as invoice_label, f.datef, f.fk_soc,";
 $sql .= " l.rowid, l.fk_product, l.product_type as line_type, l.description, l.total_ht , l.qty, l.tva_tx, l.vat_src_code,";
-$sql .= " aa.label as label_account, aa.labelshort as labelshort_account, aa.account_number,";
+$sql .= " aa.rowid as fk_compte, aa.label as label_account, aa.labelshort as labelshort_account, aa.account_number,";
 $sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tobuy, p.tosell,";
 if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
 	$sql .= " ppe.accountancy_code_buy, ppe.accountancy_code_buy_intra, ppe.accountancy_code_buy_export,";
@@ -236,11 +236,11 @@ if ($search_lineid) {
 	$sql .= natural_search("l.rowid", $search_lineid, 1);
 }
 if (strlen(trim($search_invoice))) {
-	$sql .= natural_search("f.ref", $search_invoice);
+	$sql .= natural_search(array("f.ref", "f.ref_supplier"), $search_invoice);
 }
-if (strlen(trim($search_ref_supplier))) {
+/*if (strlen(trim($search_ref_supplier))) {
 	$sql .= natural_search("f.ref_supplier", $search_ref_supplier);
-}
+}*/
 if (strlen(trim($search_label))) {
 	$sql .= natural_search("f.libelle", $search_label);
 }
@@ -333,9 +333,9 @@ if ($result) {
 	if ($search_ref) {
 		$param .= "&search_ref=".urlencode($search_ref);
 	}
-	if ($search_ref_supplier) {
+	/*if ($search_ref_supplier) {
 		$param .= '&search_ref_supplier='.urlencode($search_ref_supplier);
-	}
+	}*/
 	if ($search_label) {
 		$param .= "&search_label=".urlencode($search_label);
 	}
@@ -400,7 +400,7 @@ if ($result) {
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'"></td>';
+	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
@@ -416,11 +416,11 @@ if ($result) {
 	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth75imp" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth150', 'code2', 1, 0, 1);
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100', 'code2', 1, 0, 1);
 	//	print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="'.dol_escape_htmltag($search_tvaintra).'"></td>';
-	print '<td class="liste_titre center"><input type="text" class="flat maxwidth50" name="search_account" value="'.dol_escape_htmltag($search_account).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="'.dol_escape_htmltag($search_account).'"></td>';
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
@@ -429,7 +429,7 @@ if ($result) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("RefSupplier", $_SERVER["PHP_SELF"], "f.ref_supplier", "", $param, '', $sortfield, $sortorder);
+	//print_liste_field_titre("RefSupplier", $_SERVER["PHP_SELF"], "f.ref_supplier", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("InvoiceLabel", $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.ref, l.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("ProductRef", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
@@ -478,8 +478,8 @@ if ($result) {
 		$productstatic->status = $objp->tosell;
 		$productstatic->status_buy = $objp->tobuy;
 		$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
-		$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_sell_buy_intra;
-		$productstatic->accountancy_code_buy_export = $objp->accountancy_code_sell_buy_export;
+		$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
+		$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
 
 		$accountingaccountstatic->rowid = $objp->fk_compte;
 		$accountingaccountstatic->label = $objp->label_account;
@@ -492,12 +492,18 @@ if ($result) {
 		print '<td>'.$objp->rowid.'</td>';
 
 		// Ref Invoice
-		print '<td class="nowraponall">'.$facturefournisseur_static->getNomUrl(1).'</td>';
+		print '<td class="nowraponall">'.$facturefournisseur_static->getNomUrl(1);
+		if ($objp->ref_supplier) {
+			print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->ref_supplier).'</span>';
+		}
+		print '</td>';
 
 		// Ref supplier invoice
+		/*
 		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($objp->ref_supplier).'">';
 		print $objp->ref_supplier;
 		print '</td>';
+		*/
 
 		// Supplier invoice label
 		print '<td class="tdoverflowonsmartphone small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
@@ -552,6 +558,10 @@ if ($result) {
 		print '</tr>';
 		$i++;
 	}
+	if ($num_lines == 0) {
+		print '<tr><td colspan="13"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
+
 	print '</table>';
 	print "</div>";
 

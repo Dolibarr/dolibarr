@@ -2123,7 +2123,7 @@ class Project extends CommonObject
 
 
 		$projectsListId = null;
-		if (!$user->rights->projet->all->lire) {
+		if (!$user->hasRight("projet", "all", "lire")) {
 			$response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
 			$projectsListId = $this->getProjectsAuthorizedForUser($user, 0, 1);
 			if (empty($projectsListId)) {
@@ -2167,18 +2167,18 @@ class Project extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
+	 * @param DoliDB $dbs 		Database handler
+	 * @param int $origin_id 	Old thirdparty id
+	 * @param int $dest_id 		New thirdparty id
 	 * @return bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'projet'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 
@@ -2265,7 +2265,7 @@ class Project extends CommonObject
 					$this->user_creation = $cuser;
 				}
 
-				if ($obj->fk_user_cloture) {
+				if (!empty($obj->fk_user_cloture)) {
 					$cluser = new User($this->db);
 					$cluser->fetch($obj->fk_user_cloture);
 					$this->user_cloture = $cluser;
@@ -2289,8 +2289,8 @@ class Project extends CommonObject
 	 * Adds it to non existing supplied categories.
 	 * Existing categories are left untouch.
 	 *
-	 * @param int[]|int $categories Category or categories IDs
-	 * @return void
+	 * @param 	int[]|int 	$categories 	Category or categories IDs
+	 * @return 	int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{

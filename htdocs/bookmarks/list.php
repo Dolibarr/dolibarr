@@ -99,7 +99,7 @@ if ($action == 'delete') {
 
 $form = new Form($db);
 
-$title = $langs->trans("ListOfBookmarks");
+$title = $langs->trans("Bookmarks");
 
 llxHeader('', $title);
 

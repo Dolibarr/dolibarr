@@ -41,7 +41,7 @@ class DolGraph
 {
 	public $type = array(); // Array with type of each series. Example: array('bars', 'horizontalbars', 'lines', 'pies', 'piesemicircle', 'polar'...)
 	public $mode = 'side'; // Mode bars graph: side, depth
-	private $_library = 'chart'; // Graphic library to use (jflot, chart, artichow)
+	private $_library; // Graphic library to use (jflot, chart, artichow)
 
 	//! Array of data
 	public $data; // Data of graph: array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
@@ -1173,7 +1173,7 @@ class DolGraph
 			} else {
 				$this->stringtoshow .= 'legend: { labels: { boxWidth: 15 }, position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\'';
 				if (!empty($legendMaxLines)) {
-					$this->stringtoshow .= ', maxLines: ' . $legendMaxLines . '';
+					$this->stringtoshow .= ', maxLines: ' . $legendMaxLines;
 				}
 				$this->stringtoshow .= ' }, ' . "\n";
 			}
@@ -1185,7 +1185,7 @@ class DolGraph
 			} else {
 				$this->stringtoshow .= 'legend: { labels: { boxWidth: 15 }, position: \'' . ($showlegend == 2 ? 'right' : 'top') . '\'';
 				if (!empty($legendMaxLines)) {
-					$this->stringtoshow .= ', maxLines: ' . $legendMaxLines . '';
+					$this->stringtoshow .= ', maxLines: ' . $legendMaxLines;
 				}
 				$this->stringtoshow .= ' }, ' . "\n";
 			}
@@ -1211,7 +1211,7 @@ class DolGraph
 					$tmp = str_replace('#', '', $this->datacolor[$i]);
 					if (strpos($tmp, '-') !== false) {
 						$foundnegativecolor++;
-						$color = '#FFFFFF'; // If $val is '-123'
+						$color = 'rgba(0,0,0,.0)'; // If $val is '-123'
 					} else {
 						$color = "#" . $tmp; // If $val is '123' or '#123'
 					}

@@ -1515,6 +1515,46 @@ class BOM extends CommonObject
 			}
 		}
 	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string		HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $db,$langs;
+		$prod = new Product($db);
+		$prod->fetch($this->fk_product);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : '').'</span>';
+		if (property_exists($this, 'fields') && !empty($this->fields['bomtype']['arrayofkeyval'])) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Type").' : </span>';
+			if ($this->bomtype == 0) {
+				$return .= '<span class="info-box-label">'.$this->fields['bomtype']['arrayofkeyval'][0].'</span>';
+			} else {
+				$return .= '<span class="info-box-label">'.$this->fields['bomtype']['arrayofkeyval'][1].'</span>';
+			}
+		}
+		if (property_exists($this, 'fk_product') && !is_null($this->fk_product)) {
+			$return .= '<br><span class="info-box-label">'.$prod->getNomUrl(1).'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
+	}
 }
 
 

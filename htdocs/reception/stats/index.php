@@ -41,7 +41,7 @@ $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
 
-$langs->loadLangs(array("reception", "other", "companies"));
+$langs->loadLangs(array("receptions", "other", "companies"));
 
 // Security check
 if ($user->socid) {

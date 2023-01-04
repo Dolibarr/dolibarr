@@ -258,11 +258,12 @@ if (empty($reshook)) {
 		$psq = empty($newpsq) ? 0 : $newpsq;
 		$maxpricesupplier = $object->min_recommended_price();
 
-		if (!empty($conf->dynamicprices->enabled)) {
+		if (isModEnabled('dynamicprices')) {
 			$object->fk_price_expression = empty($eid) ? 0 : $eid; //0 discards expression
 
 			if ($object->fk_price_expression != 0) {
 				//Check the expression validity by parsing it
+				require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 				$priceparser = new PriceParser($db);
 
 				if ($priceparser->parseProduct($object) < 0) {
@@ -464,7 +465,8 @@ if (empty($reshook)) {
 					break;
 				}
 
-				if ($object->multiprices[$key] != $newprice || $object->multiprices_min[$key] != $newprice_min || $object->multiprices_base_type[$key] != $val['price_base_type'] || $object->multiprices_tva_tx[$key] != $newvattx) {
+				// If price has changed, we update it
+				if (!array_key_exists($key, $object->multiprices) || $object->multiprices[$key] != $newprice || $object->multiprices_min[$key] != $newprice_min || $object->multiprices_base_type[$key] != $val['price_base_type'] || $object->multiprices_tva_tx[$key] != $newvattx) {
 					$res = $object->updatePrice($newprice, $val['price_base_type'], $user, $val['vat_tx'], $newprice_min, $key, $val['npr'], $psq, 0, $val['localtaxes_array'], $val['default_vat_code']);
 				} else {
 					$res = 0;
@@ -1527,7 +1529,7 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 					otherPrices.show();
 					minPrice1.show();
 				}
-			};
+			}
 
 			jQuery(document).ready(function () {
 				showHidePriceRules();

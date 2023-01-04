@@ -651,7 +651,7 @@ abstract class CommonDocGenerator
 		);
 
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			  $resarray['line_unit'] = $outputlangs->trans($line->getLabelOfUnit('long'));
 			  $resarray['line_unit_short'] = $outputlangs->trans($line->getLabelOfUnit('short'));
 		}
@@ -687,7 +687,7 @@ abstract class CommonDocGenerator
 						$resql = $this->db->fetch_object($resql);
 
 						foreach ($extralabels as $key => $label) {
-							$resarray['line_product_supplier_'.$key] = $resql->{$key};
+							$resarray['line_product_supplier_'.$key] = $resql->$key;
 						}
 					}
 				}

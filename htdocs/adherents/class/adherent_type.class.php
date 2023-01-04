@@ -319,7 +319,7 @@ class AdherentType extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->escape($this->morphy)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		dol_syslog("Adherent_type::create", LOG_DEBUG);
@@ -472,7 +472,7 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *  Function that retrieves the status of the member
+	 *  Function that retrieves the properties of a membership type
 	 *
 	 *  @param 		int		$rowid			Id of member type to load
 	 *  @return		int						<0 if KO, >0 if OK

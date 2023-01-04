@@ -48,7 +48,7 @@ if ($id > 0) {
 }
 
 // Permissions
-$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartynote', 'globalcard'));

@@ -2661,12 +2661,8 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 		dol_print_error($db);
 	}
 
-	// Add the entry Sitemap: into the robot file.
+	// Add the entry Sitemap: into the robot.txt file.
 	$robotcontent = @file_get_contents($filerobot);
-	$result = preg_replace('/<?php // BEGIN PHP[^?]END PHP ?>\n/ims', '', $robotcontent);
-	if ($result) {
-		$robotcontent = $result;
-	}
 	$robotsitemap = "Sitemap: ".$domainname."/".$xmlname;
 	$result = strpos($robotcontent, 'Sitemap: ');
 	if ($result) {
@@ -3298,7 +3294,7 @@ if (!GETPOST('hide_websitemenu')) {
 									}
 									isEditingEnabled = false;
 								}
-							};
+							}
 						});
 						</script>';
 				print $langs->trans("EditInLine");
@@ -3336,15 +3332,14 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
 
 				// Delete
-				//print '<input type="submit" class="buttonDelete bordertransp" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage ? '' : ' disabled="disabled"').'>';
-				if ($websitepage->status == $websitepage::STATUS_DRAFT || !$atleastonepage) {
+				if ($websitepage->status != $websitepage::STATUS_DRAFT) {
 					$disabled = ' disabled="disabled"';
 					$title = $langs->trans("WebpageMustBeDisabled", $langs->transnoentitiesnoconv($websitepage->LibStatut(0, 0)));
 					$url = '#';
 				} else {
 					$disabled = '';
 					$title = '';
-					$url = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&website='.urlencode($website->ref);
+					$url = $_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&pageid='.((int) $websitepage->id).'&website='.urlencode($website->ref);	// action=delete for webpage, deletesite for website
 				}
 				print '<a href="'.$url.'" class="buttonDelete bordertransp'.($disabled ? ' disabled' : '').'"'.$disabled.' title="'.dol_escape_htmltag($title).'">'.img_picto('', 'delete', 'class=""').'<span class="hideonsmartphone paddingleft">'.$langs->trans("Delete").'</span></a>';
 			}

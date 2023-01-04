@@ -1123,7 +1123,7 @@ class CMailFile
 				return 'Bad value for sendmode';
 			}
 
-			$parameters = array();
+			$parameters = array('sent' => $res);
 			$action = '';
 			$reshook = $hookmanager->executeHooks('sendMailAfter', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) {

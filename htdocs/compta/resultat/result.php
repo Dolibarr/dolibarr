@@ -184,8 +184,8 @@ llxheader('', $langs->trans('ReportInOut'));
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
-$textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year - 1).'">'.img_previous().'</a>';
-$textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year + 1).'">'.img_next().'</a>';
+$textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year - 1).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_previous().'</a>';
+$textnextyear = ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year + 1).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_next().'</a>';
 
 
 
@@ -309,8 +309,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if (!is_array($cats) && $cats < 0) {
 		setEventMessages(null, $AccCat->errors, 'errors');
 	} elseif (is_array($cats) && count($cats) > 0) {
+		// Loop on each custom group of accounts
 		foreach ($cats as $cat) {
-			// Loop on each group
 			if (!empty($cat['category_type'])) {
 				// category calculed
 				// When we enter here, $sommes was filled by group of accounts
@@ -319,10 +319,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				print '<tr class="liste_total">';
 
-				// Year NP
-				print '<td class="liste_total width200">';
+				// Code and Label
+				print '<td class="liste_total tdoverflowmax100" title="'.dol_escape_htmltag($cat['code']).'">';
 				print dol_escape_htmltag($cat['code']);
-				print '</td><td>';
+				print '</td><td class="tdoverflowmax250 borderright" title="'.dol_escape_htmltag($cat['label']).'">';
 				print dol_escape_htmltag($cat['label']);
 				print '</td>';
 
@@ -339,13 +339,19 @@ if ($modecompta == 'CREANCES-DETTES') {
 				}
 
 				$result = strtr($formula, $vars);
+				$result = str_replace('--', '+', $result);
 
-				//var_dump($result);
-				//$r = $AccCat->calculate($result);
-				$r = dol_eval($result, 1, 1, '1');
-				//var_dump($r);
+				if (preg_match('/[a-z]/i', $result)) {
+					$r = 'Error bad formula: '.$result;
+					$rshort = 'Err';
+					print '<td class="liste_total right"><span class="amount" title="'.dol_escape_htmltag($r).'">'.$rshort.'</span></td>';
+				} else {
+					//var_dump($result);
+					//$r = $AccCat->calculate($result);
+					$r = dol_eval($result, 1, 1, '1');
 
-				print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
+					print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
+				}
 
 				// Year N
 				$code = $cat['code']; // code of categorie ('VTE', 'MAR', ...)
@@ -359,11 +365,12 @@ if ($modecompta == 'CREANCES-DETTES') {
 				}
 
 				$result = strtr($formula, $vars);
+				$result = str_replace('--', '+', $result);
 
 				//$r = $AccCat->calculate($result);
-				$r = dol_eval($result, 1, 1, 1);
+				$r = dol_eval($result, 1, 1, '1');
 
-				print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
+				print '<td class="liste_total right borderright"><span class="amount">'.price($r).'</span></td>';
 				$sommes[$code]['N'] += $r;
 
 				// Detail by month
@@ -373,23 +380,26 @@ if ($modecompta == 'CREANCES-DETTES') {
 							$vars[$code] = $det['M'][$k];
 						}
 						$result = strtr($formula, $vars);
+						$result = str_replace('--', '+', $result);
 
 						//$r = $AccCat->calculate($result);
-						$r = dol_eval($result, 1, 1, 1);
+						$r = dol_eval($result, 1, 1, '1');
 
 						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 						$sommes[$code]['M'][$k] += $r;
 					}
 				}
+
 				foreach ($months as $k => $v) {
 					if (($k + 1) < $date_startmonth) {
 						foreach ($sommes as $code => $det) {
 							$vars[$code] = $det['M'][$k];
 						}
 						$result = strtr($formula, $vars);
+						$result = str_replace('--', '+', $result);
 
 						//$r = $AccCat->calculate($result);
-						$r = dol_eval($result, 1, 1, 1);
+						$r = dol_eval($result, 1, 1, '1');
 
 						print '<td class="liste_total right"><span class="amount">'.price($r).'</span></td>';
 						$sommes[$code]['M'][$k] += $r;
@@ -399,8 +409,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				print "</tr>\n";
 
 				//var_dump($sommes);
-			} else // normal category
-			{
+			} else { // normal category
 				$code = $cat['code']; // Category code we process
 
 				$totCat = array();
@@ -414,23 +423,25 @@ if ($modecompta == 'CREANCES-DETTES') {
 				// Set $cpts with array of accounts in the category/group
 				$cpts = $AccCat->getCptsCat($cat['rowid']);
 				// We should loop over empty $cpts array, else the category _code_ is used in the formula, which leads to wrong result if the code is a number.
-				if (empty($cpts)) $cpts[] = array();
-
+				if (empty($cpts)) {
+					$cpts[] = array();
+				}
 
 				$arrayofaccountforfilter = array();
 				foreach ($cpts as $i => $cpt) {    // Loop on each account.
-					$arrayofaccountforfilter[] = $cpt['account_number'];
+					if (!is_null($cpt['account_number'])) {
+						$arrayofaccountforfilter[] = $cpt['account_number'];
+					}
 				}
 
 				// N-1
 				if (!empty($arrayofaccountforfilter)) {
 					$return = $AccCat->getSumDebitCredit($arrayofaccountforfilter, $date_start_previous, $date_end_previous, $cat['dc'] ? $cat['dc'] : 0);
-
 					if ($return < 0) {
 						setEventMessages(null, $AccCat->errors, 'errors');
 						$resultNP = 0;
 					} else {
-						foreach ($cpts as $i => $cpt) {    // Loop on each account.
+						foreach ($cpts as $i => $cpt) {    // Loop on each account found
 							$resultNP = empty($AccCat->sdcperaccount[$cpt['account_number']]) ? 0 : $AccCat->sdcperaccount[$cpt['account_number']];
 
 							$totCat['NP'] += $resultNP;
@@ -478,41 +489,42 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Now output columns for row $code ('VTE', 'MAR', ...)
 
-				print "<tr>";
+				print '<tr'.($showaccountdetail != 'no' ? ' class="trforbreak"' : '').'>';
 
 				// Column group
-				print '<td class="width200">';
+				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($cat['code']).'">';
 				print dol_escape_htmltag($cat['code']);
 				print '</td>';
 
 				// Label of group
-				print '<td>';
-				print dol_escape_htmltag($cat['label']);
+				$labeltoshow = dol_escape_htmltag($cat['label']);
 				if (count($cpts) > 0 && !empty($cpts[0])) {    // Show example of 5 first accounting accounts
 					$i = 0;
 					foreach ($cpts as $cpt) {
 						if ($i > 5) {
-							print '...)';
+							$labeltoshow .= '...)';
 							break;
 						}
 						if ($i > 0) {
-							print ', ';
+							$labeltoshow .= ', ';
 						} else {
-							print ' (';
+							$labeltoshow .= ' (';
 						}
-						print dol_escape_htmltag($cpt['account_number']);
+						$labeltoshow .= dol_escape_htmltag($cpt['account_number']);
 						$i++;
 					}
 					if ($i <= 5) {
-						print ')';
+						$labeltoshow .= ')';
 					}
 				} else {
-					print ' - <span class="warning">'.$langs->trans("GroupIsEmptyCheckSetup").'</span>';
+					$labeltoshow .= ' - <span class="warning">'.$langs->trans("GroupIsEmptyCheckSetup").'</span>';
 				}
+				print '<td class="tdoverflowmax250 borderright" title="'.dol_escape_htmltag(dol_string_nohtmltag($labeltoshow)).'">';
+				print $labeltoshow;
 				print '</td>';
 
 				print '<td class="right"><span class="amount">'.price($totCat['NP']).'</span></td>';
-				print '<td class="right"><span class="amount">'.price($totCat['N']).'</span></td>';
+				print '<td class="right borderright"><span class="amount">'.price($totCat['N']).'</span></td>';
 
 				// Each month
 				foreach ($totCat['M'] as $k => $v) {
@@ -537,13 +549,13 @@ if ($modecompta == 'CREANCES-DETTES') {
 						if ($showaccountdetail == 'all' || $resultN != 0) {
 							print '<tr>';
 							print '<td></td>';
-							print '<td class="tdoverflowmax200">';
+							print '<td class="tdoverflowmax250 borderright">';
 							print ' &nbsp; &nbsp; '.length_accountg($cpt['account_number']);
 							print ' - ';
 							print $cpt['account_label'];
 							print '</td>';
 							print '<td class="right"><span class="amount">'.price($resultNP).'</span></td>';
-							print '<td class="right"><span class="amount">'.price($resultN).'</span></td>';
+							print '<td class="right borderright"><span class="amount">'.price($resultN).'</span></td>';
 
 							// Make one call for each month
 							foreach ($months as $k => $v) {

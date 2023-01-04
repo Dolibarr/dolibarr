@@ -490,6 +490,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 				migrate_contractdet_rank();
 			}
+
+			// Scripts for 18.0
+			$afterversionarray = explode('.', '170.9');
+			$beforeversionarray = explode('.', '18.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_contractdet_rank();
+			}
 		}
 
 
@@ -4485,7 +4492,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @return	void
+ * @return	int						<0 if KO, >0 if OK
  */
 function migrate_reload_menu($db, $langs, $conf)
 {
@@ -4515,6 +4522,8 @@ function migrate_reload_menu($db, $langs, $conf)
 
 		print '</td></tr>';
 	}
+
+	return 1;
 }
 
 /**

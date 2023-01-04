@@ -1172,7 +1172,28 @@ if (empty($reshook)) {
 							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA) && $diff != 0) {
 								$object->fetch_lines();
 								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
-								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
+								$object->updateline(
+									$object->lines[0]->id,
+									$object->lines[0]->desc,
+									$subprice_diff,
+									$object->lines[0]->tva_tx,
+									$object->lines[0]->localtax1_tx,
+									$object->lines[0]->localtax2_tx,
+									$object->lines[0]->qty,
+									$object->lines[0]->fk_product,
+									'HT',
+									$object->lines[0]->info_bits,
+									$object->lines[0]->product_type,
+									$object->lines[0]->remise_percent,
+									0,
+									$object->lines[0]->date_start,
+									$object->lines[0]->date_end,
+									0,
+									0,
+									0,
+									'',
+									100
+								);
 							}
 						} elseif ($result > 0) {
 							$lines = $srcobject->lines;
@@ -1627,7 +1648,7 @@ if (empty($reshook)) {
 					$productsupplier->fk_unit,
 					0,
 					$pu_devise,
-					$ref_supplier,
+					GETPOST('fourn_ref', 'alpha'),
 					''
 				);
 			}
@@ -2212,7 +2233,7 @@ if ($action == 'create') {
 						jQuery(".checkforselect").prop("disabled", false);
 						jQuery(".checkforselect").prop("checked", true);
 					}
-				};
+				}
     		});
     		</script>';
 
@@ -2337,7 +2358,7 @@ if ($action == 'create') {
 
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 				$tmp = '<input type="radio" id="radio_creditnote" name="type" value="2"'.(GETPOST('type') == 2 ? ' checked' : '');
-				if (!$optionsav) {
+				if (!$optionsav && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) {
 					$tmp .= ' disabled';
 				}
 				$tmp .= '> ';
@@ -2384,7 +2405,11 @@ if ($action == 'create') {
 			}
 		} else {
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-			$tmp = '<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
+			if (empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) {
+				$tmp = '<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
+			} else {
+				$tmp='<input type="radio" name="type" id="radio_creditnote" value="2"> ';
+			}
 			$text = $tmp.$langs->trans("InvoiceAvoir").' ';
 			$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromSupplierThird").')</span> ';
 			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
@@ -2645,6 +2670,7 @@ if ($action == 'create') {
 		$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 		// Multicurrency
+		$multicurrency_resteapayer = 0;
 		if (isModEnabled("multicurrency")) {
 			$multicurrency_totalpaid = $object->getSommePaiement(1);
 			$multicurrency_totalcreditnotes = $object->getSumCreditNotesUsed(1);
@@ -2690,6 +2716,7 @@ if ($action == 'create') {
 
 		// Confirmation de la conversion de l'avoir en reduc
 		if ($action == 'converttoreduc') {
+			$type_fac = '';
 			if ($object->type == FactureFournisseur::TYPE_STANDARD) {
 				$type_fac = 'ExcessPaid';
 			} elseif ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
@@ -3599,7 +3626,7 @@ if ($action == 'create') {
 		/*
 		 * Lines
 		 */
-		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">';
+		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.(($action != 'editline') ? 'addline' : 'updateline').'">';
 		print '<input type="hidden" name="mode" value="">';
@@ -3624,7 +3651,7 @@ if ($action == 'create') {
 
 		// Show object lines
 		if (!empty($object->lines)) {
-			$ret = $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
+			$object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
 		}
 
 		$num = count($object->lines);

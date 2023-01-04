@@ -131,6 +131,7 @@ class Mo extends CommonObject
 	public $qty;
 	public $fk_warehouse;
 	public $fk_soc;
+	public $socid;
 
 	/**
 	 * @var string public note
@@ -406,6 +407,9 @@ class Mo extends CommonObject
 		if ($result > 0 && !empty($this->table_element_line)) {
 			$this->fetchLines();
 		}
+
+		$this->socid = $this->fk_soc;
+
 		return $result;
 	}
 
@@ -1271,8 +1275,8 @@ class Mo extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, $TFilters);
 
 		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
+			$this->error = $objectline->error;
+			$this->errors = $objectline->errors;
 			return $result;
 		} else {
 			$this->lines = $result;

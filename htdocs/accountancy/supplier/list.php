@@ -289,14 +289,14 @@ if ($search_lineid) {
 	$sql .= natural_search("l.rowid", $search_lineid, 1);
 }
 if (strlen(trim($search_invoice))) {
-	$sql .= natural_search("f.ref", $search_invoice);
+	$sql .= natural_search(array("f.ref", "f.ref_supplier"), $search_invoice);
 }
 if (strlen(trim($search_ref))) {
 	$sql .= natural_search("p.ref", $search_ref);
 }
-if (strlen(trim($search_ref_supplier))) {
+/*if (strlen(trim($search_ref_supplier))) {
 	$sql .= natural_search("f.ref_supplier", $search_ref_supplier);
-}
+}*/
 if (strlen(trim($search_label))) {
 	$sql .= natural_search(array("p.label", "f.libelle"), $search_label);
 }
@@ -490,7 +490,7 @@ if ($result) {
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'"></td>';
+	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
@@ -506,7 +506,7 @@ if ($result) {
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50 right" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth75imp" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 	print '<td class="liste_titre">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125', 'code2', 1, 0, 1, null, 1);
+	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100', 'code2', 1, 0, 1);
 	//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="'.dol_escape_htmltag($search_tvaintra).'"></td>';
@@ -521,7 +521,7 @@ if ($result) {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("RefSupplier", $_SERVER["PHP_SELF"], "f.ref_supplier", "", $param, '', $sortfield, $sortorder);
+	//print_liste_field_titre("RefSupplier", $_SERVER["PHP_SELF"], "f.ref_supplier", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("InvoiceLabel", $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.ref, l.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("ProductRef", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
@@ -648,16 +648,20 @@ if ($result) {
 		print '<td>'.$facturefourn_static_det->id.'</td>';
 
 		// Ref Invoice
-		print '<td class="nowraponall">'.$facturefourn_static->getNomUrl(1).'</td>';
-
-		// Ref supplier invoice
-		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($objp->ref_supplier).'">';
-		print $objp->ref_supplier;
+		print '<td class="nowraponall">'.$facturefourn_static->getNomUrl(1);
+		if ($objp->ref_supplier) {
+			print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->ref_supplier).'</span>';
+		}
 		print '</td>';
 
+		// Ref supplier invoice
+		/*print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($objp->ref_supplier).'">';
+		print $objp->ref_supplier;
+		print '</td>';*/
+
 		// Supplier invoice label
-		print '<td class="tdoverflowmax125 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
-		print $objp->invoice_label;
+		print '<td class="tdoverflowmax100 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
+		print dol_escape_htmltag($objp->invoice_label);
 		print '</td>';
 
 		// Date
@@ -669,11 +673,11 @@ if ($result) {
 			print $product_static->getNomUrl(1);
 		}
 		if ($product_static->label) {
-			print '<br><span class="opacitymedium small">'.$product_static->label.'</span>';
+			print '<br><span class="opacitymedium small">'.dol_escape_htmltag($product_static->label).'</span>';
 		}
 		print '</td>';
 
-		// Description
+		// Description of line
 		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facturefourn_static_det->desc, 1));
 		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
@@ -686,11 +690,11 @@ if ($result) {
 
 		// Vat rate
 		$code_vat_differ = '';
-		if ($objp->vat_tx_l != $objp->vat_tx_p && price2num($objp->vat_tx_p) && price2num($objp->vat_tx_l)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
-			$code_vat_differ = 'warning bold';
-		}
+		//if ($objp->vat_tx_l != $objp->vat_tx_p && price2num($objp->vat_tx_p) && price2num($objp->vat_tx_l)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
+		//	$code_vat_differ = 'warning bold';
+		//}
 		print '<td class="right'.($code_vat_differ?' '.$code_vat_differ:'').'">';
-		print vatrate($facturefourn_static_det->tva_tx.($facturefourn_static_det->vat_src_code ? ' ('.$facturefourn_static_det->vat_src_code.')' : ''));
+		print vatrate($facturefourn_static_det->tva_tx.($facturefourn_static_det->vat_src_code ? ' ('.$facturefourn_static_det->vat_src_code.')' : ''), false, 0, 0, 1);
 		print '</td>';
 
 		// Thirdparty
@@ -772,6 +776,9 @@ if ($result) {
 
 		print '</tr>';
 		$i++;
+	}
+	if ($num_lines == 0) {
+		print '<tr><td colspan="14"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print '</table>';
