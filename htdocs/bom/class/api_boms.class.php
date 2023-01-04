@@ -531,7 +531,7 @@ class Boms extends DolibarrApi
 	{
 		$myobject = array();
 		foreach ($this->bom->fields as $field => $propfield) {
-			if (in_array($field, array('rowid', 'entity', 'ref', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
+			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
 				continue; // Not a mandatory field
 			}
 			if (!isset($data[$field])) {
@@ -550,10 +550,18 @@ class Boms extends DolibarrApi
 	private function checkRefNumbering(): void
 	{
 		$ref = substr($this->bom->ref, 1, 4);
-		if ($this->bom->status > 0 && (empty($this->bom->ref) || $ref == 'PROV')) {
-			$this->bom->fetch_product();
-			$numref = $this->bom->getNextNumRef($this->bom->product);
-			$this->bom->ref = $numref;
+		if ($this->bom->status > 0 && $ref == 'PROV') {
+			throw new RestException(400, "Wrong naming scheme '(PROV%)' is only allowed on 'DRAFT' status. For automatic increment use 'auto' on the 'ref' field.");
+		}
+
+		if ($this->bom->ref == 'auto'){
+			if (empty($this->bom->id) && $this->bom->status == 0){
+				$this->bom->ref = ''; // 'ref' will auto incremented with '(PROV' + newID + ')'
+			} else {
+				$this->bom->fetch_product();
+				$numref = $this->bom->getNextNumRef($this->bom->product);
+				$this->bom->ref = $numref;
+			}
 		}
 	}
 }
