@@ -69,6 +69,7 @@ $search_type_template = GETPOST('search_type_template', 'alpha');
 $search_lang = GETPOST('search_lang', 'alpha');
 $search_fk_user = GETPOST('search_fk_user', 'intcomma');
 $search_topic = GETPOST('search_topic', 'alpha');
+$search_module = GETPOST('search_module', 'alpha');
 
 $acts = array();
 $actl = array();
@@ -108,7 +109,7 @@ $tabname[25] = MAIN_DB_PREFIX."c_email_templates";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield = array();
-$tabfield[25] = "label,lang,type_template,fk_user,private,position,topic,joinfiles,content";
+$tabfield[25] = "label,lang,type_template,fk_user,private,position,module,topic,joinfiles,content";
 if (!empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
 	$tabfield[25] .= ',content_lines';
 }
@@ -290,6 +291,7 @@ if (empty($reshook)) {
 		$search_lang = '';
 		$search_fk_user = '';
 		$search_topic = '';
+		$search_module = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -598,6 +600,9 @@ if ($search_lang) {
 if ($search_fk_user != '' && $search_fk_user != '-1') {
 	$sql .= natural_search('fk_user', $search_fk_user, 2);
 }
+if ($search_module) {
+	$sql .= natural_search('module', $search_module);
+}
 if ($search_topic) {
 	$sql .= natural_search('topic', $search_topic);
 }
@@ -703,6 +708,9 @@ if ($action == 'create') {
 		$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$align = "left";
+		if ($fieldlist[$field] == 'module') {
+			continue;
+		}
 		if ($fieldlist[$field] == 'fk_user') {
 			$valuetoshow = $langs->trans("Owner");
 		}
@@ -804,7 +812,7 @@ if ($action == 'create') {
 	foreach ($fieldsforcontent as $tmpfieldlist) {
 		print '<tr class="impair nodrag nodrop nohover"><td colspan="7" class="nobottom">';
 
-		// Label
+		// Topic of email
 		if ($tmpfieldlist == 'topic') {
 			print '<strong>'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
 		}
@@ -882,6 +890,9 @@ if ($search_type_template != '-1') {
 if ($search_fk_user > 0) {
 	$param .= '&search_fk_user='.urlencode($search_fk_user);
 }
+if ($search_module) {
+	$param .= '&search_module='.urlencode($search_module);
+}
 if ($search_topic) {
 	$param .= '&search_topic='.urlencode($search_topic);
 }
@@ -909,7 +920,9 @@ if ($num > $listlimit) {
 print '<tr class="liste_titre">';
 
 foreach ($fieldlist as $field => $value) {
-	if ($value == 'label') {
+	if ($value == 'module') {
+		print '<td class="liste_titre"><input type="text" name="search_module" class="maxwidth75" value="'.dol_escape_htmltag($search_module).'"></td>';
+	} elseif ($value == 'label') {
 		print '<td class="liste_titre"><input type="text" name="search_label" class="maxwidth200" value="'.dol_escape_htmltag($search_label).'"></td>';
 	} elseif ($value == 'lang') {
 		print '<td class="liste_titre">';
@@ -917,7 +930,7 @@ foreach ($fieldlist as $field => $value) {
 		print '</td>';
 	} elseif ($value == 'fk_user') {
 		print '<td class="liste_titre">';
-		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'maxwidth125', 1);
+		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'maxwidth100', 1);
 		print '</td>';
 	} elseif ($value == 'topic') {
 		print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
@@ -958,6 +971,9 @@ foreach ($fieldlist as $field => $value) {
 	*/
 	$valuetoshow = ucfirst($fieldlist[$field]); // By defaut
 	$valuetoshow = $langs->trans($valuetoshow); // try to translate
+	if ($fieldlist[$field] == 'module') {
+		$align = 'tdoverflowmax100';
+	}
 	if ($fieldlist[$field] == 'fk_user') {
 		$valuetoshow = $langs->trans("Owner");
 	}
@@ -1273,13 +1289,16 @@ $db->close();
  */
 function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 {
-	global $conf, $langs, $user, $db;
+	global $langs, $user, $db;
 	global $form;
 	global $elementList;
 
 	$formadmin = new FormAdmin($db);
 
 	foreach ($fieldlist as $field => $value) {
+		if ($value == 'module') {
+			continue;
+		}
 		if ($value == 'fk_user') {
 			print '<td>';
 			if ($user->admin) {
