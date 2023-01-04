@@ -546,12 +546,12 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160; </div>
 <div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;    <span class="keywordflow">if</span> ($moduletag &amp;&amp; isset($this-&gt;_tab_loaded[$moduletag]) &amp;&amp; $this-&gt;_tab_loaded[$moduletag]) {</div>
 <div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;      <span class="comment">// Rights for this module are already loaded, so we leave</span></div>
-<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;      <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;    }</div>
 <div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160; </div>
 <div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;    <span class="keywordflow">if</span> (!empty($this-&gt;all_permissions_are_loaded)) {</div>
 <div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;      <span class="comment">// We already loaded all rights for this group, so we leave</span></div>
-<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;      <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;    }</div>
 <div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160; </div>
 <div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;    <span class="comment">/*</span></div>
@@ -903,7 +903,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Wed Jan 4 2023 15:02:38 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Wed Jan 4 2023 18:05:34 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>

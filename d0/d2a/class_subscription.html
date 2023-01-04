@@ -150,6 +150,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7a3c09d86434d665089a87528600b80c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d2a/class_subscription.html#a7a3c09d86434d665089a87528600b80c">info</a> ($id)</td></tr>
 <tr class="memdesc:a7a3c09d86434d665089a87528600b80c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load information of the subscription object.  <a href="../../d0/d2a/class_subscription.html#a7a3c09d86434d665089a87528600b80c">More...</a><br /></td></tr>
 <tr class="separator:a7a3c09d86434d665089a87528600b80c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91db3b337cdf3c2c106f18285cad734e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d2a/class_subscription.html#a91db3b337cdf3c2c106f18285cad734e">getKanbanView</a> ($option='')</td></tr>
+<tr class="memdesc:a91db3b337cdf3c2c106f18285cad734e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return clicable link of object (with eventually picto)  <a href="../../d0/d2a/class_subscription.html#a91db3b337cdf3c2c106f18285cad734e">More...</a><br /></td></tr>
+<tr class="separator:a91db3b337cdf3c2c106f18285cad734e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_common_object"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_common_object')"><img src="../../closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="../../db/d09/class_common_object.html">CommonObject</a></td></tr>
 <tr class="memitem:a90d902fe977fd422fca22dc82c5d0abc inherit pub_methods_class_common_object"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/d09/class_common_object.html#a90d902fe977fd422fca22dc82c5d0abc">errorsToString</a> ()</td></tr>
 <tr class="memdesc:a90d902fe977fd422fca22dc82c5d0abc inherit pub_methods_class_common_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to output saved errors.  <a href="../../db/d09/class_common_object.html#a90d902fe977fd422fca22dc82c5d0abc">More...</a><br /></td></tr>
@@ -166,9 +169,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2733f71f0687374448001ae2e600c97e inherit pub_methods_class_common_object"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/d09/class_common_object.html#a2733f71f0687374448001ae2e600c97e">setUpperOrLowerCase</a> ()</td></tr>
 <tr class="memdesc:a2733f71f0687374448001ae2e600c97e inherit pub_methods_class_common_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set to upper or ucwords/lower if needed.  <a href="../../db/d09/class_common_object.html#a2733f71f0687374448001ae2e600c97e">More...</a><br /></td></tr>
 <tr class="separator:a2733f71f0687374448001ae2e600c97e inherit pub_methods_class_common_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0dda32b4bacb59ddd04dbe05b1e0452 inherit pub_methods_class_common_object"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/d09/class_common_object.html#ad0dda32b4bacb59ddd04dbe05b1e0452">getKanbanView</a> ($option='')</td></tr>
-<tr class="memdesc:ad0dda32b4bacb59ddd04dbe05b1e0452 inherit pub_methods_class_common_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return clicable link of object (with eventually picto)  <a href="../../db/d09/class_common_object.html#ad0dda32b4bacb59ddd04dbe05b1e0452">More...</a><br /></td></tr>
-<tr class="separator:ad0dda32b4bacb59ddd04dbe05b1e0452 inherit pub_methods_class_common_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74b7489c5fe8133fc9885831ef36f3f0 inherit pub_methods_class_common_object"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../db/d09/class_common_object.html#a74b7489c5fe8133fc9885831ef36f3f0">getFullAddress</a> ($withcountry=0, $sep=&quot;\n&quot;, $withregion=0, $extralangcode='')</td></tr>
 <tr class="memdesc:a74b7489c5fe8133fc9885831ef36f3f0 inherit pub_methods_class_common_object"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return full address of contact.  <a href="../../db/d09/class_common_object.html#a74b7489c5fe8133fc9885831ef36f3f0">More...</a><br /></td></tr>
 <tr class="separator:a74b7489c5fe8133fc9885831ef36f3f0 inherit pub_methods_class_common_object"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -725,6 +725,37 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="a91db3b337cdf3c2c106f18285cad734e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91db3b337cdf3c2c106f18285cad734e">&#9670;&nbsp;</a></span>getKanbanView()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Subscription::getKanbanView </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$option</em> = <code>''</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Return clicable link of object (with eventually picto) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramtype">string</td><td class="paramname">$option</td><td>Where point the link (0=&gt; main card, 1,2 =&gt; shipment, 'nolink'=&gt;No link) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>string HTML Code for Kanban thumb. </dd></dl>
+
+<p>Reimplemented from <a class="el" href="../../db/d09/class_common_object.html#ad0dda32b4bacb59ddd04dbe05b1e0452">CommonObject</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="../../d4/dd9/subscription_8class_8php_source.html#l00515">515</a> of file <a class="el" href="../../d4/dd9/subscription_8class_8php_source.html">subscription.class.php</a>.</p>
+
+</div>
+</div>
 <a id="a0e0757475be6f9cf037d7c91c04579e0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0e0757475be6f9cf037d7c91c04579e0">&#9670;&nbsp;</a></span>getLibStatut()</h2>
 
@@ -923,7 +954,7 @@ Additional Inherited Members</h2></td></tr>
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Wed Jan 4 2023 15:02:43 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Wed Jan 4 2023 18:05:39 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>

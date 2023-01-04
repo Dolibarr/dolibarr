@@ -364,7 +364,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;  }</div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
 <div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;  <span class="comment">// Delete</span></div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  <span class="keywordflow">if</span> ($action == <span class="stringliteral">&#39;confirm_deleteinvoice&#39;</span> &amp;&amp; $confirm == <span class="stringliteral">&#39;yes&#39;</span> &amp;&amp; $user-&gt;rights-&gt;facture-&gt;supprimer) {</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  <span class="keywordflow">if</span> ($action == <span class="stringliteral">&#39;confirm_delete&#39;</span> &amp;&amp; $confirm == <span class="stringliteral">&#39;yes&#39;</span> &amp;&amp; $user-&gt;rights-&gt;facture-&gt;supprimer) {</div>
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    $object-&gt;delete($user);</div>
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160; </div>
 <div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    header(<span class="stringliteral">&quot;Location: &quot;</span>.DOL_URL_ROOT.<span class="stringliteral">&#39;/compta/facture/invoicetemplate_list.php&#39;</span>);</div>
@@ -1268,8 +1268,8 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l01175"></a><span class="lineno"> 1175</span>&#160;    }</div>
 <div class="line"><a name="l01176"></a><span class="lineno"> 1176</span>&#160; </div>
 <div class="line"><a name="l01177"></a><span class="lineno"> 1177</span>&#160;    <span class="comment">// Confirm delete of repeatable invoice</span></div>
-<div class="line"><a name="l01178"></a><span class="lineno"> 1178</span>&#160;    <span class="keywordflow">if</span> ($action == <span class="stringliteral">&#39;ask_deleteinvoice&#39;</span>) {</div>
-<div class="line"><a name="l01179"></a><span class="lineno"> 1179</span>&#160;      <a class="code" href="../../dd/d53/listbyaccount_8php.html#ad9581e3fcc5fd2abf7f86325db0f6c7e">$formconfirm</a> = <a class="code" href="../../d3/dda/compta_2localtax_2card_8php.html#aef74eb31fbb3b41977336246033f2c11">$form</a>-&gt;formconfirm($_SERVER[<span class="stringliteral">&quot;PHP_SELF&quot;</span>].<span class="stringliteral">&#39;?id=&#39;</span>.$object-&gt;id, $langs-&gt;trans(<span class="stringliteral">&#39;DeleteRepeatableInvoice&#39;</span>), $langs-&gt;trans(<span class="stringliteral">&#39;ConfirmDeleteRepeatableInvoice&#39;</span>), <span class="stringliteral">&#39;confirm_deleteinvoice&#39;</span>, <span class="stringliteral">&#39;&#39;</span>, <span class="stringliteral">&#39;no&#39;</span>, 1);</div>
+<div class="line"><a name="l01178"></a><span class="lineno"> 1178</span>&#160;    <span class="keywordflow">if</span> ($action == <span class="stringliteral">&#39;delete&#39;</span>) {</div>
+<div class="line"><a name="l01179"></a><span class="lineno"> 1179</span>&#160;      <a class="code" href="../../dd/d53/listbyaccount_8php.html#ad9581e3fcc5fd2abf7f86325db0f6c7e">$formconfirm</a> = <a class="code" href="../../d3/dda/compta_2localtax_2card_8php.html#aef74eb31fbb3b41977336246033f2c11">$form</a>-&gt;formconfirm($_SERVER[<span class="stringliteral">&quot;PHP_SELF&quot;</span>].<span class="stringliteral">&#39;?id=&#39;</span>.$object-&gt;id, $langs-&gt;trans(<span class="stringliteral">&#39;DeleteRepeatableInvoice&#39;</span>), $langs-&gt;trans(<span class="stringliteral">&#39;ConfirmDeleteRepeatableInvoice&#39;</span>), <span class="stringliteral">&#39;confirm_delete&#39;</span>, <span class="stringliteral">&#39;&#39;</span>, <span class="stringliteral">&#39;no&#39;</span>, 1);</div>
 <div class="line"><a name="l01180"></a><span class="lineno"> 1180</span>&#160;    }</div>
 <div class="line"><a name="l01181"></a><span class="lineno"> 1181</span>&#160; </div>
 <div class="line"><a name="l01182"></a><span class="lineno"> 1182</span>&#160;    <span class="comment">// Call Hook formConfirm</span></div>
@@ -1894,7 +1894,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Wed Jan 4 2023 15:02:16 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Wed Jan 4 2023 18:05:17 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>

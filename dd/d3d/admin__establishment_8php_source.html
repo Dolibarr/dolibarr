@@ -238,35 +238,34 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;      $establishmentstatic-&gt;label = $obj-&gt;label;</div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;      $establishmentstatic-&gt;status = $obj-&gt;status;</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;      print <span class="stringliteral">&#39;&lt;tr class=&quot;oddeven&quot;&gt;&#39;</span>;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      print <span class="stringliteral">&#39;&lt;td&gt;&#39;</span>.$establishmentstatic-&gt;getNomUrl(1).<span class="stringliteral">&#39;&lt;/td&gt;&#39;</span>;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;      print <span class="stringliteral">&#39;&lt;td&gt;&#39;</span>.$obj-&gt;label.<span class="stringliteral">&#39;&lt;/td&gt;&#39;</span>;</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;      print <span class="stringliteral">&#39;&lt;td class=&quot;left&quot;&gt;&#39;</span>.$obj-&gt;address.<span class="stringliteral">&#39;&lt;/td&gt;&#39;</span>;</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;      print <span class="stringliteral">&#39;&lt;td class=&quot;left&quot;&gt;&#39;</span>.$obj-&gt;zip.<span class="stringliteral">&#39;&lt;/td&gt;&#39;</span>;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;      print <span class="stringliteral">&#39;&lt;td class=&quot;left&quot;&gt;&#39;</span>.$obj-&gt;town.<span class="stringliteral">&#39;&lt;/td&gt;&#39;</span>;</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;      print <span class="stringliteral">&#39;&lt;td class=&quot;right&quot;&gt;&#39;</span>;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;      print $establishmentstatic-&gt;getLibStatut(5);</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;      print <span class="stringliteral">&#39;&lt;/td&gt;&#39;</span>;</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;      print <span class="stringliteral">&quot;&lt;/tr&gt;\n&quot;</span>;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;      $i++;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    }</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    print <span class="stringliteral">&#39;&lt;tr class=&quot;oddeven&quot;&gt;&lt;td colspan=&quot;7&quot; class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;None&quot;</span>).<span class="stringliteral">&#39;&lt;/td&gt;&lt;/tr&gt;&#39;</span>;</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  }</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160; </div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;  print <span class="stringliteral">&#39;&lt;/table&gt;&#39;</span>;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  print <span class="stringliteral">&#39;&lt;/div&gt;&#39;</span>;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;} <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;  <a class="code" href="../../d9/d69/functions_8lib_8php.html#a39a0441491a380f7f9fe07ee296cd2fa">dol_print_error</a>($db);</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;}</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;print <a class="code" href="../../d9/d69/functions_8lib_8php.html#a43ed6679bd4b390f7b120bf848d5acf9">dol_get_fiche_end</a>();</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160; </div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="comment">// End of page</span></div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<a class="code" href="../../d6/d7c/asterisk_2wrapper_8php.html#aebbb85b0adc465834787866f31885fc5">llxFooter</a>();</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;$db-&gt;close();</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;      print <span class="stringliteral">&#39;&lt;tr class=&quot;oddeven&quot;&gt;&#39;</span>;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;      print <span class="stringliteral">&#39;&lt;td&gt;&#39;</span>.$establishmentstatic-&gt;getNomUrl(1).<span class="stringliteral">&#39;&lt;/td&gt;&#39;</span>;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      print <span class="stringliteral">&#39;&lt;td&gt;&#39;</span>.dol_escape_htmltag($obj-&gt;label).<span class="stringliteral">&#39;&lt;/td&gt;&#39;</span>;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;      print <span class="stringliteral">&#39;&lt;td&gt;&#39;</span>.dol_escape_htmltag($obj-&gt;address).<span class="stringliteral">&#39;&lt;/td&gt;&#39;</span>;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;      print <span class="stringliteral">&#39;&lt;td&gt;&#39;</span>.dol_escape_htmltag($obj-&gt;zip).<span class="stringliteral">&#39;&lt;/td&gt;&#39;</span>;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;      print <span class="stringliteral">&#39;&lt;td&gt;&#39;</span>.dol_escape_htmltag($obj-&gt;town).<span class="stringliteral">&#39;&lt;/td&gt;&#39;</span>;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;      print <span class="stringliteral">&#39;&lt;td class=&quot;right&quot;&gt;&#39;</span>;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;      print $establishmentstatic-&gt;getLibStatut(5);</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;      print <span class="stringliteral">&#39;&lt;/td&gt;&#39;</span>;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;      print <span class="stringliteral">&quot;&lt;/tr&gt;\n&quot;</span>;</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;      $i++;</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    }</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;  } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    print <span class="stringliteral">&#39;&lt;tr class=&quot;oddeven&quot;&gt;&lt;td colspan=&quot;7&quot;&gt;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;None&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&#39;</span>;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;  }</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  print <span class="stringliteral">&#39;&lt;/table&gt;&#39;</span>;</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;  print <span class="stringliteral">&#39;&lt;/div&gt;&#39;</span>;</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;} <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;  <a class="code" href="../../d9/d69/functions_8lib_8php.html#a39a0441491a380f7f9fe07ee296cd2fa">dol_print_error</a>($db);</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;}</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160; </div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;print <a class="code" href="../../d9/d69/functions_8lib_8php.html#a43ed6679bd4b390f7b120bf848d5acf9">dol_get_fiche_end</a>();</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="comment">// End of page</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<a class="code" href="../../d6/d7c/asterisk_2wrapper_8php.html#aebbb85b0adc465834787866f31885fc5">llxFooter</a>();</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;$db-&gt;close();</div>
 <div class="ttc" id="aasterisk_2wrapper_8php_html_a3e1c89b902a5beaa3d5476a09cd591ae"><div class="ttname"><a href="../../d6/d7c/asterisk_2wrapper_8php.html#a3e1c89b902a5beaa3d5476a09cd591ae">llxHeader</a></div><div class="ttdeci">if(!defined('NOREQUIRESOC')) if(!defined('NOREQUIRETRAN')) if(!defined('NOTOKENRENEWAL')) if(!defined('NOREQUIREMENU')) if(!defined('NOREQUIREHTML')) if(!defined('NOREQUIREAJAX')) llxHeader()</div><div class="ttdoc">Empty header.</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d7c/asterisk_2wrapper_8php_source.html#l00056">wrapper.php:56</a></div></div>
 <div class="ttc" id="aasterisk_2wrapper_8php_html_aebbb85b0adc465834787866f31885fc5"><div class="ttname"><a href="../../d6/d7c/asterisk_2wrapper_8php.html#aebbb85b0adc465834787866f31885fc5">llxFooter</a></div><div class="ttdeci">llxFooter()</div><div class="ttdoc">Empty footer.</div><div class="ttdef"><b>Definition:</b> <a href="../../d6/d7c/asterisk_2wrapper_8php_source.html#l00070">wrapper.php:70</a></div></div>
 <div class="ttc" id="aclass_establishment_html"><div class="ttname"><a href="../../d3/d2d/class_establishment.html">Establishment</a></div><div class="ttdoc">Class to manage establishments.</div><div class="ttdef"><b>Definition:</b> <a href="../../d2/d1b/establishment_8class_8php_source.html#l00030">establishment.class.php:31</a></div></div>
@@ -290,7 +289,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Wed Jan 4 2023 15:02:29 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Wed Jan 4 2023 18:05:27 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>

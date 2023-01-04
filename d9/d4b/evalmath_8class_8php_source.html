@@ -426,148 +426,149 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;      }</div>
 <div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;      $output[] = $op;</div>
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;    }</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    <span class="keywordflow">return</span> $output;</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;  }</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160; </div>
-<div class="line"><a name="l00380"></a><span class="lineno"><a class="line" href="../../dd/ddf/class_eval_math.html#ac1f704aec5fdd952de05fff75450e5b8">  380</a></span>&#160;  <span class="keyword">private</span> <span class="keyword">function</span> <a class="code" href="../../dd/ddf/class_eval_math.html#ac1f704aec5fdd952de05fff75450e5b8">pfx</a>($tokens, $vars = array())</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;  {</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;    $stack = <span class="keyword">new</span> <a class="code" href="../../de/d60/class_eval_math_stack.html">EvalMathStack</a>();</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160; </div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    <span class="keywordflow">foreach</span> ($tokens as $token) { <span class="comment">// nice and easy</span></div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;                    <span class="comment">// if the token is a binary operator, pop two values off the stack, do the operation, and push the result back on</span></div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;      $matches = array();</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;      <span class="keywordflow">if</span> (in_array($token, array(<span class="charliteral">&#39;+&#39;</span>, <span class="charliteral">&#39;-&#39;</span>, <span class="charliteral">&#39;*&#39;</span>, <span class="charliteral">&#39;/&#39;</span>, <span class="charliteral">&#39;^&#39;</span>))) {</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;        <span class="keywordflow">if</span> (is_null($op2 = $stack-&gt;pop())) {</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;          <span class="keywordflow">return</span> $this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>(12, <span class="stringliteral">&quot;internal error&quot;</span>);</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;        }</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;        <span class="keywordflow">if</span> (is_null($op1 = $stack-&gt;pop())) {</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;          <span class="keywordflow">return</span> $this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>(13, <span class="stringliteral">&quot;internal error&quot;</span>);</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;        }</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;        <span class="keywordflow">switch</span> ($token) {</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;          <span class="keywordflow">case</span> <span class="charliteral">&#39;+&#39;</span>:</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;            $stack-&gt;push($op1 + $op2);</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;          <span class="keywordflow">case</span> <span class="charliteral">&#39;-&#39;</span>:</div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;            $stack-&gt;push($op1 - $op2);</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;          <span class="keywordflow">case</span> <span class="charliteral">&#39;*&#39;</span>:</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;            $stack-&gt;push($op1 * $op2);</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;          <span class="keywordflow">case</span> <span class="charliteral">&#39;/&#39;</span>:</div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;            <span class="keywordflow">if</span> ($op2 == 0) {</div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;              <span class="keywordflow">return</span> $this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>(14, <span class="stringliteral">&quot;division by zero&quot;</span>);</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;            }</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;            $stack-&gt;push($op1 / $op2);</div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;          <span class="keywordflow">case</span> <span class="charliteral">&#39;^&#39;</span>:</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;            $stack-&gt;push(pow($op1, $op2));</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;            <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;        }</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;        <span class="comment">// if the token is a unary operator, pop one value off the stack, do the operation, and push it back on</span></div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;      } elseif ($token == <span class="stringliteral">&quot;_&quot;</span>) {</div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;        $stack-&gt;push(-1 * $stack-&gt;pop());</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;        <span class="comment">// if the token is a function, pop arguments off the stack, hand them to the function, and push the result back on</span></div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;      } elseif (preg_match(<span class="stringliteral">&quot;/^([a-z]\w*)\&zwj;($/&quot;</span>, $token, $matches)) { <span class="comment">// it&#39;s a function!</span></div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;        $fnn = $matches[1];</div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;        <span class="keywordflow">if</span> (in_array($fnn, $this-&gt;fb)) { <span class="comment">// built-in function:</span></div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;          <span class="keywordflow">if</span> (is_null($op1 = $stack-&gt;pop())) {</div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;            <span class="keywordflow">return</span> $this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>(15, <span class="stringliteral">&quot;internal error&quot;</span>);</div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;          }</div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;          $fnn = preg_replace(<span class="stringliteral">&quot;/^arc/&quot;</span>, <span class="stringliteral">&quot;a&quot;</span>, $fnn); <span class="comment">// for the &#39;arc&#39; trig synonyms</span></div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;          <span class="keywordflow">if</span> ($fnn == <span class="stringliteral">&#39;ln&#39;</span>) {</div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;            $fnn = <span class="stringliteral">&#39;log&#39;</span>;</div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;          }</div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;          eval(<span class="stringliteral">&#39;$stack-&gt;push(&#39;</span>.$fnn.<span class="stringliteral">&#39;($op1));&#39;</span>); <span class="comment">// perfectly safe eval()</span></div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;        } elseif (array_key_exists($fnn, $this-&gt;f)) { <span class="comment">// user function</span></div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;                                <span class="comment">// get args</span></div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;          $args = array();</div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;          <span class="keywordflow">for</span> ($i = count($this-&gt;f[$fnn][<span class="stringliteral">&#39;args&#39;</span>]) - 1; $i &gt;= 0; $i--) {</div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;            <span class="keywordflow">if</span> (is_null($args[$this-&gt;f[$fnn][<span class="stringliteral">&#39;args&#39;</span>][$i]] = $stack-&gt;pop())) {</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;              <span class="keywordflow">return</span> $this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>(16, <span class="stringliteral">&quot;internal error&quot;</span>);</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;            }</div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;          }</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;          $stack-&gt;push($this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#ac1f704aec5fdd952de05fff75450e5b8">pfx</a>($this-&gt;f[$fnn][<span class="stringliteral">&#39;func&#39;</span>], $args)); <span class="comment">// yay... recursion!!!!</span></div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;        }</div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;        <span class="comment">// if the token is a number or variable, push it on the stack</span></div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;      } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;        <span class="keywordflow">if</span> (is_numeric($token)) {</div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;          $stack-&gt;push($token);</div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;        } elseif (array_key_exists($token, $this-&gt;v)) {</div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;          $stack-&gt;push($this-&gt;v[$token]);</div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;        } elseif (array_key_exists($token, $vars)) {</div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;          $stack-&gt;push($vars[$token]);</div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;          <span class="keywordflow">return</span> $this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>(17, <span class="stringliteral">&quot;undefined variable &#39;$token&#39;&quot;</span>, $token);</div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;        }</div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;      }</div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;    }</div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;    <span class="comment">// when we&#39;re out of tokens, the stack should have a single element, the final result</span></div>
-<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;    <span class="keywordflow">if</span> ($stack-&gt;count != 1) {</div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;      <span class="keywordflow">return</span> $this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>(18, <span class="stringliteral">&quot;internal error&quot;</span>);</div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;    }</div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;    <span class="keywordflow">return</span> $stack-&gt;pop();</div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;  }</div>
-<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160; </div>
-<div class="line"><a name="l00467"></a><span class="lineno"><a class="line" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">  467</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>($code, $msg, $info = <span class="keyword">null</span>)</div>
-<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;  {</div>
-<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    $this-&gt;last_error = $msg;</div>
-<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;    $this-&gt;last_error_code = array($code, $info);</div>
-<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;    <span class="keywordflow">if</span> (!$this-&gt;suppress_errors) {</div>
-<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;      trigger_error($msg, E_USER_WARNING);</div>
-<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;    }</div>
-<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;  }</div>
-<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;}</div>
-<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160; </div>
-<div class="line"><a name="l00481"></a><span class="lineno"><a class="line" href="../../de/d60/class_eval_math_stack.html">  481</a></span>&#160;<span class="keyword">class </span><a class="code" href="../../de/d60/class_eval_math_stack.html">EvalMathStack</a></div>
-<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;{</div>
-<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160; </div>
-<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;  <span class="keyword">public</span> $stack = array();</div>
-<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160; </div>
-<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;  <span class="keyword">public</span> $count = 0;</div>
-<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160; </div>
-<div class="line"><a name="l00494"></a><span class="lineno"><a class="line" href="../../de/d60/class_eval_math_stack.html#a5539d7ebc90434bb0379d939eb994be3">  494</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="../../de/d60/class_eval_math_stack.html#a5539d7ebc90434bb0379d939eb994be3">push</a>($val)</div>
-<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;  {</div>
-<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;    $this-&gt;stack[$this-&gt;count] = $val;</div>
-<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;    $this-&gt;count++;</div>
-<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;  }</div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160; </div>
-<div class="line"><a name="l00505"></a><span class="lineno"><a class="line" href="../../de/d60/class_eval_math_stack.html#a64e49dcf076b246dfc448b43417e0509">  505</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="../../de/d60/class_eval_math_stack.html#a64e49dcf076b246dfc448b43417e0509">pop</a>()</div>
-<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;  {</div>
-<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;count &gt; 0) {</div>
-<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;      $this-&gt;count--;</div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;      <span class="keywordflow">return</span> $this-&gt;stack[$this-&gt;count];</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;    }</div>
-<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
-<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;  }</div>
-<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160; </div>
-<div class="line"><a name="l00520"></a><span class="lineno"><a class="line" href="../../de/d60/class_eval_math_stack.html#a8ba13fc0c0c4ab0af74ce184b608c62e">  520</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="../../de/d60/class_eval_math_stack.html#a8ba13fc0c0c4ab0af74ce184b608c62e">last</a>($n = 1)</div>
-<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;  {</div>
-<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;stack[$this-&gt;count - $n])) {</div>
-<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;      <span class="keywordflow">return</span> $this-&gt;stack[$this-&gt;count - $n];</div>
-<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;    }</div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;  }</div>
-<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;}</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160; </div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    <span class="keywordflow">return</span> $output;</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;  }</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160; </div>
+<div class="line"><a name="l00381"></a><span class="lineno"><a class="line" href="../../dd/ddf/class_eval_math.html#ac1f704aec5fdd952de05fff75450e5b8">  381</a></span>&#160;  <span class="keyword">private</span> <span class="keyword">function</span> <a class="code" href="../../dd/ddf/class_eval_math.html#ac1f704aec5fdd952de05fff75450e5b8">pfx</a>($tokens, $vars = array())</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;  {</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    $stack = <span class="keyword">new</span> <a class="code" href="../../de/d60/class_eval_math_stack.html">EvalMathStack</a>();</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160; </div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    <span class="keywordflow">foreach</span> ($tokens as $token) { <span class="comment">// nice and easy</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;                    <span class="comment">// if the token is a binary operator, pop two values off the stack, do the operation, and push the result back on</span></div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;      $matches = array();</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;      <span class="keywordflow">if</span> (in_array($token, array(<span class="charliteral">&#39;+&#39;</span>, <span class="charliteral">&#39;-&#39;</span>, <span class="charliteral">&#39;*&#39;</span>, <span class="charliteral">&#39;/&#39;</span>, <span class="charliteral">&#39;^&#39;</span>))) {</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;        <span class="keywordflow">if</span> (is_null($op2 = $stack-&gt;pop())) {</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;          <span class="keywordflow">return</span> $this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>(12, <span class="stringliteral">&quot;internal error&quot;</span>);</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;        }</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;        <span class="keywordflow">if</span> (is_null($op1 = $stack-&gt;pop())) {</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;          <span class="keywordflow">return</span> $this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>(13, <span class="stringliteral">&quot;internal error&quot;</span>);</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;        }</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;        <span class="keywordflow">switch</span> ($token) {</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;          <span class="keywordflow">case</span> <span class="charliteral">&#39;+&#39;</span>:</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;            $stack-&gt;push($op1 + $op2);</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;          <span class="keywordflow">case</span> <span class="charliteral">&#39;-&#39;</span>:</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;            $stack-&gt;push($op1 - $op2);</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;          <span class="keywordflow">case</span> <span class="charliteral">&#39;*&#39;</span>:</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;            $stack-&gt;push($op1 * $op2);</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;          <span class="keywordflow">case</span> <span class="charliteral">&#39;/&#39;</span>:</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;            <span class="keywordflow">if</span> ($op2 == 0) {</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;              <span class="keywordflow">return</span> $this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>(14, <span class="stringliteral">&quot;division by zero&quot;</span>);</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;            }</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;            $stack-&gt;push($op1 / $op2);</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;          <span class="keywordflow">case</span> <span class="charliteral">&#39;^&#39;</span>:</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;            $stack-&gt;push(pow($op1, $op2));</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;            <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;        }</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;        <span class="comment">// if the token is a unary operator, pop one value off the stack, do the operation, and push it back on</span></div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;      } elseif ($token == <span class="stringliteral">&quot;_&quot;</span>) {</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;        $stack-&gt;push(-1 * $stack-&gt;pop());</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;        <span class="comment">// if the token is a function, pop arguments off the stack, hand them to the function, and push the result back on</span></div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;      } elseif (preg_match(<span class="stringliteral">&quot;/^([a-z]\w*)\&zwj;($/&quot;</span>, $token, $matches)) { <span class="comment">// it&#39;s a function!</span></div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;        $fnn = $matches[1];</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;        <span class="keywordflow">if</span> (in_array($fnn, $this-&gt;fb)) { <span class="comment">// built-in function:</span></div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;          <span class="keywordflow">if</span> (is_null($op1 = $stack-&gt;pop())) {</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;            <span class="keywordflow">return</span> $this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>(15, <span class="stringliteral">&quot;internal error&quot;</span>);</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;          }</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;          $fnn = preg_replace(<span class="stringliteral">&quot;/^arc/&quot;</span>, <span class="stringliteral">&quot;a&quot;</span>, $fnn); <span class="comment">// for the &#39;arc&#39; trig synonyms</span></div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;          <span class="keywordflow">if</span> ($fnn == <span class="stringliteral">&#39;ln&#39;</span>) {</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;            $fnn = <span class="stringliteral">&#39;log&#39;</span>;</div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;          }</div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;          eval(<span class="stringliteral">&#39;$stack-&gt;push(&#39;</span>.$fnn.<span class="stringliteral">&#39;($op1));&#39;</span>); <span class="comment">// perfectly safe eval()</span></div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;        } elseif (array_key_exists($fnn, $this-&gt;f)) { <span class="comment">// user function</span></div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;                                <span class="comment">// get args</span></div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;          $args = array();</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;          <span class="keywordflow">for</span> ($i = count($this-&gt;f[$fnn][<span class="stringliteral">&#39;args&#39;</span>]) - 1; $i &gt;= 0; $i--) {</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;            <span class="keywordflow">if</span> (is_null($args[$this-&gt;f[$fnn][<span class="stringliteral">&#39;args&#39;</span>][$i]] = $stack-&gt;pop())) {</div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;              <span class="keywordflow">return</span> $this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>(16, <span class="stringliteral">&quot;internal error&quot;</span>);</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;            }</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;          }</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;          $stack-&gt;push($this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#ac1f704aec5fdd952de05fff75450e5b8">pfx</a>($this-&gt;f[$fnn][<span class="stringliteral">&#39;func&#39;</span>], $args)); <span class="comment">// yay... recursion!!!!</span></div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;        }</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;        <span class="comment">// if the token is a number or variable, push it on the stack</span></div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;      } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;        <span class="keywordflow">if</span> (is_numeric($token)) {</div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;          $stack-&gt;push($token);</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;        } elseif (array_key_exists($token, $this-&gt;v)) {</div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;          $stack-&gt;push($this-&gt;v[$token]);</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;        } elseif (array_key_exists($token, $vars)) {</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;          $stack-&gt;push($vars[$token]);</div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;          <span class="keywordflow">return</span> $this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>(17, <span class="stringliteral">&quot;undefined variable &#39;$token&#39;&quot;</span>, $token);</div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;        }</div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;      }</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;    }</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;    <span class="comment">// when we&#39;re out of tokens, the stack should have a single element, the final result</span></div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;    <span class="keywordflow">if</span> ($stack-&gt;count != 1) {</div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;      <span class="keywordflow">return</span> $this-&gt;<a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>(18, <span class="stringliteral">&quot;internal error&quot;</span>);</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;    }</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;    <span class="keywordflow">return</span> $stack-&gt;pop();</div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;  }</div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160; </div>
+<div class="line"><a name="l00468"></a><span class="lineno"><a class="line" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">  468</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">trigger</a>($code, $msg, $info = <span class="keyword">null</span>)</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;  {</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;    $this-&gt;last_error = $msg;</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;    $this-&gt;last_error_code = array($code, $info);</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;    <span class="keywordflow">if</span> (!$this-&gt;suppress_errors) {</div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;      trigger_error($msg, E_USER_WARNING);</div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;    }</div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;  }</div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;}</div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160; </div>
+<div class="line"><a name="l00482"></a><span class="lineno"><a class="line" href="../../de/d60/class_eval_math_stack.html">  482</a></span>&#160;<span class="keyword">class </span><a class="code" href="../../de/d60/class_eval_math_stack.html">EvalMathStack</a></div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;{</div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160; </div>
+<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;  <span class="keyword">public</span> $stack = array();</div>
+<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160; </div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;  <span class="keyword">public</span> $count = 0;</div>
+<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160; </div>
+<div class="line"><a name="l00495"></a><span class="lineno"><a class="line" href="../../de/d60/class_eval_math_stack.html#a5539d7ebc90434bb0379d939eb994be3">  495</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="../../de/d60/class_eval_math_stack.html#a5539d7ebc90434bb0379d939eb994be3">push</a>($val)</div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;  {</div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;    $this-&gt;stack[$this-&gt;count] = $val;</div>
+<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;    $this-&gt;count++;</div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;  }</div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160; </div>
+<div class="line"><a name="l00506"></a><span class="lineno"><a class="line" href="../../de/d60/class_eval_math_stack.html#a64e49dcf076b246dfc448b43417e0509">  506</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="../../de/d60/class_eval_math_stack.html#a64e49dcf076b246dfc448b43417e0509">pop</a>()</div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;  {</div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;    <span class="keywordflow">if</span> ($this-&gt;count &gt; 0) {</div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;      $this-&gt;count--;</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;      <span class="keywordflow">return</span> $this-&gt;stack[$this-&gt;count];</div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;    }</div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">null</span>;</div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;  }</div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160; </div>
+<div class="line"><a name="l00521"></a><span class="lineno"><a class="line" href="../../de/d60/class_eval_math_stack.html#a8ba13fc0c0c4ab0af74ce184b608c62e">  521</a></span>&#160;  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="../../de/d60/class_eval_math_stack.html#a8ba13fc0c0c4ab0af74ce184b608c62e">last</a>($n = 1)</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;  {</div>
+<div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;    <span class="keywordflow">if</span> (isset($this-&gt;stack[$this-&gt;count - $n])) {</div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;      <span class="keywordflow">return</span> $this-&gt;stack[$this-&gt;count - $n];</div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;    }</div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;  }</div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;}</div>
 <div class="ttc" id="aclass_eval_math_html"><div class="ttname"><a href="../../dd/ddf/class_eval_math.html">EvalMath</a></div><div class="ttdoc">Class EvalMath.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00097">evalmath.class.php:98</a></div></div>
-<div class="ttc" id="aclass_eval_math_html_a05b0e4f3fb9324465118cc9db584c1bb"><div class="ttname"><a href="../../dd/ddf/class_eval_math.html#a05b0e4f3fb9324465118cc9db584c1bb">EvalMath\vars</a></div><div class="ttdeci">vars()</div><div class="ttdoc">vars</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00205">evalmath.class.php:205</a></div></div>
-<div class="ttc" id="aclass_eval_math_html_a72dffcf79b485497166a2fb59de59486"><div class="ttname"><a href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">EvalMath\trigger</a></div><div class="ttdeci">trigger($code, $msg, $info=null)</div><div class="ttdoc">trigger an error, but nicely, if need be</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00467">evalmath.class.php:467</a></div></div>
+<div class="ttc" id="aclass_eval_math_html_a05b0e4f3fb9324465118cc9db584c1bb"><div class="ttname"><a href="../../dd/ddf/class_eval_math.html#a05b0e4f3fb9324465118cc9db584c1bb">EvalMath\vars</a></div><div class="ttdeci">vars()</div><div class="ttdoc">Function vars.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00205">evalmath.class.php:205</a></div></div>
+<div class="ttc" id="aclass_eval_math_html_a72dffcf79b485497166a2fb59de59486"><div class="ttname"><a href="../../dd/ddf/class_eval_math.html#a72dffcf79b485497166a2fb59de59486">EvalMath\trigger</a></div><div class="ttdeci">trigger($code, $msg, $info=null)</div><div class="ttdoc">trigger an error, but nicely, if need be</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00468">evalmath.class.php:468</a></div></div>
 <div class="ttc" id="aclass_eval_math_html_a73d2d486672a50efb0c2c6e7c1d12aaf"><div class="ttname"><a href="../../dd/ddf/class_eval_math.html#a73d2d486672a50efb0c2c6e7c1d12aaf">EvalMath\evaluate</a></div><div class="ttdeci">evaluate($expr)</div><div class="ttdoc">Evaluate.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00146">evalmath.class.php:146</a></div></div>
-<div class="ttc" id="aclass_eval_math_html_a80f3c5b593ef6c8171ac82dd64ca68a1"><div class="ttname"><a href="../../dd/ddf/class_eval_math.html#a80f3c5b593ef6c8171ac82dd64ca68a1">EvalMath\funcs</a></div><div class="ttdeci">funcs()</div><div class="ttdoc">vars</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00218">evalmath.class.php:218</a></div></div>
+<div class="ttc" id="aclass_eval_math_html_a80f3c5b593ef6c8171ac82dd64ca68a1"><div class="ttname"><a href="../../dd/ddf/class_eval_math.html#a80f3c5b593ef6c8171ac82dd64ca68a1">EvalMath\funcs</a></div><div class="ttdeci">funcs()</div><div class="ttdoc">Function funcs.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00218">evalmath.class.php:218</a></div></div>
 <div class="ttc" id="aclass_eval_math_html_a834a3898fd5b9311268ecb09015fde24"><div class="ttname"><a href="../../dd/ddf/class_eval_math.html#a834a3898fd5b9311268ecb09015fde24">EvalMath\e</a></div><div class="ttdeci">e($expr)</div><div class="ttdoc">Evaluate.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00135">evalmath.class.php:135</a></div></div>
 <div class="ttc" id="aclass_eval_math_html_aa3abc6470872495099ea17b92fb3ae58"><div class="ttname"><a href="../../dd/ddf/class_eval_math.html#aa3abc6470872495099ea17b92fb3ae58">EvalMath\__construct</a></div><div class="ttdeci">__construct()</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00122">evalmath.class.php:122</a></div></div>
 <div class="ttc" id="aclass_eval_math_html_aaf98497d6958d2bad354c421632498ee"><div class="ttname"><a href="../../dd/ddf/class_eval_math.html#aaf98497d6958d2bad354c421632498ee">EvalMath\nfx</a></div><div class="ttdeci">nfx($expr)</div><div class="ttdoc">Convert infix to postfix notation.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00235">evalmath.class.php:235</a></div></div>
-<div class="ttc" id="aclass_eval_math_html_ac1f704aec5fdd952de05fff75450e5b8"><div class="ttname"><a href="../../dd/ddf/class_eval_math.html#ac1f704aec5fdd952de05fff75450e5b8">EvalMath\pfx</a></div><div class="ttdeci">pfx($tokens, $vars=array())</div><div class="ttdoc">Evaluate postfix notation.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00380">evalmath.class.php:380</a></div></div>
-<div class="ttc" id="aclass_eval_math_stack_html"><div class="ttname"><a href="../../de/d60/class_eval_math_stack.html">EvalMathStack</a></div><div class="ttdoc">Class for internal use.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00481">evalmath.class.php:482</a></div></div>
-<div class="ttc" id="aclass_eval_math_stack_html_a5539d7ebc90434bb0379d939eb994be3"><div class="ttname"><a href="../../de/d60/class_eval_math_stack.html#a5539d7ebc90434bb0379d939eb994be3">EvalMathStack\push</a></div><div class="ttdeci">push($val)</div><div class="ttdoc">push</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00494">evalmath.class.php:494</a></div></div>
-<div class="ttc" id="aclass_eval_math_stack_html_a64e49dcf076b246dfc448b43417e0509"><div class="ttname"><a href="../../de/d60/class_eval_math_stack.html#a64e49dcf076b246dfc448b43417e0509">EvalMathStack\pop</a></div><div class="ttdeci">pop()</div><div class="ttdoc">pop</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00505">evalmath.class.php:505</a></div></div>
-<div class="ttc" id="aclass_eval_math_stack_html_a8ba13fc0c0c4ab0af74ce184b608c62e"><div class="ttname"><a href="../../de/d60/class_eval_math_stack.html#a8ba13fc0c0c4ab0af74ce184b608c62e">EvalMathStack\last</a></div><div class="ttdeci">last($n=1)</div><div class="ttdoc">last</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00520">evalmath.class.php:520</a></div></div>
+<div class="ttc" id="aclass_eval_math_html_ac1f704aec5fdd952de05fff75450e5b8"><div class="ttname"><a href="../../dd/ddf/class_eval_math.html#ac1f704aec5fdd952de05fff75450e5b8">EvalMath\pfx</a></div><div class="ttdeci">pfx($tokens, $vars=array())</div><div class="ttdoc">Evaluate postfix notation.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00381">evalmath.class.php:381</a></div></div>
+<div class="ttc" id="aclass_eval_math_stack_html"><div class="ttname"><a href="../../de/d60/class_eval_math_stack.html">EvalMathStack</a></div><div class="ttdoc">Class for internal use.</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00482">evalmath.class.php:483</a></div></div>
+<div class="ttc" id="aclass_eval_math_stack_html_a5539d7ebc90434bb0379d939eb994be3"><div class="ttname"><a href="../../de/d60/class_eval_math_stack.html#a5539d7ebc90434bb0379d939eb994be3">EvalMathStack\push</a></div><div class="ttdeci">push($val)</div><div class="ttdoc">push</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00495">evalmath.class.php:495</a></div></div>
+<div class="ttc" id="aclass_eval_math_stack_html_a64e49dcf076b246dfc448b43417e0509"><div class="ttname"><a href="../../de/d60/class_eval_math_stack.html#a64e49dcf076b246dfc448b43417e0509">EvalMathStack\pop</a></div><div class="ttdeci">pop()</div><div class="ttdoc">pop</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00506">evalmath.class.php:506</a></div></div>
+<div class="ttc" id="aclass_eval_math_stack_html_a8ba13fc0c0c4ab0af74ce184b608c62e"><div class="ttname"><a href="../../de/d60/class_eval_math_stack.html#a8ba13fc0c0c4ab0af74ce184b608c62e">EvalMathStack\last</a></div><div class="ttdeci">last($n=1)</div><div class="ttdoc">last</div><div class="ttdef"><b>Definition:</b> <a href="../../d9/d4b/evalmath_8class_8php_source.html#l00521">evalmath.class.php:521</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- 
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Wed Jan 4 2023 15:02:20 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Wed Jan 4 2023 18:05:20 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>

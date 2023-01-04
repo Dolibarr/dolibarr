@@ -466,13 +466,13 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;  <span class="keywordflow">if</span> (count($objMod-&gt;depends)) {</div>
 <div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    $text .= join(<span class="charliteral">&#39;,&#39;</span>, $objMod-&gt;depends);</div>
 <div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;None&quot;</span>);</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;None&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;  }</div>
 <div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&lt;strong&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;RequiredBy&quot;</span>).<span class="stringliteral">&#39;:&lt;/strong&gt; &#39;</span>;</div>
 <div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;  <span class="keywordflow">if</span> (count($objMod-&gt;requiredby)) {</div>
 <div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    $text .= join(<span class="charliteral">&#39;,&#39;</span>, $objMod-&gt;requiredby);</div>
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;None&quot;</span>);</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;None&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;  }</div>
 <div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160; </div>
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&lt;br&gt;&#39;</span>;</div>
@@ -489,7 +489,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;      $i++;</div>
 <div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    }</div>
 <div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>);</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;  }</div>
 <div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160; </div>
 <div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&#39;</span>;</div>
@@ -502,7 +502,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;      $i++;</div>
 <div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    }</div>
 <div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>);</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;  }</div>
 <div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160; </div>
 <div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&#39;</span>;</div>
@@ -512,7 +512,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="../../de/d28/files_8lib_8php.html#aace44b4c0a96230acea62ed544e468c6">dol_is_file</a>($filedata)) {</div>
 <div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;Yes&quot;</span>).<span class="stringliteral">&#39; &lt;span class=&quot;opacitymedium&quot;&gt;(&#39;</span>.$moduledir.<span class="stringliteral">&#39;/sql/data.sql)&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>);</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;  }</div>
 <div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160; </div>
 <div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&#39;</span>;</div>
@@ -531,7 +531,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;      }</div>
 <div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;    }</div>
 <div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>);</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;  }</div>
 <div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160; </div>
 <div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&#39;</span>;</div>
@@ -540,7 +540,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;  <span class="keywordflow">if</span> (isset($objMod-&gt;module_parts) &amp;&amp; isset($objMod-&gt;module_parts[<span class="stringliteral">&#39;models&#39;</span>]) &amp;&amp; $objMod-&gt;module_parts[<span class="stringliteral">&#39;models&#39;</span>]) {</div>
 <div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;Yes&quot;</span>);</div>
 <div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>);</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;  }</div>
 <div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160; </div>
 <div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&#39;</span>;</div>
@@ -549,7 +549,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;  <span class="keywordflow">if</span> (isset($objMod-&gt;module_parts) &amp;&amp; isset($objMod-&gt;module_parts[<span class="stringliteral">&#39;substitutions&#39;</span>]) &amp;&amp; $objMod-&gt;module_parts[<span class="stringliteral">&#39;substitutions&#39;</span>]) {</div>
 <div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;Yes&quot;</span>);</div>
 <div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>);</div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;  }</div>
 <div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160; </div>
 <div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&#39;</span>;</div>
@@ -562,7 +562,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;      $i++;</div>
 <div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    }</div>
 <div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>);</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;  }</div>
 <div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160; </div>
 <div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&#39;</span>;</div>
@@ -596,7 +596,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;      $i++;</div>
 <div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;    }</div>
 <div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>);</div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;  }</div>
 <div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160; </div>
 <div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&#39;</span>;</div>
@@ -625,7 +625,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;      $i++;</div>
 <div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;    }</div>
 <div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>);</div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;  }</div>
 <div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160; </div>
 <div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&#39;</span>;</div>
@@ -638,7 +638,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;      $i++;</div>
 <div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;    }</div>
 <div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>);</div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;  }</div>
 <div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160; </div>
 <div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&#39;</span>;</div>
@@ -647,7 +647,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;  <span class="keywordflow">if</span> (isset($objMod-&gt;menu) &amp;&amp; !empty($objMod-&gt;menu)) { <span class="comment">// objMod can be an array or just an int 1</span></div>
 <div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;Yes&quot;</span>);</div>
 <div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>);</div>
+<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;  }</div>
 <div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160; </div>
 <div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&#39;</span>;</div>
@@ -660,7 +660,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;      $i++;</div>
 <div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;    }</div>
 <div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>);</div>
+<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;  }</div>
 <div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160; </div>
 <div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&#39;</span>;</div>
@@ -673,13 +673,13 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;      $i++;</div>
 <div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;    }</div>
 <div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;    $text .= $langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>);</div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;No&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;  }</div>
 <div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160; </div>
 <div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&#39;</span>;</div>
 <div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160; </div>
 <div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;br&gt;&lt;strong&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;AddOtherPagesOrServices&quot;</span>).<span class="stringliteral">&#39;:&lt;/strong&gt; &#39;</span>;</div>
-<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;  $text .= $langs-&gt;trans(<span class="stringliteral">&quot;DetectionNotPossible&quot;</span>);</div>
+<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;  $text .= <span class="stringliteral">&#39;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;DetectionNotPossible&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&#39;</span>;</div>
 <div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;}</div>
 <div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160; </div>
 <div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160; </div>
@@ -688,7 +688,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;  <span class="keywordflow">if</span> ($changelog) {</div>
 <div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;div class=&quot;moduledesclong&quot;&gt;&#39;</span>.$changelog.<span class="stringliteral">&#39;&lt;div&gt;&#39;</span>;</div>
 <div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;div class=&quot;moduledesclong&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;NotAvailable&quot;</span>).<span class="stringliteral">&#39;&lt;/div&gt;&#39;</span>;</div>
+<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;    $text .= <span class="stringliteral">&#39;&lt;div class=&quot;moduledesclong&quot;&gt;&lt;span class=&quot;opacitymedium&quot;&gt;&#39;</span>.$langs-&gt;trans(<span class="stringliteral">&quot;NotAvailable&quot;</span>).<span class="stringliteral">&#39;&lt;/span&gt;&lt;/div&gt;&#39;</span>;</div>
 <div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;  }</div>
 <div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;}</div>
 <div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160; </div>
@@ -732,7 +732,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Wed Jan 4 2023 15:02:10 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Wed Jan 4 2023 18:05:13 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>
