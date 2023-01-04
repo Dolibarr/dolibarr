@@ -318,11 +318,12 @@ if ($action == 'edit') {
 
 $moduledir = 'mymodule';
 $myTmpObjects = array();
-$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+// TODO Scan list of objects
+$myTmpObjects['myobject'] = array('label'=>'MyObject', 'includerefgeneration'=>0, 'includedocgeneration'=>0);
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectKey == 'MyObject') {
+	if ($myTmpObjectKey != $type) {
 		continue;
 	}
 	if ($myTmpObjectArray['includerefgeneration']) {
@@ -331,7 +332,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		 */
 		$setupnotempty++;
 
-		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
+		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectArray['label']), '', '');
 
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';

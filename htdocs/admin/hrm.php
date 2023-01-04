@@ -53,7 +53,7 @@ $label = GETPOST('label', 'alpha');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $scandir = GETPOST('scan_dir', 'alpha');
-$type = 'myobject';
+$type = 'evaluation';
 
 $arrayofparameters = array(
 	'HRM_MAXRANK'=>array('type'=>'integer','enabled'=>1),
@@ -210,10 +210,10 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "hrm"
 
 $moduledir = 'hrm';
 $myTmpObjects = array();
-$myTmpObjects['evaluation'] = array('includerefgeneration'=>1, 'includedocgeneration'=>0);
+$myTmpObjects['evaluation'] = array('label'=>'Evaluation', 'includerefgeneration'=>1, 'includedocgeneration'=>0);
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectKey == 'MyObject') {
+	if ($myTmpObjectKey != $type) {
 		continue;
 	}
 	if ($myTmpObjectArray['includerefgeneration']) {
@@ -222,7 +222,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		 */
 		$setupnotempty++;
 
-		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
+		print load_fiche_titre($langs->trans("NumberingModules").' ('.$myTmpObjectArray['label'].')', '', '');
 
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
