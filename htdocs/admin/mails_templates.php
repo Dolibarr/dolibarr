@@ -709,7 +709,7 @@ if ($action == 'create') {
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$align = "left";
 		if ($fieldlist[$field] == 'module') {
-			continue;
+			$valuetoshow = '';
 		}
 		if ($fieldlist[$field] == 'fk_user') {
 			$valuetoshow = $langs->trans("Owner");
@@ -810,7 +810,7 @@ if ($action == 'create') {
 		$fieldsforcontent = array('topic', 'joinfiles', 'content', 'content_lines');
 	}
 	foreach ($fieldsforcontent as $tmpfieldlist) {
-		print '<tr class="impair nodrag nodrop nohover"><td colspan="7" class="nobottom">';
+		print '<tr class="impair nodrag nodrop nohover"><td colspan="8" class="nobottom">';
 
 		// Topic of email
 		if ($tmpfieldlist == 'topic') {
@@ -1072,7 +1072,7 @@ if ($num) {
 					if ($showfield) {
 						// Show line for topic, joinfiles and content
 						print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$rowid.' ">';
-						print '<td colspan="8">';
+						print '<td colspan="9">';
 						if ($tmpfieldlist == 'topic') {
 							print '<strong>'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
 							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'">';
@@ -1088,7 +1088,6 @@ if ($num) {
 							if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 								$okforextended = false;
 							}
-
 							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%');
 							print $doleditor->Create(1);
 						}
@@ -1297,12 +1296,11 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 
 	foreach ($fieldlist as $field => $value) {
 		if ($value == 'module') {
-			continue;
-		}
-		if ($value == 'fk_user') {
+			print '<td></td>';
+		} elseif ($value == 'fk_user') {
 			print '<td>';
 			if ($user->admin) {
-				print $form->select_dolusers(empty($obj->$value) ? '' : $obj->$value, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth150 maxwidth200');
+				print $form->select_dolusers(empty($obj->$value) ? '' : $obj->$value, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth75 maxwidth100');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
 					print $user->getNomUrl(1); // Me
@@ -1328,7 +1326,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				if ($context == 'edit') {
 					$selectedlang = $obj->lang;
 				}
-				print $formadmin->select_language($selectedlang, 'langcode', 0, null, 1, 0, 0, 'maxwidth150');
+				print $formadmin->select_language($selectedlang, 'langcode', 0, null, 1, 0, 0, 'maxwidth100');
 			} else {
 				if (!empty($obj->lang)) {
 					print $obj->lang.' - '.$langs->trans('Language_'.$obj->lang);
@@ -1348,7 +1346,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				print '<input type="hidden" name="type_template" value="'.$obj->type_template.'">';
 				print $obj->type_template;
 			} else {
-				print $form->selectarray('type_template', $elementList, (!empty($obj->type_template) ? $obj->type_template:''), 1, 0, 0, '', 0, 0, 0, '', 'minwidth150', 1, '', 0, 1);
+				print $form->selectarray('type_template', $elementList, (!empty($obj->type_template) ? $obj->type_template:''), 1, 0, 0, '', 0, 0, 0, '', 'minwidth75 maxwidth125', 1, '', 0, 1);
 			}
 			print '</td>';
 		} elseif ($context == 'add' && in_array($value, array('topic', 'joinfiles', 'content', 'content_lines'))) {
