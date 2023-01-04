@@ -2535,7 +2535,7 @@ class Ticket extends CommonObject
 
 								if ($info_sendto['email'] != '') {
 									if (!empty($info_sendto['email'])) {
-										$sendto[] = trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">";
+										$sendto[] = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'])." <".$info_sendto['email'].">";
 									}
 
 									// Contact type
