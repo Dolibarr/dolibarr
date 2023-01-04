@@ -1789,11 +1789,11 @@ class Ticket extends CommonObject
 	/**
 	 *     Search and fetch thirparties by email
 	 *
-	 *     @param  string $email   		Email
-	 *     @param  int    $type    		Type of thirdparties (0=any, 1=customer, 2=prospect, 3=supplier)
-	 *     @param  array  $filters 		Array of couple field name/value to filter the companies with the same name
-	 *     @param  string $clause  		Clause for filters
-	 *     @return array        		Array of thirdparties object
+	 *     @param  string 		$email   		Email
+	 *     @param  int    		$type    		Type of thirdparties (0=any, 1=customer, 2=prospect, 3=supplier)
+	 *     @param  array  		$filters 		Array of couple field name/value to filter the companies with the same name
+	 *     @param  string 		$clause  		Clause for filters
+	 *     @return array|int    		   		Array of thirdparties object
 	 */
 	public function searchSocidByEmail($email, $type = '0', $filters = array(), $clause = 'AND')
 	{
@@ -1854,10 +1854,10 @@ class Ticket extends CommonObject
 	/**
 	 *     Search and fetch contacts by email
 	 *
-	 *     @param  string $email 	Email
-	 *     @param  array  $socid 	Limit to a thirdparty
-	 *     @param  string $case  	Respect case
-	 *     @return array        	Array of contacts object
+	 *     @param  string 		$email 		Email
+	 *     @param  array  		$socid 		Limit to a thirdparty
+	 *     @param  string 		$case  		Respect case
+	 *     @return array|int        		Array of contacts object
 	 */
 	public function searchContactByEmail($email, $socid = '', $case = '')
 	{
@@ -1900,8 +1900,8 @@ class Ticket extends CommonObject
 	/**
 	 *    Define parent commany of current ticket
 	 *
-	 *    @param  int $id Id of thirdparty to set or '' to remove
-	 *    @return int             <0 if KO, >0 if OK
+	 *    @param  int $id		Id of thirdparty to set or '' to remove
+	 *    @return int           <0 if KO, >0 if OK
 	 */
 	public function setCustomer($id)
 	{
@@ -2075,7 +2075,7 @@ class Ticket extends CommonObject
 	 *    @param	string 	$source 	Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
 	 *    @param	int    	$list   	0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string  $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
-	 *    @return 	array          		Array of contacts
+	 *    @return 	array|int      		Array of contacts
 	 */
 	public function listeContact($status = -1, $source = 'external', $list = 0, $code = '')
 	{
@@ -2364,7 +2364,7 @@ class Ticket extends CommonObject
 			}
 		}
 
-		return;
+		return 1;
 	}
 
 	/**

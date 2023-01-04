@@ -812,7 +812,7 @@ class Task extends CommonObjectLine
 	 * @param   array   $search_array_options Array of search
 	 * @param   int     $loadextras         Fetch all Extrafields on each task
 	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
-	 * @return 	array						Array of tasks
+	 * @return 	array|string				Array of tasks
 	 */
 	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1)
 	{
@@ -1063,7 +1063,7 @@ class Task extends CommonObjectLine
 	 * @param 	int			$projectid		      Project id list separated with , to filter on project
 	 * @param 	int			$taskid			      Task id to filter on a task
 	 * @param	integer		$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
-	 * @return 	array						      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
+	 * @return 	array|int					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
 	 */
 	public function getUserRolesForProjectsOrTasks($userp, $usert, $projectid = '', $taskid = 0, $filteronprojstatus = -1)
 	{
@@ -1398,12 +1398,10 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param  User|int	$userobj			Filter on user. null or 0=No filter
 	 *  @param	string		$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 *  @return array		 					Array of info for task array('min_date', 'max_date', 'total_duration', 'total_amount', 'nblines', 'nblinesnull')
+	 *  @return array|int	 					Array of info for task array('min_date', 'max_date', 'total_duration', 'total_amount', 'nblines', 'nblinesnull')
 	 */
 	public function getSummaryOfTimeSpent($userobj = null, $morewherefilter = '')
 	{
-		global $langs;
-
 		if (is_object($userobj)) {
 			$userid = $userobj->id;
 		} else {
@@ -1567,14 +1565,12 @@ class Task extends CommonObjectLine
 	/**
 	 *  Load all records of time spent
 	 *
-	 *  @param	User	$userobj			User object
-	 *  @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 *  @return int							<0 if KO, array of time spent if OK
+	 *  @param	User		$userobj			User object
+	 *  @param	string		$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
+	 *  @return array|int						<0 if KO, array of time spent if OK
 	 */
 	public function fetchAllTimeSpent(User $userobj, $morewherefilter = '')
 	{
-		global $langs;
-
 		$arrayres = array();
 
 		$sql = "SELECT";

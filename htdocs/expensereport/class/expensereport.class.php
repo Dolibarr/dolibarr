@@ -1734,9 +1734,9 @@ class ExpenseReport extends CommonObject
 	/**
 	 *  Update total of an expense report when you add a line.
 	 *
-	 *  @param    string    $ligne_total_ht    Amount without taxes
+	 *  @param    string    $ligne_total_ht    	Amount without taxes
 	 *  @param    string    $ligne_total_tva    Amount of all taxes
-	 *  @return    void
+	 *  @return   int
 	 */
 	public function update_totaux_add($ligne_total_ht, $ligne_total_tva)
 	{
@@ -1885,7 +1885,7 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @param	int		$type		Type of line
 	 * @param	string	$seller		Seller, but actually he is unknown
-	 * @return 						true or false
+	 * @return 	boolean				true or false
 	 */
 	public function checkRules($type = 0, $seller = '')
 	{

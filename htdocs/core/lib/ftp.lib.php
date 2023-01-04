@@ -35,11 +35,10 @@
  * @param 	string	$ftp_password	FTP password
  * @param 	string	$section		Directory
  * @param	integer	$ftp_passive	Use a passive mode
- * @return	int 	<0 if OK, >0 if KO
+ * @return	array					Result of connect
  */
 function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $section, $ftp_passive = 0)
 {
-
 	global $langs, $conf;
 
 	$ok = 1;
@@ -127,7 +126,6 @@ function dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $sect
  */
 function ftp_isdir($connect_id, $dir)
 {
-
 	if (@ftp_chdir($connect_id, $dir)) {
 		ftp_cdup($connect_id);
 		return 1;
@@ -140,11 +138,10 @@ function ftp_isdir($connect_id, $dir)
  * Tell if an entry is a FTP directory
  *
  * @param 		resource	$connect_id		Connection handler
- * @return		result
+ * @return		boolean						Result of closing
  */
 function dol_ftp_close($connect_id)
 {
-
 	global $conf;
 
 	// Close FTP connection
@@ -196,7 +193,7 @@ function dol_ftp_delete($connect_id, $file, $newsection)
  * @param 		string		$localfile		The local file path
  * @param 		string		$file					The remote file path
  * @param 		string		$newsection			$newsection
- * @return		result
+ * @return		bool|resource
  */
 function dol_ftp_get($connect_id, $localfile, $file, $newsection)
 {
@@ -226,11 +223,10 @@ function dol_ftp_get($connect_id, $localfile, $file, $newsection)
  * @param 		string		$file			File name
  * @param 		string		$localfile		The path to the local file
  * @param 		string		$newsection		$newsection
- * @return		result
+ * @return		boolean
  */
 function dol_ftp_put($connect_id, $file, $localfile, $newsection)
 {
-
 	global $conf;
 
 	if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
@@ -255,11 +251,10 @@ function dol_ftp_put($connect_id, $file, $localfile, $newsection)
  * @param 		resource	$connect_id		Connection handler
  * @param 		string		$file			File
  * @param 		string		$newsection			$newsection
- * @return		result
+ * @return		boolean
  */
 function dol_ftp_rmdir($connect_id, $file, $newsection)
 {
-
 	global $conf;
 
 	if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
@@ -285,11 +280,10 @@ function dol_ftp_rmdir($connect_id, $file, $newsection)
  * @param 		resource	$connect_id		Connection handler
  * @param 		string		$newdir			Dir create
  * @param 		string		$newsection		$newsection
- * @return		result
+ * @return		boolean|string
  */
 function dol_ftp_mkdir($connect_id, $newdir, $newsection)
 {
-
 	global $conf;
 
 	if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {

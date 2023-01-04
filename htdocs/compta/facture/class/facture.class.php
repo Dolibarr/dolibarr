@@ -4148,9 +4148,10 @@ class Facture extends CommonInvoice
 	 *	Delete line in database
 	 *
 	 *	@param		int		$rowid		Id of line to delete
+	 *  @param		int		$id			Id of object (for a check)
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	public function deleteline($rowid)
+	public function deleteline($rowid, $id = 0)
 	{
 		global $user;
 
@@ -4158,6 +4159,22 @@ class Facture extends CommonInvoice
 
 		if ($this->statut != self::STATUS_DRAFT) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
+			return -1;
+		}
+
+		$line = new FactureLigne($this->db);
+
+		$line->context = $this->context;
+
+		// Load line
+		$result = $line->fetch($rowid);
+		if (!($result > 0)) {
+			dol_print_error($this->db, $line->error, $line->errors);
+			return -1;
+		}
+
+		if ($id > 0 && $line->fk_facture != $id) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
 			return -1;
 		}
 
@@ -4176,15 +4193,9 @@ class Facture extends CommonInvoice
 			return -1;
 		}
 
-		$line = new FactureLigne($this->db);
-
-		$line->context = $this->context;
-
-		// For triggers
-		$result = $line->fetch($rowid);
-		if (!($result > 0)) {
-			dol_print_error($this->db, $line->error, $line->errors);
-		}
+		// Memorize previous line for triggers
+		$staticline = clone $line;
+		$line->oldline = $staticline;
 
 		if ($line->delete($user) > 0) {
 			$result = $this->update_price(1);

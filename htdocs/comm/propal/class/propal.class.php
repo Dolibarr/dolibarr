@@ -983,9 +983,10 @@ class Propal extends CommonObject
 	 *  Delete detail line
 	 *
 	 *  @param		int		$lineid			Id of line to delete
+	 *  @param		int		$id				Id of object (for a check)
 	 *  @return     int         			>0 if OK, <0 if KO
 	 */
-	public function deleteline($lineid)
+	public function deleteline($lineid, $id = 0)
 	{
 		global $user;
 
@@ -994,8 +995,19 @@ class Propal extends CommonObject
 
 			$line = new PropaleLigne($this->db);
 
-			// For triggers
+			$line->context = $this->context;
+
+			// Load data
 			$line->fetch($lineid);
+
+			if ($id > 0 && $line->fk_propal != $id) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
+
+			// Memorize previous line for triggers
+			$staticline = clone $line;
+			$line->oldline = $staticline;
 
 			if ($line->delete($user) > 0) {
 				$this->update_price(1);

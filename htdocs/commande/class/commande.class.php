@@ -2379,58 +2379,45 @@ class Commande extends CommonOrder
 	 *
 	 *	@param      User	$user		User object
 	 *  @param      int		$lineid		Id of line to delete
+	 *  @param		int		$id			Id of object (for a check)
 	 *  @return     int        		 	>0 if OK, 0 if nothing to do, <0 if KO
 	 */
-	public function deleteline($user = null, $lineid = 0)
+	public function deleteline($user = null, $lineid = 0, $id = 0)
 	{
 		if ($this->statut == self::STATUS_DRAFT) {
 			$this->db->begin();
 
-			$sql = "SELECT fk_product, qty";
-			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql .= " WHERE rowid = ".((int) $lineid);
+			// Delete line
+			$line = new OrderLine($this->db);
 
-			$result = $this->db->query($sql);
-			if ($result) {
-				$obj = $this->db->fetch_object($result);
+			$line->context = $this->context;
 
-				if ($obj) {
-					$product = new Product($this->db);
-					$product->id = $obj->fk_product;
+			// Load data
+			$line->fetch($lineid);
 
-					// Delete line
-					$line = new OrderLine($this->db);
+			if ($id > 0 && $line->fk_commande != $id) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
 
-					// For triggers
-					$line->fetch($lineid);
+			// Memorize previous line for triggers
+			$staticline = clone $line;
+			$line->oldline = $staticline;
 
-					// Memorize previous line for triggers
-					$staticline = clone $line;
-					$line->oldline = $staticline;
+			if ($line->delete($user) > 0) {
+				$result = $this->update_price(1);
 
-					if ($line->delete($user) > 0) {
-						$result = $this->update_price(1);
-
-						if ($result > 0) {
-							$this->db->commit();
-							return 1;
-						} else {
-							$this->db->rollback();
-							$this->error = $this->db->lasterror();
-							return -1;
-						}
-					} else {
-						$this->db->rollback();
-						$this->error = $line->error;
-						return -1;
-					}
+				if ($result > 0) {
+					$this->db->commit();
+					return 1;
 				} else {
 					$this->db->rollback();
-					return 0;
+					$this->error = $this->db->lasterror();
+					return -1;
 				}
 			} else {
 				$this->db->rollback();
-				$this->error = $this->db->lasterror();
+				$this->error = $line->error;
 				return -1;
 			}
 		} else {
