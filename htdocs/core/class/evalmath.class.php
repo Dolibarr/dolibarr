@@ -198,9 +198,9 @@ class EvalMath
 	}
 
 	/**
-	 * vars
+	 * Function vars
 	 *
-	 * @return string Output
+	 * @return array	Output
 	 */
 	public function vars()
 	{
@@ -211,9 +211,9 @@ class EvalMath
 	}
 
 	/**
-	 * vars
+	 * Function funcs
 	 *
-	 * @return string Output
+	 * @return array	Output
 	 */
 	private function funcs()
 	{
@@ -229,8 +229,8 @@ class EvalMath
 	/**
 	 * Convert infix to postfix notation
 	 *
-	 * @param string $expr		Expression
-	 * @return string 			Output
+	 * @param 	string 			$expr		Expression
+	 * @return 	boolean|array 				Output
 	 */
 	private function nfx($expr)
 	{
@@ -367,6 +367,7 @@ class EvalMath
 			}
 			$output[] = $op;
 		}
+
 		return $output;
 	}
 

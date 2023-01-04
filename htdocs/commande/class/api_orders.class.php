@@ -108,11 +108,11 @@ class Orders extends DolibarrApi
 	 *
 	 * Return an array with order informations
 	 *
-	 * @param       int         $id            ID of order
+	 * @param       int         $id            	ID of order
 	 * @param		string		$ref			Ref of object
 	 * @param		string		$ref_ext		External reference of object
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
-	 * @return 	array|mixed data without useless information
+	 * @param       int         $contact_list  	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @return  	Object              		Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
