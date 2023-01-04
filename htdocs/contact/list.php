@@ -73,6 +73,7 @@ $search_firstlast_only = GETPOST("search_firstlast_only", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
 $search_firstname = GETPOST("search_firstname", 'alpha');
 $search_societe = GETPOST("search_societe", 'alpha');
+$search_societe_alias = GETPOST("search_societe_alias", 'alpha');
 $search_poste = GETPOST("search_poste", 'alpha');
 $search_phone_perso = GETPOST("search_phone_perso", 'alpha');
 $search_phone_pro = GETPOST("search_phone_pro", 'alpha');
@@ -193,6 +194,7 @@ foreach ($object->fields as $key => $val) {
 // Add none object fields for "search in all"
 if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 	$fieldstosearchall['s.nom'] = "ThirdParty";
+	$fieldstosearchall['s.name_alias'] = "AliasNames";
 }
 
 // Definition of fields for list
@@ -214,6 +216,7 @@ foreach ($object->fields as $key => $val) {
 $arrayfields['country.code_iso'] = array('label'=>"Country", 'position'=>66, 'checked'=>0);
 if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 	$arrayfields['s.nom'] = array('label'=>"ThirdParty", 'position'=>113, 'checked'=> 1);
+	$arrayfields['s.name_alias'] = array('label'=>"AliasNameShort", 'position'=>114, 'checked'=> 1);
 }
 
 $arrayfields['unsubscribed'] = array(
@@ -278,6 +281,7 @@ if (empty($reshook)) {
 		$search_lastname = "";
 		$search_firstname = "";
 		$search_societe = "";
+		$search_societe_alias = "";
 		$search_town = "";
 		$search_address = "";
 		$search_zip = "";
@@ -373,7 +377,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
-$sql = "SELECT s.rowid as socid, s.nom as name,";
+$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias as alias,";
 $sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.address, p.zip, p.town, p.poste, p.email,";
 $sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
@@ -545,8 +549,15 @@ if ($search_lastname) {
 if ($search_firstname) {
 	$sql .= natural_search('p.firstname', $search_firstname);
 }
-if ($search_societe) {
-	$sql .= natural_search(empty($conf->global->SOCIETE_DISABLE_CONTACTS) ? 's.nom' : 'p.fk_soc', $search_societe);
+if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+} else {
+	if ($search_societe) {
+		$sql .= natural_search('s.nom', $search_societe);
+	}
+	if ($search_societe_alias) {
+		$sql .= natural_search('s.name_alias', $search_societe_alias);
+	}
 }
 if ($search_country) {
 	$sql .= " AND p.fk_pays IN (".$db->sanitize($search_country).')';
@@ -677,6 +688,9 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && (
 	exit;
 }
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas';
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
 
@@ -715,6 +729,9 @@ if ($search_firstname != '') {
 }
 if ($search_societe != '') {
 	$param .= '&search_societe='.urlencode($search_societe);
+}
+if ($search_societe_alias != '') {
+	$param .= '&search_societe_alias='.urlencode($search_societe_alias);
 }
 if ($search_address != '') {
 	$param .= '&search_address='.urlencode($search_address);
@@ -993,6 +1010,12 @@ if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom'][
 	print '<input class="flat" type="text" name="search_societe" size="8" value="'.dol_escape_htmltag($search_societe).'">';
 	print '</td>';
 }
+// Alias
+if (!empty($arrayfields['s.name_alias']['checked'])) {
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat maxwidth100" type="text" name="search_societe_alias" value="'.dol_escape_htmltag($search_societe_alias).'">';
+	print '</td>';
+}
 if (!empty($arrayfields['p.priv']['checked'])) {
 	print '<td class="liste_titre center">';
 	$selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
@@ -1113,6 +1136,9 @@ if (!empty($arrayfields['p.fk_soc']['checked'])) {
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", $begin, $param, '', $sortfield, $sortorder);
+}
+if (!empty($arrayfields['s.name_alias']['checked'])) {
+	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", $begin, $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['p.priv']['checked'])) {
 	print_liste_field_titre($arrayfields['p.priv']['label'], $_SERVER["PHP_SELF"], "p.priv", $begin, $param, '', $sortfield, $sortorder, 'center ');
@@ -1351,6 +1377,16 @@ while ($i < min($num, $limit)) {
 			} else {
 				print '&nbsp;';
 			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Alias name
+		if (!empty($arrayfields['s.name_alias']['checked'])) {
+			print '<td class="nocellnopadd">';
+			print dol_escape_htmltag($obj->alias);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
