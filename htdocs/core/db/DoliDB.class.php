@@ -75,7 +75,7 @@ abstract class DoliDB implements Database
 
 
 	/**
-	 *	Return the DB prefix found into prefix_db (if it was set manually by doing $db->prefix_db=...).
+	 *	Return the DB prefix found into prefix_db (if it was set manually by doing $dbhandler->prefix_db=...).
 	 *  Otherwise return MAIN_DB_PREFIX (common use).
 	 *
 	 *	@return string		The DB prefix
