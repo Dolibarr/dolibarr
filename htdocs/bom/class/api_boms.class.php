@@ -205,6 +205,11 @@ class Boms extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			$this->bom->$field = $value;
 		}
+
+		// Check Ref Numbering
+		// We check that object has a temporary ref
+		$this->CheckRefNumbering();
+
 		if (!$this->bom->create(DolibarrApiAccess::$user)) {
 			throw new RestException(500, "Error creating BOM", array_merge(array($this->bom->error), $this->bom->errors));
 		}
@@ -240,6 +245,10 @@ class Boms extends DolibarrApi
 			}
 			$this->bom->$field = $value;
 		}
+
+		// Check Ref Numbering
+		// We check that object has a temporary ref
+		$this->CheckRefNumbering();
 
 		if ($this->bom->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
@@ -526,7 +535,7 @@ class Boms extends DolibarrApi
 	{
 		$myobject = array();
 		foreach ($this->bom->fields as $field => $propfield) {
-			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
+			if (in_array($field, array('rowid', 'entity', 'ref', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
 				continue; // Not a mandatory field
 			}
 			if (!isset($data[$field])) {
@@ -535,5 +544,20 @@ class Boms extends DolibarrApi
 				$myobject[$field] = $data[$field];
 		}
 		return $myobject;
+	}
+
+	/**
+	 * Validate the ref field and get the next Number if it's necessary.
+	 *
+	 * @return void
+	 */
+	private function CheckRefNumbering(): void
+	{
+		$ref = substr($this->bom->ref, 1, 4);
+		if ($this->bom->status > 0 && (empty($this->bom->ref) || $ref == 'PROV')) {
+			$this->bom->fetch_product();
+			$numref = $this->bom->getNextNumRef($this->bom->product);
+			$this->bom->ref = $numref;
+		}
 	}
 }
