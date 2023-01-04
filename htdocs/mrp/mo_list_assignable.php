@@ -500,7 +500,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 foreach ($arrayfields as $key => $val) {
 	if (!empty($val['checked'])) {
 		//Find CSS class in mo.class
-		$nativekey = substr($key,strpos($key,".") + 1);
+		$nativekey = substr($key, strpos($key, ".") + 1);
 		$classfield = empty($object->fields[$nativekey]) ? $val : $object->fields[$nativekey];
 		$cssforfield = (empty($classfield['csslist']) ? (empty($classfield['css']) ? '' : $classfield['css']) : $classfield['csslist']);
 		if ($key == 't.status') {
@@ -568,7 +568,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 foreach ($arrayfields as $key => $val) {
 	if (!empty($val['checked'])) {
 		//Find CSS class in mo.class
-		$nativekey = substr($key,strpos($key,".") + 1);
+		$nativekey = substr($key, strpos($key, ".") + 1);
 		$classfield = empty($object->fields[$nativekey]) ? $val : $object->fields[$nativekey];
 		$cssforfield = (empty($classfield['csslist']) ? (empty($classfield['css']) ? '' : $classfield['css']) : $classfield['csslist']);
 		if ($key == 't.status') {
@@ -641,7 +641,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 	foreach ($arrayfields as $key => $val) {
 		//Find CSS class in mo.class
-		$nativekey = substr($key,strpos($key,".") + 1);
+		$nativekey = substr($key, strpos($key, ".") + 1);
 		$classfield = empty($object->fields[$nativekey]) ? $val : $object->fields[$nativekey];
 		$cssforfield = (empty($classfield['csslist']) ? (empty($classfield['css']) ? '' : $classfield['css']) : $classfield['csslist']);
 		if (in_array($classfield['type'], array('date', 'datetime', 'timestamp'))) {
@@ -667,7 +667,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			if ($key == 't.status') {
 				print $object->getLibStatut(5);
 			} elseif ($key == 't.ref') {
-				print $object->getNomUrl(1,'production');
+				print $object->getNomUrl(1, 'production');
 			} elseif ($key == 't.fk_parent_line') {
 				$moparent = $object->getMoParent();
 				if (is_object($moparent)) print $moparent->getNomUrl(1);
