@@ -19,5 +19,7 @@ jobs:
           #php-version: '7.1'
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2022.3.0
+        with:
+          php-version: '7.1'
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
