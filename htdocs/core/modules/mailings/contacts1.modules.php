@@ -309,8 +309,7 @@ class mailing_contacts1 extends MailingTargets
 
 		// Choose language if multilangue active
 
-		if (@$conf->global->MAIN_MULTILANGS==1)
-		{
+		if (@$conf->global->MAIN_MULTILANGS==1) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($this->db);
 			$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
