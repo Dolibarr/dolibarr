@@ -67,7 +67,7 @@ class mod_asset_advanced extends ModeleNumRefAsset
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
-		$texte .= '<input type="hidden" name="maskconstBom" value="ASSET_ASSET_ADVANCED_MASK">';
+		$texte .= '<input type="hidden" name="maskconst" value="ASSET_ASSET_ADVANCED_MASK">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Asset"), $langs->transnoentities("Asset"));

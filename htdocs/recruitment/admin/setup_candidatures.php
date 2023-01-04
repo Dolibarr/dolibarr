@@ -92,10 +92,10 @@ if ((float) DOL_VERSION >= 6) {
 }
 
 if ($action == 'updateMask') {
-	$maskconstcand = GETPOST('maskconstcand', 'alpha');
+	$maskconstcand = GETPOST('maskconstcand', 'aZ09');
 	$maskcand = GETPOST('maskcand', 'alpha');
 
-	if ($maskconstcand) {
+	if ($maskconstcand && preg_match('/_MASK$/', $maskconstcand)) {
 		$res = dolibarr_set_const($db, $maskconstcand, $maskcand, 'chaine', 0, '', $conf->entity);
 	}
 
