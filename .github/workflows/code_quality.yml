@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          php-version: '7.1'
+          #php-version: '7.1'
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2022.3.0
         env:
