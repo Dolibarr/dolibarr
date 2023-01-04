@@ -448,7 +448,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$tmparray['object_PREVIOUS_YEAR'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'y'), '%Y');
 				$tmparray['object_YEAR'] = dol_print_date($this->date, '%Y');
 				$tmparray['object_NEXT_YEAR'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'y'), '%Y');
-				$tmparray['object_category_operation'] = $outputlangs->transnoentities("MentionCategoryOfOperations" . $categoryOfOperation);
+				$tmparray['object_productorservice_operation'] = $outputlangs->transnoentities("MentionCategoryOfOperations" . $categoryOfOperation);
 
 				// Call the ODTSubstitution hook
 				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray);
