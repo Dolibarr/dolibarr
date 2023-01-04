@@ -151,7 +151,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ab81f8b0e8d4085f8dbcda2cc2cd6482e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update a line to given order.  <a href="../../de/d8f/class_orders.html#ab81f8b0e8d4085f8dbcda2cc2cd6482e">More...</a><br /></td></tr>
 <tr class="separator:ab81f8b0e8d4085f8dbcda2cc2cd6482e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a224023e22eb5aa4a0aa178e14069197b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d8f/class_orders.html#a224023e22eb5aa4a0aa178e14069197b">deleteLine</a> ($id, $lineid)</td></tr>
-<tr class="memdesc:a224023e22eb5aa4a0aa178e14069197b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete a line to given order.  <a href="../../de/d8f/class_orders.html#a224023e22eb5aa4a0aa178e14069197b">More...</a><br /></td></tr>
+<tr class="memdesc:a224023e22eb5aa4a0aa178e14069197b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete a line of a given order.  <a href="../../de/d8f/class_orders.html#a224023e22eb5aa4a0aa178e14069197b">More...</a><br /></td></tr>
 <tr class="separator:a224023e22eb5aa4a0aa178e14069197b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a94b87103ff2704c7b0b190a8800d3218"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d8f/class_orders.html#a94b87103ff2704c7b0b190a8800d3218">getContacts</a> ($id, $<a class="el" href="../../d1/d2d/repair_8php.html#a26b9bb9361f70fb8747a8c3e18653135">type</a>='')</td></tr>
 <tr class="memdesc:a94b87103ff2704c7b0b190a8800d3218"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get contacts of given order.  <a href="../../de/d8f/class_orders.html#a94b87103ff2704c7b0b190a8800d3218">More...</a><br /></td></tr>
@@ -268,7 +268,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="../../da/de4/class_dolibarr_api.html#aceb4b3923ee7a5312a8efecf69329e7c">DolibarrApi</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l01090">1090</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l01076">1076</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -337,9 +337,9 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00120">120</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00119">119</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00102">getByRefExt()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00101">getByRefExt()</a>.</p>
 
 </div>
 </div>
@@ -382,7 +382,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l01112">1112</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l01098">1098</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -416,14 +416,14 @@ Additional Inherited Members</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Order ID </td></tr>
-    <tr><td class="paramtype">int</td><td class="paramname">$notrigger</td><td>Disabled triggers</td></tr>
+    <tr><td class="paramtype">int</td><td class="paramname">$notrigger</td><td>Disabled triggers </td></tr>
   </table>
   </dd>
 </dl>
-<p>@url POST {id}/close</p>
-<dl class="section return"><dt>Returns</dt><dd>int </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
+<p>@url POST {id}/close </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00859">859</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00847">847</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -446,12 +446,12 @@ Additional Inherited Members</h2></td></tr>
 <p>Create an order using an existing proposal. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramtype">int</td><td class="paramname">$proposalid</td><td>Id of the proposal</td></tr>
+    <tr><td class="paramtype">int</td><td class="paramname">$proposalid</td><td>Id of the proposal </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
 <p>@url POST /createfromproposal/{proposalid}</p>
-<dl class="section return"><dt>Returns</dt><dd>int </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">RestException</td><td>400 </td></tr>
@@ -462,7 +462,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00956">956</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00942">942</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -511,7 +511,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l01055">1055</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l01041">1041</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -540,7 +540,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>array </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00679">679</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00670">670</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -586,7 +586,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 <p>@url DELETE {id}/contact/{contactid}/{type}</p>
-<dl class="section return"><dt>Returns</dt><dd>int</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>array</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">RestException</td><td>401 </td></tr>
@@ -596,7 +596,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00595">595</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00587">587</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -626,16 +626,16 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Delete a line to given order. </p>
+<p>Delete a line of a given order. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Id of order to update </td></tr>
-    <tr><td class="paramtype">int</td><td class="paramname">$lineid</td><td>Id of line to delete</td></tr>
+    <tr><td class="paramtype">int</td><td class="paramname">$lineid</td><td>Id of line to delete </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
 <p>@url DELETE {id}/lines/{lineid}</p>
-<dl class="section return"><dt>Returns</dt><dd>int</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">RestException</td><td>401 </td></tr>
@@ -644,7 +644,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00474">474</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00470">470</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -691,7 +691,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00066">66</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00065">65</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -739,7 +739,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00084">84</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00083">83</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -787,9 +787,9 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00102">102</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00101">101</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00120">_fetch()</a>.</p>
+<p class="reference">References <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00119">_fetch()</a>.</p>
 
 </div>
 </div>
@@ -824,12 +824,12 @@ Additional Inherited Members</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>ID of order </td></tr>
-    <tr><td class="paramtype">string</td><td class="paramname">$type</td><td>Type of the contact (BILLING, SHIPPING, CUSTOMER)</td></tr>
+    <tr><td class="paramtype">string</td><td class="paramname">$type</td><td>Type of the contact (BILLING, SHIPPING, CUSTOMER) </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
 <p>@url GET {id}/contacts</p>
-<dl class="section return"><dt>Returns</dt><dd>array data without useless information</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">RestException</td><td></td></tr>
@@ -837,7 +837,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00513">513</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00506">506</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -865,9 +865,9 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 <p>@url GET {id}/lines</p>
-<dl class="section return"><dt>Returns</dt><dd>int </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>array </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00304">304</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00303">303</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -905,7 +905,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00999">999</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00985">985</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -981,7 +981,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00165">165</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00164">164</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -1011,7 +1011,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>int ID of order </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00269">269</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00268">268</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -1052,12 +1052,12 @@ Additional Inherited Members</h2></td></tr>
   <table class="params">
     <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Id of order to update </td></tr>
     <tr><td class="paramtype">int</td><td class="paramname">$contactid</td><td>Id of contact to add </td></tr>
-    <tr><td class="paramtype">string</td><td class="paramname">$type</td><td>Type of the contact (BILLING, SHIPPING, CUSTOMER)</td></tr>
+    <tr><td class="paramtype">string</td><td class="paramname">$type</td><td>Type of the contact (BILLING, SHIPPING, CUSTOMER) </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>array</dd></dl>
 <p>@url POST {id}/contact/{contactid}/{type}</p>
-<dl class="section return"><dt>Returns</dt><dd>int</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">RestException</td><td>401 </td></tr>
@@ -1066,7 +1066,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00547">547</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00539">539</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -1107,7 +1107,7 @@ Additional Inherited Members</h2></td></tr>
 <p>@url POST {id}/lines</p>
 <dl class="section return"><dt>Returns</dt><dd>int </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00336">336</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00335">335</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -1141,13 +1141,13 @@ Additional Inherited Members</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Id of order to update </td></tr>
-    <tr><td class="paramtype">array</td><td class="paramname">$request_data</td><td>Datas</td></tr>
+    <tr><td class="paramtype">array</td><td class="paramname">$request_data</td><td>Datas </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00638">638</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00629">629</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -1188,14 +1188,14 @@ Additional Inherited Members</h2></td></tr>
   <table class="params">
     <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Id of order to update </td></tr>
     <tr><td class="paramtype">int</td><td class="paramname">$lineid</td><td>Id of line to update </td></tr>
-    <tr><td class="paramtype">array</td><td class="paramname">$request_data</td><td><a class="el" href="../../df/de6/class_order_line.html" title="Class to manage order lines.">OrderLine</a> data</td></tr>
+    <tr><td class="paramtype">array</td><td class="paramname">$request_data</td><td><a class="el" href="../../df/de6/class_order_line.html" title="Class to manage order lines.">OrderLine</a> data </td></tr>
   </table>
   </dd>
 </dl>
-<p>@url PUT {id}/lines/{lineid}</p>
-<dl class="section return"><dt>Returns</dt><dd>array|bool </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object|false Object with cleaned properties</dd></dl>
+<p>@url PUT {id}/lines/{lineid} </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00404">404</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00402">402</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -1236,7 +1236,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00778">778</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00769">769</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -1260,12 +1260,12 @@ Additional Inherited Members</h2></td></tr>
 <p>Could be also called setbilled</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Id of the order</td></tr>
+    <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Id of the order </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
 <p>@url POST {id}/setinvoiced</p>
-<dl class="section return"><dt>Returns</dt><dd>int</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">RestException</td><td>400 </td></tr>
@@ -1276,7 +1276,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00816">816</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00805">805</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -1310,14 +1310,14 @@ Additional Inherited Members</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Order ID </td></tr>
-    <tr><td class="paramtype">int</td><td class="paramname">$idwarehouse</td><td>Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)</td></tr>
+    <tr><td class="paramtype">int</td><td class="paramname">$idwarehouse</td><td>Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on) </td></tr>
   </table>
   </dd>
 </dl>
-<p>@url POST {id}/settodraft</p>
-<dl class="section return"><dt>Returns</dt><dd>array </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
+<p>@url POST {id}/settodraft </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00905">905</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00892">892</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -1375,7 +1375,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>array </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00727">727</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html#l00718">718</a> of file <a class="el" href="../../d9/d7b/api__orders_8class_8php_source.html">api_orders.class.php</a>.</p>
 
 </div>
 </div>
@@ -1387,7 +1387,7 @@ Additional Inherited Members</h2></td></tr>
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Tue Jan 3 2023 15:02:58 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Wed Jan 4 2023 15:02:42 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>

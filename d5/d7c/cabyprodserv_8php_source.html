@@ -418,7 +418,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;  }</div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;  <span class="keywordflow">if</span> ($selected_cat === -2) { <span class="comment">// Without any category</span></div>
 <div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    $sql .= <span class="stringliteral">&quot; AND cp.fk_product is null&quot;</span>;</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;  } elseif ($selected_cat) {  <span class="comment">// Into a specific category</span></div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;  } elseif ($selected_cat &gt; 0) {  <span class="comment">// Into a specific category</span></div>
 <div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    <span class="keywordflow">if</span> ($subcat) {</div>
 <div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;      $TListOfCats = $categorie-&gt;get_full_arbo(<span class="stringliteral">&#39;product&#39;</span>, $selected_cat, 1);</div>
 <div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
@@ -696,7 +696,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Tue Jan 3 2023 15:02:22 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Wed Jan 4 2023 15:02:17 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>

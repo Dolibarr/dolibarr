@@ -256,7 +256,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="../../da/de4/class_dolibarr_api.html#aceb4b3923ee7a5312a8efecf69329e7c">DolibarrApi</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00974">974</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00968">968</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
 
 </div>
 </div>
@@ -317,7 +317,7 @@ Additional Inherited Members</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>array|mixed data without useless information</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">RestException</td><td></td></tr>
@@ -362,7 +362,7 @@ Additional Inherited Members</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>array </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>array</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">RestException</td><td></td></tr>
@@ -370,7 +370,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00954">954</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00948">948</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
 
 </div>
 </div>
@@ -418,14 +418,14 @@ Additional Inherited Members</h2></td></tr>
     <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Commercial proposal ID </td></tr>
     <tr><td class="paramtype">int</td><td class="paramname">$status</td><td>Must be 2 (accepted) or 3 (refused) {@min 2}{@max 3} </td></tr>
     <tr><td class="paramtype">string</td><td class="paramname">$note_private</td><td>Add this mention at end of private note </td></tr>
-    <tr><td class="paramtype">int</td><td class="paramname">$notrigger</td><td>Disabled triggers</td></tr>
+    <tr><td class="paramtype">int</td><td class="paramname">$notrigger</td><td>Disabled triggers </td></tr>
   </table>
   </dd>
 </dl>
-<p>@url POST {id}/close</p>
-<dl class="section return"><dt>Returns</dt><dd>array </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
+<p>@url POST {id}/close </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00868">868</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00862">862</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
 
 </div>
 </div>
@@ -448,13 +448,13 @@ Additional Inherited Members</h2></td></tr>
 <p>Delete commercial proposal. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Commercial proposal ID</td></tr>
+    <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Commercial proposal ID </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>array </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00728">728</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00725">725</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
 
 </div>
 </div>
@@ -495,12 +495,12 @@ Additional Inherited Members</h2></td></tr>
   <table class="params">
     <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Id of commercial proposal to update </td></tr>
     <tr><td class="paramtype">int</td><td class="paramname">$contactid</td><td>Row key of the contact in the array contact_ids. </td></tr>
-    <tr><td class="paramtype">string</td><td class="paramname">$type</td><td>Type of the contact (BILLING, SHIPPING, CUSTOMER).</td></tr>
+    <tr><td class="paramtype">string</td><td class="paramname">$type</td><td>Type of the contact (BILLING, SHIPPING, CUSTOMER). </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
 <p>@url DELETE {id}/contact/{contactid}/{type}</p>
-<dl class="section return"><dt>Returns</dt><dd>int</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">RestException</td><td>401 </td></tr>
@@ -510,7 +510,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00644">644</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00643">643</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
 
 </div>
 </div>
@@ -544,12 +544,12 @@ Additional Inherited Members</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Id of commercial proposal to update </td></tr>
-    <tr><td class="paramtype">int</td><td class="paramname">$lineid</td><td>Id of line to delete</td></tr>
+    <tr><td class="paramtype">int</td><td class="paramname">$lineid</td><td>Id of line to delete </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Object|false Object with cleaned properties</dd></dl>
 <p>@url DELETE {id}/lines/{lineid}</p>
-<dl class="section return"><dt>Returns</dt><dd>int</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">RestException</td><td>401 </td></tr>
@@ -558,7 +558,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00561">561</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00559">559</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
 
 </div>
 </div>
@@ -597,7 +597,7 @@ Additional Inherited Members</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>array|mixed data without useless information</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">RestException</td><td></td></tr>
@@ -644,7 +644,7 @@ Additional Inherited Members</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>array|mixed data without useless information</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
 <p>@url GET ref/{ref}</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
@@ -692,7 +692,7 @@ Additional Inherited Members</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>array|mixed data without useless information</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
 <p>@url GET ref_ext/{ref_ext}</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
@@ -742,7 +742,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 <p>@url GET {id}/lines</p>
-<dl class="section return"><dt>Returns</dt><dd>int </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>array </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00294">294</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
 
@@ -883,12 +883,12 @@ Additional Inherited Members</h2></td></tr>
   <table class="params">
     <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Id of commercial proposal to update </td></tr>
     <tr><td class="paramtype">int</td><td class="paramname">$contactid</td><td>Id of contact to add </td></tr>
-    <tr><td class="paramtype">string</td><td class="paramname">$type</td><td>Type of the contact (BILLING, SHIPPING, CUSTOMER)</td></tr>
+    <tr><td class="paramtype">string</td><td class="paramname">$type</td><td>Type of the contact (BILLING, SHIPPING, CUSTOMER) </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>array</dd></dl>
 <p>@url POST {id}/contact/{contactid}/{type}</p>
-<dl class="section return"><dt>Returns</dt><dd>int</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">RestException</td><td>401 </td></tr>
@@ -897,7 +897,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00600">600</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00595">595</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
 
 </div>
 </div>
@@ -1013,13 +1013,13 @@ Additional Inherited Members</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Id of commercial proposal to update </td></tr>
-    <tr><td class="paramtype">array</td><td class="paramname">$request_data</td><td>Datas</td></tr>
+    <tr><td class="paramtype">array</td><td class="paramname">$request_data</td><td>Datas </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00683">683</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00681">681</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
 
 </div>
 </div>
@@ -1060,14 +1060,14 @@ Additional Inherited Members</h2></td></tr>
   <table class="params">
     <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Id of commercial proposal to update </td></tr>
     <tr><td class="paramtype">int</td><td class="paramname">$lineid</td><td>Id of line to update </td></tr>
-    <tr><td class="paramtype">array</td><td class="paramname">$request_data</td><td>Commercial proposal line data</td></tr>
+    <tr><td class="paramtype">array</td><td class="paramname">$request_data</td><td>Commercial proposal line data </td></tr>
   </table>
   </dd>
 </dl>
-<p>@url PUT {id}/lines/{lineid}</p>
-<dl class="section return"><dt>Returns</dt><dd>object </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object|false Object with cleaned properties</dd></dl>
+<p>@url PUT {id}/lines/{lineid} </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00482">482</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00481">481</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
 
 </div>
 </div>
@@ -1091,14 +1091,14 @@ Additional Inherited Members</h2></td></tr>
 <p>Could be also called setbilled</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Commercial proposal ID</td></tr>
+    <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Commercial proposal ID </td></tr>
   </table>
   </dd>
 </dl>
-<p>@url POST {id}/setinvoiced</p>
-<dl class="section return"><dt>Returns</dt><dd>array </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
+<p>@url POST {id}/setinvoiced </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00913">913</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00906">906</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
 
 </div>
 </div>
@@ -1121,14 +1121,14 @@ Additional Inherited Members</h2></td></tr>
 <p>Set a proposal to draft. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Order ID</td></tr>
+    <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Order ID </td></tr>
   </table>
   </dd>
 </dl>
-<p>@url POST {id}/settodraft</p>
-<dl class="section return"><dt>Returns</dt><dd>array </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
+<p>@url POST {id}/settodraft </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00763">763</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00759">759</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
 
 </div>
 </div>
@@ -1163,23 +1163,23 @@ Additional Inherited Members</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Commercial proposal ID </td></tr>
-    <tr><td class="paramtype">int</td><td class="paramname">$notrigger</td><td>1=Does not execute triggers, 0= execute triggers</td></tr>
+    <tr><td class="paramtype">int</td><td class="paramname">$notrigger</td><td>1=Does not execute triggers, 0= execute triggers </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Object Object with cleaned properties</dd></dl>
 <p>@url POST {id}/validate</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
     <tr><td class="paramname">RestException</td><td>304 </td></tr>
     <tr><td class="paramname">RestException</td><td>401 </td></tr>
     <tr><td class="paramname">RestException</td><td>404 </td></tr>
-    <tr><td class="paramname">RestException</td><td>500 System error</td></tr>
+    <tr><td class="paramname">RestException</td><td>500 System error </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>array </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00820">820</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html#l00815">815</a> of file <a class="el" href="../../d9/dce/api__proposals_8class_8php_source.html">api_proposals.class.php</a>.</p>
 
 </div>
 </div>
@@ -1191,7 +1191,7 @@ Additional Inherited Members</h2></td></tr>
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Tue Jan 3 2023 15:02:59 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Wed Jan 4 2023 15:02:43 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>

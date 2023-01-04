@@ -418,14 +418,14 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00402"></a><span class="lineno"><a class="line" href="../../d2/db2/class_i_cal.html#a09b9bfc64be145447b1d9d77d69d9b8b">  402</a></span>&#160;<span class="comment"></span>  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="../../d2/db2/class_i_cal.html#a09b9bfc64be145447b1d9d77d69d9b8b">get_event_list</a>()</div>
 <div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;  {</div>
 <div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    <span class="comment">// phpcs:enable</span></div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    <span class="keywordflow">return</span> (empty($this-&gt;cal[<span class="stringliteral">&#39;VEVENT&#39;</span>]) ? <span class="stringliteral">&#39;&#39;</span> : $this-&gt;cal[<span class="stringliteral">&#39;VEVENT&#39;</span>]);</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    <span class="keywordflow">return</span> (empty($this-&gt;cal[<span class="stringliteral">&#39;VEVENT&#39;</span>]) ? array() : $this-&gt;cal[<span class="stringliteral">&#39;VEVENT&#39;</span>]);</div>
 <div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;  }</div>
 <div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160; </div>
 <div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;  <span class="comment">// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps</span></div>
 <div class="line"><a name="l00414"></a><span class="lineno"><a class="line" href="../../d2/db2/class_i_cal.html#ac4e171256383f53bfd6a64477f4d8a79">  414</a></span>&#160;<span class="comment"></span>  <span class="keyword">public</span> <span class="keyword">function</span> <a class="code" href="../../d2/db2/class_i_cal.html#ac4e171256383f53bfd6a64477f4d8a79">get_freebusy_list</a>()</div>
 <div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;  {</div>
 <div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;    <span class="comment">// phpcs:enable</span></div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    <span class="keywordflow">return</span> (empty($this-&gt;cal[<span class="stringliteral">&#39;VFREEBUSY&#39;</span>]) ? <span class="stringliteral">&#39;&#39;</span> : $this-&gt;cal[<span class="stringliteral">&#39;VFREEBUSY&#39;</span>]);</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    <span class="keywordflow">return</span> (empty($this-&gt;cal[<span class="stringliteral">&#39;VFREEBUSY&#39;</span>]) ? array() : $this-&gt;cal[<span class="stringliteral">&#39;VFREEBUSY&#39;</span>]);</div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;  }</div>
 <div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160; </div>
 <div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;  <span class="comment">// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps</span></div>
@@ -475,7 +475,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Tue Jan 3 2023 15:02:17 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Wed Jan 4 2023 15:02:14 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>

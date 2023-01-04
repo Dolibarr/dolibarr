@@ -206,7 +206,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    $this-&gt;posxdiscount = 162;</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    $this-&gt;postotalht = 174;</div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordflow">if</span> (!empty($conf-&gt;global-&gt;PRODUCT_USE_UNITS)) {</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="../../d9/d69/functions_8lib_8php.html#a640ecfcf021710aab29f85315721d059">getDolGlobalInt</a>(<span class="stringliteral">&#39;PRODUCT_USE_UNITS&#39;</span>)) {</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;      $this-&gt;posxtva = 95;</div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;      $this-&gt;posxup = 114;</div>
 <div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;      $this-&gt;posxqty = 132;</div>
@@ -578,7 +578,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;          $pdf-&gt;MultiCell($this-&gt;posxunit - $this-&gt;posxqty - 0.8, 4, $qty, 0, <span class="charliteral">&#39;R&#39;</span>); <span class="comment">// Enough for 6 chars</span></div>
 <div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160; </div>
 <div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;          <span class="comment">// Unit</span></div>
-<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;          <span class="keywordflow">if</span> (!empty($conf-&gt;global-&gt;PRODUCT_USE_UNITS)) {</div>
+<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;          <span class="keywordflow">if</span> (<a class="code" href="../../d9/d69/functions_8lib_8php.html#a640ecfcf021710aab29f85315721d059">getDolGlobalInt</a>(<span class="stringliteral">&#39;PRODUCT_USE_UNITS&#39;</span>)) {</div>
 <div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;            $unit = <a class="code" href="../../d0/d24/pdf_8lib_8php.html#a75f7ac02d592df142dfe3143ecc15fdc">pdf_getlineunit</a>($object, $i, $outputlangs, $hidedetails, $hookmanager);</div>
 <div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;            $pdf-&gt;SetXY($this-&gt;posxunit, $curY);</div>
 <div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;            $pdf-&gt;MultiCell($this-&gt;posxdiscount - $this-&gt;posxunit - 0.8, 4, $unit, 0, <span class="charliteral">&#39;L&#39;</span>);</div>
@@ -1082,7 +1082,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l01097"></a><span class="lineno"> 1097</span>&#160;      $pdf-&gt;MultiCell($this-&gt;posxunit - $this-&gt;posxqty - 1, 2, $outputlangs-&gt;transnoentities(<span class="stringliteral">&quot;Qty&quot;</span>), <span class="stringliteral">&#39;&#39;</span>, <span class="charliteral">&#39;C&#39;</span>);</div>
 <div class="line"><a name="l01098"></a><span class="lineno"> 1098</span>&#160;    }</div>
 <div class="line"><a name="l01099"></a><span class="lineno"> 1099</span>&#160; </div>
-<div class="line"><a name="l01100"></a><span class="lineno"> 1100</span>&#160;    <span class="keywordflow">if</span> (!empty($conf-&gt;global-&gt;PRODUCT_USE_UNITS)) {</div>
+<div class="line"><a name="l01100"></a><span class="lineno"> 1100</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="../../d9/d69/functions_8lib_8php.html#a640ecfcf021710aab29f85315721d059">getDolGlobalInt</a>(<span class="stringliteral">&#39;PRODUCT_USE_UNITS&#39;</span>)) {</div>
 <div class="line"><a name="l01101"></a><span class="lineno"> 1101</span>&#160;      $pdf-&gt;line($this-&gt;posxunit - 1, $tab_top, $this-&gt;posxunit - 1, $tab_top + $tab_height);</div>
 <div class="line"><a name="l01102"></a><span class="lineno"> 1102</span>&#160;      <span class="keywordflow">if</span> (empty($hidetop)) {</div>
 <div class="line"><a name="l01103"></a><span class="lineno"> 1103</span>&#160;        $pdf-&gt;SetXY($this-&gt;posxunit - 1, $tab_top + 1);</div>
@@ -1416,7 +1416,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Tue Jan 3 2023 15:02:33 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Wed Jan 4 2023 15:02:25 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>

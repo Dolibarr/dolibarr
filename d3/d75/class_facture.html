@@ -206,9 +206,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a35123eb7aaef0a0bc01b8a4d254269b6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d75/class_facture.html#a35123eb7aaef0a0bc01b8a4d254269b6">update_percent</a> ($line, $percent, $<a class="el" href="../../db/d09/class_common_object.html#a755b46ede672319a4a5b62a971fe21cc">update_price</a>=true)</td></tr>
 <tr class="memdesc:a35123eb7aaef0a0bc01b8a4d254269b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update invoice line with percentage.  <a href="../../d3/d75/class_facture.html#a35123eb7aaef0a0bc01b8a4d254269b6">More...</a><br /></td></tr>
 <tr class="separator:a35123eb7aaef0a0bc01b8a4d254269b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a225083f0650077334365841731e12f4f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d75/class_facture.html#a225083f0650077334365841731e12f4f">deleteline</a> ($<a class="el" href="../../d0/d79/email__expire__services__to__representatives_8php.html#a4e7899730e8020ee45af7fe00addf361">rowid</a>)</td></tr>
-<tr class="memdesc:a225083f0650077334365841731e12f4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete line in database.  <a href="../../d3/d75/class_facture.html#a225083f0650077334365841731e12f4f">More...</a><br /></td></tr>
-<tr class="separator:a225083f0650077334365841731e12f4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d092a3771bdbf1b03deda7bc00d0e40"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d75/class_facture.html#a3d092a3771bdbf1b03deda7bc00d0e40">deleteline</a> ($<a class="el" href="../../d0/d79/email__expire__services__to__representatives_8php.html#a4e7899730e8020ee45af7fe00addf361">rowid</a>, $id=0)</td></tr>
+<tr class="memdesc:a3d092a3771bdbf1b03deda7bc00d0e40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete line in database.  <a href="../../d3/d75/class_facture.html#a3d092a3771bdbf1b03deda7bc00d0e40">More...</a><br /></td></tr>
+<tr class="separator:a3d092a3771bdbf1b03deda7bc00d0e40"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe892221c397277eed26cb7a226eddd4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d75/class_facture.html#abe892221c397277eed26cb7a226eddd4">set_remise</a> ($<a class="el" href="../../d1/d2d/repair_8php.html#a5f41c799b43b00abfba2470cccbc7c20">user</a>, $remise, $notrigger=0)</td></tr>
 <tr class="memdesc:abe892221c397277eed26cb7a226eddd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set percent discount.  <a href="../../d3/d75/class_facture.html#abe892221c397277eed26cb7a226eddd4">More...</a><br /></td></tr>
 <tr class="separator:abe892221c397277eed26cb7a226eddd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1512,8 +1512,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a225083f0650077334365841731e12f4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a225083f0650077334365841731e12f4f">&#9670;&nbsp;</a></span>deleteline()</h2>
+<a id="a3d092a3771bdbf1b03deda7bc00d0e40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d092a3771bdbf1b03deda7bc00d0e40">&#9670;&nbsp;</a></span>deleteline()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1522,8 +1522,18 @@ Additional Inherited Members</h2></td></tr>
           <td class="memname">Facture::deleteline </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>$rowid</em></td><td>)</td>
+          <td class="paramname"><em>$rowid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>$id</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1532,12 +1542,13 @@ Additional Inherited Members</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramtype">int</td><td class="paramname">$rowid</td><td>Id of line to delete </td></tr>
+    <tr><td class="paramtype">int</td><td class="paramname">$id</td><td>Id of object (for a check) </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>int &lt;0 if KO, &gt;0 if OK </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04153">4153</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04154">4154</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -1559,7 +1570,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Currently used for documents generation : to know if retained warranty need to be displayed. </p>
 <dl class="section return"><dt>Returns</dt><dd>bool </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05263">5263</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05274">5274</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -1663,7 +1674,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l02105">2105</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05000">getLinesArray()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05011">getLinesArray()</a>.</p>
 
 </div>
 </div>
@@ -1754,7 +1765,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>int &lt;0 if KO, &gt;0 if OK </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05016">5016</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05027">5027</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -1776,7 +1787,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Returns an array containing the previous situations as <a class="el" href="../../d3/d75/class_facture.html" title="Class to manage invoices.">Facture</a> objects. </p>
 <dl class="section return"><dt>Returns</dt><dd>mixed -1 if error, array of previous situations </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05087">5087</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05098">5098</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -1798,7 +1809,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Retourne id des contacts clients de facturation. </p>
 <dl class="section return"><dt>Returns</dt><dd>array Liste des id contacts facturation </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04782">4782</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04793">4793</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 <p class="reference">References <a class="el" href="../../df/d24/commonobject_8class_8php_source.html#l01643">CommonObject\getIdContact()</a>.</p>
 
@@ -1822,7 +1833,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Retourne id des contacts clients de livraison. </p>
 <dl class="section return"><dt>Returns</dt><dd>array Liste des id contacts livraison </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04792">4792</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04803">4803</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 <p class="reference">References <a class="el" href="../../df/d24/commonobject_8class_8php_source.html#l01643">CommonObject\getIdContact()</a>.</p>
 
@@ -1846,7 +1857,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Create an array of invoice lines. </p>
 <dl class="section return"><dt>Returns</dt><dd>int &gt;0 if OK, &lt;0 if KO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05000">5000</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05011">5011</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 <p class="reference">References <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l02105">fetch_lines()</a>.</p>
 
@@ -1889,7 +1900,7 @@ Additional Inherited Members</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>string free ref or last ref </dd></dl>
 <p>$numref can be empty in case we ask for the last value because if there is no invoice created with the set up mask.</p>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04358">4358</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04369">4369</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -2005,7 +2016,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>float or -1 if not available </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05301">5301</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05312">5312</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -2027,7 +2038,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Is the customer invoice delayed? </p>
 <dl class="section return"><dt>Returns</dt><dd>bool </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05229">5229</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05240">5240</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -2056,7 +2067,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04463">4463</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04474">4474</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -2086,7 +2097,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04806">4806</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04817">4817</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -2137,7 +2148,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Checks if the invoice is the first of a cycle. </p>
 <dl class="section return"><dt>Returns</dt><dd>boolean </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05075">5075</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05086">5086</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -2159,7 +2170,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Checks if the invoice is the last in its cycle. </p>
 <dl class="section return"><dt>Returns</dt><dd>bool Last of the cycle status </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05164">5164</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05175">5175</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -2189,7 +2200,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>array Array of invoices ($id =&gt; array('ref'=&gt;,'paymentornot'=&gt;,'status'=&gt;,'paye'=&gt;) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04642">4642</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04653">4653</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -2219,7 +2230,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>array|int Array of invoices ('id'=&gt;id, 'ref'=&gt;ref, 'status'=&gt;status, 'paymentornot'=&gt;0/1) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04588">4588</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04599">4599</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -2307,7 +2318,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>array|int -1 if KO, array with result if OK </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04518">4518</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04529">4529</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -2336,7 +2347,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>WorkboardResponse|int &lt;0 if KO, <a class="el" href="../../de/d9f/class_workboard_response.html">WorkboardResponse</a> if OK </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04717">4717</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04728">4728</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -2358,7 +2369,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Load indicators for dashboard (this-&gt;nbtodo and this-&gt;nbtodolate) </p>
 <dl class="section return"><dt>Returns</dt><dd>int &lt;0 if KO, &gt;0 if OK </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04962">4962</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04973">4973</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -2380,7 +2391,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Gets the smallest reference available for a new cycle. </p>
 <dl class="section return"><dt>Returns</dt><dd>int &gt;= 1 if OK, -1 if error </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05047">5047</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05058">5058</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -2435,9 +2446,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>bool </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05215">5215</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05226">5226</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
-<p class="reference">References <a class="el" href="../../df/d24/commonobject_8class_8php_source.html#l08485">CommonObject\commonReplaceProduct()</a>.</p>
+<p class="reference">References <a class="el" href="../../df/d24/commonobject_8class_8php_source.html#l08491">CommonObject\commonReplaceProduct()</a>.</p>
 
 </div>
 </div>
@@ -2492,9 +2503,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>bool </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05198">5198</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05209">5209</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
-<p class="reference">References <a class="el" href="../../df/d24/commonobject_8class_8php_source.html#l08456">CommonObject\commonReplaceThirdparty()</a>.</p>
+<p class="reference">References <a class="el" href="../../df/d24/commonobject_8class_8php_source.html#l08462">CommonObject\commonReplaceThirdparty()</a>.</p>
 
 </div>
 </div>
@@ -2548,7 +2559,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>int 0 if OK, &lt;&gt;0 if KO (this function is used also by cron so only 0 is OK) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05432">5432</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05443">5443</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -2739,9 +2750,9 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>int &lt;0 if ko, &gt;0 if ok </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04218">4218</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04229">4229</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d9/d69/functions_8lib_8php_source.html#l01611">dol_syslog()</a>, and <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04233">setDiscount()</a>.</p>
+<p class="reference">References <a class="el" href="../../d9/d69/functions_8lib_8php_source.html#l01611">dol_syslog()</a>, and <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04244">setDiscount()</a>.</p>
 
 </div>
 </div>
@@ -2788,7 +2799,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>int &lt;0 if KO, &gt;0 if OK </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04295">4295</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04306">4306</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 <p class="reference">References <a class="el" href="../../d3/d71/support_2inc_8php_source.html#l00041">db</a>, and <a class="el" href="../../d9/d69/functions_8lib_8php_source.html#l05786">price2num()</a>.</p>
 
@@ -2921,11 +2932,11 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>int &lt;0 if ko, &gt;0 if ok </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04233">4233</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04244">4244</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 <p class="reference">References <a class="el" href="../../d3/d71/support_2inc_8php_source.html#l00041">db</a>, and <a class="el" href="../../d9/d69/functions_8lib_8php_source.html#l05786">price2num()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04218">set_remise()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l04229">set_remise()</a>.</p>
 
 </div>
 </div>
@@ -3005,7 +3016,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>int &lt;0 if KO, &gt;0 if OK </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05121">5121</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05132">5132</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 <p class="reference">References <a class="el" href="../../d3/d71/support_2inc_8php_source.html#l00041">db</a>.</p>
 
@@ -3087,7 +3098,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>int &gt;0 if OK, &lt;0 if KO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05359">5359</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05370">5370</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -3127,7 +3138,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>int &gt;0 if OK, &lt;0 if KO </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05392">5392</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05403">5403</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -3574,7 +3585,7 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>array return array </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05704">5704</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/ddc/facture_8class_8php_source.html#l05715">5715</a> of file <a class="el" href="../../df/ddc/facture_8class_8php_source.html">facture.class.php</a>.</p>
 
 </div>
 </div>
@@ -3651,7 +3662,7 @@ Additional Inherited Members</h2></td></tr>
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Tue Jan 3 2023 15:02:56 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Wed Jan 4 2023 15:02:41 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>

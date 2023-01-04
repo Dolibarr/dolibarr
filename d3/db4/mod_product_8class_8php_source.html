@@ -317,7 +317,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="../../d9/d69/functions_8lib_8php.html#a640ecfcf021710aab29f85315721d059">getDolGlobalInt</a>(<span class="stringliteral">&#39;MAIN_MULTILANGS&#39;</span>)) {</div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;      $this-&gt;export_fields_array[$r] = array_merge($this-&gt;export_fields_array[$r], array(<span class="stringliteral">&#39;l.lang&#39;</span>=&gt;<span class="stringliteral">&#39;Language&#39;</span>, <span class="stringliteral">&#39;l.label&#39;</span>=&gt;<span class="stringliteral">&#39;TranslatedLabel&#39;</span>, <span class="stringliteral">&#39;l.description&#39;</span>=&gt;<span class="stringliteral">&#39;TranslatedDescription&#39;</span>, <span class="stringliteral">&#39;l.note&#39;</span>=&gt;<span class="stringliteral">&#39;TranslatedNote&#39;</span>));</div>
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    }</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="keywordflow">if</span> (!empty($conf-&gt;global-&gt;PRODUCT_USE_UNITS)) {</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="../../d9/d69/functions_8lib_8php.html#a640ecfcf021710aab29f85315721d059">getDolGlobalInt</a>(<span class="stringliteral">&#39;PRODUCT_USE_UNITS&#39;</span>)) {</div>
 <div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;      $this-&gt;export_fields_array[$r][<span class="stringliteral">&#39;p.fk_unit&#39;</span>] = <span class="stringliteral">&#39;Unit&#39;</span>;</div>
 <div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    }</div>
 <div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    $this-&gt;export_TypeFields_array[$r] = array(</div>
@@ -724,7 +724,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="../../d9/d69/functions_8lib_8php.html#ae54e3727f7a757bd40513f88c0c7da47">isModEnabled</a>(<span class="stringliteral">&#39;barcode&#39;</span>)) {</div>
 <div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;      $this-&gt;import_fields_array[$r] = array_merge($this-&gt;import_fields_array[$r], array(<span class="stringliteral">&#39;p.barcode&#39;</span>=&gt;<span class="stringliteral">&#39;BarCode&#39;</span>));</div>
 <div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;    }</div>
-<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;    <span class="keywordflow">if</span> (!empty($conf-&gt;global-&gt;PRODUCT_USE_UNITS)) {</div>
+<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="../../d9/d69/functions_8lib_8php.html#a640ecfcf021710aab29f85315721d059">getDolGlobalInt</a>(<span class="stringliteral">&#39;PRODUCT_USE_UNITS&#39;</span>)) {</div>
 <div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;      $this-&gt;import_fields_array[$r][<span class="stringliteral">&#39;p.fk_unit&#39;</span>] = <span class="stringliteral">&#39;Unit&#39;</span>;</div>
 <div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;    }</div>
 <div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160; </div>
@@ -808,7 +808,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 <div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="../../d9/d69/functions_8lib_8php.html#ae54e3727f7a757bd40513f88c0c7da47">isModEnabled</a>(<span class="stringliteral">&#39;barcode&#39;</span>)) {</div>
 <div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;      $import_sample = array_merge($import_sample, array(<span class="stringliteral">&#39;p.barcode&#39;</span>=&gt;<span class="stringliteral">&#39;&#39;</span>));</div>
 <div class="line"><a name="l00726"></a><span class="lineno">  726</span>&#160;    }</div>
-<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;    <span class="keywordflow">if</span> (!empty($conf-&gt;global-&gt;PRODUCT_USE_UNITS)) {</div>
+<div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="../../d9/d69/functions_8lib_8php.html#a640ecfcf021710aab29f85315721d059">getDolGlobalInt</a>(<span class="stringliteral">&#39;PRODUCT_USE_UNITS&#39;</span>)) {</div>
 <div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;      $import_sample = array_merge(</div>
 <div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;        $import_sample,</div>
 <div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;        array(</div>
@@ -1028,7 +1028,7 @@ var searchBox = new SearchBox("searchBox", "../../search",false,'Search','.html'
 File added into doxygen generated documentation
 -->
 <hr class="footer" />
-<address class="footer"><small>Generated on Tue Jan 3 2023 15:02:32 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
+<address class="footer"><small>Generated on Wed Jan 4 2023 15:02:24 for <a href="https://www.dolibarr.org" title="ERP and CRM open source software">dolibarr</a> by Doxygen 1.9.1 </small></address>
 <br>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-9049390-16"></script>
