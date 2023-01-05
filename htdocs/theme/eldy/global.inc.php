@@ -1715,10 +1715,6 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	display: inline-block;
 }
 
-.parentonrightofpage {
-  direction: rtl;
-}
-
 
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
@@ -6519,6 +6515,10 @@ ul.select2-results__options li {
 	font-size: 0.95em;
 }
 
+.parentonrightofpage {
+  direction: rtl;
+}
+
 @media only screen and (min-width: 767px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
@@ -6715,7 +6715,7 @@ dl.dropdown {
 	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {
-	right: auto;
+	<?php echo $right; ?>: auto;
 }
 .dropdown dd ul li {
 	white-space: nowrap;

@@ -133,14 +133,16 @@ class FormPropal
 			print '</option>';
 			$i++;
 		}
-		//Option for Signed+Billed
-		if ($selected != '' && $selected == "2,4") {
-			print '<option value="2,4" selected>';
-		} else {
-			print '<option value="2,4">';
+		// Option for Signed+Billed
+		if ($mode == 'customer') {
+			if ($selected != '' && $selected == "2,4") {
+				print '<option value="2,4" selected>';
+			} else {
+				print '<option value="2,4">';
+			}
+			print ($langs->trans($prefix.'Signed'.($short ? 'Short' : '')).' '.$langs->trans("or").' '.$langs->trans($prefix.'Billed'.($short ? 'Short' : '')));
+			print '</option>';
 		}
-		print ($langs->trans($prefix.'Signed'.($short ? 'Short' : '')).' '.$langs->trans("or").' '.$langs->trans($prefix.'Billed'.($short ? 'Short' : '')));
-		print '</option>';
 		print '</select>';
 
 		print ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($showempty < 0 ? (string) $showempty : '-1'), $morecss);

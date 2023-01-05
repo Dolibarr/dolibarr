@@ -6441,6 +6441,10 @@ ul.select2-results__options li {
 	}
 }
 
+.parentonrightofpage {
+  direction: rtl;
+}
+
 
 /* ============================================================================== */
 /*  For categories                                                                */
@@ -6609,7 +6613,7 @@ dl.dropdown {
 	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {
-	right: auto;
+	<?php echo $right; ?>: auto;
 }
 .dropdown dd ul li {
 	white-space: nowrap;
