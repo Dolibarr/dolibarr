@@ -1187,13 +1187,13 @@ if (!empty($arrayfields['p.import_key']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
-	print '<td class="liste_titre nowrap center">';
+	print '<td class="liste_titre center parentonrightofpage">';
 	$arrayofstatus = array();
 	foreach ($object->statuts_short as $key => $val) {
 		$arrayofstatus[$key] = $langs->trans($val);
 	}
 	$arrayofstatus['99'] = $langs->trans("NotClosed").' ('.$langs->trans('Draft').' + '.$langs->trans('Opened').')';
-	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth125 onrightofpage', 1);
+	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
 	print '</td>';
 }
 // Action column

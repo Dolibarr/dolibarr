@@ -569,13 +569,13 @@ if (!empty($arrayfields['f.note_private']['checked'])) {
 }
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre right parentonrightofpage">';
 	$tmp = $objectstatic->LibStatut(0); // To load $this->statuts_short
 	$liststatus = $objectstatic->statuts_short;
 	if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
 		unset($liststatus[2]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 	}
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'onrightofpage');
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Fields of detail line
