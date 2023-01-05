@@ -554,7 +554,7 @@ class Boms extends DolibarrApi
 			throw new RestException(400, "Wrong naming scheme '(PROV%)' is only allowed on 'DRAFT' status. For automatic increment use 'auto' on the 'ref' field.");
 		}
 
-		if ($this->bom->ref == 'auto') {
+		if (strtolower($this->bom->ref) == 'auto') {
 			if (empty($this->bom->id) && $this->bom->status == 0) {
 				$this->bom->ref = ''; // 'ref' will auto incremented with '(PROV' + newID + ')'
 			} else {
