@@ -117,7 +117,7 @@ FULL_PATH_NAMES = YES
 # If left blank the directory from which doxygen is run is used as the
 # path to strip.
 
-STRIP_FROM_PATH = ""
+STRIP_FROM_PATH = "/home/dolibarr/doxygen.dolibarr.org/"
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
 # the path mentioned in the documentation of a class, which tells
@@ -1098,7 +1098,7 @@ SEARCHENGINE = YES
 # full text search. The disadvances is that it is more difficult to setup
 # and does not have live searching capabilities.
 
-SERVER_BASED_SEARCH = NO
+SERVER_BASED_SEARCH = YES
 
 #---------------------------------------------------------------------------
 # configuration options related to the LaTeX output
