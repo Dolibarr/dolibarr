@@ -68,7 +68,7 @@ $hookmanager->initHooks(array('ordersupplierdispatch'));
 
 // Recuperation de l'id de projet
 $projectid = 0;
-if ($_GET["projectid"]) {
+if (isset($_GET["projectid"])) {
 	$projectid = GETPOST("projectid", 'int');
 }
 
@@ -782,7 +782,8 @@ if ($id > 0 || !empty($ref)) {
 				if (!$objp->fk_product > 0) {
 					$nbfreeproduct++;
 				} else {
-					$remaintodispatch = price2num($objp->qty - ((float) $products_dispatched[$objp->rowid]), 5); // Calculation of dispatched
+					$alreadydispatched = isset($products_dispatched[$objp->rowid])?$products_dispatched[$objp->rowid]:0;
+					$remaintodispatch = price2num($objp->qty - ((float) $alreadydispatched), 5); // Calculation of dispatched
 					if ($remaintodispatch < 0 && empty($conf->global->SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN)) {
 						$remaintodispatch = 0;
 					}
@@ -799,7 +800,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<!-- Line to dispatch '.$suffix.' -->'."\n";
 						// hidden fields for js function
 						print '<input id="qty_ordered'.$suffix.'" type="hidden" value="'.$objp->qty.'">';
-						print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.(float) $products_dispatched[$objp->rowid].'">';
+						print '<input id="qty_dispatched'.$suffix.'" type="hidden" value="'.(float) $alreadydispatched.'">';
 						print '<tr class="oddeven">';
 
 						if (empty($conf->cache['product'][$objp->fk_product])) {
@@ -860,7 +861,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<td class="right">'.$objp->qty.'</td>';
 
 						// Already dispatched
-						print '<td class="right">'.$products_dispatched[$objp->rowid].'</td>';
+						print '<td class="right">'.$alreadydispatched.'</td>';
 
 						if (isModEnabled('productbatch') && $objp->tobatch > 0) {
 							$type = 'batch';
