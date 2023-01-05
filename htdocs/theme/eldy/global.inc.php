@@ -1715,6 +1715,11 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	display: inline-block;
 }
 
+.parentonrightofpage {
+  direction: rtl;
+}
+
+
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)
 {
