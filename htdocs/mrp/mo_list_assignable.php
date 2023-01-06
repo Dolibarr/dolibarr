@@ -118,17 +118,10 @@ $arrayfields = array(
 	't.fk_soc' => array('label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>(!isModEnabled('societe') ? 0 : 1), 'checked'=>0, 'position'=>50),
 	't.fk_project' => array('label'=>'Project', 'picto'=>'project', 'enabled'=>(!isModEnabled('project') ? 0 : 1), 'checked'=>0, 'position'=>51),
 	't.fk_warehouse' => array('label'=>'WarehouseForProduction', 'picto'=>'stock', 'enabled'=>(!isModEnabled('stock') ? 0 : 1), 'checked'=>1, 'position'=>52),
-	//'t.note_public' => array('label'=>'NotePublic', 'enabled'=>1, 'checked'=>0, 'position'=>61),
-	//'t.note_private' => array('label'=>'NotePrivate', 'enabled'=>1, 'checked'=>0, 'position'=>62),
 	't.date_creation' => array('label'=>'DateCreation', 'enabled'=>1, 'checked'=>0, 'position'=>500),
 	't.tms' => array('label'=>'DateModification', 'enabled'=>1, 'checked'=>0, 'position'=>501),
-	//'t.date_valid' => array('label'=>'DateValidation', 'enabled'=>1, 'checked'=>0, 'position'=>502,),
-	//'t.fk_user_creat' => array('label'=>'UserAuthor', 'enabled'=>1, 'checked'=>0, 'position'=>510),
-	//'t.fk_user_modif' => array('label'=>'UserModif', 'enabled'=>1, 'checked'=>0, 'position'=>511),
 	't.date_start_planned' => array('label'=>'DateStartPlannedMo', 'enabled'=>1, 'checked'=>1, 'position'=>55),
 	't.date_end_planned' => array('label'=>'DateEndPlannedMo', 'enabled'=>1, 'checked'=>1, 'position'=>56),
-	//'t.import_key' => array('label'=>'ImportId', 'enabled'=>1, 'checked'=>0, 'position'=>1000),
-	//'t.model_pdf' =>array('label'=>'Model pdf', 'enabled'=>1, 'checked'=>0, 'position'=>1010),
 	't.status' => array('label'=>'Status', 'enabled'=>1, 'checked'=>1, 'position'=>1000),
 	't.fk_parent_line' => array('label'=>'ParentMo', 'enabled'=>1, 'checked'=>0, 'position'=>1020),
 );
@@ -539,11 +532,6 @@ foreach ($arrayfields as $key => $val) {
 	}
 }
 
-
-
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-
 // Fields from hook
 $parameters = array('arrayfields'=>$arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -586,8 +574,7 @@ foreach ($arrayfields as $key => $val) {
 		print getTitleFieldOfList($arrayfields[$key]['label'], 0, $_SERVER['PHP_SELF'], $key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
 	}
 }
-// Extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+
 // Hook fields
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -698,8 +685,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			}
 		}
 	}
-	// Extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+
 	// Fields from hook
 	$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
