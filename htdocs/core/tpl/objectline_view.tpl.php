@@ -292,7 +292,8 @@ if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 		}
 	}
 	$tooltiponprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);
-	$tooltiponprice .= '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltiponprice).'">';
+
+	$tooltiponprice = '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltiponprice).'">';
 	$tooltiponpriceend = '</span>';
 }
 

@@ -658,18 +658,25 @@ if ($action == 'create' && $permissiontoadd) {
 	print '<script>';
 	print '$( document ).ready(function() {';
 		print '$("#updateAmountWithLastSalary").on("click", function updateAmountWithLastSalary() {
-					console.log("We click on link to autofill salary amount");
 					var fk_user = $("#fk_user").val()
 					var url = "'.DOL_URL_ROOT.'/salaries/ajax/ajaxsalaries.php?fk_user="+fk_user;
+					console.log("We click on link to autofill salary amount url="+url);
 					if (fk_user != -1) {
 						$.get(
 							url,
 							function( data ) {
-								if(data!=null) {
-									console.log("Data returned: "+data);
-									item = JSON.parse(data);
-									if(item[0].key == "Amount") {
+								console.log("Data returned: "+data);
+								if (data != null) {
+									if (typeof data == "object") {
+										console.log("data is already type object, no need to parse it");
+										item = data;
+									} else {
+										console.log("data is type "+(typeof data));
+										item = JSON.parse(data);
+									}
+									if (item[0].key == "Amount") {
 										value = item[0].value;
+										console.log("amount returned = "+value);
 										if (value != null) {
 											$("#amount").val(item[0].value);
 										} else {
