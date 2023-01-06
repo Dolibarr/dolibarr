@@ -134,7 +134,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $keys_with_alias = array();
 foreach ($keys as $fieldname) {
-	if (substr($fieldname,0,2) != 't.' && str_contains($fieldname, '.'))
+	if (substr($fieldname, 0, 2) != 't.' && str_contains($fieldname, '.'))
 		$keys_with_alias[] = $fieldname;
 }
 
