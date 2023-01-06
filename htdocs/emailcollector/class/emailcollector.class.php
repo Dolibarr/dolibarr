@@ -2158,6 +2158,118 @@ class EmailCollector extends CommonObject
 									}
 								}
 							}
+						} elseif ($operation['type'] == 'loadandcreatecontact') { // Search and create contact
+							if (empty($operation['actionparam'])) {
+								$errorforactions++;
+								$this->error = "Action loadandcreatecontact has empty parameter. Must be 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to extract data";
+								$this->errors[] = $this->error;
+							} else {
+								$contact_static = new Contact($this->db);
+								// Overwrite values with values extracted from source email
+								$errorforthisaction = $this->overwritePropertiesOfObject($contact_static, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
+								if ($errorforthisaction) {
+									$errorforactions++;
+								} else {
+									if (!empty($contact_static->email) && $contact_static->email != $from) $from = $contact_static->email;
+
+									$result = $contactstatic->fetch(0, null, '', $from);
+									if ($result < 0) {
+										$errorforactions++;
+										$this->error = 'Error when getting contact with email ' . $from;
+										$this->errors[] = $this->error;
+										break;
+									} elseif ($result == 0) {
+										dol_syslog("Contact with email " . $from . " was not found. We try to create it.");
+										$contactstatic = new Contact($this->db);
+
+										// Create contact
+										$contactstatic->email = $from;
+										$operationslog .= '<br>We set property email='.dol_escape_htmltag($from);
+
+										// Overwrite values with values extracted from source email
+										$errorforthisaction = $this->overwritePropertiesOfObject($contactstatic, $operation['actionparam'], $messagetext, $subject, $header, $operationslog);
+
+										if ($errorforthisaction) {
+											$errorforactions++;
+										} else {
+											// Search country by name or code
+											if (!empty($contactstatic->country)) {
+												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+												$result = getCountry('', 3, $this->db, '', 1, $contactstatic->country);
+												if ($result == 'NotDefined') {
+													$errorforactions++;
+													$this->error = "Error country not found by this name '" . $contactstatic->country . "'";
+												} elseif (!($result > 0)) {
+													$errorforactions++;
+													$this->error = "Error when search country by this name '" . $contactstatic->country . "'";
+													$this->errors[] = $this->db->lasterror();
+												} else {
+													$contactstatic->country_id = $result;
+													$operationslog .= '<br>We set property country_id='.dol_escape_htmltag($result);
+												}
+											} elseif (!empty($contactstatic->country_code)) {
+												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+												$result = getCountry($contactstatic->country_code, 3, $this->db);
+												if ($result == 'NotDefined') {
+													$errorforactions++;
+													$this->error = "Error country not found by this code '" . $contactstatic->country_code . "'";
+												} elseif (!($result > 0)) {
+													$errorforactions++;
+													$this->error = "Error when search country by this code '" . $contactstatic->country_code . "'";
+													$this->errors[] = $this->db->lasterror();
+												} else {
+													$contactstatic->country_id = $result;
+													$operationslog .= '<br>We set property country_id='.dol_escape_htmltag($result);
+												}
+											}
+
+											if (!$errorforactions) {
+												// Search state by name or code (for country if defined)
+												if (!empty($contactstatic->state)) {
+													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+													$result = dol_getIdFromCode($this->db, $contactstatic->state, 'c_departements', 'nom', 'rowid');
+													if (empty($result)) {
+														$errorforactions++;
+														$this->error = "Error state not found by this name '" . $contactstatic->state . "'";
+													} elseif (!($result > 0)) {
+														$errorforactions++;
+														$this->error = "Error when search state by this name '" . $contactstatic->state . "'";
+														$this->errors[] = $this->db->lasterror();
+													} else {
+														$contactstatic->state_id = $result;
+														$operationslog .= '<br>We set property state_id='.dol_escape_htmltag($result);
+													}
+												} elseif (!empty($contactstatic->state_code)) {
+													require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+													$result = dol_getIdFromCode($this->db, $contactstatic->state_code, 'c_departements', 'code_departement', 'rowid');
+													if (empty($result)) {
+														$errorforactions++;
+														$this->error = "Error state not found by this code '" . $contactstatic->state_code . "'";
+													} elseif (!($result > 0)) {
+														$errorforactions++;
+														$this->error = "Error when search state by this code '" . $contactstatic->state_code . "'";
+														$this->errors[] = $this->db->lasterror();
+													} else {
+														$contactstatic->state_id = $result;
+														$operationslog .= '<br>We set property state_id='.dol_escape_htmltag($result);
+													}
+												}
+											}
+
+											if (!$errorforactions) {
+												$result = $contactstatic->create($user);
+												if ($result <= 0) {
+													$errorforactions++;
+													$this->error = $contactstatic->error;
+													$this->errors = $contactstatic->errors;
+												} else {
+													$operationslog .= '<br>Contact created -> id = '.dol_escape_htmltag($contactstatic->id);
+												}
+											}
+										}
+									}
+								}
+							}
 						} elseif ($operation['type'] == 'recordevent') {
 							// Create event
 							$actioncomm = new ActionComm($this->db);
