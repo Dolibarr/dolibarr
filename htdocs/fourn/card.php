@@ -98,7 +98,7 @@ if (empty($reshook)) {
 		$action = "";
 	}
 
-	if ($action == 'setsupplieraccountancycode') {
+	if ($action == 'setsupplieraccountancycode' && $user->hasRight('societe', 'creer')) {
 		$result = $object->fetch($id);
 		$object->code_compta_fournisseur = GETPOST("supplieraccountancycode");
 		$result = $object->update($object->id, $user, 1, 0, 1);
@@ -107,7 +107,7 @@ if (empty($reshook)) {
 		}
 	}
 	// Set payment terms of the settlement
-	if ($action == 'setconditions' && $user->rights->societe->creer) {
+	if ($action == 'setconditions' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_supplier_id', 'int'));
 		if ($result < 0) {
@@ -115,7 +115,7 @@ if (empty($reshook)) {
 		}
 	}
 	// Payment mode
-	if ($action == 'setmode' && $user->rights->societe->creer) {
+	if ($action == 'setmode' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_supplier_id', 'int'));
 		if ($result < 0) {
@@ -124,7 +124,7 @@ if (empty($reshook)) {
 	}
 
 	// Bank account
-	if ($action == 'setbankaccount' && $user->rights->societe->creer) {
+	if ($action == 'setbankaccount' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
 		if ($result < 0) {
@@ -133,7 +133,7 @@ if (empty($reshook)) {
 	}
 
 	// update supplier order min amount
-	if ($action == 'setsupplier_order_min_amount') {
+	if ($action == 'setsupplier_order_min_amount' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 		$object->supplier_order_min_amount = price2num(GETPOST('supplier_order_min_amount', 'alpha'));
 		$result = $object->update($object->id, $user);
@@ -142,7 +142,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 
 		$object->oldcopy = dol_clone($object);
