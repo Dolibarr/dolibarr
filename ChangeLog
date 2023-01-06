@@ -9,7 +9,7 @@ WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The deprecated method escapeunderscore() of database handlers has been removed. You must use escapeforlike instead.
-
+* The method nb_expedition() has been renamed into countNbOfShipments() 
 
 
 

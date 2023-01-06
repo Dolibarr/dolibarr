@@ -4224,7 +4224,7 @@ class Facture extends CommonInvoice
 	 *	@param     	User	$user		User that set discount
 	 *	@param     	double	$remise		Discount
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int 		<0 if ko, >0 if ok
+	 *	@return		int 				<0 if KO, >0 if OK
 	 */
 	public function set_remise($user, $remise, $notrigger = 0)
 	{
@@ -4239,7 +4239,7 @@ class Facture extends CommonInvoice
 	 *	@param     	User	$user		User that set discount
 	 *	@param     	double	$remise		Discount
 	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return		int 		<0 if ko, >0 if ok
+	 *	@return		int 				<0 if KO, >0 if OK
 	 */
 	public function setDiscount($user, $remise, $notrigger = 0)
 	{
@@ -4291,6 +4291,8 @@ class Facture extends CommonInvoice
 				return -1 * $error;
 			}
 		}
+
+		return 0;
 	}
 
 
@@ -4356,6 +4358,8 @@ class Facture extends CommonInvoice
 				return -1 * $error;
 			}
 		}
+
+		return 0;
 	}
 
 	/**
@@ -5742,6 +5746,8 @@ class Facture extends CommonInvoice
 		} else {
 			dol_print_error($this->db);
 		}
+
+		return array();
 	}
 }
 

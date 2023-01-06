@@ -1173,6 +1173,8 @@ class Commande extends CommonOrder
 					return -1;
 				}
 			}
+
+			return 0;
 		} else {
 			dol_print_error($this->db);
 			$this->db->rollback();
@@ -2307,17 +2309,13 @@ class Commande extends CommonOrder
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns a array with expeditions lines number
+	 * Returns an array with expeditions lines number
 	 *
 	 * @return	int		Nb of shipments
-	 *
-	 * TODO deprecate, move to Shipping class
 	 */
-	public function nb_expedition()
+	public function countNbOfShipments()
 	{
-		// phpcs:enable
 		$sql = 'SELECT count(*)';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expedition as e';
 		$sql .= ', '.MAIN_DB_PREFIX.'element_element as el';
@@ -2333,6 +2331,8 @@ class Commande extends CommonOrder
 		} else {
 			dol_print_error($this->db);
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2501,6 +2501,8 @@ class Commande extends CommonOrder
 				return -1 * $error;
 			}
 		}
+
+		return 0;
 	}
 
 
@@ -2565,6 +2567,8 @@ class Commande extends CommonOrder
 				return -1 * $error;
 			}
 		}
+
+		return 0;
 	}
 
 
@@ -3433,7 +3437,7 @@ class Commande extends CommonOrder
 		}
 
 		// Test we can delete
-		if ($this->nb_expedition() != 0) {
+		if ($this->countNbOfShipments() != 0) {
 			$this->errors[] = $langs->trans('SomeShipmentExists');
 			$error++;
 		}
