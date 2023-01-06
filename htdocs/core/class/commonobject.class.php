@@ -16,6 +16,7 @@
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -5738,15 +5739,16 @@ abstract class CommonObject
 	 *
 	 * @param   string              $fieldname          Name of field
 	 * @param   string              $alternatevalue     Alternate value to use
+	 * @param   string              $type    			Type of data
 	 * @return  string|string[]                         Default value (can be an array if the GETPOST return an array)
 	 **/
-	public function getDefaultCreateValueFor($fieldname, $alternatevalue = null)
+	public function getDefaultCreateValueFor($fieldname, $alternatevalue = null, $type = 'alphanohtml')
 	{
 		global $conf, $_POST;
 
 		// If param here has been posted, we use this value first.
 		if (GETPOSTISSET($fieldname)) {
-			return GETPOST($fieldname, 'alphanohtml', 3);
+			return GETPOST($fieldname, $type, 3);
 		}
 
 		if (isset($alternatevalue)) {
