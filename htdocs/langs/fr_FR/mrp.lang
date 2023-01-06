@@ -11,7 +11,7 @@ Bom=Nomenclatures produits (BOM)
 BillOfMaterials=Nomenclature BOM
 BillOfMaterialsLines=Lignes de nomenclature
 BOMsSetup=Configuration du module BOM
-ListOfBOMs=Bills of material - BOM
+ListOfBOMs=Nomenclatures - Nomenclature
 ListOfManufacturingOrders=Ordres Fabrication
 NewBOM=Nouveau BOM
 ProductBOMHelp=Produit à créer (ou désassembler) avec cette nomenclature. <br> Remarque: les produits avec la propriété 'Nature de produit' = 'Matière première' ne sont pas visibles dans cette liste.
@@ -116,5 +116,5 @@ ParentMo=OF parent
 MOChild=OF Enfant
 BomCantAddChildBom=La nomenclature %s est déjà présente dans l'arbre menant à la nomenclature %s
 BOMNetNeeds = Besoins nets
-BOMProductsList=BOM's products
-BOMServicesList=BOM's services
+BOMProductsList=Les produits de BOM
+BOMServicesList=Les services de BOM

@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Impossible de générer un échéancier p
 CantModifyInterestIfScheduleIsUsed = Vous ne pouvez pas modifier l'intérêt si vous utilisez le calendrier
 # Admin
 ConfigLoan=Configuration du module Emprunt
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Compte (du plan comptable) à utiliser par défaut pour le capital (module Prêt)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Compte (du plan comptable) à utiliser par défaut pour les intérêts (module Prêt)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Compte (du plan comptable) à utiliser par défaut pour l'assurance (module Prêt)
 CreateCalcSchedule=Créer / Modifier échéancier de prêt
