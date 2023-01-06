@@ -197,6 +197,8 @@ class HookManager
 				'getFormatedSupplierRef',
 				'getIdProfUrl',
 				'getInputIdProf',
+				'isPaymentOK',
+				'llxFooter',
 				'menuDropdownQuickaddItems',
 				'menuLeftMenuItems',
 				'moveUploadedFile',

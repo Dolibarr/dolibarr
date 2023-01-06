@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=rtl
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -28,6 +34,7 @@ NoTemplateDefined=اس ای میل کی قسم کے لیے کوئی ٹیمپلی
 AvailableVariables=دستیاب متبادل متغیرات
 NoTranslation=کوئی ترجمہ نہیں
 Translation=ترجمہ
+Translations=Translations
 CurrentTimeZone=ٹائم زون پی ایچ پی (سرور)
 EmptySearchString=غیر خالی تلاش کے معیارات درج کریں۔
 EnterADateCriteria=تاریخ کا معیار درج کریں۔
@@ -199,6 +206,7 @@ Valid=درست
 Approve=منظور کرو
 Disapprove=نامنظور کرنا
 ReOpen=دوبارہ کھولیں۔
+OpenVerb=Open
 Upload=اپ لوڈ کریں۔
 ToLink=لنک
 Select=منتخب کریں۔
@@ -216,7 +224,7 @@ UserGroup=User group
 UserGroups=User groups
 NoUserGroupDefined=کسی صارف گروپ کی وضاحت نہیں کی گئی۔
 Password=پاس ورڈ
-PasswordRetype=اپنا پاس ورڈ دوبارہ ٹائپ کریں۔
+PasswordRetype=Repeat your password
 NoteSomeFeaturesAreDisabled=نوٹ کریں کہ اس مظاہرے میں بہت ساری خصوصیات/ماڈیولز غیر فعال ہیں۔
 Name=نام
 NameSlashCompany=نام / کمپنی
@@ -481,6 +489,7 @@ ActionsOnContact=اس رابطہ/پتہ کے لیے واقعات
 ActionsOnContract=اس معاہدے کے لیے تقریبات
 ActionsOnMember=اس رکن کے بارے میں واقعات
 ActionsOnProduct=اس پروڈکٹ کے بارے میں واقعات
+ActionsOnAsset=Events for this fixed asset
 NActionsLate=%s دیر سے
 ToDo=ایسا کرنے کے لئے
 Completed=مکمل
@@ -921,6 +930,7 @@ DirectDownloadInternalLink=نجی ڈاؤن لوڈ لنک
 PrivateDownloadLinkDesc=آپ کو لاگ ان ہونے کی ضرورت ہے اور آپ کو فائل دیکھنے یا ڈاؤن لوڈ کرنے کے لیے اجازت کی ضرورت ہے۔
 Download=ڈاؤن لوڈ کریں
 DownloadDocument=دستاویز ڈاؤن لوڈ کریں۔
+DownloadSignedDocument=Download signed document
 ActualizeCurrency=کرنسی کی شرح کو اپ ڈیٹ کریں۔
 Fiscalyear=مالی سال
 ModuleBuilder=ماڈیول اور ایپلیکیشن بلڈر
@@ -1046,6 +1056,7 @@ SearchIntoContracts=معاہدے
 SearchIntoCustomerShipments=گاہک کی ترسیل
 SearchIntoExpenseReports=اخراجات کی رپورٹ
 SearchIntoLeaves=چھوڑو
+SearchIntoKM=Knowledge base
 SearchIntoTickets=ٹکٹ
 SearchIntoCustomerPayments=گاہک کی ادائیگی
 SearchIntoVendorPayments=وینڈر کی ادائیگی
@@ -1137,15 +1148,29 @@ EventReminder=واقعہ کی یاد دہانی
 UpdateForAllLines=تمام لائنوں کے لیے اپ ڈیٹ کریں۔
 OnHold=ہولڈ پر
 Civility=تہذیب
-AffectTag=ٹیگ کو متاثر کریں۔
+AffectTag=Assign Tag
+AffectUser=Assign User
+SetSupervisor=Set Supervisor
 CreateExternalUser=بیرونی صارف بنائیں
-ConfirmAffectTag=بلک ٹیگ کا اثر
-ConfirmAffectTagQuestion=کیا آپ واقعی %s منتخب کردہ ریکارڈ (ریکارڈز) پر ٹیگز کو متاثر کرنا چاہتے ہیں؟
+ConfirmAffectTag=Bulk Tag Assignement
+ConfirmAffectUser=Bulk User Assignement
+ProjectRole=Role assigned on each project
+TasksRole=Role assigned on each task of each project
+ConfirmSetSupervisor=Bulk Supervisor Set
+ConfirmUpdatePrice=Choose a increase/decrease price rate
+ConfirmAffectTagQuestion=Are you sure you want to assign tags to the %s selected record(s)?
+ConfirmAffectUserQuestion=Are you sure you want to assign users to the %s selected record(s)?
+ConfirmSetSupervisorQuestion=Are you sure you want to set supervisor to the %s selected record(s)?
+ConfirmUpdatePriceQuestion=Are you sure you want to update the price of the %s selected record(s)?
 CategTypeNotFound=ریکارڈ کی قسم کے لیے کوئی ٹیگ کی قسم نہیں ملی
+Rate=شرح
+SupervisorNotFound=Supervisor not found
 CopiedToClipboard=کلپ بورڈ پر کاپی ہو گیا۔
 InformationOnLinkToContract=یہ رقم صرف معاہدے کی تمام لائنوں کا کل ہے۔ وقت کا کوئی خیال نہیں رکھا جاتا۔
 ConfirmCancel=کیا تمہیں یقین ہے تم اسے ملتوی کرنا چاہتے ہو
 EmailMsgID=MsgID کو ای میل کریں۔
+EmailDate=Email date
+SetToStatus=Set to status %s
 SetToEnabled=فعال پر سیٹ کریں۔
 SetToDisabled=غیر فعال پر سیٹ کریں۔
 ConfirmMassEnabling=بڑے پیمانے پر چالو کرنے کی تصدیق
@@ -1174,9 +1199,14 @@ Terminated=Terminated
 AddLineOnPosition=Add line on position (at the end if empty)
 ConfirmAllocateCommercial=Assign sales representative confirmation
 ConfirmAllocateCommercialQuestion=Are you sure you want to assign the %s selected record(s)?
-CommercialsAffected=Sales representatives affected
-CommercialAffected=Sales representative affected
+CommercialsAffected=Sales representatives assigned
+CommercialAffected=Sales representative assigned
 YourMessage=Your message
 YourMessageHasBeenReceived=Your message has been received. We will answer or contact you as soon as possible.
 UrlToCheck=Url to check
 Automation=Automation
+CreatedByEmailCollector=Created by Email collector
+CreatedByPublicPortal=Created from Public portal
+UserAgent=User Agent
+InternalUser=Internal user
+ExternalUser=External user

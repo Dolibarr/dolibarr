@@ -198,7 +198,7 @@ class modService extends DolibarrModules
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('l.lang'=>'Language', 'l.label'=>'TranslatedLabel', 'l.description'=>'TranslatedDescription', 'l.note'=>'TranslatedNote'));
 		}
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->export_fields_array[$r]['p.fk_unit'] = 'Unit';
 		}
 		$this->export_TypeFields_array[$r] = array(
@@ -587,7 +587,7 @@ class modService extends DolibarrModules
 		if (isModEnabled('barcode')) {
 			$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('p.barcode'=>'BarCode'));
 		}
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->import_fields_array[$r]['p.fk_unit'] = 'Unit';
 		}
 		// Add extra fields
@@ -678,7 +678,7 @@ class modService extends DolibarrModules
 		if (isModEnabled('barcode')) {
 			$import_sample = array_merge($import_sample, array('p.barcode'=>''));
 		}
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$import_sample = array_merge(
 				$import_sample,
 				array(

@@ -1203,12 +1203,12 @@ if ($resql) {
 
 	$topicmail = "SendOrderRef";
 	$modelmail = "order_supplier_send";
-	$objecttmp = new CommandeFournisseur($db);
+	$objecttmp = new CommandeFournisseur($db);	// in case $object is not the good object
 	$trackid = 'sord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($massaction == 'prevalidate') {
-		print $form->formconfirm($_SERVER["PHP_SELF"].$fieldstosearchall, $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
 	}
 
 	if ($massaction == 'createbills') {
@@ -1469,8 +1469,8 @@ if ($resql) {
 	}
 	// Status billed
 	if (!empty($arrayfields['cf.billed']['checked'])) {
-		print '<td class="liste_titre center">';
-		print $form->selectyesno('search_billed', $search_billed, 1, false, 1, 1, 'maxwidth100 onrightofpage');
+		print '<td class="liste_titre center parentonrightofpage">';
+		print $form->selectyesno('search_billed', $search_billed, 1, false, 1, 1, 'search_status width100 onrightofpage');
 		print '</td>';
 	}
 	// Date valid

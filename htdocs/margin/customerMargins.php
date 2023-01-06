@@ -89,7 +89,8 @@ $text = $langs->trans("Margins");
 //print load_fiche_titre($text);
 
 // Show tabs
-$head = marges_prepare_head($user);
+$head = marges_prepare_head();
+
 $titre = $langs->trans("Margins");
 $picto = 'margin';
 

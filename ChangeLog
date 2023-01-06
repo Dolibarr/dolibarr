@@ -21,7 +21,7 @@ For users:
 NEW: Minimal PHP version is now PHP 7.0 instead of PHP 5.6
 NEW: #21780 Add pid field to Cronjob class and store PID on job execution
 NEW: #19680 Add option PRODUCT_ALLOW_EXTERNAL_DOWNLOAD to automatically have uploaded files shared publicly by a link
-NEW: #20650 can move the checkbox column on left (experimental option)
+NEW: #20650 can move the checkbox column on left (experimental option MAIN_CHECKBOX_LEFT_COLUMN)
 NEW: #21000 Added columns 'alias_name' on project, supplier invoice, supplier order, supplier proposals and task list
 NEW: #21395 Added option for dark theme mode in display - color and theme
 NEW: #21397 added option to auto define barcode numbers for third-parties in barcode module setup
@@ -165,7 +165,7 @@ NEW: show product label on inventory
 NEW: show sell-by and eat-by dates only if not empty
 NEW: show SellBy/EatBy dates for each batch product in shipment card
 NEW: skip accept/refuse process for proposals (option PROPAL_SKIP_ACCEPT_REFUSE)
-NEW: SMTP using oauth2 authentication
+NEW: experimental SMTP using PhpImap allowing OAuth2 authentication (need to add option MAIN_IMAP_USE_PHPIMAP)
 NEW: can substitue project title in mail template
 NEW: Supplier order list - Add column private and public note
 NEW: Support IP type in extrafields
@@ -221,6 +221,39 @@ Following changes may create regressions for some external modules, but were nec
 * Rename MAIN_LIST_ALLOW_NOTES into MAIN_LIST_HIDE_NOTES and rename MAIN_LIST_ALLOW_PRIVATE_NOTES into MAIN_LIST_HIDE_PRIVATE_NOTES
 * Rename the substitution for project label instead of project title in substitution variables
 
+
+***** ChangeLog for 16.0.4 compared to 16.0.2 *****
+
+FIX: Amount of localtax1 and 2 not correctly save on purchase order (the rate was saved instead)
+FIX: #20415
+FIX: #21280
+FIX: #23008
+FIX: #22271
+FIX: #22837
+FIX: #23019 Impossible to add task times to an existing draft invoice
+FIX: #23072
+FIX: #23087
+FIX: #23115 
+FIX: #23116
+FIX: #23281
+FIX: bad selection of barcode numbering module
+FIX: Can't see all time spent by all user
+FIX: CI
+FIX: CommonObject - showOptionals - Display blank td when MAIN_VIEW_LINE_NUMBER is enabled and action is confirm_valid
+FIX: Documents API inconsistency
+FIX: #23075
+FIX: #23117
+FIX: get multicurrency infos of propal when create order from propal with "WORKFLOW_PROPAL_AUTOCREATE_ORDER" conf
+FIX: Give predictable order to inventory lines
+FIX: include class multicurrency
+FIX: methods declaration (backport fix 67b9a7dc07d708231d12b5e58800334d4a01ef98)
+FIX: multicurrency_tx and not currency_tx
+FIX: PGSQL Integer type does not have a free length
+FIX: Product list in setup.php in new Module
+FIX: propal and order stats broken on Tag+User(retricted customer list)
+FIX: saving of numbering module for jobs
+FIX: Stickler
+FIX: travis
 
 ***** ChangeLog for 16.0.3 compared to 16.0.2 *****
 

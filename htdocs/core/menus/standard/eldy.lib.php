@@ -1622,7 +1622,6 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				$newmenu->add("/accountancy/admin/accountmodel.php?id=31&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Pcg_version"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_chartmodel', 40);
 				$newmenu->add("/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Chartofaccounts"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_chart', 41);
 				$newmenu->add("/accountancy/admin/subaccount.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("ChartOfSubaccounts"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_chart', 41);
-				$newmenu->add("/accountancy/admin/categories_list.php?id=32&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("AccountingCategory"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_chart', 50);
 				$newmenu->add("/accountancy/admin/defaultaccounts.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuDefaultAccounts"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_default', 60);
 				if (isModEnabled('banque')) {
 					$newmenu->add("/compta/bank/list.php?mainmenu=accountancy&leftmenu=accountancy_admin&search_status=-1", $langs->trans("MenuBankAccounts"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_bank', 70);
@@ -1640,6 +1639,7 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
 					$newmenu->add("/accountancy/admin/closure.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("MenuClosureAccounts"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_closure', 120);
 				}
+				$newmenu->add("/accountancy/admin/categories_list.php?id=32&search_country_id=".$mysoc->country_id."&mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("AccountingCategory"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_chart', 125);
 				$newmenu->add("/accountancy/admin/export.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("ExportOptions"), 1, $user->hasRight('accounting',  'chartofaccount'), '', $mainmenu, 'accountancy_admin_export', 130);
 			}
 
@@ -2061,7 +2061,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			if (isModEnabled('supplier_order')) {
 				$newmenu->add("/product/stock/replenish.php", $langs->trans("Replenishment"), 1, $user->hasRight('stock', 'mouvement', 'creer') && $user->hasRight('fournisseur',  'lire'));
 			}
-			$newmenu->add("/product/stock/stockatdate.php", $langs->trans("StockAtDate"), 1, $user->hasRight('product', 'read', '', 1) && $user->hasRight('stock', 'lire'));
+			$newmenu->add("/product/stock/stockatdate.php", $langs->trans("StockAtDate"), 1, $user->hasRight('product', 'read') && $user->hasRight('stock', 'lire'));
 
 			// Categories for warehouses
 			if (isModEnabled('categorie')) {

@@ -119,7 +119,7 @@ if (empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
 	}
 
 	// Conf files must be in read only mode
-	if (is_writable($conffile)) {
+	if (is_writable($conffile)) {	// $conffile is defined into filefunc.inc.php
 		$langs->load("errors");
 		//$langs->load("other");
 		//if (!empty($message)) $message.='<br>';
@@ -512,23 +512,6 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				if (!empty($groupElement['globalStatsKey']) && empty($groupElement['globalStats'])) { // can be filled by hook
 					$globalStatsKey = $groupElement['globalStatsKey'];
 					$groupElement['globalStats'] = array();
-
-					if (isset($keys) && is_array($keys) && in_array($globalStatsKey, $keys)) {
-						// get key index of stats used in $includes, $classes, $keys, $icons, $titres, $links
-						$keyIndex = array_search($globalStatsKey, $keys);
-
-						$classe = (!empty($classes[$keyIndex]) ? $classes[$keyIndex] : '');
-						if (isset($boardloaded[$classe]) && is_object($boardloaded[$classe])) {
-							$groupElement['globalStats']['total'] = $boardloaded[$classe]->nb[$globalStatsKey] ? $boardloaded[$classe]->nb[$globalStatsKey] : 0;
-							$nbTotal = floatval($groupElement['globalStats']['total']);
-							if ($nbTotal >= 10000) {
-								$nbTotal = round($nbTotal / 1000, 2).'k';
-							}
-							$groupElement['globalStats']['text'] = $langs->trans('Total').' : '.$langs->trans($titres[$keyIndex]).' ('.$groupElement['globalStats']['total'].')';
-							$groupElement['globalStats']['total'] = $nbTotal;
-							//$groupElement['globalStats']['link'] = $links[$keyIndex];
-						}
-					}
 				}
 
 				$openedDashBoard .= '<div class="box-flex-item"><div class="box-flex-item-with-margin">'."\n";
@@ -700,12 +683,12 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			if ($board->nbtodolate > 0) {
 				$boxwork .= '<div class="dashboardlinelatecoin nowrap">';
 				$boxwork .= '<a title="'.dol_escape_htmltag($textlate).'" class="valignmiddle dashboardlineindicatorlate'.($board->nbtodolate > 0 ? ' dashboardlineko' : ' dashboardlineok').'" href="'.((!$board->url_late) ? $board->url : $board->url_late).'">';
-				//$boxwork .= img_picto($textlate, "warning_white", 'class="valigntextbottom"').'';
+				//$boxwork .= img_picto($textlate, "warning_white", 'class="valigntextbottom"');
 				$boxwork .= img_picto(
 					$textlate,
 					"warning_white",
 					'class="inline-block hideonsmartphone valigntextbottom"'
-				).'';
+				);
 				$boxwork .= '<span class="dashboardlineindicatorlate'.($board->nbtodolate > 0 ? ' dashboardlineko' : ' dashboardlineok').'">';
 				$boxwork .= $board->nbtodolate;
 				$boxwork .= '</span>';
@@ -823,23 +806,15 @@ function getWeatherStatus($totallate)
 
 	$used_conf = empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'MAIN_METEO_LEVEL' : 'MAIN_METEO_PERCENTAGE_LEVEL';
 
-	$level0 = $offset;
 	$weather->level = 0;
-	if (!empty($conf->global->{$used_conf.'0'})) {
-		$level0 = $conf->global->{$used_conf.'0'};
-	}
-	$level1 = $offset + 1 * $factor;
-	if (!empty($conf->global->{$used_conf.'1'})) {
-		$level1 = $conf->global->{$used_conf.'1'};
-	}
+	$level0 = $offset;
+	$level0 = getDolGlobalString($used_conf.'0', $level0);
+	$level1 = $offset + $factor;
+	$level1 = getDolGlobalString($used_conf.'1', $level1);
 	$level2 = $offset + 2 * $factor;
-	if (!empty($conf->global->{$used_conf.'2'})) {
-		$level2 = $conf->global->{$used_conf.'2'};
-	}
+	$level2 = getDolGlobalString($used_conf.'2', $level2);
 	$level3 = $offset + 3 * $factor;
-	if (!empty($conf->global->{$used_conf.'3'})) {
-		$level3 = $conf->global->{$used_conf.'3'};
-	}
+	$level3 = getDolGlobalString($used_conf.'3', $level3);
 
 	if ($totallate <= $level0) {
 		$weather->picto = 'weather-clear.png';

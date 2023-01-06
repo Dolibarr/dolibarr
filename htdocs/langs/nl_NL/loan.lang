@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with
 CantModifyInterestIfScheduleIsUsed = U kunt de rente niet wijzigen indien u een schema gebruikt
 # Admin
 ConfigLoan=Configuratie van de module lening
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standaard grootboekrekening kapitaal
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standaard grootboekrekening rente
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standaard grootboekrekening verzekeringen
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
 CreateCalcSchedule=Bewerk financiële betrokkenheid

@@ -226,7 +226,7 @@ class Tva extends CommonObject
 		$sql .= " label='".$this->db->escape($this->label)."',";
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " fk_user_creat=".((int) $this->fk_user_creat).",";
-		$sql .= " fk_user_modif=".($this->fk_user_modif > 0 ? $this->fk_user_modif : $user->id)."";
+		$sql .= " fk_user_modif=".((int) ($this->fk_user_modif > 0 ? $this->fk_user_modif : $user->id));
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

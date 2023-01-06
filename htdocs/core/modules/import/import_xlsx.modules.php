@@ -624,7 +624,7 @@ class ImportXlsx extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$newval = $this->thirdpartyobject->get_codefournisseur(0, 1);
+										$this->thirdpartyobject->get_codefournisseur(0, 1);
 										$newval = $this->thirdpartyobject->code_fournisseur;
 										//print 'code_fournisseur='.$newval;
 									}

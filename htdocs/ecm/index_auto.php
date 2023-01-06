@@ -309,7 +309,7 @@ llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $m
 // Add sections to manage
 $rowspan = 0;
 $sectionauto = array();
-if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
+if (empty($conf->global->ECM_AUTO_TREE_HIDEN)) {
 	if (isModEnabled("product") || isModEnabled("service")) {
 		$langs->load("products");
 		$rowspan++; $sectionauto[] = array('position'=>10, 'level'=>1, 'module'=>'product', 'test'=>(isModEnabled("product") || isModEnabled("service")), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts"));

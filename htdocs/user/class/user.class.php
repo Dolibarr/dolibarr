@@ -436,7 +436,7 @@ class User extends CommonObject
 		$sql .= " u.admin, u.login, u.note_private, u.note_public,";
 		$sql .= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
 		$sql .= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.fk_user_expense_validator, u.fk_user_holiday_validator,";
-		$sql .= " u.statut, u.lang, u.entity,";
+		$sql .= " u.statut as status, u.lang, u.entity,";
 		$sql .= " u.datec as datec,";
 		$sql .= " u.tms as datem,";
 		$sql .= " u.datelastlogin as datel,";
@@ -553,7 +553,10 @@ class User extends CommonObject
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->note			= $obj->note_private;	// deprecated
-				$this->statut		= $obj->statut;
+
+				$this->statut		= $obj->status;			// deprecated
+				$this->status		= $obj->status;
+
 				$this->photo		= $obj->photo;
 				$this->openid		= $obj->openid;
 				$this->lang			= $obj->lang;
@@ -717,7 +720,6 @@ class User extends CommonObject
 			'shipping' => 'expedition',
 			'task' => 'task@projet',
 			'fichinter' => 'ficheinter',
-			'propale' => 'propal',
 			'inventory' => 'stock',
 			'invoice' => 'facture',
 			'invoice_supplier' => 'fournisseur',
@@ -1350,7 +1352,11 @@ class User extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if ($this->statut == $status) {
+		if (isset($this->statut)) {
+			if ($this->statut == $status) {
+				return 0;
+			}
+		} elseif (isset($this->status) && $this->status == $status) {
 			return 0;
 		}
 
@@ -1390,8 +1396,8 @@ class User extends CommonObject
 	 * Adds it to non existing supplied categories.
 	 * Existing categories are left untouch.
 	 *
-	 * @param int[]|int $categories Category or categories IDs
-	 * @return void
+	 * @param 	int[]|int 	$categories 	Category or categories IDs
+	 * @return 	int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -3253,7 +3259,8 @@ class User extends CommonObject
 		$this->iplastlogin = '127.0.0.1';
 		$this->datepreviouslogin = $now;
 		$this->ippreviouslogin = '127.0.0.1';
-		$this->statut = 1;
+		$this->statut = 1;		// deprecated
+		$this->status = 1;
 
 		$this->entity = 1;
 		return 1;
@@ -3371,24 +3378,36 @@ class User extends CommonObject
 
 		$socialnetworks = getArrayOfSocialNetworks();
 
-		$this->firstname = $ldapuser->{$conf->global->LDAP_FIELD_FIRSTNAME};
-		$this->lastname = $ldapuser->{$conf->global->LDAP_FIELD_NAME};
-		$this->login = $ldapuser->{$conf->global->LDAP_FIELD_LOGIN};
-		$this->pass = $ldapuser->{$conf->global->LDAP_FIELD_PASSWORD};
-		$this->pass_indatabase_crypted = $ldapuser->{$conf->global->LDAP_FIELD_PASSWORD_CRYPTED};
+		$tmpvar = getDolGlobalString('LDAP_FIELD_FIRSTNAME');
+		$this->firstname = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_NAME');
+		$this->lastname = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_LOGIN');
+		$this->login = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_PASSWORD');
+		$this->pass = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED');
+		$this->pass_indatabase_crypted = $ldapuser->$tmpvar;
 
-		$this->office_phone = $ldapuser->{$conf->global->LDAP_FIELD_PHONE};
-		$this->user_mobile = $ldapuser->{$conf->global->LDAP_FIELD_MOBILE};
-		$this->office_fax = $ldapuser->{$conf->global->LDAP_FIELD_FAX};
-		$this->email = $ldapuser->{$conf->global->LDAP_FIELD_MAIL};
+		$tmpvar = getDolGlobalString('LDAP_FIELD_PHONE');
+		$this->office_phone = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_MOBILE');
+		$this->user_mobile = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_FAX');
+		$this->office_fax = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_MAIL');
+		$this->email = $ldapuser->$tmpvar;
 		foreach ($socialnetworks as $key => $value) {
-			$tmpkey = 'LDAP_FIELD_'.strtoupper($value['label']);
-			$this->socialnetworks[$value['label']] = $ldapuser->{$conf->global->$tmpkey};
+			$tmpvar = getDolGlobalString('LDAP_FIELD_'.strtoupper($value['label']));
+			$this->socialnetworks[$value['label']] = $ldapuser->$tmpvar;
 		}
-		$this->ldap_sid = $ldapuser->{$conf->global->LDAP_FIELD_SID};
+		$tmpvar = getDolGlobalString('LDAP_FIELD_SID');
+		$this->ldap_sid = $ldapuser->$tmpvar;
 
-		$this->job = $ldapuser->{$conf->global->LDAP_FIELD_TITLE};
-		$this->note_public = $ldapuser->{$conf->global->LDAP_FIELD_DESCRIPTION};
+		$tmpvar = getDolGlobalString('LDAP_FIELD_TITLE');
+		$this->job = $ldapuser->$tmpvar;
+		$tmpvar = getDolGlobalString('LDAP_FIELD_DESCRIPTION');
+		$this->note_public = $ldapuser->$tmpvar;
 
 		$result = $this->update($user);
 
@@ -3470,7 +3489,7 @@ class User extends CommonObject
 	 *
 	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
 	 *  @param		string	$filter				SQL filter on users. This parameter must not come from user intput.
-	 *	@return		array		      		  	Array of users $this->users. Note: $this->parentof is also set.
+	 *	@return		array|int	      		  	Array of users $this->users. Note: $this->parentof is also set.
 	 */
 	public function get_full_tree($deleteafterid = 0, $filter = '')
 	{
@@ -3642,18 +3661,18 @@ class User extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'user',
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 

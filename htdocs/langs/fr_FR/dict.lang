@@ -29,7 +29,7 @@ CountryPT=Portugal
 CountrySA=Arabie Saoudite
 CountryMC=Monaco
 CountryAU=Australie
-CountrySG=Singapoure
+CountrySG=Singapour
 CountryAF=Afghanistan
 CountryAX=Iles Aland
 CountryAL=Albanie
@@ -250,7 +250,9 @@ CountryMF=Saint-Martin
 
 ##### Civilities #####
 CivilityMME=Madame
+CivilityMMEShort=Mrs.
 CivilityMR=Monsieur
+CivilityMRShort=Mr.
 CivilityMLE=Mademoiselle
 CivilityMTRE=Maître
 CivilityDR=Docteur

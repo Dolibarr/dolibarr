@@ -340,13 +340,13 @@ function getBrowserInfo($user_agent)
 	$reg = array();
 	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
 		$name = 'firefox';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/edge(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
 		$name = 'edge';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $user_agent, $reg)) {
 		$name = 'chrome';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/chrome/i', $user_agent, $reg)) {
 		// we can have 'chrome (Mozilla...) chrome x.y' in one string
 		$name = 'chrome';
@@ -356,11 +356,11 @@ function getBrowserInfo($user_agent)
 		$name = 'epiphany';
 	} elseif (preg_match('/safari(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
 		$name = 'safari';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
 		// Safari is often present in string for mobile but its not.
 		$name = 'opera';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg)) {
 		$name = 'ie';
 		$version = end($reg);
@@ -368,10 +368,10 @@ function getBrowserInfo($user_agent)
 		// MS products at end
 		$name = 'ie';
 		$version = end($reg);
-	} elseif (preg_match('/l(i|y)n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) {
+	} elseif (preg_match('/l[iy]n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) {
 		// MS products at end
 		$name = 'lynxlinks';
-		$version = $reg[4];
+		$version = empty($reg[3]) ? '' : $reg[3];
 	}
 
 	if ($tablet) {
@@ -1718,7 +1718,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *	@param	string	$name				A name for the html component
  *	@param	string	$label 	    		Label shown in Popup title top bar
  *	@param  string	$buttonstring  		button string
- *	@param  string	$url				Relative Url to open
+ *	@param  string	$url				Relative Url to open. For example '/project/card.php'
  *  @param	string	$disabled			Disabled text
  *  @param	string	$morecss			More CSS
  *  @param	string	$backtopagejsfields	The back to page must be managed using javascript instead of a redirect.
@@ -1752,13 +1752,16 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	}
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
-	$out .= '<!-- a link for button to open url into a dialog popup backtopagejsfields = '.$backtopagejsfields.' -->';
+	$out .= '<!-- a link for button to open url into a dialog popup with backtopagejsfields = '.$backtopagejsfields.' -->';
 	$out .= '<a class="cursorpointer classlink button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
 	if (empty($conf->use_javascript_ajax)) {
 		$out .= ' href="'.DOL_URL_ROOT.$url.'" target="_blank"';
 	}
 	$out .= '>'.$buttonstring.'</a>';
+
 	if (!empty($conf->use_javascript_ajax)) {
+		// Add code to open url using the popup. Add also hidden field to retreive the returned variables
+		$out .= '<!-- code to open popup and variables to retreive returned variables -->';
 		$out .= '<div id="idfordialog'.$name.'" class="hidden">div for dialog</div>';
 		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">div for returned id</div>';
 		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">div for returned label</div>';
@@ -2195,7 +2198,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 						// If the preview file is found
 						if (file_exists($fileimage)) {
 							$phototoshow = '<div class="photoref">';
-							$phototoshow .= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+							$phototoshow .= '<img height="'.$heightforphotref.'" class="photo photowithborder" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
 							$phototoshow .= '</div>';
 						}
 					}
@@ -2644,12 +2647,6 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$format = str_replace('%A', '__A__', $format);
 	}
 
-	$useadodb = getDolGlobalInt('MAIN_USE_LEGACY_ADODB_FOR_DATE', 0);
-	//$useadodb = 1;	// To switch to adodb
-	if (!empty($useadodb)) {
-		include_once DOL_DOCUMENT_ROOT.'/includes/adodbtime/adodb-time.inc.php';
-	}
-
 	// Analyze date
 	$reg = array();
 	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg)) {	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
@@ -2668,14 +2665,37 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$ssec	= (!empty($reg[6]) ? $reg[6] : '');
 
 		$time = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
-		if (empty($useadodb)) {
+
+		if ($to_gmt) {
+			$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
+		} else {
+			$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
+		}
+		$dtts = new DateTime();
+		$dtts->setTimestamp($time);
+		$dtts->setTimezone($tzo);
+		$newformat = str_replace(
+			array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+			array('Y', 'y', 'm', 'd', 'H', 'h', 'i', 's', 'A', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+			$format);
+		$ret = $dtts->format($newformat);
+		$ret = str_replace(
+			array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+			array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+			$ret
+		);
+	} else {
+		// Date is a timestamps
+		if ($time < 100000000000) {	// Protection against bad date values
+			$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
+
 			if ($to_gmt) {
 				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
 			} else {
 				$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
 			}
 			$dtts = new DateTime();
-			$dtts->setTimestamp($time);
+			$dtts->setTimestamp($timetouse);
 			$dtts->setTimezone($tzo);
 			$newformat = str_replace(
 				array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
@@ -2685,36 +2705,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			$ret = str_replace(
 				array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
 				array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
-				$ret);
-		} else {
-			$ret = adodb_strftime($format, $time + $offsettz + $offsetdst, $to_gmt);
-		}
-	} else {
-		// Date is a timestamps
-		if ($time < 100000000000) {	// Protection against bad date values
-			$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
-
-			if (empty($useadodb)) {
-				if ($to_gmt) {
-					$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
-				} else {
-					$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
-				}
-				$dtts = new DateTime();
-				$dtts->setTimestamp($timetouse);
-				$dtts->setTimezone($tzo);
-				$newformat = str_replace(
-					array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
-					array('Y', 'y', 'm', 'd', 'H', 'h', 'i', 's', 'A', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
-					$format);
-				$ret = $dtts->format($newformat);
-				$ret = str_replace(
-					array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
-					array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
-					$ret);
-			} else {
-				$ret = adodb_strftime($format, $timetouse, $to_gmt);	// If to_gmt = false then adodb_strftime use TZ of server
-			}
+				$ret
+			);
 			//var_dump($ret);exit;
 		} else {
 			$ret = 'Bad value '.$time.' for date';
@@ -2724,20 +2716,15 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	if (preg_match('/__b__/i', $format)) {
 		$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
 
-		if (empty($useadodb)) {
-			if ($to_gmt) {
-				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
-			} else {
-				$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
-			}
-			$dtts = new DateTime();
-			$dtts->setTimestamp($timetouse);
-			$dtts->setTimezone($tzo);
-			$month = $dtts->format("m");
+		if ($to_gmt) {
+			$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
 		} else {
-			// After this ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-			$month = adodb_strftime('%m', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+			$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
 		}
+		$dtts = new DateTime();
+		$dtts->setTimestamp($timetouse);
+		$dtts->setTimezone($tzo);
+		$month = $dtts->format("m");
 		$month = sprintf("%02d", $month); // $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput) {
 			$monthtext = $outputlangs->transnoentities('Month'.$month);
@@ -2756,19 +2743,15 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		//print "time=$time offsettz=$offsettz offsetdst=$offsetdst offsettzstring=$offsettzstring";
 		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-		if (empty($useadodb)) {
-			if ($to_gmt) {
-				$tzo = new DateTimeZone('UTC');
-			} else {
-				$tzo = new DateTimeZone(date_default_timezone_get());
-			}
-			$dtts = new DateTime();
-			$dtts->setTimestamp($timetouse);
-			$dtts->setTimezone($tzo);
-			$w = $dtts->format("w");
+		if ($to_gmt) {
+			$tzo = new DateTimeZone('UTC');
 		} else {
-			$w = adodb_strftime('%w', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+			$tzo = new DateTimeZone(date_default_timezone_get());
 		}
+		$dtts = new DateTime();
+		$dtts->setTimestamp($timetouse);
+		$dtts->setTimezone($tzo);
+		$w = $dtts->format("w");
 		$dayweek = $outputlangs->transnoentitiesnoconv('Day'.$w);
 
 		$ret = str_replace('__A__', $dayweek, $ret);
@@ -3821,7 +3804,7 @@ function isValidMXRecord($domain)
 		}
 	}
 
-	// function idn_to_ascii or checkdnsrr does not exists
+	// function idn_to_ascii or checkdnsrr or getmxrr does not exists
 	return -1;
 }
 
@@ -4080,12 +4063,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'cash-register', 'category', 'chart', 'check', 'clock', 'close_title', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cubes',
 				'currency', 'multicurrency',
 				'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
-				'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt',
+				'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
 				'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
 				'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'knowledgemanagement',
-				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lot', 'long-arrow-alt-right',
+				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lock', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
 				'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
@@ -4244,7 +4227,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'dynamicprice'=>'#a69944',
 				'edit'=>'#444', 'note'=>'#999', 'error'=>'', 'help'=>'#bbb', 'listlight'=>'#999', 'language'=>'#555',
 				//'dolly'=>'#a69944', 'dollyrevert'=>'#a69944',
-				'lot'=>'#a69944',
+				'lock'=>'#ddd', 'lot'=>'#a69944',
 				'map-marker-alt'=>'#aaa', 'mrp'=>'#a69944', 'product'=>'#a69944', 'service'=>'#a69944', 'inventory'=>'#a69944', 'stock'=>'#a69944', 'movement'=>'#a69944',
 				'other'=>'#ddd', 'world'=>'#986c6a',
 				'partnership'=>'#6c6aa8', 'playdisabled'=>'#ccc', 'printer'=>'#444', 'projectpub'=>'#986c6a', 'reception'=>'#a69944', 'resize'=>'#444', 'rss'=>'#cba',
@@ -4544,7 +4527,7 @@ function img_view($titlealt = 'default', $float = 0, $other = 'class="valignmidd
 
 	$moreatt = ($float ? 'style="float: right" ' : '').$other;
 
-	return img_picto($titlealt, 'view.png', $moreatt);
+	return img_picto($titlealt, 'eye', $moreatt);
 }
 
 /**
@@ -5055,7 +5038,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		} elseif (is_array($errors)) {
 			$errors = array_merge(array($error), $errors);
 		} else {
-			$errors = array_merge(array($error));
+			$errors = array_merge(array($error), array($errors));
 		}
 
 		foreach ($errors as $msg) {
@@ -5762,7 +5745,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 			$currency_code = $conf->currency;
 		}
 
-		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD');
+		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD', 'CRC');
 		$listoflanguagesbefore = array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore)) {
 			$cursymbolbefore .= $outlangs->getCurrencySymbol($currency_code);
@@ -7676,6 +7659,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			if (isModEnabled("propal") && (!is_object($object) || $object->element == 'propal')) {
 				$substitutionarray['__ONLINE_SIGN_URL__'] = 'ToOfferALinkForOnlineSignature';
 			}
+			if (isModEnabled("ficheinter") && (!is_object($object) || $object->element == 'fichinter')) {
+				$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = 'ToOfferALinkForOnlineSignature';
+			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
 			$substitutionarray['__SECUREKEYPAYMENT__'] = 'Security key (if key is not unique per record)';
@@ -7945,6 +7931,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (is_object($object) && $object->element == 'propal') {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'proposal', $object->ref);
+				}
+				if (is_object($object) && $object->element == 'fichinter') {
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+					$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = getOnlineSignatureUrl(0, 'fichinter', $object->ref);
 				}
 				if (!empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'propal') {
 					$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = $object->getLastMainDocLink($object->element);
@@ -8418,10 +8408,10 @@ function setEventMessage($mesgs, $style = 'mesgs')
  *	Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
  *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
  *
- *	@param	string	$mesg			Message string
- *	@param	array	$mesgs			Message array
- *  @param  string	$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
- *  @param	string	$messagekey		A key to be used to allow the feature "Never show this message again"
+ *	@param	string		$mesg			Message string
+ *	@param	array|null	$mesgs			Message array
+ *  @param  string		$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @param	string		$messagekey		A key to be used to allow the feature "Never show this message again"
  *  @return	void
  *  @see	dol_htmloutput_events()
  */
@@ -8668,7 +8658,8 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  @param      array		$array      		Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @param      string		$index				Key in array to use for sorting criteria
  *  @param      int			$order				Sort order ('asc' or 'desc')
- *  @param      int			$natsort			1=use "natural" sort (natsort) for a search criteria thats is strings or unknown, 0=use "standard" sort (asort) for numbers
+ *  @param      int			$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort)
+ *   											If values are numeric (I said value not type): 0=Use numeric order (even if type is string) so use a "natural" sort, 1=use "natural" sort too (same than 0), -1=Force alphabetical order
  *  @param      int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
  *  @param		int			$keepindex			If 0 and index key of array to sort is a numeric, than index will be rewrote. If 1 or index key is not numeric, key for index is kept after sorting.
  *  @return     array							Sorted array
@@ -8688,9 +8679,12 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 				} else {
 					$temp[$key] = empty($array[$key][$index]) ? 0 : $array[$key][$index];
 				}
+				if ($natsort == -1) {
+					$temp[$key] = '___'.$temp[$key];        // We add a string at begin of value to force an alpha order when using asort.
+				}
 			}
 
-			if (!$natsort) {
+			if (empty($natsort) || $natsort == -1) {
 				if ($order == 'asc') {
 					asort($temp);
 				} else {
@@ -10221,12 +10215,12 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$imgmime = 'mdb.png';
 		$famime = 'file-o';
 	}
-	if (preg_match('/\.doc(x|m)?$/i', $tmpfile)) {
+	if (preg_match('/\.doc[xm]?$/i', $tmpfile)) {
 		$mime = 'application/msword';
 		$imgmime = 'doc.png';
 		$famime = 'file-word-o';
 	}
-	if (preg_match('/\.dot(x|m)?$/i', $tmpfile)) {
+	if (preg_match('/\.dot[xm]?$/i', $tmpfile)) {
 		$mime = 'application/msword';
 		$imgmime = 'doc.png';
 		$famime = 'file-word-o';
@@ -10246,17 +10240,17 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$imgmime = 'xls.png';
 		$famime = 'file-excel-o';
 	}
-	if (preg_match('/\.xls(b|m|x)$/i', $tmpfile)) {
+	if (preg_match('/\.xls[bmx]$/i', $tmpfile)) {
 		$mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 		$imgmime = 'xls.png';
 		$famime = 'file-excel-o';
 	}
-	if (preg_match('/\.pps(m|x)?$/i', $tmpfile)) {
+	if (preg_match('/\.pps[mx]?$/i', $tmpfile)) {
 		$mime = 'application/vnd.ms-powerpoint';
 		$imgmime = 'ppt.png';
 		$famime = 'file-powerpoint-o';
 	}
-	if (preg_match('/\.ppt(m|x)?$/i', $tmpfile)) {
+	if (preg_match('/\.ppt[mx]?$/i', $tmpfile)) {
 		$mime = 'application/x-mspowerpoint';
 		$imgmime = 'ppt.png';
 		$famime = 'file-powerpoint-o';
@@ -12061,7 +12055,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 				$out .= $actionstatic->getNomUrl(1, -1, 'valignmiddle').' ';
 			}
 
-			if (!empty($user->rights->agenda->allactions->create) ||
+			if ($user->hasRight('agenda', 'allactions', 'create') ||
 				(($actionstatic->authorid == $user->id || $actionstatic->userownerid == $user->id) && !empty($user->rights->agenda->myactions->create))) {
 				$out .= '<a class="timeline-btn" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?action=edit&token='.newToken().'&id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'"><i class="fa fa-pencil" title="'.$langs->trans("Modify").'" ></i></a>';
 			}

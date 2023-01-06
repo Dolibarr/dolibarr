@@ -65,7 +65,6 @@ MenuMembersStats=Estatísticas
 NewMemberbyWeb=Novo membro adicionado. Aguardando aprovação
 NewMemberForm=Formulário para novo membro
 TurnoverOrBudget=Volume de negócios (para uma empresa) ou de orçamento (para uma fundação)
-MEMBER_NEWFORM_PAYONLINE=Ir na página de pagamento online integrado
 NoEmailSentToMember=Nenhum e-mail enviado para o membro
 MembershipPaid=Filiação paga pelo período atual (até %s)
 YouMayFindYourInvoiceInThisEmail=Você pode encontrar sua fatura anexada a este e-mail

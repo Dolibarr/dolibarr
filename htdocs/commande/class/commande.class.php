@@ -1301,6 +1301,7 @@ class Commande extends CommonOrder
 	{
 		global $conf, $hookmanager;
 
+		dol_include_once('/multicurrency/class/multicurrency.class.php');
 		dol_include_once('/core/class/extrafields.class.php');
 
 		$error = 0;
@@ -1375,6 +1376,29 @@ class Commande extends CommonOrder
 
 		$this->origin = $object->element;
 		$this->origin_id = $object->id;
+
+				// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
+		if (!empty($conf->multicurrency->enabled)) {
+			if (!empty($object->multicurrency_code)) {
+				$this->multicurrency_code = $object->multicurrency_code;
+			}
+			if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($object->multicurrency_tx)) {
+				$this->multicurrency_tx = $object->multicurrency_tx;
+			}
+
+			if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
+					$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_commande);
+					$this->fk_multicurrency = $tmparray[0];
+					$this->multicurrency_tx = $tmparray[1];
+			} else {
+					$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
+			}
+			if (empty($this->fk_multicurrency)) {
+					$this->multicurrency_code = $conf->currency;
+					$this->fk_multicurrency = 0;
+					$this->multicurrency_tx = 1;
+			}
+		}
 
 		// get extrafields from original line
 		$object->fetch_optionals();
@@ -2355,58 +2379,45 @@ class Commande extends CommonOrder
 	 *
 	 *	@param      User	$user		User object
 	 *  @param      int		$lineid		Id of line to delete
+	 *  @param		int		$id			Id of object (for a check)
 	 *  @return     int        		 	>0 if OK, 0 if nothing to do, <0 if KO
 	 */
-	public function deleteline($user = null, $lineid = 0)
+	public function deleteline($user = null, $lineid = 0, $id = 0)
 	{
 		if ($this->statut == self::STATUS_DRAFT) {
 			$this->db->begin();
 
-			$sql = "SELECT fk_product, qty";
-			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql .= " WHERE rowid = ".((int) $lineid);
+			// Delete line
+			$line = new OrderLine($this->db);
 
-			$result = $this->db->query($sql);
-			if ($result) {
-				$obj = $this->db->fetch_object($result);
+			$line->context = $this->context;
 
-				if ($obj) {
-					$product = new Product($this->db);
-					$product->id = $obj->fk_product;
+			// Load data
+			$line->fetch($lineid);
 
-					// Delete line
-					$line = new OrderLine($this->db);
+			if ($id > 0 && $line->fk_commande != $id) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
 
-					// For triggers
-					$line->fetch($lineid);
+			// Memorize previous line for triggers
+			$staticline = clone $line;
+			$line->oldline = $staticline;
 
-					// Memorize previous line for triggers
-					$staticline = clone $line;
-					$line->oldline = $staticline;
+			if ($line->delete($user) > 0) {
+				$result = $this->update_price(1);
 
-					if ($line->delete($user) > 0) {
-						$result = $this->update_price(1);
-
-						if ($result > 0) {
-							$this->db->commit();
-							return 1;
-						} else {
-							$this->db->rollback();
-							$this->error = $this->db->lasterror();
-							return -1;
-						}
-					} else {
-						$this->db->rollback();
-						$this->error = $line->error;
-						return -1;
-					}
+				if ($result > 0) {
+					$this->db->commit();
+					return 1;
 				} else {
 					$this->db->rollback();
-					return 0;
+					$this->error = $this->db->lasterror();
+					return -1;
 				}
 			} else {
 				$this->db->rollback();
-				$this->error = $this->db->lasterror();
+				$this->error = $line->error;
 				return -1;
 			}
 		} else {
@@ -3352,7 +3363,7 @@ class Commande extends CommonOrder
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -4043,18 +4054,18 @@ class Commande extends CommonOrder
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 		'commande'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -4625,14 +4636,14 @@ class OrderLine extends CommonOrderLine
 		$sql .= " , localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= " , qty=".price2num($this->qty);
 		$sql .= " , ref_ext='".$this->db->escape($this->ref_ext)."'";
-		$sql .= " , subprice=".price2num($this->subprice)."";
-		$sql .= " , remise_percent=".price2num($this->remise_percent)."";
-		$sql .= " , price=".price2num($this->price).""; // TODO A virer
-		$sql .= " , remise=".price2num($this->remise).""; // TODO A virer
+		$sql .= " , subprice=".price2num($this->subprice);
+		$sql .= " , remise_percent=".price2num($this->remise_percent);
+		$sql .= " , price=".price2num($this->price); // TODO A virer
+		$sql .= " , remise=".price2num($this->remise); // TODO A virer
 		if (empty($this->skip_update_total)) {
-			$sql .= " , total_ht=".price2num($this->total_ht)."";
-			$sql .= " , total_tva=".price2num($this->total_tva)."";
-			$sql .= " , total_ttc=".price2num($this->total_ttc)."";
+			$sql .= " , total_ht=".price2num($this->total_ht);
+			$sql .= " , total_tva=".price2num($this->total_tva);
+			$sql .= " , total_ttc=".price2num($this->total_ttc);
 			$sql .= " , total_localtax1=".price2num($this->total_localtax1);
 			$sql .= " , total_localtax2=".price2num($this->total_localtax2);
 		}
@@ -4650,10 +4661,10 @@ class OrderLine extends CommonOrderLine
 		$sql .= " , fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 
 		// Multicurrency
-		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
+		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
+		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
 
 		$sql .= " WHERE rowid = ".((int) $this->rowid);
 

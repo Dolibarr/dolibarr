@@ -4886,7 +4886,7 @@ class Societe extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
-	 * @param 	string 		$type_categ 			Category type ('customer' or 'supplier')
+	 * @param 	string 		$type_categ 	Category type ('customer' or 'supplier')
 	 * @return	int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories, $type_categ)
@@ -5049,7 +5049,7 @@ class Societe extends CommonObject
 		$sql .= $field." = '".$this->db->escape($value)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this)."::".__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {

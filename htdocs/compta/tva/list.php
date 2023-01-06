@@ -398,9 +398,9 @@ if (!empty($arrayfields['t.amount']['checked'])) {
 
 // Status
 if (!empty($arrayfields['t.status']['checked'])) {
-	print '<td class="liste_titre maxwidthonsmartphone right">';
+	print '<td class="liste_titre right parentonrightofpage">';
 	$liststatus = array('0' => $langs->trans("Unpaid"), '1' => $langs->trans("Paid"));
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 

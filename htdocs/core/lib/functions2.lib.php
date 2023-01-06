@@ -1301,7 +1301,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	}
 
 	//print $sql.'<br>';
-	dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
+	dol_syslog("functions2::get_next_value mode=".$mode, LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -1360,7 +1360,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$sql .= " AND ".$sqlwhere;
 		}
 
-		dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
+		dol_syslog("functions2::get_next_value mode=".$mode, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -2652,6 +2652,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'commande';
 	} elseif ($moduleobject == 'shipments') {
 		$moduledirforclass = 'expedition';
+	} elseif ($moduleobject == 'multicurrencies') {
+		$moduledirforclass = 'multicurrency';
 	} elseif ($moduleobject == 'facture' || $moduleobject == 'invoice' || $moduleobject == 'invoices') {
 		$moduledirforclass = 'compta/facture';
 	} elseif ($moduleobject == 'project' || $moduleobject == 'projects' || $moduleobject == 'task' || $moduleobject == 'tasks') {

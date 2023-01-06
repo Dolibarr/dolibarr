@@ -683,14 +683,14 @@ if ($action == 'validate' && $permissiontoadd) {
 						$idwarehouse = 0;
 					}
 					if ($objecttmp->valid($user, $idwarehouse)) {
-						setEventMessage($langs->trans('hasBeenValidated', $objecttmp->ref), 'mesgs');
+						setEventMessages($langs->trans('hasBeenValidated', $objecttmp->ref), null, 'mesgs');
 					} else {
-						setEventMessage($objecttmp->error, $objecttmp->errors, 'errors');
+						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 						$error++;
 					}
 				} else {
 					$langs->load("errors");
-					setEventMessage($langs->trans('ErrorIsNotADraft', $objecttmp->ref), 'errors');
+					setEventMessages($langs->trans('ErrorIsNotADraft', $objecttmp->ref), null, 'errors');
 					$error++;
 				}
 			} else {
@@ -714,14 +714,14 @@ if ($action == 'shipped' && $permissiontoadd) {
 			if ($objecttmp->fetch($checked)) {
 				if ($objecttmp->statut == 1 || $objecttmp->statut == 2) {
 					if ($objecttmp->cloture($user)) {
-						setEventMessage($langs->trans('PassedInClosedStatus', $objecttmp->ref), 'mesgs');
+						setEventMessages($langs->trans('PassedInClosedStatus', $objecttmp->ref), null, 'mesgs');
 					} else {
-						setEventMessage($langs->trans('CantBeClosed'), 'errors');
+						setEventMessages($langs->trans('CantBeClosed'), null, 'errors');
 						$error++;
 					}
 				} else {
 					$langs->load("errors");
-					setEventMessage($langs->trans('ErrorIsNotADraft', $objecttmp->ref), 'errors');
+					setEventMessages($langs->trans('ErrorIsNotADraft', $objecttmp->ref), null, 'errors');
 					$error++;
 				}
 			} else {
@@ -1734,7 +1734,7 @@ if ($resql) {
 	}
 	// Status
 	if (!empty($arrayfields['c.fk_statut']['checked'])) {
-		print '<td class="liste_titre maxwidthonsmartphone center">';
+		print '<td class="liste_titre center parentonrightofpage">';
 		$liststatus = array(
 			Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraftShort"),
 			Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
@@ -1744,7 +1744,7 @@ if ($resql) {
 			-2=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
 			Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
 		);
-		print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'maxwidth125 onrightofpage', 1);
+		print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
 		print '</td>';
 	}
 	// Action column

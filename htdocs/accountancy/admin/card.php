@@ -282,7 +282,7 @@ if ($action == 'create') {
 	print $form->textwithpicto($langs->trans("AccountingCategory"), $langs->transnoentitiesnoconv("AccountingAccountGroupsDesc"));
 	print '</td>';
 	print '<td>';
-	$formaccounting->select_accounting_category($object->account_category, 'account_category', 1, 0, 1);
+	print $formaccounting->select_accounting_category($object->account_category, 'account_category', 1, 0, 1);
 	print '</td></tr>';
 
 	print '</table>';
@@ -359,7 +359,7 @@ if ($action == 'create') {
 			print $form->textwithpicto($langs->trans("AccountingCategory"), $langs->transnoentitiesnoconv("AccountingAccountGroupsDesc"));
 			print '</td>';
 			print '<td>';
-			$formaccounting->select_accounting_category($object->account_category, 'account_category', 1);
+			print $formaccounting->select_accounting_category($object->account_category, 'account_category', 1);
 			print '</td></tr>';
 
 			print '</table>';

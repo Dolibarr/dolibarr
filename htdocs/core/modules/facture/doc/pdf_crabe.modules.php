@@ -180,7 +180,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Define position of columns
 		$this->posxdesc = $this->marge_gauche + 1;
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->posxtva = 101;
 			$this->posxup = 118;
 			$this->posxqty = 135;
@@ -677,7 +677,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->MultiCell($this->posxunit - $this->posxqty - 0.8, 4, $qty, 0, 'R'); // Enough for 6 chars
 
 					// Unit
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						$unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
 						$pdf->SetXY($this->posxunit, $curY);
 						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 4, $unit, 0, 'L');
@@ -1347,11 +1347,11 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
-		$pdf->SetXY($col1x, $tab2_top + 0);
+		$pdf->SetXY($col1x, $tab2_top);
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities(empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) ? "TotalHT" : "Total").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities(empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) ? "TotalHT" : "Total") : ''), 0, 'L', 1);
 
 		$total_ht = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
-		$pdf->SetXY($col2x, $tab2_top + 0);
+		$pdf->SetXY($col2x, $tab2_top);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($total_ht + (!empty($object->remise) ? $object->remise : 0)), 0, $outputlangs), 0, 'R', 1);
 
 		// Show VAT by rates and total
@@ -1710,7 +1710,7 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->MultiCell($this->posxunit - $this->posxqty - 1, 2, $outputlangs->transnoentities("Qty"), '', 'C');
 		}
 
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
 				$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
@@ -2083,7 +2083,7 @@ class pdf_crabe extends ModelePDFFactures
 					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, $object->contact, $usecontact, 'target', $object);
 				} else {
 					$carac_client_name_shipping=pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
-					$carac_client_shipping=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);;
+					$carac_client_shipping=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
 				}
 				if (!empty($carac_client_shipping) && (isset($object->contact->socid) && $object->contact->socid != $object->socid)) {
 					$posy += $hautcadre;

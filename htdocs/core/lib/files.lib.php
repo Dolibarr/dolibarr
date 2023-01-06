@@ -1567,7 +1567,9 @@ function dol_meta_create($object)
 		}
 
 		if (is_dir($dir)) {
-			$nblines = count($object->lines);
+			if (is_countable($object->lines) && count($object->lines) > 0) {
+				$nblines = count($object->lines);
+			}
 			$client = $object->thirdparty->name." ".$object->thirdparty->address." ".$object->thirdparty->zip." ".$object->thirdparty->town;
 			$meta = "REFERENCE=\"".$object->ref."\"
 			DATE=\"" . dol_print_date($object->date, '')."\"
@@ -1651,6 +1653,7 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  */
 function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesession = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null)
 {
+
 	global $db, $user, $conf, $langs;
 
 	$res = 0;
@@ -1748,7 +1751,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 							if ($allowoverwrite) {
 								// Do not show error message. We can have an error due to DB_ERROR_RECORD_ALREADY_EXISTS
 							} else {
-								setEventMessages('WarningFailedToAddFileIntoDatabaseIndex', '', 'warnings');
+								setEventMessages('WarningFailedToAddFileIntoDatabaseIndex', null, 'warnings');
 							}
 						}
 					}
@@ -1988,7 +1991,6 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
  */
 function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = '')
 {
-	global $langs;
 	if (class_exists('Imagick')) {
 		$image = new Imagick();
 		try {
@@ -2417,7 +2419,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
  * @param	array		$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
  * @param	int			$nohook			Disable all hooks
  * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
- * @return	string						Full path to most recent file
+ * @return	array						Array with properties (full path, date, ...) of to most recent file
  */
 function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(\.meta|_preview.*\.png)$', '^\.'), $nohook = false, $mode = '')
 {

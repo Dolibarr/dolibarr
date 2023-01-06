@@ -20,3 +20,4 @@ ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Izvēlieties, vai saistītā lap
 BookmarksManagement=Grāmatzīmju vadība
 BookmarksMenuShortCut=Ctrl + shift + m
 NoBookmarks=Nav definētu grāmatzīmju
+NoBookmarkFound=Grāmatzīme nav atrasta

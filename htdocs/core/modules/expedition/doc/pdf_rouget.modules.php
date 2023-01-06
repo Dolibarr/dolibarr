@@ -890,7 +890,7 @@ class pdf_rouget extends ModelePdfExpedition
 	 *  @param  Expedition	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	int							<0 if KO, > if OK
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -1023,6 +1023,16 @@ class pdf_rouget extends ModelePdfExpedition
 			}
 		}
 
+		$top_shift = 0;
+		// Show list of linked objects
+		/*
+		$current_y = $pdf->getY();
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
+		if ($current_y < $pdf->getY()) {
+			$top_shift = $pdf->getY() - $current_y;
+		}
+		*/
+
 		if ($showaddress) {
 			// Sender properties
 			$carac_emetteur = '';
@@ -1128,6 +1138,7 @@ class pdf_rouget extends ModelePdfExpedition
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+		return $top_shift;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

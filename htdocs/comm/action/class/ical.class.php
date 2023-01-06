@@ -402,7 +402,7 @@ class ICal
 	public function get_event_list()
 	{
 		// phpcs:enable
-		return (empty($this->cal['VEVENT']) ? '' : $this->cal['VEVENT']);
+		return (empty($this->cal['VEVENT']) ? array() : $this->cal['VEVENT']);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -414,7 +414,7 @@ class ICal
 	public function get_freebusy_list()
 	{
 		// phpcs:enable
-		return (empty($this->cal['VFREEBUSY']) ? '' : $this->cal['VFREEBUSY']);
+		return (empty($this->cal['VFREEBUSY']) ? array() : $this->cal['VFREEBUSY']);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

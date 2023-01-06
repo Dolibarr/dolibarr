@@ -1187,7 +1187,7 @@ if ($step == 5 && $datatoexport) {
 	$htmltabloflibs .= '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 	$htmltabloflibs .= '</tr>'."\n";
 
-	$liste = $objmodelexport->liste_modeles($db);
+	$liste = $objmodelexport->listOfAvailableExportFormat($db);
 	$listeall = $liste;
 	foreach ($listeall as $key => $val) {
 		if (preg_match('/__\(Disabled\)__/', $listeall[$key])) {

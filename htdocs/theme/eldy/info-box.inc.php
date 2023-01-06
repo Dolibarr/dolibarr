@@ -434,7 +434,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 
 /* USING FONTAWESOME FOR WEATHER */
 .info-box-weather .info-box-icon{
-	background: rgba(0, 0, 0, 0.08) !important;
+	background: var(--colorbacktitle1) !important;
 }
 .fa-weather-level0:before{
 	content: "\f185";

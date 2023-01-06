@@ -37,7 +37,8 @@ EventOrganization=Organizzazione di eventi
 Settings=Impostazioni
 EventOrganizationSetupPage = Pagina di configurazione dell'organizzazione dell'evento
 EVENTORGANIZATION_TASK_LABEL = Etichetta delle attività da creare automaticamente quando il progetto viene convalidato
-EVENTORGANIZATION_TASK_LABELTooltip = Quando si convalida un evento organizzato, alcune operazioni possono essere creati automaticamente nel progetto <br> <br> Ad esempio: <br> Send Call for Conference <br> Invia Invito a Booth <br> Ricevi invito a conferenze <br> ricevere la chiamata per Booth <br> sottoscrizioni aperte agli eventi per i partecipanti <br> Invia ricorda l'evento ai relatori <br> Invia ricorda l'evento all'host dello stand <br> Invia ricorda l'evento ai partecipanti
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project <br>  <br> For example:  <br> Send Call for Conferences <br> Send Call for Booths <br> Validate suggestions of Conferences <br> Validate application for Booths <br> Open subscriptions to the event for attendees <br> Invia un promemoria dell'evento ai relatori <br> Invia un promemoria dell'evento agli host dello stand <br> Invia un promemoria dell'evento ai partecipanti
+EVENTORGANIZATION_TASK_LABELTooltip2=Mantieni vuoto se non è necessario creare attività automaticamente.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categoria da aggiungere a terze parti creata automaticamente quando qualcuno suggerisce una conferenza
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categoria da aggiungere a terze parti creata automaticamente quando suggeriscono uno stand
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Modello di email da inviare dopo aver ricevuto un suggerimento per una conferenza.
@@ -53,12 +54,15 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = Nel modulo per creare/aggiungere un par
 # Object
 #
 EventOrganizationConfOrBooth= Conferenza o stand
+EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Gestire l'organizzazione di un evento
 ConferenceOrBooth = Conferenza o stand
 ConferenceOrBoothTab = Conferenza o stand
 AmountPaid = Importo pagato
 DateOfRegistration = Data di registrazione
 ConferenceOrBoothAttendee = Partecipante alla conferenza o allo stand
+ApplicantOrVisitor=Applicant or visitor
+Speaker=Speaker
 
 #
 # Template Mail
@@ -111,15 +115,15 @@ EvntOrgRegistrationHelpMessage = Qui puoi votare per una conferenza o suggerirne
 EvntOrgRegistrationConfHelpMessage = Qui puoi suggerire una nuova conferenza da animare durante l'evento.
 EvntOrgRegistrationBoothHelpMessage = Qui puoi candidarti per avere uno stand durante l'evento.
 ListOfSuggestedConferences = Elenco delle conferenze suggerite
-ListOfSuggestedBooths = Elenco delle cabine consigliate
-ListOfConferencesOrBooths=Elenco delle conferenze o degli stand del progetto dell'evento
+ListOfSuggestedBooths=Suggested booths
+ListOfConferencesOrBooths=Conferences or booths of event project
 SuggestConference = Proponi una nuova conferenza
 SuggestBooth = Suggerisci uno stand
 ViewAndVote = Visualizza e vota gli eventi suggeriti
 PublicAttendeeSubscriptionGlobalPage = Link pubblico per la registrazione all'evento
 PublicAttendeeSubscriptionPage = Link pubblico solo per la registrazione a questo evento
 MissingOrBadSecureKey = La chiave di sicurezza non è valida o manca
-EvntOrgWelcomeMessage = Questo modulo permette di registrarsi come nuovo partecipante all'evento: <b> %s </b>
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
 EvntOrgDuration = Questa conferenza inizia su %s e termina su %s.
 ConferenceAttendeeFee = Quota di partecipazione alla conferenza per l'evento: "%s" che si verifica da %s a %s.
 BoothLocationFee = Posizione dello stand per l'evento: '%s' che si verifica da %s a %s
@@ -129,7 +133,7 @@ LabelOfconference=Etichetta conferenza
 ConferenceIsNotConfirmed=Iscrizione non disponibile, conferenza non ancora confermata
 DateMustBeBeforeThan=%s deve essere prima di %s
 DateMustBeAfterThan=%s deve essere dopo %s
-
+MaxNbOfAttendeesReached=The maximum number of participants has been reached
 NewSubscription=Registrazione
 OrganizationEventConfRequestWasReceived=Il tuo suggerimento per una conferenza è stato ricevuto
 OrganizationEventBoothRequestWasReceived=La tua richiesta per uno stand è stata ricevuta
@@ -138,6 +142,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=Il tuo pagamento per la regist
 OrganizationEventBulkMailToAttendees=Questo è un promemoria della tua partecipazione all'evento come partecipante
 OrganizationEventBulkMailToSpeakers=Questo è un promemoria sulla tua partecipazione all'evento come relatore
 OrganizationEventLinkToThirdParty=Collegamento a terzi (cliente, fornitore o partner)
+OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=Domanda per uno stand
 NewSuggestionOfConference=Domanda per una conferenza
@@ -153,7 +158,7 @@ VoteOk = Il tuo voto è stato accettato.
 AlreadyVoted = Hai già votato per questo evento.
 VoteError = Si è verificato un errore durante la votazione, riprova.
 
-SubscriptionOk = La tua registrazione è stata convalidata
+SubscriptionOk=Your registration has been recorded
 ConfAttendeeSubscriptionConfirmation = Conferma della tua iscrizione a un evento
 Attendee = Partecipante
 PaymentConferenceAttendee = Pagamento dei partecipanti alla conferenza
@@ -161,7 +166,9 @@ PaymentBoothLocation = Pagamento posizione stand
 DeleteConferenceOrBoothAttendee=Rimuovi partecipante
 RegistrationAndPaymentWereAlreadyRecorder=Per la mail <b> %s </b> sono già state registrate una registrazione e un pagamento
 EmailAttendee=E-mail del partecipante
+EmailCompany=Company email
 EmailCompanyForInvoice=Email aziendale (per fattura, se diversa dall'email del partecipante)
 ErrorSeveralCompaniesWithEmailContactUs=Sono state trovate diverse aziende con questa e-mail, quindi non possiamo convalidare automaticamente la tua registrazione. Vi preghiamo di contattarci all'indirizzo %s per una convalida manuale
 ErrorSeveralCompaniesWithNameContactUs=Sono state trovate diverse aziende con questo nome, quindi non possiamo convalidare automaticamente la tua registrazione. Si prega di contattarci all'indirizzo %s per una convalida manuale
 NoPublicActionsAllowedForThisEvent=Nessuna azione pubblica è aperta al pubblico per questo evento
+MaxNbOfAttendees=Numero massimo di partecipanti

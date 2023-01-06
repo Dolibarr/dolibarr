@@ -1518,7 +1518,7 @@ class EmailCollector extends CommonObject
 				$trackidfoundintorecipientid = 0;
 				$reg = array();
 				// See also later list of all supported tags...
-				if (preg_match('/\+(thi|ctc|use|mem|sub|proj|tas|con|tic|job|pro|ord|inv|spro|sor|sin|leav|stockinv|job|surv|salary)([0-9]+)@/', $emailto, $reg)) {
+				if (preg_match('/\+(thi|ctc|use|mem|sub|proj|tas|con|tic|pro|ord|inv|spro|sor|sin|leav|stockinv|job|surv|salary)([0-9]+)@/', $emailto, $reg)) {
 					$trackidfoundintorecipienttype = $reg[1];
 					$trackidfoundintorecipientid = $reg[2];
 				} elseif (preg_match('/\+emailing-(\w+)@/', $emailto, $reg)) {	// Can be 'emailing-test' or 'emailing-IdMailing-IdRecipient'
@@ -2277,7 +2277,7 @@ class EmailCollector extends CommonObject
 									'fields' => array('ref'),
 									'class' => 'recruitment/class/recruitmentjobposition.class.php',
 									'object' => 'RecruitmentJobPosition'),
-								'recruitment/recruitmentjobposition' => array('table' => 'recruitment_recruitmentcandidature',
+								'recruitment/recruitmentcandidature' => array('table' => 'recruitment_recruitmentcandidature',
 									'fields' => array('ref'),
 									'class' => 'recruitment/class/recruitmentcandidature.class.php',
 									'object' => ' RecruitmentCandidature'),
@@ -2322,7 +2322,7 @@ class EmailCollector extends CommonObject
 									'class' => 'compta/facture/class/facture.class.php',
 									'object' => 'Facture'),
 								'fournisseur/facture' => array('table' => 'facture_fourn',
-									'fields' => array('ref', ref_client),
+									'fields' => array('ref', 'ref_client'),
 									'class' => 'fourn/class/fournisseur.facture.class.php',
 									'object' => 'FactureFournisseur'),
 								'produit' => array('table' => 'product',
@@ -3025,13 +3025,14 @@ class EmailCollector extends CommonObject
 			 * Check if the same file name already exists in the upload folder,
 			 * append increment number to the original filename
 			 */
-			while (file_exists($destdir."/" . $file_name . "." . $extension)) {
-				$file_name = (string) $file_name_original . ' (' . $num . ')';
+			while (file_exists($destdir."/".$file_name.".".$extension)) {
+				$file_name = $file_name_original . ' (' . $num . ')';
 				$file_name_complete = $file_name . "." . $extension;
 				$destination = $destdir.'/'.$file_name_complete;
 				$num++;
 			}
 
+			$destination = dol_sanitizePathName($destination);
 
 			file_put_contents($destination, $data);
 		}

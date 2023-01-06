@@ -405,7 +405,7 @@ if ($action == 'create') {
 						$("#label_type_payment").removeClass("fieldrequired");
 						$(".hide_if_no_auto_create_payment").hide();
 					}
-				};
+				}
 				$("#radiopayment").click(function() {
 					$("#label").val($(this).data("label"));
 				});

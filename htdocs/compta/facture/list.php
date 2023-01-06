@@ -843,7 +843,7 @@ if (!empty($searchCategoryProductList)) {
 		}
 	}
 }
-$searchCategoryCustomerList = $search_categ_cus ? array($search_categ_cus) : array();;
+$searchCategoryCustomerList = $search_categ_cus ? array($search_categ_cus) : array();
 $searchCategoryCustomerOperator = 0;
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
 if (!empty($searchCategoryCustomerList)) {
@@ -1590,9 +1590,9 @@ if ($resql) {
 	}
 	// Status
 	if (!empty($arrayfields['f.fk_statut']['checked'])) {
-		print '<td class="liste_titre maxwidthonsmartphone right">';
+		print '<td class="liste_titre right parentonrightofpage">';
 		$liststatus = array('0'=>$langs->trans("BillShortStatusDraft"), '0,1'=>$langs->trans("BillShortStatusDraft").'+'.$langs->trans("BillShortStatusNotPaid"), '1'=>$langs->trans("BillShortStatusNotPaid"), '1,2'=>$langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
-		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'width100 onrightofpage', 1);
+		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
 		print '</td>';
 	}
 	// Action column

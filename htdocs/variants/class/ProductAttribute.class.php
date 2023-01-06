@@ -119,6 +119,11 @@ class ProductAttribute extends CommonObject
 	 */
 	public $line;
 
+	/**
+	 * @var int		Number of product that use this attribute
+	 */
+	public $is_used_by_products;
+
 
 	/**
 	 * Constructor

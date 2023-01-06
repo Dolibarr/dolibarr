@@ -414,7 +414,7 @@ class CodingPhpTest extends PHPUnit\Framework\TestCase
 			$matches=array();
 			preg_match_all('/(\$sql|SET\s|WHERE\s|INSERT\s|VALUES\s|VALUES\().+\s*\'\s*\.\s*\$(.........)/', $filecontent, $matches, PREG_SET_ORDER);
 			foreach ($matches as $key => $val) {
-				if (! in_array($val[2], array('this->db-', 'db->prefi', 'db->sanit', 'conf->ent', 'key : \'\')', 'key])."\')', 'excludefi', 'regexstri', ''))) {
+				if (! in_array($val[2], array('this->db-', 'db->prefi', 'db->sanit', 'dbs->pref', 'dbs->sani', 'conf->ent', 'key : \'\')', 'key])."\')', 'excludefi', 'regexstri', ''))) {
 					$ok=false;
 					var_dump($matches);
 					break;

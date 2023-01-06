@@ -1956,14 +1956,14 @@ class Facture extends CommonInvoice
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON f.fk_incoterms = i.rowid';
 
 		if ($rowid) {
-			$sql .= " WHERE f.rowid=".((int) $rowid);
+			$sql .= " WHERE f.rowid = ".((int) $rowid);
 		} else {
 			$sql .= ' WHERE f.entity IN ('.getEntity('invoice').')'; // Don't use entity if you use rowid
 			if ($ref) {
-				$sql .= " AND f.ref='".$this->db->escape($ref)."'";
+				$sql .= " AND f.ref = '".$this->db->escape($ref)."'";
 			}
 			if ($ref_ext) {
-				$sql .= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
+				$sql .= " AND f.ref_ext = '".$this->db->escape($ref_ext)."'";
 			}
 		}
 
@@ -4148,9 +4148,10 @@ class Facture extends CommonInvoice
 	 *	Delete line in database
 	 *
 	 *	@param		int		$rowid		Id of line to delete
+	 *  @param		int		$id			Id of object (for a check)
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
-	public function deleteline($rowid)
+	public function deleteline($rowid, $id = 0)
 	{
 		global $user;
 
@@ -4158,6 +4159,22 @@ class Facture extends CommonInvoice
 
 		if ($this->statut != self::STATUS_DRAFT) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
+			return -1;
+		}
+
+		$line = new FactureLigne($this->db);
+
+		$line->context = $this->context;
+
+		// Load line
+		$result = $line->fetch($rowid);
+		if (!($result > 0)) {
+			dol_print_error($this->db, $line->error, $line->errors);
+			return -1;
+		}
+
+		if ($id > 0 && $line->fk_facture != $id) {
+			$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
 			return -1;
 		}
 
@@ -4176,15 +4193,9 @@ class Facture extends CommonInvoice
 			return -1;
 		}
 
-		$line = new FactureLigne($this->db);
-
-		$line->context = $this->context;
-
-		// For triggers
-		$result = $line->fetch($rowid);
-		if (!($result > 0)) {
-			dol_print_error($this->db, $line->error, $line->errors);
-		}
+		// Memorize previous line for triggers
+		$staticline = clone $line;
+		$line->oldline = $staticline;
 
 		if ($line->delete($user) > 0) {
 			$result = $this->update_price(1);
@@ -5190,18 +5201,18 @@ class Facture extends CommonInvoice
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param  DoliDB  $db             Database handler
-	 * @param  int     $origin_id      Old third-party id
-	 * @param  int     $dest_id        New third-party id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'facture'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -6264,7 +6275,7 @@ class FactureLigne extends CommonInvoiceLine
 			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
 		}
 		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
-		$sql .= ", buy_price_ht=".(($this->pa_ht || $this->pa_ht === 0 || $this->pa_ht === '0') ? price2num($this->pa_ht) : "null"); // $this->pa_ht should always be defined (set to 0 or to sell price depending on option)
+		$sql .= ", buy_price_ht=".(($this->pa_ht || (string) $this->pa_ht === '0') ? price2num($this->pa_ht) : "null"); // $this->pa_ht should always be defined (set to 0 or to sell price depending on option)
 		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
 			$sql .= ", rang=".((int) $this->rang);
@@ -6375,11 +6386,11 @@ class FactureLigne extends CommonInvoiceLine
 
 		// Update line in database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
-		$sql .= " total_ht=".price2num($this->total_ht)."";
-		$sql .= ",total_tva=".price2num($this->total_tva)."";
-		$sql .= ",total_localtax1=".price2num($this->total_localtax1)."";
-		$sql .= ",total_localtax2=".price2num($this->total_localtax2)."";
-		$sql .= ",total_ttc=".price2num($this->total_ttc)."";
+		$sql .= " total_ht=".price2num($this->total_ht);
+		$sql .= ",total_tva=".price2num($this->total_tva);
+		$sql .= ",total_localtax1=".price2num($this->total_localtax1);
+		$sql .= ",total_localtax2=".price2num($this->total_localtax2);
+		$sql .= ",total_ttc=".price2num($this->total_ttc);
 		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);

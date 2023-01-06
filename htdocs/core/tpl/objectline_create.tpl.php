@@ -127,7 +127,7 @@ if ($nolinesbefore) {
 		<?php } ?>
 		<td class="linecolqty right"><?php echo $langs->trans('Qty'); ?></td>
 		<?php
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="linecoluseunit left">';
 			print '<span id="title_units">';
 			print $langs->trans('Unit');
@@ -214,7 +214,7 @@ if ($nolinesbefore) {
 					echo ' ';
 				}
 			}
-			echo $form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', 1, 1, $forceall);
+			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', 1, 1, $forceall);
 			echo '</span>';
 		}
 		// Predefined product/service
@@ -424,7 +424,7 @@ if ($nolinesbefore) {
 	<input type="text" name="qty" id="qty" class="flat width40 right" value="<?php echo (GETPOSTISSET("qty") ? GETPOST("qty", 'alpha', 2) : 1); ?>">
 	</td>
 	<?php
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
 		print '<td class="nobottom linecoluseunit left">';
 		print $form->selectUnits(empty($line->fk_unit) ? $conf->global->PRODUCT_USE_UNITS : $line->fk_unit, "units");
@@ -511,7 +511,7 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 		print $form->selectDate($date_start, 'date_start', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
 		print ' '.$langs->trans('to').' ';
 		print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
-	};
+	}
 
 	if ($prefillDates) {
 		echo ' <span class="small"><a href="#" id="prefill_service_dates">'.$langs->trans('FillWithLastServiceDates').'</a></span>';
@@ -937,7 +937,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 		?>
 
 		<?php
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
+		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 			?>
 			/* To process customer price per quantity (PRODUIT_CUSTOMER_PRICES_BY_QTY works only if combo product is not an ajax after x key pressed) */
 			var pbq = parseInt($('option:selected', this).attr('data-pbq'));				// When select is done from HTML select
@@ -1148,7 +1148,7 @@ if (!empty($usemargins) && $user->rights->margins->creer) {
 			jQuery("#multicurrency_price_ttc").val('').hide();
 			jQuery("#title_up_ttc, #title_up_ttc_currency").hide();
 		<?php } ?>
-		jQuery("#fourn_ref, #tva_tx, #title_vat").hide();
+		jQuery("#tva_tx, #title_vat").hide();
 		/* jQuery("#title_fourn_ref").hide(); */
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 		jQuery("#buying_price").show();

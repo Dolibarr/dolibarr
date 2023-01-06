@@ -1,27 +1,32 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_am_ET=إثيوبي
 Language_ar_AR=العربية
-Language_ar_DZ=Arabic (Algeria)
+Language_ar_DZ=العربية (الجزائر)
 Language_ar_EG=العربية (مصر)
-Language_ar_MA=Arabic (Moroco)
+Language_ar_JO=العربية (الأردنية)
+Language_ar_MA=العربية (المغرب)
 Language_ar_SA=العربية
-Language_ar_TN=Arabic (Tunisia)
-Language_ar_IQ=Arabic (Iraq)
-Language_as_IN=Assamese
+Language_ar_TN=العربية (تونس)
+Language_ar_IQ=العربية (العراق)
+Language_as_IN=الأسامية
 Language_az_AZ=أذربيجان
 Language_bn_BD=بنغالي
 Language_bn_IN=البنغالية (الهند)
 Language_bg_BG=البلغارية
+Language_bo_CN=التبتية
 Language_bs_BA=البوسنية
 Language_ca_ES=كاتالاني
 Language_cs_CZ=تشيكي
+Language_cy_GB=تهرب من دفع الرهان
 Language_da_DA=الدانمركية
 Language_da_DK=دانماركي
 Language_de_DE=اللغة الألمانية
 Language_de_AT=الألمانية (النمسا)
 Language_de_CH=الألمانية (سويسرا)
+Language_de_LU=German (Luxembourg)
 Language_el_GR=يوناني
 Language_el_CY=اليونانية (قبرص)
+Language_en_AE=الإنجليزية (الإمارات العربية المتحدة)
 Language_en_AU=الإنكليزية (أستراليا)
 Language_en_CA=الإنكليزية (كندا)
 Language_en_GB=الانجليزية (المملكة المتحدة)
@@ -31,11 +36,13 @@ Language_en_SA=الإنجليزية (المملكة العربية السعود�
 Language_en_SG=الإنجليزية (سنغافورة)
 Language_en_US=الإنكليزية (الولايات المتحدة)
 Language_en_ZA=الإنكليزية (جنوب أفريقيا)
+Language_en_ZW=English (Zimbabwe)
 Language_es_ES=الأسبانية
 Language_es_AR=الأسبانية (الأرجنتين)
 Language_es_BO=الأسبانية (بوليفيا)
 Language_es_CL=الإسبانية (تشيلي)
 Language_es_CO=الأسبانية (كولومبيا)
+Language_es_CR=الأسبانية (كوستاريكا)
 Language_es_DO=الأسبانية (جمهورية الدومنيكان)
 Language_es_EC=الإسبانية (إكوادور)
 Language_es_GT=الإسبانية (غواتيمالا)
@@ -74,7 +81,7 @@ Language_it_IT=الإيطالي
 Language_it_CH=الإيطالية (سويسرا)
 Language_ja_JP=اليابانية
 Language_ka_GE=الجورجية
-Language_kk_KZ=Kazakh
+Language_kk_KZ=الكازاخستانية
 Language_km_KH=الخمير
 Language_kn_IN=الكانادا
 Language_ko_KR=الكورية
@@ -83,19 +90,22 @@ Language_lt_LT=اللتوانية
 Language_lv_LV=اللاتفية
 Language_mk_MK=المقدونية
 Language_mn_MN=المنغولية
+Language_my_MM=البورمية
 Language_nb_NO=النرويجية (بوكمال)
 Language_ne_NP=النيبالية
 Language_nl_BE=الهولندية (بلجيكا)
 Language_nl_NL=اللغة الهولندية
 Language_pl_PL=بولندي
-Language_pt_AO=Portuguese (Angola)
+Language_pt_AO=البرتغالية (أنغولا)
+Language_pt_MZ=البرتغالية (موزمبيق)
 Language_pt_BR=البرتغالية (البرازيل)
 Language_pt_PT=البرتغالية
-Language_ro_MD=Romanian (Moldavia)
+Language_ro_MD=الرومانية (مولدافيا)
 Language_ro_RO=الرومانية
 Language_ru_RU=الروسية
 Language_ru_UA=الروسية (أوكرانيا)
-Language_tg_TJ=Tajik
+Language_ta_IN=التاميل
+Language_tg_TJ=طاجيك
 Language_tr_TR=التركية
 Language_sl_SI=السلوفينية
 Language_sv_SV=السويدية
@@ -103,9 +113,11 @@ Language_sv_SE=السويدية
 Language_sq_AL=الألبانية
 Language_sk_SK=السلوفاكية
 Language_sr_RS=صربي
+Language_sw_KE=Swahili
 Language_sw_SW=السواحيلية
 Language_th_TH=التايلاندية
 Language_uk_UA=الأوكراني
+Language_ur_PK=الأردية
 Language_uz_UZ=الأوزبكي
 Language_vi_VN=الفيتنامية
 Language_zh_CN=الصينية
