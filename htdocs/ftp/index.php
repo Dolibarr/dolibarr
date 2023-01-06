@@ -154,6 +154,7 @@ if ($action == 'addfolder') {
 
 // Action ajout d'un rep
 if ($action == 'add' && $user->rights->ftp->setup) {
+	$ecmdir = new EcmDirectory($db);
 	$ecmdir->ref                = GETPOST("ref");
 	$ecmdir->label              = GETPOST("label");
 	$ecmdir->description        = GETPOST("desc");

@@ -161,11 +161,10 @@ function dol_ftp_close($connect_id)
  * @param 		resource	$connect_id		Connection handler
  * @param 		string		$file			File
  * @param 		string		$newsection			$newsection
- * @return		result
+ * @return		bool
  */
 function dol_ftp_delete($connect_id, $file, $newsection)
 {
-
 	global $conf;
 
 	if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
@@ -197,7 +196,6 @@ function dol_ftp_delete($connect_id, $file, $newsection)
  */
 function dol_ftp_get($connect_id, $localfile, $file, $newsection)
 {
-
 	global $conf;
 
 	if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
@@ -223,7 +221,7 @@ function dol_ftp_get($connect_id, $localfile, $file, $newsection)
  * @param 		string		$file			File name
  * @param 		string		$localfile		The path to the local file
  * @param 		string		$newsection		$newsection
- * @return		boolean
+ * @return		bool
  */
 function dol_ftp_put($connect_id, $file, $localfile, $newsection)
 {
@@ -251,7 +249,7 @@ function dol_ftp_put($connect_id, $file, $localfile, $newsection)
  * @param 		resource	$connect_id		Connection handler
  * @param 		string		$file			File
  * @param 		string		$newsection			$newsection
- * @return		boolean
+ * @return		bool
  */
 function dol_ftp_rmdir($connect_id, $file, $newsection)
 {
@@ -280,7 +278,7 @@ function dol_ftp_rmdir($connect_id, $file, $newsection)
  * @param 		resource	$connect_id		Connection handler
  * @param 		string		$newdir			Dir create
  * @param 		string		$newsection		$newsection
- * @return		boolean|string
+ * @return		bool|string
  */
 function dol_ftp_mkdir($connect_id, $newdir, $newsection)
 {

@@ -6444,7 +6444,7 @@ class Form
 	 *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another select_date field.
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
-	 *  @return	string|void					Nothing or string if nooutput is 1
+	 *  @return	string						'' or HTML component string if nooutput is 1
 	 *  @deprecated
 	 *  @see    selectDate(), form_date(), select_month(), select_year(), select_dayofweek()
 	 */
@@ -6456,7 +6456,8 @@ class Form
 			return $retstring;
 		}
 		print $retstring;
-		return;
+
+		return '';
 	}
 
 	/**
@@ -6990,7 +6991,7 @@ class Form
 	 *						            	If 'textselect' input hour is in text and input min is a combo
 	 *  @param	integer		$minunderhours	If 1, show minutes selection under the hours
 	 * 	@param	int			$nooutput		Do not output html string but return it
-	 *  @return	string|void
+	 *  @return	string						HTML component
 	 */
 	public function select_duration($prefix, $iSecond = '', $disabled = 0, $typehour = 'select', $minunderhours = 0, $nooutput = 0)
 	{
@@ -7064,7 +7065,8 @@ class Form
 		}
 
 		print $retstring;
-		return;
+
+		return '';
 	}
 
 	/**
