@@ -705,7 +705,7 @@ UPDATE llx_const SET name = 'MAIN_LIST_HIDE_PRIVATE_NOTES' WHERE name = 'MAIN_LI
 -- Rename prospect level on contact
 ALTER TABLE llx_socpeople CHANGE fk_prospectcontactlevel fk_prospectlevel varchar(12);
 
--- Add shipment lines dispatcher
+-- Virtual products (kits) with shipment dispatcher
 create table llx_expeditiondet_dispatch
 (
     rowid             integer AUTO_INCREMENT PRIMARY KEY,
@@ -715,7 +715,6 @@ create table llx_expeditiondet_dispatch
     fk_entrepot       integer NOT NULL,
     qty               real
 )ENGINE=innodb;
-
 ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_expeditiondet (fk_expeditiondet);
 ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_product (fk_product);
 ALTER TABLE llx_expeditiondet_dispatch ADD INDEX idx_expeditiondet_dispatch_fk_product_parent (fk_product_parent);
@@ -724,6 +723,9 @@ ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_product_parent FOREIGN KEY (fk_product_parent) REFERENCES llx_product (rowid);
 ALTER TABLE llx_expeditiondet_dispatch ADD CONSTRAINT fk_expeditiondet_dispatch_fk_entrepot FOREIGN KEY (fk_entrepot) REFERENCES llx_entrepot (rowid);
+
+-- Remove indec column in virtual products (kits)
+ALTER TABLE llx_product_association DROP COLUMN incdec;
 
 -- Backport 14.0.0 -> 15.0.0
 ALTER TABLE llx_emailcollector_emailcollectoraction MODIFY COLUMN actionparam TEXT;
