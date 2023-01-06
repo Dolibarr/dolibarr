@@ -204,7 +204,7 @@ class Form
 	 * @param	array	$moreoptions	Array with more options. For example array('addnowlink'=>1), array('valuealreadyhtmlescaped'=>1)
 	 * @return  string					HTML edit field
 	 */
-	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 0, $formatfunc = '', $paramid = 'id', $gm = 'auto', $moreoptions = array())
+	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 1, $formatfunc = '', $paramid = 'id', $gm = 'auto', $moreoptions = array())
 	{
 		global $conf, $langs;
 
@@ -307,7 +307,7 @@ class Form
 
 				// Button save-cancel
 				if (empty($notabletag)) {
-					$ret .= '<td class="left">';
+					$ret .= '<td>';
 				}
 				//else $ret.='<div class="clearboth"></div>';
 				$ret .= '<input type="submit" class="smallpaddingimp button'.(empty($notabletag) ? '' : ' ').'" name="modify" value="'.$langs->trans("Modify").'">';

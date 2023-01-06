@@ -276,7 +276,7 @@ if ($object->id > 0) {
 	$vattoshow = ($object->tva_intra ? showValueWithClipboardCPButton(dol_escape_htmltag($object->tva_intra)) : '');
 	print $form->editfieldkey("VATIntra", 'tva_intra', $object->tva_intra, $object, $user->hasRight('societe', 'creer'));
 	print '</td><td>';
-	print $form->editfieldval("VATIntra", 'tva_intra', $vattoshow, $object, $user->hasRight('societe', 'creer'), 'string', $object->tva_intra, null, null, '', 0, '', 'id', 'auto', array('valuealreadyhtmlescaped'=>1));
+	print $form->editfieldval("VATIntra", 'tva_intra', $vattoshow, $object, $user->hasRight('societe', 'creer'), 'string', $object->tva_intra, null, null, '', 1, '', 'id', 'auto', array('valuealreadyhtmlescaped'=>1));
 	print '</td></tr>';
 
 	// Default terms of the settlement
