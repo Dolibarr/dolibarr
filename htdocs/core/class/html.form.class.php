@@ -278,10 +278,14 @@ class Form
 					$ret .= '</textarea>';
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
 					$addnowlink = empty($moreoptions['addnowlink']) ? 0 : $moreoptions['addnowlink'];
-					$ret .= $this->selectDate($value, $htmlname, 0, 0, 1, 'form'.$htmlname, 1, $addnowlink, 0, '', '', '', '', 1, '', '', $gm);
+					$adddateof = empty($moreoptions['adddateof']) ? '' : $moreoptions['adddateof'];
+					$labeladddateof = empty($moreoptions['labeladddateof']) ? '' : $moreoptions['labeladddateof'];
+					$ret .= $this->selectDate($value, $htmlname, 0, 0, 1, 'form'.$htmlname, 1, $addnowlink, 0, '', '', $adddateof, '', 1, $labeladddateof, '', $gm);
 				} elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') {
 					$addnowlink = empty($moreoptions['addnowlink']) ? 0 : $moreoptions['addnowlink'];
-					$ret .= $this->selectDate($value, $htmlname, 1, 1, 1, 'form'.$htmlname, 1, $addnowlink, 0, '', '', '', '', 1, '', '', $gm);
+					$adddateof = empty($moreoptions['adddateof']) ? '' : $moreoptions['adddateof'];
+					$labeladddateof = empty($moreoptions['labeladddateof']) ? '' : $moreoptions['labeladddateof'];
+					$ret .= $this->selectDate($value, $htmlname, 1, 1, 1, 'form'.$htmlname, 1, $addnowlink, 0, '', '', $adddateof, '', 1, $labeladddateof, '', $gm);
 				} elseif (preg_match('/^select;/', $typeofdata)) {
 					$arraydata = explode(',', preg_replace('/^select;/', '', $typeofdata));
 					$arraylist = array();
@@ -6496,7 +6500,7 @@ class Form
 	 * 	@param 	int				$disabled		Disable input fields
 	 *  @param  int				$fullday        When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
 	 *  @param	string			$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
-	 *  @param  datetime    	$adddateof      Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
+	 *  @param  datetime|string	$adddateof      Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
 	 *  @param  string      	$openinghours   Specify hour start and hour end for the select ex 8,20
 	 *  @param  int         	$stepminutes    Specify step for minutes between 1 and 30
 	 *  @param	string			$labeladddateof Label to use for the $adddateof parameter.
