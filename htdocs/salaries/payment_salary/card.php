@@ -133,8 +133,6 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/salaries/payments.php">'.$langs->trans("B
 
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'id', '');
 
-$salary->fetch($object->fk_salary);
-
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -151,7 +149,7 @@ print '</td></tr>';*/
 print '<tr><td>';
 print $form->editfieldkey("Date", 'datep', $object->datep, $object, 1, 'datehourpicker');
 print '</td><td>';
-print $form->editfieldval("Date", 'datep', $object->datep, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel', array('addnowlink'=>1, 'adddateof'=>$salary->datesp, 'labeladddateof'=>$langs->transnoentitiesnoconv("DateStart")));
+print $form->editfieldval("Date", 'datep', $object->datep, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel', array('addnowlink'=>1));
 print "</td>";
 print '</tr>';
 
@@ -164,10 +162,10 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('Numero').'</td><td>'.dol_escape_htmltag($object->num_payment).'</td></tr>';
 
 // Montant
-print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount, 0, $langs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
-print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.dol_nl2br($object->note).'</td></tr>';
+print '<tr><td>'.$langs->trans('Note').'</td><td>'.dol_nl2br($object->note_private).'</td></tr>';
 
 // Bank account
 if (isModEnabled("banque")) {
@@ -177,7 +175,7 @@ if (isModEnabled("banque")) {
 
 		print '<tr>';
 		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-		print '<td colspan="3">';
+		print '<td>';
 		print $bankline->getNomUrl(1, 0, 'showall');
 		print '</td>';
 		print '</tr>';
