@@ -29,6 +29,8 @@ BalanceBefore=توازن (پہلے)
 Balance=بقیہ
 Debit=ڈیبٹ
 Credit=کریڈٹ
+AccountingDebit=Debit
+AccountingCredit=Credit
 Piece=اکاؤنٹنگ ڈاکٹر
 AmountHTVATRealReceived=نیٹ جمع
 AmountHTVATRealPaid=خالص ادائیگی
@@ -244,12 +246,12 @@ TurnoverPerProductInCommitmentAccountingNotRelevant=فی پروڈکٹ جمع ہ�
 TurnoverPerSaleTaxRateInCommitmentAccountingNotRelevant=فی سیل ٹیکس کی شرح سے جمع ہونے والے ٹرن اوور کی رپورٹ دستیاب نہیں ہے۔ یہ رپورٹ صرف ٹرن اوور انوائس کے لیے دستیاب ہے۔
 CalculationMode=کیلکولیشن موڈ
 AccountancyJournal=اکاؤنٹنگ کوڈ جرنل
-ACCOUNTING_VAT_SOLD_ACCOUNT=سیلز پر VAT کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر VAT ڈکشنری سیٹ اپ پر وضاحت نہیں کی گئی ہے تو استعمال کیا جاتا ہے)
-ACCOUNTING_VAT_BUY_ACCOUNT=خریداریوں پر VAT کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ (اگر VAT لغت کے سیٹ اپ پر وضاحت نہ کی گئی ہو تو استعمال کیا جاتا ہے)
-ACCOUNTING_VAT_PAY_ACCOUNT=VAT کی ادائیگی کے لیے بطور ڈیفالٹ اکاؤنٹنگ اکاؤنٹ
-ACCOUNTING_ACCOUNT_CUSTOMER=اکاؤنٹنگ اکاؤنٹ کسٹمر تھرڈ پارٹیز کے لیے استعمال کیا جاتا ہے۔
+ACCOUNTING_VAT_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for VAT on sales (used if not defined on VAT dictionary setup)
+ACCOUNTING_VAT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for VAT on purchases (used if not defined on VAT dictionary setup)
+ACCOUNTING_VAT_PAY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for paying VAT
+ACCOUNTING_ACCOUNT_CUSTOMER=Account (from the Chart Of Account) used for "customer" third parties
 ACCOUNTING_ACCOUNT_CUSTOMER_Desc=تھرڈ پارٹی کارڈ پر بیان کردہ وقف اکاؤنٹنگ اکاؤنٹ صرف Subledger اکاؤنٹنگ کے لیے استعمال کیا جائے گا۔ یہ جنرل لیجر کے لیے اور سبلیجر اکاؤنٹنگ کی ڈیفالٹ ویلیو کے طور پر استعمال کیا جائے گا اگر تھرڈ پارٹی پر مخصوص کسٹمر اکاؤنٹنگ اکاؤنٹ کی وضاحت نہیں کی گئی ہے۔
-ACCOUNTING_ACCOUNT_SUPPLIER=وینڈر تھرڈ پارٹیز کے لیے اکاؤنٹنگ اکاؤنٹ استعمال کیا جاتا ہے۔
+ACCOUNTING_ACCOUNT_SUPPLIER=Account (from the Chart of Account) used for the "vendor" third parties
 ACCOUNTING_ACCOUNT_SUPPLIER_Desc=تھرڈ پارٹی کارڈ پر بیان کردہ وقف اکاؤنٹنگ اکاؤنٹ صرف Subledger اکاؤنٹنگ کے لیے استعمال کیا جائے گا۔ یہ جنرل لیجر کے لیے اور سبلیجر اکاؤنٹنگ کی ڈیفالٹ ویلیو کے طور پر استعمال کیا جائے گا اگر تیسرے فریق پر ڈیڈیکیٹڈ وینڈر اکاؤنٹنگ اکاؤنٹ کی وضاحت نہیں کی گئی ہے۔
 ConfirmCloneTax=سماجی/مالیاتی ٹیکس کے کلون کی تصدیق کریں۔
 ConfirmCloneVAT=VAT ڈیکلریشن کے کلون کی تصدیق کریں۔
@@ -300,3 +302,4 @@ InvoiceToPay15Days=ادائیگی کے لیے (15 سے 30 دن)
 InvoiceToPay30Days=ادائیگی کے لیے (> 30 دن)
 ConfirmPreselectAccount=اکاؤنٹنسی کوڈ کو پہلے سے منتخب کریں۔
 ConfirmPreselectAccountQuestion=کیا آپ واقعی اس اکاؤنٹنسی کوڈ کے ساتھ %s منتخب لائنوں کو پہلے سے منتخب کرنا چاہتے ہیں؟
+AmountPaidMustMatchAmountOfDownPayment=Amount paid must match amount of down payment
