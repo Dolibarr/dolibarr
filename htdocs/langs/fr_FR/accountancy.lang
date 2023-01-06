@@ -340,6 +340,7 @@ ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Désactiver la liaison et le transf
 NotExportLettering=Ne pas exporter les informations de lettrage lors de la génération du fichier
 NotifiedExportDate=Marquer les lignes exportées comme Exportées <span class="warning">(pour modifier une ligne, vous devrez supprimer toute la transaction et la retransférer en comptabilité)</span>
 NotifiedValidationDate=Valider et bloquer les lignes exportées <span class="warning">(même effet que la fonctionnalité de "%s", la modification et la suppression de ces lignes ne sera DÉFINITIVEMENT plus possible)</span>
+NotifiedExportFull=Exporter les pièces ?
 DateValidationAndLock=Validation et verrouillage de la date
 ConfirmExportFile=Confirmation de la génération du fichier d'export comptable ?
 ExportDraftJournal=Exporter le journal brouillon
@@ -438,6 +439,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Dés
 AccountancyErrorMismatchLetterCode=Incohérence dans le code de lettrage
 AccountancyErrorMismatchBalanceAmount=Le montant de la balance (%s) n'est pas égale à 0
 AccountancyErrorLetteringBookkeeping=Des erreurs se sont produites concernant les transactions: %s
+ErrorArchiveAddFile=Impossible d'ajouter le fichier "%s" dans l'archive
 
 ## Import
 ImportAccountingEntries=Écritures comptables
