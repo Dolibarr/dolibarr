@@ -252,7 +252,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
 				$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '');
 			}
-			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;origin=contact&amp;originid='.$object->id.'&amp;percentage=-1&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
+			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;origin=contact&amp;originid='.$object->id.'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
 			$out .= '&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
 		}
 
