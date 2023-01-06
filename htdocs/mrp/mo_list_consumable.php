@@ -17,17 +17,18 @@
  */
 
 /**
- *   	\file       mo_list_assignable.php
+ *   	\file       mo_list_consumable.php
  *		\ingroup    mrp
  *		\brief      List page for assignable products to a mo
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // load mrp libraries
 require_once __DIR__.'/class/mo.class.php';
@@ -107,13 +108,15 @@ foreach ($object->fields as $key => $val) {
 
 // Definition of array of fields for columns
 $arrayfields = array(
+	't.rowid' => array('label'=>'TechnicalID', 'enabled'=>0, 'visible'=>-2, 'position'=>1),
 	't.ref' => array('label'=>'Ref', 'checked'=>1, 'position'=>5),
 	't.fk_bom' => array('label'=>'BOM', 'enabled'=>(!isModEnabled('bom') ? 0 : 1), 'checked'=>1, 'position'=>33),
 	't.mrptype' => array('label'=>'Type', 'enabled'=>1, 'checked'=>1, 'position'=>34),
-	't.fk_product' => array('label'=>'Product', 'enabled'=>(!isModEnabled('product') ? 0 : 1), 'checked'=>1, 'position'=>35),
+	'p.productrowid' => array('alias'=>'p', 'label'=>'ProductTechnicalID', 'enabled'=>0, 'visible'=>-2, 'checked'=>0, 'position'=>1),
+	'p.productref' => array('alias'=>'p', 'label'=>'Product', 'enabled'=>(!isModEnabled('product') ? 0 : 1), 'checked'=>1, 'position'=>35),
 	't.qty' => array('label'=>'QtyToProduce', 'enabled'=>1, 'checked'=>1, 'position'=>40),
-	'qty_missing' => array('label'=>'QtyIsMissing', 'enabled'=>1, 'checked'=>1, 'position'=>41, 'type'=>'real', 'visible'=>1, 'css'=>'width75'),
-	'p.stock' => array('label'=>'QtyInStock', 'enabled'=>1, 'checked'=>1, 'position'=>41, 'type'=>'real', 'visible'=>1, 'css'=>'width75'),
+	'qty_toconsum' => array('label'=>'QtyToConsum', 'enabled'=>1, 'checked'=>1, 'position'=>41, 'type'=>'real', 'visible'=>1, 'css'=>'width75'),
+	'p.productstock' => array('alias'=>'p', 'label'=>'QtyInStock', 'enabled'=>1, 'checked'=>1, 'position'=>41, 'type'=>'real', 'visible'=>1, 'css'=>'width75'),
 	't.label' => array('label'=>'Label', 'enabled'=>1, 'checked'=>1, 'position'=>49),
 	't.fk_soc' => array('label'=>'ThirdParty', 'picto'=>'company', 'enabled'=>(!isModEnabled('societe') ? 0 : 1), 'checked'=>0, 'position'=>50),
 	't.fk_project' => array('label'=>'Project', 'picto'=>'project', 'enabled'=>(!isModEnabled('project') ? 0 : 1), 'checked'=>0, 'position'=>51),
@@ -128,6 +131,12 @@ $arrayfields = array(
 
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
+$keys_with_alias = array();
+foreach ($keys as $fieldname) {
+	if (substr($fieldname,0,2) != 't.' && str_contains($fieldname, '.'))
+		$keys_with_alias[] = $fieldname;
+}
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -205,17 +214,25 @@ $now = dol_now();
 
 //$help_url="EN:Module_Mo|FR:Module_Mo_FR|ES:Módulo_Mo";
 $help_url = '';
-$title = $langs->trans('ListOfManufacturingOrdersWithAssignableProducts');
+$title = $langs->trans('ListOfManufacturingOrdersWithConsumableProducts');
 $morejs = array();
 $morecss = array();
 
 
 // Build and execute select
 // --------------------------------------------------------------------
+$keys = array_keys($arrayfields);
+$keys = array_diff($keys, ["qty_toconsum"]);
+$keys = array_diff($keys, ["p.productrowid"]);
+$keys = array_diff($keys, ["p.productref"]);
+$keys = array_diff($keys, ["p.productstock"]);
+
 $sql = 'SELECT ';
-$sql .= $object->getFieldList('t');
-$sql .= ',(tLine.qty - IFNULL(tChild.qty_consumed, 0)) AS qty_missing';
-$sql .= ',p.stock';
+$sql .=  implode(',', $keys);
+$sql .= ',(l.qty - IFNULL(tChild.qty_consumed, 0)) AS qty_toconsum';
+$sql .= ',p.rowid AS `p.productrowid`';
+$sql .= ',p.ref AS `p.productref`';
+$sql .= ',p.stock AS `p.productstock`';
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -230,8 +247,8 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
-$sql .= " FROM ".MAIN_DB_PREFIX."mrp_production as tLine";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element." as t ON tLine.fk_mo = t.rowid";
+$sql .= " FROM ".MAIN_DB_PREFIX."mrp_production as l";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element." as t ON l.fk_mo = t.rowid";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
@@ -241,8 +258,8 @@ $sqlConsumed .= " FROM llx_mrp_production";
 $sqlConsumed .= " WHERE role = 'consumed'";
 $sqlConsumed .= " GROUP BY fk_mrp_production";
 
-$sql .= " LEFT JOIN (".$sqlConsumed.") as tChild ON tLine.rowid = tChild.fk_mrp_production";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON tLine.fk_product = p.rowid";
+$sql .= " LEFT JOIN (".$sqlConsumed.") as tChild ON l.rowid = tChild.fk_mrp_production";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
 
 // Add table from hooks
 $parameters = array();
@@ -254,7 +271,7 @@ if ($object->ismultientitymanaged == 1) {
 	$sql .= " WHERE 1 = 1";
 }
 
-$sql .= " AND t.status IN (1,2,3) AND tLine.role = 'toconsume' AND p.fk_product_type = 0 AND p.stock > 0";
+$sql .= " AND t.status IN (1,2,3) AND l.role = 'toconsume' AND p.fk_product_type = 0 AND p.stock > 0";
 
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
@@ -324,13 +341,13 @@ $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/,\s*$/','', $sql);
 */
 
-$sql .= " HAVING qty_missing > 0";
+$sql .= " HAVING qty_toconsum > 0";
 
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcounttemp = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT (tLine.qty - IFNULL(tChild.qty_consumed, 0)) AS qty_missing', $sql);
+	$sqlforcounttemp = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT (l.qty - IFNULL(tChild.qty_consumed, 0)) AS qty_toconsum', $sql);
 	$sqlforcount = "SELECT COUNT(*) as nbtotalofrecords FROM (".$sqlforcounttemp.") as c";
 
 	$resql = $db->query($sqlforcount);
@@ -491,10 +508,10 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 
 foreach ($arrayfields as $key => $val) {
-	if (!empty($val['checked'])) {
+	if (!empty($val['checked']) && !str_starts_with($key, 'ef.')) {
 		//Find CSS class in mo.class
 		$nativekey = substr($key, strpos($key, ".") + 1);
-		$classfield = empty($object->fields[$nativekey]) ? $val : $object->fields[$nativekey];
+		$classfield = array_key_exists($key, $keys_with_alias) ? $val : $object->fields[$nativekey];
 		$cssforfield = (empty($classfield['csslist']) ? (empty($classfield['css']) ? '' : $classfield['css']) : $classfield['csslist']);
 		if ($key == 't.status') {
 			$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -515,22 +532,24 @@ foreach ($arrayfields as $key => $val) {
 			continue;
 		}
 		if (!empty($classfield['arrayofkeyval']) && is_array($classfield['arrayofkeyval'])) {
-			print $form->selectarray('search_'.$nativekey, $classfield['arrayofkeyval'], (isset($search[$nativekey]) ? $search[$nativekey] : ''), $classfield['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
+			print $form->selectarray('search_'.$key, $classfield['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $classfield['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		} elseif ((strpos($classfield['type'], 'integer:') === 0) || (strpos($classfield['type'], 'sellist:') === 0)) {
-			print $object->showInputField($classfield, $nativekey, (isset($search[$nativekey]) ? $search[$nativekey] : ''), '', '', 'search_', 'maxwidth125', 1);
+			print $object->showInputField($classfield, $nativekey, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', 'maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp|datetime)/', $classfield['type'])) {
-			print '<input type="text" class="flat maxwidth75" name="search_'.$nativekey.'" value="'.dol_escape_htmltag(isset($search[$nativekey]) ? $search[$nativekey] : '').'">';
+			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $classfield['type'])) {
 			print '<div class="nowrap">';
-			print $form->selectDate($search[$nativekey.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$nativekey."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+			print $form->selectDate($search[$key.'_dtstart'] ? $search[$key.'_dtstart'] : '', "search_".$key."_dtstart", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 			print '</div>';
 			print '<div class="nowrap">';
-			print $form->selectDate($search[$nativekey.'_dtend'] ? $search[$key.'_dtend'] : '', "search_".$nativekey."_dtend", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+			print $form->selectDate($search[$key.'_dtend'] ? $search[$key.'_dtend'] : '', "search_".$key."_dtend", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 			print '</div>';
 		}
 		print '</td>';
 	}
 }
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters = array('arrayfields'=>$arrayfields);
@@ -554,10 +573,10 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 
 foreach ($arrayfields as $key => $val) {
-	if (!empty($val['checked'])) {
+	if (!empty($val['checked']) && !str_starts_with($key, 'ef.')) {
 		//Find CSS class in mo.class
 		$nativekey = substr($key, strpos($key, ".") + 1);
-		$classfield = empty($object->fields[$nativekey]) ? $val : $object->fields[$nativekey];
+		$classfield = array_key_exists($key, $keys_with_alias) ? $val : $object->fields[$nativekey];
 		$cssforfield = (empty($classfield['csslist']) ? (empty($classfield['css']) ? '' : $classfield['css']) : $classfield['csslist']);
 		if ($key == 't.status') {
 			$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -574,6 +593,8 @@ foreach ($arrayfields as $key => $val) {
 		print getTitleFieldOfList($arrayfields[$key]['label'], 0, $_SERVER['PHP_SELF'], $key, '', $param, ($cssforfield ? 'class="'.$cssforfield.'"' : ''), $sortfield, $sortorder, ($cssforfield ? $cssforfield.' ' : ''))."\n";
 	}
 }
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 // Hook fields
 $parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
@@ -629,7 +650,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	foreach ($arrayfields as $key => $val) {
 		//Find CSS class in mo.class
 		$nativekey = substr($key, strpos($key, ".") + 1);
-		$classfield = empty($object->fields[$nativekey]) ? $val : $object->fields[$nativekey];
+		$classfield = array_key_exists($key, $keys_with_alias) ? $val : $object->fields[$nativekey];
 		$cssforfield = (empty($classfield['csslist']) ? (empty($classfield['css']) ? '' : $classfield['css']) : $classfield['csslist']);
 		if (in_array($classfield['type'], array('date', 'datetime', 'timestamp'))) {
 			$cssforfield .= ($cssforfield ? ' ' : '').'center';
@@ -649,7 +670,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$cssforfield .= ($cssforfield ? ' ' : '').'right';
 		}
 
-		if (!empty($arrayfields[$key]['checked'])) {
+		if (!empty($arrayfields[$key]['checked']) && !str_starts_with($key, 'ef.')) {
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 			if ($key == 't.status') {
 				print $object->getLibStatut(5);
@@ -660,10 +681,14 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				if (is_object($moparent)) print $moparent->getNomUrl(1);
 			} elseif ($key == 't.rowid') {
 				print $object->showOutputField($classfield, $nativekey, $object->id, '');
-			} elseif ($key == 'qty_missing') {
+			} elseif ($key == 'qty_toconsum') {
 				print $object->showOutputField($val, $key, $obj->$key, '');
-			} elseif ($key == 'p.stock') {
-				print $object->showOutputField($val, $key, $obj->$nativekey, '');
+			} elseif ($key == 'p.productref') {
+				$objProduct = new Product($db);
+				$objProduct->fetch($obj->{'p.productrowid'});
+				print $objProduct->getNomUrl(1);
+			} elseif ($key == 'p.productstock') {
+				print $object->showOutputField($val, $key, $obj->$key, '');
 			} else {
 				print $object->showOutputField($classfield, $nativekey, $object->$nativekey, '');
 			}
@@ -685,6 +710,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			}
 		}
 	}
+	// Extra fields
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
 	// Fields from hook
 	$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
