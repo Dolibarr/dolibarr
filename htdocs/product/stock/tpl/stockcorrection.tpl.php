@@ -29,6 +29,10 @@ if (empty($conf) || !is_object($conf)) {
 
 <!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
 <?php
+/**
+ * @var Product $object
+ */
+
 $productref = '';
 if ($object->element == 'product') {
 	$productref = $object->ref;
@@ -41,6 +45,19 @@ if (empty($id)) {
 	$id = $object->id;
 }
 
+$sellByCss = '';
+$eatByCss = '';
+if ($object->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY) {
+	$sellByCss = 'fieldrequired';
+} elseif ($object->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY) {
+	$eatByCss = 'fieldrequired';
+} elseif ($object->sell_or_eat_by_mandatory == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
+	$sellByCss = 'fieldrequired';
+	$eatByCss = 'fieldrequired';
+}
+
+$disableSellBy = getDolGlobalInt('PRODUCT_DISABLE_SELLBY');
+$disableEatBy = getDolGlobalInt('PRODUCT_DISABLE_EATBY');
 print '<script type="text/javascript" language="javascript">
 		jQuery(document).ready(function() {
 			function init_price()
@@ -51,9 +68,29 @@ print '<script type="text/javascript" language="javascript">
 			init_price();
 			jQuery("#mouvement").change(function() {
 				init_price();
-			});
-		});
-		</script>';
+			});';
+
+if ($disableSellBy == 0 || $disableEatBy == 0) {
+		print '
+			var disableSellBy = '.$disableSellBy.';
+			var disableEatBy = '.$disableSellBy.';
+			jQuery("#batch_number").change(function(event) {
+				var batch = jQuery(this).val();
+				jQuery.getJSON("'.DOL_URL_ROOT.'/product/ajax/product_lot.php?action=search&token='.newToken().'&product_id='.$id.'&batch="+batch, function(data) {
+					if (data.length > 0) {
+						var productLot = data[0];
+						if (disableSellBy == 0) {
+							jQuery("#sellby").val(productLot.sellby);
+						}
+						if (disableEatBy == 0) {
+							jQuery("#eatby").val(productLot.eatby);
+						}
+					}
+				});
+			});';
+}
+print  '});';
+print '</script>';
 
 
 print load_fiche_titre($langs->trans("StockCorrection"), '', 'generic');
@@ -116,18 +153,18 @@ if (!empty($conf->productbatch->enabled) &&
 ) {
 	print '<tr>';
 	print '<td'.($object->element == 'stock' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
-	print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
+	print '<input type="text" id="batch_number" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-		print '<td>'.$langs->trans("SellByDate").'</td><td>';
+		print '<td'.($sellByCss ? ' class="'.$sellByCss.'"' : '').'>'.$langs->trans("SellByDate").'</td><td>';
 		$sellbyselected = dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
 		print $form->selectDate($sellbyselected, 'sellby', '', '', 1, "");
 		print '</td>';
 	}
 	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-		print '<td>'.$langs->trans("EatByDate").'</td><td>';
+		print '<td'.($eatByCss ? ' class="'.$eatByCss.'"' : '').'>'.$langs->trans("EatByDate").'</td><td>';
 		$eatbyselected = dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
 		print $form->selectDate($eatbyselected, 'eatby', '', '', 1, "");
 		print '</td>';

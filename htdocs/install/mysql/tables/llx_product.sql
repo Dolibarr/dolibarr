@@ -59,6 +59,7 @@ create table llx_product
   tobuy                         tinyint      DEFAULT 1,             -- Product you buy
   onportal                      tinyint      DEFAULT 0,	            -- If it is a product you sell and you want to sell it on portal (module website must be on)
   tobatch                       tinyint      DEFAULT 0 NOT NULL,    -- Is it a product that need a batch management (eat-by or lot management)
+  sell_or_eat_by_mandatory      tinyint      DEFAULT 0 NOT NULL,    -- Make sell-by or eat-by date mandatory
   batch_mask			        varchar(32)  DEFAULT NULL,          -- If the product has batch feature, you may want to use a batch mask per product
   fk_product_type               integer      DEFAULT 0,             -- Type of product: 0 for regular product, 1 for service, 9 for other (used by external module)
   duration                      varchar(6),

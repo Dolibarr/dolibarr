@@ -748,3 +748,6 @@ INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT 'MAIN_SE
 INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT 'MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST', entity, value, type, visible, note FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
 INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT 'MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST', entity, value, type, visible, note FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
 DELETE FROM llx_const WHERE name = "MAIN_SEARCH_CATEGORY_CUSTOMER_ON_LISTS";
+
+-- Make sell-by or eat-by date mandatory
+ALTER TABLE llx_product ADD COLUMN sell_or_eat_by_mandatory tinyint DEFAULT 0 NOT NULL AFTER tobatch;
