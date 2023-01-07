@@ -185,12 +185,12 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 		}
 
 		$tmparray = array();
-		if (trim($_POST['sendto'])) {
+		if (isset($_POST['sendto'])) {
 			// Recipients are provided into free text field
 			$tmparray[] = trim(GETPOST('sendto', 'alphawithlgt'));
 		}
 
-		if (trim($_POST['tomail'])) {
+		if (isset($_POST['tomail'])) {
 			// Recipients are provided into free hidden text field
 			$tmparray[] = trim(GETPOST('tomail', 'alphawithlgt'));
 		}
