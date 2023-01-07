@@ -910,7 +910,9 @@ textarea.centpercent {
 .nomarginright {
 	margin-<?php print $right; ?>: unset;
 }
-
+.nowidthimp {
+	width: unset !important;
+}
 .cursordefault {
 	cursor: default;
 }

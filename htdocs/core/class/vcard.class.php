@@ -1,4 +1,7 @@
 <?php
+use Splash\Tests\WsObjects\O00ObjectBaseTest;
+use JMS\Serializer\Exception\ObjectConstructionException;
+
 /* Copyright (C)           Kai Blankenhorn      <kaib@bitfolge.de>
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
@@ -366,6 +369,90 @@ class vCard
 	{
 		return $this->filename;
 	}
+
+	/**
+	 * Return a VCARD string
+	 *
+	 * @param	Object		$object		Object
+	 * @param	Societe		$company	Company
+	 * @param	Translate	$langs		Lang object
+	 * @return	string					String
+	 */
+	public function buildVCardString($object, $company, $langs)
+	{
+		$this->setProdId('Dolibarr '.DOL_VERSION);
+
+		$this->setUid('DOLIBARR-USERID-'.$object->id);
+		$this->setName($object->lastname, $object->firstname, "", $object->civility_code, "");
+		$this->setFormattedName($object->getFullName($langs, 1));
+
+		$this->setPhoneNumber($object->office_phone, "TYPE=WORK;VOICE");
+		$this->setPhoneNumber($object->personal_mobile, "TYPE=HOME;VOICE");
+		$this->setPhoneNumber($object->user_mobile, "TYPE=CELL;VOICE");
+		$this->setPhoneNumber($object->office_fax, "TYPE=WORK;FAX");
+
+		$country = $object->country_code ? $object->country : '';
+
+		$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=WORK;POSTAL");
+		$this->setLabel("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=WORK");
+
+		$this->setEmail($object->email, "TYPE=WORK");
+		$this->setNote($object->note_public);
+		$this->setTitle($object->job);
+
+		if ($company->id > 0) {
+			$this->setURL($company->url, "TYPE=WORK");
+			if (!$object->office_phone) {
+				$this->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
+			}
+			if (!$object->office_fax) {
+				$this->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
+			}
+			if (!$object->zip) {
+				$this->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK;POSTAL");
+			}
+
+			// when company e-mail is empty, use only user e-mail
+			if (empty(trim($company->email))) {
+				// was set before, don't set twice
+			} elseif (empty(trim($object->email))) {
+				// when user e-mail is empty, use only company e-mail
+				$this->setEmail($company->email, "TYPE=WORK");
+			} else {
+				$tmpuser2 = explode("@", trim($object->email));
+				$tmpcompany = explode("@", trim($company->email));
+
+				if (strtolower(end($tmpuser2)) == strtolower(end($tmpcompany))) {
+					// when e-mail domain of user and company are the same, use user e-mail at first (and company e-mail at second)
+					$this->setEmail($object->email, "TYPE=WORK");
+
+					// support by Microsoft Outlook (2019 and possible earlier)
+					$this->setEmail($company->email, 'INTERNET');
+				} else {
+					// when e-mail of user and company complete different use company e-mail at first (and user e-mail at second)
+					$this->setEmail($company->email, "TYPE=WORK");
+
+					// support by Microsoft Outlook (2019 and possible earlier)
+					$this->setEmail($object->email, 'INTERNET');
+				}
+			}
+
+			// Si user lie a un tiers non de type "particulier"
+			if ($company->typent_code != 'TE_PRIVATE') {
+				$this->setOrg($company->name);
+			}
+		}
+
+		// Personal informations
+		$this->setPhoneNumber($object->personal_mobile, "TYPE=HOME;VOICE");
+		if ($object->birth) {
+			$this->setBirthday($object->birth);
+		}
+
+		// Return VCard string
+		return $this->getVCard();
+	}
+
 
 	/* Example from Microsoft Outlook 2019
 

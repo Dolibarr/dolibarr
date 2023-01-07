@@ -3787,6 +3787,30 @@ class User extends CommonObject
 	}
 
 	/**
+	 * Return string with full Url to virtual card
+	 *
+	 * @return	string				      Url string
+	 */
+	public function getOnlineVirtualCardUrl()
+	{
+		global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root;
+		global $conf;
+
+		$encodedsecurekey = dol_hash($dolibarr_main_instance_unique_id.'uservirtualcard'.$this->id.'-'.$this->login, 'md5');
+		if (isModEnabled('multicompany')) {
+			$entity_qr = '&entity='.((int) $conf->entity);
+		} else {
+			$entity_qr = '';
+		}
+		// Define $urlwithroot
+		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+		return $urlwithroot.'/public/users/view.php?id='.$this->id.'&securekey='.$encodedsecurekey.$entity_qr;
+	}
+
+	/**
 	 *	Load all objects into $this->users
 	 *
 	 *  @param	string		$sortorder		sort order

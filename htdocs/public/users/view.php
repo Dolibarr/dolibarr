@@ -1,0 +1,381 @@
+<?php
+/* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *       \file       htdocs/public/users/view.php
+ *       \ingroup    user
+ *       \brief      Public file to user profile
+ */
+
+if (!defined('NOLOGIN')) {
+	define("NOLOGIN", 1); // This means this output page does not require to be logged.
+}
+if (!defined('NOCSRFCHECK')) {
+	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+}
+if (!defined('NOIPCHECK')) {
+	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+if (!defined('NOBROWSERNOTIF')) {
+	define('NOBROWSERNOTIF', '1');
+}
+
+// Load Dolibarr environment
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
+
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "other", "recruitment"));
+
+// Get parameters
+$action   = GETPOST('action', 'aZ09');
+$cancel   = GETPOST('cancel', 'alpha');
+$backtopage = '';
+
+$id = GETPOST('id', 'int');
+$securekey = GETPOST('securekey', 'alpha');
+$suffix = GETPOST('suffix');
+
+$object = new User($db);
+$object->fetch($id, '', '', 1);
+
+// Define $urlwithroot
+//$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+//$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+$urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
+
+// Security check
+global $dolibarr_main_instance_unique_id;
+$encodedsecurekey = dol_hash($dolibarr_main_instance_unique_id.'uservirtualcard'.$object->id.'-'.$object->login, 'md5');
+if ($encodedsecurekey != $securekey) {
+	httponly_accessforbidden('User profile page not found or not allowed');
+}
+
+
+/*
+ * Actions
+ */
+
+if ($cancel) {
+	if (!empty($backtopage)) {
+		header("Location: ".$backtopage);
+		exit;
+	}
+	$action = 'view';
+}
+
+/*
+if ($action == "view" || $action == "presend" || $action == "dosubmit") {
+	$error = 0;
+	$display_ticket = false;
+	if (!strlen($ref)) {
+		$error++;
+		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")));
+		$action = '';
+	}
+	if (!strlen($email)) {
+		$error++;
+		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Email")));
+		$action = '';
+	} else {
+		if (!isValidEmail($email)) {
+			$error++;
+			array_push($object->errors, $langs->trans("ErrorEmailInvalid"));
+			$action = '';
+		}
+	}
+
+	if (!$error) {
+		$ret = $object->fetch('', $ref);
+	}
+
+	if ($error || $errors) {
+		setEventMessages($object->error, $object->errors, 'errors');
+		if ($action == "dosubmit") {
+			$action = 'presend';
+		} else {
+			$action = '';
+		}
+	}
+}
+*/
+//var_dump($action);
+//$object->doActions($action);
+
+// Actions to send emails (for ticket, we need to manage the addfile and removefile only)
+/*$triggersendname = 'USER_SENTBYMAIL';
+$paramname = 'id';
+$autocopy = 'MAIN_MAIL_AUTOCOPY_USER_TO'; // used to know the automatic BCC to add
+$trackid = 'use'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+*/
+
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+$company = $mysoc;
+
+if ($action == 'vcard') {
+	// We create VCard
+	$v = new vCard();
+	$output = $v->buildVCardString($object, $company, $langs);
+
+	$filename = trim(urldecode($v->getFileName())); // "Nom prenom.vcf"
+	$filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
+	//$filename = dol_sanitizeFileName($filename);
+
+	top_httphead('text/x-vcard; name="'.$filename.'"');
+
+	header("Content-Disposition: attachment; filename=\"".$filename."\"");
+	header("Content-Length: ".dol_strlen($output));
+	header("Connection: close");
+
+	print $output;
+
+	$db->close();
+
+	exit;
+}
+
+$head = '';
+if (!empty($conf->global->MAIN_USER_PROFILE_CSS_URL)) {
+	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_USER_PROFILE_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+}
+
+$conf->dol_hide_topmenu = 1;
+$conf->dol_hide_leftmenu = 1;
+
+if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
+	$langs->load("errors");
+	print '<div class="error">'.$langs->trans('ErrorPublicInterfaceNotEnabled').'</div>';
+	$db->close();
+	exit();
+}
+
+$arrayofjs = array();
+$arrayofcss = array();
+
+$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
+llxHeader($head, $langs->trans("UserProfile").' '.$object->getFullName($langs), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1, 1);
+
+print '<span id="dolpaymentspan"></span>'."\n";
+print '<div class="center">'."\n";
+print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
+print '<input type="hidden" name="action" value="dosubmit">'."\n";
+print '<input type="hidden" name="securekey" value="'.$securekey.'">'."\n";
+print '<input type="hidden" name="entity" value="'.$entity.'" />';
+print "\n";
+print '<!-- Form to view job -->'."\n";
+
+$modulepart = 'user';
+$imagesize = 'small';
+$dir = $conf->user->dir_output;
+$email = $object->email;
+
+// Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
+// Define logo and logosmall
+$logo = '';
+$logosmall = '';
+if (!empty($object->photo)) {
+	if (dolIsAllowedForPreview($object->photo)) {
+		$logosmall = get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.getImageFileNameForSize($object->photo, '_small');
+		$logo = get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.$object->photo;
+		//$originalfile = get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.$object->photo;
+	}
+}
+//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
+// Define urllogo
+$urllogo = '';
+$urllogofull = '';
+if (!empty($logosmall) && is_readable($conf->user->dir_output.'/'.$logosmall)) {
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&amp;entity='.$conf->entity.'&amp;file='.urlencode($logosmall);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.'&entity='.$conf->entity.'&file='.urlencode($logosmall);
+} elseif (!empty($logo) && is_readable($conf->user->dir_output.'/'.$logo)) {
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&amp;entity='.$conf->entity.'&amp;file='.urlencode($logo);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.'&entity='.$conf->entity.'&file='.urlencode($logo);
+}
+
+// Output html code for logo
+print '<div class="backgreypublicpayment">';
+print '<div class="logopublicpayment">';
+
+// Show photo
+if ($urllogo) {
+	/*if (!empty($mysoc->url)) {
+		print '<a href="'.$mysoc->url.'" target="_blank" rel="noopener">';
+	}*/
+	print '<img id="dolpaymentlogo" src="'.$urllogofull.'">';
+	/*if (!empty($mysoc->url)) {
+		print '</a>';
+	}*/
+}
+print '</div>';
+/*if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+	print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+}*/
+print '</div>';
+
+
+if (!empty($conf->global->USER_IMAGE_PUBLIC_INTERFACE)) {
+	print '<div class="backimagepublicrecruitment">';
+	print '<img id="idUSER_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->USER_IMAGE_PUBLIC_INTERFACE.'">';
+	print '</div>';
+}
+
+$urlforqrcode = $_SERVER["PHP_SELF"].'?action=vcard&id='.((int) $object->id).'&securekey='.urlencode($securekey);
+
+// Show barcode
+$showbarcode = GETPOST('nobarcode') ? 0 : 1;
+if ($showbarcode) {
+	print '<br>';
+	print '<div class="floatleft inline-block valignmiddle divphotoref">';
+	print 'QRCODE...<br>';
+	print $urlforqrcode;
+	print '</div>';
+	print '<br>';
+	print '<br>';
+}
+
+
+print '<div class="opacitymedium">'.$langs->trans("Me").'</div>'."\n";
+print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
+
+// Output payment summary form
+print '<tr><td class="left">';
+
+print '<div class="nowidthimp" id="tablepublicpayment">';
+
+print '<br>';
+
+// Add contact info
+print '...';
+
+print '<br>';
+
+
+print '</div>'."\n";
+print "\n";
+
+print '</td></tr>'."\n";
+
+print '</table>'."\n";
+
+
+
+
+print '<div class="opacitymedium">'.$langs->trans("MyCompany").'</div>'."\n";
+print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
+
+// Output payment summary form
+print '<tr><td class="left">';
+
+print '<div class="nowidthimp" id="tablepublicpayment">';
+
+// Add company info
+
+
+// Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
+// Define logo and logosmall
+$logosmall = $mysoc->logo_small;
+$logo = $mysoc->logo;
+$paramlogo = 'ONLINE_USER_LOGO_'.$suffix;
+if (!empty($conf->global->$paramlogo)) {
+	$logosmall = $conf->global->$paramlogo;
+} elseif (!empty($conf->global->ONLINE_USER_LOGO)) {
+	$logosmall = $conf->global->ONLINE_USER_LOGO;
+}
+//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
+// Define urllogo
+$urllogo = '';
+$urllogofull = '';
+if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
+} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
+}
+// Output html code for logo
+if ($urllogo) {
+	print '<div class="logopublicpayment">';
+	if (!empty($mysoc->url)) {
+		print '<a href="'.$mysoc->url.'" target="_blank" rel="noopener">';
+	}
+	print '<img id="dolpaymentlogo" src="'.$urllogofull.'">';
+	if (!empty($mysoc->url)) {
+		print '</a>';
+	}
+	print '</div>';
+}
+
+
+if ($mysoc->email) {
+	print '<br>';
+	print img_picto('', 'email', 'class="pictofixedwidth"').dol_print_email($mysoc->email, 0, 0, 1);
+	print '<br>';
+}
+
+if ($mysoc->url) {
+	print '<br>';
+	print img_picto('', 'globe', 'class="pictofixedwidth"');
+	//print 'rr';
+	print dol_print_url($mysoc->url, '_blank', 0, 0, '');
+	print '<br>';
+}
+
+
+print '</div>'."\n";
+print "\n";
+
+print '</td></tr>'."\n";
+
+print '</table>'."\n";
+
+
+
+// Description
+$text = getDolUserString('USER_PUBLIC_MORE', '', $object);
+print $text;
+
+
+print '</form>'."\n";
+print '</div>'."\n";
+print '<br>';
+
+
+//htmlPrintOnlinePaymentFooter($mysoc, $langs);
+
+print '<div class="backgreypublicpayment">';
+print '<div class="center">';
+print '<a href="'.$urlforqrcode.'">';
+print img_picto($langs->trans("AddTocontacts"), 'add').' ';
+print $langs->trans("AddTocontacts");
+print '</a>';
+print '</div>';
+//print '<div>';
+//print '</div>';
+print '</div>';
+
+llxFooter('', 'public');
+
+$db->close();
