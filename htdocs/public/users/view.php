@@ -257,7 +257,7 @@ if ($showbarcode) {
 }
 
 
-print '<div class="opacitymedium">'.$langs->trans("Me").'</div>'."\n";
+//print '<div class="opacitymedium">'.$langs->trans("Me").'</div>'."\n";
 print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
 
 // Output payment summary form
@@ -368,8 +368,8 @@ print '<br>';
 print '<div class="backgreypublicpayment">';
 print '<div class="center">';
 print '<a href="'.$urlforqrcode.'">';
-print img_picto($langs->trans("AddTocontacts"), 'add').' ';
-print $langs->trans("AddTocontacts");
+print img_picto($langs->trans("AddToContacts"), 'add').' ';
+print $langs->trans("AddToContacts");
 print '</a>';
 print '</div>';
 //print '<div>';
