@@ -3789,9 +3789,10 @@ class User extends CommonObject
 	/**
 	 * Return string with full Url to virtual card
 	 *
-	 * @return	string				      Url string
+	 * @param	string		$mode		Mode for link
+	 * @return	string				    Url string link
 	 */
-	public function getOnlineVirtualCardUrl()
+	public function getOnlineVirtualCardUrl($mode = '')
 	{
 		global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root;
 		global $conf;
@@ -3807,7 +3808,7 @@ class User extends CommonObject
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-		return $urlwithroot.'/public/users/view.php?id='.$this->id.'&securekey='.$encodedsecurekey.$entity_qr;
+		return $urlwithroot.'/public/users/view.php?id='.$this->id.'&securekey='.$encodedsecurekey.$entity_qr.($mode ? '&mode='.urlencode($mode) : '');
 	}
 
 	/**

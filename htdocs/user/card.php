@@ -1433,12 +1433,10 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
 
 			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid" rel="noopener">';
-			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard").' ('.$langs->trans("AddToContacts").')', 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 			$morehtmlref .= '</a>';
 
-			//$urltovirtualcard = $object->getOnlineVirtualCardUrl();
 			$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-
 			$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl"), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 			/*$morehtmlref .= '<a href="'.$urltovirtualcard.'" class="refid" target="_blank" rel="noopener">';
 			$morehtmlref .= img_picto($langs->trans("PublicVirtualCardUrl"), 'id-card', 'class="valignmiddle marginleftonly paddingrightonly"');

@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Load translation files required by page
-$langs->load("users");
+$langs->loadLangs(array("users", "companies"));
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -62,11 +62,12 @@ if (($object->id != $user->id) && empty($user->rights->user->user->lire)) {
 
 if ($action == 'update') {
 	$tmparray = array();
-	$tmparray['USER_PUBLIC_COMPANY_NAME'] = (GETPOST('USER_PUBLIC_COMPANY_NAME') ? 1 : 0);
-	$tmparray['USER_PUBLIC_JOBPOSITION'] = (GETPOST('USER_PUBLIC_JOBPOSITION') ? 1 : 0);
-	$tmparray['USER_PUBLIC_EMAIL'] = (GETPOST('USER_PUBLIC_EMAIL') ? 1 : 0);
-	$tmparray['USER_PUBLIC_PHONE'] = (GETPOST('USER_PUBLIC_PHONE') ? 1 : 0);
-	$tmparray['USER_PUBLIC_SOCIALNETWORKS'] = (GETPOST('USER_PUBLIC_SOCIALNETWORKS') ? 1 : 0);
+	$tmparray['USER_PUBLIC_HIDE_JOBPOSITION'] = (GETPOST('USER_PUBLIC_HIDE_JOBPOSITION') ? 1 : 0);
+	$tmparray['USER_PUBLIC_HIDE_EMAIL'] = (GETPOST('USER_PUBLIC_HIDE_EMAIL') ? 1 : 0);
+	$tmparray['USER_PUBLIC_HIDE_OFFICE_PHONE'] = (GETPOST('USER_PUBLIC_HIDE_OFFICE_PHONE') ? 1 : 0);
+	$tmparray['USER_PUBLIC_HIDE_USER_MOBILE'] = (GETPOST('USER_PUBLIC_HIDE_USER_MOBILE') ? 1 : 0);
+	$tmparray['USER_PUBLIC_HIDE_SOCIALNETWORKS'] = (GETPOST('USER_PUBLIC_HIDE_SOCIALNETWORKS') ? 1 : 0);
+	$tmparray['USER_PUBLIC_HIDE_COMPANY'] = (GETPOST('USER_PUBLIC_HIDE_COMPANY') ? 1 : 0);
 	$tmparray['USER_PUBLIC_MORE'] = (GETPOST('USER_PUBLIC_MORE') ? GETPOST('USER_PUBLIC_MORE') : '');
 
 	dol_set_user_param($db, $conf, $object, $tmparray);
@@ -133,6 +134,7 @@ print '<br>';
 print '<span class="opacitymedium">'.$langs->trans("UserPublicPageDesc").'</span><br><br>';
 
 $param = '&id='.((int) $object->id);
+$param .= '&dol_openinpopup=1';
 
 $enabledisablehtml = $langs->trans("EnablePublicVirtualCard").' ';
 if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
@@ -179,40 +181,46 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<td>'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
 
-	// Company name
-	print '<tr class="oddeven" id="tramount"><td>';
-	print $langs->trans("Company");
-	print '</td><td>';
-	//print '<input type="text" class="maxwidth300" id="USER_PUBLIC_COMPANY_NAME" name="USER_PUBLIC_COMPANY_NAME" value="'.(getDolUserString('USER_PUBLIC_COMPANY_NAME', $mysoc->name, $object) ? getDolUserString('USER_PUBLIC_COMPANY_NAME', $mysoc->name, $object) : 0).'">';
-	print $form->selectyesno("USER_PUBLIC_COMPANY_NAME", (getDolUserInt('USER_PUBLIC_COMPANY_NAME', 0, $object) ? getDolUserInt('USER_PUBLIC_COMPANY_NAME', 0, $object) : 0), 1);
-	print "</td></tr>\n";
-
 	// Job position
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("PostOrFunction");
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("PostOrFunction"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_JOBPOSITION", (getDolUserInt('USER_PUBLIC_JOBPOSITION', 0, $object) ? getDolUserInt('USER_PUBLIC_JOBPOSITION', 0, $object) : 0), 1);
+	print $form->selectyesno("USER_PUBLIC_HIDE_JOBPOSITION", (getDolUserInt('USER_PUBLIC_HIDE_JOBPOSITION', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_JOBPOSITION', 0, $object) : 0), 1);
 	print "</td></tr>\n";
 
 	// Email
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("Email");
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Email"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_EMAIL", (getDolUserInt('USER_PUBLIC_EMAIL', 0, $object) ? getDolUserInt('USER_PUBLIC_EMAIL', 0, $object) : 0), 1);
+	print $form->selectyesno("USER_PUBLIC_HIDE_EMAIL", (getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object) : 0), 1);
 	print "</td></tr>\n";
 
-	// Phone
+	// Office phone
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("Phone");
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("OfficePhone"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_PHONE", (getDolUserInt('USER_PUBLIC_PHONE', 0, $object) ? getDolUserInt('USER_PUBLIC_PHONE', 0, $object) : 0), 1);
+	print $form->selectyesno("USER_PUBLIC_HIDE_OFFICE_PHONE", (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object) : 0), 1);
+	print "</td></tr>\n";
+
+	// Office phone
+	print '<tr class="oddeven" id="tredit"><td>';
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("UserMobile"));
+	print '</td><td>';
+	print $form->selectyesno("USER_PUBLIC_HIDE_USER_MOBILE", (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object) : 0), 1);
 	print "</td></tr>\n";
 
 	// Social networks
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("SocialNetworks");
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworks"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_SOCIALNETWORKS", (getDolUserInt('USER_PUBLIC_SOCIALNETWORKS', 0, $object) ? getDolUserInt('USER_PUBLIC_SOCIALNETWORKS', 0, $object) : 0), 1);
+	print $form->selectyesno("USER_PUBLIC_HIDE_SOCIALNETWORKS", (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object) : 0), 1);
+	print "</td></tr>\n";
+
+	// Company name
+	print '<tr class="oddeven" id="tramount"><td>';
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("CompanySection"));
+	print '</td><td>';
+	print $form->selectyesno("USER_PUBLIC_HIDE_COMPANY", (getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object) : 0), 1);
 	print "</td></tr>\n";
 
 	// More

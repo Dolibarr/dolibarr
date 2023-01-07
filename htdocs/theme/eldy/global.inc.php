@@ -3110,6 +3110,17 @@ img.userphotosmall {			/* size for user photo in lists */
 	vertical-align: middle;
 	background-color: #FFF;
 }
+img.userphotopublicvcard {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	background-size: contain;
+	border: 1px solid;
+	border-color: rgba(128, 128, 128, 0.5);
+	position: relative;
+	top: 25px;
+	left: -110px;
+}
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
 	background: #fff;
 }
@@ -7813,6 +7824,12 @@ div.clipboardCPValue.hidewithsize {
 
 	.lilevel1 span.paddingright {
 		padding-right: 4px;
+	}
+
+	img.userphotopublicvcard {
+		left: unset;
+		top: unset;
+		margin-top: 30px;
 	}
 }
 

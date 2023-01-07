@@ -1731,11 +1731,13 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *	@param  string	$url				Relative Url to open. For example '/project/card.php'
  *  @param	string	$disabled			Disabled text
  *  @param	string	$morecss			More CSS
+ *  @param	string	$jsonopen			Some JS code to execute on click/open of popup
  *  @param	string	$backtopagejsfields	The back to page must be managed using javascript instead of a redirect.
  *  									Value is 'keyforpopupid:Name_of_html_component_to_set_with id,Name_of_html_component_to_set_with_label'
+ *  @param	string	$accesskey			A key to use shortcut
  * 	@return	string						HTML component with button
  */
-function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'classlink button bordertransp', $backtopagejsfields = '')
+function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'classlink button bordertransp', $jsonopen = '', $backtopagejsfields = '', $accesskey = '')
 {
 	global $conf;
 
@@ -1763,9 +1765,11 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out .= '<!-- a link for button to open url into a dialog popup with backtopagejsfields = '.$backtopagejsfields.' -->';
-	$out .= '<a class="cursorpointer button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
+	$out .= '<a '.($accesskey ? ' accesskey="'.$accesskey.'"' : '').' class="cursorpointer button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
 	if (empty($conf->use_javascript_ajax)) {
 		$out .= ' href="'.DOL_URL_ROOT.$url.'" target="_blank"';
+	} elseif ($jsonopen) {
+		$out .= ' onclick="javascript:'.$jsonopen.'"';
 	}
 	$out .= '>'.$buttonstring.'</a>';
 
@@ -2324,7 +2328,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 	// Add alias for thirdparty
 	if (!empty($object->name_alias)) {
-		$morehtmlref .= '<div class="refidno opacitymedium">'.$object->name_alias.'</div>';
+		$morehtmlref .= '<div class="refidno opacitymedium">'.dol_escape_htmltag($object->name_alias).'</div>';
 	}
 
 	// Add label
@@ -2346,7 +2350,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && ($conf->global->MAIN_SHOW_TECHNICAL_ID == '1' || preg_match('/'.preg_quote($object->element, '/').'/i', $conf->global->MAIN_SHOW_TECHNICAL_ID)) && !empty($object->id)) {
 		$morehtmlref .= '<div style="clear: both;"></div>';
 		$morehtmlref .= '<div class="refidno opacitymedium">';
-		$morehtmlref .= $langs->trans("TechnicalID").': '.$object->id;
+		$morehtmlref .= $langs->trans("TechnicalID").': '.((int) $object->id);
 		$morehtmlref .= '</div>';
 	}
 
@@ -3166,11 +3170,10 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 	if (!empty($type)) {
 		$htmllink = '<div class="divsocialnetwork inline-block valignmiddle">';
 		// Use dictionary definition for picto $dictsocialnetworks[$type]['icon']
-		$htmllink .= '<span class="fa paddingright '.($dictsocialnetworks[$type]['icon'] ? $dictsocialnetworks[$type]['icon'] : 'fa-link').'"></span>';
+		$htmllink .= '<span class="fa paddingright pictofixedwidth '.($dictsocialnetworks[$type]['icon'] ? $dictsocialnetworks[$type]['icon'] : 'fa-link').'"></span>';
 		if ($type == 'skype') {
 			$htmllink .= dol_escape_htmltag($value);
-			$htmllink .= '&nbsp;';
-			$htmllink .= '<a href="skype:';
+			$htmllink .= '&nbsp; <a href="skype:';
 			$htmllink .= dol_string_nospecial($value, '_', '', array('@'));
 			$htmllink .= '?call" alt="'.$langs->trans("Call").'&nbsp;'.$value.'" title="'.dol_escape_htmltag($langs->trans("Call").' '.$value).'">';
 			$htmllink .= '<img src="'.DOL_URL_ROOT.'/theme/common/skype_callbutton.png" border="0">';
@@ -3208,9 +3211,9 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 				}
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
 				if (preg_match('/^https?:\/\//i', $link)) {
-					$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
 				} else {
-					$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
 				}
 			} else {
 				$htmllink .= dol_escape_htmltag($value);
@@ -3263,7 +3266,7 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
  * 	@param  string  $countrycode    Country code to use for formatting
  * 	@param 	int		$cid 		    Id of contact if known
  * 	@param 	int		$socid          Id of third party if known
- * 	@param 	string	$addlink	    ''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
+ * 	@param 	string	$addlink	    ''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set), 'tel'=Force "tel:..." link
  * 	@param 	string	$separ 		    Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
  *  @param	string  $withpicto      Show picto ('fax', 'phone', 'mobile')
  *  @param	string	$titlealt	    Text to show on alt
@@ -3471,7 +3474,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 	}
 	if (!empty($addlink)) {	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
-		if ($conf->browser->layout == 'phone' || (isModEnabled('clicktodial') && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS))) {	// If phone or option for, we use link of phone
+		if ($addlink == 'tel' || $conf->browser->layout == 'phone' || (isModEnabled('clicktodial') && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS))) {	// If phone or option for, we use link of phone
 			$newphoneform = $newphone;
 			$newphone = '<a href="tel:'.$phone.'"';
 			$newphone .= '>'.$newphoneform.'</a>';
