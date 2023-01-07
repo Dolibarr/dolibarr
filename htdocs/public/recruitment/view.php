@@ -159,6 +159,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
  * View
  */
 
+$now = dol_now();
+
 $head = '';
 if (!empty($conf->global->MAIN_RECRUITMENT_CSS_URL)) {
 	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_RECRUITMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
