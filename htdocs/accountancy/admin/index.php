@@ -514,18 +514,20 @@ if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
 }
 print '</tr>';
 
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ACCOUNTING_ENABLE_AUTOLETTERING").'</td>';
-if (!empty($conf->global->ACCOUNTING_ENABLE_AUTOLETTERING)) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setenableautolettering&value=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
-	print '</a></td>';
-} else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setenableautolettering&value=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
-	print '</a></td>';
+if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
+	print '<tr class="oddeven">';
+	print '<td>' . $langs->trans("ACCOUNTING_ENABLE_AUTOLETTERING") . '</td>';
+	if (!empty($conf->global->ACCOUNTING_ENABLE_AUTOLETTERING)) {
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenableautolettering&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenableautolettering&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print '</tr>';
 }
-print '</tr>';
 
 print '</table>';
 
