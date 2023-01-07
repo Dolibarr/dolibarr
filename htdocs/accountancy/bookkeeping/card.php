@@ -576,18 +576,18 @@ if (!empty($object->piece_num)) {
 
 			print '<tr class="liste_titre">';
 
-				print_liste_field_titre("AccountAccountingShort");
-				print_liste_field_titre("SubledgerAccount");
-				print_liste_field_titre("LabelOperation");
-				print_liste_field_titre("AccountingDebit", "", "", "", "", 'class="right"');
-				print_liste_field_titre("AccountingCredit", "", "", "", "", 'class="right"');
-				if (empty($object->date_validation)) {
-					print_liste_field_titre("Action", "", "", "", "", 'width="60"', "", "", 'center ');
-				} else {
-					print_liste_field_titre("");
-				}
+			print_liste_field_titre("AccountAccountingShort");
+			print_liste_field_titre("SubledgerAccount");
+			print_liste_field_titre("LabelOperation");
+			print_liste_field_titre("AccountingDebit", "", "", "", "", 'class="right"');
+			print_liste_field_titre("AccountingCredit", "", "", "", "", 'class="right"');
+			if (empty($object->date_validation)) {
+				print_liste_field_titre("Action", "", "", "", "", 'width="60"', "", "", 'center ');
+			} else {
+				print_liste_field_titre("");
+			}
 
-				print "</tr>\n";
+			print "</tr>\n";
 
 			// In _tmp mode the first line is empty so we remove it
 			if ($mode == "_tmp") {
