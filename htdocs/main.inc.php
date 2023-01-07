@@ -2284,7 +2284,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	// Defined the links for bottom of card
 	$profilLink = '<a accesskey="c" href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="button-top-menu-dropdown" title="'.dol_escape_htmltag($langs->trans("YourUserFile")).'"><i class="fa fa-user"></i>  '.$langs->trans("Card").'</a>';
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $user->id);
-	$virtuelcardLink = dolButtonToOpenUrlInDialogPopup('publicvirtualcardmenu', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', ''), $urltovirtualcard, '', 'button-top-menu-dropdown marginleftonly nohover', "closeTopMenuLoginDropdown()", '', 'v');
+	$virtuelcardLink = dolButtonToOpenUrlInDialogPopup('publicvirtualcardmenu', $langs->trans("PublicVirtualCardUrl").(is_object($user) ? ' - '.$user->getFullName($langs) : ''), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', ''), $urltovirtualcard, '', 'button-top-menu-dropdown marginleftonly nohover', "closeTopMenuLoginDropdown()", '', 'v');
 	$logoutLink = '<a accesskey="l" href="'.$urllogout.'" class="button-top-menu-dropdown" title="'.dol_escape_htmltag($langs->trans("Logout")).'"><i class="fa fa-sign-out-alt"></i> '.$langs->trans("Logout").'</a>';
 
 	$profilName = $user->getFullName($langs).' ('.$user->login.')';
