@@ -119,6 +119,7 @@ class Categorie extends CommonObject
 		'supplier' => 'soc',
 		'contact'  => 'socpeople',
 		'bank_account' => 'account',
+		//'bank_line'  => 'fk_account',
 	);
 
 	/**
@@ -130,6 +131,7 @@ class Categorie extends CommonObject
 		'customer' => 'societe',
 		'supplier' => 'fournisseur',
 		'bank_account'=> 'account',
+		//'bank_line'  => 'bank',
 	);
 
 	/**
@@ -146,6 +148,7 @@ class Categorie extends CommonObject
 		'user'     => 'User',
 		'account'  => 'Account', // old for bank account
 		'bank_account'  => 'Account',
+		//'bank_line'  => 'Account_line',
 		'project'  => 'Project',
 		'warehouse'=> 'Entrepot',
 		'actioncomm' => 'ActionComm',
@@ -168,6 +171,7 @@ class Categorie extends CommonObject
 		'user' => 'UsersCategoriesArea',
 		'account' => 'AccountsCategoriesArea', // old for bank account
 		'bank_account' => 'AccountsCategoriesArea',
+		//'bank_line' => 'AccountsCategoriesArea',
 		'project' => 'ProjectsCategoriesArea',
 		'warehouse'=> 'StocksCategoriesArea',
 		'actioncomm' => 'ActioncommCategoriesArea',
@@ -184,9 +188,31 @@ class Categorie extends CommonObject
 		'member'   => 'adherent',
 		'contact'  => 'socpeople',
 		'account'  => 'bank_account', // old for bank account
+		//'bank_line' => 'bank',
 		'project'  => 'projet',
 		'warehouse'=> 'entrepot',
 		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord'
+	);
+
+	/**
+	 * @var array 	Object table mapping from type string (table llx_...) when value of key does not match table name.
+	 * 				This array may be completed by external modules with hook "constructCategory"
+	 */
+	public $MAP_OBJ_STATUS = array(
+		'product'      => 'status',
+		'supplier'     => 'statut',
+		'customer'     => 'statut',
+		'member'       => 'statut',
+		'contact'      => 'statut',
+		'bank_account' => 'clos',
+		'project'      => 'fk_statut',
+		'user'         => 'statut',
+		//'bank_line'    => 'rappro',
+		'warehouse'    => 'statut',
+		'actioncomm'   => 'status',
+		'website_page' => 'status',
+		'ticket'       => 'fk_statut',
+		'knowledgemanagement' => 'status'
 	);
 
 	/**
@@ -2047,6 +2073,51 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::count_all_categories", LOG_DEBUG);
 		$sql = "SELECT COUNT(rowid) FROM ".MAIN_DB_PREFIX."categorie";
 		$sql .= " WHERE entity IN (".getEntity('category').")";
+
+		$res = $this->db->query($sql);
+		if ($res) {
+			$obj = $this->db->fetch_object($res);
+			return $obj->count;
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	 *      
+	 *
+	 *      @return array 
+	 */
+	public function getLibStatutObject($status_id, $type = 'product', $mode=0, $moreparam=array()) {
+	
+		global $user;
+
+		$objs = array();
+
+		$classnameforobj = $this->MAP_OBJ_CLASS[$type];
+		$obj = new $classnameforobj($this->db);
+		switch ($type) {
+			case 'product' :
+				$labelstatus = $staticmember->LibStatut($status_id, $mode, (isset($moreparam['type']) ? $moreparam['type'] : ''));
+				break;
+			case 'member' :
+				$labelstatus = $staticmember->LibStatut($status_id, (isset($moreparam['need_subscription']) ? $moreparam['need_subscription'] : ''), (isset($moreparam['date_end_subscription']) ? $moreparam['date_end_subscription'] : ''), $mode);
+				break;
+			case 'actioncomm' :
+				$labelstatus = $staticmember->LibStatut($status_id, $mode, (isset($moreparam['hidenastatus']) ? $moreparam['hidenastatus'] : 0), (isset($moreparam['datestart']) ? $moreparam['datestart'] : ''));
+				break;
+			case 'ticket' :
+				$labelstatus = $staticmember->LibStatut($status_id, $mode, (isset($moreparam['notooltip']) ? $moreparam['notooltip'] : 0), (isset($moreparam['progress']) ? $moreparam['progress'] : 0));
+				break;
+			default : // case 'supplier', 'contact', 'bank_account', 'project', 'user', 'bank_line', 'warehouse', 'website_page', 'knowledgemanagement', ...
+				$labelstatus = $staticmember->LibStatut($status_id, $mode);
+				break;
+		}
+		/*$this->info_box_contents[$line][] = array(
+			'td' => 'class="right tdoverflowmax100" width="15%" title="'.dol_escape_htmltag($labelstatus).'"',
+			'text' => $labelstatus
+		);*/
 
 		$res = $this->db->query($sql);
 		if ($res) {
