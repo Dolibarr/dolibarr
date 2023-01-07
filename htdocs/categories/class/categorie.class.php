@@ -2085,12 +2085,13 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 *      
 	 *
-	 *      @return array 
+	 *
+	 *      @return array
 	 */
-	public function getLibStatutObject($status_id, $type = 'product', $mode=0, $moreparam=array()) {
-	
+	public function getLibStatutObject($status_id, $type = 'product', $mode = 0, $moreparam = array())
+	{
+
 		global $user;
 
 		$objs = array();
