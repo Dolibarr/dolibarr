@@ -1111,6 +1111,24 @@ class Mo extends CommonObject
 			$url = DOL_URL_ROOT.'/mrp/mo_production.php?id='.$this->id;
 		}
 
+		if (str_starts_with($option,'consume,')) {
+			$url = DOL_URL_ROOT.'/mrp/mo_production.php?id='.$this->id.'&action=consumeorproduce';
+			$option = substr($option,strpos($option,'consume,'));
+			$arrTmp = explode(',',$option);
+			$optionArr=[];
+			foreach ($arrTmp as $optTmp) {
+				$key = explode('=',$optTmp)[0];
+				$val = explode('=',$optTmp)[1];
+				$optionArr[$key] = $val;
+			}
+			if (!empty($optionArr['lineid']) && !empty($optionArr['qty'])){
+				$url .= '&qty-'.$optionArr['lineid'].'-1'.'='.$optionArr['qty'];
+			}
+			if (!empty($optionArr['lineid']) && !empty($optionArr['warehouseid'])){
+				$url .= '&idwarehouse-'.$optionArr['lineid'].'-1'.'='.$optionArr['warehouseid'];
+			}
+		}
+
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
