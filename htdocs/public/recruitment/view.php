@@ -223,7 +223,7 @@ if ($urllogo) {
 	if (!empty($mysoc->url)) {
 		print '<a href="'.$mysoc->url.'" target="_blank" rel="noopener">';
 	}
-	print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
+	print '<img id="dolpaymentlogo" src="'.$urllogofull.'">';
 	if (!empty($mysoc->url)) {
 		print '</a>';
 	}
