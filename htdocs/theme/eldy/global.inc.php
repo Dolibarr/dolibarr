@@ -634,7 +634,7 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	-webkit-box-shadow: 0px 0px 5px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 5px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:hover, .buttonDelete:hover   {
+.button:hover:not(.nohover), .buttonDelete:hover:not(.nohover)   {
 	/* warning: having a larger shadow has side effect when button is completely on left of a table */
 	-webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
