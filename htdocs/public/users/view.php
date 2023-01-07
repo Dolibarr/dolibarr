@@ -96,6 +96,7 @@ $company = $mysoc;
 if ($mode == 'vcard') {
 	// We create VCard
 	$v = new vCard();
+
 	$output = $v->buildVCardString($object, $company, $langs);
 
 	$filename = trim(urldecode($v->getFileName())); // "Nom prenom.vcf"

@@ -353,7 +353,7 @@ class vCard
 		$text .= "VERSION:4.0\r\n";		// With V4, all encoding are UTF-8
 		//$text.= "VERSION:2.1\r\n";
 		foreach ($this->properties as $key => $value) {
-			$text .= "$key:$value\r\n";
+			$text .= $key.":".$value."\r\n";
 		}
 		$text .= "REV:".date("Y-m-d")."T".date("H:i:s")."Z\r\n";
 		//$text .= "MAILER: Dolibarr\r\n";
@@ -374,7 +374,7 @@ class vCard
 	/**
 	 * Return a VCARD string
 	 *
-	 * @param	Object		$object		Object
+	 * @param	Object		$object		Object (User, Contact)
 	 * @param	Societe		$company	Company
 	 * @param	Translate	$langs		Lang object
 	 * @return	string					String
@@ -403,8 +403,13 @@ class vCard
 		$this->setNote($object->note_public);
 		$this->setTitle($object->job);
 
-		if ($company->id > 0) {
+		// For user, type=home
+		// For contact, this is not defined
+		$this->setURL($object->url, "TYPE=HOME");
+
+		if (is_object($company)) {
 			$this->setURL($company->url, "TYPE=WORK");
+
 			if (!$object->office_phone) {
 				$this->setPhoneNumber($company->phone, "TYPE=WORK,VOICE");
 			}
