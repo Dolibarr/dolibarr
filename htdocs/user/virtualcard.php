@@ -35,6 +35,7 @@ $langs->loadLangs(array("users", "companies"));
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
@@ -62,9 +63,11 @@ if (($object->id != $user->id) && empty($user->rights->user->user->lire)) {
 
 if ($action == 'update') {
 	$tmparray = array();
+	$tmparray['USER_PUBLIC_HIDE_PHOTO'] = (GETPOST('USER_PUBLIC_HIDE_PHOTO') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_JOBPOSITION'] = (GETPOST('USER_PUBLIC_HIDE_JOBPOSITION') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_EMAIL'] = (GETPOST('USER_PUBLIC_HIDE_EMAIL') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_OFFICE_PHONE'] = (GETPOST('USER_PUBLIC_HIDE_OFFICE_PHONE') ? 1 : 0);
+	$tmparray['USER_PUBLIC_HIDE_OFFICE_FAX'] = (GETPOST('USER_PUBLIC_HIDE_OFFICE_FAX') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_USER_MOBILE'] = (GETPOST('USER_PUBLIC_HIDE_USER_MOBILE') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_SOCIALNETWORKS'] = (GETPOST('USER_PUBLIC_HIDE_SOCIALNETWORKS') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_COMPANY'] = (GETPOST('USER_PUBLIC_HIDE_COMPANY') ? 1 : 0);
@@ -177,9 +180,16 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Parameter").'</td>';
+	print '<td>'.$langs->trans("Options").'</td>';
 	print '<td>'.$langs->trans("Value").'</td>';
 	print "</tr>\n";
+
+	// User photo
+	print '<tr class="oddeven" id="tredit"><td>';
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Photo"));
+	print '</td><td>';
+	print $form->selectyesno("USER_PUBLIC_HIDE_PHOTO", (getDolUserInt('USER_PUBLIC_HIDE_PHOTO', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_PHOTO', 0, $object) : 0), 1);
+	print "</td></tr>\n";
 
 	// Job position
 	print '<tr class="oddeven" id="tredit"><td>';
@@ -202,7 +212,14 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print $form->selectyesno("USER_PUBLIC_HIDE_OFFICE_PHONE", (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object) : 0), 1);
 	print "</td></tr>\n";
 
-	// Office phone
+	// Office fax
+	print '<tr class="oddeven" id="tredit"><td>';
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("OfficeFax"));
+	print '</td><td>';
+	print $form->selectyesno("USER_PUBLIC_HIDE_OFFICE_FAX", (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object) : 0), 1);
+	print "</td></tr>\n";
+
+	// User mobile
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("UserMobile"));
 	print '</td><td>';
@@ -225,7 +242,7 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 
 	// More
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("More");
+	print $langs->trans("Text");
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor('USER_PUBLIC_MORE', getDolUserString('USER_PUBLIC_MORE', '', $object), '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
@@ -236,7 +253,7 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '</div>';
 
 	print '<div class="center">';
-	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
+	print $form->buttonsSaveCancel("Save", "Cancel", array(), 0, '', $dol_openinpopup);
 	print '</div>';
 }
 

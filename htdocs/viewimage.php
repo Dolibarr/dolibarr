@@ -66,6 +66,9 @@ if (isset($_GET["modulepart"])) {
 	if ($_GET["modulepart"] == 'medias') {
 		$needlogin = 0;
 	}
+	if ($_GET["modulepart"] == 'userphotopublic') {
+		$needlogin = 0;
+	}
 	// Used by TakePOS Auto Order
 	if ($_GET["modulepart"] == 'product' && isset($_GET["publictakepos"])) {
 		$needlogin = 0;
@@ -133,7 +136,6 @@ if (empty($original_file) && empty($hashp) && $modulepart != 'barcode') {
 if ($modulepart == 'fckeditor') {
 	$modulepart = 'medias'; // For backward compatibility
 }
-
 
 
 /*

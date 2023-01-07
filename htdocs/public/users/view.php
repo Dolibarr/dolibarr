@@ -146,7 +146,7 @@ print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
 print '<!-- Form to view job -->'."\n";
 
-$modulepart = 'user';
+$modulepart = 'userphotopublic';
 $imagesize = 'small';
 $dir = $conf->user->dir_output;
 $email = $object->email;
@@ -167,11 +167,11 @@ if (!empty($object->photo)) {
 $urllogo = '';
 $urllogofull = '';
 if (!empty($logosmall) && is_readable($conf->user->dir_output.'/'.$logosmall)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&amp;entity='.$conf->entity.'&amp;file='.urlencode($logosmall);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.'&entity='.$conf->entity.'&file='.urlencode($logosmall);
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&amp;entity='.$conf->entity.'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logosmall);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.'&entity='.$conf->entity.'&amp;securekey='.urlencode($securekey).'&file='.urlencode($logosmall);
 } elseif (!empty($logo) && is_readable($conf->user->dir_output.'/'.$logo)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&amp;entity='.$conf->entity.'&amp;file='.urlencode($logo);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.'&entity='.$conf->entity.'&file='.urlencode($logo);
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&amp;entity='.$conf->entity.'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logo);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.'&entity='.$conf->entity.'&amp;securekey='.urlencode($securekey).'&file='.urlencode($logo);
 }
 
 // Output html code for logo
@@ -223,40 +223,43 @@ if ($showbarcode) {
 if ($urllogo) {
 	print '<img class="userphotopublicvcard" id="dolpaymentlogo" src="'.$urllogofull.'">';
 }
-print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
 
-// Output payment summary form
-print '<tr><td class="left">';
 
-print '<div class="nowidthimp" id="tablepublicpayment">';
+$usersection = '';
 
 // User email
 if ($object->email && !getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object)) {
-	print '<div class="flexitemsmall">';
-	print dol_print_email($object->email, 0, 0, 1, 0, 1, 1);
-	print '</div>';
+	$usersection .= '<div class="flexitemsmall">';
+	$usersection .= dol_print_email($object->email, 0, 0, 1, 0, 1, 1);
+	$usersection .= '</div>';
 }
 
 // User url
 if ($object->url && !getDolUserInt('USER_PUBLIC_HIDE_URL', 0, $object)) {
-	print '<div class="flexitemsmall">';
-	print img_picto('', 'globe', 'class="pictofixedwidth"');
-	print dol_print_url($object->url, '_blank', 0, 0, '');
-	print '</div>';
+	$usersection .= '<div class="flexitemsmall">';
+	$usersection .= img_picto('', 'globe', 'class="pictofixedwidth"');
+	$usersection .= dol_print_url($object->url, '_blank', 0, 0, '');
+	$usersection .= '</div>';
 }
 
 // User phone
 if ($object->office_phone && !getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object)) {
-	print '<div class="flexitemsmall">';
-	print img_picto('', 'phone', 'class="pictofixedwidth"');
-	print dol_print_phone($object->office_phone, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
-	print '<div>';
+	$usersection .= '<div class="flexitemsmall">';
+	$usersection .= img_picto('', 'phone', 'class="pictofixedwidth"');
+	$usersection .= dol_print_phone($object->office_phone, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
+	$usersection .= '<div>';
+}
+if ($object->office_fax && !getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object)) {
+	$usersection .= '<div class="flexitemsmall">';
+	$usersection .= img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
+	$usersection .= dol_print_phone($object->office_fax, $object->country_code, 0, $mysoc->id, 'fax', ' ', 0, '');
+	$usersection .= '<div>';
 }
 if ($object->user_mobile && !getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
-	print '<div class="flexitemsmall">';
-	print img_picto('', 'phone', 'class="pictofixedwidth"');
-	print dol_print_phone($object->user_mobile, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
-	print '<div>';
+	$usersection .= '<div class="flexitemsmall">';
+	$usersection .= img_picto('', 'phone', 'class="pictofixedwidth"');
+	$usersection .= dol_print_phone($object->user_mobile, $object->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
+	$usersection .= '<div>';
 }
 
 // Social networks
@@ -264,20 +267,29 @@ if (!empty($object->socialnetworks) && is_array($object->socialnetworks) && coun
 	if (!getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
 		foreach ($object->socialnetworks as $key => $value) {
 			if ($value) {
-				print '<div class="flexitemsmall">'.dol_print_socialnetworks($value, 0, $mysoc->id, $key, $socialnetworksdict).'</div>';
+				$usersection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($value, 0, $mysoc->id, $key, $socialnetworksdict).'</div>';
 			}
 		}
 	}
 }
 
+if ($usersection) {
+	print '<table id="dolpaymenttable" summary="Job position offer" class="center">'."\n";
 
-print '</div>'."\n";
-print "\n";
+	// Output payment summary form
+	print '<tr><td class="left">';
 
-print '</td></tr>'."\n";
+	print '<div class="nowidthimp" id="tablepublicpayment">';
 
-print '</table>'."\n";
+	print $usersection;
 
+	print '</div>'."\n";
+	print "\n";
+
+	print '</td></tr>'."\n";
+
+	print '</table>'."\n";
+}
 
 
 if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
@@ -301,6 +313,12 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 		$companysection .= '<div class="flexitemsmall">';
 		$companysection .= img_picto('', 'phone', 'class="pictofixedwidth"');
 		$companysection .= dol_print_phone($mysoc->phone, $mysoc->country_code, 0, $mysoc->id, 'tel', ' ', 0, '');
+		$companysection .= '<div>';
+	}
+	if ($mysoc->fax) {
+		$companysection .= '<div class="flexitemsmall">';
+		$companysection .= img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
+		$companysection .= dol_print_phone($mysoc->fax, $mysoc->country_code, 0, $mysoc->id, 'fax', ' ', 0, '');
 		$companysection .= '<div>';
 	}
 

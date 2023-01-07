@@ -1438,9 +1438,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
 			$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl"), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
-			/*$morehtmlref .= '<a href="'.$urltovirtualcard.'" class="refid" target="_blank" rel="noopener">';
-			$morehtmlref .= img_picto($langs->trans("PublicVirtualCardUrl"), 'id-card', 'class="valignmiddle marginleftonly paddingrightonly"');
-			$morehtmlref .= '</a>';*/
 
 			dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
