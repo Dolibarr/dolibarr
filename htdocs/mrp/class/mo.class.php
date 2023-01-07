@@ -1122,10 +1122,10 @@ class Mo extends CommonObject
 				$optionArr[$key] = $val;
 			}
 			if (!empty($optionArr['lineid']) && !empty($optionArr['qty'])) {
-				$url .= '&qty-'.$optionArr['lineid'].'-1'.'='.$optionArr['qty'];
+				$url .= '&qty-'.$optionArr['lineid'].'-1='.$optionArr['qty'];
 			}
 			if (!empty($optionArr['lineid']) && !empty($optionArr['warehouseid'])) {
-				$url .= '&idwarehouse-'.$optionArr['lineid'].'-1'.'='.$optionArr['warehouseid'];
+				$url .= '&idwarehouse-'.$optionArr['lineid'].'-1='.$optionArr['warehouseid'];
 			}
 		}
 
