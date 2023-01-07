@@ -146,7 +146,7 @@ foreach ($arrayfields as $key => $val) {
 	}
 }
 
-if (!empty($sortfield)){
+if (!empty($sortfield)) {
 	$sortfield = $db->escape($sortfield);
 }
 
@@ -241,7 +241,7 @@ $keys = array_diff($keys, ["qtytoconsum", "productrowid", "productref", "product
 
 $sql = 'SELECT ';
 $firstKey = true;
-foreach ($keys AS $key){
+foreach ($keys AS $key) {
 	!$firstKey ? $sql .= ',' : '';
 	$sql .= !empty($arrayfields[$key]['alias']) ? $arrayfields[$key]['alias'] . '.' . $key : $key;
 	$firstKey = false;
@@ -556,11 +556,9 @@ foreach ($arrayfields as $key => $val) {
 				$tmpObj = new Entrepot($db);
 				$tmpObj->fields['warehouserowid'] = $object->fields['fk_warehouse'];
 				print $tmpObj->showInputField($classfield, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', 'maxwidth125', 1);
-			}
-			else {
+			} else {
 				print $object->showInputField($classfield, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', 'maxwidth125', 1);
 			}
-
 		} elseif (!preg_match('/^(date|timestamp|datetime)/', $classfield['type'])) {
 			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $classfield['type'])) {
@@ -735,7 +733,6 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				}
 				$totalarray['val'][$key] += $object->$key;
 			}
-
 		}
 	}
 	// Extra fields
