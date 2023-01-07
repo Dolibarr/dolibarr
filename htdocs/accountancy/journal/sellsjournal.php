@@ -390,7 +390,7 @@ if ($action == 'writebookkeeping') {
 						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 					}
 				} else {
-					if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+					if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && getDolGlobalInt('ACCOUNTING_ENABLE_AUTOLETTERING')) {
 						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 						$lettering_static = new Lettering($db);
 						$nb_lettering = $lettering_static->bookkeepingLettering(array($bookkeeping->id));
