@@ -2101,14 +2101,15 @@ if ($action == 'create') {
 		// reload page to retrieve supplier informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script type="text/javascript">
-			$(document).ready(function() {
-				$("#socid").change(function() {
-					var socid = $(this).val();
-                    var fac_rec = $(\'#fac_rec\').val();
-        			window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+				$(document).ready(function() {
+					$("#socid").change(function() {
+						console.log("We have changed the company - Reload page");
+						// reload page
+						$("input[name=action]").val("create");
+						$("form[name=add]").submit();
+					});
 				});
-			});
-			</script>';
+				</script>';
 		}
 		if ($fac_recid <= 0) {
 			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
