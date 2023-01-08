@@ -37,6 +37,10 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 
+if (empty($id) && empty($ref)) {
+	$id = $user->id;
+}
+
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
