@@ -277,6 +277,7 @@ class Mo extends CommonObject
 
 		if ($this->fk_bom > 0) {
 			// If there is a nown BOM, we force the type of MO to the type of BOM
+			include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 			$tmpbom = new BOM($this->db);
 			$tmpbom->fetch($this->fk_bom);
 
