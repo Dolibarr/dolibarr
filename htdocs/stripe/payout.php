@@ -127,7 +127,6 @@ if (!$rowid) {
 		}
 
 		foreach ($payout->data as $payout) {
-
 			print '<tr class="oddeven">';
 
 			// Ref
