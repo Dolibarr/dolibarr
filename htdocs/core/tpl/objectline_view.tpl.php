@@ -255,11 +255,40 @@ if (!empty($conf->accounting->enabled) && $line->fk_accounting_account > 0) {
 }
 
 print '</td>';
+// Vendor price ref
 if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 	print '<td class="linecolrefsupplier">';
 	print ($line->ref_fourn ? $line->ref_fourn : $line->ref_supplier);
 	print '</td>';
 }
+
+$tooltiponprice = '';
+$tooltiponpriceend = '';
+if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+	$tooltiponprice = $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
+	$tooltiponprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva);
+	$seller = ($senderissupplier ? (is_object($object->thirdparty) ? $object->thirdparty : null) : $mysoc);
+	if ($seller) {
+		if ($seller->useLocalTax(1)) {
+			if (($mysoc->country_code == $object->thirdparty->country_code) || $seller->useLocalTax(1)) {
+				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax1);
+			} else {
+				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'=<span class="opacitymedium">'.$langs->trans("NotUsedForThis".($senderissupplier ? "Vendor" : "Customer")).'</span>';
+			}
+		}
+		if ($seller->useLocalTax(2)) {
+			if (($mysoc->country_code == $object->thirdparty->country_code) || $seller->useLocalTax(2)) {
+				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax2);
+			} else {
+				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'=<span class="opacitymedium">'.$langs->trans("NotUsedForThis".($senderissupplier ? "Vendor" : "Customer")).'</span>';
+			}
+		}
+	}
+	$tooltiponprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);
+	$tooltiponprice = '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltiponprice).'">';
+	$tooltiponpriceend = '</span>';
+}
+
 // VAT Rate
 print '<td class="linecolvat nowrap right">';
 $coldisplay++;
@@ -276,8 +305,9 @@ if (price2num($line->total_localtax2)) {
 if (empty($positiverates)) {
 	$positiverates = '0';
 }
+print $tooltiponprice;
 print vatrate($positiverates.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : ''), '%', $line->info_bits);
-//print vatrate($line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), '%', $line->info_bits);
+print $tooltiponpriceend;
 ?></td>
 
 	<td class="linecoluht nowrap right"><?php $coldisplay++; ?><?php print price($sign * $line->subprice); ?></td>
@@ -344,45 +374,24 @@ if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid)) {
 		<td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php print price(price2num($line->marque_tx, 'MT')).'%'; ?></td>
 	<?php }
 }
+
 // Price total without tax
 if ($line->special_code == 3) { ?>
 	<td class="linecoloption nowrap right"><?php $coldisplay++; ?><?php print $langs->trans('Option'); ?></td>
 <?php } else {
 	print '<td class="linecolht nowrap right">';
 	$coldisplay++;
-	if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-		$tooltiponprice = $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
-		$tooltiponprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva);
-		if (!$senderissupplier && is_object($object->thirdparty)) {
-			if ($mysoc->useLocalTax(1)) {
-				if (($mysoc->country_code == $object->thirdparty->country_code) || $object->thirdparty->useLocalTax(1)) {
-					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax1);
-				} else {
-					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'=<span class="opacitymedium">'.$langs->trans("NotUsedForThisCustomer").'</span>';
-				}
-			}
-			if ($mysoc->useLocalTax(2)) {
-				if (($mysoc->country_code == $object->thirdparty->country_code) || $object->thirdparty->useLocalTax(2)) {
-					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax2);
-				} else {
-					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'=<span class="opacitymedium">'.$langs->trans("NotUsedForThisCustomer").'</span>';
-				}
-			}
-		}
-		$tooltiponprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);
-
-		print '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltiponprice).'">';
-	}
+	print $tooltiponprice;
 	print price($sign * $line->total_ht);
-	if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-		print '</span>';
-	}
+	print $tooltiponpriceend;
 	print '</td>';
 	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
 		print '<td class="linecolutotalht_currency nowrap right">'.price($sign * $line->multicurrency_total_ht).'</td>';
 		$coldisplay++;
 	}
 }
+
+// Price inc tax
 if ($outputalsopricetotalwithtax) {
 	print '<td class="linecolht nowrap right">'.price($sign * $line->total_ttc).'</td>';
 	$coldisplay++;
@@ -397,6 +406,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		}
 	}
 
+	// Asset info
 	if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
 		print '<td class="linecolasset center">';
 		$coldisplay++;
@@ -426,6 +436,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		print '</td>';
 	}
 
+	// Edit picto
 	print '<td class="linecoledit center">';
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
@@ -435,6 +446,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 	}
 	print '</td>';
 
+	// Delete picto
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
 	if (!$situationinvoicelinewithparent && empty($disableremove)) { // For situation invoice, deletion is not possible if there is a parent company.
@@ -444,6 +456,7 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 	}
 	print '</td>';
 
+	// Move up-down picto
 	if ($num > 1 && $conf->browser->layout != 'phone' && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) {
 		print '<td class="linecolmove tdlineupdown center">';
 		$coldisplay++;
