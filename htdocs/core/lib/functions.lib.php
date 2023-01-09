@@ -6454,12 +6454,12 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
 
 /**
  *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
- *   VATRULE 1: Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
- *	 VATRULE 2: Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
- *	 VATRULE 3: Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
- *	 VATRULE 4: Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
- *	 VATRULE 5: Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
- *	 VATRULE 6: Sinon TVA proposee par defaut=0. Fin de regle.
+ *   VATRULE 1: If seller does not use VAT, default VAT is 0. End of rule.
+ *	 VATRULE 2: If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
+ *	 VATRULE 3: If (seller and buyer in the European Community) and (property sold = new means of transport such as car, boat, plane) then VAT by default = 0 (VAT must be paid by the buyer to the tax center of his country and not to the seller). End of rule.
+ *	 VATRULE 4: If (seller and buyer in the European Community) and (buyer = individual) then VAT by default = VAT of the product sold. End of rule
+ *	 VATRULE 5: If (seller and buyer in European Community) and (buyer = company) then VAT by default=0. End of rule
+ *	 VATRULE 6: Otherwise the VAT proposed by default=0. End of rule.
  *
  *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
  *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
@@ -6504,26 +6504,24 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		}
 	}
 
-	// If seller does not use VAT
+	// If seller does not use VAT, default VAT is 0. End of rule.
 	if (!$seller_use_vat) {
 		//print 'VATRULE 1';
 		return 0;
 	}
 
-	// Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concerne si le test suivant n'est pas suffisant.
-
-	// Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
+	// If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
 	if (($seller_country_code == $buyer_country_code)
 	|| (in_array($seller_country_code, array('FR', 'MC')) && in_array($buyer_country_code, array('FR', 'MC')))) { // Warning ->country_code not always defined
 		//print 'VATRULE 2';
 		return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
 	}
 
-	// Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+	// If (seller and buyer in the European Community) and (property sold = new means of transport such as car, boat, plane) then VAT by default = 0 (VAT must be paid by the buyer to the tax center of his country and not to the seller). End of rule.
 	// 'VATRULE 3' - Not supported
 
-	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
-	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+	// If (seller and buyer in the European Community) and (buyer = individual) then VAT by default = VAT of the product sold. End of rule
+	// If (seller and buyer in European Community) and (buyer = company) then VAT by default=0. End of rule
 	if (($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if ($isacompany && !empty($conf->global->MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL)) {
@@ -6542,7 +6540,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		}
 	}
 
-	// Si (vendeur dans Communaute europeene et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+	// If (seller in the European Community and buyer outside the European Community and private buyer) then VAT by default = VAT of the product sold. End of rule
 	// I don't see any use case that need this rule.
 	if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
@@ -6552,15 +6550,15 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		}
 	}
 
-	// Sinon la TVA proposee par defaut=0. Fin de regle.
-	// Rem: Cela signifie qu'au moins un des 2 est hors Communaute europeenne et que le pays differe
+	// Otherwise the VAT proposed by default=0. End of rule.
+	// Rem: This means that at least one of the 2 is outside the European Community and the country differs
 	//print 'VATRULE 6';
 	return 0;
 }
 
 
 /**
- *	Fonction qui renvoie si tva doit etre tva percue recuperable
+ *	Function that returns whether VAT must be recoverable collected VAT (e.g.: VAT NPR in France)
  *
  *	@param	Societe		$thirdparty_seller    	Thirdparty seller
  *	@param  Societe		$thirdparty_buyer   	Thirdparty buyer
