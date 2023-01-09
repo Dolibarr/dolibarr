@@ -838,6 +838,9 @@ class CommandeFournisseur extends CommonOrder
 
 		$label = '';
 
+        $fourn = new Societe($this->db);
+        $fourn->fetch($this->socid);
+
 		if ($user->hasRight("fournisseur", "commande", "read")) {
 			$label = '<u class="paddingrightonly">'.$langs->trans("SupplierOrder").'</u>';
 			if (isset($this->statut)) {
@@ -849,6 +852,7 @@ class CommandeFournisseur extends CommonOrder
 			if (!empty($this->ref_supplier)) {
 				$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 			}
+            $label .= '<br><b>'.$langs->trans('Supplier').':</b> '.$fourn->name;
 			if (!empty($this->total_ht)) {
 				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
 			}
