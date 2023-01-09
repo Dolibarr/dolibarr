@@ -1866,7 +1866,7 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '					<PstlAdr>'.$CrLf;
 			$XML_DEBITOR .= '						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
 			$addressline1 = strtr($row_address, array(CHR(13) => ", ", CHR(10) => ""));
-			$addressline2 = strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => ""));
+			$addressline2 = strtr($row_zip.(($row_zip && $row_town) ? ' ' : (string) $row_town), array(CHR(13) => ", ", CHR(10) => ""));
 			if (trim($addressline1)) {
 				$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}
@@ -1935,7 +1935,7 @@ class BonPrelevement extends CommonObject
 			$XML_CREDITOR .= '					<PstlAdr>'.$CrLf;
 			$XML_CREDITOR .= '						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
 			$addressline1 = strtr($row_address, array(CHR(13) => ", ", CHR(10) => ""));
-			$addressline2 = strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => ""));
+			$addressline2 = strtr($row_zip.(($row_zip && $row_town) ? ' ' : (string) $row_town), array(CHR(13) => ", ", CHR(10) => ""));
 			if (trim($addressline1)) {
 				$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)).'</AdrLine>'.$CrLf;
 			}

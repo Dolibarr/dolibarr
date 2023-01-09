@@ -483,7 +483,7 @@ if (!empty($arrayfields['b.tms']['checked'])) {
 }
 // Status
 if (!empty($arrayfields['b.clos']['checked'])) {
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center parentonrightofpage">';
 	$array = array(
 		'opened'=>$langs->trans("Opened"),
 		'closed'=>$langs->trans("Closed")

@@ -652,6 +652,8 @@ function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlan
 	} else {
 		dol_print_error($dbtouse, '');
 	}
+
+	return '';
 }
 
 /**

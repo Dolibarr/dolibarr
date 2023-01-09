@@ -1505,7 +1505,7 @@ class Mo extends CommonObject
 	/**
 	 * Function used to return childs of Mo
 	 *
-	 * @return array if OK, -1 if KO
+	 * @return array|int 			array if OK, -1 if KO
 	 */
 	public function getMoChilds()
 	{
@@ -1543,11 +1543,10 @@ class Mo extends CommonObject
 	/**
 	 * Function used to return childs of Mo
 	 *
-	 * @return object Mo if OK, -1 if KO, 0 if not exist
+	 * @return Object|int			MO object if OK, -1 if KO, 0 if not exist
 	 */
 	public function getMoParent()
 	{
-
 		$MoParent = new Mo($this->db);
 		$error = 0;
 

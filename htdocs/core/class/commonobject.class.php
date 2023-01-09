@@ -2072,7 +2072,7 @@ abstract class CommonObject
 
 		$sql .= " WHERE ".$id_field." = ".((int) $id);
 
-		dol_syslog(__METHOD__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($trigkey) {
@@ -3338,6 +3338,8 @@ abstract class CommonObject
 			$row = $this->db->fetch_row($resql);
 			return $row[0];
 		}
+
+		return 0;
 	}
 
 	/**
@@ -3361,6 +3363,8 @@ abstract class CommonObject
 			$row = $this->db->fetch_row($resql);
 			return $row[0];
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3406,6 +3410,8 @@ abstract class CommonObject
 				return $row[0];
 			}
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -4533,6 +4539,8 @@ abstract class CommonObject
 			$row = $this->db->fetch_row($resql);
 			return $row[0];
 		}
+
+		return 0;
 	}
 
 	/**
@@ -5115,7 +5123,7 @@ abstract class CommonObject
 			print '<td class="linecoluht_currency right">'.$langs->trans('PriceUHTCurrency').'</td>';
 		}
 		print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 		}
 		print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
@@ -5253,7 +5261,7 @@ abstract class CommonObject
 		$this->tpl['total_ht'] = price($line->total_ht);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->tpl['unit'] = $langs->transnoentities($line->getLabelOfUnit('long'));
 		}
 		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
@@ -5766,6 +5774,9 @@ abstract class CommonObject
 		}
 
 		// TODO Ad here a scan into table llx_overwrite_default with a filter on $this->element and $fieldname
+		// store content into $conf->cache['overwrite_default']
+
+		return '';
 	}
 
 
@@ -7822,7 +7833,7 @@ abstract class CommonObject
 	 * clear validation message result for a field
 	 *
 	 * @param string $fieldKey Key of attribute to clear
-	 * @return null
+	 * @return void
 	 */
 	public function clearFieldError($fieldKey)
 	{
@@ -7835,12 +7846,14 @@ abstract class CommonObject
 	 *
 	 * @param string $fieldKey Key of attribute
 	 * @param string $msg the field error message
-	 * @return null
+	 * @return void
 	 */
 	public function setFieldError($fieldKey, $msg = '')
 	{
 		global $langs;
-		if (empty($msg)) { $msg = $langs->trans("UnknowError"); }
+		if (empty($msg)) {
+			$msg = $langs->trans("UnknowError");
+		}
 
 		$this->error = $this->validateFieldsErrors[$fieldKey] = $msg;
 	}

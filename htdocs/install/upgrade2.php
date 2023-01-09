@@ -4086,11 +4086,11 @@ function migrate_rename_directories($db, $langs, $conf, $oldname, $newname)
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @return	void
+ * @return	boolean
  */
 function migrate_delete_old_files($db, $langs, $conf)
 {
-	$result = true;
+	$ret = true;
 
 	dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
 
@@ -4155,7 +4155,6 @@ function migrate_delete_old_files($db, $langs, $conf)
 
 	foreach ($filetodeletearray as $filetodelete) {
 		//print '<b>'DOL_DOCUMENT_ROOT.$filetodelete."</b><br>\n";
-		$result = 1;
 		if (file_exists(DOL_DOCUMENT_ROOT.$filetodelete)) {
 			$result = dol_delete_file(DOL_DOCUMENT_ROOT.$filetodelete, 0, 0, 0, null, true, false);
 			if (!$result) {
@@ -4167,7 +4166,8 @@ function migrate_delete_old_files($db, $langs, $conf)
 			}
 		}
 	}
-	return $result;
+
+	return $ret;
 }
 
 /**
@@ -4176,11 +4176,11 @@ function migrate_delete_old_files($db, $langs, $conf)
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @return	void
+ * @return	boolean
  */
 function migrate_delete_old_dir($db, $langs, $conf)
 {
-	$result = true;
+	$ret = true;
 
 	dolibarr_install_syslog("upgrade2::migrate_delete_old_dir");
 
@@ -4206,7 +4206,8 @@ function migrate_delete_old_dir($db, $langs, $conf)
 			print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
 		}
 	}
-	return $result;
+
+	return $ret;
 }
 
 

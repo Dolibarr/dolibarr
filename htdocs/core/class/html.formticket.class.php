@@ -779,7 +779,7 @@ class FormTicket
 	 *      @param	string		$morecss			More CSS
 	 * 		@param	int 		$use_multilevel		If > 0 create a multilevel select which use $htmlname example: $use_multilevel = 1 permit to have 2 select boxes.
 	 * 		@param	Translate	$outputlangs		Output language
-	 *      @return void
+	 *      @return string|void						String of HTML component
 	 */
 	public function selectGroupTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '', $use_multilevel = 0, $outputlangs = null)
 	{
@@ -985,7 +985,6 @@ class FormTicket
 					}
 					$sql = substr($sql, 0, -2);
 					$sql .= ")";
-				} else {
 				}
 				$sql .= $this->db->order('ctc.pos', 'ASC');
 

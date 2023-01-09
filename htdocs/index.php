@@ -490,7 +490,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		foreach ($dashboardgroup as $groupKey => $groupElement) {
 			$boards = array();
 
-			// Scan $groupElement and save the one with 'stats' that lust be used for Open object dashboard
+			// Scan $groupElement and save the one with 'stats' that must be used for the open objects dashboard
 			if (empty($conf->global->MAIN_DISABLE_NEW_OPENED_DASH_BOARD)) {
 				foreach ($groupElement['stats'] as $infoKey) {
 					if (!empty($valid_dashboardlines[$infoKey])) {
@@ -519,10 +519,10 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				$openedDashBoard .= '		<span class="info-box-icon bg-infobox-'.$groupKeyLowerCase.'">'."\n";
 				$openedDashBoard .= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
 
-				// Show the span for the total of record
+				// Show the span for the total of record. TODO This seems not used.
 				if (!empty($groupElement['globalStats'])) {
 					$globalStatInTopOpenedDashBoard[] = $globalStatsKey;
-					$openedDashBoard .= '<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$nbTotal.'</span>';
+					$openedDashBoard .= '<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$groupElement['globalStats']['nbTotal'].'</span>';
 				}
 
 				$openedDashBoard .= '</span>'."\n";
@@ -809,7 +809,7 @@ function getWeatherStatus($totallate)
 	$weather->level = 0;
 	$level0 = $offset;
 	$level0 = getDolGlobalString($used_conf.'0', $level0);
-	$level1 = $offset + 1 * $factor;
+	$level1 = $offset + $factor;
 	$level1 = getDolGlobalString($used_conf.'1', $level1);
 	$level2 = $offset + 2 * $factor;
 	$level2 = getDolGlobalString($used_conf.'2', $level2);

@@ -381,6 +381,10 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->salaries-
 		$object->paye = 0;
 		$object->id = $object->ref = null;
 
+		if (GETPOST('amount', 'alphanohtml')) {
+				$object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);
+		}
+
 		if (GETPOST('clone_label', 'alphanohtml')) {
 			$object->label = GETPOST('clone_label', 'alphanohtml');
 		} else {
@@ -658,18 +662,25 @@ if ($action == 'create' && $permissiontoadd) {
 	print '<script>';
 	print '$( document ).ready(function() {';
 		print '$("#updateAmountWithLastSalary").on("click", function updateAmountWithLastSalary() {
-					console.log("We click on link to autofill salary amount");
 					var fk_user = $("#fk_user").val()
 					var url = "'.DOL_URL_ROOT.'/salaries/ajax/ajaxsalaries.php?fk_user="+fk_user;
+					console.log("We click on link to autofill salary amount url="+url);
 					if (fk_user != -1) {
 						$.get(
 							url,
 							function( data ) {
-								if(data!=null) {
-									console.log("Data returned: "+data);
-									item = JSON.parse(data);
-									if(item[0].key == "Amount") {
+								console.log("Data returned: "+data);
+								if (data != null) {
+									if (typeof data == "object") {
+										console.log("data is already type object, no need to parse it");
+										item = data;
+									} else {
+										console.log("data is type "+(typeof data));
+										item = JSON.parse(data);
+									}
+									if (item[0].key == "Amount") {
 										value = item[0].value;
+										console.log("amount returned = "+value);
 										if (value != null) {
 											$("#amount").val(item[0].value);
 										} else {
@@ -707,6 +718,7 @@ if ($id > 0) {
 		//$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
+		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100');
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
 	}

@@ -449,9 +449,9 @@ if (isModEnabled("banque")) {
 print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$db->escape($search_amount).'"></td>';
 
 //Status
-print '<td class="liste_titre maxwidthonsmartphone right">';
+print '<td class="liste_titre right parentonrightofpage">';
 $liststatus = array('0' => $langs->trans("Unpaid"), '1' => $langs->trans("Paid"));
-print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
+print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 print '</td>';
 
 // Extra fields

@@ -661,18 +661,15 @@ class FichinterRec extends Fichinter
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *	@param	string		$option		''=Create a specimen fichinter with lines, 'nolines'=No lines
 	 *  @return	void
 	 */
-	public function initAsSpecimen($option = '')
+	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
+		//$now = dol_now();
+		//$arraynow = dol_getdate($now);
+		//$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
-		$now = dol_now();
-		$arraynow = dol_getdate($now);
-		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
-
-		parent::initAsSpecimen($option);
+		parent::initAsSpecimen();
 
 		$this->usenewprice = 1;
 	}

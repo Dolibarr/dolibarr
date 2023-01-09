@@ -232,14 +232,14 @@ if ($resql) {
 		print '</td>';
 	}
 	print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre right parentonrightofpage">';
 	$liststatus = array(
 		Don::STATUS_DRAFT=>$langs->trans("DonationStatusPromiseNotValidated"),
 		Don::STATUS_VALIDATED=>$langs->trans("DonationStatusPromiseValidated"),
 		Don::STATUS_PAID=>$langs->trans("DonationStatusPaid"),
 		Don::STATUS_CANCELED=>$langs->trans("Canceled")
 	);
-	print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100 onrightofpage');
+	print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'search_status maxwidth100 onrightofpage');
 	print '</td>';
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(0);

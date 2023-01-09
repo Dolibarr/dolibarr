@@ -69,6 +69,7 @@ $search_type_template = GETPOST('search_type_template', 'alpha');
 $search_lang = GETPOST('search_lang', 'alpha');
 $search_fk_user = GETPOST('search_fk_user', 'intcomma');
 $search_topic = GETPOST('search_topic', 'alpha');
+$search_module = GETPOST('search_module', 'alpha');
 
 $acts = array();
 $actl = array();
@@ -108,7 +109,7 @@ $tabname[25] = MAIN_DB_PREFIX."c_email_templates";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield = array();
-$tabfield[25] = "label,lang,type_template,fk_user,private,position,topic,joinfiles,content";
+$tabfield[25] = "label,lang,type_template,fk_user,private,position,module,topic,joinfiles,content";
 if (!empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) {
 	$tabfield[25] .= ',content_lines';
 }
@@ -290,6 +291,7 @@ if (empty($reshook)) {
 		$search_lang = '';
 		$search_fk_user = '';
 		$search_topic = '';
+		$search_module = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -598,6 +600,9 @@ if ($search_lang) {
 if ($search_fk_user != '' && $search_fk_user != '-1') {
 	$sql .= natural_search('fk_user', $search_fk_user, 2);
 }
+if ($search_module) {
+	$sql .= natural_search('module', $search_module);
+}
 if ($search_topic) {
 	$sql .= natural_search('topic', $search_topic);
 }
@@ -703,6 +708,9 @@ if ($action == 'create') {
 		$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
 		$valuetoshow = $langs->trans($valuetoshow); // try to translate
 		$align = "left";
+		if ($fieldlist[$field] == 'module') {
+			$valuetoshow = '';
+		}
 		if ($fieldlist[$field] == 'fk_user') {
 			$valuetoshow = $langs->trans("Owner");
 		}
@@ -802,9 +810,9 @@ if ($action == 'create') {
 		$fieldsforcontent = array('topic', 'joinfiles', 'content', 'content_lines');
 	}
 	foreach ($fieldsforcontent as $tmpfieldlist) {
-		print '<tr class="impair nodrag nodrop nohover"><td colspan="7" class="nobottom">';
+		print '<tr class="impair nodrag nodrop nohover"><td colspan="8" class="nobottom">';
 
-		// Label
+		// Topic of email
 		if ($tmpfieldlist == 'topic') {
 			print '<strong>'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
 		}
@@ -882,6 +890,9 @@ if ($search_type_template != '-1') {
 if ($search_fk_user > 0) {
 	$param .= '&search_fk_user='.urlencode($search_fk_user);
 }
+if ($search_module) {
+	$param .= '&search_module='.urlencode($search_module);
+}
 if ($search_topic) {
 	$param .= '&search_topic='.urlencode($search_topic);
 }
@@ -909,7 +920,9 @@ if ($num > $listlimit) {
 print '<tr class="liste_titre">';
 
 foreach ($fieldlist as $field => $value) {
-	if ($value == 'label') {
+	if ($value == 'module') {
+		print '<td class="liste_titre"><input type="text" name="search_module" class="maxwidth75" value="'.dol_escape_htmltag($search_module).'"></td>';
+	} elseif ($value == 'label') {
 		print '<td class="liste_titre"><input type="text" name="search_label" class="maxwidth200" value="'.dol_escape_htmltag($search_label).'"></td>';
 	} elseif ($value == 'lang') {
 		print '<td class="liste_titre">';
@@ -917,7 +930,7 @@ foreach ($fieldlist as $field => $value) {
 		print '</td>';
 	} elseif ($value == 'fk_user') {
 		print '<td class="liste_titre">';
-		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'maxwidth125', 1);
+		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'maxwidth100', 1);
 		print '</td>';
 	} elseif ($value == 'topic') {
 		print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
@@ -958,6 +971,9 @@ foreach ($fieldlist as $field => $value) {
 	*/
 	$valuetoshow = ucfirst($fieldlist[$field]); // By defaut
 	$valuetoshow = $langs->trans($valuetoshow); // try to translate
+	if ($fieldlist[$field] == 'module') {
+		$align = 'tdoverflowmax100';
+	}
 	if ($fieldlist[$field] == 'fk_user') {
 		$valuetoshow = $langs->trans("Owner");
 	}
@@ -1056,7 +1072,7 @@ if ($num) {
 					if ($showfield) {
 						// Show line for topic, joinfiles and content
 						print '</tr><tr class="oddeven" nohover tr-'.$tmpfieldlist.'-'.$rowid.' ">';
-						print '<td colspan="8">';
+						print '<td colspan="9">';
 						if ($tmpfieldlist == 'topic') {
 							print '<strong>'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
 							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'">';
@@ -1072,7 +1088,6 @@ if ($num) {
 							if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 								$okforextended = false;
 							}
-
 							$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 500, 'dolibarr_mailings', 'In', 0, $acceptlocallinktomedia, $okforextended, ROWS_6, '90%');
 							print $doleditor->Create(1);
 						}
@@ -1273,17 +1288,19 @@ $db->close();
  */
 function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 {
-	global $conf, $langs, $user, $db;
+	global $langs, $user, $db;
 	global $form;
 	global $elementList;
 
 	$formadmin = new FormAdmin($db);
 
 	foreach ($fieldlist as $field => $value) {
-		if ($value == 'fk_user') {
+		if ($value == 'module') {
+			print '<td></td>';
+		} elseif ($value == 'fk_user') {
 			print '<td>';
 			if ($user->admin) {
-				print $form->select_dolusers(empty($obj->$value) ? '' : $obj->$value, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth150 maxwidth200');
+				print $form->select_dolusers(empty($obj->$value) ? '' : $obj->$value, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth75 maxwidth100');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
 					print $user->getNomUrl(1); // Me
@@ -1309,7 +1326,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				if ($context == 'edit') {
 					$selectedlang = $obj->lang;
 				}
-				print $formadmin->select_language($selectedlang, 'langcode', 0, null, 1, 0, 0, 'maxwidth150');
+				print $formadmin->select_language($selectedlang, 'langcode', 0, null, 1, 0, 0, 'maxwidth100');
 			} else {
 				if (!empty($obj->lang)) {
 					print $obj->lang.' - '.$langs->trans('Language_'.$obj->lang);
@@ -1329,7 +1346,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 				print '<input type="hidden" name="type_template" value="'.$obj->type_template.'">';
 				print $obj->type_template;
 			} else {
-				print $form->selectarray('type_template', $elementList, (!empty($obj->type_template) ? $obj->type_template:''), 1, 0, 0, '', 0, 0, 0, '', 'minwidth150', 1, '', 0, 1);
+				print $form->selectarray('type_template', $elementList, (!empty($obj->type_template) ? $obj->type_template:''), 1, 0, 0, '', 0, 0, 0, '', 'minwidth75 maxwidth125', 1, '', 0, 1);
 			}
 			print '</td>';
 		} elseif ($context == 'add' && in_array($value, array('topic', 'joinfiles', 'content', 'content_lines'))) {

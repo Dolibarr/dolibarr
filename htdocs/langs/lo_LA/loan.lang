@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with
 CantModifyInterestIfScheduleIsUsed = ເຈົ້າບໍ່ສາມາດແກ້ໄຂຄວາມສົນໃຈໄດ້ຖ້າເຈົ້າໃຊ້ ກຳ ນົດເວລາ
 # Admin
 ConfigLoan=ການ ກຳ ນົດຄ່າເງິນກູ້ຂອງໂມດູນ
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=ບັນຊີທຶນບັນຊີຕາມຄ່າເລີ່ມຕົ້ນ
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=ອັດຕາດອກເບ້ຍບັນຊີຕາມຄ່າເລີ່ມຕົ້ນ
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=ການປະກັນບັນຊີບັນຊີຕາມຄ່າເລີ່ມຕົ້ນ
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
 CreateCalcSchedule=ແກ້ໄຂ ຄຳ commitmentັ້ນສັນຍາດ້ານການເງິນ

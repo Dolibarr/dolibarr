@@ -2871,7 +2871,7 @@ if ($action == 'create' && $usercancreate) {
 				// Ship
 				$numshipping = 0;
 				if (isModEnabled('expedition')) {
-					$numshipping = $object->nb_expedition();
+					$numshipping = $object->countNbOfShipments();
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || !empty($conf->global->STOCK_SUPPORTS_SERVICES))) {
 						if ((isModEnabled('expedition_bon') && $user->rights->expedition->creer) || ($conf->delivery_note->enabled && $user->rights->expedition->delivery->creer)) {

@@ -15,6 +15,7 @@ exclude:
       - htdocs/custom
       - htdocs/includes
       - htdocs/install/doctemplates
+      - htdocs/modulebuilder/template/test/functionnal
   - name: PhpIssetCanBeReplacedWithCoalesceInspection
   - name: PhpRedundantOptionalArgumentInspection
   - name: PhpLanguageLevelInspection
@@ -80,4 +81,5 @@ exclude:
   - name: PhpParameterNameChangedDuringInheritanceInspection
   - name: PhpDuplicateSwitchCaseBodyInspection
   - name: PhpNestedDirNameCallsCanBeReplacedWithLevelParameterInspection
-  
+  - name: PhpPointlessBooleanExpressionInConditionInspection  
+  - name: PhpUndefinedMethodInspection

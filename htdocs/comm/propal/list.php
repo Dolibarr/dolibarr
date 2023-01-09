@@ -306,7 +306,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid'=>$socid, 'arrayfields'=>&$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -1386,8 +1386,8 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['u.login']['checked'])) {
 		// Author
-		print '<td class="liste_titre" align="center">';
-		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
+		print '<td class="liste_titre">';
+		print '<input class="flat maxwidth75" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 		print '</td>';
 	}
 	if (!empty($arrayfields['sale_representative']['checked'])) {
@@ -1443,8 +1443,8 @@ if ($resql) {
 	}
 	// Status
 	if (!empty($arrayfields['p.fk_statut']['checked'])) {
-		print '<td class="liste_titre maxwidthonsmartphone right">';
-		$formpropal->selectProposalStatus($search_status, 1, 0, 1, 'customer', 'search_statut', 'search_status maxwidth125 onrightofpage');
+		print '<td class="liste_titre right parentonrightofpage">';
+		$formpropal->selectProposalStatus($search_status, 1, 0, 1, 'customer', 'search_statut', 'search_status width100 onrightofpage');
 		print '</td>';
 	}
 	// Action column

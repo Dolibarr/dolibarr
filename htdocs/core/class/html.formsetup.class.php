@@ -339,8 +339,8 @@ class FormSetup
 	/**
 	 * Method used to test  module builder convertion to this form usage
 	 *
-	 * @param array 	$params 	an array of arrays of params from old modulBuilder params
-	 * @return null
+	 * @param 	array 	$params 	an array of arrays of params from old modulBuilder params
+	 * @return 	void
 	 */
 	public function addItemsFromParamsArray($params)
 	{
@@ -683,7 +683,8 @@ class FormSetupItem
 
 	/**
 	 * Save const value based on htdocs/core/actions_setmoduleoptions.inc.php
-	 *	@return     int         			-1 if KO, 1 if OK
+	 *
+	 * @return     int         			-1 if KO, 1 if OK
 	 */
 	public function saveConfValue()
 	{
@@ -714,10 +715,13 @@ class FormSetupItem
 				return 1;
 			}
 		}
+
+		return 0;
 	}
 
 	/**
 	 * Set an override function for saving data
+	 *
 	 * @param callable $callBack a callable function
 	 * @return void
 	 */
@@ -1005,6 +1009,7 @@ class FormSetupItem
 	 * set the type from string : used for old module builder setup conf style conversion and tests
 	 * because this two class will quickly evolve it's important to not set directly $this->type (will be protected) so this method exist
 	 * to be sure we can manage evolution easily
+	 *
 	 * @param string $type possible values based on old module builder setup : 'string', 'textarea', 'category:'.Categorie::TYPE_CUSTOMER', 'emailtemplate', 'thirdparty_type'
 	 * @deprecated yes this setTypeFromTypeString came deprecated because it exists only for manage setup convertion
 	 * @return bool
@@ -1012,11 +1017,13 @@ class FormSetupItem
 	public function setTypeFromTypeString($type)
 	{
 		$this->type = $type;
+
 		return true;
 	}
 
 	/**
 	 * Add error
+	 *
 	 * @param array|string $errors the error text
 	 * @return null
 	 */
@@ -1034,7 +1041,9 @@ class FormSetupItem
 	}
 
 	/**
-	 * @return bool|string Generate the output html for this item
+	 * generateOutputField
+	 *
+	 * @return bool|string 		Generate the output html for this item
 	 */
 	public function generateOutputField()
 	{

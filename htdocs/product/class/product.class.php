@@ -1463,6 +1463,14 @@ class Product extends CommonObject
 				}
 			}
 
+			// Delete record into ECM index and physically
+			if (!$error) {
+				$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+				if (!$res) {
+					$error++;
+				}
+			}
+
 			if (!$error) {
 				// We remove directory
 				$ref = dol_sanitizeFileName($this->ref);

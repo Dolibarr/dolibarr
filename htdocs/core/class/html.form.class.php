@@ -201,10 +201,10 @@ class Form
 	 * @param	string	$formatfunc		Call a specific function to output field in view mode (For example: 'dol_print_email')
 	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
 	 * @param	string	$gm				'auto' or 'tzuser' or 'tzuserrel' or 'tzserver' (when $typeofdata is a date)
-	 * @param	array	$moreoptions	Array with more options. For example array('addnowlink'=>1)
+	 * @param	array	$moreoptions	Array with more options. For example array('addnowlink'=>1), array('valuealreadyhtmlescaped'=>1)
 	 * @return  string					HTML edit field
 	 */
-	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 0, $formatfunc = '', $paramid = 'id', $gm = 'auto', $moreoptions = array())
+	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 1, $formatfunc = '', $paramid = 'id', $gm = 'auto', $moreoptions = array())
 	{
 		global $conf, $langs;
 
@@ -278,10 +278,14 @@ class Form
 					$ret .= '</textarea>';
 				} elseif ($typeofdata == 'day' || $typeofdata == 'datepicker') {
 					$addnowlink = empty($moreoptions['addnowlink']) ? 0 : $moreoptions['addnowlink'];
-					$ret .= $this->selectDate($value, $htmlname, 0, 0, 1, 'form'.$htmlname, 1, $addnowlink, 0, '', '', '', '', 1, '', '', $gm);
+					$adddateof = empty($moreoptions['adddateof']) ? '' : $moreoptions['adddateof'];
+					$labeladddateof = empty($moreoptions['labeladddateof']) ? '' : $moreoptions['labeladddateof'];
+					$ret .= $this->selectDate($value, $htmlname, 0, 0, 1, 'form'.$htmlname, 1, $addnowlink, 0, '', '', $adddateof, '', 1, $labeladddateof, '', $gm);
 				} elseif ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker') {
 					$addnowlink = empty($moreoptions['addnowlink']) ? 0 : $moreoptions['addnowlink'];
-					$ret .= $this->selectDate($value, $htmlname, 1, 1, 1, 'form'.$htmlname, 1, $addnowlink, 0, '', '', '', '', 1, '', '', $gm);
+					$adddateof = empty($moreoptions['adddateof']) ? '' : $moreoptions['adddateof'];
+					$labeladddateof = empty($moreoptions['labeladddateof']) ? '' : $moreoptions['labeladddateof'];
+					$ret .= $this->selectDate($value, $htmlname, 1, 1, 1, 'form'.$htmlname, 1, $addnowlink, 0, '', '', $adddateof, '', 1, $labeladddateof, '', $gm);
 				} elseif (preg_match('/^select;/', $typeofdata)) {
 					$arraydata = explode(',', preg_replace('/^select;/', '', $typeofdata));
 					$arraylist = array();
@@ -303,7 +307,7 @@ class Form
 
 				// Button save-cancel
 				if (empty($notabletag)) {
-					$ret .= '<td class="left">';
+					$ret .= '<td>';
 				}
 				//else $ret.='<div class="clearboth"></div>';
 				$ret .= '<input type="submit" class="smallpaddingimp button'.(empty($notabletag) ? '' : ' ').'" name="modify" value="'.$langs->trans("Modify").'">';
@@ -363,7 +367,11 @@ class Form
 					// clean data from some dangerous html
 					$ret .= dol_string_onlythesehtmltags(dol_htmlentitiesbr($tmpcontent));
 				} else {
-					$ret .= dol_escape_htmltag($value);
+					if (empty($moreoptions['valuealreadyhtmlescaped'])) {
+						$ret .= dol_escape_htmltag($value);
+					} else {
+						$ret .= $value;		// $value must be already html escaped.
+					}
 				}
 
 				if ($formatfunc && method_exists($object, $formatfunc)) {
@@ -1347,7 +1355,7 @@ class Form
 	 *	@param  bool	$multiple       add [] in the name of element and add 'multiple' attribut
 	 *  @param	array	$excludeids		Exclude IDs from the select combo
 	 * 	@param	int		$showcode		Show code in list
-	 * 	@return	string					HTML string with
+	 * 	@return	array|string			HTML string with
 	 */
 	public function select_thirdparty_list($selected = '', $htmlname = 'socid', $filter = '', $showempty = '', $showtype = 0, $forcecombo = 0, $events = array(), $filterkey = '', $outputmode = 0, $limit = 0, $morecss = 'minwidth100', $moreparam = '', $multiple = false, $excludeids = array(), $showcode = 0)
 	{
@@ -1936,7 +1944,7 @@ class Form
 	 *  @param  int				$outputmode     0=HTML select string, 1=Array
 	 *  @param  bool			$multiple       add [] in the name of element and add 'multiple' attribut
 	 *  @param  int				$forcecombo     Force the component to be a simple combo box without ajax
-	 * 	@return	string							HTML select string
+	 * 	@return	array|string					HTML select string
 	 *  @see select_dolgroups()
 	 */
 	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
@@ -2545,7 +2553,7 @@ class Form
 		$outarray = array();
 
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$langs->load('other');
 		}
 
@@ -2589,7 +2597,7 @@ class Form
 			$selectFields .= ", idprodcustprice, custprice, custprice_ttc, custprice_base_type, custtva_tx, custdefault_vat_code, custref";
 		}
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
 			$selectFields .= ', unit_long, unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units';
 		}
@@ -2634,7 +2642,7 @@ class Form
 			$sql .= " LEFT JOIN  ".$this->db->prefix()."product_customer_price as pcp ON pcp.fk_soc=".((int) $socid)." AND pcp.fk_product=p.rowid";
 		}
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."c_units u ON u.rowid = p.fk_unit";
 		}
 		// Multilang : we add translation
@@ -2941,7 +2949,7 @@ class Form
 
 		// Units
 		$outvalUnits = '';
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			if (!empty($objp->unit_short)) {
 				$outvalUnits .= ' - '.$objp->unit_short;
 			}
@@ -3277,7 +3285,7 @@ class Form
 
 		$langs->load('stocks');
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$langs->load('other');
 		}
 
@@ -3292,7 +3300,7 @@ class Form
 			$sql .= ", p.description";
 		}
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$sql .= ", u.label as unit_long, u.short_label as unit_short, p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units";
 		}
 		if (isModEnabled('barcode')) {
@@ -3305,7 +3313,7 @@ class Form
 		}
 		$sql .= " LEFT JOIN ".$this->db->prefix()."societe as s ON pfp.fk_soc = s.rowid";
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$sql .= " LEFT JOIN ".$this->db->prefix()."c_units u ON u.rowid = p.fk_unit";
 		}
 		$sql .= " WHERE p.entity IN (".getEntity('product').")";
@@ -3398,7 +3406,7 @@ class Form
 
 				// Units
 				$outvalUnits = '';
-				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+				if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 					if (!empty($objp->unit_short)) {
 						$outvalUnits .= ' - '.$objp->unit_short;
 					}
@@ -3791,7 +3799,7 @@ class Form
 	 *    @param    int		$socid				Id of company
 	 *    @param    string	$htmlname          	Name of HTML field
 	 *    @param    int		$showempty         	Add an empty field
-	 *    @return	integer|null
+	 *    @return	integer
 	 */
 	public function select_address($selected, $socid, $htmlname = 'address_id', $showempty = 0)
 	{
@@ -3827,7 +3835,7 @@ class Form
 			return $num;
 		} else {
 			dol_print_error($this->db);
-			return;
+			return -1;
 		}
 	}
 
@@ -6436,7 +6444,7 @@ class Form
 	 *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another select_date field.
 	 *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
-	 *  @return	string|void					Nothing or string if nooutput is 1
+	 *  @return	string						'' or HTML component string if nooutput is 1
 	 *  @deprecated
 	 *  @see    selectDate(), form_date(), select_month(), select_year(), select_dayofweek()
 	 */
@@ -6448,7 +6456,8 @@ class Form
 			return $retstring;
 		}
 		print $retstring;
-		return;
+
+		return '';
 	}
 
 	/**
@@ -6496,7 +6505,7 @@ class Form
 	 * 	@param 	int				$disabled		Disable input fields
 	 *  @param  int				$fullday        When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
 	 *  @param	string			$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
-	 *  @param  datetime    	$adddateof      Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
+	 *  @param  datetime|string	$adddateof      Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
 	 *  @param  string      	$openinghours   Specify hour start and hour end for the select ex 8,20
 	 *  @param  int         	$stepminutes    Specify step for minutes between 1 and 30
 	 *  @param	string			$labeladddateof Label to use for the $adddateof parameter.
@@ -6982,7 +6991,7 @@ class Form
 	 *						            	If 'textselect' input hour is in text and input min is a combo
 	 *  @param	integer		$minunderhours	If 1, show minutes selection under the hours
 	 * 	@param	int			$nooutput		Do not output html string but return it
-	 *  @return	string|void
+	 *  @return	string						HTML component
 	 */
 	public function select_duration($prefix, $iSecond = '', $disabled = 0, $typehour = 'select', $minunderhours = 0, $nooutput = 0)
 	{
@@ -7056,7 +7065,8 @@ class Form
 		}
 
 		print $retstring;
-		return;
+
+		return '';
 	}
 
 	/**
@@ -7139,7 +7149,7 @@ class Form
 	 *  @param		string	$showempty		    '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * 	@param		int		$forcecombo		    Force to use combo box
 	 *  @param      string  $morecss            Add more css on select
-	 *  @return     array    				    Array of keys for json
+	 *  @return     array|string			    Array of keys for json or HTML component
 	 */
 	public function selectTicketsList($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
@@ -7345,7 +7355,7 @@ class Form
 	 *  @param		string	$showempty		    '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * 	@param		int		$forcecombo		    Force to use combo box
 	 *  @param      string  $morecss            Add more css on select
-	 *  @return     array    				    Array of keys for json
+	 *  @return     array|string			    Array of keys for json or HTML component
 	 */
 	public function selectProjectsList($selected = '', $htmlname = 'projectid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
@@ -7560,7 +7570,7 @@ class Form
 	 *  @param		string	$showempty		    '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * 	@param		int		$forcecombo		    Force to use combo box
 	 *  @param      string  $morecss            Add more css on select
-	 *  @return     array    				    Array of keys for json
+	 *  @return     array|string			    Array of keys for json or HTML string component
 	 */
 	public function selectMembersList($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{

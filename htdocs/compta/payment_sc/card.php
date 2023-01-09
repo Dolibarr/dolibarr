@@ -46,8 +46,6 @@ $confirm = GETPOST('confirm', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// TODO ajouter regle pour restreindre acces paiement
-//$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentSocialContribution($db);
 if ($id > 0) {
@@ -56,6 +54,8 @@ if ($id > 0) {
 		dol_print_error($db, 'Failed to get payment id '.$id);
 	}
 }
+
+$result = restrictedArea($user, 'payment_sc', $id, '');
 
 
 /*
@@ -77,7 +77,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('tax', '
 	}
 }
 
-if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('tax', 'charges', 'creer')) {
+/*if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('tax', 'charges', 'creer')) {
 	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
 	$res = $object->update_date($datepaye);
 	if ($res === 0) {
@@ -85,7 +85,7 @@ if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('tax', 'char
 	} else {
 		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
 	}
-}
+}*/
 
 
 /*

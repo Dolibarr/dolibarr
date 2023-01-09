@@ -305,7 +305,7 @@ if ($action == 'create') {
 		// Show object lines
 		$result = $object->getLinesArray();
 
-		print load_fiche_titre($langs->trans("PossibleValues") . (!empty($object->lines) ? ' (' . count($object->lines) . ')' : ''));
+		print load_fiche_titre($langs->trans("PossibleValues") . (!empty($object->lines) ? '<span class="opacitymedium colorblack paddingleft">(' . count($object->lines) . ')</span>' : ''));
 
 		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '#line_' . GETPOST('lineid', 'int')) . '" method="POST">
 		<input type="hidden" name="token" value="' . newToken() . '">

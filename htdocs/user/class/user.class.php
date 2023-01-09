@@ -3489,7 +3489,7 @@ class User extends CommonObject
 	 *
 	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
 	 *  @param		string	$filter				SQL filter on users. This parameter must not come from user intput.
-	 *	@return		array		      		  	Array of users $this->users. Note: $this->parentof is also set.
+	 *	@return		array|int	      		  	Array of users $this->users. Note: $this->parentof is also set.
 	 */
 	public function get_full_tree($deleteafterid = 0, $filter = '')
 	{
@@ -3784,6 +3784,31 @@ class User extends CommonObject
 		} else {
 			dol_print_error($this->db);
 		}
+	}
+
+	/**
+	 * Return string with full Url to virtual card
+	 *
+	 * @param	string		$mode		Mode for link
+	 * @return	string				    Url string link
+	 */
+	public function getOnlineVirtualCardUrl($mode = '')
+	{
+		global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root;
+		global $conf;
+
+		$encodedsecurekey = dol_hash($dolibarr_main_instance_unique_id.'uservirtualcard'.$this->id.'-'.$this->login, 'md5');
+		if (isModEnabled('multicompany')) {
+			$entity_qr = '&entity='.((int) $conf->entity);
+		} else {
+			$entity_qr = '';
+		}
+		// Define $urlwithroot
+		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+		//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+		return $urlwithroot.'/public/users/view.php?id='.$this->id.'&securekey='.$encodedsecurekey.$entity_qr.($mode ? '&mode='.urlencode($mode) : '');
 	}
 
 	/**

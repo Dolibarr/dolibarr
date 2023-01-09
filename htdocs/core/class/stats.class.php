@@ -55,7 +55,7 @@ abstract class Stats
 		global $conf, $user, $langs;
 
 		if ($startyear > $endyear) {
-			return -1;
+			return array();
 		}
 
 		$datay = array();
@@ -156,7 +156,7 @@ abstract class Stats
 		global $conf, $user, $langs;
 
 		if ($startyear > $endyear) {
-			return -1;
+			return array();
 		}
 
 		$datay = array();
@@ -251,7 +251,7 @@ abstract class Stats
 	public function getAverageByMonthWithPrevYear($endyear, $startyear)
 	{
 		if ($startyear > $endyear) {
-			return -1;
+			return array();
 		}
 
 		$datay = array();
