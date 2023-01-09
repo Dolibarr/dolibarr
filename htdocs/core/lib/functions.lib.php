@@ -6514,7 +6514,22 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	if (($seller_country_code == $buyer_country_code)
 	|| (in_array($seller_country_code, array('FR', 'MC')) && in_array($buyer_country_code, array('FR', 'MC')))) { // Warning ->country_code not always defined
 		//print 'VATRULE 2';
-		return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+		$tmpvat = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+
+		if ($seller_country_code == 'IN' && getDolGlobalString('MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA')) {
+			// Special case for india. TODO Convert tmpvat according to tmpvat, seller sate and buyer state
+			//print 'VATRULE 2b';
+			$reg = array();
+			if (preg_match('/^C+S-(\d+)$/', $tmpvat, $reg) && $thirdparty_seller->state_id != $thirdparty_buyer->state_id) {
+				// we must revert the C+S into I
+				$tmpvat = "I-".$reg[1];
+			} elseif (preg_match('/^I-(\d+)$/', $tmpvat, $reg) && $thirdparty_seller->state_id == $thirdparty_buyer->state_id) {
+				// we must revert the I into C+S
+				$tmpvat = "C+S-".$reg[1];
+			}
+		}
+
+		return $tmpvat;
 	}
 
 	// If (seller and buyer in the European Community) and (property sold = new means of transport such as car, boat, plane) then VAT by default = 0 (VAT must be paid by the buyer to the tax center of his country and not to the seller). End of rule.
