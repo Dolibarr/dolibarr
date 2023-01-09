@@ -219,6 +219,19 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $descriptionlong;
 
+	/**
+	 * dictionaries
+	 *
+	 * @var array
+	 */
+	public $dictionaries;
+
+	/**
+	 * tabs
+	 *
+	 * @var array
+	 */
+	public $tabs;
 
 	// For exports
 
