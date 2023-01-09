@@ -69,7 +69,6 @@ $ref = GETPOST('ref', 'alpha');
 $action 		= GETPOST('action', 'alpha');
 $confirm		= GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'purchaseordercard'; // To manage different context of search
-
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
