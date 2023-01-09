@@ -6517,15 +6517,15 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		$tmpvat = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
 
 		if ($seller_country_code == 'IN' && getDolGlobalString('MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA')) {
-			// Special case for india. TODO Convert tmpvat according to tmpvat, seller sate and buyer state
+			// Special case for india.
 			//print 'VATRULE 2b';
 			$reg = array();
-			if (preg_match('/^C+S-(\d+)$/', $tmpvat, $reg) && $thirdparty_seller->state_id != $thirdparty_buyer->state_id) {
+			if (preg_match('/C+S-(\d+)/', $tmpvat, $reg) && $thirdparty_seller->state_id != $thirdparty_buyer->state_id) {
 				// we must revert the C+S into I
-				$tmpvat = "I-".$reg[1];
-			} elseif (preg_match('/^I-(\d+)$/', $tmpvat, $reg) && $thirdparty_seller->state_id == $thirdparty_buyer->state_id) {
+				$tmpvat = str_replace("C+S", "I", $tmpvat);
+			} elseif (preg_match('/I-(\d+)/', $tmpvat, $reg) && $thirdparty_seller->state_id == $thirdparty_buyer->state_id) {
 				// we must revert the I into C+S
-				$tmpvat = "C+S-".$reg[1];
+				$tmpvat = str_replace("I", "C+S", $tmpvat);
 			}
 		}
 
