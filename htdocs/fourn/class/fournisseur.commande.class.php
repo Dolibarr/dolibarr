@@ -13,6 +13,7 @@
  * Copyright (C) 2018-2022  Ferran Marcet         	<fmarcet@2byte.es>
  * Copyright (C) 2021       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023       Benjamin FALIÈRE        <benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -607,9 +608,406 @@ class CommandeFournisseur extends CommonOrder
 			}
 			$this->db->free($result);
 
+<<<<<<< Updated upstream
 			return $num;
 		} else {
 			$this->error = $this->db->error()." sql=".$sql;
+=======
+    		return $num;
+    	}
+    	else
+    	{
+    		$this->error = $this->db->error()." sql=".$sql;
+    		return -1;
+    	}
+    }
+
+    /**
+     *	Validate an order
+     *
+     *	@param	User	$user			Validator User
+     *	@param	int		$idwarehouse	Id of warehouse to use for stock decrease
+     *  @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+     *	@return	int						<0 if KO, >0 if OK
+     */
+    public function valid($user, $idwarehouse = 0, $notrigger = 0)
+    {
+        global $langs, $conf;
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+        $error = 0;
+
+        dol_syslog(get_class($this)."::valid");
+        $result = 0;
+        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande->creer))
+       	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate)))
+        {
+            $this->db->begin();
+
+            // Definition of supplier order numbering model name
+            $soc = new Societe($this->db);
+            $soc->fetch($this->fourn_id);
+
+            // Check if object has a temporary ref
+            if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
+            {
+                $num = $this->getNextNumRef($soc);
+            }
+            else
+			{
+                $num = $this->ref;
+            }
+            $this->newref = dol_sanitizeFileName($num);
+
+            $sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
+            $sql .= " SET ref='".$this->db->escape($num)."',";
+            $sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
+            $sql .= " date_valid='".$this->db->idate(dol_now())."',";
+            $sql .= " fk_user_valid = ".$user->id;
+            $sql .= " WHERE rowid = ".$this->id;
+            $sql .= " AND fk_statut = ".self::STATUS_DRAFT;
+
+            $resql = $this->db->query($sql);
+            if (!$resql)
+            {
+                dol_print_error($this->db);
+                $error++;
+            }
+
+            if (!$error && !$notrigger)
+            {
+				// Call trigger
+				$result = $this->call_trigger('ORDER_SUPPLIER_VALIDATE', $user);
+				if ($result < 0) $error++;
+				// End call triggers
+            }
+
+            if (!$error)
+            {
+	            $this->oldref = $this->ref;
+
+                // Rename directory if dir was a temporary ref
+                if (preg_match('/^[\(]?PROV/i', $this->ref))
+                {
+                	// Now we rename also files into index
+                	$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'fournisseur/commande/".$this->db->escape($this->newref)."'";
+                	$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'fournisseur/commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+                	$resql = $this->db->query($sql);
+                	if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
+
+                	// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+                    $oldref = dol_sanitizeFileName($this->ref);
+                    $newref = dol_sanitizeFileName($num);
+                    $dirsource = $conf->fournisseur->commande->dir_output.'/'.$oldref;
+                    $dirdest = $conf->fournisseur->commande->dir_output.'/'.$newref;
+                    if (!$error && file_exists($dirsource))
+                    {
+                        dol_syslog(get_class($this)."::valid rename dir ".$dirsource." into ".$dirdest);
+
+                        if (@rename($dirsource, $dirdest))
+                        {
+                            dol_syslog("Rename ok");
+                            // Rename docs starting with $oldref with $newref
+	                        $listoffiles = dol_dir_list($conf->fournisseur->commande->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+	                        foreach ($listoffiles as $fileentry)
+	                        {
+	                        	$dirsource = $fileentry['name'];
+	                        	$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
+	                        	$dirsource = $fileentry['path'].'/'.$dirsource;
+	                        	$dirdest = $fileentry['path'].'/'.$dirdest;
+	                        	@rename($dirsource, $dirdest);
+	                        }
+                        }
+                    }
+                }
+            }
+
+            if (!$error)
+            {
+                $result = 1;
+                $this->statut = self::STATUS_VALIDATED;
+                $this->ref = $num;
+            }
+
+            if (!$error)
+            {
+                $this->db->commit();
+                return 1;
+            }
+            else
+            {
+                $this->db->rollback();
+                return -1;
+            }
+        }
+        else
+        {
+            $this->error = 'NotAuthorized';
+            dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+            return -1;
+        }
+    }
+
+    /**
+     *  Return label of the status of object
+     *
+	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
+     *  @return 	string        			Label
+     */
+    public function getLibStatut($mode = 0)
+    {
+        return $this->LibStatut($this->statut, $mode, $this->billed);
+    }
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+    /**
+     *  Return label of a status
+     *
+     * 	@param  int		$status		Id statut
+	 *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+     *  @param  int     $billed     1=Billed
+     *  @return string				Label of status
+     */
+    public function LibStatut($status, $mode = 0, $billed = 0)
+    {
+        // phpcs:enable
+    	global $conf, $langs;
+
+    	if (empty($this->statuts) || empty($this->statutshort)) {
+	        $langs->load('orders');
+
+	        $this->statuts[0] = 'StatusSupplierOrderDraft';
+	        $this->statuts[1] = 'StatusSupplierOrderValidated';
+	        $this->statuts[2] = 'StatusSupplierOrderApproved';
+	        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusSupplierOrderOnProcess';
+	        else $this->statuts[3] = 'StatusSupplierOrderOnProcessWithValidation';
+	        $this->statuts[4] = 'StatusSupplierOrderReceivedPartially';
+	        $this->statuts[5] = 'StatusSupplierOrderReceivedAll';
+	        $this->statuts[6] = 'StatusSupplierOrderCanceled'; // Approved->Canceled
+	        $this->statuts[7] = 'StatusSupplierOrderCanceled'; // Process running->canceled
+	        $this->statuts[9] = 'StatusSupplierOrderRefused';
+
+	        // List of language codes for status
+	        $this->statutshort[0] = 'StatusSupplierOrderDraftShort';
+	        $this->statutshort[1] = 'StatusSupplierOrderValidatedShort';
+	        $this->statutshort[2] = 'StatusSupplierOrderApprovedShort';
+	        $this->statutshort[3] = 'StatusSupplierOrderOnProcessShort';
+	        $this->statutshort[4] = 'StatusSupplierOrderReceivedPartiallyShort';
+	        $this->statutshort[5] = 'StatusSupplierOrderReceivedAllShort';
+	        $this->statutshort[6] = 'StatusSupplierOrderCanceledShort';
+	        $this->statutshort[7] = 'StatusSupplierOrderCanceledShort';
+	        $this->statutshort[9] = 'StatusSupplierOrderRefusedShort';
+    	}
+
+        $statustrans = array(
+            0 => 'status0',
+            1 => 'status1b',
+            2 => 'status1',
+            3 => 'status4',
+            4 => 'status4b',
+            5 => 'status6',
+            6 => 'status9',
+            7 => 'status9',
+            9 => 'status9',
+        );
+
+        $statusClass = 'status0';
+        if (!empty($statustrans[$status])) {
+            $statusClass = $statustrans[$status];
+        }
+
+        $billedtext = '';
+        if ($billed) {
+        	$billedtext = ' - '.$langs->trans("Billed");
+        }
+        if ($status == 5 && $billed) $statusClass = 'status6';
+
+        $statusLong = $langs->trans($this->statuts[$status]).$billedtext;
+        $statusShort = $langs->trans($this->statutshort[$status]);
+
+        return dolGetStatus($statusLong, $statusShort, '', $statusClass, $mode);
+    }
+
+
+    /**
+     *	Return clicable name (with picto eventually)
+     *
+     *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+     *	@param		string	$option						On what the link points
+     *  @param	    int   	$notooltip					1=Disable tooltip
+     *  @param      int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param		int		$addlinktonotes				Add link to show notes
+     *	@return		string								Chain with URL
+     */
+    public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
+    {
+        global $langs, $conf, $user;
+
+        $fourn = new Societe($this->db);
+        $fourn->fetch($this->socid);
+
+        $result = '';
+        $label = '<u>'.$langs->trans("ShowOrder").'</u>';
+        if (!empty($this->ref))
+            $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+        if (!empty($this->ref_supplier))
+            $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
+        $label .= '<br><b>'.$langs->trans('Supplier').':</b> '.$fourn->name;
+        if (!empty($this->total_ht))
+            $label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
+        if (!empty($this->total_tva))
+            $label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
+        if (!empty($this->total_ttc))
+            $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+
+        $picto = 'order';
+        $url = DOL_URL_ROOT.'/fourn/commande/card.php?id='.$this->id;
+
+        if ($option !== 'nolink')
+        {
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+        	if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+        }
+
+        $linkclose = '';
+        if (empty($notooltip))
+        {
+            if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+            {
+                $label = $langs->trans("ShowOrder");
+                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+            }
+            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose .= ' class="classfortooltip"';
+        }
+
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart .= $linkclose.'>';
+        $linkend = '</a>';
+
+        $result .= $linkstart;
+        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+        if ($withpicto != 2) $result .= $this->ref;
+        $result .= $linkend;
+
+        if ($addlinktonotes)
+        {
+        	$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
+        	if ($txttoshow)
+        	{
+        		$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
+        		$result .= ' <span class="note inline-block">';
+        		$result .= '<a href="'.DOL_URL_ROOT.'/fourn/commande/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow).'">';
+        		$result .= img_picto('', 'note');
+        		$result .= '</a>';
+        		//$result.=img_picto($langs->trans("ViewNote"),'object_generic');
+        		//$result.='</a>';
+        		$result .= '</span>';
+        	}
+        }
+
+        return $result;
+    }
+
+
+    /**
+     *  Returns the following order reference not used depending on the numbering model activated
+     *                  defined within COMMANDE_SUPPLIER_ADDON_NUMBER
+     *
+     *  @param	    Societe		$soc  		company object
+     *  @return     string                  free reference for the invoice
+     */
+    public function getNextNumRef($soc)
+    {
+        global $db, $langs, $conf;
+        $langs->load("orders");
+
+        if (!empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER))
+        {
+            $mybool = false;
+
+            $file = $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER.'.php';
+            $classname = $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER;
+
+            // Include file with class
+            $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+            foreach ($dirmodels as $reldir) {
+                $dir = dol_buildpath($reldir."core/modules/supplier_order/");
+
+                // Load file with numbering class (if found)
+                $mybool |= @include_once $dir.$file;
+            }
+
+            if ($mybool === false) {
+                dol_print_error('', "Failed to include file ".$file);
+                return '';
+            }
+
+            $obj = new $classname();
+            $numref = $obj->getNextValue($soc, $this);
+
+            if ($numref != "")
+            {
+                return $numref;
+            }
+            else
+			{
+                $this->error = $obj->error;
+                return -1;
+            }
+        }
+        else
+		{
+            $this->error = "Error_COMMANDE_SUPPLIER_ADDON_NotDefined";
+            return -2;
+        }
+    }
+	/**
+     *	Class invoiced the supplier order
+     *
+     *  @param      User        $user       Object user making the change
+     *	@return     int     	            <0 if KO, >0 if KO
+     */
+    public function classifyBilled(User $user)
+    {
+        $error = 0;
+        $this->db->begin();
+
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
+        $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
+
+        if ($this->db->query($sql))
+        {
+        	if (!$error)
+        	{
+        	    // Call trigger
+        	    $result = $this->call_trigger('ORDER_SUPPLIER_CLASSIFY_BILLED', $user);
+        	    if ($result < 0) $error++;
+        	    // End call triggers
+        	}
+
+        	if (!$error)
+        	{
+        	    $this->billed = 1;
+
+        	    $this->db->commit();
+        	    return 1;
+        	}
+        	else
+        	{
+        	    $this->db->rollback();
+                return -1;
+        	}
+        }
+        else
+        {
+        	dol_print_error($this->db);
+
+        	$this->db->rollback();
+>>>>>>> Stashed changes
 			return -1;
 		}
 	}
