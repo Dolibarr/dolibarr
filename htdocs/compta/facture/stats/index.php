@@ -378,14 +378,24 @@ foreach ($data as $val) {
 		print '</tr>';
 	}
 
+	if ($mode == 'supplier') {
+		$greennb = (empty($val['nb_diff']) || $val['nb_diff'] <= 0);
+		$greentotal = (empty($val['total_diff']) || $val['total_diff'] <= 0);
+		$greenavg = (empty($val['avg_diff']) || $val['avg_diff'] <= 0);
+	} else {
+		$greennb = (empty($val['nb_diff']) || $val['nb_diff'] >= 0);
+		$greentotal = (empty($val['total_diff']) || $val['total_diff'] >= 0);
+		$greenavg = (empty($val['avg_diff']) || $val['avg_diff'] >= 0);
+	}
+
 	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right opacitylow" style="'.((empty($val['nb_diff']) || $val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(!empty($val['nb_diff']) && $val['nb_diff'] < 0 ? '' : '+').round(!empty($val['nb_diff']) ? $val['nb_diff'] : 0).'%</td>';
+	print '<td class="right opacitylow" style="'.($greennb ? 'color: green;' : 'color: red;').'">'.(!empty($val['nb_diff']) && $val['nb_diff'] < 0 ? '' : '+').round(!empty($val['nb_diff']) ? $val['nb_diff'] : 0).'%</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';
-	print '<td class="right opacitylow" style="'.((empty($val['total_diff']) || $val['total_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.( !empty($val['total_diff']) && $val['total_diff'] < 0 ? '' : '+').round(!empty($val['total_diff']) ? $val['total_diff'] : 0).'%</td>';
+	print '<td class="right opacitylow" style="'.($greentotal ? 'color: green;' : 'color: red;').'">'.( !empty($val['total_diff']) && $val['total_diff'] < 0 ? '' : '+').round(!empty($val['total_diff']) ? $val['total_diff'] : 0).'%</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
-	print '<td class="right opacitylow" style="'.((empty($val['avg_diff']) || $val['avg_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(!empty($val['avg_diff']) && $val['avg_diff'] < 0 ? '' : '+').round(!empty($val['avg_diff']) ? $val['avg_diff'] : 0).'%</td>';
+	print '<td class="right opacitylow" style="'.($greenavg ? 'color: green;' : 'color: red;').'">'.(!empty($val['avg_diff']) && $val['avg_diff'] < 0 ? '' : '+').round(!empty($val['avg_diff']) ? $val['avg_diff'] : 0).'%</td>';
 	print '</tr>';
 	$oldyear = $year;
 }

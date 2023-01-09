@@ -17,18 +17,14 @@
  */
 
 /**
- * \file        class/partnership.class.php
+ * \file        htdocs/partnership/class/partnership.class.php
  * \ingroup     partnership
  * \brief       This file is a CRUD class file for Partnership (Create/Read/Update/Delete)
  */
 
-use Illuminate\Support\Arr;
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-
 
 /**
  * Class for Partnership
@@ -198,7 +194,7 @@ class Partnership extends CommonObject
 
 		$this->db = $db;
 
-		if (!empty($conf->global->PARTNERSHIP_IS_MANAGED_FOR) && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
+		if (getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 			$this->fields['fk_member'] = array('type'=>'integer:Adherent:adherents/class/adherent.class.php:1', 'label'=>'Member', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'member', 'csslist'=>'tdoverflowmax150');
 		} else {
 			$this->fields['fk_soc'] = array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'company', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax150');

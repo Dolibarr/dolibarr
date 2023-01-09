@@ -1209,7 +1209,7 @@ class BonPrelevement extends CommonObject
 		$result = '';
 
 		$labeltoshow = 'PaymentByDirectDebit';
-		if ($this->type == 'bank-transfer') {
+		if (!empty($this->type) && $this->type == 'bank-transfer') {
 			$labeltoshow = 'PaymentByBankTransfer';
 		}
 
@@ -1221,7 +1221,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
-		if ($this->type == 'bank-transfer') {
+		if (!empty($this->type) && $this->type == 'bank-transfer') {
 			$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
 		}
 

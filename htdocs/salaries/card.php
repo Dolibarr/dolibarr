@@ -685,7 +685,7 @@ if ($action == 'create' && $permissiontoadd) {
 						);
 
 					} else {
-						alert("'.dol_escape_js($langs->trans("FillFieldFirst")).'");
+						alert("'.dol_escape_js($langs->transnoentitiesnoconv("FillFieldFirst")).'");
 					}
 		});
 

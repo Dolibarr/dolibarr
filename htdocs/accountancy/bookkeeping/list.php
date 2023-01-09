@@ -192,8 +192,8 @@ $arrayfields = array(
 	't.numero_compte'=>array('label'=>$langs->trans("AccountAccountingShort"), 'checked'=>1),
 	't.subledger_account'=>array('label'=>$langs->trans("SubledgerAccount"), 'checked'=>1),
 	't.label_operation'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-	't.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1),
-	't.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1),
+	't.debit'=>array('label'=>$langs->trans("AccountingDebit"), 'checked'=>1),
+	't.credit'=>array('label'=>$langs->trans("AccountingCredit"), 'checked'=>1),
 	't.lettering_code'=>array('label'=>$langs->trans("LetteringCode"), 'checked'=>1),
 	't.date_creation'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0),
 	't.tms'=>array('label'=>$langs->trans("DateModification"), 'checked'=>0),
@@ -942,14 +942,20 @@ if (count($filter)) {
 	$buttonLabel = $langs->trans("ExportList");
 }
 
-$parameters = array();
+$parameters = array('param' => $param);
 $reshook = $hookmanager->executeHooks('addMoreActionsButtonsList', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
+$newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
+
 if (empty($reshook)) {
 	// Button re-export
 	if (!empty($conf->global->ACCOUNTING_REEXPORT)) {
-		$newcardbutton = '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("Activated"), 'switch_on').'</a> ';
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=0'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("Activated"), 'switch_on').'</a> ';
 	} else {
-		$newcardbutton = '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
+		$newcardbutton .= '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=setreexport&token='.newToken().'&value=1'.($param ? '&'.$param : '').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a> ';
 	}
 	$newcardbutton .= '<span class="valignmiddle marginrightonly">'.$langs->trans("IncludeDocsAlreadyExported").'</span>';
 
@@ -1506,6 +1512,10 @@ while ($i < min($num, $limit)) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 
+$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 print "</table>";
 print '</div>';
 
@@ -1520,4 +1530,5 @@ print '</form>';
 
 // End of page
 llxFooter();
+
 $db->close();

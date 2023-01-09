@@ -404,6 +404,9 @@ $facturestatic = new FactureFournisseur($db);
 $formcompany = new FormCompany($db);
 $thirdparty = new Societe($db);
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
 $sql = "SELECT";
 if ($search_all) {
 	$sql = 'SELECT DISTINCT';
@@ -435,6 +438,9 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
@@ -503,11 +509,15 @@ if ($search_type != '' && $search_type >= 0) {
 if ($search_project) {
 	$sql .= natural_search('p.ref', $search_project);
 }
-if ($search_company) {
-	$sql .= natural_search('s.nom', $search_company);
-}
-if ($search_company_alias) {
-	$sql .= natural_search('s.name_alias', $search_company_alias);
+if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
+} else {
+	if ($search_company) {
+		$sql .= natural_search('s.nom', $search_company);
+	}
+	if ($search_company_alias) {
+		$sql .= natural_search('s.name_alias', $search_company_alias);
+	}
 }
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
@@ -699,19 +709,32 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
 
-$sql .= $db->order($sortfield, $sortorder);
-
+// Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-$sql .= $db->plimit($limit + 1, $offset);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
 //print $sql;
 
 $resql = $db->query($sql);
@@ -1205,7 +1228,7 @@ if (!empty($arrayfields['f.tms']['checked'])) {
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone right">';
 	$liststatus = array('0'=>$langs->trans("Draft"), '1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"));
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', '', 1);
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'onrightofpage', 1);
 	print '</td>';
 }
 // Action column

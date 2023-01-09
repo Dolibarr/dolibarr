@@ -204,6 +204,7 @@ class BlockedLog
 		}
 
 		// Add more action to track from a conf variable
+		// For example: STOCK_MOVEMENT,...
 		if (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)) {
 			$tmparrayofmoresupportedevents = explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED);
 			foreach ($tmparrayofmoresupportedevents as $val) {
@@ -305,6 +306,15 @@ class BlockedLog
 			} else {
 				$this->error++;
 			}
+		} elseif ($this->element === 'stockmouvement') {
+			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+			$object = new MouvementStock($this->db);
+			if ($object->fetch($this->fk_object) > 0) {
+				return $object->getNomUrl(1);
+			} else {
+				$this->error++;
+			}
 		} elseif ($this->action == 'MODULE_SET') {
 			return '<i class="opacitymedium">'.$langs->trans("BlockedLogEnabled").'</i>';
 		} elseif ($this->action == 'MODULE_RESET') {
@@ -378,9 +388,14 @@ class BlockedLog
 			$this->date_object = $object->dateh;
 		} elseif ($object->element == 'cashcontrol') {
 			$this->date_object = $object->date_creation;
-		} else {
+		} elseif (property_exists($object, 'date')) {
+			// Generic case
 			$this->date_object = $object->date;
+		} elseif (property_exists($object, 'datem')) {
+			// Generic case (second chance, for example for stock movement)
+			$this->date_object = $object->datem;
 		}
+
 		// ref
 		$this->ref_object = ((!empty($object->newref)) ? $object->newref : $object->ref); // newref is set when validating a draft, ref is set in other cases
 		// type of object
@@ -395,11 +410,18 @@ class BlockedLog
 		$arrayoffieldstoexclude = array(
 			'table_element', 'fields', 'ref_previous', 'ref_next', 'origin', 'origin_id', 'oldcopy', 'picto', 'error', 'errors', 'model_pdf', 'modelpdf', 'last_main_doc', 'civility_id', 'contact', 'contact_id',
 			'table_element_line', 'ismultientitymanaged', 'isextrafieldmanaged',
+			'array_languages',
+			'childtables',
+			'contact_ids',
+			'context',
+			'labelStatus',
+			'labelStatusShort',
 			'linkedObjectsIds',
 			'linkedObjects',
 			'fk_delivery_address',
-			'context',
-			'projet'          // There is already ->fk_project
+			'projet',          // There is already ->fk_project
+			'restrictiononfksoc',
+			'specimen',
 		);
 		// Add more fields to exclude depending on object type
 		if ($this->element == 'cashcontrol') {
@@ -428,7 +450,7 @@ class BlockedLog
 					continue; // Discard if not into a dedicated list
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->thirdparty->{$key} = $value;
+					$this->object_data->thirdparty->$key = $value;
 				}
 			}
 		}
@@ -448,7 +470,7 @@ class BlockedLog
 					continue; // Discard if not into a dedicated list
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->mycompany->{$key} = $value;
+					$this->object_data->mycompany->$key = $value;
 				}
 			}
 		}
@@ -486,12 +508,12 @@ class BlockedLog
 							}
 
 							if (!is_object($valueline) && !is_null($valueline) && $valueline !== '') {
-								$this->object_data->invoiceline[$lineid]->{$keyline} = $valueline;
+								$this->object_data->invoiceline[$lineid]->$keyline = $valueline;
 							}
 						}
 					}
 				} elseif (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->{$key} = $value;
+					$this->object_data->$key = $value;
 				}
 			}
 
@@ -509,7 +531,7 @@ class BlockedLog
 					continue; // Discard if not into a dedicated list
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->{$key} = $value;
+					$this->object_data->$key = $value;
 				}
 			}
 
@@ -601,7 +623,7 @@ class BlockedLog
 								continue; // Discard if not into a dedicated list
 							}
 							if (!is_object($value) && !is_null($value) && $value !== '') {
-								$paymentpart->thirdparty->{$key} = $value;
+								$paymentpart->thirdparty->$key = $value;
 							}
 						}
 					}
@@ -625,11 +647,11 @@ class BlockedLog
 							}
 							if (!is_object($value) && !is_null($value) && $value !== '') {
 								if ($this->element == 'payment_donation') {
-									$paymentpart->donation->{$key} = $value;
+									$paymentpart->donation->$key = $value;
 								} elseif ($this->element == 'payment_various') {
-									$paymentpart->various->{$key} = $value;
+									$paymentpart->various->$key = $value;
 								} else {
-									$paymentpart->invoice->{$key} = $value;
+									$paymentpart->invoice->$key = $value;
 								}
 							}
 						}
@@ -664,21 +686,30 @@ class BlockedLog
 					continue; // Discard if not into a dedicated list
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->{$key} = $value;
+					$this->object_data->$key = $value;
 				}
 			}
 
 			if (!empty($object->newref)) {
 				$this->object_data->ref = $object->newref;
 			}
-		} else // Generic case
-		{
+		} elseif ($this->element == 'stockmouvement') {
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
 					continue; // Discard some properties
 				}
 				if (!is_object($value) && !is_null($value) && $value !== '') {
-					$this->object_data->{$key} = $value;
+					$this->object_data->$key = $value;
+				}
+			}
+		} else {
+			// Generic case
+			foreach ($object as $key => $value) {
+				if (in_array($key, $arrayoffieldstoexclude)) {
+					continue; // Discard some properties
+				}
+				if (!is_object($value) && !is_null($value) && $value !== '') {
+					$this->object_data->$key = $value;
 				}
 			}
 

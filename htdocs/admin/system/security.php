@@ -312,6 +312,32 @@ print yn(empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA) ? 0 : 1);
 print '<br>';
 print '<br>';
 
+
+$sessiontimeout = ini_get("session.gc_maxlifetime");
+if (empty($conf->global->MAIN_SESSION_TIMEOUT)) {
+	$conf->global->MAIN_SESSION_TIMEOUT = $sessiontimeout;
+}
+print '<strong>'.$langs->trans("SessionTimeOut").'</strong>';
+if (ini_get("session.gc_probability") == 0) {
+	print $form->textwithpicto('', $langs->trans("SessionsPurgedByExternalSystem", ini_get("session.gc_maxlifetime")));
+} else {
+	print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor"), ini_get("session.gc_maxlifetime")));
+}
+print ': '.getDolGlobalInt('MAIN_SESSION_TIMEOUT').' '.strtolower($langs->trans("Seconds"));
+print '<br><br>';
+
+print '<strong>'.$langs->trans("MaxNumberOfImagesInGetPost").'</strong>: ';
+print getDolGlobalInt('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT').' '.strtolower($langs->trans("Images"));
+print '<br><br>';
+
+print '<strong>'.$langs->trans("MaxNumberOfPostOnPublicPagesByIP").'</strong>: ';
+print getDolGlobalInt('MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS', 200).' '.strtolower($langs->trans("Posts"));
+print '<br><br>';
+
+print '<strong>'.$langs->trans("MaxNumberOfAttachementOnForms").'</strong>: ';
+print getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10).' '.strtolower($langs->trans("Files"));
+print '<br><br>';
+
 print '<strong>'.$langs->trans("DoNotStoreClearPassword").'</strong>: ';
 print empty($conf->global->DATABASE_PWD_ENCRYPTED) ? '' : img_picto('', 'tick').' ';
 print yn(empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1);

@@ -1612,13 +1612,13 @@ class Ticket extends CommonObject
 		// Insert entry into agenda with code 'TICKET_MSG'
 		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$actioncomm = new ActionComm($this->db);
-		$actioncomm->type_code = 'AC_OTH';
+		$actioncomm->type_code = 'AC_OTH_AUTO';	// This is not an entry that must appears into manual calendar but only into CRM calendar
 		$actioncomm->code = 'TICKET_MSG';
 		if ($this->private) {
 			$actioncomm->code = 'TICKET_MSG_PRIVATE';
 		}
 		if ($send_email) {
-			$actioncomm->type_code = 'AC_EMAIL';
+			$actioncomm->code .= '_SENTBYMAIL';
 		}
 		$actioncomm->socid = $this->socid;
 		$actioncomm->label = $this->subject;
@@ -1691,7 +1691,7 @@ class Ticket extends CommonObject
 				$this->cache_msgs_ticket[$i]['datec'] = $this->db->jdate($obj->datec);
 				$this->cache_msgs_ticket[$i]['subject'] = $obj->label;
 				$this->cache_msgs_ticket[$i]['message'] = $obj->message;
-				$this->cache_msgs_ticket[$i]['private'] = ($obj->code == 'TICKET_MSG_PRIVATE' ? 1 : 0);
+				$this->cache_msgs_ticket[$i]['private'] = (preg_match('/^TICKET_MSG_PRIVATE/', $obj->code) ? 1 : 0);
 				$i++;
 			}
 			return $num;

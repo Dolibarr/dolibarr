@@ -214,7 +214,7 @@ class modProjet extends DolibarrModules
 		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
 
-		//Exports
+		// Exports
 		//--------
 		$r = 1;
 
@@ -291,6 +291,40 @@ class modProjet extends DolibarrModules
 		}
 		$this->export_sql_end[$r] .= " WHERE p.entity IN (".getEntity('project').")";
 
+		// Import project/opportunities
+		$r++;
+		$this->import_code[$r] = 'projects';
+		$this->import_label[$r] = 'ImportDatasetProjects';
+		$this->import_icon[$r] = 'project';
+		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r] = array('t'=>MAIN_DB_PREFIX.'projet', 'extra'=>MAIN_DB_PREFIX.'projet_extrafields'); // List of tables to insert into (insert done in same order)
+		$this->import_fields_array[$r] = array('t.ref'=>'ProjectRef*', 't.title'=>'Label*', 't.description'=>"Description", 't.fk_soc' => 'ThirdPartyName', 't.public'=>"Public", 't.fk_statut'=>"Status");
+		$this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('t.fk_opp_status'=>"OpportunityStatus", 't.opp_percent'=>"OpportunityProbability", 't.opp_amount'=>"OpportunityAmount", 't.note_public'=>"NotePublic", 't.note_private'=>"NotePrivate", 't.budget_amount'=>"Budget", 't.dateo'=>"DateStart", 't.datee'=>"DateEnd"));
+		// Add extra fields
+		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'projet' AND entity IN (0,".$conf->entity.")";
+		$resql = $this->db->query($sql);
+		if ($resql) {    // This can fail when class is used on old database (during migration for example)
+			while ($obj = $this->db->fetch_object($resql)) {
+				$fieldname = 'extra.'.$obj->name;
+				$fieldlabel = ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname] = $fieldlabel.($obj->fieldrequired ? '*' : '');
+			}
+		}
+		// End add extra fields
+		$this->import_fieldshidden_array[$r] = array('t.fk_user_creat'=>'user->id', 'extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'projet'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+		$this->import_convertvalue_array[$r] = array(
+			't.ref'=>array('rule'=>'getrefifauto', 'class'=>(empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON), 'path'=>"/core/modules/project/".(empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON).'.php'),
+			't.fk_soc' => array(
+				'rule'    => 'fetchidfromref',
+				'file'    => '/societe/class/societe.class.php',
+				'class'   => 'Societe',
+				'method'  => 'fetch',
+				'element' => 'ThirdParty'
+			),
+		);
+		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
+		$this->import_regex_array[$r] = array('t.dateo'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 't.datee'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 't.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
+		$this->import_examplevalues_array[$r] = array('t.fk_soc'=>'ThirdParty', 't.ref'=>"auto or PJ2010-1234", 't.title'=>"My project", 't.fk_statut'=>'0,1 or 2', 't.datec'=>'1972-10-10', 't.note_private'=>"My private note", 't.note_public'=>"My public note");
 
 		// Import list of tasks
 		if (empty($conf->global->PROJECT_HIDE_TASKS)) {

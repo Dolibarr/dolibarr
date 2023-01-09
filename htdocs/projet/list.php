@@ -113,6 +113,13 @@ $search_accept_booth_suggestions = GETPOST('search_accept_booth_suggestions', 'i
 $search_price_registration = GETPOST("search_price_registration", 'alpha');
 $search_price_booth = GETPOST("search_price_booth", 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
+$searchCategoryCustomerOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator', 'int');
+} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+	$searchCategoryCustomerOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+}
+$searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $mine = ((GETPOST('mode') == 'mine') ? 1 : 0);
@@ -403,11 +410,14 @@ if (count($listofprojectcontacttypeexternal) == 0) {
 	$listofprojectcontacttypeexternal[0] = '0'; // To avoid sql syntax error if not found
 }
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
 $sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
 $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount,";
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
-$sql .= " p.email_msgid,";
+$sql .= " p.email_msgid, p.import_key,";
 $sql .= " p.accept_conference_suggestions, p.accept_booth_suggestions, p.price_registration, p.price_booth,";
 $sql .= " s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
 $sql .= " country.code as country_code,";
@@ -444,6 +454,10 @@ if ($search_project_user > 0) {
 if ($search_project_contact > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ecp_contact";
 }
+
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= " WHERE p.entity IN (".getEntity('project').')';
 if (empty($user->rights->projet->all->lire)) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
@@ -458,11 +472,15 @@ if ($search_ref) {
 if ($search_label) {
 	$sql .= natural_search('p.title', $search_label);
 }
-if ($search_societe) {
-	$sql .= natural_search('s.nom', $search_societe);
-}
-if ($search_societe_alias) {
-	$sql .= natural_search('s.name_alias', $search_societe_alias);
+if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
+	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+} else {
+	if ($search_societe) {
+		$sql .= natural_search('s.nom', $search_societe);
+	}
+	if ($search_societe_alias) {
+		$sql .= natural_search('s.name_alias', $search_societe_alias);
+	}
 }
 if ($search_opp_amount) {
 	$sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
@@ -592,6 +610,50 @@ if (!empty($searchCategoryProjectList)) {
 		if (!empty($searchCategoryProjectSqlList)) {
 			$sql .= " AND (".implode(' AND ', $searchCategoryProjectSqlList).")";
 		}
+	}
+}
+$searchCategoryCustomerSqlList = array();
+if ($searchCategoryCustomerOperator == 1) {
+	$existsCategoryCustomerList = array();
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$sqlCategoryCustomerNotExists  = " NOT EXISTS (";
+			$sqlCategoryCustomerNotExists .= " SELECT cat_cus.fk_soc";
+			$sqlCategoryCustomerNotExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
+			$sqlCategoryCustomerNotExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
+			$sqlCategoryCustomerNotExists .= " )";
+			$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerNotExists;
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			$existsCategoryCustomerList[] = $db->escape($searchCategoryCustomer);
+		}
+	}
+	if (!empty($existsCategoryCustomerList)) {
+		$sqlCategoryCustomerExists = " EXISTS (";
+		$sqlCategoryCustomerExists .= " SELECT cat_cus.fk_soc";
+		$sqlCategoryCustomerExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
+		$sqlCategoryCustomerExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
+		$sqlCategoryCustomerExists .= " AND cat_cus.fk_categorie IN (".$db->sanitize(implode(',', $existsCategoryCustomerList)).")";
+		$sqlCategoryCustomerExists .= " )";
+		$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerExists;
+	}
+	if (!empty($searchCategoryCustomerSqlList)) {
+		$sql .= " AND (".implode(' OR ', $searchCategoryCustomerSqlList).")";
+	}
+} else {
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$sqlCategoryCustomerNotExists = " NOT EXISTS (";
+			$sqlCategoryCustomerNotExists .= " SELECT cat_cus.fk_soc";
+			$sqlCategoryCustomerNotExists .= " FROM ".$db->prefix()."categorie_societe AS cat_cus";
+			$sqlCategoryCustomerNotExists .= " WHERE cat_cus.fk_soc = p.fk_soc";
+			$sqlCategoryCustomerNotExists .= " )";
+			$searchCategoryCustomerSqlList[] = $sqlCategoryCustomerNotExists;
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			$searchCategoryCustomerSqlList[] = "p.fk_soc IN (SELECT fk_soc FROM ".$db->prefix()."categorie_societe WHERE fk_categorie = ".((int) $searchCategoryCustomer).")";
+		}
+	}
+	if (!empty($searchCategoryCustomerSqlList)) {
+		$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
 	}
 }
 // Add where from extra fields
@@ -794,6 +856,9 @@ if ($search_login) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+	$param .= "&search_category_customer_list[]=".urlencode($searchCategoryCustomer);
+}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -899,6 +964,18 @@ if ($user->rights->user->user->lire) {
 if (isModEnabled('categorie') && $user->rights->categorie->lire) {
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array);
+}
+// Filter on customer categories
+if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST) && !empty($conf->categorie->enabled) && $user->rights->categorie->lire) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
+	$categoriesArr = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 1);
+	$categoriesArr[-2] = '- '.$langs->trans('NotCategorized').' -';
+	$moreforfilter .= Form::multiselectarray('search_category_customer_list', $categoriesArr, $searchCategoryCustomerList, 0, 0, 'minwidth300', 0, 0, '', 'category', $tmptitle);
+	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_customer_operator" name="search_category_customer_operator" value="1"'.($searchCategoryCustomerOperator == 1 ? ' checked="checked"' : '').'/>';
+	$moreforfilter .= $form->textwithpicto('', $langs->trans('UseOrOperatorForCategories') . ' : ' . $tmptitle, 1, 'help', '', 0, 2, 'tooltip_cat_cus'); // Tooltip on click
+	$moreforfilter .= '</div>';
 }
 
 if (!empty($moreforfilter)) {
@@ -1104,6 +1181,11 @@ if (!empty($arrayfields['p.email_msgid']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
+if (!empty($arrayfields['p.import_key']['checked'])) {
+	// Import key
+	print '<td class="liste_titre">';
+	print '</td>';
+}
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '<td class="liste_titre nowrap right">';
 	$arrayofstatus = array();
@@ -1111,7 +1193,7 @@ if (!empty($arrayfields['p.fk_statut']['checked'])) {
 		$arrayofstatus[$key] = $langs->trans($val);
 	}
 	$arrayofstatus['99'] = $langs->trans("NotClosed").' ('.$langs->trans('Draft').' + '.$langs->trans('Opened').')';
-	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'minwidth75imp maxwidth125 selectarrowonleft');
+	print $form->selectarray('search_status', $arrayofstatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'minwidth75imp maxwidth125 selectarrowonleft onrightofpage');
 	print ajax_combobox('search_status');
 	print '</td>';
 }
@@ -1211,6 +1293,9 @@ if (!empty($arrayfields['p.tms']['checked'])) {
 }
 if (!empty($arrayfields['p.email_msgid']['checked'])) {
 	print_liste_field_titre($arrayfields['p.email_msgid']['label'], $_SERVER["PHP_SELF"], "p.email_msgid", "", $param, '', $sortfield, $sortorder, 'center ');
+}
+if (!empty($arrayfields['p.import_key']['checked'])) {
+	print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, '');
 }
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print_liste_field_titre($arrayfields['p.fk_statut']['label'], $_SERVER["PHP_SELF"], "p.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -1664,6 +1749,13 @@ while ($i < $imaxinloop) {
 			print $obj->email_msgid;
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
+		}
+		// Import key
+		if (!empty($arrayfields['p.import_key']['checked'])) {
+			print '<td class="right">'.dol_escape_htmltag($obj->import_key).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Status
 		if (!empty($arrayfields['p.fk_statut']['checked'])) {

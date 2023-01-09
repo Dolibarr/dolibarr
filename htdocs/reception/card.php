@@ -1242,10 +1242,15 @@ if ($action == 'create') {
 				// Display lines for extrafields of the Reception line
 				// $line is a 'CommandeFournisseurLigne', $dispatchLines contains values of Reception lines so properties of CommandeFournisseurDispatch
 				if (!empty($extrafields)) {
-					//var_dump($line);
 					$colspan = 5;
 					if (isModEnabled('productbatch')) {
-						$colspan += 3;
+						$colspan += 2;
+						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+							$colspan += 1;
+						}
+						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							$colspan += 1;
+						}
 					}
 					$recLine = new CommandeFournisseurDispatch($db);
 
@@ -1286,7 +1291,7 @@ if ($action == 'create') {
 	$lines = $object->lines;
 
 	$num_prod = count($lines);
-
+	$indiceAsked = 0;
 	if ($object->id > 0) {
 		if (!empty($object->origin) && $object->origin_id > 0) {
 			$object->origin = 'CommandeFournisseur';

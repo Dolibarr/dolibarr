@@ -251,6 +251,9 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 if (isModEnabled('project')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr on f.fk_projet = pr.rowid";
@@ -324,20 +327,18 @@ $sql .= $hookmanager->resPrint;
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	/* This old and fast method to get and count full list returns all record so use a high amount of memory. */
-	$resql = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($resql);
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	/*$sqlforcount = preg_replace('/^SELECT[a-zA-Z0-9\._\s\(\),=<>\:\-\']+\sFROM/Ui', 'SELECT COUNT(*) as nbtotalofrecords FROM', $sql);
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
 		$nbtotalofrecords = $objforcount->nbtotalofrecords;
 	} else {
 		dol_print_error($db);
-	}*/
+	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -574,7 +575,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
 		unset($liststatus[2]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 	}
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1);
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'onrightofpage');
 	print '</td>';
 }
 // Fields of detail line

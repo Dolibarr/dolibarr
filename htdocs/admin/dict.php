@@ -1982,7 +1982,7 @@ if ($id > 0) {
 									$valuetoshow = ($key != "Country".strtoupper($obj->country_code) ? $obj->country_code." - ".$key : $obj->country);
 								}
 							} elseif ($value == 'recuperableonly' || $value == 'deductible' || $value == 'category_type') {
-								$valuetoshow = yn($valuetoshow);
+								$valuetoshow = yn($valuetoshow ? 1 : 0);
 								$class = "center";
 							} elseif ($value == 'type_cdr') {
 								if (empty($valuetoshow)) {

@@ -807,11 +807,11 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 	$i = -1;
 
-	if (isModEnabled('project') && $user->rights->projet->lire) {
+	if (isModEnabled('project') && $user->hasRight('projet', 'lire')) {
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (isModEnabled('project') && $user->rights->projet->creer && empty($nocreatelink)) {
+		if (isModEnabled('project') && $user->hasRight('projet', 'creer') && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 		}
 
@@ -1062,7 +1062,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$arrayfields = dol_sort_array($arrayfields, 'position');
 
 	$newcardbutton = '';
-	if ($user->rights->societe->contact->creer) {
+	if ($user->hasRight('societe', 'contact', 'creer')) {
 		$addcontact = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
 		$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
 	}
@@ -1117,12 +1117,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$extrafieldsobjectkey = $contactstatic->table_element;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-	$sql = "SELECT t.rowid, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.socialnetworks, t.statut, t.photo,";
+	$sql = "SELECT t.rowid, t.entity, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.socialnetworks, t.statut, t.photo,";
 	$sql .= " t.civility as civility_id, t.address, t.zip, t.town";
 	$sql .= ", t.note_private";
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
 	$sql .= " WHERE t.fk_soc = ".((int) $object->id);
+	$sql .= " AND ((t.fk_user_creat = ".((int) $user->id)." AND t.priv = 1) OR t.priv = 0)";
 	if ($search_rowid) {
 		$sql .= natural_search('t.rowid', $search_rowid);
 	}
@@ -1182,7 +1183,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		if (!empty($arrayfields['t.'.$key]['checked']) || !empty($arrayfields['sc.'.$key]['checked'])) {
 			print '<td class="liste_titre'.($align ? ' '.$align : '').'">';
 			if (in_array($key, array('statut'))) {
-				print $form->selectarray('search_status', array('-1'=>'', '0'=>$contactstatic->LibStatut(0, 1), '1'=>$contactstatic->LibStatut(1, 1)), $search_status);
+				print $form->selectarray('search_status', array('-1'=>'', '0'=>$contactstatic->LibStatut(0, 1), '1'=>$contactstatic->LibStatut(1, 1)), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
 			} elseif (in_array($key, array('role'))) {
 				print $formcompany->showRoles("search_roles", $contactstatic, 'edit', $search_roles, 'minwidth200 maxwidth300');
 			} else {
@@ -1271,6 +1272,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			$contactstatic->email = $obj->email;
 			$contactstatic->socialnetworks = $obj->socialnetworks;
 			$contactstatic->photo = $obj->photo;
+			$contactstatic->entity = $obj->entity;
 
 			$country_code = getCountry($obj->country_id, 2);
 			$contactstatic->country_code = $country_code;
@@ -1361,14 +1363,14 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			print '<td align="right">';
 
 			// Add to agenda
-			if (isModEnabled('agenda')&& $user->rights->agenda->myactions->create) {
+			if (isModEnabled('agenda')&& $user->hasRight('agenda', 'myactions', 'create')) {
 				print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
 				print img_object($langs->trans("Event"), "action");
 				print '</a> &nbsp; ';
 			}
 
 			// Edit
-			if ($user->rights->societe->contact->creer) {
+			if ($user->hasRight('societe', 'contact', 'creer')) {
 				print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
 				print img_edit();
 				print '</a>';
@@ -1575,7 +1577,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			$sql .= ", ".MAIN_DB_PREFIX."bom_bom as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
-		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (is_array($filterobj->fields['ref']) || is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
+		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref']) || $filterobj->fields['label'] && is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
 			$sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
 		}
 
@@ -1617,7 +1619,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
-			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (is_array($filterobj->fields['ref']) || is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
+			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && (!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref']) || $filterobj->fields['label'] && is_array($filterobj->fields['label'])) && $filterobj->table_element && $filterobj->element) {
 				// Generic case
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? "@".$module : "")."'";
 				if ($filterobj->id) {
@@ -1896,7 +1898,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
 				$labeltype = 'AC_OTH';
 			}
-			if ($actionstatic->type_code == 'AC_OTH' && $actionstatic->code == 'TICKET_MSG') {
+			if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 				$labeltype = $langs->trans("Message");
 			} else {
 				if (!empty($arraylist[$labeltype])) {

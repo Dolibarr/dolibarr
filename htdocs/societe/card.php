@@ -138,10 +138,10 @@ if (!empty($canvas)) {
 
 // Permissions
 $permissiontoread 	= $user->hasRight('societe', 'lire');
-$permissiontoadd 	= $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoadd 	= $user->hasRight('societe', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->hasRight('societe', 'supprimer') || ($permissiontoadd && isset($object->status) && $object->status == 0);
-$permissionnote 	= $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink 	= $user->rights->societe->creer; // Used by the include of actions_dellink.inc.php
+$permissionnote 	= $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink 	= $user->hasRight('societe', 'creer'); // Used by the include of actions_dellink.inc.php
 $upload_dir 		= $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
@@ -978,7 +978,7 @@ if (empty($reshook)) {
 	// Actions to build doc
 	$id = $socid;
 	$upload_dir = !empty($conf->societe->multidir_output[$object->entity])?$conf->societe->multidir_output[$object->entity]:$conf->societe->dir_output;
-	$permissiontoadd = $user->rights->societe->creer;
+	$permissiontoadd = $user->hasRight('societe', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -1986,6 +1986,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->town = GETPOST('town', 'alphanohtml');
 				$object->country_id = GETPOST('country_id') ?GETPOST('country_id', 'int') : $mysoc->country_id;
 				$object->state_id = GETPOST('state_id', 'int');
+				$object->parent = GETPOST('parent_company_id', 'int');
 
 				$object->socialnetworks = array();
 				if (isModEnabled('socialnetworks')) {
@@ -2614,6 +2615,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
+			// Parent company
+			if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
+				print '<tr>';
+				print '<td>'.$langs->trans('ParentCompany').'</td>';
+				print '<td colspan="3" class="maxwidthonsmartphone">';
+				print img_picto('', 'company', 'class="paddingrightonly"');
+				print $form->select_company(GETPOST('parent_company_id') ? GETPOST('parent_company_id') : $object->parent, 'parent_company_id', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
+				print '</td></tr>';
+			}
+
 			// Webservices url/key
 			if (!empty($conf->syncsupplierwebservices->enabled)) {
 				print '<tr><td>'.$form->editfieldkey('WebServiceURL', 'webservices_url', '', $object, 0).'</td>';
@@ -3018,7 +3029,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Third-Party Type
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ThirdPartyType').'</td>';
-		if ($action != 'editthirdpartytype' && $user->rights->societe->creer) {
+		if ($action != 'editthirdpartytype' && $user->hasRight('societe', 'creer')) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -3087,7 +3098,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (isModEnabled('incoterm')) {
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans('IncotermLabel').'</td>';
-			if ($action != 'editincoterm' && $user->rights->societe->creer) {
+			if ($action != 'editincoterm' && $user->hasRight('societe', 'creer')) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit('', 1).'</a></td>';
 			}
 			print '</tr></table>';
@@ -3151,7 +3162,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ParentCompany').'</td>';
-			if ($action != 'editparentcompany' && $user->rights->societe->creer) {
+			if ($action != 'editparentcompany' && $user->hasRight('societe', 'creer')) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 			}
 			print '</tr></table>';
@@ -3279,7 +3290,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
 				$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
 				$genallowed = $user->hasRight('societe', 'lire');
-				$delallowed = $user->rights->societe->creer;
+				$delallowed = $user->hasRight('societe', 'creer');
 
 				print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 			}

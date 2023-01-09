@@ -134,6 +134,6 @@ class FormPropal
 		}
 		print '</select>';
 
-		print ajax_combobox($htmlname);
+		print ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($showempty < 0 ? (string) $showempty : '-1'), $morecss);
 	}
 }

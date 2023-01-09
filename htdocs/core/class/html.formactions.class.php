@@ -293,12 +293,17 @@ class FormActions
 					print '</td>';
 
 					$actionstatic = $actioncomm;
+
+					// Example: Email sent from invoice card
+					//$actionstatic->code = 'AC_BILL_SENTBYMAIL
+					//$actionstatic->type_code = 'AC_OTHER_AUTO'
+
 					// Type
 					$labeltype = $actionstatic->type_code;
 					if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
 						$labeltype = 'AC_OTH';
 					}
-					if ($actionstatic->type_code == 'AC_OTH' && $actionstatic->code == 'TICKET_MSG') {
+					if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 						$labeltype = $langs->trans("Message");
 					} else {
 						if (!empty($arraylist[$labeltype])) {

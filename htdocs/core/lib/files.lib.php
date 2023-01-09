@@ -1657,7 +1657,12 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 
 	if (!empty($_FILES[$varfiles])) { // For view $_FILES[$varfiles]['error']
 		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
-
+		$maxfilesinform = getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10);
+		if (is_array($_FILES[$varfiles]["name"]) && count($_FILES[$varfiles]["name"]) > $maxfilesinform) {
+			$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+			setEventMessages($langs->trans("ErrorTooMuchFileInForm", $maxfilesinform), null, "errors");
+			return -1;
+		}
 		$result = dol_mkdir($upload_dir);
 		//      var_dump($result);exit;
 		if ($result >= 0) {
@@ -2473,7 +2478,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	if (empty($refname)) {
 		$refname = basename(dirname($original_file)."/");
 		if ($refname == 'thumbs') {
-			// If we get the thumbns directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
+			// If we get the thumbs directory, we must go one step higher. For example original_file='10/thumbs/myfile_small.jpg' -> refname='10'
 			$refname = basename(dirname(dirname($original_file))."/");
 		}
 	}

@@ -369,7 +369,7 @@ if (empty($reshook)) {
 							}
 
 							if (!empty($conf->global->MAILING_DELAY)) {
-								dol_syslog("Wait a delay of MAILING_DELAY=".$conf->global->MAILING_DELAY);
+								dol_syslog("Wait a delay of MAILING_DELAY=".((float) $conf->global->MAILING_DELAY));
 								usleep((float) $conf->global->MAILING_DELAY * 1000000);
 							}
 
@@ -1093,18 +1093,18 @@ if ($action == 'create') {
 			}
 
 
-			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br><br><span class="small">';
 			foreach ($object->substitutionarray as $key => $val) {
 				$htmltext .= $key.' = '.$langs->trans($val).'<br>';
 			}
-			$htmltext .= '</i>';
+			$htmltext .= '</span></i>';
 
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'emailsubstitionhelp'), 'generic');
+			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 3, 'emailsubstitionhelp'), 'generic');
 
 			print dol_get_fiche_head('', '', '', -1);
 
-			print '<table class="bordernooddeven" width="100%">';
+			print '<table class="bordernooddeven tableforfield centpercent">';
 
 			// Subject
 			print '<tr><td class="titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';

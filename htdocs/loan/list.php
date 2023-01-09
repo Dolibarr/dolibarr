@@ -107,8 +107,13 @@ $title = $langs->trans('Loans');
 
 $sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.paid,";
 $sql .= " SUM(pl.amount_capital) as alreadypaid";
-$sql .= " FROM ".MAIN_DB_PREFIX."loan as l LEFT JOIN ".MAIN_DB_PREFIX."payment_loan AS pl";
-$sql .= " ON l.rowid = pl.fk_loan";
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
+$sql .= " FROM ".MAIN_DB_PREFIX."loan as l";
+$linktopl = " LEFT JOIN ".MAIN_DB_PREFIX."payment_loan AS pl ON l.rowid = pl.fk_loan";
+$sql .= $linktopl;
+
 $sql .= " WHERE l.entity = ".$conf->entity;
 if ($search_amount) {
 	$sql .= natural_search("l.capital", $search_amount, 1);
@@ -120,35 +125,42 @@ if ($search_label) {
 	$sql .= natural_search("l.label", $search_label);
 }
 $sql .= " GROUP BY l.rowid, l.label, l.capital, l.paid, l.datestart, l.dateend";
-$sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$resql = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/'.preg_quote($linktopl, '/').'/', '', $sqlforcount);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
 
-// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit))) {
-	$num = $nbtotalofrecords;
-} else {
-	if ($limit) {
-		$sql .= $db->plimit($limit + 1, $offset);
-	}
-
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-		exit;
-	}
-
-	$num = $db->num_rows($resql);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
 }
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$num = $db->num_rows($resql);
 
 // Output page
 // --------------------------------------------------------------------

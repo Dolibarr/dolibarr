@@ -280,8 +280,8 @@ ErrorWrongFileName=Name of the file cannot have __SOMETHING__ in it
 ErrorNotInDictionaryPaymentConditions=Not in Payment Terms Dictionary, please modify.
 ErrorIsNotADraft=%s is not a draft
 ErrorExecIdFailed=Can't execute command "id"
-ErrorBadCharIntoLoginName=Unauthorized character in the login name
-ErrorRequestTooLarge=Error, request too large
+ErrorBadCharIntoLoginName=Unauthorized character in the field %s
+ErrorRequestTooLarge=Error, request too large or session expired
 ErrorNotApproverForHoliday=You are not the approver for leave %s
 ErrorAttributeIsUsedIntoProduct=This attribute is used in one or more product variants
 ErrorAttributeValueIsUsedIntoProduct=This attribute value is used in one or more product variants
@@ -302,6 +302,7 @@ ErrorTableNotFound=Table <b>%s</b> not found
 ErrorValueForTooLow=Value for <b>%s</b> is too low
 ErrorValueCantBeNull=Value for <b>%s</b> can't be null
 ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
+ErrorTooMuchFileInForm=Too much files in form, the maximum number is %s file(s)
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
