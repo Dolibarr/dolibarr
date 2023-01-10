@@ -44,6 +44,7 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$mode = GETPOST('mode', 'alopha');
 
 $sall = GETPOST("sall", "alpha");
 $filter = GETPOST("filter", 'alpha');
@@ -81,6 +82,7 @@ $duration_unit = GETPOST('duration_unit', 'alpha');
 $vote = GETPOST("vote", "int");
 $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
+$caneditamount = GETPOSTINT("caneditamount");
 
 // Security check
 $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
@@ -124,11 +126,11 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	$object->status = (int) $status;
 	$object->subscription = (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
-	$object->caneditamount = GETPOSTINT("caneditamount");
+	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
-	$object->note = trim($comment);
 	$object->note_public = trim($comment);
+	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
 	$object->vote = (int) $vote;
 
@@ -142,7 +144,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	} else {
-		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
+		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle = '".$db->escape($object->label)."'";
 		$sql .= " WHERE entity IN (".getEntity('member_type').")";
 		$result = $db->query($sql);
 		$num = null;
@@ -170,7 +172,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	}
 }
 
-if ($action == 'update' && $user->rights->adherent->configurer) {
+if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
 
 	$object->oldcopy = dol_clone($object);
@@ -183,8 +185,8 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
 	$object->duration_unit = $duration_unit;
-	$object->note = trim($comment);
 	$object->note_public = trim($comment);
+	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
 	$object->vote = (boolean) trim($vote);
 
@@ -206,7 +208,7 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 	exit;
 }
 
-if ($action == 'confirm_delete' && !empty($user->rights->adherent->configurer)) {
+if ($action == 'confirm_delete' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
 	$res = $object->delete();
 
@@ -248,6 +250,9 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		$i = 0;
 
 		$param = '';
+		if (!empty($mode)) {
+			$param .= '&mode'.urlencode($mode);
+		}
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 			$param .= '&contextpage='.$contextpage;
 		}
@@ -256,7 +261,11 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		}
 
 		$newcardbutton = '';
-		if ($user->rights->adherent->configurer) {
+
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+
+		if ($user->hasRight('adherent', 'configurer')) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
 		}
 
@@ -269,6 +278,8 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+		print '<input type="hidden" name="mode" value="'.$mode.'">';
+
 
 		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -291,7 +302,13 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 		$membertype = new AdherentType($db);
 
-		while ($i < $num) {
+		$i = 0;
+		/*$savnbfield = $totalarray['nbfield'];
+		$totalarray = array();
+		$totalarray['nbfield'] = 0;*/
+
+		$imaxinloop = ($limit ? min($num, $limit) : $num);
+		while ($i < $imaxinloop) {
 			$objp = $db->fetch_object($result);
 
 			$membertype->id = $objp->rowid;
@@ -302,32 +319,46 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$membertype->amount = $objp->amount;
 			$membertype->caneditamount = $objp->caneditamount;
 
-			print '<tr class="oddeven">';
-			print '<td class="nowraponall">';
-			print $membertype->getNomUrl(1);
-			//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
-			print '</td>';
-			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
-			print '<td class="center">';
-			if ($objp->morphy == 'phy') {
-				print $langs->trans("Physical");
-			} elseif ($objp->morphy == 'mor') {
-				print $langs->trans("Moral");
+			if ($mode == 'kanban') {
+				if ($i == 0) {
+					print '<tr><td colspan="12">';
+					print '<div class="box-flex-container">';
+				}
+				//output kanban
+				$membertype->label = $objp->label;
+				print $membertype->getKanbanView('');
+				if ($i == ($imaxinloop - 1)) {
+					print '</div>';
+					print '</td></tr>';
+				}
 			} else {
-				print $langs->trans("MorAndPhy");
+				print '<tr class="oddeven">';
+				print '<td class="nowraponall">';
+				print $membertype->getNomUrl(1);
+				//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
+				print '</td>';
+				print '<td>'.dol_escape_htmltag($objp->label).'</td>';
+				print '<td class="center">';
+				if ($objp->morphy == 'phy') {
+					print $langs->trans("Physical");
+				} elseif ($objp->morphy == 'mor') {
+					print $langs->trans("Moral");
+				} else {
+					print $langs->trans("MorAndPhy");
+				}
+				print '</td>';
+				print '<td class="center">'.yn($objp->subscription).'</td>';
+				print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
+				print '<td class="center">'.yn($objp->caneditamount).'</td>';
+				print '<td class="center">'.yn($objp->vote).'</td>';
+				print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
+				if ($user->rights->adherent->configurer) {
+					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+				} else {
+					print '<td class="right">&nbsp;</td>';
+				}
+				print "</tr>";
 			}
-			print '</td>';
-			print '<td class="center">'.yn($objp->subscription).'</td>';
-			print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
-			print '<td class="center">'.yn($objp->caneditamount).'</td>';
-			print '<td class="center">'.yn($objp->vote).'</td>';
-			print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
-			if ($user->rights->adherent->configurer) {
-				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
-			} else {
-				print '<td class="right">&nbsp;</td>';
-			}
-			print "</tr>";
 			$i++;
 		}
 
@@ -390,8 +421,8 @@ if ($action == 'create') {
 	print '<input name="amount" size="5" value="'.(GETPOSTISSET('amount') ? GETPOST('amount') : price($amount)).'">';
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("CanEditAmount").'</td><td>';
-	print $form->selectyesno("caneditamount", 0, 1);
+	print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
+	print $form->selectyesno("caneditamount", GETPOSTISSET('caneditamount') ? GETPOST('caneditamount') : 0, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
@@ -832,7 +863,7 @@ if ($rowid > 0) {
 		print '</td></tr>';
 
 		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmountDetail")).'</td><td>';
-		print $form->selectyesno("caneditamount", $object->caneditamount);
+		print $form->selectyesno("caneditamount", $object->caneditamount, 1);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';

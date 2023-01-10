@@ -322,7 +322,7 @@ if ($modecompta == 'BOOKKEEPING') {
 
 				if ($showaccountdetail == 'no') {
 					if ($objp->pcg_type != $oldpcgtype) {
-						print '<tr class="trforbreak"><td colspan="3" class="tdforbreak">'.$objp->pcg_type.'</td></tr>';
+						print '<tr class="trforbreak"><td colspan="3" class="tdforbreak">'.dol_escape_htmltag($objp->pcg_type).'</td></tr>';
 						$oldpcgtype = $objp->pcg_type;
 					}
 				}
@@ -331,17 +331,17 @@ if ($modecompta == 'BOOKKEEPING') {
 					print '<tr class="oddeven">';
 					print '<td></td>';
 					print '<td>';
-					print $objp->pcg_type;
-					print ($objp->name ? ' ('.$objp->name.')' : ' ('.$langs->trans("Unknown").')');
+					print dol_escape_htmltag($objp->pcg_type);
+					print ($objp->name ? ' ('.dol_escape_htmltag($objp->name).')' : ' ('.$langs->trans("Unknown").')');
 					print "</td>\n";
-					print '<td class="right"><span class="amount">'.price($objp->amount)."</span></td>\n";
+					print '<td class="right nowraponall"><span class="amount">'.price($objp->amount)."</span></td>\n";
 					print "</tr>\n";
 				} else {
 					print '<tr class="oddeven trforbreak">';
 					print '<td colspan="2" class="tdforbreak">';
-					print $objp->pcg_type;
+					print dol_escape_htmltag($objp->pcg_type);
 					print "</td>\n";
-					print '<td class="right tdforbreak"><span class="amount">'.price($objp->amount)."</span></td>\n";
+					print '<td class="right nowraponall tdforbreak"><span class="amount">'.price($objp->amount)."</span></td>\n";
 					print "</tr>\n";
 				}
 
@@ -368,7 +368,7 @@ if ($modecompta == 'BOOKKEEPING') {
 					$cpts = $AccCat->getCptsCat(0, $tmppredefinedgroupwhere);
 
 					foreach ($cpts as $j => $cpt) {
-						$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, $cpt['dc']);
+						$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, (empty($cpt['dc']) ? 0 : $cpt['dc']));
 						if ($return < 0) {
 							setEventMessages(null, $AccCat->errors, 'errors');
 							$resultN = 0;
@@ -381,7 +381,7 @@ if ($modecompta == 'BOOKKEEPING') {
 							print '<tr>';
 							print '<td></td>';
 							print '<td class="tdoverflowmax200"> &nbsp; &nbsp; '.length_accountg($cpt['account_number']).' - '.$cpt['account_label'].'</td>';
-							print '<td class="right"><span class="amount">'.price($resultN).'</span></td>';
+							print '<td class="right nowraponall"><span class="amount">'.price($resultN).'</span></td>';
 							print "</tr>\n";
 						}
 					}
@@ -1541,27 +1541,27 @@ print '</tr>';
 
 print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Income").'</td>';
 if ($modecompta == 'CREANCES-DETTES') {
-	print '<td class="liste_total right">'.price(price2num($total_ht_income, 'MT')).'</td>';
+	print '<td class="liste_total right nowraponall">'.price(price2num($total_ht_income, 'MT')).'</td>';
 } elseif ($modecompta == 'RECETTES-DEPENSES') {
 	print '<td></td>';
 }
-print '<td class="liste_total right">'.price(price2num($total_ttc_income, 'MT')).'</td>';
+print '<td class="liste_total right nowraponall">'.price(price2num($total_ttc_income, 'MT')).'</td>';
 print '</tr>';
 print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Outcome").'</td>';
 if ($modecompta == 'CREANCES-DETTES') {
-	print '<td class="liste_total right">'.price(price2num(-$total_ht_outcome, 'MT')).'</td>';
+	print '<td class="liste_total right nowraponall">'.price(price2num(-$total_ht_outcome, 'MT')).'</td>';
 } elseif ($modecompta == 'RECETTES-DEPENSES') {
 	print '<td></td>';
 }
-print '<td class="liste_total right">'.price(price2num(-$total_ttc_outcome, 'MT')).'</td>';
+print '<td class="liste_total right nowraponall">'.price(price2num(-$total_ttc_outcome, 'MT')).'</td>';
 print '</tr>';
 print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Profit").'</td>';
 if ($modecompta == 'CREANCES-DETTES') {
-	print '<td class="liste_total right">'.price(price2num($total_ht, 'MT')).'</td>';
+	print '<td class="liste_total right nowraponall">'.price(price2num($total_ht, 'MT')).'</td>';
 } elseif ($modecompta == 'RECETTES-DEPENSES') {
 	print '<td></td>';
 }
-print '<td class="liste_total right">'.price(price2num($total_ttc, 'MT')).'</td>';
+print '<td class="liste_total right nowraponall">'.price(price2num($total_ttc, 'MT')).'</td>';
 print '</tr>';
 
 print "</table>";

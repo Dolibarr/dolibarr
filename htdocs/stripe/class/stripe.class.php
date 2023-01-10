@@ -279,9 +279,9 @@ class Stripe extends CommonObject
 			global $stripearrayofkeysbyenv;
 			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
-				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'');
+				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve((string) $paymentmethod->id);
 			} else {
-				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'', array("stripe_account" => $key));
+				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve((string) $paymentmethod->id, array("stripe_account" => $key));
 			}
 		} catch (Exception $e) {
 			$this->error = $e->getMessage();
@@ -307,9 +307,9 @@ class Stripe extends CommonObject
 			global $stripearrayofkeysbyenv;
 			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 			if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
-				$selectedreader = \Stripe\Terminal\Reader::retrieve(''.$reader.'');
+				$selectedreader = \Stripe\Terminal\Reader::retrieve((string) $reader);
 			} else {
-				$stripepaymentmethod = \Stripe\Terminal\Reader::retrieve(''.$reader.'', array("stripe_account" => $key));
+				$stripepaymentmethod = \Stripe\Terminal\Reader::retrieve((string) $reader, array("stripe_account" => $key));
 			}
 		} catch (Exception $e) {
 			$this->error = $e->getMessage();
@@ -378,7 +378,7 @@ class Stripe extends CommonObject
 
 		$paymentintent = null;
 
-		if (is_object($object) && !empty($conf->global->STRIPE_REUSE_EXISTING_INTENT_IF_FOUND) && empty($conf->global->STRIPE_CARD_PRESENT)) {
+		if (is_object($object) && getDolGlobalInt('STRIPE_REUSE_EXISTING_INTENT_IF_FOUND') && !getDolGlobalInt('STRIPE_CARD_PRESENT')) {
 			// Warning. If a payment was tried and failed, a payment intent was created.
 			// But if we change something on object to pay (amount or other that does not change the idempotency key), reusing same payment intent is not allowed by Stripe.
 			// Recommended solution is to recreate a new payment intent each time we need one (old one will be automatically closed by Stripe after a delay), Stripe will
@@ -435,26 +435,26 @@ class Stripe extends CommonObject
 			// list of payment method types
 			$paymentmethodtypes = array("card");
 			$descriptor = dol_trunc($tag, 10, 'right', 'UTF-8', 1);
-			if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT)) {
+			if (getDolGlobalInt('STRIPE_SEPA_DIRECT_DEBIT')) {
 				$paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
 				//$descriptor = preg_replace('/ref=[^:=]+/', '', $descriptor);	// Clean ref
 			}
-			if (!empty($conf->global->STRIPE_KLARNA)) {
+			if (getDolGlobalInt('STRIPE_KLARNA')) {
 				$paymentmethodtypes[] = "klarna";
 			}
-			if (!empty($conf->global->STRIPE_BANCONTACT)) {
+			if (getDolGlobalInt('STRIPE_BANCONTACT')) {
 				$paymentmethodtypes[] = "bancontact";
 			}
-			if (!empty($conf->global->STRIPE_IDEAL)) {
+			if (getDolGlobalInt('STRIPE_IDEAL')) {
 				$paymentmethodtypes[] = "ideal";
 			}
-			if (!empty($conf->global->STRIPE_GIROPAY)) {
+			if (getDolGlobalInt('STRIPE_GIROPAY')) {
 				$paymentmethodtypes[] = "giropay";
 			}
-			if (!empty($conf->global->STRIPE_SOFORT)) {
+			if (getDolGlobalInt('STRIPE_SOFORT')) {
 				$paymentmethodtypes[] = "sofort";
 			}
-			if (!empty($conf->global->STRIPE_CARD_PRESENT) && $mode == 'terminal') {
+			if (getDolGlobalInt('STRIPE_CARD_PRESENT') && $mode == 'terminal') {
 				$paymentmethodtypes = array("card_present");
 			}
 
@@ -484,13 +484,13 @@ class Stripe extends CommonObject
 				//$dataforintent["setup_future_usage"] = "off_session";
 				$dataforintent["off_session"] = true;
 			}
-			if (!empty($conf->global->STRIPE_GIROPAY)) {
+			if (getDolGlobalInt('STRIPE_GIROPAY')) {
 				unset($dataforintent['setup_future_usage']);
 			}
-			if (!empty($conf->global->STRIPE_KLARNA)) {
+			if (getDolGlobalInt('STRIPE_KLARNA')) {
 				unset($dataforintent['setup_future_usage']);
 			}
-			if (!empty($conf->global->STRIPE_CARD_PRESENT) && $mode == 'terminal') {
+			if (getDolGlobalInt('STRIPE_CARD_PRESENT') && $mode == 'terminal') {
 				unset($dataforintent['setup_future_usage']);
 				$dataforintent["capture_method"] = "manual";
 				$dataforintent["confirmation_method"] = "manual";
@@ -500,7 +500,7 @@ class Stripe extends CommonObject
 				$description .= ' - '.$payment_method;
 			}
 
-			if ($conf->entity != $conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0) {
+			if ($conf->entity != getDolGlobalInt('STRIPECONNECT_PRINCIPAL') && $stripefee > 0) {
 				$dataforintent["application_fee_amount"] = $stripefee;
 			}
 			if ($usethirdpartyemailforreceiptemail && is_object($object) && $object->thirdparty->email) {
@@ -1087,13 +1087,13 @@ class Stripe extends CommonObject
 		$ipaddress = getUserRemoteIP();
 
 		$metadata = array(
-			"dol_id" => "".$item."",
-			"dol_type" => "".$origin."",
-			"dol_thirdparty_id" => "".$societe->id."",
+			"dol_id" => (string) $item,
+			"dol_type" => (string) $origin,
+			"dol_thirdparty_id" => (string) $societe->id,
 			'dol_thirdparty_name' => $societe->name,
-			'dol_version'=>DOL_VERSION,
-			'dol_entity'=>$conf->entity,
-			'ipaddress'=>$ipaddress
+			'dol_version' => DOL_VERSION,
+			'dol_entity' => $conf->entity,
+			'ipaddress' => $ipaddress
 		);
 		$return = new Stripe($this->db);
 		try {
@@ -1233,7 +1233,7 @@ class Stripe extends CommonObject
 					$return->message = $charge->source->card->brand." ....".$charge->source->card->last4;
 				} elseif ($charge->source->type == 'three_d_secure') {
 					$stripe = new Stripe($this->db);
-					$src = \Stripe\Source::retrieve("".$charge->source->three_d_secure->card."", array(
+					$src = \Stripe\Source::retrieve("".$charge->source->three_d_secure->card, array(
 					"stripe_account" => $stripe->getStripeAccount($service)
 					));
 					$return->message = $src->card->brand." ....".$src->card->last4;

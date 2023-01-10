@@ -37,7 +37,8 @@ EventOrganization=Event organization
 Settings=Ustawienia
 EventOrganizationSetupPage = Strona konfiguracji imprezy organizacyjnej
 EVENTORGANIZATION_TASK_LABEL = Etykiety zadań automatycznie tworzonych po zatwierdzeniu projektu
-EVENTORGANIZATION_TASK_LABELTooltip = Podczas walidacji zorganizowanego wydarzenia niektóre zadania mogą być tworzone automatycznie w projekcie<br><br>Na przykład: <br>Wyślij wezwanie na konferencję<br>Wyślij wezwanie do stoiska<br>Odbierz wezwanie na konferencję<br>Odbierz wezwanie na konferencję<br>Odbierz wezwanie do stoiska<br>Wyślij prelegentom przypomnienie o imprezie<br>Wyślij gospodarzom stoiska przypomnienie o imprezie<br>Wyślij uczestnikom przypomnienie o imprezie
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
+EVENTORGANIZATION_TASK_LABELTooltip2=Keep empty if you don't need to create tasks automatically.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kategoria dodawana do kontrahentów, tworzona automatycznie po otrzymaniu sugestii zorganizowania konferencji.
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kategoria dodawana do kontrahentów, tworzona automatycznie po otrzymaniu sugestii zorganizowania stoiska.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Szablon wiadomości e-mail wysyłany po otrzymaniu sugestii zorganizowania konferencji.
@@ -53,12 +54,15 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, 
 # Object
 #
 EventOrganizationConfOrBooth= Konferencja lub stoisko
+EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Manage the organization of an event
 ConferenceOrBooth = Konferencja lub stoisko
 ConferenceOrBoothTab = Konferencja lub stoisko
 AmountPaid = Amount paid
 DateOfRegistration = Date of registration
 ConferenceOrBoothAttendee = Uczestnik konferencji lub stoiska
+ApplicantOrVisitor=Applicant or visitor
+Speaker=Speaker
 
 #
 # Template Mail
@@ -111,15 +115,15 @@ EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest 
 EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
 EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
 ListOfSuggestedConferences = Lista proponowanych konferencji
-ListOfSuggestedBooths = Lista sugerowanych stoisk
-ListOfConferencesOrBooths=List of conferences or booths of event project
+ListOfSuggestedBooths=Suggested booths
+ListOfConferencesOrBooths=Conferences or booths of event project
 SuggestConference = Zaproponuj nową konferencję
 SuggestBooth = Zaproponuj stoisko
 ViewAndVote = Zobacz i zagłosuj na sugerowane wydarzenia
 PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
 PublicAttendeeSubscriptionPage = Public link for registration to this event only
 MissingOrBadSecureKey = Klucz bezpieczeństwa jest nieprawidłowy lub go brakuje
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
+EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
 EvntOrgDuration = Ta konferencja zaczyna się %s i kończy się %s.
 ConferenceAttendeeFee = Opłata uczestnika konferencji za wydarzenie: '%s' występujące od %s do %s.
 BoothLocationFee = Lokalizacja stoiska dla wydarzenia: „%s” występujące od %s do %s
@@ -129,7 +133,7 @@ LabelOfconference=Etykieta konferencji
 ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
 DateMustBeBeforeThan=%s must be before %s
 DateMustBeAfterThan=%s must be after %s
-
+MaxNbOfAttendeesReached=The maximum number of participants has been reached
 NewSubscription=Registration
 OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
 OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
@@ -138,6 +142,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event re
 OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
 OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
 OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
+OrganizationEvenLabelName=Public name of the conference or booth
 
 NewSuggestionOfBooth=Application for a booth
 NewSuggestionOfConference=Application for a conference
@@ -153,7 +158,7 @@ VoteOk = Twój głos został zaakceptowany.
 AlreadyVoted = Już zagłosowałeś na to wydarzenie.
 VoteError = Podczas głosowania wystąpił błąd, spróbuj ponownie.
 
-SubscriptionOk = Your registration has been validated
+SubscriptionOk=Your registration has been recorded
 ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
 Attendee = Uczestnik
 PaymentConferenceAttendee = Opłata za uczestnika konferencji
@@ -161,7 +166,9 @@ PaymentBoothLocation = Płatność za miejsce na stoisku
 DeleteConferenceOrBoothAttendee=Remove attendee
 RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
 EmailAttendee=Attendee email
+EmailCompany=Company email
 EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
 ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
 ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+MaxNbOfAttendees=Max number of attendees

@@ -362,7 +362,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			$contactid = GETPOST("contactid", 'int');
 			$object->fetch($contactid);
-			$object->fetchRoles($contactid);
+			$object->fetchRoles();
 
 			// Photo save
 			$dir = $conf->societe->multidir_output[$object->entity]."/contact/".$object->id."/photos";

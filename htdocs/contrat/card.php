@@ -669,6 +669,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'updateline' && $user->rights->contrat->creer && !GETPOST('cancel', 'alpha')) {
 		$error = 0;
+		$predef = '';
 
 		if (!empty($date_start_update) && !empty($date_end_update) && $date_start_update > $date_end_update) {
 			setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
@@ -744,7 +745,7 @@ if (empty($reshook)) {
 			$objectline->date_end = $date_end_update;
 			$objectline->date_end_real = $date_end_real_update;
 			$objectline->fk_user_cloture = $user->id;
-			$objectline->fk_fournprice = $fk_fournprice;
+			//$objectline->fk_fournprice = $fk_fournprice;
 			$objectline->pa_ht = $pa_ht;
 			$objectline->rang = $objectline->rang;
 
@@ -1512,7 +1513,7 @@ if ($action == 'create') {
 				//	print '<td width="80" class="right">'.$langs->trans("PriceUHTCurrency").'</td>';
 				//}
 				print '<td width="30" class="center">'.$langs->trans("Qty").'</td>';
-				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+				if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 					print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
 				}
 				print '<td width="50" class="right">'.$langs->trans("ReductionShort").'</td>';
@@ -1593,7 +1594,7 @@ if ($action == 'create') {
 					// Quantity
 					print '<td class="center">'.$objp->qty.'</td>';
 					// Unit
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						print '<td class="left">'.$langs->trans($object->lines[$cursorline - 1]->getLabelOfUnit()).'</td>';
 					}
 					// Discount
@@ -1634,9 +1635,9 @@ if ($action == 'create') {
 					if ($objp->subprice >= 0) {
 						$colspan = 6;
 
-						if ($conf->margin->enabled && $conf->global->PRODUCT_USE_UNITS) {
+						if ($conf->margin->enabled && getDolGlobalString('PRODUCT_USE_UNITS')) {
 							$colspan = 8;
-						} elseif ($conf->margin->enabled || $conf->global->PRODUCT_USE_UNITS) {
+						} elseif ($conf->margin->enabled || getDolGlobalString('PRODUCT_USE_UNITS')) {
 							$colspan = 7;
 						}
 
@@ -1700,7 +1701,7 @@ if ($action == 'create') {
 							if (empty($senderissupplier)) {
 								print $form->select_produits((!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0), 'idprod');
 							} else {
-								print $form->select_produits_fournisseurs((!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0), 'idprod');
+								$form->select_produits_fournisseurs((!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0), 'idprod');
 							}
 						}
 						print '<br>';
@@ -1738,7 +1739,7 @@ if ($action == 'create') {
 					print '<td class="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
 
 					// Unit
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						print '<td class="left">';
 						print $form->selectUnits($objp->fk_unit, "unit");
 						print '</td>';
@@ -1764,7 +1765,7 @@ if ($action == 'create') {
 					if (isModEnabled('margin') && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
 						$colspan++;
 					}
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						$colspan++;
 					}
 
@@ -2024,7 +2025,7 @@ if ($action == 'create') {
 				print '</td></tr>';
 
 				print '<tr class="oddeven">';
-				print '<td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.dol_escape_htmltag(GETPOST('comment', 'alpha')).'"></td>';
+				print '<td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input class="quatrevingtpercent" type="text" class="flat" name="comment" value="'.dol_escape_htmltag(GETPOST('comment', 'alpha')).'"></td>';
 				print '<td class="nohover right">';
 				print '<input type="submit" class="button" name="close" value="'.$langs->trans("Disable").'"> &nbsp; ';
 				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -2204,7 +2205,7 @@ if ($action == 'create') {
 			$delallowed = $user->rights->contrat->creer;
 
 
-			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : $conf->global->CONTRACT_ADDON_PDF), 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
+			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : getDolGlobalString('CONTRACT_ADDON_PDF')), 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
 
 
 			// Show links to link elements
@@ -2212,7 +2213,7 @@ if ($action == 'create') {
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			// Show online signature link
-			if ($object->statut != Contrat::STATUS_DRAFT && $conf->global->CONTRACT_ALLOW_ONLINESIGN) {
+			if ($object->statut != Contrat::STATUS_DRAFT && getDolGlobalString('CONTRACT_ALLOW_ONLINESIGN')) {
 				print '<br><!-- Link to sign -->';
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 

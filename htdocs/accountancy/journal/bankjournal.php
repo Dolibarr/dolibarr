@@ -4,7 +4,7 @@
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2022  Open-DSI      			<support@open-dsi.fr>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2017-2021  Frédéric France         <frederic.france@netlogic.fr>
@@ -796,7 +796,7 @@ if (!$error && $action == 'writebookkeeping') {
 								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 							}
 						} else {
-							if ($lettering && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
+							if ($lettering && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && getDolGlobalInt('ACCOUNTING_ENABLE_AUTOLETTERING')) {
 								require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 								$lettering_static = new Lettering($db);
 								$nb_lettering = $lettering_static->bookkeepingLetteringAll(array($bookkeeping->id));
@@ -1230,22 +1230,22 @@ if (empty($action) || $action == 'view') {
 					$account_ledger = $k;
 					// Try to force general ledger account depending on type
 					if ($tabtype[$key] == 'payment') {
-						$account_ledger = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
+						$account_ledger = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
 					}
 					if ($tabtype[$key] == 'payment_supplier') {
-						$account_ledger = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
+						$account_ledger = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
 					}
 					if ($tabtype[$key] == 'payment_expensereport') {
-						$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+						$account_ledger = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT');
 					}
 					if ($tabtype[$key] == 'payment_salary') {
-						$account_ledger = $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT;
+						$account_ledger = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT');
 					}
 					if ($tabtype[$key] == 'payment_vat') {
-						$account_ledger = $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT;
+						$account_ledger = getDolGlobalString('ACCOUNTING_VAT_PAY_ACCOUNT');
 					}
 					if ($tabtype[$key] == 'member') {
-						$account_ledger = $conf->global->ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT;
+						$account_ledger = getDolGlobalString('ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT');
 					}
 					if ($tabtype[$key] == 'payment_various') {
 						$account_ledger = $tabpay[$key]["account_various"];
@@ -1284,7 +1284,7 @@ if (empty($action) || $action == 'view') {
 						}
 					}
 					print '<td class="maxwidth300" title="'.dol_escape_htmltag(dol_string_nohtmltag($accounttoshow)).'">';
-					print $accounttoshow;
+					print $accounttoshow;	// This is a HTML string
 					print "</td>";
 
 					// Subledger account
@@ -1313,7 +1313,7 @@ if (empty($action) || $action == 'view') {
 						}
 					}
 					print '<td class="maxwidth300">';
-					print $accounttoshowsubledger;
+					print $accounttoshowsubledger;	// This is a html string
 					print "</td>";
 
 					print "<td>".$reflabel."</td>";
@@ -1418,9 +1418,19 @@ function getSourceDocRef($val, $typerecord)
 
 	$sqlmid = '';
 	if ($typerecord == 'payment') {
-		$sqlmid = 'SELECT payfac.fk_facture as id, f.ref as ref';
-		$sqlmid .= " FROM ".MAIN_DB_PREFIX."paiement_facture as payfac, ".MAIN_DB_PREFIX."facture as f";
-		$sqlmid .= " WHERE payfac.fk_facture = f.rowid AND payfac.fk_paiement=".((int) $val["paymentid"]);
+		if (getDolGlobalInt('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
+			$sqlmid = "SELECT payfac.fk_facture as id, ".$db->ifsql('f1.rowid IS NULL', 'f.ref', 'f1.ref')." as ref";
+			$sqlmid .= " FROM ".$db->prefix()."paiement_facture as payfac";
+			$sqlmid .= " LEFT JOIN ".$db->prefix()."facture as f ON f.rowid = payfac.fk_facture";
+			$sqlmid .= " LEFT JOIN ".$db->prefix()."societe_remise_except as sre ON sre.fk_facture_source = payfac.fk_facture";
+			$sqlmid .= " LEFT JOIN ".$db->prefix()."facture as f1 ON f1.rowid = sre.fk_facture";
+			$sqlmid .= " WHERE payfac.fk_paiement=".((int) $val['paymentid']);
+		} else {
+			$sqlmid = "SELECT payfac.fk_facture as id, f.ref as ref";
+			$sqlmid .= " FROM ".$db->prefix()."paiement_facture as payfac";
+			$sqlmid .= " INNER JOIN ".$db->prefix()."facture as f ON f.rowid = payfac.fk_facture";
+			$sqlmid .= " WHERE payfac.fk_paiement=".((int) $val['paymentid']);
+		}
 		$ref = $langs->transnoentitiesnoconv("Invoice");
 	} elseif ($typerecord == 'payment_supplier') {
 		$sqlmid = 'SELECT payfac.fk_facturefourn as id, f.ref';

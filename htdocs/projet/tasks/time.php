@@ -88,6 +88,10 @@ $search_company = GETPOST('$search_company', 'alpha');
 $search_company_alias = GETPOST('$search_company_alias', 'alpha');
 $search_project_ref = GETPOST('$search_project_ref', 'alpha');
 $search_project_label = GETPOST('$search_project_label', 'alpha');
+$search_timespent_starthour = GETPOSTINT("search_timespent_duration_starthour");
+$search_timespent_startmin = GETPOSTINT("search_timespent_duration_startmin");
+$search_timespent_endhour = GETPOSTINT("search_timespent_duration_endhour");
+$search_timespent_endmin = GETPOSTINT("search_timespent_duration_endmin");
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -191,11 +195,15 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_project_ref = '';
 	$search_project_label = '';
 	$search_task_label = '';
-	$search_user = 0;
+	$search_user = -1;
 	$search_valuebilled = '';
 	$search_product_ref = '';
 	$toselect = array();
 	$search_array_options = array();
+	$search_timespent_starthour = '';
+	$search_timespent_startmin = '';
+	$search_timespent_endhour = '';
+	$search_timespent_endmin = '';
 	$action = '';
 }
 
@@ -470,27 +478,38 @@ if ($action == 'confirm_generateinvoice') {
 		}
 
 		if (!$error) {
-			if ($generateinvoicemode == 'onelineperuser') {
+			if ($generateinvoicemode == 'onelineperuser') {		// 1 line per user (and per product)
 				$arrayoftasks = array();
 				foreach ($toselect as $key => $value) {
 					// Get userid, timepent
-					$object->fetchTimeSpent($value);
+					$object->fetchTimeSpent($value);	// $value is ID of 1 line in timespent table
 					$arrayoftasks[$object->timespent_fk_user][(int) $object->timespent_fk_product]['timespent'] += $object->timespent_duration;
 					$arrayoftasks[$object->timespent_fk_user][(int) $object->timespent_fk_product]['totalvaluetodivideby3600'] += ($object->timespent_duration * $object->timespent_thm);
 				}
 
 				foreach ($arrayoftasks as $userid => $data) {
 					$fuser->fetch($userid);
-					//$pu_ht = $value['timespent'] * $fuser->thm;
 					$username = $fuser->getFullName($langs);
-					foreach ($data as $fk_product=>$timespent_data) {
+
+					foreach ($data as $fk_product => $timespent_data) {
 						// Define qty per hour
 						$qtyhour = $timespent_data['timespent'] / 3600;
 						$qtyhourtext = convertSecondToTime($timespent_data['timespent'], 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
 
-						// If no unit price known
+						// Set the unit price we want to sell the time, for this user
+						if (getDolGlobalInt('PROJECT_USE_REAL_COST_FOR_TIME_INVOICING')) {
+							// We set unit price to 0 to force the use of the rate saved during recording
+							$pu_ht = 0;
+						} else {
+							// We want to sell all the time spent with the last hourly rate of user
+							$pu_ht = $fuser->thm;
+						}
+
+						// If no unit price known for user, we use the price recorded when recording timespent.
 						if (empty($pu_ht)) {
-							$pu_ht = price2num($timespent_data['totalvaluetodivideby3600'] / 3600, 'MU');
+							if ($timespent_data['timespent']) {
+								$pu_ht = price2num(($timespent_data['totalvaluetodivideby3600'] / $timespent_data['timespent']), 'MU');
+							}
 						}
 
 						// Add lines
@@ -501,7 +520,8 @@ if ($action == 'confirm_generateinvoice') {
 						$localtax1line = $localtax1;
 						$localtax2line = $localtax2;
 
-						if (!empty($fk_product) && $fk_product!==$idprod) {
+						// If a particular product/service was defined for the task
+						if (!empty($fk_product) && $fk_product !== $idprod) {
 							if (!array_key_exists($fk_product, $product_data_cache)) {
 								$result = $tmpproduct->fetch($fk_product);
 								if ($result < 0) {
@@ -1227,7 +1247,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 
 		// Call Hook formConfirm
-		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid, "projectstatic" => $projectstatic, "withproject" => $withproject);
+		$parameters = array('formConfirm' => $formconfirm, "projectstatic" => $projectstatic, "withproject" => $withproject);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$formconfirm .= $hookmanager->resPrint;
@@ -1253,7 +1273,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		$arrayfields['author'] = array('label'=>$langs->trans("By"), 'checked'=>1);
 		$arrayfields['t.note'] = array('label'=>$langs->trans("Note"), 'checked'=>1);
-		if ($conf->service->enabled && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
+		if (isModEnabled('service') && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 			$arrayfields['t.fk_product'] = array('label' => $langs->trans("Product"), 'checked' => 1);
 		}
 		$arrayfields['t.task_duration'] = array('label'=>$langs->trans("Duration"), 'checked'=>1);
@@ -1324,6 +1344,18 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		if ($search_date_endyear) {
 			$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+		}
+		if ($search_timespent_starthour) {
+			$param .= '&search_timespent_duration_starthour='.urlencode($search_timespent_starthour);
+		}
+		if ($search_timespent_startmin) {
+			$param .= '&search_timespent_duration_startmin='.urlencode($search_timespent_startmin);
+		}
+		if ($search_timespent_endhour) {
+			$param .= '&search_timespent_duration_endhour='.urlencode($search_timespent_endhour);
+		}
+		if ($search_timespent_endmin) {
+			$param .= '&search_timespent_duration_endmin='.urlencode($search_timespent_endmin);
 		}
 
 		/*
@@ -1434,7 +1466,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $langs->trans('InvoiceToUse');
 				print '</td>';
 				print '<td>';
-				$form->selectInvoice('invoice', '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
+				$form->selectInvoice($projectstatic->thirdparty->id, '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
 				print '</td>';
 				print '</tr>';
 				/*print '<tr>';
@@ -1510,6 +1542,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		 */
 		$tasks = array();
 
+		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+		$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')); // This also change content of $arrayfields
+
 		$sql = "SELECT t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm,";
 		$sql .= " t.fk_product,";
 		$sql .= " pt.ref, pt.label, pt.fk_projet,";
@@ -1546,7 +1581,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (empty($search_user)) {
 				$search_user = $user->id;
 			}
-			$sql .= " AND t.fk_user = ".((int) $search_user);
+			if ($search_user > 0) $sql .= " AND t.fk_user = ".((int) $search_user);
 		}
 
 		if ($search_note) {
@@ -1555,11 +1590,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		if ($search_task_ref) {
 			$sql .= natural_search('pt.ref', $search_task_ref);
 		}
-		if ($search_company) {
-			$sql .= natural_search('s.nom', $search_company);
-		}
-		if ($search_company_alias) {
-			$sql .= natural_search('s.name_alias', $search_company_alias);
+		if (empty($arrayfields['s.name_alias']['checked']) && $search_company) {
+			$sql .= natural_search(array("s.nom", "s.name_alias"), $search_company);
+		} else {
+			if ($search_company) {
+				$sql .= natural_search('s.nom', $search_company);
+			}
+			if ($search_company_alias) {
+				$sql .= natural_search('s.name_alias', $search_company_alias);
+			}
 		}
 		if ($search_project_ref) {
 			$sql .= natural_search('p.ref', $search_project_ref);
@@ -1588,6 +1627,20 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		if ($search_date_end) {
 			$sql .= " AND t.task_date <= '".$db->idate($search_date_end)."'";
+		}
+
+		if (!empty($arrayfields['t.task_duration']['checked'])) {
+			if ($search_timespent_starthour || $search_timespent_startmin) {
+				$timespent_duration_start = $search_timespent_starthour * 60 * 60; // We store duration in seconds
+				$timespent_duration_start += ($search_timespent_startmin ? $search_timespent_startmin : 0) * 60; // We store duration in seconds
+				$sql .= " AND t.task_duration >= " . $timespent_duration_start;
+			}
+
+			if ($search_timespent_endhour || $search_timespent_endmin) {
+				$timespent_duration_end = $search_timespent_endhour * 60 * 60; // We store duration in seconds
+				$timespent_duration_end += ($search_timespent_endmin ? $search_timespent_endmin : 0) * 60; // We store duration in seconds
+				$sql .= " AND t.task_duration <= " . $timespent_duration_end;
+			}
 		}
 
 		$sql .= dolSqlDateFilter('t.task_datehour', $search_day, $search_month, $search_year);
@@ -1858,7 +1911,26 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		// Duration
 		if (!empty($arrayfields['t.task_duration']['checked'])) {
-			print '<td class="liste_titre right"></td>';
+			// Duration - Time spent
+			print '<td class="liste_titre right">';
+
+			$durationtouse_start = 0;
+			if ($search_timespent_starthour || $search_timespent_startmin) {
+				$durationtouse_start = ($search_timespent_starthour * 3600 + $search_timespent_startmin * 60);
+			}
+			print '<div class="nowraponall">'.$langs->trans('from').'&nbsp;';
+			$form->select_duration('search_timespent_duration_start', $durationtouse_start, 0, 'text');
+			print '</div>';
+
+			$durationtouse_end = 0;
+			if ($search_timespent_endhour || $search_timespent_endmin) {
+				$durationtouse_end = ($search_timespent_endhour * 3600 + $search_timespent_endmin * 60);
+			}
+			print '<div class="nowraponall">'.$langs->trans('at').'&nbsp;';
+			$form->select_duration('search_timespent_duration_end', $durationtouse_end, 0, 'text');
+			print '</div>';
+
+			print '</td>';
 		}
 		// Product
 		if (!empty($arrayfields['t.fk_product']['checked'])) {
@@ -1952,7 +2024,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		$total = 0;
 		$totalvalue = 0;
-		$totalarray = array();
+		$totalarray = array('nbfield'=>0);
 		foreach ($tasks as $task_time) {
 			if ($i >= $limit) {
 				break;
@@ -2149,11 +2221,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.task_duration';
 				}
-				$totalarray['val']['t.task_duration'] += $task_time->task_duration;
+				if (empty($totalarray['val']['t.task_duration'])) {
+					$totalarray['val']['t.task_duration'] = $task_time->task_duration;
+				} else {
+					$totalarray['val']['t.task_duration'] += $task_time->task_duration;
+				}
 				if (!$i) {
 					$totalarray['totaldurationfield'] = $totalarray['nbfield'];
 				}
-				$totalarray['totalduration'] += $task_time->task_duration;
+				if (empty($totalarray['totalduration'])) {
+					$totalarray['totalduration'] = $task_time->task_duration;
+				} else {
+					$totalarray['totalduration'] += $task_time->task_duration;
+				}
 			}
 
 			//Product
@@ -2189,11 +2269,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 'value';
 				}
-				$totalarray['val']['value'] += $value;
+				if (empty($totalarray['val']['value'])) {
+					$totalarray['val']['value'] = $value;
+				} else {
+					$totalarray['val']['value'] += $value;
+				}
 				if (!$i) {
 					$totalarray['totalvaluefield'] = $totalarray['nbfield'];
 				}
-				$totalarray['totalvalue'] += $value;
+				if (empty($totalarray['totalvalue'])) {
+					$totalarray['totalvalue'] = $value;
+				} else {
+					$totalarray['totalvalue'] += $value;
+				}
 			}
 
 			// Invoiced

@@ -219,7 +219,7 @@ if ($resql) {
 			print '<td class="right">'.price($objp->total_ttc - $alreadypayed).'</td>';
 
 			// Status
-			print '<td class="center">'.$expensereport->getLibStatut(4, $objp->amount).'</td>';
+			print '<td class="center">'.$expensereport->getLibStatut(4).'</td>';
 
 			print "</tr>\n";
 

@@ -110,6 +110,7 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
                   	  console.log("toggle dropdown dt a");
 
                       //$(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
+                      $(".ulselectedfields").removeClass("open");
 					  $(this).parent().parent().find(\'dd ul\').toggleClass("open");
 
 					  if ($(this).parent().parent().find(\'dd ul\').hasClass("open")) {

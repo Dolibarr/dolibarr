@@ -52,7 +52,12 @@ $langs->loadLangs(array("interventions", "admin", "compta", "bills"));
 
 // Security check
 $id = (GETPOST('fichinterid', 'int') ?GETPOST('fichinterid', 'int') : GETPOST('id', 'int'));
+$ref = GETPOST('ref', 'alpha');
+$date_next_execution = GETPOST('date_next_execution', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
+$backtopage = GETPOST('backtopage', 'alpha');
+$socid = GETPOST('socid', 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -62,12 +67,19 @@ if ($action == "create" || $action == "add") {
 }
 $result = restrictedArea($user, 'ficheinter', $id, $objecttype);
 
-if ($page == -1) {
+// Load variable for pagination
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
-
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -102,6 +114,17 @@ $arrayfields = array(
  * Actions
  */
 
+if ($cancel) {
+	/*var_dump($cancel);var_dump($backtopage);var_dump($backtopageforcancel);exit;*/
+	if (!empty($backtopageforcancel)) {
+		header("Location: ".$backtopageforcancel);
+		exit;
+	} elseif (!empty($backtopage)) {
+		header("Location: ".$backtopage);
+		exit;
+	}
+	$action = '';
+}
 
 // Create predefined intervention
 if ($action == 'add') {
@@ -130,6 +153,8 @@ if ($action == 'add') {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 			$action = "create";
 			$error++;
+		} else {
+			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		}
 		if ($nb_gen_max === '') {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("MaxPeriodNumber")), null, 'errors');
@@ -151,7 +176,6 @@ if ($action == 'add') {
 		$object->nb_gen_max = $nb_gen_max;
 		$object->auto_validate = GETPOST('auto_validate', 'int');
 
-		$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		$object->date_when = $date_next_execution;
 
 		if ($object->create($user) > 0) {
@@ -210,7 +234,7 @@ if ($action == 'add') {
 } elseif ($action == 'delete' && $user->rights->ficheinter->supprimer) {
 	// delete modele
 	$object->fetch($id);
-	$object->delete();
+	$object->delete($user);
 	$id = 0;
 	header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
@@ -268,6 +292,7 @@ if ($action == 'create') {
 		print '<form action="card-rec.php" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="fichinterid" value="'.$object->id.'">';
 
 		print dol_get_fiche_head();
@@ -332,7 +357,7 @@ if ($action == 'create') {
 		if (isModEnabled('contrat')) {
 			$formcontract = new FormContract($db);
 			print "<tr><td>".$langs->trans("Contract")."</td><td>";
-			$contractid = GETPOST('contractid') ?GETPOST('contractid') : $object->fk_contract;
+			$contractid = GETPOST('contractid') ? GETPOST('contractid') : (!empty($object->fk_contract) ? $object->fk_contract : 0) ;
 			$numcontract = $formcontract->select_contract($object->thirdparty->id, $contractid, 'contracttid');
 			print "</td></tr>";
 		}
@@ -357,7 +382,7 @@ if ($action == 'create') {
 
 		// First date of execution for cron
 		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
-		if ($date_next_execution != "") {
+		if (empty($date_next_execution)) {
 			$date_next_execution = (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
 		}
 		print $form->selectDate($date_next_execution, '', 1, 1, '', "add", 1, 1);
@@ -736,7 +761,7 @@ if ($action == 'create') {
 
 			if ($user->rights->ficheinter->creer) {
 				print '<div class="inline-block divButAction">';
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel&token='.newToken().'';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel&token='.newToken();
 				print '&socid='.$object->thirdparty->id.'&id='.$object->id.'">';
 				print $langs->trans("AddIntervention").'</a></div>';
 			}
@@ -763,22 +788,22 @@ if ($action == 'create') {
 		}
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND f.entity = ".$conf->entity;
-		if ($socid) {
+		if (!empty($socid)) {
 			$sql .= " AND s.rowid = ".((int) $socid);
 		}
 		if (empty($user->rights->societe->client->voir) && !$socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
-		if ($search_ref) {
+		if (!empty($search_ref)) {
 			$sql .= natural_search('f.titre', $search_ref);
 		}
-		if ($search_societe) {
+		if (!empty($search_societe)) {
 			$sql .= natural_search('s.nom', $search_societe);
 		}
-		if ($search_frequency == '1') {
+		if (!empty($search_frequency) && $search_frequency == '1') {
 			$sql .= ' AND f.frequency > 0';
 		}
-		if ($search_frequency == '0') {
+		if (isset($search_frequency) && (string) $search_frequency == '0') {
 			$sql .= ' AND (f.frequency IS NULL or f.frequency = 0)';
 		}
 

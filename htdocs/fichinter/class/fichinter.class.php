@@ -501,6 +501,8 @@ class Fichinter extends CommonObject
 				$this->db->free($resql);
 				return 1;
 			}
+
+			return 0;
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -515,8 +517,6 @@ class Fichinter extends CommonObject
 	 */
 	public function setDraft($user)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
 		// Protection
@@ -664,6 +664,8 @@ class Fichinter extends CommonObject
 				return -1;
 			}
 		}
+
+		return 0;
 	}
 
 	/**
@@ -904,8 +906,6 @@ class Fichinter extends CommonObject
 	 */
 	public function info($id)
 	{
-		global $conf;
-
 		$sql = "SELECT f.rowid,";
 		$sql .= " f.datec,";
 		$sql .= " f.tms as date_modification,";
@@ -955,7 +955,7 @@ class Fichinter extends CommonObject
 	 *	@param		int		$notrigger		Disable trigger
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	public function delete($user, $notrigger = 0)
+	public function delete(User $user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1074,13 +1074,11 @@ class Fichinter extends CommonObject
 	 *
 	 *  @param      User	$user				Object user who define
 	 *  @param      integer	$date_delivery   	date of delivery
-	 *  @return     int							<0 if ko, >0 if ok
+	 *  @return     int							<0 if KO, >0 if OK
 	 */
 	public function set_date_delivery($user, $date_delivery)
 	{
 		// phpcs:enable
-		global $conf;
-
 		if ($user->rights->ficheinter->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET datei = '".$this->db->idate($date_delivery)."'";
@@ -1096,6 +1094,8 @@ class Fichinter extends CommonObject
 				return -1;
 			}
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1109,8 +1109,6 @@ class Fichinter extends CommonObject
 	public function set_description($user, $description)
 	{
 		// phpcs:enable
-		global $conf;
-
 		if ($user->rights->ficheinter->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET description = '".$this->db->escape($description)."',";
@@ -1126,6 +1124,8 @@ class Fichinter extends CommonObject
 				return -1;
 			}
 		}
+
+		return 0;
 	}
 
 
@@ -1135,13 +1135,11 @@ class Fichinter extends CommonObject
 	 *
 	 *	@param      User	$user			Object user who modify
 	 *	@param      int		$contractid		Description
-	 *	@return     int						<0 if ko, >0 if ok
+	 *	@return     int						<0 if KO, >0 if OK
 	 */
 	public function set_contrat($user, $contractid)
 	{
 		// phpcs:enable
-		global $conf;
-
 		if ($user->rights->ficheinter->creer) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET fk_contrat = ".((int) $contractid);
@@ -1155,6 +1153,7 @@ class Fichinter extends CommonObject
 				return -1;
 			}
 		}
+
 		return -2;
 	}
 
@@ -1261,7 +1260,7 @@ class Fichinter extends CommonObject
 	{
 		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
 
-		if ($this->statut == 0) {
+		if ($this->statut == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			// Insertion ligne
@@ -1288,6 +1287,8 @@ class Fichinter extends CommonObject
 				return -1;
 			}
 		}
+
+		return 0;
 	}
 
 
@@ -1300,7 +1301,7 @@ class Fichinter extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
+		global $langs;
 
 		$now = dol_now();
 
@@ -1383,18 +1384,18 @@ class Fichinter extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'fichinter'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**

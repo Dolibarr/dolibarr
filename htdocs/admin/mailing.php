@@ -51,8 +51,19 @@ if ($action == 'setvalue') {
 	$mailerror = GETPOST('MAILING_EMAIL_ERRORSTO', 'alpha');
 	$checkread = GETPOST('value', 'alpha');
 	$checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY', 'alpha');
-	$mailingdelay = GETPOST('MAILING_DELAY', 'int');
 	$contactbulkdefault = GETPOST('MAILING_CONTACT_DEFAULT_BULK_STATUS', 'int');
+	if (GETPOST('MAILING_DELAY', 'alpha') != '') {
+		$mailingdelay = price2num(GETPOST('MAILING_DELAY', 'alpha'), 3);		// Not less than 1 millisecond.
+	} else {
+		$mailingdelay = '';
+	}
+	// Clean data
+	if ((float) $mailingdelay > 10) {
+		$mailingdelay = 10;
+	}
+	if (GETPOST('MAILING_DELAY', 'alpha') != '' && GETPOST('MAILING_DELAY', 'alpha') != '0' && (float) $mailingdelay < 0.001) {
+		$mailingdelay = 0.001;
+	}
 
 	$res = dolibarr_set_const($db, "MAILING_EMAIL_FROM", $mailfrom, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
@@ -148,7 +159,7 @@ print '<td class="hideonsmartphone"><span class="opacitymedium">webmaster@exampl
 print '</tr>';
 
 print '<tr class="oddeven"><td>';
-print $langs->trans("MailingDelay").'</td><td>';
+print $form->textwithpicto($langs->trans("MailingDelay"), $langs->trans("IfDefinedUseAValueBeetween", '0.001', '10')).'</td><td>';
 print '<input class="width75" type="text" name="MAILING_DELAY" value="'.$conf->global->MAILING_DELAY.'">';
 print '</td>';
 print '<td class="hideonsmartphone"></td>';

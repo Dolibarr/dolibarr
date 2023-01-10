@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Grāmatvedības konts, ko izmanto trešām pusēm
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Lietotāja kartē norādītais grāmatvedības konts tiks izmantots tikai pakārtotajam grāmatvedim. Šis viens tiks izmantots General Ledger un noklusējuma vērtība Subledged grāmatvedībai, ja lietotāja definēts lietotāju grāmatvedības konts nav definēts.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Grāmatvedības konts pēc noklusējuma algu maksājumiem
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Pēc noklusējuma, veidojot algu, atstājiet tukšu opciju "Automātiski izveidot kopējo maksājumu"
 Salary=Alga

@@ -1134,8 +1134,8 @@ if ($resql) {
 	}
 	// Conciliated
 	if (!empty($arrayfields['b.conciliated']['checked'])) {
-		print '<td class="liste_titre" align="center">';
-		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1);
+		print '<td class="liste_titre center parentonrightofpage">';
+		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1, 'search_status onrightofpage maxwidth75');
 		print '</td>';
 	}
 	// Bordereau

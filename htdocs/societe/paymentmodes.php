@@ -80,7 +80,7 @@ $hookmanager->initHooks(array('thirdpartybancard', 'globalcard'));
 
 // Permissions
 $permissiontoread = $user->hasRight('societe', 'lire');
-$permissiontoadd = $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_builddoc.inc.php
+$permissiontoadd = $user->hasRight('societe', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_builddoc.inc.php
 
 $permissiontoaddupdatepaymentinformation = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $permissiontoadd) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->societe->thirdparty_paymentinformation_advance->write)));
 
@@ -111,6 +111,7 @@ if ($cancel) {
 	$action = '';
 }
 
+$morehtmlright = '';
 $parameters = array('id'=>$socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -1128,7 +1129,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								print '....'.$companypaymentmodetemp->last_four;
 							}
 							if ($companypaymentmodetemp->exp_date_month || $companypaymentmodetemp->exp_date_year) {
-								print ' - '.sprintf("%02d", $companypaymentmodetemp->exp_date_month).'/'.$companypaymentmodetemp->exp_date_year.'';
+								print ' - '.sprintf("%02d", $companypaymentmodetemp->exp_date_month).'/'.$companypaymentmodetemp->exp_date_year;
 							}
 							print '</td><td>';
 							if ($companypaymentmodetemp->country_code) {
@@ -1235,7 +1236,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				// Information
 				print '<td valign="middle">';
 				if ($src->object == 'card') {
-					print '....'.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year.'';
+					print '....'.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year;
 					print '</td><td>';
 					if ($src->country) {
 						$img = picto_from_langcode($src->country);
@@ -1245,7 +1246,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
 				} elseif ($src->object == 'source' && $src->type == 'card') {
-					print '<span class="opacitymedium">'.$src->owner->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print '<span class="opacitymedium">'.$src->owner->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year;
 					print '</td><td>';
 
 					if ($src->card->country) {
@@ -1266,7 +1267,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						print img_warning().' <span class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</span>';
 					}
 				} elseif ($src->object == 'payment_method' && $src->type == 'card') {
-					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year;
 					print '</td><td>';
 
 					if ($src->card->country) {
@@ -1479,20 +1480,22 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print $string;
 			print '</td>';
 			// IBAN
-			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->iban).'">'.dol_escape_htmltag($rib->iban);
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($rib->iban).'">';
 			if (!empty($rib->iban)) {
 				if (!checkIbanForAccount($rib)) {
-					print ' '.img_picto($langs->trans("IbanNotValid"), 'warning');
+					print img_picto($langs->trans("IbanNotValid"), 'warning').' ';
 				}
 			}
+			print dol_escape_htmltag($rib->iban);
 			print '</td>';
 			// BIC
-			print '<td>'.$rib->bic;
+			print '<td>';
 			if (!empty($rib->bic)) {
 				if (!checkSwiftForAccount($rib)) {
-					print ' '.img_picto($langs->trans("SwiftNotValid"), 'warning');
+					print img_picto($langs->trans("SwiftNotValid"), 'warning').' ';
 				}
 			}
+			print dol_escape_htmltag($rib->bic);
 			print '</td>';
 
 			if (!empty($conf->prelevement->enabled)) {

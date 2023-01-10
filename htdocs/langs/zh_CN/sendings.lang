@@ -21,7 +21,7 @@ QtyShipped=出货数量
 QtyShippedShort=数量船。
 QtyPreparedOrShipped=数量（准备或发货）
 QtyToShip=出货数量
-QtyToReceive=Qty to receive
+QtyToReceive=接收数量
 QtyReceived=收到的数量
 QtyInOtherShipments=数量（其他运输）
 KeepToShip=继续发货
@@ -43,34 +43,34 @@ ConfirmValidateSending=您确定要参考<b> %s </b>验证此货件吗？
 ConfirmCancelSending=您确定要取消此货件吗？
 DocumentModelMerou=Merou A5 model
 WarningNoQtyLeftToSend=警告，没有产品等待装运。
-StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+StatsOnShipmentsOnlyValidated=统计数据只针对已验证的发货。使用的日期是确认发货的日期（计划交货日期并不总是知道）
 DateDeliveryPlanned=计划运输日期
 RefDeliveryReceipt=参考送货收据
 StatusReceipt=状态交货收据
 DateReceived=交货日期收到
-ClassifyReception=Classify reception
-SendShippingByEMail=Send shipment by email
+ClassifyReception=分类接收
+SendShippingByEMail=通过电子邮件发送
 SendShippingRef=提交运输 %s
 ActionsOnShipping=运输活动
 LinkToTrackYourPackage=链接到追踪您的包裹
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentCreationIsDoneFromOrder=目前，从销售订单记录中创建新的发货已完成。
 ShipmentLine=运输线路
-ProductQtyInCustomersOrdersRunning=Product quantity from open sales orders
-ProductQtyInSuppliersOrdersRunning=Product quantity from open purchase orders
-ProductQtyInShipmentAlreadySent=Product quantity from open sales order already sent
-ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase orders already received
-NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+ProductQtyInCustomersOrdersRunning=开放销售订单的产品数量
+ProductQtyInSuppliersOrdersRunning=开放采购订单的产品数量
+ProductQtyInShipmentAlreadySent=开放销售订单的产品数量已发送
+ProductQtyInSuppliersShipmentAlreadyRecevied=开放采购订单的产品数量已收到
+NoProductToShipFoundIntoStock=仓库<b>%s</b>中找不到要运输的产品，更正库存或返回以选择另一个仓库。
 WeightVolShort=重量/体积
 ValidateOrderFirstBeforeShipment=您必须先验证订单才能发货。
 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=更多的送货单(logo. ..完整的文档模板)
-DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
+DocumentModelStorm=更完整的交货凭证和额外字段兼容性的文档模型（标识...）
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=没有定义的常数EXPEDITION_ADDON_NUMBER
 SumOfProductVolumes=产品总数
 SumOfProductWeights=产品总重
 
 # warehouse details
 DetailWarehouseNumber= 仓库明细
-DetailWarehouseFormat= W:%s (Qty: %d)
+DetailWarehouseFormat= W：%s(数量：%d)

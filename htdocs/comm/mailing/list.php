@@ -33,6 +33,7 @@ $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $optioncss = GETPOST('optioncss', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
@@ -187,7 +188,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 
-	$title = $langs->trans("ListOfEMailings");
+	$title = $langs->trans("EMailings");
 	if ($filteremail) {
 		$title .= ' ('.$langs->trans("SentTo", $filteremail).')';
 	}

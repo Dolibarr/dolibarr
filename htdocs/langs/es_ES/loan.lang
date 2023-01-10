@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = No se puede generar una línea de tiempo 
 CantModifyInterestIfScheduleIsUsed = No puede modificar el interés si usa el programador
 # Admin
 ConfigLoan=Configuración del módulo préstamos
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cuenta contable por defecto para el capital
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Cuenta contable por defecto para el interés
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Cuenta contable por defecto para el seguro
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
 CreateCalcSchedule=Editar el prestamo

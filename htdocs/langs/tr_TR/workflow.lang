@@ -7,6 +7,7 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Bir teklifin imzalanmasının ardından oto
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Bir teklifin imzalanmasına istinaden otomatik olarak bir müşteri faturası oluştur (yeni fatura teklifle aynı tutara sahip olacaktır)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Bir sözleşme doğrulandıktan sonra kendiliğinden bir müşteri faturası oluştur
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Bir müşteri siparişinin kapatılmasının ardından otomatik olarak müşteri faturası oluştur (yeni fatura sipariş ile aynı tutara sahip olacaktır)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=On ticket creation, automatically create an intervention.
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Müşteri siparişi "faturalandı" olarak ayarlandığında (ve siparişin tutarı imzalanmış olan bağlantılı teklifin toplam tutarı ile aynı ise) bağlantılı kaynak teklifi de "faturalandı" olarak sınıflandır
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Müşteri faturası doğrulandığında (ve faturanın tutarı imzalanmış olan bağlantılı teklifin toplam tutarı ile aynı ise) bağlantılı kaynak teklifi "faturalandı" olarak sınıflandır
@@ -14,13 +15,22 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Müşteri faturası doğruland
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Bir sevkiyat doğrulandığında (ve tüm sevkiyatlardan sonra sevk edilen miktar siparişteki miktar ile aynı ise) bağlantılı kaynak müşteri siparişini "sevk edildi" olarak sınıflandır
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
-# Autoclassify purchase order
+# Autoclassify purchase proposal
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Tedarikçi faturası doğrulandığında (ve faturanın tutarı bağlantılı teklifin toplam tutarı ile aynı ise) bağlantılı kaynak tedarikçi teklifini "faturalandı" olarak sınıflandır
+# Autoclassify purchase order
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Tedarikçi faturası doğrulandığında (ve faturanın tutarı bağlantılı siparişin toplam tutarı ile aynı ise) bağlantılı kaynak tedarikçi siparişini "faturalandı" olarak sınıflandır
-descWORKFLOW_BILL_ON_RECEPTION=Bağlantılı bir tedarikçi siparişi doğrulandığında alımları "faturalandırıldı" olarak sınıflandırın
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classify linked source purchase order as received when a reception is validated (and if the quantity received by all receptions is the same as in the purchase order to update)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classify linked source purchase order as received when a reception is closed (and if the quantity received by all rceptions is the same as in the purchase order to update)
+# Autoclassify purchase invoice
+descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link available contracts of matching thirdparty
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking contracts, search among those of parents companies
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Otomatik oluşturma
 AutomaticClassification=Otomatik sınıflandırma
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+AutomaticClosing=Automatic closing
+AutomaticLinking=Automatic linking

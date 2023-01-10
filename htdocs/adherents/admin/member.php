@@ -152,10 +152,13 @@ if ($action == 'set_default') {
 		setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
 		$db->commit();
 	}
-}
-
-// Action to update or add a constant
-if ($action == 'update' || $action == 'add') {
+} elseif ($action == 'setcodemember') {
+	$result = dolibarr_set_const($db, "MEMBER_CODEMEMBER_ADDON", $value, 'chaine', 0, '', $conf->entity);
+	if ($result <= 0) {
+		dol_print_error($db);
+	}
+} elseif ($action == 'update' || $action == 'add') {
+	// Action to update or add a constant
 	$constname = GETPOST('constname', 'alpha');
 	$constvalue = (GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
 
@@ -222,6 +225,97 @@ print load_fiche_titre($langs->trans("MembersSetup"), $linkback, 'title_setup');
 $head = member_admin_prepare_head();
 
 print dol_get_fiche_head($head, 'general', $langs->trans("Members"), -1, 'user');
+
+$dirModMember = array_merge(array('/core/modules/member/'), $conf->modules_parts['member']);
+foreach ($conf->modules_parts['models'] as $mo) {
+	//Add more models
+	$dirModMember[] = $mo.'core/modules/member/';
+}
+
+// Module to manage customer/supplier code
+
+print load_fiche_titre($langs->trans("MemberCodeChecker"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">'."\n";
+print '<tr class="liste_titre">'."\n";
+print '  <td>'.$langs->trans("Name").'</td>';
+print '  <td>'.$langs->trans("Description").'</td>';
+print '  <td>'.$langs->trans("Example").'</td>';
+print '  <td class="center" width="80">'.$langs->trans("Status").'</td>';
+print '  <td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+print "</tr>\n";
+
+$arrayofmodules = array();
+
+foreach ($dirModMember as $dirroot) {
+	$dir = dol_buildpath($dirroot, 0);
+
+	$handle = @opendir($dir);
+	if (is_resource($handle)) {
+		// Loop on each module find in opened directory
+		while (($file = readdir($handle)) !== false) {
+			// module filename has to start with mod_member_
+			if (substr($file, 0, 11) == 'mod_member_' && substr($file, -3) == 'php') {
+				$file = substr($file, 0, dol_strlen($file) - 4);
+				try {
+					dol_include_once($dirroot.$file.'.php');
+				} catch (Exception $e) {
+					dol_syslog($e->getMessage(), LOG_ERR);
+					continue;
+				}
+				$modCodeMember = new $file;
+				// Show modules according to features level
+				if ($modCodeMember->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					continue;
+				}
+				if ($modCodeMember->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					continue;
+				}
+
+				$arrayofmodules[$file] = $modCodeMember;
+			}
+		}
+		closedir($handle);
+	}
+}
+
+$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+
+foreach ($arrayofmodules as $file => $modCodeMember) {
+	print '<tr class="oddeven">'."\n";
+	print '<td width="140">'.$modCodeMember->name.'</td>'."\n";
+	print '<td>'.$modCodeMember->info($langs).'</td>'."\n";
+	print '<td class="nowrap">'.$modCodeMember->getExample($langs).'</td>'."\n";
+
+	if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON') == "$file") {
+		print '<td class="center">'."\n";
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print "</td>\n";
+	} else {
+		$disabled = (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
+		print '<td class="center">';
+		if (!$disabled) {
+			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodemember&token='.newToken().'&value='.urlencode($file).'">';
+		}
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		if (!$disabled) {
+			print '</a>';
+		}
+		print '</td>';
+	}
+
+	print '<td class="center">';
+	$s = $modCodeMember->getToolTip($langs, null, -1);
+	print $form->textwithpicto('', $s, 1);
+	print '</td>';
+
+	print '</tr>';
+}
+print '</table>';
+print '</div>';
+
+print "<br>";
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';

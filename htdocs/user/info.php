@@ -51,7 +51,7 @@ $feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // If user is not user that read and no permission to read other users, we stop
-if (($object->id != $user->id) && (!$user->rights->user->user->lire)) {
+if (($object->id != $user->id) && empty($user->rights->user->user->lire)) {
 	accessforbidden();
 }
 

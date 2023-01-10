@@ -84,7 +84,7 @@ $fullpathselecteddir = '<none>';
 if ($modulepart == 'ecm') {
 	$fullpathselecteddir = $conf->ecm->dir_output.'/'.($selecteddir != '/' ? $selecteddir : '');
 	$fullpathpreopened = $conf->ecm->dir_output.'/'.($preopened != '/' ? $preopened : '');
-} elseif ($modulepart == 'medias') {
+} elseif ($modulepart == 'medias' || $modulepart == 'website') {
 	$fullpathselecteddir = $dolibarr_main_data_root.'/medias/'.($selecteddir != '/' ? $selecteddir : '');
 	$fullpathpreopened = $dolibarr_main_data_root.'/medias/'.($preopened != '/' ? $preopened : '');
 }
@@ -99,14 +99,26 @@ if (preg_match('/\.\./', $fullpathselecteddir) || preg_match('/[<>|]/', $fullpat
 	exit;
 }
 
+if (empty($modulepart)) {
+	$modulepart = $module;
+}
+
 // Check permissions
 if ($modulepart == 'ecm') {
-	if (!$user->rights->ecm->read) {
+	if (!$user->hasRight('ecm', 'read')) {
 		accessforbidden();
 	}
-} elseif ($modulepart == 'medias') {
+} elseif ($modulepart == 'medias' || $modulepart == 'website') {
 	// Always allowed
+} else {
+	accessforbidden();
 }
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
