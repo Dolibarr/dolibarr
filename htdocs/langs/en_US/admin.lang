@@ -1096,6 +1096,7 @@ VATIsUsedDesc=By default when creating prospects, invoices, orders etc. the Sale
 VATIsNotUsedDesc=By default the proposed Sales tax is 0 which can be used for cases like associations, individuals or small companies.
 VATIsUsedExampleFR=In France, it means companies or organizations having a real fiscal system (Simplified real or normal real). A system in which VAT is declared.
 VATIsNotUsedExampleFR=In France, it means associations that are non Sales tax declared or companies, organizations or liberal professions that have chosen the micro enterprise fiscal system (Sales tax in franchise) and paid a franchise Sales tax without any Sales tax declaration.  This choice will display the reference "Non applicable Sales tax - art-293B of CGI" on invoices.
+VATType=VAT type
 ##### Local Taxes #####
 TypeOfSaleTaxes=Type of sales tax
 LTRate=Rate
