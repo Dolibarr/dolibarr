@@ -45,7 +45,7 @@ $thirdpartytmp = new Societe($db);
 
 $modBarCodeProduct = '';
 
-$maxperinit = 1000;
+$maxperinit = empty($conf->global->BARCODE_INIT_MAX) ? 1000 : $conf->global->BARCODE_INIT_MAX;
 
 
 /*
