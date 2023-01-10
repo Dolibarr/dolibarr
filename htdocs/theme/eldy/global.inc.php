@@ -49,7 +49,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
-	--tableforfieldcolor:#666;
+	--tableforfieldcolor:#888;
 	--amountremaintopaycolor:#880000;
 	--amountpaymentcomplete:#008800;
 	--amountremaintopaybackcolor:none;
