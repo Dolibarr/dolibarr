@@ -2623,7 +2623,7 @@ if ($resql) {
 
 			// Import key
 			if (!empty($arrayfields['c.import_key']['checked'])) {
-				print '<td class="nowrap center">'.$obj->import_key.'</td>';
+				print '<td class="nowrap center">'.dol_escape_htmltag($obj->import_key).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
