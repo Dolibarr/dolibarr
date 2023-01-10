@@ -205,7 +205,7 @@ class Contact extends CommonObject
 
 	/**
 	 * Array of socialnetworks
-	 * @var array 
+	 * @var array
 	 */
 	public $socialnetworks;
 
@@ -275,12 +275,12 @@ class Contact extends CommonObject
 	 */
 	public $priv;
 
-	
+
 	/**
 	 * @var date
 	 */
 	public $birthday;
-	
+
 	/**
 	 * @var string language for contact communication // only with multilanguage enabled
 	 */
