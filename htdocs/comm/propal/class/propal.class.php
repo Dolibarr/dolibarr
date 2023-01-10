@@ -2903,7 +2903,7 @@ class Propal extends CommonObject
 	 *    @param    int		$offset				For pagination
 	 *    @param    string	$sortfield			Sort criteria
 	 *    @param    string	$sortorder			Sort order
-	 *    @return	int		       				-1 if KO, array with result if OK
+	 *    @return	array|int		       		-1 if KO, array with result if OK
 	 */
 	public function liste_array($shortlist = 0, $draft = 0, $notcurrentuser = 0, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'p.datep', $sortorder = 'DESC')
 	{
@@ -2982,8 +2982,8 @@ class Propal extends CommonObject
 	/**
 	 *  Returns an array with id and ref of related invoices
 	 *
-	 *	@param		int		$id			Id propal
-	 *	@return		array				Array of invoices id
+	 *	@param		int			$id			Id propal
+	 *	@return		array|int				Array of invoices id
 	 */
 	public function InvoiceArrayList($id)
 	{
