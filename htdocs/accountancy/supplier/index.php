@@ -298,7 +298,10 @@ if ($action == 'validatehistory') {
 		$db->rollback();
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans('AutomaticBindingDone', 	$nbbinddone, $notpossible), null, 'mesgs');
+		setEventMessages($langs->trans('AutomaticBindingDone', 	$nbbinddone, $notpossible), null, ($notpossible ? 'warnings' : 'mesgs'));
+		if ($notpossible) {
+			setEventMessages($langs->trans('DoManualBindingForFailedRecord', $notpossible), null, 'warnings');
+		}
 	}
 }
 
@@ -320,7 +323,7 @@ print '</span><br>';
 
 $y = $year_current;
 
-$buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'">'.$langs->trans("ValidateHistory").'</a>';
+$buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'">'.img_picto('', 'link', 'class="paddingright fa-color-unset"').$langs->trans("ValidateHistory").'</a>';
 
 
 print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, $buttonbind, '', 0, 1, 1);
@@ -408,8 +411,21 @@ if ($resql) {
 		}
 		print '</td>';
 		for ($i = 2; $i <= 13; $i++) {
+			$cursormonth = (($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) + $i - 2);
+			if ($cursormonth > 12) {
+				$cursormonth -= 12;
+			}
+			$cursoryear = ($cursormonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+			$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
+
 			print '<td class="right nowraponall amount">';
 			print price($row[$i]);
+			// Add link to make binding
+			if (!empty(price2num($row[$i]))) {
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&validatemonth='.((int) $cursormonth).'&validateyear='.((int) $cursoryear).'&token='.newToken().'">';
+				print img_picto($langs->trans("ValidateHistory").' ('.$langs->trans('Month'.str_pad($cursormonth, 2, '0', STR_PAD_LEFT)).' '.$cursoryear.')', 'link', 'class="marginleft2"');
+				print '</a>';
+			}
 			print '</td>';
 		}
 		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
@@ -541,7 +557,7 @@ print "</table>\n";
 print '</div>';
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange. Why showing a report that should rely on result of this step ?
+if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This part of code looks strange. Why showing a report that should rely on result of this step ?
 	print '<br>';
 	print '<br>';
 
