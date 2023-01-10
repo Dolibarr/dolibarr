@@ -391,7 +391,7 @@ if ($nolinesbefore) {
 		$coldisplay++;
 		if ($object->element == 'propal' || $object->element == 'commande' || $object->element == 'facture' || $object->element == 'facturerec') {
 			$type_tva = 1;
-		} else if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {
+		} elseif ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {
 			$type_tva = 2;
 		}
 		if ($seller->tva_assuj == "0") {
