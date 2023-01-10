@@ -187,33 +187,46 @@ llxHeader('', $title, $help_url);
 
 // List of possible landing pages
 $tmparray = array('index.php'=>'Dashboard');
-if (isModEnabled("societe")) {
-	$tmparray['societe/index.php?mainmenu=companies&leftmenu='] = 'ThirdPartiesArea';
+
+// List of translation item correspondance for core modules titles
+$correspondance=array(
+	'agenda'=>'Agenda',
+	'ticket'=>'Tickets',
+	'societe'=>'ThirdPartiesArea',
+	'projet'=>'ProjectsArea',
+	'hrm'=>'HRMArea',
+	'product'=>'ProductsAndServicesArea',
+	'comm'=>'CommercialArea',
+	'compta'=>'AccountancyTreasuryArea',
+	'knowledgemanagement'=>'KnowledgeManagementArea',
+	'opensurvey'=>'OpenSurveyArea',
+	'adherent'=>'MembersArea',
+);
+
+// Generate list of possible landing pages from database
+$resql=$db->query("SELECT * FROM `".MAIN_DB_PREFIX."menu`");
+if ($resql) 
+{
+	while ($el=$db->fetch_object($resql))
+	{
+		eval("\$enabled={$el->enabled};");
+		eval("\$perms={$el->perms};");
+		if ($perms===1 && $enabled===true) {
+			$linkchar=(strpos($el->url,"?")===false)?"?":"&";
+			$url=$el->url.$linkchar."mainmenu={$el->mainmenu}&leftmenu={$el->leftmenu}";
+			if (substr($url,0,1)=="/") {
+				$url=substr($url,1,-1);
+			}
+			if (isset($correspondance[$el->module])) {
+				$tmparray[$url]=$langs->trans($correspondance[$el->module])." - ".$langs->trans($el->titre);
+			}
+			else {
+				$tmparray[$url]=$langs->trans("Module".ucfirst($el->module)."Name")." - ".$langs->trans($el->titre);
+			}
+		}
+	}
 }
-if (!empty($conf->project->enabled)) {
-	$tmparray['projet/index.php?mainmenu=project&leftmenu='] = 'ProjectsArea';
-}
-if (isModEnabled('holiday') || isModEnabled('expensereport')) {
-	$tmparray['hrm/index.php?mainmenu=hrm&leftmenu='] = 'HRMArea'; // TODO Complete list with first level of menus
-}
-if (isModEnabled("product") || isModEnabled("service")) {
-	$tmparray['product/index.php?mainmenu=products&leftmenu='] = 'ProductsAndServicesArea';
-}
-if (isModEnabled("propal") || isModEnabled('commande') || isModEnabled('ficheinter') || isModEnabled('contrat')) {
-	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = 'CommercialArea';
-}
-if (isModEnabled('comptabilite') || isModEnabled('accounting')) {
-	$tmparray['compta/index.php?mainmenu=compta&leftmenu='] = 'AccountancyTreasuryArea';
-}
-if (isModEnabled('adherent')) {
-	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = 'MembersArea';
-}
-if (isModEnabled('agenda')) {
-	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = 'Agenda';
-}
-if (isModEnabled('ticket')) {
-	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = 'Tickets';
-}
+
 
 $head = user_prepare_head($object);
 
