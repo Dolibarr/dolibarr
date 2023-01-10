@@ -343,7 +343,8 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 		//var_dump($sFileName); var_dump(image_format_supported($sFileName));exit;
-		$isImageValid = (image_format_supported($sFileName) >= 0 ? true : false);
+		$imgsupported = image_format_supported($sFileName);
+		$isImageValid = ($imgsupported >= 0 ? true : false);
 		if (!$isImageValid) {
 			$sErrorNumber = '202';
 		}
@@ -387,7 +388,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 
 				if (file_exists($sFilePath)) {
 					//previous checks failed, try once again
-					if (isset($isImageValid) && $isImageValid === -1 && IsImageValid($sFilePath, $sExtension) === false) {
+					if (isset($isImageValid) && $imgsupported === -1 && IsImageValid($sFilePath, $sExtension) === false) {
 						dol_syslog("connector.lib.php IsImageValid is ko");
 						@unlink($sFilePath);
 						$sErrorNumber = '202';

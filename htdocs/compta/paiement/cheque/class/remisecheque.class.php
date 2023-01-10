@@ -190,8 +190,8 @@ class RemiseCheque extends CommonObject
 
 			if ($this->id > 0 && $this->errno == 0) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-				$sql .= " SET ref='(PROV".$this->id.")'";
-				$sql .= " WHERE rowid=".((int) $this->id)."";
+				$sql .= " SET ref = '(PROV".$this->id.")'";
+				$sql .= " WHERE rowid=".((int) $this->id);
 
 				$resql = $this->db->query($sql);
 				if (!$resql) {

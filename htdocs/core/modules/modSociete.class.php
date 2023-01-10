@@ -571,7 +571,6 @@ class modSociete extends DolibarrModules
 				'dict' => 'DictionaryCompanyType'
 			),
 			's.capital' => array('rule' => 'numeric'),
-			's.fk_stcomm' => array('rule' => 'zeroifnull'),
 			's.parent' => array(
 				'rule' => 'fetchidfromref',
 				'file' => '/societe/class/societe.class.php',

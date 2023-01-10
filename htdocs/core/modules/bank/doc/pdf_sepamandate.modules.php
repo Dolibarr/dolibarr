@@ -526,7 +526,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$tab_hl = 4;
 
 		$posx = $this->marge_gauche;
-		$pdf->SetXY($posx, $tab_top + 0);
+		$pdf->SetXY($posx, $tab_top);
 
 		$pdf->SetFont('', '', $default_font_size - 2);
 
@@ -540,7 +540,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$index = 0;
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
-		$pdf->SetXY($posx, $tab_top + 0);
+		$pdf->SetXY($posx, $tab_top);
 		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentitiesnoconv("Signature"), 0, 'L', 1);
 
 		$pdf->SetXY($posx, $tab_top + $tab_hl);

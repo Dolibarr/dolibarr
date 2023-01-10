@@ -206,7 +206,7 @@ class Don extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $conf, $user, $langs;
+		global $conf;
 
 		$now = dol_now();
 
@@ -224,10 +224,10 @@ class Don extends CommonObject
 			$num_socs = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num_socs) {
-				$i++;
-
 				$row = $this->db->fetch_row($resql);
 				$socids[$i] = $row[0];
+
+				$i++;
 			}
 		}
 
@@ -237,7 +237,7 @@ class Don extends CommonObject
 		$this->specimen = 1;
 		$this->lastname = 'Doe';
 		$this->firstname = 'John';
-		$this->socid = 1;
+		$this->socid = empty($socids[0]) ? 0 : $socids[0];
 		$this->date = $now;
 		$this->date_valid = $now;
 		$this->amount = 100.90;
@@ -1101,18 +1101,18 @@ class Don extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param  DoliDB  $db             Database handler
-	 * @param  int     $origin_id      Old third-party id
-	 * @param  int     $dest_id        New third-party id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'don'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**

@@ -166,4 +166,37 @@ abstract class CommonObjectLine extends CommonObject
 	{
 		return 0;
 	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string		HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : '').'</span>';
+		if (property_exists($this, 'date_delivery')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.dol_print_date($this->db->jdate($this->date_delivery), "dayhour").'</span>';
+		}
+		if (property_exists($this, 'town') && !empty($this->town)) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Town").'</span>';
+			$return .= '<span class="info-box-label "> : '.$this->town.'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
+	}
 }

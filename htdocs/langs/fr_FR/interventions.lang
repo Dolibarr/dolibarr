@@ -69,3 +69,4 @@ GenerateInter=Générer intervention
 FichinterNoContractLinked=L'intervention %s a été créée sans contrat lié.
 ErrorFicheinterCompanyDoesNotExist=L'entreprise n'existe pas. L'intervention n'a pas été créée.
 NextDateToIntervention=Date de la prochaine génération d'intervention
+NoIntervention=Aucune intervention

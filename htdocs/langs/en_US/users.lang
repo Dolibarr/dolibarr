@@ -129,3 +129,6 @@ IPLastLogin=IP last login
 IPPreviousLogin=IP previous login
 ShowAllPerms=Show all permission rows
 HideAllPerms=Hide all permission rows
+UserPublicPageDesc=You can enable a virtual card for this user. An url with the user profile and a barcode will be available to allow anybody with a smartphone to scan it and add your contact to its address book.
+EnablePublicVirtualCard=Enable the public virtual user card
+PublicVirtualCardUrl=Public virtual user card

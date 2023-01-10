@@ -113,7 +113,8 @@ if (!count($listofvars) && !count($listofstatus)) {
 				if ($key != $param) {
 					continue;
 				}
-				$val2 = ${$val['var']};
+				$tmpvar = $val['var'];
+				$val2 = ${$tmpvar};
 				$text = 'Should be in line with value of param <b>'.$val['var'].'</b> thas is <b>'.($val2 ? $val2 : "'' (=".$val['valifempty'].")").'</b>';
 				$show = 1;
 			}

@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with
 CantModifyInterestIfScheduleIsUsed = Ni allwch addasu llog os ydych yn defnyddio amserlen
 # Admin
 ConfigLoan=Ffurfwedd y benthyciad modiwl
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cyfalaf cyfrif cyfrifo yn ddiofyn
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Llog cyfrif cyfrifeg yn ddiofyn
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Yswiriant cyfrif cyfrifo yn ddiofyn
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
 CreateCalcSchedule=Golygu ymrwymiad ariannol

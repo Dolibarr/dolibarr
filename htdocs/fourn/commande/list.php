@@ -67,7 +67,7 @@ $search_date_order_endyear = GETPOST('search_date_order_endyear', 'int');
 $search_date_order_start = dol_mktime(0, 0, 0, $search_date_order_startmonth, $search_date_order_startday, $search_date_order_startyear);	// Use tzserver
 $search_date_order_end = dol_mktime(23, 59, 59, $search_date_order_endmonth, $search_date_order_endday, $search_date_order_endyear);
 
-$search_date_delivery_starvtday = GETPOST('search_date_delivery_startday', 'int');
+$search_date_delivery_startday = GETPOST('search_date_delivery_startday', 'int');
 $search_date_delivery_startmonth = GETPOST('search_date_delivery_startmonth', 'int');
 $search_date_delivery_startyear = GETPOST('search_date_delivery_startyear', 'int');
 $search_date_delivery_endday = GETPOST('search_date_delivery_endday', 'int');
@@ -1203,12 +1203,12 @@ if ($resql) {
 
 	$topicmail = "SendOrderRef";
 	$modelmail = "order_supplier_send";
-	$objecttmp = new CommandeFournisseur($db);
+	$objecttmp = new CommandeFournisseur($db);	// in case $object is not the good object
 	$trackid = 'sord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($massaction == 'prevalidate') {
-		print $form->formconfirm($_SERVER["PHP_SELF"].$fieldstosearchall, $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
 	}
 
 	if ($massaction == 'createbills') {
@@ -1469,8 +1469,8 @@ if ($resql) {
 	}
 	// Status billed
 	if (!empty($arrayfields['cf.billed']['checked'])) {
-		print '<td class="liste_titre center">';
-		print $form->selectyesno('search_billed', $search_billed, 1, false, 1, 1, 'maxwidth100 onrightofpage');
+		print '<td class="liste_titre center parentonrightofpage">';
+		print $form->selectyesno('search_billed', $search_billed, 1, false, 1, 1, 'search_status width100 onrightofpage');
 		print '</td>';
 	}
 	// Date valid

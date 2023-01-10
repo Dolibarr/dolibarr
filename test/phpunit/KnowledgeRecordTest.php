@@ -132,27 +132,6 @@ class KnowledgeRecordTest extends PHPUnit\Framework\TestCase
 
 
 	/**
-	 * A sample test
-	 *
-	 * @return bool
-	 */
-	public function testSomething()
-	{
-		global $conf, $user, $langs, $db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		$result = true;
-
-		print __METHOD__." result=".$result."\n";
-		$this->assertTrue($result);
-
-		return $result;
-	}
-
-	/**
 	 * testKnowledgeRecordCreate
 	 *
 	 * @return int

@@ -151,9 +151,9 @@ if (empty($reshook) && $action == 'confirm_create_thirdparty' && $confirm == 'ye
 	}
 }
 
-if (empty($reshook) && $action == 'setuserid' && ($user->rights->user->self->creer || $user->rights->user->user->creer)) {
+if (empty($reshook) && $action == 'setuserid' && ($user->rights->user->self->creer || $user->hasRight('user', 'user', 'creer'))) {
 	$error = 0;
-	if (empty($user->rights->user->user->creer)) {    // If can edit only itself user, we can link to itself only
+	if (!$user->hasRight('user', 'user', 'creer')) {    // If can edit only itself user, we can link to itself only
 		if (GETPOST("userid", 'int') != $user->id && GETPOST("userid", 'int') != $object->user_id) {
 			$error++;
 			setEventMessages($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"), null, 'errors');
@@ -201,7 +201,7 @@ if (empty($reshook) && $action == 'setsocid') {
 	}
 }
 
-if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !$cancel) {
+if ($user->hasRight('adherent', 'cotisation', 'creer') && $action == 'subscription' && !$cancel) {
 	$error = 0;
 
 	$langs->load("banks");
@@ -674,7 +674,7 @@ if ($rowid > 0) {
 	 */
 
 	// Button to create a new subscription if member no draft (-1) neither resiliated (0) neither excluded (-2)
-	if ($user->rights->adherent->cotisation->creer) {
+	if ($user->hasRight('adherent', 'cotisation', 'creer')) {
 		if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 			print '<div class="tabsAction">';
 
@@ -814,7 +814,7 @@ if ($rowid > 0) {
 	/*
 	 * Add new subscription form
 	 */
-	if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->rights->adherent->cotisation->creer) {
+	if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->hasRight('adherent', 'cotisation', 'creer')) {
 		print '<br>';
 
 		print load_fiche_titre($langs->trans("NewCotisation"));
@@ -1142,7 +1142,7 @@ if ($rowid > 0) {
 
 			$tmp = '<input name="sendmail" type="checkbox"'.(GETPOST('sendmail', 'alpha') ? ' checked' : (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? ' checked' : '')).'>';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.$conf->global->ADHERENT_MAIL_FROM.'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailTopic").'</b>:<br>'."\n";
 			if ($subjecttosend) {

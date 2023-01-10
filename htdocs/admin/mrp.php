@@ -52,10 +52,10 @@ $type = 'mrp';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstmrp = GETPOST('maskconstMo', 'alpha');
+	$maskconstmrp = GETPOST('maskconstMo', 'aZ09');
 	$maskmrp = GETPOST('maskMo', 'alpha');
 
-	if ($maskconstmrp) {
+	if ($maskconstmrp && preg_match('/_MASK$/', $maskconstmrp)) {
 		$res = dolibarr_set_const($db, $maskconstmrp, $maskmrp, 'chaine', 0, '', $conf->entity);
 	}
 

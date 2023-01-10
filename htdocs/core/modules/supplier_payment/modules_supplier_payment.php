@@ -17,6 +17,8 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+
+
 /**
  *	Parent class for supplier invoices models
  */
@@ -74,8 +76,6 @@ abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'supplier_payment';
 		$list = array();
 
@@ -87,8 +87,9 @@ abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 }
 
 /**
- *  \class      ModeleNumRefSupplierPayments
- *  \brief      Payment numbering references mother class
+ *  ModeleNumRefSupplierPayments
+ *
+ *  Payment numbering references mother class
  */
 
 abstract class ModeleNumRefSupplierPayments
@@ -111,7 +112,7 @@ abstract class ModeleNumRefSupplierPayments
 	/**
 	 *	Return the default description of numbering module
 	 *
-	 *	@return     string      Texte descripif
+	 *	@return     string      Descriptive text
 	 */
 	public function info()
 	{

@@ -52,9 +52,7 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
+
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -83,7 +81,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other"));
+$langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
 
 // Security check
 if (empty($conf->adherent->enabled)) {
@@ -257,6 +255,17 @@ if (empty($reshook) && $action == 'add') {
 		}
 	}
 
+	// Check Captcha code if is enabled
+	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		$sessionkey = 'dol_antispam_value';
+		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+		if (!$ok) {
+			$error++;
+			$errmsg .= $langs->trans("ErrorBadValueForCode")."<br>\n";
+			$action = '';
+		}
+	}
+
 	$public = GETPOSTISSET('public') ? 1 : 0;
 
 	if (!$error) {
@@ -393,7 +402,7 @@ if (empty($reshook) && $action == 'add') {
 					}
 
 					$to = $adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
-					$from = $conf->global->ADHERENT_MAIL_FROM;
+					$from = getDolGlobalString('ADHERENT_MAIL_FROM');
 					$mailfile = new CMailFile(
 						'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
 						$to,
@@ -552,7 +561,7 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 				if (jQuery("#morphy").val() == \'mor\') {
 					jQuery("#trcompany").show();
 				}
-			};
+			}
 			initmorphy();
 			jQuery("#morphy").change(function() {
 				initmorphy();
@@ -786,6 +795,20 @@ if (!empty($conf->global->MEMBER_SKIP_TABLE) || !empty($conf->global->MEMBER_NEW
 			print '<input type="text" name="amount" id="amounthidden" class="flat amount width50" disabled value="'.$showedamount.'">';
 			print ' '.$langs->trans("Currency".$conf->currency);
 		}
+		print '</td></tr>';
+	}
+
+	// Display Captcha code if is enabled
+	if (!empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+		print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
+		print '<span class="span-icon-security inline-block">';
+		print '<input id="securitycode" placeholder="'.$langs->trans("SecurityCode").'" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" />';
+		print '</span>';
+		print '<span class="nowrap inline-block">';
+		print '<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
+		print '<a class="inline-block valignmiddle" href="'.$php_self.'" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
+		print '</span>';
 		print '</td></tr>';
 	}
 

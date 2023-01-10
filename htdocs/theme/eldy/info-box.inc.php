@@ -101,6 +101,22 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	font-size: 25px;
 	line-height: 92px;
 }
+.info-box-order {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 2px;
+	display: block;
+	overflow: hidden;
+	float: left;
+	height: 115px;
+	width: 88px;
+	text-align: center;
+	font-size: 2.3em;
+	line-height: 115px;
+	margin-right: 10px;
+	background: var(--colorbacktitle1) !important;
+}
 .opened-dash-board-wrap .info-box .info-box-icon {
 	font-size: 2em;
 }
@@ -418,7 +434,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 
 /* USING FONTAWESOME FOR WEATHER */
 .info-box-weather .info-box-icon{
-	background: rgba(0, 0, 0, 0.08) !important;
+	background: var(--colorbacktitle1) !important;
 }
 .fa-weather-level0:before{
 	content: "\f185";

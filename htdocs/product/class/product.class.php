@@ -1463,6 +1463,14 @@ class Product extends CommonObject
 				}
 			}
 
+			// Delete record into ECM index and physically
+			if (!$error) {
+				$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+				if (!$res) {
+					$error++;
+				}
+			}
+
 			if (!$error) {
 				// We remove directory
 				$ref = dol_sanitizeFileName($this->ref);
@@ -1671,7 +1679,7 @@ class Product extends CommonObject
 		$sql .= "$field = '".$this->db->escape($value)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(__METHOD__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
@@ -3005,7 +3013,7 @@ class Product extends CommonObject
 	 *
 	 * @param  int    $socid           Id societe pour filtrer sur une societe
 	 * @param  string $filtrestatut    Id statut pour filtrer sur un statut
-	 * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation.
+	 * @param  int    $forVirtualStock Ignore rights filter for virtual stock calculation. Set when load_stats_commande is used for virtual stock calculation.
 	 * @return integer                 Array of stats in $this->stats_commande (nb=nb of order, qty=qty ordered), <0 if ko or >0 if ok
 	 */
 	public function load_stats_commande($socid = 0, $filtrestatut = '', $forVirtualStock = 0)
@@ -3065,18 +3073,38 @@ class Product extends CommonObject
 			}
 
 			// If stock decrease is on invoice validation, the theorical stock continue to
-			// count the orders to ship in theorical stock when some are already removed b invoice validation.
-			// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is on, we make a compensation.
-			if (!empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
+			// count the orders to ship in theorical stock when some are already removed by invoice validation.
+			if ($forVirtualStock && !empty($conf->global->STOCK_CALCULATE_ON_BILL)) {
 				if (!empty($conf->global->DECREASE_ONLY_UNINVOICEDPRODUCTS)) {
+					// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is on, we make a compensation but only if order not yet invoice.
 					$adeduire = 0;
-					$sql = "SELECT sum(fd.qty) as count FROM ".$this->db->prefix()."facturedet fd ";
-					$sql .= " JOIN ".$this->db->prefix()."facture f ON fd.fk_facture = f.rowid ";
-					$sql .= " JOIN ".$this->db->prefix()."element_element el ON el.fk_target = f.rowid and el.targettype = 'facture' and sourcetype = 'commande'";
-					$sql .= " JOIN ".$this->db->prefix()."commande c ON el.fk_source = c.rowid ";
+					$sql = "SELECT sum(fd.qty) as count FROM ".$this->db->prefix()."facturedet as fd ";
+					$sql .= " JOIN ".$this->db->prefix()."facture as f ON fd.fk_facture = f.rowid ";
+					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
+					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid ";
 					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND c.facture = 0 AND fd.fk_product = ".((int) $this->id);
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
+					$resql = $this->db->query($sql);
+					if ($resql) {
+						if ($this->db->num_rows($resql) > 0) {
+							$obj = $this->db->fetch_object($resql);
+							$adeduire += $obj->count;
+						}
+					}
 
+					$this->stats_commande['qty'] -= $adeduire;
+				} else {
+					// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is off, we make a compensation with lines of invoices linked to the order
+					include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
+					// For every order having invoice already validated we need to decrease stock cause it's in physical stock
+					$adeduire = 0;
+					$sql = 'SELECT sum(fd.qty) as count FROM '.MAIN_DB_PREFIX.'facturedet as fd ';
+					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture as f ON fd.fk_facture = f.rowid ';
+					$sql .= ' JOIN '.MAIN_DB_PREFIX."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
+					$sql .= ' JOIN '.MAIN_DB_PREFIX.'commande as c ON el.fk_source = c.rowid ';
+					$sql .= ' WHERE c.fk_statut IN ('.$this->db->sanitize($filtrestatut).') AND f.fk_statut > '.Facture::STATUS_DRAFT.' AND fd.fk_product = '.((int) $this->id);
+					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
 					$resql = $this->db->query($sql);
 					if ($resql) {
 						if ($this->db->num_rows($resql) > 0) {
@@ -5127,7 +5155,7 @@ class Product extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('productdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result, 'label' => &$label);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -5158,11 +5186,7 @@ class Product extends CommonObject
 
 		// Positionne le modele sur le nom du modele a utiliser
 		if (!dol_strlen($modele)) {
-			if (!empty($conf->global->PRODUCT_ADDON_PDF)) {
-				$modele = $conf->global->PRODUCT_ADDON_PDF;
-			} else {
-				$modele = 'strato';
-			}
+			$modele = getDolGlobalString('PRODUCT_ADDON_PDF', 'strato');
 		}
 
 		$modelpath = "core/modules/product/doc/";
@@ -6095,8 +6119,8 @@ class Product extends CommonObject
 	 * Adds it to non existing supplied categories.
 	 * Existing categories are left untouch.
 	 *
-	 * @param  int[]|int $categories Category or categories IDs
-	 * @return void
+	 * @param  int[]|int 	$categories 	Category or categories IDs
+	 * @return int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -6107,19 +6131,19 @@ class Product extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param  DoliDB $db        Database handler
-	 * @param  int    $origin_id Old thirdparty id
-	 * @param  int    $dest_id   New thirdparty id
+	 * @param  DoliDB $dbs        	Database handler
+	 * @param  int    $origin_id 	Old thirdparty id
+	 * @param  int    $dest_id   	New thirdparty id
 	 * @return bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'product_customer_price',
 			'product_customer_price_log'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
