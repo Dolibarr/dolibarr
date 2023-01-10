@@ -205,22 +205,19 @@ $correspondance=array(
 
 // Generate list of possible landing pages from database
 $resql=$db->query("SELECT * FROM `".MAIN_DB_PREFIX."menu`");
-if ($resql) 
-{
-	while ($el=$db->fetch_object($resql))
-	{
+if ($resql) {
+	while ($el=$db->fetch_object($resql)) {
 		eval("\$enabled={$el->enabled};");
 		eval("\$perms={$el->perms};");
 		if ($perms===1 && $enabled===true) {
-			$linkchar=(strpos($el->url,"?")===false)?"?":"&";
+			$linkchar=(strpos($el->url, "?")===false)?"?":"&";
 			$url=$el->url.$linkchar."mainmenu={$el->mainmenu}&leftmenu={$el->leftmenu}";
-			if (substr($url,0,1)=="/") {
-				$url=substr($url,1,-1);
+			if (substr($url, 0, 1)=="/") {
+				$url=substr($url, 1, -1);
 			}
 			if (isset($correspondance[$el->module])) {
 				$tmparray[$url]=$langs->trans($correspondance[$el->module])." - ".$langs->trans($el->titre);
-			}
-			else {
+			} else {
 				$tmparray[$url]=$langs->trans("Module".ucfirst($el->module)."Name")." - ".$langs->trans($el->titre);
 			}
 		}
