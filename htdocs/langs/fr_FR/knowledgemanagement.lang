@@ -45,9 +45,9 @@ ValidateReply = Valider la réponse
 KnowledgeRecords = Articles
 KnowledgeRecord = Article
 KnowledgeRecordExtraFields = Atribut supplémentaires (articles)
-GroupOfTicket=Groupe de tickets
-YouCanLinkArticleToATicketCategory=Vous pouvez lier un article à un groupe de tickets (ainsi l'article sera proposé lors de la qualification de nouveaux tickets)
-SuggestedForTicketsInGroup=Suggéré pour les tickets lorsque le groupe est
+GroupOfTicket=Catégorisation de tickets
+YouCanLinkArticleToATicketCategory=Vous pouvez lier l'article à un groupe de tickets (ainsi l'article sera mis en évidence sur tous les tickets de ce groupe)
+SuggestedForTicketsInGroup=Suggéré lors de la création du ticket
 
 SetObsolete=Définir comme obsolète
 ConfirmCloseKM=Confirmez-vous la fermeture de cet article comme obsolète ?

@@ -33,10 +33,8 @@ if (empty($conf) || !is_object($conf)) {
 // DDOS protection
 $size = (empty($_SERVER['CONTENT_LENGTH']) ? 0 : (int) $_SERVER['CONTENT_LENGTH']);
 if ($size > 10000) {
-	http_response_code(413);
 	$langs->loadLangs(array("errors", "install"));
-	accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'.<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 0, 0, 1);
-	exit;
+	httponly_accessforbidden('<center>'.$langs->trans("ErrorRequestTooLarge").'.<br><a href="'.DOL_URL_ROOT.'">'.$langs->trans("ClickHereToGoToApp").'</a></center>', 413, 1);
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -100,7 +98,7 @@ if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$disablenofollow = 0;
 }
 
-print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
+top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
 
 
 $colorbackhmenu1 = '60,70,100'; // topmenu
@@ -139,9 +137,11 @@ $(document).ready(function () {
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
+
 <input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 <input type="hidden" name="actionlogin" value="login">
 <input type="hidden" name="loginfunction" value="loginfunction" />
+<input type="hidden" name="backtopage" value="<?php echo GETPOST('backtopage'); ?>" />
 <!-- Add fields to store and send local user information. This fields are filled by the core/js/dst.js -->
 <input type="hidden" name="tz" id="tz" value="" />
 <input type="hidden" name="tz_string" id="tz_string" value="" />
@@ -316,7 +316,7 @@ if ($forgetpasslink || $helpcenterlink) {
 if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
 	$langs->load("users");
 
-	//if (! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
+	//if (!empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
 	echo '<br>';
 	echo '<div class="center" style="margin-top: 4px;">';
 
@@ -372,9 +372,19 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 // Show error message if defined
 if (!empty($_SESSION['dol_loginmesg'])) {
 	?>
-	<div class="center login_main_message"><div class="error">
-	<?php echo dol_escape_htmltag($_SESSION['dol_loginmesg']); ?>
-	</div></div>
+	<div class="center login_main_message">
+	<?php
+	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
+	if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
+		$message = str_replace('<!-- warning -->', '', $message);
+		print '<div class="warning">';
+	} else {
+		print '<div class="error">';
+	}
+	print dol_escape_htmltag($message);
+	print '</div>';
+	?>
+	</div>
 	<?php
 }
 

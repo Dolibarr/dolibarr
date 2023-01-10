@@ -24,6 +24,7 @@
  *  \brief      Description and activation file for the EventOrganization
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
  *  Description and activation class for module EventOrganization
@@ -55,13 +56,13 @@ class modEventOrganization extends DolibarrModules
 		$this->description = "EventOrganizationDescription";
 		$this->descriptionlong = "EventOrganizationDescriptionLong";
 
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 
 
 		// Key used in llx_const table to save module status enabled/disabled (where EVENTORGANIZATION is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 
-		$this->picto = 'action';
+		$this->picto = 'conferenceorbooth';
 
 		// Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
 		$this->module_parts = array(
@@ -122,7 +123,7 @@ class modEventOrganization extends DolibarrModules
 		$this->langfiles = array("eventorganization");
 
 		// Prerequisites
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(13, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
@@ -168,7 +169,7 @@ class modEventOrganization extends DolibarrModules
 		// 'invoice_supplier' to add a tab in supplier invoice view
 		// 'member'           to add a tab in fundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -257,7 +258,7 @@ class modEventOrganization extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=project,fk_leftmenu=eventorganization',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
 			'titre'=>'New',
-			'url'=>'/projet/card.php?leftmenu=projects&action=create&usage_organize_event=1',
+			'url'=>'/projet/card.php?leftmenu=projects&action=create&usage_organize_event=1&usage_opportunity=0',
 			'langs'=>'eventorganization@eventorganization',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000+$r,
 			'enabled'=>'$conf->eventorganization->enabled',  // Define condition to show or hide menu entry. Use '$conf->eventorganization->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
@@ -326,7 +327,7 @@ class modEventOrganization extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		// Permissions
 		$this->remove($options);
@@ -367,7 +368,31 @@ class modEventOrganization extends DolibarrModules
 			}
 		}
 
-		return $this->_init($sql, $options);
+		$init = $this->_init($sql, $options);
+
+
+		// Insert some vars
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		$formmail = new FormMail($this->db);
+
+		$template = $formmail->getEMailTemplate($this->db, 'conferenceorbooth', $user, $langs, 0, 1, '(EventOrganizationEmailAskConf)');
+		if ($template->id > 0) {
+			dolibarr_set_const($this->db, 'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF', $template->id, 'chaine', 0, '', $conf->entity);
+		}
+		$template = $formmail->getEMailTemplate($this->db, 'conferenceorbooth', $user, $langs, 0, 1, '(EventOrganizationEmailAskBooth)');
+		if ($template->id > 0) {
+			dolibarr_set_const($this->db, 'EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH', $template->id, 'chaine', 0, '', $conf->entity);
+		}
+		$template = $formmail->getEMailTemplate($this->db, 'conferenceorbooth', $user, $langs, 0, 1, '(EventOrganizationEmailBoothPayment)');
+		if ($template->id > 0) {
+			dolibarr_set_const($this->db, 'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH', $template->id, 'chaine', 0, '', $conf->entity);
+		}
+		$template = $formmail->getEMailTemplate($this->db, 'conferenceorbooth', $user, $langs, 0, 1, '(EventOrganizationEmailRegistrationPayment)');
+		if ($template->id > 0) {
+			dolibarr_set_const($this->db, 'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT', $template->id, 'chaine', 0, '', $conf->entity);
+		}
+
+		return $init;
 	}
 
 	/**

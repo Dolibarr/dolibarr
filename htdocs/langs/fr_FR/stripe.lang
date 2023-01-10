@@ -61,6 +61,7 @@ DeleteACard=Supprimer carte
 ConfirmDeleteCard=Êtes-vous sûr de vouloir supprimer cette carte de crédit ou de débit?
 CreateCustomerOnStripe=Créer client sur Stripe
 CreateCardOnStripe=Créer carte sur Stripe
+CreateBANOnStripe=Créer une banque sur Stripe
 ShowInStripe=Afficher dans Stripe
 StripeUserAccountForActions=Compte d'utilisateur à utiliser pour certains e-mails de notification d'événements Stripe (Stripe payouts)
 StripePayoutList=Liste des versements par Stripe
@@ -69,3 +70,5 @@ ToOfferALinkForLiveWebhook=Lien pour la configuration de Stripe WebHook pour app
 PaymentWillBeRecordedForNextPeriod=Le paiement sera enregistré pour la prochaine période.
 ClickHereToTryAgain=<a href="%s">Cliquez ici pour essayer à nouveau...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=En raison des règles d'Authentification Client Forte, la création d'une carte doit être effectuée à partir du backoffice de Stripe. Vous pouvez cliquer ici pour basculer sur la fiche client Stripe: %s
+TERMINAL_LOCATION=Emplacement (adresse) des terminaux
+RequestDirectDebitWithStripe=Demander un prélèvement automatique avec Stripe

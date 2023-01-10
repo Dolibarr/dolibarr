@@ -21,6 +21,7 @@
  *	\brief      Setup page of module MRP
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -51,10 +52,10 @@ $type = 'mrp';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstmrp = GETPOST('maskconstMo', 'alpha');
+	$maskconstmrp = GETPOST('maskconstMo', 'aZ09');
 	$maskmrp = GETPOST('maskMo', 'alpha');
 
-	if ($maskconstmrp) {
+	if ($maskconstmrp && preg_match('/_MASK$/', $maskconstmrp)) {
 		$res = dolibarr_set_const($db, $maskconstmrp, $maskmrp, 'chaine', 0, '', $conf->entity);
 	}
 
@@ -446,10 +447,10 @@ print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnMOs"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'MRP_MO_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
-	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
+	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
+	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
 	print $doleditor->Create();
 }
 print '</td><td class="right">';
@@ -465,7 +466,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"set_MRP_MO_DRAFT_WATERMARK
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftMOs"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
-print '<input class="flat minwidth200" type="text" name="MRP_MO_DRAFT_WATERMARK" value="'.$conf->global->MRP_MO_DRAFT_WATERMARK.'">';
+print '<input class="flat minwidth200" type="text" name="MRP_MO_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('MRP_MO_DRAFT_WATERMARK')).'">';
 print '</td><td class="right">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

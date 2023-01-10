@@ -34,6 +34,13 @@ abstract class Stats
 	public $cachefilesuffix = ''; // Suffix to add to name of cache file (to avoid file name conflicts)
 
 	/**
+	 *  @param	int		$year 			number
+	 * 	@param	int 	$format 		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * 	@return int						value
+	 */
+	protected abstract function getNbByMonth($year, $format = 0);
+
+	/**
 	 * Return nb of elements by month for several years
 	 *
 	 * @param 	int		$endyear		Start year
@@ -48,7 +55,7 @@ abstract class Stats
 		global $conf, $user, $langs;
 
 		if ($startyear > $endyear) {
-			return -1;
+			return array();
 		}
 
 		$datay = array();
@@ -96,7 +103,8 @@ abstract class Stats
 				$data[$i][] = $datay[$endyear][($i + $sm) % 12][0];
 				$year = $startyear;
 				while ($year <= $endyear) {
-					$data[$i][] = $datay[$year - (1 - ((int) ($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1];
+					// floor(($i + $sm) / 12)) is 0 if we are after the month start $sm and same year, become 1 when we reach january of next year
+					$data[$i][] = $datay[$year - (1 - floor(($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1];
 					$year++;
 				}
 			}
@@ -124,6 +132,13 @@ abstract class Stats
 	}
 
 	/**
+	 * @param	int		$year			year number
+	 * @param	int 	$format			0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 * @return 	int						value
+	 */
+	protected abstract function getAmountByMonth($year, $format = 0);
+
+	/**
 	 * Return amount of elements by month for several years.
 	 * Criterias used to build request are defined into the constructor of parent class into xxx/class/xxxstats.class.php
 	 * The caller of class can add more filters into sql request by adding criteris into the $stats->where property just after
@@ -141,7 +156,7 @@ abstract class Stats
 		global $conf, $user, $langs;
 
 		if ($startyear > $endyear) {
-			return -1;
+			return array();
 		}
 
 		$datay = array();
@@ -190,7 +205,8 @@ abstract class Stats
 				$data[$i][] = isset($datay[$endyear][($i + $sm) % 12]['label']) ? $datay[$endyear][($i + $sm) % 12]['label'] : $datay[$endyear][($i + $sm) % 12][0]; // set label
 				$year = $startyear;
 				while ($year <= $endyear) {
-					$data[$i][] = $datay[$year - (1 - ((int) ($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1]; // set yval for x=i
+					// floor(($i + $sm) / 12)) is 0 if we are after the month start $sm and same year, become 1 when we reach january of next year
+					$data[$i][] = $datay[$year - (1 - floor(($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1]; // set yval for x=i
 					$year++;
 				}
 			}
@@ -220,6 +236,12 @@ abstract class Stats
 	}
 
 	/**
+	 * @param	int     $year           year number
+	 * @return 	int						value
+	 */
+	protected abstract function getAverageByMonth($year);
+
+	/**
 	 * Return average of entity by month for several years
 	 *
 	 * @param	int		$endyear		Start year
@@ -229,7 +251,7 @@ abstract class Stats
 	public function getAverageByMonthWithPrevYear($endyear, $startyear)
 	{
 		if ($startyear > $endyear) {
-			return -1;
+			return array();
 		}
 
 		$datay = array();
@@ -337,7 +359,7 @@ abstract class Stats
 		// phpcs:enable
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -366,7 +388,7 @@ abstract class Stats
 		// phpcs:enable
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -420,7 +442,7 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -460,7 +482,6 @@ abstract class Stats
 		return $data;
 	}
 
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *     Return the amount per month for a given year
@@ -478,7 +499,7 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -536,7 +557,7 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -592,7 +613,7 @@ abstract class Stats
 
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);

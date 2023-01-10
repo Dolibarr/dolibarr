@@ -95,6 +95,11 @@ class AdherentType extends CommonObject
 	public $amount;
 
 	/**
+	 * @var int Amount can be choosen by the visitor during subscription (0 or 1)
+	 */
+	public $caneditamount;
+
+	/**
 	 * @var string 	Public note
 	 * @deprecated
 	 */
@@ -314,7 +319,7 @@ class AdherentType extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->escape($this->morphy)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
-		$sql .= ", ".$conf->entity;
+		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
 		dol_syslog("Adherent_type::create", LOG_DEBUG);
@@ -380,6 +385,7 @@ class AdherentType extends CommonObject
 		$sql .= "morphy = '".$this->db->escape($this->morphy)."',";
 		$sql .= "subscription = '".$this->db->escape($this->subscription)."',";
 		$sql .= "amount = ".((empty($this->amount) && $this->amount == '') ? 'null' : ((float) $this->amount)).",";
+		$sql .= "caneditamount = ".((int) $this->caneditamount).",";
 		$sql .= "duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."',";
 		$sql .= "note = '".$this->db->escape($this->note_public)."',";
 		$sql .= "vote = ".(integer) $this->db->escape($this->vote).",";
@@ -391,7 +397,7 @@ class AdherentType extends CommonObject
 			$this->description = $this->db->escape($this->note_public);
 
 			// Multilangs
-			if (!empty($conf->global->MAIN_MULTILANGS)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				if ($this->setMultiLangs($user) < 0) {
 					$this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
 					return -2;
@@ -434,6 +440,7 @@ class AdherentType extends CommonObject
 
 	/**
 	 *	Function to delete the member's status
+	 *  TODO Add param "User $user"
 	 *
 	 *  @return		int		> 0 if OK, 0 if not found, < 0 if KO
 	 */
@@ -465,7 +472,7 @@ class AdherentType extends CommonObject
 	}
 
 	/**
-	 *  Function that retrieves the status of the member
+	 *  Function that retrieves the properties of a membership type
 	 *
 	 *  @param 		int		$rowid			Id of member type to load
 	 *  @return		int						<0 if KO, >0 if OK
@@ -474,7 +481,7 @@ class AdherentType extends CommonObject
 	{
 		global $langs, $conf;
 
-		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut as status, d.duration, d.subscription, d.amount, d.mail_valid, d.note as note_public, d.vote";
+		$sql = "SELECT d.rowid, d.libelle as label, d.morphy, d.statut as status, d.duration, d.subscription, d.amount, d.caneditamount, d.mail_valid, d.note as note_public, d.vote";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 		$sql .= " WHERE d.rowid = ".(int) $rowid;
 
@@ -495,13 +502,14 @@ class AdherentType extends CommonObject
 				$this->duration_unit  = substr($obj->duration, -1);
 				$this->subscription   = $obj->subscription;
 				$this->amount         = $obj->amount;
+				$this->caneditamount  = $obj->caneditamount;
 				$this->mail_valid     = $obj->mail_valid;
 				$this->note           = $obj->note_public;	// deprecated
 				$this->note_public    = $obj->note_public;
 				$this->vote           = $obj->vote;
 
 				// multilangs
-				if (!empty($conf->global->MAIN_MULTILANGS)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$this->getMultiLangs();
 				}
 
@@ -850,6 +858,7 @@ class AdherentType extends CommonObject
 		$this->note_public = 'This is a public note';
 		$this->mail_valid = 'This is welcome email';
 		$this->subscription = 1;
+		$this->caneditamount = 0;
 		$this->vote = 0;
 
 		$this->status = 1;
@@ -917,5 +926,47 @@ class AdherentType extends CommonObject
 		}
 
 		return '';
+	}
+
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return 	string				HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs,$user;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if ($user->rights->adherent->configurer) {
+			$return .= '<span class="right paddingleft"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$this->ref.'">'.img_edit().'</a></span>';
+		} else {
+			$return .= '<span class="right">&nbsp;</span>';
+		}
+		if (property_exists($this, 'vote')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("VoteAllowed").' : '.yn($this->vote).'</span>';
+		}
+		if (property_exists($this, 'amount')) {
+			if (is_null($this->amount) || $this->amount === '') {
+				$return .= '<br>';
+			} else {
+				$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Amount").'</span>';
+				$return .= '<span class="amount"> : '.price($this->amount).'</span>';
+			}
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

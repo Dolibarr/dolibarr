@@ -451,7 +451,7 @@ if ($step == 1 || !$datatoexport) {
 			print $label;
 			print '</td><td class="right">';
 			if ($objexport->array_export_perms[$key]) {
-				print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'next', 'class="fa-15x"').'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&module_position='.$objexport->array_export_module[$key]->module_position.'&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"), 'next', 'class="fa-15"').'</a>';
 			} else {
 				print '<span class="opacitymedium">'.$langs->trans("NotEnoughPermissions").'</span>';
 			}
@@ -883,9 +883,9 @@ if ($step == 4 && $datatoexport) {
 				if (isset($objexport->array_export_fields[0][$code])) {
 					$list .= ($list ? ', ' : '');
 					if (isset($array_filtervalue[$code]) && preg_match('/^\s*[<>]/', $array_filtervalue[$code])) {
-						$list .= $langs->trans($objexport->array_export_fields[0][$code]).(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '');
+						$list .= '<span class="opacitymedium">'.$langs->trans($objexport->array_export_fields[0][$code]).'</span>'.(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '');
 					} else {
-						$list .= $langs->trans($objexport->array_export_fields[0][$code])."='".(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '')."'";
+						$list .= '<span class="opacitymedium">'.$langs->trans($objexport->array_export_fields[0][$code])."</span>='".(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '')."'";
 					}
 				}
 			}
@@ -1163,9 +1163,9 @@ if ($step == 5 && $datatoexport) {
 				if (isset($objexport->array_export_fields[0][$code])) {
 					$list .= ($list ? ', ' : '');
 					if (isset($array_filtervalue[$code]) && preg_match('/^\s*[<>]/', $array_filtervalue[$code])) {
-						$list .= $langs->trans($objexport->array_export_fields[0][$code]).(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '');
+						$list .= '<span class="opacitymedium">'.$langs->trans($objexport->array_export_fields[0][$code]).'</span>'.(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '');
 					} else {
-						$list .= $langs->trans($objexport->array_export_fields[0][$code])."='".(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '')."'";
+						$list .= '<span class="opacitymedium">'.$langs->trans($objexport->array_export_fields[0][$code])."</span>='".(isset($array_filtervalue[$code]) ? $array_filtervalue[$code] : '')."'";
 					}
 				}
 			}
@@ -1187,7 +1187,7 @@ if ($step == 5 && $datatoexport) {
 	$htmltabloflibs .= '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 	$htmltabloflibs .= '</tr>'."\n";
 
-	$liste = $objmodelexport->liste_modeles($db);
+	$liste = $objmodelexport->listOfAvailableExportFormat($db);
 	$listeall = $liste;
 	foreach ($listeall as $key => $val) {
 		if (preg_match('/__\(Disabled\)__/', $listeall[$key])) {

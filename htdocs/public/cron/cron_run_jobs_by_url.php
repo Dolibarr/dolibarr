@@ -75,7 +75,7 @@ $langs->loadLangs(array("admin", "cron", "dict"));
 
 // Security check
 if (empty($conf->cron->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Cron not enabled');
 }
 
 
@@ -93,7 +93,7 @@ if (empty($key)) {
 	echo 'Securitykey is required. Check setup of cron jobs module.';
 	exit;
 }
-if ($key != $conf->global->CRON_KEY) {
+if ($key != getDolGlobalString('CRON_KEY')) {
 	echo 'Securitykey is wrong.';
 	exit;
 }
@@ -135,33 +135,25 @@ if (!empty($id)) {
 	$filter['t.rowid'] = $id;
 }
 
-$result = $object->fetch_all('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
+$result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result < 0) {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php fetch Error".$object->error, LOG_ERR);
 	exit;
 }
 
-$qualifiedjobs = array();
-foreach ($object->lines as $val) {
-	if (!verifCond($val->test)) {
-		continue;
-	}
-	$qualifiedjobs[] = $val;
-}
-
 // TODO Duplicate code. This sequence of code must be shared with code into cron_run_jobs.php script.
 
 // current date
-$nbofjobs = count($qualifiedjobs);
+$nbofjobs = count($object->lines);
 $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
-if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
+if (is_array($object->lines) && (count($object->lines) > 0)) {
 	$savconf = dol_clone($conf);
 
 	// Loop over job
-	foreach ($qualifiedjobs as $line) {
+	foreach ($object->lines as $line) {
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
@@ -189,6 +181,10 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 				}
 				$user->getrights();
 			}
+		}
+
+		if (!verifCond($line->test)) {
+			continue;
 		}
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database

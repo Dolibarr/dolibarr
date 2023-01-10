@@ -128,9 +128,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 	$error = 0;
 
 	// If password is encoded, we decode it
-	if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
+	if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
 		require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-		if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
+		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
 			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
@@ -222,9 +222,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				print $langs->trans("AdminLoginCreatedSuccessfuly", $login)."<br>";
 				$success = 1;
 			} else {
-				if ($newuser->error == 'ErrorLoginAlreadyExists') {
+				if ($result == -6) {	//login or email already exists
 					dolibarr_install_syslog('step5: AdminLoginAlreadyExists', LOG_WARNING);
-					print '<br><div class="warning">'.$langs->trans("AdminLoginAlreadyExists", $login)."</div><br>";
+					print '<br><div class="warning">'.$newuser->error."</div><br>";
 					$success = 1;
 				} else {
 					dolibarr_install_syslog('step5: FailedToCreateAdminLogin '.$newuser->error, LOG_ERR);
@@ -267,11 +267,14 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 					if (!$resql) {
 						dol_print_error($db, 'Error in setup program');
 					}
+					// The install.lock file is created few lines later if version is last one or if option MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE is on
+					/* No need to enable this
 					$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) values(".$db->encrypt('MAIN_REMOVE_INSTALL_WARNING').", ".$db->encrypt(1).", 'chaine', 1, 'Disable install warnings', 0)");
 					if (!$resql) {
 						dol_print_error($db, 'Error in setup program');
 					}
 					$conf->global->MAIN_REMOVE_INSTALL_WARNING = 1;
+					*/
 				}
 
 				// If we ask to force some modules to be enabled
@@ -297,7 +300,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 				}
 
 				dolibarr_install_syslog('step5: remove MAIN_NOT_INSTALLED const');
-				$resql = $db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')."='MAIN_NOT_INSTALLED'");
+				$resql = $db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE ".$db->decrypt('name')." = 'MAIN_NOT_INSTALLED'");
 				if (!$resql) {
 					dol_print_error($db, 'Error in setup program');
 				}
@@ -450,7 +453,7 @@ if ($action == "set") {
 		$morehtml .= '</a></div>';
 	}
 } else {
-	dol_print_error('', 'step5.php: unknown choice of action');
+	dol_print_error('', 'step5.php: unknown choice of action='.$action.' in create lock file seaction');
 }
 
 // Clear cache files

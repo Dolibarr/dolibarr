@@ -63,7 +63,7 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	/**
 	 *   Returns the description of the numbering model
 	 *
-	 *   @return     string      Texte descripif
+	 *   @return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -174,7 +174,7 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param  Societe     $objsoc         Object thirdparty
 	 *  @param  Object      $object         Object livraison
-	 *  @return string                      Texte descriptif
+	 *  @return string                      Descriptive text
 	 */
 	public function delivery_get_num($objsoc = 0, $object = '')
 	{

@@ -40,9 +40,7 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
+
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -52,12 +50,14 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Init vars
 $errmsg = '';
@@ -67,16 +67,15 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Load translation files
-$langs->loadLangs(array("main", "members", "companies", "install", "other"));
+$langs->loadLangs(array("main", "members", "partnership", "companies", "install", "other"));
 
 // Security check
 if (empty($conf->partnership->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Partnership not enabled');
 }
 
 if (empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
-	print $langs->trans("Auto subscription form for public visitors has not been enabled");
-	exit;
+	httponly_accessforbidden("Auto subscription form for public visitors has not been enabled");
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -178,10 +177,14 @@ if (empty($reshook) && $action == 'add') {
 
 	$db->begin();
 
-	/*if (GETPOST('typeid') <= 0) {
+	if (GETPOST('partnershiptype', 'int') <= 0) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"))."<br>\n";
-	}*/
+	}
+	if (!GETPOST('societe')) {
+		$error++;
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("societe"))."<br>\n";
+	}
 	if (!GETPOST('lastname')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
@@ -190,6 +193,7 @@ if (empty($reshook) && $action == 'add') {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
 	}
+
 	if (empty(GETPOST('email'))) {
 		$error++;
 		$errmsg .= $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Email'))."<br>\n";
@@ -211,17 +215,94 @@ if (empty($reshook) && $action == 'add') {
 			$partnership->fk_soc = 0;
 		}
 
-		$partnership->statut      = -1;
-		$partnership->firstname   = GETPOST('firstname');
-		$partnership->lastname    = GETPOST('lastname');
-		$partnership->address     = GETPOST('address');
-		$partnership->zip         = GETPOST('zipcode');
-		$partnership->town        = GETPOST('town');
-		$partnership->email       = GETPOST('email');
-		$partnership->country_id  = GETPOST('country_id', 'int');
-		$partnership->state_id    = GETPOST('state_id', 'int');
-		//$partnership->typeid      = $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE ? $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
-		$partnership->note_private = GETPOST('note_private');
+		$partnership->status                 = 0;
+		$partnership->note_private           = GETPOST('note_private');
+		$partnership->date_creation 		 = dol_now();
+		$partnership->date_partnership_start = dol_now();
+		$partnership->fk_user_creat          = 0;
+		$partnership->fk_type                = GETPOST('partnershiptype', 'int');
+		//$partnership->typeid               = $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE ? $conf->global->PARTNERSHIP_NEWFORM_FORCETYPE : GETPOST('typeid', 'int');
+		$partnership->ip = getUserRemoteIP();
+
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+		$now = dol_now();
+		$minmonthpost = dol_time_plus_duree($now, -1, "m");
+		// Calculate nb of post for IP
+		$nb_post_ip = 0;
+		if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+			$sql = "SELECT COUNT(ref) as nb_partnerships";
+			$sql .= " FROM ".MAIN_DB_PREFIX."partnership";
+			$sql .= " WHERE ip = '".$db->escape($partnership->ip)."'";
+			$sql .= " AND date_creation > '".$db->idate($minmonthpost)."'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$i++;
+					$obj = $db->fetch_object($resql);
+					$nb_post_ip = $obj->nb_partnerships;
+				}
+			}
+		}
+		// test if societe already exist
+		$company = new Societe($db);
+		$result = $company->fetch(0, GETPOST('societe'));
+		if ($result == 0) { // si il ya pas d'entree sur le nom  on teste l'email
+			$result1 = $company->fetch(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, GETPOST('email'));
+			if ($result1 > 0) {
+				$error++;
+				$errmsg = $langs->trans("EmailAlreadyExistsPleaseRewriteYourCompanyName");
+			} else {
+				//create thirdparty
+				$company = new Societe($db);
+
+				$company->name        = GETPOST('societe');
+				$company->address     = GETPOST('address');
+				$company->zip         = GETPOST('zipcode');
+				$company->town        = GETPOST('town');
+				$company->email       = GETPOST('email');
+				$company->country_id  = GETPOST('country_id', 'int');
+				$company->state_id    = GETPOST('state_id', 'int');
+				$company->name_alias  = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
+
+				$resultat=$company->create($user);
+				if ($resultat < 0) {
+					$error++;
+					$errmsg .= join('<br>', $company->errors);
+				}
+
+				$partnership->fk_soc = $company->id;
+			}
+		} elseif ($result == -2) {
+			$error++;
+			$errmsg = $langs->trans("TwoRecordsOfCompanyName");
+		} else {
+			$partnership->fk_soc = $company->id;
+			// update thirdparty fields
+			if (empty($company->address)) {
+				$company->address = GETPOST('address');
+			}
+			if (empty($company->zip)) {
+				$company->zip = GETPOST('zipcode');
+			}
+			if (empty($company->town)) {
+				$company->town = GETPOST('town');
+			}
+			if (empty($company->country_id)) {
+				$company->country_id = GETPOST('country_id', 'int');
+			}
+			if (empty($company->email)) {
+				$company->email = GETPOST('email');
+			}
+			if (empty($company->state_id)) {
+				$company->state_id = GETPOST('state_id', 'int');
+			}
+			if (empty($company->name_alias)) {
+				$company->name_alias = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
+			}
+			$company->update(0);
+		}
 
 		// Fill array 'array_options' with data from add form
 		$extrafields->fetch_name_optionals_label($partnership->table_element);
@@ -230,175 +311,187 @@ if (empty($reshook) && $action == 'add') {
 			$error++;
 		}
 
-		$result = $partnership->create($user);
-		if ($result > 0) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$object = $partnership;
+		if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
+			$error++;
+			$errmsg = $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
+			array_push($partnership->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
+		}
+		if (!$error) {
+			$result = $partnership->create($user);
+			if ($result > 0) {
+				/*
+				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+				$object = $partnership;
 
-			/*
-			$partnershipt = new PartnershipType($db);
-			$partnershipt->fetch($object->typeid);
 
-			if ($object->email) {
-				$subject = '';
-				$msg = '';
+				$partnershipt = new PartnershipType($db);
+				$partnershipt->fetch($object->typeid);
 
-				// Send subscription email
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-				// Set output language
-				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-				// Load traductions files required by page
-				$outputlangs->loadLangs(array("main", "members"));
-				// Get email content from template
-				$arraydefaultmessage = null;
-				$labeltouse = $conf->global->PARTNERSHIP_EMAIL_TEMPLATE_AUTOREGISTER;
+				if ($object->email) {
+					$subject = '';
+					$msg = '';
 
-				if (!empty($labeltouse)) {
-					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+					// Send subscription email
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+					$formmail = new FormMail($db);
+					// Set output language
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					// Load traductions files required by page
+					$outputlangs->loadLangs(array("main", "members"));
+					// Get email content from template
+					$arraydefaultmessage = null;
+					$labeltouse = $conf->global->PARTNERSHIP_EMAIL_TEMPLATE_AUTOREGISTER;
+
+					if (!empty($labeltouse)) {
+						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+					}
+
+					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+						$subject = $arraydefaultmessage->topic;
+						$msg     = $arraydefaultmessage->content;
+					}
+
+					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+					$texttosend = make_substitutions(dol_concatdesc($msg, $partnershipt->getMailOnValid()), $substitutionarray, $outputlangs);
+
+					if ($subjecttosend && $texttosend) {
+						$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
+
+						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+					}
 				}
 
-				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-					$subject = $arraydefaultmessage->topic;
-					$msg     = $arraydefaultmessage->content;
-				}
 
-				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-				complete_substitutions_array($substitutionarray, $outputlangs, $object);
-				$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-				$texttosend = make_substitutions(dol_concatdesc($msg, $partnershipt->getMailOnValid()), $substitutionarray, $outputlangs);
-
-				if ($subjecttosend && $texttosend) {
-					$moreinheader = 'X-Dolibarr-Info: send_an_email by public/members/new.php'."\r\n";
-
-					$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
-				}
-			}
-			*/
-
-			// Send email to the foundation to say a new member subscribed with autosubscribe form
-			if (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') && !empty($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
-				  !empty($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL)) {
-				// Define link to login card
-				$appli = constant('DOL_APPLICATION_TITLE');
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-					$appli = $conf->global->MAIN_APPLICATION_TITLE;
-					if (preg_match('/\d\.\d/', $appli)) {
-						if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
-							$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
+				// Send email to the foundation to say a new member subscribed with autosubscribe form
+				/*
+				if (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') && !empty($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
+					  !empty($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL)) {
+					// Define link to login card
+					$appli = constant('DOL_APPLICATION_TITLE');
+					if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+						$appli = $conf->global->MAIN_APPLICATION_TITLE;
+						if (preg_match('/\d\.\d/', $appli)) {
+							if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
+								$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
+							}
+						} else {
+							$appli .= " ".DOL_VERSION;
 						}
 					} else {
 						$appli .= " ".DOL_VERSION;
 					}
+
+					$to = $partnership->makeSubstitution(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
+					$from = getDolGlobalString('PARTNERSHIP_MAIL_FROM');
+					$mailfile = new CMailFile(
+						'['.$appli.'] '.getDolGlobalString('PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT', 'Partnership request'),
+						$to,
+						$from,
+						$partnership->makeSubstitution(getDolGlobalString('PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL')),
+						array(),
+						array(),
+						array(),
+						"",
+						"",
+						0,
+						-1
+					);
+
+					if (!$mailfile->sendfile()) {
+						dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
+					}
+				}*/
+
+				if (!empty($backtopage)) {
+					$urlback = $backtopage;
+				} elseif (!empty($conf->global->PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION)) {
+					$urlback = $conf->global->PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION;
+					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
-					$appli .= " ".DOL_VERSION;
+					$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
 				}
 
-				$to = $partnership->makeSubstitution(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
-				$from = getDolGlobalString('PARTNERSHIP_MAIL_FROM');
-				$mailfile = new CMailFile(
-					'['.$appli.'] '.getDolGlobalString('PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT', 'Partnership request'),
-					$to,
-					$from,
-					$partnership->makeSubstitution(getDolGlobalString('PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL')),
-					array(),
-					array(),
-					array(),
-					"",
-					"",
-					0,
-					-1
-				);
+				/*
+				if (!empty($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE) && $conf->global->PARTNERSHIP_NEWFORM_PAYONLINE != '-1') {
+					if ($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE == 'all') {
+						$urlback = DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
+						if (price2num(GETPOST('amount', 'alpha'))) {
+							$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
+						}
+						if (GETPOST('email')) {
+							$urlback .= '&email='.urlencode(GETPOST('email'));
+						}
+						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
+							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
+							} else {
+								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+							}
+						}
+					} elseif ($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE == 'paybox') {
+						$urlback = DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
+						if (price2num(GETPOST('amount', 'alpha'))) {
+							$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
+						}
+						if (GETPOST('email')) {
+							$urlback .= '&email='.urlencode(GETPOST('email'));
+						}
+						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
+							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
+							} else {
+								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+							}
+						}
+					} elseif ($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE == 'paypal') {
+						$urlback = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
+						if (price2num(GETPOST('amount', 'alpha'))) {
+							$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
+						}
+						if (GETPOST('email')) {
+							$urlback .= '&email='.urlencode(GETPOST('email'));
+						}
+						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
+							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
+							} else {
+								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+							}
+						}
+					} elseif ($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE == 'stripe') {
+						$urlback = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.$partnership->ref;
+						if (price2num(GETPOST('amount', 'alpha'))) {
+							$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
+						}
+						if (GETPOST('email')) {
+							$urlback .= '&email='.urlencode(GETPOST('email'));
+						}
+						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
+							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
+								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
+							} else {
+								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+							}
+						}
+					} else {
+						dol_print_error('', "Autosubscribe form is setup to ask an online payment for a not managed online payment");
+						exit;
+					}
+				}*/
 
-				if (!$mailfile->sendfile()) {
-					dol_syslog($langs->trans("ErrorFailedToSendMail", $from, $to), LOG_ERR);
+				if (!empty($entity)) {
+					$urlback .= '&entity='.$entity;
 				}
-			}
-
-			if (!empty($backtopage)) {
-				$urlback = $backtopage;
-			} elseif (!empty($conf->global->PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION)) {
-				$urlback = $conf->global->PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION;
-				// TODO Make replacement of __AMOUNT__, etc...
+				dol_syslog("partnership ".$partnership->ref." was created, we redirect to ".$urlback);
 			} else {
-				$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
+				$error++;
+				$errmsg .= join('<br>', $partnership->errors);
 			}
-
-			if (!empty($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE) && $conf->global->PARTNERSHIP_NEWFORM_PAYONLINE != '-1') {
-				if ($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE == 'all') {
-					$urlback = DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
-					if (price2num(GETPOST('amount', 'alpha'))) {
-						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					}
-					if (GETPOST('email')) {
-						$urlback .= '&email='.urlencode(GETPOST('email'));
-					}
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
-						} else {
-							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
-						}
-					}
-				} elseif ($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE == 'paybox') {
-					$urlback = DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
-					if (price2num(GETPOST('amount', 'alpha'))) {
-						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					}
-					if (GETPOST('email')) {
-						$urlback .= '&email='.urlencode(GETPOST('email'));
-					}
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
-						} else {
-							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
-						}
-					}
-				} elseif ($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE == 'paypal') {
-					$urlback = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
-					if (price2num(GETPOST('amount', 'alpha'))) {
-						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					}
-					if (GETPOST('email')) {
-						$urlback .= '&email='.urlencode(GETPOST('email'));
-					}
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
-						} else {
-							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
-						}
-					}
-				} elseif ($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE == 'stripe') {
-					$urlback = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.$partnership->ref;
-					if (price2num(GETPOST('amount', 'alpha'))) {
-						$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
-					}
-					if (GETPOST('email')) {
-						$urlback .= '&email='.urlencode(GETPOST('email'));
-					}
-					if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-							$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
-						} else {
-							$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
-						}
-					}
-				} else {
-					dol_print_error('', "Autosubscribe form is setup to ask an online payment for a not managed online payment");
-					exit;
-				}
-			}
-
-			if (!empty($entity)) {
-				$urlback .= '&entity='.$entity;
-			}
-			dol_syslog("partnership ".$partnership->ref." was created, we redirect to ".$urlback);
 		} else {
-			$error++;
-			$errmsg .= join('<br>', $partnership->errors);
+			setEventMessage($errmsg, 'errors');
 		}
 	}
 
@@ -437,7 +530,7 @@ if (empty($reshook) && $action == 'added') {
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-$extrafields->fetch_name_optionals_label($partnership->table_element); // fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
 
 
 llxHeaderVierge($langs->trans("NewPartnershipRequest"));
@@ -453,7 +546,7 @@ print '<div class="center subscriptionformhelptext justify">';
 if (!empty($conf->global->PARTNERSHIP_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PARTNERSHIP_NEWFORM_TEXT)."<br>\n";
 } else {
-	print $langs->trans("NewPartnershipRequestDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
+	print $langs->trans("NewPartnershipRequestDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }
 print '</div>';
 

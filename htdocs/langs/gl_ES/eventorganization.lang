@@ -54,12 +54,15 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = No formulario para crear/engadir un asi
 # Object
 #
 EventOrganizationConfOrBooth= Conferencia ou Stand
+EventOrganizationConfOrBoothes=Conferencias ou Stands
 ManageOrganizeEvent = Xestionar a organización dun evento 
 ConferenceOrBooth = Conferencia ou Stand
 ConferenceOrBoothTab = Conferencia ou Stand
 AmountPaid = Cantidade xa paga
 DateOfRegistration = Data de rexistro
 ConferenceOrBoothAttendee = Asistente á conferencia ou stand 
+ApplicantOrVisitor=Solicitante ou visitante
+Speaker=Ponente
 
 #
 # Template Mail
@@ -112,15 +115,15 @@ EvntOrgRegistrationHelpMessage = Aquí pode votar por unha conferencia ou suxeri
 EvntOrgRegistrationConfHelpMessage = Aquí pode suxerir unha nova conferencia para animar durante o evento. 
 EvntOrgRegistrationBoothHelpMessage = Aquí pode solicitar un stand durante o evento.
 ListOfSuggestedConferences = Listaxe de conferencias suxeridas 
-ListOfSuggestedBooths = Listaxe de stands suxeridos
-ListOfConferencesOrBooths=Listaxe de conferencias ou stands do evento
+ListOfSuggestedBooths=Stands suxeridos
+ListOfConferencesOrBooths=Conferencias ou stands de eventos do proxecto
 SuggestConference = Suxerir unha nova conferencia 
 SuggestBooth = Suxerir un stand
 ViewAndVote = Ver e votar por eventos suxeridos 
 PublicAttendeeSubscriptionGlobalPage = Ligazón pública para a inscrición ao evento 
 PublicAttendeeSubscriptionPage = Ligazón pública para a inscrición só neste evento 
 MissingOrBadSecureKey = A clave de seguridade non é válida ou inexistente
-EvntOrgWelcomeMessage = Este formulario permítelle rexistrarse como novo participante no evento: <b> %s</b>
+EvntOrgWelcomeMessage = Este formulario permítelle rexistrarse como novo participante no evento
 EvntOrgDuration = Esta conferencia comeza en %s e remata en %s. 
 ConferenceAttendeeFee = Importe de asistente á conferencia para o evento:' %s ' acontece de %s a %s
 BoothLocationFee = Localización do stand para o evento: "%s" que acontece do %s ao %s
@@ -130,7 +133,7 @@ LabelOfconference=Etiqueta de conferencia
 ConferenceIsNotConfirmed=Rexistro non dispoñible, a conferencia aínda non está confirmada
 DateMustBeBeforeThan=%s debe ser antes de %s
 DateMustBeAfterThan=%s debe ser despois de %s
-
+MaxNbOfAttendeesReached=Alcanzouse o número máximo de participantes
 NewSubscription=Rexistro
 OrganizationEventConfRequestWasReceived=A súa suxestión para unha conferencia foi recibida
 OrganizationEventBoothRequestWasReceived=A súa solicitude para un stand foi recibida
@@ -139,6 +142,7 @@ OrganizationEventPaymentOfRegistrationWasReceived=O seu pagamento pola inscrici�
 OrganizationEventBulkMailToAttendees=Esta é unha lembranza da súa participación no evento como asistente 
 OrganizationEventBulkMailToSpeakers=Esta é unha lembranza da súa participación no evento como ponente 
 OrganizationEventLinkToThirdParty=Ligazón a terceiros (cliente, provedor ou asociado) 
+OrganizationEvenLabelName=Nome público da conferencia ou posto
 
 NewSuggestionOfBooth=Solicitude de stand
 NewSuggestionOfConference=Solicitude para unha conferencia 
@@ -154,7 +158,7 @@ VoteOk = O seu voto foi aceptado
 AlreadyVoted = Xa votou para este evento
 VoteError = Produciuse un erro durante a votación, ténteo de novo. 
 
-SubscriptionOk = A súa inscrición foi validada
+SubscriptionOk=O seu rexistro foi gravado
 ConfAttendeeSubscriptionConfirmation = Confirmación da súa subscrición ao evento
 Attendee = Asistente
 PaymentConferenceAttendee = Pagamento de asistente á conferencia
@@ -162,6 +166,7 @@ PaymentBoothLocation = Pagamento da localización do stand
 DeleteConferenceOrBoothAttendee=Eliminar asistente 
 RegistrationAndPaymentWereAlreadyRecorder=Xa se rexistrou unha inscrición e un pagamento para este correo electrónico <b> %s</b> 
 EmailAttendee=Correo electrónico do asistente 
+EmailCompany=Correo electrónico da empresa
 EmailCompanyForInvoice=Correo electrónico da empresa (para factura, se é diferente do correo electrónico do participante) 
 ErrorSeveralCompaniesWithEmailContactUs=Atopáronse varias empresas con este correo electrónico polo que non podemos validar automaticamente a súa inscrición. Póñase en contacto connosco en %s para unha validación manual 
 ErrorSeveralCompaniesWithNameContactUs=Atopáronse varias empresas con este nome polo que non podemos validar automaticamente a súa inscrición. Póñase en contacto connosco en %s para unha validación manual 

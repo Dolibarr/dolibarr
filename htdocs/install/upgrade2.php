@@ -123,9 +123,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	print '<table border="0" width="100%">';
 
 	// If password is encoded, we decode it
-	if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
+	if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
 		require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-		if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
+		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
 			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
@@ -420,7 +420,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '5.0.9');
 			$beforeversionarray = explode('.', '6.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-				if (!empty($conf->multicompany->enabled)) {
+				if (isModEnabled('multicompany')) {
 					global $multicompany_transverse_mode;
 
 					// Only if the transverse mode is not used
@@ -455,7 +455,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '8.0.9');
 			$beforeversionarray = explode('.', '9.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-				migrate_user_photospath();
+				//migrate_user_photospath();
 			}
 
 			// Scripts for 11.0
@@ -480,7 +480,22 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '15.0.9');
 			$beforeversionarray = explode('.', '16.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_user_photospath();
 				migrate_user_photospath2();
+			}
+
+			// Scripts for 17.0
+			$afterversionarray = explode('.', '16.0.9');
+			$beforeversionarray = explode('.', '17.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_contractdet_rank();
+			}
+
+			// Scripts for 18.0
+			$afterversionarray = explode('.', '170.9');
+			$beforeversionarray = explode('.', '18.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_contractdet_rank();
 			}
 		}
 
@@ -574,7 +589,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 					print '</td></tr>';
 				}
 			} else {
-				//if (! empty($conf->modules))
+				//if (!empty($conf->modules))
 				if (!empty($conf->modules_parts['hooks'])) {     // If there is at least one module with one hook, we show message to say nothing was done
 					print '<tr class="trforrunsql"><td colspan="4">';
 					print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("NodoUpgradeAfterDB");
@@ -646,7 +661,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				print '</td></tr>';
 			}
 		} else {
-			//if (! empty($conf->modules))
+			//if (!empty($conf->modules))
 			if (!empty($conf->modules_parts['hooks'])) {     // If there is at least one module with one hook, we show message to say nothing was done
 				print '<tr class="trforrunsql"><td colspan="4">';
 				print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("NodoUpgradeAfterFiles");
@@ -2024,7 +2039,7 @@ function migrate_modeles($db, $langs, $conf)
 		}
 	}
 
-	if (!empty($conf->commande->enabled)) {
+	if (isModEnabled('commande')) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 		$modellist = ModelePDFCommandes::liste_modeles($db);
 		if (count($modellist) == 0) {
@@ -2037,7 +2052,7 @@ function migrate_modeles($db, $langs, $conf)
 		}
 	}
 
-	if (!empty($conf->expedition->enabled)) {
+	if (isModEnabled("expedition")) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 		$modellist = ModelePDFExpedition::liste_modeles($db);
 		if (count($modellist) == 0) {
@@ -4071,11 +4086,11 @@ function migrate_rename_directories($db, $langs, $conf, $oldname, $newname)
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @return	void
+ * @return	boolean
  */
 function migrate_delete_old_files($db, $langs, $conf)
 {
-	$result = true;
+	$ret = true;
 
 	dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
 
@@ -4094,6 +4109,8 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/triggers/interface_modCommande_Ecotax.class.php',
 		'/core/triggers/interface_modCommande_fraisport.class.php',
 		'/core/triggers/interface_modPropale_PropalWorkflow.class.php',
+		'/core/triggers/interface_99_modWebhook_WebhookTriggers.class.php',
+		'/core/triggers/interface_99_modZapier_ZapierTriggers.class.php',
 		'/core/menus/smartphone/iphone.lib.php',
 		'/core/menus/smartphone/iphone_backoffice.php',
 		'/core/menus/smartphone/iphone_frontoffice.php',
@@ -4116,6 +4133,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/boxes/box_members.php',
 
 		'/api/class/api_generic.class.php',
+		'/asterisk/cidlookup.php',
 		'/categories/class/api_category.class.php',
 		'/categories/class/api_deprecated_category.class.php',
 		'/compta/facture/class/api_invoice.class.php',
@@ -4137,7 +4155,6 @@ function migrate_delete_old_files($db, $langs, $conf)
 
 	foreach ($filetodeletearray as $filetodelete) {
 		//print '<b>'DOL_DOCUMENT_ROOT.$filetodelete."</b><br>\n";
-		$result = 1;
 		if (file_exists(DOL_DOCUMENT_ROOT.$filetodelete)) {
 			$result = dol_delete_file(DOL_DOCUMENT_ROOT.$filetodelete, 0, 0, 0, null, true, false);
 			if (!$result) {
@@ -4149,7 +4166,8 @@ function migrate_delete_old_files($db, $langs, $conf)
 			}
 		}
 	}
-	return $result;
+
+	return $ret;
 }
 
 /**
@@ -4158,11 +4176,11 @@ function migrate_delete_old_files($db, $langs, $conf)
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @return	void
+ * @return	boolean
  */
 function migrate_delete_old_dir($db, $langs, $conf)
 {
-	$result = true;
+	$ret = true;
 
 	dolibarr_install_syslog("upgrade2::migrate_delete_old_dir");
 
@@ -4188,7 +4206,8 @@ function migrate_delete_old_dir($db, $langs, $conf)
 			print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
 		}
 	}
-	return $result;
+
+	return $ret;
 }
 
 
@@ -4474,7 +4493,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @return	void
+ * @return	int						<0 if KO, >0 if OK
  */
 function migrate_reload_menu($db, $langs, $conf)
 {
@@ -4504,6 +4523,8 @@ function migrate_reload_menu($db, $langs, $conf)
 
 		print '</td></tr>';
 	}
+
+	return 1;
 }
 
 /**
@@ -5130,6 +5151,64 @@ function migrate_export_import_profiles($mode = 'export')
 	if ($resultstring) {
 		print $resultstring;
 	} else {
+		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+	}
+}
+
+/**
+ * Migrate Rank into contract  line
+ *
+ * @return  void
+ */
+function migrate_contractdet_rank()
+{
+
+	global $db, $langs;
+
+	$error = 0;
+	$resultstring = '';
+
+	$db->begin();
+	print '<tr class="trforrunsql"><td colspan="4">';
+	print '<b>'.$langs->trans('MigrationContractLineRank')."</b><br>\n";
+
+	$sql = "SELECT c.rowid as cid ,cd.rowid as cdid,cd.rang FROM ".$db->prefix()."contratdet as cd INNER JOIN ".$db->prefix()."contrat as c ON c.rowid=cd.fk_contrat AND cd.rang=0";
+	$sql .=" ORDER BY c.rowid,cd.rowid";
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$currentRank=0;
+		$current_contract=0;
+		while ($obj = $db->fetch_object($resql)) {
+			if (empty($current_contract) || $current_contract==$obj->cid) {
+				$currentRank++;
+			} else {
+				$currentRank=1;
+			}
+
+			$sqlUpd = "UPDATE ".$db->prefix()."contratdet SET rang=".(int) $currentRank." WHERE rowid=".(int) $obj->cdid;
+			$resultstring = '.';
+			print $resultstring;
+			$resqlUpd = $db->query($sqlUpd);
+			if (!$resqlUpd) {
+				dol_print_error($db);
+				$error++;
+			}
+
+			$current_contract =  $obj->cid;
+		}
+	} else {
+		$error++;
+	}
+	if (!$error) {
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+
+	print '</td></tr>';
+
+	if (!$resultstring) {
 		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
 	}
 }

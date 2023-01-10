@@ -24,6 +24,7 @@
  *       \brief      Page to define emailing targets
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
@@ -384,6 +385,7 @@ if ($object->fetch($id) >= 0) {
 					if ($allowaddtarget) {
 						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&token='.newToken().'&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.newToken().'">';
+						print '<input type="hidden" name="page_y" value="'.newToken().'">';
 					} else {
 						print '<div '.$bctag[$var].'>';
 					}
@@ -392,7 +394,7 @@ if ($object->fetch($id) >= 0) {
 					if (empty($obj->picto)) {
 						$obj->picto = 'generic';
 					}
-					print img_object($langs->trans("EmailingTargetSelector").': '.get_class($obj), $obj->picto, 'class="valignmiddle pictomodule"');
+					print img_object($langs->trans("EmailingTargetSelector").': '.get_class($obj), $obj->picto, 'class="valignmiddle pictomodule pictofixedwidth"');
 					print ' ';
 					print $obj->getDesc();
 					print '</div>';
@@ -428,7 +430,7 @@ if ($object->fetch($id) >= 0) {
 
 					print '<div class="tagtd right">';
 					if ($allowaddtarget) {
-						print '<input type="submit" class="button button-add small" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
+						print '<input type="submit" class="button button-add small reposition" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 					} else {
 						print '<input type="submit" class="button small disabled" disabled="disabled" name="button_'.$modulename.'" value="'.$langs->trans("Add").'">';
 						//print $langs->trans("MailNoChangePossible");
@@ -514,7 +516,7 @@ if ($object->fetch($id) >= 0) {
 		$num = $db->num_rows($resql);
 
 		$param = "&id=".$object->id;
-		//if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+		//if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 		if ($limit > 0 && $limit != $conf->liste_limit) {
 			$param .= '&limit='.urlencode($limit);
 		}
@@ -542,7 +544,7 @@ if ($object->fetch($id) >= 0) {
 		if ($allowaddtarget) {
 			$morehtmlcenter = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition smallpaddingimp">'.$langs->trans("TargetsReset").'</a>';
 		}
-		$morehtmlcenter .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?exportcsv=1&id='.$object->id.'">'.$langs->trans("Download").'</a>';
+		$morehtmlcenter .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=exportcsv&token='.newToken().'&exportcsv=1&id='.$object->id.'">'.img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download").'</a>';
 
 		$massactionbutton = '';
 
@@ -631,19 +633,21 @@ if ($object->fetch($id) >= 0) {
 			include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 			$objectstaticmember = new Adherent($db);
 			$objectstaticuser = new User($db);
 			$objectstaticcompany = new Societe($db);
 			$objectstaticcontact = new Contact($db);
+			$objectstaticeventorganization = new ConferenceOrBoothAttendee($db);
 
 			while ($i < min($num, $limit)) {
 				$obj = $db->fetch_object($resql);
 
 				print '<tr class="oddeven">';
-				print '<td class="tdoverflowmax150">'.img_picto('$obj->email', 'email', 'class="paddingright"').$obj->email.'</td>';
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.$obj->lastname.'</td>';
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">'.$obj->firstname.'</td>';
-				print '<td>'.$obj->other.'</td>';
+				print '<td class="tdoverflowmax150">'.img_picto('$obj->email', 'email', 'class="paddingright"').dol_escape_htmltag($obj->email).'</td>';
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->lastname).'</td>';
+				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
+				print '<td><span class="small">'.dol_escape_htmltag($obj->other).'</small></td>';
 				print '<td class="center tdoverflowmax150">';
 				if (empty($obj->source_id) || empty($obj->source_type)) {
 					print empty($obj->source_url) ? '' : $obj->source_url; // For backward compatibility
@@ -660,6 +664,9 @@ if ($object->fetch($id) >= 0) {
 					} elseif ($obj->source_type == 'contact') {
 						$objectstaticcontact->fetch($obj->source_id);
 						print $objectstaticcontact->getNomUrl(1);
+					} elseif ($obj->source_type == 'eventorganizationattendee') {
+						$objectstaticeventorganization->fetch($obj->source_id);
+						print $objectstaticeventorganization->getNomUrl(1);
 					} else {
 						print $obj->source_url;
 					}

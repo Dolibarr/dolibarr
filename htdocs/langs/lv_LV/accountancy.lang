@@ -48,8 +48,9 @@ CountriesNotInEEC=Valstis, kas nav EEK valstīs
 CountriesInEECExceptMe=Valstis EEK, izņemot %s
 CountriesExceptMe=Visas valstis, izņemot %s
 AccountantFiles=Eksportēt pirmdokumentus
-ExportAccountingSourceDocHelp=Izmantojot šo rīku, varat eksportēt avota notikumus (sarakstu CSV un PDF formātā), kas tiek izmantoti jūsu grāmatvedības uzskaitei.
+ExportAccountingSourceDocHelp=Izmantojot šo rīku, varat meklēt un eksportēt avota notikumus, kas tiek izmantoti jūsu grāmatvedības uzskaitei. <br> Eksportētajā ZIP failā būs pieprasīto vienumu saraksti CSV formātā, kā arī tiem pievienotie faili to sākotnējā formātā (PDF, ODT, DOCX...).
 ExportAccountingSourceDocHelp2=Lai eksportētu žurnālus, izmantojiet izvēlnes ierakstu %s - %s.
+ExportAccountingProjectHelp=Norādiet projektu, ja jums ir nepieciešams grāmatvedības pārskats tikai par konkrētu projektu. Izdevumu atskaites un kredīta maksājumi nav iekļauti projektu pārskatos.
 VueByAccountAccounting=Skatīt pēc grāmatvedības konta
 VueBySubAccountAccounting=Skatīt pēc grāmatvedības apakškonta
 
@@ -58,6 +59,7 @@ MainAccountForSuppliersNotDefined=Galvenais grāmatvedības konts piegādātāji
 MainAccountForUsersNotDefined=Galvenais grāmatvedības konts lietotājiem, kas nav definēti iestatījumos
 MainAccountForVatPaymentNotDefined=Galvenais grāmatvedības konts par PVN maksājumu, kas nav definēts iestatījumos
 MainAccountForSubscriptionPaymentNotDefined=Galvenais grāmatvedības konts abonēšanas maksā, kas nav definēts iestatījumā
+UserAccountNotDefined=Uzskaites konts lietotājam, kas nav definēts iestatījumos
 
 AccountancyArea=Grāmatvedības zona
 AccountancyAreaDescIntro=Grāmatvedības moduļa lietošana tiek veikta vairākos posmos:
@@ -161,42 +163,46 @@ BANK_DISABLE_DIRECT_INPUT=Atspējot tiešu darījumu reģistrāciju bankas kont�
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Iespējot eksporta projektu žurnālā
 ACCOUNTANCY_COMBO_FOR_AUX=Iespējot kombinēto sarakstu meitas kontam (tas var būt lēns, ja jums ir daudz trešo pušu, pārtraukt iespēju meklēt daļu vērtības)
 ACCOUNTING_DATE_START_BINDING=Definējiet datumu, lai sāktu iesiešanu un pārskaitīšanu grāmatvedībā. Zem šī datuma darījumi netiks pārnesti uz grāmatvedību.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Pārsūtot grāmatvedību, pēc noklusējuma atlasiet periodu
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Kāds ir grāmatvedības pārskaitījuma periods, kas atlasīts pēc noklusējuma
 
-ACCOUNTING_SELL_JOURNAL=Pārdošanas žurnāls
-ACCOUNTING_PURCHASE_JOURNAL=Pirkuma žurnāls
-ACCOUNTING_MISCELLANEOUS_JOURNAL=Dažādi žurnāli
+ACCOUNTING_SELL_JOURNAL=Pārdošanas žurnāls (pārdošana un atgriešana)
+ACCOUNTING_PURCHASE_JOURNAL=Pirkumu žurnāls (pirkšana un atgriešana)
+ACCOUNTING_BANK_JOURNAL=Kases žurnāls (kvītis un izmaksas)
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Izdevumu atskaites žurnāls
-ACCOUNTING_SOCIAL_JOURNAL=Sociālais žurnāls
+ACCOUNTING_MISCELLANEOUS_JOURNAL=Vispārējais žurnāls
 ACCOUNTING_HAS_NEW_JOURNAL=Vai jauns Vēstnesis?
+ACCOUNTING_INVENTORY_JOURNAL=Inventāra žurnāls
+ACCOUNTING_SOCIAL_JOURNAL=Sociālais žurnāls
 
 ACCOUNTING_RESULT_PROFIT=Rezultātu uzskaites konts (peļņa)
 ACCOUNTING_RESULT_LOSS=Rezultātu uzskaites konts (zaudējumi)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Noslēguma žurnāls
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Grāmatvedības konts bankas pārskaitījuma starp konts
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account (from the Chart Of Account) to be used as the account for transitional bank transfers
 TransitionalAccount=Pārejas bankas konta pārejas konts
 
-ACCOUNTING_ACCOUNT_SUSPENSE=Gaidīšanas grāmatvedības konts
-DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
-ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Grāmatvedības konts, lai reģistrētu abonementus
+ACCOUNTING_ACCOUNT_SUSPENSE=Account (from the Chart Of Account) to be used as the account for unallocated funds either received or paid i.e. funds in "wait[ing]"
+DONATION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register donations (Donation module)
+ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Account (from the Chart Of Account) to be used to register memberships subscriptions (Membership module - if membership recorded without invoice)
 
-ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Grāmatvedības konts pēc noklusējuma reģistrē klientu depozītu
-UseAuxiliaryAccountOnCustomerDeposit=Izmantojiet apakškontus klientu noguldījumu līnijās
+ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register customer deposit
+UseAuxiliaryAccountOnCustomerDeposit=Saglabājiet klienta kontu kā individuālu kontu meitas virsgrāmatā pirmo iemaksu rindām (ja tas ir atspējots, individuālais konts pirmās iemaksas rindām paliks tukšs)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default
+UseAuxiliaryAccountOnSupplierDeposit=Saglabājiet piegādātāja kontu kā individuālo kontu meitas virsgrāmatā pirmās iemaksas rindām (ja tas ir atspējots, individuālais konts pirmās iemaksas rindām paliks tukšs)
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Nopirkto produktu grāmatvedības konts pēc noklusējuma (tiek izmantots, ja tas nav definēts produktu lapā)
-ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Grāmatvedības konts pēc noklusējuma nopirktajiem produktiem EEK (lietots, ja nav definēts produktu lapā)
-ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Grāmatvedības konts pēc noklusējuma nopirktajiem produktiem un importētajiem no EEK (izmantots, ja tas nav noteikts produkta lapā)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Grāmatvedības konts pēc noklusējuma pārdotajiem produktiem (izmanto, ja produkta lapā nav noteikts).
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Grāmatvedības konts pēc noklusējuma ražojumiem, ko pārdod EEK (izmanto, ja nav definēts produktu lapā)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Grāmatvedības konts pēc noklusējuma produktiem, kas pārdoti un eksportēti no EEK (izmantots, ja tas nav noteikts produkta lapā)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased within same country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased and imported from any other foreign country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold products (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold from EEC to another EEC country (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold and exported to any other foreign country (used if not defined in the product sheet)
 
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Grāmatvedības konts pēc noklusējuma par nopirktajiem pakalpojumiem (lieto, ja tas nav noteikts pakalpojuma lapā)
-ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Grāmatvedības konts pēc noklusējuma nopirktajiem pakalpojumiem EEK (izmantots, ja pakalpojuma lapā nav noteikts)
-ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Grāmatvedības konts pēc noklusējuma par nopirktajiem pakalpojumiem un ievestajiem no EEK (tiek izmantots, ja pakalpojuma lapā tas nav noteikts)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Grāmatvedības konts pēc noklusējuma pārdotajiem pakalpojumiem (izmanto, ja tas nav noteikts pakalpojuma lapā)
-ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Grāmatvedības konts pēc noklusējuma par pakalpojumiem, kas pārdoti EEK (izmantots, ja nav definēts pakalpojumu lapā)
-ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Grāmatvedības konts pēc noklusējuma par pakalpojumiem, kas pārdoti un eksportēti no EEK (tiek izmantoti, ja tie nav definēti pakalpojumu lapā)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased within same country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased from EEC to another EEC country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased and imported from other foreign country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the sold services (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold from EEC to another EEC country (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold and exported to any other foreign country (used if not defined in the service sheet)
 
 Doctype=Dokumenta veids
 Docdate=Datums
@@ -211,7 +217,7 @@ Codejournal=Žurnāls
 JournalLabel=Žurnāla etiķete
 NumPiece=Gabala numurs
 TransactionNumShort=Num. darījums
-AccountingCategory=Pielāgota grupa
+AccountingCategory=Custom group of accounts
 GroupByAccountAccounting=Grupēt pēc galvenās grāmatas konta
 GroupBySubAccountAccounting=Grupēt pēc apakšzinēja konta
 AccountingAccountGroupsDesc=Šeit jūs varat definēt dažas grāmatvedības kontu grupas. Tie tiks izmantoti personificētiem grāmatvedības pārskatiem.
@@ -265,13 +271,13 @@ Reconcilable=Samierināms
 TotalVente=Kopējais apgrozījums pirms nodokļu nomaksas
 TotalMarge=Kopējā pārdošanas starpība
 
-DescVentilCustomer=Aplūkojiet šeit klienta rēķina līniju sarakstu, kas saistītas (vai nav) ar produktu grāmatvedības kontu
-DescVentilMore=Vairumā gadījumu, ja jūs izmantojat iepriekš definētus produktus vai pakalpojumus, un produkta / pakalpojuma kartē norādiet konta numuru, programma varēs veikt visu saistību starp jūsu rēķina līnijām un jūsu kontu plāna grāmatvedības kontu, tikai vienu klikšķi, izmantojot pogu <strong> "%s" </ strong>. Ja konts nav iestatīts uz produktu / pakalpojumu kartēm vai ja jums joprojām ir dažas līnijas, kurām nav saistības ar kontu, izvēlnē "<strong> %s </ strong>" būs jāveic manuāla piesaistīšana.
-DescVentilDoneCustomer=Konsultējieties šeit ar rindu rēķinu klientu sarakstu un to produktu uzskaites kontu
-DescVentilTodoCustomer=Piesaistiet rēķina līnijas, kas vēl nav saistītas ar produkta grāmatvedības kontu
-ChangeAccount=Izmainiet produktu / pakalpojumu grāmatvedības kontu izvēlētajām līnijām ar šādu grāmatvedības kontu:
+DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product account from chart of account
+DescVentilMore=In most cases, if you use predefined products or services and you set the account (from chart of account) on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product account from chart of account
+DescVentilTodoCustomer=Bind invoice lines not already bound with a product account from chart of account
+ChangeAccount=Change the product/service account (from chart of account) for the selected lines with the following account:
 Vide=-
-DescVentilSupplier=Šeit atrodams pārdevēju rēķinu rindu saraksts, kas ir piesaistīts vai vēl nav saistīts ar produkta grāmatvedības kontu (ir redzams tikai ieraksts, kas vēl nav pārskaitīts grāmatvedībā)
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product account from chart of account (only record not already transfered in accountancy are visible)
 DescVentilDoneSupplier=Šeit skatiet piegādātāju rēķinu un to grāmatvedības kontu sarakstu
 DescVentilTodoExpenseReport=Bind expense report lines, kas jau nav saistītas ar maksu grāmatvedības kontu
 DescVentilExpenseReport=Konsultējieties šeit ar izdevumu pārskatu rindiņu sarakstu, kas ir saistoši (vai nē) ar maksu grāmatvedības kontu
@@ -279,24 +285,24 @@ DescVentilExpenseReportMore=Ja jūs izveidojat grāmatvedības kontu uz izdevumu
 DescVentilDoneExpenseReport=Konsultējieties šeit ar izdevumu pārskatu rindu sarakstu un to maksu grāmatvedības kontu
 
 Closure=Gada slēgšana
-DescClosure=Šeit skatiet to kustību skaitu pa mēnešiem, kas vēl nav apstiprinātas un bloķētas
+DescClosure=Šeit skatiet kustību skaitu pa mēnešiem, kas vēl nav apstiprinātas un bloķētas
 OverviewOfMovementsNotValidated=Pārskats par kustībām, kas nav apstiprinātas un bloķētas
 AllMovementsWereRecordedAsValidated=Visas kustības tika reģistrētas kā apstiprinātas un bloķētas
 NotAllMovementsCouldBeRecordedAsValidated=Ne visas kustības varēja reģistrēt kā apstiprinātas un bloķētas
-ValidateMovements=Apstiprināt un bloķēt ierakstu...
+ValidateMovements=Validēt un bloķēt kustības...
 DescValidateMovements=Jebkādas rakstīšanas, burtu un izdzēsto tekstu izmaiņas vai dzēšana būs aizliegtas. Visi vingrinājumu ieraksti ir jāapstiprina, pretējā gadījumā aizvēršana nebūs iespējama
 
 ValidateHistory=Piesaistiet automātiski
 AutomaticBindingDone=Automātiskā saistīšana ir pabeigta (%s) — dažiem ierakstiem automātiskā saistīšana nav iespējama (%s)
 
-ErrorAccountancyCodeIsAlreadyUse=Kļūda, nevarat izdzēst šo grāmatvedības kontu, jo tas tiek izmantots
+ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Kustības nav pareizi līdzsvarotas. Debets = %s & kredīts = %s
 Balancing=Līdzsvarošana
 FicheVentilation=Iesiešanas kartiņa
 GeneralLedgerIsWritten=Darījumi ir rakstīti grāmatvedībā
 GeneralLedgerSomeRecordWasNotRecorded=Daži darījumi nevarēja tikt publicēti žurnālā. Ja nav citas kļūdas ziņojuma, iespējams, ka tie jau tika publicēti.
 NoNewRecordSaved=Vairs nav pārsūtāmu ierakstu
-ListOfProductsWithoutAccountingAccount=Produktu saraksts, uz kuriem nav saistīta kāds grāmatvedības konts
+ListOfProductsWithoutAccountingAccount=List of products not bound to any account of chart of account
 ChangeBinding=Mainiet saites
 Accounted=Uzskaitīts virsgrāmatā
 NotYetAccounted=Vēl nav pārnests uz grāmatvedību
@@ -319,9 +325,10 @@ AccountingJournalType1=Dažādas darbības
 AccountingJournalType2=Pārdošanas
 AccountingJournalType3=Pirkumi
 AccountingJournalType4=Banka
-AccountingJournalType5=Izdevumu pārskats
+AccountingJournalType5=Izdevumu atskaites
 AccountingJournalType8=Inventārs
 AccountingJournalType9=Ir jauns
+GenerationOfAccountingEntries=Grāmatvedības ierakstu ģenerēšana
 ErrorAccountingJournalIsAlreadyUse=Šis žurnāls jau ir izmantots
 AccountingAccountForSalesTaxAreDefinedInto=Piezīme. Pārdošanas nodokļa grāmatvedības konts ir norādīts izvēlnē <b> %s </b>- <b> %s </b>.
 NumberOfAccountancyEntries=Ierakstu skaits
@@ -329,10 +336,12 @@ NumberOfAccountancyMovements=Pārvietošanas skaits
 ACCOUNTING_DISABLE_BINDING_ON_SALES=Atspējot saistīšanu un pārskaitīšanu pārdošanas grāmatvedībā (klienta rēķini netiks ņemti vērā grāmatvedībā)
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Atspējot saistīšanu un pārsūtīšanu pirkumu grāmatvedībā (pārdevēja rēķini netiks ņemti vērā grāmatvedībā)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Atspējojiet grāmatvedībā iesiešanu un pārskaitīšanu izdevumu pārskatos (grāmatvedībā netiks ņemti vērā izdevumu pārskati)
+ACCOUNTING_ENABLE_LETTERING=Grāmatvedībā iespējot burtu funkciju
 
 ## Export
+NotExportLettering=Veidojot failu, neeksportējiet burtus
 NotifiedExportDate=Atzīmējiet eksportētās rindas kā Eksportētas <span class="warning"> (lai mainītu rindu, jums būs jāizdzēš viss darījums un atkārtoti jāpārsūta uz grāmatvedību) </span>
-NotifiedValidationDate=Apstipriniet un bloķējiet eksportētos ierakstus <span class="warning"> (tāds pats efekts kā funkcijai "Aizvērt", rindu modifikācija un dzēšana NOTEIKTI nebūs iespējama) </span>
+NotifiedValidationDate=Apstipriniet un bloķējiet eksportētos ierakstus <span class="warning"> (tāds pats efekts kā funkcijai "%s", rindu modifikācija un dzēšana NOTEIKTI nebūs iespējama) </span>
 DateValidationAndLock=Datuma apstiprināšana un bloķēšana
 ConfirmExportFile=Apstiprinājums par grāmatvedības eksporta faila ģenerēšanu?
 ExportDraftJournal=Eksporta žurnāla projekts
@@ -398,7 +407,11 @@ Calculated=Aprēķināts
 Formula=Formula
 
 ## Reconcile
+LetteringAuto=Saskaņot auto
+LetteringManual=Saskaņošanas rokasgrāmata
 Unlettering=Nesamierināties
+UnletteringAuto=Nesaskaņots auto
+UnletteringManual=Nesaskaņojama rokasgrāmata
 AccountancyNoLetteringModified=Saskaņošana nav mainīta
 AccountancyOneLetteringModifiedSuccessfully=Viens saskaņojums ir veiksmīgi pārveidots
 AccountancyLetteringModifiedSuccessfully=%s saskaņošana ir veiksmīgi modificēta
@@ -407,7 +420,8 @@ AccountancyOneUnletteringModifiedSuccessfully=Viena nesaskaņošana ir veiksmīg
 AccountancyUnletteringModifiedSuccessfully=%s nesaskaņošana ir veiksmīgi modificēta
 
 ## Confirm box
-ConfirmMassUnlettering=Lielapjoma nesaskaņošanas apstiprinājums
+ConfirmMassUnletteringAuto=Lielapjoma automātiskās nesaskaņošanas apstiprinājums
+ConfirmMassUnletteringManual=Lielapjoma manuālas nesaskaņošanas apstiprinājums
 ConfirmMassUnletteringQuestion=Vai tiešām vēlaties nesaskaņot %s atlasītos ierakstus?
 ConfirmMassDeleteBookkeepingWriting=Lielapjoma dzēšanas apstiprinājums
 ConfirmMassDeleteBookkeepingWritingQuestion=Tādējādi darījums tiks dzēsts no uzskaites (tiks dzēstas visas ar to pašu darījumu saistītās rindas) Vai tiešām vēlaties dzēst %s atlasītos ierakstus?
@@ -427,6 +441,7 @@ SorryThisModuleIsNotCompatibleWithTheExperimentalFeatureOfSituationInvoices=Diem
 AccountancyErrorMismatchLetterCode=Saskaņošanas koda neatbilstība
 AccountancyErrorMismatchBalanceAmount=Atlikums (%s) nav vienāds ar 0
 AccountancyErrorLetteringBookkeeping=Ir radušās kļūdas saistībā ar darījumiem: %s
+ErrorAccountNumberAlreadyExists=Grāmatvedības numurs %s jau pastāv
 
 ## Import
 ImportAccountingEntries=Grāmatvedības ieraksti
@@ -453,6 +468,5 @@ FECFormatMulticurrencyCode=Daudzvalūtu kods (Idevise)
 DateExport=Eksporta datums
 WarningReportNotReliable=Brīdinājums. Šis pārskats nav balstīts uz grāmatvedi, tādēļ tajā nav darījumu, kas Manuāli ir manuāli modificēts. Ja žurnāls ir atjaunināts, grāmatvedības skats ir precīzāks.
 ExpenseReportJournal=Izdevumu atskaites žurnāls
-InventoryJournal=Inventāra žurnāls
 
 NAccounts=%s konti

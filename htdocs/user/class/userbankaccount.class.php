@@ -134,6 +134,9 @@ class UserBankAccount extends Account
 		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
+		$sql .= ",currency_code = '".$this->db->escape($this->currency_code)."'";
+		$sql .= ",state_id = ".($this->state_id > 0 ? ((int) $this->state_id) : "null");
+		$sql .= ",fk_country = ".($this->country_id > 0 ? ((int) $this->country_id) : "null");
 
 		if (trim($this->label) != '') {
 			$sql .= ",label = '".$this->db->escape($this->label)."'";
@@ -165,17 +168,23 @@ class UserBankAccount extends Account
 			return -1;
 		}
 
-		$sql = "SELECT rowid, fk_user, entity, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-		$sql .= " owner_address, label, datec, tms as datem";
-		$sql .= " FROM ".$this->db->prefix()."user_rib";
+		$sql = "SELECT ur.rowid, ur.fk_user, ur.entity, ur.bank, ur.number, ur.code_banque, ur.code_guichet, ur.cle_rib, ur.bic, ur.iban_prefix as iban, ur.domiciliation, ur.proprio";
+		$sql .= ", ur.owner_address, ur.label, ur.datec, ur.tms as datem";
+		$sql .= ', ur.currency_code, ur.state_id, ur.fk_country as country_id';
+		$sql .= ', c.code as country_code, c.label as country';
+		$sql .= ', d.code_departement as state_code, d.nom as state';
+		$sql .= " FROM ".$this->db->prefix()."user_rib as ur";
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'c_country as c ON ur.fk_country=c.rowid';
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'c_departements as d ON ur.state_id=d.rowid';
+
 		if ($id) {
-			$sql .= " WHERE rowid = ".((int) $id);
+			$sql .= " WHERE ur.rowid = ".((int) $id);
 		}
 		if ($ref) {
-			$sql .= " WHERE label = '".$this->db->escape($ref)."'";
+			$sql .= " WHERE ur.label = '".$this->db->escape($ref)."'";
 		}
 		if ($userid) {
-			$sql .= " WHERE fk_user = ".((int) $userid);
+			$sql .= " WHERE ur.fk_user = ".((int) $userid);
 		}
 
 		$resql = $this->db->query($sql);
@@ -198,6 +207,15 @@ class UserBankAccount extends Account
 				$this->label = $obj->label;
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->datem = $this->db->jdate($obj->datem);
+				$this->currency_code = $obj->currency_code;
+
+				$this->state_id = $obj->state_id;
+				$this->state_code = $obj->state_code;
+				$this->state = $obj->state;
+
+				$this->country_id = $obj->country_id;
+				$this->country_code = $obj->country_code;
+				$this->country = $obj->country;
 			}
 			$this->db->free($resql);
 
@@ -223,7 +241,7 @@ class UserBankAccount extends Account
 				$rib = $this->label." : ";
 			}
 
-			$rib .= (string) $this;
+			$rib .= $this->iban;
 		}
 
 		return $rib;

@@ -39,9 +39,7 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
-if (!defined('NOIPCHECK')) {
-	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
-}
+
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -50,12 +48,14 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Init vars
 $errmsg = '';
@@ -81,8 +81,8 @@ $object = new Project($db);
 $user->loadDefaultValues();
 
 // Security check
-if (empty($conf->projet->enabled)) {
-	accessforbidden('', 0, 0, 1);
+if (empty($conf->project->enabled)) {
+	httponly_accessforbidden('Module Project not enabled');
 }
 
 
@@ -287,13 +287,34 @@ if (empty($reshook) && $action == 'add') {
 		$proj->ref         = $defaultref;
 		$proj->statut      = $proj::STATUS_DRAFT;
 		$proj->status      = $proj::STATUS_DRAFT;
-		$proj->email       = GETPOST("email");
 		$proj->public      = 1;
 		$proj->usage_opportunity = 1;
 		$proj->title       = $langs->trans("LeadFromPublicForm");
 		$proj->description = GETPOST("description", "alphanohtml");
 		$proj->opp_status  = $defaultoppstatus;
 		$proj->fk_opp_status  = $defaultoppstatus;
+
+		$proj->ip = getUserRemoteIP();
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+		$now = dol_now();
+		$minmonthpost = dol_time_plus_duree($now, -1, "m");
+		$nb_post_ip = 0;
+		if ($nb_post_max > 0) {	// Calculate only if there is a limit to check
+			$sql = "SELECT COUNT(rowid) as nb_projets";
+			$sql .= " FROM ".MAIN_DB_PREFIX."projet";
+			$sql .= " WHERE ip = '".$db->escape($proj->ip)."'";
+			$sql .= " AND datec > '".$db->idate($minmonthpost)."'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+				while ($i < $num) {
+					$i++;
+					$obj = $db->fetch_object($resql);
+					$nb_post_ip = $obj->nb_projets;
+				}
+			}
+		}
 
 		// Fill array 'array_options' with data from the form
 		$extrafields->fetch_name_optionals_label($proj->table_element);
@@ -302,74 +323,83 @@ if (empty($reshook) && $action == 'add') {
 			$error++;
 		}
 
-		// Create the project
-		$result = $proj->create($user);
-		if ($result > 0) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$object = $proj;
-
-			if ($object->email) {
-				$subject = '';
-				$msg = '';
-
-				// Send subscription email
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-				$formmail = new FormMail($db);
-				// Set output language
-				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-				// Load traductions files required by page
-				$outputlangs->loadLangs(array("main", "members", "projects"));
-				// Get email content from template
-				$arraydefaultmessage = null;
-				$labeltouse = $conf->global->PROJECT_EMAIL_TEMPLATE_AUTOLEAD;
-
-				if (!empty($labeltouse)) {
-					$arraydefaultmessage = $formmail->getEMailTemplate($db, 'project', $user, $outputlangs, 0, 1, $labeltouse);
-				}
-
-				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-					$subject = $arraydefaultmessage->topic;
-					$msg     = $arraydefaultmessage->content;
-				}
-				if (empty($labeltosue)) {
-					$labeltouse = '['.$mysoc->name.'] '.$langs->trans("YourMessage");
-					$msg = $langs->trans("YourMessageHasBeenReceived");
-				}
-
-				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-				complete_substitutions_array($substitutionarray, $outputlangs, $object);
-				$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
-				$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
-
-				if ($subjecttosend && $texttosend) {
-					$moreinheader = 'X-Dolibarr-Info: send_an_email by public/lead/new.php'."\r\n";
-
-					$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
-				}
-				/*if ($result < 0) {
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
-				}*/
-			}
-
-			if (!empty($backtopage)) {
-				$urlback = $backtopage;
-			} elseif (!empty($conf->global->PROJECT_URL_REDIRECT_LEAD)) {
-				$urlback = $conf->global->PROJECT_URL_REDIRECT_LEAD;
-				// TODO Make replacement of __AMOUNT__, etc...
-			} else {
-				$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
-			}
-
-			if (!empty($entity)) {
-				$urlback .= '&entity='.$entity;
-			}
-
-			dol_syslog("project lead ".$proj->ref." has been created, we redirect to ".$urlback);
-		} else {
+		if ($nb_post_max > 0 && $nb_post_ip >= $nb_post_max) {
 			$error++;
-			$errmsg .= $proj->error.'<br>'.join('<br>', $proj->errors);
+			$errmsg = $langs->trans("AlreadyTooMuchPostOnThisIPAdress");
+			array_push($proj->errors, $langs->trans("AlreadyTooMuchPostOnThisIPAdress"));
+		}
+		// Create the project
+		if (!$error) {
+			$result = $proj->create($user);
+			if ($result > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+				$object = $proj;
+
+				if ($object->email) {
+					$subject = '';
+					$msg = '';
+
+					// Send subscription email
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+					$formmail = new FormMail($db);
+					// Set output language
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+					// Load traductions files required by page
+					$outputlangs->loadLangs(array("main", "members", "projects"));
+					// Get email content from template
+					$arraydefaultmessage = null;
+					$labeltouse = $conf->global->PROJECT_EMAIL_TEMPLATE_AUTOLEAD;
+
+					if (!empty($labeltouse)) {
+						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'project', $user, $outputlangs, 0, 1, $labeltouse);
+					}
+
+					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+						$subject = $arraydefaultmessage->topic;
+						$msg     = $arraydefaultmessage->content;
+					}
+					if (empty($labeltosue)) {
+						$labeltouse = '['.$mysoc->name.'] '.$langs->trans("YourMessage");
+						$msg = $langs->trans("YourMessageHasBeenReceived");
+					}
+
+					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+					$texttosend = make_substitutions($msg, $substitutionarray, $outputlangs);
+
+					if ($subjecttosend && $texttosend) {
+						$moreinheader = 'X-Dolibarr-Info: send_an_email by public/lead/new.php'."\r\n";
+
+						$result = $object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1, '', $moreinheader);
+					}
+					/*if ($result < 0) {
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}*/
+				}
+
+				if (!empty($backtopage)) {
+					$urlback = $backtopage;
+				} elseif (!empty($conf->global->PROJECT_URL_REDIRECT_LEAD)) {
+					$urlback = $conf->global->PROJECT_URL_REDIRECT_LEAD;
+					// TODO Make replacement of __AMOUNT__, etc...
+				} else {
+					$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
+				}
+
+				if (!empty($entity)) {
+					$urlback .= '&entity='.$entity;
+				}
+
+				dol_syslog("project lead ".$proj->ref." has been created, we redirect to ".$urlback);
+			} else {
+				$error++;
+				$errmsg .= $proj->error.'<br>'.join('<br>', $proj->errors);
+			}
+		} else {
+			setEventMessage($errmsg, 'errors');
 		}
 	}
 
@@ -423,7 +453,7 @@ print '<div class="center subscriptionformhelptext justify">';
 if (!empty($conf->global->PROJECT_NEWFORM_TEXT)) {
 	print $langs->trans($conf->global->PROJECT_NEWFORM_TEXT)."<br>\n";
 } else {
-	print $langs->trans("FormForNewLeadDesc", $conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
+	print $langs->trans("FormForNewLeadDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }
 print '</div>';
 

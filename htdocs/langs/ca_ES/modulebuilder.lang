@@ -1,17 +1,19 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Aquesta eina només l'han d'utilitzar usuaris o desenvolupadors experimentats. Proporciona utilitats per construir o editar el vostre propi mòdul. La documentació per al desenvolupament manual alternatiu <a href="%s" target="_blank" rel="noopener noreferrer"> és aquí </a>.
-EnterNameOfModuleDesc=Enter the name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
-EnterNameOfObjectDesc=Enter the name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
-EnterNameOfDictionaryDesc=Enter the name of the dictionary to create with no spaces. Use uppercase to separate words (For example: MyDico...). The class file, but also the SQL file will be generated.
+IdModule= Identificador del mòdul
+ModuleBuilderDesc=Aquesta eina només l'han d'utilitzar usuaris o desenvolupadors experimentats. Proporciona utilitats per a construir o editar el vostre propi mòdul. La documentació per al desenvolupament manual alternatiu <a href="%s" target="_blank" rel="noopener noreferrer"> és aquí </a>.
+EnterNameOfModuleDesc=Introduïu el nom del mòdul/aplicació que voleu crear sense espais. Utilitzeu majúscules per a separar paraules (per exemple: MyModule, EcommerceForShop, SyncWithMySystem...)
+EnterNameOfObjectDesc=Introduïu el nom de l'objecte que voleu crear sense espais. Utilitzeu majúscules per a separar paraules (per exemple: ElMeuObjecte, Estudiant, Professor...). Es generarà el fitxer de classe CRUD, les pàgines per a llistar/afegir/editar/suprimir l'objecte i els fitxers SQL.
+EnterNameOfDictionaryDesc=Introduïu el nom del diccionari que voleu crear sense espais. Utilitzeu majúscules per a separar paraules (per exemple: MyDico...). Es generarà el fitxer de classe, però també el fitxer SQL.
 ModuleBuilderDesc2=Camí on es generen / editen els mòduls (primer directori per als mòduls externs definits en %s): <strong> %s </strong>
 ModuleBuilderDesc3=S'han trobat mòduls generats/editables: <strong>%s</strong>
 ModuleBuilderDesc4=Es detecta un mòdul com "editable" quan el fitxer <strong>%s</strong> existeix al directori arrel del mòdul
 NewModule=Mòdul nou
 NewObjectInModulebuilder=Objecte nou
-NewDictionary=New dictionary
+NewDictionary=Nou diccionari
+ModuleName=Nom del mòdul
 ModuleKey=Clau del mòdul
 ObjectKey=Clau de l'objecte
-DicKey=Dictionary key
+DicKey=Clau del diccionari
 ModuleInitialized=Mòdul inicialitzat
 FilesForObjectInitialized=S'han inicialitzat els fitxers per al objecte nou '%s'
 FilesForObjectUpdated=Fitxers de l'objecte '%s' actualitzat (fitxers .sql i fitxer .class.php)
@@ -20,7 +22,7 @@ ModuleBuilderDescspecifications=Podeu introduir aquí una descripció detallada 
 ModuleBuilderDescobjects=Definiu aquí els objectes que voleu gestionar amb el vostre mòdul. Es generarà una classe CRUD DAO, fitxers SQL, una pàgina per a llistar el registre d'objectes, per a crear/editar/visualitzar un registre i una API.
 ModuleBuilderDescmenus=Aquesta pestanya està dedicada a definir les entrades de menú proporcionades pel teu mòdul.
 ModuleBuilderDescpermissions=Aquesta pestanya està dedicada a definir els permisos nous que voleu proporcionar amb el vostre mòdul.
-ModuleBuilderDesctriggers=Aquesta és la vista dels disparadors proporcionats pel teu mòdul. Per incloure el codi executat quan es posa en marxa un esdeveniment de negoci desencadenat, edita aquest fitxer.
+ModuleBuilderDesctriggers=Aquesta és la vista dels disparadors proporcionats pel vostre mòdul. Per a incloure el codi executat quan s'activa un esdeveniment de negoci, només cal que editeu aquest fitxer.
 ModuleBuilderDeschooks=Aquesta pestanya està dedicada als ganxos (hooks)
 ModuleBuilderDescwidgets=Aquesta pestanya està dedicada a gestionar/crear ginys.
 ModuleBuilderDescbuildpackage=Aquí podeu generar un fitxer de paquet "a punt per a distribuir" (un fitxer .zip normalitzat) del vostre mòdul i un fitxer de documentació "a punt per a distribuir". Simplement feu clic al botó per a crear el paquet o el fitxer de documentació.
@@ -34,7 +36,7 @@ ModuleIsNotActive=Aquest mòdul encara no està activat. Aneu a %s per a publica
 ModuleIsLive=Aquest mòdul ha estat activat. Qualsevol canvi pot trencar la funció actual en viu.
 DescriptionLong=Descripció llarga
 EditorName=Nom de l'editor
-EditorUrl=URL d'editor
+EditorUrl=URL de l'editor
 DescriptorFile=Fitxer descriptor del mòdul
 ClassFile=Fitxer per a la classe CRUD DAO PHP
 ApiClassFile=Fitxer per la classe PHP API
@@ -48,14 +50,17 @@ PathToModulePackage=Ruta al zip del paquet del mòdul/aplicació
 PathToModuleDocumentation=Camí al fitxer de la documentació del mòdul / aplicació (%s)
 SpaceOrSpecialCharAreNotAllowed=Els espais o caràcters especials no estan permesos.
 FileNotYetGenerated=El fitxer encara no s'ha generat
+GenerateCode=Genera codi
 RegenerateClassAndSql=Força l'actualització dels fitxers .class i .sql
 RegenerateMissingFiles=Genera els fitxers que falten
 SpecificationFile=Fitxer de documentació
 LanguageFile=Arxiu del llenguatge
 ObjectProperties=Propietats de l'objecte
+Property=Propery
+PropertyDesc=Una propietat és un atribut que caracteritza un objecte. Aquest atribut té un codi, un nom i un tipus amb diverses opcions.
 ConfirmDeleteProperty=Estàs segur que vols eliminar la propietat <strong> %s </strong>? Això canviarà el codi a la classe PHP, però també eliminarà la columna de la definició de la taula de l'objecte.
 NotNull=No és NULL
-NotNullDesc=1=Set database to NOT NULL, 0=Allow null values, -1=Allow null values by forcing value to NULL if empty ('' or 0)
+NotNullDesc=1=Estableix la base de dades en NOT NULL, 0=Permet valors nuls, -1=Permet valors nuls forçant el valor a NULL si està buit ('' o 0)
 SearchAll=Utilitzat per a 'cerca tot'
 DatabaseIndex=Índex de bases de dades
 FileAlreadyExists=El fitxer %s ja existeix
@@ -81,15 +86,16 @@ IsAMeasure=És una mesura
 DirScanned=Directori escanejat
 NoTrigger=Sense activador (trigger)
 NoWidget=Sense widget
-GoToApiExplorer=Explorador d'API
+ApiExplorer=Explorador d'API
 ListOfMenusEntries=Llista d'entrades de menú
 ListOfDictionariesEntries=Llista d'entrades de diccionaris
 ListOfPermissionsDefined=Llista de permisos definits
 SeeExamples=Mira exemples aquí
-EnabledDesc=Condició per a tenir aquest camp actiu (Exemples: 1 ó $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=És visible el camp ? (Exemples: 0=Mai visible, 1=Visible als llistats i als formularis crear/modificar/veure, 2=Visible només als llistats, 3=Visible només als formularis crear/modificar/veure (no als llistats), 4=Visible als llistats i només als formularis modificar/veure (no al de crear), 5=Visible als llistats i només al formulari de veure (però no als formularis de crear i modificar).<br><br>Utilitzant un valor negatiu implicarà que el camp no es mostrarà per defecte als llistats però podrà ser escollit per veure's).<br><br>pot ser una expressió, per exemple:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Mostra aquest camp en documents PDF compatibles, podeu gestionar la posició amb el camp "Posició". <br> Actualment, els models PDF compatibles coneguts són: eratostene (comanda), espadon (enviament), esponja (factures), cian (propal / pressupost), cornas (comanda del proveïdor) <br> <br> <strong> = display <br> 2 = només si no està buit <br> <br> <strong> Per a les línies de documents: </strong> <br> 0 = no es veuen les <br> 1 = mostren en una columna <br> = 3 = display a la columna de descripció de línia després de la descripció <br> 4 = display a la columna de descripció després de la descripció només si no està buida
-DisplayOnPdf=Visualització en PDF
+EnabledDesc=Condició per tenir aquest camp actiu. <br> <br> Exemples: <br> 1 <br> isModEnabled('MAIN_MODULE_MYMODULE') a0342fccfda19bzLE_Get ='GCCFda19bz0'
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).
+ItCanBeAnExpression=It can be an expression. Example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user->hasRight('holiday', 'define_holiday')?1:5
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
+DisplayOnPdf=En PDF
 IsAMeasureDesc=Es pot acumular el valor del camp per a obtenir un total a la llista? (Exemples: 1 o 0)
 SearchAllDesc=El camp utilitzat per realitzar una cerca des de l'eina de cerca ràpida? (Exemples: 1 o 0)
 SpecDefDesc=Introduïu aquí tota la documentació que voleu proporcionar amb el vostre mòdul que encara no està definit per altres pestanyes. Podeu utilitzar .md o millor, la sintaxi enriquida .asciidoc.
@@ -100,7 +106,7 @@ PermissionsDefDesc=Definiu aquí els nous permisos proporcionats pel vostre mòd
 MenusDefDescTooltip=Els menús proporcionats pel vostre mòdul/aplicació es defineixen a la matriu <strong> $this->menus </strong> al fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l'editor incrustat. <br> <br> Nota: un cop definits (i el mòdul reactivat), els menús també són visibles a l'editor de menús disponible per als usuaris administradors a %s.
 DictionariesDefDescTooltip=Els diccionaris subministrats pel vostre mòdul/aplicació es defineixen a la matriu <strong>$this->dictionaries</strong> del fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l’editor incrustat. <br><br> Nota: un cop definit (i reactivat el mòdul), els diccionaris també són visibles a la zona de configuració per als usuaris administradors a %s.
 PermissionsDefDescTooltip=Els permisos proporcionats pel vostre mòdul / aplicació es defineixen a la matriu <strong>$ this-> rights</strong> al fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l’editor incrustat. <br><br> Nota: un cop definits (i el mòdul reactivat), els permisos es visualitzen a la configuració de permisos per defecte %s.
-HooksDefDesc=Definiu a la propietat <b>module_parts['hooks']</b>, en el descriptor del mòdul, el context dels "hooks" que voleu gestionar (una llista de contextos es pot trobar si cerqueu '<b>initHooks</b>' (en el codi del nucli de Dolibarr. <br> Editeu el fitxer del "hook" per a afegir el codi de les vostres funcions "hookables" (les quals es poden trobar cercant "<b>executeHooks</b>" en el codi del nucli de Dolibarr).
+HooksDefDesc=Definiu a la propietat <b> module_parts['hooks'] </b>, al descriptor del mòdul, el context dels "hooks" que voleu gestionar (la llista de contextos es pot trobar mitjançant una cerca a '<b> initHooks(</b>' en el codi del nucli).<br>Edita el fitxer "hook" per a afegir codi de les vostres funcions enganxades (les funcions enganxables es poden trobar mitjançant una cerca a '<b> executeHooks </b>' al codi del nucli).
 TriggerDefDesc=Definiu al fitxer disparador el codi que voleu executar quan s'executi un esdeveniment empresarial extern al vostre mòdul (esdeveniments desencadenats per altres mòduls).
 SeeIDsInUse=Consulteu els identificadors que s’utilitzen a la instal·lació
 SeeReservedIDsRangeHere=Consultar l'interval d'identificadors reservats
@@ -130,26 +136,32 @@ UseSpecificEditorURL = Utilitzeu editor específic URL
 UseSpecificFamily = Utilitzeu una família específica
 UseSpecificAuthor = Utilitzeu un autor específic
 UseSpecificVersion = Utilitzeu una versió inicial específica
-IncludeRefGeneration=The reference of object must be generated automatically by custom numbering rules
-IncludeRefGenerationHelp=Check this if you want to include code to manage the generation of the reference automatically using custom numbering rules
-IncludeDocGeneration=I want to generate some documents from templates for the object
+IncludeRefGeneration=The reference of this object must be generated automatically by custom numbering rules
+IncludeRefGenerationHelp=Marqueu-ho si voleu incloure codi per gestionar automàticament la generació de la referència mitjançant regles de numeració personalitzades
+IncludeDocGeneration=I want the feature to generate some documents (PDF, ODT) from templates for this object
 IncludeDocGenerationHelp=Si ho marques, es generarà el codi per a afegir una casella "Generar document" al registre.
-ShowOnCombobox=Mostra el valor a la llista desplegable
+ShowOnCombobox=Show value into combo boxes
 KeyForTooltip=Clau per donar més informació
 CSSClass=CSS per a editar/crear un formulari
 CSSViewClass=CSS per al formulari de lectura
 CSSListClass=CSS per a llistats
 NotEditable=No editable
 ForeignKey=Clau forana
-TypeOfFieldsHelp=Tipus de camps: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> '1' vol dir que afegim un botó + després de la combinació per crear el registre <br> 'filtre' és una condició sql, exemple: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+ForeignKeyDesc=If the value of this field must be guaranted to exists into another table. Enter here a value matching syntax: tablename.parentfieldtocheck
+TypeOfFieldsHelp=Example:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' means we add a + button after the combo to create the record<br>'filter' is a sql condition, example: 'status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)'
+TypeOfFieldsHelpIntro=This is the type of the field/attribute.
 AsciiToHtmlConverter=Convertidor Ascii a HTML
 AsciiToPdfConverter=Convertidor Ascii a PDF
 TableNotEmptyDropCanceled=La taula no està buida. S'ha cancel·lat l'eliminació.
 ModuleBuilderNotAllowed=El creador de mòduls està disponible però no permès al vostre usuari.
 ImportExportProfiles=Importar i exportar perfils
-ValidateModBuilderDesc=Establiu-ho a 1 si voleu que el mètode $this->validateField() de l'objecte es cridi per validar el contingut del camp durant la inserció o l'actualització. Establiu 0 si no es requereix validació.
+ValidateModBuilderDesc=Set this to 1 if you want to have the method $this->validateField() of object being called to validate the content of the field during insert or update. Set 0 if there is no validation required.
 WarningDatabaseIsNotUpdated=Avís: la base de dades no s'actualitza automàticament, heu de destruir les taules i desactivar-habilitar el mòdul perquè es tornin a crear taules.
 LinkToParentMenu=Menú principal (fk_xxxxmenu)
 ListOfTabsEntries=Llista d'entrades de pestanyes
 TabsDefDesc=Definiu aquí les pestanyes proporcionades pel vostre mòdul
 TabsDefDescTooltip=Les pestanyes proporcionades pel vostre mòdul/aplicació es defineixen a la matriu <strong> $this->tabs </strong> al fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l'editor incrustat.
+BadValueForType=Valor incorrecte per al tipus %s
+DefinePropertiesFromExistingTable=Define properties from an existing table
+DefinePropertiesFromExistingTableDesc=If a table in the database (for the object to create) already exists, you can use it to define the properties of the object.
+DefinePropertiesFromExistingTableDesc2=Keep empty if the table does not exist yet. The code generator will use different kinds of fields to build an example of table that you can edit later.

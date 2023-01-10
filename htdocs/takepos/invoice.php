@@ -18,18 +18,16 @@
  */
 
 /**
- *	\file       htdocs/takepos/invoice.php
- *	\ingroup    takepos
- *	\brief      Page to generate section with list of lines
+ *    \file       htdocs/takepos/invoice.php
+ *    \ingroup    takepos
+ *    \brief      Page to generate section with list of lines
  */
 
-// if (! defined('NOREQUIREUSER'))    define('NOREQUIREUSER', '1');    // Not disabled cause need to load personalized language
-// if (! defined('NOREQUIREDB'))        define('NOREQUIREDB', '1');        // Not disabled cause need to load personalized language
-// if (! defined('NOREQUIRESOC'))        define('NOREQUIRESOC', '1');
-// if (! defined('NOREQUIRETRAN'))        define('NOREQUIRETRAN', '1');
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
+// if (! defined('NOREQUIREUSER')) 		define('NOREQUIREUSER', '1'); 		// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIREDB')) 		define('NOREQUIREDB', '1'); 		// Not disabled cause need to load personalized language
+// if (! defined('NOREQUIRESOC')) 		define('NOREQUIRESOC', '1');
+// if (! defined('NOREQUIRETRAN')) 		define('NOREQUIRETRAN', '1');
+
 if (!defined('NOTOKENRENEWAL')) {
 	define('NOTOKENRENEWAL', '1');
 }
@@ -43,16 +41,16 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	require '../main.inc.php';
 }
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-$hookmanager->initHooks(array('takeposinvoice'));
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-global $mysoc;
+$hookmanager->initHooks(array('takeposinvoice'));
 
 $langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks", "banks"));
 
@@ -69,11 +67,6 @@ if (empty($user->rights->takepos->run) && !defined('INCLUDE_PHONEPAGE_FROM_PUBLI
 	accessforbidden();
 }
 
-
-/*
- * View
- */
-
 if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	// DIRECT LINK TO THIS PAGE FROM MOBILE AND NO TERMINAL SELECTED
 	if ($_SESSION["takeposterminal"] == "") {
@@ -84,23 +77,8 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 			exit;
 		}
 	}
-	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
-	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-		$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
-	}
-	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
-	<meta name="apple-mobile-web-app-capable" content="yes">
-	<meta name="mobile-web-app-capable" content="yes">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
-	$arrayofcss = array(
-	'/takepos/css/pos.css.php',
-	'/takepos/js/jquery.colorbox-min.js'
-	);
-	$arrayofjs = array('/takepos/js/jquery.colorbox-min.js');
-	$disablejs = 0;
-	$disablehead = 0;
-	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 }
+
 
 /**
  * Abort invoice creationg with a given error message
@@ -171,11 +149,12 @@ if ($invoice->socid > 0) {
 }
 
 // Change the currency of invoice if it was modified
-if (!empty($conf->multicurrency->enabled) && !empty($_SESSION["takeposcustomercurrency"])) {
+if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"])) {
 	if ($invoice->multicurrency_code != $_SESSION["takeposcustomercurrency"]) {
 		$invoice->setMulticurrencyCode($_SESSION["takeposcustomercurrency"]);
 	}
 }
+
 
 /*
  * Actions
@@ -195,16 +174,16 @@ if (empty($reshook)) {
 			$bankaccount = GETPOST('accountid', 'int');
 		} else {
 			if ($pay == 'LIQ') {
-				$bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
+				$bankaccount = getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]);            // For backward compatibility
 			} elseif ($pay == "CHQ") {
-				$bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
+				$bankaccount = getDolGlobalString('CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]);    // For backward compatibility
 			} else {
 				$accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
-				$bankaccount = $conf->global->$accountname;
+				$bankaccount = getDolGlobalString($accountname);
 			}
 		}
 
-		if ($bankaccount <= 0 && $pay != "delayed" && !empty($conf->banque->enabled)) {
+		if ($bankaccount <= 0 && $pay != "delayed" && isModEnabled("banque")) {
 			$errormsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount"));
 			$error++;
 		}
@@ -238,13 +217,6 @@ if (empty($reshook)) {
 			$invoice->update($user);
 		}
 
-		//$sav_FACTURE_ADDON = '';
-		//if (!empty($conf->global->TAKEPOS_ADDON)) {
-		//	$sav_FACTURE_ADDON = $conf->global->FACTURE_ADDON;
-		//	if ($conf->global->TAKEPOS_ADDON == "terminal") $conf->global->FACTURE_ADDON = $conf->global->{'TAKEPOS_ADDON'.$_SESSION["takeposterminal"]};
-		//	else $conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
-		//}
-
 		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 		if ($error) {
 			dol_htmloutput_errors($errormsg, null, 1);
@@ -260,14 +232,14 @@ if (empty($reshook)) {
 			$error++;
 			dol_syslog('Sale without lines');
 			dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
-		} elseif (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
+		} elseif (isModEnabled('stock') && $conf->global->$constantforkey != "1") {
 			$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
 			$conf->global->STOCK_CALCULATE_ON_BILL = 1;
 
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
 			$batch_rule = 0;
-			if (!empty($conf->productbatch->enabled) && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
+			if (isModEnabled('productbatch') && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 				$batch_rule = Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST;
 			}
@@ -278,7 +250,8 @@ if (empty($reshook)) {
 			$res = $invoice->validate($user);
 			if ($res < 0) {
 				$error++;
-				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
+				$langs->load("admin");
+				dol_htmloutput_errors($invoice->error == 'NotConfigured' ? $langs->trans("NotConfigured").' (TakePos numbering module)': $invoice->error, $invoice->errors, 1);
 			}
 		}
 
@@ -455,13 +428,13 @@ if (empty($reshook)) {
 		$creditnote->update_price(1);
 
 		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
-		if (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
+		if (isModEnabled('stock') && $conf->global->$constantforkey != "1") {
 			$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
 			$conf->global->STOCK_CALCULATE_ON_BILL = 1;
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 			dol_syslog("Validate invoice with stock change into warehouse defined into constant ".$constantforkey." = ".$conf->global->$constantforkey);
 			$batch_rule = 0;
-			if (!empty($conf->productbatch->enabled) && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
+			if (isModEnabled('productbatch') && !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
 				require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 				$batch_rule = Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST;
 			}
@@ -542,7 +515,7 @@ if (empty($reshook)) {
 
 		$idoflineadded = 0;
 		// Group if enabled. Skip group if line already sent to the printer
-		if (!empty($conf->global->TAKEPOS_GROUP_SAME_PRODUCT) && $line->special_code != "4") {
+		if (!empty($conf->global->TAKEPOS_GROUP_SAME_PRODUCT)) {
 			foreach ($invoice->lines as $line) {
 				if ($line->product_ref == $prod->ref) {
 					if ($line->special_code==4) continue; // If this line is sended to printer create new line
@@ -560,13 +533,41 @@ if (empty($reshook)) {
 			$invoice->fetch_thirdparty();
 			$array_options = array();
 
+			$line = array('description' => $prod->description, 'price' => $price, 'tva_tx' => $tva_tx, 'locatax1_tx' => $localtax1_tx, 'locatax2_tx' => $localtax2_tx, 'remise_percent' => $customer->remise_percent, 'price_ttc' => $price_ttc, 'array_options' => $array_options);
+
+			/* setup of margin calculation */
+			if (isset($conf->global->MARGIN_TYPE)) {
+				if ($conf->global->MARGIN_TYPE == 'pmp' && !empty($prod->pmp)) {
+					$line['fk_fournprice'] = null;
+					$line['pa_ht'] = $prod->pmp;
+				} elseif ($conf->global->MARGIN_TYPE == 'costprice' && !empty($prod->cost_price)) {
+					$line['fk_fournprice'] = null;
+					$line['pa_ht'] = $prod->cost_price;
+				} else {
+					// default is fournprice
+					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+					$pf = new ProductFournisseur($db);
+					if ($pf->find_min_price_product_fournisseur($idproduct, $qty) > 0) {
+						$line['fk_fournprice'] = $pf->product_fourn_price_id;
+						$line['pa_ht'] = $pf->fourn_unitprice_with_discount;
+						if ($pf->fourn_charges > 0)
+							$line['pa_ht'] += $pf->fourn_charges / $pf->fourn_qty;
+					}
+				}
+			}
+
 			// complete line by hook
-			$parameters = array('prod' => $prod);
-			$reshook=$hookmanager->executeHooks('completeTakePosAddLine', $parameters, $invoice, $action);
+			$parameters = array('prod' => $prod, 'line' => $line);
+			$reshook=$hookmanager->executeHooks('completeTakePosAddLine', $parameters, $invoice, $action);    // Note that $action and $line may have been modified by some hooks
 			if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+
 			if (empty($reshook)) {
-				$idoflineadded = $invoice->addline($prod->description, $price, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', null, '', '', $array_options, 100, '', null, 0);
+				if (!empty($hookmanager->resArray)) {
+					$line = $hookmanager->resArray;
+				}
+
+				$idoflineadded = $invoice->addline($line['description'], $line['price'], $qty, $line['tva_tx'], $line['localtax1_tx'], $line['localtax2_tx'], $idproduct, $line['remise_percent'], '', 0, 0, 0, '', $price_base_type, $line['price_ttc'], $prod->type, -1, 0, '', 0, (!empty($parent_line)) ? $parent_line : '', $line['fk_fournprice'], $line['pa_ht'], '', $line['array_options'], 100, '', null, 0);
 			}
 
 			if (!empty($conf->global->TAKEPOS_CUSTOMER_DISPLAY)) {
@@ -695,7 +696,9 @@ if (empty($reshook)) {
 				$pu_ht = price2num($number / (1 + ($line->tva_tx / 100)), 'MU');
 				//Check min price
 				if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($line->remise_percent) / 100) < price2num($price_min)))) {
-					echo $langs->trans("CantBeLessThanMinPrice");
+					$langs->load("products");
+					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
+					//echo $langs->trans("CantBeLessThanMinPrice");
 				} else {
 					if (empty($user->rights->takepos->editlines) || (empty($user->rights->takepos->editorderedlines) && $line->special_code == "4")) {
 						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
@@ -731,7 +734,8 @@ if (empty($reshook)) {
 
 				// Check min price
 				if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($line->subprice) * (1 - price2num($number) / 100) < price2num($price_min)))) {
-					echo $langs->trans("CantBeLessThanMinPrice");
+					$langs->load("products");
+					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
 				} else {
 					if (empty($user->rights->takepos->editlines) || (empty($user->rights->takepos->editorderedlines) && $line->special_code == "4")) {
 						dol_htmloutput_errors($langs->trans("NotEnoughPermissions", "TakePos"), null, 1);
@@ -925,7 +929,31 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
+// llxHeader
+if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
+	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+		$title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+	}
+	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
+	$arrayofcss = array(
+		'/takepos/css/pos.css.php',
+	);
+	$arrayofjs = array('/takepos/js/jquery.colorbox-min.js');
+	$disablejs = 0;
+	$disablehead = 0;
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+
+	print '<body>'."\n";
+} else {
+	top_httphead('text/html', 1);
+}
+
 ?>
+<!-- invoice.php -->
 <script type="text/javascript">
 var selectedline=0;
 var selectedtext="";
@@ -1048,7 +1076,7 @@ function SendTicket(id)
 
 function PrintBox(id, action) {
 	console.log("Open box before printing");
-	$.colorbox({href:"printbox.php?facid="+id+"&action="+action, width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintWithoutDetails"); ?>"});
+	$.colorbox({href:"printbox.php?facid="+id+"&action="+action+"&token=<?php echo newToken(); ?>", width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintWithoutDetails"); ?>"});
 }
 
 function Print(id, gift){
@@ -1059,7 +1087,7 @@ function Print(id, gift){
 function TakeposPrinting(id){
 	var receipt;
 	console.log("TakeposPrinting" + id);
-	$.get("receipt.php?facid="+id, function(data, status){
+	$.get("receipt.php?facid="+id, function(data, status) {
 		receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');
 		$.ajax({
 			type: "POST",
@@ -1071,7 +1099,7 @@ function TakeposPrinting(id){
 
 function TakeposConnector(id){
 	console.log("TakeposConnector" + id);
-	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&term=<?php echo urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>&id="+id+"&token=<?php echo currentToken(); ?>", function(data, status) {
+	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&token=<?php echo newToken(); ?>&term=<?php echo urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>&id="+id+"&token=<?php echo currentToken(); ?>", function(data, status) {
 		$.ajax({
 			type: "POST",
 			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php',
@@ -1085,7 +1113,7 @@ function DolibarrTakeposPrinting(id) {
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
+		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
 	});
 }
 
@@ -1142,12 +1170,12 @@ $( document ).ready(function() {
 			echo $obj->rowid;
 			echo '\\\'; Refresh();">';
 			if ($placeid == $obj->rowid) {
-				echo "<b>";
+				echo '<span class="basketselected">';
+			} else {
+				echo '<span class="basketnotselected">';
 			}
 			echo '<span class="fa fa-shopping-cart paddingright"></span>'.dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
-			if ($placeid == $obj->rowid) {
-				echo "</b>";
-			}
+			echo '</span>';
 			echo '</a>\');';
 		}
 		echo '$("#shoppingcart").append(\'<a onclick="place=\\\'0-';
@@ -1161,7 +1189,7 @@ $( document ).ready(function() {
 
 	$idwarehouse = 0;
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
-	if (!empty($conf->stock->enabled)) {
+	if (isModEnabled('stock')) {
 		if (getDolGlobalString("$constantforkey") != "1") {
 			$constantforkey = 'CASHDESK_ID_WAREHOUSE'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 			$idwarehouse = getDolGlobalString($constantforkey);
@@ -1197,7 +1225,7 @@ $( document ).ready(function() {
 
 	// Module Adherent
 	$s = '';
-	if (!empty($conf->adherent->enabled) && $invoice->socid > 0 && $invoice->socid != $conf->global->$constforcompanyid) {
+	if (isModEnabled('adherent') && $invoice->socid > 0 && $invoice->socid != $conf->global->$constforcompanyid) {
 		$s = '<span class="small">';
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$langs->load("members");
@@ -1318,7 +1346,7 @@ if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
 		// In phone version only show when it is invoice page
 		if (empty($mobilepage) || $mobilepage == "invoice") {
 			print '<span id="linecolht-span-total" style="font-size:1.3em; font-weight: bold;">' . price($invoice->total_ht, 1, '', 1, -1, -1, $conf->currency) . '</span>';
-			if (!empty($conf->multicurrency->enabled) && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+			if (isModEnabled('multicurrency') && $_SESSION["takeposcustomercurrency"] != "" && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 				//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 				include_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
 				$multicurrency = new MultiCurrency($db);
@@ -1334,7 +1362,7 @@ if (empty($_SESSION["basiclayout"]) || $_SESSION["basiclayout"] != 1) {
 	// In phone version only show when it is invoice page
 	if (empty($mobilepage) || $mobilepage == "invoice") {
 		print '<span id="linecolht-span-total" style="font-size:1.3em; font-weight: bold;">'.price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</span>';
-		if (!empty($conf->multicurrency->enabled) && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+		if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 			//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 			include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 			$multicurrency = new MultiCurrency($db);
@@ -1396,7 +1424,7 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 			$htmlforlines .= '" onclick="AddProduct(\''.$place.'\', '.$row->id.')">';
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 				$htmlforlines .= '<img class="imgwrapper" width="33%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$row->id.'"><br>';
-				$htmlforlines .= $row->label.''.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+				$htmlforlines .= $row->label.' '.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency);
 				$htmlforlines .= '</div>'."\n";
 			} else {
 				$htmlforlines .= '<td class="left">';
@@ -1515,7 +1543,7 @@ if ($placeid > 0) {
 						$tooltiptext .= $line->desc;
 					}
 				}
-				if ($conf->global->TAKEPOS_SHOW_PRODUCT_REFERENCE == 1) {
+				if (getDolGlobalInt('TAKEPOS_SHOW_PRODUCT_REFERENCE') == 1) {
 					$htmlforlines .= $form->textwithpicto($line->product_label ? '<b>' . $line->product_ref . '</b> - ' . $line->product_label : dolGetFirstLineOfText($line->desc, 1), $tooltiptext);
 				} else {
 					$htmlforlines .= $form->textwithpicto($line->product_label ? $line->product_label : ($line->product_ref ? $line->product_ref : dolGetFirstLineOfText($line->desc, 1)), $tooltiptext);
@@ -1551,7 +1579,8 @@ if ($placeid > 0) {
 				$moreinfo .= '<br>'.$langs->transcountry("TotalVAT", $mysoc->country_code).': '.price($line->total_tva);
 				$moreinfo .= '<br>'.$langs->transcountry("TotalLT1", $mysoc->country_code).': '.price($line->total_localtax1);
 				$moreinfo .= '<br>'.$langs->transcountry("TotalLT2", $mysoc->country_code).': '.price($line->total_localtax2);
-				$moreinfo .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).': '.price($line->total_ttc);
+				$moreinfo .= '<hr>';
+				$moreinfo .= $langs->transcountry("TotalTTC", $mysoc->country_code).': '.price($line->total_ttc);
 				//$moreinfo .= $langs->trans("TotalHT").': '.$line->total_ht;
 				if ($line->date_start || $line->date_end) {
 					$htmlforlines .= '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end).'</div>';
@@ -1566,7 +1595,7 @@ if ($placeid > 0) {
 
 				$htmlforlines .= '<td class="right">'.vatrate($line->remise_percent, true).'</td>';
 				$htmlforlines .= '<td class="right">';
-				if (!empty($conf->stock->enabled) && !empty($user->rights->stock->mouvement->lire)) {
+				if (isModEnabled('stock') && !empty($user->rights->stock->mouvement->lire)) {
 					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 					if (!empty($conf->global->$constantforkey) && $line->fk_product > 0 && empty($conf->global->TAKEPOS_HIDE_STOCK_ON_LINE)) {
 						$sql = "SELECT e.rowid, e.ref, e.lieu, e.fk_parent, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";
@@ -1603,7 +1632,7 @@ if ($placeid > 0) {
 				if (getDolGlobalString('TAKEPOS_SHOW_HT')) {
 					$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
 					$htmlforlines .= price($line->total_ht, 1, '', 1, -1, -1, $conf->currency);
-					if (!empty($conf->multicurrency->enabled) && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+					if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 						//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 						include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 						$multicurrency = new MultiCurrency($db);
@@ -1614,7 +1643,7 @@ if ($placeid > 0) {
 				}
 				$htmlforlines .= '<td class="right classfortooltip" title="'.$moreinfo.'">';
 				$htmlforlines .= price($line->total_ttc, 1, '', 1, -1, -1, $conf->currency);
-				if (!empty($conf->multicurrency->enabled) && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
+				if (isModEnabled('multicurrency') && !empty($_SESSION["takeposcustomercurrency"]) && $conf->currency != $_SESSION["takeposcustomercurrency"]) {
 					//Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
 					include_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 					$multicurrency = new MultiCurrency($db);
@@ -1653,8 +1682,14 @@ if (($action == "valid" || $action == "history") && $invoice->type != Facture::T
 
 if ($action == "search") {
 	print '<center>
-	<input type="text" id="search" class="input-search-takepos" name="search" onkeyup="Search2();" style="width: 80%; font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans('Search')).'">
+	<input type="text" id="search" class="input-search-takepos" name="search" onkeyup="Search2(\'\', null);" style="width: 80%; font-size: 150%;" placeholder="'.dol_escape_htmltag($langs->trans('Search')).'">
 	</center>';
 }
 
 print '</div>';
+
+// llxFooter
+if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+	print '</body></html>';
+}
+

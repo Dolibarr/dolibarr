@@ -28,7 +28,7 @@ print '<tr><td>';
 print '<table class="nobordernopadding" width="100%"><tr><td>';
 print $langs->trans('SalesRepresentatives');
 print '</td>';
-if ($action != 'editsalesrepresentatives' && $user->rights->societe->creer) {
+if ($action != 'editsalesrepresentatives' && $user->hasRight('societe', 'creer')) {
 	print '<td class="right">';
 	print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editsalesrepresentatives&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
 	print '</td>';

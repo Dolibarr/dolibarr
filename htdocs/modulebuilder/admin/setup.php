@@ -111,7 +111,7 @@ print '<br>';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td style="width: 30%">'.$langs->trans("Key").'</td>';
+print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
@@ -132,37 +132,39 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		}
 	}
 	print '</td></tr>';
+}
 
-	print '<tr class="oddeven">';
-	print '<td class="tdtop">'.$langs->trans("UseSpecificEditorName").'</td>';
-	print '<td>';
-	print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_NAME" value="'.$conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME.'">';
-	print '</td>';
-	print '</tr>';
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UseSpecificEditorName").'</td>';
+print '<td>';
+print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_NAME" value="'.$conf->global->MODULEBUILDER_SPECIFIC_EDITOR_NAME.'">';
+print '</td>';
+print '</tr>';
 
-	print '<tr class="oddeven">';
-	print '<td class="tdtop">'.$langs->trans("UseSpecificEditorURL").'</td>';
-	print '<td>';
-	print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_URL" value="'.$conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL.'">';
-	print '</td>';
-	print '</tr>';
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UseSpecificEditorURL").'</td>';
+print '<td>';
+print '<input type="text" name="MODULEBUILDER_SPECIFIC_EDITOR_URL" value="'.$conf->global->MODULEBUILDER_SPECIFIC_EDITOR_URL.'">';
+print '</td>';
+print '</tr>';
 
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	print '<tr class="oddeven">';
-	print '<td class="tdtop">'.$langs->trans("UseSpecificFamily").'</td>';
+	print '<td>'.$langs->trans("UseSpecificFamily").'</td>';
 	print '<td>';
 	print '<input type="text" name="MODULEBUILDER_SPECIFIC_FAMILY" value="'.$conf->global->MODULEBUILDER_SPECIFIC_FAMILY.'">';
 	print '</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven">';
-	print '<td class="tdtop">'.$langs->trans("UseSpecificAuthor").'</td>';
+	print '<td>'.$langs->trans("UseSpecificAuthor").'</td>';
 	print '<td>';
 	print '<input type="text" name="MODULEBUILDER_SPECIFIC_AUTHOR" value="'.$conf->global->MODULEBUILDER_SPECIFIC_AUTHOR.'">';
 	print '</td>';
 	print '</tr>';
 
 	print '<tr class="oddeven">';
-	print '<td class="tdtop">'.$langs->trans("UseSpecificVersion").'</td>';
+	print '<td>'.$langs->trans("UseSpecificVersion").'</td>';
 	print '<td>';
 	print '<input type="text" name="MODULEBUILDER_SPECIFIC_VERSION" value="'.$conf->global->MODULEBUILDER_SPECIFIC_VERSION.'">';
 	print '</td>';
@@ -170,14 +172,14 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 }
 
 print '<tr class="oddeven">';
-print '<td class="tdtop">'.$langs->trans("UseSpecificReadme").'</td>';
+print '<td>'.$langs->trans("UseSpecificReadme").'</td>';
 print '<td>';
 print '<textarea class="centpercent" rows="20" name="MODULEBUILDER_SPECIFIC_README">'.$conf->global->MODULEBUILDER_SPECIFIC_README.'</textarea>';
 print '</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td class="tdtop">'.$langs->trans("AsciiToHtmlConverter").'</td>';
+print '<td>'.$langs->trans("AsciiToHtmlConverter").'</td>';
 print '<td>';
 print '<input type="text" name="MODULEBUILDER_ASCIIDOCTOR" value="'.$conf->global->MODULEBUILDER_ASCIIDOCTOR.'">';
 print ' '.$langs->trans("Example").': asciidoc, asciidoctor';
@@ -185,7 +187,7 @@ print '</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td class="tdtop">'.$langs->trans("AsciiToPdfConverter").'</td>';
+print '<td>'.$langs->trans("AsciiToPdfConverter").'</td>';
 print '<td>';
 print '<input type="text" name="MODULEBUILDER_ASCIIDOCTORPDF" value="'.$conf->global->MODULEBUILDER_ASCIIDOCTORPDF.'">';
 print ' '.$langs->trans("Example").': asciidoctor-pdf';

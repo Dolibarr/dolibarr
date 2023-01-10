@@ -29,7 +29,6 @@ create table llx_societe
   entity                   integer DEFAULT 1 NOT NULL,                  -- multi company id
 
   ref_ext                  varchar(255),                                -- reference into an external system (not used by dolibarr)
-  ref_int                  varchar(255),                                -- reference into an internal system (deprecated)
 
   statut                   tinyint        DEFAULT 0,            		-- statut
   parent                   integer,
@@ -45,7 +44,7 @@ create table llx_societe
   town                     varchar(50),                         		-- town
   fk_departement           integer        DEFAULT 0,            		--
   fk_pays                  integer        DEFAULT 0,            		--
-  fk_account               integer        DEFAULT 0,            		--
+  fk_account               integer        DEFAULT 0,            		-- default bank account
   phone                    varchar(20),                         		-- phone number
   fax                      varchar(20),                         		-- fax number
   url                      varchar(255),                        		--

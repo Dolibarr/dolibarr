@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -28,6 +34,7 @@ NoTemplateDefined=Sen padrón dispoñible para este tipo de cooreo electrónico
 AvailableVariables=Variables de substitución dispoñibles
 NoTranslation=Sen tradución
 Translation=Tradución
+Translations=Traducións
 CurrentTimeZone=Zona horaria PHP (Servidor)
 EmptySearchString=Entre unha cadea de busca non baleira
 EnterADateCriteria=Engadir un criterio de data
@@ -199,6 +206,7 @@ Valid=Validar
 Approve=Aprobar
 Disapprove=Desaprobar
 ReOpen=Reabrir
+OpenVerb=Abertos
 Upload=Actualizar ficheiro
 ToLink=Ligazón
 Select=Seleccionar
@@ -216,7 +224,7 @@ UserGroup=Grupo de usuarios
 UserGroups=Grupos de usuarios
 NoUserGroupDefined=Non hai definido grupo de usuarios
 Password=Contrasinal
-PasswordRetype=Repetir o teu contrasinal
+PasswordRetype=Repita o seu contrasinal
 NoteSomeFeaturesAreDisabled=Ten conta que moitos módulos/funcionalidades foron desactivados nesta demo.
 Name=Nome
 NameSlashCompany=Nome / Empresa
@@ -481,6 +489,7 @@ ActionsOnContact=Eventos deste contacto/enderezo
 ActionsOnContract=Eventos deste contrato
 ActionsOnMember=Eventos deste membro
 ActionsOnProduct=Eventos deste produto
+ActionsOnAsset=Eventos para este activo fixo
 NActionsLate=%s en atraso
 ToDo=A realizar
 Completed=Realizado
@@ -712,6 +721,7 @@ FeatureDisabled=Función desactivada
 MoveBox=Mover panel
 Offered=S/Custo
 NotEnoughPermissions=Non ten permisos para esta acción
+UserNotInHierachy=Esta acción está reservada aos supervisores deste usuario
 SessionName=Nome sesión
 Method=Método
 Receive=Recepción
@@ -801,6 +811,7 @@ URLPhoto=Url da foto/logo
 SetLinkToAnotherThirdParty=Ligar a outro terceiro
 LinkTo=Ligar a
 LinkToProposal=Ligar a orzamento
+LinkToExpedition= Ligazón á expedición
 LinkToOrder=Ligar a pedimento
 LinkToInvoice=Ligar a factura
 LinkToTemplateInvoice=Ligar o padrón de factura
@@ -919,6 +930,7 @@ DirectDownloadInternalLink=Ligazón privada de descarga
 PrivateDownloadLinkDesc=Precisa estar logueado e ter permisos para ver ou descargar o ficheiro
 Download=Descargar
 DownloadDocument=Descargar o documento
+DownloadSignedDocument=Descargar documento asinado
 ActualizeCurrency=Actualizar o tipo de cambio
 Fiscalyear=Ano fiscal
 ModuleBuilder=Módulo e aplicación Builder
@@ -1044,6 +1056,7 @@ SearchIntoContracts=Contratos
 SearchIntoCustomerShipments=Envíos a clientes
 SearchIntoExpenseReports=Informes de gastos
 SearchIntoLeaves=Día libre
+SearchIntoKM=Base de Coñecemento
 SearchIntoTickets=Tickets
 SearchIntoCustomerPayments=Pagamentos dos clientes
 SearchIntoVendorPayments=Pagamentos a provedores
@@ -1135,15 +1148,29 @@ EventReminder=Recordatorio de evento
 UpdateForAllLines=Actualizar todas as liñas
 OnHold=Agardando
 Civility=Cortesía
-AffectTag=Poñer etiqueta
+AffectTag=Asignar etiqueta
+AffectUser=Asignar usuario
+SetSupervisor=Configurar Supervisor
 CreateExternalUser=Crear usuario externo
-ConfirmAffectTag=Poñer etiqueta masiva
-ConfirmAffectTagQuestion=Está certo de que quere poñer ás etiquetas dos rexistros seleccionados %s?
+ConfirmAffectTag=Asignación masiva de etiquetas
+ConfirmAffectUser=Asignación masiva de usuarios
+ProjectRole=Papel asignado en cada proxecto
+TasksRole=Papel asignado en cada tarefa de cada proxecto
+ConfirmSetSupervisor=Configuración masiva de supervisores
+ConfirmUpdatePrice=Escolla un aumento/diminución da taxa de prezo
+ConfirmAffectTagQuestion=Está certo de querer asignar etiquetas aos rexistros seleccionados %s?
+ConfirmAffectUserQuestion=Está certo de querer asignar usuarios aos rexistros seleccionados %s?
+ConfirmSetSupervisorQuestion=Está certo de querer configurar o supervisor para o(s) rexistro(s) seleccionado(s) %s?
+ConfirmUpdatePriceQuestion=Está certo de querer actualizar o prezo do(s) rexistro(s) seleccionado(s) %s?
 CategTypeNotFound=Non se atopou ningún tipo de etiqueta para o tipo de rexistros
+Rate=Tipo
+SupervisorNotFound=Non se atopou o supervisor
 CopiedToClipboard=Copiado a portapapeis
 InformationOnLinkToContract=Este importe é só o total de todas as liñas do contrato. Non se ten en conta ningunha noción de tempo.
 ConfirmCancel=Está certo de querer cancelar
 EmailMsgID=Correo electónico  MsgID
+EmailDate=Data do correo electrónico
+SetToStatus=Establece o estado %s
 SetToEnabled=Establecer como activado 
 SetToDisabled=Establecer como desactivado 
 ConfirmMassEnabling=confirmación de habilitación masiva 
@@ -1172,8 +1199,14 @@ Terminated=De baixa
 AddLineOnPosition=Engadir liña na posición (ao final se está baleira)
 ConfirmAllocateCommercial=Asignar a confirmación do representante de vendas
 ConfirmAllocateCommercialQuestion=Está certo de querer asignar o(s) rexistro(s) seleccionado(s) a %s?
-CommercialsAffected=Representantes de vendas afectados
-CommercialAffected=Representante de vendas afectado
+CommercialsAffected=Representantes de vendas asignados
+CommercialAffected=Representante de vendas asignado
 YourMessage=A súa mensaxe
 YourMessageHasBeenReceived=Recibiuse a súa mensaxe. Atenderemos ou contactaremos con vostede canto antes.
 UrlToCheck=URL para comprobar
+Automation=Automatización
+CreatedByEmailCollector=Creado por Recolector de Correo
+CreatedByPublicPortal=Creado a partir do portal público
+UserAgent=Axente de usuario
+InternalUser=Usuario interno
+ExternalUser=Usuario externo

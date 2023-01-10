@@ -68,3 +68,5 @@ ConfirmReopenIntervention=Vai tiešām vēlaties atvērt iejaukšanos <b> %s </b
 GenerateInter=Ģenerēt iejaukšanos
 FichinterNoContractLinked=Intervence %s ir izveidota bez saistīta līguma.
 ErrorFicheinterCompanyDoesNotExist=Uzņēmums neeksistē. Intervence nav izveidota.
+NextDateToIntervention=Nākamās intervences paaudzes datums
+NoIntervention=No intervention

@@ -86,6 +86,11 @@ class Task extends CommonObjectLine
 	public $progress;
 
 	/**
+	 * @deprecated Use date_end instead
+	 */
+	public $datee;
+
+	/**
 	 * @var int ID
 	 */
 	public $fk_statut;
@@ -122,6 +127,7 @@ class Task extends CommonObjectLine
 	public $timespent_fk_user;
 	public $timespent_thm;
 	public $timespent_note;
+	public $timespent_fk_product;
 
 	public $comments = array();
 
@@ -473,12 +479,12 @@ class Task extends CommonObjectLine
 
 		if (!$error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref)) {
 			// We remove directory
-			if ($conf->projet->dir_output) {
+			if ($conf->project->dir_output) {
 				$project = new Project($this->db);
 				$project->fetch($this->fk_project);
 
-				$olddir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->oldcopy->ref);
-				$newdir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->ref);
+				$olddir = $conf->project->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->oldcopy->ref);
+				$newdir = $conf->project->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($this->ref);
 				if (file_exists($olddir)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					$res = dol_move_dir($olddir, $newdir);
@@ -600,11 +606,11 @@ class Task extends CommonObjectLine
 			return -1 * $error;
 		} else {
 			//Delete associated link file
-			if ($conf->projet->dir_output) {
+			if ($conf->project->dir_output) {
 				$projectstatic = new Project($this->db);
 				$projectstatic->fetch($this->fk_project);
 
-				$dir = $conf->projet->dir_output."/".dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($this->id);
+				$dir = $conf->project->dir_output."/".dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($this->id);
 				dol_syslog(get_class($this)."::delete dir=".$dir, LOG_DEBUG);
 				if (file_exists($dir)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -805,9 +811,10 @@ class Task extends CommonObjectLine
 	 * @param   int     $includebilltime    Calculate also the time to bill and billed
 	 * @param   array   $search_array_options Array of search
 	 * @param   int     $loadextras         Fetch all Extrafields on each task
-	 * @return 	array						Array of tasks
+	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
+	 * @return 	array|string				Array of tasks
 	 */
-	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0)
+	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1)
 	{
 		global $conf, $hookmanager;
 
@@ -962,14 +969,16 @@ class Task extends CommonObjectLine
 
 				$obj = $this->db->fetch_object($resql);
 
-				if ((!$obj->public) && (is_object($userp))) {	// If not public project and we ask a filter on project owned by a user
-					if (!$this->getUserRolesForProjectsOrTasks($userp, 0, $obj->projectid, 0)) {
-						$error++;
+				if ($loadRoleMode) {
+					if ((!$obj->public) && (is_object($userp))) {    // If not public project and we ask a filter on project owned by a user
+						if (!$this->getUserRolesForProjectsOrTasks($userp, null, $obj->projectid, 0)) {
+							$error++;
+						}
 					}
-				}
-				if (is_object($usert)) {							// If we ask a filter on a user affected to a task
-					if (!$this->getUserRolesForProjectsOrTasks(0, $usert, $obj->projectid, $obj->taskid)) {
-						$error++;
+					if (is_object($usert)) {                            // If we ask a filter on a user affected to a task
+						if (!$this->getUserRolesForProjectsOrTasks(null, $usert, $obj->projectid, $obj->taskid)) {
+							$error++;
+						}
 					}
 				}
 
@@ -1016,7 +1025,8 @@ class Task extends CommonObjectLine
 					if (!empty($extrafields->attributes['projet']['label'])) {
 						foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
 							if ($extrafields->attributes['projet']['type'][$key] != 'separate') {
-								$tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
+								$tmpvar = 'options_'.$key;
+								$tasks[$i]->{'options_'.$key} = $obj->$tmpvar;
 							}
 						}
 					}
@@ -1024,7 +1034,8 @@ class Task extends CommonObjectLine
 					if (!empty($extrafields->attributes['projet_task']['label'])) {
 						foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
 							if ($extrafields->attributes['projet_task']['type'][$key] != 'separate') {
-								$tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
+								$tmpvar = 'options_'.$key;
+								$tasks[$i]->{'options_'.$key} = $obj->$tmpvar;
 							}
 						}
 					}
@@ -1047,12 +1058,12 @@ class Task extends CommonObjectLine
 	/**
 	 * Return list of roles for a user for each projects or each tasks (or a particular project or a particular task).
 	 *
-	 * @param	User	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
-	 * @param	User	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
-	 * @param 	int		$projectid		      Project id list separated with , to filter on project
-	 * @param 	int		$taskid			      Task id to filter on a task
-	 * @param	integer	$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
-	 * @return 	array					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
+	 * @param	User|null	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
+	 * @param	User|null	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
+	 * @param 	int			$projectid		      Project id list separated with , to filter on project
+	 * @param 	int			$taskid			      Task id to filter on a task
+	 * @param	integer		$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
+	 * @return 	array|int					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
 	 */
 	public function getUserRolesForProjectsOrTasks($userp, $usert, $projectid = '', $taskid = 0, $filteronprojstatus = -1)
 	{
@@ -1201,7 +1212,7 @@ class Task extends CommonObjectLine
 			$this->timespent_datehour = $this->timespent_date;
 		}
 
-		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1222,6 +1233,7 @@ class Task extends CommonObjectLine
 		$sql .= ", task_date_withhour";
 		$sql .= ", task_duration";
 		$sql .= ", fk_user";
+		$sql .= ", fk_product";
 		$sql .= ", note";
 		$sql .= ", datec";
 		$sql .= ") VALUES (";
@@ -1231,6 +1243,7 @@ class Task extends CommonObjectLine
 		$sql .= ", ".(empty($this->timespent_withhour) ? 0 : 1);
 		$sql .= ", ".((int) $this->timespent_duration);
 		$sql .= ", ".((int) $this->timespent_fk_user);
+		$sql .= ", ".((int) $this->timespent_fk_product);
 		$sql .= ", ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ")";
@@ -1385,12 +1398,10 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param  User|int	$userobj			Filter on user. null or 0=No filter
 	 *  @param	string		$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 *  @return array		 					Array of info for task array('min_date', 'max_date', 'total_duration', 'total_amount', 'nblines', 'nblinesnull')
+	 *  @return array|int	 					Array of info for task array('min_date', 'max_date', 'total_duration', 'total_amount', 'nblines', 'nblinesnull')
 	 */
 	public function getSummaryOfTimeSpent($userobj = null, $morewherefilter = '')
 	{
-		global $langs;
-
 		if (is_object($userobj)) {
 			$userid = $userobj->id;
 		} else {
@@ -1518,6 +1529,7 @@ class Task extends CommonObjectLine
 		$sql .= " t.task_date_withhour,";
 		$sql .= " t.task_duration,";
 		$sql .= " t.fk_user,";
+		$sql .= " t.fk_product,";
 		$sql .= " t.thm,";
 		$sql .= " t.note";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
@@ -1536,6 +1548,7 @@ class Task extends CommonObjectLine
 				$this->timespent_withhour   = $obj->task_date_withhour;
 				$this->timespent_duration = $obj->task_duration;
 				$this->timespent_fk_user	= $obj->fk_user;
+				$this->timespent_fk_product	= $obj->fk_product;
 				$this->timespent_thm    	= $obj->thm; // hourly rate
 				$this->timespent_note = $obj->note;
 			}
@@ -1552,14 +1565,12 @@ class Task extends CommonObjectLine
 	/**
 	 *  Load all records of time spent
 	 *
-	 *  @param	User	$userobj			User object
-	 *  @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 *  @return int							<0 if KO, array of time spent if OK
+	 *  @param	User		$userobj			User object
+	 *  @param	string		$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
+	 *  @return array|int						<0 if KO, array of time spent if OK
 	 */
 	public function fetchAllTimeSpent(User $userobj, $morewherefilter = '')
 	{
-		global $langs;
-
 		$arrayres = array();
 
 		$sql = "SELECT";
@@ -1670,7 +1681,7 @@ class Task extends CommonObjectLine
 			$this->timespent_note = trim($this->timespent_note);
 		}
 
-		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1689,6 +1700,7 @@ class Task extends CommonObjectLine
 		$sql .= " task_date_withhour = ".(empty($this->timespent_withhour) ? 0 : 1).",";
 		$sql .= " task_duration = ".((int) $this->timespent_duration).",";
 		$sql .= " fk_user = ".((int) $this->timespent_fk_user).",";
+		$sql .= " fk_product = ".((int) $this->timespent_fk_product).",";
 		$sql .= " note = ".(isset($this->timespent_note) ? "'".$this->db->escape($this->timespent_note)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $this->timespent_id);
 
@@ -1713,26 +1725,31 @@ class Task extends CommonObjectLine
 			$ret = -1;
 		}
 
-		if ($ret == 1 && ($this->timespent_old_duration != $this->timespent_duration)) {
-			// Recalculate amount of time spent for task and update denormalized field
-			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM ".MAIN_DB_PREFIX."projet_task_time as ptt where ptt.fk_task = ".((int) $this->id).")";
-			if (isset($this->progress)) {
-				$sql .= ", progress = ".((float) $this->progress); // Do not overwrite value if not provided
-			}
-			$sql .= " WHERE rowid = ".((int) $this->id);
+		if ($ret == 1 && (($this->timespent_old_duration != $this->timespent_duration) || !empty($conf->global->TIMESPENT_ALWAYS_UPDATE_THM))) {
+			if ($this->timespent_old_duration != $this->timespent_duration) {
+				// Recalculate amount of time spent for task and update denormalized field
+				$sql = "UPDATE " . MAIN_DB_PREFIX . "projet_task";
+				$sql .= " SET duration_effective = (SELECT SUM(task_duration) FROM " . MAIN_DB_PREFIX . "projet_task_time as ptt where ptt.fk_task = " . ((int) $this->id) . ")";
+				if (isset($this->progress)) {
+					$sql .= ", progress = " . ((float) $this->progress); // Do not overwrite value if not provided
+				}
+				$sql .= " WHERE rowid = " . ((int) $this->id);
 
-			dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
-			if (!$this->db->query($sql)) {
-				$this->error = $this->db->lasterror();
-				$this->db->rollback();
-				$ret = -2;
+				dol_syslog(get_class($this) . "::updateTimeSpent", LOG_DEBUG);
+				if (!$this->db->query($sql)) {
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					$ret = -2;
+				}
 			}
 
 			// Update hourly rate of this time spent entry, but only if it was not set initialy
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
 			$sql .= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".((int) $this->timespent_fk_user).")"; // set average hour rate of user
-			$sql .= " WHERE (thm IS NULL OR thm = 0) AND rowid = ".((int) $this->timespent_id);
+			$sql .= " WHERE rowid = ".((int) $this->timespent_id);
+			if (empty($conf->global->TIMESPENT_ALWAYS_UPDATE_THM)) { // then if not empty we always update, in case of new thm for user, or change user of task time line
+				$sql .= " AND (thm IS NULL OR thm = 0)";
+			}
 
 			dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 			if (!$this->db->query($sql)) {
@@ -1760,7 +1777,7 @@ class Task extends CommonObjectLine
 
 		$error = 0;
 
-		if (! empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
+		if (!empty($conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
@@ -1957,8 +1974,8 @@ class Task extends CommonObjectLine
 					$clone_project_ref = $ori_project_ref;
 				}
 
-				$clone_task_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($clone_project_ref)."/".dol_sanitizeFileName($clone_task_ref);
-				$ori_task_dir = $conf->projet->dir_output."/".dol_sanitizeFileName($ori_project_ref)."/".dol_sanitizeFileName($fromid);
+				$clone_task_dir = $conf->project->dir_output."/".dol_sanitizeFileName($clone_project_ref)."/".dol_sanitizeFileName($clone_task_ref);
+				$ori_task_dir = $conf->project->dir_output."/".dol_sanitizeFileName($ori_project_ref)."/".dol_sanitizeFileName($fromid);
 
 				$filearray = dol_dir_list($ori_task_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', '', SORT_ASC, 1);
 				foreach ($filearray as $key => $file) {
@@ -2184,7 +2201,7 @@ class Task extends CommonObjectLine
 		$sql .= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
 		$sql .= " t.dateo as date_start, t.datee as datee";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 		$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 		$sql .= " WHERE p.entity IN (".getEntity('project', 0).')';
@@ -2205,9 +2222,9 @@ class Task extends CommonObjectLine
 			$task_static = new Task($this->db);
 
 			$response = new WorkboardResponse();
-			$response->warning_delay = $conf->projet->task->warning_delay / 60 / 60 / 24;
+			$response->warning_delay = $conf->project->task->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("OpenedTasks");
-			if ($user->rights->projet->all->lire) {
+			if ($user->hasRight("projet", "all", "lire")) {
 				$response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
 			} else {
 				$response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';
@@ -2306,6 +2323,6 @@ class Task extends CommonObjectLine
 
 		$datetouse = ($this->date_end > 0) ? $this->date_end : ((isset($this->datee) && $this->datee > 0) ? $this->datee : 0);
 
-		return ($datetouse > 0 && ($datetouse < ($now - $conf->projet->task->warning_delay)));
+		return ($datetouse > 0 && ($datetouse < ($now - $conf->project->task->warning_delay)));
 	}
 }

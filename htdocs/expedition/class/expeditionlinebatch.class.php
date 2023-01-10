@@ -44,7 +44,7 @@ class ExpeditionLineBatch extends CommonObject
 	public $qty;
 	public $dluo_qty; // deprecated, use qty
 	public $entrepot_id;
-	public $fk_origin_stock;
+	public $fk_origin_stock;		// rowid in llx_product_batch table
 	public $fk_expeditiondet;
 
 
@@ -194,7 +194,7 @@ class ExpeditionLineBatch extends CommonObject
 		}
 		$sql .= " WHERE fk_expeditiondet=".(int) $id_line_expdet;
 
-		dol_syslog(__METHOD__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);

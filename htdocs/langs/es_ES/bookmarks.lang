@@ -20,3 +20,4 @@ ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elija si la página enlazada deb
 BookmarksManagement=Gestión de marcadores
 BookmarksMenuShortCut=Ctrl + shift + m
 NoBookmarks=No hay marcadores definidos
+NoBookmarkFound=No se encontró ningún marcador

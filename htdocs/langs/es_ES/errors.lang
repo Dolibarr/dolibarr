@@ -14,6 +14,7 @@ ErrorLoginAlreadyExists=El login %s ya existe.
 ErrorGroupAlreadyExists=El grupo %s ya existe.
 ErrorEmailAlreadyExists=El correo electrónico %s ya existe.
 ErrorRecordNotFound=Registro no encontrado
+ErrorRecordNotFoundShort=No encontrado
 ErrorFailToCopyFile=Error al copiar el archivo '<b>%s</b>' en '<b>%s</b>'.
 ErrorFailToCopyDir=Error al copiar el directorio  '<b>%s</b>' en '<b>%s</b>'.
 ErrorFailToRenameFile=Error al renombrar el archivo '<b>%s</b>' a '<b>%s</b>'.
@@ -48,6 +49,7 @@ ErrorBadImageFormat=El archivo de imagen es de un formato no soportado (Su PHP n
 ErrorBadDateFormat=El valor '%s' tiene un formato de fecha no reconocido
 ErrorWrongDate=¡La fecha no es correcta!
 ErrorFailedToWriteInDir=Imposible escribir en el directorio %s
+ErrorFailedToBuildArchive=Error al crear el archivo de almacenamiento %s
 ErrorFoundBadEmailInFile=Encontrada sintaxis incorrecta en email en %s líneas en archivo (ejemplo linea %s con email=%s)
 ErrorUserCannotBeDelete=No puede eliminarse el usuario. Es posible que esté asociado a ítems de Dolibarr
 ErrorFieldsRequired=Algunos campos obligatorios se han dejado en blanco.
@@ -76,7 +78,7 @@ ErrorNoValueForCheckBoxType=Los valores de la lista deben ser indicados
 ErrorNoValueForRadioType=Los valores de la lista deben ser indicados
 ErrorBadFormatValueList=El valor de la lista no puede tener más de una coma: <u>%s</u>, pero es necesaria al menos una: clave,valor
 ErrorFieldCanNotContainSpecialCharacters=El campo <b>%s</b> no debe contener carácteres especiales
-ErrorFieldCanNotContainSpecialNorUpperCharacters=El campo <b>%s</b> no debe contener carácteres especiales, ni caracteres en mayúsculas y no puede contener sólo números
+ErrorFieldCanNotContainSpecialNorUpperCharacters=El campo <b> %s </b> no debe contener caracteres especiales, ni mayúsculas, y debe comenzar con un carácter alfabético (a-z)
 ErrorFieldMustHaveXChar=El campo <b> %s </b> debe tener al menos %s caracteres.
 ErrorNoAccountancyModuleLoaded=Módulo de contabilidad no activado
 ErrorExportDuplicateProfil=El nombre de este perfil ya existe para este conjunto de exportación
@@ -92,11 +94,12 @@ ErrorModuleRequireJavascript=Javascript no debe estar desactivado para que esta 
 ErrorPasswordsMustMatch=Las 2 contraseñas indicadas deben corresponderse
 ErrorContactEMail=Se ha producido un error técnico. Contacte con el administrador al e-mail <b>%s</b>, indicando el código de error <b>%s</b> en su mensaje, o puede también adjuntar una copia de pantalla de esta página.
 ErrorWrongValueForField=Valor incorrecto para el campo número <b>%s</b>:  '<b>%s</b>' no cumple con la regla <b>%s</b>
+ErrorHtmlInjectionForField=Campo <b> %s </b>: El valor '<b> %s </b>' contiene datos maliciosos no permitidos
 ErrorFieldValueNotIn=Valor incorrecto del campo número <b>%s</b>: '<b>%s</b>' no es un valor disponible en el campo <b>%s</b> de la tabla <b>%s</b>
 ErrorFieldRefNotIn=Valor incorrecto para el campo número <b>%s</b>: '<b>%s</b>' no es una referencia existente en <b>%s</b>
+ErrorMultipleRecordFoundFromRef=Se encontraron varios registros al buscar desde ref <b> %s </b> . No hay forma de saber qué ID usar.
 ErrorsOnXLines=%s errores encontrados
 ErrorFileIsInfectedWithAVirus=¡El antivirus no ha podido validar este archivo (es probable que esté infectado por un virus)!
-ErrorSpecialCharNotAllowedForField=Los caracteres especiales no son admitidos por el campo "%s"
 ErrorNumRefModel=Hay una referencia en la base de datos (%s) y es incompatible con esta numeración. Elimine la línea o renombre la referencia para activar este módulo.
 ErrorQtyTooLowForThisSupplier=Cantidad insuficiente para este proveedor o no hay precio definido en este producto para este proveedor
 ErrorOrdersNotCreatedQtyTooLow=Algunos pedidos no se han creado debido a una cantidad demasiado baja
@@ -241,6 +244,7 @@ ErrorObjectMustHaveStatusActiveToBeDisabled=Los objetos deben tener el estado 'A
 ErrorObjectMustHaveStatusDraftOrDisabledToBeActivated=Los objetos deben tener el estado 'Borrador' o 'Deshabilitad' para ser habilitados
 ErrorNoFieldWithAttributeShowoncombobox=Ningún campo tiene la propiedad 'showoncombobo' en la definición del objeto '%s'. No hay forma de mostrar el combolist.
 ErrorFieldRequiredForProduct=El campo '%s' es obligatorio para el producto %s
+AlreadyTooMuchPostOnThisIPAdress=Ya has publicado demasiado en esta dirección IP.
 ProblemIsInSetupOfTerminal=Problema en la configuración del terminal %s.
 ErrorAddAtLeastOneLineFirst=Introduzca al menos una opción
 ErrorRecordAlreadyInAccountingDeletionNotPossible=Error, el registro ya se transfirió en contabilidad, la eliminación no es posible.
@@ -270,28 +274,40 @@ ErrorYouMustFirstSetupYourChartOfAccount=Primero debe configurar su plan de cuen
 ErrorFailedToFindEmailTemplate=No se pudo encontrar la plantilla con el nombre de código %s
 ErrorDurationForServiceNotDefinedCantCalculateHourlyPrice=Duración no definida en el servicio. No hay forma de calcular el precio por hora.
 ErrorActionCommPropertyUserowneridNotDefined=Se requiere el propietario del usuario
-ErrorActionCommBadType=El tipo de evento seleccionado (id: %n, código: %s) no existe en el diccionario de tipo de evento
+ErrorActionCommBadType=El tipo de evento seleccionado (id: %s, código: %s) no existe en el diccionario de tipo de evento
 CheckVersionFail=Error de verificación de versión
 ErrorWrongFileName=El nombre del archivo no puede contener __SOMETHING__
 ErrorNotInDictionaryPaymentConditions=No está en el Diccionario de términos de pago, modifíquelo.
 ErrorIsNotADraft=%s no es un borrador
 ErrorExecIdFailed=No se puede ejecutar el comando "id"
-ErrorBadCharIntoLoginName=Carácter no autorizado en el nombre de inicio de sesión
-ErrorRequestTooLarge=Error, solicitud demasiado grande
+ErrorBadCharIntoLoginName=Carácter no autorizado en el campo %s
+ErrorRequestTooLarge=Error, solicitud demasiado grande o sesión caducada
 ErrorNotApproverForHoliday=Usted no es el aprobador del día libre %s
 ErrorAttributeIsUsedIntoProduct=Este atributo se utiliza en una o más variantes de producto
 ErrorAttributeValueIsUsedIntoProduct=Este valor de atributo se utiliza en una o más variantes de producto
-ErrorPaymentInBothCurrency=Error, all amounts must be entered in the same column
-ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=You try to pay invoices in the currency %s from an account with the currency %s
-ErrorInvoiceLoadThirdParty=Can't load third-party object for invoice "%s"
-ErrorInvoiceLoadThirdPartyKey=Third-party key "%s" no set for invoice "%s"
-ErrorDeleteLineNotAllowedByObjectStatus=Delete line is not allowed by actual object status
-ErrorAjaxRequestFailed=Request failed
+ErrorPaymentInBothCurrency=Error, todos los montos deben ingresarse en la misma columna
+ErrorYouTryToPayInvoicesInACurrencyFromBankWithAnotherCurrency=Intenta pagar facturas en la moneda %s desde una cuenta con la moneda %s
+ErrorInvoiceLoadThirdParty=No se puede cargar el objeto de terceros para la factura "%s"
+ErrorInvoiceLoadThirdPartyKey=Clave de terceros "%s" no configurada para la factura "%s"
+ErrorDeleteLineNotAllowedByObjectStatus=Eliminar línea no está permitido por el estado actual del objeto
+ErrorAjaxRequestFailed=Solicitud fallida
+ErrorThirpdartyOrMemberidIsMandatory=Tercero o Miembro de la sociedad es obligatorio
+ErrorFailedToWriteInTempDirectory=Error al escribir en el directorio temporal
+ErrorQuantityIsLimitedTo=La cantidad está limitada a %s
+ErrorFailedToLoadThirdParty=No se pudo encontrar/cargar un tercero desde id=%s, email=%s, name=%s
+ErrorThisPaymentModeIsNotSepa=Este modo de pago no es una cuenta bancaria
+ErrorStripeCustomerNotFoundCreateFirst=El cliente de Stripe no está configurado para este tercero (o configurado en un valor eliminado en el lado de Stripe). Créelo (o vuelva a adjuntarlo) primero.
+ErrorCharPlusNotSupportedByImapForSearch=La búsqueda IMAP no puede buscar en el remitente o el destinatario una cadena que contenga el carácter +
+ErrorTableNotFound=Tabla <b> %s </b> no encontrada
+ErrorValueForTooLow=El valor para <b> %s </b> es demasiado bajo
+ErrorValueCantBeNull=El valor para <b> %s </b> no puede ser nulo
+ErrorDateOfMovementLowerThanDateOfFileTransmission=La fecha de la transacción bancaria no puede ser anterior a la fecha de transmisión del archivo
+ErrorTooMuchFileInForm=Demasiados archivos en el formulario, el número máximo es %s archivo(s)
 
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=El parámetro PHP upload_max_filesize (%s) es más alto que el parámetro PHP post_max_size (%s). Esta no es una configuración consistente.
 WarningPasswordSetWithNoAccount=Se fijó una contraseña para este miembro. Sin embargo, no se ha creado ninguna cuenta de usuario. Así que esta contraseña no se puede utilizar para acceder a Dolibarr. Puede ser utilizada por un módulo/interfaz externo, pero si no necesitar definir accesos de un miembro, puede desactivar la opción "Administrar un inicio de sesión para cada miembro" en la configuración del módulo miembros. Si necesita administrar un inicio de sesión, pero no necesita ninguna contraseña, puede dejar este campo vacío para evitar esta advertencia. Nota: También puede usarse el correo electrónico como inicio de sesión si el miembro está vinculada a un usuario.
-WarningMandatorySetupNotComplete=Haga clic aquí para configurar los parámetros obligatorios
+WarningMandatorySetupNotComplete=Haga clic aquí para configurar los parámetros principales
 WarningEnableYourModulesApplications=Haga clic aquí para activar sus módulos y aplicaciones
 WarningSafeModeOnCheckExecDir=Atención, está activada la opción PHP <b>safe_mode</b>, el comando deberá estar dentro de un directorio declarado dentro del parámetro php <b>safe_mode_exec_dir</b>.
 WarningBookmarkAlreadyExists=Ya existe un marcador con este título o esta URL.
@@ -300,7 +316,7 @@ WarningConfFileMustBeReadOnly=Atención, su archivo (<b>htdocs/conf/conf.php</b>
 WarningsOnXLines=Alertas en <b>%s</b> líneas fuente
 WarningNoDocumentModelActivated=No hay ningún modelo para la generación del documento activado. Se tomará un modelo por defecto hasta que se configure el módulo.
 WarningLockFileDoesNotExists=Atención: Una vez terminada la instalación, deben desactivarse las herramientas de instalación/actualización añadiendo el archivo <b>install.lock</b> en el directorio <b>%s</b>. La ausencia de este archivo representa un fallo grave de seguridad.
-WarningUntilDirRemoved=Las alertas de seguridad sólo son visibles a los administradores y permanecen activas hasta que el problema sea resuelto (o si la constante MAIN_REMOVE_INSTALL_WARNING es definida en Configuración->Varios)
+WarningUntilDirRemoved=Esta advertencia de seguridad permanecerá activa mientras la vulnerabilidad esté presente.
 WarningCloseAlways=Aviso, el cierre es realizado aunque la cantidad total difiera entre los elementos de origen y destino. Active esta funcionalidad con precaución.
 WarningUsingThisBoxSlowDown=Atención, el uso de este panel provoca serias ralentizaciones en las páginas  que muestran este panel.
 WarningClickToDialUserSetupNotComplete=La configuración de ClickToDial para su cuenta de usuario no está completa (vea la pestaña ClickToDial en su ficha de usuario)
@@ -321,12 +337,10 @@ WarningCreateSubAccounts=Advertencia, no puede crear directamente una subcuenta,
 WarningAvailableOnlyForHTTPSServers=Disponible solo si usa una conexión segura HTTPS.
 WarningModuleXDisabledSoYouMayMissEventHere=El módulo %s no se ha habilitado. Así que puede perderse muchos eventos aquí.
 WarningPaypalPaymentNotCompatibleWithStrict=El valor 'Estricto' hace que las funciones de pago en línea no funcionen correctamente. Utilice 'Lax' en su lugar.
+WarningThemeForcedTo=Advertencia, el tema ha sido forzado a <b> %s </b> por la constante oculta MAIN_FORCETHEME
+WarningPagesWillBeDeleted=Advertencia, esto también eliminará todas las páginas/contenedores existentes del sitio web. Debe exportar su sitio web antes, para tener una copia de seguridad para volver a importarlo más tarde.
+WarningAutoValNotPossibleWhenStockIsDecreasedOnInvoiceVal=La validación automática está deshabilitada cuando la opción para disminuir el stock está configurada en "Validación de facturas".
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
 # Validate
 RequireValidValue = Valor no válido
 RequireAtLeastXString = Requiere al menos %s carácter(es)
@@ -347,12 +361,3 @@ BadSetupOfField = Error de configuración incorrecta del campo
 BadSetupOfFieldClassNotFoundForValidation = Error de configuración incorrecta del campo: clase no encontrada para validación
 BadSetupOfFieldFileNotFound = Error de configuración incorrecta del campo: no se encontró el archivo para su inclusión
 BadSetupOfFieldFetchNotCallable = Error de configuración incorrecta del campo: la recuperación no se puede llamar en la clase
-<<<<<<< HEAD
-=======
-=======
-=======
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
-=======
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
->>>>>>> branch '15.0' of git@github.com:Dolibarr/dolibarr.git
