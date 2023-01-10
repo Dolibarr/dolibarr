@@ -15,7 +15,7 @@
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014-2020  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
@@ -6129,9 +6129,10 @@ class Form
 	 *  Load into the cache vat rates of a country
 	 *
 	 *  @param	string	$country_code		Country code with quotes ("'CA'", or "'CA,IN,...'")
+	 *  @param	int	    $type_vat			0=All type, 1=VAT rate sale, 2=VAT rate purchase
 	 *  @return	int							Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	public function load_cache_vatrates($country_code)
+	public function load_cache_vatrates($country_code, $type_vat = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -6143,10 +6144,13 @@ class Form
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$sql = "SELECT DISTINCT t.rowid, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly";
+		$sql = "SELECT DISTINCT t.rowid, t.type_vat, t.code, t.taux, t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.recuperableonly";
 		$sql .= " FROM ".$this->db->prefix()."c_tva as t, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE t.fk_pays = c.rowid";
 		$sql .= " AND t.active > 0";
+		if ($type_vat > 0) {
+			$sql .= " AND t.type_vat IN (0, ".((int) $type_vat).")";
+		}
 		$sql .= " AND c.code IN (".$this->db->sanitize($country_code, 1).")";
 		$sql .= " ORDER BY t.code ASC, t.taux ASC, t.recuperableonly ASC";
 
@@ -6156,10 +6160,11 @@ class Form
 			if ($num) {
 				for ($i = 0; $i < $num; $i++) {
 					$obj = $this->db->fetch_object($resql);
-					$this->cache_vatrates[$i]['rowid']	= $obj->rowid;
-					$this->cache_vatrates[$i]['code'] = $obj->code;
-					$this->cache_vatrates[$i]['txtva']	= $obj->taux;
-					$this->cache_vatrates[$i]['nprtva'] = $obj->recuperableonly;
+					$this->cache_vatrates[$i]['rowid']			= $obj->rowid;
+					$this->cache_vatrates[$i]['type_vat']		= $obj->type_vat;
+					$this->cache_vatrates[$i]['code']			= $obj->code;
+					$this->cache_vatrates[$i]['txtva']			= $obj->taux;
+					$this->cache_vatrates[$i]['nprtva']			= $obj->recuperableonly;
 					$this->cache_vatrates[$i]['localtax1']	    = $obj->localtax1;
 					$this->cache_vatrates[$i]['localtax1_type']	= $obj->localtax1_type;
 					$this->cache_vatrates[$i]['localtax2']	    = $obj->localtax2;
@@ -6214,9 +6219,10 @@ class Form
 	 *                  					      Sinon la TVA proposee par defaut=0. Fin de regle.
 	 *  @param	bool	     $options_only		  Return HTML options lines only (for ajax treatment)
 	 *  @param  int          $mode                0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
+	 *  @param  int          $type_vat            0=All type, 1=VAT rate sale, 2=VAT rate purchase
 	 *  @return	string
 	 */
-	public function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = '', $societe_acheteuse = '', $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0)
+	public function load_tva($htmlname = 'tauxtva', $selectedrate = '', $societe_vendeuse = '', $societe_acheteuse = '', $idprod = 0, $info_bits = 0, $type = '', $options_only = false, $mode = 0, $type_vat = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf, $mysoc;
@@ -6279,7 +6285,7 @@ class Form
 		}
 
 		// Now we get list
-		$num = $this->load_cache_vatrates($code_country); // If no vat defined, return -1 with message into this->error
+		$num = $this->load_cache_vatrates($code_country, $type_vat); // If no vat defined, return -1 with message into this->error
 
 		if ($num > 0) {
 			// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
