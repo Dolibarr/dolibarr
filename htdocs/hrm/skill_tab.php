@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/skillrank.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
@@ -59,7 +60,6 @@ $skill = new SkillRank($db);
 // Initialize technical objects
 if (in_array($objecttype, $TAuthorizedObjects)) {
 	if ($objecttype == 'job') {
-		require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 		$object = new Job($db);
 	} elseif ($objecttype == "user") {
 		$object = new User($db);
@@ -74,8 +74,8 @@ $hookmanager->initHooks(array('skilltab', 'globalcard')); // Note that conf->hoo
 include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
 // Permissions
-$permissiontoread = $user->rights->hrm->all->read;
-$permissiontoadd  = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoread = $user->hasRight('hrm', 'all', 'read');
+$permissiontoadd  = $user->hasRight('hrm', 'all', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) accessforbidden();
@@ -215,14 +215,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' . $listLink . '?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	if ($objecttype == 'job') {
+		$linkback = '<a href="' . dol_buildpath('/hrm/job_list.php', 1) . '?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
-	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
-	$morehtmlref .= '</a>';
+		$morehtmlref = '<div class="refid">';
+		$morehtmlref.= $object->label;
+		$morehtmlref .= '</div>';
 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'rowid', $morehtmlref, '&objecttype='.$objecttype);
+		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'rowid', $morehtmlref);
+	} else {
+		$linkback = '<a href="' . $listLink . '?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
+		$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+		$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+		$morehtmlref .= '</a>';
+
+		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'rowid', $morehtmlref, '&objecttype='.$objecttype);
+	}
 
 	// Get all available skills
 	$static_skill = new Skill($db);
@@ -250,59 +259,59 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="fichehalfleft">';
 
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent tableforfield">';
+	print '<table class="border centpercent tableforfield">'."\n";
 
-	// Login
-	print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
-	if (!empty($object->ldap_sid) && $object->statut == 0) {
-		print '<td class="error">';
-		print $langs->trans("LoginAccountDisableInDolibarr");
-		print '</td>';
+	if ($objecttype == 'job') {
+		// Common attributes
+		//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
+		//unset($object->fields['fk_project']);				// Hide field already shown in banner
+		//unset($object->fields['fk_soc']);					// Hide field already shown in banner
+		$object->fields['label']['visible']=0; // Already in banner
+		include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
+
+		// Other attributes. Fields from hook formObjectOptions and Extrafields.
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 	} else {
-		print '<td>';
-		$addadmin = '';
-		if (property_exists($object, 'admin')) {
-			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
-			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+		// Login
+		print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
+		if (!empty($object->ldap_sid) && $object->statut == 0) {
+			print '<td class="error">';
+			print $langs->trans("LoginAccountDisableInDolibarr");
+			print '</td>';
+		} else {
+			print '<td>';
+			$addadmin = '';
+			if (property_exists($object, 'admin')) {
+				if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
+					$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+				} elseif (!empty($object->admin)) {
+					$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+				}
 			}
+			print showValueWithClipboardCPButton(!empty($object->login) ? $object->login : '').$addadmin;
+			print '</td>';
 		}
-		print showValueWithClipboardCPButton($object->login).$addadmin;
+		print '</tr>'."\n";
+
+		$object->fields['label']['visible']=0; // Already in banner
+		$object->fields['firstname']['visible']=0; // Already in banner
+		$object->fields['lastname']['visible']=0; // Already in banner
+		//include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
+
+		// Ref employee
+		print '<tr><td class="titlefield">'.$langs->trans("RefEmployee").'</td>';
+		print '<td class="error">';
+		print showValueWithClipboardCPButton(!empty($object->ref_employee) ? $object->ref_employee : '');
 		print '</td>';
+		print '</tr>'."\n";
+
+		// National Registration Number
+		print '<tr><td class="titlefield">'.$langs->trans("NationalRegistrationNumber").'</td>';
+		print '<td class="error">';
+		print showValueWithClipboardCPButton(!empty($object->national_registration_number) ? $object->national_registration_number : '');
+		print '</td>';
+		print '</tr>'."\n";
 	}
-	print '</tr>'."\n";
-
-	$object->fields['label']['visible']=0; // Already in banner
-	$object->fields['firstname']['visible']=0; // Already in banner
-	$object->fields['lastname']['visible']=0; // Already in banner
-	//include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
-
-	// Ref employee
-	print '<tr><td class="titlefield">'.$langs->trans("RefEmployee").'</td>';
-	print '<td class="error">';
-	print showValueWithClipboardCPButton($object->ref_employee);
-	print '</td>';
-	print '</tr>'."\n";
-
-	// National Registration Number
-	print '<tr><td class="titlefield">'.$langs->trans("NationalRegistrationNumber").'</td>';
-	print '<td class="error">';
-	print showValueWithClipboardCPButton($object->national_registration_number);
-	print '</td>';
-	print '</tr>'."\n";
-
-	/*print '<tr><td class="titlefield">'.$langs->trans("NbOfActiveNotifications").'</td>';   // Notification for this thirdparty
-	 print '<td colspan="3">';
-	 $nbofrecipientemails=0;
-	 $notify=new Notify($db);
-	 $tmparray = $notify->getNotificationsArray('', 0, null, $object->id, array('user'));
-	 foreach($tmparray as $tmpkey => $tmpval)
-	 {
-	 $nbofrecipientemails++;
-	 }
-	 print $nbofrecipientemails;
-	 print '</td></tr>';*/
 
 	print '</table>';
 
@@ -323,7 +332,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 		print '<tr><td style="width:90%">' . $langs->trans('AddSkill') . '</td><td style="width:10%"></td></tr>';
 		print '<tr>';
-		print '<td>' . $form->multiselectarray('fk_skill', array_diff_key($TAllSkillsFormatted, $TAlreadyUsedSkill), array(), 0, 0, '', 0, '100%') . '</td>';
+		print '<td>';
+		print img_picto('', 'shapes', 'class="pictofixedwidth"');
+		print $form->multiselectarray('fk_skill', array_diff_key($TAllSkillsFormatted, $TAlreadyUsedSkill), array(), 0, 0, 'widthcentpercentminusx') . '</td>';
 		print '<td><input class="button reposition" type="submit" value="' . $langs->trans('Add') . '"></td>';
 		print '</tr>';
 		print '</table>';

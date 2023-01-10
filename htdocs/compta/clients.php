@@ -133,7 +133,7 @@ if ($resql) {
 
 	$langs->load('commercial');
 
-	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
+	print_barre_liste($langs->trans("Customers"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 

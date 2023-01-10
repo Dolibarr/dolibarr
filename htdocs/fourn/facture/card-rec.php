@@ -107,8 +107,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $permissionnote = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer;; // Used by the include of actions_dellink.inc.php
-$permissiontoedit = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer;; // Used by the include of actions_lineupdonw.inc.php
+$permissiondellink = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer; // Used by the include of actions_dellink.inc.php
+$permissiontoedit = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer; // Used by the include of actions_lineupdonw.inc.php
 
 $usercanread = $user->rights->fournisseur->facture->lire || $user->rights->supplier_invoice->lire;
 $usercancreate = $user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer;
@@ -1621,10 +1621,8 @@ if ($action == 'create') {
 			}
 		}
 
-		//if ($object->statut == Facture::STATUS_DRAFT && ($user->rights->fournisseur->facture->supprimer || $user->rights->supplier_invoice->supprimer))
-		if (($user->rights->fournisseur->facture->supprimer || $user->rights->supplier_invoice->supprimer)) {
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?action=ask_deleteinvoice&id=' . $object->id . '&token=' . newToken() . '">' . $langs->trans('Delete') . '</a></div>';
-		}
+		// Delete
+		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=ask_deleteinvoice&token='.newToken(), 'delete', ($user->rights->fournisseur->facture->supprimer || $user->rights->supplier_invoice->supprimer));
 
 		print '</div>';
 

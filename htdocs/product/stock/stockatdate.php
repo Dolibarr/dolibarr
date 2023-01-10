@@ -243,7 +243,7 @@ $num = 0;
 
 $title = $langs->trans('StockAtDate');
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price,';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price, p.pmp,';
 $sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 $sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock, ';
 if ($fk_warehouse > 0) {
@@ -565,12 +565,12 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 			// PMP value
 			print '<td class="right">';
-			if (price2num($objp->estimatedvalue, 'MT')) {
-				print '<span class="amount">'.price(price2num($objp->estimatedvalue, 'MT'), 1).'</span>';
+			if (price2num($stock * $objp->pmp, 'MT')) {
+				print '<span class="amount">'.price(price2num($stock * $objp->pmp, 'MT'), 1).'</span>';
 			} else {
 				print '';
 			}
-			$totalbuyingprice += $objp->estimatedvalue;
+			$totalbuyingprice += $stock * $objp->pmp;
 			print '</td>';
 
 			// Selling value

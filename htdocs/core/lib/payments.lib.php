@@ -146,24 +146,31 @@ function payment_supplier_prepare_head(Paiement $object)
  */
 function getValidOnlinePaymentMethods($paymentmethod = '')
 {
-	global $conf, $langs;
+	global $conf, $langs, $hookmanager, $action;
 
 	$validpaymentmethod = array();
 
-	if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled)) {
+	if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypal')) {
 		$langs->load("paypal");
 		$validpaymentmethod['paypal'] = 'valid';
 	}
-	if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled)) {
+	if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
 		$langs->load("paybox");
 		$validpaymentmethod['paybox'] = 'valid';
 	}
-	if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled)) {
+	if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 		$langs->load("stripe");
 		$validpaymentmethod['stripe'] = 'valid';
 	}
-	// TODO Add trigger
 
+	// This hook is used to complete the $validpaymentmethod array so an external payment modules
+	// can add its own key (ie 'payzen' for Payzen, ...)
+	$parameters = [
+		'paymentmethod' => $paymentmethod,
+		'validpaymentmethod' => &$validpaymentmethod
+	];
+	$tmpobject = new stdClass();
+	$hookmanager->executeHooks('doValidatePayment', $parameters, $tmpobject, $action);
 
 	return $validpaymentmethod;
 }

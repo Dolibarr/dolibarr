@@ -217,7 +217,6 @@ class ConferenceOrBooth extends ActionComm
 		$this->socid = $this->fk_soc;
 		$this->datef = $this->datep2;
 		$this->note_private = $this->note;
-		$this->fk_user_author = $this->fk_user_author;
 	}
 
 	/**
@@ -716,8 +715,8 @@ class ConferenceOrBooth extends ActionComm
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_conferenceorbooth = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
+			$this->error = $objectline->error;
+			$this->errors = $objectline->errors;
 			return $result;
 		} else {
 			$this->lines = $result;

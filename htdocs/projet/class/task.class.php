@@ -811,9 +811,10 @@ class Task extends CommonObjectLine
 	 * @param   int     $includebilltime    Calculate also the time to bill and billed
 	 * @param   array   $search_array_options Array of search
 	 * @param   int     $loadextras         Fetch all Extrafields on each task
-	 * @return 	array						Array of tasks
+	 * @param	int		$loadRoleMode		1= will test Roles on task;  0 used in delete project action
+	 * @return 	array|string				Array of tasks
 	 */
-	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0)
+	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array(), $loadextras = 0, $loadRoleMode = 1)
 	{
 		global $conf, $hookmanager;
 
@@ -968,14 +969,16 @@ class Task extends CommonObjectLine
 
 				$obj = $this->db->fetch_object($resql);
 
-				if ((!$obj->public) && (is_object($userp))) {	// If not public project and we ask a filter on project owned by a user
-					if (!$this->getUserRolesForProjectsOrTasks($userp, 0, $obj->projectid, 0)) {
-						$error++;
+				if ($loadRoleMode) {
+					if ((!$obj->public) && (is_object($userp))) {    // If not public project and we ask a filter on project owned by a user
+						if (!$this->getUserRolesForProjectsOrTasks($userp, null, $obj->projectid, 0)) {
+							$error++;
+						}
 					}
-				}
-				if (is_object($usert)) {							// If we ask a filter on a user affected to a task
-					if (!$this->getUserRolesForProjectsOrTasks(0, $usert, $obj->projectid, $obj->taskid)) {
-						$error++;
+					if (is_object($usert)) {                            // If we ask a filter on a user affected to a task
+						if (!$this->getUserRolesForProjectsOrTasks(null, $usert, $obj->projectid, $obj->taskid)) {
+							$error++;
+						}
 					}
 				}
 
@@ -1022,7 +1025,8 @@ class Task extends CommonObjectLine
 					if (!empty($extrafields->attributes['projet']['label'])) {
 						foreach ($extrafields->attributes['projet']['label'] as $key => $val) {
 							if ($extrafields->attributes['projet']['type'][$key] != 'separate') {
-								$tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
+								$tmpvar = 'options_'.$key;
+								$tasks[$i]->{'options_'.$key} = $obj->$tmpvar;
 							}
 						}
 					}
@@ -1030,7 +1034,8 @@ class Task extends CommonObjectLine
 					if (!empty($extrafields->attributes['projet_task']['label'])) {
 						foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
 							if ($extrafields->attributes['projet_task']['type'][$key] != 'separate') {
-								$tasks[$i]->{'options_'.$key} = $obj->{'options_'.$key};
+								$tmpvar = 'options_'.$key;
+								$tasks[$i]->{'options_'.$key} = $obj->$tmpvar;
 							}
 						}
 					}
@@ -1053,12 +1058,12 @@ class Task extends CommonObjectLine
 	/**
 	 * Return list of roles for a user for each projects or each tasks (or a particular project or a particular task).
 	 *
-	 * @param	User	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
-	 * @param	User	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
-	 * @param 	int		$projectid		      Project id list separated with , to filter on project
-	 * @param 	int		$taskid			      Task id to filter on a task
-	 * @param	integer	$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
-	 * @return 	array					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
+	 * @param	User|null	$userp			      Return roles on project for this internal user. If set, usert and taskid must not be defined.
+	 * @param	User|null	$usert			      Return roles on task for this internal user. If set userp must NOT be defined. -1 means no filter.
+	 * @param 	int			$projectid		      Project id list separated with , to filter on project
+	 * @param 	int			$taskid			      Task id to filter on a task
+	 * @param	integer		$filteronprojstatus	  Filter on project status if userp is set. Not used if userp not defined.
+	 * @return 	array|int					      Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
 	 */
 	public function getUserRolesForProjectsOrTasks($userp, $usert, $projectid = '', $taskid = 0, $filteronprojstatus = -1)
 	{
@@ -1393,12 +1398,10 @@ class Task extends CommonObjectLine
 	 *
 	 *  @param  User|int	$userobj			Filter on user. null or 0=No filter
 	 *  @param	string		$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 *  @return array		 					Array of info for task array('min_date', 'max_date', 'total_duration', 'total_amount', 'nblines', 'nblinesnull')
+	 *  @return array|int	 					Array of info for task array('min_date', 'max_date', 'total_duration', 'total_amount', 'nblines', 'nblinesnull')
 	 */
 	public function getSummaryOfTimeSpent($userobj = null, $morewherefilter = '')
 	{
-		global $langs;
-
 		if (is_object($userobj)) {
 			$userid = $userobj->id;
 		} else {
@@ -1562,14 +1565,12 @@ class Task extends CommonObjectLine
 	/**
 	 *  Load all records of time spent
 	 *
-	 *  @param	User	$userobj			User object
-	 *  @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
-	 *  @return int							<0 if KO, array of time spent if OK
+	 *  @param	User		$userobj			User object
+	 *  @param	string		$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
+	 *  @return array|int						<0 if KO, array of time spent if OK
 	 */
 	public function fetchAllTimeSpent(User $userobj, $morewherefilter = '')
 	{
-		global $langs;
-
 		$arrayres = array();
 
 		$sql = "SELECT";
@@ -2200,7 +2201,7 @@ class Task extends CommonObjectLine
 		$sql .= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
 		$sql .= " t.dateo as date_start, t.datee as datee";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
+		//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 		//if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 		$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 		$sql .= " WHERE p.entity IN (".getEntity('project', 0).')';
@@ -2223,7 +2224,7 @@ class Task extends CommonObjectLine
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->project->task->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("OpenedTasks");
-			if ($user->rights->projet->all->lire) {
+			if ($user->hasRight("projet", "all", "lire")) {
 				$response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
 			} else {
 				$response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';

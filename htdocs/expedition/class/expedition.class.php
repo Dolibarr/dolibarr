@@ -84,6 +84,13 @@ class Expedition extends CommonObject
 	 */
 	public $picto = 'dolly';
 
+
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array();
+
+
 	public $socid;
 
 	/**
@@ -733,7 +740,8 @@ class Expedition extends CommonObject
 					} else {
 						$qty = $obj->edbqty;
 					}
-					if ($qty <= 0) {
+
+					if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('SHIPMENT_ALLOW_NEGATIVE_QTY'))) {
 						continue;
 					}
 					dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
@@ -1903,23 +1911,6 @@ class Expedition extends CommonObject
 
 		dol_syslog(get_class($this)."::initAsSpecimen");
 
-		// Load array of products prodids
-		$num_prods = 0;
-		$prodids = array();
-		$sql = "SELECT rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product";
-		$sql .= " WHERE entity IN (".getEntity('product').")";
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num_prods = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num_prods) {
-				$i++;
-				$row = $this->db->fetch_row($resql);
-				$prodids[$i] = $row[0];
-			}
-		}
-
 		$order = new Commande($this->db);
 		$order->initAsSpecimen();
 
@@ -1932,7 +1923,7 @@ class Expedition extends CommonObject
 		$this->date                 = $now;
 		$this->date_creation        = $now;
 		$this->date_valid           = $now;
-		$this->date_delivery        = $now;
+		$this->date_delivery        = $now + 24 * 3600;
 		$this->date_expedition      = $now + 24 * 3600;
 
 		$this->entrepot_id          = 0;
@@ -2141,8 +2132,9 @@ class Expedition extends CommonObject
 					}
 				}
 				if ($shipments_match_order) {
-					dol_syslog("Qty for the ".count($order->lines)." lines of order have same value for shipments with status Expedition::STATUS_CLOSED=".self::STATUS_CLOSED.', so we close order');
-					$order->cloture($user);
+					dol_syslog("Qty for the ".count($order->lines)." lines of the origin order is same than qty for lines in the shipment we close (shipments_match_order is true), with new status Expedition::STATUS_CLOSED=".self::STATUS_CLOSED.', so we close order');
+					// We close the order
+					$order->cloture($user);		// Note this may also create an invoice if module workflow ask it
 				}
 			}
 
@@ -2240,21 +2232,6 @@ class Expedition extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Classify the shipping as invoiced (used when WORKFLOW_BILL_ON_SHIPMENT is on)
-	 *
-	 *	@deprecated
-	 *  @see setBilled()
-	 *	@return     int     <0 if ko, >0 if ok
-	 */
-	public function set_billed()
-	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::set_billed is deprecated, use setBilled instead", LOG_NOTICE);
-		return $this->setBilled();
 	}
 
 	/**
@@ -2456,18 +2433,18 @@ class Expedition extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'expedition'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 }
 

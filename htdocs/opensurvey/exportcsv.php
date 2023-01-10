@@ -63,14 +63,14 @@ $now = dol_now();
 
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 $toutsujet = explode(",", $object->sujet);
-
+$somme = array();
 // affichage des sujets du sondage
-$input .= $langs->trans("Name").";";
+$input = $langs->trans("Name").";";
 for ($i = 0; $toutsujet[$i]; $i++) {
 	if ($object->format == "D") {
-		$input .= ''.dol_print_date($toutsujet[$i], 'dayhour').';';
+		$input .= dol_print_date($toutsujet[$i], 'dayhour').';';
 	} else {
-		$input .= ''.$toutsujet[$i].';';
+		$input .= $toutsujet[$i].';';
 	}
 }
 
@@ -80,7 +80,7 @@ if (strpos($object->sujet, '@') !== false) {
 	$input .= ";";
 	for ($i = 0; $toutsujet[$i]; $i++) {
 		$heures = explode("@", $toutsujet[$i]);
-		$input .= ''.$heures[1].';';
+		$input .= $heures[1].';';
 	}
 
 	$input .= "\r\n";
@@ -105,15 +105,18 @@ if ($resql) {
 		//affichage des resultats
 		$ensemblereponses = $obj->reponses;
 		for ($k = 0; $k < $nbcolonnes; $k++) {
+			if (empty($somme[$k])) {
+				$somme[$k] = 0;
+			}
 			$car = substr($ensemblereponses, $k, 1);
 			if ($car == "1") {
 				$input .= 'OK;';
 				$somme[$k]++;
 			} elseif ($car == "2") {
-				$input .= 'KO;';
+				$input .= ';';
 				$somme[$k]++;
 			} else {
-				$input .= ';';
+				$input .= 'KO;';
 			}
 		}
 

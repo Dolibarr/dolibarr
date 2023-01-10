@@ -309,7 +309,7 @@ llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $m
 // Add sections to manage
 $rowspan = 0;
 $sectionauto = array();
-if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
+if (empty($conf->global->ECM_AUTO_TREE_HIDEN)) {
 	if (isModEnabled("product") || isModEnabled("service")) {
 		$langs->load("products");
 		$rowspan++; $sectionauto[] = array('position'=>10, 'level'=>1, 'module'=>'product', 'test'=>(isModEnabled("product") || isModEnabled("service")), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts"));
@@ -387,7 +387,7 @@ if (!empty($conf->global->ECM_AUTO_TREE_ENABLED)) {
 	}
 }
 
-$head = ecm_prepare_dasboard_head('');
+$head = ecm_prepare_dasboard_head(null);
 print dol_get_fiche_head($head, 'index_auto', '', -1, '');
 
 
@@ -443,6 +443,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 	// Auto section
 	if (count($sectionauto)) {
 		$htmltooltip = $langs->trans("ECMAreaDesc2");
+		$htmltooltip .= '<br>'.$langs->trans("ECMAreaDesc2b");
 
 		$sectionauto = dol_sort_array($sectionauto, 'label', 'ASC', true, false);
 
@@ -476,6 +477,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 			$htmltooltip .= '<b>'.$langs->trans("Description").'</b>: '.$val['desc'];
 			print $form->textwithpicto('', $htmltooltip, 1, 'info');
 			print '</div>';
+
 			print '</li>';
 
 			$nbofentries++;

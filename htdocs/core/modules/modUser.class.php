@@ -68,7 +68,7 @@ class modUser extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("main", "users", "companies", "members", "salaries", "hrm");
 		$this->always_enabled = true; // Can't be disabled
 
@@ -337,7 +337,7 @@ class modUser extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array(
 			'u.lastname'=>"Doe", 'u.firstname'=>'John', 'u.login'=>'jdoe', 'u.employee'=>'0 or 1', 'u.job'=>'CTO', 'u.gender'=>'man or woman',
 			'u.pass_crypted'=>'Encrypted password',
-			'u.fk_soc'=>'0 (internal user) or company name (external user)', 'u.datec'=>dol_print_date(dol_now(), '%Y-%m-%d'), 'u.address'=>"61 jump street",
+			'u.fk_soc'=>'0 (internal user) or company name (external user)', 'u.address'=>"61 jump street",
 			'u.zip'=>"123456", 'u.town'=>"Big town", 'u.fk_country'=>'US, FR, DE...', 'u.office_phone'=>"0101010101", 'u.office_fax'=>"0101010102",
 			'u.email'=>"test@mycompany.com", 'u.salary'=>"10000", 'u.note_public'=>"This is an example of public note for record", 'u.note_private'=>"This is an example of private note for record", 'u.datec'=>"2015-01-01 or 2015-01-01 12:30:00",
 			'u.statut'=>"0 (closed) or 1 (active)",

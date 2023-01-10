@@ -80,7 +80,7 @@ class BankCateg // extends CommonObject
 		$sql .= "label";
 		$sql .= ", entity";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'")."";
+		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'");
 		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
 
@@ -169,7 +169,7 @@ class BankCateg // extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ SET";
-		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null")."";
+		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 		$sql .= " AND entity = ".$conf->entity;
 

@@ -296,7 +296,7 @@ class Tasks extends DolibarrApi
 			$usert = new User($this->db);
 			$usert->fetch($userid);
 		}
-		$this->task->roles = $this->task->getUserRolesForProjectsOrTasks(0, $usert, 0, $id);
+		$this->task->roles = $this->task->getUserRolesForProjectsOrTasks(null, $usert, 0, $id);
 		$result = array();
 		foreach ($this->task->roles as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));
@@ -544,7 +544,7 @@ class Tasks extends DolibarrApi
 		$this->task->timespent_datehour = $newdate;
 		$this->task->timespent_withhour = 1;
 		$this->task->timespent_duration = $duration;
-		$this->task->timespent_fk_user  = $user_id;
+		$this->task->timespent_fk_user  = $uid;
 		$this->task->timespent_note     = $note;
 
 		$result = $this->task->addTimeSpent(DolibarrApiAccess::$user, 0);

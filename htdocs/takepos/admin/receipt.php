@@ -93,75 +93,6 @@ print '<form action="'.$_SERVER["PHP_SELF"].'?terminal='.(empty($terminal) ? 1 :
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
-print load_fiche_titre($langs->trans("PrintMethod"), '', '');
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td><td>'.$langs->trans("Description").'</td><td class="right">'.$langs->trans("Status").'</td>';
-print "</tr>\n";
-
-// Browser method
-print '<tr class="oddeven"><td>';
-print $langs->trans('Browser');
-print '<td>';
-print $langs->trans('BrowserMethodDescription');
-print '</td><td class="right">';
-if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "browser") {
-	print img_picto($langs->trans("Activated"), 'switch_on');
-} else {
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=browser">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-}
-print "</td></tr>\n";
-
-// Receipt printer module
-print '<tr class="oddeven"><td>';
-print $langs->trans('DolibarrReceiptPrinter');
-print '<td>';
-print $langs->trans('ReceiptPrinterMethodDescription');
-if (isModEnabled('receiptprinter')) {
-	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
-		print '<br>';
-		print img_picto('', 'printer', 'class="paddingright"').'<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php">'.$langs->trans("Setup").'</a>';
-	}
-}
-print '</td><td class="right">';
-if (isModEnabled('receiptprinter')) {
-	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
-		print img_picto($langs->trans("Activated"), 'switch_on');
-	} else {
-		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-	}
-} else {
-	print '<span class="opacitymedium">';
-	print $langs->trans("ModuleReceiptPrinterMustBeEnabled");
-	print '</span>';
-}
-print "</td></tr>\n";
-
-// TakePOS Connector
-print '<tr class="oddeven"><td>';
-print "TakePOS Connector";
-print '<td>';
-print $langs->trans('TakeposConnectorMethodDescription');
-
-if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-	print '<br>';
-	print $langs->trans("URL")." / ".$langs->trans("IPAddress").' (<a href="http://en.takepos.com/connector" target="_blank" rel="noopener noreferrer external">'.$langs->trans("TakeposConnectorNecesary").'</a>)';
-	print ' <input type="text" class="minwidth200" id="TAKEPOS_PRINT_SERVER" name="TAKEPOS_PRINT_SERVER" value="'.getDolGlobalString('TAKEPOS_PRINT_SERVER').'">';
-}
-
-print '</td><td class="right">';
-if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-	print img_picto($langs->trans("Activated"), 'switch_on');
-} else {
-	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&token='.newToken().'&value=takeposconnector">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-}
-print "</td></tr>\n";
-print '</table>';
-print '</div>';
-
-
 print load_fiche_titre($langs->trans("Receipt"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
@@ -284,6 +215,13 @@ print '<br>';
 print $form->buttonsSaveCancel("Save", '');
 
 print "</form>\n";
+
+print load_fiche_titre($langs->trans("Preview"), '', '');
+print '<div style="width: 50%; float:center;background-color:#606060">';
+print '<center>';
+print '<iframe id="iframe" allowtransparency="true" style="background: #FFFFFF;" src="../receipt.php" width="80%" height="600"></iframe>';
+print '</center>';
+print '</div>';
 
 print '<br>';
 

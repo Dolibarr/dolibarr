@@ -587,7 +587,8 @@ if ($id) {
 						foreach ($fieldlist as $field => $value) {
 							$showfield = 1;
 							$class = "left";
-							$valuetoshow = $obj->{$fieldlist[$field]};
+							$tmpvar = $fieldlist[$field];
+							$valuetoshow = $obj->$tmpvar;
 							if ($valuetoshow == 'all') {
 								$valuetoshow = $langs->trans('All');
 							} elseif ($fieldlist[$field] == 'nature' && $tabname[$id] == MAIN_DB_PREFIX.'accounting_journal') {
@@ -609,12 +610,6 @@ if ($id) {
 					$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
 					if (isset($obj->code) && $id != 10) {
 						if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
-							$iserasable = 0;
-							$canbedisabled = 0;
-						} elseif ($obj->code == 'RECEP') {
-							$iserasable = 0;
-							$canbedisabled = 0;
-						} elseif ($obj->code == 'EF0') {
 							$iserasable = 0;
 							$canbedisabled = 0;
 						}

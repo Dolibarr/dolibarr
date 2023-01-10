@@ -575,7 +575,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	}
 
 	// Date payment
-	print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+	print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'dayhour', 'tzuserrel')."</td>\n";
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}

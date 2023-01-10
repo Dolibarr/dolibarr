@@ -193,11 +193,19 @@ class Ldap
 	{
 		// phpcs:enable
 		global $conf;
+		global $dolibarr_main_auth_ldap_debug;
 
 		$connected = 0;
 		$this->bind = 0;
 		$this->error = 0;
 		$this->connectedServer = '';
+
+		$ldapdebug = ((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false") ? false : true);
+
+		if ($ldapdebug) {
+			dol_syslog(get_class($this)."::connect_bind");
+			print "DEBUG: connect_bind<br>\n";
+		}
 
 		// Check parameters
 		if (count($this->server) == 0 || empty($this->server[0])) {
@@ -223,18 +231,28 @@ class Ldap
 				}
 
 				if ($this->serverPing($host, $this->serverPort) === true) {
+					if ($ldapdebug) {
+						dol_syslog(get_class($this)."::connect_bind serverPing true, we try ldap_connect to ".$host);
+					}
 					$this->connection = ldap_connect($host, $this->serverPort);
 				} else {
 					if (preg_match('/^ldaps/i', $host)) {
 						// With host = ldaps://server, the serverPing to ssl://server sometimes fails, even if the ldap_connect succeed, so
-						// we test this case and continue in suche a case even if serverPing fails.
+						// we test this case and continue in such a case even if serverPing fails.
+						if ($ldapdebug) {
+							dol_syslog(get_class($this)."::connect_bind serverPing false, we try ldap_connect to ".$host);
+						}
 						$this->connection = ldap_connect($host, $this->serverPort);
 					} else {
 						continue;
 					}
 				}
 
-				if (is_resource($this->connection) ||  is_object($this->connection)) {
+				if (is_resource($this->connection) || is_object($this->connection)) {
+					if ($ldapdebug) {
+						dol_syslog(get_class($this)."::connect_bind this->connection is ok", LOG_DEBUG);
+					}
+
 					// Upgrade connexion to TLS, if requested by the configuration
 					if (!empty($conf->global->LDAP_SERVER_USE_TLS)) {
 						// For test/debug
@@ -964,7 +982,7 @@ class Ldap
 	 *
 	 * 	@param	string	$filterrecord		Record
 	 * 	@param	string	$attribute			Attributes
-	 * 	@return void
+	 * 	@return array|boolean
 	 */
 	public function getAttributeValues($filterrecord, $attribute)
 	{
@@ -1007,7 +1025,7 @@ class Ldap
 	 *	@param	array	$attributeArray 	Array of fields required. Note this array must also contains field $useridentifier (Ex: sn,userPassword)
 	 *	@param	int		$activefilter		'1' or 'user'=use field this->filter as filter instead of parameter $search, 'group'=use field this->filtergroup as filter, 'member'=use field this->filtermember as filter
 	 *	@param	array	$attributeAsArray 	Array of fields wanted as an array not a string
-	 *	@return	array						Array of [id_record][ldap_field]=value
+	 *	@return	array|int					Array of [id_record][ldap_field]=value
 	 */
 	public function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter = 0, $attributeAsArray = array())
 	{
@@ -1040,12 +1058,12 @@ class Ldap
 		if (is_array($attributeArray)) {
 			// Return list with required fields
 			$attributeArray = array_values($attributeArray); // This is to force to have index reordered from 0 (not make ldap_search fails)
-			dol_syslog(get_class($this)."::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter." attributeArray=(".join(',', $attributeArray).")");
+			dol_syslog(get_class($this)."::getRecords connection=".$this->connectedServer.":".$this->serverPort." userDn=".$userDn." filter=".$filter." attributeArray=(".join(',', $attributeArray).")");
 			//var_dump($attributeArray);
 			$this->result = @ldap_search($this->connection, $userDn, $filter, $attributeArray);
 		} else {
 			// Return list with fields selected by default
-			dol_syslog(get_class($this)."::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter);
+			dol_syslog(get_class($this)."::getRecords connection=".$this->connectedServer.":".$this->serverPort." userDn=".$userDn." filter=".$filter);
 			$this->result = @ldap_search($this->connection, $userDn, $filter);
 		}
 		if (!$this->result) {
@@ -1060,7 +1078,7 @@ class Ldap
 		//print_r($info);
 
 		for ($i = 0; $i < $info["count"]; $i++) {
-			$recordid = $this->convToOutputCharset($info[$i][$useridentifier][0], $this->ldapcharset);
+			$recordid = $this->convToOutputCharset($info[$i][strtolower($useridentifier)][0], $this->ldapcharset);
 			if ($recordid) {
 				//print "Found record with key $useridentifier=".$recordid."<br>\n";
 				$fulllist[$recordid][$useridentifier] = $recordid;
@@ -1221,10 +1239,10 @@ class Ldap
 	/**
 	 * 		Load all attribute of a LDAP user
 	 *
-	 * 		@param	User	$user		User to search for. Not used if a filter is provided.
-	 *      @param  string	$filter		Filter for search. Must start with &.
-	 *                       	       	Examples: &(objectClass=inetOrgPerson) &(objectClass=user)(objectCategory=person) &(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com)
-	 *		@return	int					>0 if OK, <0 if KO
+	 * 		@param	User|string	$user		Not used.
+	 *      @param  string		$filter		Filter for search. Must start with &.
+	 *                       		       	Examples: &(objectClass=inetOrgPerson) &(objectClass=user)(objectCategory=person) &(isMemberOf=cn=Sales,ou=Groups,dc=opencsi,dc=com)
+	 *		@return	int						>0 if OK, <0 if KO
 	 */
 	public function fetch($user, $filter)
 	{
@@ -1324,7 +1342,7 @@ class Ldap
 	 * 	UserAccountControl Flgs to more human understandable form...
 	 *
 	 *	@param	string		$uacf		UACF
-	 *	@return	void
+	 *	@return	array
 	 */
 	public function parseUACF($uacf)
 	{
@@ -1364,7 +1382,7 @@ class Ldap
 		}
 
 		//Return human friendly flags
-		return($retval);
+		return $retval;
 	}
 
 	/**
@@ -1396,7 +1414,7 @@ class Ldap
 			$retval = "UNKNOWN_TYPE_".$samtype;
 		}
 
-		return($retval);
+		return $retval;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

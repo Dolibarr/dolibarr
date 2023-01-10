@@ -12,7 +12,7 @@
  * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2019       Lenin Rivas           	<lenin.rivas@servcom-it.com>
  * Copyright (C) 2020       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021-2022	Anthony Berton       	<bertonanthony@gmail.com>
+ * Copyright (C) 2021-2022	Anthony Berton       	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,9 +61,9 @@ function pdf_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'pdf_admin');
 
-	if (isModEnabled("propal")) {
+	if (isModEnabled("propal") || isModEnabled('facture') || isModEnabled('reception')) {
 		$head[$h][0] = DOL_URL_ROOT.'/admin/pdf_other.php';
-		$head[$h][1] = $langs->trans("Other");
+		$head[$h][1] = $langs->trans("Others");
 		$head[$h][2] = 'other';
 		$h++;
 	}
@@ -400,9 +400,16 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 			}
 		}
 	} elseif ($thirdparty instanceof Contact) {
-		$socname = $thirdparty->socname;
-		if (($includealias || getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) && !empty($thirdparty->name_alias)) {
-			// TODO PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME not completely implemented
+		if ($thirdparty->socid > 0) {
+			$thirdparty->fetch_thirdparty();
+			$socname = $thirdparty->thirdparty->name;
+			if (($includealias || getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME')) && !empty($thirdparty->thirdparty->name_alias)) {
+				if (getDolGlobalInt('PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME') == 2) {
+					$socname = $thirdparty->thirdparty->name_alias." - ".$thirdparty->thirdparty->name;
+				} else {
+					$socname = $thirdparty->thirdparty->name." - ".$thirdparty->thirdparty->name_alias;
+				}
+			}
 		}
 	} else {
 		throw new InvalidArgumentException('Parameter 1 $thirdparty is not a Societe nor Contact');
@@ -1171,7 +1178,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 			$mycustomfooterheight = pdfGetHeightForHtmlContent($pdf, dol_htmlentitiesbr($mycustomfooter, 1, 'UTF-8', 0));
 
 			$marginwithfooter = $marge_basse + $freetextheight + $mycustomfooterheight;
-			$posy = $marginwithfooter + 0;
+			$posy = (float) $marginwithfooter;
 
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
@@ -1215,7 +1222,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		} else {
 			// Else default footer
 			$marginwithfooter = $marge_basse + $freetextheight + (!empty($line1) ? 3 : 0) + (!empty($line2) ? 3 : 0) + (!empty($line3) ? 3 : 0) + (!empty($line4) ? 3 : 0);
-			$posy = $marginwithfooter + 0;
+			$posy = (float) $marginwithfooter;
 
 			// Option for footer background color (without freetext zone)
 			if (getDolGlobalString('PDF_FOOTER_BACKGROUND_COLOR')) {
@@ -1281,9 +1288,9 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	}
 	// Show page nb only on iso languages (so default Helvetica font)
 	if (strtolower(pdf_getPDFFont($outputlangs)) == 'helvetica') {
-		$pdf->SetXY($dims['wk'] - $dims['rm'] - 15, -$posy);
-		//print 'xxx'.$pdf->PageNo().'-'.$pdf->getAliasNbPages().'-'.$pdf->getAliasNumPage();exit;
-		$pdf->MultiCell(15, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
+		$pdf->SetXY($dims['wk'] - $dims['rm'] - 18, -$posy);
+		//$pdf->MultiCell(18, 2, $pdf->getPageNumGroupAlias().' / '.$pdf->getPageGroupAlias(), 0, 'R', 0);
+		$pdf->MultiCell(18, 2, $pdf->PageNo().' / '.$pdf->getAliasNbPages(), 0, 'R', 0);
 	}
 
 	//  Show Draft Watermark
@@ -1567,7 +1574,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				$productCustomerPriceStatic = new Productcustomerprice($db);
 				$filter = array('fk_product' => $idprod, 'fk_soc' => $object->socid);
 
-				$nbCustomerPrices = $productCustomerPriceStatic->fetch_all('', '', 1, 0, $filter);
+				$nbCustomerPrices = $productCustomerPriceStatic->fetchAll('', '', 1, 0, $filter);
 
 				if ($nbCustomerPrices > 0) {
 					$productCustomerPrice = $productCustomerPriceStatic->lines[0];
@@ -1645,7 +1652,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	}
 
 	// Show information for lot
-	if ($dbatch) {
+	if (!empty($dbatch)) {
 		// $object is a shipment.
 		//var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have seral lines for one fk_origin_line)
 		//var_dump($object->lines[$i]->detail_batch);			// array from llx_expeditiondet_batch (each line with a lot is linked to llx_expeditiondet)
@@ -2385,10 +2392,10 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			$outputlangs->load('orders');
 
 			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
-				$object->note_public = dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefOrder").' : <br>');
+				$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
 				foreach ($objects as $elementobject) {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(!empty($elementobject->ref_client) ? ' ('.$elementobject->ref_client.')' : '').(!empty($elementobject->ref_supplier) ? ' ('.$elementobject->ref_supplier.')' : '').' ');
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs).'<br>');
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(empty($elementobject->ref_client) ?'' : ' ('.$elementobject->ref_client.')').(empty($elementobject->ref_supplier) ? '' : ' ('.$elementobject->ref_supplier.')').' ');
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs));
 				}
 			} elseif (count($objects) == 1) {
 				$elementobject = array_shift($objects);
@@ -2419,9 +2426,9 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			if (count($objects) > 1) {
 				$order = null;
 				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {
-					$object->note_public = dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' : <br>');
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' :');
 				} else {
-					$object->note_public = dol_concatdesc($object->note_public, '<br>'.$outputlangs->transnoentities("RefSending").' : <br>');
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefSending").' :');
 				}
 				// We concat this record info into fields xxx_value. title is overwrote.
 				foreach ($objects as $elementobject) {
@@ -2439,11 +2446,9 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 
 					if (! is_object($order)) {
 						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref));
-						$object->note_public = dol_concatdesc($object->note_public, '<br>');
 					} else {
 						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : ''));
 						$object->note_public = dol_concatdesc($object->note_public, ' / '.$outputlangs->transnoentities($elementobject->ref));
-						$object->note_public = dol_concatdesc($object->note_public, '<br>');
 					}
 				}
 			} elseif (count($objects) == 1) {

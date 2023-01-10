@@ -68,7 +68,7 @@ class modPropale extends DolibarrModules
 		$this->depends = array("modSociete"); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->config_page_url = array("propal.php");
 		$this->langfiles = array("propal", "bills", "companies", "deliveries", "products");
 
@@ -78,7 +78,7 @@ class modPropale extends DolibarrModules
 
 		$this->const[$r][0] = "PROPALE_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "azur";
+		$this->const[$r][2] = "cyan";
 		$this->const[$r][3] = 'Name of the proposal generation manager in PDF format';
 		$this->const[$r][4] = 0;
 		$r++;

@@ -110,10 +110,10 @@ class Position extends CommonObject
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_contrat' => array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'fk_contrat', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>0,),
 		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Employee', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'default'=>0),
-		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'Job', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1,),
+		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'JobPosition', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1,),
 		'date_start' => array('type'=>'date', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>51, 'notnull'=>1, 'visible'=>1,),
 		'date_end' => array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>52, 'notnull'=>0, 'visible'=>1,),
-		'abort_comment' => array('type'=>'varchar(255)', 'label'=>'AbandonmentComment', 'enabled'=>'1', 'position'=>502, 'notnull'=>0, 'visible'=>1,),
+		'abort_comment' => array('type'=>'varchar(255)', 'label'=>'AbandonmentComment', 'enabled'=>'getDolGlobalInt("HRM_JOB_POSITON_ENDING_COMMENT")', 'position'=>502, 'notnull'=>0, 'visible'=>1,),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>0,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
@@ -971,8 +971,8 @@ class Position extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql' => 'fk_position = ' . $this->id));
 
 		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
+			$this->error = $objectline->error;
+			$this->errors = $objectline->errors;
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -1036,6 +1036,8 @@ class Position extends CommonObject
 	}
 
 	/**
+	 * getForUser
+	 *
 	 * @param int $userid id of user we need to get position list
 	 * @return array|int of positions of user with for each of them the job fetched into that array
 	 */
@@ -1049,7 +1051,7 @@ class Position extends CommonObject
 	}
 
 	/**
-	 *  Create a document onto disk according to template module.
+	 * Create a document onto disk according to template module.
 	 *
 	 * @param string $modele Force template to use ('' to not force)
 	 * @param Translate $outputlangs objet lang a utiliser pour traduction

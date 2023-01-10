@@ -54,6 +54,7 @@ $backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -132,9 +133,10 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Permissions
-$permissiontoread   = $user->rights->hrm->evaluation->read;
-$permissiontoadd    = $user->rights->hrm->evaluation->write;
-$permissiontodelete = $user->rights->hrm->evaluation->delete;
+$permissiontoread    = $user->rights->hrm->evaluation->read;
+$permissiontoreadall = $user->rights->hrm->evaluation->readall;
+$permissiontoadd     = $user->rights->hrm->evaluation->write;
+$permissiontodelete  = $user->rights->hrm->evaluation->delete;
 
 // Security check
 if (empty($conf->hrm->enabled)) {
@@ -148,7 +150,7 @@ if ($user->socid > 0) accessforbidden();
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
 //if (empty($conf->hrm->enabled)) accessforbidden();
-//if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) accessforbidden();
 
 
 
@@ -275,6 +277,11 @@ foreach ($search as $key => $val) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+
+if (empty($permissiontoreadall)) {
+	$sql.= " AND t.fk_user IN(".$db->sanitize(implode(", ", $user->getAllChildIds(1))).") ";
+}
+
 //$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';

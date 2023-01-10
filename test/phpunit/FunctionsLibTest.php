@@ -188,6 +188,8 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
+		$newproductcloned2 = dol_clone($newproduct1, 2);
+		var_dump($newproductcloned2);
 		//print __METHOD__." newproductcloned1->db must be null\n";
 		//$this->assertNull($newproductcloned1->db, 'newproductcloned1->db is null');
 	}
@@ -440,6 +442,14 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('ios', $tmp['browseros']);
 		$this->assertEquals('tablet', $tmp['layout']);
 		$this->assertEquals('iphone', $tmp['phone']);
+
+		//Lynx
+		$user_agent = 'Lynx/2.8.8dev.3 libwww‑FM/2.14 SSL‑MM/1.4.1';
+		$tmp=getBrowserInfo($user_agent);
+		$this->assertEquals('lynxlinks', $tmp['browsername']);
+		$this->assertEquals('2.8.8', $tmp['browserversion']);
+		$this->assertEquals('unknown', $tmp['browseros']);
+		$this->assertEquals('classic', $tmp['layout']);
 	}
 
 

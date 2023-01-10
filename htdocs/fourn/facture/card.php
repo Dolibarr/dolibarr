@@ -64,7 +64,7 @@ if (isModEnabled('accounting')) {
 
 
 $langs->loadLangs(array('bills', 'compta', 'suppliers', 'companies', 'products', 'banks', 'admin'));
-if (!empty($conf->incoterm->enabled)) {
+if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
 
@@ -399,7 +399,7 @@ if (empty($reshook)) {
 		} else {
 			$db->commit();
 		}
-	} elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled)) {
+	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
 	} elseif ($action == 'setmode' && $usercancreate) {
@@ -1172,7 +1172,28 @@ if (empty($reshook)) {
 							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA) && $diff != 0) {
 								$object->fetch_lines();
 								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
-								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
+								$object->updateline(
+									$object->lines[0]->id,
+									$object->lines[0]->desc,
+									$subprice_diff,
+									$object->lines[0]->tva_tx,
+									$object->lines[0]->localtax1_tx,
+									$object->lines[0]->localtax2_tx,
+									$object->lines[0]->qty,
+									$object->lines[0]->fk_product,
+									'HT',
+									$object->lines[0]->info_bits,
+									$object->lines[0]->product_type,
+									$object->lines[0]->remise_percent,
+									0,
+									$object->lines[0]->date_start,
+									$object->lines[0]->date_end,
+									0,
+									0,
+									0,
+									'',
+									100
+								);
 							}
 						} elseif ($result > 0) {
 							$lines = $srcobject->lines;
@@ -1299,10 +1320,13 @@ if (empty($reshook)) {
 		// Edit line
 		$db->begin();
 
-		if (! $object->fetch($id) > 0)	dol_print_error($db);
+		if (! $object->fetch($id) > 0) {
+			dol_print_error($db);
+		}
 		$object->fetch_thirdparty();
 
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
+		$tva_tx = str_replace('*', '', $tva_tx);
 
 		if (GETPOST('price_ht') != '' || GETPOST('multicurrency_subprice') != '') {
 			$up = price2num(GETPOST('price_ht'), '', 2);
@@ -1360,7 +1384,27 @@ if (empty($reshook)) {
 			}
 		}
 
-		$result = $object->updateline(GETPOST('lineid', 'int'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, price2num(GETPOST('qty'), 'MS'), GETPOST('productid', 'int'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, GETPOST('units'), $pu_devise, GETPOST('fourn_ref', 'alpha'));
+		$result = $object->updateline(
+			GETPOST('lineid', 'int'),
+			$label,
+			$up,
+			$tva_tx,
+			$localtax1_tx,
+			$localtax2_tx,
+			price2num(GETPOST('qty'), 'MS'),
+			GETPOST('productid', 'int'),
+			$price_base_type,
+			$info_bits,
+			$type,
+			$remise_percent,
+			0,
+			$date_start,
+			$date_end,
+			$array_options,
+			GETPOST('units', 'alpha'),
+			$pu_devise,
+			GETPOST('fourn_ref', 'alpha')
+		);
 		if ($result >= 0) {
 			unset($_POST['label']);
 			unset($_POST['fourn_ref']);
@@ -1604,7 +1648,7 @@ if (empty($reshook)) {
 					$productsupplier->fk_unit,
 					0,
 					$pu_devise,
-					$ref_supplier,
+					GETPOST('fourn_ref', 'alpha'),
 					''
 				);
 			}
@@ -2057,14 +2101,15 @@ if ($action == 'create') {
 		// reload page to retrieve supplier informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script type="text/javascript">
-			$(document).ready(function() {
-				$("#socid").change(function() {
-					var socid = $(this).val();
-                    var fac_rec = $(\'#fac_rec\').val();
-        			window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+				$(document).ready(function() {
+					$("#socid").change(function() {
+						console.log("We have changed the company - Reload page");
+						// reload page
+						$("input[name=action]").val("create");
+						$("form[name=add]").submit();
+					});
 				});
-			});
-			</script>';
+				</script>';
 		}
 		if ($fac_recid <= 0) {
 			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
@@ -2189,7 +2234,7 @@ if ($action == 'create') {
 						jQuery(".checkforselect").prop("disabled", false);
 						jQuery(".checkforselect").prop("checked", true);
 					}
-				};
+				}
     		});
     		</script>';
 
@@ -2314,7 +2359,7 @@ if ($action == 'create') {
 
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 				$tmp = '<input type="radio" id="radio_creditnote" name="type" value="2"'.(GETPOST('type') == 2 ? ' checked' : '');
-				if (!$optionsav) {
+				if (!$optionsav && empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) {
 					$tmp .= ' disabled';
 				}
 				$tmp .= '> ';
@@ -2361,7 +2406,11 @@ if ($action == 'create') {
 			}
 		} else {
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-			$tmp = '<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
+			if (empty($conf->global->INVOICE_CREDIT_NOTE_STANDALONE)) {
+				$tmp = '<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
+			} else {
+				$tmp='<input type="radio" name="type" id="radio_creditnote" value="2"> ';
+			}
 			$text = $tmp.$langs->trans("InvoiceAvoir").' ';
 			$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromSupplierThird").')</span> ';
 			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
@@ -2429,7 +2478,7 @@ if ($action == 'create') {
 	}
 
 	// Incoterms
-	if (!empty($conf->incoterm->enabled)) {
+	if (isModEnabled('incoterm')) {
 		print '<tr>';
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), !empty($objectsrc->label_incoterms) ? $objectsrc->label_incoterms : '', 1).'</label></td>';
 		print '<td colspan="3" class="maxwidthonsmartphone">';
@@ -2588,7 +2637,6 @@ if ($action == 'create') {
 		//
 		// View or edit mode
 		//
-
 		$now = dol_now();
 
 		$productstatic = new Product($db);
@@ -2623,13 +2671,16 @@ if ($action == 'create') {
 		$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 		// Multicurrency
+		$multicurrency_resteapayer = 0;
 		if (isModEnabled("multicurrency")) {
 			$multicurrency_totalpaid = $object->getSommePaiement(1);
 			$multicurrency_totalcreditnotes = $object->getSumCreditNotesUsed(1);
 			$multicurrency_totaldeposits = $object->getSumDepositsUsed(1);
 			$multicurrency_resteapayer = price2num($object->multicurrency_total_ttc - $multicurrency_totalpaid - $multicurrency_totalcreditnotes - $multicurrency_totaldeposits, 'MT');
 			// Code to fix case of corrupted data
-			if ($resteapayer == 0 && $multicurrency_resteapayer != 0) {
+			// TODO We should not need this. Also data comes from not reliable value of $object->multicurrency_total_ttc that may be wrong if it was
+			// calculated by summing lines that were in a currency for some of them and into another for others (lines from discount/down payment into another currency for example)
+			if ($resteapayer == 0 && $multicurrency_resteapayer != 0 && $object->multicurrency_code != $conf->currency) {
 				$resteapayer = price2num($multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
 			}
 		}
@@ -2639,7 +2690,7 @@ if ($action == 'create') {
 		}
 		$resteapayeraffiche = $resteapayer;
 
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Never use this
+		if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Never use this
 			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		} else {
@@ -2666,6 +2717,7 @@ if ($action == 'create') {
 
 		// Confirmation de la conversion de l'avoir en reduc
 		if ($action == 'converttoreduc') {
+			$type_fac = '';
 			if ($object->type == FactureFournisseur::TYPE_STANDARD) {
 				$type_fac = 'ExcessPaid';
 			} elseif ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
@@ -2871,39 +2923,28 @@ if ($action == 'create') {
 		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', 0, 1);
 		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', null, null, '', 1);
 		// Thirdparty
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'supplier');
+		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'supplier');
 		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
 		}
 		// Project
 		if (isModEnabled('project')) {
 			$langs->load("projects");
-			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($usercancreate) {
+			$morehtmlref .= '<br>';
+			if ($permissiontoadd) {
+				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				if ($action == 'classify') {
-					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-					$morehtmlref .= '</form>';
-				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-				}
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
-					$morehtmlref .= ' : '.$proj->getNomUrl(1);
+					$morehtmlref .= $proj->getNomUrl(1);
 					if ($proj->title) {
-						$morehtmlref .= ' - '.$proj->title;
+						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 					}
-				} else {
-					$morehtmlref .= '';
 				}
 			}
 		}
@@ -2917,7 +2958,7 @@ if ($action == 'create') {
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		// Type
 		print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
@@ -2927,15 +2968,15 @@ if ($action == 'create') {
 		if ($object->type == FactureFournisseur::TYPE_REPLACEMENT) {
 			$facreplaced = new FactureFournisseur($db);
 			$facreplaced->fetch($object->fk_facture_source);
-			print ' &nbsp; '.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1));
+			print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).'</span>';
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 			$facusing = new FactureFournisseur($db);
 			if ($object->fk_facture_source > 0) {
 				$facusing->fetch($object->fk_facture_source);
-				print ' &nbsp; '.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1));
+				print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).'</span>';
 			} else {
-				print ' &nbsp; '.$langs->transnoentities("CorrectedInvoiceNotFound");
+				print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("CorrectedInvoiceNotFound").'</span>';
 			}
 		}
 
@@ -2947,12 +2988,13 @@ if ($action == 'create') {
 				$facavoir->fetch($id);
 				$invoicecredits[] = $facavoir->getNomUrl(1);
 			}
-			print ' ('.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits) . ')';
+			print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits);
+			print '</span>';
 		}
 		if (isset($objectidnext) && $objectidnext > 0) {
 			$facthatreplace = new FactureFournisseur($db);
 			$facthatreplace->fetch($facidnext);
-			print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
+			print ' <span class="opacitymediumbycolor paddingleft">'.str_replace('{s1}', $facthatreplace->getNomUrl(1), $langs->transnoentities("ReplacedByInvoice", '{s1}')).'</span>';
 		}
 		if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT) {
 			$discount = new DiscountAbsolute($db);
@@ -3000,8 +3042,8 @@ if ($action == 'create') {
 		print '<td>'.$form->editfieldval("Label", 'label', $object->label, $object, $usercancreate).'</td>';
 		print '</tr>';
 
-		$form_permission = ($object->statut < FactureFournisseur::STATUS_CLOSED) && $usercancreate && ($object->getSommePaiement() <= 0);
-		$form_permission2 = ($object->statut < FactureFournisseur::STATUS_CLOSED) && $usercancreate;
+		//$form_permission = ($object->statut < FactureFournisseur::STATUS_CLOSED) && $usercancreate && ($object->getSommePaiement() <= 0);
+		$form_permission = ($object->statut < FactureFournisseur::STATUS_CLOSED) && $usercancreate;
 
 		// Date
 		print '<tr><td>';
@@ -3013,11 +3055,11 @@ if ($action == 'create') {
 		// Default terms of the settlement
 		$langs->load('bills');
 		print '<tr><td class="nowrap">';
-		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('PaymentConditions');
 		print '<td>';
 		if ($action != 'editconditions' && $form_permission) {
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
+			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
@@ -3031,9 +3073,9 @@ if ($action == 'create') {
 
 		// Due date
 		print '<tr><td>';
-		print $form->editfieldkey("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission2, 'datepicker');
+		print $form->editfieldkey("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission, 'datepicker');
 		print '</td><td>';
-		print $form->editfieldval("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission2, 'datepicker');
+		print $form->editfieldval("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission, 'datepicker');
 		if ($action != 'editdate_lim_reglement' && $object->hasDelay()) {
 			print img_warning($langs->trans('Late'));
 		}
@@ -3042,10 +3084,10 @@ if ($action == 'create') {
 		// Mode of payment
 		$langs->load('bills');
 		print '<tr><td class="nowrap">';
-		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode' && $form_permission2) {
+		if ($action != 'editmode' && $form_permission) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -3127,7 +3169,7 @@ if ($action == 'create') {
 		}
 
 		// Incoterms
-		if (!empty($conf->incoterm->enabled)) {
+		if (isModEnabled('incoterm')) {
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>';
 			print $langs->trans('IncotermLabel');
@@ -3152,7 +3194,7 @@ if ($action == 'create') {
 		if (isModEnabled('intracommreport')) {
 			$langs->loadLangs(array("intracommreport"));
 			print '<tr><td>';
-			print '<table width="100%" class="nobordernopadding"><tr><td>';
+			print '<table class="nobordernopadding centpercent"><tr><td>';
 			print $langs->trans('IntracommReportTransportMode');
 			print '</td>';
 			if ($action != 'editmode' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
@@ -3265,7 +3307,7 @@ if ($action == 'create') {
 		if (isModEnabled("banque")) {
 			$nbrows++; $nbcols++;
 		}
-		if (!empty($conf->incoterm->enabled)) {
+		if (isModEnabled('incoterm')) {
 			$nbrows++;
 		}
 		if (isModEnabled("multicurrency")) {
@@ -3298,7 +3340,7 @@ if ($action == 'create') {
 			$i = 0;
 
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder paymenttable" width="100%">';
+			print '<table class="noborder paymenttable centpercent">';
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre">'.($object->type == FactureFournisseur::TYPE_CREDIT_NOTE ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
 			print '<td>'.$langs->trans('Date').'</td>';
@@ -3324,12 +3366,13 @@ if ($action == 'create') {
 					$paymentstatic->type_label = $objp->payment_type;
 
 					print '<tr class="oddeven">';
-					print '<td>';
+					print '<td class="nowraponall">';
 					print $paymentstatic->getNomUrl(1);
 					print '</td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day').'</td>';
-					print '<td>';
-					print $form->form_modes_reglement(null, $objp->paiement_type, 'none').' '.$objp->num_payment;
+					$s = $form->form_modes_reglement(null, $objp->paiement_type, 'none', '', 1, 0, '', 1).' '.$objp->num_payment;
+					print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($s).'">';
+					print $s;
 					print '</td>';
 					if (isModEnabled("banque")) {
 						$bankaccountstatic->id = $objp->baid;
@@ -3516,7 +3559,7 @@ if ($action == 'create') {
 				}
 				print '</span>';
 				print '</td>';
-				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($object->multicurrency_tx*$resteapayeraffiche, 'MT')).'</td><td>&nbsp;</td></tr>';
+				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($multicurrency_resteapayer, 'MT')).'</td><td>&nbsp;</td></tr>';
 			}
 		} else { // Credit note
 			$cssforamountpaymentcomplete = 'amountpaymentneutral';
@@ -3584,7 +3627,7 @@ if ($action == 'create') {
 		/*
 		 * Lines
 		 */
-		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">';
+		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.(($action != 'editline') ? 'addline' : 'updateline').'">';
 		print '<input type="hidden" name="mode" value="">';
@@ -3609,7 +3652,7 @@ if ($action == 'create') {
 
 		// Show object lines
 		if (!empty($object->lines)) {
-			$ret = $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
+			$object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
 		}
 
 		$num = count($object->lines);
@@ -3781,21 +3824,26 @@ if ($action == 'create') {
 
 				// Delete
 				$isErasable = $object->is_erasable();
-				if ($action != 'confirm_edit' && ($user->rights->fournisseur->facture->supprimer || ($usercancreate && $isErasable == 1))) {	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
-					//var_dump($isErasable);
+				if ($action != 'confirm_edit' && ($usercandelete || ($usercancreate && $isErasable == 1))) {	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
+					$enableDelete = false;
+					$htmltooltip = '';
+					$params = (empty($conf->use_javascript_ajax) ? array() : array('attr' => array('class' => 'reposition')));
+					//var_dump($isErasable); var_dump($params);
 					if ($isErasable == -4) {
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecausePayments").'">'.$langs->trans('Delete').'</a>';
+						$htmltooltip = $langs->trans("DisabledBecausePayments");
 					} elseif ($isErasable == -3) {	// Should never happen with supplier invoice
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseNotLastSituationInvoice").'">'.$langs->trans('Delete').'</a>';
+						$htmltooltip = $langs->trans("DisabledBecauseNotLastSituationInvoice");
 					} elseif ($isErasable == -2) {	// Should never happen with supplier invoice
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseNotLastInvoice").'">'.$langs->trans('Delete').'</a>';
+						$htmltooltip = $langs->trans("DisabledBecauseNotLastInvoice");
 					} elseif ($isErasable == -1) {
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseDispatchedInBookkeeping").'">'.$langs->trans('Delete').'</a>';
+						$htmltooltip = $langs->trans("DisabledBecauseDispatchedInBookkeeping");
 					} elseif ($isErasable <= 0) {	// Any other cases
-						print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("DisabledBecauseNotErasable").'">'.$langs->trans('Delete').'</a>';
+						$htmltooltip = $langs->trans("DisabledBecauseNotErasable");
 					} else {
-						print '<a class="butActionDelete'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans('Delete').'</a>';
+						$enableDelete = true;
+						$htmltooltip = '';
 					}
+					print dolGetButtonAction($htmltooltip, $langs->trans("Delete"), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), $object->id, $enableDelete, $params);
 				}
 				print '</div>';
 

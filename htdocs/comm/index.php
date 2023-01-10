@@ -72,7 +72,12 @@ if ($user->socid > 0) {
 } else {
 	$id = 0;
 }
-restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
+
+//restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);
+if (!$user->hasRight('propal', 'read') && !$user->hasRight('supplier_proposal', 'read') && !$user->hasRight('commande', 'read') && !$user->hasRight('fournisseur', 'commande', 'read')
+	&& !$user->hasRight('supplier_order', 'read') && !$user->hasRight('fichinter', 'read')) {
+	accessforbidden();
+}
 
 $maxofloop = (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
 
@@ -129,7 +134,7 @@ if ($tmp) {
  * Draft customer proposals
  */
 
-if (isModEnabled("propal") && $user->rights->propal->lire) {
+if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -227,7 +232,7 @@ if (isModEnabled("propal") && $user->rights->propal->lire) {
  * Draft supplier proposals
  */
 
-if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire) {
+if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "lire")) {
 	$sql = "SELECT p.rowid, p.ref, p.total_ht, p.total_tva, p.total_ttc, p.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -321,7 +326,7 @@ if (isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire)
 
 
 /*
- * Draft customer orders
+ * Draft sales orders
  */
 
 if (isModEnabled('commande') && $user->rights->commande->lire) {
@@ -422,7 +427,7 @@ if (isModEnabled('commande') && $user->rights->commande->lire) {
  * Draft purchase orders
  */
 
-if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)) {
+if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight("fournisseur", "commande", "lire")) || (isModEnabled("supplier_order") && $user->hasRight("supplier_order", "lire"))) {
 	$sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_statut as status";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -517,7 +522,7 @@ if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMO
 
 
 /*
- * Draft interventionals
+ * Draft interventions
  */
 if (isModEnabled('ficheinter')) {
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, f.fk_statut";
@@ -546,13 +551,12 @@ if (isModEnabled('ficheinter')) {
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$nbofloop = min($num, $maxofloop);
+		startSimpleTable("DraftFichinter", "fichinter/list.php", "search_status=".Fichinter::STATUS_DRAFT, 2, $num);
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
+		//print '<tr class="liste_titre">';
+		//print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
 
-		if ($num) {
+		if ($num > 0) {
 			$i = 0;
 			while ($i < $nbofloop) {
 				$obj = $db->fetch_object($resql);
@@ -585,6 +589,10 @@ if (isModEnabled('ficheinter')) {
 				$i++;
 			}
 		}
+
+		addSummaryTableLine(3, $num, $nbofloop, $total, "NoIntervention");
+		finishSimpleTable(true);
+
 		print "</table></div>";
 	}
 }
@@ -811,7 +819,7 @@ if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERM
 /*
  * Latest contracts
  */
-if (isModEnabled('contrat') && $user->rights->contrat->lire && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
+if (isModEnabled('contrat') && $user->hasRight("contrat", "lire") && 0) { // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 	$staticcontrat = new Contrat($db);
 
 	$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
@@ -889,7 +897,7 @@ if (isModEnabled('contrat') && $user->rights->contrat->lire && 0) { // TODO A RE
 /*
  * Opened (validated) proposals
  */
-if (isModEnabled("propal") && $user->rights->propal->lire) {
+if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 	$sql = "SELECT p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 	$sql .= ", s.code_client, s.code_compta, s.client";
@@ -1091,7 +1099,7 @@ if (isModEnabled('commande') && $user->rights->commande->lire) {
 				print '</table>';
 				print '</td>';
 
-				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
+				print '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 				$datem = $db->jdate($obj->dv);
 				print '<td class="center tddate" title="'.dol_escape_htmltag($langs->trans("DateValue").': '.dol_print_date($datem, 'day', 'tzserver')).'">';
 				print dol_print_date($datem, 'day', 'tzserver');

@@ -26,7 +26,7 @@ CronCommand=فرمان
 CronList=وظایف برنامه‌ریزی‌شده
 CronDelete=حذف وظایف‌برنامه‌ریزی‌شده
 CronConfirmDelete=آیا مطمئن هستید می‌خواهید این وظایف‌برنامه‌ریزی‌شده را حذف کنید؟
-CronExecute=اجرای وظیفۀ برنامه‌ریزی‌شده
+CronExecute=Launch now
 CronConfirmExecute=آیا مطمئن هستید می‌خواهید اکنون این وظیفۀ برنامه‌ریزی شده را اجرا کنید؟
 CronInfo=واحد وظایف‌برنامه‌ریزی‌شده  به شما امکان اجرای خودکار و زمان‌بندی‌شدۀ وظایف را می‌دهد. این وظایف همچنین امکان اجرای دلخواه دستی نیز دارند.
 CronTask=وظیفه
@@ -58,7 +58,7 @@ CronNote=توضیح
 CronFieldMandatory=بخش %s الزامی است
 CronErrEndDateStartDt=تاریخ پایان نمی‌تواند قبل از تاریخ شروع باشد
 StatusAtInstall=وضعیت نصب واحد
-CronStatusActiveBtn=Schedule
+CronStatusActiveBtn=Enable scheduling
 CronStatusInactiveBtn=غیرفعال‌کردن
 CronTaskInactive=This job is disabled (not scheduled)
 CronId=شناسه
@@ -82,10 +82,19 @@ UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - 
 JobDisabled=وظیفه غیرفعال است
 MakeLocalDatabaseDumpShort=پشتیبان‌گیری از پایگاه داده محلی
 MakeLocalDatabaseDump=نسخه‌برداری-dump از پایگاه دادۀ محلی. مؤلفه‌های مربوطه از قرار: فشرده‌سازی ('gz'  یا 'bz' یا 'none')، نوع پشتیبان‌گیری  ('mysql', 'pgsql', 'auto'), 1, 'auto' یا نام فایلی که ساخته می‌شود, تعداد فایل‌هائی که نگه‌داری می‌شود است
+MakeSendLocalDatabaseDumpShort=Send local database backup
+MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
+BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
+CleanUnfinishedCronjobShort=Clean unfinished cronjob
+CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
 WarningCronDelayed=توجه، برای مقاصد بهینه‌سازی، زمان اجرای بعدی وظایف فعال، وظایف شما ممکن است حداکثر %s ساعت قبل از اجرا تاخیر داشته  باشد.
 DATAPOLICYJob=Data cleaner and anonymizer
 JobXMustBeEnabled=Job %s must be enabled
+EmailIfError=Email for warning on error
+ErrorInBatch=Error when running the job %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Last executed scheduled job
 NextScheduledJobExecute=Next scheduled job to execute
 NumberScheduledJobError=Number of scheduled jobs in error
+NumberScheduledJobNeverFinished=Number of scheduled jobs never finished

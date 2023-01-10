@@ -41,7 +41,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$nowyear = strftime("%Y", dol_now());
+$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
 $startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
 $endyear = $year;
@@ -58,7 +58,7 @@ $form = new Form($db);
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
+print load_fiche_titre($langs->trans("StatisticsOfDonations"), $mesg);
 
 
 dol_mkdir($dir);
@@ -72,9 +72,9 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 
 
 if (empty($user->rights->societe->client->voir) || $user->socid) {
-	$filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
+	$filenamenb = $dir.'/donationnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
-	$filenamenb = $dir.'/shipmentsnbinyear-'.$year.'.png';
+	$filenamenb = $dir.'/donationnbinyear-'.$year.'.png';
 }
 
 $px1 = new DolGraph();
@@ -91,11 +91,11 @@ if (!$mesg) {
 	$px1->SetMinValue(min(0, $px1->GetFloorMinValue()));
 	$px1->SetWidth($WIDTH);
 	$px1->SetHeight($HEIGHT);
-	$px1->SetYLabel($langs->trans("NbOfSendings"));
+	$px1->SetYLabel($langs->trans("NbOfDonations"));
 	$px1->SetShading(3);
 	$px1->SetHorizTickIncrement(1);
 	$px1->mode = 'depth';
-	$px1->SetTitle($langs->trans("NumberOfShipmentsByMonth"));
+	$px1->SetTitle($langs->trans("NumberOfDonationsByMonth"));
 
 	$px1->draw($filenamenb, $fileurlnb);
 }
@@ -245,7 +245,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="border centpercent">';
 print '<tr height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
-print '<td class="center">'.$langs->trans("NbOfSendings").'</td>';
+print '<td class="right">'.$langs->trans("NbOfDonations").'</td>';
 /*print '<td class="center">'.$langs->trans("AmountTotal").'</td>';
 print '<td class="center">'.$langs->trans("AmountAverage").'</td>';*/
 print '</tr>';
@@ -334,7 +334,7 @@ print '</table>';
 */
 
 print '<br>';
-print '<i>'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
+print '<i>'.$langs->trans("StatsOnDonationsOnlyValidated").'</i>';
 
 llxFooter();
 

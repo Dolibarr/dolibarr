@@ -84,6 +84,8 @@ if (empty($user->rights->mailing->lire) || (empty($conf->global->EXTERNAL_USERS_
 	accessforbidden();
 }
 
+$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
+
 
 /*
  * Actions
@@ -124,8 +126,6 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'warnings');
 			$action = '';
 		} else {
-			$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
-
 			if ($object->statut == 0) {
 				dol_print_error('', 'ErrorMailIsNotValidated');
 				exit;
@@ -227,13 +227,13 @@ if (empty($reshook)) {
 						$substitutionarray['__UNSUBSCRIBE_URL__'] = DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.urlencode($obj->tag).'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'&email='.urlencode($obj->email).'&mtid='.$obj->rowid;
 
 						$onlinepaymentenabled = 0;
-						if (!empty($conf->paypal->enabled)) {
+						if (isModEnabled('paypal')) {
 							$onlinepaymentenabled++;
 						}
-						if (!empty($conf->paybox->enabled)) {
+						if (isModEnabled('paybox')) {
 							$onlinepaymentenabled++;
 						}
-						if (!empty($conf->stripe->enabled)) {
+						if (isModEnabled('stripe')) {
 							$onlinepaymentenabled++;
 						}
 						if ($onlinepaymentenabled && !empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
@@ -263,7 +263,7 @@ if (empty($reshook)) {
 							$substitutionarray['__PUBLICLINK_NEWMEMBERFORM__'] = '<a target="_blank" rel="noopener noreferrer" href="'.DOL_MAIN_URL_ROOT.'/public/members/new.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '').'">'.$langs->trans('BlankSubscriptionForm'). '</a>';
 						}
 						/* For backward compatibility, deprecated */
-						if (!empty($conf->paypal->enabled) && !empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
+						if (isModEnabled('paypal') && !empty($conf->global->PAYPAL_SECURITY_TOKEN)) {
 							$substitutionarray['__SECUREKEYPAYPAL__'] = dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 
 							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) {
@@ -318,7 +318,8 @@ if (empty($reshook)) {
 
 						// Mail making
 						$trackid = 'emailing-'.$obj->fk_mailing.'-'.$obj->rowid;
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing');
+						$upload_dir_tmp = $upload_dir;
+						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid, $moreinheader, 'emailing', '', $upload_dir_tmp);
 
 						if ($mail->error) {
 							$res = 0;
@@ -368,7 +369,7 @@ if (empty($reshook)) {
 							}
 
 							if (!empty($conf->global->MAILING_DELAY)) {
-								dol_syslog("Wait a delay of MAILING_DELAY=".$conf->global->MAILING_DELAY);
+								dol_syslog("Wait a delay of MAILING_DELAY=".((float) $conf->global->MAILING_DELAY));
 								usleep((float) $conf->global->MAILING_DELAY * 1000000);
 							}
 
@@ -478,7 +479,8 @@ if (empty($reshook)) {
 			}
 
 			$trackid = 'emailing-test';
-			$mailfile = new CMailFile($tmpsujet, $object->sendto, $object->email_from, $tmpbody, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $object->email_errorsto, $arr_css, $trackid, '', 'emailing');
+			$upload_dir_tmp = $upload_dir;
+			$mailfile = new CMailFile($tmpsujet, $object->sendto, $object->email_from, $tmpbody, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $object->email_errorsto, $arr_css, $trackid, '', 'emailing', '', $upload_dir_tmp);
 
 			$result = $mailfile->sendfile();
 			if ($result) {
@@ -520,9 +522,10 @@ if (empty($reshook)) {
 				exit;
 			}
 			$mesgs[] = $object->error;
+			$mesgs = array_merge($mesgs, $object->errors);
 		}
 
-		setEventMessages(null, $mesgs, 'errors');
+		setEventMessages('', $mesgs, 'errors');
 		$action = "create";
 	}
 
@@ -607,9 +610,10 @@ if (empty($reshook)) {
 					exit;
 				}
 				$mesgs[] = $object->error;
+				$mesgs = array_merge($mesgs, $object->errors);
 			}
 
-			setEventMessages($mesg, $mesgs, 'errors');
+			setEventMessages('', $mesgs, 'errors');
 			$action = "edit";
 		} else {
 			$action = "edit";
@@ -726,11 +730,14 @@ if ($action == 'create') {
 	// Print mail form
 	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
 
-	print dol_get_fiche_head();
+	print dol_get_fiche_head(array(), '', '', -3);
 
 	print '<table class="border centpercent">';
+
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTitle").'</td><td><input class="flat minwidth300" name="title" value="'.dol_escape_htmltag(GETPOST('title')).'" autofocus="autofocus"></td></tr>';
+
 	print '<tr><td class="fieldrequired">'.$langs->trans("MailFrom").'</td><td><input class="flat minwidth200" name="from" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
+
 	print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td><input class="flat minwidth200" name="errorsto" value="'.(!empty($conf->global->MAILING_EMAIL_ERRORSTO) ? $conf->global->MAILING_EMAIL_ERRORSTO : $conf->global->MAIN_MAIL_ERRORS_TO).'"></td></tr>';
 
 	// Other attributes
@@ -742,7 +749,7 @@ if ($action == 'create') {
 	}
 
 	print '</table>';
-	print '</br><br>';
+	print '<br><br>';
 
 	print '<table class="border centpercent">';
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet', 'alphanohtml')).'"></td></tr>';
@@ -761,7 +768,7 @@ if ($action == 'create') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("CreateMailing", '');
+	print $form->buttonsSaveCancel("CreateMailing", 'Cancel');
 
 	print '</form>';
 } else {
@@ -887,16 +894,16 @@ if ($action == 'create') {
 
 			// Description
 			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("MailTitle", 'title', $object->title, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldkey("MailTitle", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string');
 			print '</td><td>';
-			print $form->editfieldval("MailTitle", 'title', $object->title, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldval("MailTitle", 'title', $object->title, $object, $user->hasRight('mailing', 'creer'), 'string');
 			print '</td></tr>';
 
 			// From
 			print '<tr><td>';
-			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'string');
 			print '</td><td>';
-			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'string');
 			$email = CMailFile::getValidAddress($object->email_from, 2);
 			if ($email && !isValidEmail($email)) {
 				$langs->load("errors");
@@ -910,9 +917,9 @@ if ($action == 'create') {
 
 			// Errors to
 			print '<tr><td>';
-			print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'string');
 			print '</td><td>';
-			print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->rights->mailing->creer && $object->statut < 3, 'string');
+			print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->statut < 3, 'string');
 			$email = CMailFile::getValidAddress($object->email_errorsto, 2);
 			if ($email && !isValidEmail($email)) {
 				$langs->load("errors");
@@ -977,11 +984,11 @@ if ($action == 'create') {
 			if (GETPOST('cancel', 'alpha') || $confirm == 'no' || $action == '' || in_array($action, array('settodraft', 'valid', 'delete', 'sendall', 'clone', 'test'))) {
 				print "\n\n<div class=\"tabsAction\">\n";
 
-				if (($object->statut == 1) && ($user->rights->mailing->valider || $object->user_validation == $user->id)) {
+				if (($object->statut == 1) && ($user->hasRight('mailing', 'valider') || $object->user_validation == $user->id)) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=settodraft&token='.newToken().'&id='.$object->id.'">'.$langs->trans("SetToDraft").'</a>';
 				}
 
-				if (($object->statut == 0 || $object->statut == 1 || $object->statut == 2) && $user->rights->mailing->creer) {
+				if (($object->statut == 0 || $object->statut == 1 || $object->statut == 2) && $user->hasRight('mailing', 'creer')) {
 					if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_MAILING)) {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("EditWithEditor").'</a>';
 					} else {
@@ -1011,7 +1018,7 @@ if ($action == 'create') {
 					}
 				}
 
-				if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->rights->mailing->valider) {
+				if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->hasRight('mailing', 'valider')) {
 					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SendingFromWebInterfaceIsNotAllowed")).'">'.$langs->trans("SendMailing").'</a>';
 					} elseif (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send) {
@@ -1021,11 +1028,11 @@ if ($action == 'create') {
 					}
 				}
 
-				if ($user->rights->mailing->creer) {
+				if ($user->hasRight('mailing', 'creer')) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&amp;object=emailing&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a>';
 				}
 
-				if (($object->statut == 2 || $object->statut == 3) && $user->rights->mailing->valider) {
+				if (($object->statut == 2 || $object->statut == 3) && $user->hasRight('mailing', 'valider')) {
 					if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ResetMailing").'</a>';
 					} else {
@@ -1033,7 +1040,7 @@ if ($action == 'create') {
 					}
 				}
 
-				if (($object->statut <= 1 && $user->rights->mailing->creer) || $user->rights->mailing->supprimer) {
+				if (($object->statut <= 1 && $user->hasRight('mailing', 'creer')) || $user->hasRight('mailing', 'supprimer')) {
 					if ($object->statut > 0 && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->delete)) {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("DeleteMailing").'</a>';
 					} else {
@@ -1086,18 +1093,18 @@ if ($action == 'create') {
 			}
 
 
-			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br>';
+			$htmltext = '<i>'.$langs->trans("FollowingConstantsWillBeSubstituted").':<br><br><span class="small">';
 			foreach ($object->substitutionarray as $key => $val) {
 				$htmltext .= $key.' = '.$langs->trans($val).'<br>';
 			}
-			$htmltext .= '</i>';
+			$htmltext .= '</span></i>';
 
 			// Print mail content
-			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'emailsubstitionhelp'), 'generic');
+			print load_fiche_titre($langs->trans("EMail"), $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 3, 'emailsubstitionhelp'), 'generic');
 
 			print dol_get_fiche_head('', '', '', -1);
 
-			print '<table class="bordernooddeven" width="100%">';
+			print '<table class="bordernooddeven tableforfield centpercent">';
 
 			// Subject
 			print '<tr><td class="titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
@@ -1262,8 +1269,9 @@ if ($action == 'create') {
 					$out .= '<br></div>';
 				}
 			} else {
-				$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
+				//$out .= '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
 			}
+
 			// Add link to add file
 			$maxfilesizearray = getMaxFileSizeArray();
 			$maxmin = $maxfilesizearray['maxmin'];
@@ -1272,7 +1280,7 @@ if ($action == 'create') {
 			}
 			$out .= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
 			$out .= ' ';
-			$out .= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+			$out .= '<input type="submit" class="button smallpaddingimp" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
 			print $out;
 			print '</td></tr>';
 
@@ -1306,7 +1314,7 @@ if ($action == 'create') {
 
 			print '<div class="center">';
 			print '<input type="submit" class="button buttonforacesave button-save" value="'.$langs->trans("Save").'" name="save">';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '&nbsp; &nbsp; &nbsp;';
 			print '<input type="submit" class="button button-cancel" value="'.$langs->trans("Cancel").'" name="cancel">';
 			print '</div>';
 

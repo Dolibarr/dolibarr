@@ -75,12 +75,18 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->partnership->multidir_output[$object->entity ? $object->entity : $conf->entity]."/partnership/".get_exdir(0, 0, 0, 1, $object);
 }
 
+$permissiontoread = $user->rights->partnership->read;
+$permissiontoadd = $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php
+$managedfor = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
+
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'partnership', $object->id);
-
-$permissiontoadd = $user->rights->partnership->write; // Used by the include of actions_addupdatedelete.inc.php
+if (empty($conf->partnership->enabled)) accessforbidden();
+if (empty($permissiontoread)) accessforbidden();
+if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') accessforbidden();
+if ($object->id > 0 && !($object->fk_soc > 0) && $managedfor == 'thirdparty') accessforbidden();
 
 
 

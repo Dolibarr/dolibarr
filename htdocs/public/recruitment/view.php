@@ -94,7 +94,7 @@ if ($cancel) {
 	$action = 'view';
 }
 
-if ($action == "view" || $action == "presend" || $action == "close" || $action == "confirm_public_close" || $action == "add_message") {
+if ($action == "view" || $action == "presend" || $action == "dosubmit") {
 	$error = 0;
 	$display_ticket = false;
 	if (!strlen($ref)) {
@@ -119,11 +119,11 @@ if ($action == "view" || $action == "presend" || $action == "close" || $action =
 	}
 
 	/*
-	if (!$error && $action == "add_message" && $display_ticket && GETPOSTISSET('btn_add_message'))
+	if (!$error && $action == "dosubmit")
 	{
-		// TODO Add message...
-		$ret = $object->newMessage($user, $action, 0, 1);
+		// Test MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS
 
+		// TODO Create job application
 
 
 
@@ -136,7 +136,7 @@ if ($action == "view" || $action == "presend" || $action == "close" || $action =
 
 	if ($error || $errors) {
 		setEventMessages($object->error, $object->errors, 'errors');
-		if ($action == "add_message") {
+		if ($action == "dosubmit") {
 			$action = 'presend';
 		} else {
 			$action = '';
@@ -158,6 +158,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 /*
  * View
  */
+
+$now = dol_now();
 
 $head = '';
 if (!empty($conf->global->MAIN_RECRUITMENT_CSS_URL)) {
@@ -185,7 +187,7 @@ print '<span id="dolpaymentspan"></span>'."\n";
 print '<div class="center">'."\n";
 print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
-print '<input type="hidden" name="action" value="dosign">'."\n";
+print '<input type="hidden" name="action" value="dosubmit">'."\n";
 print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
 print '<input type="hidden" name="suffix" value="'.GETPOST("suffix", 'alpha').'">'."\n";
 print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
@@ -201,7 +203,7 @@ $paramlogo = 'ONLINE_RECRUITMENT_LOGO_'.$suffix;
 if (!empty($conf->global->$paramlogo)) {
 	$logosmall = $conf->global->$paramlogo;
 } elseif (!empty($conf->global->ONLINE_RECRUITMENT_LOGO)) {
-	$logosmall = $conf->global->ONLINE_RECRUITMENT_LOGO_;
+	$logosmall = $conf->global->ONLINE_RECRUITMENT_LOGO;
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
@@ -221,7 +223,7 @@ if ($urllogo) {
 	if (!empty($mysoc->url)) {
 		print '<a href="'.$mysoc->url.'" target="_blank" rel="noopener">';
 	}
-	print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
+	print '<img id="dolpaymentlogo" src="'.$urllogofull.'">';
 	if (!empty($mysoc->url)) {
 		print '</a>';
 	}
@@ -234,7 +236,7 @@ if ($urllogo) {
 
 if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
 	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE.'">';
+	print '<img id="idRECRUITMENT_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE.'">';
 	print '</div>';
 }
 

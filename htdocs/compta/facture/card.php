@@ -1385,6 +1385,7 @@ if (empty($reshook)) {
 				$object->note_public		= trim(GETPOST('note_public', 'restricthtml'));
 				$object->note_private = trim(GETPOST('note_private', 'restricthtml'));
 				$object->ref_client			= GETPOST('ref_client');
+				$object->ref_customer		= GETPOST('ref_client');
 				$object->model_pdf = GETPOST('model');
 				$object->fk_project			= GETPOST('projectid', 'int');
 				$object->cond_reglement_id	= (GETPOST('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
@@ -2504,12 +2505,12 @@ if (empty($reshook)) {
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
 			if ($usermustrespectpricemin && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)) {
-				if ($pu_ht && $price_min && ((price2num($pu_ht) * (1 - $remise_percent / 100)) < price2num($price_min))) {
+				if ($pu_ht && $price_min && (((float) price2num($pu_ht) * (1 - (float) $remise_percent / 100)) < (float) price2num($price_min))) {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
-				} elseif ($pu_ttc && $price_min_ttc && ((price2num($pu_ttc) * (1 - $remise_percent / 100)) < price2num($price_min_ttc))) {
+				} elseif ($pu_ttc && $price_min_ttc && ((price2num($pu_ttc) * (1 - (float) $remise_percent / 100)) < price2num($price_min_ttc))) {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
@@ -2762,7 +2763,7 @@ if (empty($reshook)) {
 					}
 
 					if (!$errors) {
-						setEventMessages($langs->trans('Updated'), '', 'mesgs');
+						setEventMessages($langs->trans('Updated'), null, 'mesgs');
 						header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 					} else {
 						setEventMessages($langs->trans('ErrorOutingSituationInvoiceCreditNote'), array(), 'errors');
@@ -3065,6 +3066,11 @@ if ($action == 'create') {
 				$remise_percent 	= (!empty($expesrc->remise_percent) ? $expesrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
 				$remise_absolue 	= (!empty($expesrc->remise_absolue) ? $expesrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
+				if (isModEnabled('multicurrency')) {
+					$currency_code 	= (!empty($expesrc->multicurrency_code) ? $expesrc->multicurrency_code : (!empty($soc->multicurrency_code) ? $soc->multicurrency_code : $objectsrc->multicurrency_code));
+					$currency_tx 	= (!empty($expesrc->multicurrency_tx) ? $expesrc->multicurrency_tx : (!empty($soc->multicurrency_tx) ? $soc->multicurrency_tx : $objectsrc->multicurrency_tx));
+				}
+
 				//Replicate extrafields
 				$expesrc->fetch_optionals();
 				$object->array_options = $expesrc->array_options;
@@ -3351,7 +3357,7 @@ if ($action == 'create') {
 						jQuery(".checkforselect").prop("disabled", false);
 						jQuery(".checkforselect").prop("checked", true);
 					}
-				};
+				}
     		});
     		</script>';
 
@@ -3774,7 +3780,7 @@ if ($action == 'create') {
 			if ($soc->fetch_optionals() > 0) {
 				$object->array_options = array_merge($object->array_options, $soc->array_options);
 			}
-		};
+		}
 
 		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
@@ -3999,7 +4005,9 @@ if ($action == 'create') {
 		$multicurrency_totaldeposits = $object->getSumDepositsUsed(1);
 		$multicurrency_resteapayer = price2num($object->multicurrency_total_ttc - $multicurrency_totalpaid - $multicurrency_totalcreditnotes - $multicurrency_totaldeposits, 'MT');
 		// Code to fix case of corrupted data
-		if ($resteapayer == 0 && $multicurrency_resteapayer != 0) {
+		// TODO We should not need this. Also data comes from a not reliable value of $object->multicurrency_total_ttc that may be wrong if it was
+		// calculated by summing lines that were in a currency for some of them and into another for others (lines from discount/down payment into another currency for example)
+		if ($resteapayer == 0 && $multicurrency_resteapayer != 0 && $object->multicurrency_code != $conf->currency) {
 			$resteapayer = price2num($multicurrency_resteapayer / $object->multicurrency_tx, 'MT');
 		}
 	}
@@ -4360,39 +4368,28 @@ if ($action == 'create') {
 	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $usercancreate, 'string'.(isset($conf->global->THIRDPARTY_REF_INPUT_SIZE) ? ':'.$conf->global->THIRDPARTY_REF_INPUT_SIZE : ''), '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'customer');
+	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
 		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
 	}
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
-		$morehtmlref .= '<br>'.$langs->trans('Project').' ';
+		$morehtmlref .= '<br>';
 		if ($usercancreate) {
+			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			if ($action == 'classify') {
-				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-				$morehtmlref .= '</form>';
-			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-			}
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= ' : '.$proj->getNomUrl(1);
+				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
-					$morehtmlref .= ' - '.$proj->title;
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 				}
-			} else {
-				$morehtmlref .= '';
 			}
 		}
 	}
@@ -4681,16 +4678,16 @@ if ($action == 'create') {
 		if ($displayWarranty) {
 			// Retained Warranty
 			print '<tr class="retained-warranty-lines"  ><td>';
-			print '<table id="retained-warranty-table" class="nobordernopadding" width="100%"><tr><td>';
+			print '<table id="retained-warranty-table" class="nobordernopadding centpercent"><tr><td>';
 			print $langs->trans('RetainedWarranty');
 			print '</td>';
-			if ($action != 'editretainedwarranty' && $user->rights->facture->creer) {
+			if ($action != 'editretainedwarranty' && $user->rights->facture->creer && $object->statut == Facture::STATUS_DRAFT) {
 				print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarranty&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setretainedwarranty'), 1).'</a></td>';
 			}
 
 			print '</tr></table>';
 			print '</td><td>';
-			if ($action == 'editretainedwarranty') {
+			if ($action == 'editretainedwarranty' && $object->statut == Facture::STATUS_DRAFT) {
 				print '<form  id="retained-warranty-form"  method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
 				print '<input type="hidden" name="action" value="setretainedwarranty">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -4707,7 +4704,7 @@ if ($action == 'create') {
 			print '<table id="retained-warranty-cond-reglement-table"  class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditionsShortRetainedWarranty');
 			print '</td>';
-			if ($action != 'editretainedwarrantypaymentterms' && $user->rights->facture->creer) {
+			if ($action != 'editretainedwarrantypaymentterms' && $user->rights->facture->creer && $object->statut == Facture::STATUS_DRAFT) {
 				print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarrantypaymentterms&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setPaymentConditionsShortRetainedWarranty'), 1).'</a></td>';
 			}
 
@@ -4718,7 +4715,7 @@ if ($action == 'create') {
 				$defaultDate = $object->date;
 			}
 
-			if ($action == 'editretainedwarrantypaymentterms') {
+			if ($action == 'editretainedwarrantypaymentterms' && $object->statut == Facture::STATUS_DRAFT) {
 				//date('Y-m-d',$object->date_lim_reglement)
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
 				print '<input type="hidden" name="action" value="setretainedwarrantyconditions">';
@@ -4742,7 +4739,7 @@ if ($action == 'create') {
 			print '<table id="retained-warranty-date-limit-table"  class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('RetainedWarrantyDateLimit');
 			print '</td>';
-			if ($action != 'editretainedwarrantydatelimit' && $user->rights->facture->creer) {
+			if ($action != 'editretainedwarrantydatelimit' && $user->rights->facture->creer && $object->statut == Facture::STATUS_DRAFT) {
 				print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarrantydatelimit&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setretainedwarrantyDateLimit'), 1).'</a></td>';
 			}
 
@@ -4753,7 +4750,7 @@ if ($action == 'create') {
 				$defaultDate = $object->date;
 			}
 
-			if ($action == 'editretainedwarrantydatelimit') {
+			if ($action == 'editretainedwarrantydatelimit' && $object->statut == Facture::STATUS_DRAFT) {
 				//date('Y-m-d',$object->date_lim_reglement)
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
 				print '<input type="hidden" name="action" value="setretainedwarrantydatelimit">';
@@ -5426,7 +5423,7 @@ if ($action == 'create') {
 
 	// Show object lines
 	if (!empty($object->lines)) {
-		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+		$object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 	}
 
 	// Form to add new line
@@ -5460,7 +5457,6 @@ if ($action == 'create') {
 		if (empty($reshook)) {
 			$params = array(
 				'attr' => array(
-					'title' => '',
 					'class' => 'classfortooltip'
 				)
 			);
@@ -5535,9 +5531,9 @@ if ($action == 'create') {
 						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendMail').'</span>';
 					} else {
 						if ($usercansend) {
-							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '', true, $params);
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle', '', true, $params);
 						} else {
-							print dolGetButtonAction($langs->trans('SendMail'), '', 'default', '#', '', false, $params);
+							print dolGetButtonAction('', $langs->trans('SendMail'), 'default', '#', '', false, $params);
 						}
 					}
 				}
@@ -5665,7 +5661,7 @@ if ($action == 'create') {
 				&& $usercancreate
 				&& !$objectidnext
 				&& $object->is_last_in_cycle()
-				&& $conf->global->INVOICE_USE_SITUATION_CREDIT_NOTE
+				&& getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE')
 				) {
 				if ($usercanunvalidate) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&amp;fac_avoir='.$object->id.'&amp;invoiceAvoirWithLines=1&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').'">'.$langs->trans("CreateCreditNote").'</a>';
@@ -5717,33 +5713,32 @@ if ($action == 'create') {
 			$isErasable = $object->is_erasable();
 			$params = array(
 				'attr' => array(
-					'title' => '',
 					'class' => 'classfortooltip'
 				)
 			);
 			if ($usercandelete || ($usercancreate && $isErasable == 1)) {	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
 				$enableDelete = false;
 				$deleteHref = '#';
+				$htmltooltip = '';
 				if ($isErasable == -4) {
-					$params['attr']['title'] = $langs->trans('DisabledBecausePayments');
+					$htmltooltip = $langs->trans('DisabledBecausePayments');
 				} elseif ($isErasable == -3) {
-					$params['attr']['title'] = $langs->trans('DisabledBecauseNotLastSituationInvoice');
+					$htmltooltip = $langs->trans('DisabledBecauseNotLastSituationInvoice');
 				} elseif ($isErasable == -2) {
-					$params['attr']['title'] = $langs->trans('DisabledBecauseNotLastInvoice');
+					$htmltooltip = $langs->trans('DisabledBecauseNotLastInvoice');
 				} elseif ($isErasable == -1) {
-					$params['attr']['title'] = $langs->trans('DisabledBecauseDispatchedInBookkeeping');
+					$htmltooltip = $langs->trans('DisabledBecauseDispatchedInBookkeeping');
 				} elseif ($isErasable <= 0) {	// Any other cases
-					$params['attr']['title'] = $langs->trans('DisabledBecauseNotErasable');
+					$htmltooltip = $langs->trans('DisabledBecauseNotErasable');
 				} elseif ($objectidnext) {
-					$params['attr']['title'] = $langs->trans('DisabledBecauseReplacedInvoice');
+					$htmltooltip = $langs->trans('DisabledBecauseReplacedInvoice');
 				} else {
 					$deleteHref = $_SERVER["PHP_SELF"].'?facid='.$object->id.'&action=delete&token='.newToken();
 					$enableDelete = true;
 				}
-				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $deleteHref, '', $enableDelete, $params);
+				print dolGetButtonAction($htmltooltip, $langs->trans('Delete'), 'delete', $deleteHref, '', $enableDelete, $params);
 			} else {
-				$params['attr']['title'] = $langs->trans('NotAllowed');
-				print dolGetButtonAction($langs->trans('Delete'), '', 'delete', '#', '', false, $params);
+				print dolGetButtonAction($langs->trans('Delete'), $langs->trans('Delete'), 'delete', '#', '', false);
 			}
 		}
 		print '</div>';
@@ -5802,7 +5797,7 @@ if ($action == 'create') {
 
 
 		// Show online payment link
-		$useonlinepayment = (!empty($conf->paypal->enabled) || !empty($conf->stripe->enabled) || !empty($conf->paybox->enabled));
+		$useonlinepayment = (isModEnabled('paypal') || isModEnabled('stripe') || isModEnabled('paybox'));
 
 		if ($object->statut != Facture::STATUS_DRAFT && $useonlinepayment) {
 			print '<br><!-- Link to pay -->'."\n";

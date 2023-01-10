@@ -106,7 +106,7 @@ if ($id > 0) {
 	/* ************************************************************************** */
 
 	print "<div class=\"graph\">\n";
-	$year = strftime("%Y", time());
+	$year = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 
 	$file = $conf->stock->dir_temp.'/entrepot-'.$entrepot->id.'-'.($year).'.png';
 

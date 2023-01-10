@@ -70,9 +70,10 @@ function contact_prepare_head(Contact $object)
 			$sql = 'SELECT COUNT(n.rowid) as nb';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'projet as n';
 			$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (n.rowid = cc.element_id)';
-			$sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
-			$sql .= ' AND cc.fk_c_type_contact IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'c_type_contact WHERE element="project" AND source="external")';
-			$sql .= ' AND n.entity IN ('.getEntity('project').')';
+			$sql .= " WHERE cc.fk_socpeople = ".((int) $object->id);
+			$sql .= " AND cc.fk_c_type_contact IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_type_contact WHERE element='project' AND source='external')";
+			$sql .= " AND n.entity IN (".getEntity('project').")";
+
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -191,10 +192,10 @@ function show_contacts_projects($conf, $langs, $db, $object, $backtopage = '', $
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status as cls on p.fk_opp_status = cls.rowid';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'element_contact as cc ON (p.rowid = cc.element_id)';
 		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_contact as ctc ON (ctc.rowid = cc.fk_c_type_contact)';
-		$sql .= ' WHERE cc.fk_socpeople = '.((int) $object->id);
-		$sql .= ' AND ctc.element="project" AND ctc.source="external"';
-		$sql .= ' AND p.entity IN ('.getEntity('project').')';
-		$sql .= ' ORDER BY p.dateo DESC';
+		$sql .= " WHERE cc.fk_socpeople = ".((int) $object->id);
+		$sql .= " AND ctc.element='project' AND ctc.source='external'";
+		$sql .= " AND p.entity IN (".getEntity('project').")";
+		$sql .= " ORDER BY p.dateo DESC";
 
 		$result = $db->query($sql);
 		if ($result) {

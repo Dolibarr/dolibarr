@@ -30,7 +30,7 @@ dol_include_once('/recruitment/core/modules/recruitment/modules_recruitmentcandi
 
 
 /**
- *	Class to manage customer Bom numbering rules advanced
+ *	Class to manage the Advanced numbering rule for Job application
  */
 class mod_recruitmentcandidature_advanced extends ModeleNumRefRecruitmentCandidature
 {
@@ -54,7 +54,7 @@ class mod_recruitmentcandidature_advanced extends ModeleNumRefRecruitmentCandida
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{
@@ -69,7 +69,7 @@ class mod_recruitmentcandidature_advanced extends ModeleNumRefRecruitmentCandida
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconstcand" value="RECRUITMENT_RECRUITMENTCANDIDATURE_ADVANCED_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("RecruitmentCandidature"), $langs->transnoentities("RecruitmentCandidature"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");

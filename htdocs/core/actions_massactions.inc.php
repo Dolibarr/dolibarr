@@ -41,6 +41,10 @@ if (empty($objectclass) || empty($uploaddir)) {
 	dol_print_error(null, 'include of actions_massactions.inc.php is done but var $objectclass or $uploaddir was not defined');
 	exit;
 }
+if (empty($massaction)) {
+	$massaction = '';
+}
+$error = 0;
 
 // For backward compatibility
 if (!empty($permtoread) && empty($permissiontoread)) {
@@ -53,14 +57,13 @@ if (!empty($permtodelete) && empty($permissiontodelete)) {
 	$permissiontodelete = $permtodelete;
 }
 
-
 // Mass actions. Controls on number of lines checked.
 $maxformassaction = (empty($conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS) ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
-if (!empty($massaction) && is_array($toselect) && count($toselect) < 1) {
+if ($massaction && is_array($toselect) && count($toselect) < 1) {
 	$error++;
 	setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
 }
-if (!$error && is_array($toselect) && count($toselect) > $maxformassaction) {
+if (!$error && isset($toselect) && is_array($toselect) && count($toselect) > $maxformassaction) {
 	setEventMessages($langs->trans('TooManyRecordForMassAction', $maxformassaction), null, 'errors');
 	$error++;
 }
@@ -90,11 +93,11 @@ if (!$error && $massaction == 'confirm_presend') {
 		$objecttmp = new $objectclass($db);
 		if ($objecttmp->element == 'expensereport') {
 			$thirdparty = new User($db);
-		}
-		if ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
+		} elseif ($objecttmp->element == 'contact') {
+			$thirdparty = new Contact($db);
+		} elseif ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 			$thirdparty = new Adherent($db);
-		}
-		if ($objecttmp->element == 'holiday') {
+		} elseif ($objecttmp->element == 'holiday') {
 			$thirdparty = new User($db);
 		}
 
@@ -107,14 +110,13 @@ if (!$error && $massaction == 'confirm_presend') {
 				$thirdpartyid = ($objecttmp->fk_soc ? $objecttmp->fk_soc : $objecttmp->socid);
 				if ($objecttmp->element == 'societe') {
 					$thirdpartyid = $objecttmp->id;
-				}
-				if ($objecttmp->element == 'expensereport') {
+				} elseif ($objecttmp->element == 'contact') {
+					$thirdpartyid = $objecttmp->id;
+				} elseif ($objecttmp->element == 'expensereport') {
 					$thirdpartyid = $objecttmp->fk_user_author;
-				}
-				if ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
+				} elseif ($objecttmp->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 					$thirdpartyid = $objecttmp->fk_member;
-				}
-				if ($objecttmp->element == 'holiday') {
+				} elseif ($objecttmp->element == 'holiday') {
 					$thirdpartyid = $objecttmp->fk_user;
 				}
 				if (empty($thirdpartyid)) {
@@ -265,6 +267,10 @@ if (!$error && $massaction == 'confirm_presend') {
 						$fuser = new User($db);
 						$fuser->fetch($objectobj->fk_user_author);
 						$sendto = $fuser->email;
+					} elseif ($objectobj->element == 'contact') {
+						$fcontact = new Contact($db);
+						$fcontact->fetch($objectobj->id);
+						$sendto = $fcontact->email;
 					} elseif ($objectobj->element == 'partnership' && getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR') == 'member') {
 						$fadherent = new Adherent($db);
 						$fadherent->fetch($objectobj->fk_member);
@@ -507,31 +513,28 @@ if (!$error && $massaction == 'confirm_presend') {
 						$trackid = 'thi'.$thirdparty->id;
 						if ($objecttmp->element == 'expensereport') {
 							$trackid = 'use'.$thirdparty->id;
-						}
-						if ($objecttmp->element == 'holiday') {
+						} elseif ($objecttmp->element == 'contact') {
+							$trackid = 'ctc'.$thirdparty->id;
+						} elseif ($objecttmp->element == 'holiday') {
 							$trackid = 'use'.$thirdparty->id;
 						}
 					} else {
 						$trackid = strtolower(get_class($objecttmp));
-						if (get_class($objecttmp) == 'Contrat') {
+						if (get_class($objecttmp) == 'Contact') {
+							$trackid = 'ctc';
+						} elseif (get_class($objecttmp) == 'Contrat') {
 							$trackid = 'con';
-						}
-						if (get_class($objecttmp) == 'Propal') {
+						} elseif (get_class($objecttmp) == 'Propal') {
 							$trackid = 'pro';
-						}
-						if (get_class($objecttmp) == 'Commande') {
+						} elseif (get_class($objecttmp) == 'Commande') {
 							$trackid = 'ord';
-						}
-						if (get_class($objecttmp) == 'Facture') {
+						} elseif (get_class($objecttmp) == 'Facture') {
 							$trackid = 'inv';
-						}
-						if (get_class($objecttmp) == 'Supplier_Proposal') {
+						} elseif (get_class($objecttmp) == 'Supplier_Proposal') {
 							$trackid = 'spr';
-						}
-						if (get_class($objecttmp) == 'CommandeFournisseur') {
+						} elseif (get_class($objecttmp) == 'CommandeFournisseur') {
 							$trackid = 'sor';
-						}
-						if (get_class($objecttmp) == 'FactureFournisseur') {
+						} elseif (get_class($objecttmp) == 'FactureFournisseur') {
 							$trackid = 'sin';
 						}
 
@@ -589,6 +592,9 @@ if (!$error && $massaction == 'confirm_presend') {
 								$objectobj2->actionmsg2		= $actionmsg2; // Short text
 								$objectobj2->fk_element		= $objid2;
 								$objectobj2->elementtype	= $objectobj2->element;
+								if (!empty($conf->global->MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT)) {
+									$objectobj2->actionmsg2		= $subjectreplaced; // Short text
+								}
 
 								$triggername = strtoupper(get_class($objectobj2)).'_SENTBYMAIL';
 								if ($triggername == 'SOCIETE_SENTBYMAIL') {
@@ -841,7 +847,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		}
 		$pdf->SetFont(pdf_getPDFFont($outputlangs));
 
-		if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
 		}
 
@@ -1043,8 +1049,9 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 			}
 
 			if ($objectclass == 'Holiday' && ! in_array($objecttmp->statut, array(Holiday::STATUS_DRAFT, Holiday::STATUS_CANCELED, Holiday::STATUS_REFUSED))) {
+				$langs->load("errors");
 				$nbignored++;
-				$resaction .= '<div class="error">'.$langs->trans('ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted', $objecttmp->ref).'</div><br>';
+				$TMsg[] = '<div class="error">'.$langs->trans('ErrorLeaveRequestMustBeDraftCanceledOrRefusedToBeDeleted', $objecttmp->ref).'</div><br>';
 				continue;
 			}
 
@@ -1223,6 +1230,143 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 				}
 			}
 		}
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		} else {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		}
+		$db->commit();
+		$toselect=array();
+	} else {
+		$db->rollback();
+	}
+}
+
+if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoadd) {
+	$db->begin();
+	if (GETPOSTISSET('pricerate')) {
+		$pricepercentage=GETPOST('pricerate', 'int');
+		if ($pricepercentage == 0) {
+			setEventMessages($langs->trans("RecordsModified", 0), null);
+		} else {
+			foreach ($toselect as $toselectid) {
+				$result = $object->fetch($toselectid);
+				//var_dump($contcats);exit;
+				if ($result > 0) {
+					if ($obj->price_base_type == 'TTC') {
+						$newprice = $object->price_ttc * (100 + $pricepercentage) / 100;
+						$minprice = $object->price_min_ttc;
+					} else {
+						$newprice = $object->price * (100 + $pricepercentage) / 100;
+						$minprice = $object->price_min;
+					}
+					$res = $object->updatePrice($newprice, $obj->price_base_type, $user, $object->tva_tx, $minprice, 0, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+					if ($res > 0) {
+						$nbok++;
+					} else {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+					break;
+				}
+			}
+		}
+	}
+
+	if (!$error) {
+		if ($nbok > 0) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		}
+		$db->commit();
+		$toselect=array();
+	} else {
+		$db->rollback();
+	}
+}
+
+if (!$error && ($action == 'setsupervisor' && $confirm == 'yes') && $permissiontoadd) {
+	$db->begin();
+	$supervisortoset=GETPOST('supervisortoset');
+	if (!empty($supervisortoset)) {
+		foreach ($toselect as $toselectid) {
+			$result = $object->fetch($toselectid);
+			//var_dump($contcats);exit;
+			if ($result > 0) {
+				$object->fk_user = $supervisortoset;
+				$res = $object->update($user);
+				if ($res > 0) {
+					$nbok++;
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+	} else {
+		setEventMessage('UserNotFound', 'errors');
+		$error++;
+	}
+
+	if (!$error) {
+		if ($nbok > 1) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		} else {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null);
+		}
+		$db->commit();
+		$toselect=array();
+	} else {
+		$db->rollback();
+	}
+}
+
+if (!$error && ($action == 'affectuser' && $confirm == 'yes') && $permissiontoadd) {
+	$db->begin();
+
+	$usertoaffect=GETPOST('usertoaffect');
+	$projectrole=GETPOST('projectrole');
+	$tasksrole=GETPOST('tasksrole');
+	if (!empty($usertoaffect)) {
+		foreach ($toselect as $toselectid) {
+			$result = $object->fetch($toselectid);
+			//var_dump($contcats);exit;
+			if ($result > 0) {
+				$res = $object->add_contact($usertoaffect, $projectrole, 'internal');
+				if ($res >= 0) {
+					$taskstatic = new Task($db);
+					$task_array = $taskstatic->getTasksArray(0, 0, $object->id, 0, 0);
+
+					foreach ($task_array as $task) {
+						$tasksToAffect = new Task($db);
+						$result = $tasksToAffect->fetch($task->id);
+						if ($result > 0) {
+							$res = $tasksToAffect->add_contact($usertoaffect, $tasksrole, 'internal');
+							if ($res < 0) {
+								setEventMessages($tasksToAffect->error, $tasksToAffect->errors, 'errors');
+							}
+						}
+					}
+					$nbok++;
+				} else {
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+	} else {
+		setEventMessage('UserNotFound', 'errors');
+		$error++;
 	}
 
 	if (!$error) {
@@ -1422,7 +1566,7 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 
 				// If no SQL error, we redirect to the request form
 				if (!$error) {
-					// Calculcate number of days consummed
+					// Calculcate number of days consumed
 					$nbopenedday = num_open_day($objecttmp->date_debut_gmt, $objecttmp->date_fin_gmt, 0, 1, $objecttmp->halfday);
 					$soldeActuel = $objecttmp->getCpforUser($objecttmp->fk_user, $objecttmp->fk_type);
 					$newSolde = ($soldeActuel - $nbopenedday);
@@ -1564,7 +1708,7 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 	}
 }
 
-$parameters['toselect'] = $toselect;
+$parameters['toselect'] = (empty($toselect) ? array() : $toselect);
 $parameters['uploaddir'] = $uploaddir;
 $parameters['massaction'] = $massaction;
 $parameters['diroutputmassaction'] = isset($diroutputmassaction) ? $diroutputmassaction : null;

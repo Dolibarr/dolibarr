@@ -213,7 +213,13 @@ if ($mode == 'setup' && $user->admin) {
 			$urltocheckperms = '';
 		}
 
-		$urltorenew .= '&keyforprovider='.urlencode($keyforprovider);
+		if ($urltorenew) {
+			$urltorenew .= '&keyforprovider='.urlencode($keyforprovider);
+		}
+		if ($urltodelete) {
+			$urltodelete .= '&keyforprovider='.urlencode($keyforprovider);
+		}
+
 
 		// Show value of token
 		$tokenobj = null;
@@ -290,6 +296,14 @@ if ($mode == 'setup' && $user->admin) {
 		print '<td>';
 		print '</td>';
 		print '</tr>'."\n";
+
+		// Scopes
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("Scopes").'</td>';
+		print '<td colspan="2">';
+		$currentscopes = getDolGlobalString($key[4]);
+		print $currentscopes;
+		print '</td></tr>';
 
 		print '<tr class="oddeven">';
 		print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';

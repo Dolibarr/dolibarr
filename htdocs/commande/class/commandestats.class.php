@@ -93,9 +93,6 @@ class CommandeStats extends Stats
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
 		$this->where .= ($this->where ? ' AND ' : '').'c.entity IN ('.getEntity('commande').')';
 
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
-			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-		}
 		if ($this->socid) {
 			$this->where .= " AND c.fk_soc = ".((int) $this->socid);
 		}
@@ -109,9 +106,7 @@ class CommandeStats extends Stats
 		}
 
 		if ($categid) {
-			$this->join .= ' LEFT JOIN '.$this->categ_link.' as cats ON cats.fk_soc = c.fk_soc';
-			$this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as cat ON cat.rowid = cats.fk_categorie';
-			$this->where .= ' AND cat.rowid = '.((int) $categid);
+			$this->where .= ' AND EXISTS (SELECT rowid FROM '.$this->categ_link.' as cats WHERE cats.fk_soc = c.fk_soc AND cats.fk_categorie = '.((int) $categid).')';
 		}
 	}
 
@@ -129,7 +124,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
 		if (empty($user->rights->societe->client->voir) && !$this->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -154,7 +149,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_commande,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (empty($user->rights->societe->client->voir) && !$this->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
@@ -178,7 +173,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (empty($user->rights->societe->client->voir) && !$this->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -203,7 +198,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, AVG(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (empty($user->rights->societe->client->voir) && !$this->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -226,7 +221,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_commande,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
 		if (empty($user->rights->societe->client->voir) && !$this->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
@@ -250,7 +245,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
 		$sql .= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
 		if (empty($user->rights->societe->client->voir) && !$user->socid) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= "  INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= $this->join;
 		$sql .= " WHERE ".$this->where;

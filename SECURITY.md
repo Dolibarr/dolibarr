@@ -6,9 +6,8 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 
 | Version    | Supported              |
 | ---------- | ---------------------- |
-| <= 15.0.0  | :x:                    |
-| >= 15.0.1+ | :white_check_mark: except CSRF attacks|
-| >= 16.0.0  | :white_check_mark:     |
+| <= 16.0.2  | :x:                    |
+| >= 16.0.3  | :white_check_mark:     |
 | >= develop | :white_check_mark:     |
 
 ## Reporting a Vulnerability

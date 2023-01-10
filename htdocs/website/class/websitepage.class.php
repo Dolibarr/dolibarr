@@ -50,11 +50,23 @@ class WebsitePage extends CommonObject
 	 */
 	public $picto = 'file-code';
 
+	/**
+	 * @var string 	Field with ID of parent key if this field has a parent or for child tables
+	 */
+	public $fk_element = 'fk_website_page';
+
+	/**
+	 * @var array	List of child tables. To know object to delete on cascade.
+	 */
+	protected $childtablesoncascade = array('categorie_website_page');
+
 
 	/**
 	 * @var int ID
 	 */
 	public $fk_website;
+
+	public $fk_page;		// If translation of another page
 
 	public $pageurl;
 	public $aliasalt;
@@ -116,8 +128,8 @@ class WebsitePage extends CommonObject
 	 */
 	public $fk_object;
 
-	const STATUS_DRAFT = 0;
-	const STATUS_VALIDATED = 1;
+	const STATUS_DRAFT = 0;			// offline
+	const STATUS_VALIDATED = 1;		// online
 
 
 	/**
@@ -177,35 +189,6 @@ class WebsitePage extends CommonObject
 		'fk_object' => array('type' => 'varchar(255)', 'label' => 'ObjectId', 'enabled'=>1, 'visible'=>0, 'position'=>47, 'searchall'=>0, 'help'=>'')
 	);
 	// END MODULEBUILDER PROPERTIES
-
-
-	// If this object has a subtable with lines
-
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	//public $table_element_line = 'mymodule_myobjectline';
-
-	/**
-	 * @var string 	Field with ID of parent key if this field has a parent or for child tables
-	 */
-	public $fk_element = 'fk_website_page';
-
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	//public $class_element_line = 'MyObjectline';
-
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
-	 */
-	//protected $childtables=array();
-
-	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
-	 */
-	protected $childtablesoncascade = array('categorie_website_page');
-
 
 
 	/**
@@ -838,10 +821,10 @@ class WebsitePage extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("mymodule");
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Offline');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Online');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Offline');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Online');
 		}
 
 		$statusType = 'status5';
