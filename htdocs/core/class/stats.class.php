@@ -237,7 +237,7 @@ abstract class Stats
 
 	/**
 	 * @param	int     $year           year number
-	 * @return 	int						value
+	 * @return 	array					array of values
 	 */
 	protected abstract function getAverageByMonth($year);
 
