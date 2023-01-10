@@ -1139,9 +1139,10 @@ class BookKeeping extends CommonObject
 	 * @param 	int 	$offset 		offset limit
 	 * @param 	array 	$filter 		filter array
 	 * @param 	string 	$filtermode 	filter mode (AND or OR)
+	 * @param 	int 	$option 		option (0: general account or 1: subaccount)
 	 * @return 	int 					<0 if KO, >0 if OK
 	 */
-	public function fetchAllBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAllBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND', $option = 0)
 	{
 		global $conf;
 
@@ -1151,6 +1152,9 @@ class BookKeeping extends CommonObject
 
 		$sql = 'SELECT';
 		$sql .= " t.numero_compte,";
+		$sql .= " t.label_compte,";
+		$sql .= " t.subledger_account,";
+		$sql .= " t.subledger_label,";
 		$sql .= " SUM(t.debit) as debit,";
 		$sql .= " SUM(t.credit) as credit";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
@@ -1176,6 +1180,8 @@ class BookKeeping extends CommonObject
 					} else {
 						$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
 					}
+				} elseif ($key == 't.reconciled_option') {
+					$sqlwhere[] = 't.lettering_code IS NULL';
 				} else {
 					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
@@ -1186,7 +1192,17 @@ class BookKeeping extends CommonObject
 			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
 		}
 
-		$sql .= ' GROUP BY t.numero_compte';
+		if (!empty($option)) {
+			$sql .= ' AND t.subledger_account IS NOT NULL';
+			$sql .= ' AND t.subledger_account != ""';
+			$sql .= ' GROUP BY t.subledger_account';
+			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
+		} else {
+			$sql .= ' GROUP BY t.numero_compte';
+			$sortfield = 't.numero_compte'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
+		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
@@ -1204,6 +1220,9 @@ class BookKeeping extends CommonObject
 				$line = new BookKeepingLine();
 
 				$line->numero_compte = $obj->numero_compte;
+				$line->label_compte = $obj->label_compte;
+				$line->subledger_account = $obj->subledger_account;
+				$line->subledger_label = $obj->subledger_label;
 				$line->debit = $obj->debit;
 				$line->credit = $obj->credit;
 
