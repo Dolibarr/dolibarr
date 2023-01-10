@@ -21,7 +21,7 @@ CountryNL=荷兰
 CountryHU=匈牙利
 CountryRU=俄国
 CountrySE=瑞典
-CountryCI=Ivoiry海岸
+CountryCI=Ivory Coast
 CountrySN=塞内加尔
 CountryAR=阿根廷
 CountryCM=喀麦隆
@@ -250,7 +250,9 @@ CountryMF=圣马丁
 
 ##### Civilities #####
 CivilityMME=夫人
+CivilityMMEShort=夫人
 CivilityMR=先生
+CivilityMRShort=先生
 CivilityMLE=女士
 CivilityMTRE=尊上（花千骨看多了）
 CivilityDR=医生

@@ -261,6 +261,20 @@ if ($action == 'setenablelettering') {
 	}
 }
 
+if ($action == 'setenableautolettering') {
+	$setenableautolettering = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_AUTOLETTERING", $setenableautolettering, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
 
 /*
  * View
@@ -430,7 +444,7 @@ foreach ($list_binding as $key) {
 		print $form->selectDate((!empty($conf->global->$key) ? $db->idate($conf->global->$key) : -1), $key, 0, 0, 1);
 	} elseif ($key == 'ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER') {
 		$array = array(0=>$langs->trans("PreviousMonth"), 1=>$langs->trans("CurrentMonth"), 2=>$langs->trans("Fiscalyear"));
-		print $form->selectarray($key, $array, (isset($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER) ? $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER : 0));
+		print $form->selectarray($key, $array, (isset($conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER) ? $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER : 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
 	} else {
 		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	}
@@ -479,6 +493,7 @@ if (!empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS)) {
 print '</tr>';
 
 print '</table>';
+print '<br>';
 
 // Lettering params
 print '<table class="noborder centpercent">';
@@ -498,6 +513,21 @@ if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
 	print '</a></td>';
 }
 print '</tr>';
+
+if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
+	print '<tr class="oddeven">';
+	print '<td>' . $langs->trans("ACCOUNTING_ENABLE_AUTOLETTERING") . '</td>';
+	if (!empty($conf->global->ACCOUNTING_ENABLE_AUTOLETTERING)) {
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenableautolettering&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setenableautolettering&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print '</tr>';
+}
 
 print '</table>';
 

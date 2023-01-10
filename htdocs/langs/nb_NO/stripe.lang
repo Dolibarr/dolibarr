@@ -61,6 +61,7 @@ DeleteACard=Slett kort
 ConfirmDeleteCard=Er du sikker på at du vil slette dette Kreditt- eller debetkortet?
 CreateCustomerOnStripe=Opprett kunde på Stripe
 CreateCardOnStripe=Lag kort på Stripe
+CreateBANOnStripe=Opprett bank på Stripe
 ShowInStripe=Vis i Stripe
 StripeUserAccountForActions=Brukerkonto til bruk for e-postvarsling av noen Stripe-hendelser (Stripe-utbetalinger)
 StripePayoutList=Liste over Stripe utbetalinger
@@ -69,3 +70,5 @@ ToOfferALinkForLiveWebhook=Link til oppsett av Stripe WebHook for oppkall av IPN
 PaymentWillBeRecordedForNextPeriod=Betalingen blir registrert for neste periode.
 ClickHereToTryAgain=<a href="%s">Klikk her for å prøve igjen ...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=På grunn av sterke regler for godkjenning av kunder, må opprettelse av et kort gjøres fra Stripe backoffice. Du kan klikke her for å slå på Stripe kundeoppføring: %s
+TERMINAL_LOCATION=Plassering (adresse) for terminaler
+RequestDirectDebitWithStripe=Be om direktedebet med Stripe

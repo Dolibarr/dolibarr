@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Классифици�
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Классифицировать связанный исходный заказ на покупку как полученный, когда прием подтвержден (и если количество, полученное всеми приемами, такое же, как в заказе на покупку для обновления)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Классифицировать связанный исходный заказ на покупку как полученный, когда прием закрыт (и если количество, полученное всеми приемами, такое же, как в заказе на покупку для обновления)
 # Autoclassify purchase invoice
-descWORKFLOW_BILL_ON_RECEPTION=Классифицируйте приемы как "выставленные" при подтверждении связанного заказа поставщика.
+descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=При создании тикета свяжите доступные контракты соответствующей третьей стороны
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=При привязке договоров искать среди договоров материнских компаний
@@ -31,6 +31,6 @@ descWORKFLOW_TICKET_CLOSE_INTERVENTION=Закройте все вмешател�
 AutomaticCreation=Автоматическое создание
 AutomaticClassification=Автоматическая классификация
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Классифицировать отгрузку из связанного источника как закрытую после подтверждения счета клиента
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
 AutomaticClosing=Автоматическое закрытие
 AutomaticLinking=Автоматическое связывание

@@ -285,7 +285,7 @@ if (count($listinsetup) > 0) {
 		// Delete
 		print '<td>';
 		$label = preg_replace('/_NAME$/', '', $keyforsupportedoauth2array);
-		print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&provider='.$keyforprovider.'&label='.$label.'">';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&provider='.urlencode($keyforprovider).'&label='.urlencode($label).'">';
 		print img_picto('', 'delete');
 		print '</a>';
 
@@ -298,7 +298,8 @@ if (count($listinsetup) > 0) {
 			$redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$keyforsupportedoauth2array]['callbackfile'].'_oauthcallback.php';
 			print '<tr class="oddeven value">';
 			print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
-			print '<td><input style="width: 80%" type"text" name="uri'.$keyforsupportedoauth2array.'" value="'.$redirect_uri.'" disabled>';
+			print '<td><input style="width: 80%" type="text" name="uri'.$keyforsupportedoauth2array.'" id="uri'.$keyforsupportedoauth2array.$keyforprovider.'" value="'.$redirect_uri.'" disabled>';
+			print ajax_autoselect('uri'.$keyforsupportedoauth2array.$keyforprovider);
 			print '</td>';
 			print '<td></td>';
 			print '</tr>';
@@ -306,7 +307,7 @@ if (count($listinsetup) > 0) {
 			if ($keyforsupportedoauth2array == 'OAUTH_OTHER_NAME') {
 				print '<tr class="oddeven value">';
 				print '<td>'.$langs->trans("URLOfServiceForAuthorization").'</td>';
-				print '<td><input style="width: 80%" type"text" name="'.$key[3].'" value="'.getDolGlobalString($key[3]).'" >';
+				print '<td><input style="width: 80%" type="text" name="'.$key[3].'" value="'.getDolGlobalString($key[3]).'" >';
 				print '</td>';
 				print '<td></td>';
 				print '</tr>';

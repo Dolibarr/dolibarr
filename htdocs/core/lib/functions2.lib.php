@@ -1043,7 +1043,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$regType = array();
 	if (preg_match('/\{(t+)\}/i', $mask, $regType)) {
 		$masktype = $regType[1];
-		$masktype_value = substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1])); // get n first characters of thirdparty typent_code (where n is length in mask)
+		$masktype_value = dol_substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1])); // get n first characters of thirdparty typent_code (where n is length in mask)
 		$masktype_value = str_pad($masktype_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
 	} else {
 		$masktype = '';
@@ -1301,7 +1301,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	}
 
 	//print $sql.'<br>';
-	dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
+	dol_syslog("functions2::get_next_value mode=".$mode, LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -1360,7 +1360,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$sql .= " AND ".$sqlwhere;
 		}
 
-		dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
+		dol_syslog("functions2::get_next_value mode=".$mode, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -1784,7 +1784,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
  *	@param	DoliDB	$db         Handler database
  *	@param	Conf	$conf		Object conf
  *	@param	User	$user      	Object user
- *	@param	array	$tab        Array (key=>value) with all parameters to save
+ *	@param	array	$tab        Array (key=>value) with all parameters to save/update
  *	@return int         		<0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()
@@ -2652,6 +2652,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'commande';
 	} elseif ($moduleobject == 'shipments') {
 		$moduledirforclass = 'expedition';
+	} elseif ($moduleobject == 'multicurrencies') {
+		$moduledirforclass = 'multicurrency';
 	} elseif ($moduleobject == 'facture' || $moduleobject == 'invoice' || $moduleobject == 'invoices') {
 		$moduledirforclass = 'compta/facture';
 	} elseif ($moduleobject == 'project' || $moduleobject == 'projects' || $moduleobject == 'task' || $moduleobject == 'tasks') {

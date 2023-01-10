@@ -29,6 +29,8 @@ use OAuth\Common\Storage\Exception\TokenNotFoundException;
 use OAuth\Common\Storage\Exception\AuthorizationStateNotFoundException;
 use DoliDB;
 
+
+
 /**
  * Class to manage storage of OAUTH2 in Dolibarr
  */
@@ -65,10 +67,10 @@ class DoliStorage implements TokenStorageInterface
 
 	/**
 	 * @param 	DoliDB 	$db					Database handler
-	 * @param 	Conf 	$conf				Conf object
+	 * @param 	\Conf 	$conf				Conf object
 	 * @param	string	$keyforprovider		Key to manage several providers of the same type. For example 'abc' will be added to 'Google' to defined storage key.
 	 */
-	public function __construct(DoliDB $db, $conf, $keyforprovider = '')
+	public function __construct(DoliDB $db, \Conf $conf, $keyforprovider = '')
 	{
 		$this->db = $db;
 		$this->conf = $conf;

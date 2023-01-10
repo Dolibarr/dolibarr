@@ -198,7 +198,7 @@ if (!empty($array_query['cust_prospect_status'])) {
 	print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 }
 print '</td><td>';
-print $formadvtargetemaling->multiselectProspectionStatus($array_query['cust_prospect_status'], 'cust_prospect_status', 1);
+print $formadvtargetemaling->multiselectProspectionStatus($array_query['cust_prospect_status'], 'cust_prospect_status');
 print '</td><td>'."\n";
 print '</td></tr>'."\n";
 

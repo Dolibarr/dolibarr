@@ -55,7 +55,7 @@ class mod_sn_advanced extends ModeleNumRefBatch
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Texte descripif
+	 *  @return     string      Descriptive text
 	 */
 	public function info()
 	{

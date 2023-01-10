@@ -1,7 +1,8 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 17.0.0 or higher.
+-- when current version is 18.0.0 or higher.
+
 --
 -- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
@@ -34,6 +35,26 @@
 
 -- Missing in v17 or lower
 
+-- VMYSQL4.3 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN `rank` rankorder integer;
+-- VPGSQL8.2 ALTER TABLE llx_hrm_skillrank CHANGE COLUMN rank rankorder integer;
+
+
 
 -- v18
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_CLOSE','Project closed','Executed when a project is closed','project',145);
+
+-- amount was removed in v12
+ALTER TABLE llx_facture DROP COLUMN amount;
+
+-- Rename prospect level on contact
+ALTER TABLE llx_socpeople CHANGE fk_prospectcontactlevel fk_prospectlevel varchar(12);
+
+ALTER TABLE llx_facture ADD COLUMN prorata_discount	real DEFAULT NULL;
+
+ALTER TABLE llx_payment_salary MODIFY COLUMN datep datetime;
+
+INSERT INTO llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1179, 117, 'I-28'  , 28,   0, '0',   0, '0', 0, 'IGST',      1);
+INSERT INTO llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (1176, 117, 'C+S-18',  0,   9, '1',   9, '1', 0, 'CGST+SGST - Same state sales', 1);
+
 ALTER TABLE llx_c_tva ADD COLUMN type_vat smallint NOT NULL DEFAULT '0' AFTER fk_pays;

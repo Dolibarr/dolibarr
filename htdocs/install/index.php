@@ -44,7 +44,7 @@ $langs->load("admin");
  * View
  */
 
-$formadmin = new FormAdmin(''); // Note: $db does not exist yet but we don't need it, so we put ''.
+$formadmin = new FormAdmin(null); // Note: $db does not exist yet but we don't need it, so we put ''.
 
 pHeader("", "check"); // Next step = check
 

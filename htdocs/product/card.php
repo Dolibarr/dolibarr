@@ -444,7 +444,7 @@ if (empty($reshook)) {
 			}
 
 			$error++;
-			setEventMessages($errors, null, 'errors');
+			setEventMessages('', $errors, 'errors');
 		}
 	}
 
@@ -541,7 +541,7 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				$error++;
 				$mesg = 'Failed to get bar code type information ';
-				setEventMessages($mesg.$stdobject->error, $mesg.$stdobject->errors, 'errors');
+				setEventMessages($mesg.$stdobject->error, $stdobject->errors, 'errors');
 			}
 			$object->barcode_type_code      = $stdobject->barcode_type_code;
 			$object->barcode_type_coder     = $stdobject->barcode_type_coder;
@@ -780,7 +780,7 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					$error++;
 					$mesg = 'Failed to get bar code type information ';
-					setEventMessages($mesg.$stdobject->error, $mesg.$stdobject->errors, 'errors');
+					setEventMessages($mesg.$stdobject->error, $stdobject->errors, 'errors');
 				}
 				$object->barcode_type_code      = $stdobject->barcode_type_code;
 				$object->barcode_type_coder     = $stdobject->barcode_type_coder;
@@ -1249,7 +1249,6 @@ if (isModEnabled('barcode') && !empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
 			$modBarCodeProduct = new $module();
 	}
 }
-
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// -----------------------------------------
@@ -2382,7 +2381,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="setbarcode">';
 					print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
-					print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
+					print '<input class="width300" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$tmpcode.'">';
 					print '&nbsp;<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 					print '</form>';
 				} else {

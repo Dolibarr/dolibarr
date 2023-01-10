@@ -4,7 +4,7 @@ IntracommReportSetup = Intracommreport module setup
 IntracommReportAbout = About intracommreport
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
+INTRACOMMREPORT_NUM_AGREMENT=批准号（由CISD签发）
 INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
 INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
@@ -32,7 +32,7 @@ IntracommReportTitle=Preparation of an XML file in ProDouane format
 # List
 IntracommReportList=List of generated declarations
 IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
+IntracommReportPeriod=Period of analysis
 IntracommReportTypeDeclaration=Type of declaration
 IntracommReportDownload=download XML file
 

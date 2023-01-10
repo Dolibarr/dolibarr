@@ -259,7 +259,7 @@ print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'proje
 // can have a parent that is not affected to him).
 $tasksarray = $task->getTasksArray(0, 0, ($object->id ? $object->id : $id), $socid, 0);
 // We load also tasks limited to a particular user
-//$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjectsOrTasks(0,$user,$object->id,0) : '');
+//$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjectsOrTasks(null, $user, $object->id, 0) : '');
 //var_dump($tasksarray);
 //var_dump($tasksrole);
 

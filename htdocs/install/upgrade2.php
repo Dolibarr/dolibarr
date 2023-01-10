@@ -490,6 +490,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 				migrate_contractdet_rank();
 			}
+
+			// Scripts for 18.0
+			$afterversionarray = explode('.', '170.9');
+			$beforeversionarray = explode('.', '18.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_contractdet_rank();
+			}
 		}
 
 
@@ -4079,11 +4086,11 @@ function migrate_rename_directories($db, $langs, $conf, $oldname, $newname)
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @return	void
+ * @return	boolean
  */
 function migrate_delete_old_files($db, $langs, $conf)
 {
-	$result = true;
+	$ret = true;
 
 	dolibarr_install_syslog("upgrade2::migrate_delete_old_files");
 
@@ -4148,7 +4155,6 @@ function migrate_delete_old_files($db, $langs, $conf)
 
 	foreach ($filetodeletearray as $filetodelete) {
 		//print '<b>'DOL_DOCUMENT_ROOT.$filetodelete."</b><br>\n";
-		$result = 1;
 		if (file_exists(DOL_DOCUMENT_ROOT.$filetodelete)) {
 			$result = dol_delete_file(DOL_DOCUMENT_ROOT.$filetodelete, 0, 0, 0, null, true, false);
 			if (!$result) {
@@ -4160,7 +4166,8 @@ function migrate_delete_old_files($db, $langs, $conf)
 			}
 		}
 	}
-	return $result;
+
+	return $ret;
 }
 
 /**
@@ -4169,11 +4176,11 @@ function migrate_delete_old_files($db, $langs, $conf)
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @return	void
+ * @return	boolean
  */
 function migrate_delete_old_dir($db, $langs, $conf)
 {
-	$result = true;
+	$ret = true;
 
 	dolibarr_install_syslog("upgrade2::migrate_delete_old_dir");
 
@@ -4199,7 +4206,8 @@ function migrate_delete_old_dir($db, $langs, $conf)
 			print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
 		}
 	}
-	return $result;
+
+	return $ret;
 }
 
 
@@ -4485,7 +4493,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @return	void
+ * @return	int						<0 if KO, >0 if OK
  */
 function migrate_reload_menu($db, $langs, $conf)
 {
@@ -4515,6 +4523,8 @@ function migrate_reload_menu($db, $langs, $conf)
 
 		print '</td></tr>';
 	}
+
+	return 1;
 }
 
 /**

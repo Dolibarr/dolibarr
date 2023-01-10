@@ -834,7 +834,6 @@ class Translate
 						'ja'=>'ja_JP',
 						'lo'=>'lo_LA',
 						'nb'=>'nb_NO',
-						'fa'=>'fa_IR',
 						'sq'=>'sq_AL',
 						'sr'=>'sr_RS',
 						'sv'=>'sv_SE',

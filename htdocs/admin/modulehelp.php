@@ -372,13 +372,13 @@ if ($mode == 'feature') {
 	if (count($objMod->depends)) {
 		$text .= join(',', $objMod->depends);
 	} else {
-		$text .= $langs->trans("None");
+		$text .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
 	$text .= '<br><strong>'.$langs->trans("RequiredBy").':</strong> ';
 	if (count($objMod->requiredby)) {
 		$text .= join(',', $objMod->requiredby);
 	} else {
-		$text .= $langs->trans("None");
+		$text .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
 
 	$text .= '<br><br>';
@@ -395,7 +395,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -408,7 +408,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -418,7 +418,7 @@ if ($mode == 'feature') {
 	if (dol_is_file($filedata)) {
 		$text .= $langs->trans("Yes").' <span class="opacitymedium">('.$moduledir.'/sql/data.sql)</span>';
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -437,7 +437,7 @@ if ($mode == 'feature') {
 			}
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -446,7 +446,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->module_parts) && isset($objMod->module_parts['models']) && $objMod->module_parts['models']) {
 		$text .= $langs->trans("Yes");
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -455,7 +455,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions']) {
 		$text .= $langs->trans("Yes");
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -468,7 +468,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -502,7 +502,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -531,7 +531,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -544,7 +544,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -553,7 +553,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->menu) && !empty($objMod->menu)) { // objMod can be an array or just an int 1
 		$text .= $langs->trans("Yes");
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -566,7 +566,7 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
@@ -579,13 +579,13 @@ if ($mode == 'feature') {
 			$i++;
 		}
 	} else {
-		$text .= $langs->trans("No");
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 
 	$text .= '<br>';
 
 	$text .= '<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
-	$text .= $langs->trans("DetectionNotPossible");
+	$text .= '<span class="opacitymedium">'.$langs->trans("DetectionNotPossible").'</span>';
 }
 
 
@@ -594,7 +594,7 @@ if ($mode == 'changelog') {
 	if ($changelog) {
 		$text .= '<div class="moduledesclong">'.$changelog.'<div>';
 	} else {
-		$text .= '<div class="moduledesclong">'.$langs->trans("NotAvailable").'</div>';
+		$text .= '<div class="moduledesclong"><span class="opacitymedium">'.$langs->trans("NotAvailable").'</span></div>';
 	}
 }
 

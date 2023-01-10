@@ -98,7 +98,7 @@ class ProjectStats extends Stats
 
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__METHOD__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
