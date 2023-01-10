@@ -183,32 +183,43 @@ llxHeader();
 
 // List of possible landing pages
 $tmparray = array('index.php'=>'Dashboard');
-if (!empty($conf->societe->enabled)) {
-	$tmparray['societe/index.php?mainmenu=companies&leftmenu='] = 'ThirdPartiesArea';
-}
-if (!empty($conf->project->enabled)) {
-	$tmparray['projet/index.php?mainmenu=project&leftmenu='] = 'ProjectsArea';
-}
-if (!empty($conf->holiday->enabled) || !empty($conf->expensereport->enabled)) {
-	$tmparray['hrm/index.php?mainmenu=hrm&leftmenu='] = 'HRMArea'; // TODO Complete list with first level of menus
-}
-if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) {
-	$tmparray['product/index.php?mainmenu=products&leftmenu='] = 'ProductsAndServicesArea';
-}
-if (!empty($conf->propal->enabled) || !empty($conf->commande->enabled) || !empty($conf->ficheinter->enabled) || !empty($conf->contrat->enabled)) {
-	$tmparray['comm/index.php?mainmenu=commercial&leftmenu='] = 'CommercialArea';
-}
-if (!empty($conf->comptabilite->enabled) || !empty($conf->accounting->enabled)) {
-	$tmparray['compta/index.php?mainmenu=compta&leftmenu='] = 'AccountancyTreasuryArea';
-}
-if (!empty($conf->adherent->enabled)) {
-	$tmparray['adherents/index.php?mainmenu=members&leftmenu='] = 'MembersArea';
-}
-if (isModEnabled('agenda')) {
-	$tmparray['comm/action/index.php?mainmenu=agenda&leftmenu='] = 'Agenda';
-}
-if (!empty($conf->ticket->enabled)) {
-	$tmparray['ticket/list.php?mainmenu=ticket&leftmenu='] = 'Tickets';
+
+// List of translation item correspondance for core modules titles
+$correspondance=array(
+	'agenda'=>'Agenda',
+	'ticket'=>'Tickets',
+	'societe'=>'ThirdPartiesArea',
+	'projet'=>'ProjectsArea',
+	'hrm'=>'HRMArea',
+	'product'=>'ProductsAndServicesArea',
+	'comm'=>'CommercialArea',
+	'compta'=>'AccountancyTreasuryArea',
+	'knowledgemanagement'=>'KnowledgeManagementArea',
+	'opensurvey'=>'OpenSurveyArea'
+);
+
+// Generate list of possible landing pages from database
+$resql=$db->query("SELECT * FROM `".MAIN_DB_PREFIX."menu`");
+if ($resql)
+{
+	while ($el=$db->fetch_object($resql))
+	{
+		eval("\$enabled={$el->enabled};");
+		eval("\$perms={$el->perms};");
+		if ($perms===1 && $enabled===true) {
+			$linkchar=(strpos($el->url,"?")===false)?"?":"&";
+			$url=$el->url.$linkchar."mainmenu={$el->mainmenu}&leftmenu={$el->leftmenu}";
+			if (substr($url,0,1)=="/") {
+				$url=substr($url,1,-1);
+			}
+			if (isset($correspondance[$el->module])) {
+				$tmparray[$url]=$langs->trans($correspondance[$el->module])." - ".$langs->trans($el->titre);
+			}
+			else {
+				$tmparray[$url]=$langs->trans("Module".ucfirst($el->module)."Name")." - ".$langs->trans($el->titre);
+			}
+		}
+	}
 }
 
 $head = user_prepare_head($object);
