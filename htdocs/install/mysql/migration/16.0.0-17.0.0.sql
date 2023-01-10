@@ -56,24 +56,25 @@ UPDATE llx_c_actioncomm SET type = 'system' WHERE code = 'AC_OTH';
 
 ALTER TABLE llx_opensurvey_user_studs MODIFY reponses VARCHAR(200) NOT NULL;
 
+
 -- v17
 
 ALTER TABLE llx_mailing_cibles MODIFY COLUMN source_type varchar(32); 
-
-ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_percent (percent);
 
 UPDATE llx_c_paiement SET code = 'BANCON' WHERE code = 'BAN' AND libelle = 'Bancontact';
 
 -- VMYSQL4.3 ALTER TABLE llx_partnership MODIFY COLUMN fk_user_creat integer NULL;
 -- VPGSQL8.2 ALTER TABLE llx_partnership ALTER COLUMN fk_user_creat DROP NOT NULL;
 
-ALTER TABLE llx_partnership ADD COLUMN ip varchar(250);
-ALTER TABLE llx_adherent ADD COLUMN ip varchar(250);
-ALTER TABLE llx_projet ADD COLUMN ip varchar(250);
+-- add columns for IP
 ALTER TABLE llx_actioncomm ADD COLUMN ip varchar(250);
+ALTER TABLE llx_adherent ADD COLUMN ip varchar(250);
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD COLUMN ip varchar(250);
-ALTER TABLE llx_opensurvey_user_studs ADD COLUMN ip varchar(250);
 ALTER TABLE llx_opensurvey_comments ADD COLUMN ip varchar(250);
+ALTER TABLE llx_opensurvey_user_studs ADD COLUMN ip varchar(250);
+ALTER TABLE llx_partnership ADD COLUMN ip varchar(250);
+ALTER TABLE llx_projet ADD COLUMN ip varchar(250);
+--
 
 ALTER TABLE llx_fichinterdet_rec DROP COLUMN remise;
 ALTER TABLE llx_fichinterdet_rec DROP COLUMN fk_export_commpta;
@@ -82,9 +83,6 @@ UPDATE llx_const set name = 'ADHERENT_MAILMAN_ADMIN_PASSWORD' WHERE name = 'ADHE
 
 ALTER TABLE llx_oauth_token ADD COLUMN state text after tokenstring;
 
-ALTER TABLE llx_adherent ADD COLUMN default_lang VARCHAR(6) DEFAULT NULL AFTER datefin;
-
-ALTER TABLE llx_adherent_type ADD COLUMN caneditamount integer DEFAULT 0 AFTER amount;
 
 ALTER TABLE llx_holiday CHANGE COLUMN date_approve date_approval datetime;
 
@@ -101,13 +99,10 @@ ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN acces_type integer DEFA
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN oauth_service varchar(128) DEFAULT NULL;
 
 
-ALTER TABLE llx_bank ADD COLUMN position integer DEFAULT 0;
-
 ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur_dispatch_fk_product (fk_product);
 
 INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('MAIN_SECURITY_MAX_IMG_IN_HTML_CONTENT', 1, 1000, 'int', 0);
 
-ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN port varchar(10) DEFAULT '993';
 
 ALTER TABLE llx_facture ADD COLUMN close_missing_amount double(24, 8) after close_code;
 
@@ -126,8 +121,8 @@ ALTER TABLE llx_ticket ADD email_date datetime after email_msgid;
 
 ALTER TABLE llx_ticket MODIFY COLUMN message mediumtext;
 
-ALTER TABLE llx_cronjob ADD COLUMN pid integer;
 
+-- add holidays for Belgium
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-VICTORYDAY',  0, 2, '', 0,  5,  8, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-NATIONALDAY', 0, 2, '', 0,  7, 21, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-ASSOMPTION',  0, 2, '', 0,  8, 15, 1);
@@ -137,6 +132,7 @@ INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, m
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-ASCENSION',   0, 2, 'ascension', 0, 0, 0, 1);
 INSERT INTO llx_c_hrm_public_holiday (code, entity, fk_country, dayrule, year, month, day, active) VALUES('BE-PENTECOST',   0, 2, 'pentecost', 0, 0, 0, 1);
 
+
 ALTER TABLE llx_societe_rib ADD COLUMN state_id integer AFTER default_rib;
 ALTER TABLE llx_societe_rib ADD COLUMN fk_country integer AFTER state_id;
 ALTER TABLE llx_societe_rib ADD COLUMN currency_code varchar(3) AFTER fk_country;
@@ -145,6 +141,38 @@ ALTER TABLE llx_user_rib ADD COLUMN state_id integer AFTER owner_address;
 ALTER TABLE llx_user_rib ADD COLUMN fk_country integer AFTER state_id;
 ALTER TABLE llx_user_rib ADD COLUMN currency_code varchar(3) AFTER fk_country;
 
+
+ALTER TABLE llx_product_lot ADD COLUMN note_public text DEFAULT NULL after batch;
+ALTER TABLE llx_product_lot ADD COLUMN note_private text DEFAULT NULL after note_public;
+
+ALTER TABLE llx_user CHANGE COLUMN note note_private text;
+
+ALTER TABLE llx_product ADD COLUMN fk_default_workstation integer DEFAULT NULL;
+ALTER TABLE llx_bom_bomline ADD COLUMN fk_unit integer DEFAULT NULL;
+
+ALTER TABLE llx_rights_def ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+
+-- Actioncomm
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_percent (percent);
+
+
+-- Action Trigger
+ALTER TABLE llx_c_action_trigger MODIFY COLUMN code varchar(128);
+INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('PROJECT_SENTBYMAIL','Project sent by mail','Executed when a project is sent by email','project',144);
+
+
+-- Adherent
+ALTER TABLE llx_adherent ADD COLUMN default_lang VARCHAR(6) DEFAULT NULL AFTER datefin;
+
+-- Adherent_Type
+ALTER TABLE llx_adherent_type ADD COLUMN caneditamount integer DEFAULT 0 AFTER amount;
+
+
+-- Bank
+ALTER TABLE llx_bank ADD COLUMN position integer DEFAULT 0;
+
+-- Bank_Extrafields
 CREATE TABLE llx_bank_extrafields
 (
   rowid      integer AUTO_INCREMENT PRIMARY KEY,
@@ -155,52 +183,55 @@ CREATE TABLE llx_bank_extrafields
 
 ALTER TABLE llx_bank_extrafields ADD INDEX idx_bank_extrafields (fk_object);
 
-ALTER TABLE llx_product_lot ADD COLUMN note_public text DEFAULT NULL after batch;
-ALTER TABLE llx_product_lot ADD COLUMN note_private text DEFAULT NULL after note_public;
+-- Bank_URL
+ALTER TABLE llx_bank_url ADD INDEX idx_bank_url_url_id (url_id);
 
-ALTER TABLE llx_user CHANGE COLUMN note note_private text;
 
+-- llx_c_Effectif
 UPDATE llx_c_effectif SET code='EF101-500', libelle='101 - 500' WHERE code='EF100-500';
 
 
-ALTER TABLE llx_product ADD COLUMN fk_default_workstation integer DEFAULT NULL;
-ALTER TABLE llx_bom_bomline ADD COLUMN fk_unit integer DEFAULT NULL;
+-- Commande 
+ALTER TABLE llx_commande ADD COLUMN revenuestamp double(24,8) DEFAULT 0 after localtax2;
 
-ALTER TABLE llx_rights_def ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
-UPDATE llx_establishment SET name='' WHERE name IS NULL;
-ALTER TABLE llx_establishment CHANGE name label varchar(255) NOT NULL;
+-- Cronjob
+ALTER TABLE llx_cronjob ADD COLUMN pid integer;
 
+
+-- Donations
 ALTER TABLE llx_don ADD UNIQUE INDEX idx_don_uk_ref (ref, entity);
-
 ALTER TABLE llx_don ADD INDEX idx_don_fk_soc (fk_soc);
 ALTER TABLE llx_don ADD INDEX idx_don_fk_project (fk_projet);
 ALTER TABLE llx_don ADD INDEX idx_don_fk_user_author (fk_user_author);
 ALTER TABLE llx_don ADD INDEX idx_don_fk_user_valid (fk_user_valid);
 
-ALTER TABLE llx_commande ADD COLUMN revenuestamp double(24,8) DEFAULT 0 after localtax2;
 
+-- Element_categorie
 create table llx_element_categorie
 (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   fk_categorie  integer NOT NULL,
-  fk_element  integer NOT NULL,
+  fk_element    integer NOT NULL,
   import_key    varchar(14)
 )ENGINE=innodb;
 
 ALTER TABLE llx_element_categorie ADD UNIQUE INDEX idx_element_categorie_idx (fk_element, fk_categorie);
-
 ALTER TABLE llx_element_categorie ADD CONSTRAINT fk_element_categorie_fk_categorie FOREIGN KEY (fk_categorie) REFERENCES llx_categorie(rowid);
 
-INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) VALUES ('PROJECT_SENTBYMAIL','Project sent by mail','Executed when a project is sent by email','project',144);
+
+-- Establishment
+UPDATE llx_establishment SET name='' WHERE name IS NULL;
+ALTER TABLE llx_establishment CHANGE name label varchar(255) NOT NULL;
+
+
+-- Extrafields
+ALTER TABLE llx_extrafields MODIFY COLUMN fielddefault text;
+
 
 ALTER TABLE llx_socpeople ADD INDEX idx_socpeople_lastname (lastname);
 
 ALTER TABLE llx_societe ADD INDEX idx_societe_nom(nom);
-
-ALTER TABLE llx_extrafields MODIFY COLUMN fielddefault text;
-
-ALTER TABLE llx_bank_url ADD INDEX idx_bank_url_url_id (url_id);
 
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_code varchar(3) NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_tx double(24,8) NULL;
@@ -221,7 +252,6 @@ ALTER TABLE llx_projet ADD COLUMN date_end_event   datetime;
 ALTER TABLE llx_projet ADD COLUMN location         varchar(255);
 
 
-ALTER TABLE llx_c_action_trigger MODIFY COLUMN code varchar(128);
 
 ALTER TABLE llx_overwrite_trans DROP INDEX uk_overwrite_trans;
 ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(entity, lang, transkey);
@@ -229,7 +259,6 @@ ALTER TABLE llx_overwrite_trans ADD UNIQUE INDEX uk_overwrite_trans(entity, lang
 --
 -- List of all managed triggered events (used for trigger agenda automatic events and for notification)
 --
-
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_CREATE','Third party created','Executed when a third party is created','societe',1);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_MODIFY','Third party update','Executed when you update third party','societe',1);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('COMPANY_SENTBYMAIL','Mails sent from third party card','Executed when you send email from third party card','societe',1);
