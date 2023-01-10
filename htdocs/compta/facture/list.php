@@ -75,6 +75,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'invoicelist';
+$mode = GETPOST('mode', 'alpha');
 
 if ($contextpage == 'poslist') {
 	$optioncss = 'print';
@@ -974,6 +975,9 @@ if ($resql) {
 	}
 
 	$param = '&socid='.urlencode($socid);
+	if (!empty($mode)) {
+		$param .= '&mode='.urlencode($mode);
+	}
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -1185,6 +1189,9 @@ if ($resql) {
 		if (!empty($socid)) {
 			$url .= '&socid='.$socid;
 		}
+		$newcardbutton  = '';
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 		$newcardbutton = dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->hasRight("facture", "creer"));
 	}
 
@@ -1204,6 +1211,7 @@ if ($resql) {
 	print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="socid" value="'.$socid.'">';
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 	print_barre_liste($langs->trans('BillsCustomers').' '.($socid > 0 ? ' '.$soc->name : ''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -1894,645 +1902,660 @@ if ($resql) {
 				$total_margin += $marginInfo['total_margin'];
 			}
 
-			print '<tr class="oddeven"';
-			if ($contextpage == 'poslist') {
-				print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();';
-				if (strpos($obj->ref, 'PROV') !== false) {
-					//If is a draft invoice, load var to be able to add products
-					$place = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
-					print 'parent.place=\''.$place.'\'';
+			if ($mode == 'kanban') {
+				if ($i == 0) {
+					print '<tr><td colspan="12">';
+					print '<div class="box-flex-container">';
 				}
-				print '});"';
-			}
-			print '>';
-
-
-			// Action column
-			if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-				print '<td class="nowrap" align="center">';
-				if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-					$selected = 0;
-					if (in_array($obj->id, $arrayofselected)) {
-						$selected = 1;
+				// Output Kanban
+				$facturestatic->socid = $companystatic->getNomUrl(1, 'company', 15);
+				$userstatic->fetch($obj->fk_user_author);
+				$facturestatic->fk_user_author = $userstatic->getNomUrl(1);
+				print $facturestatic->getKanbanView('');
+				if ($i == (min($num, $limit) - 1)) {
+					print '</div>';
+					print '</td></tr>';
+				}
+			} else {
+				print '<tr class="oddeven"';
+				if ($contextpage == 'poslist') {
+					print ' onclick="parent.$(\'#poslines\').load(\'invoice.php?action=history&placeid='.$obj->id.'\', function() {parent.$.colorbox.close();';
+					if (strpos($obj->ref, 'PROV') !== false) {
+						//If is a draft invoice, load var to be able to add products
+						$place = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
+						print 'parent.place=\''.$place.'\'';
 					}
-					print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+					print '});"';
 				}
-				print '</td>';
-			}
+				print '>';
 
-			// No
-			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
-				print '<td>'.(($offset * $limit) + $i).'</td>';
-			}
 
-			// Ref
-			if (!empty($arrayfields['f.ref']['checked'])) {
-				print '<td class="nowraponall">';
-
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-
-				print '<td class="nobordernopadding nowraponall">';
-				if ($contextpage == 'poslist') {
-					print dol_escape_htmltag($obj->ref);
-				} else {
-					print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
-				}
-
-				$filename = dol_sanitizeFileName($obj->ref);
-				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
-				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->id;
-				print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
-				print '</td>';
-				print '</tr>';
-				print '</table>';
-
-				print "</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// Customer ref
-			if (!empty($arrayfields['f.ref_client']['checked'])) {
-				print '<td class="nowrap tdoverflowmax200">';
-				print dol_escape_htmltag($obj->ref_client);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// Type
-			if (!empty($arrayfields['f.type']['checked'])) {
-				print '<td class="nowraponall tdoverflowmax100" title="'.$facturestatic->getLibType().'">';
-				print $facturestatic->getLibType(2);
-				print "</td>";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// Date
-			if (!empty($arrayfields['f.datef']['checked'])) {
-				print '<td align="center" class="nowraponall">';
-				print dol_print_date($db->jdate($obj->datef), 'day');
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// Date
-			if (!empty($arrayfields['f.date_valid']['checked'])) {
-				print '<td align="center" class="nowraponall">';
-				print dol_print_date($db->jdate($obj->date_valid), 'day');
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// Date limit
-			if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
-				print '<td align="center" class="nowraponall">'.dol_print_date($datelimit, 'day');
-				if ($facturestatic->hasDelay()) {
-					print img_warning($langs->trans('Alert').' - '.$langs->trans('Late'));
-				}
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// Project ref
-			if (!empty($arrayfields['p.ref']['checked'])) {
-				print '<td class="nocellnopadd nowraponall">';
-				if ($obj->project_id > 0) {
-					print $projectstatic->getNomUrl(1);
-				}
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// Project title
-			if (!empty($arrayfields['p.title']['checked'])) {
-				print '<td class="nowraponall">';
-				if ($obj->project_id > 0) {
-					print dol_escape_htmltag($projectstatic->title);
-				}
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// Third party
-			if (!empty($arrayfields['s.nom']['checked'])) {
-				print '<td class="tdoverflowmax200">';
-				if ($contextpage == 'poslist') {
-					print dol_escape_htmltag($companystatic->name);
-				} else {
-					print $companystatic->getNomUrl(1, 'customer', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
-				}
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Alias
-			if (!empty($arrayfields['s.name_alias']['checked'])) {
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
-				print dol_escape_htmltag($companystatic->name_alias);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Parent company
-			if (!empty($arrayfields['s2.nom']['checked'])) {
-				print '<td class="tdoverflowmax200">';
-				if ($obj->fk_parent > 0) {
-					if (!isset($company_url_list[$obj->fk_parent])) {
-						$companyparent = new Societe($db);
-						$res = $companyparent->fetch($obj->fk_parent);
-						if ($res > 0) {
-							$company_url_list[$obj->fk_parent] = $companyparent->getNomUrl(1);
+				// Action column
+				if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+					print '<td class="nowrap" align="center">';
+					if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+						$selected = 0;
+						if (in_array($obj->id, $arrayofselected)) {
+							$selected = 1;
 						}
+						print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
 					}
-					if (isset($company_url_list[$obj->fk_parent])) {
-						print $company_url_list[$obj->fk_parent];
+					print '</td>';
+				}
+
+				// No
+				if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+					print '<td>'.(($offset * $limit) + $i).'</td>';
+				}
+
+				// Ref
+				if (!empty($arrayfields['f.ref']['checked'])) {
+					print '<td class="nowraponall">';
+
+					print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+
+					print '<td class="nobordernopadding nowraponall">';
+					if ($contextpage == 'poslist') {
+						print dol_escape_htmltag($obj->ref);
+					} else {
+						print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
+					}
+
+					$filename = dol_sanitizeFileName($obj->ref);
+					$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+					$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->id;
+					print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
+					print '</td>';
+					print '</tr>';
+					print '</table>';
+
+					print "</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
 					}
 				}
-				print "</td>";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Town
-			if (!empty($arrayfields['s.town']['checked'])) {
-				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->town).'">';
-				print dol_escape_htmltag($obj->town);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Zip
-			if (!empty($arrayfields['s.zip']['checked'])) {
-				print '<td class="nowraponall">';
-				print dol_escape_htmltag($obj->zip);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// State
-			if (!empty($arrayfields['state.nom']['checked'])) {
-				print "<td>".dol_escape_htmltag($obj->state_name)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Country
-			if (!empty($arrayfields['country.code_iso']['checked'])) {
-				print '<td class="center">';
-				$tmparray = getCountry($obj->fk_pays, 'all');
-				print $tmparray['label'];
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Type ent
-			if (!empty($arrayfields['typent.code']['checked'])) {
-				print '<td class="center">';
-				if (!is_array($typenArray) || count($typenArray) == 0) {
-					$typenArray = $formcompany->typent_array(1);
-				}
-				print $typenArray[$obj->typent_code];
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Staff
-			if (!empty($arrayfields['staff.code']['checked'])) {
-				print '<td class="center">';
-				if (!is_array($conf->cache['staff']) || count($conf->cache['staff']) == 0) {
-					$conf->cache['staff'] = $formcompany->effectif_array(1);
-				}
-				print $conf->cache['staff'][$obj->staff_code];
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
 
-			// Payment mode
-			if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
-				$s = $form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1, 0, '', 1);
-				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
-				print $s;
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// Payment terms
-			if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
-				$s = $form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', 0, '', -1, -1, 1);
-				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
-				print $s;
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// Module Source
-			if (!empty($arrayfields['f.module_source']['checked'])) {
-				print '<td>';
-				print dol_escape_htmltag($obj->module_source);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// POS Terminal
-			if (!empty($arrayfields['f.pos_source']['checked'])) {
-				print '<td>';
-				print dol_escape_htmltag($obj->pos_source);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// Amount HT
-			if (!empty($arrayfields['f.total_ht']['checked'])) {
-				print '<td class="right nowraponall amount">'.price($obj->total_ht)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_ht';
-				}
-				$totalarray['val']['f.total_ht'] += $obj->total_ht;
-			}
-			// Amount VAT
-			if (!empty($arrayfields['f.total_tva']['checked'])) {
-				print '<td class="right nowraponall amount">'.price($obj->total_tva)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_tva';
-				}
-				$totalarray['val']['f.total_tva'] += $obj->total_tva;
-			}
-			// Amount LocalTax1
-			if (!empty($arrayfields['f.total_localtax1']['checked'])) {
-				print '<td class="right nowraponall amount">'.price($obj->total_localtax1)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_localtax1';
-				}
-				$totalarray['val']['f.total_localtax1'] += $obj->total_localtax1;
-			}
-			// Amount LocalTax2
-			if (!empty($arrayfields['f.total_localtax2']['checked'])) {
-				print '<td class="right nowraponall amount">'.price($obj->total_localtax2)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_localtax2';
-				}
-				$totalarray['val']['f.total_localtax2'] += $obj->total_localtax2;
-			}
-			// Amount TTC
-			if (!empty($arrayfields['f.total_ttc']['checked'])) {
-				print '<td class="right nowraponall amount">'.price($obj->total_ttc)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'f.total_ttc';
-				}
-				$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
-			}
-
-			$userstatic->id = $obj->fk_user_author;
-			$userstatic->login = $obj->login;
-			$userstatic->lastname = $obj->lastname;
-			$userstatic->firstname = $obj->firstname;
-			$userstatic->email = $obj->user_email;
-			$userstatic->statut = $obj->user_statut;
-			$userstatic->entity = $obj->entity;
-			$userstatic->photo = $obj->photo;
-			$userstatic->office_phone = $obj->office_phone;
-			$userstatic->office_fax = $obj->office_fax;
-			$userstatic->user_mobile = $obj->user_mobile;
-			$userstatic->job = $obj->job;
-			$userstatic->gender = $obj->gender;
-
-			// Author
-			if (!empty($arrayfields['u.login']['checked'])) {
-				print '<td class="tdoverflowmax200">';
-				if ($userstatic->id) {
-					print $userstatic->getNomUrl(-1);
-				} else {
-					print '&nbsp;';
-				}
-				print "</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			if (!empty($arrayfields['sale_representative']['checked'])) {
-				// Sales representatives
-				print '<td>';
-				if ($obj->socid > 0) {
-					$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
-					if ($listsalesrepresentatives < 0) {
-						dol_print_error($db);
+				// Customer ref
+				if (!empty($arrayfields['f.ref_client']['checked'])) {
+					print '<td class="nowrap tdoverflowmax200">';
+					print dol_escape_htmltag($obj->ref_client);
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
 					}
-					$nbofsalesrepresentative = count($listsalesrepresentatives);
-					if ($nbofsalesrepresentative > 6) {
-						// We print only number
-						print $nbofsalesrepresentative;
-					} elseif ($nbofsalesrepresentative > 0) {
-						$j = 0;
-						foreach ($listsalesrepresentatives as $val) {
-							$userstatic->id = $val['id'];
-							$userstatic->lastname = $val['lastname'];
-							$userstatic->firstname = $val['firstname'];
-							$userstatic->email = $val['email'];
-							$userstatic->statut = $val['statut'];
-							$userstatic->entity = $val['entity'];
-							$userstatic->photo = $val['photo'];
-							$userstatic->login = $val['login'];
-							$userstatic->office_phone = $val['office_phone'];
-							$userstatic->office_fax = $val['office_fax'];
-							$userstatic->user_mobile = $val['user_mobile'];
-							$userstatic->job = $val['job'];
-							$userstatic->gender = $val['gender'];
-							//print '<div class="float">':
-							print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
-							$j++;
-							if ($j < $nbofsalesrepresentative) {
-								print ' ';
+				}
+
+				// Type
+				if (!empty($arrayfields['f.type']['checked'])) {
+					print '<td class="nowraponall tdoverflowmax100" title="'.$facturestatic->getLibType().'">';
+					print $facturestatic->getLibType(2);
+					print "</td>";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+
+				// Date
+				if (!empty($arrayfields['f.datef']['checked'])) {
+					print '<td align="center" class="nowraponall">';
+					print dol_print_date($db->jdate($obj->datef), 'day');
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+
+				// Date
+				if (!empty($arrayfields['f.date_valid']['checked'])) {
+					print '<td align="center" class="nowraponall">';
+					print dol_print_date($db->jdate($obj->date_valid), 'day');
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+
+				// Date limit
+				if (!empty($arrayfields['f.date_lim_reglement']['checked'])) {
+					print '<td align="center" class="nowraponall">'.dol_print_date($datelimit, 'day');
+					if ($facturestatic->hasDelay()) {
+						print img_warning($langs->trans('Alert').' - '.$langs->trans('Late'));
+					}
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+
+				// Project ref
+				if (!empty($arrayfields['p.ref']['checked'])) {
+					print '<td class="nocellnopadd nowraponall">';
+					if ($obj->project_id > 0) {
+						print $projectstatic->getNomUrl(1);
+					}
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+
+				// Project title
+				if (!empty($arrayfields['p.title']['checked'])) {
+					print '<td class="nowraponall">';
+					if ($obj->project_id > 0) {
+						print dol_escape_htmltag($projectstatic->title);
+					}
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+
+				// Third party
+				if (!empty($arrayfields['s.nom']['checked'])) {
+					print '<td class="tdoverflowmax200">';
+					if ($contextpage == 'poslist') {
+						print dol_escape_htmltag($companystatic->name);
+					} else {
+						print $companystatic->getNomUrl(1, 'customer', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
+					}
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Alias
+				if (!empty($arrayfields['s.name_alias']['checked'])) {
+					print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
+					print dol_escape_htmltag($companystatic->name_alias);
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Parent company
+				if (!empty($arrayfields['s2.nom']['checked'])) {
+					print '<td class="tdoverflowmax200">';
+					if ($obj->fk_parent > 0) {
+						if (!isset($company_url_list[$obj->fk_parent])) {
+							$companyparent = new Societe($db);
+							$res = $companyparent->fetch($obj->fk_parent);
+							if ($res > 0) {
+								$company_url_list[$obj->fk_parent] = $companyparent->getNomUrl(1);
 							}
-							//print '</div>';
+						}
+						if (isset($company_url_list[$obj->fk_parent])) {
+							print $company_url_list[$obj->fk_parent];
 						}
 					}
-					//else print $langs->trans("NoSalesRepresentativeAffected");
-				} else {
-					print '&nbsp;';
+					print "</td>";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
+				// Town
+				if (!empty($arrayfields['s.town']['checked'])) {
+					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->town).'">';
+					print dol_escape_htmltag($obj->town);
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
-			}
+				// Zip
+				if (!empty($arrayfields['s.zip']['checked'])) {
+					print '<td class="nowraponall">';
+					print dol_escape_htmltag($obj->zip);
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// State
+				if (!empty($arrayfields['state.nom']['checked'])) {
+					print "<td>".dol_escape_htmltag($obj->state_name)."</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Country
+				if (!empty($arrayfields['country.code_iso']['checked'])) {
+					print '<td class="center">';
+					$tmparray = getCountry($obj->fk_pays, 'all');
+					print $tmparray['label'];
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Type ent
+				if (!empty($arrayfields['typent.code']['checked'])) {
+					print '<td class="center">';
+					if (!is_array($typenArray) || count($typenArray) == 0) {
+						$typenArray = $formcompany->typent_array(1);
+					}
+					print $typenArray[$obj->typent_code];
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Staff
+				if (!empty($arrayfields['staff.code']['checked'])) {
+					print '<td class="center">';
+					if (!is_array($conf->cache['staff']) || count($conf->cache['staff']) == 0) {
+						$conf->cache['staff'] = $formcompany->effectif_array(1);
+					}
+					print $conf->cache['staff'][$obj->staff_code];
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
 
-			if (!empty($arrayfields['f.retained_warranty']['checked'])) {
-				print '<td align="right">'.(!empty($obj->retained_warranty) ? price($obj->retained_warranty).'%' : '&nbsp;').'</td>';
-			}
+				// Payment mode
+				if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
+					$s = $form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1, 0, '', 1);
+					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
+					print $s;
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
 
-			if (!empty($arrayfields['dynamount_payed']['checked'])) {
-				print '<td class="right nowraponall amount">'.(!empty($totalpay) ? price($totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
-				if (!$i) {
-					$totalarray['nbfield']++;
+				// Payment terms
+				if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
+					$s = $form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', 0, '', -1, -1, 1);
+					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
+					print $s;
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'totalam';
-				}
-				$totalarray['val']['totalam'] += $totalpay;
-			}
 
-			// Pending amount
-			if (!empty($arrayfields['rtp']['checked'])) {
-				print '<td class="right nowraponall amount">';
-				print (!empty($remaintopay) ? price($remaintopay, 0, $langs) : '&nbsp;');
-				print '</td>'; // TODO Use a denormalized field
-				if (!$i) {
-					$totalarray['nbfield']++;
+				// Module Source
+				if (!empty($arrayfields['f.module_source']['checked'])) {
+					print '<td>';
+					print dol_escape_htmltag($obj->module_source);
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
 				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'rtp';
-				}
-				$totalarray['val']['rtp'] += $remaintopay;
-			}
 
+				// POS Terminal
+				if (!empty($arrayfields['f.pos_source']['checked'])) {
+					print '<td>';
+					print dol_escape_htmltag($obj->pos_source);
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
 
-			// Currency
-			if (!empty($arrayfields['f.multicurrency_code']['checked'])) {
-				print '<td class="nowraponall tdoverflowmax125" title="'.dol_escape_htmltag($obj->multicurrency_code.' - '.$langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code)).'">';
-				if (empty($conf->global->MAIN_SHOW_ONLY_CODE_MULTICURRENCY)) {
-					print $langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code);
-				} else {
-					print dol_escape_htmltag($obj->multicurrency_code);
+				// Amount HT
+				if (!empty($arrayfields['f.total_ht']['checked'])) {
+					print '<td class="right nowraponall amount">'.price($obj->total_ht)."</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'f.total_ht';
+					}
+					$totalarray['val']['f.total_ht'] += $obj->total_ht;
 				}
-				print "</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
+				// Amount VAT
+				if (!empty($arrayfields['f.total_tva']['checked'])) {
+					print '<td class="right nowraponall amount">'.price($obj->total_tva)."</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'f.total_tva';
+					}
+					$totalarray['val']['f.total_tva'] += $obj->total_tva;
 				}
-			}
+				// Amount LocalTax1
+				if (!empty($arrayfields['f.total_localtax1']['checked'])) {
+					print '<td class="right nowraponall amount">'.price($obj->total_localtax1)."</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'f.total_localtax1';
+					}
+					$totalarray['val']['f.total_localtax1'] += $obj->total_localtax1;
+				}
+				// Amount LocalTax2
+				if (!empty($arrayfields['f.total_localtax2']['checked'])) {
+					print '<td class="right nowraponall amount">'.price($obj->total_localtax2)."</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'f.total_localtax2';
+					}
+					$totalarray['val']['f.total_localtax2'] += $obj->total_localtax2;
+				}
+				// Amount TTC
+				if (!empty($arrayfields['f.total_ttc']['checked'])) {
+					print '<td class="right nowraponall amount">'.price($obj->total_ttc)."</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'f.total_ttc';
+					}
+					$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
+				}
 
-			// Currency rate
-			if (!empty($arrayfields['f.multicurrency_tx']['checked'])) {
-				print '<td class="nowraponall">';
-				$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
-				print "</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Amount HT
-			if (!empty($arrayfields['f.multicurrency_total_ht']['checked'])) {
-				print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_ht)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Amount VAT
-			if (!empty($arrayfields['f.multicurrency_total_vat']['checked'])) {
-				print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_vat)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Amount TTC
-			if (!empty($arrayfields['f.multicurrency_total_ttc']['checked'])) {
-				print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_ttc)."</td>\n";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {
-				print '<td class="right nowraponall amount">'.(!empty($multicurrency_totalpay) ?price($multicurrency_totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
+				$userstatic->id = $obj->fk_user_author;
+				$userstatic->login = $obj->login;
+				$userstatic->lastname = $obj->lastname;
+				$userstatic->firstname = $obj->firstname;
+				$userstatic->email = $obj->user_email;
+				$userstatic->statut = $obj->user_statut;
+				$userstatic->entity = $obj->entity;
+				$userstatic->photo = $obj->photo;
+				$userstatic->office_phone = $obj->office_phone;
+				$userstatic->office_fax = $obj->office_fax;
+				$userstatic->user_mobile = $obj->user_mobile;
+				$userstatic->job = $obj->job;
+				$userstatic->gender = $obj->gender;
 
-			// Pending amount
-			if (!empty($arrayfields['multicurrency_rtp']['checked'])) {
-				print '<td class="right nowraponall">';
-				print (!empty($multicurrency_remaintopay) ? price($multicurrency_remaintopay, 0, $langs) : '&nbsp;');
-				print '</td>'; // TODO Use a denormalized field
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// Total buying or cost price
-			if (!empty($arrayfields['total_pa']['checked'])) {
-				print '<td class="right nowrap">'.price($marginInfo['pa_total']).'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Total margin
-			if (!empty($arrayfields['total_margin']['checked'])) {
-				print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
-				}
-				$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
-			}
-			// Total margin rate
-			if (!empty($arrayfields['total_margin_rate']['checked'])) {
-				print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], null, null, null, null, 2).'%').'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Total mark rate
-			if (!empty($arrayfields['total_mark_rate']['checked'])) {
-				print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-				if (!$i) {
-					$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
-				}
-				if ($i >= $imaxinloop - 1) {
-					if (!empty($total_ht)) {
-						$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
+				// Author
+				if (!empty($arrayfields['u.login']['checked'])) {
+					print '<td class="tdoverflowmax200">';
+					if ($userstatic->id) {
+						print $userstatic->getNomUrl(-1);
 					} else {
-						$totalarray['val']['total_mark_rate'] = '';
+						print '&nbsp;';
+					}
+					print "</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
 					}
 				}
-			}
 
-			// Extra fields
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-			// Fields from hook
-			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
-			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
-			// Date creation
-			if (!empty($arrayfields['f.datec']['checked'])) {
-				print '<td class="nowraponall center">';
-				print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Date modification
-			if (!empty($arrayfields['f.tms']['checked'])) {
-				print '<td class="nowraponall center">';
-				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Date closing
-			if (!empty($arrayfields['f.date_closing']['checked'])) {
-				print '<td class="nowraponall center">';
-				print dol_print_date($db->jdate($obj->date_closing), 'dayhour', 'tzuser');
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Note public
-			if (!empty($arrayfields['f.note_public']['checked'])) {
-				print '<td class="center">';
-				print dol_string_nohtmltag($obj->note_public);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Note private
-			if (!empty($arrayfields['f.note_private']['checked'])) {
-				print '<td class="center">';
-				print dol_string_nohtmltag($obj->note_private);
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Template Invoice
-			if (!empty($arrayfields['f.fk_fac_rec_source']['checked'])) {
-				print '<td class="center">';
-				if (!empty($obj->fk_fac_rec_source)) {
-					$facrec = new FactureRec($db);
-					$result = $facrec->fetch($obj->fk_fac_rec_source);
-					if ($result < 0) {
-						setEventMessages($facrec->error, $facrec->errors, 'errors');
+				if (!empty($arrayfields['sale_representative']['checked'])) {
+					// Sales representatives
+					print '<td>';
+					if ($obj->socid > 0) {
+						$listsalesrepresentatives = $companystatic->getSalesRepresentatives($user);
+						if ($listsalesrepresentatives < 0) {
+							dol_print_error($db);
+						}
+						$nbofsalesrepresentative = count($listsalesrepresentatives);
+						if ($nbofsalesrepresentative > 6) {
+							// We print only number
+							print $nbofsalesrepresentative;
+						} elseif ($nbofsalesrepresentative > 0) {
+							$j = 0;
+							foreach ($listsalesrepresentatives as $val) {
+								$userstatic->id = $val['id'];
+								$userstatic->lastname = $val['lastname'];
+								$userstatic->firstname = $val['firstname'];
+								$userstatic->email = $val['email'];
+								$userstatic->statut = $val['statut'];
+								$userstatic->entity = $val['entity'];
+								$userstatic->photo = $val['photo'];
+								$userstatic->login = $val['login'];
+								$userstatic->office_phone = $val['office_phone'];
+								$userstatic->office_fax = $val['office_fax'];
+								$userstatic->user_mobile = $val['user_mobile'];
+								$userstatic->job = $val['job'];
+								$userstatic->gender = $val['gender'];
+								//print '<div class="float">':
+								print ($nbofsalesrepresentative < 2) ? $userstatic->getNomUrl(-1, '', 0, 0, 12) : $userstatic->getNomUrl(-2);
+								$j++;
+								if ($j < $nbofsalesrepresentative) {
+									print ' ';
+								}
+								//print '</div>';
+							}
+						}
+						//else print $langs->trans("NoSalesRepresentativeAffected");
 					} else {
-						print $facrec->getNomUrl();
+						print '&nbsp;';
+					}
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
 					}
 				}
-				print '</td>';
+
+				if (!empty($arrayfields['f.retained_warranty']['checked'])) {
+					print '<td align="right">'.(!empty($obj->retained_warranty) ? price($obj->retained_warranty).'%' : '&nbsp;').'</td>';
+				}
+
+				if (!empty($arrayfields['dynamount_payed']['checked'])) {
+					print '<td class="right nowraponall amount">'.(!empty($totalpay) ? price($totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'totalam';
+					}
+					$totalarray['val']['totalam'] += $totalpay;
+				}
+
+				// Pending amount
+				if (!empty($arrayfields['rtp']['checked'])) {
+					print '<td class="right nowraponall amount">';
+					print (!empty($remaintopay) ? price($remaintopay, 0, $langs) : '&nbsp;');
+					print '</td>'; // TODO Use a denormalized field
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'rtp';
+					}
+					$totalarray['val']['rtp'] += $remaintopay;
+				}
+
+
+				// Currency
+				if (!empty($arrayfields['f.multicurrency_code']['checked'])) {
+					print '<td class="nowraponall tdoverflowmax125" title="'.dol_escape_htmltag($obj->multicurrency_code.' - '.$langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code)).'">';
+					if (empty($conf->global->MAIN_SHOW_ONLY_CODE_MULTICURRENCY)) {
+						print $langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code);
+					} else {
+						print dol_escape_htmltag($obj->multicurrency_code);
+					}
+					print "</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+
+				// Currency rate
+				if (!empty($arrayfields['f.multicurrency_tx']['checked'])) {
+					print '<td class="nowraponall">';
+					$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+					print "</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Amount HT
+				if (!empty($arrayfields['f.multicurrency_total_ht']['checked'])) {
+					print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_ht)."</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Amount VAT
+				if (!empty($arrayfields['f.multicurrency_total_vat']['checked'])) {
+					print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_vat)."</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Amount TTC
+				if (!empty($arrayfields['f.multicurrency_total_ttc']['checked'])) {
+					print '<td class="right nowraponall amount">'.price($obj->multicurrency_total_ttc)."</td>\n";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {
+					print '<td class="right nowraponall amount">'.(!empty($multicurrency_totalpay) ?price($multicurrency_totalpay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+
+				// Pending amount
+				if (!empty($arrayfields['multicurrency_rtp']['checked'])) {
+					print '<td class="right nowraponall">';
+					print (!empty($multicurrency_remaintopay) ? price($multicurrency_remaintopay, 0, $langs) : '&nbsp;');
+					print '</td>'; // TODO Use a denormalized field
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+
+				// Total buying or cost price
+				if (!empty($arrayfields['total_pa']['checked'])) {
+					print '<td class="right nowrap">'.price($marginInfo['pa_total']).'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Total margin
+				if (!empty($arrayfields['total_margin']['checked'])) {
+					print '<td class="right nowrap">'.price($marginInfo['total_margin']).'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
+					}
+					$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
+				}
+				// Total margin rate
+				if (!empty($arrayfields['total_margin_rate']['checked'])) {
+					print '<td class="right nowrap">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], null, null, null, null, 2).'%').'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Total mark rate
+				if (!empty($arrayfields['total_mark_rate']['checked'])) {
+					print '<td class="right nowrap">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+					if (!$i) {
+						$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
+					}
+					if ($i >= $imaxinloop - 1) {
+						if (!empty($total_ht)) {
+							$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
+						} else {
+							$totalarray['val']['total_mark_rate'] = '';
+						}
+					}
+				}
+
+				// Extra fields
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+				// Fields from hook
+				$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				print $hookmanager->resPrint;
+				// Date creation
+				if (!empty($arrayfields['f.datec']['checked'])) {
+					print '<td class="nowraponall center">';
+					print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Date modification
+				if (!empty($arrayfields['f.tms']['checked'])) {
+					print '<td class="nowraponall center">';
+					print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Date closing
+				if (!empty($arrayfields['f.date_closing']['checked'])) {
+					print '<td class="nowraponall center">';
+					print dol_print_date($db->jdate($obj->date_closing), 'dayhour', 'tzuser');
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Note public
+				if (!empty($arrayfields['f.note_public']['checked'])) {
+					print '<td class="center">';
+					print dol_string_nohtmltag($obj->note_public);
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Note private
+				if (!empty($arrayfields['f.note_private']['checked'])) {
+					print '<td class="center">';
+					print dol_string_nohtmltag($obj->note_private);
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Template Invoice
+				if (!empty($arrayfields['f.fk_fac_rec_source']['checked'])) {
+					print '<td class="center">';
+					if (!empty($obj->fk_fac_rec_source)) {
+						$facrec = new FactureRec($db);
+						$result = $facrec->fetch($obj->fk_fac_rec_source);
+						if ($result < 0) {
+							setEventMessages($facrec->error, $facrec->errors, 'errors');
+						} else {
+							print $facrec->getNomUrl();
+						}
+					}
+					print '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+				// Status
+				if (!empty($arrayfields['f.fk_statut']['checked'])) {
+					print '<td class="nowrap right">';
+					print $facturestatic->getLibStatut(5, $paiement);
+					print "</td>";
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+
+				// Action column (Show the massaction button only when this page is not opend from the Extended POS)
+
+				if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+					print '<td class="nowrap" align="center">';
+					if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+						$selected = 0;
+						if (in_array($obj->id, $arrayofselected)) {
+							$selected = 1;
+						}
+						print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+					}
+					print '</td>';
+				}
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
+				print "</tr>\n";
 			}
-			// Status
-			if (!empty($arrayfields['f.fk_statut']['checked'])) {
-				print '<td class="nowrap right">';
-				print $facturestatic->getLibStatut(5, $paiement);
-				print "</td>";
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-
-			// Action column (Show the massaction button only when this page is not opend from the Extended POS)
-
-			if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
-				print '<td class="nowrap" align="center">';
-				if (($massactionbutton || $massaction) && $contextpage != 'poslist') {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-					$selected = 0;
-					if (in_array($obj->id, $arrayofselected)) {
-						$selected = 1;
-					}
-					print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
-				}
-				print '</td>';
-			}
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-			print "</tr>\n";
-
 			$i++;
 		}
 
