@@ -1331,7 +1331,7 @@ class FactureFournisseurRec extends CommonInvoice
 						// We refresh the object in order to have all necessary data (like date_lim_reglement)
 						$new_fac_fourn->fetch($new_fac_fourn->id);
 						$result = $new_fac_fourn->generateDocument($facturerec->model_pdf, $langs);
-						if ($result <= 0) {
+						if ($result < 0) {
 							$this->errors = $new_fac_fourn->errors;
 							$this->error = $new_fac_fourn->error;
 							$error++;
