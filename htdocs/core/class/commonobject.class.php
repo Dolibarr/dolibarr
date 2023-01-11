@@ -12,7 +12,7 @@
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
@@ -156,6 +156,10 @@ abstract class CommonObject
 	 */
 	public $restrictiononfksoc = 0;
 
+	/**
+	 * @var string string for output
+	 */
+	public $output;
 
 	// Following vars are used by some objects only. We keep this property here in CommonObject to be able to provide common method using them.
 
@@ -489,6 +493,13 @@ abstract class CommonObject
 	 * @var string The name
 	 */
 	public $name;
+
+	/**
+	 * @var string The name
+	 * @deprecated
+	 * @see name
+	 */
+	public $nom;
 
 	/**
 	 * @var string The lastname
