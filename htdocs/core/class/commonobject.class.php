@@ -174,6 +174,18 @@ abstract class CommonObject
 	public $canvas;
 
 	/**
+	 * @var Product 	The related product object
+	 * @see fetch_product()
+	 */
+	public $product;
+
+	/**
+	 * @var int 		The related product ID
+	 * @see fetch_product()
+	 */
+	public $fk_product;
+
+	/**
 	 * @var Project 	The related project object
 	 * @see fetch_projet()
 	 */
@@ -186,6 +198,7 @@ abstract class CommonObject
 	public $fk_project;
 
 	/**
+	 * @var Project 	The related project object
 	 * @deprecated
 	 * @see project
 	 */
@@ -624,6 +637,10 @@ abstract class CommonObject
 	 */
 	public $alreadypaid;
 
+	/**
+	 * @var int ismultientitymanaged
+	 */
+	public $ismultientitymanaged;
 
 	protected $labelStatus;
 	protected $labelStatusShort;
@@ -1882,14 +1899,17 @@ abstract class CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Load the project with id $this->fk_project into this->project
+	 * Load the project with id $this->fk_project into this->project
 	 *
+	 * @deprecated
+	 * @see fetch_project()
 	 *		@return		int			<0 if KO, >=0 if OK
 	 */
-	public function fetch_project()
+	public function fetch_projet()
 	{
 		// phpcs:enable
-		return $this->fetch_projet();
+		dol_syslog('Warning using deprecated fetch_projet() in commonobject', LOG_WARNING);
+		return $this->fetch_project();
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1898,12 +1918,13 @@ abstract class CommonObject
 	 *
 	 *		@return		int			<0 if KO, >=0 if OK
 	 */
-	public function fetch_projet()
+	public function fetch_project()
 	{
 		// phpcs:enable
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 		if (empty($this->fk_project) && !empty($this->fk_projet)) {
+			dol_syslog('Warning using deprecated fk_projet in commonobject::fetch_project()', LOG_WARNING);
 			$this->fk_project = $this->fk_projet; // For backward compatibility
 		}
 		if (empty($this->fk_project)) {
