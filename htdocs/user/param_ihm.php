@@ -216,10 +216,10 @@ if (isModEnabled('ticket')) {
 }
 
 // Hook for insertion new items in the List of possible landing pages
-$reshook = $hookmanager->executeHooks('addToLandingPageList',$tmparray,$object); 
+$reshook = $hookmanager->executeHooks('addToLandingPageList', $tmparray, $object);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-} else if ($reshook == 0) {
+} elseif ($reshook == 0) {
 	$tmparray=$hookmanager->resArray;
 }
 
