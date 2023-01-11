@@ -716,7 +716,7 @@ class Salary extends CommonObject
 	 */
 	public function getKanbanView($option = '')
 	{
-		global $langs, $db;
+		global $langs;
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
