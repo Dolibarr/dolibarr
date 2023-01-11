@@ -1168,8 +1168,10 @@ class BookKeeping extends CommonObject
 		$sql = 'SELECT';
 		$sql .= " t.numero_compte,";
 		$sql .= " t.label_compte,";
-		$sql .= " t.subledger_account,";
-		$sql .= " t.subledger_label,";
+		if (!empty($option)) {
+			$sql .= " t.subledger_account,";
+			$sql .= " t.subledger_label,";
+		}
 		$sql .= " SUM(t.debit) as debit,";
 		$sql .= " SUM(t.credit) as credit";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
@@ -1210,11 +1212,11 @@ class BookKeeping extends CommonObject
 		if (!empty($option)) {
 			$sql .= ' AND t.subledger_account IS NOT NULL';
 			$sql .= ' AND t.subledger_account != ""';
-			$sql .= ' GROUP BY t.subledger_account';
+			$sql .= ' GROUP BY t.numero_compte, t.label_compte, t.subledger_account, t.subledger_label';
 			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
 			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
 		} else {
-			$sql .= ' GROUP BY t.numero_compte';
+			$sql .= ' GROUP BY t.numero_compte, t.label_compte';
 			$sortfield = 't.numero_compte'.($sortfield ? ','.$sortfield : '');
 			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
 		}
