@@ -81,9 +81,24 @@ abstract class CommonObject
 	private $validateFieldsErrors = array();
 
 	/**
+	 * @var string String to identify module
+	 */
+	public $module;
+
+	/**
+	 * @var array Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array();
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element;
+
+	/**
+	 * @var int The related element
+	 */
+	public $fk_element;
 
 	/**
 	 * @var string 	Name to use for 'features' parameter to check module permissions user->rights->feature with restrictedArea().
@@ -180,7 +195,7 @@ abstract class CommonObject
 	public $product;
 
 	/**
-	 * @var int 		The related product ID
+	 * @var int The related product ID
 	 * @see fetch_product()
 	 */
 	public $fk_product;
@@ -641,6 +656,11 @@ abstract class CommonObject
 	 * @var int ismultientitymanaged
 	 */
 	public $ismultientitymanaged;
+
+	/**
+	 * @var int isextrafieldmanaged
+	 */
+	public $isextrafieldmanaged;
 
 	protected $labelStatus;
 	protected $labelStatusShort;
@@ -9567,7 +9587,8 @@ abstract class CommonObject
 			$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
 			if ($result < 0) {
 				$error++;
-			} //Do also here what you must do to rollback action if trigger fail
+				//Do also here what you must do to rollback action if trigger fail
+			}
 			// End call triggers
 		}
 
@@ -9672,7 +9693,8 @@ abstract class CommonObject
 				$result = $this->call_trigger(strtoupper(get_class($this)).'_DELETE', $user);
 				if ($result < 0) {
 					$error++;
-				} // Do also here what you must do to rollback action if trigger fail
+					// Do also here what you must do to rollback action if trigger fail
+				}
 				// End call triggers
 			}
 		}
