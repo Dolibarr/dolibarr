@@ -2514,7 +2514,7 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'type_duration') {
 			print '<td>';
-			print $form->selectTypeDuration('', $obj->{$value}, array('i','h'));
+			print $form->selectTypeDuration('', (!empty($obj->{$value}) ? $obj->{$value}:''), array('i','h'));
 			print '</td>';
 		} else {
 			$fieldValue = isset($obj->{$value}) ? $obj->{$value}: '';
