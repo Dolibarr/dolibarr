@@ -183,8 +183,10 @@ if (empty($reshook)) {
 			$companybankaccount->stripe_card_ref = GETPOST('stripe_card_ref', 'alpha');
 
 			$result = $companybankaccount->update($user);
-			if (!$result) {
+			if ($result <= 0) {
+				// Display error message and get back to edit mode
 				setEventMessages($companybankaccount->error, $companybankaccount->errors, 'errors');
+				$action = 'edit';
 			} else {
 				// If this account is the default bank account, we disable others
 				if ($companybankaccount->default_rib) {
