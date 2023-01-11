@@ -832,7 +832,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$totalToShip = $tmparray['toship'];
 		// Set trueVolume and volume_units not currently stored into database
 		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
-			$object->trueVolume = price(($object->trueWidth * $object->trueHeight * $object->trueDepth), 0, $outputlangs, 0, 0);
+			$object->trueVolume = $object->trueWidth * $object->trueHeight * $object->trueDepth;
 			$object->volume_units = $object->size_units * 3;
 		}
 
