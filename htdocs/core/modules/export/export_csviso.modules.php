@@ -74,9 +74,8 @@ class ExportCsv extends ModeleExports
 		}
 		$this->escape = '"';
 		$this->enclosure = '"';
-
-		$this->id = 'csv'; // Same value then xxx in file name export_xxx.modules.php
-		$this->label = 'CSV'; // Label of driver
+		$this->id = 'csviso'; // Same value then xxx in file name export_xxx.modules.php
+		$this->label = 'CSV ISO-8859-1'; // Label of driver
 		$this->desc = $langs->trans("CSVFormatDesc", $this->separator, $this->enclosure, $this->escape);
 		$this->extension = 'csv'; // Extension for generated file by this driver
 		$this->picto = 'mime/other'; // Picto
@@ -215,11 +214,9 @@ class ExportCsv extends ModeleExports
 		// phpcs:enable
 		global $conf;
 
-		if (!empty($conf->global->EXPORT_CSV_FORCE_CHARSET)) {
-			$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
-		} else {
-			$outputlangs->charset_output = 'ISO-8859-1';
-		}
+		$outputlangs->charset_output = 'ISO-8859-1';
+		$conf->global->EXPORT_CSV_FORCE_CHARSET = 'ISO-8859-1';
+
 		$selectlabel = array();
 
 		foreach ($array_selected_sorted as $code => $value) {
@@ -256,11 +253,8 @@ class ExportCsv extends ModeleExports
 		// phpcs:enable
 		global $conf;
 
-		if (!empty($conf->global->EXPORT_CSV_FORCE_CHARSET)) {
-			$outputlangs->charset_output = $conf->global->EXPORT_CSV_FORCE_CHARSET;
-		} else {
-			$outputlangs->charset_output = 'ISO-8859-1';
-		}
+		$outputlangs->charset_output = 'ISO-8859-1';
+		$conf->global->EXPORT_CSV_FORCE_CHARSET = 'ISO-8859-1';
 
 		$this->col = 0;
 
