@@ -47,6 +47,8 @@ $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sclist';
+$mode = GETPOST('mode', 'alpha');
+
 
 $search_ref = GETPOST('search_ref', 'int');
 $search_label = GETPOST('search_label', 'alpha');
@@ -294,6 +296,9 @@ $num = $db->num_rows($resql);
 $i = 0;
 
 $param = '';
+if (!empty($mode)) {
+	$param .= '&mode='.urlencode($mode);
+}
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
@@ -367,6 +372,8 @@ if ($search_date_limit_endyear) {
 }
 
 $newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 if ($user->rights->tax->charges->creer) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewSocialContribution'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/sociales/card.php?action=create');
 }
@@ -382,6 +389,8 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+
 
 $center = '';
 
@@ -576,162 +585,179 @@ while ($i < min($num, $limit)) {
 	$chargesociale_static->ref = $obj->rowid;
 	$chargesociale_static->label = $obj->label;
 	$chargesociale_static->type_label = $obj->type_label;
+	$chargesociale_static->amount = $obj->amount;
+	$chargesociale_static->paye = $obj->paye;
+	$chargesociale_static->date_ech = $obj->date_ech;
+
 
 	if (isModEnabled('project')) {
 		$projectstatic->id = $obj->project_id;
 		$projectstatic->ref = $obj->project_ref;
 		$projectstatic->title = $obj->project_label;
 	}
-
-	print '<tr class="oddeven">';
-
-	// Line number
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
-		print '<td>'.(($offset * $limit) + $i).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+	if ($mode == 'kanban') {
+		if ($i == 0) {
+			print '<tr><td colspan="12">';
+			print '<div class="box-flex-container">';
 		}
-	}
+		// Output Kanban
 
-	// Ref
-	if (!empty($arrayfields['cs.rowid']['checked'])) {
-		print '<td>'.$chargesociale_static->getNomUrl(1, '20').'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		$chargesociale_static->fk_project = $projectstatic->getNomUrl();
+		print $chargesociale_static->getKanbanView('');
+		if ($i == (min($num, $limit) - 1)) {
+			print '</div>';
+			print '</td></tr>';
 		}
-	}
+	} else {
+		print '<tr class="oddeven">';
 
-	// Label
-	if (!empty($arrayfields['cs.libelle']['checked'])) {
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Type
-	if (!empty($arrayfields['cs.fk_type']['checked'])) {
-		$typelabeltoshow = $obj->type_label;
-		$typelabelpopup = $obj->type_label;
-		if (isModEnabled('accounting')) {
-			$typelabelpopup .= ' - '.$langs->trans("AccountancyCode").': '.$obj->type_accountancy_code;
-		}
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($typelabelpopup).'">'.dol_escape_htmltag($typelabeltoshow).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Date
-	if (!empty($arrayfields['cs.date_ech']['checked'])) {
-		print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Date end period
-	if (!empty($arrayfields['cs.periode']['checked'])) {
-		print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Project ref
-	if (!empty($arrayfields['p.ref']['checked'])) {
-		print '<td class="nowraponall">';
-		if ($obj->project_id > 0) {
-			print $projectstatic->getNomUrl(1);
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	if (!empty($arrayfields['cs.fk_user']['checked'])) {
-		// Employee
-		print '<td class="tdoverflowmax150">';
-		if (!empty($obj->fk_user)) {
-			if (!empty($TLoadedUsers[$obj->fk_user])) {
-				$ustatic = $TLoadedUsers[$obj->fk_user];
-			} else {
-				$ustatic = new User($db);
-				$ustatic->fetch($obj->fk_user);
-				$TLoadedUsers[$obj->fk_user] = $ustatic;
+		// Line number
+		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+			print '<td>'.(($offset * $limit) + $i).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
 			}
-			print $ustatic->getNomUrl(-1);
 		}
-		print "</td>\n";
+
+		// Ref
+		if (!empty($arrayfields['cs.rowid']['checked'])) {
+			print '<td>'.$chargesociale_static->getNomUrl(1, '20').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Label
+		if (!empty($arrayfields['cs.libelle']['checked'])) {
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Type
+		if (!empty($arrayfields['cs.fk_type']['checked'])) {
+			$typelabeltoshow = $obj->type_label;
+			$typelabelpopup = $obj->type_label;
+			if (isModEnabled('accounting')) {
+				$typelabelpopup .= ' - '.$langs->trans("AccountancyCode").': '.$obj->type_accountancy_code;
+			}
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($typelabelpopup).'">'.dol_escape_htmltag($typelabeltoshow).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Date
+		if (!empty($arrayfields['cs.date_ech']['checked'])) {
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Date end period
+		if (!empty($arrayfields['cs.periode']['checked'])) {
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Project ref
+		if (!empty($arrayfields['p.ref']['checked'])) {
+			print '<td class="nowraponall">';
+			if ($obj->project_id > 0) {
+				print $projectstatic->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		if (!empty($arrayfields['cs.fk_user']['checked'])) {
+			// Employee
+			print '<td class="tdoverflowmax150">';
+			if (!empty($obj->fk_user)) {
+				if (!empty($TLoadedUsers[$obj->fk_user])) {
+					$ustatic = $TLoadedUsers[$obj->fk_user];
+				} else {
+					$ustatic = new User($db);
+					$ustatic->fetch($obj->fk_user);
+					$TLoadedUsers[$obj->fk_user] = $ustatic;
+				}
+				print $ustatic->getNomUrl(-1);
+			}
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Type
+		if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("PaymentTypeShort".$obj->payment_code)).'">';
+			if (!empty($obj->payment_code)) {
+				print $langs->trans("PaymentTypeShort".$obj->payment_code);
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Account
+		if (!empty($arrayfields['cs.fk_account']['checked'])) {
+			print '<td class="toverflowmax150">';
+			if ($obj->fk_account > 0) {
+				$bankstatic->id = $obj->fk_account;
+				$bankstatic->ref = $obj->bref;
+				$bankstatic->number = $obj->bnumber;
+				$bankstatic->iban = $obj->iban;
+				$bankstatic->bic = $obj->bic;
+				$bankstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
+				$bankstatic->account_number = $obj->account_number;
+				$bankstatic->clos = $obj->clos;
+
+				//$accountingjournal->fetch($obj->fk_accountancy_journal);
+				//$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+
+				$bankstatic->label = $obj->blabel;
+				print $bankstatic->getNomUrl(1);
+			}
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+
+		// Amount
+		if (!empty($arrayfields['cs.amount']['checked'])) {
+			print '<td class="nowraponall amount right">'.price($obj->amount).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			if (!$i) {
+				$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
+			}
+			$totalarray['val']['totalttcfield'] += $obj->amount;
+		}
+
+		// Status
+		if (!empty($arrayfields['cs.paye']['checked'])) {
+			print '<td class="nowraponall right">'.$chargesociale_static->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Buttons
+		print '<td></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
+
+		print '</tr>'."\n";
 	}
-
-	// Type
-	if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
-		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("PaymentTypeShort".$obj->payment_code)).'">';
-		if (!empty($obj->payment_code)) {
-			print $langs->trans("PaymentTypeShort".$obj->payment_code);
-		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Account
-	if (!empty($arrayfields['cs.fk_account']['checked'])) {
-		print '<td class="toverflowmax150">';
-		if ($obj->fk_account > 0) {
-			$bankstatic->id = $obj->fk_account;
-			$bankstatic->ref = $obj->bref;
-			$bankstatic->number = $obj->bnumber;
-			$bankstatic->iban = $obj->iban;
-			$bankstatic->bic = $obj->bic;
-			$bankstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
-			$bankstatic->account_number = $obj->account_number;
-			$bankstatic->clos = $obj->clos;
-
-			//$accountingjournal->fetch($obj->fk_accountancy_journal);
-			//$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
-
-			$bankstatic->label = $obj->blabel;
-			print $bankstatic->getNomUrl(1);
-		}
-		print '</td>';
-		if (!$i) $totalarray['nbfield']++;
-	}
-
-	// Amount
-	if (!empty($arrayfields['cs.amount']['checked'])) {
-		print '<td class="nowraponall amount right">'.price($obj->amount).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-		if (!$i) {
-			$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
-		}
-		$totalarray['val']['totalttcfield'] += $obj->amount;
-	}
-
-	// Status
-	if (!empty($arrayfields['cs.paye']['checked'])) {
-		print '<td class="nowraponall right">'.$chargesociale_static->LibStatut($obj->paye, 5, $obj->alreadypayed).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-
-	// Buttons
-	print '<td></td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	print '</tr>'."\n";
-
 	$i++;
 }
 
