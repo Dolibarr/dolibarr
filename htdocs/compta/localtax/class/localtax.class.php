@@ -638,7 +638,7 @@ class Localtax extends CommonObject
 	 */
 	public function getKanbanView($option = '')
 	{
-		global $langs, $db;
+		global $langs;
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
@@ -650,10 +650,10 @@ class Localtax extends CommonObject
 			$return .= ' | <span class="info-box-label">'.$this->label.'</span>';
 		}
 		if (property_exists($this, 'datev')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label">'.dol_print_date($db->jdate($this->datev), 'day').'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->datev), 'day').'</span>';
 		}
 		if (property_exists($this, 'datep')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("DatePayment", '', '', '', '', 5).'</span> : <span class="info-box-label">'.dol_print_date($db->jdate($this->datep), 'day').'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("DatePayment", '', '', '', '', 5).'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->datep), 'day').'</span>';
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
