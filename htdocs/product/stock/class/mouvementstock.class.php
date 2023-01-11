@@ -834,7 +834,7 @@ class MouvementStock extends CommonObject
 		$sql .= " WHERE fk_product = ".((int) $productidselected);
 		$sql .= " AND datem < '".$this->db->idate($datebefore)."'";
 
-		dol_syslog(get_class($this).__METHOD__.'', LOG_DEBUG);
+		dol_syslog(get_class($this).__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);

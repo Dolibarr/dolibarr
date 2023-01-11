@@ -206,7 +206,7 @@ class Don extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $conf, $user, $langs;
+		global $conf;
 
 		$now = dol_now();
 
@@ -224,10 +224,10 @@ class Don extends CommonObject
 			$num_socs = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num_socs) {
-				$i++;
-
 				$row = $this->db->fetch_row($resql);
 				$socids[$i] = $row[0];
+
+				$i++;
 			}
 		}
 
@@ -237,7 +237,7 @@ class Don extends CommonObject
 		$this->specimen = 1;
 		$this->lastname = 'Doe';
 		$this->firstname = 'John';
-		$this->socid = 1;
+		$this->socid = empty($socids[0]) ? 0 : $socids[0];
 		$this->date = $now;
 		$this->date_valid = $now;
 		$this->amount = 100.90;

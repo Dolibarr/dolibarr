@@ -325,7 +325,7 @@ if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METE
 	if (!empty($conf->global->MAIN_METEO_LEVEL0)) {
 		$level0 = $conf->global->MAIN_METEO_LEVEL0;
 	}
-	$level1 = $offset + 1 * $cursor;
+	$level1 = $offset + $cursor;
 	if (!empty($conf->global->MAIN_METEO_LEVEL1)) {
 		$level1 = $conf->global->MAIN_METEO_LEVEL1;
 	}
@@ -459,7 +459,7 @@ if ($action == 'edit') {
 	print '</form>';
 } else {
 	print '<br><br><div class="tabsAction">';
-	print '<a class="butAction" href="delais.php?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+	print '<a class="butAction reposition" href="delais.php?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 	print '</div>';
 }
 

@@ -1141,24 +1141,24 @@ class ExtraFields
 
 				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
 				$out .= '<option value="0">&nbsp;</option>';
-				foreach ($param['options'] as $key => $val) {
-					if ((string) $key == '') {
+				foreach ($param['options'] as $key2 => $val2) {
+					if ((string) $key2 == '') {
 						continue;
 					}
-					$valarray = explode('|', $val);
-					$val = $valarray[0];
+					$valarray = explode('|', $val2);
+					$val2 = $valarray[0];
 					$parent = '';
 					if (!empty($valarray[1])) {
 						$parent = $valarray[1];
 					}
-					$out .= '<option value="'.$key.'"';
-					$out .= (((string) $value == (string) $key) ? ' selected' : '');
+					$out .= '<option value="'.$key2.'"';
+					$out .= (((string) $value == (string) $key2) ? ' selected' : '');
 					$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
 					$out .= '>';
-					if ($langfile && $val) {
-						$out .= $langs->trans($val);
+					if ($langfile && $val2) {
+						$out .= $langs->trans($val2);
 					} else {
-						$out .= $val;
+						$out .= $val2;
 					}
 					$out .= '</option>';
 				}

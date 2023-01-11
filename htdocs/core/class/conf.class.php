@@ -499,9 +499,9 @@ class Conf
 			// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
 			// Sous module bons d'expedition
-			$this->expedition_bon->enabled = (!empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? $this->global->MAIN_SUBMODULE_EXPEDITION : 0);
+			$this->expedition_bon->enabled = (empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? 0 : $this->global->MAIN_SUBMODULE_EXPEDITION);
 			// Sub module delivery note  Sous module bons de livraison
-			$this->delivery_note->enabled = (!empty($this->global->MAIN_SUBMODULE_DELIVERY) ? $this->global->MAIN_SUBMODULE_DELIVERY : 0);
+			$this->delivery_note->enabled = (empty($this->global->MAIN_SUBMODULE_DELIVERY) ? 0 : $this->global->MAIN_SUBMODULE_DELIVERY);
 
 			// Module fournisseur
 			if (!empty($this->fournisseur)) {

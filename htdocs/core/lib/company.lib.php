@@ -652,6 +652,8 @@ function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlan
 	} else {
 		dol_print_error($dbtouse, '');
 	}
+
+	return '';
 }
 
 /**
@@ -999,7 +1001,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$extrafields->fetch_name_optionals_label($contactstatic->table_element);
 
 	$contactstatic->fields = array(
-		'rowid'     =>array('type'=>'integer', 'label'=>"TechnicalID", 'enabled'=>1, 'visible'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'enabled'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'position'=>1),
+		'rowid'     =>array('type'=>'integer', 'label'=>"TechnicalID", 'enabled'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'visible'=>(!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) ? 1 : 0), 'position'=>1),
 		'name'      =>array('type'=>'varchar(128)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
 		'poste'     =>array('type'=>'varchar(128)', 'label'=>'PostOrFunction', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>2, 'index'=>1, 'position'=>20),
 		'address'   =>array('type'=>'varchar(128)', 'label'=>'Address', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>3, 'index'=>1, 'position'=>30),
@@ -1988,7 +1990,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 			if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
 				$out .= '<td class="valignmiddle">';
 				$contact = new Contact($db);
-				foreach ($histo[$key]['socpeopleassigned'] as $cid => $value) {
+				foreach ($histo[$key]['socpeopleassigned'] as $cid => $cvalue) {
 					$result = $contact->fetch($cid);
 
 					if ($result < 0) {

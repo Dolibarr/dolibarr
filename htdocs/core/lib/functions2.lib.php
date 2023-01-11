@@ -1784,7 +1784,7 @@ function weight_convert($weight, &$from_unit, $to_unit)
  *	@param	DoliDB	$db         Handler database
  *	@param	Conf	$conf		Object conf
  *	@param	User	$user      	Object user
- *	@param	array	$tab        Array (key=>value) with all parameters to save
+ *	@param	array	$tab        Array (key=>value) with all parameters to save/update
  *	@return int         		<0 if KO, >0 if OK
  *
  *	@see		dolibarr_get_const(), dolibarr_set_const(), dolibarr_del_const()
@@ -2652,6 +2652,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'commande';
 	} elseif ($moduleobject == 'shipments') {
 		$moduledirforclass = 'expedition';
+	} elseif ($moduleobject == 'multicurrencies') {
+		$moduledirforclass = 'multicurrency';
 	} elseif ($moduleobject == 'facture' || $moduleobject == 'invoice' || $moduleobject == 'invoices') {
 		$moduledirforclass = 'compta/facture';
 	} elseif ($moduleobject == 'project' || $moduleobject == 'projects' || $moduleobject == 'task' || $moduleobject == 'tasks') {

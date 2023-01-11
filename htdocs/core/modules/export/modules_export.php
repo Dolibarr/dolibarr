@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 /**
  *	Parent class for export modules
  */
-class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance propreties loaded by liste_modeles
+class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance propreties loaded by listOfAvailableExportFormat
 {
 	/**
 	 * @var string Error code (or message)
@@ -44,7 +44,6 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	public $libversion = array();
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Load into memory list of available export format
 	 *
@@ -52,10 +51,9 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array						List of templates (same content than array this->driverlabel)
 	 */
-	public function liste_modeles($db, $maxfilenamelength = 0)
+	public function listOfAvailableExportFormat($db, $maxfilenamelength = 0)
 	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::liste_modeles");
+		dol_syslog(get_class($this)."::listOfAvailableExportFormat");
 
 		$dir = DOL_DOCUMENT_ROOT."/core/modules/export/";
 		$handle = opendir($dir);

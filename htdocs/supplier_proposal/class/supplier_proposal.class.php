@@ -2584,7 +2584,7 @@ class SupplierProposal extends CommonObject
 		// For other object, here we call fetch_lines. But fetch_lines does not exists on supplier proposal
 
 		$sql = 'SELECT pt.rowid, pt.label as custom_label, pt.description, pt.fk_product, pt.fk_remise_except,';
-		$sql .= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
+		$sql .= ' pt.qty, pt.tva_tx, pt.vat_src_code, pt.remise_percent, pt.subprice, pt.info_bits,';
 		$sql .= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code, pt.localtax1_tx, pt.localtax2_tx,';
 		$sql .= ' pt.product_type, pt.rang, pt.fk_parent_line,';
 		$sql .= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
@@ -2620,6 +2620,7 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i]->fk_remise_except = $obj->fk_remise_except;
 				$this->lines[$i]->remise_percent = $obj->remise_percent;
 				$this->lines[$i]->tva_tx = $obj->tva_tx;
+				$this->lines[$i]->vat_src_code = $obj->vat_src_code;
 				$this->lines[$i]->info_bits			= $obj->info_bits;
 				$this->lines[$i]->total_ht = $obj->total_ht;
 				$this->lines[$i]->total_tva			= $obj->total_tva;
@@ -2988,6 +2989,9 @@ class SupplierProposalLine extends CommonObjectLine
 		if (empty($this->tva_tx)) {
 			$this->tva_tx = 0;
 		}
+		if (empty($this->vat_src_code)) {
+			$this->vat_src_code = '';
+		}
 		if (empty($this->localtax1_tx)) {
 			$this->localtax1_tx = 0;
 		}
@@ -3056,7 +3060,7 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'supplier_proposaldet';
 		$sql .= ' (fk_supplier_proposal, fk_parent_line, label, description, fk_product, product_type,';
 		$sql .= ' date_start, date_end,';
-		$sql .= ' fk_remise_except, qty, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
+		$sql .= ' fk_remise_except, qty, tva_tx, vat_src_code, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
 		$sql .= ' subprice, remise_percent, ';
 		$sql .= ' info_bits, ';
 		$sql .= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang,';
@@ -3073,6 +3077,7 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= " ".($this->fk_remise_except ? ((int) $this->fk_remise_except) : "null").",";
 		$sql .= " ".price2num($this->qty, 'MS').",";
 		$sql .= " ".price2num($this->tva_tx).",";
+		$sql .= " '".$this->db->escape($this->vat_src_code)."',";
 		$sql .= " ".price2num($this->localtax1_tx).",";
 		$sql .= " ".price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";

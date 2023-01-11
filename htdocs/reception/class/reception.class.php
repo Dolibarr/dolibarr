@@ -1348,25 +1348,6 @@ class Reception extends CommonObject
 
 		dol_syslog(get_class($this)."::initAsSpecimen");
 
-		// Load array of products prodids
-		$num_prods = 0;
-		$prodids = array();
-		$sql = "SELECT rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product";
-		$sql .= " WHERE entity IN (".getEntity('product').")";
-		$sql .= $this->db->plimit(100);
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num_prods = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num_prods) {
-				$i++;
-				$row = $this->db->fetch_row($resql);
-				$prodids[$i] = $row[0];
-			}
-		}
-
 		$order = new CommandeFournisseur($this->db);
 		$order->initAsSpecimen();
 

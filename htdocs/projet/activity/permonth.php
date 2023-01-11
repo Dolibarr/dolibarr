@@ -102,6 +102,8 @@ if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id) {
 
 $object = new Task($db);
 
+$error = 0;
+
 
 /*
  * Actions
@@ -201,10 +203,10 @@ if ($action == 'addtime' && $user->rights->projet->lire) {
 	if (empty($timetoadd)) {
 		setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
 	} else {
-		foreach ($timetoadd as $taskid => $value) {     // Loop on each task
+		foreach ($timetoadd as $tmptaskid => $tmpvalue) {     // Loop on each task
 			$updateoftaskdone = 0;
-			foreach ($value as $key => $val) {          // Loop on each day
-				$amountoadd = $timetoadd[$taskid][$key];
+			foreach ($tmpvalue as $key => $val) {          // Loop on each day
+				$amountoadd = $timetoadd[$tmptaskid][$key];
 				if (!empty($amountoadd)) {
 					$tmpduration = explode(':', $amountoadd);
 					$newduration = 0;
@@ -219,8 +221,8 @@ if ($action == 'addtime' && $user->rights->projet->lire) {
 					}
 
 					if ($newduration > 0) {
-						$object->fetch($taskid);
-						$object->progress = GETPOST($taskid.'progress', 'int');
+						$object->fetch($tmptaskid);
+						$object->progress = GETPOST($tmptaskid.'progress', 'int');
 						$object->timespent_duration = $newduration;
 						$object->timespent_fk_user = $usertoprocess->id;
 						$object->timespent_date = dol_time_plus_duree($firstdaytoshow, $key, 'd');
@@ -239,11 +241,11 @@ if ($action == 'addtime' && $user->rights->projet->lire) {
 			}
 
 			if (!$updateoftaskdone) {  // Check to update progress if no update were done on task.
-				$object->fetch($taskid);
+				$object->fetch($tmptaskid);
 				//var_dump($object->progress);
-				//var_dump(GETPOST($taskid . 'progress', 'int')); exit;
-				if ($object->progress != GETPOST($taskid.'progress', 'int')) {
-					$object->progress = GETPOST($taskid.'progress', 'int');
+				//var_dump(GETPOST($tmptaskid . 'progress', 'int')); exit;
+				if ($object->progress != GETPOST($tmptaskid.'progress', 'int')) {
+					$object->progress = GETPOST($tmptaskid.'progress', 'int');
 					$result = $object->update($user);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');

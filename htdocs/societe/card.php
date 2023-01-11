@@ -574,11 +574,11 @@ if (empty($reshook)) {
 				if (!empty($object->email) && !isValidEMail($object->email)) {
 					$langs->load("errors");
 					$error++;
-					setEventMessages('', $langs->trans("ErrorBadEMail", $object->email), 'errors');
+					setEventMessages($langs->trans("ErrorBadEMail", $object->email), null, 'errors');
 				}
 				if (!empty($object->url) && !isValidUrl($object->url)) {
 					$langs->load("errors");
-					setEventMessages('', $langs->trans("ErrorBadUrl", $object->url), 'errors');
+					setEventMessages($langs->trans("ErrorBadUrl", $object->url), null, 'errors');
 				}
 				if (!empty($object->webservices_url)) {
 					//Check if has transport, without any the soap client will give error
@@ -1381,12 +1381,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				  data: function (params) {
 						return {
 							newcompany: params.term // search term
-						};
+						}
 				  },
 				  processResults: function (data, params) {
 					  return {
 						results: data
-					  };
+					  }
 				  },
 				  cache: true
 				},
@@ -2150,7 +2150,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					{
 						jQuery(".visibleifsupplier").show();
 					}
-				};
+				}
 
        			$("#selectcountry_id").change(function() {
        				document.formsoc.action.value="edit";
@@ -3312,11 +3312,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Contacts list
 				if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 					$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
-				}
-
-				// Addresses list
-				if (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT)) {
-					$result = show_addresses($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
 				}
 			}
 		}

@@ -577,6 +577,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 		// Output Kanban
 
+
 		print $paymentsalstatic->getKanbanView('');
 		if ($i == (min($num, $limit) - 1)) {
 			print '</div>';
@@ -590,6 +591,13 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
+
+	// Date payment
+	print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'dayhour', 'tzuserrel')."</td>\n";
+	if (!$i) {
+		$totalarray['nbfield']++;
+	}
+
 
 		// Ref salary
 		print "<td>".$salstatic->getNomUrl(1)."</td>\n";

@@ -180,9 +180,9 @@ class UserGroup extends CommonObject
 	/**
 	 *  Return array of groups objects for a particular user
 	 *
-	 *  @param		int		$userid 		User id to search
-	 *  @param		boolean	$load_members	Load all members of the group
-	 *  @return		array     				Array of groups objects
+	 *  @param		int			$userid 		User id to search
+	 *  @param		boolean		$load_members	Load all members of the group
+	 *  @return		array|int     				Array of groups objects
 	 */
 	public function listGroupsForUser($userid, $load_members = true)
 	{
@@ -544,7 +544,7 @@ class UserGroup extends CommonObject
 	 *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
 	 *
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
-	 *	@return     int						<0 if KO, >0 if OK
+	 *	@return     int						<0 if KO, >=0 if OK
 	 */
 	public function getrights($moduletag = '')
 	{
@@ -552,12 +552,12 @@ class UserGroup extends CommonObject
 
 		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag]) {
 			// Rights for this module are already loaded, so we leave
-			return;
+			return 0;
 		}
 
 		if (!empty($this->all_permissions_are_loaded)) {
 			// We already loaded all rights for this group, so we leave
-			return;
+			return 0;
 		}
 
 		/*

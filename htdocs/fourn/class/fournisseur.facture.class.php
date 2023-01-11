@@ -275,7 +275,7 @@ class FactureFournisseur extends CommonInvoice
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>30),
 		'type' =>array('type'=>'smallint(6)', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>40),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>40),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
 		'datef' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>55),
@@ -852,15 +852,18 @@ class FactureFournisseur extends CommonInvoice
 	}
 
 	/**
-	 *    Load object in memory from database
+	 *  Load object in memory from database
 	 *
-	 *    @param	int		$id         Id supplier invoice
-	 *    @param	string	$ref		Ref supplier invoice
-	 *    @return   int        			<0 if KO, >0 if OK, 0 if not found
+	 *  @param	int		$id         Id supplier invoice
+	 *  @param	string	$ref		Ref supplier invoice
+	 * 	@param	string	$ref_ext	External reference of invoice
+	 *  @return int  	   			<0 if KO, >0 if OK, 0 if not found
 	 */
-	public function fetch($id = '', $ref = '')
+	public function fetch($id = '', $ref = '', $ref_ext = '')
 	{
-		global $langs;
+		if (empty($id) && empty($ref) && empty($ref_ext)) {
+			return -1;
+		}
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -911,10 +914,15 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON t.fk_mode_reglement = p.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON t.fk_incoterms = i.rowid';
 		if ($id) {
-			$sql .= " WHERE t.rowid=".((int) $id);
-		}
-		if ($ref) {
-			$sql .= " WHERE t.ref='".$this->db->escape($ref)."' AND t.entity IN (".getEntity('supplier_invoice').")";
+			$sql .= " WHERE t.rowid = ".((int) $id);
+		} else {
+			$sql .= ' WHERE t.entity IN ('.getEntity('supplier_invoice').')'; // Don't use entity if you use rowid
+			if ($ref) {
+				$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
+			}
+			if ($ref_ext) {
+				$sql .= " AND t.ref_ext = '".$this->db->escape($ref_ext)."'";
+			}
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -1383,7 +1391,7 @@ class FactureFournisseur extends CommonInvoice
 				$result = $this->update_price(1);
 				if ($result > 0) {
 					// Create link between discount and invoice line
-					$result = $remise->link_to_invoice($lineid, 0, 'supplier');
+					$result = $remise->link_to_invoice($lineid, 0);
 					if ($result < 0) {
 						$this->error = $remise->error;
 						$this->db->rollback();

@@ -423,6 +423,33 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	print $content;
 }
 
+/**
+ * Increase the website counter of page access.
+ *
+ * @param   int		$websiteid			ID of website
+ * @param	string	$websitepagetype	Type of page ('blogpost', 'page', ...)
+ * @param	int		$websitepageid		ID of page
+ * @return  int							<0 if KO, >0 if OK
+ */
+function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid)
+{
+	if (!getDolGlobalInt('WEBSITE_PERF_DISABLE_COUNTERS')) {
+		//dol_syslog("dolWebsiteIncrementCounter websiteid=".$websiteid." websitepagetype=".$websitepagetype." websitepageid=".$websitepageid);
+		if (in_array($websitepagetype, array('blogpost', 'page'))) {
+			global $db;
+
+			$sql = "UPDATE ".$db->prefix()."website SET pageviews_total = pageviews_total + 1, lastaccess = '".$db->idate(dol_now())."'";
+			$sql .= " WHERE rowid = ".((int) $websiteid);
+			$resql = $db->query($sql);
+			if (! $resql) {
+				return -1;
+			}
+		}
+	}
+
+	return 1;
+}
+
 
 /**
  * Format img tags to introduce viewimage on img src.

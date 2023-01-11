@@ -2038,11 +2038,11 @@ if (empty($reshook)) {
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
-			$tva_tx = (GETPOST('tva_tx', 'alpha') ? price2num(preg_replace('/\s*\(.*\)/', '', GETPOST('tva_tx', 'alpha'))) : 0);
 		} else {
 			$idprod = GETPOST('idprod', 'int');
-			$tva_tx = '';
 		}
+
+		$tva_tx = GETPOST('tva_tx', 'alpha');
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
 		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef, 'alpha'), '', 2) : 0);
@@ -2137,7 +2137,6 @@ if (empty($reshook)) {
 
 			// Ecrase $pu par celui du produit
 			// Ecrase $desc par celui du produit
-			// Ecrase $tva_tx par celui du produit
 			// Ecrase $base_price_type par celui du produit
 			// Replaces $fk_unit with the product's
 			if (!empty($idprod) && $idprod > 0) {
@@ -2157,8 +2156,8 @@ if (empty($reshook)) {
 				$price_min_ttc = $datapriceofproduct['price_min_ttc'];
 				$price_base_type = $datapriceofproduct['price_base_type'];
 
-				$tva_tx = $datapriceofproduct['tva_tx'];
-				$tva_npr = $datapriceofproduct['tva_npr'];
+				//$tva_tx = $datapriceofproduct['tva_tx'];
+				//$tva_npr = $datapriceofproduct['tva_npr'];
 
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
 				$tmpprodvat = price2num(preg_replace('/\s*\(.*\)/', '', $prod->tva_tx));
@@ -3067,8 +3066,8 @@ if ($action == 'create') {
 				$remise_absolue 	= (!empty($expesrc->remise_absolue) ? $expesrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
 				if (isModEnabled('multicurrency')) {
-					$currency_code 	= (!empty($expesrc->currency_code) ? $expesrc->currency_code : (!empty($soc->currency_code) ? $soc->currency_code : $objectsrc->multicurrency_code));
-					$currency_tx 	= (!empty($expesrc->currency_tx) ? $expesrc->currency_tx : (!empty($soc->currency_tx) ? $soc->currency_tx : $objectsrc->currency_tx));
+					$currency_code 	= (!empty($expesrc->multicurrency_code) ? $expesrc->multicurrency_code : (!empty($soc->multicurrency_code) ? $soc->multicurrency_code : $objectsrc->multicurrency_code));
+					$currency_tx 	= (!empty($expesrc->multicurrency_tx) ? $expesrc->multicurrency_tx : (!empty($soc->multicurrency_tx) ? $soc->multicurrency_tx : $objectsrc->multicurrency_tx));
 				}
 
 				//Replicate extrafields
@@ -3357,7 +3356,7 @@ if ($action == 'create') {
 						jQuery(".checkforselect").prop("disabled", false);
 						jQuery(".checkforselect").prop("checked", true);
 					}
-				};
+				}
     		});
     		</script>';
 
@@ -3780,7 +3779,7 @@ if ($action == 'create') {
 			if ($soc->fetch_optionals() > 0) {
 				$object->array_options = array_merge($object->array_options, $soc->array_options);
 			}
-		};
+		}
 
 		print $object->showOptionals($extrafields, 'create', $parameters);
 	}
@@ -4678,16 +4677,16 @@ if ($action == 'create') {
 		if ($displayWarranty) {
 			// Retained Warranty
 			print '<tr class="retained-warranty-lines"  ><td>';
-			print '<table id="retained-warranty-table" class="nobordernopadding" width="100%"><tr><td>';
+			print '<table id="retained-warranty-table" class="nobordernopadding centpercent"><tr><td>';
 			print $langs->trans('RetainedWarranty');
 			print '</td>';
-			if ($action != 'editretainedwarranty' && $user->rights->facture->creer) {
+			if ($action != 'editretainedwarranty' && $user->rights->facture->creer && $object->statut == Facture::STATUS_DRAFT) {
 				print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarranty&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setretainedwarranty'), 1).'</a></td>';
 			}
 
 			print '</tr></table>';
 			print '</td><td>';
-			if ($action == 'editretainedwarranty') {
+			if ($action == 'editretainedwarranty' && $object->statut == Facture::STATUS_DRAFT) {
 				print '<form  id="retained-warranty-form"  method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
 				print '<input type="hidden" name="action" value="setretainedwarranty">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -4704,7 +4703,7 @@ if ($action == 'create') {
 			print '<table id="retained-warranty-cond-reglement-table"  class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditionsShortRetainedWarranty');
 			print '</td>';
-			if ($action != 'editretainedwarrantypaymentterms' && $user->rights->facture->creer) {
+			if ($action != 'editretainedwarrantypaymentterms' && $user->rights->facture->creer && $object->statut == Facture::STATUS_DRAFT) {
 				print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarrantypaymentterms&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setPaymentConditionsShortRetainedWarranty'), 1).'</a></td>';
 			}
 
@@ -4715,7 +4714,7 @@ if ($action == 'create') {
 				$defaultDate = $object->date;
 			}
 
-			if ($action == 'editretainedwarrantypaymentterms') {
+			if ($action == 'editretainedwarrantypaymentterms' && $object->statut == Facture::STATUS_DRAFT) {
 				//date('Y-m-d',$object->date_lim_reglement)
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
 				print '<input type="hidden" name="action" value="setretainedwarrantyconditions">';
@@ -4739,7 +4738,7 @@ if ($action == 'create') {
 			print '<table id="retained-warranty-date-limit-table"  class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('RetainedWarrantyDateLimit');
 			print '</td>';
-			if ($action != 'editretainedwarrantydatelimit' && $user->rights->facture->creer) {
+			if ($action != 'editretainedwarrantydatelimit' && $user->rights->facture->creer && $object->statut == Facture::STATUS_DRAFT) {
 				print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarrantydatelimit&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('setretainedwarrantyDateLimit'), 1).'</a></td>';
 			}
 
@@ -4750,7 +4749,7 @@ if ($action == 'create') {
 				$defaultDate = $object->date;
 			}
 
-			if ($action == 'editretainedwarrantydatelimit') {
+			if ($action == 'editretainedwarrantydatelimit' && $object->statut == Facture::STATUS_DRAFT) {
 				//date('Y-m-d',$object->date_lim_reglement)
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
 				print '<input type="hidden" name="action" value="setretainedwarrantydatelimit">';
@@ -5423,7 +5422,7 @@ if ($action == 'create') {
 
 	// Show object lines
 	if (!empty($object->lines)) {
-		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+		$object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 	}
 
 	// Form to add new line

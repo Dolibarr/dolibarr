@@ -115,30 +115,5 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("DeleteContact"), $langs->trans("ConfirmDeleteContact"), "confirm_delete", '', 0, 1);
 			}
 		}
-
-		if ($action == 'list') {
-			$this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
-		}
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * 	Fetch datas list and save into ->list_datas
-	 *
-	 *  @param	int		$limit		Limit number of responses
-	 *  @param	int		$offset		Offset for first response
-	 *  @param	string	$sortfield	Sort field
-	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
-	 *  @return	void
-	 */
-	public function LoadListDatas($limit, $offset, $sortfield, $sortorder)
-	{
-		// phpcs:enable
-		global $conf, $langs;
-
-		//$this->getFieldList();
-
-		$this->list_datas = array();
 	}
 }

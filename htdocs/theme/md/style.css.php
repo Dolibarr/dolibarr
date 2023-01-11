@@ -93,7 +93,7 @@ if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL
 }
 
-if (GETPOSTISSET('THEME_DARKMODEENABLED', 'int')) {
+if (GETPOSTISSET('THEME_DARKMODEENABLED')) {
 	$conf->global->THEME_DARKMODEENABLED = GETPOST('THEME_DARKMODEENABLED', 'int'); // If darkmode was forced on URL
 }
 
@@ -485,6 +485,11 @@ th.wrapcolumntitle.liste_titre_sel:not(.maxwidthsearch), td.wrapcolumntitle.list
 	max-width: 120px;
 	text-overflow: ellipsis;
 }
+th.wrapcolumntitle dl dt a span.fas.fa-list {
+	padding-bottom: 1px;
+	vertical-align: bottom;
+}
+
 .liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
@@ -874,7 +879,7 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:hover, .buttonDelete:hover   {
+.button:hover:not(.nohover), .buttonDelete:hover:not(.nohover)   {
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
@@ -1141,6 +1146,9 @@ textarea.centpercent {
 }
 .nomarginright {
 	margin-<?php print $right; ?>: unset;
+}
+.nowidthimp {
+	width: unset !important;
 }
 
 .cursordefault {
@@ -1771,7 +1779,9 @@ table[summary="list_of_modules"] .fa-cog {
 .linkedcol-element {
 	min-width: 100px;
 }
-
+.linkedcol-amount {
+	white-space: nowrap;
+}
 .linkedcol-date {
 	text-align: center;
 }
@@ -3221,6 +3231,17 @@ img.userphotosmall {			/* size for user photo in lists */
 }
 img.userphoto[alt="Gravatar avatar"], img.photouserphoto.dropdown-user-image[alt="Gravatar avatar"] {
 	background: #fff;
+}
+img.userphotopublicvcard {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	background-size: contain;
+	border: 1px solid;
+	border-color: rgba(128, 128, 128, 0.5);
+	position: relative;
+	top: 25px;
+	left: -110px;
 }
 form[name="addtime"] img.userphoto {
 	border: 1px solid #444;
@@ -6434,6 +6455,10 @@ ul.select2-results__options li {
 	}
 }
 
+.parentonrightofpage {
+  direction: rtl;
+}
+
 
 /* ============================================================================== */
 /*  For categories                                                                */
@@ -6602,7 +6627,7 @@ dl.dropdown {
 	z-index: 1;
 }
 .dropdown dd ul.selectedfieldsleft {
-	right: auto;
+	<?php echo $right; ?>: auto;
 }
 .dropdown dd ul li {
 	white-space: nowrap;
@@ -7624,6 +7649,12 @@ div.clipboardCPValue.hidewithsize {
 
 	.lilevel1 span.paddingright {
 		padding-right: 3px;
+	}
+	
+	img.userphotopublicvcard {
+		left: unset;
+		top: unset;
+		margin-top: 30px;
 	}
 }
 
