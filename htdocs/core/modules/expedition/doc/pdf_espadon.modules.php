@@ -830,11 +830,6 @@ class pdf_espadon extends ModelePdfExpedition
 		$totalVolume = $tmparray['volume'];
 		$totalOrdered = $tmparray['ordered'];
 		$totalToShip = $tmparray['toship'];
-		// Set trueVolume and volume_units not currently stored into database
-		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
-			$object->trueVolume = price(($object->trueWidth * $object->trueHeight * $object->trueDepth), 0, $outputlangs, 0, 0);
-			$object->volume_units = $object->size_units * 3;
-		}
 
 		if ($totalWeight != '') {
 			$totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
@@ -846,11 +841,14 @@ class pdf_espadon extends ModelePdfExpedition
 			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);
 		}
 		if ($object->trueVolume) {
-			$totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
+			if ($object->volume_units < 50) {
+				var_dump($object->trueVolume, $object->volume_units);
+				$totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
+			} else {
+				$totalVolumetoshow = $object->trueVolume.' '.measuringUnitString(0, "volume", $object->volume_units);
+			}
+			//$totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs);
 		}
-
-
-
 
 		if ($this->getColumnStatus('desc')) {
 			$this->printStdColumnContent($pdf, $tab2_top, 'desc', $outputlangs->transnoentities("Total"));

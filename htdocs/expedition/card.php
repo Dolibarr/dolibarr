@@ -1891,27 +1891,21 @@ if ($action == 'create') {
 		print $langs->trans("Volume");
 		print '</td>';
 		print '<td colspan="3">';
-		$calculatedVolume = 0;
-		$volumeUnit = 0;
-		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
-			$calculatedVolume = ($object->trueWidth * $object->trueHeight * $object->trueDepth);
-			$volumeUnit = $object->size_units * 3;
-		}
-		// If sending volume not defined we use sum of products
-		if ($calculatedVolume > 0) {
-			if ($volumeUnit < 50) {
-				print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
+		if (!empty($object->trueVolume)) {
+			var_dump($object->trueVolume, $object->volume_units);
+			if ($object->volume_units < 50) {
+				print showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
 			} else {
-				print $calculatedVolume.' '.measuringUnitString(0, "volume", $volumeUnit);
+				print $object->trueVolume.' '.measuringUnitString(0, "volume", $object->volume_units);
 			}
 		}
 		if ($totalVolume > 0) {
-			if ($calculatedVolume) {
+			if (!empty($object->trueVolume)) {
 				print ' ('.$langs->trans("SumOfProductVolumes").': ';
 			}
 			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
 			//if (empty($calculatedVolume)) print ' ('.$langs->trans("Calculated").')';
-			if ($calculatedVolume) {
+			if (!empty($object->trueVolume)) {
 				print ')';
 			}
 		}

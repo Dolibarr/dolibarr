@@ -135,8 +135,11 @@ class Expedition extends CommonObject
 	public $height_units;
 	public $trueDepth;
 	public $depth_units;
+	public $trueVolume;
+	public $volume_units;
 	// A denormalized value
 	public $trueSize;
+
 
 	/**
 	 * @var integer|string Date delivery planed
@@ -596,6 +599,12 @@ class Expedition extends CommonObject
 				$this->height_units         = $obj->size_units;
 				$this->trueDepth            = $obj->size;
 				$this->depth_units          = $obj->size_units;
+
+				if ($this->trueWidth && $this->trueHeight && $this->trueDepth) {
+					$this->trueVolume = ($this->trueWidth * $this->trueHeight * $this->trueDepth);
+					var_dump($this->trueVolume);
+				}
+				$this->volume_units = $obj->size_units * 3;
 
 				$this->note_public          = $obj->note_public;
 				$this->note_private         = $obj->note_private;
