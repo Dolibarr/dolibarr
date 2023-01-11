@@ -45,6 +45,8 @@ $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bomlist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$mode       = GETPOST('mode', 'alpha'); // mode view for result
+
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -316,6 +318,9 @@ llxHeader('', $title, $help_url);
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
+if (!empty($mode)) {
+	$param .= '&mode='.urlencode($mode);
+}
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
@@ -385,11 +390,16 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
+
 
 $url = DOL_URL_ROOT.'/salaries/card.php?action=create';
 if (!empty($socid)) {
 	$url .= '&socid='.$socid;
 }
+$newcardbutton  = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton = dolGetButtonTitle($langs->trans('NewSalaryPayment'), '', 'fa fa-plus-circle', $url, '', $user->rights->salaries->write);
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -532,8 +542,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
-	// Show here line of result
-	print '<tr class="oddeven">';
+
 
 	$userstatic->id = $obj->uid;
 	$userstatic->lastname = $obj->lastname;
@@ -549,136 +558,162 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 	$paymentsalstatic->id = $obj->rowid;
 	$paymentsalstatic->ref = $obj->rowid;
+	$paymentsalstatic->amount = $obj->amount;
+	$paymentsalstatic->fk_typepayment = $obj->payment_code;
+	$paymentsalstatic->datec = $obj->dateep;
+	$paymentsalstatic->datep = $obj->datep;
 
-	// Ref
-	print "<td>".$paymentsalstatic->getNomUrl(1)."</td>\n";
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
+	$accountlinestatic->id = $obj->fk_bank;
+	$accountlinestatic->ref = $obj->fk_bank;
+	$paymentsalstatic->fk_bank = $accountlinestatic->getNomUrl(1);
+	$paymentsalstatic->fk_user_author = $userstatic->getNomUrl(1);
 
-	// Ref salary
-	print "<td>".$salstatic->getNomUrl(1)."</td>\n";
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
 
-	// Label payment
-	print "<td>".dol_trunc($obj->label, 40)."</td>\n";
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
 
-	// Date end period
-	print '<td class="center">'.dol_print_date($db->jdate($obj->dateep), 'day')."</td>\n";
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
+	if ($mode == 'kanban') {
+		if ($i == 0) {
+			print '<tr><td colspan="12">';
+			print '<div class="box-flex-container">';
+		}
+		// Output Kanban
 
-	// Date payment
-	print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
+		print $paymentsalstatic->getKanbanView('');
+		if ($i == (min($num, $limit) - 1)) {
+			print '</div>';
+			print '</td></tr>';
+		}
+	} else {
+		// Show here line of result
+		print '<tr class="oddeven">';
+		// Ref
+		print "<td>".$paymentsalstatic->getNomUrl(1)."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
-	// Date value
-	/*print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
-	if (!$i) $totalarray['nbfield']++;*/
+		// Ref salary
+		print "<td>".$salstatic->getNomUrl(1)."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
-	// Employee
-	print "<td>".$userstatic->getNomUrl(1)."</td>\n";
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
+		// Label payment
+		print "<td>".dol_trunc($obj->label, 40)."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
-	// Type
-	print '<td>';
-	print $langs->trans("PaymentTypeShort".$obj->payment_code);
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
+		// Date end period
+		print '<td class="center">'.dol_print_date($db->jdate($obj->dateep), 'day')."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
-	// Chq number
-	print '<td>'.$obj->num_payment.'</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
+		// Date payment
+		print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day')."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
-	// Account
-	if (isModEnabled("banque")) {
-		// Bank transaction
+		// Date value
+		/*print '<td class="center">'.dol_print_date($db->jdate($obj->datev), 'day')."</td>\n";
+		if (!$i) $totalarray['nbfield']++;*/
+
+		// Employee
+		print "<td>".$userstatic->getNomUrl(1)."</td>\n";
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+
+		// Type
 		print '<td>';
-		$accountlinestatic->id = $obj->fk_bank;
-		print $accountlinestatic->getNomUrl(1);
+		print $langs->trans("PaymentTypeShort".$obj->payment_code);
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
 
-		print '<td>';
-		if ($obj->fk_bank > 0) {
-			//$accountstatic->fetch($obj->fk_bank);
-			$accountstatic->id = $obj->bid;
-			$accountstatic->ref = $obj->bref;
-			$accountstatic->number = $obj->bnumber;
-			$accountstatic->iban = $obj->iban;
-			$accountstatic->bic = $obj->bic;
-			$accountstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
-			$accountstatic->clos = $obj->clos;
+		// Chq number
+		print '<td>'.$obj->num_payment.'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
 
-			if (isModEnabled('accounting')) {
-				$accountstatic->account_number = $obj->account_number;
-
-				$accountingjournal = new AccountingJournal($db);
-				$accountingjournal->fetch($obj->fk_accountancy_journal);
-
-				$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+		// Account
+		if (isModEnabled("banque")) {
+			// Bank transaction
+			print '<td>';
+			$accountlinestatic->id = $obj->fk_bank;
+			print $accountlinestatic->getNomUrl(1);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
 			}
-			$accountstatic->label = $obj->blabel;
-			if ($accountstatic->id > 0) {
-				print $accountstatic->getNomUrl(1);
+
+			print '<td>';
+			if ($obj->fk_bank > 0) {
+				//$accountstatic->fetch($obj->fk_bank);
+				$accountstatic->id = $obj->bid;
+				$accountstatic->ref = $obj->bref;
+				$accountstatic->number = $obj->bnumber;
+				$accountstatic->iban = $obj->iban;
+				$accountstatic->bic = $obj->bic;
+				$accountstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
+				$accountstatic->clos = $obj->clos;
+
+				if (isModEnabled('accounting')) {
+					$accountstatic->account_number = $obj->account_number;
+
+					$accountingjournal = new AccountingJournal($db);
+					$accountingjournal->fetch($obj->fk_accountancy_journal);
+
+					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
+				}
+				$accountstatic->label = $obj->blabel;
+				if ($accountstatic->id > 0) {
+					print $accountstatic->getNomUrl(1);
+				}
+			} else {
+				print '&nbsp;';
 			}
-		} else {
-			print '&nbsp;';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Amount
+		print '<td class="nowrap right"><span class="amount">'.price($obj->amount).'</span></td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+		if (!$i) {
+			$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
+		}
+		$totalarray['val']['totalttcfield'] += $obj->amount;
+
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+		// Fields from hook
+		$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		// Action column
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-	}
 
-	// Amount
-	print '<td class="nowrap right"><span class="amount">'.price($obj->amount).'</span></td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
+		print '</tr>'."\n";
 	}
-	if (!$i) {
-		$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
-	}
-	$totalarray['val']['totalttcfield'] += $obj->amount;
-
-	// Extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'object'=>$object, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
-	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	// Action column
-	print '<td class="nowrap center">';
-	if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		$selected = 0;
-		if (in_array($object->id, $arrayofselected)) {
-			$selected = 1;
-		}
-		print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
-	}
-	print '</td>';
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
-
-	print '</tr>'."\n";
-
 	$i++;
 }
 
