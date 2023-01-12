@@ -852,7 +852,7 @@ class CommandeFournisseur extends CommonOrder
 			if (!empty($this->ref_supplier)) {
 				$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 			}
-			if (!empty($this->thirdparty->name)){
+			if (!empty($this->thirdparty->name)) {
 				$label .= '<br><b>'.$langs->trans('Supplier').':</b> '.$this->thirdparty->name;
 			}
 			if (!empty($this->total_ht)) {
