@@ -383,12 +383,15 @@ class CommandeFournisseur extends CommonOrder
 				return 0;
 			}
 
+			$thirdparty = new Societe($this->db);
+
 			$this->id = $obj->rowid;
 			$this->entity = $obj->entity;
 
 			$this->ref = $obj->ref;
 			$this->ref_supplier = $obj->ref_supplier;
 			$this->socid = $obj->fk_soc;
+			$this->thirdparty = $thirdparty->fetch($this->socid);
 			$this->fourn_id = $obj->fk_soc;
 			$this->statut				= $obj->fk_statut;
 			$this->status				= $obj->fk_statut;
@@ -838,9 +841,6 @@ class CommandeFournisseur extends CommonOrder
 
 		$label = '';
 
-		$fourn = new Societe($this->db);
-		$fourn->fetch($this->socid);
-
 		if ($user->hasRight("fournisseur", "commande", "read")) {
 			$label = '<u class="paddingrightonly">'.$langs->trans("SupplierOrder").'</u>';
 			if (isset($this->statut)) {
@@ -852,7 +852,9 @@ class CommandeFournisseur extends CommonOrder
 			if (!empty($this->ref_supplier)) {
 				$label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 			}
-			$label .= '<br><b>'.$langs->trans('Supplier').':</b> '.$fourn->name;
+			if (!empty($this->thirdparty->name)){
+				$label .= '<br><b>'.$langs->trans('Supplier').':</b> '.$this->thirdparty->name;
+			}
 			if (!empty($this->total_ht)) {
 				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
 			}
