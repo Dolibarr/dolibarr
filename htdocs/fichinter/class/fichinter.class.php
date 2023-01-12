@@ -749,25 +749,25 @@ class Fichinter extends CommonObject
 	{
 		// phpcs:enable
 		// Init/load array of translation of status
-		if (empty($this->statuts) || empty($this->statuts_short) || empty($this->statuts_logo)) {
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			$langs->load("fichinter");
 
-			$this->statuts[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->statuts[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
-			$this->statuts[self::STATUS_BILLED] = $langs->transnoentitiesnoconv('StatusInterInvoiced');
-			$this->statuts[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Done');
-			$this->statuts_short[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->statuts_short[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
-			$this->statuts_short[self::STATUS_BILLED] = $langs->transnoentitiesnoconv('StatusInterInvoiced');
-			$this->statuts_short[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Done');
-			$this->statuts_logo[self::STATUS_DRAFT] = 'status0';
-			$this->statuts_logo[self::STATUS_VALIDATED] = 'status1';
-			$this->statuts_logo[self::STATUS_BILLED] = 'status6';
-			$this->statuts_logo[self::STATUS_CLOSED] = 'status6';
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatus[self::STATUS_BILLED] = $langs->transnoentitiesnoconv('StatusInterInvoiced');
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Done');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
+			$this->labelStatusShort[self::STATUS_BILLED] = $langs->transnoentitiesnoconv('StatusInterInvoiced');
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Done');
 		}
 
-		return dolGetStatus($this->statuts[$status], $this->statuts_short[$status], '', $this->statuts_logo[$status], $mode);
+		$statuscode = 'status'.$status;
+		if ($status == self::STATUS_BILLED || $status == self::STATUS_CLOSED) {
+			$statuscode = 'status6';
+		}
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statuscode, $mode);
 	}
 
 	/**
