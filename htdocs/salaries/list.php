@@ -458,7 +458,7 @@ if (isModEnabled("banque")) {
 // Amount
 print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$db->escape($search_amount).'"></td>';
 
-//Status
+// Status
 print '<td class="liste_titre right parentonrightofpage">';
 $liststatus = array('0' => $langs->trans("Unpaid"), '1' => $langs->trans("Paid"));
 print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
@@ -538,7 +538,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$userstatic->login = $obj->login;
 	$userstatic->email = $obj->email;
 	$userstatic->socid = $obj->fk_soc;
-	$userstatic->statut = $obj->status;
+	$userstatic->statut = $obj->status;		// deprecated
+	$userstatic->status = $obj->status;
 
 	$salstatic->id = $obj->rowid;
 	$salstatic->ref = $obj->rowid;
@@ -590,7 +591,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 		}
 
 		// Employee
-		print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(1)."</td>\n";
+		print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -637,7 +638,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			}
 		}
 
-		//  if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
+		// if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 
 		// Amount
 		print '<td class="nowrap right"><span class="amount">'.price($obj->amount).'</span></td>';
