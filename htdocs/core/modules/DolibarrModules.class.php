@@ -976,8 +976,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$tmp = json_decode($obj->note, true);
 				}
 				return array(
-					'authorid' => $tmp['authorid'],
-					'ip' => $tmp['ip'],
+					'authorid' => empty($tmp['authorid']) ? '' : $tmp['authorid'],
+					'ip' => empty($tmp['ip']) ? '' : $tmp['ip'],
 					'lastactivationdate' => $this->db->jdate($obj->tms),
 					'lastactivationversion' => (!empty($tmp['lastactivationversion']) ? $tmp['lastactivationversion'] : 'unknown'),
 				);
