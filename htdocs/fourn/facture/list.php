@@ -766,11 +766,11 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($search_all) {
 	$param .= '&search_all='.urlencode($search_all);
 }
-	if ($search_date_start) {
-		$param .= buildParamDate('search_date_start', null, '', 'tzserver');
+if ($search_date_start) {
+	$param .= buildParamDate('search_date_start', null, '', 'tzserver');
 }
-	if ($search_date_end) {
-		$param .= buildParamDate('search_date_end', null, '', 'tzserver');
+if ($search_date_end) {
+	$param .= buildParamDate('search_date_end', null, '', 'tzserver');
 }
 if ($search_datelimit_startday) {
 	$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
