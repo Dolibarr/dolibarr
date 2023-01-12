@@ -224,7 +224,7 @@ $now = dol_now();
 $help_url = '';
 $title = $langs->trans('Salaries');
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.photo, u.salary as current_salary, u.fk_soc as fk_soc, u.statut as status,";
 $sql .= " s.rowid, s.fk_account, s.paye, s.fk_user, s.amount, s.salary, s.label, s.datesp, s.dateep, s.fk_typepayment as paymenttype, ";
 $sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
 $sql .= " pst.code as payment_code,";
@@ -540,6 +540,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	$userstatic->socid = $obj->fk_soc;
 	$userstatic->statut = $obj->status;		// deprecated
 	$userstatic->status = $obj->status;
+	$userstatic->photo = $obj->photo;
 
 	$salstatic->id = $obj->rowid;
 	$salstatic->ref = $obj->rowid;
