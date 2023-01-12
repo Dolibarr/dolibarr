@@ -38,6 +38,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
@@ -384,6 +385,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			$thirdparty = new Societe($this->db);
+			$thirdparty->fetch($obj->fk_soc);
 
 			$this->id = $obj->rowid;
 			$this->entity = $obj->entity;
@@ -391,7 +393,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->ref = $obj->ref;
 			$this->ref_supplier = $obj->ref_supplier;
 			$this->socid = $obj->fk_soc;
-			$this->thirdparty = $thirdparty->fetch($this->socid);
+			$this->thirdparty = $thirdparty;
 			$this->fourn_id = $obj->fk_soc;
 			$this->statut				= $obj->fk_statut;
 			$this->status				= $obj->fk_statut;
