@@ -282,7 +282,36 @@ if ($action == 'set' && $user->admin) {
 	}
 	header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
 	exit;
+} elseif (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1 && $action == 'reload' && $user->admin && GETPOST('confirm') == 'yes') {
+	$result = unActivateModule($value, 0);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	if ($result) {
+		setEventMessages($result, null, 'errors');
+		header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
+	}
+	$resarray = activateModule($value, 0, 1);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	if (!empty($resarray['errors'])) {
+		setEventMessages('', $resarray['errors'], 'errors');
+	} else {
+		if ($resarray['nbperms'] > 0) {
+			$tmpsql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."user WHERE admin <> 1";
+			$resqltmp = $db->query($tmpsql);
+			if ($resqltmp) {
+				$obj = $db->fetch_object($resqltmp);
+				if ($obj && $obj->nb > 1) {
+					$msg = $langs->trans('ModuleEnabledAdminMustCheckRights');
+					setEventMessages($msg, null, 'warnings');
+				}
+			} else {
+				dol_print_error($db);
+			}
+		}
+	}
+	header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
+	exit;
 }
+
 
 
 
@@ -461,6 +490,19 @@ if ($action == 'reset_confirm' && $user->admin) {
 
 		$form = new Form($db);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?value='.$value.'&mode='.$mode.$param, $langs->trans('ConfirmUnactivation'), $langs->trans(GETPOST('confirm_message_code')), 'reset', '', 'no', 1);
+	}
+}
+
+if ($action == 'reload_confirm' && $user->admin) {
+	if (!empty($modules[$value])) {
+		$objMod = $modules[$value];
+
+		if (!empty($objMod->langfiles)) {
+			$langs->loadLangs($objMod->langfiles);
+		}
+
+		$form = new Form($db);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?value='.$value.'&mode='.$mode.$param, $langs->trans('ConfirmReload'), $langs->trans(GETPOST('confirm_message_code')), 'reload', '', 'no', 1);
 	}
 }
 
@@ -802,10 +844,22 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.urlencode($objMod->warnings_unactivation[$mysoc->country_code]).'&amp;value='.$modName.'&amp;mode='.$mode.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
 					$codeenabledisable .= '</a>';
+					if (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1) {
+						$codeenabledisable .= '&nbsp;';
+						$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reload_confirm&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
+						$codeenabledisable .= img_picto($langs->trans("Reload"), 'refresh', 'class="fa-15"');
+						$codeenabledisable .= '</a>';
+					}
 				} else {
 					$codeenabledisable .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reset&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
 					$codeenabledisable .= img_picto($langs->trans("Activated"), 'switch_on');
 					$codeenabledisable .= '</a>';
+					if (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1) {
+						$codeenabledisable .= '&nbsp;';
+						$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reload&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
+						$codeenabledisable .= img_picto($langs->trans("Reload"), 'refresh', 'class="fa-15"');
+						$codeenabledisable .= '</a>';
+					}
 				}
 			}
 

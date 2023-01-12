@@ -1084,11 +1084,12 @@ function purgeSessions($mysessionid)
 /**
  *  Enable a module
  *
- *  @param      string		$value      Name of module to activate
- *  @param      int			$withdeps   Activate/Disable also all dependencies
- *  @return     array      			    array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
+ *  @param      string		$value      			Name of module to activate
+ *  @param      int			$withdeps  				Activate/Disable also all dependencies
+ * 	@param		int			$noconfverification		Remove verification of $conf variable for module
+ *  @return     array      			    			array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
  */
-function activateModule($value, $withdeps = 1)
+function activateModule($value, $withdeps = 1, $noconfverification = 0)
 {
 	global $db, $langs, $conf, $mysoc;
 
@@ -1144,8 +1145,10 @@ function activateModule($value, $withdeps = 1)
 	}
 
 	$const_name = $objMod->const_name;
-	if (!empty($conf->global->$const_name)) {
-		return $ret;
+	if ($noconfverification == 0) {
+		if (!empty($conf->global->$const_name)) {
+			return $ret;
+		}
 	}
 
 	$result = $objMod->init(); // Enable module
