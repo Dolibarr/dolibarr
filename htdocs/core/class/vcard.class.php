@@ -117,22 +117,25 @@ class vCard
 		if ($type != "") {
 			$key .= ";".$type;
 		}
-		$key .= ";".$this->encoding;
-		$this->properties[$key] = 'VALUE=uri:tel:'.encode($number);
+		$key .= ";VALUE=uri";
+		//$key .= ";".$this->encoding;
+		$this->properties[$key] = 'tel:'.$number;
 	}
 
 	/**
 	 *	mise en forme de la photo
 	 *  warning NON TESTE !
 	 *
-	 *  @param  string  $type			Type 'image/gif'
+	 *  @param  string  $type			Type 'image/jpeg' or 'JPEG'
 	 *  @param  string  $photo			Photo
 	 *  @return	void
 	 */
 	public function setPhoto($type, $photo)
 	{
 		// $type = "GIF" | "JPEG"
-		$this->properties["PHOTO;MEDIATYPE=$type;ENCODING=BASE64"] = base64_encode($photo);
+		//$this->properties["PHOTO;MEDIATYPE=$type;ENCODING=BASE64"] = base64_encode($photo);
+		$this->properties["PHOTO;MEDIATYPE=$type"] = $photo;		// must be url of photo
+		//$this->properties["PHOTO;TYPE=$type;ENCODING=BASE64"] = base64_encode($photo);   // must be content of image
 	}
 
 	/**
@@ -152,13 +155,14 @@ class vCard
 	 *	@param	string	$family			Family name
 	 *	@param	string	$first			First name
 	 *	@param	string	$additional		Additional (e.g. second name, nick name)
-	 *	@param	string	$prefix			Prefix (e.g. "Mr.", "Ms.", "Prof.")
+	 *	@param	string	$prefix			Title prefix (e.g. "Mr.", "Ms.", "Prof.")
 	 *	@param	string	$suffix			Suffix (e.g. "sen." for senior, "jun." for junior)
 	 *	@return	void
 	 */
 	public function setName($family = "", $first = "", $additional = "", $prefix = "", $suffix = "")
 	{
-		$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
+		//$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
+		$this->properties["N"] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
 		$this->filename = "$first%20$family.vcf";
 		if (empty($this->properties["FN"])) {
 			$this->setFormattedName(trim("$prefix $first $additional $family $suffix"));
@@ -173,8 +177,9 @@ class vCard
 	 */
 	public function setBirthday($date)
 	{
-		// $date format is YYYY-MM-DD - RFC 2425 and RFC 2426
-		$this->properties["BDAY"] = dol_print_date($date, 'dayrfc');
+		// $date format is YYYY-MM-DD - RFC 2425 and RFC 2426 for vcard v3
+		// $date format is YYYYMMDD or ISO8601 for vcard v4
+		$this->properties["BDAY"] = dol_print_date($date, 'dayxcard');
 	}
 
 	/**
@@ -309,7 +314,7 @@ class vCard
 	 */
 	public function setProdId($prodid)
 	{
-		$this->properties["PRODID;".$this->encoding] = encode($prodid);
+		$this->properties["PRODID"] = encode($prodid);
 	}
 
 
@@ -321,7 +326,7 @@ class vCard
 	 */
 	public function setUID($uid)
 	{
-		$this->properties["UID;".$this->encoding] = encode($uid);
+		$this->properties["UID"] = encode($uid);
 	}
 
 
@@ -355,7 +360,7 @@ class vCard
 		foreach ($this->properties as $key => $value) {
 			$text .= $key.":".$value."\r\n";
 		}
-		$text .= "REV:".date("Y-m-d")."T".date("H:i:s")."Z\r\n";
+		$text .= "REV:".date("Ymd")."T".date("His")."Z\r\n";
 		//$text .= "MAILER: Dolibarr\r\n";
 		$text .= "END:VCARD\r\n";
 		return $text;
@@ -374,12 +379,13 @@ class vCard
 	/**
 	 * Return a VCARD string
 	 *
-	 * @param	Object		$object		Object (User, Contact)
-	 * @param	Societe		$company	Company
-	 * @param	Translate	$langs		Lang object
-	 * @return	string					String
+	 * @param	Object			$object		Object (User or Contact)
+	 * @param	Societe|null	$company	Company. May be null
+	 * @param	Translate		$langs		Lang object
+	 * @param	string			$urlphoto	Full public URL of photo
+	 * @return	string						String
 	 */
-	public function buildVCardString($object, $company, $langs)
+	public function buildVCardString($object, $company, $langs, $urlphoto = '')
 	{
 		global $dolibarr_main_instance_unique_id;
 
@@ -389,70 +395,136 @@ class vCard
 		$this->setName($object->lastname, $object->firstname, "", $object->civility_code, "");
 		$this->setFormattedName($object->getFullName($langs, 1));
 
-		$this->setPhoneNumber($object->office_phone, "TYPE=WORK,VOICE");
-		$this->setPhoneNumber($object->personal_mobile, "TYPE=HOME,VOICE");
-		$this->setPhoneNumber($object->user_mobile, "TYPE=CELL,VOICE");
-		$this->setPhoneNumber($object->office_fax, "TYPE=WORK,FAX");
-
-		$country = $object->country_code ? $object->country : '';
-
-		$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=WORK");
-		//$this->setLabel("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=WORK");
-
-		$this->setEmail($object->email, "TYPE=WORK");
-		$this->setNote($object->note_public);
-		$this->setTitle($object->job);
-
-		// For user, type=home
-		// For contact, this is not defined
-		$this->setURL($object->url, "TYPE=HOME");
-
-		if (is_object($company)) {
-			$this->setURL($company->url, "TYPE=WORK");
-
-			if (!$object->office_phone) {
-				$this->setPhoneNumber($company->phone, "TYPE=WORK,VOICE");
-			}
-			if (!$object->office_fax) {
-				$this->setPhoneNumber($company->fax, "TYPE=WORK,FAX");
-			}
-			if (!$object->zip) {
-				$this->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK");
-			}
-
-			// when company e-mail is empty, use only user e-mail
-			if (empty(trim($company->email))) {
-				// was set before, don't set twice
-			} elseif (empty(trim($object->email))) {
-				// when user e-mail is empty, use only company e-mail
-				$this->setEmail($company->email, "TYPE=WORK");
-			} else {
-				$tmpuser2 = explode("@", trim($object->email));
-				$tmpcompany = explode("@", trim($company->email));
-
-				if (strtolower(end($tmpuser2)) == strtolower(end($tmpcompany))) {
-					// when e-mail domain of user and company are the same, use user e-mail at first (and company e-mail at second)
-					$this->setEmail($object->email, "TYPE=WORK");
-
-					// support by Microsoft Outlook (2019 and possible earlier)
-					$this->setEmail($company->email, '');
-				} else {
-					// when e-mail of user and company complete different use company e-mail at first (and user e-mail at second)
-					$this->setEmail($company->email, "TYPE=WORK");
-
-					// support by Microsoft Outlook (2019 and possible earlier)
-					$this->setEmail($object->email, '');
-				}
-			}
-
-			// Si user lie a un tiers non de type "particulier"
-			if ($company->typent_code != 'TE_PRIVATE') {
-				$this->setOrg($company->name);
+		if ($urlphoto) {
+			$mimetype = dol_mimetype($urlphoto);
+			if ($mimetype) {
+				$this->setPhoto($mimetype, $urlphoto);
 			}
 		}
 
-		// Personal informations
-		$this->setPhoneNumber($object->personal_mobile, "TYPE=HOME,VOICE");
+		if ($object->office_phone) {
+			$this->setPhoneNumber($object->office_phone, "TYPE=WORK,VOICE");
+		}
+		/* disabled
+		if ($object->personal_mobile) {
+			$this->setPhoneNumber($object->personal_mobile, "TYPE=CELL,VOICE");
+		}*/
+		if ($object->user_mobile) {
+			$this->setPhoneNumber($object->user_mobile, "TYPE=CELL,VOICE");
+		}
+		if ($object->office_fax) {
+			$this->setPhoneNumber($object->office_fax, "TYPE=WORK,FAX");
+		}
+
+		if (!empty($object->socialnetworks)) {
+			foreach ($object->socialnetworks as $key => $val) {
+				$urlsn = '';
+				if ($key == 'linkedin') {
+					if (!preg_match('/^http/', $val)) {
+						$urlsn = 'https://www.'.$key.'.com/company/'.urlencode($val);
+					} else {
+						$urlsn = $val;
+					}
+				} elseif ($key == 'youtube') {
+					if (!preg_match('/^http/', $val)) {
+						$urlsn = 'https://www.'.$key.'.com/user/'.urlencode($val);
+					} else {
+						$urlsn = $val;
+					}
+				} else {
+					if (!preg_match('/^http/', $val)) {
+						$urlsn = 'https://www.'.$key.'.com/'.urlencode($val);
+					} else {
+						$urlsn = $val;
+					}
+				}
+				if ($urlsn) {
+					$this->properties["socialProfile;type=".$key] = $urlsn;
+				}
+			}
+		}
+
+		$country = $object->country_code ? $object->country : '';
+
+		if ($object->address || $object->town || $object->state || $object->zip || $object->country) {
+			$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=WORK");
+			//$this->setLabel("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=HOME");
+		}
+
+		if ($object->email) {
+			$this->setEmail($object->email, "TYPE=WORK");
+		}
+		/* disabled
+		if ($object->personal_email) {
+			$this->setEmail($object->personal_email, "TYPE=HOME");
+		} */
+		if ($object->note_public) {
+			$this->setNote($object->note_public);
+		}
+		if ($object->job) {
+			$this->setTitle($object->job);
+		}
+
+		// For user, type=home
+		// For contact, $object->url is not defined
+		if ($object->url) {
+			$this->setURL($object->url, "");
+		}
+
+		if (is_object($company)) {
+			// Si user linked to a thirdparty and not a physical people
+			if ($company->typent_code != 'TE_PRIVATE') {
+				$this->setOrg($company->name);
+			}
+
+			$this->setURL($company->url, "");
+
+			if ($company->phone && $company->phone != $object->office_phone) {
+				$this->setPhoneNumber($company->phone, "TYPE=WORK,VOICE");
+			}
+			if ($company->fax && $company->fax != $object->office_fax) {
+				$this->setPhoneNumber($company->fax, "TYPE=WORK,FAX");
+			}
+			if ($company->address || $company->town || $company->state || $company->zip || $company->country) {
+				$this->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK");
+			}
+
+			if ($company->email && $company->email != $object->email) {
+				$this->setEmail($company->email, "TYPE=WORK");
+			}
+
+			/*
+			if (!empty($company->socialnetworks)) {
+				foreach ($company->socialnetworks as $key => $val) {
+					$urlsn = '';
+					if ($key == 'linkedin') {
+						if (!preg_match('/^http/', $val)) {
+							$urlsn = 'https://www.'.$key.'.com/company/'.urlencode($val);
+						} else {
+							$urlsn = $val;
+						}
+					} elseif ($key == 'youtube') {
+						if (!preg_match('/^http/', $val)) {
+							$urlsn = 'https://www.'.$key.'.com/user/'.urlencode($val);
+						} else {
+							$urlsn = $val;
+						}
+					} else {
+						if (!preg_match('/^http/', $val)) {
+							$urlsn = 'https://www.'.$key.'.com/'.urlencode($val);
+						} else {
+							$urlsn = $val;
+						}
+					}
+					if ($urlsn) {
+						$this->properties["socialProfile;type=".$key] = $urlsn;
+					}
+				}
+			}
+			*/
+		}
+
+		// Birthday
 		if ($object->birth) {
 			$this->setBirthday($object->birth);
 		}
