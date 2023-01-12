@@ -438,7 +438,14 @@ function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid
 		if (in_array($websitepagetype, array('blogpost', 'page'))) {
 			global $db;
 
-			$sql = "UPDATE ".$db->prefix()."website SET pageviews_total = pageviews_total + 1, lastaccess = '".$db->idate(dol_now())."'";
+			$tmpnow = dol_getdate(dol_now('gmt'), true, 'gmt');
+
+			$sql = "UPDATE ".$db->prefix()."website SET ";
+			$sql .= " pageviews_total = pageviews_total + 1,";
+			$sql .= " pageviews_month = pageviews_month + 1,";
+			// if last access was done during previous month, we save pageview_month into pageviews_previous_month
+			$sql .= " pageviews_previous_month = ".$db->ifsql("lastaccess < '".$db->idate(dol_mktime(0, 0, 0, $tmpnow['month'], 1, $tmpnow['year'], 'gmt', 0), 'gmt')."'", 'pageviews_month', 'pageviews_previous_month').",";
+			$sql .= " lastaccess = '".$db->idate(dol_now('gmt'), 'gmt')."'";
 			$sql .= " WHERE rowid = ".((int) $websiteid);
 			$resql = $db->query($sql);
 			if (! $resql) {

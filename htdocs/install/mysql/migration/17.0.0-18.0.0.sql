@@ -59,3 +59,5 @@ INSERT INTO llx_c_tva(rowid,fk_pays,code,taux,localtax1,localtax1_type,localtax2
 
 ALTER TABLE llx_user ADD COLUMN flagdelsessionsbefore datetime DEFAULT NULL;
 
+ALTER TABLE llx_website ADD COLUMN pageviews_previous_month BIGINT UNSIGNED DEFAULT 0;
+
