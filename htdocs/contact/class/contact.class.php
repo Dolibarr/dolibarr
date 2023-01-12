@@ -153,22 +153,22 @@ class Contact extends CommonObject
 	public $town;
 
 	/**
-	 * @var int // Id of department
+	 * @var int  Id of department
 	 */
 	public $state_id;
 
 	/**
-	 * @var string // Code of department
+	 * @var string  Code of department
 	 */
 	public $state_code;
 
 	/**
-	 * @var string // Label of department
+	 * @var string  Label of department
 	 */
 	public $state;
 
 	/**
-	 * @var string // Job Position
+	 * @var string  Job Position
 	 */
 	public $poste;
 
@@ -179,7 +179,7 @@ class Contact extends CommonObject
 	public $fk_soc;		// both socid and fk_soc are used
 
 	/**
-	 * @var int  0=inactive, 1=active // Status
+	 * @var int  0=inactive, 1=active  (Status)
 	 */
 	public $statut;
 
@@ -282,7 +282,7 @@ class Contact extends CommonObject
 	public $birthday;
 
 	/**
-	 * @var string language for contact communication // only with multilanguage enabled
+	 * @var string language for contact communication  -- only with multilanguage enabled
 	 */
 	public $default_lang;
 
