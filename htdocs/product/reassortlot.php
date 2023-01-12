@@ -514,6 +514,13 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
+// Action column
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print '<td class="liste_titre maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 print '<td class="liste_titre">';
 print '<input class="flat" type="text" name="sref" size="6" value="'.$sref.'">';
 print '</td>';
@@ -571,6 +578,10 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
+// Action column
+if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre('');
+}
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", '', $param, "", $sortfield, $sortorder);
 print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", '', $param, "", $sortfield, $sortorder);
 if (isModEnabled("service") && $type == 1) {
@@ -591,7 +602,9 @@ print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique",
 print_liste_field_titre('');
 print_liste_field_titre("ProductStatusOnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre("ProductStatusOnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre('');
+if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	print_liste_field_titre('');
+}
 print "</tr>\n";
 
 $product_static = new Product($db);
@@ -647,6 +660,11 @@ while ($i < $imaxinloop) {
 	$warehousetmp->fk_parent = $objp->warehouse_parent;
 
 	print '<tr>';
+
+	// Action column
+	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td></td>';
+	}
 
 	// Ref
 	print '<td class="nowrap">';
@@ -711,7 +729,10 @@ while ($i < $imaxinloop) {
 
 	print '<td class="right nowrap">'.$product_static->LibStatut($objp->tobuy, 5, 1).'</td>';
 
-	print '<td></td>';
+	// Action column
+	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		print '<td></td>';
+	}
 
 	print "</tr>\n";
 	$i++;
