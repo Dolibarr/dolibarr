@@ -104,9 +104,9 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 		$target = array();
 		$j = 0;
 
-		$sql = " select rowid as id, email, firstname, lastname, plan, partner";
+		$sql = " select rowid as id, label, firstname, lastname";
 		$sql .= " from ".MAIN_DB_PREFIX."myobject";
-		$sql .= " where email IS NOT NULL AND email != ''";
+		$sql .= " where email IS NOT NULL AND email <> ''";
 		if (GETPOSTISSET('filter') && GETPOST('filter', 'alphanohtml') != 'none') {
 			$sql .= " AND status = '".$this->db->escape(GETPOST('filter', 'alphanohtml'))."'";
 		}
@@ -129,10 +129,10 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 						'name' => $obj->lastname,
 						'id' => $obj->id,
 						'firstname' => $obj->firstname,
-						'other' => $obj->plan.';'.$obj->partner,
+						'other' => $obj->label,
 						'source_url' => $this->url($obj->id),
 						'source_id' => $obj->id,
-						'source_type' => 'dolicloud'
+						'source_type' => 'myobject@mymodule'
 					);
 					$old = $obj->email;
 					$j++;

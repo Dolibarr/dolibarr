@@ -2,8 +2,10 @@
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022  		Progiseize         		<a.bisotti@progiseize.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +104,9 @@ if (GETPOST("button_export_file_x") || GETPOST("button_export_file.x") || GETPOS
 	$action = 'export_file';
 }
 
-$search_accountancy_code = GETPOST("search_accountancy_code");
+$search_account_category = GETPOST('search_account_category', 'int');
+
+$search_accountancy_code = GETPOST("search_accountancy_code", 'alpha');
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
 if ($search_accountancy_code_start == - 1) {
 	$search_accountancy_code_start = '';
@@ -253,6 +257,7 @@ if (empty($reshook)) {
 		$search_doc_type = '';
 		$search_doc_ref = '';
 		$search_doc_date = '';
+		$search_account_category = '';
 		$search_accountancy_code = '';
 		$search_accountancy_code_start = '';
 		$search_accountancy_code_end = '';
@@ -334,6 +339,20 @@ if (empty($reshook)) {
 	if (!empty($search_doc_ref)) {
 		$filter['t.doc_ref'] = $search_doc_ref;
 		$param .= '&search_doc_ref='.urlencode($search_doc_ref);
+	}
+	if ($search_account_category != '-1' && !empty($search_account_category)) {
+		require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
+		$accountingcategory = new AccountancyCategory($db);
+
+		$listofaccountsforgroup = $accountingcategory->getCptsCat(0, 'fk_accounting_category = '.((int) $search_account_category));
+		$listofaccountsforgroup2 = array();
+		if (is_array($listofaccountsforgroup)) {
+			foreach ($listofaccountsforgroup as $tmpval) {
+				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['id'])."'";
+			}
+		}
+		$filter['t.search_accounting_code_in'] = join(',', $listofaccountsforgroup2);
+		$param .= '&search_account_category='.urlencode($search_account_category);
 	}
 	if (!empty($search_accountancy_code)) {
 		$filter['t.numero_compte'] = $search_accountancy_code;
@@ -642,6 +661,9 @@ $sql .= " t.tms as date_modification,";
 $sql .= " t.date_export,";
 $sql .= " t.date_validated as date_validation,";
 $sql .= " t.import_key";
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= ' FROM '.MAIN_DB_PREFIX.$object->table_element.' as t';
 // Manage filter
 $sqlwhere = array();
@@ -672,7 +694,13 @@ if (count($filter) > 0) {
 		} elseif ($key == 't.reconciled_option') {
 			$sqlwhere[] = 't.lettering_code IS NULL';
 		} elseif ($key == 't.code_journal' && !empty($value)) {
-			$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+			if (is_array($value)) {
+				$sqlwhere[] = natural_search("t.code_journal", join(',', $value), 3, 1);
+			} else {
+				$sqlwhere[] = natural_search("t.code_journal", $value, 3, 1);
+			}
+		} elseif ($key == 't.search_accounting_code_in' && !empty($value)) {
+			$sqlwhere[] = 't.numero_compte IN ('.$db->sanitize($value, 1).')';
 		} else {
 			$sqlwhere[] = natural_search($key, $value, 0, 1);
 		}
@@ -684,9 +712,6 @@ if (empty($conf->global->ACCOUNTING_REEXPORT)) {
 }
 if (count($sqlwhere) > 0) {
 	$sql .= ' AND '.implode(' AND ', $sqlwhere);
-}
-if (!empty($sortfield)) {
-	$sql .= $db->order($sortfield, $sortorder);
 }
 //print $sql;
 
@@ -715,58 +740,62 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 			}
 		}
 
-		$mimetype = $accountancyexport->getMimeType($formatexportset);
-
-		top_httphead($mimetype, 1);
-
-		// Output data on screen
-		$accountancyexport->export($object->lines, $formatexportset);
-
 		$notifiedexportdate = GETPOST('notifiedexportdate', 'alpha');
 		$notifiedvalidationdate = GETPOST('notifiedvalidationdate', 'alpha');
+		$withAttachment = !empty(trim(GETPOST('notifiedexportfull', 'alphanohtml'))) ? 1 : 0;
 
-		if (!empty($accountancyexport->errors)) {
-			dol_print_error('', '', $accountancyexport->errors);
-		} elseif (!empty($notifiedexportdate) || !empty($notifiedvalidationdate)) {
-			// Specify as export : update field date_export or date_validated
-			$error = 0;
-			$db->begin();
+		// Output data on screen or download
+		$result = $accountancyexport->export($object->lines, $formatexportset, $withAttachment);
 
-			if (is_array($object->lines)) {
-				foreach ($object->lines as $movement) {
-					$now = dol_now();
+		$error = 0;
+		if ($result < 0) {
+			$error++;
+		} else {
+			if (!empty($notifiedexportdate) || !empty($notifiedvalidationdate)) {
+				if (is_array($object->lines)) {
+					// Specify as export : update field date_export or date_validated
+					$db->begin();
 
-					$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-					$sql .= " SET";
-					if (!empty($notifiedexportdate) && !empty($notifiedvalidationdate)) {
-						$sql .= " date_export = '".$db->idate($now)."'";
-						$sql .= ", date_validated = '".$db->idate($now)."'";
-					} elseif (!empty($notifiedexportdate)) {
-						$sql .= " date_export = '".$db->idate($now)."'";
-					} elseif (!empty($notifiedvalidationdate)) {
-						$sql .= " date_validated = '".$db->idate($now)."'";
+					foreach ($object->lines as $movement) {
+						$now = dol_now();
+
+						$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
+						$sql .= " SET";
+						if (!empty($notifiedexportdate) && !empty($notifiedvalidationdate)) {
+							$sql .= " date_export = '".$db->idate($now)."'";
+							$sql .= ", date_validated = '".$db->idate($now)."'";
+						} elseif (!empty($notifiedexportdate)) {
+							$sql .= " date_export = '".$db->idate($now)."'";
+						} elseif (!empty($notifiedvalidationdate)) {
+							$sql .= " date_validated = '".$db->idate($now)."'";
+						}
+						$sql .= " WHERE rowid = ".((int) $movement->id);
+
+						dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
+
+						$result = $db->query($sql);
+						if (!$result) {
+							$error++;
+							break;
+						}
 					}
-					$sql .= " WHERE rowid = ".((int) $movement->id);
 
-					dol_syslog("/accountancy/bookkeeping/list.php Function export_file Specify movements as exported", LOG_DEBUG);
-
-					$result = $db->query($sql);
-					if (!$result) {
+					if (!$error) {
+						$db->commit();
+					} else {
 						$error++;
-						break;
+						$accountancyexport->errors[] = $langs->trans('NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated');
+						$db->rollback();
 					}
 				}
 			}
-
-			if (!$error) {
-				$db->commit();
-			} else {
-				$error++;
-				$db->rollback();
-				dol_print_error('', $langs->trans("NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated"));
-			}
 		}
-		exit;
+
+		if ($error) {
+			setEventMessages('', $accountancyexport->errors, 'errors');
+			header('Location: '.$_SERVER['PHP_SELF']);
+		}
+		exit(); // download or show errors
 	}
 }
 
@@ -783,27 +812,37 @@ $title_page = $langs->trans("Operations").' - '.$langs->trans("Journals");
 // Count total nb of records
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	$resql = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
+	$db->free($resql);
 }
-// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
-if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
-	$num = $nbtotalofrecords;
-} else {
+
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
-
-	$resql = $db->query($sql);
-	if (!$resql) {
-		dol_print_error($db);
-		exit;
-	}
-
-	$num = $db->num_rows($resql);
 }
+
+$resql = $db->query($sql);
+if (!$resql) {
+	dol_print_error($db);
+	exit;
+}
+
+$num = $db->num_rows($resql);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -854,7 +893,17 @@ if ($action == 'export_file') {
 		$form_question['separator3'] = array('name'=>'separator3', 'type'=>'separator');
 	}
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 350, 600);
+	// add documents in an archive for accountancy export (Quadratus)
+	if (getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV') == AccountancyExport::$EXPORT_TYPE_QUADRATUS) {
+		$form_question['notifiedexportfull'] = array(
+			'name' => 'notifiedexportfull',
+			'type' => 'checkbox',
+			'label' => $langs->trans('NotifiedExportFull'),
+			'value' => 'false',
+		);
+	}
+
+	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?'.$param, $langs->trans("ExportFilteredList").' ('.$listofformat[$formatexportset].')', $langs->trans('ConfirmExportFile'), 'export_fileconfirm', $form_question, '', 1, 400, 600);
 }
 
 //if ($action == 'delbookkeepingyear') {
@@ -997,6 +1046,12 @@ if ($massactionbutton && $contextpage != 'poslist') {
 }
 
 $moreforfilter = '';
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= $langs->trans('AccountingCategory').': ';
+$moreforfilter .= '<div class="nowrap inline-block">';
+$moreforfilter .= $formaccounting->select_accounting_category($search_account_category, 'search_account_category', 1, 0, 0, 0);
+$moreforfilter .= '</div>';
+$moreforfilter .= '</div>';
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1005,6 +1060,10 @@ if (empty($reshook)) {
 } else {
 	$moreforfilter = $hookmanager->resPrint;
 }
+
+print '<div class="liste_titre liste_titre_bydiv centpercent">';
+print $moreforfilter;
+print '</div>';
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste centpercent">';
@@ -1511,6 +1570,16 @@ while ($i < min($num, $limit)) {
 // Show total line
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
+// If no record found
+if ($num == 0) {
+	$colspan = 1;
+	foreach ($arrayfields as $key => $val) {
+		if (!empty($val['checked'])) {
+			$colspan++;
+		}
+	}
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+}
 
 $parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

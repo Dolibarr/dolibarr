@@ -29,7 +29,6 @@
  */
 class Projects extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -267,10 +266,9 @@ class Projects extends DolibarrApi
 	 *
 	 * @param   int   $id             Id of project
 	 * @param   int   $userid         Id of user (0 = connected user)
+	 * @return array
 	 *
 	 * @url	GET {id}/roles
-	 *
-	 * @return int
 	 */
 	public function getRoles($id, $userid = 0)
 	{
@@ -301,6 +299,7 @@ class Projects extends DolibarrApi
 		foreach ($this->project->roles as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));
 		}
+
 		return $result;
 	}
 

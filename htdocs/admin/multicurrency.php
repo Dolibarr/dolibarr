@@ -134,7 +134,8 @@ if ($action == 'add_currency') {
 		dolibarr_set_const($db, 'MULTICURRENCY_APP_SOURCE', GETPOST('MULTICURRENCY_APP_SOURCE', 'alpha'));
 		//dolibarr_set_const($db, 'MULTICURRENCY_ALTERNATE_SOURCE', GETPOST('MULTICURRENCY_ALTERNATE_SOURCE', 'alpha'));
 	} else {
-		$result = MultiCurrency::syncRates($conf->global->MULTICURRENCY_APP_ID);
+		$multiurrency = new MultiCurrency($db);
+		$result = $multiurrency->syncRates(getDolGlobalString('MULTICURRENCY_APP_ID'));
 		if ($result > 0) {
 			setEventMessages($langs->trans("CurrencyRateSyncSucceed"), null, "mesgs");
 		}

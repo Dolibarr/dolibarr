@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Бухгалтерлік есептік жазба үшінші пайдаланушыларға қолданылады
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Пайдаланушы карточкасында анықталған арнайы есеп шоты тек қосалқы есепке алу үшін қолданылады. Егер ол пайдаланушының арнайы есептік жазбасы анықталмаса, бұл Бас кітап үшін және қосалқы есепке алудың әдепкі мәні ретінде пайдаланылады.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Жалақы төлеу үшін әдепкі бойынша бухгалтерлік есеп
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Әдепкі бойынша, жалақыны құру кезінде «Жалпы төлемді автоматты түрде жасау» опциясын бос қалдырыңыз
 Salary=Жалақы
@@ -24,3 +24,4 @@ SalariesStatistics=Жалақы статистикасы
 SalariesAndPayments=Жалақы мен төлемдер
 ConfirmDeleteSalaryPayment=Бұл жалақы төлемін жойғыңыз келе ме?
 FillFieldFirst=Fill employee field first
+UpdateAmountWithLastSalary=Set amount with last salary

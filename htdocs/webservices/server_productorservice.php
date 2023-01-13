@@ -962,7 +962,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
  * Get list of products for a category
  *
  * @param	array		$authentication		Array of authentication information
- * @param	array		$id					Category id
+ * @param	int			$id					Category id
  * @param	Translate	$lang				Force lang
  * @return	array							Array result
  */

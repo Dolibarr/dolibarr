@@ -81,7 +81,7 @@ $object->fetch($facid);
 
 // Call to external receipt modules if exist
 $parameters = array();
-$hookmanager->initHooks(array('takeposfrontend'), $facid);
+$hookmanager->initHooks(array('takeposfrontend'));
 $reshook = $hookmanager->executeHooks('TakeposReceipt', $parameters, $object);
 if (!empty($hookmanager->resPrint)) {
 	print $hookmanager->resPrint;

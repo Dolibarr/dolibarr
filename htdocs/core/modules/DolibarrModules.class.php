@@ -299,10 +299,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $picto;
 
 	/**
-	 * @var string[] List of config pages
+	 * @var string[]|string 	List of config pages (Old modules uses a string. New one must use an array)
 	 *
 	 * Name of php pages stored into module/admin directory, used to setup module.
-	 * e.g.: "admin.php@module"
+	 * e.g.: array("setup.php@mymodule")
 	 */
 	public $config_page_url;
 
@@ -461,7 +461,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				// Add current entity id
 				$sql = str_replace('__ENTITY__', $conf->entity, $sql);
 
-				dol_syslog(get_class($this)."::_init ignoreerror=".$ignoreerror."", LOG_DEBUG);
+				dol_syslog(get_class($this)."::_init ignoreerror=".$ignoreerror, LOG_DEBUG);
 				$result = $this->db->query($sql, $ignoreerror);
 				if (!$result) {
 					if (!$ignoreerror) {
@@ -976,8 +976,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$tmp = json_decode($obj->note, true);
 				}
 				return array(
-					'authorid' => $tmp['authorid'],
-					'ip' => $tmp['ip'],
+					'authorid' => empty($tmp['authorid']) ? '' : $tmp['authorid'],
+					'ip' => empty($tmp['ip']) ? '' : $tmp['ip'],
 					'lastactivationdate' => $this->db->jdate($obj->tms),
 					'lastactivationversion' => (!empty($tmp['lastactivationversion']) ? $tmp['lastactivationversion'] : 'unknown'),
 				);
@@ -1327,7 +1327,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 								$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, box_order, fk_user, entity)";
 								$sql .= " VALUES (".((int) $lastid).", ".((int) $key2).", '0', 0, ".((int) $conf->entity).")";
 
-								dol_syslog(get_class($this)."::insert_boxes onto page ".$key2."=".$val2."", LOG_DEBUG);
+								dol_syslog(get_class($this)."::insert_boxes onto page ".$key2."=".$val2, LOG_DEBUG);
 								$resql = $this->db->query($sql);
 								if (!$resql) {
 									$err++;

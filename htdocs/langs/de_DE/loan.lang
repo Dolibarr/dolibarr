@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Es kann kein Zahlungsplan für ein Darleh
 CantModifyInterestIfScheduleIsUsed = Sie können die Zinsen nicht ändern, wenn Sie den Zahlungsplan verwenden.
 # Admin
 ConfigLoan=Konfiguration des Moduls Darlehen
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard-Buchungskonto Darlehensbetrag
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standard-Buchungskonto Zinsen
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standard-Buchungskonto Versicherung
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Konto (aus dem Kontenplan), das standardmäßig für Kapital verwendet werden soll (Darlehensmodul)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Konto (aus dem Kontenplan), das standardmäßig für Zinsen verwendet werden soll (Darlehensmodul)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Konto (aus dem Kontenplan), das standardmäßig für Versicherungen verwendet werden soll (Darlehensmodul)
 CreateCalcSchedule=Zahlungsplan bearbeiten

@@ -266,15 +266,15 @@ if ($mode == 'config' && $user->admin) {
 		$dirmodels = array('/core/modules/printing/');
 	}
 
-	foreach ($result as $driver) {
+	foreach ($result as $tmpdriver) {
 		foreach ($dirmodels as $dir) {
-			if (file_exists(dol_buildpath($dir, 0).$driver.'.modules.php')) {
-				$classfile = dol_buildpath($dir, 0).$driver.'.modules.php';
+			if (file_exists(dol_buildpath($dir, 0).$tmpdriver.'.modules.php')) {
+				$classfile = dol_buildpath($dir, 0).$tmpdriver.'.modules.php';
 				break;
 			}
 		}
 		require_once $classfile;
-		$classname = 'printing_'.$driver;
+		$classname = 'printing_'.$tmpdriver;
 		$printer = new $classname($db);
 		$langs->load($printer::LANGFILE);
 		//print '<pre>'.print_r($printer, true).'</pre>';

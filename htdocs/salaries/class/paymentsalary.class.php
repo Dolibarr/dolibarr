@@ -266,6 +266,7 @@ class PaymentSalary extends CommonObject
 				$this->num_paiement = $obj->num_payment;
 				$this->num_payment = $obj->num_payment;
 				$this->note = $obj->note;
+				$this->note_private = $obj->note;
 				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->fk_user_modif = $obj->fk_user_modif;
@@ -602,12 +603,66 @@ class PaymentSalary extends CommonObject
 		}
 	}
 
+	/**
+	 *	Updates the payment date.
+	 *  Old name of function is update_date()
+	 *
+	 *  @param	int	$date   		New date
+	 *  @return int					<0 if KO, 0 if OK
+	 */
+	public function updatePaymentDate($date)
+	{
+		$error = 0;
+
+		if (!empty($date)) {
+			$this->db->begin();
+
+			dol_syslog(get_class($this)."::updatePaymentDate with date = ".$date, LOG_DEBUG);
+
+			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+			$sql .= " SET datep = '".$this->db->idate($date)."'";
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->error = 'Error -1 '.$this->db->error();
+			}
+
+			$type = $this->element;
+
+			$sql = "UPDATE ".MAIN_DB_PREFIX.'bank';
+			$sql .= " SET dateo = '".$this->db->idate($date)."', datev = '".$this->db->idate($date)."'";
+			$sql .= " WHERE rowid IN (SELECT fk_bank FROM ".MAIN_DB_PREFIX."bank_url WHERE type = '".$this->db->escape($type)."' AND url_id = ".((int) $this->id).")";
+			$sql .= " AND rappro = 0";
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->error = 'Error -1 '.$this->db->error();
+			}
+
+			if (!$error) {
+			}
+
+			if (!$error) {
+				$this->datep = $date;
+
+				$this->db->commit();
+				return 0;
+			} else {
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		return -1; //no date given or already validated
+	}
 
 	/**
-	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *  Return the label of the status
 	 *
-	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return  string				Libelle
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -616,11 +671,11 @@ class PaymentSalary extends CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Renvoi le libelle d'un statut donne
+	 *  Return the status
 	 *
-	 * @param   int		$status     Statut
-	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 * @return	string  		    Libelle du statut
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -706,5 +761,40 @@ class PaymentSalary extends CommonObject
 		}
 
 		return $result;
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string		HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs, $db;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		if (property_exists($this, 'fk_bank')) {
+			$return .= ' |  <span class="info-box-label">'.$this->fk_bank.'</span>';
+		}
+		if (property_exists($this, 'fk_user_author')) {
+			$return .= '<br><span class="info-box-status">'.$this->fk_user_author.'</span>';
+		}
+
+		if (property_exists($this, 'fk_typepayment')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("PaymentMode").'</span> : <span class="info-box-label">'.$this->fk_typepayment.'</span>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }
