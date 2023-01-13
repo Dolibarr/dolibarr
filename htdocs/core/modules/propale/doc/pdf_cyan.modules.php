@@ -267,7 +267,7 @@ class pdf_cyan extends ModelePDFPropales
 						}
 
 						foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
-							if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES)) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+							if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 								if ($obj['photo_vignette']) {
 									$filename = $obj['photo_vignette'];
 								} else {
@@ -1244,11 +1244,11 @@ class pdf_cyan extends ModelePDFPropales
 
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
-		$pdf->SetXY($col1x, $tab2_top + 0);
+		$pdf->SetXY($col1x, $tab2_top);
 		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("TotalHT") : ''), 0, 'L', 1);
 
 		$total_ht = ((isModEnabled("multicurrency") && isset($object->multicurrency_tx) && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ht : $object->total_ht);
-		$pdf->SetXY($col2x, $tab2_top + 0);
+		$pdf->SetXY($col2x, $tab2_top);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ht + (!empty($object->remise) ? $object->remise : 0), 0, $outputlangs), 0, 'R', 1);
 
 		// Show VAT by rates and total
@@ -1574,13 +1574,13 @@ class pdf_cyan extends ModelePDFPropales
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		if (empty($conf->global->PDF_DISABLE_MYCOMPANY_LOGO)) {
+		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
 				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 					$logodir = $conf->mycompany->multidir_output[$object->entity];
 				}
-				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO)) {
+				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
 				} else {
 					$logo = $logodir.'/logos/'.$this->emetteur->logo;
@@ -1854,7 +1854,7 @@ class pdf_cyan extends ModelePDFPropales
 		$index = 0;
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
-		$pdf->SetXY($posx, $tab_top + 0);
+		$pdf->SetXY($posx, $tab_top);
 		$pdf->SetFont('', '', $default_font_size - 2);
 		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentities("ProposalCustomerSignature"), 0, 'L', 1);
 
@@ -1948,6 +1948,7 @@ class pdf_cyan extends ModelePDFPropales
 
 		if (!empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE) && !empty($this->atleastonephoto)) {
 			$this->cols['photo']['status'] = true;
+			$this->cols['photo']['border-left'] = true;
 		}
 
 
@@ -2009,7 +2010,7 @@ class pdf_cyan extends ModelePDFPropales
 			),
 			'border-left' => true, // add left line separator
 		);
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->cols['unit']['status'] = true;
 		}
 

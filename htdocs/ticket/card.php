@@ -71,7 +71,7 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
@@ -299,6 +299,7 @@ if (empty($reshook)) {
 			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'create';
 		}
 	}
 
@@ -738,7 +739,7 @@ if ($action == 'create' || $action == 'presend') {
 
 	$formticket->withcancel = 1;
 
-	$formticket->showForm(1, 'create', 0);
+	$formticket->showForm(1, 'create', 0, null, $action);
 	/*} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
 	$formticket = new FormTicket($db);
 
@@ -826,9 +827,6 @@ if ($action == 'create' || $action == 'presend') {
 		// Confirmation abandon
 		if ($action == 'abandon') {
 			print $form->formconfirm($url_page_current."?track_id=".$object->track_id, $langs->trans("AbandonTicket"), $langs->trans("ConfirmAbandonTicket"), "confirm_abandon", '', '', 1);
-			if ($ret == 'html') {
-				print '<br>';
-			}
 		}
 		// Confirmation delete
 		if ($action == 'delete') {
@@ -1547,7 +1545,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fa fa-comment-dots', $url, 'add-new-ticket-title-button', $btnstatus);
 
 			// Show link to add event (if read and not closed)
-			$btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage" && $action != "add_message"; ;
+			$btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage" && $action != "add_message";
 			$url = dol_buildpath('/comm/action/card.php', 1).'?action=create&datep='.date('YmdHi').'&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id);
 			$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, 'add-new-ticket-even-button', $btnstatus);
 

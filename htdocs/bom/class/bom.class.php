@@ -568,9 +568,10 @@ class BOM extends CommonObject
 	 * @param	int		$fk_bom_child			Id of BOM Child
 	 * @param	string	$import_key				Import Key
 	 * @param	string	$fk_unit				Unit
+	 * @param	array		$array_options		extrafields array
 	 * @return	int								<0 if KO, Id of created object if OK
 	 */
-	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '')
+	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = '', $array_options = 0)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -640,6 +641,10 @@ class BOM extends CommonObject
 			$this->line->position = $rankToUse;
 			$this->line->fk_unit = $fk_unit;
 
+			if (is_array($array_options) && count($array_options) > 0) {
+				$this->line->array_options = $array_options;
+			}
+
 			$result = $this->line->create($user);
 
 			if ($result > 0) {
@@ -668,10 +673,11 @@ class BOM extends CommonObject
 	 * @param	float	$efficiency				Efficiency in MO
 	 * @param	int		$position				Position of BOM-Line in BOM-Lines
 	 * @param	string	$import_key				Import Key
-	 * @param	int		$fk_unit					Unit of line
+	 * @param	int		$fk_unit				Unit of line
+	 * @param	array	$array_options			extrafields array
 	 * @return	int								<0 if KO, Id of updated BOM-Line if OK
 	 */
-	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0)
+	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = 0)
 	{
 		global $mysoc, $conf, $langs, $user;
 
@@ -743,6 +749,13 @@ class BOM extends CommonObject
 			$this->line->position = $rankToUse;
 			if (!empty($fk_unit)) {
 				$this->line->fk_unit = $fk_unit;
+			}
+
+			if (is_array($array_options) && count($array_options) > 0) {
+				// We replace values in this->line->array_options only for entries defined into $array_options
+				foreach ($array_options as $key => $value) {
+					$this->line->array_options[$key] = $array_options[$key];
+				}
 			}
 
 			$result = $this->line->update($user);
@@ -1316,7 +1329,7 @@ class BOM extends CommonObject
 	 * BOM costs calculation based on cost_price or pmp of each BOM line.
 	 * Set the property ->total_cost and ->unit_cost of BOM.
 	 *
-	 * @return void
+	 * @return int			<0 if KO, >0 if OK
 	 */
 	public function calculateCosts()
 	{
@@ -1401,6 +1414,8 @@ class BOM extends CommonObject
 				$this->unit_cost = price2num($this->total_cost * $this->qty, 'MU');
 			}
 		}
+
+		return 1;
 	}
 
 	/**
@@ -1501,6 +1516,46 @@ class BOM extends CommonObject
 				$this->getParentBomTreeRecursive($TParentBom, $res->fk_bom, $level+1);
 			}
 		}
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string		HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $db,$langs;
+		$prod = new Product($db);
+		$prod->fetch($this->fk_product);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : '').'</span>';
+		if (property_exists($this, 'fields') && !empty($this->fields['bomtype']['arrayofkeyval'])) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Type").' : </span>';
+			if ($this->bomtype == 0) {
+				$return .= '<span class="info-box-label">'.$this->fields['bomtype']['arrayofkeyval'][0].'</span>';
+			} else {
+				$return .= '<span class="info-box-label">'.$this->fields['bomtype']['arrayofkeyval'][1].'</span>';
+			}
+		}
+		if (property_exists($this, 'fk_product') && !is_null($this->fk_product)) {
+			$return .= '<br><span class="info-box-label">'.$prod->getNomUrl(1).'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }
 

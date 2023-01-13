@@ -232,7 +232,7 @@ class Contrat extends CommonObject
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
 		'date_contrat' =>array('type'=>'datetime', 'label'=>'Date contrat', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>70),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>70),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>75),
 		'fk_commercial_signature' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SaleRepresentative Signature', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'fk_commercial_suivi' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SaleRepresentative follower', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
@@ -718,7 +718,7 @@ class Contrat extends CommonObject
 					$this->socid = $obj->fk_soc;
 					$this->fk_soc = $obj->fk_soc;
 					$this->last_main_doc = $obj->last_main_doc;
-					$this->extraparams = (array) json_decode($obj->extraparams, true);
+					$this->extraparams = (isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : null);
 
 					$this->db->free($resql);
 
@@ -1368,8 +1368,8 @@ class Contrat extends CommonObject
 		$sql .= " fk_commercial_suivi=".(isset($this->fk_commercial_suivi) ? $this->fk_commercial_suivi : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
-		//$sql.= " extraparams=".(isset($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		//$sql.= " extraparams=".(isset($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -2474,18 +2474,18 @@ class Contrat extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'contrat'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -2789,6 +2789,38 @@ class Contrat extends CommonObject
 
 		return ($error ? 1: 0);
 	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string		HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'societe')) {
+			$return .= '<br><span class="info-box-label ">'.$this->societe.'</span>';
+		}
+		if (property_exists($this, 'date_contrat')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateContract").' : </span><span class="info-box-label">'.dol_print_date($this->date_contrat).'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
+	}
 }
 
 
@@ -2865,23 +2897,6 @@ class ContratLigne extends CommonObjectLine
 	public $date_start_real; // date start real
 	public $date_end; // date end planned
 	public $date_end_real; // date end real
-	// For backward compatibility
-	/**
-	 * @deprecated	Use date_start
-	 */
-	//public $date_ouverture_prevue; // date start planned
-	/**
-	 * @deprecated	Use date_start_real
-	 */
-	//public $date_ouverture; // date start real
-	/**
-	 * @deprecated	Use date_end
-	 */
-	//public $date_fin_validite; // date end planned
-	/**
-	 * @deprecated	Use date_end_real
-	 */
-	//public $date_cloture; // date end real
 
 	public $tva_tx;
 	public $vat_src_code;
@@ -3303,15 +3318,11 @@ class ContratLigne extends CommonObjectLine
 			$this->date_end_real = $this->date_end_real;
 		}
 
-
-		// Check parameters
-		// Put here code to add control on parameters values
-
 		// Calcul du total TTC et de la TVA pour la ligne a partir de
 		// qty, pu, remise_percent et txtva
 		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-		$localtaxes_type = getLocalTaxesFromRate($this->txtva, 0, $this->societe, $mysoc);
+		$localtaxes_type = getLocalTaxesFromRate($this->txtva, 0, $this->thirdparty, $mysoc);
 
 		$tabprice = calcul_price_total($this->qty, $this->price_ht, $this->remise_percent, $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, 'HT', 0, 1, $mysoc, $localtaxes_type);
 		$this->total_ht  = $tabprice[0];
@@ -3455,11 +3466,11 @@ class ContratLigne extends CommonObjectLine
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
-		$sql .= " total_ht=".price2num($this->total_ht, 'MT')."";
-		$sql .= ",total_tva=".price2num($this->total_tva, 'MT')."";
-		$sql .= ",total_localtax1=".price2num($this->total_localtax1, 'MT')."";
-		$sql .= ",total_localtax2=".price2num($this->total_localtax2, 'MT')."";
-		$sql .= ",total_ttc=".price2num($this->total_ttc, 'MT')."";
+		$sql .= " total_ht=".price2num($this->total_ht, 'MT');
+		$sql .= ",total_tva=".price2num($this->total_tva, 'MT');
+		$sql .= ",total_localtax1=".price2num($this->total_localtax1, 'MT');
+		$sql .= ",total_localtax2=".price2num($this->total_localtax2, 'MT');
+		$sql .= ",total_ttc=".price2num($this->total_ttc, 'MT');
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
@@ -3645,6 +3656,7 @@ class ContratLigne extends CommonObjectLine
 
 		// Update object
 		$this->date_cloture = $date_end_real;
+		$this->date_end_real = $date_end_real;
 		$this->fk_user_cloture = $user->id;
 		$this->commentaire = $comment;
 

@@ -119,7 +119,7 @@ class MyObject extends CommonObject
 		'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'help'=>'Help text', 'showoncombobox'=>2, 'validate'=>1, 'alwayseditable'=>1),
 		'amount'        => array('type'=>'price', 'label'=>'Amount', 'enabled'=>1, 'visible'=>1, 'default'=>'null', 'position'=>40, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for amount', 'validate'=>1),
 		'qty'           => array('type'=>'real', 'label'=>'Qty', 'enabled'=>1, 'visible'=>1, 'default'=>'0', 'position'=>45, 'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text for quantity', 'css'=>'maxwidth75imp', 'validate'=>1),
-		'fk_soc' 		=> array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'picto'=>'company', 'label'=>'ThirdParty', 'visible'=> 1, 'enabled'=>'$conf->societe->enabled', 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'OrganizationEventLinkToThirdParty', 'validate'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
+		'fk_soc' 		=> array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'picto'=>'company', 'label'=>'ThirdParty', 'visible'=> 1, 'enabled'=>'isModEnabled("societe")', 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'OrganizationEventLinkToThirdParty', 'validate'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
 		'fk_project'    => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'picto'=>'project', 'enabled'=>'$conf->project->enabled', 'visible'=>-1, 'position'=>52, 'notnull'=>-1, 'index'=>1, 'validate'=>1, 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
 		'description'   => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>3, 'position'=>60, 'validate'=>1),
 		'note_public'   => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>61, 'validate'=>1, 'cssview'=>'wordbreak'),
@@ -853,7 +853,7 @@ class MyObject extends CommonObject
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
 		global $action, $hookmanager;
-		$hookmanager->initHooks(array('myobjectdao'));
+		$hookmanager->initHooks(array($this->element.'dao'));
 		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
@@ -864,6 +864,36 @@ class MyObject extends CommonObject
 
 		return $result;
 	}
+
+	/**
+	 *	Return a thumb for kanban views
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	/*
+	public function getKanbanView($option = '')
+	{
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'label')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$this->label.'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+
+		return $return;
+	}
+	*/
 
 	/**
 	 *  Return the label of the status

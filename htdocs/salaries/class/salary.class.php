@@ -544,7 +544,7 @@ class Salary extends CommonObject
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright pictofixedwidth"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip pictofixedwidth"'), 0, 0, $notooltip ? 0 : 1);
 		if ($withpicto != 2) $result .= $this->ref;
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
@@ -706,5 +706,39 @@ class Salary extends CommonObject
 		if ($status == 1) $statusType = 'status6';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string		HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		if (property_exists($this, 'fk_user')) {
+			$return .= ' | <span class="info-box-label">'.$this->fk_user.'</span>';
+		}
+		if (property_exists($this, 'type_payment')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("PaymentMode").'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
+		}
+		if (method_exists($this, 'LibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->LibStatut($this->paye, 5, $this->alreadypaid).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

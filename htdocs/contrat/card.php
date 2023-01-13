@@ -424,11 +424,11 @@ if (empty($reshook)) {
 
 		if (GETPOST('prod_entry_mode', 'alpha') == 'free') {
 			$idprod = 0;
-			$tva_tx = (GETPOST('tva_tx', 'alpha') ? price2num(preg_replace('/\s*\(.*\)/', '', GETPOST('tva_tx', 'alpha'))) : 0);
 		} else {
 			$idprod = GETPOST('idprod', 'int');
-			$tva_tx = '';
 		}
+
+		$tva_tx = GETPOST('tva_tx', 'alpha');
 
 		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS');
 		$remise_percent = (GETPOSTISSET('remise_percent'.$predef) ? price2num(GETPOST('remise_percent'.$predef), 2) : 0);
@@ -467,36 +467,27 @@ if (empty($reshook)) {
 			// Clean parameters
 			$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 			$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
-			$price_base_type = (GETPOST('price_base_type', 'alpha') ?GETPOST('price_base_type', 'alpha') : 'HT');
 
-			// Ecrase $pu par celui du produit
-			// Ecrase $desc par celui du produit
-			// Ecrase $tva_tx par celui du produit
-			// Ecrase $base_price_type par celui du produit
+			// Ecrase $tva_tx par celui du produit. TODO Remove this once vat selection is open
+			// Get and check minimum price
 			if ($idprod > 0) {
 				$prod = new Product($db);
 				$prod->fetch($idprod);
 
 				// Update if prices fields are defined
-				$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
+				/*$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
 				if (empty($tva_tx)) {
 					$tva_npr = 0;
-				}
+				}*/
 
-				$pu_ht = $prod->price;
-				$pu_ttc = $prod->price_ttc;
 				$price_min = $prod->price_min;
 				$price_min_ttc = $prod->price_min_ttc;
-				$price_base_type = $prod->price_base_type;
 
 				// On defini prix unitaire
 				if ($conf->global->PRODUIT_MULTIPRICES && $object->thirdparty->price_level) {
-					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
-					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 					$price_min_ttc = $prod->multiprices_min_ttc[$object->thirdparty->price_level];
-					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
 				} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 					// If price per customer
 					require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
@@ -508,19 +499,16 @@ if (empty($reshook)) {
 					$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 					if ($result) {
 						if (count($prodcustprice->lines) > 0) {
-							$pu_ht = price($prodcustprice->lines[0]->price);
-							$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
 							$price_min =  price($prodcustprice->lines[0]->price_min);
 							$price_min_ttc =  price($prodcustprice->lines[0]->price_min_ttc);
-							$price_base_type = $prodcustprice->lines[0]->price_base_type;
-							$tva_tx = $prodcustprice->lines[0]->tva_tx;
+							/*$tva_tx = $prodcustprice->lines[0]->tva_tx;
 							if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
 								$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
 							}
 							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
 							if (empty($tva_tx)) {
 								$tva_npr = 0;
-							}
+							}*/
 						}
 					}
 				}
@@ -532,16 +520,11 @@ if (empty($reshook)) {
 				if (!empty($price_ht) || $price_ht === '0') {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+					$price_base_type = 'HT';
 				} elseif (!empty($price_ttc) || $price_ttc === '0') {
 					$pu_ttc = price2num($price_ttc, 'MU');
 					$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
-				} elseif ($tmpvat != $tmpprodvat) {
-					// Is this still used ?
-					if ($price_base_type != 'HT') {
-						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
-					} else {
-						$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
-					}
+					$price_base_type = 'TTC';
 				}
 
 				$desc = $prod->description;
@@ -571,8 +554,16 @@ if (empty($reshook)) {
 				$pu_ht_devise = price2num($price_ht_devise, 'MU');
 				$pu_ttc_devise = price2num($price_ttc_devise, 'MU');
 
-				$price_base_type = 'HT';
-				if ($pu_ttc && !$pu_ht) {
+				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
+
+				// Set unit price to use
+				if (!empty($price_ht) || $price_ht === '0') {
+					$pu_ht = price2num($price_ht, 'MU');
+					$pu_ttc = price2num($pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
+					$price_base_type = 'HT';
+				} elseif (!empty($price_ttc) || $price_ttc === '0') {
+					$pu_ttc = price2num($price_ttc, 'MU');
+					$pu_ht = price2num($pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 					$price_base_type = 'TTC';
 				}
 			}
@@ -679,6 +670,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'updateline' && $user->rights->contrat->creer && !GETPOST('cancel', 'alpha')) {
 		$error = 0;
+		$predef = '';
 
 		if (!empty($date_start_update) && !empty($date_end_update) && $date_start_update > $date_end_update) {
 			setEventMessages($langs->trans("Error").': '.$langs->trans("DateStartPlanned").' > '.$langs->trans("DateEndPlanned"), null, 'errors');
@@ -708,7 +700,7 @@ if (empty($reshook)) {
 				$date_end_real_update = $objectline->date_end_real;
 			}
 
-			$vat_rate = GETPOST('eltva_tx');
+			$vat_rate = GETPOST('eltva_tx', 'alpha');
 			// Define info_bits
 			$info_bits = 0;
 			if (preg_match('/\*/', $vat_rate)) {
@@ -754,7 +746,7 @@ if (empty($reshook)) {
 			$objectline->date_end = $date_end_update;
 			$objectline->date_end_real = $date_end_real_update;
 			$objectline->fk_user_cloture = $user->id;
-			$objectline->fk_fournprice = $fk_fournprice;
+			//$objectline->fk_fournprice = $fk_fournprice;
 			$objectline->pa_ht = $pa_ht;
 			$objectline->rang = $objectline->rang;
 
@@ -1522,7 +1514,7 @@ if ($action == 'create') {
 				//	print '<td width="80" class="right">'.$langs->trans("PriceUHTCurrency").'</td>';
 				//}
 				print '<td width="30" class="center">'.$langs->trans("Qty").'</td>';
-				if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+				if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 					print '<td width="30" class="left">'.$langs->trans("Unit").'</td>';
 				}
 				print '<td width="50" class="right">'.$langs->trans("ReductionShort").'</td>';
@@ -1603,7 +1595,7 @@ if ($action == 'create') {
 					// Quantity
 					print '<td class="center">'.$objp->qty.'</td>';
 					// Unit
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						print '<td class="left">'.$langs->trans($object->lines[$cursorline - 1]->getLabelOfUnit()).'</td>';
 					}
 					// Discount
@@ -1644,9 +1636,9 @@ if ($action == 'create') {
 					if ($objp->subprice >= 0) {
 						$colspan = 6;
 
-						if ($conf->margin->enabled && $conf->global->PRODUCT_USE_UNITS) {
+						if ($conf->margin->enabled && getDolGlobalString('PRODUCT_USE_UNITS')) {
 							$colspan = 8;
-						} elseif ($conf->margin->enabled || $conf->global->PRODUCT_USE_UNITS) {
+						} elseif ($conf->margin->enabled || getDolGlobalString('PRODUCT_USE_UNITS')) {
 							$colspan = 7;
 						}
 
@@ -1710,7 +1702,7 @@ if ($action == 'create') {
 							if (empty($senderissupplier)) {
 								print $form->select_produits((!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0), 'idprod');
 							} else {
-								print $form->select_produits_fournisseurs((!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0), 'idprod');
+								$form->select_produits_fournisseurs((!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0), 'idprod');
 							}
 						}
 						print '<br>';
@@ -1748,7 +1740,7 @@ if ($action == 'create') {
 					print '<td class="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
 
 					// Unit
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						print '<td class="left">';
 						print $form->selectUnits($objp->fk_unit, "unit");
 						print '</td>';
@@ -1774,7 +1766,7 @@ if ($action == 'create') {
 					if (isModEnabled('margin') && !empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) {
 						$colspan++;
 					}
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						$colspan++;
 					}
 
@@ -2034,7 +2026,7 @@ if ($action == 'create') {
 				print '</td></tr>';
 
 				print '<tr class="oddeven">';
-				print '<td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.dol_escape_htmltag(GETPOST('comment', 'alpha')).'"></td>';
+				print '<td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input class="quatrevingtpercent" type="text" class="flat" name="comment" value="'.dol_escape_htmltag(GETPOST('comment', 'alpha')).'"></td>';
 				print '<td class="nohover right">';
 				print '<input type="submit" class="button" name="close" value="'.$langs->trans("Disable").'"> &nbsp; ';
 				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -2055,11 +2047,12 @@ if ($action == 'create') {
 			$dateSelector = 1;
 
 			print "\n";
-			print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#add' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+			print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
 			<input type="hidden" name="token" value="'.newToken().'">
 			<input type="hidden" name="action" value="'.(($action != 'editline') ? 'addline' : 'updateline').'">
 			<input type="hidden" name="mode" value="">
 			<input type="hidden" name="id" value="'.$object->id.'">
+			<input type="hidden" name="page_y" value="">
 			';
 
 			print '<div class="div-table-responsive-no-min">';
@@ -2214,7 +2207,7 @@ if ($action == 'create') {
 			$delallowed = $user->rights->contrat->creer;
 
 
-			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : $conf->global->CONTRACT_ADDON_PDF), 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
+			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, ($object->model_pdf ? $object->model_pdf : getDolGlobalString('CONTRACT_ADDON_PDF')), 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
 
 
 			// Show links to link elements
@@ -2222,7 +2215,7 @@ if ($action == 'create') {
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			// Show online signature link
-			if ($object->statut != Contrat::STATUS_DRAFT && $conf->global->CONTRACT_ALLOW_ONLINESIGN) {
+			if ($object->statut != Contrat::STATUS_DRAFT && getDolGlobalString('CONTRACT_ALLOW_ONLINESIGN')) {
 				print '<br><!-- Link to sign -->';
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 

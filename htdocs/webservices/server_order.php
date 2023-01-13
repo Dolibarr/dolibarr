@@ -741,9 +741,9 @@ function createOrder($authentication, $order)
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
-				foreach ($extrafields->attributes[$elementtype]['label'] as $key => $label) {
-					$key = 'options_'.$key;
-					$newline->array_options[$key] = $line[$key];
+				foreach ($extrafields->attributes[$elementtype]['label'] as $tmpkey => $tmplabel) {
+					$tmpkey = 'options_'.$tmpkey;
+					$newline->array_options[$tmpkey] = $line[$tmpkey];
 				}
 			}
 

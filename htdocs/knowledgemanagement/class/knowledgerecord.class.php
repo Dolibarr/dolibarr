@@ -103,7 +103,7 @@ class KnowledgeRecord extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'visible'=>5, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", "csslist"=>"nowraponall", "showoncombobox"=>1),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>20, 'index'=>1),
-		'question' => array('type'=>'text', 'label'=>'Question', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'csslist'=>'tdoverflowmax300', 'copytoclipboard'=>1, 'tdcss'=>'titlefieldcreate nowraponall'),
+		'question' => array('type'=>'text', 'label'=>'Question', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'csslist'=>'tdoverflowmax300', 'copytoclipboard'=>1, 'tdcss'=>'titlefieldcreate nowraponall'),
 		'lang' => array('type'=>'varchar(6)', 'label'=>'Language', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1, 'tdcss'=>'titlefieldcreate nowraponall', "csslist"=>"tdoverflowmax100"),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>2,),
@@ -115,7 +115,7 @@ class KnowledgeRecord extends CommonObject
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
 		//'url' => array('type'=>'varchar(255)', 'label'=>'URL', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'csslist'=>'tdoverflow200', 'help'=>'UrlForInfoPage'),
 		'fk_c_ticket_category' => array('type'=>'integer:CTicketCategory:ticket/class/cticketcategory.class.php:0:(t.active:=:1):pos', 'label'=>'SuggestedForTicketsInGroup', 'enabled'=>'isModEnabled("ticket")', 'position'=>520, 'notnull'=>0, 'visible'=>-1, 'help'=>'YouCanLinkArticleToATicketCategory', 'csslist'=>'minwidth200 tdoverflowmax250'),
-		'answer' => array('type'=>'html', 'label'=>'Solution', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>3, 'csslist'=>'tdoverflowmax300', 'copytoclipboard'=>1, 'tdcss'=>'titlefieldcreate nowraponall'),
+		'answer' => array('type'=>'html', 'label'=>'Solution', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>3, 'searchall'=>1, 'csslist'=>'tdoverflowmax300', 'copytoclipboard'=>1, 'tdcss'=>'titlefieldcreate nowraponall'),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>5, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Obsolete'),),
 	);
 	public $rowid;
@@ -918,8 +918,8 @@ class KnowledgeRecord extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_knowledgerecord = '.((int) $this->id)));
 
 		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
+			$this->error = $objectline->error;
+			$this->errors = $objectline->errors;
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -1058,8 +1058,8 @@ class KnowledgeRecord extends CommonObject
 	 * Adds it to non existing supplied categories.
 	 * Existing categories are left untouch.
 	 *
-	 * @param int[]|int $categories Category or categories IDs
-	 * @return void
+	 * @param 	int[]|int 	$categories 	Category or categories IDs
+	 * @return 	int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{

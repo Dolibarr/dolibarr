@@ -781,7 +781,6 @@ abstract class CommonObject
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->picto);
-		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
@@ -2073,7 +2072,7 @@ abstract class CommonObject
 
 		$sql .= " WHERE ".$id_field." = ".((int) $id);
 
-		dol_syslog(__METHOD__."", LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($trigkey) {
@@ -3339,6 +3338,8 @@ abstract class CommonObject
 			$row = $this->db->fetch_row($resql);
 			return $row[0];
 		}
+
+		return 0;
 	}
 
 	/**
@@ -3362,6 +3363,8 @@ abstract class CommonObject
 			$row = $this->db->fetch_row($resql);
 			return $row[0];
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3407,6 +3410,8 @@ abstract class CommonObject
 				return $row[0];
 			}
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3797,7 +3802,7 @@ abstract class CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Add objects linked in llx_element_element.
+	 *	Add an object link into llx_element_element.
 	 *
 	 *	@param		string	$origin		Linked element type
 	 *	@param		int		$origin_id	Linked element id
@@ -4117,6 +4122,21 @@ abstract class CommonObject
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 *	Clear the cache saying that all linked object were already loaded. So next fetchObjectLinked will reload all links.
+	 *
+	 *	@return int						<0 if KO, >0 if OK
+	 *  @see	fetchObjectLinked()
+	 */
+	public function clearObjectLinkedCache()
+	{
+		if ($this->id > 0 && !empty($this->linkedObjectsFullLoaded[$this->id])) {
+			unset($this->linkedObjectsFullLoaded[$this->id]);
+		}
+
+		return 1;
 	}
 
 	/**
@@ -4519,6 +4539,8 @@ abstract class CommonObject
 			$row = $this->db->fetch_row($resql);
 			return $row[0];
 		}
+
+		return 0;
 	}
 
 	/**
@@ -5101,7 +5123,7 @@ abstract class CommonObject
 			print '<td class="linecoluht_currency right">'.$langs->trans('PriceUHTCurrency').'</td>';
 		}
 		print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
 		}
 		print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
@@ -5239,7 +5261,7 @@ abstract class CommonObject
 		$this->tpl['total_ht'] = price($line->total_ht);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->tpl['unit'] = $langs->transnoentities($line->getLabelOfUnit('long'));
 		}
 		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
@@ -5752,6 +5774,9 @@ abstract class CommonObject
 		}
 
 		// TODO Ad here a scan into table llx_overwrite_default with a filter on $this->element and $fieldname
+		// store content into $conf->cache['overwrite_default']
+
+		return '';
 	}
 
 
@@ -6443,9 +6468,9 @@ abstract class CommonObject
 							return -1;
 						} elseif ($value == '') {
 							$new_array_languages[$key] = null;
+						} else {
+							$new_array_languages[$key] = $value;
 						}
-						//dol_syslog("double value"." sur ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
-						$new_array_languages[$key] = $value;
 						break;
 						/*case 'select':	// Not required, we chosed value='0' for undefined values
 						 if ($value=='-1')
@@ -7808,7 +7833,7 @@ abstract class CommonObject
 	 * clear validation message result for a field
 	 *
 	 * @param string $fieldKey Key of attribute to clear
-	 * @return null
+	 * @return void
 	 */
 	public function clearFieldError($fieldKey)
 	{
@@ -7821,12 +7846,14 @@ abstract class CommonObject
 	 *
 	 * @param string $fieldKey Key of attribute
 	 * @param string $msg the field error message
-	 * @return null
+	 * @return void
 	 */
 	public function setFieldError($fieldKey, $msg = '')
 	{
 		global $langs;
-		if (empty($msg)) { $msg = $langs->trans("UnknowError"); }
+		if (empty($msg)) {
+			$msg = $langs->trans("UnknowError");
+		}
 
 		$this->error = $this->validateFieldsErrors[$fieldKey] = $msg;
 	}
@@ -8066,8 +8093,10 @@ abstract class CommonObject
 				$out .= '<!-- commonobject:showOptionals --> ';
 				$out .= "\n";
 
+				$nbofextrafieldsshown = 0;
 				$extrafields_collapse_num = '';
-				$e = 0;
+				$e = 0;	// var to manage the modulo (odd/even)
+
 				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $label) {
 					// Show only the key field in params
 					if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) {
@@ -8150,6 +8179,8 @@ abstract class CommonObject
 							//var_dump($keyprefix.' - '.$key.' - '.$keysuffix.' - '.$keyprefix.'options_'.$key.$keysuffix.' - '.$this->array_options["options_".$key.$keysuffix].' - '.$getposttemp.' - '.$value);
 							break;
 					}
+
+					$nbofextrafieldsshown++;
 
 					// Output value of the current field
 					if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate') {
@@ -8241,13 +8272,13 @@ abstract class CommonObject
 
 						if ($display_type == 'card') {
 							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
-							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'valid' || $action == 'editline')) {
+							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'valid' || $action == 'editline' || $action == 'confirm_valid' || $action == 'confirm_cancel')) {
 								$out .= '<td></td>';
 							}
 							$out .= '<td class="titlefieldcreate wordbreak';
 						} elseif ($display_type == 'line') {
 							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="fieldline_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.(!empty($this->id)?'_'.$this->id:'').'" '.$domData.' >';
-							$out .= '<div style="display: inline-block; padding-right:4px" class="titlefieldcreate wordbreak';
+							$out .= '<div style="display: inline-block; padding-right:4px" class="wordbreak';
 						}
 						//$out .= "titlefield";
 						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
@@ -8305,6 +8336,7 @@ abstract class CommonObject
 						} else {
 							$out .= ($display_type=='card' ? '</tr>' : '</div>');
 						}
+
 						$e++;
 					}
 				}
@@ -8315,6 +8347,10 @@ abstract class CommonObject
 				}
 
 				$out .= '<!-- commonobject:showOptionals end --> '."\n";
+
+				if (empty($nbofextrafieldsshown)) {
+					$out = '';
+				}
 			}
 		}
 
@@ -8423,19 +8459,19 @@ abstract class CommonObject
 	 * This function is meant to be called from replaceThirdparty with the appropriate tables
 	 * Column name fk_soc MUST be used to identify thirdparties
 	 *
-	 * @param  DoliDB 	   $db 			  Database handler
+	 * @param  DoliDB 	   $dbs			  Database handler
 	 * @param  int 		   $origin_id     Old thirdparty id (the thirdparty to delete)
 	 * @param  int 		   $dest_id       New thirdparty id (the thirdparty that will received element of the other)
 	 * @param  string[]    $tables        Tables that need to be changed
 	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old thirdparty may already exists on new one)
 	 * @return bool						  True if success, False if error
 	 */
-	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
+	public static function commonReplaceThirdparty(DoliDB $dbs, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
 	{
 		foreach ($tables as $table) {
-			$sql = 'UPDATE '.$db->prefix().$table.' SET fk_soc = '.((int) $dest_id).' WHERE fk_soc = '.((int) $origin_id);
+			$sql = 'UPDATE '.$dbs->prefix().$table.' SET fk_soc = '.((int) $dest_id).' WHERE fk_soc = '.((int) $origin_id);
 
-			if (!$db->query($sql)) {
+			if (!$dbs->query($sql)) {
 				if ($ignoreerrors) {
 					return true; // TODO Not enough. If there is A-B on kept thirdparty and B-C on old one, we must get A-B-C after merge. Not A-B.
 				}
@@ -8452,19 +8488,19 @@ abstract class CommonObject
 	 * This function is meant to be called from replaceProduct with the appropriate tables
 	 * Column name fk_product MUST be used to identify products
 	 *
-	 * @param  DoliDB 	   $db 			  Database handler
+	 * @param  DoliDB 	   $dbs			  Database handler
 	 * @param  int 		   $origin_id     Old product id (the product to delete)
 	 * @param  int 		   $dest_id       New product id (the product that will received element of the other)
 	 * @param  string[]    $tables        Tables that need to be changed
 	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old product may already exists on new one)
 	 * @return bool						  True if success, False if error
 	 */
-	public static function commonReplaceProduct(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
+	public static function commonReplaceProduct(DoliDB $dbs, $origin_id, $dest_id, array $tables, $ignoreerrors = 0)
 	{
 		foreach ($tables as $table) {
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_product = '.((int) $dest_id).' WHERE fk_product = '.((int) $origin_id);
 
-			if (!$db->query($sql)) {
+			if (!$dbs->query($sql)) {
 				if ($ignoreerrors) {
 					return true; // TODO Not enough. If there is A-B on kept product and B-C on old one, we must get A-B-C after merge. Not A-B.
 				}
@@ -9592,6 +9628,12 @@ abstract class CommonObject
 			}
 		}
 
+		// Delete linked object
+		$res = $this->deleteObjectLinked();
+		if ($res < 0) {
+			$error++;
+		}
+
 		if (!$error && !empty($this->isextrafieldmanaged)) {
 			$result = $this->deleteExtraFields();
 			if ($result < 0) {
@@ -9715,23 +9757,24 @@ abstract class CommonObject
 		$tmpforobjectclass = get_class($this);
 		$tmpforobjectlineclass = ucfirst($tmpforobjectclass).'Line';
 
+		$this->db->begin();
+
 		// Call trigger
 		$result = $this->call_trigger('LINE'.strtoupper($tmpforobjectclass).'_DELETE', $user);
 		if ($result < 0) {
-			return -1;
+			$error++;
 		}
 		// End call triggers
 
-		$this->db->begin();
+		if (empty($error)) {
+			$sql = "DELETE FROM ".$this->db->prefix().$this->table_element_line;
+			$sql .= " WHERE rowid = ".((int) $idline);
 
-		$sql = "DELETE FROM ".$this->db->prefix().$this->table_element_line;
-		$sql .= " WHERE rowid = ".((int) $idline);
-
-		dol_syslog(get_class($this)."::deleteLineCommon", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$this->error = "Error ".$this->db->lasterror();
-			$error++;
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = "Error ".$this->db->lasterror();
+				$error++;
+			}
 		}
 
 		if (empty($error)) {
@@ -9927,7 +9970,7 @@ abstract class CommonObject
 	 * @param 	int[]|int 	$categories 		Category ID or array of Categories IDs
 	 * @param 	string 		$type_categ 		Category type ('customer', 'supplier', 'website_page', ...) definied into const class Categorie type
 	 * @param 	boolean		$remove_existing 	True: Remove existings categories from Object if not supplies by $categories, False: let them
-	 * @return	int							<0 if KO, >0 if OK
+	 * @return	int								<0 if KO, >0 if OK
 	 */
 	public function setCategoriesCommon($categories, $type_categ = '', $remove_existing = true)
 	{

@@ -35,11 +35,12 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 }
-require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+
 
 /**
  *	Class to manage predefined suppliers products
@@ -253,7 +254,7 @@ class CommandeFournisseur extends CommonOrder
 		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountVAT', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>235),
 		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'MulticurrencyAmountTTC', 'enabled'=>'isModEnabled("multicurrency")', 'visible'=>-1, 'position'=>240),
 		'date_creation' =>array('type'=>'datetime', 'label'=>'Date creation', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>1, 'notnull'=>1, 'position'=>46),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>1, 'notnull'=>1, 'position'=>46),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>1000, 'index'=>1),
 		'tms'=>array('type'=>'datetime', 'label'=>"DateModificationShort", 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>501),
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'visible'=>0, 'position'=>700),
@@ -1593,7 +1594,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -1820,10 +1821,10 @@ class CommandeFournisseur extends CommonOrder
 			$label = '';	// deprecated
 
 			if ($fk_product > 0) {
-				if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY)) {
+				if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY)) {	// Not the common case
 					// Check quantity is enough
 					dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
-					$prod = new Product($this->db);
+					$prod = new ProductFournisseur($this->db);
 					if ($prod->fetch($fk_product) > 0) {
 						$product_type = $prod->type;
 						$label = $prod->label;
@@ -1882,7 +1883,7 @@ class CommandeFournisseur extends CommonOrder
 						if (!empty($prod->packaging) && ($qty % $prod->packaging) > 0) {
 							$coeff = intval($qty / $prod->packaging) + 1;
 							$qty = $prod->packaging * $coeff;
-							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 						}
 					}
 				}
@@ -1895,6 +1896,7 @@ class CommandeFournisseur extends CommonOrder
 			$localtaxes_type = getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
 
 			// Clean vat code
+			$reg = array();
 			$vat_src_code = '';
 			if (preg_match('/\((.*)\)/', $txtva, $reg)) {
 				$vat_src_code = $reg[1];
@@ -3263,18 +3265,18 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'commande_fournisseur'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -3541,6 +3543,38 @@ class CommandeFournisseur extends CommonOrder
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string		HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'socid') || property_exists($this, 'total_tva')) {
+			$return .='<br><span class="info-box-label amount">'.$this->socid.'</span>';
+		}
+		if (property_exists($this, 'billed')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Billed").' : </span><span class="info-box-label">'.yn($this->billed).'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }
 
@@ -3899,8 +3933,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
 		$sql .= ", vat_src_code = '".(empty($this->vat_src_code) ? '' : $this->vat_src_code)."'";
 		$sql .= ", tva_tx='".price2num($this->tva_tx)."'";
-		$sql .= ", localtax1_tx='".price2num($this->total_localtax1)."'";
-		$sql .= ", localtax2_tx='".price2num($this->total_localtax2)."'";
+		$sql .= ", localtax1_tx='".price2num($this->localtax1_tx)."'";
+		$sql .= ", localtax2_tx='".price2num($this->localtax2_tx)."'";
 		$sql .= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
 		$sql .= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= ", qty='".price2num($this->qty)."'";
@@ -3917,10 +3951,10 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ($this->fk_unit ? ", fk_unit='".$this->db->escape($this->fk_unit)."'" : ", fk_unit=null");
 
 		// Multicurrency
-		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-		$sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		$sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
+		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
+		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
 
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

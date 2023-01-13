@@ -93,8 +93,13 @@ $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
-$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
 $confirm 	= GETPOST('confirm', 'alpha');
+
+$dol_openinpopup = '';
+if (!empty($backtopagejsfields)) {
+	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
+	$dol_openinpopup = $tmpbacktopagejsfields[0];
+}
 
 $socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('id', 'int');
 if ($user->socid) {
@@ -138,10 +143,10 @@ if (!empty($canvas)) {
 
 // Permissions
 $permissiontoread 	= $user->hasRight('societe', 'lire');
-$permissiontoadd 	= $user->rights->societe->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoadd 	= $user->hasRight('societe', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->hasRight('societe', 'supprimer') || ($permissiontoadd && isset($object->status) && $object->status == 0);
-$permissionnote 	= $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink 	= $user->rights->societe->creer; // Used by the include of actions_dellink.inc.php
+$permissionnote 	= $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink 	= $user->hasRight('societe', 'creer'); // Used by the include of actions_dellink.inc.php
 $upload_dir 		= $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
@@ -570,11 +575,11 @@ if (empty($reshook)) {
 				if (!empty($object->email) && !isValidEMail($object->email)) {
 					$langs->load("errors");
 					$error++;
-					setEventMessages('', $langs->trans("ErrorBadEMail", $object->email), 'errors');
+					setEventMessages($langs->trans("ErrorBadEMail", $object->email), null, 'errors');
 				}
 				if (!empty($object->url) && !isValidUrl($object->url)) {
 					$langs->load("errors");
-					setEventMessages('', $langs->trans("ErrorBadUrl", $object->url), 'errors');
+					setEventMessages($langs->trans("ErrorBadUrl", $object->url), null, 'errors');
 				}
 				if (!empty($object->webservices_url)) {
 					//Check if has transport, without any the soap client will give error
@@ -712,9 +717,6 @@ if (empty($reshook)) {
 
 					if ($backtopagejsfields) {
 						llxHeader('', '', '');
-
-						$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-						$dol_openinpopup = $tmpbacktopagejsfields[0];
 
 						$retstring = '<script>';
 						$retstring .= 'jQuery(document).ready(function() {
@@ -978,7 +980,7 @@ if (empty($reshook)) {
 	// Actions to build doc
 	$id = $socid;
 	$upload_dir = !empty($conf->societe->multidir_output[$object->entity])?$conf->societe->multidir_output[$object->entity]:$conf->societe->dir_output;
-	$permissiontoadd = $user->rights->societe->creer;
+	$permissiontoadd = $user->hasRight('societe', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -1104,7 +1106,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$object->fournisseur		= GETPOST('fournisseur') ? GETPOST('fournisseur', 'int') : $object->fournisseur;
 			$object->code_fournisseur = GETPOST('supplier_code', 'alpha');
 		} else {
-			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'), '', 'warnings');
+			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'), null, 'warnings');
 		}
 
 		$object->address = GETPOST('address', 'alphanohtml');
@@ -1341,6 +1343,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
+		print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 		print '<input type="hidden" name="private" value='.$object->particulier.'>';
 		print '<input type="hidden" name="type" value='.GETPOST("type", 'alpha').'>';
 		print '<input type="hidden" name="LastName" value="'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName').'">';
@@ -1379,12 +1382,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				  data: function (params) {
 						return {
 							newcompany: params.term // search term
-						};
+						}
 				  },
 				  processResults: function (data, params) {
 					  return {
 						results: data
-					  };
+					  }
 				  },
 				  cache: true
 				},
@@ -1851,7 +1854,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency)), 'multicurrency_code', 1);
+			print img_picto('', 'currency', 'class="pictofixedwidth"');
+			print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency)), 'multicurrency_code', 1, '', false, 'maxwidth150 widthcentpercentminusx');
 			print '</td></tr>';
 		}
 
@@ -1891,7 +1895,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Accountancy codes
 		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
-			print '<table class="border" width="100%">';
+			print '<table class="border centpercent">';
 
 			if (isModEnabled('accounting')) {
 				// Accountancy_code_sell
@@ -1986,6 +1990,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$object->town = GETPOST('town', 'alphanohtml');
 				$object->country_id = GETPOST('country_id') ?GETPOST('country_id', 'int') : $mysoc->country_id;
 				$object->state_id = GETPOST('state_id', 'int');
+				$object->parent = GETPOST('parent_company_id', 'int');
 
 				$object->socialnetworks = array();
 				if (isModEnabled('socialnetworks')) {
@@ -2146,7 +2151,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					{
 						jQuery(".visibleifsupplier").show();
 					}
-				};
+				}
 
        			$("#selectcountry_id").change(function() {
        				document.formsoc.action.value="edit";
@@ -2298,13 +2303,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// Zip / Town
-			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td>';
+			print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>';
 			print $formcompany->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
 			print '</td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
-			print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
+			print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>';
 			print $formcompany->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 			print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
 			print '</td></tr>';
@@ -2333,30 +2338,24 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Phone / Fax
 			print '<tr><td>'.$form->editfieldkey('Phone', 'phone', GETPOST('phone', 'alpha'), $object, 0).'</td>';
-			print '<td>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'"></td>';
+			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>'.img_picto('', 'object_phoning', 'class="pictofixedwidth"').' <input type="text" name="phone" id="phone" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'"></td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
 			print '<td>'.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
-			print '<td>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
+			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td>';
+			print '</tr>';
 
-			// EMail / Web
+			// Web
 			print '<tr><td>'.$form->editfieldkey('Web', 'url', GETPOST('url', 'alpha'), $object, 0).'</td>';
-			print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" name="url" id="url" class="maxwidth200onsmartphone maxwidth300 widthcentpercentminusx " value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->url).'"></td>';
+			print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" name="url" id="url" class="maxwidth200onsmartphone maxwidth300 widthcentpercentminusx " value="'.(GETPOSTISSET('url') ?GETPOST('url', 'alpha') : $object->url).'"></td></tr>';
 
 			// EMail
 			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
-			print '<td>';
-			print img_picto('', 'object_email');
-			print '<input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td>';
-			if (!empty($conf->mailing->enabled)) {
-				$langs->load("mails");
-				print '<td class="nowrap">'.$langs->trans("NbOfEMailingsSend").'</td>';
-				print '<td>'.$object->getNbOfEMailings().'</td>';
-			} else {
-				print '<td colspan="2"></td>';
-			}
-			print '</tr>';
+			print '<td colspan="3">';
+			print img_picto('', 'object_email', 'class="pictofixedwidth"');
+			print '<input type="text" name="email" id="email" class="maxwidth500 widthcentpercentminusx" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'">';
+			print '</td></tr>';
 
 			// Unsubscribe
 			if (!empty($conf->mailing->enabled)) {
@@ -2556,7 +2555,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Default language
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
-				print img_picto('', 'language').$formadmin->select_language($object->default_lang, 'default_lang', 0, 0, 1);
+				print img_picto('', 'language', 'class="pictofixedwidth"').$formadmin->select_language($object->default_lang, 'default_lang', 0, null, '1', 0, 0, 'maxwidth300 widthcentpercentminusx');
 				print '</td>';
 				print '</tr>';
 			}
@@ -2582,7 +2581,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print img_picto('', 'category').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 				print "</td></tr>";
 
 				// Supplier
@@ -2596,7 +2595,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}
-					print img_picto('', 'category').$form->multiselectarray('suppcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('suppcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 					print "</td></tr>";
 				}
 			}
@@ -2606,13 +2605,24 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<tr>';
 				print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
-				print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency)), 'multicurrency_code', 1);
+				print img_picto('', 'currency', 'class="pictofixedwidth"');
+				print $form->selectMultiCurrency((GETPOSTISSET('multicurrency_code') ? GETPOST('multicurrency_code') : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency)), 'multicurrency_code', 1, '', false, 'maxwidth150 widthcentpercentminusx');
 				print '</td></tr>';
 			}
 
 			// Other attributes
 			$parameters = array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
+
+			// Parent company
+			if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
+				print '<tr>';
+				print '<td>'.$langs->trans('ParentCompany').'</td>';
+				print '<td colspan="3" class="maxwidthonsmartphone">';
+				print img_picto('', 'company', 'class="pictofixedwidth"');
+				print $form->select_company(GETPOST('parent_company_id') ? GETPOST('parent_company_id') : $object->parent, 'parent_company_id', '', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300 maxwidth500 widthcentpercentminusxx');
+				print '</td></tr>';
+			}
 
 			// Webservices url/key
 			if (!empty($conf->syncsupplierwebservices->enabled)) {
@@ -2661,7 +2671,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (empty($arrayselected)) {
 				$arrayselected = $object->getSalesRepresentatives($user, 1);
 			}
-			print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1);
+			print img_picto('', 'user', 'class="pictofixedwidth"').$form->multiselectarray('commercial', $userlist, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1);
 			print '</td></tr>';
 
 			print '</table>';
@@ -3018,7 +3028,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Third-Party Type
 		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ThirdPartyType').'</td>';
-		if ($action != 'editthirdpartytype' && $user->rights->societe->creer) {
+		if ($action != 'editthirdpartytype' && $user->hasRight('societe', 'creer')) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editthirdpartytype&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -3048,13 +3058,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		}
 		print '</td></tr>';
 
-		// Email
-		if (!empty($conf->mailing->enabled)) {
-			$langs->load("mails");
-			print '<tr><td>'.$langs->trans("NbOfEMailingsSend").'</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?filteremail='.urlencode($object->email).'">'.$object->getNbOfEMailings().'</a></td></tr>';
-		}
-
 		// Unsubscribe opt-out
 		if (!empty($conf->mailing->enabled)) {
 			$result = $object->getNoEmail();
@@ -3067,6 +3070,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			} else {
 				print '<span class="opacitymedium">'.$langs->trans("EMailNotDefined").'</span>';
 			}
+
+			$langs->load("mails");
+			print ' &nbsp; <span class="badge badge-secondary" title="'.dol_escape_htmltag($langs->trans("NbOfEMailingsSend")).'">'.$object->getNbOfEMailings().'</span>';
+
 			print '</td></tr>';
 		}
 
@@ -3087,7 +3094,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (isModEnabled('incoterm')) {
 			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans('IncotermLabel').'</td>';
-			if ($action != 'editincoterm' && $user->rights->societe->creer) {
+			if ($action != 'editincoterm' && $user->hasRight('societe', 'creer')) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit('', 1).'</a></td>';
 			}
 			print '</tr></table>';
@@ -3151,7 +3158,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY)) {
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans('ParentCompany').'</td>';
-			if ($action != 'editparentcompany' && $user->rights->societe->creer) {
+			if ($action != 'editparentcompany' && $user->hasRight('societe', 'creer')) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editparentcompany&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 			}
 			print '</tr></table>';
@@ -3279,7 +3286,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
 				$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
 				$genallowed = $user->hasRight('societe', 'lire');
-				$delallowed = $user->rights->societe->creer;
+				$delallowed = $user->hasRight('societe', 'creer');
 
 				print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 			}
@@ -3306,11 +3313,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				// Contacts list
 				if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
 					$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
-				}
-
-				// Addresses list
-				if (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT)) {
-					$result = show_addresses($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id);
 				}
 			}
 		}

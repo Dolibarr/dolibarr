@@ -19,10 +19,10 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classifiqueu la comanda de v
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classifica el pressupost de proveïdor vinculat com facturat quan la factura de proveïdor és validada (i si l'import de la factura és igual a l'import total del pressupost vinculat)
 # Autoclassify purchase order
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classifica la comanda de proveïdor vinculada com facturada quan la factura de proveïdor és validada (i si l'import de la factura és igual a l'import total de la comanda vinculada)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classifica l'ordre de compra d'origen enllaçat com a rebut quan es valida una recepció (i si la quantitat rebuda per totes les recepcions és la mateixa que a l'ordre de compra per actualitzar)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classifica l'ordre de compra d'origen enllaçat com a rebut quan es tanca una recepció (i si la quantitat rebuda per totes les recepcions és la mateixa que a l'ordre de compra per actualitzar)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classifica com a rebuda l'ordre de compra d'origen enllaçada quan es valida una recepció (i si la quantitat rebuda per totes les recepcions és la mateixa que a l'ordre de compra per a actualitzar)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classifica com a rebuda l'ordre de compra d'origen enllaçada quan es tanca una recepció (i si la quantitat rebuda per totes les recepcions és la mateixa que a l'ordre de compra per a actualitzar)
 # Autoclassify purchase invoice
-descWORKFLOW_BILL_ON_RECEPTION=Classifica les recepcions com a "facturades" quan es valida una comanda de proveïdor enllaçada
+descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=Quan creeu un bitllet, enllaceu els contractes disponibles del tercer coincident
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=En enllaçar contractes, cerqueu entre els de les empreses matrius
@@ -31,6 +31,6 @@ descWORKFLOW_TICKET_CLOSE_INTERVENTION=Tanca totes les intervencions vinculades 
 AutomaticCreation=Creació automàtica
 AutomaticClassification=Classificació automàtica
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classifica com a tancat l'enviament d'origen enllaçat quan es validi la factura del client
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
 AutomaticClosing=Tancament automàtic
 AutomaticLinking=Enllaç automàtic

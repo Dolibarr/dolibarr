@@ -250,7 +250,9 @@ CountryMF=Saint Martin
 
 ##### Civilities #####
 CivilityMME=D-na
+CivilityMMEShort=D-na
 CivilityMR=Dl
+CivilityMRShort=Dl
 CivilityMLE=Doamna
 CivilityMTRE=Maestru
 CivilityDR=Doctor

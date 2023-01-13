@@ -252,18 +252,6 @@ class TraceableDB extends DoliDB
 	}
 
 	/**
-	 * Escape a string to insert data
-	 *
-	 * @param   string $stringtoencode String to escape
-	 * @return  string                        String escaped
-	 * @deprecated
-	 */
-	public function escapeunderscore($stringtoencode)
-	{
-		return $this->db->escapeunderscore($stringtoencode);
-	}
-
-	/**
 	 *	Escape a string to insert data into a like
 	 *
 	 *	@param	string	$stringtoencode		String to escape
@@ -661,7 +649,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function free($resultset = null)
 	{
-		return $this->db->free($resultset);
+		$this->db->free($resultset);
 	}
 
 	/**

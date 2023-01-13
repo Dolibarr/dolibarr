@@ -38,12 +38,10 @@
 include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
 
@@ -277,7 +275,7 @@ class FactureFournisseur extends CommonInvoice
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25, 'index'=>1),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>30),
 		'type' =>array('type'=>'smallint(6)', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>40),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>40),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
 		'datef' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>55),
@@ -592,7 +590,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(double) $this->multicurrency_tx;
-		$sql .= ", ".(isset($this->fk_facture_source) ? $this->fk_facture_source : "NULL");
+		$sql .= ", ".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null");
 		$sql .= ", ".(isset($this->fk_fac_rec_source) ? $this->fk_fac_rec_source : "NULL");
 		$sql .= ")";
 
@@ -854,15 +852,18 @@ class FactureFournisseur extends CommonInvoice
 	}
 
 	/**
-	 *    Load object in memory from database
+	 *  Load object in memory from database
 	 *
-	 *    @param	int		$id         Id supplier invoice
-	 *    @param	string	$ref		Ref supplier invoice
-	 *    @return   int        			<0 if KO, >0 if OK, 0 if not found
+	 *  @param	int		$id         Id supplier invoice
+	 *  @param	string	$ref		Ref supplier invoice
+	 * 	@param	string	$ref_ext	External reference of invoice
+	 *  @return int  	   			<0 if KO, >0 if OK, 0 if not found
 	 */
-	public function fetch($id = '', $ref = '')
+	public function fetch($id = '', $ref = '', $ref_ext = '')
 	{
-		global $langs;
+		if (empty($id) && empty($ref) && empty($ref_ext)) {
+			return -1;
+		}
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -913,10 +914,15 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON t.fk_mode_reglement = p.id";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON t.fk_incoterms = i.rowid';
 		if ($id) {
-			$sql .= " WHERE t.rowid=".((int) $id);
-		}
-		if ($ref) {
-			$sql .= " WHERE t.ref='".$this->db->escape($ref)."' AND t.entity IN (".getEntity('supplier_invoice').")";
+			$sql .= " WHERE t.rowid = ".((int) $id);
+		} else {
+			$sql .= ' WHERE t.entity IN ('.getEntity('supplier_invoice').')'; // Don't use entity if you use rowid
+			if ($ref) {
+				$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
+			}
+			if ($ref_ext) {
+				$sql .= " AND t.ref_ext = '".$this->db->escape($ref_ext)."'";
+			}
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -1234,35 +1240,34 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_supplier=".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
-		$sql .= " entity=".(isset($this->entity) ? $this->entity : "null").",";
-		$sql .= " type=".(isset($this->type) ? $this->type : "null").",";
-		$sql .= " fk_soc=".(isset($this->fk_soc) ? $this->fk_soc : "null").",";
+		$sql .= " entity=".(isset($this->entity) ? ((int) $this->entity) : "null").",";
+		$sql .= " type=".(isset($this->type) ? ((int) $this->type) : "null").",";
+		$sql .= " fk_soc=".(isset($this->fk_soc) ? ((int) $this->fk_soc) : "null").",";
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " datef=".(dol_strlen($this->date) != 0 ? "'".$this->db->idate($this->date)."'" : 'null').",";
 		if (dol_strlen($this->tms) != 0) {
 			$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		}
 		$sql .= " libelle=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
-		$sql .= " paye=".(isset($this->paye) ? $this->paye : "null").",";
+		$sql .= " paye=".(isset($this->paye) ? ((int) $this->paye) : "null").",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
-		//$sql .= " tva=".(isset($this->tva) ? $this->tva : "null").",";
-		$sql .= " localtax1=".(isset($this->localtax1) ? $this->localtax1 : "null").",";
-		$sql .= " localtax2=".(isset($this->localtax2) ? $this->localtax2 : "null").",";
-		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
-		$sql .= " total_tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
-		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
-		$sql .= " fk_statut=".(isset($this->status) ? $this->status : (isset($this->statut) ? $this->statut : "null")).",";
-		$sql .= " fk_user_author=".(isset($this->author) ? $this->author : "null").",";
-		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? $this->fk_user_valid : "null").",";
-		$sql .= " fk_facture_source=".(isset($this->fk_facture_source) ? $this->fk_facture_source : "null").",";
-		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
-		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
+		$sql .= " localtax1=".(isset($this->localtax1) ? ((float) $this->localtax1) : "null").",";
+		$sql .= " localtax2=".(isset($this->localtax2) ? ((float) $this->localtax2) : "null").",";
+		$sql .= " total_ht=".(isset($this->total_ht) ? ((float) $this->total_ht) : "null").",";
+		$sql .= " total_tva=".(isset($this->total_tva) ? ((float) $this->total_tva) : "null").",";
+		$sql .= " total_ttc=".(isset($this->total_ttc) ? ((float) $this->total_ttc) : "null").",";
+		$sql .= " fk_statut=".(isset($this->status) ? ((int) $this->status) : (isset($this->statut) ? ((int) $this->statut) : "null")).",";
+		$sql .= " fk_user_author=".(isset($this->author) ? ((int) $this->author) : "null").",";
+		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? ((int) $this->fk_user_valid) : "null").",";
+		$sql .= " fk_facture_source=".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
+		$sql .= " fk_projet=".(isset($this->fk_project) ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
 		$sql .= " date_lim_reglement=".(dol_strlen($this->date_echeance) != 0 ? "'".$this->db->idate($this->date_echeance)."'" : 'null').",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -1386,7 +1391,7 @@ class FactureFournisseur extends CommonInvoice
 				$result = $this->update_price(1);
 				if ($result > 0) {
 					// Create link between discount and invoice line
-					$result = $remise->link_to_invoice($lineid, 0, 'supplier');
+					$result = $remise->link_to_invoice($lineid, 0);
 					if ($result < 0) {
 						$this->error = $remise->error;
 						$this->db->rollback();
@@ -2074,7 +2079,7 @@ class FactureFournisseur extends CommonInvoice
 				if (!empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY)) {
 					// Check quantity is enough
 					dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." qty=".$qty." ref_supplier=".$ref_supplier);
-					$prod = new Product($this->db);
+					$prod = new ProductFournisseur($this->db);
 					if ($prod->fetch($fk_product) > 0) {
 						$product_type = $prod->type;
 						$label = $prod->label;
@@ -3157,18 +3162,18 @@ class FactureFournisseur extends CommonInvoice
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'facture_fourn'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -3227,6 +3232,43 @@ class FactureFournisseur extends CommonInvoice
 		}
 
 		return $isUsed;
+	}
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string		HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		if (property_exists($this, 'socid')) {
+			$return .= ' | <span class="info-box-label">'.$this->socid.'</span>';
+		}
+		if (property_exists($this, 'date_echeance') && property_exists($this, 'date')) {
+			if (!empty($this->date_echeance)) {
+				$return .= '<br><span class="info-box-label">'.dol_print_date($this->date_echeance).'</span>';
+			} else {
+				$return .= '<br><span class="info-box-label">'.dol_print_date($this->date).'</span>';
+			}
+		}
+		if (property_exists($this, 'total_ht')) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("AmountHT").'</span> : <span class="info-box-label amount">'.price($this->total_ht).'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }
 
@@ -3695,10 +3737,10 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 
 		// Multicurrency
-		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
+		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
+		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
 
 		$sql .= " WHERE rowid = ".((int) $this->id);
 

@@ -14,11 +14,11 @@ default.properties
 /.pydevproject
 /.vscode
 .DS_Store
-.idea
 *.iml
 *.orig
 Thumbs.db
 /dolibarr_genesis.mp4
+.phpunit.result.cache
 # Log files
 dolibarr_install.log
 upgrade.log

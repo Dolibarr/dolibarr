@@ -252,7 +252,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 								$dir = $conf->product->dir_output.'/'.$midir;
 
 								foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
-									if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES)) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+									if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 										if ($obj['photo_vignette']) {
 											$filename = $obj['photo_vignette'];
 										} else {
@@ -752,8 +752,8 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK))) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->COMMANDE_DRAFT_WATERMARK);
+		if ($object->statut == 0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK')) {
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
 		}
 
 		$pdf->SetTextColor(0, 0, 60);

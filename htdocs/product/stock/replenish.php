@@ -78,12 +78,12 @@ while ($tmpobj = $db->fetch_object($resWar)) {
 	$listofqualifiedwarehousesid .= $tmpobj->rowid;
 	$lastWarehouseID = $tmpobj->rowid;
 	$count++;
-};
+}
 
 //MultiCompany : If only 1 Warehouse is visible, filter will automatically be set to it.
 if ($count == 1 && (empty($fk_entrepot) || $fk_entrepot <= 0) && !empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED)) {
 	$fk_entrepot = $lastWarehouseID;
-};
+}
 
 $texte = '';
 
@@ -465,7 +465,7 @@ if ($usevirtualstock) {
 		$sqlProductionToConsume .= " ".MAIN_DB_PREFIX."mrp_production as mp5";
 		$sqlProductionToConsume .= " WHERE mm5.rowid = mp5.fk_mo AND mm5.entity IN (".getEntity(!empty($conf->global->STOCK_CALCULATE_VIRTUAL_STOCK_TRANSVERSE_MODE) ? 'stock' : 'mo').")";
 		$sqlProductionToConsume .= " AND mp5.fk_product = p.rowid";
-		$sqlProductionToConsume .= " AND mp5.role IN ('toconsume', 'consummed')";
+		$sqlProductionToConsume .= " AND mp5.role IN ('toconsume', 'consumed')";
 		$sqlProductionToConsume .= " AND mm5.status IN (1,2))";
 
 		$sqlProductionToProduce = "(SELECT GREATEST(0, ".$db->ifsql("SUM(".$db->ifsql("mp5.role = 'toproduce'", 'mp5.qty', '- mp5.qty').") IS NULL", "0", "SUM(".$db->ifsql("mp5.role = 'toproduce'", 'mp5.qty', '- mp5.qty').")").") as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
