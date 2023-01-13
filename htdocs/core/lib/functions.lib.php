@@ -6845,6 +6845,22 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
 
 
 /**
+ *	Change mod of a file
+ *
+ *  @param	string		$filepath		Full file path
+ *	@return void
+ */
+function dolChmod($filepath)
+{
+	global $conf;
+
+	if (!empty($conf->global->MAIN_UMASK)) {
+		@chmod($filepath, octdec($conf->global->MAIN_UMASK));
+	}
+}
+
+
+/**
  *	Return picto saying a field is required
  *
  *	@return  string		Chaine avec picto obligatoire

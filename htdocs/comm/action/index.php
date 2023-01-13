@@ -49,6 +49,7 @@ if (empty($conf->global->AGENDA_EXT_NB)) {
 	$conf->global->AGENDA_EXT_NB = 5;
 }
 $MAXAGENDA = $conf->global->AGENDA_EXT_NB;
+$DELAYFORCACHE = 300;	// 300 seconds
 
 $disabledefaultvalues = GETPOST('disabledefaultvalues', 'int');
 
@@ -615,7 +616,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 				$default = '';
 			}
 
-			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
+			$s .= '<div class="nowrap inline-block minheight30"><input type="checkbox" id="check_ext'.$htmlname.'" name="check_ext'.$htmlname.'" value="1" '.$default.'> <label for="check_ext'.$htmlname.'" title="'.dol_escape_htmltag($langs->trans("Cache").' '.round($DELAYFORCACHE / 60).'mn').'">'.dol_escape_htmltag($val['name']).'</label> &nbsp; </div>';
 		}
 	}
 
@@ -1010,9 +1011,13 @@ if ($mode == 'show_day') {
 	// Request only leaves for the current selected day
 	$sql .= " AND '".$db->escape($year)."-".$db->escape($month)."-".$db->escape($day)."' BETWEEN x.date_debut AND x.date_fin";	// date_debut and date_fin are date without time
 } elseif ($mode == 'show_week') {
-	// TODO: Add filter to reduce database request
+	// Restrict on current month (we get more, but we will filter later)
+	$sql .= " AND date_debut < '".dol_get_last_day($year, $month)."'";
+	$sql .= " AND date_fin >= '".dol_get_first_day($year, $month)."'";
 } elseif ($mode == 'show_month') {
-	// TODO: Add filter to reduce database request
+	// Restrict on current month
+	$sql .= " AND date_debut <= '".dol_get_last_day($year, $month)."'";
+	$sql .= " AND date_fin >= '".dol_get_first_day($year, $month)."'";
 }
 
 $resql = $db->query($sql);
@@ -1083,8 +1088,11 @@ if (count($listofextcals)) {
 		$colorcal = $extcal['color'];
 		$buggedfile = $extcal['buggedfile'];
 
+		$pathforcachefile = dol_sanitizePathName($conf->user->dir_temp).'/'.dol_sanitizeFileName('extcal_'.$namecal.'_user'.$user->id).'.cache';
+		//var_dump($pathforcachefile);exit;
+
 		$ical = new ICal();
-		$ical->parse($url);
+		$ical->parse($url, $pathforcachefile, $DELAYFORCACHE);
 
 		// After this $ical->cal['VEVENT'] contains array of events, $ical->cal['DAYLIGHT'] contains daylight info, $ical->cal['STANDARD'] contains non daylight info, ...
 		//var_dump($ical->cal); exit;
