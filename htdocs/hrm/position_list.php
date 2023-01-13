@@ -622,7 +622,13 @@ while ($i < $imaxinloop) {
 		$userstatic->fetch($obj->fk_user);
 		$object->fk_user = $userstatic->getNomUrl(1);
 		// output kanban
-		print $object->getKanbanView('');
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+			print $object->getKanbanView('');
+		}
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
