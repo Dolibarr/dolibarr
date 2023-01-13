@@ -240,12 +240,9 @@ class EcmFiles extends CommonObject
 		}
 
 		// If ref not defined
-		$ref = '';
-		if (!empty($this->ref)) {
-			$ref = $this->ref;
-		} else {
+		if (empty($this->ref)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-			$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
+			$this->ref = dol_hash($this->filepath.'/'.$this->filename, 3);
 		}
 
 		$maxposition = 0;
@@ -300,7 +297,7 @@ class EcmFiles extends CommonObject
 		$sql .= 'src_object_type,';
 		$sql .= 'src_object_id';
 		$sql .= ') VALUES (';
-		$sql .= " '".$this->db->escape($ref)."', ";
+		$sql .= " '".$this->db->escape($this->ref)."', ";
 		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
 		$sql .= ' '.(!isset($this->share) ? 'NULL' : "'".$this->db->escape($this->share)."'").',';
 		$sql .= ' '.$this->entity.',';
