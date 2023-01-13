@@ -301,7 +301,7 @@ class Propal extends CommonObject
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>20),
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>22),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>40),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'position'=>23),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'position'=>23),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>24),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
@@ -454,6 +454,8 @@ class Propal extends CommonObject
 
 			$this->lines[] = $line;
 		}
+
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -981,9 +983,10 @@ class Propal extends CommonObject
 	 *  Delete detail line
 	 *
 	 *  @param		int		$lineid			Id of line to delete
+	 *  @param		int		$id				Id of object (for a check)
 	 *  @return     int         			>0 if OK, <0 if KO
 	 */
-	public function deleteline($lineid)
+	public function deleteline($lineid, $id = 0)
 	{
 		global $user;
 
@@ -992,8 +995,19 @@ class Propal extends CommonObject
 
 			$line = new PropaleLigne($this->db);
 
-			// For triggers
+			$line->context = $this->context;
+
+			// Load data
 			$line->fetch($lineid);
+
+			if ($id > 0 && $line->fk_propal != $id) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
+
+			// Memorize previous line for triggers
+			$staticline = clone $line;
+			$line->oldline = $staticline;
 
 			if ($line->delete($user) > 0) {
 				$this->update_price(1);
@@ -1752,7 +1766,7 @@ class Propal extends CommonObject
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -2108,6 +2122,8 @@ class Propal extends CommonObject
 				return -1 * $error;
 			}
 		}
+
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2164,6 +2180,8 @@ class Propal extends CommonObject
 				return -1 * $error;
 			}
 		}
+
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2235,6 +2253,8 @@ class Propal extends CommonObject
 				return -1 * $error;
 			}
 		}
+
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2417,9 +2437,9 @@ class Propal extends CommonObject
 				$this->db->rollback();
 				return -1 * $error;
 			}
-		} else {
-			return -1;
 		}
+
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2480,6 +2500,8 @@ class Propal extends CommonObject
 				return -1 * $error;
 			}
 		}
+
+		return -1;
 	}
 
 
@@ -2542,6 +2564,8 @@ class Propal extends CommonObject
 				return -1 * $error;
 			}
 		}
+
+		return -1;
 	}
 
 
@@ -2879,7 +2903,7 @@ class Propal extends CommonObject
 	 *    @param    int		$offset				For pagination
 	 *    @param    string	$sortfield			Sort criteria
 	 *    @param    string	$sortorder			Sort order
-	 *    @return	int		       				-1 if KO, array with result if OK
+	 *    @return	array|int		       		-1 if KO, array with result if OK
 	 */
 	public function liste_array($shortlist = 0, $draft = 0, $notcurrentuser = 0, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'p.datep', $sortorder = 'DESC')
 	{
@@ -2958,8 +2982,8 @@ class Propal extends CommonObject
 	/**
 	 *  Returns an array with id and ref of related invoices
 	 *
-	 *	@param		int		$id			Id propal
-	 *	@return		array				Array of invoices id
+	 *	@param		int			$id			Id propal
+	 *	@return		array|int				Array of invoices id
 	 */
 	public function InvoiceArrayList($id)
 	{
@@ -3860,18 +3884,18 @@ class Propal extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'propal'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -3889,6 +3913,41 @@ class Propal extends CommonObject
 		);
 
 		return CommonObject::commonReplaceProduct($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string		HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs;
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		//$return .= '<i class="fa fa-dol-action"></i>'; // Can be image
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if (property_exists($this, 'fk_project')) {
+			$return .= '<span class="info-box-ref"> | '.$this->fk_project.'</span>';
+		}
+		if (property_exists($this, 'author')) {
+			$return .= '<br><span class="info-box-label">'.$this->author.'</span>';
+		}
+		if (property_exists($this, 'total_ht')) {
+			$return .='<br><span class="" >'.$langs->trans("AmountHT").' : </span><span class="info-box-label amount">'.price($this->total_ht).'</span>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }
 
@@ -4444,17 +4503,17 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
 		$sql .= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= ", qty='".price2num($this->qty)."'";
-		$sql .= ", subprice=".price2num($this->subprice)."";
-		$sql .= ", remise_percent=".price2num($this->remise_percent)."";
-		$sql .= ", price=".(float) price2num($this->price).""; // TODO A virer
-		$sql .= ", remise=".(float) price2num($this->remise).""; // TODO A virer
+		$sql .= ", subprice=".price2num($this->subprice);
+		$sql .= ", remise_percent=".price2num($this->remise_percent);
+		$sql .= ", price=".(float) price2num($this->price); // TODO A virer
+		$sql .= ", remise=".(float) price2num($this->remise); // TODO A virer
 		$sql .= ", info_bits='".$this->db->escape($this->info_bits)."'";
 		if (empty($this->skip_update_total)) {
-			$sql .= ", total_ht=".price2num($this->total_ht)."";
-			$sql .= ", total_tva=".price2num($this->total_tva)."";
-			$sql .= ", total_ttc=".price2num($this->total_ttc)."";
-			$sql .= ", total_localtax1=".price2num($this->total_localtax1)."";
-			$sql .= ", total_localtax2=".price2num($this->total_localtax2)."";
+			$sql .= ", total_ht=".price2num($this->total_ht);
+			$sql .= ", total_tva=".price2num($this->total_tva);
+			$sql .= ", total_ttc=".price2num($this->total_ttc);
+			$sql .= ", total_localtax1=".price2num($this->total_localtax1);
+			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
 		}
 		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
 		$sql .= ", buy_price_ht=".price2num($this->pa_ht);
@@ -4470,10 +4529,10 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ", fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 
 		// Multicurrency
-		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-		$sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		$sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
+		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
+		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
 
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -4520,9 +4579,9 @@ class PropaleLigne extends CommonObjectLine
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
-		$sql .= " total_ht=".price2num($this->total_ht, 'MT')."";
-		$sql .= ",total_tva=".price2num($this->total_tva, 'MT')."";
-		$sql .= ",total_ttc=".price2num($this->total_ttc, 'MT')."";
+		$sql .= " total_ht=".price2num($this->total_ht, 'MT');
+		$sql .= ",total_tva=".price2num($this->total_tva, 'MT');
+		$sql .= ",total_ttc=".price2num($this->total_ttc, 'MT');
 		$sql .= " WHERE rowid = ".((int) $this->rowid);
 
 		dol_syslog("PropaleLigne::update_total", LOG_DEBUG);

@@ -194,7 +194,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							$("#'.$htmlnamejquery.'").attr("data-tvatx", ui.item.tva_tx);
 							$("#'.$htmlnamejquery.'").attr("data-default-vat-code", ui.item.default_vat_code);
 	';
-	if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
+	if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
 		$script .= '
 							// For customer price when PRODUIT_CUSTOMER_PRICES_BY_QTY is on
 							console.log("PRODUIT_CUSTOMER_PRICES_BY_QTY is on, propagate also prices by quantity into data-pbqxxx properties");
@@ -480,8 +480,11 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 		<script>
 			$(document).ready(function () {
 				$(\''.(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname).'\').'.$tmpplugin.'({
-					dir: \'ltr\',
-					width: \''.dol_escape_js($widthTypeOfAutocomplete).'\',		/* off or resolve */
+					dir: \'ltr\',';
+	if (preg_match('/onrightofpage/', $morecss)) {	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
+		$msg .= ' dropdownAutoWidth: true, dropdownParent: $(\'#'.$htmlname.'\').parent(), '."\n";
+	}
+	$msg .= '		width: \''.dol_escape_js($widthTypeOfAutocomplete).'\',		/* off or resolve */
 					minimumInputLength: '.((int) $minLengthToAutocomplete).',
 					language: select2arrayoflanguage,
 					matcher: function (params, data) {
@@ -499,6 +502,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 					theme: \'default'.$moreselect2theme.'\',		/* to add css on generated html components */
 					containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					selectionCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
+					dropdownCssClass: \'ui-dialog\',
 					templateResult: function (data, container) {	/* Format visible output into combo list */
 	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 						if (data.element) { $(container).addClass($(data.element).attr("class")); }
@@ -515,8 +519,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 					},
 					escapeMarkup: function(markup) {
 						return markup;
-					},
-					dropdownCssClass: \'ui-dialog\'
+					}
 				})';
 	if ($forcefocus) {
 		$msg .= '.select2(\'focus\')';

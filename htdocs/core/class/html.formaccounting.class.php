@@ -224,7 +224,7 @@ class FormAccounting extends Form
 	 * 	@param	int		$maxlen			Max length of text in combo box
 	 * 	@param	int		$help			Add or not the admin help picto
 	 *  @param  int     $allcountries   All countries
-	 * 	@return	void
+	 * 	@return	string					HTML component with the select
 	 */
 	public function select_accounting_category($selected = '', $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
 	{
@@ -295,7 +295,7 @@ class FormAccounting extends Form
 
 		$out .= ajax_combobox($htmlname, array());
 
-		print $out;
+		return $out;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

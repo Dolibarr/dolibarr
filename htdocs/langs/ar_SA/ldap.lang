@@ -25,3 +25,7 @@ ContactSynchronized=تمت مزامنة جهة الاتصال
 ForceSynchronize=إجبار التزامن بين دوليبار و خادم الوصول الخفيف للأدلة
 ErrorFailedToReadLDAP=فشل في قراءة قاعدة بيانات خادم الوصول الخفيف للأدلة. راجع إعدادات وحدة خادم الوصول الخفيف للأدلة، وإمكانية الوصول إلى قاعدة البيانات.
 PasswordOfUserInLDAP=كلمة سر المستخدم في  خادم الوصول الخفيف للأدلة
+LDAPPasswordHashType=نوع تجزئة كلمة المرور
+LDAPPasswordHashTypeExample=نوع تجزئة كلمة المرور المستخدمة على الخادم
+SupportedForLDAPExportScriptOnly=مدعوم فقط من خلال برنامج نصي للتصدير ldap
+SupportedForLDAPImportScriptOnly=مدعوم فقط بواسطة برنامج نصي للاستيراد ldap

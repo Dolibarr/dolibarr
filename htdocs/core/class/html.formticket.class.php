@@ -146,9 +146,10 @@ class FormTicket
 	 * @param	string			$mode					Mode ('create' or 'edit')
 	 * @param	int				$public					1=If we show the form for the public interface
 	 * @param	Contact|null	$with_contact			[=NULL] Contact to link to this ticket if exists
+	 * @param	string			$action					[=''] Action in card
 	 * @return 	void
 	 */
-	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, Contact $with_contact = null)
+	public function showForm($withdolfichehead = 0, $mode = 'edit', $public = 0, Contact $with_contact = null, $action = '')
 	{
 		global $conf, $langs, $user, $hookmanager;
 
@@ -346,7 +347,7 @@ class FormTicket
 				print $langs->trans('SubjectAnswerToTicket').' '.$this->topic_title;
 			} else {
 				if (isset($this->withreadid) && $this->withreadid > 0) {
-					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title.'';
+					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withreadid.' : '.$this->topic_title;
 				} else {
 					$subject = GETPOST('subject', 'alpha');
 				}
@@ -361,7 +362,7 @@ class FormTicket
 			print '<!-- Script to manage change of ticket group -->
 			<script>
 			jQuery(document).ready(function() {
-				function groupticketchange(){
+				function groupticketchange() {
 					console.log("We called groupticketchange, so we try to load list KM linked to event");
 					$("#KWwithajax").html("");
 					idgroupticket = $("#selectcategory_code").val();
@@ -636,7 +637,7 @@ class FormTicket
 
 		// Other attributes
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $this->action); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			print $ticketstat->showOptionals($extrafields, 'create');
 		}
@@ -778,7 +779,7 @@ class FormTicket
 	 *      @param	string		$morecss			More CSS
 	 * 		@param	int 		$use_multilevel		If > 0 create a multilevel select which use $htmlname example: $use_multilevel = 1 permit to have 2 select boxes.
 	 * 		@param	Translate	$outputlangs		Output language
-	 *      @return void
+	 *      @return string|void						String of HTML component
 	 */
 	public function selectGroupTickets($selected = '', $htmlname = 'ticketcategory', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '', $use_multilevel = 0, $outputlangs = null)
 	{
@@ -984,7 +985,6 @@ class FormTicket
 					}
 					$sql = substr($sql, 0, -2);
 					$sql .= ")";
-				} else {
 				}
 				$sql .= $this->db->order('ctc.pos', 'ASC');
 
@@ -1021,7 +1021,7 @@ class FormTicket
 							}
 							$stringtoprint .= '<option '.$iselected.' class="'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'" value="'.dol_escape_htmltag($groupvalue).'" data-html="'.dol_escape_htmltag($grouplabel).'">'.dol_escape_htmltag($grouplabel).'</option>';
 							if (empty($tabscript[$groupcodefather])) {
-								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").val() == "'.dol_escape_js($groupcodefather).'"){
+								$tabscript[$groupcodefather] = 'if ($("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").val() == "'.dol_escape_js($groupcodefather).'"){
 									$(".'.$htmlname.'_'.dol_escape_htmltag($fatherid).'_child_'.$levelid.'").show()
 									console.log("We show childs tickets of '.$groupcodefather.' group ticket")
 								}else{
@@ -1039,7 +1039,7 @@ class FormTicket
 
 				$stringtoprint .='<script>';
 				$stringtoprint .='arraynotparents = '.json_encode($arraycodenotparent).';';	// when the last visible combo list is number x, this is the array of group
-				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").val())){
+				$stringtoprint .='if (arraynotparents.includes($("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").val())){
 					console.log("'.$htmlname.'_child_'.$levelid.'")
 					if($("#'.$htmlname.'_child_'.$levelid.'").val() == "" && ($("#'.$htmlname.'_child_'.$levelid.'").attr("child_id")>'.$child_id.')){
 						$("#'.$htmlname.'_child_'.$levelid.'").hide();
@@ -1051,7 +1051,7 @@ class FormTicket
 						console.log("We choose '.$htmlname.' input and reload hidden input");
 					}
 				}
-				$("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid-1:'').'").change(function() {
+				$("#'.$htmlname.($levelid > 1 ?'_child_'.($levelid-1):'').'").change(function() {
 					child_id = $("#'.$htmlname.($levelid > 1 ?'_child_'.$levelid:'').'").attr("child_id");
 
 					/* Change of value to select this value*/
@@ -1094,7 +1094,7 @@ class FormTicket
 				$levelid++;
 				foreach ($tabscript as $script) {
 					$stringtoprint .= $script;
-				};
+				}
 				$stringtoprint .='})';
 				$stringtoprint .='</script>';
 			}

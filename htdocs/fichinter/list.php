@@ -57,6 +57,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'interventionlist';
+$mode = GETPOST('mode', 'alpha');
 
 $search_ref = GETPOST('search_ref') ?GETPOST('search_ref', 'alpha') : GETPOST('search_inter', 'alpha');
 $search_ref_client = GETPOST('search_ref_client', 'alpha');
@@ -213,7 +214,7 @@ if (isModEnabled('contrat')) {
 $now = dol_now();
 
 $help_url = '';
-$title = $langs->trans("ListOfInterventions");
+$title = $langs->trans("Interventions");
 $morejs = array();
 $morecss = array();
 
@@ -460,7 +461,10 @@ $url = DOL_URL_ROOT.'/fichinter/card.php?action=create';
 if (!empty($socid)) {
 	$url .= '&socid='.$socid;
 }
-$newcardbutton = dolGetButtonTitle($langs->trans('NewIntervention'), '', 'fa fa-plus-circle', $url, '', $user->rights->ficheinter->creer);
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewIntervention'), '', 'fa fa-plus-circle', $url, '', $user->rights->ficheinter->creer);
 
 print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -569,13 +573,13 @@ if (!empty($arrayfields['f.note_private']['checked'])) {
 }
 // Status
 if (!empty($arrayfields['f.fk_statut']['checked'])) {
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre right parentonrightofpage">';
 	$tmp = $objectstatic->LibStatut(0); // To load $this->statuts_short
 	$liststatus = $objectstatic->statuts_short;
 	if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) {
 		unset($liststatus[2]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 	}
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'onrightofpage');
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Fields of detail line
@@ -695,200 +699,219 @@ while ($i < $imaxinloop) {
 	$companystatic->email = $obj->email;
 	$companystatic->status = $obj->thirdpartystatus;
 
-	print '<tr class="oddeven">';
-	// Action column
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
-			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+	//mode kanban
+	if ($mode == 'kanban') {
+		if ($i == 0) {
+			print '<tr><td colspan="12">';
+			print '<div class="box-flex-container">';
 		}
-		print '</td>';
-	}
-	if (!empty($arrayfields['f.ref']['checked'])) {
-		print "<td>";
 
-		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-		// Picto + Ref
-		print '<td class="nobordernopadding nowraponall">';
-		print $objectstatic->getNomUrl(1);
-		print '</td>';
-		// Warning
-		$warnornote = '';
-		//if ($obj->fk_statut == 1 && $db->jdate($obj->dfv) < ($now - $conf->fichinter->warning_delay)) $warnornote.=img_warning($langs->trans("Late"));
-		if (!empty($obj->note_private)) {
-			$warnornote .= ($warnornote ? ' ' : '');
-			$warnornote .= '<span class="note">';
-			$warnornote .= '<a href="note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
-			$warnornote .= '</span>';
+		// Output Kanban
+		$objectstatic->duration = $obj->duree;
+		$objectstatic->socid = $companystatic->getNomUrl(1, '', 44);
+
+
+		print $objectstatic->getKanbanView('');
+		if ($i == (min($num, $limit) - 1)) {
+			print '</div>';
+			print '</td></tr>';
 		}
-		if ($warnornote) {
-			print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-			print $warnornote;
+	} else {
+		print '<tr class="oddeven">';
+		// Action column
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
 			print '</td>';
 		}
+		if (!empty($arrayfields['f.ref']['checked'])) {
+			print "<td>";
 
-		// Other picto tool
-		print '<td width="16" class="right nobordernopadding hideonsmartphone">';
-		$filename = dol_sanitizeFileName($obj->ref);
-		$filedir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($obj->ref);
-		$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-		print '</td></tr></table>';
+			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+			// Picto + Ref
+			print '<td class="nobordernopadding nowraponall">';
+			print $objectstatic->getNomUrl(1);
+			print '</td>';
+			// Warning
+			$warnornote = '';
+			//if ($obj->fk_statut == 1 && $db->jdate($obj->dfv) < ($now - $conf->fichinter->warning_delay)) $warnornote.=img_warning($langs->trans("Late"));
+			if (!empty($obj->note_private)) {
+				$warnornote .= ($warnornote ? ' ' : '');
+				$warnornote .= '<span class="note">';
+				$warnornote .= '<a href="note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"), 'object_generic').'</a>';
+				$warnornote .= '</span>';
+			}
+			if ($warnornote) {
+				print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
+				print $warnornote;
+				print '</td>';
+			}
 
-		print "</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
+			// Other picto tool
+			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
+			$filename = dol_sanitizeFileName($obj->ref);
+			$filedir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+			print '</td></tr></table>';
+
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-	}
-	if (!empty($arrayfields['f.ref_client']['checked'])) {
-		// Customer ref
-		print '<td class="nowrap tdoverflowmax200">';
-		print dol_escape_htmltag($obj->ref_client);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		if (!empty($arrayfields['f.ref_client']['checked'])) {
+			// Customer ref
+			print '<td class="nowrap tdoverflowmax200">';
+			print dol_escape_htmltag($obj->ref_client);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-	}
-	if (!empty($arrayfields['s.nom']['checked'])) {
-		print '<td>';
-		print $companystatic->getNomUrl(1, '', 44);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		if (!empty($arrayfields['s.nom']['checked'])) {
+			print '<td>';
+			print $companystatic->getNomUrl(1, '', 44);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-	}
-	if (!empty($arrayfields['pr.ref']['checked'])) {
-		print '<td>';
-		$projetstatic->id = $obj->projet_id;
-		$projetstatic->ref = $obj->projet_ref;
-		$projetstatic->title = $obj->projet_title;
-		if ($projetstatic->id > 0) {
-			print $projetstatic->getNomUrl(1, '');
+		if (!empty($arrayfields['pr.ref']['checked'])) {
+			print '<td>';
+			$projetstatic->id = $obj->projet_id;
+			$projetstatic->ref = $obj->projet_ref;
+			$projetstatic->title = $obj->projet_title;
+			if ($projetstatic->id > 0) {
+				print $projetstatic->getNomUrl(1, '');
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		if (!empty($arrayfields['c.ref']['checked'])) {
+			print '<td>';
+			$contratstatic->id = $obj->contrat_id;
+			$contratstatic->ref = $obj->contrat_ref;
+			$contratstatic->ref_customer = $obj->contrat_ref_customer;
+			$contratstatic->ref_supplier = $obj->contrat_ref_supplier;
+			if ($contratstatic->id > 0) {
+				print $contratstatic->getNomUrl(1, '');
+				print '</td>';
+			}
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-	}
-	if (!empty($arrayfields['c.ref']['checked'])) {
-		print '<td>';
-		$contratstatic->id = $obj->contrat_id;
-		$contratstatic->ref = $obj->contrat_ref;
-		$contratstatic->ref_customer = $obj->contrat_ref_customer;
-		$contratstatic->ref_supplier = $obj->contrat_ref_supplier;
-		if ($contratstatic->id > 0) {
-			print $contratstatic->getNomUrl(1, '');
+		if (!empty($arrayfields['f.description']['checked'])) {
+			print '<td>'.dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->description, 1)), 48).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+		// Fields from hook
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		// Date creation
+		if (!empty($arrayfields['f.datec']['checked'])) {
+			print '<td class="center">';
+			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Date modification
+		if (!empty($arrayfields['f.tms']['checked'])) {
+			print '<td class="center">';
+			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note public
+		if (!empty($arrayfields['f.note_public']['checked'])) {
+			print '<td class="center">';
+			print dol_string_nohtmltag($obj->note_public);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Note private
+		if (!empty($arrayfields['f.note_private']['checked'])) {
+			print '<td class="center">';
+			print dol_string_nohtmltag($obj->note_private);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Status
+		if (!empty($arrayfields['f.fk_statut']['checked'])) {
+			print '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Fields of detail of line
+		if (!empty($arrayfields['fd.description']['checked'])) {
+			print '<td>'.dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->descriptiondetail, 1)), 48).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['fd.date']['checked'])) {
+			print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		if (!empty($arrayfields['fd.duree']['checked'])) {
+			print '<td class="right">'.convertSecondToTime($obj->duree, 'allhourmin').'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+			if (!$i) {
+				$totalarray['type'][$totalarray['nbfield']] = 'duration';
+			}
+			if (!$i) {
+				$totalarray['pos'][$totalarray['nbfield']] = 'fd.duree';
+			}
+			$totalarray['val']['fd.duree'] += $obj->duree;
+		}
+		// Action column
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="nowrap center">';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
+				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			}
 			print '</td>';
 		}
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-	}
-	if (!empty($arrayfields['f.description']['checked'])) {
-		print '<td>'.dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->description, 1)), 48).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
 
-	// Extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
-	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	// Date creation
-	if (!empty($arrayfields['f.datec']['checked'])) {
-		print '<td class="center">';
-		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Date modification
-	if (!empty($arrayfields['f.tms']['checked'])) {
-		print '<td class="center">';
-		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Note public
-	if (!empty($arrayfields['f.note_public']['checked'])) {
-		print '<td class="center">';
-		print dol_string_nohtmltag($obj->note_public);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Note private
-	if (!empty($arrayfields['f.note_private']['checked'])) {
-		print '<td class="center">';
-		print dol_string_nohtmltag($obj->note_private);
-		print '</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Status
-	if (!empty($arrayfields['f.fk_statut']['checked'])) {
-		print '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	// Fields of detail of line
-	if (!empty($arrayfields['fd.description']['checked'])) {
-		print '<td>'.dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->descriptiondetail, 1)), 48).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['fd.date']['checked'])) {
-		print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-	}
-	if (!empty($arrayfields['fd.duree']['checked'])) {
-		print '<td class="right">'.convertSecondToTime($obj->duree, 'allhourmin').'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
-		}
-		if (!$i) {
-			$totalarray['type'][$totalarray['nbfield']] = 'duration';
-		}
-		if (!$i) {
-			$totalarray['pos'][$totalarray['nbfield']] = 'fd.duree';
-		}
-		$totalarray['val']['fd.duree'] += $obj->duree;
-	}
-	// Action column
-	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="nowrap center">';
-		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			$selected = 0;
-			if (in_array($obj->rowid, $arrayofselected)) {
-				$selected = 1;
-			}
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
-		}
-		print '</td>';
-	}
-	if (!$i) {
-		$totalarray['nbfield']++;
-	}
+		print '</tr>'."\n";
 
-	print '</tr>'."\n";
-
-	$total += $obj->duree;
+		$total += $obj->duree;
+	}
 	$i++;
 }
 

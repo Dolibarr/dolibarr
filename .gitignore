@@ -14,7 +14,6 @@ default.properties
 /.pydevproject
 /.vscode
 .DS_Store
-.idea
 *.iml
 *.orig
 Thumbs.db

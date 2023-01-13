@@ -690,7 +690,7 @@ class FormCompany extends Form
 								}
 							}
 						);
-					};
+					}
 				});
 				</script>';
 			}

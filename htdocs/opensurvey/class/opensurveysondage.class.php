@@ -83,6 +83,8 @@ class Opensurveysondage extends CommonObject
 
 	public $date_fin = '';
 
+	public $date_m;
+
 	/**
 	 * @var int status
 	 */

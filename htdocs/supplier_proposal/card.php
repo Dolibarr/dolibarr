@@ -591,10 +591,8 @@ if (empty($reshook)) {
 		$prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
-			$tva_tx = (GETPOST('tva_tx', 'alpha') ? price2num(preg_replace('/\s*\(.*\)/', '', GETPOST('tva_tx', 'alpha'))) : 0);
 		} else {
 			$idprod = GETPOST('idprod', 'int');
-			$tva_tx = '';
 		}
 
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);		// Can be '1.2' or '1.2 (CODE)'
@@ -1322,7 +1320,8 @@ if ($action == 'create') {
 	// Shipping Method
 	if (isModEnabled("expedition")) {
 		print '<tr><td>'.$langs->trans('SendingMethod').'</td><td colspan="2">';
-		print $form->selectShippingMethod(GETPOST('shipping_method_id') > 0 ? GETPOST('shipping_method_id', 'int') : "", 'shipping_method_id', '', 1);
+		print img_picto('', 'object_dollyrevert', 'class="pictofixedwidth"');
+		$form->selectShippingMethod(GETPOST('shipping_method_id') > 0 ? GETPOST('shipping_method_id', 'int') : "", 'shipping_method_id', '', 1);
 		print '</td></tr>';
 	}
 
@@ -1902,7 +1901,7 @@ if ($action == 'create') {
 	}
 
 	if (!empty($object->lines)) {
-		$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, $dateSelector);
+		$object->printObjectLines($action, $soc, $mysoc, $lineid, $dateSelector);
 	}
 
 	// Form to add new line

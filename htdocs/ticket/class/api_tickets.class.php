@@ -112,11 +112,7 @@ class Tickets extends DolibarrApi
 	 */
 	public function getByRef($ref)
 	{
-		try {
-			return $this->getCommon(0, '', $ref);
-		} catch (Exception $e) {
-			   throw $e;
-		}
+		return $this->getCommon(0, '', $ref);
 	}
 
 	/**

@@ -28,7 +28,7 @@ CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with
 CantModifyInterestIfScheduleIsUsed = Егер сіз кестені қолдансаңыз, қызығушылықты өзгерте алмайсыз
 # Admin
 ConfigLoan=Кредиттік модульді конфигурациялау
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Әдепкі бойынша есеп шотының капиталы
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Әдепкі бойынша бухгалтерлік шоттағы пайыздар
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Әдепкі бойынша бухгалтерлік шотты сақтандыру
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Account (from the Chart Of Account) to be used by default for capital (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Account (from the Chart Of Account) to be used by default for interest (Loan module)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Account (from the Chart Of Account) to be used by default for insurance (Loan module)
 CreateCalcSchedule=Қаржылық міндеттемені өңдеу

@@ -295,7 +295,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS)) {
-			$overlappingExpenseReportID = $object->periode_existe($fuser, $object->date_debut, $object->date_fin, true);
+			$overlappingExpenseReportID = $object->periode_existe($fuser, $object->date_debut, $object->date_fin);
 
 			if ($overlappingExpenseReportID > 0) {
 				$error++;
@@ -971,7 +971,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
-			setEventMessages("NOT_AUTHOR", '', 'errors');
+			setEventMessages("NOT_AUTHOR", null, 'errors');
 		}
 	}
 

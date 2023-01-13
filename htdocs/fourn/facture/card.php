@@ -1172,7 +1172,28 @@ if (empty($reshook)) {
 							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA) && $diff != 0) {
 								$object->fetch_lines();
 								$subprice_diff = $object->lines[0]->subprice - $diff / (1 + $object->lines[0]->tva_tx / 100);
-								$object->updateline($object->lines[0]->id, $object->lines[0]->desc, $subprice_diff, $object->lines[0]->qty, $object->lines[0]->remise_percent, $object->lines[0]->date_start, $object->lines[0]->date_end, $object->lines[0]->tva_tx, 0, 0, 'HT', $object->lines[0]->info_bits, $object->lines[0]->product_type, 0, 0, 0, $object->lines[0]->pa_ht, $object->lines[0]->label, 0, array(), 100);
+								$object->updateline(
+									$object->lines[0]->id,
+									$object->lines[0]->desc,
+									$subprice_diff,
+									$object->lines[0]->tva_tx,
+									$object->lines[0]->localtax1_tx,
+									$object->lines[0]->localtax2_tx,
+									$object->lines[0]->qty,
+									$object->lines[0]->fk_product,
+									'HT',
+									$object->lines[0]->info_bits,
+									$object->lines[0]->product_type,
+									$object->lines[0]->remise_percent,
+									0,
+									$object->lines[0]->date_start,
+									$object->lines[0]->date_end,
+									0,
+									0,
+									0,
+									'',
+									100
+								);
 							}
 						} elseif ($result > 0) {
 							$lines = $srcobject->lines;
@@ -1627,7 +1648,7 @@ if (empty($reshook)) {
 					$productsupplier->fk_unit,
 					0,
 					$pu_devise,
-					$ref_supplier,
+					GETPOST('fourn_ref', 'alpha'),
 					''
 				);
 			}
@@ -2080,14 +2101,15 @@ if ($action == 'create') {
 		// reload page to retrieve supplier informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_SUPPLIER_CHANGE)) {
 			print '<script type="text/javascript">
-			$(document).ready(function() {
-				$("#socid").change(function() {
-					var socid = $(this).val();
-                    var fac_rec = $(\'#fac_rec\').val();
-        			window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+				$(document).ready(function() {
+					$("#socid").change(function() {
+						console.log("We have changed the company - Reload page");
+						// reload page
+						$("input[name=action]").val("create");
+						$("form[name=add]").submit();
+					});
 				});
-			});
-			</script>';
+				</script>';
 		}
 		if ($fac_recid <= 0) {
 			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
@@ -2212,7 +2234,7 @@ if ($action == 'create') {
 						jQuery(".checkforselect").prop("disabled", false);
 						jQuery(".checkforselect").prop("checked", true);
 					}
-				};
+				}
     		});
     		</script>';
 
@@ -2649,6 +2671,7 @@ if ($action == 'create') {
 		$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 		// Multicurrency
+		$multicurrency_resteapayer = 0;
 		if (isModEnabled("multicurrency")) {
 			$multicurrency_totalpaid = $object->getSommePaiement(1);
 			$multicurrency_totalcreditnotes = $object->getSumCreditNotesUsed(1);
@@ -2694,6 +2717,7 @@ if ($action == 'create') {
 
 		// Confirmation de la conversion de l'avoir en reduc
 		if ($action == 'converttoreduc') {
+			$type_fac = '';
 			if ($object->type == FactureFournisseur::TYPE_STANDARD) {
 				$type_fac = 'ExcessPaid';
 			} elseif ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
@@ -3628,7 +3652,7 @@ if ($action == 'create') {
 
 		// Show object lines
 		if (!empty($object->lines)) {
-			$ret = $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
+			$object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
 		}
 
 		$num = count($object->lines);

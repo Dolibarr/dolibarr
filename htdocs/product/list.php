@@ -210,7 +210,7 @@ $alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ?
 $arrayfields = array(
 	'p.rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'noteditable'=>1, 'notnull'=> 1, 'index'=>1, 'position'=>1, 'comment'=>'Id', 'css'=>'left'),
 	'p.ref'=>array('label'=>"Ref", 'checked'=>1, 'position'=>10),
-	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(!empty($conf->barcode->enabled))),
+	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(isModEnabled('barcode'))),
 	'thumbnail'=>array('label'=>'Photo', 'checked'=>0, 'position'=>10),
 	'p.label'=>array('label'=>"Label", 'checked'=>1, 'position'=>10),
 	'p.fk_product_type'=>array('label'=>"Type", 'checked'=>0, 'enabled'=>(isModEnabled("product") && isModEnabled("service")), 'position'=>11),
@@ -1142,12 +1142,12 @@ if (!empty($arrayfields['p.tms']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['p.tosell']['checked'])) {
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center parentonrightofpage">';
 	print $form->selectarray('search_tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'), '1'=>$langs->trans('ProductStatusOnSellShort')), $search_tosell, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
-	print '</td >';
+	print '</td>';
 }
 if (!empty($arrayfields['p.tobuy']['checked'])) {
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center parentonrightofpage">';
 	print $form->selectarray('search_tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'), '1'=>$langs->trans('ProductStatusOnBuyShort')), $search_tobuy, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
