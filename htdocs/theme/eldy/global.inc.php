@@ -2012,11 +2012,12 @@ td.showDragHandle {
 	z-index: 1005;
 }
 <?php } ?>
-<?php if (!empty($conf->global->THEME_DARKMODEENABLED)) {  ?>
-.side-nav-vert {
-	border-bottom: 1px solid #888;
+
+@media screen and (prefers-color-scheme: dark) {
+	.side-nav-vert {
+		border-bottom: 1px solid #888;
+	}
 }
-<?php } ?>
 
 .side-nav {
 	/*display: block;
