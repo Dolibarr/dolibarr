@@ -201,10 +201,11 @@ class Form
 	 * @param	string	$formatfunc		Call a specific function to output field
 	 * @param	string	$paramid		Key of parameter for id ('id', 'socid')
 	 * @param	string	$gm				'auto' or 'tzuser' or 'tzserver' (when $typeofdata is a date)
+	 * @param	array	$moreoptions	Array with more options. For example array('addnowlink'=>1), array('valuealreadyhtmlescaped'=>1)
 	 * @param	string	$editaction		[=''] use GETPOST default action or set action to edit mode
 	 * @return  string					HTML edit field
 	 */
-	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 0, $formatfunc = '', $paramid = 'id', $gm = 'auto', $editaction = '')
+	public function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata = 'string', $editvalue = '', $extObject = null, $custommsg = null, $moreparam = '', $notabletag = 1, $formatfunc = '', $paramid = 'id', $gm = 'auto', $moreoptions = array(), $editaction = '')
 	{
 		global $conf, $langs, $db;
 
