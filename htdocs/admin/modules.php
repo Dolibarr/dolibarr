@@ -589,6 +589,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
 	$moreforfilter .= $form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), $langs->trans('Origin'), 0, 0, '', 0, 0, 0, '', 'maxwidth250', 1);
 	$moreforfilter .= '</div>';
+
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 		$array_version = array('stable'=>$langs->transnoentitiesnoconv("Stable"));
 		if ($conf->global->MAIN_FEATURES_LEVEL < 0) {
@@ -601,11 +602,12 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			$array_version['development'] = $langs->trans("Development");
 		}
 		$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
-		$moreforfilter .= $form->selectarray('search_version', $array_version, $search_version, $langs->trans('Version'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
+		$moreforfilter .= $form->selectarray('search_version', $array_version, $search_version, $langs->transnoentitiesnoconv('Version'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
 		$moreforfilter .= '</div>';
 	}
+	$array_status = array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled"));
 	$moreforfilter .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
-	$moreforfilter .= $form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, $langs->trans('Status'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
+	$moreforfilter .= $form->selectarray('search_status', $array_status, $search_status, $langs->transnoentitiesnoconv('Status'), 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
 	$moreforfilter .= '</div>';
 	$moreforfilter .= ' ';
 	$moreforfilter .= '<div class="divsearchfield valignmiddle inline-block">';
