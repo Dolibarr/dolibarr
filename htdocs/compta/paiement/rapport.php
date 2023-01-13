@@ -24,6 +24,7 @@
  *	\brief      Payment reports page
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/rapport/pdf_paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -102,7 +103,7 @@ $syear = GETPOST("reyear") ?GETPOST("reyear") : date("Y", time());
 
 print $formother->select_month($cmonth, 'remonth');
 
-print $formother->select_year($syear, 'reyear');
+print $formother->selectyear($syear, 'reyear');
 
 print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 print '</form>';

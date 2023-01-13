@@ -23,7 +23,7 @@ if (empty($conf) || !is_object($conf)) {
 	exit;
 }
 
-echo "<!-- BEGIN PHP TEMPLATE adherents/tpl/linkedopjectblock.tpl.php -->\n";
+echo "<!-- BEGIN PHP TEMPLATE adherents/tpl/linkedobjectblock.tpl.php -->\n";
 
 global $user;
 
@@ -39,7 +39,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '<td class="center"></td>';
 	echo '<td class="center">'.dol_print_date($objectlink->dateh, 'day').'</td>';
 	echo '<td class="right">';
-	if ($user->rights->adherent->lire) {
+	if ($user->hasRight('adherent', 'lire')) {
 		$total = $total + $objectlink->amount;
 		echo price($objectlink->amount);
 	}

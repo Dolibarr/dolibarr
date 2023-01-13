@@ -64,9 +64,9 @@ class pdf_merou extends ModelePdfExpedition
 
 	/**
 	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.6 = array(5, 6)
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
 	 */
-	public $phpmin = array(5, 6);
+	public $phpmin = array(7, 0);
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -121,7 +121,7 @@ class pdf_merou extends ModelePdfExpedition
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	public function __construct($db = 0)
+	public function __construct(DoliDB $db)
 	{
 		global $conf, $langs, $mysoc;
 
@@ -135,10 +135,10 @@ class pdf_merou extends ModelePdfExpedition
 		$this->page_largeur = $formatarray['width'];
 		$this->page_hauteur = round($formatarray['height'] / 2);
 		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
-		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
-		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
-		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
+		$this->marge_gauche = getDolGlobalInt('MAIN_PDF_MARGIN_LEFT', 10);
+		$this->marge_droite = getDolGlobalInt('MAIN_PDF_MARGIN_RIGHT', 10);
+		$this->marge_haute = getDolGlobalInt('MAIN_PDF_MARGIN_TOP', 10);
+		$this->marge_basse = getDolGlobalInt('MAIN_PDF_MARGIN_BOTTOM', 10);
 
 		$this->option_logo = 1; // Display logo
 
@@ -266,7 +266,7 @@ class pdf_merou extends ModelePdfExpedition
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Shipment"));
-				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) {
+				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
 
@@ -281,7 +281,7 @@ class pdf_merou extends ModelePdfExpedition
 				$pdf->SetTextColor(0, 0, 0);
 
 				$tab_top = 52;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 : 10);
+				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
@@ -520,7 +520,7 @@ class pdf_merou extends ModelePdfExpedition
 	 *  @param  Expedition	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	int							<0 if KO, > if OK
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -553,7 +553,7 @@ class pdf_merou extends ModelePdfExpedition
 			if (!empty($conf->mycompany->multidir_output[$object->entity])) {
 				$logodir = $conf->mycompany->multidir_output[$object->entity];
 			}
-			if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO)) {
+			if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 				$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
 			} else {
 				$logo = $logodir.'/logos/'.$this->emetteur->logo;
@@ -592,7 +592,7 @@ class pdf_merou extends ModelePdfExpedition
 		$origin_id = $object->origin_id;
 
 		// Add list of linked elements
-		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size - 1, $hookmanager);
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size - 1);
 
 		//$this->Code39($Xoff+43, $Yoff+1, $object->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Definition Location of the Company block
@@ -700,6 +700,16 @@ class pdf_merou extends ModelePdfExpedition
 
 		$widthrecbox = $blW;
 
+		$top_shift = 0;
+		// Show list of linked objects
+		/*
+		$current_y = $pdf->getY();
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
+		if ($current_y < $pdf->getY()) {
+			$top_shift = $pdf->getY() - $current_y;
+		}
+		*/
+
 		// Show Recipient frame
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 		$pdf->SetXY($blDestX, $Yoff - 4);
@@ -717,5 +727,7 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetFont('', '', $default_font_size - 3);
 		$pdf->SetXY($blDestX, $posy);
 		$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
+
+		return $top_shift;
 	}
 }

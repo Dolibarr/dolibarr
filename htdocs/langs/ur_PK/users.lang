@@ -47,7 +47,7 @@ RemoveFromGroup=گروپ سے نکال دیں۔
 PasswordChangedAndSentTo=پاس ورڈ تبدیل کر کے <b> %s </b> پر بھیج دیا گیا۔
 PasswordChangeRequest=<b> %s </b> کے لیے پاس ورڈ تبدیل کرنے کی درخواست
 PasswordChangeRequestSent=<b> کے لیے پاس ورڈ بدلنے کی درخواست
-IfLoginExistPasswordRequestSent=اگر یہ لاگ ان ایک درست اکاؤنٹ ہے تو پاس ورڈ کو دوبارہ ترتیب دینے کے لیے ایک ای میل بھیجی گئی ہے۔
+IfLoginExistPasswordRequestSent=If this login is a valid account (with a valid email), an email to reset password has been sent.
 IfEmailExistPasswordRequestSent=اگر یہ ای میل ایک درست اکاؤنٹ ہے تو پاس ورڈ کو دوبارہ ترتیب دینے کے لیے ایک ای میل بھیجی گئی ہے۔
 ConfirmPasswordReset=پاس ورڈ دوبارہ ترتیب دینے کی تصدیق کریں۔
 MenuUsersAndGroups=صارفین اور گروپس
@@ -68,7 +68,6 @@ CreateDolibarrLogin=ایک صارف بنائیں
 CreateDolibarrThirdParty=تیسری پارٹی بنائیں
 LoginAccountDisableInDolibarr=Dolibarr میں اکاؤنٹ کو غیر فعال کر دیا گیا ہے۔
 UsePersonalValue=ذاتی قدر استعمال کریں۔
-InternalUser=اندرونی صارف
 ExportDataset_user_1=صارفین اور ان کی خصوصیات
 DomainUser=ڈومین صارف %s
 Reactivate=دوبارہ فعال کریں۔
@@ -114,7 +113,7 @@ UserLogoff=صارف لاگ آؤٹ
 UserLogged=صارف لاگ ان
 DateOfEmployment=ملازمت کی تاریخ
 DateEmployment=روزگار
-DateEmploymentstart=ملازمت شروع ہونے کی تاریخ
+DateEmploymentStart=Employment Start Date
 DateEmploymentEnd=ملازمت کی آخری تاریخ
 RangeOfLoginValidity=رسائی کی درستگی کی تاریخ کی حد
 CantDisableYourself=آپ اپنے صارف کے ریکارڈ کو غیر فعال نہیں کر سکتے
@@ -124,3 +123,9 @@ ValidatorIsSupervisorByDefault=پہلے سے طے شدہ طور پر، تصدی�
 UserPersonalEmail=ذاتی ای میل
 UserPersonalMobile=ذاتی موبائل فون
 WarningNotLangOfInterface=تنبیہ، یہ وہ مرکزی زبان ہے جو صارف بولتا ہے، نہ کہ اس انٹرفیس کی زبان جسے دیکھنے کے لیے اس نے چنا ہے۔ اس صارف کے ذریعے نظر آنے والی انٹرفیس کی زبان کو تبدیل کرنے کے لیے، %s ٹیب پر جائیں
+DateLastLogin=Date last login
+DatePreviousLogin=Date previous login
+IPLastLogin=IP last login
+IPPreviousLogin=IP previous login
+ShowAllPerms=Show all permission rows
+HideAllPerms=Hide all permission rows

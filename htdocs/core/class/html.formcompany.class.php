@@ -56,7 +56,7 @@ class FormCompany extends Form
 		$effs = array();
 
 		$sql = "SELECT id, code, libelle";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_typent";
+		$sql .= " FROM ".$this->db->prefix()."c_typent";
 		$sql .= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = ".(empty($mysoc->country_id) ? '0' : $mysoc->country_id).")";
 		if ($filter) {
 			$sql .= " ".$filter;
@@ -105,7 +105,7 @@ class FormCompany extends Form
 		$effs = array();
 
 		$sql = "SELECT id, code, libelle";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
+		$sql .= " FROM ".$this->db->prefix()."c_effectif";
 		$sql .= " WHERE active = 1";
 		if ($filter) {
 			$sql .= " ".$filter;
@@ -155,7 +155,7 @@ class FormCompany extends Form
 
 		dol_syslog(get_class($this).'::form_prospect_level', LOG_DEBUG);
 		$sql = "SELECT code, label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
+		$sql .= " FROM ".$this->db->prefix()."c_prospectlevel";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY sortorder";
 		$resql = $this->db->query($sql);
@@ -183,7 +183,7 @@ class FormCompany extends Form
 		if (!empty($htmlname) && $user->admin) {
 			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print '<input type="submit" class="button button-save valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '<input type="submit" class="button button-save valignmiddle small" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
 
@@ -206,7 +206,7 @@ class FormCompany extends Form
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$sql = "SELECT code, label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel";
+		$sql .= " FROM ".$this->db->prefix()."c_prospectcontactlevel";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY sortorder";
 		$resql = $this->db->query($sql);
@@ -234,7 +234,7 @@ class FormCompany extends Form
 		if (!empty($htmlname) && $user->admin) {
 			print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
-		print '<input type="submit" class="button button-save valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '<input type="submit" class="button button-save valignmiddle small" value="'.$langs->trans("Modify").'">';
 		print '</form>';
 	}
 
@@ -283,7 +283,7 @@ class FormCompany extends Form
 
 		// Serch departements/cantons/province active d'une region et pays actif
 		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.nom as region_name FROM";
-		$sql .= " ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " ".$this->db->prefix()."c_departements as d, ".$this->db->prefix()."c_regions as r,".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
 		$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
 		if ($country_codeid && is_numeric($country_codeid)) {
@@ -385,7 +385,7 @@ class FormCompany extends Form
 		$langs->load("dict");
 
 		$sql = "SELECT r.rowid, r.code_region as code, r.nom as label, r.active, c.code as country_code, c.label as country";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " FROM ".$this->db->prefix()."c_regions as r, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE r.fk_pays=c.rowid AND r.active = 1 and c.active = 1";
 		$sql .= " ORDER BY c.code, c.label ASC";
 
@@ -444,7 +444,7 @@ class FormCompany extends Form
 
 		$out = '';
 
-		$sql = "SELECT rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_civility";
+		$sql = "SELECT rowid, code, label, active FROM ".$this->db->prefix()."c_civility";
 		$sql .= " WHERE active = 1";
 
 		dol_syslog("Form::select_civility", LOG_DEBUG);
@@ -525,7 +525,7 @@ class FormCompany extends Form
 
 		// On recherche les formes juridiques actives des pays actifs
 		$sql  = "SELECT f.rowid, f.code as code , f.libelle as label, f.active, c.label as country, c.code as country_code";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " FROM ".$this->db->prefix()."c_forme_juridique as f, ".$this->db->prefix()."c_country as c";
 		$sql .= " WHERE f.fk_pays=c.rowid";
 		$sql .= " AND f.active = 1 AND c.active = 1";
 		if ($country_codeid) {
@@ -618,7 +618,7 @@ class FormCompany extends Form
 	 */
 	public function selectCompaniesForNewContact($object, $var_id, $selected = '', $htmlname = 'newcompany', $limitto = '', $forceid = 0, $moreparam = '', $morecss = '')
 	{
-		global $conf, $langs;
+		global $conf, $hookmanager;
 
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
 			// Use Ajax search
@@ -690,7 +690,7 @@ class FormCompany extends Form
 								}
 							}
 						);
-					};
+					}
 				});
 				</script>';
 			}
@@ -709,15 +709,19 @@ class FormCompany extends Form
 				$sql .= ", s.address, s.zip, s.town";
 				$sql .= ", dictp.code as country_code";
 			}
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			$sql .= " FROM ".$this->db->prefix()."societe as s";
 			if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST)) {
-				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid = s.fk_pays";
+				$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as dictp ON dictp.rowid = s.fk_pays";
 			}
 			$sql .= " WHERE s.entity IN (".getEntity('societe').")";
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto)) {
 				$sql .= " AND s.rowid IN (".$this->db->sanitize(join(',', $limitto)).")";
 			}
+			// Add where from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('selectCompaniesForNewContactListWhere', $parameters); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
 			$sql .= " ORDER BY s.nom ASC";
 
 			$resql = $this->db->query($sql);
@@ -821,13 +825,14 @@ class FormCompany extends Form
 	/**
 	 * showContactRoles on view and edit mode
 	 *
-	 * @param string $htmlname Html component name and id
-	 * @param Contact $contact Contact Obejct
-	 * @param string $rendermode view, edit
-	 * @param array $selected $key=>$val $val is selected Roles for input mode
-	 * @return string   String with contacts roles
+	 * @param 	string 		$htmlname 	Html component name and id
+	 * @param 	Contact 	$contact 	Contact Obejct
+	 * @param 	string 		$rendermode view, edit
+	 * @param 	array		$selected 	$key=>$val $val is selected Roles for input mode
+	 * @param	string		$morecss	More css
+	 * @return 	string   				String with contacts roles
 	 */
-	public function showRoles($htmlname, Contact $contact, $rendermode = 'view', $selected = array())
+	public function showRoles($htmlname, Contact $contact, $rendermode = 'view', $selected = array(), $morecss = 'minwidth500')
 	{
 		if ($rendermode === 'view') {
 			$toprint = array();
@@ -852,7 +857,7 @@ class FormCompany extends Form
 					$selected = $newselected;
 				}
 			}
-			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, 'minwidth500');
+			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, $morecss);
 		}
 
 		return 'ErrorBadValueForParameterRenderMode'; // Should not happened
@@ -1021,7 +1026,7 @@ class FormCompany extends Form
 	public function selectProspectCustomerType($selected, $htmlname = 'client', $htmlidname = 'customerprospect', $typeinput = 'form', $morecss = '', $allowempty = '')
 	{
 		global $conf, $langs;
-		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->fournisseur->enabled)) {
+		if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && !empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && !isModEnabled('fournisseur')) {
 			return '' ;
 		}
 
@@ -1054,7 +1059,7 @@ class FormCompany extends Form
 			if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
 				$out .= '<option value="1,3"'.($selected == '1,3' ? ' selected' : '').'>'.$langs->trans('Customer').'</option>';
 			}
-			if (!empty($conf->fournisseur->enabled)) {
+			if (isModEnabled("fournisseur")) {
 				$out .= '<option value="4"'.($selected == '4' ? ' selected' : '').'>'.$langs->trans('Supplier').'</option>';
 			}
 			$out .= '<option value="0"'.($selected == '0' ? ' selected' : '').'>'.$langs->trans('Other').'</option>';

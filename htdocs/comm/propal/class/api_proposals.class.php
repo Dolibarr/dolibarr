@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2020   Thibault FOUCART   		<support@ptibogxiv.net>
+/* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2020       Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
+ * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +49,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 		$this->propal = new Propal($this->db);
 	}
@@ -57,9 +59,9 @@ class Proposals extends DolibarrApi
 	 *
 	 * Return an array with commercial proposal informations
 	 *
-	 * @param       int         $id           ID of commercial proposal
-	 * @param       int         $contact_list 0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
-	 * @return 	array|mixed data without useless information
+	 * @param   int         $id           	ID of commercial proposal
+	 * @param   int         $contact_list 	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @return  Object              		Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -74,8 +76,8 @@ class Proposals extends DolibarrApi
 	 * Return an array with proposal informations
 	 *
 	 * @param       string		$ref			Ref of object
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
-	 * @return 	array|mixed data without useless information
+	 * @param       int         $contact_list  	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @return  	Object              		Object with cleaned properties
 	 *
 	 * @url GET    ref/{ref}
 	 *
@@ -91,9 +93,9 @@ class Proposals extends DolibarrApi
 	 *
 	 * Return an array with proposal informations
 	 *
-	 * @param       string		$ref_ext			External reference of object
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
-	 * @return 	array|mixed data without useless information
+	 * @param       string		$ref_ext		External reference of object
+	 * @param       int         $contact_list  	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @return  	Object              		Object with cleaned properties
 	 *
 	 * @url GET    ref_ext/{ref_ext}
 	 *
@@ -109,11 +111,11 @@ class Proposals extends DolibarrApi
 	 *
 	 * Return an array with proposal informations
 	 *
-	 * @param       int         $id             ID of order
-	 * @param		string		$ref			Ref of object
-	 * @param		string		$ref_ext		External reference of object
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
-	 * @return 	array|mixed data without useless information
+	 * @param   int         $id             ID of order
+	 * @param	string		$ref			Ref of object
+	 * @param	string		$ref_ext		External reference of object
+	 * @param   int         $contact_list  	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @return  Object              		Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -133,8 +135,13 @@ class Proposals extends DolibarrApi
 		}
 
 		// Add external contacts ids.
-		$this->propal->contacts_ids = $this->propal->liste_contact(-1, 'external', $contact_list);
+		$tmparray = $this->propal->liste_contact(-1, 'external', $contact_list);
+		if (is_array($tmparray)) {
+			$this->propal->contacts_ids = $tmparray;
+		}
+
 		$this->propal->fetchObjectLinked();
+
 		return $this->_cleanObjectDatas($this->propal);
 	}
 
@@ -226,7 +233,10 @@ class Proposals extends DolibarrApi
 				$proposal_static = new Propal($this->db);
 				if ($proposal_static->fetch($obj->rowid)) {
 					// Add external contacts ids
-					$proposal_static->contacts_ids = $proposal_static->liste_contact(-1, 'external', 1);
+					$tmparray = $proposal_static->liste_contact(-1, 'external', 1);
+					if (is_array($tmparray)) {
+						$proposal_static->contacts_ids = $tmparray;
+					}
 					$obj_ret[] = $this->_cleanObjectDatas($proposal_static);
 				}
 				$i++;
@@ -274,14 +284,17 @@ class Proposals extends DolibarrApi
 	/**
 	 * Get lines of a commercial proposal
 	 *
-	 * @param int   $id             Id of commercial proposal
+	 * @param int		$id				Id of commercial proposal
+	 * @param string    $sqlfilters 	Other criteria to filter answers separated by a comma. d is the alias for proposal lines table, p is the alias for product table. "Syntax example "(p.ref:like:'SO-%') and (d.date_start:<:'20220101')"
 	 *
 	 * @url	GET {id}/lines
 	 *
-	 * @return int
+	 * @return array
 	 */
-	public function getLines($id)
+	public function getLines($id, $sqlfilters = '')
 	{
+		$filters = "";
+
 		if (!DolibarrApiAccess::$user->rights->propal->lire) {
 			throw new RestException(401);
 		}
@@ -294,7 +307,16 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->propal->getLinesArray();
+
+		if (!empty($sqlfilters)) {
+			if (!DolibarrApi::_checkFilters($sqlfilters)) {
+				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			}
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$filters = " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+		}
+
+		$this->propal->getLinesArray($filters);
 		$result = array();
 		foreach ($this->propal->lines as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));
@@ -308,7 +330,7 @@ class Proposals extends DolibarrApi
 	 * @param int   $id             Id of commercial proposal to update
 	 * @param array $request_data   Commercial proposal line data
 	 *
-	 * @url	POST {id}/lines
+	 * @url	POST {id}/line
 	 *
 	 * @return int
 	 */
@@ -329,8 +351,8 @@ class Proposals extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->propal->addline(
 			$request_data->desc,
@@ -369,15 +391,92 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Update a line of given commercial proposal
+	 * Add lines to given commercial proposal
 	 *
 	 * @param int   $id             Id of commercial proposal to update
-	 * @param int   $lineid         Id of line to update
 	 * @param array $request_data   Commercial proposal line data
 	 *
-	 * @url	PUT {id}/lines/{lineid}
+	 * @url	POST {id}/lines
 	 *
-	 * @return object
+	 * @return int
+	 */
+	public function postLines($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->rights->propal->creer) {
+			throw new RestException(401);
+		}
+
+		$result = $this->propal->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Commercial Proposal not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$errors = [];
+		$this->db->begin();
+
+		foreach ($request_data as $TData) {
+			if (empty($TData[0])) $TData = array($TData);
+
+			foreach ($TData as $lineData) {
+				$line = (object) $lineData;
+
+				$updateRes = $this->propal->addline(
+					$line->desc,
+					$line->subprice,
+					$line->qty,
+					$line->tva_tx,
+					$line->localtax1_tx,
+					$line->localtax2_tx,
+					$line->fk_product,
+					$line->remise_percent,
+					'HT',
+					0,
+					$line->info_bits,
+					$line->product_type,
+					$line->rang,
+					$line->special_code,
+					$line->fk_parent_line,
+					$line->fk_fournprice,
+					$line->pa_ht,
+					$line->label,
+					$line->date_start,
+					$line->date_end,
+					$line->array_options,
+					$line->fk_unit,
+					$line->origin,
+					$line->origin_id,
+					$line->multicurrency_subprice,
+					$line->fk_remise_except
+				);
+
+				if ($updateRes < 0) {
+					$errors['lineLabel'] = $line->label;
+					$errors['msg'] = $this->propal->errors;
+				}
+			}
+		}
+		if (empty($errors)) {
+			$this->db->commit();
+			return $updateRes;
+		} else {
+			$this->db->rollback();
+			throw new RestException(400, implode(", ", $errors));
+		}
+	}
+
+	/**
+	 * Update a line of given commercial proposal
+	 *
+	 * @param 	int   			$id             Id of commercial proposal to update
+	 * @param 	int   			$lineid         Id of line to update
+	 * @param 	array 			$request_data   Commercial proposal line data
+	 * @return  Object|false    				Object with cleaned properties
+	 *
+	 * @url	PUT {id}/lines/{lineid}
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
@@ -396,8 +495,12 @@ class Proposals extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		if (isset($request_data->desc)) $request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		if (isset($request_data->label)) $request_data->label = checkVal($request_data->label);
+		if (isset($request_data->desc)) {
+			$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		}
+		if (isset($request_data->label)) {
+			$request_data->label = sanitizeVal($request_data->label);
+		}
 
 		$propalline = new PropaleLigne($this->db);
 		$result = $propalline->fetch($lineid);
@@ -427,7 +530,9 @@ class Proposals extends DolibarrApi
 			isset($request_data->date_end) ? $request_data->date_end : $propalline->date_end,
 			isset($request_data->array_options) ? $request_data->array_options : $propalline->array_options,
 			isset($request_data->fk_unit) ? $request_data->fk_unit : $propalline->fk_unit,
-			isset($request_data->multicurrency_subprice) ? $request_data->multicurrency_subprice : $propalline->subprice
+			isset($request_data->multicurrency_subprice) ? $request_data->multicurrency_subprice : $propalline->subprice,
+			0,
+			isset($request_data->rang) ? $request_data->rang : $propalline->rang
 		);
 
 		if ($updateRes > 0) {
@@ -442,12 +547,11 @@ class Proposals extends DolibarrApi
 	 * Delete a line of given commercial proposal
 	 *
 	 *
-	 * @param int   $id             Id of commercial proposal to update
-	 * @param int   $lineid         Id of line to delete
+	 * @param 	int   			$id             Id of commercial proposal to update
+	 * @param 	int   			$lineid         Id of line to delete
+	 * @return  Object|false    				Object with cleaned properties
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
-	 *
-	 * @return int
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -467,9 +571,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// TODO Check the lineid $lineid is a line of ojbect
-
-		$updateRes = $this->propal->deleteline($lineid);
+		$updateRes = $this->propal->deleteline($lineid, $id);
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
@@ -483,10 +585,9 @@ class Proposals extends DolibarrApi
 	 * @param int    $id             Id of commercial proposal to update
 	 * @param int    $contactid      Id of contact to add
 	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 * @return array
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}
-	 *
-	 * @return int
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -517,19 +618,23 @@ class Proposals extends DolibarrApi
 			throw new RestException(500, 'Error when added the contact');
 		}
 
-		return $this->propal;
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Contact linked to the proposal'
+			)
+		);
 	}
 
 	 /**
 	  * Delete a contact type of given commercial proposal
 	  *
-	  * @param int    $id             Id of commercial proposal to update
-	  * @param int    $contactid      Row key of the contact in the array contact_ids.
-	  * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER).
+	  * @param 	int    $id             	Id of commercial proposal to update
+	  * @param 	int    $contactid      	Row key of the contact in the array contact_ids.
+	  * @param 	string $type           	Type of the contact (BILLING, SHIPPING, CUSTOMER).
+	  * @return Object    				Object with cleaned properties
 	  *
 	  * @url	DELETE {id}/contact/{contactid}/{type}
-	  *
-	  * @return int
 	  *
 	  * @throws RestException 401
 	  * @throws RestException 404
@@ -551,7 +656,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$contacts = $this->invoice->liste_contact();
+		$contacts = $this->propal->liste_contact();
 
 		foreach ($contacts as $contact) {
 			if ($contact['id'] == $contactid && $contact['code'] == $type) {
@@ -569,10 +674,9 @@ class Proposals extends DolibarrApi
 	/**
 	 * Update commercial proposal general fields (won't touch lines of commercial proposal)
 	 *
-	 * @param int   $id             Id of commercial proposal to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             Id of commercial proposal to update
+	 * @param 	array 	$request_data   Datas
+	 * @return 	Object    				Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -616,7 +720,6 @@ class Proposals extends DolibarrApi
 	 * Delete commercial proposal
 	 *
 	 * @param   int     $id         Commercial proposal ID
-	 *
 	 * @return  array
 	 */
 	public function delete($id)
@@ -649,10 +752,9 @@ class Proposals extends DolibarrApi
 	 * Set a proposal to draft
 	 *
 	 * @param   int     $id             Order ID
+	 * @return 	Object    				Object with cleaned properties
 	 *
 	 * @url POST    {id}/settodraft
-	 *
-	 * @return  array
 	 */
 	public function settodraft($id)
 	{
@@ -701,6 +803,7 @@ class Proposals extends DolibarrApi
 	 *
 	 * @param   int     $id             Commercial proposal ID
 	 * @param   int     $notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @return 	Object    				Object with cleaned properties
 	 *
 	 * @url POST    {id}/validate
 	 *
@@ -708,8 +811,6 @@ class Proposals extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
-	 *
-	 * @return array
 	 */
 	public function validate($id, $notrigger = 0)
 	{
@@ -754,10 +855,9 @@ class Proposals extends DolibarrApi
 	 * @param   int	    $status			Must be 2 (accepted) or 3 (refused)				{@min 2}{@max 3}
 	 * @param   string  $note_private   Add this mention at end of private note
 	 * @param   int     $notrigger      Disabled triggers
+	 * @return 	Object    				Object with cleaned properties
 	 *
 	 * @url POST    {id}/close
-	 *
-	 * @return  array
 	 */
 	public function close($id, $status, $note_private = '', $notrigger = 0)
 	{
@@ -799,10 +899,9 @@ class Proposals extends DolibarrApi
 	 * Set a commercial proposal billed. Could be also called setbilled
 	 *
 	 * @param   int     $id             Commercial proposal ID
+	 * @return 	Object    				Object with cleaned properties
 	 *
 	 * @url POST    {id}/setinvoiced
-	 *
-	 * @return  array
 	 */
 	public function setinvoiced($id)
 	{
@@ -843,6 +942,7 @@ class Proposals extends DolibarrApi
 	 *
 	 * @param   array           $data   Array with data to verify
 	 * @return  array
+	 *
 	 * @throws  RestException
 	 */
 	private function _validate($data)

@@ -31,6 +31,45 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 abstract class CommonOrder extends CommonObject
 {
 	use CommonIncoterm;
+
+
+		/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs, $conf;
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<div class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', 'order');
+		$return .= '</div>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<br><div class="info-box-ref opacitymedium tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
+		}
+		if (property_exists($this, 'total_ht')) {
+			$return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency).' '.$langs->trans('HT').'</div>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<div class="info-box-status margintoponly">'.$this->getLibStatut(5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
+	}
+
+	/**
+	 * @var string code
+	 */
+	public $code = "";
 }
 
 /**
@@ -73,10 +112,22 @@ abstract class CommonOrderLine extends CommonObjectLine
 	public $product_label;
 
 	/**
+	 * Boolean that indicates whether the product is available for sale '1' or not '0'
+	 * @var int
+	 */
+	public $product_tosell=0;
+
+	/**
+	 * Boolean that indicates whether the product is available for purchase '1' or not '0'
+	 * @var int
+	 */
+	public $product_tobuy=0;
+
+	/**
 	 * Product description
 	 * @var string
 	 */
-	public $product_desc;
+	 public $product_desc;
 
 	/**
 	 * Product use lot

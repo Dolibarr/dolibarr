@@ -41,6 +41,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -53,9 +54,6 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('newpayment'));
-
-// For encryption
-global $dolibarr_main_instance_unique_id;
 
 // Load translation files
 $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
@@ -86,8 +84,8 @@ if ($resultproject < 0) {
 }
 
 // Security check
-if (empty($conf->projet->enabled)) {
-	accessforbidden('', 0, 0, 1);
+if (empty($conf->project->enabled)) {
+	httponly_accessforbidden('Module Project not enabled');
 }
 
 

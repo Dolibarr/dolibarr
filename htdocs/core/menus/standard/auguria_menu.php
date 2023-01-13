@@ -115,7 +115,9 @@ class MenuManager
 		$this->tabMenu = $tabMenu;
 		//var_dump($tabMenu);
 
-		//if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
+		//if ($forcemainmenu == 'all') {
+		//var_dump($this->tabMenu);
+		//}
 	}
 
 
@@ -184,8 +186,10 @@ class MenuManager
 					print '<a class="alilevel0" href="#">';
 
 					// Add font-awesome
-					if ($val['level'] == 0 && $val['mainmenu'] == 'home') {
-						print '<span class="fa fa-home fa-fw paddingright" aria-hidden="true"></span>';
+					if ($val['level'] == 0 && !empty($val['prefix'])) {
+						print $val['prefix'];
+					} elseif ($val['level'] == 0 && $val['mainmenu'] == 'home') {
+						print '<span class="fa fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
 					}
 
 					print $val['titre'];
@@ -282,8 +286,7 @@ class MenuManager
 									//print ' data-ajax="false"';
 									print '>';
 									$lastlevel2[$val2['level']] = 'enabled';
-								} else // Not allowed but visible (greyed)
-								{
+								} else { // Not allowed but visible (greyed)
 									print '<a href="#" class="vsmenudisabled">';
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
@@ -294,6 +297,13 @@ class MenuManager
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
 							}
+
+							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
+								print $val2['prefix'];
+							} else {
+								print '<i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth"></i>';
+							}
+
 							print $val2['titre'];
 							if ($relurl2) {
 								if ($val2['enabled']) {	// Allowed
@@ -309,7 +319,15 @@ class MenuManager
 					print '</ul>';
 				}
 				if ($val['enabled'] == 2) {
-					print '<span class="vsmenudisabled">'.$val['titre'].'</span>';
+					print '<span class="spanlilevel0 vsmenudisabled">';
+
+					// Add font-awesome
+					if ($val['level'] == 0 && !empty($val['prefix'])) {
+						print $val['prefix'];
+					}
+
+					print $val['titre'];
+					print '</span>';
 				}
 				print '</li>';
 				print '</ul>'."\n";

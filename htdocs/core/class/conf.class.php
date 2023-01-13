@@ -51,7 +51,7 @@ class Conf
 	public $use_javascript_ajax;
 	//! To store if javascript/ajax is enabked
 	public $disable_compute;
-	//! Used to store current currency (ISO code like 'USD', 'EUR', ...)
+	//! Used to store current currency (ISO code like 'USD', 'EUR', ...). To get the currency symbol: $langs->getCurrencySymbol($this->currency)
 	public $currency;
 
 	//! Used to store current css (from theme)
@@ -133,6 +133,7 @@ class Conf
 			'barcode' => array(),
 			'models' => array(),
 			'societe' => array(),
+			'member' => array(),
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array()
@@ -145,27 +146,27 @@ class Conf
 		$this->expedition_bon = new stdClass();
 		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
-		$this->product			= new stdClass();
-		$this->service			= new stdClass();
-		$this->contrat			= new stdClass();
-		$this->actions			= new stdClass();
-		$this->agenda			= new stdClass();
+		$this->product = new stdClass();
+		$this->service = new stdClass();
+		$this->contrat = new stdClass();
+		$this->actions = new stdClass();
+		$this->agenda = new stdClass();
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
-		$this->facture			= new stdClass();
-		$this->contrat			= new stdClass();
+		$this->facture = new stdClass();
+		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
-		$this->adherent			= new stdClass();
+		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
-		$this->notification		= new stdClass();
+		$this->notification = new stdClass();
 		$this->mailing = new stdClass();
-		$this->expensereport	= new stdClass();
-		$this->productbatch		= new stdClass();
+		$this->expensereport = new stdClass();
+		$this->productbatch = new stdClass();
 	}
 
 	/**
 	 * Load setup values into conf object (read llx_const) for a specified entity
-	 * Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setValues is called.
+	 * Note that this->db->xxx, this->file->xxx and this->multicompany have been already loaded when setEntityValues is called.
 	 *
 	 * @param	DoliDB	$db			Database handler
 	 * @param	int		$entity		Entity to get
@@ -215,26 +216,26 @@ class Conf
 		$this->expedition_bon = new stdClass();
 		$this->delivery_note = new stdClass();
 		$this->fournisseur = new stdClass();
-		$this->product			= new stdClass();
-		$this->service			= new stdClass();
-		$this->contrat			= new stdClass();
-		$this->actions			= new stdClass();
-		$this->agenda			= new stdClass();
+		$this->product = new stdClass();
+		$this->service = new stdClass();
+		$this->contrat = new stdClass();
+		$this->actions = new stdClass();
+		$this->agenda = new stdClass();
 		$this->commande = new stdClass();
 		$this->propal = new stdClass();
-		$this->facture			= new stdClass();
-		$this->contrat			= new stdClass();
+		$this->facture = new stdClass();
+		$this->contrat = new stdClass();
 		$this->user	= new stdClass();
-		$this->adherent			= new stdClass();
+		$this->adherent = new stdClass();
 		$this->bank = new stdClass();
-		$this->notification		= new stdClass();
+		$this->notification = new stdClass();
 		$this->mailing = new stdClass();
-		$this->expensereport	= new stdClass();
-		$this->productbatch		= new stdClass();
+		$this->expensereport = new stdClass();
+		$this->productbatch = new stdClass();
 
 		// Common arrays
 		$this->cache = array();
-		$this->modules = array();;
+		$this->modules = array();
 		$this->modules_parts = array(
 			'css' => array(),
 			'js' => array(),
@@ -249,16 +250,19 @@ class Conf
 			'barcode' => array(),
 			'models' => array(),
 			'societe' => array(),
+			'member' => array(),
 			'hooks' => array(),
 			'dir' => array(),
 			'syslog' => array(),
 		);
 
 		if (!is_null($db) && is_object($db)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+
 			// Define all global constants into $this->global->key=value
 			$sql = "SELECT ".$db->decrypt('name')." as name,";
 			$sql .= " ".$db->decrypt('value')." as value, entity";
-			$sql .= " FROM ".MAIN_DB_PREFIX."const";
+			$sql .= " FROM ".$db->prefix()."const";
 			$sql .= " WHERE entity IN (0,".$this->entity.")";
 			$sql .= " ORDER BY entity"; // This is to have entity 0 first, then entity 1 that overwrite.
 
@@ -278,8 +282,7 @@ class Conf
 							$value = $_ENV['DOLIBARR_'.$key];
 						}
 
-						//if (! defined("$key")) define("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_HANDLERS during install)
-						$this->global->$key = $value;
+						$this->global->$key = dolDecrypt($value);
 
 						if ($value && strpos($key, 'MAIN_MODULE_') === 0) {
 							$reg = array();
@@ -346,7 +349,7 @@ class Conf
 				$db->free($resql);
 			}
 
-			// Include other local consts.php files and fetch their values to the corresponding database constants.
+			// Include other local file xxx/zzz_consts.php to overwrite some variables
 			if (!empty($this->global->LOCAL_CONSTS_FILES)) {
 				$filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
 				foreach ($filesList as $file) {
@@ -370,7 +373,7 @@ class Conf
 			}
 
 			// Object $mc
-			if (!defined('NOREQUIREMC') && !empty($this->multicompany->enabled)) {
+			if (!defined('NOREQUIREMC') && isModEnabled('multicompany')) {
 				global $mc;
 				$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 				if ($ret) {
@@ -424,7 +427,7 @@ class Conf
 			$rootfordata = DOL_DATA_ROOT;
 			$rootforuser = DOL_DATA_ROOT;
 			// If multicompany module is enabled, we redefine the root of data
-			if (!empty($this->multicompany->enabled) && !empty($this->entity) && $this->entity > 1) {
+			if (isModEnabled('multicompany') && !empty($this->entity) && $this->entity > 1) {
 				$rootfordata .= '/'.$this->entity;
 			}
 			// Set standard temporary folder name or global override
@@ -496,9 +499,9 @@ class Conf
 			// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
 			// Sous module bons d'expedition
-			$this->expedition_bon->enabled = (!empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? $this->global->MAIN_SUBMODULE_EXPEDITION : 0);
+			$this->expedition_bon->enabled = (empty($this->global->MAIN_SUBMODULE_EXPEDITION) ? 0 : $this->global->MAIN_SUBMODULE_EXPEDITION);
 			// Sub module delivery note  Sous module bons de livraison
-			$this->delivery_note->enabled = (!empty($this->global->MAIN_SUBMODULE_DELIVERY) ? $this->global->MAIN_SUBMODULE_DELIVERY : 0);
+			$this->delivery_note->enabled = (empty($this->global->MAIN_SUBMODULE_DELIVERY) ? 0 : $this->global->MAIN_SUBMODULE_DELIVERY);
 
 			// Module fournisseur
 			if (!empty($this->fournisseur)) {
@@ -616,15 +619,15 @@ class Conf
 			if (!empty($this->productbatch->enabled)) {
 				$this->global->STOCK_CALCULATE_ON_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER = 0;
-				$this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
-				$this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 0;
+				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) $this->global->STOCK_CALCULATE_ON_SHIPMENT = 1;
+				if (empty($this->global->STOCK_CALCULATE_ON_SHIPMENT)) $this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE = 1;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL = 0;
 				$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER = 0;
 				if (empty($this->reception->enabled)) {
 					$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER = 1;
 				} else {
-					$this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
-					$this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 0;
+					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)) $this->global->STOCK_CALCULATE_ON_RECEPTION = 1;
+					if (empty($this->global->STOCK_CALCULATE_ON_RECEPTION)) $this->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE = 1;
 				}
 			}
 
@@ -673,6 +676,9 @@ class Conf
 				$this->global->PRODUIT_LIMIT_SIZE = 1000;
 			}
 			$this->product->limit_size = $this->global->PRODUIT_LIMIT_SIZE;
+
+			// Set PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE, may be modified later according to browser
+			$this->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = (isset($this->global->PRODUIT_DESC_IN_FORM) ? $this->global->PRODUIT_DESC_IN_FORM : 0);
 
 			// conf->theme et $this->css
 			if (empty($this->global->MAIN_THEME)) {
@@ -746,8 +752,8 @@ class Conf
 				$this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT = 1; // allow html content into free footer text
 			}
 
-			// Default max file size for upload
-			$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
+			// Default max file size for upload (deprecated)
+			//$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
 
 			// By default, we propagate contacts
 			if (!isset($this->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN)) {
@@ -774,6 +780,11 @@ class Conf
 				$this->global->MULTICURRENCY_USE_ORIGIN_TX = 1;
 			}
 
+			// By default, use an enclosure " for field with CRL or LF into content, + we also remove also CRL/LF chars.
+			if (!isset($this->global->USE_STRICT_CSV_RULES)) {
+				$this->global->USE_STRICT_CSV_RULES = 2;
+			}
+
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
 			if (!isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && empty($this->global->STRIPE_USE_NEW_CHECKOUT)) {
 				$this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1;
@@ -781,7 +792,7 @@ class Conf
 
 			// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 			if (!isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) {
-				$this->global->MAIN_MODULES_FOR_EXTERNAL = 'user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog'; // '' means 'all'. Note that contact is added here as it should be a module later.
+				$this->global->MAIN_MODULES_FOR_EXTERNAL = 'user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,reception,agenda,resource,adherent,blockedlog'; // '' means 'all'. Note that contact is added here as it should be a module later.
 			}
 			if (!empty($this->modules_parts['moduleforexternal'])) {		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list
 				foreach ($this->modules_parts['moduleforexternal'] as $key => $value) {
@@ -910,8 +921,12 @@ class Conf
 				// Value 1 makes CSRF check for all POST parameters only
 				// Value 2 makes also CSRF check for GET requests with action = a sensitive requests like action=del, action=remove...
 				// Value 3 makes also CSRF check for all GET requests with a param action or massaction
-				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 1;
+				$this->global->MAIN_SECURITY_CSRF_WITH_TOKEN = 2;
 				// Note: Set MAIN_SECURITY_CSRF_TOKEN_RENEWAL_ON_EACH_CALL=1 to have a renewal of token at each page call instead of each session (not recommended)
+			}
+
+			if (!isset($this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA)) {
+				$this->global->MAIN_MAIL_ADD_INLINE_IMAGES_IF_DATA = 1;
 			}
 
 			if (!defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
@@ -981,7 +996,7 @@ class Conf
 			}
 
 			// Object $mc
-			if (!defined('NOREQUIREMC') && !empty($this->multicompany->enabled)) {
+			if (!defined('NOREQUIREMC') && isModEnabled('multicompany')) {
 				if (is_object($mc)) {
 					$mc->setValues($this);
 				}
@@ -1035,11 +1050,14 @@ class Conf
 		if (!empty($this->file->mailing_limit_sendbyweb)) {
 			$this->global->MAILING_LIMIT_SENDBYWEB = $this->file->mailing_limit_sendbyweb;
 		}
-		if (empty($this->global->MAILING_LIMIT_SENDBYWEB)) {
+		if (empty($this->global->MAILING_LIMIT_SENDBYWEB)) {	// Limit by web can't be 0
 			$this->global->MAILING_LIMIT_SENDBYWEB = 25;
 		}
 		if (!empty($this->file->mailing_limit_sendbycli)) {
 			$this->global->MAILING_LIMIT_SENDBYCLI = $this->file->mailing_limit_sendbycli;
+		}
+		if (!empty($this->file->mailing_limit_sendbyday)) {
+			$this->global->MAILING_LIMIT_SENDBYDAY = $this->file->mailing_limit_sendbyday;
 		}
 
 		return 0;

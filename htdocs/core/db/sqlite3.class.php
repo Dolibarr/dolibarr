@@ -38,7 +38,10 @@ class DoliDBSqlite3 extends DoliDB
 	const LABEL = 'Sqlite3';
 	//! Version min database
 	const VERSIONMIN = '3.0.0';
-	/** @var SQLite3Result Resultset of last query */
+
+	/**
+	 * @var SQLite3Result|boolean 	Resultset of last query
+	 */
 	private $_results;
 
 	const WEEK_MONDAY_FIRST = 1;
@@ -647,14 +650,14 @@ class DoliDBSqlite3 extends DoliDB
 	}
 
 	/**
-	 *	Escape a string to insert data
+	 *	Escape a string to insert data into a like
 	 *
 	 *	@param	string	$stringtoencode		String to escape
 	 *	@return	string						String escaped
 	 */
-	public function escapeunderscore($stringtoencode)
+	public function escapeforlike($stringtoencode)
 	{
-		return str_replace('_', '\_', $stringtoencode);
+		return str_replace(array('_', '\\', '%'), array('\_', '\\\\', '\%'), (string) $stringtoencode);
 	}
 
 	/**
@@ -1026,7 +1029,7 @@ class DoliDBSqlite3 extends DoliDB
 	 *
 	 *	@param	string		$table	Name of table
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
-	 *	@return	SQLite3Result		Resource
+	 *	@return	bool|SQLite3Result		Resource
 	 */
 	public function DDLDescTable($table, $field = "")
 	{

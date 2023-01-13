@@ -54,8 +54,6 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'order_supplier';
 		$list = array();
 
@@ -120,9 +118,11 @@ abstract class ModeleNumRefSuppliersOrders
 
 	/**  Returns next value assigned
 	 *
-	 *   @return     string      Valeur
+	 *  @param	Societe		$objsoc     Object third party
+	 *  @param  Object	    $object		Object
+	 *  @return string      			Valeur
 	 */
-	public function getNextValue()
+	public function getNextValue($objsoc = 0, $object = '')
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

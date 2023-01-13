@@ -206,7 +206,7 @@ class Don extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $conf, $user, $langs;
+		global $conf;
 
 		$now = dol_now();
 
@@ -224,10 +224,10 @@ class Don extends CommonObject
 			$num_socs = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num_socs) {
-				$i++;
-
 				$row = $this->db->fetch_row($resql);
 				$socids[$i] = $row[0];
+
+				$i++;
 			}
 		}
 
@@ -237,7 +237,7 @@ class Don extends CommonObject
 		$this->specimen = 1;
 		$this->lastname = 'Doe';
 		$this->firstname = 'John';
-		$this->socid = 1;
+		$this->socid = empty($socids[0]) ? 0 : $socids[0];
 		$this->date = $now;
 		$this->date_valid = $now;
 		$this->amount = 100.90;
@@ -406,9 +406,9 @@ class Don extends CommonObject
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", null";
 		$sql .= ", '".$this->db->idate($this->date)."'";
-		$sql .= ", '".$this->db->escape(trim($this->email))."'";
-		$sql .= ", '".$this->db->escape(trim($this->phone))."'";
-		$sql .= ", '".$this->db->escape(trim($this->phone_mobile))."'";
+		$sql .= ", '".(!empty($this->email) ? $this->db->escape(trim($this->email)) : "")."'";
+		$sql .= ", '".(!empty($this->phone) ? $this->db->escape(trim($this->phone)) : "")."'";
+		$sql .= ", '".(!empty($this->phone_mobile) ? $this->db->escape(trim($this->phone_mobile)) : "")."'";
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -832,8 +832,8 @@ class Don extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->write))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->bom->bom_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->write))
+		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->bom->bom_advance->validate))))
 		 {
 		 $this->error='Permission denied';
 		 return -1;
@@ -913,7 +913,7 @@ class Don extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $notooltip = 0, $moretitle = '', $save_lastsearch_value = -1)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -953,7 +953,15 @@ class Don extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
-
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 
@@ -966,7 +974,7 @@ class Don extends CommonObject
 	public function info($id)
 	{
 		$sql = 'SELECT d.rowid, d.datec, d.fk_user_author, d.fk_user_valid,';
-		$sql .= ' d.tms';
+		$sql .= ' d.tms as datem';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'don as d';
 		$sql .= ' WHERE d.rowid = '.((int) $id);
 
@@ -977,18 +985,11 @@ class Don extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_modification = $vuser;
-				}
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->date_modification = (!empty($obj->tms) ? $this->db->jdate($obj->tms) : "");
 			}
 			$this->db->free($result);
 		} else {
@@ -1100,18 +1101,18 @@ class Don extends CommonObject
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param  DoliDB  $db             Database handler
-	 * @param  int     $origin_id      Old third-party id
-	 * @param  int     $dest_id        New third-party id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'don'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -1139,5 +1140,40 @@ class Don extends CommonObject
 			$sum_amount = (float) $this->db->fetch_object($resql)->sum_amount;
 			return (float) $this->amount - $sum_amount;
 		}
+	}
+
+		/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @return		string		HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '')
+	{
+		global $langs;
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		if (property_exists($this, 'date')) {
+			$return .= ' | <span class="opacitymedium" >'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->date).'</span>';
+		}
+		if (property_exists($this, 'societe') && !empty($this->societe)) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Company").'</span> : <span class="info-box-label">'.$this->societe.'</span>';
+		}
+		if (property_exists($this, 'amount')) {
+			$return .= '<br><span class="opacitymedium" >'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
+		}
+		if (method_exists($this, 'LibStatut')) {
+			$return .= '<br><div class="info-box-status margintoponly">'.$this->LibStatut($this->labelStatus, 5).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

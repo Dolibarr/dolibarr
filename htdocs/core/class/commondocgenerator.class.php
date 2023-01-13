@@ -61,6 +61,32 @@ abstract class CommonDocGenerator
 	public $update_main_doc_field;
 
 	/**
+	 * @var string	The name of constant to use to scan ODT files (Exemple: 'COMMANDE_ADDON_PDF_ODT_PATH')
+	 */
+	public $scandir;
+
+	public $page_hauteur;
+	public $page_largeur;
+	public $marge_gauche;
+	public $marge_droite;
+	public $marge_haute;
+	public $marge_basse;
+
+	public $option_logo;
+	public $option_tva;
+	public $option_multilang;
+	public $option_freetext;
+	public $option_draft_watermark;
+
+	public $option_modereg;
+	public $option_condreg;
+	public $option_escompte;
+	public $option_credit_note;
+
+	public $emetteur;
+
+
+	/**
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      Database handler
@@ -625,7 +651,7 @@ abstract class CommonDocGenerator
 		);
 
 		// Units
-		if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			  $resarray['line_unit'] = $outputlangs->trans($line->getLabelOfUnit('long'));
 			  $resarray['line_unit_short'] = $outputlangs->trans($line->getLabelOfUnit('short'));
 		}
@@ -655,13 +681,13 @@ abstract class CommonDocGenerator
 
 				if ($columns != "") {
 					$columns = substr($columns, 0, strlen($columns) - 2);
-					$resql = $this->db->query("SELECT ".$columns." FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields AS ex INNER JOIN ".MAIN_DB_PREFIX."product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = '".$this->db->escape($line->ref_supplier)."'");
+					$resql = $this->db->query("SELECT ".$columns." FROM ".$this->db->prefix()."product_fournisseur_price_extrafields AS ex INNER JOIN ".$this->db->prefix()."product_fournisseur_price AS f ON ex.fk_object = f.rowid WHERE f.ref_fourn = '".$this->db->escape($line->ref_supplier)."'");
 
 					if ($this->db->num_rows($resql) > 0) {
 						$resql = $this->db->fetch_object($resql);
 
 						foreach ($extralabels as $key => $label) {
-							$resarray['line_product_supplier_'.$key] = $resql->{$key};
+							$resarray['line_product_supplier_'.$key] = $resql->$key;
 						}
 					}
 				}
@@ -869,7 +895,12 @@ abstract class CommonDocGenerator
 					//Add value to store price with currency
 					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key.'_currency' => $object->array_options['options_'.$key.'_currency']));
 				} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'select') {
-					$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$object->array_options['options_'.$key]];
+					$valueofselectkey = $object->array_options['options_'.$key];
+					if (array_key_exists($valueofselectkey, $extrafields->attributes[$object->table_element]['param'][$key]['options'])) {
+						$object->array_options['options_'.$key] = $extrafields->attributes[$object->table_element]['param'][$key]['options'][$valueofselectkey];
+					} else {
+						$object->array_options['options_'.$key] = '';
+					}
 				} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'checkbox') {
 					$valArray = explode(',', $object->array_options['options_'.$key]);
 					$output = array();
@@ -919,7 +950,11 @@ abstract class CommonDocGenerator
 					}
 				}
 
-				$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
+				if (array_key_exists('options_'.$key, $object->array_options)) {
+					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
+				} else {
+					$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => ''));
+				}
 			}
 		}
 
@@ -981,12 +1016,10 @@ abstract class CommonDocGenerator
 	 *      @param	int				$hidedetails		Do not show line details
 	 *      @param	int				$hidedesc			Do not show desc
 	 *      @param	int				$hideref			Do not show ref
-	 *      @return	null
+	 *      @return	void
 	 */
 	public function prepareArrayColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf;
-
 		$this->defineColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
 
@@ -1075,10 +1108,10 @@ abstract class CommonDocGenerator
 	}
 
 	/**
-	 *   	get column position rank from column key
+	 *  get column position rank from column key
 	 *
-	 *   	@param	string		$colKey    		the column key
-	 *      @return	int         rank on success and -1 on error
+	 *  @param	string		$colKey    		the column key
+	 *  @return	int         rank on success and -1 on error
 	 */
 	public function getColumnRank($colKey)
 	{
@@ -1091,11 +1124,11 @@ abstract class CommonDocGenerator
 	/**
 	 *  get column position rank from column key
 	 *
-	 *  @param	string		$newColKey    	the new column key
-	 *  @param	array		$defArray    	a single column definition array
-	 *  @param	string		$targetCol    	target column used to place the new column beside
-	 *  @param	bool		$insertAfterTarget    	insert before or after target column ?
-	 *  @return	int         new rank on success and -1 on error
+	 *  @param	string		$newColKey    		the new column key
+	 *  @param	array		$defArray    		a single column definition array
+	 *  @param	string		$targetCol    		target column used to place the new column beside
+	 *  @param	bool		$insertAfterTarget  insert before or after target column ?
+	 *  @return	int         					new rank on success and -1 on error
 	 */
 	public function insertNewColumnDef($newColKey, $defArray, $targetCol = false, $insertAfterTarget = false)
 	{
@@ -1136,11 +1169,11 @@ abstract class CommonDocGenerator
 	/**
 	 *  print standard column content
 	 *
-	 *  @param	TCPDF		    $pdf    	pdf object
-	 *  @param	float		$curY    	curent Y position
-	 *  @param	string		$colKey    	the column key
-	 *  @param	string		$columnText   column text
-	 *  @return	null
+	 *  @param	TCPDF		$pdf    		pdf object
+	 *  @param	float		$curY    		curent Y position
+	 *  @param	string		$colKey    		the column key
+	 *  @param	string		$columnText   	column text
+	 *  @return	int							<0 if KO, >= if OK
 	 */
 	public function printStdColumnContent($pdf, &$curY, $colKey, $columnText = '')
 	{
@@ -1158,7 +1191,7 @@ abstract class CommonDocGenerator
 		}
 		if (!$reshook) {
 			if (empty($columnText)) {
-				return;
+				return 0;
 			}
 			$pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
 			$colDef = $this->cols[$colKey];
@@ -1171,22 +1204,24 @@ abstract class CommonDocGenerator
 			// restore cell padding
 			$pdf->setCellPaddings($curentCellPaddinds['L'], $curentCellPaddinds['T'], $curentCellPaddinds['R'], $curentCellPaddinds['B']);
 		}
+
+		return 0;
 	}
 
 
 	/**
 	 *  print description column content
 	 *
-	 *  @param	TCPDF		$pdf    	pdf object
-	 *  @param	float		$curY    	curent Y position
-	 *  @param	string		$colKey    	the column key
-	 *  @param  object      $object CommonObject
-	 *  @param  int         $i  the $object->lines array key
-	 *  @param  Translate $outputlangs    Output language
-	 *  @param  int $hideref hide ref
-	 *  @param  int $hidedesc hide desc
-	 *  @param  int $issupplierline if object need supplier product
-	 *  @return null
+	 *  @param	TCPDF		$pdf    		pdf object
+	 *  @param	float		$curY    		curent Y position
+	 *  @param	string		$colKey    		the column key
+	 *  @param  object      $object 		CommonObject
+	 *  @param  int         $i  			the $object->lines array key
+	 *  @param  Translate 	$outputlangs    Output language
+	 *  @param  int 		$hideref 		hide ref
+	 *  @param  int 		$hidedesc 		hide desc
+	 *  @param  int 		$issupplierline if object need supplier product
+	 *  @return void
 	 */
 	public function printColDescContent($pdf, &$curY, $colKey, $object, $i, $outputlangs, $hideref = 0, $hidedesc = 0, $issupplierline = 0)
 	{
@@ -1230,7 +1265,7 @@ abstract class CommonDocGenerator
 		global $hookmanager;
 
 		if (empty($object->table_element)) {
-			return;
+			return '';
 		}
 
 		$extrafieldsKeyPrefix = "options_";
@@ -1253,7 +1288,8 @@ abstract class CommonDocGenerator
 		}
 		$extrafields = $this->extrafieldsCache;
 
-		$extrafieldOutputContent = $extrafields->showOutputField($extrafieldKey, $object->array_options[$extrafieldOptionsKey], '', $object->table_element);
+		$extrafieldOutputContent = '';
+		if (isset($object->array_options[$extrafieldOptionsKey])) $extrafieldOutputContent = $extrafields->showOutputField($extrafieldKey, $object->array_options[$extrafieldOptionsKey], '', $object->table_element);
 
 		// TODO : allow showOutputField to be pdf public friendly, ex: in a link to object, clean getNomUrl to remove link and images... like a getName methode ...
 		if ($extrafields->attributes[$object->table_element]['type'][$extrafieldKey] == 'link') {
@@ -1282,10 +1318,10 @@ abstract class CommonDocGenerator
 	/**
 	 *  display extrafields columns content
 	 *
-	 *  @param	object		$object    	line of common object
-	 *  @param Translate $outputlangs    Output language
-	 *  @param array $params    array of additionals parameters
-	 *  @return	double  max y value
+	 *  @param	object		$object    		line of common object
+	 *  @param 	Translate 	$outputlangs    Output language
+	 *  @param 	array 		$params    		array of additionals parameters
+	 *  @return	string  					Html string
 	 */
 	public function getExtrafieldsInHtml($object, $outputlangs, $params = array())
 	{
@@ -1295,7 +1331,7 @@ abstract class CommonDocGenerator
 			return;
 		}
 
-		// Load extrafiels if not allready does
+		// Load extrafields if not allready done
 		if (empty($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
@@ -1330,7 +1366,6 @@ abstract class CommonDocGenerator
 		);
 
 		$params = $params + $defaultParams;
-
 
 		/**
 		 * @var $extrafields ExtraFields
@@ -1558,18 +1593,16 @@ abstract class CommonDocGenerator
 	 *  @param	object			$object    		common object det
 	 *  @param	Translate		$outputlangs    langs
 	 *  @param	int			   $hidedetails		Do not show line details
-	 *  @return	null
+	 *  @return	int								<0 if KO, >=0 if OK
 	 */
 	public function defineColumnExtrafield($object, $outputlangs, $hidedetails = 0)
 	{
-		global $conf;
-
 		if (!empty($hidedetails)) {
-			return;
+			return 0;
 		}
 
 		if (empty($object->table_element)) {
-			return;
+			return 0;
 		}
 
 		// Load extrafiels if not allready does
@@ -1639,5 +1672,7 @@ abstract class CommonDocGenerator
 				$this->insertNewColumnDef("options_".$key, $def);
 			}
 		}
+
+		return 1;
 	}
 }

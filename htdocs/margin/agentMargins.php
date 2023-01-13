@@ -23,6 +23,7 @@
  *	\brief      Page des marges par agent commercial
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -47,6 +48,11 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) {
 	$sortorder = "ASC";
+}
+if ($user->rights->margins->read->all) {
+	$agentid = GETPOST('agentid', 'int');
+} else {
+	$agentid = $user->id;
 }
 if (!$sortfield) {
 	if ($agentid > 0) {
@@ -73,11 +79,6 @@ if (!empty($enddatemonth)) {
 }
 
 // Security check
-if ($user->rights->margins->read->all) {
-	$agentid = GETPOST('agentid', 'int');
-} else {
-	$agentid = $user->id;
-}
 $result = restrictedArea($user, 'margins');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -108,7 +109,8 @@ $text = $langs->trans("Margins");
 //print load_fiche_titre($text);
 
 // Show tabs
-$head = marges_prepare_head($user);
+$head = marges_prepare_head();
+
 $titre = $langs->trans("Margins");
 $picto = 'margin';
 
@@ -315,7 +317,8 @@ if ($result) {
 			$sortfield = 'name';
 		}
 		$group_list = dol_sort_array($group_list, $sortfield, $sortorder);
-
+		$cumul_achat = 0;
+		$cumul_vente = 0;
 		foreach ($group_list as $group_id => $group_array) {
 			$pa = $group_array['buying_price'];
 			$pv = $group_array['selling_price'];

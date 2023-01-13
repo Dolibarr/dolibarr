@@ -20,9 +20,9 @@
  */
 
 /**
- *  \file       skill_note.php
- *  \ingroup    hrm
- *  \brief      Tab for notes on skill
+ *    \file       htdocs/hrm/skill_note.php
+ *    \ingroup    hrm
+ *    \brief      Tab for notes on skill
  */
 
 
@@ -33,12 +33,12 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "companies"));
+$langs->loadLangs(array('hrm', 'companies'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id         = GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$action     = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -53,10 +53,11 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->hrm->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = $conf->hrm->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
-$permissionnote = $user->rights->hrm->all->write;
+// Permissions
+$permissionnote   = $user->rights->hrm->all->write;
 $permissiontoread = $user->rights->hrm->all->read; // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)

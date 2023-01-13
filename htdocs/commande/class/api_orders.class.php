@@ -28,7 +28,6 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
  */
 class Orders extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -109,11 +108,11 @@ class Orders extends DolibarrApi
 	 *
 	 * Return an array with order informations
 	 *
-	 * @param       int         $id            ID of order
+	 * @param       int         $id            	ID of order
 	 * @param		string		$ref			Ref of object
 	 * @param		string		$ref_ext		External reference of object
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
-	 * @return 	array|mixed data without useless information
+	 * @param       int         $contact_list  	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @return  	Object              		Object with cleaned properties
 	 *
 	 * @throws 	RestException
 	 */
@@ -133,8 +132,16 @@ class Orders extends DolibarrApi
 		}
 
 		// Add external contacts ids
-		$this->commande->contacts_ids = $this->commande->liste_contact(-1, 'external', $contact_list);
+		$tmparray = $this->commande->liste_contact(-1, 'external', $contact_list);
+		if (is_array($tmparray)) {
+			$this->commande->contacts_ids = $tmparray;
+		}
 		$this->commande->fetchObjectLinked();
+
+		// Add online_payment_url, cf #20477
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		$this->commande->online_payment_url = getOnlinePaymentUrl(0, 'order', $this->commande->ref);
+
 		return $this->_cleanObjectDatas($this->commande);
 	}
 
@@ -229,7 +236,14 @@ class Orders extends DolibarrApi
 				$commande_static = new Commande($this->db);
 				if ($commande_static->fetch($obj->rowid)) {
 					// Add external contacts ids
-					$commande_static->contacts_ids = $commande_static->liste_contact(-1, 'external', 1);
+					$tmparray = $commande_static->liste_contact(-1, 'external', 1);
+					if (is_array($tmparray)) {
+						$commande_static->contacts_ids = $tmparray;
+					}
+					// Add online_payment_url, cf #20477
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+					$commande_static->online_payment_url = getOnlinePaymentUrl(0, 'order', $commande_static->ref);
+
 					$obj_ret[] = $this->_cleanObjectDatas($commande_static);
 				}
 				$i++;
@@ -284,7 +298,7 @@ class Orders extends DolibarrApi
 	 *
 	 * @url	GET {id}/lines
 	 *
-	 * @return int
+	 * @return array
 	 */
 	public function getLines($id)
 	{
@@ -335,8 +349,8 @@ class Orders extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->commande->addline(
 			$request_data->desc,
@@ -378,13 +392,12 @@ class Orders extends DolibarrApi
 	/**
 	 * Update a line to given order
 	 *
-	 * @param int   $id             Id of order to update
-	 * @param int   $lineid         Id of line to update
-	 * @param array $request_data   OrderLine data
+	 * @param 	int   $id             Id of order to update
+	 * @param 	int   $lineid         Id of line to update
+	 * @param 	array $request_data   OrderLine data
+	 * @return	Object|false		  Object with cleaned properties
 	 *
 	 * @url	PUT {id}/lines/{lineid}
-	 *
-	 * @return array|bool
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
@@ -403,8 +416,8 @@ class Orders extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
-		$request_data->label = checkVal($request_data->label);
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
+		$request_data->label = sanitizeVal($request_data->label);
 
 		$updateRes = $this->commande->updateline(
 			$lineid,
@@ -430,7 +443,8 @@ class Orders extends DolibarrApi
 			$request_data->fk_unit,
 			$request_data->multicurrency_subprice,
 			0,
-			$request_data->ref_ext
+			$request_data->ref_ext,
+			$request_data->rang
 		);
 
 		if ($updateRes > 0) {
@@ -442,15 +456,13 @@ class Orders extends DolibarrApi
 	}
 
 	/**
-	 * Delete a line to given order
+	 * Delete a line of a given order
 	 *
-	 *
-	 * @param int   $id             Id of order to update
-	 * @param int   $lineid         Id of line to delete
+	 * @param 	int   	$id             Id of order to update
+	 * @param 	int   	$lineid         Id of line to delete
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
-	 *
-	 * @return int
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -470,9 +482,7 @@ class Orders extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// TODO Check the lineid $lineid is a line of ojbect
-
-		$updateRes = $this->commande->deleteline(DolibarrApiAccess::$user, $lineid);
+		$updateRes = $this->commande->deleteline(DolibarrApiAccess::$user, $lineid, $id);
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
@@ -485,12 +495,11 @@ class Orders extends DolibarrApi
 	 *
 	 * Return an array with contact informations
 	 *
-	 * @param int    $id   ID of order
-	 * @param string $type Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 * @param 	int    	$id   		ID of order
+	 * @param 	string 	$type 		Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 * @return	Object				Object with cleaned properties
 	 *
 	 * @url	GET {id}/contacts
-	 *
-	 * @return 	array data without useless information
 	 *
 	 * @throws 	RestException
 	 */
@@ -520,10 +529,9 @@ class Orders extends DolibarrApi
 	 * @param int    $id             Id of order to update
 	 * @param int    $contactid      Id of contact to add
 	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 * @return array
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}
-	 *
-	 * @return int
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -570,7 +578,7 @@ class Orders extends DolibarrApi
 	 *
 	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
-	 * @return int
+	 * @return array
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -614,10 +622,9 @@ class Orders extends DolibarrApi
 	/**
 	 * Update order general fields (won't touch lines of order)
 	 *
-	 * @param int   $id             Id of order to update
-	 * @param array $request_data   Datas
-	 *
-	 * @return int
+	 * @param 	int   	$id             Id of order to update
+	 * @param 	array 	$request_data   Datas
+	 * @return	Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -735,6 +742,10 @@ class Orders extends DolibarrApi
 
 		$this->commande->fetchObjectLinked();
 
+		//fix #20477 : add online_payment_url
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+		$this->commande->online_payment_url = getOnlinePaymentUrl(0, 'order', $this->commande->ref);
+
 		return $this->_cleanObjectDatas($this->commande);
 	}
 
@@ -757,7 +768,6 @@ class Orders extends DolibarrApi
 	 */
 	public function reopen($id)
 	{
-
 		if (!DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
 		}
@@ -782,11 +792,10 @@ class Orders extends DolibarrApi
 	/**
 	 * Classify the order as invoiced. Could be also called setbilled
 	 *
-	 * @param int   $id           Id of the order
+	 * @param 	int   $id           Id of the order
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url     POST {id}/setinvoiced
-	 *
-	 * @return int
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -831,10 +840,9 @@ class Orders extends DolibarrApi
 	 *
 	 * @param   int     $id             Order ID
 	 * @param   int     $notrigger      Disabled triggers
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/close
-	 *
-	 * @return  int
 	 */
 	public function close($id, $notrigger = 0)
 	{
@@ -877,10 +885,9 @@ class Orders extends DolibarrApi
 	 *
 	 * @param   int     $id             Order ID
 	 * @param   int 	$idwarehouse    Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/settodraft
-	 *
-	 * @return  array
 	 */
 	public function settodraft($id, $idwarehouse = -1)
 	{
@@ -922,12 +929,11 @@ class Orders extends DolibarrApi
 	/**
 	 * Create an order using an existing proposal.
 	 *
-	 *
 	 * @param int   $proposalid       Id of the proposal
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url     POST /createfromproposal/{proposalid}
 	 *
-	 * @return int
 	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 404

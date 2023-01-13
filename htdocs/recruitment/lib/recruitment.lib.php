@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2020 Adminson Alicealalalamdskfldmjgdfgdfhfghgfh <testldr9@dolicloud.com>
+/* Copyright (C) 2019   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2022   Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,11 @@
  */
 function recruitmentAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('recruitment_recruitmentjobposition');
+	$extrafields->fetch_name_optionals_label('recruitment_recruitmentcandidature');
 
 	$langs->load("recruitment");
 
@@ -52,11 +57,19 @@ function recruitmentAdminPrepareHead()
 
 	$head[$h][0] = dol_buildpath("/recruitment/admin/jobposition_extrafields.php", 1);
 	$head[$h][1] = $langs->trans("ExtrafieldsJobPosition");
+	$nbExtrafields = $extrafields->attributes['recruitment_recruitmentjobposition']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'jobposition_extrafields';
 	$h++;
 
 	$head[$h][0] = dol_buildpath("/recruitment/admin/candidature_extrafields.php", 1);
 	$head[$h][1] = $langs->trans("ExtrafieldsApplication");
+	$nbExtrafields = $extrafields->attributes['recruitment_recruitmentcandidature']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'candidature_extrafields';
 	$h++;
 
@@ -69,6 +82,8 @@ function recruitmentAdminPrepareHead()
 	//	'entity:-tabname:Title:@recruitment:/recruitment/mypage.php?id=__ID__'
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'recruitment');
+
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'recruitment', 'remove');
 
 	return $head;
 }

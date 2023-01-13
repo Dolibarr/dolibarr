@@ -25,6 +25,7 @@
  *	\brief      Home page of interventional module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
@@ -149,7 +150,7 @@ if ($resql) {
 	foreach ($listofstatus as $status) {
 		if (!$conf->use_javascript_ajax) {
 			print '<tr class="oddeven">';
-			print '<td>'.$fichinterstatic->LibStatut($status, $bool, 0).'</td>';
+			print '<td>'.$fichinterstatic->LibStatut($status, 0).'</td>';
 			print '<td class="right"><a href="list.php?search_status='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).' ';
 			print $fichinterstatic->LibStatut($status, 3);
 			print '</a>';
@@ -169,7 +170,7 @@ if ($resql) {
 /*
  * Draft orders
  */
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -292,7 +293,7 @@ if ($resql) {
  * interventions to process
  */
 
-if (!empty($conf->ficheinter->enabled)) {
+if (isModEnabled('ficheinter')) {
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";

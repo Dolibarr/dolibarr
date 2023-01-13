@@ -68,7 +68,7 @@ class modUser extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("main", "users", "companies", "members", "salaries", "hrm");
 		$this->always_enabled = true; // Can't be disabled
 
@@ -225,13 +225,16 @@ class modUser extends DolibarrModules
 			'u.accountancy_code'=>"UserAccountancyCode",
 			'u.address'=>"Address", 'u.zip'=>"Zip", 'u.town'=>"Town",
 			'u.office_phone'=>'Phone', 'u.user_mobile'=>"Mobile", 'u.office_fax'=>'Fax',
-			'u.email'=>"Email", 'u.note'=>"Note", 'u.signature'=>'Signature',
+			'u.email'=>"Email", 'u.note_public'=>"NotePublic", 'u.note_private'=>"NotePrivate", 'u.signature'=>'Signature',
 			'u.fk_user'=>'HierarchicalResponsible', 'u.thm'=>'THM', 'u.tjm'=>'TJM', 'u.weeklyhours'=>'WeeklyHours',
-			'u.dateemployment'=>'DateEmployment', 'u.salary'=>'Salary', 'u.color'=>'Color', 'u.api_key'=>'ApiKey',
+			'u.dateemployment'=>'DateEmploymentStart', 'u.dateemploymentend'=>'DateEmploymentEnd', 'u.salary'=>'Salary', 'u.color'=>'Color', 'u.api_key'=>'ApiKey',
 			'u.birth'=>'DateOfBirth',
 			'u.datec'=>"DateCreation", 'u.tms'=>"DateLastModification",
 			'u.admin'=>"Administrator", 'u.statut'=>'Status', 'u.datelastlogin'=>'LastConnexion', 'u.datepreviouslogin'=>'PreviousConnexion',
-			'u.fk_socpeople'=>"IdContact", 'u.fk_soc'=>"IdCompany", 'u.fk_member'=>"MemberId",
+			'u.fk_socpeople'=>"IdContact", 'u.fk_soc'=>"IdCompany",
+			'u.fk_member'=>"MemberId",
+			"a.firstname"=>"MemberFirstname",
+			"a.lastname"=>"MemberLastname",
 			'g.nom'=>"Group"
 		);
 		$this->export_TypeFields_array[$r] = array(
@@ -239,10 +242,18 @@ class modUser extends DolibarrModules
 			'u.accountancy_code'=>'Text',
 			'u.address'=>"Text", 'u.zip'=>"Text", 'u.town'=>"Text",
 			'u.office_phone'=>'Text', 'u.user_mobile'=>'Text', 'u.office_fax'=>'Text',
-			'u.email'=>'Text', 'u.datec'=>"Date", 'u.tms'=>"Date", 'u.admin'=>"Boolean", 'u.statut'=>'Status', 'u.note'=>"Text", 'u.signature'=>"Text", 'u.datelastlogin'=>'Date',
-			'u.fk_user'=>"List:user:login",
+			'u.email'=>'Text', 'u.datec'=>"Date", 'u.tms'=>"Date", 'u.admin'=>"Boolean", 'u.statut'=>'Status', 'u.note_public'=>"Text", 'u.note_private'=>"Text", 'u.signature'=>"Text", 'u.datelastlogin'=>'Date',
+			'u.fk_user'=>"FormSelect:select_dolusers",
 			'u.birth'=>'Date',
-			'u.datepreviouslogin'=>'Date', 'u.fk_soc'=>"List:societe:nom:rowid", 'u.fk_member'=>"List:adherent:firstname",
+			'u.datepreviouslogin'=>'Date',
+			'u.fk_socpeople'=>'FormSelect:selectcontacts',
+			'u.fk_soc'=>"FormSelect:select_company",
+			'u.tjm'=>"Numeric", 'u.thm'=>"Numeric", 'u.fk_member'=>"Numeric",
+			'u.weeklyhours'=>"Numeric",
+			'u.dateemployment'=>"Date", 'u.dateemploymentend'=>"Date", 'u.salary'=>"Numeric",
+			'u.color'=>'Text', 'u.api_key'=>'Text',
+			'a.firstname'=>'Text',
+			'a.lastname'=>'Text',
 			'g.nom'=>"Text"
 		);
 		$this->export_entities_array[$r] = array(
@@ -250,13 +261,14 @@ class modUser extends DolibarrModules
 			'u.accountancy_code'=>'user',
 			'u.address'=>"user", 'u.zip'=>"user", 'u.town'=>"user",
 			'u.office_phone'=>'user', 'u.user_mobile'=>'user', 'u.office_fax'=>'user',
-			'u.email'=>'user', 'u.note'=>"user", 'u.signature'=>'user',
+			'u.email'=>'user', 'u.note_public'=>"user", 'u.note_private'=>"user", 'u.signature'=>'user',
 			'u.fk_user'=>'user', 'u.thm'=>'user', 'u.tjm'=>'user', 'u.weeklyhours'=>'user',
-			'u.dateemployment'=>'user', 'u.salary'=>'user', 'u.color'=>'user', 'u.api_key'=>'user',
+			'u.dateemployment'=>'user', 'u.dateemploymentend'=>'user', 'u.salary'=>'user', 'u.color'=>'user', 'u.api_key'=>'user',
 			'u.birth'=>'user',
 			'u.datec'=>"user", 'u.tms'=>"user",
 			'u.admin'=>"user", 'u.statut'=>'user', 'u.datelastlogin'=>'user', 'u.datepreviouslogin'=>'user',
 			'u.fk_socpeople'=>"contact", 'u.fk_soc'=>"company", 'u.fk_member'=>"member",
+			'a.firstname'=>"member", 'a.lastname'=>"member",
 			'g.nom'=>"Group"
 		);
 		$keyforselect = 'user';
@@ -272,6 +284,7 @@ class modUser extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user_extrafields as extra ON u.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'usergroup_user as ug ON u.rowid = ug.fk_user';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'usergroup as g ON ug.fk_usergroup = g.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent as a ON u.fk_member = a.rowid';
 		$this->export_sql_end[$r] .= ' WHERE u.entity IN ('.getEntity('user').')';
 
 		// Imports
@@ -290,9 +303,9 @@ class modUser extends DolibarrModules
 			'u.pass_crypted'=>"Password", 'u.admin'=>"Administrator", 'u.fk_soc'=>"Company*", 'u.address'=>"Address", 'u.zip'=>"Zip", 'u.town'=>"Town",
 			'u.fk_state'=>"StateId", 'u.fk_country'=>"CountryCode",
 			'u.office_phone'=>"Phone", 'u.user_mobile'=>"Mobile", 'u.office_fax'=>"Fax",
-			'u.email'=>"Email", 'u.note'=>"Note", 'u.signature'=>'Signature',
+			'u.email'=>"Email", 'u.note_public'=>"NotePublic", 'u.note_private'=>"NotePrivate", 'u.signature'=>'Signature',
 			'u.fk_user'=>'HierarchicalResponsible', 'u.thm'=>'THM', 'u.tjm'=>'TJM', 'u.weeklyhours'=>'WeeklyHours',
-			'u.dateemployment'=>'DateEmployment', 'u.salary'=>'Salary', 'u.color'=>'Color', 'u.api_key'=>'ApiKey',
+			'u.dateemployment'=>'DateEmploymentStart', 'u.dateemploymentend'=>'DateEmploymentEnd', 'u.salary'=>'Salary', 'u.color'=>'Color', 'u.api_key'=>'ApiKey',
 			'u.birth'=>'DateOfBirth',
 			'u.datec'=>"DateCreation",
 			'u.statut'=>'Status'
@@ -324,9 +337,9 @@ class modUser extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array(
 			'u.lastname'=>"Doe", 'u.firstname'=>'John', 'u.login'=>'jdoe', 'u.employee'=>'0 or 1', 'u.job'=>'CTO', 'u.gender'=>'man or woman',
 			'u.pass_crypted'=>'Encrypted password',
-			'u.fk_soc'=>'0 (internal user) or company name (external user)', 'u.datec'=>dol_print_date(dol_now(), '%Y-%m-%d'), 'u.address'=>"61 jump street",
+			'u.fk_soc'=>'0 (internal user) or company name (external user)', 'u.address'=>"61 jump street",
 			'u.zip'=>"123456", 'u.town'=>"Big town", 'u.fk_country'=>'US, FR, DE...', 'u.office_phone'=>"0101010101", 'u.office_fax'=>"0101010102",
-			'u.email'=>"test@mycompany.com", 'u.salary'=>"10000", 'u.note'=>"This is an example of note for record", 'u.datec'=>"2015-01-01 or 2015-01-01 12:30:00",
+			'u.email'=>"test@mycompany.com", 'u.salary'=>"10000", 'u.note_public'=>"This is an example of public note for record", 'u.note_private'=>"This is an example of private note for record", 'u.datec'=>"2015-01-01 or 2015-01-01 12:30:00",
 			'u.statut'=>"0 (closed) or 1 (active)",
 		);
 		$this->import_updatekeys_array[$r] = array('u.lastname'=>'Lastname', 'u.firstname'=>'Firstname', 'u.login'=>'Login');

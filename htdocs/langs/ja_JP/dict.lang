@@ -250,7 +250,9 @@ CountryMF=サンマルタン島
 
 ##### Civilities #####
 CivilityMME=ミセス
+CivilityMMEShort=ミセス
 CivilityMR=ミスター
+CivilityMRShort=ミスター
 CivilityMLE=ミズ
 CivilityMTRE=マスタ
 CivilityDR=ドクター
@@ -301,7 +303,7 @@ DemandReasonTypeSRC_CAMP_MAIL=メーリングキャンペーン
 DemandReasonTypeSRC_CAMP_EMAIL=キャンペーンをメールで送信
 DemandReasonTypeSRC_CAMP_PHO=電話のキャンペーン
 DemandReasonTypeSRC_CAMP_FAX=ファックスキャンペーン
-DemandReasonTypeSRC_COMM=商業的接触
+DemandReasonTypeSRC_COMM=商取引接触
 DemandReasonTypeSRC_SHOP=店の連絡先
 DemandReasonTypeSRC_WOM=口頭
 DemandReasonTypeSRC_PARTNER=パートナー

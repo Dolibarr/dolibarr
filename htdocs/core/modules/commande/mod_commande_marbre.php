@@ -20,12 +20,12 @@
 /**
  *  \file       htdocs/core/modules/commande/mod_commande_marbre.php
  *  \ingroup    commande
- *  \brief      File of class to manage customer order numbering rules Marbre
+ *  \brief      File of class to manage Sales Order numbering rules Marbre
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 
 /**
- *	Class to manage customer order numbering rules Marbre
+ *	Class to manage Sales Order numbering rules Marbre
  */
 class mod_commande_marbre extends ModeleNumRefCommandes
 {
@@ -47,6 +47,18 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 */
 	public $name = 'Marbre';
 
+
+	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+		global $conf, $mysoc;
+
+		if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 16.0 && $mysoc->country_code != 'FR') {
+			$this->prefix = 'SO'; // We use correct standard code "SO = Sale Order"
+		}
+	}
 
 	/**
 	 *  Return description of numbering module

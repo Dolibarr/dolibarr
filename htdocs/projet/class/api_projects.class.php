@@ -29,7 +29,6 @@
  */
 class Projects extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -228,7 +227,7 @@ class Projects extends DolibarrApi
 	 * See also API /tasks
 	 *
 	 * @param int   $id                     Id of project
-	 * @param int   $includetimespent       0=Return only list of tasks. 1=Include a summary of time spent, 2=Include details of time spent lines (2 is no implemented yet)
+	 * @param int   $includetimespent       0=Return only list of tasks. 1=Include a summary of time spent, 2=Include details of time spent lines
 	 * @return int
 	 *
 	 * @url	GET {id}/tasks
@@ -253,9 +252,8 @@ class Projects extends DolibarrApi
 			if ($includetimespent == 1) {
 				$timespent = $line->getSummaryOfTimeSpent(0);
 			}
-			if ($includetimespent == 1) {
-				// TODO
-				// Add class for timespent records and loop and fill $line->lines with records of timespent
+			if ($includetimespent == 2) {
+				$timespent = $line->fetchTimeSpentOnTask();
 			}
 			array_push($result, $this->_cleanObjectDatas($line));
 		}
@@ -268,10 +266,9 @@ class Projects extends DolibarrApi
 	 *
 	 * @param   int   $id             Id of project
 	 * @param   int   $userid         Id of user (0 = connected user)
+	 * @return array
 	 *
 	 * @url	GET {id}/roles
-	 *
-	 * @return int
 	 */
 	public function getRoles($id, $userid = 0)
 	{
@@ -297,11 +294,12 @@ class Projects extends DolibarrApi
 			$userp = new User($this->db);
 			$userp->fetch($userid);
 		}
-		$this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, 0, $id, 0);
+		$this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, null, $id, 0);
 		$result = array();
 		foreach ($this->project->roles as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));
 		}
+
 		return $result;
 	}
 
@@ -334,7 +332,7 @@ class Projects extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
 
 		$updateRes = $this->project->addline(
 						$request_data->desc,
@@ -401,7 +399,7 @@ class Projects extends DolibarrApi
 
 		$request_data = (object) $request_data;
 
-		$request_data->desc = checkVal($request_data->desc, 'restricthtml');
+		$request_data->desc = sanitizeVal($request_data->desc, 'restricthtml');
 
 		$updateRes = $this->project->updateline(
 						$lineid,

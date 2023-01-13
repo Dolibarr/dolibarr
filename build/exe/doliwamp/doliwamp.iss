@@ -98,11 +98,9 @@ Source: "build\exe\doliwamp\startdoliwamp_manual_donotuse.bat.install"; DestDir:
 Source: "build\exe\doliwamp\builddemosslfiles.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversion;
 
-; PhpMyAdmin, Apache, Php, Mysql
+; Apache, Php, Mysql
 ; Put here path of Wampserver applications
-; Value OK: apache 2.4.41, php 7.3.12, mariadb10.4.10 (wampserver3.2.0_x64.exe)
 ; Value OK: apache 2.4.51, php 7.3.33, mariadb10.6.5 (wampserver3.2.6_x64.exe)
-Source: "C:\wamp64\apps\phpmyadmin4.9.7\*.*"; DestDir: "{app}\apps\phpmyadmin4.9.7"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log,darkblue_orange"
 Source: "C:\wamp64\bin\apache\apache2.4.51\*.*"; DestDir: "{app}\bin\apache\apache2.4.51"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
 Source: "C:\wamp64\bin\php\php7.3.33\*.*"; DestDir: "{app}\bin\php\php7.3.33"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
 Source: "C:\wamp64\bin\mariadb\mariadb10.6.5\*.*"; DestDir: "{app}\bin\mariadb\mariadb10.6.5"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
@@ -119,9 +117,7 @@ Source: "scripts\*.*"; DestDir: "{app}\www\dolibarr\scripts"; Flags: ignoreversi
 Source: "*.*"; DestDir: "{app}\www\dolibarr"; Flags: ignoreversion; Excludes: ".gitignore,.project,CVS\*,Thumbs.db,default.properties,install.lock"
 
 ; Config files
-Source: "build\exe\doliwamp\phpmyadmin.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\dolibarr.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\config.inc.php.install"; DestDir: "{app}\apps\phpmyadmin4.1.14"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.4.51\conf"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mariadb\mariadb10.6.5"; Flags: ignoreversion;
@@ -188,7 +184,6 @@ var destFileA: String;
 var srcContents: String;
 var browser: String;
 var mysqlVersion: String;
-var phpmyadminVersion: String;
 var phpDllCopy: String;
 var batFile: String;
 
@@ -235,7 +230,6 @@ begin
   apacheVersion := '2.4.51';
   phpVersion := '7.3.33' ;
   mysqlVersion := '10.6.5';
-  phpmyadminVersion := '4.9.7';
 
   smtpServer := 'localhost';
   apachePort := '80';
@@ -590,6 +584,17 @@ begin
 
 	      if browser = 'iexplore.exe' then
 	      begin
+		    if FileExists (pfPath+'/Microsoft/Edge/Application/msedge.exe')  then
+		    begin
+		      if MsgBox(CustomMessage('MicrosoftEdgeDetected'),mbConfirmation,MB_YESNO) = IDYES then
+		      begin
+		        browser := pfPath+'/Microsoft/Edge/Application/msedge.exe';
+		      end;
+		    end;
+		  end;
+
+	      if browser = 'iexplore.exe' then
+	      begin
             if FileExists (pfPath+'/Internet Explorer/iexplore.exe')  then
             begin
                GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, pfPath+'/Internet Explorer', 'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
@@ -625,27 +630,6 @@ begin
 
 		
 		    //----------------------------------------------
-		    // Create file alias phpmyadmin (always)
-		    //----------------------------------------------
-		
-		    destFile := pathWithSlashes+'/alias/phpmyadmin.conf';
-		    srcFile := pathWithSlashes+'/alias/phpmyadmin.conf.install';
-		
-		    if FileExists(srcFile) then
-		    begin
-		      LoadStringFromFile (srcFile, srcContents);
-		
-		      //installDir et version de phpmyadmin
-		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
-		      StringChangeEx (srcContents, 'WAMPPHPMYADMINVERSION', phpmyadminVersion, True);
-		
-		      SaveStringToFile(destFile,srcContents, False);
-		    end;
-		    DeleteFile(srcFile);
-		
-		
-		
-		    //----------------------------------------------
 		    // Create file alias dolibarr (if not exists)
 		    //----------------------------------------------
 		
@@ -677,35 +661,6 @@ begin
 		    end;
 		    DeleteFile(srcFile);
 		
-		
-		
-		
-		    //----------------------------------------------
-		    // Create file configuration for phpmyadmin (if not exists)
-		    //----------------------------------------------
-		
-		    destFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php';
-		    srcFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php.install';
-		
-		    if FileExists(srcFile) then
-		    begin
-	  	      if not FileExists (destFile) then
-		      begin
-	            LoadStringFromFile (srcFile, srcContents);
-	            StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
-	            StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
-	            SaveStringToFile(destFile,srcContents, False);
-		      end
-		      else
-		      begin
-		        // We must replace to use format 2.4 of apache
-	            DeleteFile(destFile);
-	            LoadStringFromFile (srcFile, srcContents);
-	            StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
-	            StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
-	            SaveStringToFile(destFile,srcContents, False);
-		      end;
-		    end;
 		
 		
 		

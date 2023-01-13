@@ -91,6 +91,8 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
+$textobject = $langs->transnoentitiesnoconv("MyObject");
+
 $help_url = '';
 $page_name = "MyModuleSetup";
 
@@ -111,10 +113,12 @@ print dol_get_fiche_end();
 
 
 // Buttons
-if ($action != 'create' && $action != 'edit') {
-	print '<div class="tabsAction">';
-	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
-	print "</div>";
+if ((float) DOL_VERSION < 17) {	// On v17+, the "New Attribute" button is included into tpl.
+	if ($action != 'create' && $action != 'edit') {
+		print '<div class="tabsAction">';
+		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
+		print "</div>";
+	}
 }
 
 

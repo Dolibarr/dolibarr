@@ -23,11 +23,12 @@
  *	\brief      Page to preview votes of a survey
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
-require_once DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 // Security check
 if (empty($user->rights->opensurvey->read)) {
@@ -75,7 +76,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			}
 		}
 
-		$nom = substr(GETPOST("nom", 'nohtml'), 0, 64);
+		$nom = substr(GETPOST("nom", 'alphanohtml'), 0, 64);
 
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';
@@ -103,13 +104,13 @@ $testmodifier = false;
 $testligneamodifier = false;
 $ligneamodifier = -1;
 for ($i = 0; $i < $nblines; $i++) {
-	if (isset($_POST['modifierligne'.$i])) {
+	if (GETPOSTISSET('modifierligne'.$i)) {
 		$ligneamodifier = $i;
 		$testligneamodifier = true;
 	}
 
 	//test pour voir si une ligne est a modifier
-	if (isset($_POST['validermodifier'.$i])) {
+	if (GETPOSTISSET('validermodifier'.$i)) {
 		$modifier = $i;
 		$testmodifier = true;
 	}
@@ -153,7 +154,7 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && $object->format =
 
 	//on rajoute la valeur a la fin de tous les sujets deja entrés
 	$nouveauxsujets .= ',';
-	$nouveauxsujets .= str_replace(array(",", "@"), " ", GETPOST("nouvellecolonne")).(empty($_POST["typecolonne"]) ? '' : '@'.GETPOST("typecolonne"));
+	$nouveauxsujets .= str_replace(array(",", "@"), " ", GETPOST("nouvellecolonne")).(!GETPOST("typecolonne") ? '' : '@'.GETPOST("typecolonne"));
 
 	//mise a jour avec les nouveaux sujets dans la base
 	$sql = 'UPDATE '.MAIN_DB_PREFIX."opensurvey_sondage";
@@ -434,7 +435,7 @@ $toutsujet = explode(",", $object->sujet);
 $listofanswers = array();
 foreach ($toutsujet as $value) {
 	$tmp = explode('@', $value);
-	$listofanswers[] = array('label'=>$tmp[0], 'format'=>($tmp[1] ? $tmp[1] : 'checkbox'));
+	$listofanswers[] = array('label'=>$tmp[0], 'format'=>(!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
 }
 $toutsujet = str_replace("@", "<br>", $toutsujet);
 $toutsujet = str_replace("°", "'", $toutsujet);
@@ -471,7 +472,7 @@ print '<tr><td>';
 $adresseadmin = $object->mail_admin;
 print $langs->trans("Title").'</td><td>';
 if ($action == 'edit') {
-	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(dol_htmlentities($object->title)).'">';
+	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag($object->title).'">';
 } else {
 	print dol_htmlentities($object->title);
 }
@@ -609,7 +610,7 @@ if (GETPOST('ajoutsujet')) {
 
 		print '&nbsp;';
 
-		print $formother->select_year('', 'nouvelleannee', 1, 0, 5, 0, 1);
+		print $formother->selectyear('', 'nouvelleannee', 1, 0, 5, 0, 1);
 
 		print '<br><br>'.$langs->trans("AddStartHour").': <br><br>'."\n";
 		print '<select name="nouvelleheuredebut"> '."\n";
@@ -700,34 +701,10 @@ if ($object->format == "D") {
 	$colspan = 1;
 	$nbofsujet = count($toutsujet);
 	for ($i = 0; $i < $nbofsujet; $i++) {
-		$current = $toutsujet[$i];
-
-		if (strpos($toutsujet[$i], '@') !== false) {
-			$current = substr($toutsujet[$i], 0, strpos($toutsujet[$i], '@'));
-		}
-
-		if (isset($toutsujet[$i + 1]) && strpos($toutsujet[$i + 1], '@') !== false) {
-			$next = substr($toutsujet[$i + 1], 0, strpos($toutsujet[$i + 1], '@'));
-		} elseif (isset($toutsujet[$i + 1])) {
-			$next = $toutsujet[$i + 1];
-		}
-
-		$currenty = 0;
-		if ($current) {
-			$currenty = strftime("%Y", $current);
-		}
-		$next = 0;
-		if ($next) {
-			$nexty = strftime("%Y", $next);
-		}
-		if (isset($toutsujet[$i + 1]) && ($currenty == $nexty)) {
+		if (isset($toutsujet[$i + 1]) && date('Y', intval($toutsujet[$i])) == date('Y', intval($toutsujet[$i + 1]))) {
 			$colspan++;
 		} else {
-			print '<td colspan='.$colspan.' class="annee">';
-			if ($current) {
-				print strftime("%Y", $current);
-			}
-			print '</td>'."\n";
+			print '<td colspan='.$colspan.' class="annee">'.date('Y', intval($toutsujet[$i])).'</td>'."\n";
 			$colspan = 1;
 		}
 	}
@@ -1149,7 +1126,7 @@ $compteursujet = 0;
 $meilleursujet = '';
 for ($i = 0; $i < $nbcolonnes; $i++) {
 	if (isset($sumfor[$i]) === true && isset($meilleurecolonne) === true && $sumfor[$i] == $meilleurecolonne) {
-		$meilleursujet .= ", ";
+		$meilleursujet .= ($meilleursujet ? ", " : "");
 
 		if ($object->format == "D") {
 			$meilleursujetexport = $toutsujet[$i];
@@ -1158,7 +1135,7 @@ for ($i = 0; $i < $nbcolonnes; $i++) {
 				$toutsujetdate = explode("@", $toutsujet[$i]);
 				$meilleursujet .= dol_print_date($toutsujetdate[0], 'daytext').($toutsujetdate[0] ? ' ('.dol_print_date($toutsujetdate[0], '%A').')' : '').' - '.$toutsujetdate[1];
 			} else {
-				$meilleursujet .= dol_print_date($toutsujet[$i], 'daytext').($toutsujet[$i] ? ' ('.dol_print_date($toutsujet[$i], '%A').')' : '');
+				$meilleursujet .= dol_print_date((empty($toutsujet[$i]) ? 0 : $toutsujet[$i]), 'daytext').' ('.dol_print_date((empty($toutsujet[$i]) ? 0 : $toutsujet[$i]), '%A').')';
 			}
 		} else {
 			$tmps = explode('@', $toutsujet[$i]);

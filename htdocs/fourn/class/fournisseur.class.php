@@ -106,7 +106,7 @@ class Fournisseur extends Societe
 	public function load_state_board()
 	{
 		// phpcs:enable
-		global $conf, $user;
+		global $conf, $user, $hookmanager;
 
 		$this->nb = array();
 		$clause = "WHERE";
@@ -120,6 +120,12 @@ class Fournisseur extends Societe
 		}
 		$sql .= " ".$clause." s.fournisseur = 1";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
+		// Add where from hooks
+		if (is_object($hookmanager)) {
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $this); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
+		}
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -203,17 +209,17 @@ class Fournisseur extends Societe
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param  DoliDB  $db             Database handler
-	 * @param  int     $origin_id      Old third-party id
-	 * @param  int     $dest_id        New third-party id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'facture_fourn'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 }

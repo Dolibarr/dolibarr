@@ -66,3 +66,7 @@ RepeatableIntervention=Plantilla de intervención
 ToCreateAPredefinedIntervention=Para crear una intervención predefinida o recurrente, cree una intervención común y conviértala en plantilla de intervención
 ConfirmReopenIntervention=¿Está seguro de querer volver a abrir la intervención <b> %s </b>?
 GenerateInter=Generar intervención
+FichinterNoContractLinked=La intervención %s se ha creado sin un contrato vinculado.
+ErrorFicheinterCompanyDoesNotExist=La empresa no existe. No se ha creado la intervención.
+NextDateToIntervention=Fecha para la próxima generación de intervención
+NoIntervention=Sin intervención

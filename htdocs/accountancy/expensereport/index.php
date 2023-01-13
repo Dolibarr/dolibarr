@@ -24,6 +24,7 @@
  * \brief		Home expense report ventilation
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -58,7 +59,7 @@ $year_current = $year_start;
 $action = GETPOST('action', 'aZ09');
 
 // Security check
-if (empty($conf->accounting->enabled)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
 if ($user->socid > 0) {
@@ -161,7 +162,10 @@ if ($action == 'validatehistory') {
 		$db->rollback();
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans('AutomaticBindingDone', $nbbinddone, $notpossible), null, 'mesgs');
+		setEventMessages($langs->trans('AutomaticBindingDone', $nbbinddone, $notpossible), null,  ($notpossible ? 'warnings' : 'mesgs'));
+		if ($notpossible) {
+			setEventMessages($langs->trans('DoManualBindingForFailedRecord', $notpossible), null, 'warnings');
+		}
 	}
 }
 
@@ -184,7 +188,7 @@ print '</span><br>';
 
 $y = $year_current;
 
-$buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'&year='.$year_current.'">'.$langs->trans("ValidateHistory").'</a>';
+$buttonbind = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&token='.newToken().'&year='.$year_current.'">'.img_picto('', 'link', 'class="paddingright fa-color-unset"').$langs->trans("ValidateHistory").'</a>';
 
 
 print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"').$langs->trans("OverviewOfAmountOfLinesNotBound"), '', '', '', '', '', '', -1, '', '', 0, $buttonbind, '', 0, 1, 1);
@@ -262,20 +266,49 @@ if ($resql) {
 		print '</td>';
 		print '<td>';
 		if ($row[0] == 'tobind') {
-			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/expensereport/list.php?search_year='.((int) $y), $langs->transnoentitiesnoconv("ToBind"));
+			$startmonth = ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1);
+			if ($startmonth > 12) {
+				$startmonth -= 12;
+			}
+			$startyear = ($startmonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+			$endmonth = ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) + 11;
+			if ($endmonth > 12) {
+				$endmonth -= 12;
+			}
+			$endyear = ($endmonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/expensereport/list.php?search_date_startday=1&search_date_startmonth='.((int) $startmonth).'&search_date_startyear='.((int) $startyear).'&search_date_endday=&search_date_endmonth='.((int) $endmonth).'&search_date_endyear='.((int) $endyear), $langs->transnoentitiesnoconv("ToBind"));
 		} else {
 			print $row[1];
 		}
 		print '</td>';
 		for ($i = 2; $i <= 13; $i++) {
+			$cursormonth = (($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) + $i - 2);
+			if ($cursormonth > 12) {
+				$cursormonth -= 12;
+			}
+			$cursoryear = ($cursormonth < ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1)) ? $y + 1 : $y;
+			$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
+
 			print '<td class="right nowraponall amount">';
 			print price($row[$i]);
+			// Add link to make binding
+			if (!empty(price2num($row[$i]))) {
+				print '<a href="'.$_SERVER['PHP_SELF'].'?action=validatehistory&year='.$y.'&validatemonth='.((int) $cursormonth).'&validateyear='.((int) $cursoryear).'&token='.newToken().'">';
+				print img_picto($langs->trans("ValidateHistory").' ('.$langs->trans('Month'.str_pad($cursormonth, 2, '0', STR_PAD_LEFT)).' '.$cursoryear.')', 'link', 'class="marginleft2"');
+				print '</a>';
+			}
 			print '</td>';
 		}
 		print '<td class="right nowraponall amount"><b>'.price($row[14]).'</b></td>';
 		print '</tr>';
 	}
 	$db->free($resql);
+
+	if ($num == 0) {
+		print '<tr class="oddeven"><td colspan="16">';
+		print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
+		print '</td></tr>';
+	}
 } else {
 	print $db->lasterror(); // Show last sql error
 }
@@ -358,6 +391,12 @@ if ($resql) {
 		print '</tr>';
 	}
 	$db->free($resql);
+
+	if ($num == 0) {
+		print '<tr class="oddeven"><td colspan="16">';
+		print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
+		print '</td></tr>';
+	}
 } else {
 	print $db->lasterror(); // Show last sql error
 }
@@ -366,7 +405,7 @@ print '</div>';
 
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL > 0) { // This part of code looks strange. Why showing a report where results depends on next step (so not yet available) ?
+if (getDolGlobalString('SHOW_TOTAL_OF_PREVIOUS_LISTS_IN_LIN_PAGE')) { // This part of code looks strange. Why showing a report that should rely on result of this step ?
 	print '<br>';
 	print '<br>';
 

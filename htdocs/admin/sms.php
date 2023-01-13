@@ -23,6 +23,7 @@
  *       \brief      Page to setup emails sending
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -62,7 +63,7 @@ if ($action == 'update' && !$cancel) {
 
 
 // Send sms
-if ($action == 'send' && !$_POST['cancel']) {
+if ($action == 'send' && !$cancel) {
 	$error = 0;
 
 	$smsfrom = '';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
@@ -23,6 +23,7 @@
  *   \brief      Page to setup boxes
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
@@ -229,6 +230,7 @@ $sql .= " WHERE b.box_id = bd.rowid";
 $sql .= " AND b.entity IN (0,".$conf->entity.")";
 $sql .= " AND b.fk_user=0";
 $sql .= " ORDER by b.position, b.box_order";
+//print $sql;
 
 dol_syslog("Search available boxes", LOG_DEBUG);
 $resql = $db->query($sql);
@@ -355,7 +357,7 @@ foreach ($boxtoadd as $box) {
 
 	// For each possible position, an activation link is displayed if the box is not already active for that position
 	print '<td class="center">';
-	print $form->selectarray("boxid[".$box->box_id."][pos]", $arrayofhomepages, -1, 1, 0, 0, '', 1)."\n";
+	print $form->selectarray("boxid[".$box->box_id."][pos]", $arrayofhomepages, -1, 1, 0, 0, '', 1, 0, 0, '', 'minwidth75', 1)."\n";
 	print '<input type="hidden" name="boxid['.$box->box_id.'][value]" value="'.$box->box_id.'">'."\n";
 	print '</td>';
 

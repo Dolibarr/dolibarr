@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2011-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  *		\brief      Page to list payments of special expenses
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
@@ -41,6 +42,7 @@ $langs->loadLangs(array('compta', 'bills'));
 $mode = GETPOST("mode", 'alpha');
 $year = GETPOST("year", 'int');
 $filtre = GETPOST("filtre", 'alpha');
+$optioncss = GETPOST('optioncss', 'alpha');
 if (!$year && $mode != 'tvaonly') {
 	$year = date("Y", time());
 }
@@ -112,13 +114,15 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
+$center = '';
+
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy', 0, '', '', $limit);
 
 if ($year) {
 	$param .= '&year='.$year;
 }
 
-if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
+if (isModEnabled('tax') && $user->rights->tax->charges->lire) {
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -129,7 +133,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "ptva.datep", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "ptva.num_paiement", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled("banque")) {
 		print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "ptva.fk_bank", "", $param, '', $sortfield, $sortorder);
 		print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "bank.ref", "", $param, '', $sortfield, $sortorder);
 	}
@@ -141,7 +145,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 	$sql = "SELECT tva.rowid, tva.label as label, b.fk_account, ptva.fk_bank";
 	$sql .= ", tva.datev";
 	$sql .= ", tva.amount as total,";
-	$sql .= " ptva.rowid as pid, ptva.datep, ptva.amount as totalpaye, ptva.num_paiement as num_payment,";
+	$sql .= " ptva.rowid as pid, ptva.datep, ptva.amount as totalpaid, ptva.num_paiement as num_payment,";
 	$sql .= " pct.code as payment_code";
 	$sql .= " FROM ".MAIN_DB_PREFIX."tva as tva,";
 	$sql .= " ".MAIN_DB_PREFIX."payment_vat as ptva";
@@ -175,10 +179,14 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 		$i = 0;
 		$total = 0;
 		$totalnb = 0;
-		$totalpaye = 0;
+		$totalpaid = 0;
 
 		while ($i < min($num, $limit)) {
 			$obj = $db->fetch_object($resql);
+
+			$tva->id = $obj->rowid;
+			$tva->ref = $obj->rowid;
+			$tva->label = $obj->label;
 
 			$payment_vat_static->id = $obj->pid;
 			$payment_vat_static->ref = $obj->pid;
@@ -190,33 +198,34 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 
 			// VAT
 			print '<td>';
-			$tva->id = $obj->rowid;
-			$tva->ref = $obj->rowid;
-			$tva->label = $obj->label;
 			print $tva->getNomUrl(1, '20');
 			print '</td>';
 
 			// Label
-			print '<td>'.$obj->label.'</td>';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->label).'">'.dol_escape_htmltag($obj->label).'</td>';
 
 			// Date
-			$date = $obj->datev;
-			print '<td>'.dol_print_date($date, 'day').'</td>';
+			$date = $db->jdate($obj->datev);
+			print '<td class="center nowraponall">'.dol_print_date($date, 'day').'</td>';
 
 			// Date payment
-			print '<td class="center">'.dol_print_date($db->jdate($obj->datep), 'day').'</td>';
+			$datep = $db->jdate($obj->datep);
+			print '<td class="center nowraponalls">'.dol_print_date($datep, 'day').'</td>';
 
 			// Type payment
-			print '<td>';
+			$labelpaymenttype = '';
 			if ($obj->payment_code) {
-				print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+				$labelpaymenttype = $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
 			}
+
+			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labelpaymenttype).'">';
+			print dol_escape_htmltag($labelpaymenttype);
 			print '</td>';
 
 			// Chq number
-			print '<td>'.$obj->num_payment.'</td>';
+			print '<td>'.dol_escape_htmltag($obj->num_payment).'</td>';
 
-			if (!empty($conf->banque->enabled)) {
+			if (isModEnabled("banque")) {
 				// Bank transaction
 				print '<td>';
 				$accountlinestatic->id = $obj->fk_bank;
@@ -231,21 +240,20 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 				print '</td>';
 			}
 
-			// Type
-			//print '<td><a href="../tva/list.php?filtre=tva.fk_type:'.$obj->type.'">'.$obj->type_label.'</a></td>';
 			// Expected to pay
 			print '<td class="right"><span class="amount">'.price($obj->total).'</span></td>';
+
 			// Paid
 			print '<td class="right"><span class="amount">';
-			if ($obj->totalpaye) {
-				print price($obj->totalpaye);
+			if ($obj->totalpaid) {
+				print price($obj->totalpaid);
 			}
 			print '</span></td>';
 			print '</tr>';
 
 			$total = $total + $obj->total;
 			$totalnb = $totalnb + $obj->nb;
-			$totalpaye = $totalpaye + $obj->totalpaye;
+			$totalpaid = $totalpaid + $obj->totalpaid;
 			$i++;
 		}
 
@@ -254,13 +262,13 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire) {
 		print '<td class="liste_total right"></td>'; // A total here has no sense
 		print '<td align="center" class="liste_total">&nbsp;</td>';
 		print '<td align="center" class="liste_total">&nbsp;</td>';
-		if (!empty($conf->banque->enabled)) {
+		if (isModEnabled("banque")) {
 			print '<td align="center" class="liste_total">&nbsp;</td>';
 			print '<td align="center" class="liste_total">&nbsp;</td>';
 		}
 		print '<td align="center" class="liste_total">&nbsp;</td>';
 		print '<td align="center" class="liste_total">&nbsp;</td>';
-		print '<td class="liste_total right">'.price($totalpaye)."</td>";
+		print '<td class="liste_total right">'.price($totalpaid)."</td>";
 		print "</tr>";
 	} else {
 		dol_print_error($db);

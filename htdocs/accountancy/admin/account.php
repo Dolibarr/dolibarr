@@ -23,6 +23,7 @@
  * \brief		List accounting account
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries"));
+$langs->loadLangs(array('accountancy', 'admin', 'bills', 'compta', 'salaries'));
 
 $mesg = '';
 $action = GETPOST('action', 'aZ09');
@@ -46,20 +47,21 @@ $search_label = GETPOST('search_label', 'alpha');
 $search_labelshort = GETPOST('search_labelshort', 'alpha');
 $search_accountparent = GETPOST('search_accountparent', 'alpha');
 $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
+$search_import_key = GETPOST('search_import_key', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $confirm = GETPOST('confirm', 'alpha');
 
 $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
-$permissiontoadd = !empty($user->rights->accounting->chartofaccount);
-$permissiontodelete = !empty($user->rights->accounting->chartofaccount);
+$permissiontoadd = $user->hasRight('accounting', 'chartofaccount');
+$permissiontodelete = $user->hasRight('accounting', 'chartofaccount');
 
 // Security check
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (empty($user->rights->accounting->chartofaccount)) {
+if (!$user->hasRight('accounting', 'chartofaccount')) {
 	accessforbidden();
 }
 
@@ -82,20 +84,26 @@ if (!$sortorder) {
 }
 
 $arrayfields = array(
-	'aa.account_number'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
-	'aa.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-	'aa.labelshort'=>array('label'=>$langs->trans("LabelToShow"), 'checked'=>1),
-	'aa.account_parent'=>array('label'=>$langs->trans("Accountparent"), 'checked'=>1),
-	'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>1, 'help'=>'PcgtypeDesc'),
-	'aa.reconcilable'=>array('label'=>$langs->trans("Reconcilable"), 'checked'=>1),
-	'aa.active'=>array('label'=>$langs->trans("Activated"), 'checked'=>1)
+	'aa.account_number'=>array('label'=>"AccountNumber", 'checked'=>1),
+	'aa.label'=>array('label'=>"Label", 'checked'=>1),
+	'aa.labelshort'=>array('label'=>"LabelToShow", 'checked'=>1),
+	'aa.account_parent'=>array('label'=>"Accountparent", 'checked'=>1),
+	'aa.pcg_type'=>array('label'=>"Pcgtype", 'checked'=>1, 'help'=>'PcgtypeDesc'),
+	'categories'=>array('label'=>"AccountingCategories", 'checked'=>-1, 'help'=>'AccountingCategoriesDesc'),
+	'aa.reconcilable'=>array('label'=>"Reconcilable", 'checked'=>1),
+	'aa.active'=>array('label'=>"Activated", 'checked'=>1),
+	'aa.import_key'=>array('label'=>"ImportId", 'checked'=>-1)
 );
 
 if ($conf->global->MAIN_FEATURES_LEVEL < 2) {
+	unset($arrayfields['categories']);
 	unset($arrayfields['aa.reconcilable']);
 }
 
 $accounting = new AccountingAccount($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('accountancyadminaccount'));
 
 
 /*
@@ -109,8 +117,8 @@ if (!GETPOST('confirmmassaction', 'alpha')) {
 	$massaction = '';
 }
 
-$parameters = array();
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been monowraponalldified by some hooks
+$parameters = array('chartofaccounts' => $chartofaccounts, 'permissiontoadd' => $permissiontoadd, 'permissiontodelete' => $permissiontodelete);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $accounting, $action); // Note that $action and $object may have been monowraponalldified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -222,15 +230,12 @@ if ($action == 'delete') {
 
 $pcgver = $conf->global->CHARTOFACCOUNTS;
 
-$sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent , aa.label, aa.labelshort, aa.reconcilable, aa.active, ";
+$sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent, aa.label, aa.labelshort, aa.fk_accounting_category,";
+$sql .= " aa.reconcilable, aa.active, aa.import_key,";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 $sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as aa";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version AND aa.entity = ".$conf->entity;
-if ($db->type == 'pgsql') {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".$conf->entity;
-} else {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".$conf->entity;
-}
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version AND aa.entity = ".((int) $conf->entity);
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = aa.account_parent AND a2.entity = ".((int) $conf->entity);
 $sql .= " WHERE asy.rowid = ".((int) $pcgver);
 //print $sql;
 if (strlen(trim($search_account))) {
@@ -294,7 +299,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 }
 
 // List of mass actions available
-if ($user->rights->accounting->chartofaccount) {
+if ($user->hasRight('accounting', 'chartofaccount')) {
 	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 }
 if (in_array($massaction, array('presend', 'predelete', 'closed'))) {
@@ -334,6 +339,9 @@ if ($resql) {
 		$param .= '&search_pcgtype='.urlencode($search_pcgtype);
 	}
 	if ($optioncss != '') {
+		$param .= '&search_import_key='.urlencode($search_import_key);
+	}
+	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
 	}
 
@@ -349,6 +357,8 @@ if ($resql) {
 			});
 	    	</script>';
 	}
+
+	$newcardbutton = '';
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') {
@@ -393,9 +403,14 @@ if ($resql) {
 	}
 	print "</select>";
 	print ajax_combobox("chartofaccounts");
-	print '<input type="'.(empty($conf->use_javascript_ajax) ? 'submit' : 'button').'" class="button button-edit" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
+	print '<input type="'.(empty($conf->use_javascript_ajax) ? 'submit' : 'button').'" class="button button-edit small" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
 
 	print '<br>';
+
+	$parameters = array('chartofaccounts' => $chartofaccounts, 'permissiontoadd' => $permissiontoadd, 'permissiontodelete' => $permissiontodelete);
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $accounting, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
 	print '<br>';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
@@ -425,11 +440,20 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['aa.account_parent']['checked'])) {
 		print '<td class="liste_titre">';
-		print $formaccounting->select_account($search_accountparent, 'search_accountparent', 2);
+		print $formaccounting->select_account($search_accountparent, 'search_accountparent', 2, array(), 0, 0, 'maxwidth150');
 		print '</td>';
 	}
+	// Predefined group
 	if (!empty($arrayfields['aa.pcg_type']['checked'])) {
-		print '<td class="liste_titre"><input type="text" class="flat width100" name="search_pcgtype" value="'.$search_pcgtype.'"></td>';
+		print '<td class="liste_titre"><input type="text" class="flat width75" name="search_pcgtype" value="'.$search_pcgtype.'"></td>';
+	}
+	// Custom groups
+	if (!empty($arrayfields['categories']['checked'])) {
+		print '<td class="liste_titre"></td>';
+	}
+	// Import key
+	if (!empty($arrayfields['aa.import_key']['checked'])) {
+		print '<td class="liste_titre"><input type="text" class="flat width75" name="search_import_key" value="'.$search_import_key.'"></td>';
 	}
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
@@ -459,6 +483,12 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['aa.pcg_type']['checked'])) {
 		print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type,aa.account_number', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help'], 1);
+	}
+	if (!empty($arrayfields['categories']['checked'])) {
+		print_liste_field_titre($arrayfields['categories']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '', $arrayfields['categories']['help'], 1);
+	}
+	if (!empty($arrayfields['aa.import_key']['checked'])) {
+		print_liste_field_titre($arrayfields['aa.import_key']['label'], $_SERVER["PHP_SELF"], 'aa.import_key', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.import_key']['help'], 1);
 	}
 	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
@@ -494,7 +524,7 @@ if ($resql) {
 		// Account label
 		if (!empty($arrayfields['aa.label']['checked'])) {
 			print "<td>";
-			print $obj->label;
+			print dol_escape_htmltag($obj->label);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -504,7 +534,7 @@ if ($resql) {
 		// Account label to show (label short)
 		if (!empty($arrayfields['aa.labelshort']['checked'])) {
 			print "<td>";
-			print $obj->labelshort;
+			print dol_escape_htmltag($obj->labelshort);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -538,10 +568,30 @@ if ($resql) {
 			}
 		}
 
-		// Chart of accounts type
+		// Predefined group (deprecated)
 		if (!empty($arrayfields['aa.pcg_type']['checked'])) {
 			print "<td>";
-			print $obj->pcg_type;
+			print dol_escape_htmltag($obj->pcg_type);
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Custom accounts
+		if (!empty($arrayfields['categories']['checked'])) {
+			print "<td>";
+			// TODO Get all custom groups labels the account is in
+			print dol_escape_htmltag($obj->fk_accounting_category);
+			print "</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Import id
+		if (!empty($arrayfields['aa.import_key']['checked'])) {
+			print "<td>";
+			print dol_escape_htmltag($obj->import_key);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -588,7 +638,7 @@ if ($resql) {
 
 		// Action
 		print '<td class="center nowraponall">';
-		if ($user->rights->accounting->chartofaccount) {
+		if ($user->hasRight('accounting', 'chartofaccount')) {
 			print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
 			print img_edit();
 			print '</a>';

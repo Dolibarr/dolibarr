@@ -41,6 +41,7 @@ if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -56,7 +57,7 @@ $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('newpayment'));
 
 // For encryption
-global $dolibarr_main_instance_unique_id, $dolibarr_main_url_root;
+global $dolibarr_main_url_root;
 
 // Load translation files
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
@@ -91,7 +92,7 @@ if ($resultproject < 0) {
 
 // Security check
 if (empty($conf->eventorganization->enabled)) {
-	accessforbidden('', 0, 0, 1);
+	httponly_accessforbidden('Module Event organization not enabled');
 }
 
 

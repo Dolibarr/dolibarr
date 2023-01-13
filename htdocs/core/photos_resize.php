@@ -24,6 +24,7 @@
  *       \brief     File of page to resize photos
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -33,7 +34,7 @@ $langs->loadLangs(array("products", "other"));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
-$modulepart = GETPOST('modulepart', 'alpha') ?GETPOST('modulepart', 'alpha') : 'produit|service';
+$modulepart = GETPOST('modulepart', 'alpha') ? GETPOST('modulepart', 'alpha') : 'produit|service';
 $original_file = GETPOST("file");
 $backtourl = GETPOST('backtourl');
 $cancel = GETPOST('cancel', 'alpha');
@@ -56,13 +57,13 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$accessallowed = 1;
 } elseif ($modulepart == 'project') {
 	$result = restrictedArea($user, 'projet', $id);
-	if (!$user->rights->projet->lire) {
+	if (empty($user->rights->projet->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'bom') {
 	$result = restrictedArea($user, $modulepart, $id, 'bom_bom');
-	if (!$user->rights->bom->read) {
+	if (empty($user->rights->bom->read)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -73,14 +74,14 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'user') {
-	$result = restrictedArea($user, $modulepart, $id, $modulepart);
-	if (!$user->rights->user->user->lire) {
+	$result = restrictedArea($user, $modulepart, $id, $modulepart, $modulepart);
+	if (empty($user->rights->user->user->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
 } elseif ($modulepart == 'tax') {
 	$result = restrictedArea($user, $modulepart, $id, 'chargesociales', 'charges');
-	if (!$user->rights->tax->charges->lire) {
+	if (empty($user->rights->tax->charges->lire)) {
 		accessforbidden();
 	}
 	$accessallowed = 1;
@@ -284,45 +285,45 @@ if (empty($backtourl)) {
 	$regs = array();
 
 	if (in_array($modulepart, array('product', 'produit', 'service', 'produit|service'))) {
-		$backtourl = DOL_URL_ROOT."/product/document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/product/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('expensereport'))) {
-		$backtourl = DOL_URL_ROOT."/expensereport/document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/expensereport/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('holiday'))) {
-		$backtourl = DOL_URL_ROOT."/holiday/document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/holiday/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('member'))) {
-		$backtourl = DOL_URL_ROOT."/adherents/document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/adherents/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('project'))) {
-		$backtourl = DOL_URL_ROOT."/projet/document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/projet/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('propal'))) {
-		$backtourl = DOL_URL_ROOT."/comm/propal/document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/comm/propal/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('societe'))) {
-		$backtourl = DOL_URL_ROOT."/societe/document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/societe/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('tax'))) {
-		$backtourl = DOL_URL_ROOT."/compta/sociales/document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/compta/sociales/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('ticket'))) {
-		$backtourl = DOL_URL_ROOT."/ticket/document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/ticket/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('user'))) {
-		$backtourl = DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/user/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('facture'))) {
-		$backtourl = DOL_URL_ROOT."/compta/facture/document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/compta/facture/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('facture_fourn', 'facture_fournisseur'))) {
-		$backtourl = DOL_URL_ROOT."/fourn/facture/document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/fourn/facture/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('bank')) && preg_match('/\/statement\/([^\/]+)\//', $file, $regs)) {
 		$num = $regs[1];
-		$backtourl = DOL_URL_ROOT."/compta/bank/account_statement_document.php?id=".$id.'&num='.urlencode($num).'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/compta/bank/account_statement_document.php?id=".((int) $id).'&num='.urlencode($num).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('bank'))) {
-		$backtourl = DOL_URL_ROOT."/compta/bank/document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/compta/bank/document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('mrp'))) {
-		$backtourl = DOL_URL_ROOT."/mrp/mo_document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/mrp/mo_document.php?id=".((int) $id).'&file='.urlencode($file);
 	} elseif (in_array($modulepart, array('medias'))) {
 		$section_dir = dirname($file);
 		if (!preg_match('/\/$/', $section_dir)) {
 			$section_dir .= '/';
 		}
-		$backtourl = DOL_URL_ROOT."/website/index.php?action=file_manager&website=".$website.'&section_dir='.urlencode($section_dir);
+		$backtourl = DOL_URL_ROOT.'/website/index.php?action=file_manager'.($website ? '&website='.urlencode($website) : '').'&section_dir='.urlencode($section_dir);
 	} else {
 		// Generic case that should work for everybody else
-		$backtourl = DOL_URL_ROOT."/".$modulepart."/".$modulepart."_document.php?id=".$id.'&file='.urldecode($file);
+		$backtourl = DOL_URL_ROOT."/".$modulepart."/".$modulepart."_document.php?id=".((int) $id).'&file='.urlencode($file);
 	}
 }
 
@@ -413,7 +414,6 @@ if ($action == 'confirm_crop') {
 
 	$fullpath = $dir."/".$original_file;
 
-	//var_dump($fullpath.' '.$_POST['w'].'x'.$_POST['h'].'-'.$_POST['x'].'x'.$_POST['y']);exit;
 	$result = dol_imageResizeOrCrop($fullpath, 1, GETPOST('w', 'int'), GETPOST('h', 'int'), GETPOST('x', 'int'), GETPOST('y', 'int'));
 
 	if ($result == $fullpath) {
@@ -475,6 +475,7 @@ if ($action == 'confirm_crop') {
  * View
  */
 
+$head = '';
 $title = $langs->trans("ImageEditor");
 $morejs = array('/includes/jquery/plugins/jcrop/js/jquery.Jcrop.min.js', '/core/js/lib_photosresize.js');
 $morecss = array('/includes/jquery/plugins/jcrop/css/jquery.Jcrop.css');
@@ -500,14 +501,15 @@ print '<br>'."\n";
  */
 
 print '<!-- Form to resize -->'."\n";
-print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.$id.($num ? '&num='.$num : '').'" method="POST">';
+print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).($num ? '&num='.urlencode($num) : '').'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="backtourl" value="'.$backtourl.'">';
 
 print '<fieldset id="redim_file">';
 print '<legend>'.$langs->trans("Resize").'</legend>';
 print $langs->trans("ResizeDesc").'<br>';
-print $langs->trans("NewLength").': <input name="sizex" type="number" class="flat maxwidth50"> px  &nbsp; '.$langs->trans("or").' &nbsp; ';
-print $langs->trans("NewHeight").': <input name="sizey" type="number" class="flat maxwidth50"> px &nbsp; <br>';
+print $langs->trans("NewLength").': <input name="sizex" type="number" class="flat maxwidth50 right"> px  &nbsp; <span class="opacitymedium">'.$langs->trans("or").'</span> &nbsp; ';
+print $langs->trans("NewHeight").': <input name="sizey" type="number" class="flat maxwidth50 right"> px &nbsp; <br>';
 
 print '<input type="hidden" name="file" value="'.dol_escape_htmltag($file).'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
@@ -520,6 +522,7 @@ print '&nbsp;';
 print '<input type="submit" id="cancelresize" name="cancel" class="button button-cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" />';
 print '</fieldset>'."\n";
 print '</form>';
+
 print '<br>'."\n";
 
 
@@ -560,17 +563,18 @@ if (!empty($conf->use_javascript_ajax)) {
 		print '</div>';
 		print '</div><br>';
 
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.($num ? '&num='.$num : '').'" method="POST">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).($num ? '&num='.$num : '').'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="backtourl" value="'.$backtourl.'">';
 		print '
 		      <div class="jc_coords">
 		         '.$langs->trans("NewSizeAfterCropping").':
-		         <label>X1 <input type="number" class="flat maxwidth50" id="x" name="x" /></label>
-		         <label>Y1 <input type="number" class="flat maxwidth50" id="y" name="y" /></label>
-		         <label>X2 <input type="number" class="flat maxwidth50" id="x2" name="x2" /></label>
-		         <label>Y2 <input type="number" class="flat maxwidth50" id="y2" name="y2" /></label>
-		         <label>W  <input type="number" class="flat maxwidth50" id="w" name="w" /></label>
-		         <label>H  <input type="number" class="flat maxwidth50" id="h" name="h" /></label>
+		         &nbsp; <label>X1=<input type="number" class="flat maxwidth50" id="x" name="x" /></label>
+		         &nbsp; <label>Y1=<input type="number" class="flat maxwidth50" id="y" name="y" /></label>
+		         &nbsp; <label>X2=<input type="number" class="flat maxwidth50" id="x2" name="x2" /></label>
+		         &nbsp; <label>Y2=<input type="number" class="flat maxwidth50" id="y2" name="y2" /></label>
+		         &nbsp; <label>W=<input type="number" class="flat maxwidth50" id="w" name="w" /></label>
+		         &nbsp; <label>H=<input type="number" class="flat maxwidth50" id="h" name="h" /></label>
 		      </div>
 
 		      <input type="hidden" id="file" name="file" value="'.dol_escape_htmltag($original_file).'" />

@@ -63,7 +63,7 @@ class box_contacts extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->societe->lire && $user->rights->societe->contact->lire);
+		$this->hidden = !($user->hasRight('societe', 'lire') && $user->hasRight('societe', 'contact', 'lire'));
 	}
 
 	/**
@@ -74,14 +74,18 @@ class box_contacts extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs, $conf, $hookmanager;
+
 		$langs->load("boxes");
 
 		$this->max = $max;
 
+		$contactstatic = new Contact($this->db);
+		$societestatic = new Societe($this->db);
+
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts", $max));
 
-		if ($user->rights->societe->lire && $user->rights->societe->contact->lire) {
+		if ($user->hasRight('societe', 'lire') && $user->rights->societe->contact->lire) {
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
 
 			$sql .= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile, sp.email as spemail";
@@ -106,22 +110,25 @@ class box_contacts extends ModeleBoxes
 			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
-			$sql .= " WHERE sp.entity IN (".getEntity('socpeople').")";
+			$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
 			if (empty($user->rights->societe->client->voir) && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
-			if ($user->socid) {
-				$sql .= " AND sp.fk_soc = ".((int) $user->socid);
+			// Add where from hooks
+			$parameters = array('socid' => $user->socid, 'boxcode' => $this->boxcode);
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $contactstatic); // Note that $action and $object may have been modified by hook
+			if (empty($reshook)) {
+				if ($user->socid > 0) {
+					$sql .= " AND sp.fk_soc = ".((int) $user->socid);
+				}
 			}
+			$sql .= $hookmanager->resPrint;
 			$sql .= " ORDER BY sp.tms DESC";
 			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
 			if ($result) {
 				$num = $this->db->num_rows($result);
-
-				$contactstatic = new Contact($this->db);
-				$societestatic = new Societe($this->db);
 
 				$line = 0;
 				while ($line < $num) {
@@ -170,7 +177,7 @@ class box_contacts extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="right"',
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($datem, "day", 'tzuserrel'),
 					);
 

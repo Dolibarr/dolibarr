@@ -55,7 +55,7 @@ create table llx_actioncomm
   durationp			real,							-- planed duration
 
   label				varchar(255) NOT NULL,			-- label/title of event or topic of email
-  note				text,							-- private note of event or content of email
+  note				mediumtext,						-- private note of event or content of email
   
   calling_duration  integer,                        -- when event is a phone call, duration of phone call
   
@@ -79,6 +79,8 @@ create table llx_actioncomm
 
   fk_element		integer DEFAULT NULL,			-- For link to an element (proposal, invoice, order, ...)
   elementtype		varchar(255) DEFAULT NULL,		-- For link to an element (proposal, invoice, order, ...)
+
+  ip            varchar(250),              --ip used to create record (for public submission page)
 
   import_key		varchar(14),
   extraparams		varchar(255)					-- for other parameters with json format

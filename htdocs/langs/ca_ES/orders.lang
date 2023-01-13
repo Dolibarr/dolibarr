@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - orders
+OrderExists=Ja hi havia una comanda oberta vinculada a aquesta proposta, de manera que no es va crear cap altra comanda automàticament
 OrdersArea=Àrea comandes de clients
 SuppliersOrdersArea=Àrea de comandes de compra
 OrderCard=Fitxa comanda
@@ -68,6 +69,8 @@ CreateOrder=Crear comanda
 RefuseOrder=Rebutja la comanda
 ApproveOrder=Aprova la comanda
 Approve2Order=Aprovar comanda (segon nivell)
+UserApproval=Usuari per a l'aprovació
+UserApproval2=Usuari per aprovació (segon nivell)
 ValidateOrder=Validar la comanda
 UnvalidateOrder=Desvalidar la comanda
 DeleteOrder=Elimina la comanda
@@ -102,6 +105,8 @@ ConfirmCancelOrder=Vols anul·lar aquesta comanda?
 ConfirmMakeOrder=Vols confirmar la creació d'aquesta comanda a data de <b>%s</b>?
 GenerateBill=Facturar
 ClassifyShipped=Classifica enviat
+PassedInShippedStatus=classificat lliurat
+YouCantShipThis=Això no ho puc classificar. Si us plau, comproveu els permisos dels usuaris
 DraftOrders=Esborranys de comandes
 DraftSuppliersOrders=Esborrany de comandes de compra
 OnProcessOrders=Comandes en procés

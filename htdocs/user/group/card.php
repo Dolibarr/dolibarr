@@ -25,6 +25,7 @@
  *       \brief      Tab of a user group
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
@@ -32,16 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Defini si peux lire/modifier utilisateurs et permisssions
-$canreadperms = ($user->admin || $user->rights->user->user->lire);
-$caneditperms = ($user->admin || $user->rights->user->user->creer);
-$candisableperms = ($user->admin || $user->rights->user->user->supprimer);
+$canreadperms = ($user->admin || $user->hasRight("user", "user", "read"));
+$caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
+$candisableperms = ($user->admin || $user->hasRight("user", "user", "delete"));
 $feature2 = 'user';
 
 // Advanced permissions
 if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$canreadperms = ($user->admin || $user->rights->user->group_advance->read);
-	$caneditperms = ($user->admin || $user->rights->user->group_advance->write);
-	$candisableperms = ($user->admin || $user->rights->user->group_advance->delete);
+	$canreadperms = ($user->admin || $user->hasRight("user", "group_advance", "read"));
+	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
+	$candisableperms = ($user->admin || $user->hasRight("user", "group_advance", "delete"));
 	$feature2 = 'group_advance';
 }
 
@@ -73,7 +74,7 @@ $hookmanager->initHooks(array('groupcard', 'globalcard'));
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', $feature2);
 
 // Users/Groups management only in master entity if transverse mode
-if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
+if (isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
 	accessforbidden();
 }
 
@@ -122,11 +123,11 @@ if (empty($reshook)) {
 	// Action add group
 	if ($action == 'add') {
 		if ($caneditperms) {
-			if (!GETPOST("nom", "nohtml")) {
+			if (!GETPOST("nom", "alphanohtml")) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action = "create"; // Go back to create page
 			} else {
-				$object->name	= GETPOST("nom", 'nohtml');
+				$object->name	= GETPOST("nom", 'alphanohtml');
 				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 				// Fill array 'array_options' with data from add form
@@ -135,7 +136,7 @@ if (empty($reshook)) {
 					$error++;
 				}
 
-				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 					$object->entity = 0;
 				} else {
 					if ($conf->entity == 1 && $user->admin && !$user->entity) {		// Same permissions test than the one used to show the combo of entities into the form
@@ -206,7 +207,7 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->name = GETPOST("nom", 'nohtml');
+			$object->name = GETPOST("nom", 'alphanohtml');
 			$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
 
 			// Fill array 'array_options' with data from add form
@@ -215,7 +216,7 @@ if (empty($reshook)) {
 				$error++;
 			}
 
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				$object->entity = 0;
 			} elseif (GETPOSTISSET("entity")) {
 				$object->entity = GETPOST("entity", "int");
@@ -238,7 +239,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->user->dir_output.'/usergroups';
-	$permissiontoadd = $user->rights->user->user->creer;
+	$permissiontoadd = $user->hasRight("user", "user", "write");
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -246,8 +247,13 @@ if (empty($reshook)) {
 /*
  * View
  */
+$title = $object->name.' - '.$langs->trans("Card");
+if ($action == 'create') {
+	$title = $langs->trans("NewGroup");
+}
+$help_url = "";
+llxHeader('', $title, $help_url);
 
-llxHeader('', $langs->trans("GroupCard"));
 
 $form = new Form($db);
 $fuserstatic = new User($db);
@@ -257,7 +263,7 @@ $formfile = new FormFile($db);
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewGroup"), '', 'object_group');
 
-	print dol_set_focus('#nom');
+	dol_set_focus('#nom');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -269,7 +275,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent tableforfieldcreate">';
 
 	// Multicompany
-	if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+	if (isModEnabled('multicompany') && is_object($mc)) {
 		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
 			print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 			print "<td>".$mc->select_entities($conf->entity);
@@ -324,7 +330,7 @@ if ($action == 'create') {
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-			dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+			dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
@@ -343,7 +349,7 @@ if ($action == 'create') {
 			}
 
 			// Multicompany
-			if (!empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
+			if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
 				$mc->getInfo($object->entity);
 				print "<tr>".'<td class="titlefield">'.$langs->trans("Entity").'</td>';
 				print '<td class="valeur">'.dol_escape_htmltag($mc->label);
@@ -412,6 +418,7 @@ if ($action == 'create') {
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="adduser">';
+					print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
 					print '<td class="liste_titre">';
@@ -420,8 +427,10 @@ if ($action == 'create') {
 					print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 					print '<input type="submit" class="button buttongen button-add" value="'.$langs->trans("Add").'">';
 					print '</td></tr>'."\n";
-					print '</table></form>'."\n";
-					print '<br>';
+					print '</table>';
+					print '</div>';
+					print '</form>'."\n";
+					//print '<br>';
 				}
 
 				/*
@@ -443,7 +452,7 @@ if ($action == 'create') {
 						print '<tr class="oddeven">';
 						print '<td class="tdoverflowmax150">';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
-						if ($useringroup->admin && !$useringroup->entity) {
+						if (isModEnabled('multicompany') && $useringroup->admin && empty($useringroup->entity)) {
 							print img_picto($langs->trans("SuperAdministrator"), 'redstar');
 						} elseif ($useringroup->admin) {
 							print img_picto($langs->trans("Administrator"), 'star');
@@ -454,7 +463,7 @@ if ($action == 'create') {
 						print '<td class="center">'.$useringroup->getLibStatut(5).'</td>';
 						print '<td class="right">';
 						if (!empty($user->admin)) {
-							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'">';
+							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=removeuser&token='.newToken().'&user='.$useringroup->id.'">';
 							print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 							print '</a>';
 						} else {
@@ -480,10 +489,10 @@ if ($action == 'create') {
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->user->dir_output."/usergroups/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->user->user->creer;
-			$delallowed = $user->rights->user->user->supprimer;
+			$genallowed = $user->hasRight("user", "user", "write");
+			$delallowed = $user->hasRight("user", "user", "delete");
 
-			$somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+			$somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $mysoc->default_lang);
 
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, null);
@@ -515,7 +524,7 @@ if ($action == 'create') {
 			print '<table class="border centpercent tableforfieldedit">'."\n";
 
 			// Multicompany
-			if (!empty($conf->multicompany->enabled) && is_object($mc)) {
+			if (isModEnabled('multicompany') && is_object($mc)) {
 				if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
 					print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 					print "<td>".$mc->select_entities($object->entity);

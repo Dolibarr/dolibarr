@@ -111,6 +111,10 @@ with
 				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
 				//var_dump($file.' '.(!@TCPDF_STATIC::file_exists($file)));
 				//return false;	
+                $tfile = str_replace(' ', '%20', $file);
+				if (@TCPDF_STATIC::file_exists($tfile)) {
+					$file = $tfile;
+				}
 			}
 			
 * Replace in tcpdf.php
@@ -271,7 +275,17 @@ RESTLER:
 	with 
 	
 	$loaders = array_unique(static::$rogueLoaders, SORT_REGULAR);
+	
+* Replace CommentParser.php line 423
+	elseif (count($value) && is_numeric($value[0]))
+	
+	with
+	
+	elseif (count($value) && isset($value[0]) && is_numeric($value[0]))
 
+* Add CommentParser.php line 406 & 407 to remove a warning on api request in php 8.1
+	empty($value[0]) ? null :
+	empty($value[1]) ? null :
 
 +With swagger 2 provided into /explorer:
 ----------------------------------------

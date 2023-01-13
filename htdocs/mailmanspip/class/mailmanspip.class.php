@@ -77,7 +77,7 @@ class MailmanSpip
 	 */
 	public function isSpipEnabled()
 	{
-		if (defined("ADHERENT_USE_SPIP") && (ADHERENT_USE_SPIP == 1)) {
+		if (getDolGlobalInt("ADHERENT_USE_SPIP") == 1) {
 			return true;
 		}
 
@@ -91,10 +91,8 @@ class MailmanSpip
 	 */
 	public function checkSpipConfig()
 	{
-		if (defined('ADHERENT_SPIP_SERVEUR') && defined('ADHERENT_SPIP_USER') && defined('ADHERENT_SPIP_PASS') && defined('ADHERENT_SPIP_DB')) {
-			if (ADHERENT_SPIP_SERVEUR != '' && ADHERENT_SPIP_USER != '' && ADHERENT_SPIP_PASS != '' && ADHERENT_SPIP_DB != '') {
-				return true;
-			}
+		if (getDolGlobalString('ADHERENT_SPIP_SERVEUR') != '' && getDolGlobalString('ADHERENT_SPIP_USER') != '' && getDolGlobalString('ADHERENT_SPIP_PASS') != '' && getDolGlobalString('ADHERENT_SPIP_DB') != '') {
+			return true;
 		}
 
 		return false;
@@ -107,13 +105,13 @@ class MailmanSpip
 	 */
 	public function connectSpip()
 	{
-		$resource = getDoliDBInstance('mysql', ADHERENT_SPIP_SERVEUR, ADHERENT_SPIP_USER, ADHERENT_SPIP_PASS, ADHERENT_SPIP_DB, ADHERENT_SPIP_PORT);
+		$resource = getDoliDBInstance('mysql', getDolGlobalString('ADHERENT_SPIP_SERVEUR'), getDolGlobalString('ADHERENT_SPIP_USER'), getDolGlobalString('ADHERENT_SPIP_PASS'), getDolGlobalString('ADHERENT_SPIP_DB'), getDolGlobalString('ADHERENT_SPIP_PORT'));
 
 		if ($resource->ok) {
 			return $resource;
 		}
 
-		dol_syslog('Error when connecting to SPIP '.ADHERENT_SPIP_SERVEUR.' '.ADHERENT_SPIP_USER.' '.ADHERENT_SPIP_PASS.' '.ADHERENT_SPIP_DB, LOG_ERR);
+		dol_syslog('Error when connecting to SPIP '.getDolGlobalString('ADHERENT_SPIP_SERVEUR').' '.getDolGlobalString('ADHERENT_SPIP_USER').' '.getDolGlobalString('ADHERENT_SPIP_PASS').' '.getDolGlobalString('ADHERENT_SPIP_DB'), LOG_ERR);
 
 		return false;
 	}
@@ -141,34 +139,15 @@ class MailmanSpip
 			$list,
 			$object->email,
 			$object->pass,
-			$conf->global->ADHERENT_MAILMAN_ADMINPW
+			$conf->global->ADHERENT_MAILMAN_ADMIN_PASSWORD
 		);
 
 		$curl_url = str_replace($patterns, $replace, $url);
 		dol_syslog('Calling Mailman: '.$curl_url);
 
-		$ch = curl_init($curl_url);
+		$result = getURLContent($curl_url);
 
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_FAILONERROR, true);
-		@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
-		curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-
-		$result = curl_exec($ch);
-		dol_syslog('result curl_exec='.$result);
-
-		//An error was found, we store it in $this->error for later
-		if ($result === false || curl_errno($ch) > 0) {
-			$this->error = curl_errno($ch).' '.curl_error($ch);
-			dol_syslog('Error using curl '.$this->error, LOG_ERR);
-		}
-
-		curl_close($ch);
-
-		return $result;
+		return $result['content'];
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

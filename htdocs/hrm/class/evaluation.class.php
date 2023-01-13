@@ -20,9 +20,9 @@
  */
 
 /**
- * \file        class/evaluation.class.php
- * \ingroup     hrm
- * \brief       This file is a CRUD class file for Evaluation (Create/Read/Update/Delete)
+ *    \file        htdocs/hrm/class/evaluation.class.php
+ *    \ingroup     hrm
+ *    \brief       This file is a CRUD class file for Evaluation (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -118,8 +118,8 @@ class Evaluation extends CommonObject
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'default'=>0, 'visible'=>5, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '6' => 'Closed'),),
 		'date_eval' => array('type'=>'date', 'label'=>'DateEval', 'enabled'=>'1', 'position'=>502, 'notnull'=>1, 'visible'=>1,),
-		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'User', 'enabled'=>'1', 'position'=>504, 'notnull'=>1, 'visible'=>1,),
-		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'Job', 'enabled'=>'1', 'position'=>505, 'notnull'=>1, 'visible'=>1,),
+		'fk_user' => array('type'=>'integer:User:user/class/user.class.php:0', 'label'=>'User', 'enabled'=>'1', 'position'=>504, 'notnull'=>1, 'visible'=>1,),
+		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'JobPosition', 'enabled'=>'1', 'position'=>505, 'notnull'=>1, 'visible'=>1,),
 	);
 	public $rowid;
 	public $ref;
@@ -182,15 +182,19 @@ class Evaluation extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		$this->db = $db;
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
-		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
+		}
+
+		if (empty($user->rights->hrm->evaluation->readall)) {
+			$this->fields['fk_user']['type'].= ':rowid IN('.$this->db->sanitize(implode(", ", $user->getAllChildIds(1))).')';
 		}
 
 		$this->date_eval = dol_now();
@@ -808,7 +812,7 @@ class Evaluation extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('evaluationdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -849,7 +853,7 @@ class Evaluation extends CommonObject
 			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
-			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Closed');
 		}
 
 		$statusType = 'status'.$status;
@@ -878,27 +882,11 @@ class Evaluation extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
 
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
-				if ($obj->fk_user_cloture) {
-					$cluser = new User($this->db);
-					$cluser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cluser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
-				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
+				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 
 			$this->db->free($result);
@@ -935,8 +923,8 @@ class Evaluation extends CommonObject
 		$result = $objectline->fetchAll('ASC', '', 0, 0, array('customsql'=>'fk_evaluation = '.$this->id));
 
 		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
+			$this->error = $objectline->error;
+			$this->errors = $objectline->errors;
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -1067,79 +1055,4 @@ class Evaluation extends CommonObject
 
 		return $error;
 	}
-
-	/**
-	 * @param string $action
-	 * @param int $selected
-	 */
-	//  public function printObjectLines($action, $selected = 0)
-	//  {
-	//      global $conf, $hookmanager, $langs, $user, $extrafields, $object;
-	//      // TODO We should not use global var for this
-	//      global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
-	//
-	//      // Define usemargins
-	////        $usemargins = 0;
-	////        if (!empty($conf->margin->enabled) && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) {
-	////            $usemargins = 1;
-	////        }
-	//
-	//      $num = count($this->lines);
-	//
-	//      // Line extrafield
-	//      if (!is_object($extrafields)) {
-	//          require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-	//          $extrafields = new ExtraFields($this->db);
-	//      }
-	//      $extrafields->fetch_name_optionals_label($this->table_element_line);
-	//
-	//      $parameters = array('num'=>$num, 'selected'=>$selected, 'table_element_line'=>$this->table_element_line);
-	//      $reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-	//      if (empty($reshook)) {
-	//          // Output template part (modules that overwrite templates must declare this into descriptor)
-	//          // Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook.
-	//          include dol_buildpath('hrm/core/tpl/objectline_title.tpl.php');
-	//      }
-	//
-	//      $i = 0;
-	//
-	//      print "<!-- begin printObjectLines() --><tbody>\n";
-	//      foreach ($this->lines as $line) {
-	//          //Line extrafield
-	//          $line->fetch_optionals();
-	//
-	//          //if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
-	//          if (is_object($hookmanager)) {   // Old code is commented on preceding line.
-	//              if (empty($line->fk_parent_line)) {
-	//                  $parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'selected'=>$selected, 'table_element_line'=>$line->table_element);
-	//                  $reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-	//              } else {
-	//                  $parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'fk_parent_line'=>$line->fk_parent_line);
-	//                  $reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-	//              }
-	//          }
-	//          if (empty($reshook)) {
-	//              $this->printObjectLine($action, $line);
-	//          }
-	//
-	//          $i++;
-	//      }
-	//      print "</tbody><!-- end printObjectLines() -->\n";
-	//  }
-
-	//  public function printObjectLine($action, $line)
-	//  {
-	//      global $conf, $langs, $user, $object, $hookmanager;
-	//      global $form;
-	//      global $object_rights, $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
-	//
-	//      $object_rights = $this->getRights();
-	//
-	//      $element = $this->element;
-	//
-	//      $text = '';
-	//      $description = '';
-	//
-	//      include dol_buildpath('hrm/tpl/objectline_view.tpl.php');
-	//  }
 }

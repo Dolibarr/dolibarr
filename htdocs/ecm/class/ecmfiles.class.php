@@ -404,7 +404,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity because filesystem on disk does not know what is Dolibarr entities
-		 if (! empty($conf->multicompany->enabled)) {
+		 if (isModEnabled('multicompany')) {
 		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		 }*/
 		if ($relativepath) {
@@ -543,7 +543,7 @@ class EcmFiles extends CommonObject
 		}
 		$sql .= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity
-		 if (! empty($conf->multicompany->enabled)) {
+		 if (isModEnabled('multicompany')) {
 		 $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		 }*/
 		if (count($sqlwhere) > 0) {
@@ -566,7 +566,7 @@ class EcmFiles extends CommonObject
 				$line = new EcmfilesLine();
 
 				$line->id = $obj->rowid;
-				$line->ref = $obj->ref;
+				$line->ref = $obj->rowid;
 				$line->label = $obj->label;
 				$line->share = $obj->share;
 				$line->entity = $obj->entity;
@@ -748,7 +748,13 @@ class EcmFiles extends CommonObject
 		}
 
 		// If you need to delete child tables to, you can insert them here
-
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if (!$result) {
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
+				$error++;
+			}
+		}
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' WHERE rowid='.((int) $this->id);
@@ -836,7 +842,7 @@ class EcmFiles extends CommonObject
 	{
 		global $db, $conf, $langs;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $menumanager, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -873,6 +879,16 @@ class EcmFiles extends CommonObject
 			}
 		}
 		$result .= $linkstart.$this->ref.$linkend;
+
+		global $action;
+		$hookmanager->initHooks(array($this->element . 'dao'));
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 		return $result;
 	}
 

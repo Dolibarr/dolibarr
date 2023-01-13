@@ -66,3 +66,5 @@ RepeatableIntervention=Interventsiya shabloni
 ToCreateAPredefinedIntervention=Oldindan belgilangan yoki takrorlanadigan aralashuvni yaratish uchun umumiy aralashuvni yarating va uni aralashuv shabloniga o'zgartiring
 ConfirmReopenIntervention=Siz aralashuvni qayta ochishni xohlaysizmi <b> %s </b>?
 GenerateInter=Interventsiya yarating
+FichinterNoContractLinked=Intervention %s bog'langan shartnomasiz yaratilgan.
+ErrorFicheinterCompanyDoesNotExist=Kompaniya mavjud emas. Intervensiya yaratilmagan.

@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - sms
 Sms=Sms
 SmsSetup=SMS opsætning
-SmsDesc=Denne side giver dig mulighed for at definere globale muligheder for sms-funktioner
-SmsCard=SMS Card
-AllSms=Alle SMS-kampagner
+SmsDesc=Denne side giver dig mulighed for at definere globale muligheder for SMS-funktioner
+SmsCard=SMS kort
+AllSms=Alle sms-kampagner
 SmsTargets=Mål
 SmsRecipients=Mål
 SmsRecipient=Mål
 SmsTitle=Beskrivelse
-SmsFrom=Sender
+SmsFrom=Afsender
 SmsTo=Mål
 SmsTopic=Emne af SMS
 SmsText=Besked

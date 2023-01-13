@@ -41,6 +41,8 @@ class mailing_fraise extends MailingTargets
 
 	public $require_module = array('adherent');
 
+	public $enabled = 'isModEnabled("adherent")';
+
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -91,8 +93,8 @@ class mailing_fraise extends MailingTargets
 	 *    For example if this selector is used to extract 500 different
 	 *    emails from a text file, this function must return 500.
 	 *
-	 *  @param    string    $sql        Requete sql de comptage
-	 *    @return        int            Nb of recipients
+	 *    @param      string    	$sql        Requete sql de comptage
+	 *    @return     int|string      			Nb of recipient, or <0 if error, or '' if NA
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
@@ -100,8 +102,7 @@ class mailing_fraise extends MailingTargets
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= " WHERE (a.email IS NOT NULL AND a.email != '') AND a.entity IN (".getEntity('member').")";
 
-		// La requete doit retourner un champ "nb" pour etre comprise
-		// par parent::getNbOfRecipients
+		// La requete doit retourner un champ "nb" pour etre comprise par parent::getNbOfRecipients
 		return parent::getNbOfRecipients($sql);
 	}
 

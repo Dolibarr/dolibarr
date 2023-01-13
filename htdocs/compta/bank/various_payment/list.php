@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2019	Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2022	Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
@@ -24,10 +24,12 @@
  *  \brief      List of various payments
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -35,12 +37,13 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "accountancy"));
 
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
+
 // Security check
 $socid = GETPOST("socid", "int");
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'banque', '', '', '');
 
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -76,6 +79,7 @@ if (empty($search_datev_start)) {
 if (empty($search_datev_end)) {
 	$search_datev_end = GETPOST("search_datev_end", 'int');
 }
+$search_type_id = GETPOST('search_type_id', 'int');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -95,19 +99,6 @@ if (!$sortorder) {
 
 $filtre = GETPOST("filtre", 'alpha');
 
-if (!GETPOST('typeid')) {
-	$newfiltre = str_replace('filtre=', '', $filtre);
-	$filterarray = explode('-', $newfiltre);
-	foreach ($filterarray as $val) {
-		$part = explode(':', $val);
-		if ($part[0] == 'v.fk_typepayment') {
-			$typeid = $part[1];
-		}
-	}
-} else {
-	$typeid = GETPOST('typeid');
-}
-
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
 	$search_ref = '';
 	$search_label = '';
@@ -121,7 +112,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_bank_entry = '';
 	$search_accountancy_account = '';
 	$search_accountancy_subledger = '';
-	$typeid = '';
+	$search_type_id = '';
 }
 
 $search_all = GETPOSTISSET("search_all") ? trim(GETPOST("search_all", 'alpha')) : trim(GETPOST('sall'));
@@ -162,16 +153,21 @@ $arrayfields = array(
 	'datep'			=>array('label'=>"DatePayment", 'checked'=>1, 'position'=>120),
 	'datev'			=>array('label'=>"DateValue", 'checked'=>-1, 'position'=>130),
 	'type'			=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>140),
-	'project'		=>array('label'=>"Project", 'checked'=>1, 'position'=>200, "enabled"=>!empty($conf->projet->enabled)),
-	'bank'			=>array('label'=>"BankAccount", 'checked'=>1, 'position'=>300, "enabled"=>!empty($conf->banque->enabled)),
-	'entry'			=>array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>310, "enabled"=>!empty($conf->banque->enabled)),
-	'account'		=>array('label'=>"AccountAccountingShort", 'checked'=>1, 'position'=>400, "enabled"=>!empty($conf->accounting->enabled)),
-	'subledger'		=>array('label'=>"SubledgerAccount", 'checked'=>1, 'position'=>410, "enabled"=>!empty($conf->accounting->enabled)),
+	'project'		=>array('label'=>"Project", 'checked'=>1, 'position'=>200, "enabled"=>isModEnabled('project')),
+	'bank'			=>array('label'=>"BankAccount", 'checked'=>1, 'position'=>300, "enabled"=>isModEnabled("banque")),
+	'entry'			=>array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>310, "enabled"=>isModEnabled("banque")),
+	'account'		=>array('label'=>"AccountAccountingShort", 'checked'=>1, 'position'=>400, "enabled"=>isModEnabled('accounting')),
+	'subledger'		=>array('label'=>"SubledgerAccount", 'checked'=>1, 'position'=>410, "enabled"=>isModEnabled('accounting')),
 	'debit'			=>array('label'=>"Debit", 'checked'=>1, 'position'=>500),
 	'credit'		=>array('label'=>"Credit", 'checked'=>1, 'position'=>510),
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
+$object = new PaymentVarious($db);
+
+$result = restrictedArea($user, 'banque', '', '', '');
+
 
 /*
  * Actions
@@ -196,7 +192,7 @@ $form = new Form($db);
 if ($arrayfields['account']['checked'] || $arrayfields['subledger']['checked']) {
 	$formaccounting = new FormAccounting($db);
 }
-if ($arrayfields['bank']['checked'] && !empty($conf->accounting->enabled)) {
+if ($arrayfields['bank']['checked'] && isModEnabled('accounting')) {
 	$accountingjournal = new AccountingJournal($db);
 }
 if ($arrayfields['ref']['checked']) {
@@ -218,6 +214,9 @@ if ($arrayfields['account']['checked']) {
 $sql = "SELECT v.rowid, v.sens, v.amount, v.label, v.datep as datep, v.datev as datev, v.fk_typepayment as type, v.num_payment, v.fk_bank, v.accountancy_code, v.subledger_account, v.fk_projet as fk_project,";
 $sql .= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number as bank_account_number, ba.fk_accountancy_journal as accountancy_journal, ba.label as blabel,";
 $sql .= " pst.code as payment_code";
+
+$sqlfields = $sql; // $sql fields to remove for count total
+
 $sql .= " FROM ".MAIN_DB_PREFIX."payment_various as v";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON v.fk_typepayment = pst.id";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON v.fk_bank = b.rowid";
@@ -261,36 +260,54 @@ if ($search_accountancy_account > 0) {
 if ($search_accountancy_subledger > 0) {
 	$sql .= " AND v.subledger_account = ".((int) $search_accountancy_subledger);
 }
-if ($typeid > 0) {
-	$sql .= " AND v.fk_typepayment=".((int) $typeid);
+if ($search_type_id > 0) {
+	$sql .= " AND v.fk_typepayment=".((int) $search_type_id);
 }
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 
-$sql .= $db->order($sortfield, $sortorder);
+// Count total nb of records
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
 
-$totalnboflines = 0;
-$result = $db->query($sql);
-if ($result) {
-	$totalnboflines = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+	$db->free($resql);
 }
-$sql .= $db->plimit($limit + 1, $offset);
 
-$result = $db->query($sql);
-if ($result) {
-	$num = $db->num_rows($result);
+// Complete request and execute it with limit
+$sql .= $db->order($sortfield, $sortorder);
+if ($limit) {
+	$sql .= $db->plimit($limit + 1, $offset);
+}
+
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
 
 	// Direct jump if only one record found
 	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
-		$obj = $db->fetch_object($result);
+		$obj = $db->fetch_object($resql);
 		$id = $obj->rowid;
 		header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$id);
 		exit;
 	}
 
 	// must be place behind the last "header(...)" call
-	llxHeader();
+	llxHeader('', $langs->trans("VariousPayments"));
 
 	$i = 0;
 	$total = 0;
@@ -320,8 +337,8 @@ if ($result) {
 	if ($search_datev_end) {
 		$param .= '&search_datev_end='.urlencode($search_datev_end);
 	}
-	if ($typeid > 0) {
-		$param .= '&typeid='.urlencode($typeid);
+	if ($search_type_id > 0) {
+		$param .= '&search_type_id='.urlencode($search_type_id);
 	}
 	if ($search_amount_deb) {
 		$param .= '&search_amount_deb='.urlencode($search_amount_deb);
@@ -360,7 +377,7 @@ if ($result) {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	print_barre_liste($langs->trans("MenuVariousPayment"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans("MenuVariousPayment"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	if ($search_all) {
 		foreach ($fieldstosearchall as $key => $val) {
@@ -371,6 +388,7 @@ if ($result) {
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$moreforfilter= '';
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">';
@@ -423,7 +441,7 @@ if ($result) {
 	// Payment type
 	if ($arrayfields['type']['checked']) {
 		print '<td class="liste_titre center">';
-		$form->select_types_paiements($typeid, 'typeid', '', 0, 1, 1, 16, 1, 'maxwidth100');
+		print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
 
@@ -449,7 +467,7 @@ if ($result) {
 	}
 
 	// Accounting account
-	if ($arrayfields['account']['checked']) {
+	if (!empty($arrayfields['account']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<div class="nowrap">';
 		print $formaccounting->select_account($search_accountancy_account, 'search_accountancy_account', 1, array(), 1, 1, 'maxwidth200');
@@ -458,7 +476,7 @@ if ($result) {
 	}
 
 	// Subledger account
-	if ($arrayfields['subledger']['checked']) {
+	if (!empty($arrayfields['subledger']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<div class="nowrap">';
 		print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, 'maxwidth200');
@@ -467,7 +485,7 @@ if ($result) {
 	}
 
 	// Debit
-	if ($arrayfields['debit']['checked']) {
+	if (!empty($arrayfields['debit']['checked'])) {
 		print '<td class="liste_titre right">';
 		print '<input name="search_amount_deb" class="flat maxwidth50" type="text" value="'.dol_escape_htmltag($search_amount_deb).'">';
 		print '</td>';
@@ -486,6 +504,7 @@ if ($result) {
 	print '</td>';
 
 	print '</tr>';
+
 
 	print '<tr class="liste_titre">';
 
@@ -517,10 +536,10 @@ if ($result) {
 	if ($arrayfields['entry']['checked']) {
 		print_liste_field_titre($arrayfields['entry']['label'], $_SERVER["PHP_SELF"], 'ba.label', '', $param, '', $sortfield, $sortorder);
 	}
-	if ($arrayfields['account']['checked']) {
+	if (!empty($arrayfields['account']['checked'])) {
 		print_liste_field_titre($arrayfields['account']['label'], $_SERVER["PHP_SELF"], 'v.accountancy_code', '', $param, '', $sortfield, $sortorder, 'left ');
 	}
-	if ($arrayfields['subledger']['checked']) {
+	if (!empty($arrayfields['subledger']['checked'])) {
 		print_liste_field_titre($arrayfields['subledger']['label'], $_SERVER["PHP_SELF"], 'v.subledger_account', '', $param, '', $sortfield, $sortorder, 'left ');
 	}
 	if ($arrayfields['debit']['checked']) {
@@ -535,13 +554,17 @@ if ($result) {
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	print '</tr>';
 
 
 	$totalarray = array();
+	$totalarray['nbfield'] = 0;
+	$totalarray['val']['total_cred'] = 0;
+	$totalarray['val']['total_deb'] = 0;
+
 	while ($i < min($num, $limit)) {
-		$obj = $db->fetch_object($result);
+		$obj = $db->fetch_object($resql);
 
 		$variousstatic->id = $obj->rowid;
 		$variousstatic->ref = $obj->rowid;
@@ -622,7 +645,7 @@ if ($result) {
 				$accountstatic->ref = $obj->bref;
 				$accountstatic->number = $obj->bnumber;
 
-				if (!empty($conf->accounting->enabled)) {
+				if (isModEnabled('accounting')) {
 					$accountstatic->account_number = $obj->bank_account_number;
 					$accountingjournal->fetch($obj->accountancy_journal);
 					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
@@ -649,19 +672,18 @@ if ($result) {
 		}
 
 		// Accounting account
-		if ($arrayfields['account']['checked']) {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+		if (!empty($arrayfields['account']['checked'])) {
 			$accountingaccount->fetch('', $obj->accountancy_code, 1);
 
-			print '<td>'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->accountancy_code.' '.$accountingaccount->label).'">'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 
 		// Accounting subledger account
-		if ($arrayfields['subledger']['checked']) {
-			print '<td>'.length_accounta($obj->subledger_account).'</td>';
+		if (!empty($arrayfields['subledger']['checked'])) {
+			print '<td class="tdoverflowmax150">'.length_accounta($obj->subledger_account).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -705,7 +727,7 @@ if ($result) {
 			$totalarray['nbfield']++;
 		}
 
-		print "</tr>";
+		print '</tr>'."\n";
 
 		$i++;
 	}
@@ -713,11 +735,27 @@ if ($result) {
 	// Show total line
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
-	print "</table>";
-	print '</div>';
-	print '</form>';
+	// If no record found
+	if ($num == 0) {
+		$colspan = 1;
+		foreach ($arrayfields as $key => $val) {
+			if (!empty($val['checked'])) {
+				$colspan++;
+			}
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
 
-	$db->free($result);
+	$db->free($resql);
+
+	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
+	print '</table>'."\n";
+	print '</div>'."\n";
+
+	print '</form>'."\n";
 } else {
 	dol_print_error($db);
 }

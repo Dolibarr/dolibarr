@@ -24,6 +24,7 @@
  *		\brief      Tab payment info
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
@@ -51,7 +52,7 @@ $confirm = GETPOST('confirm', 'alpha');
 llxHeader('', $langs->trans("Payment"));
 
 $object = new PaymentExpenseReport($db);
-$object->fetch($id, $ref);
+$object->fetch($id);
 $object->info($object->id);
 
 $head = payment_expensereport_prepare_head($object);

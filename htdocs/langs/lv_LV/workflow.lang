@@ -7,6 +7,7 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automātiski izveidojiet pārdošanas pasū
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automātiski izveidojiet klienta rēķinu pēc komerciāla piedāvājuma parakstīšanas (jaunajā rēķinā būs tāda pati summa kā piedāvājumā)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automātiski izveidot klienta rēķinu pēc līguma apstiprināšanas
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automātiski izveidojiet klienta rēķinu pēc pārdošanas pasūtījuma slēgšanas (jaunajam rēķinam būs tāda pati summa kā pasūtījumam)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Izveidojot biļeti, automātiski izveidojiet iejaukšanos.
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klasificējiet saistītā avota priekšlikumu kā rēķinu, kad pārdošanas pasūtījums ir iestatīts uz rēķinu (un ja pasūtījuma summa ir vienāda ar parakstītā saistītā priekšlikuma kopējo summu)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klasificēt saistīto avota priekšlikumu kā rēķinu, kad klienta rēķins ir apstiprināts (un ja rēķina summa ir tāda pati kā parakstītā saistītā piedāvājuma kopējā summa)
@@ -21,10 +22,15 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klasificēt saistīto
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Klasificēt saistītā avota pirkuma pasūtījumu kā saņemtu, kad saņemšana ir apstiprināta (un ja visu pieņemšanu saņemtais daudzums ir tāds pats kā atjaunināmajā pirkuma pasūtījumā)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Saistītā avota pirkuma pasūtījuma klasificēšana kā saņemta, kad pieņemšana ir slēgta (un ja visu pieņemšanu saņemtais daudzums ir tāds pats kā atjaunināmajā pirkuma pasūtījumā)
 # Autoclassify purchase invoice
-descWORKFLOW_BILL_ON_RECEPTION=Klasificējiet pieņemjumus uz “rēķinu”, kad ir apstiprināts saistītā piegādātāja pasūtījums
+descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Klasificējiet pieņemšanas kā "rēķins", kad ir apstiprināts saistītais pirkuma rēķins (un ja rēķina summa ir tāda pati kā saistīto pieņemšanu kopējā summa)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Veidojot biļeti, saistiet pieejamos atbilstošās trešās puses līgumus
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Saistot līgumus, meklējiet starp mātesuzņēmumu līgumiem
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Kad biļete ir slēgta, aizveriet visas ar biļeti saistītās darbības
 AutomaticCreation=Automātiska veidošana
 AutomaticClassification=Automātiskā klasifikācija
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Klasificējiet saistītā avota sūtījumu kā slēgtu, kad tiek apstiprināts klienta rēķins
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Klasificēt saistītā avota sūtījumu kā slēgtu, kad klienta rēķins ir apstiprināts (un ja rēķina summa ir tāda pati kā saistīto sūtījumu kopējā summa)
+AutomaticClosing=Automātiska aizvēršana
+AutomaticLinking=Automātiska saistīšana

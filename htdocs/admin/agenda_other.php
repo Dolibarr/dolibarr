@@ -26,6 +26,7 @@
  *      \brief      Autocreate actions for agenda module setup page
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
@@ -41,6 +42,8 @@ $langs->loadLangs(array('admin', 'other', 'agenda', 'users'));
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
 $param = GETPOST('param', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
@@ -50,6 +53,9 @@ $type = 'action';
 /*
  *	Actions
  */
+
+$error = 0;
+$errors = array();
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -106,6 +112,33 @@ if ($action == 'set') {
 		setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
 	} else {
 		setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+	}
+} elseif ($action == 'setcolors') {
+	$event_color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('event_past_color', 'alphanohtml'));
+	$res = dolibarr_set_const($db, 'AGENDA_EVENT_PAST_COLOR', $event_color, 'chaine', 0, '', $conf->entity);
+	if (!$res > 0) {
+		$error++;
+		$errors[] = $db->lasterror();
+	}
+
+	$event_color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('event_current_color', 'alphanohtml'));
+	$res = dolibarr_set_const($db, 'AGENDA_EVENT_CURRENT_COLOR', $event_color, 'chaine', 0, '', $conf->entity);
+	if (!$res > 0) {
+		$error++;
+		$errors[] = $db->lasterror();
+	}
+
+	$event_color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('event_future_color', 'alphanohtml'));
+	$res = dolibarr_set_const($db, 'AGENDA_EVENT_FUTURE_COLOR', $event_color, 'chaine', 0, '', $conf->entity);
+	if (!$res > 0) {
+		$error++;
+		$errors[] = $db->lasterror();
+	}
+
+	if ($error) {
+		setEventMessages('', $errors, 'errors');
+	} else {
+		setEventMessage($langs->trans('SetupSaved'));
 	}
 } elseif ($action == 'specimen') {  // For orders
 	$modele = GETPOST('module', 'alpha');
@@ -190,9 +223,10 @@ print dol_get_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
 
 
 /*
- *  Documents models for supplier orders
+ *  Miscellaneous
  */
 
+print load_fiche_titre($langs->trans('Miscellaneous'), '', '');
 
 // Define array def of models
 $def = array();
@@ -365,7 +399,7 @@ if (!is_array($result) && $result < 0) {
 } elseif (count($result) > 0) {
 	$defval = reset($result)->value;
 }
-$formactions->form_select_status_action('agenda', $defval, 1, "AGENDA_EVENT_DEFAULT_STATUS", 0, 1, 'maxwidth200');
+$formactions->form_select_status_action('agenda', $defval, 1, "AGENDA_EVENT_DEFAULT_STATUS", 0, 1, 'maxwidth200 onrightofpage');
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_TYPE
@@ -392,13 +426,62 @@ print '</td></tr>'."\n";
 
 print '</table>';
 
-print dol_get_fiche_end();
+print $form->buttonsSaveCancel("Save", '');
+
+print '</form>';
+
+
+/*
+ * User interface (colors)
+ */
+
+print load_fiche_titre($langs->trans('UserInterface'), '', '');
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+$formother = new FormOther($db);
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" name="form_colors">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="setcolors">';
+
+print '<table class="noborder allwidth">'."\n";
+print '<tr class="liste_titre">'."\n";
+print '<td>'.$langs->trans("Parameters").'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
+print '</tr>'."\n";
+
+// AGENDA_EVENT_PAST_COLOR
+print '<tr class="oddeven">'."\n";
+print '<td>'.$langs->trans('AGENDA_EVENT_PAST_COLOR').'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right">'."\n";
+print $formother->selectColor($conf->global->AGENDA_EVENT_PAST_COLOR, 'event_past_color');
+print '</td></tr>'."\n";
+// AGENDA_EVENT_CURRENT_COLOR
+print '<tr class="oddeven">'."\n";
+print '<td>'.$langs->trans('AGENDA_EVENT_CURRENT_COLOR').'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right">'."\n";
+print $formother->selectColor($conf->global->AGENDA_EVENT_CURRENT_COLOR, 'event_current_color');
+print '</td></tr>'."\n";
+// AGENDA_EVENT_FUTURE_COLOR
+print '<tr class="oddeven">'."\n";
+print '<td>'.$langs->trans('AGENDA_EVENT_FUTURE_COLOR').'</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right">'."\n";
+print $formother->selectColor($conf->global->AGENDA_EVENT_FUTURE_COLOR, 'event_future_color');
+print '</td></tr>'."\n";
+
+print '</table>';
 
 print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
 print "<br>";
+
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

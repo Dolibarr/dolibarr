@@ -74,7 +74,7 @@ class modAdherent extends DolibarrModules
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array('modMailmanSpip'); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("members", "companies");
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		// Constants
 		$this->const = array();
@@ -145,7 +145,7 @@ class modAdherent extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$this->const[$r][0] = "ADHERENT_MAILMAN_ADMINPW";
+		$this->const[$r][0] = "ADHERENT_MAILMAN_ADMIN_PASSWORD";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "";
 		$this->const[$r][3] = "Mot de passe Admin des liste mailman";
@@ -250,7 +250,7 @@ class modAdherent extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 78;
-		$this->rights[$r][1] = 'Read subscriptions';
+		$this->rights[$r][1] = 'Read membership fees';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'cotisation';
@@ -258,7 +258,7 @@ class modAdherent extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 79;
-		$this->rights[$r][1] = 'Create/modify/remove subscriptions';
+		$this->rights[$r][1] = 'Create/modify/remove membership fees';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'cotisation';
@@ -286,8 +286,8 @@ class modAdherent extends DolibarrModules
 		$this->export_label[$r] = 'MembersAndSubscriptions';
 		$this->export_permission[$r] = array(array("adherent", "export"));
 		$this->export_fields_array[$r] = array(
-			'a.rowid'=>'Id', 'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname", 'a.firstname'=>"Firstname", 'a.login'=>"Login", 'a.gender'=>"Gender", 'a.morphy'=>'MemberNature',
-			'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town", 'd.nom'=>"State", 'co.code'=>"CountryCode", 'co.label'=>"Country",
+			'a.rowid'=>'MemberId', 'a.ref'=>'MemberRef', 'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname", 'a.firstname'=>"Firstname", 'a.login'=>"Login", 'a.gender'=>"Gender", 'a.morphy'=>'MemberNature',
+			'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town", 'd.code_departement'=>'StateCode', 'd.nom'=>"State", 'co.code'=>"CountryCode", 'co.label'=>"Country",
 			'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile", 'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status",
 			'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate", 'a.datec'=>'DateCreation', 'a.datevalid'=>'DateValidation',
 			'a.tms'=>'DateLastModification', 'a.datefin'=>'DateEndSubscription', 'ta.rowid'=>'MemberTypeId', 'ta.libelle'=>'MemberTypeLabel',
@@ -301,7 +301,7 @@ class modAdherent extends DolibarrModules
 			'c.rowid'=>'Numeric', 'c.dateadh'=>'Date', 'c.datef'=>'Date', 'c.subscription'=>'Numeric'
 		);
 		$this->export_entities_array[$r] = array(
-			'a.rowid'=>'member', 'a.civility'=>"member", 'a.lastname'=>"member", 'a.firstname'=>"member", 'a.login'=>"member", 'a.gender'=>'member', 'a.morphy'=>'member',
+			'a.rowid'=>'member', 'a.ref'=>'member', 'a.civility'=>"member", 'a.lastname'=>"member", 'a.firstname'=>"member", 'a.login'=>"member", 'a.gender'=>'member', 'a.morphy'=>'member',
 			'a.societe'=>'member', 'a.address'=>"member", 'a.zip'=>"member", 'a.town'=>"member", 'd.nom'=>"member", 'co.code'=>"member", 'co.label'=>"member",
 			'a.phone'=>"member", 'a.phone_perso'=>"member", 'a.phone_mobile'=>"member", 'a.email'=>"member", 'a.birth'=>"member", 'a.statut'=>"member",
 			'a.photo'=>"member", 'a.note_public'=>"member", 'a.note_private'=>"member", 'a.datec'=>'member', 'a.datevalid'=>'member', 'a.tms'=>'member',
@@ -338,14 +338,14 @@ class modAdherent extends DolibarrModules
 		$this->import_tables_array[$r] = array('a'=>MAIN_DB_PREFIX.'adherent', 'extra'=>MAIN_DB_PREFIX.'adherent_extrafields');
 		$this->import_tables_creator_array[$r] = array('a'=>'fk_user_author'); // Fields to store import user id
 		$this->import_fields_array[$r] = array(
-			'a.ref' => 'Member Ref*',
+			'a.ref' => 'MemberRef*',
 			'a.civility'=>"UserTitle", 'a.lastname'=>"Lastname*", 'a.firstname'=>"Firstname", 'a.gender'=>"Gender", 'a.login'=>"Login*", "a.pass"=>"Password",
-			"a.fk_adherent_type"=>"MemberType*", 'a.morphy'=>'MemberNature*', 'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town",
-			'a.state_id'=>'StateId', 'a.country'=>"CountryId", 'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile",
+			"a.fk_adherent_type"=>"MemberTypeId*", 'a.morphy'=>'MemberNature*', 'a.societe'=>'Company', 'a.address'=>"Address", 'a.zip'=>"Zip", 'a.town'=>"Town",
+			'a.state_id'=>'StateId|StateCode', 'a.country'=>"CountryId|CountryCode", 'a.phone'=>"PhonePro", 'a.phone_perso'=>"PhonePerso", 'a.phone_mobile'=>"PhoneMobile",
 			'a.email'=>"Email", 'a.birth'=>"Birthday", 'a.statut'=>"Status*", 'a.photo'=>"Photo", 'a.note_public'=>"NotePublic", 'a.note_private'=>"NotePrivate",
 			'a.datec'=>'DateCreation', 'a.datefin'=>'DateEndSubscription'
 		);
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$this->import_fields_array[$r]['a.fk_soc'] = "ThirdParty";
 		}
 		// Add extra fields
@@ -380,7 +380,7 @@ class modAdherent extends DolibarrModules
 				'dict' => 'DictionaryCountry'
 			)
 		);
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$this->import_convertvalue_array[$r]['a.fk_soc'] = array('rule'=>'fetchidfromref', 'classfile'=>'/societe/class/societe.class.php', 'class'=>'Societe', 'method'=>'fetch', 'element'=>'ThirdParty');
 		}
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'adherent'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
@@ -394,10 +394,10 @@ class modAdherent extends DolibarrModules
 			'a.email'=>'jsmith@example.com', 'a.birth'=>'1972-10-10', 'a.statut'=>"0 or 1", 'a.note_public'=>"This is a public comment on member",
 			'a.note_private'=>"This is private comment on member", 'a.datec'=>dol_print_date($now, '%Y-%m__%d'), 'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'), '%Y-%m-%d')
 		);
-		if (!empty($conf->societe->enabled)) {
+		if (isModEnabled("societe")) {
 			$this->import_examplevalues_array[$r]['a.fk_soc'] = "rowid or name";
 		}
-		$this->import_updatekeys_array[$r] = array('a.ref'=>'Member Ref', 'a.login'=>'Login');
+		$this->import_updatekeys_array[$r] = array('a.ref'=>'MemberRef', 'a.login'=>'Login');
 
 		// Cronjobs
 		$arraydate = dol_getdate(dol_now());
