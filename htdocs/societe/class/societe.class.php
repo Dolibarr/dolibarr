@@ -1452,7 +1452,7 @@ class Societe extends CommonObject
 
 			$sql .= ",fk_effectif = ".($this->effectif_id > 0 ? ((int) $this->effectif_id) : "null");
 			if (isset($this->stcomm_id)) {
-				$sql .= ",fk_stcomm=".($this->stcomm_id > 0 ? ((int) $this->stcomm_id) : "0");
+				$sql .= ",fk_stcomm=".(int) $this->stcomm_id;
 			}
 			if (isset($this->typent_id)) {
 				$sql .= ",fk_typent = ".($this->typent_id > 0 ? ((int) $this->typent_id) : "0");
