@@ -357,7 +357,7 @@ if ($action == 'createtask' && $user->rights->projet->creer) {
 			} else {
 				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					$langs->load("projects");
-					setEventMessages($langs->trans('NewTaskRefSuggested'), '', 'warnings');
+					setEventMessages($langs->trans('NewTaskRefSuggested'), null, 'warnings');
 					$duplicate_code_error = true;
 				} else {
 					setEventMessages($task->error, $task->errors, 'errors');
@@ -862,7 +862,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		$tmpuser->fetch($search_user_id);
 	}
 
-	$tasksrole = ($tmpuser->id > 0 ? $taskstatic->getUserRolesForProjectsOrTasks(0, $tmpuser, $object->id, 0) : '');
+	$tasksrole = ($tmpuser->id > 0 ? $taskstatic->getUserRolesForProjectsOrTasks(null, $tmpuser, $object->id, 0) : '');
 	//var_dump($tasksarray);
 	//var_dump($tasksrole);
 

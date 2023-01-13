@@ -88,7 +88,7 @@ if ($idprod > 0) {
 				$label .= ' ('.$productSupplier->fourn_ref.')';
 			}
 
-			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price2num($price, 0, '', 0), "label" => $label, "title" => $title); // For price field, we must use price2num(), for label or title, price()
+			$prices[] = array("id" => $productSupplier->product_fourn_price_id, "price" => price2num($price, '', 0), "label" => $label, "title" => $title); // For price field, we must use price2num(), for label or title, price()
 		}
 	}
 

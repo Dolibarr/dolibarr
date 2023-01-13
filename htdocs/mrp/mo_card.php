@@ -148,17 +148,17 @@ if (empty($reshook)) {
 		$objectbomchildline = new BOMLine($db);
 
 		foreach ($TBomLineId as $id_bom_line) {
-			$object = new Mo($db);
+			$object = new Mo($db);	// modified by the actions_addupdatedelete.inc.php
 
 			$objectbomchildline->fetch($id_bom_line);
 
 			$TMoLines = $moline->fetchAll('DESC', 'rowid', '1', '', array('origin_id' => $id_bom_line));
 
-			foreach ($TMoLines as $moline) {
+			foreach ($TMoLines as $tmpmoline) {
 				$_POST['fk_bom'] = $objectbomchildline->fk_bom_child;
-				$_POST['fk_parent_line'] = $moline->id;
-				$_POST['qty'] = $moline->qty;
-				$_POST['fk_product'] = $moline->fk_product;
+				$_POST['fk_parent_line'] = $tmpmoline->id;
+				$_POST['qty'] = $tmpmoline->qty;
+				$_POST['fk_product'] = $tmpmoline->fk_product;
 			}
 
 			include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -484,14 +484,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', null, null, '', 1);*/
 	// Thirdparty
-	$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
-	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+	if (is_object($object->thirdparty)) {
+		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
+		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
+			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
+		}
 	}
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
-		$morehtmlref .= '<br>';
+		if (is_object($object->thirdparty)) {
+			$morehtmlref .= '<br>';
+		}
 		if ($permissiontoadd) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {

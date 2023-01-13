@@ -306,7 +306,7 @@ class Commande extends CommonOrder
 		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>25),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>26),
 		'ref_client' =>array('type'=>'varchar(255)', 'label'=>'RefCustomer', 'enabled'=>1, 'visible'=>-1, 'position'=>28),
-		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'visible'=>-1, 'notnull'=>1, 'position'=>20),
+		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>'isModEnabled("societe")', 'visible'=>-1, 'notnull'=>1, 'position'=>20),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'visible'=>-1, 'position'=>25),
 		'date_commande' =>array('type'=>'date', 'label'=>'Date', 'enabled'=>1, 'visible'=>1, 'position'=>60),
 		'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>62),
@@ -1173,6 +1173,8 @@ class Commande extends CommonOrder
 					return -1;
 				}
 			}
+
+			return 0;
 		} else {
 			dol_print_error($this->db);
 			$this->db->rollback();
@@ -1301,6 +1303,7 @@ class Commande extends CommonOrder
 	{
 		global $conf, $hookmanager;
 
+		dol_include_once('/multicurrency/class/multicurrency.class.php');
 		dol_include_once('/core/class/extrafields.class.php');
 
 		$error = 0;
@@ -1375,6 +1378,29 @@ class Commande extends CommonOrder
 
 		$this->origin = $object->element;
 		$this->origin_id = $object->id;
+
+				// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
+		if (!empty($conf->multicurrency->enabled)) {
+			if (!empty($object->multicurrency_code)) {
+				$this->multicurrency_code = $object->multicurrency_code;
+			}
+			if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($object->multicurrency_tx)) {
+				$this->multicurrency_tx = $object->multicurrency_tx;
+			}
+
+			if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
+					$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_commande);
+					$this->fk_multicurrency = $tmparray[0];
+					$this->multicurrency_tx = $tmparray[1];
+			} else {
+					$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
+			}
+			if (empty($this->fk_multicurrency)) {
+					$this->multicurrency_code = $conf->currency;
+					$this->fk_multicurrency = 0;
+					$this->multicurrency_tx = 1;
+			}
+		}
 
 		// get extrafields from original line
 		$object->fetch_optionals();
@@ -2283,17 +2309,13 @@ class Commande extends CommonOrder
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Returns a array with expeditions lines number
+	 * Returns an array with expeditions lines number
 	 *
 	 * @return	int		Nb of shipments
-	 *
-	 * TODO deprecate, move to Shipping class
 	 */
-	public function nb_expedition()
+	public function countNbOfShipments()
 	{
-		// phpcs:enable
 		$sql = 'SELECT count(*)';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'expedition as e';
 		$sql .= ', '.MAIN_DB_PREFIX.'element_element as el';
@@ -2309,6 +2331,8 @@ class Commande extends CommonOrder
 		} else {
 			dol_print_error($this->db);
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2355,58 +2379,45 @@ class Commande extends CommonOrder
 	 *
 	 *	@param      User	$user		User object
 	 *  @param      int		$lineid		Id of line to delete
+	 *  @param		int		$id			Id of object (for a check)
 	 *  @return     int        		 	>0 if OK, 0 if nothing to do, <0 if KO
 	 */
-	public function deleteline($user = null, $lineid = 0)
+	public function deleteline($user = null, $lineid = 0, $id = 0)
 	{
 		if ($this->statut == self::STATUS_DRAFT) {
 			$this->db->begin();
 
-			$sql = "SELECT fk_product, qty";
-			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql .= " WHERE rowid = ".((int) $lineid);
+			// Delete line
+			$line = new OrderLine($this->db);
 
-			$result = $this->db->query($sql);
-			if ($result) {
-				$obj = $this->db->fetch_object($result);
+			$line->context = $this->context;
 
-				if ($obj) {
-					$product = new Product($this->db);
-					$product->id = $obj->fk_product;
+			// Load data
+			$line->fetch($lineid);
 
-					// Delete line
-					$line = new OrderLine($this->db);
+			if ($id > 0 && $line->fk_commande != $id) {
+				$this->error = 'ErrorLineIDDoesNotMatchWithObjectID';
+				return -1;
+			}
 
-					// For triggers
-					$line->fetch($lineid);
+			// Memorize previous line for triggers
+			$staticline = clone $line;
+			$line->oldline = $staticline;
 
-					// Memorize previous line for triggers
-					$staticline = clone $line;
-					$line->oldline = $staticline;
+			if ($line->delete($user) > 0) {
+				$result = $this->update_price(1);
 
-					if ($line->delete($user) > 0) {
-						$result = $this->update_price(1);
-
-						if ($result > 0) {
-							$this->db->commit();
-							return 1;
-						} else {
-							$this->db->rollback();
-							$this->error = $this->db->lasterror();
-							return -1;
-						}
-					} else {
-						$this->db->rollback();
-						$this->error = $line->error;
-						return -1;
-					}
+				if ($result > 0) {
+					$this->db->commit();
+					return 1;
 				} else {
 					$this->db->rollback();
-					return 0;
+					$this->error = $this->db->lasterror();
+					return -1;
 				}
 			} else {
 				$this->db->rollback();
-				$this->error = $this->db->lasterror();
+				$this->error = $line->error;
 				return -1;
 			}
 		} else {
@@ -2490,6 +2501,8 @@ class Commande extends CommonOrder
 				return -1 * $error;
 			}
 		}
+
+		return 0;
 	}
 
 
@@ -2554,6 +2567,8 @@ class Commande extends CommonOrder
 				return -1 * $error;
 			}
 		}
+
+		return 0;
 	}
 
 
@@ -3352,7 +3367,7 @@ class Commande extends CommonOrder
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -3422,7 +3437,7 @@ class Commande extends CommonOrder
 		}
 
 		// Test we can delete
-		if ($this->nb_expedition() != 0) {
+		if ($this->countNbOfShipments() != 0) {
 			$this->errors[] = $langs->trans('SomeShipmentExists');
 			$error++;
 		}
@@ -4043,18 +4058,18 @@ class Commande extends CommonOrder
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 		'commande'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -4582,6 +4597,9 @@ class OrderLine extends CommonOrderLine
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
 		}
+		if (empty($this->remise)) {
+			$this->remise = 0;
+		}
 		if (empty($this->info_bits)) {
 			$this->info_bits = 0;
 		}
@@ -4625,14 +4643,14 @@ class OrderLine extends CommonOrderLine
 		$sql .= " , localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= " , qty=".price2num($this->qty);
 		$sql .= " , ref_ext='".$this->db->escape($this->ref_ext)."'";
-		$sql .= " , subprice=".price2num($this->subprice)."";
-		$sql .= " , remise_percent=".price2num($this->remise_percent)."";
-		$sql .= " , price=".price2num($this->price).""; // TODO A virer
-		$sql .= " , remise=".price2num($this->remise).""; // TODO A virer
+		$sql .= " , subprice=".price2num($this->subprice);
+		$sql .= " , remise_percent=".price2num($this->remise_percent);
+		$sql .= " , price=".price2num($this->price); // TODO A virer
+		$sql .= " , remise=".price2num($this->remise); // TODO A virer
 		if (empty($this->skip_update_total)) {
-			$sql .= " , total_ht=".price2num($this->total_ht)."";
-			$sql .= " , total_tva=".price2num($this->total_tva)."";
-			$sql .= " , total_ttc=".price2num($this->total_ttc)."";
+			$sql .= " , total_ht=".price2num($this->total_ht);
+			$sql .= " , total_tva=".price2num($this->total_tva);
+			$sql .= " , total_ttc=".price2num($this->total_ttc);
 			$sql .= " , total_localtax1=".price2num($this->total_localtax1);
 			$sql .= " , total_localtax2=".price2num($this->total_localtax2);
 		}
@@ -4650,10 +4668,10 @@ class OrderLine extends CommonOrderLine
 		$sql .= " , fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
 
 		// Multicurrency
-		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice);
+		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
+		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
+		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
 
 		$sql .= " WHERE rowid = ".((int) $this->rowid);
 

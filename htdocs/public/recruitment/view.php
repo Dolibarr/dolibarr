@@ -159,6 +159,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
  * View
  */
 
+$now = dol_now();
+
 $head = '';
 if (!empty($conf->global->MAIN_RECRUITMENT_CSS_URL)) {
 	$head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_RECRUITMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
@@ -201,7 +203,7 @@ $paramlogo = 'ONLINE_RECRUITMENT_LOGO_'.$suffix;
 if (!empty($conf->global->$paramlogo)) {
 	$logosmall = $conf->global->$paramlogo;
 } elseif (!empty($conf->global->ONLINE_RECRUITMENT_LOGO)) {
-	$logosmall = $conf->global->ONLINE_RECRUITMENT_LOGO_;
+	$logosmall = $conf->global->ONLINE_RECRUITMENT_LOGO;
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo
@@ -221,7 +223,7 @@ if ($urllogo) {
 	if (!empty($mysoc->url)) {
 		print '<a href="'.$mysoc->url.'" target="_blank" rel="noopener">';
 	}
-	print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
+	print '<img id="dolpaymentlogo" src="'.$urllogofull.'">';
 	if (!empty($mysoc->url)) {
 		print '</a>';
 	}
@@ -234,7 +236,7 @@ if ($urllogo) {
 
 if (!empty($conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE)) {
 	print '<div class="backimagepublicrecruitment">';
-	print '<img id="idPROJECT_IMAGE_PUBLIC_SUGGEST_BOOTH" src="'.$conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE.'">';
+	print '<img id="idRECRUITMENT_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->RECRUITMENT_IMAGE_PUBLIC_INTERFACE.'">';
 	print '</div>';
 }
 

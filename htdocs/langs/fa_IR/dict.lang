@@ -21,7 +21,7 @@ CountryNL=هلند
 CountryHU=مجارستان
 CountryRU=روسیه،
 CountrySE=سوئد
-CountryCI=Ivoiry ساحل
+CountryCI=Ivory Coast
 CountrySN=سنگال
 CountryAR=آرژانتین
 CountryCM=کامرون
@@ -250,7 +250,9 @@ CountryMF=سنت مارتین
 
 ##### Civilities #####
 CivilityMME=خانم
+CivilityMMEShort=خانم
 CivilityMR=آقای
+CivilityMRShort=آقای
 CivilityMLE=خانم
 CivilityMTRE=استاد
 CivilityDR=دکتر
