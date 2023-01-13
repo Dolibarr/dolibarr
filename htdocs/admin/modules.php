@@ -847,7 +847,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					if (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1) {
 						$codeenabledisable .= '&nbsp;';
 						$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reload_confirm&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
-						$codeenabledisable .= img_picto($langs->trans("Reload"), 'refresh', 'class="fa-15"');
+						$codeenabledisable .= img_picto($langs->trans("Reload"), 'refresh', 'class="opacitymedium"');
 						$codeenabledisable .= '</a>';
 					}
 				} else {
@@ -857,7 +857,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 					if (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1) {
 						$codeenabledisable .= '&nbsp;';
 						$codeenabledisable .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;token='.newToken().'&amp;module_position='.$module_position.'&amp;action=reload&amp;value='.$modName.'&amp;mode='.$mode.'&amp;confirm=yes'.$param.'">';
-						$codeenabledisable .= img_picto($langs->trans("Reload"), 'refresh', 'class="fa-15"');
+						$codeenabledisable .= img_picto($langs->trans("Reload"), 'refresh', 'class="opacitymedium"');
 						$codeenabledisable .= '</a>';
 					}
 				}
