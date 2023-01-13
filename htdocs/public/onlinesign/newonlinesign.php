@@ -421,6 +421,7 @@ if ($action == "dosign" && empty($cancel)) {
 		$("#signbutton").attr("disabled",false);
 		if(!$._data($("#signbutton")[0], "events")){
 			$("#signbutton").on("click",function(){
+				$("#signbutton").val("'.$langs->transnoentities('PleaseBePatient').'");
 				var signature = $("#signature").jSignature("getData", "image");
 				$.ajax({
 					type: "POST",
