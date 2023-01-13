@@ -2216,7 +2216,7 @@ if ($resql) {
 
 		// Amount HT/net
 		if (!empty($arrayfields['c.total_ht']['checked'])) {
-			  print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
+			print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
