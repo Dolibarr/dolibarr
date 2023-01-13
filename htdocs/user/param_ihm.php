@@ -219,12 +219,11 @@ if (isModEnabled('ticket')) {
 $reshook = $hookmanager->executeHooks('addToLandingPageList', $tmparray, $object);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-} elseif ($reshook === 0) {
-	if (count($hookmanager->resArray)!==0) {
-		$tmparray=$hookmanager->resArray;
-	}
+} elseif ($reshook > 0) {
+	$tmparray=$hookmanager->resArray;
+} elseif ($reshook == 0) {
+	$tmparray=array_merge($tmparray, $hookmanager->resArray);
 }
-
 
 $head = user_prepare_head($object);
 
