@@ -344,9 +344,6 @@ $param = '';
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
-if (!empty($mode)) {
-	$param .= '&mode='.urlencode($mode);
-}
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
@@ -405,6 +402,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $permforcashfence = 1;
+
 $newcardbutton  = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
@@ -564,8 +562,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			print '<tr><td colspan="12">';
 			print '<div class="box-flex-container">';
 		}
-		// Output Kanban
-		//var_dump($obj->posmodule);exit;
+
 		$object->posmodule = $obj->posmodule;
 		$object->cash = $obj->cash;
 		$object->opening = $obj->opening;
