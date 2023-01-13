@@ -632,7 +632,7 @@ if ($id) {
 
 					// Active
 					print '<td align="center" class="nowrap">';
-					print '<a class="reposition" href="'.$url.'action='.$acts[($obj->status ? 1 : 0)].'">'.$actl[($obj->status ? 1 : 0)].'</a>';
+					print '<a class="reposition" href="'.$url.'action='.$acts[($obj->status ? 1 : 0)].'&token='.newToken().'">'.$actl[($obj->status ? 1 : 0)].'</a>';
 					print "</td>";
 
 					// Modify link
