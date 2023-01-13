@@ -1130,7 +1130,7 @@ class Skill extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input style="float:right;" id="cb'.$this->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		$return .= '<input class="fright" id="cb'.$this->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		if (property_exists($this, 'skill_type')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span>';
 			$return .= ' : <span class="info-box-label ">'.$this->fields['skill_type']['arrayofkeyval'][$this->skill_type].'</span>';
