@@ -116,7 +116,7 @@ function getDolUserString($key, $default = '', $tmpuser = null)
 	}
 
 	// return $conf->global->$key ?? $default;
-	return (string) (empty($tmpuser->conf->$key) ? $default : $$tmpuser->conf->$key);
+	return (string) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
 }
 
 /**

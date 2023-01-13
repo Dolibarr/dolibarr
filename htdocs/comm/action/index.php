@@ -299,6 +299,7 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		$enabled = 'AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
 		$default = 'AGENDA_EXT_ACTIVEBYDEFAULT_'.$user->id.'_'.$i;
 		$buggedfile = 'AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
+
 		if (getDolUserString($source) && getDolUserString($name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(

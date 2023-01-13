@@ -951,14 +951,15 @@ while ($i < $imaxinloop) {
 		$event_owner_style .= 'border-left: #' . $cache_user_list[$obj->fk_user_action]->color . ' 5px solid;';
 	}
 
-	// get event style for start date
+	// get event style for start and end date
 	$event_more_class = '';
-	$event_start_date_style = '';
+	$event_start_date_css = '';
+	$event_end_date_css = '';
 	$event_start_date_time = $actionstatic->datep;
 	if ($event_start_date_time > $now) {
 		// future event
 		$event_more_class = 'event-future';
-		$event_start_date_color = $conf->global->AGENDA_EVENT_FUTURE_COLOR;
+		$event_start_date_css = $event_end_date_css = $event_more_class;
 	} else {
 		if ($obj->fulldayevent == 1) {
 			$today_start_date_time = $today_start_time;
@@ -971,20 +972,16 @@ while ($i < $imaxinloop) {
 		if ($event_end_date_time != null && $event_end_date_time < $today_start_date_time) {
 			// past event
 			$event_more_class = 'event-past';
-			$event_start_date_color = $conf->global->AGENDA_EVENT_PAST_COLOR;
 		} elseif ($event_end_date_time == null && $event_start_date_time < $today_start_date_time) {
 			// past event
 			$event_more_class = 'event-past';
-			$event_start_date_color = $conf->global->AGENDA_EVENT_PAST_COLOR;
 		} else {
 			// current event
 			$event_more_class = 'event-current';
-			$event_start_date_color = $conf->global->AGENDA_EVENT_CURRENT_COLOR;
 		}
+		$event_start_date_css = $event_end_date_css = $event_more_class;
 	}
-	if ($event_start_date_color != '') {
-		$event_start_date_style .= 'background: #' . $event_start_date_color . ';';
-	}
+	$event_start_date_css = $event_end_date_css = $event_more_class;
 
 	print '<tr class="oddeven' . ($event_more_class != '' ? ' '.$event_more_class : '') . '">';
 	// Action column
@@ -1065,13 +1062,14 @@ while ($i < $imaxinloop) {
 
 	// Start date
 	if (!empty($arrayfields['a.datep']['checked'])) {
-		print '<td class="center nowraponall"' . ($event_start_date_style != '' ? ' style="'.$event_start_date_style.'"' : '') . '>';
+		print '<td class="center nowraponall'.($event_start_date_css ? ' '.$event_start_date_css : '').'"><span>';
 		if (empty($obj->fulldayevent)) {
 			print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuserrel');
 		} else {
 			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 			print dol_print_date($db->jdate($obj->dp), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuserrel'));
 		}
+		print '</span>';
 		$late = 0;
 		if ($actionstatic->hasDelay() && $actionstatic->percentage >= 0 && $actionstatic->percentage < 100 ) {
 			$late = 1;
@@ -1084,13 +1082,14 @@ while ($i < $imaxinloop) {
 
 	// End date
 	if (!empty($arrayfields['a.datep2']['checked'])) {
-		print '<td class="center nowraponall">';
+		print '<td class="center nowraponall'.($event_end_date_css ? ' '.$event_end_date_css : '').'"><span>';
 		if (empty($obj->fulldayevent)) {
 			print dol_print_date($db->jdate($obj->dp2), $formatToUse, 'tzuserrel');
 		} else {
 			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 			print dol_print_date($db->jdate($obj->dp2), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuserrel'));
 		}
+		print '</span>';
 		print '</td>';
 	}
 
