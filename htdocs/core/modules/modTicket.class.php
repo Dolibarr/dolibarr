@@ -222,7 +222,7 @@ class modTicket extends DolibarrModules
 		$this->menus = array(); // List of menus to add
 		$r = 0;
 
-		/*$this->menu[$r] = array('fk_menu' => 0, // Put 0 if this is a top menu
+		$this->menu[$r] = array('fk_menu' => 0, // Put 0 if this is a top menu
 			'type' => 'top', // This is a Top menu entry
 			'titre' => 'Ticket',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
@@ -235,7 +235,7 @@ class modTicket extends DolibarrModules
 			'perms' => '$user->rights->ticket->read', // Use 'perms'=>'$user->rights->ticket->level1->level2' if you want your menu with a permission rules
 			'target' => '',
 			'user' => 2); // 0=Menu for internal users, 1=external users, 2=both
-		$r++;*/
+		$r++;
 
 		$this->menu[$r] = array('fk_menu' => 'fk_mainmenu=ticket',
 			'type' => 'left',
