@@ -288,6 +288,23 @@ if (!empty($object->ldap_sid) && $object->statut == 0) {
 }
 print '</tr>'."\n";
 
+// Type
+print '<tr><td>';
+$text = $langs->trans("Type");
+print $form->textwithpicto($text, $langs->trans("InternalExternalDesc"));
+print '</td><td>';
+$type = $langs->trans("Internal");
+if ($object->socid > 0) {
+	$type = $langs->trans("External");
+}
+print '<span class="badgeneutral">';
+print $type;
+if ($object->ldap_sid) {
+	print ' ('.$langs->trans("DomainUser").')';
+}
+print '</span>';
+print '</td></tr>'."\n";
+
 print '</table>';
 
 print '</div>';
