@@ -404,17 +404,15 @@ if ($resql) {
 		if (!empty($arrayfields['type']['checked'])) {
 			print '<td class="center">';
 			$s = '';
-			
+
 			// Customer
 			if ($obj->type == 1) {
 				$s .= '<a class="customer-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->rowid.'">'.$langs->trans("Customer").'</a>';
 			} elseif ($obj->type == 2) {
-				
-			// Supplier
+				// Supplier
 				$s .= '<a class="vendor-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
 			} elseif ($obj->type == 3) {
-				
-			// User - Employee
+				// User - Employee
 				$s .= '<a class="user-back" style="padding-left: 6px; padding-right: 6px" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">'.$langs->trans("Employee").'</a>';
 			}
 			print $s;
@@ -447,17 +445,15 @@ if ($resql) {
 		// Action
 		print '<td class="center">';
 		$e = '';
-		
+
 		// Customer
 		if ($obj->type == 1) {
 			$e .= '<a class="editfielda" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&token='.newToken().'&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		} elseif ($obj->type == 2) {
-			
-		// Supplier
+			// Supplier
 			$e .= '<a class="editfielda" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/societe/card.php?action=edit&token='.newToken().'&socid='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		} elseif ($obj->type == 3) {
-			
-		// User - Employee
+			// User - Employee
 			$e .= '<a class="editfielda" title="'.$langs->trans("Employee").'" href="'.DOL_URL_ROOT.'/user/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_edit().'</a>';
 		}
 		print $e;
