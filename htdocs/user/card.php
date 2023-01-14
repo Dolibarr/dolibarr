@@ -375,6 +375,7 @@ if (empty($reshook)) {
 			$editgroup->oldcopy = clone $editgroup;
 
 			$object->fetch($id);
+
 			if ($action == 'addgroup') {
 				$result = $object->SetInGroup($group, $editgroup->entity);
 			}
