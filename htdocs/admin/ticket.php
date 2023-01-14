@@ -442,7 +442,7 @@ foreach ($dirmodels as $reldir) {
 								}
 								print '</td>';
 
-								// Active / Status 
+								// Active / Status
 								if (in_array($name, $def)) {
 									print '<td class="center">'."\n";
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'">';
@@ -474,7 +474,7 @@ foreach ($dirmodels as $reldir) {
 								print '</td>';
 
 								print "</tr>\n";
-								
+
 								// Info
 								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
 								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
