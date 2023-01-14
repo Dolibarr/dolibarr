@@ -212,8 +212,6 @@ print_liste_field_titre("Position", $_SERVER["PHP_SELF"], "b.position", "", $par
 print_liste_field_titre('');
 print "</tr>\n";
 
-$cacheOfUsers = array();
-
 $i = 0;
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
@@ -268,13 +266,13 @@ while ($i < min($num, $limit)) {
 	// Author
 	print '<td class="center">';
 	if ($obj->fk_user) {
-		if (empty($cacheOfUsers[$obj->fk_user])) {
+		if (empty($conf->cache['users'][$obj->fk_user])) {
 			$tmpuser = new User($db);
 			$tmpuser->fetch($obj->fk_user);
-			$cacheOfUsers[$obj->fk_user] = $tmpuser;
+			$conf->cache['users'][$obj->fk_user] = $tmpuser;
 		}
-		$tmpuser = $cacheOfUsers[$obj->fk_user];
-		print $tmpuser->getNomUrl(1);
+		$tmpuser = $conf->cache['users'][$obj->fk_user];
+		print $tmpuser->getNomUrl(-1);
 	} else {
 		print '<span class="opacitymedium">'.$langs->trans("Everybody").'</span>';
 		if (!$user->admin) {
