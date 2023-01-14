@@ -332,7 +332,8 @@ if ($result > 0) {
 				$userstatic->email = $obj->email;
 				$userstatic->statut = $obj->status;
 
-				print '<tr class="oddeven"><td>'.$userstatic->getNomUrl(1);
+				print '<tr class="oddeven">';
+				print '<td>'.$userstatic->getNomUrl(1);
 				if ($obj->type == 'email') {
 					if (isValidEmail($obj->email)) {
 						print ' &lt;'.$obj->email.'&gt;';
@@ -359,8 +360,9 @@ if ($result > 0) {
 				$i++;
 			}
 			$db->free($resql);
+		} else {
+			print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
-
 		// List of notifications enabled for fixed email
 		/*
 		foreach($conf->global as $key => $val) {
