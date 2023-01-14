@@ -71,6 +71,10 @@ $group = GETPOST("group", "int", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
 
+if (empty($id)) {
+	$id = $user->id;
+}
+
 $dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
 $dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
 $datestartvalidity = dol_mktime(0, 0, 0, GETPOST('datestartvaliditymonth', 'int'), GETPOST('datestartvalidityday', 'int'), GETPOST('datestartvalidityyear', 'int'));

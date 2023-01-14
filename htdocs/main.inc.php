@@ -1048,6 +1048,7 @@ if (!defined('NOLOGIN')) {
 
 		// Store value into session (values always stored)
 		$_SESSION["dol_login"] = $user->login;
+		$_SESSION["dol_logindate"] = dol_now('gmt');
 		$_SESSION["dol_authmode"] = isset($dol_authmode) ? $dol_authmode : '';
 		$_SESSION["dol_tz"] = isset($dol_tz) ? $dol_tz : '';
 		$_SESSION["dol_tz_string"] = isset($dol_tz_string) ? $dol_tz_string : '';

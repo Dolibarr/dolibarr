@@ -2298,7 +2298,7 @@ class User extends CommonObject
 			$sql = "UPDATE ".$this->db->prefix()."user";
 			$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."',";
 			$sql .= " pass_temp = null";
-			if (empty($flagdelsessionsbefore)) {
+			if (!empty($flagdelsessionsbefore)) {
 				$sql .= ", flagdelsessionsbefore = '".$this->db->idate(dol_now() - 5, 'gmt')."'";
 			}
 			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
