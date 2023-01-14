@@ -465,9 +465,9 @@ class vCard
 			$this->setTitle($object->job);
 		}
 
-		// For user, type=home
+		// For user, $object->url is not defined
 		// For contact, $object->url is not defined
-		if ($object->url) {
+		if (!empty($object->url)) {
 			$this->setURL($object->url, "");
 		}
 
