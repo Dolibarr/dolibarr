@@ -2422,7 +2422,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(\.meta|_preview.*\.png)$', '^\.'), $nohook = false, $mode = '')
 {
 	$tmparray = dol_dir_list($dir, 'files', 0, $regexfilter, $excludefilter, 'date', SORT_DESC, $mode, $nohook);
-	return $tmparray[0];
+	return isset($tmparray[0])?$tmparray[0]:null;
 }
 
 /**
