@@ -11,8 +11,9 @@ NEW: PHP 8.2 compatibility:
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* The deprecated method escapeunderscore() of database handlers has been removed. You must use escapeforlike instead.
-* The method nb_expedition() has been renamed into countNbOfShipments() 
+* The deprecated method "escapeunderscore()" of database handlers has been removed. You must use "escapeforlike()" instead.
+* The method "nb_expedition()" has been renamed into "countNbOfShipments()" 
+* Revert default type of hooks. Default is now 'addreplace' hooks (and exception become 'output' hooks, that become deprecated).
 
 
 
