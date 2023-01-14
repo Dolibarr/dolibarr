@@ -37,6 +37,7 @@ $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bookmarklist'; // To manage different context of search
 $id = GETPOST("id", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
+$mode = GETPOST('mode', 'aZ09');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
