@@ -204,4 +204,3 @@ StatusSupplierOrderApproved=Approved
 StatusSupplierOrderRefused=Refused
 StatusSupplierOrderReceivedPartially=Partially received
 StatusSupplierOrderReceivedAll=All products received
-NeedAtLeastOneInvoice = There has to be at least one Invoice
