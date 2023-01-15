@@ -499,5 +499,5 @@ OutOfEurope=Out of Europe (EEC)
 CurrentOutstandingBillLate=Current outstanding bill late
 BecarefullChangeThirdpartyBeforeAddProductToInvoice=Be carefull, depending on your product price settings, you should change thirdparty before adding product to POS.
 EmailAlreadyExistsPleaseRewriteYourCompanyName=email already exists please rewrite your company name
-TwoRecordsOfCompanyName=more than one record exists for this company please contact us to complete your partnership request"
+TwoRecordsOfCompanyName=more than one record exists for this company, please contact us to complete your partnership request
 CompanySection=Company section
