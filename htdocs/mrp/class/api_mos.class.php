@@ -252,7 +252,7 @@ class Mos extends DolibarrApi
 		$selects = array();
 		foreach ($keys AS $key) {
 			$select = '';
-			If (!empty($arrayfields[$key]['sqlSelect'])){
+			If (!empty($arrayfields[$key]['sqlSelect'])) {
 				$select = $arrayfields[$key]['sqlSelect'];
 			} else {
 				$select = 't.'.$key;
@@ -262,7 +262,7 @@ class Mos extends DolibarrApi
 		}
 
 		$sql = 'SELECT t.rowid,t.entity,';
-		$sql .= implode(',',$selects);
+		$sql .= implode(',', $selects);
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as s";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as p ON s.fk_product = p.rowid";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."mrp_production as l ON p.rowid = l.fk_product";

@@ -133,10 +133,10 @@ class MoLineConsumable extends CommonObject
 	 */
 	public $warehousereel;
 
-//	/**
-//	 * @var integer id from the specific warehouse
-//	 */
-//	public $warehouserowid;
+	//  /**
+	//   * @var integer id from the specific warehouse
+	//   */
+	//  public $warehouserowid;
 
 	/**
 	 * @var integer id from MoLine where affected
@@ -221,9 +221,9 @@ class MoLineConsumable extends CommonObject
 		$selects = array();
 		foreach ($keys AS $key) {
 			$select = '';
-			If (!empty($arrayfields[$key]['sqlSelect'])){
+			If (!empty($arrayfields[$key]['sqlSelect'])) {
 				$select = $arrayfields[$key]['sqlSelect'];
-			} else if (startsWith($key, 'ef.')) {
+			} elseif (startsWith($key, 'ef.')) {
 				continue;
 			} else {
 				$select = 't.'.$key;
@@ -232,7 +232,7 @@ class MoLineConsumable extends CommonObject
 		}
 
 		$sql = 'SELECT t.rowid,';
-		$sql .= implode(',',$selects);
+		$sql .= implode(',', $selects);
 		// Add fields from extrafields
 		if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -319,5 +319,4 @@ class MoLineConsumable extends CommonObject
 			return -1;
 		}
 	}
-
 }

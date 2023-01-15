@@ -220,9 +220,9 @@ $keys = array_keys($arrayfields);
 $selects = array();
 foreach ($keys AS $key) {
 	$select = '';
-	If (!empty($arrayfields[$key]['sqlSelect'])){
+	If (!empty($arrayfields[$key]['sqlSelect'])) {
 		$select = $arrayfields[$key]['sqlSelect'];
-	} else if (startsWith($key, 'ef.')) {
+	} elseif (startsWith($key, 'ef.')) {
 		continue;
 	} else {
 		$select = 't.'.$key;
@@ -232,7 +232,7 @@ foreach ($keys AS $key) {
 }
 
 $sql = 'SELECT t.rowid,';
-$sql .= implode(',',$selects);
+$sql .= implode(',', $selects);
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -697,8 +697,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 				if (is_object($moparent)) print $moparent->getNomUrl(1);
 			} elseif ($key == 'rowid') {
 				print $object->showOutputField($classfield, $key, $object->id, '');
-//			} elseif ($key == 'qtytoconsum') {
-//				print $object->showOutputField($val, $key, $obj->$key, '');
+				//          } elseif ($key == 'qtytoconsum') {
+				//              print $object->showOutputField($val, $key, $obj->$key, '');
 			} elseif ($key == 'productref') {
 				$objProduct = new Product($db);
 				$objProduct->fetch($obj->{'productrowid'});
