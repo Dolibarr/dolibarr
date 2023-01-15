@@ -450,8 +450,9 @@ print '<br>';
 print '<div class="backgreypublicpayment">';
 print '<div class="center">';
 print '<a href="'.$urlforqrcode.'">';
-print img_picto($langs->trans("AddToContacts"), 'add').' ';
-print $langs->trans("AddToContacts");
+// Download / AddToContacts
+print img_picto($langs->trans("Download").' VCF', 'add').' ';
+print $langs->trans("Download").' VCF';
 print '</a>';
 print '</div>';
 //print '<div>';
