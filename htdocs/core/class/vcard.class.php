@@ -442,7 +442,7 @@ class vCard
 					}
 				}
 				if ($urlsn) {
-					$this->properties["SOCIALPROFILE;TYPE=home-".$key] = $key.':'.$urlsn;
+					$this->properties["SOCIALPROFILE;TYPE=WORK-".$key] = $key.':'.$urlsn;
 				}
 			}
 		}
