@@ -45,26 +45,17 @@ NEW: #22676 massaction for updating product prices
 NEW: #22735 Massaction to affect users on projects
 NEW: #25594 can chose if VAT ID is unique or not for third parties
 NEW: #4482 adding js to hide/show advanced option on the export data page
-NEW: Accountancy - Add a graphic option to enable lettering function - FPC21
-NEW: Accountancy - Add a way to clean some words when you generate thirdparty accounting account
-NEW: Accountancy - Added an option during export to export or not the lettering FPC21
-NEW: Accountancy - Manage supplier deposit with specific account
-NEW: Accountancy - Model Digitaria - Add a way to clean some words when you generate thirdparty accounting account FPC22
 NEW: Add a constant to disallow modification of the product reference.
 NEW: Add a method doAutoRenewContracts that can be used as a cron task.
 NEW: Add " as enclosure by default for CSV export. Keep removing CR/LF.
 NEW: add attached file in presend email form of thirdparty card
 NEW: Add a way to enter LICENSE file content in property of website
-NEW: Add badge in admin extrafields setup
 NEW: add constant PROPAL_BYPASS_VALIDATED_STATUS
-NEW: Add date event (!= date project) and location on event organization
 NEW: Add employment anniversary in birthday box
-NEW: Add extrafield type "IP" to store IP addresses
 NEW: Add fail2ban rules examples to limit access to /public pages
 NEW: Add filter "Product subject to lot/Serial" in stock per lot/serial
 NEW: Add hidden option MAIN_EMAIL_SUPPORT_ACK to restore Email ack checkbox (feature abandonned by mailers)
 NEW: Add link to create an element from the category page
-NEW: add margin infos to takepos invoice lines
 NEW: Add max size send for "backup and link to mail" option
 NEW: Add method httponly_accessforbidden()
 NEW: Add more advices into the Setup security page
@@ -81,74 +72,83 @@ NEW: Add a new advanced permission "read price"
 NEW: Add substitution key __SENDEREMAIL_SIGNATURE__
 NEW: Add the referrer-policy to "same-origin" by default on all public pages.
 NEW: Add the SMTP header References on ticket email created by email
-NEW: Add the thirdparty column to the time list (projet/tasks/time.php)
 NEW: Add trigger to record the event of sending an email from a project #20912
 NEW: Allow download link option in module configuration (propal,invoice,supplier proposal, order)
-NEW: Bank - Add salaries & vat in tab planned entries
-NEW: Bulk action to remove a category in list/search website pages
-NEW: Can copy/paste images into emails sent.
-NEW: Can edit label of an emailing even once sent
-NEW: Can edit property css, cssview, csslist on extrafields
 NEW: Can enter the unit price including the vat
 NEW: Can invoice task time per different services
 NEW: Can join several files by default on email form
-NEW: Can send an email on scheduled job error
 NEW: Can set a commercial discount by entering amount including VAT
 NEW: Can set a monthly frequency (or multiple) in cron tasks.
 NEW: Can set start and end dates and comment on button "Activate all services"
 NEW: can sort and preselected best supplier price
 NEW: Can use products categories to make inventory
 NEW: Change filter type on tickets list into a multiselect combo
-NEW: conf TIMESPENT_ALWAYS_UPDATE_THM, when it's on we always check current thm of user to update it in task time line
 NEW: show date delivery planned on orders linked to company and product
-NEW: Default values in extrafields are not more limited to 255 char.
-NEW: display currency in takepos menu
-NEW: Enable online signature for interventions
 NEW: Encrypt all sensitive constants in llx_const
 NEW: filter on reception dates (from / to) in cheque paiement card
-NEW: Contracts: Default template of contract is not mandatory
-NEW: Contracts: Manage Position (Rank) on Contract Lines
-NEW: EMail-Collector: add IMAP port setting 
-NEW: EMail-Collector: add a button "Test collect"
-NEW: Extrafields: field price with currency
-NEW: Extrafields: support IP type in extrafields
-NEW: Members: default_lang for members
-NEW: Members: Table of membership types
-NEW: Members: add free membership amounts at the membership type level
-NEW: Projects: add author on list
-NEW: Proposals: show delivery mode on PDF for proposals
-NEW: Reception: add a from/to on search on date field
-NEW: TakePOS: Header Scroll in TakePOS
-NEW: TakePOS: add price to product box in TakePOS
-NEW: TakePOS: add setup parameters, can setup terminal name
-NEW: TakePOS: support of Stripe Terminal with TakePOS
-NEW: TakePOS: Receipt preview in TakePOS setup
-NEW: TakePOS: different product list on smartphone
-NEW: Website: can delete a whole website if disabled
-NEW: Website: can remove a website template
-NEW: Website: can set header "Strict-Transport-Security" in web sites.
-NEW: Website: can switch status of website and page from the website toolbar
-NEW: Website: Templates of websites are now directories and not zip into core repo
-NEW: Website: add 4 other templates in website module
-NEW: If we select another view list mode, we keep it
-NEW: Introduce dolEncrypt and dolDecrypt to be able to encrypt data in db
+NEW: Accountancy - Add a graphic option to enable lettering function - FPC21
+NEW: Accountancy - Add a way to clean some words when you generate thirdparty accounting account
+NEW: Accountancy - Added an option during export to export or not the lettering FPC21
+NEW: Accountancy - Manage supplier deposit with specific account
+NEW: Accountancy - Model Digitaria - Add a way to clean some words when you generate thirdparty accounting account FPC22
+NEW: Bank - add salaries & VAT in tab planned entries
+NEW: Contracts - Default template of contract is not mandatory
+NEW: Contracts - Manage Position (Rank) on Contract Lines
+NEW: EMail - can copy/paste images into emails sent
+NEW: EMail - can edit label of an emailing even once sent
+NEW: EMail - can send an email on scheduled job error
+NEW: EMail-Collector - add IMAP port setting 
+NEW: EMail-Collector - add a button "Test collect"
+NEW: Event-Organization - add date event (!= date project) and location on event organization
+NEW: Extrafields - add badge in admin extrafields setup
+NEW: Extrafields - can edit property css, cssview, csslist on extrafields
+NEW: Extrafields - default values in extrafields are not more limited to 255 char.
+NEW: Extrafields - field price with currency
+NEW: Extrafields - support IP type to store IP addresses
+NEW: Interventions - enable online signature for interventions
 NEW: Invoice - Add french mention on pdf when vat debit option is on
+NEW: Members - default_lang for members
+NEW: Members - Table of membership types
+NEW: Members - add free membership amounts at the membership type level
+NEW: Projects - add author on list
+NEW: Projects - add the thirdparty column to the time list (projet/tasks/time.php)
+NEW: Proposals - show delivery mode on PDF for proposals
+NEW: Proposals - skip accept/refuse process for proposals (option PROPAL_SKIP_ACCEPT_REFUSE)
+NEW: Reception - add a from/to on search on date field
+NEW: Stock - page for mass stock transfer can be used with no source stock
+NEW: Stock - product categories filter on inventory list
+NEW: Stock - show product label on inventory
+NEW: Stock - manage virtual stock at a future date
+NEW: TakePOS - add margin infos to TakePOS invoice lines
+NEW: TakePOS - display currency in TakePOS menu
+NEW: TakePOS - Header Scroll in TakePOS
+NEW: TakePOS - add price to product box in TakePOS
+NEW: TakePOS - add setup parameters, can setup terminal name
+NEW: TakePOS - support of Stripe Terminal with TakePOS
+NEW: TakePOS - Receipt preview in TakePOS setup
+NEW: TakePOS - different product list on smartphone
+NEW: Thirdparty - set thirdparty type with company modify trigger
+NEW: Website - can delete a whole website if disabled
+NEW: Website - can remove a website template
+NEW: Website - can set header "Strict-Transport-Security" in web sites.
+NEW: Website - can switch status of website and page from the website toolbar
+NEW: Website - Templates of websites are now directories and not zip into core repo
+NEW: Website - add 4 other templates in website module
+NEW: General - Bulk action to remove a category in list/search website pages
+NEW: General - If we select another view list mode, we keep it
+NEW: General - Introduce dolEncrypt and dolDecrypt to be able to encrypt data in db
 NEW: invoice export : add accounting affectation
 NEW: label on products categories filter
 NEW: The link "add to bookmark" is always on top in the bookmark popup
-NEW: Make module WebservicesClient deprecated. Use module WebHook instead.
 NEW: manage no email with thirdparties (better for GDPR)
 NEW: Manage VAT on all lines on purchases cycle
-NEW: manage virtual stock at a future date
 NEW: On a bank reconciled line, we can modify the bank receipt
 NEW: On a form to send an email, we show all emails of all contacts of object
-NEW: Page for mass stock transfer can be used with no source stock
 NEW: parent company column and filter in invoice and order list
 NEW: Add show "Sales rep" option for PDF
 NEW: Picto for shared link is clickable
 NEW: possibility to select scopes with checkbox for Oauth tokens
 NEW: private and public note on user, thirdparty and contact list
-NEW: product categories filter on inventory list
 NEW: Product supplier price: autofill default supplier VAT
 NEW: Public counters feature
 NEW: Start a simple support of recurrent events on agenda
@@ -156,15 +156,12 @@ NEW: Resize parent company column in order list
 NEW: Saved token of OAUTH module are now encrypted into llx_oauth_token
 NEW: Save one click to select on delivery ack, on emails.
 NEW: scheduled job to send unpaid invoice reminder can now use the cc and bcc from email template
-NEW: set thirdparty type with company modify trigger
 NEW: Show also scheduled task never finished in scheduled task widget
 NEW: show badge with number of extrafields in setup
 NEW: show category tree in sellist and chkbxlst for common object
 NEW: Show picto and color into combo for selection of tags
-NEW: show product label on inventory
 NEW: show sell-by and eat-by dates only if not empty
 NEW: show SellBy/EatBy dates for each batch product in shipment card
-NEW: skip accept/refuse process for proposals (option PROPAL_SKIP_ACCEPT_REFUSE)
 NEW: experimental SMTP using PhpImap allowing OAuth2 authentication (need to add option MAIN_IMAP_USE_PHPIMAP)
 NEW: can substitue project title in mail template
 NEW: Supplier order list - Add column private and public note
@@ -175,10 +172,11 @@ NEW: expand/collapse permissions on user permission page
 NEW: Add the target to select attendees of event for emailings
 
  Option / Const for System: 
-NEW: Option PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT showing warehouse on PDF
-NEW: Option PRODUIT_DESC_IN_FORM accept (desktop only or +smartphone)
-NEW: MAIN_SEARCH_CATEGORY_PRODUCT_ON_LISTS const to show category customer filter
-NEW: constant PROPAL_NEW_AS_SIGNED
+NEW: MAIN_SEARCH_CATEGORY_PRODUCT_ON_LISTS  const to show category customer filter
+NEW: PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT showing warehouse on PDF
+NEW: PRODUIT_DESC_IN_FORM accept (desktop only or +smartphone)
+NEW: PROPAL_NEW_AS_SIGNED
+NEW: TIMESPENT_ALWAYS_UPDATE_THM, when it's on we always check current thm of user to update it in task time line
 
  Localisation:
 NEW: adding JAPAN Chart-of-Account and regions/departments
@@ -187,6 +185,7 @@ NEW: adding NIF verification for Algeria
  Modules
 NEW: Experimental module Asset
 NEW: Init module bookcal
+NEW: Make module WebservicesClient deprecated. Use module WebHook instead.
 
 
 For developers or integrators:
