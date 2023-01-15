@@ -108,7 +108,7 @@ foreach ($object->fields as $key => $val) {
 // Initialize array of search criterias
 $search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search = array();
-foreach ($arrayfields as $key => $val) {
+foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
 		$search[$key] = GETPOST('search_'.$key, 'alpha');
 	}
@@ -120,7 +120,7 @@ foreach ($arrayfields as $key => $val) {
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
-foreach ($arrayfields as $key => $val) {
+foreach ($object->fields as $key => $val) {
 	if (!empty($val['searchall'])) {
 		$fieldstosearchall[$key] = $val['label'];
 	}
@@ -172,7 +172,7 @@ if (empty($reshook)) {
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-		foreach ($arrayfields as $key => $val) {
+		foreach ($object->fields as $key => $val) {
 			$search[$key] = '';
 			if ($key == 'status') {
 				$search[$key] = -1;
@@ -274,53 +274,53 @@ $sql .= " AND t.status IN (1,2,3) AND l.role = 'toconsume' AND p.fk_product_type
 $sql .= " HAVING qtytoconsum > 0";
 
 foreach ($search as $key => $val) {
-	$sqlColumnName = !empty($arrayfields[$key]['alias']) ? $arrayfields[$key]['alias'].'.'.$db->escape($key) : $db->escape($key);
+	$columnName = !empty($arrayfields[$key]['alias']) ? $arrayfields[$key]['alias'].'.'.$key : $key;
 
 	if (array_key_exists($key, $arrayfields)) {
-		if ($key == 'status' && $search[$key] == -1) {
+		if ($key == 'status' && $val == -1) {
 			continue;
 		}
-		if ($key == 'fk_warehouse' && $search[$key] == -1) {
+		if ($key == 'fk_warehouse' && $val == -1) {
 			continue;
 		}
-		if ($key == 'fk_project' && $search[$key] == -1) {
+		if ($key == 'fk_project' && $val == -1) {
 			continue;
 		}
-		if ($key == 'fk_bom' && $search[$key] == -1) {
+		if ($key == 'fk_bom' && $val == -1) {
 			continue;
 		}
-		if ($key == 'mrptype' && $search[$key] == -1) {
+		if ($key == 'mrptype' && $val == -1) {
 			continue;
 		}
-		if ($key == 'fk_parent_line' && $search[$key] != '') {
-			$sql .= natural_search('moparent.ref', $search[$key], 0);
+		if ($key == 'fk_parent_line' && $val != '') {
+			$sql .= natural_search('moparent.ref', $val, 0);
 			continue;
 		}
 
 		if ($key == 'status') {
-			$sql .= natural_search($sqlColumnName, $search[$key], 0);
+			$sql .= natural_search($columnName, $val, 0);
 			continue;
 		}
 
-		$mode_search = (($object->isInt($arrayfields[$key]) || $object->isFloat($arrayfields[$key])) ? 1 : 0);
-		if ((strpos($arrayfields[$key]['type'], 'integer:') === 0) || (strpos($arrayfields[$key]['type'], 'sellist:') === 0) || !empty($arrayfields[$key]['arrayofkeyval'])) {
-			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($arrayfields[$key]['arrayofkeyval']) || !array_key_exists('0', $arrayfields[$key]['arrayofkeyval'])))) {
+		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
+		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
+			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($object->fields[$key]['arrayofkeyval']) || !array_key_exists('0', $object->fields[$key]['arrayofkeyval'])))) {
 				$search[$key] = '';
 			}
 			$mode_search = 2;
 		}
 		if ($search[$key] != '') {
-			$sql .= natural_search($sqlColumnName, $search[$key], (($key == 'status') ? 2 : $mode_search));
+			$sql .= natural_search($columnName, $search[$key], (($key == 'status') ? 2 : $mode_search));
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
 			$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
-			if (preg_match('/^(date|timestamp|datetime)/', $arrayfields[$columnName]['type'])) {
+			if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 				if (preg_match('/_dtstart$/', $key)) {
-					$sql .= " AND ".$sqlColumnName." >= '".$db->idate($search[$key])."'";
+					$sql .= " AND ".$columnName." >= '".$db->idate($search[$key])."'";
 				}
 				if (preg_match('/_dtend$/', $key)) {
-					$sql .= " AND ".$sqlColumnName." <= '".$db->idate($search[$key])."'";
+					$sql .= " AND ".$columnName." <= '".$db->idate($search[$key])."'";
 				}
 			}
 		}
