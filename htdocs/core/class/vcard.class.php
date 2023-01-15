@@ -359,7 +359,8 @@ class vCard
 		$text .= "VERSION:4.0\r\n";		// With V4, all encoding are UTF-8
 		//$text.= "VERSION:2.1\r\n";
 		foreach ($this->properties as $key => $value) {
-			$text .= $key.":".$value."\r\n";
+			$newkey = preg_replace('/-.*$/', '', $key);	// remove suffix -twitter, -facebook, ...
+			$text .= $newkey.":".$value."\r\n";
 		}
 		$text .= "REV:".date("Ymd")."T".date("His")."Z\r\n";
 		//$text .= "MAILER: Dolibarr\r\n";
@@ -441,7 +442,7 @@ class vCard
 					}
 				}
 				if ($urlsn) {
-					$this->properties["SOCIALPROFILE;TYPE=home"] = $key.':'.$urlsn;
+					$this->properties["SOCIALPROFILE;TYPE=home-".$key] = $key.':'.$urlsn;
 				}
 			}
 		}
