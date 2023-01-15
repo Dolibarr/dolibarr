@@ -31,7 +31,7 @@
  */
 function encode($string)
 {
-	return str_replace(";", "\;", (dol_quoted_printable_encode(utf8_decode($string))));
+	return str_replace(";", "\;", (dol_quoted_printable_encode($string)));
 }
 
 
@@ -488,7 +488,7 @@ class vCard
 				$this->setPhoneNumber($company->fax, "TYPE=WORK,FAX");
 			}
 			if ($company->address || $company->town || $company->state || $company->zip || $company->country) {
-				$this->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK");
+				$this->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "");
 			}
 
 			if ($company->email && $company->email != $object->email) {
