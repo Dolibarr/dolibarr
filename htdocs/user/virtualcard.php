@@ -210,21 +210,21 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 
 	// Office phone
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("OfficePhone"));
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("PhonePro"));
 	print '</td><td>';
 	print $form->selectyesno("USER_PUBLIC_HIDE_OFFICE_PHONE", (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object) : 0), 1);
 	print "</td></tr>\n";
 
 	// Office fax
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("OfficeFax"));
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Fax"));
 	print '</td><td>';
 	print $form->selectyesno("USER_PUBLIC_HIDE_OFFICE_FAX", (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object) : 0), 1);
 	print "</td></tr>\n";
 
 	// User mobile
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("UserMobile"));
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("PhoneMobile"));
 	print '</td><td>';
 	print $form->selectyesno("USER_PUBLIC_HIDE_USER_MOBILE", (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object) : 0), 1);
 	print "</td></tr>\n";
@@ -238,7 +238,7 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 
 	// Social networks
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworks"));
+	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworksInformation"));
 	print '</td><td>';
 	print $form->selectyesno("USER_PUBLIC_HIDE_SOCIALNETWORKS", (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object) : 0), 1);
 	print "</td></tr>\n";
@@ -262,7 +262,8 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print $langs->trans("Text");
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('USER_PUBLIC_MORE', getDolUserString('USER_PUBLIC_MORE', '', $object), '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
+	$extendededitor = 0;	// We force no WYSIWYG editor
+	$doleditor = new DolEditor('USER_PUBLIC_MORE', getDolUserString('USER_PUBLIC_MORE', '', $object), '', 160, 'dolibarr_notes', '', false, false, $extendededitor, ROWS_5, '90%');
 	$doleditor->Create();
 	print "</td></tr>\n";
 

@@ -488,7 +488,7 @@ class vCard
 				$this->setPhoneNumber($company->fax, "TYPE=WORK,FAX");
 			}
 			if ($company->address || $company->town || $company->state || $company->zip || $company->country) {
-				$this->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "");
+				$this->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK");
 			}
 
 			if ($company->email && $company->email != $object->email) {
