@@ -441,7 +441,7 @@ class vCard
 					}
 				}
 				if ($urlsn) {
-					$this->properties["socialProfile;type=".$key] = $urlsn;
+					$this->properties["SOCIALPROFILE;TYPE=home"] = $key.':'.$urlsn;
 				}
 			}
 		}
