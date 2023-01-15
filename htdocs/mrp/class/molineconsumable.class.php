@@ -20,12 +20,13 @@
 /**
  * \file        class/molineconsumable.class.php
  * \ingroup     mrp
- * \brief       This file is a CRUD class file for Mo (Create/Read/Update/Delete)
+ * \brief       This file is a CRUD class file for MoLineConsumable (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -65,6 +66,53 @@ class MoLineConsumable extends CommonObject
 	 */
 	public $fields = array();
 
+	public $rowid;
+	public $entity;
+	public $ref;
+	public $mrptype;
+	public $label;
+	public $qty;
+	public $fk_warehouse;
+	public $fk_soc;
+	public $socid;
+
+	/**
+	 * @var string public note
+	 */
+	public $note_public;
+
+	/**
+	 * @var string private note
+	 */
+	public $note_private;
+
+	/**
+	 * @var integer|string date_creation
+	 */
+	public $date_creation;
+
+
+	public $tms;
+	public $fk_user_creat;
+	public $fk_user_modif;
+	public $import_key;
+	public $status;
+	public $fk_product;
+
+	/**
+	 * @var integer|string date_start_planned
+	 */
+	public $date_start_planned;
+
+	/**
+	 * @var integer|string date_end_planned
+	 */
+	public $date_end_planned;
+
+
+	public $fk_bom;
+	public $fk_project;
+
 	/**
 	 * @var integer id from the consumable product
 	 */
@@ -85,13 +133,13 @@ class MoLineConsumable extends CommonObject
 	 */
 	public $warehousereel;
 
-	/**
-	 * @var integer id from the specific warehouse
-	 */
-	public $warehouserowid;
+//	/**
+//	 * @var integer id from the specific warehouse
+//	 */
+//	public $warehouserowid;
 
 	/**
-	 * @var integer id from MOLine where affected
+	 * @var integer id from MoLine where affected
 	 */
 	public $molinerowid;
 	// END MODULEBUILDER PROPERTIES
@@ -111,22 +159,18 @@ class MoLineConsumable extends CommonObject
 		$this->db = $db;
 
 		// Get the $fields list of Mo class
-		$tmpMo = new Mo();
-		foreach ($tmpMo->fields as $field) {
-			$field['alias'] = 't';
-			$this->fields[] = $field;
-		}
+		$tmpMo = new Mo($db);
+		$this->fields = array_merge($tmpMo->fields);
 
-		// Extends the $fileds list
+		// Extends the $fields list
 		$extendFields = array(
-			'consumableproductrowid' => array('label'=>'ProductTechnicalID', 'enabled'=>0, 'visible'=>-2, 'checked'=>0, 'position'=>1),
-			'consumbaleproductref' => array('label'=>'Product', 'enabled'=>(!isModEnabled('product') ? 0 : 1), 'checked'=>1, 'position'=>35),
-			'qtytoconsum' => array('label'=>'QtyToConsum', 'enabled'=>1, 'checked'=>1, 'position'=>42, 'type'=>'real', 'visible'=>1, 'css'=>'width75'),
-			'warehousereel' => array('label'=>'QtyInWarehouse', 'enabled'=>1, 'checked'=>1, 'position'=>43, 'type'=>'real', 'visible'=>1, 'css'=>'width75'),
-			'warehouserowid' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'Warehouse', 'enabled'=>1, 'checked'=>1, 'position'=>44, 'visible'=>1),
-			'molinerowid' => array('label'=>'molinerowid', 'enabled'=>0, 'checked'=>0, 'position'=>1, 'visible'=>-2),
+			'consumableproductrowid' => array('sqlSelect'=>'p.rowid AS consumableproductrowid', 'label'=>'ProductToConsumeTechnicalID', 'enabled'=>1, 'visible'=>-2, 'checked'=>0, 'position'=>1),
+			'consumbaleproductref' => array('sqlSelect'=>'p.ref AS consumbaleproductref','label'=>'ProductToConsume', 'enabled'=>(!isModEnabled('product') ? 0 : 1), 'checked'=>1, 'position'=>35, 'visible'=>1),
+			'qtytoconsum' => array('sqlSelect'=>'(l.qty - IFNULL(tChild.qty_consumed, 0)) AS qtytoconsum','label'=>'QtyToConsum', 'enabled'=>1, 'checked'=>1, 'position'=>42, 'type'=>'real', 'visible'=>1, 'css'=>'width75'),
+			'warehousereel' => array('sqlSelect'=>'s.reel AS warehousereel','label'=>'QtyInWarehouse', 'enabled'=>1, 'checked'=>1, 'position'=>43, 'type'=>'real', 'visible'=>1, 'css'=>'width75'),
+			'molinerowid' => array('sqlSelect'=>'l.rowid AS molinerowid','label'=>'molinerowid', 'enabled'=>1, 'checked'=>0, 'position'=>1, 'visible'=>-2),
 		);
-		array_push($this->fields, $extendFields);
+		$this->fields = array_merge($this->fields, $extendFields);
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -171,15 +215,59 @@ class MoLineConsumable extends CommonObject
 
 		$records = array();
 
-		//TODO: SELECT aus mo_list_consumable.php übernehmen
+		// Build and execute select
+		// --------------------------------------------------------------------
+		$keys = array_keys($this->fields);
+		$selects = array();
+		foreach ($keys AS $key) {
+			$select = '';
+			If (!empty($arrayfields[$key]['sqlSelect'])){
+				$select = $arrayfields[$key]['sqlSelect'];
+			} else if (startsWith($key, 'ef.')) {
+				continue;
+			} else {
+				$select = 't.'.$key;
+			}
+			$selects[] = $select;
+		}
 
-		$sql = 'SELECT ';
-		$sql .= $this->getFieldList();
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		$sql = 'SELECT t.rowid,';
+		$sql .= implode(',',$selects);
+		// Add fields from extrafields
+		if (!empty($extrafields->attributes[$object->table_element]['label'])) {
+			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+				$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : "");
+			}
+		}
+		// Add fields from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
+		$sql = preg_replace('/,\s*$/', '', $sql);
+
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as s";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."product as p ON s.fk_product = p.rowid";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."mrp_production as l ON p.rowid = l.fk_product";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element." as t ON l.fk_mo = t.rowid";
+		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+		}
+
+		$sqlConsumed = "SELECT fk_mrp_production, SUM(qty) AS qty_consumed";
+		$sqlConsumed .= " FROM ".MAIN_DB_PREFIX."mrp_production";
+		$sqlConsumed .= " WHERE role = 'consumed'";
+		$sqlConsumed .= " GROUP BY fk_mrp_production";
+
+		$sql .= " LEFT JOIN (".$sqlConsumed.") as tChild ON l.rowid = tChild.fk_mrp_production";
+
+		// Add table from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
+		if ($object->ismultientitymanaged == 1) {
+			$sql .= " WHERE t.entity IN (".getEntity($object->element).")";
 		} else {
-			$sql .= ' WHERE 1 = 1';
+			$sql .= " WHERE 1 = 1";
 		}
 		// Manage filter
 		$sqlwhere = array();
@@ -231,6 +319,5 @@ class MoLineConsumable extends CommonObject
 			return -1;
 		}
 	}
-
 
 }

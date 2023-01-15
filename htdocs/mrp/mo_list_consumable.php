@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 // load mrp libraries
-require_once __DIR__.'/class/mo.class.php';
+require_once __DIR__.'/class/molineconsumable.class.php';
 
 // for other modules
 //dol_include_once('/othermodule/class/otherobject.class.php');
@@ -68,7 +68,7 @@ $pagenext = $page + 1;
 //if (! $sortorder) $sortorder="DESC";
 
 // Initialize technical objects
-$object = new Mo($db);
+$object = new MoLineConsumable($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('molistassignable')); // Note that conf->hooks_modules contains array
@@ -90,40 +90,20 @@ if (!$sortorder) {
 $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
-	if (!empty($val['visible']) || $key == 'rowid') {
+	if (!empty($val['visible'])) {
 		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields[$key] = array(
-			'type'=>$val['type'],
-			'alias'=>'t',
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1, 1, '1')),
+			'enabled'=>($visible != 3 && $visible != -2 && dol_eval($val['enabled'], 1, 1, '1')),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
-	}
-
-	if ($key == 'fk_parent_line') {
-		$visible = (int) dol_eval($val['visible'], 1);
-		$arrayfields[$key] = array(
-			'type'=>$val['type'],
-			'alias'=>'t',
-			'label'=>$val['label'],
-			'checked'=>(($visible <= 0) ? 0 : 1),
-			'enabled'=>($visible != 3 && dol_eval($val['enabled'], 1)),
-			'position'=>$val['position'],
-			'help'=> isset($val['help']) ? $val['help'] : ''
-		);
+		if (!empty($val['sqlSelect'])) {
+			$arrayfields[$key]['sqlSelect'] = $val['sqlSelect'];
+		}
 	}
 }
-$arrayfields['rowid']['enabled'] = 0;
-$arrayfields['fk_product']['enabled'] = 0;
-$arrayfields['productrowid'] = array('label'=>'ProductTechnicalID', 'enabled'=>0, 'visible'=>-2, 'checked'=>0, 'position'=>1);
-$arrayfields['productref'] = array('label'=>'Product', 'enabled'=>(!isModEnabled('product') ? 0 : 1), 'checked'=>1, 'position'=>35);
-$arrayfields['qtytoconsum'] = array('label'=>'QtyToConsum', 'enabled'=>1, 'checked'=>1, 'position'=>42, 'type'=>'real', 'visible'=>1, 'css'=>'width75');
-$arrayfields['warehousereel'] = array('label'=>'QtyInWarehouse', 'enabled'=>1, 'checked'=>1, 'position'=>43, 'type'=>'real', 'visible'=>1, 'css'=>'width75');
-$arrayfields['warehouserowid'] = array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'Warehouse', 'enabled'=>1, 'checked'=>1, 'position'=>44, 'visible'=>1);
-$arrayfields['molinerowid'] = array('label'=>'molinerowid', 'enabled'=>0, 'checked'=>0, 'position'=>1, 'visible'=>-2);
 
 // Initialize array of search criterias
 $search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
@@ -237,21 +217,22 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 $keys = array_keys($arrayfields);
-$keys = array_diff($keys, ["qtytoconsum", "productrowid", "productref", "productstock", "warehousereel", "warehouserowid", "molinerowid"]);
-
-$sql = 'SELECT ';
-$firstKey = true;
+$selects = array();
 foreach ($keys AS $key) {
-	!$firstKey ? $sql .= ',' : '';
-	$sql .= !empty($arrayfields[$key]['alias']) ? $arrayfields[$key]['alias'] . '.' . $key : $key;
-	$firstKey = false;
+	$select = '';
+	If (!empty($arrayfields[$key]['sqlSelect'])){
+		$select = $arrayfields[$key]['sqlSelect'];
+	} else if (startsWith($key, 'ef.')) {
+		continue;
+	} else {
+		$select = 't.'.$key;
+	}
+
+	$selects[] = $select;
 }
-$sql .= ',p.rowid AS productrowid';
-$sql .= ',p.ref AS productref';
-$sql .= ',(l.qty - IFNULL(tChild.qty_consumed, 0)) AS qtytoconsum';
-$sql .= ',s.fk_entrepot AS warehouserowid';
-$sql .= ',s.reel AS warehousereel';
-$sql .= ', l.rowid AS molinerowid';
+
+$sql = 'SELECT t.rowid,';
+$sql .= implode(',',$selects);
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -297,6 +278,18 @@ foreach ($search as $key => $val) {
 
 	if (array_key_exists($key, $arrayfields)) {
 		if ($key == 'status' && $search[$key] == -1) {
+			continue;
+		}
+		if ($key == 'fk_warehouse' && $search[$key] == -1) {
+			continue;
+		}
+		if ($key == 'fk_project' && $search[$key] == -1) {
+			continue;
+		}
+		if ($key == 'fk_bom' && $search[$key] == -1) {
+			continue;
+		}
+		if ($key == 'mrptype' && $search[$key] == -1) {
 			continue;
 		}
 		if ($key == 'fk_parent_line' && $search[$key] != '') {
@@ -552,13 +545,7 @@ foreach ($arrayfields as $key => $val) {
 		if (!empty($classfield['arrayofkeyval']) && is_array($classfield['arrayofkeyval'])) {
 			print $form->selectarray('search_'.$key, $classfield['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $classfield['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		} elseif ((strpos($classfield['type'], 'integer:') === 0) || (strpos($classfield['type'], 'sellist:') === 0)) {
-			if ($key == 'warehouserowid') {
-				$tmpObj = new Entrepot($db);
-				$tmpObj->fields['warehouserowid'] = $object->fields['fk_warehouse'];
-				print $tmpObj->showInputField($classfield, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', 'maxwidth125', 1);
-			} else {
-				print $object->showInputField($classfield, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', 'maxwidth125', 1);
-			}
+			print $object->showInputField($classfield, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', 'maxwidth125', 1);
 		} elseif (!preg_match('/^(date|timestamp|datetime)/', $classfield['type'])) {
 			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $classfield['type'])) {
@@ -656,6 +643,10 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
+	// Temp Mo Object
+	$tmpMoObj = new Mo($db);
+	$tmpMoObj->setVarsFromFetchObj($obj);
+
 	// Show here line of result
 	print '<tr class="oddeven">';
 	// Action column
@@ -692,25 +683,29 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$cssforfield .= ($cssforfield ? ' ' : '').'right';
 		}
 
-		if (!empty($arrayfields[$key]['checked']) && !str_starts_with($key, 'ef.')) {
+		if (!empty($arrayfields[$key]['checked']) && !startsWith($key, 'ef.')) {
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 			if ($key == 'status') {
-				print $object->getLibStatut(5);
+				print $tmpMoObj->getLibStatut(5);
 			} elseif ($key == 'ref') {
-				$qty = min($obj->warehousereel, $obj->qtytoconsum);
-				$option = 'consume,lineid='.$obj->molinerowid.',warehouseid='.$obj->warehouserowid.',qty='.$qty;
-				$url = $object->getNomUrl(1, $option);
+				$qty = min($object->warehousereel, $obj->qtytoconsum);
+				$option = 'consume,lineid='.$object->molinerowid.',warehouseid='.$object->warehouserowid.',qty='.$qty;
+				$url = $tmpMoObj->getNomUrl(1, $option);
 				print $url;
 			} elseif ($key == 'fk_parent_line') {
 				$moparent = $object->getMoParent();
 				if (is_object($moparent)) print $moparent->getNomUrl(1);
 			} elseif ($key == 'rowid') {
 				print $object->showOutputField($classfield, $key, $object->id, '');
-			} elseif ($key == 'qtytoconsum') {
-				print $object->showOutputField($val, $key, $obj->$key, '');
+//			} elseif ($key == 'qtytoconsum') {
+//				print $object->showOutputField($val, $key, $obj->$key, '');
 			} elseif ($key == 'productref') {
 				$objProduct = new Product($db);
 				$objProduct->fetch($obj->{'productrowid'});
+				print $objProduct->getNomUrl(1);
+			} elseif ($key == 'consumbaleproductref') {
+				$objProduct = new Product($db);
+				$objProduct->fetch($object->{'consumableproductrowid'});
 				print $objProduct->getNomUrl(1);
 			} elseif ($key == 'productstock') {
 				print $object->showOutputField($val, $key, $obj->$key, '');
@@ -813,3 +808,16 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 // End of page
 llxFooter();
 $db->close();
+
+/**
+ * Verify if $haystack startswith $needle
+ *
+ * @param string $haystack string to test
+ * @param string $needle string to find
+ * @return bool false if Ko true else
+ */
+function startsWith($haystack, $needle)
+{
+	$length = strlen($needle);
+	return substr($haystack, 0, $length) === $needle;
+}
