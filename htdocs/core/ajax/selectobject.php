@@ -43,7 +43,7 @@ $objectdesc = GETPOST('objectdesc', 'alpha');
 $htmlname = GETPOST('htmlname', 'aZ09');
 $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $id = GETPOST('id', 'int');
-$filter = GETPOST('filter', 'alphanohtml');
+$filter = GETPOST('filter', 'nocheck');
 
 
 /*
