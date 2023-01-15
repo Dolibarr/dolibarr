@@ -183,7 +183,7 @@ class vCard
 	}
 
 	/**
-	 *	mise en forme de l'adresse
+	 *	Address
 	 *
 	 *	@param	string	$postoffice		Postoffice
 	 *	@param	string	$extended		Extended
@@ -196,7 +196,7 @@ class vCard
 	 *  @param	string	$label			Label
 	 *	@return	void
 	 */
-	public function setAddress($postoffice = "", $extended = "", $street = "", $city = "", $region = "", $zip = "", $country = "", $type = "HOME", $label = '')
+	public function setAddress($postoffice = "", $extended = "", $street = "", $city = "", $region = "", $zip = "", $country = "", $type = "", $label = "")
 	{
 		// $type may be DOM | INTL | POSTAL | PARCEL | HOME | WORK or any combination of these: e.g. "WORK;PARCEL;POSTAL"
 		$key = "ADR";
@@ -207,7 +207,7 @@ class vCard
 			$key .= ';LABEL="'.encode($label).'"';
 		}
 		$key .= ";".$this->encoding;
-		$this->properties[$key] = ";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
+		$this->properties[$key] = encode($postoffice).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
 
 		//if ($this->properties["LABEL;".$type.";".$this->encoding] == '') {
 			//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
@@ -215,7 +215,7 @@ class vCard
 	}
 
 	/**
-	 *  mise en forme du label
+	 *  Address (old standard)
 	 *
 	 *  @param	string	$postoffice		Postoffice
 	 *  @param	string	$extended		Extended
@@ -226,6 +226,7 @@ class vCard
 	 *  @param	string	$country		Country
 	 *  @param	string	$type			Type
 	 *  @return	void
+	 *  @deprecated
 	 */
 	public function setLabel($postoffice = "", $extended = "", $street = "", $city = "", $region = "", $zip = "", $country = "", $type = "HOME")
 	{
@@ -378,6 +379,7 @@ class vCard
 
 	/**
 	 * Return a VCARD string
+	 * See RFC https://datatracker.ietf.org/doc/html/rfc6350
 	 *
 	 * @param	Object			$object		Object (User or Contact)
 	 * @param	Societe|null	$company	Company. May be null

@@ -114,11 +114,11 @@ if (!empty($object->photo)) {
 $urllogo = '';
 $urllogofull = '';
 if (!empty($logosmall) && is_readable($dir.'/'.$logosmall)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&amp;entity='.$conf->entity.'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logosmall);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.'&entity='.$conf->entity.'&securekey='.urlencode($securekey).'&file='.urlencode($logosmall);
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logosmall);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&securekey='.urlencode($securekey).'&file='.urlencode($logosmall);
 } elseif (!empty($logo) && is_readable($dir.'/'.$logo)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&amp;entity='.$conf->entity.'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logo);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.'&amp;entity='.$conf->entity.'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logo);
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logo);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&securekey='.urlencode($securekey).'&file='.urlencode($logo);
 }
 
 // Clean data we don't want on public page
@@ -152,6 +152,12 @@ if (getDolUserInt('USER_PUBLIC_HIDE_BIRTH', 0, $object)) {
 if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
 	$object->socialnetworks = '';
 }
+if (getDolUserInt('USER_PUBLIC_HIDE_ADDRESS', 0, $object)) {
+	$object->address = '';
+	$object->zip = '';
+	$object->state = '';
+	$object->country = '';
+}
 if (getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	$company = null;
 }
@@ -159,9 +165,6 @@ if (getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 
 // Output vcard
 if ($mode == 'vcard') {
-	// Reset data no selected for public VCard
-
-
 	// We create VCard
 	$output = $v->buildVCardString($object, $company, $langs, $urllogofull);
 
@@ -169,7 +172,7 @@ if ($mode == 'vcard') {
 	$filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
 	//$filename = dol_sanitizeFileName($filename);
 
-	top_httphead('text/x-vcard; name="'.$filename.'"');
+	top_httphead('text/vcard; name="'.$filename.'"');
 
 	header("Content-Disposition: attachment; filename=\"".$filename."\"");
 	header("Content-Length: ".dol_strlen($output));
@@ -387,11 +390,11 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	$urllogo = '';
 	$urllogofull = '';
 	if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
-		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany'.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany'.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&file='.urlencode('logos/thumbs/'.$logosmall);
 	} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
-		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
-		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany'.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;file='.urlencode('logos/'.$logo);
+		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany'.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&file='.urlencode('logos/'.$logo);
 	}
 	// Output html code for logo
 	if ($urllogo) {
