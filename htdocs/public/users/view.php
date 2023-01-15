@@ -154,6 +154,7 @@ if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
 }
 if (getDolUserInt('USER_PUBLIC_HIDE_ADDRESS', 0, $object)) {
 	$object->address = '';
+	$object->town = '';
 	$object->zip = '';
 	$object->state = '';
 	$object->country = '';

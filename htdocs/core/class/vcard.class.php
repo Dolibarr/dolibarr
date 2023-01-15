@@ -449,7 +449,7 @@ class vCard
 		$country = $object->country_code ? $object->country : '';
 
 		if ($object->address || $object->town || $object->state || $object->zip || $object->country) {
-			$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=WORK");
+			$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "");
 			//$this->setLabel("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=HOME");
 		}
 
