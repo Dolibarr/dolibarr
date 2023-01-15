@@ -2137,10 +2137,7 @@ class Form
 						$out .= ' selected';
 					}
 					$out .= ' data-html="';
-					$outhtml = '';
-					// if (!empty($obj->photo)) {
-					$outhtml .= $userstatic->getNomUrl(-3, '', 0, 1, 24, 1, 'login', '', 1).' ';
-					// }
+					$outhtml = $userstatic->getNomUrl(-3, '', 0, 1, 24, 1, 'login', '', 1).' ';
 					if ($showstatus >= 0 && $obj->status == 0) {
 						$outhtml .= '<strike class="opacitymediumxxx">';
 					}
