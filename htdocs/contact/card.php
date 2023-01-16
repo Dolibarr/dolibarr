@@ -1592,7 +1592,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	}
 }
 
-function showSocialNetwork() {
+function showSocialNetwork()
+{
 	global $socialnetworks, $object, $form, $object, $langs;
 	echo '<script type="text/javascript">$("document").ready(function() {toogleSocialNetwork(false); });</script>';
 
