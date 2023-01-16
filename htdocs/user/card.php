@@ -521,6 +521,13 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
+					$passwordismodified = 0;
+					if (!empty($object->pass)) {
+						if ($object->pass != $object->pass_indatabase && !dol_verifyHash($object->pass, $object->pass_indatabase_crypted)) {
+							$passwordismodified = 1;
+						}
+					}
+
 					$ret = $object->update($user);		// This may include call to setPassword if password has changed
 					if ($ret < 0) {
 						$error++;
@@ -614,6 +621,13 @@ if (empty($reshook)) {
 						$error++;
 						$langs->load("errors");
 						setEventMessages($langs->transnoentitiesnoconv("WarningYourLoginWasModifiedPleaseLogin"), null, 'warnings');
+					}
+					if ($passwordismodified && $object->login == $user->login) {    // Current user has changed its password
+						$error++;
+						$langs->load("errors");
+						setEventMessages($langs->transnoentitiesnoconv("WarningYourPasswordWasModifiedPleaseLogin"), null, 'warnings');
+						header("Location: ".DOL_URL_ROOT.'/user/card.php?id='.$object->id);
+						exit;
 					}
 				} else {
 					$db->rollback();

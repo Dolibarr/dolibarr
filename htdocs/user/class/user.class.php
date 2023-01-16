@@ -276,6 +276,7 @@ class User extends CommonObject
 
 	public $datelastlogin;
 	public $datepreviouslogin;
+	public $flagdelsessionsbefore;
 	public $iplastlogin;
 	public $ippreviouslogin;
 	public $datestartvalidity;
@@ -441,6 +442,7 @@ class User extends CommonObject
 		$sql .= " u.tms as datem,";
 		$sql .= " u.datelastlogin as datel,";
 		$sql .= " u.datepreviouslogin as datep,";
+		$sql .= " u.flagdelsessionsbefore,";
 		$sql .= " u.iplastlogin,";
 		$sql .= " u.ippreviouslogin,";
 		$sql .= " u.datelastpassvalidation,";
@@ -575,6 +577,7 @@ class User extends CommonObject
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->datelastlogin = $this->db->jdate($obj->datel);
 				$this->datepreviouslogin = $this->db->jdate($obj->datep);
+				$this->flagdelsessionsbefore = $this->db->jdate($obj->flagdelsessionsbefore, 'gmt');
 				$this->iplastlogin = $obj->iplastlogin;
 				$this->ippreviouslogin = $obj->ippreviouslogin;
 				$this->datestartvalidity = $this->db->jdate($obj->datestartvalidity);
