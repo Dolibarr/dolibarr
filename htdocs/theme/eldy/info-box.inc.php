@@ -491,12 +491,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	min-width: 350px;
 	max-width: 350px;
 }
-
-/**for make a checkbox in the right of the box in mode kanban */
 .fright {
 	float:right;
 }
-
 @media only screen and (max-width: 1740px) {
 	.info-box-module {
 		min-width: 315px;
