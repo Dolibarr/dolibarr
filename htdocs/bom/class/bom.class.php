@@ -476,7 +476,7 @@ class BOM extends CommonObject
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if ($this->ismultientitymanaged) {
-			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
@@ -1736,7 +1736,7 @@ class BOMLine extends CommonObjectLine
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if ($this->ismultientitymanaged) {
-			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}

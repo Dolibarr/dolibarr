@@ -428,7 +428,7 @@ class StockTransfer extends CommonObject
 		$sql = 'SELECT ';
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		else $sql .= ' WHERE 1 = 1';
 		// Manage filter
 		$sqlwhere = array();
