@@ -71,6 +71,10 @@ $group = GETPOST("group", "int", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
 
+if (empty($id)) {
+	$id = $user->id;
+}
+
 $dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth', 'int'), GETPOST('dateemploymentday', 'int'), GETPOST('dateemploymentyear', 'int'));
 $dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth', 'int'), GETPOST('dateemploymentendday', 'int'), GETPOST('dateemploymentendyear', 'int'));
 $datestartvalidity = dol_mktime(0, 0, 0, GETPOST('datestartvaliditymonth', 'int'), GETPOST('datestartvalidityday', 'int'), GETPOST('datestartvalidityyear', 'int'));
@@ -375,6 +379,7 @@ if (empty($reshook)) {
 			$editgroup->oldcopy = clone $editgroup;
 
 			$object->fetch($id);
+
 			if ($action == 'addgroup') {
 				$result = $object->SetInGroup($group, $editgroup->entity);
 			}
@@ -516,7 +521,14 @@ if (empty($reshook)) {
 				}
 
 				if (!$error) {
-					$ret = $object->update($user);
+					$passwordismodified = 0;
+					if (!empty($object->pass)) {
+						if ($object->pass != $object->pass_indatabase && !dol_verifyHash($object->pass, $object->pass_indatabase_crypted)) {
+							$passwordismodified = 1;
+						}
+					}
+
+					$ret = $object->update($user);		// This may include call to setPassword if password has changed
 					if ($ret < 0) {
 						$error++;
 						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -609,6 +621,13 @@ if (empty($reshook)) {
 						$error++;
 						$langs->load("errors");
 						setEventMessages($langs->transnoentitiesnoconv("WarningYourLoginWasModifiedPleaseLogin"), null, 'warnings');
+					}
+					if ($passwordismodified && $object->login == $user->login) {    // Current user has changed its password
+						$error++;
+						$langs->load("errors");
+						setEventMessages($langs->transnoentitiesnoconv("WarningYourPasswordWasModifiedPleaseLogin"), null, 'warnings');
+						header("Location: ".DOL_URL_ROOT.'/user/card.php?id='.$object->id);
+						exit;
 					}
 				} else {
 					$db->rollback();
@@ -1432,7 +1451,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 		if ($action != 'edit') {
 			print dol_get_fiche_head($head, 'user', $title, -1, 'user');
 
-			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid" rel="noopener">';
+			$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener" rel="noopener">';
 			$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard").' ('.$langs->trans("AddToContacts").')', 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 			$morehtmlref .= '</a>';
 
@@ -1509,7 +1528,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				$huser = new User($db);
 				if ($object->fk_user > 0) {
 					$huser->fetch($object->fk_user);
-					print $huser->getNomUrl(1);
+					print $huser->getNomUrl(-1);
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 				}
@@ -1527,7 +1546,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if (!empty($object->fk_user_expense_validator)) {
 					$evuser = new User($db);
 					$evuser->fetch($object->fk_user_expense_validator);
-					print $evuser->getNomUrl(1);
+					print $evuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -1543,7 +1562,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				if (!empty($object->fk_user_holiday_validator)) {
 					$hvuser = new User($db);
 					$hvuser->fetch($object->fk_user_holiday_validator);
-					print $hvuser->getNomUrl(1);
+					print $hvuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2258,7 +2277,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
 				$huser = new User($db);
 				$huser->fetch($object->fk_user);
-				print $huser->getNomUrl(1);
+				print $huser->getNomUrl(-1);
 			}
 			print '</td>';
 			print "</tr>\n";
@@ -2276,7 +2295,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print '<input type="hidden" name="fk_user_expense_validator" value="'.$object->fk_user_expense_validator.'">';
 					$evuser = new User($db);
 					$evuser->fetch($object->fk_user_expense_validator);
-					print $evuser->getNomUrl(1);
+					print $evuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2295,7 +2314,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print '<input type="hidden" name="fk_user_holiday_validator" value="'.$object->fk_user_holiday_validator.'">';
 					$hvuser = new User($db);
 					$hvuser->fetch($object->fk_user_holiday_validator);
-					print $hvuser->getNomUrl(1);
+					print $hvuser->getNomUrl(-1);
 				}
 				print '</td>';
 				print "</tr>\n";
@@ -2464,6 +2483,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Country
 			print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td>';
+			print img_picto('', 'country', 'class="pictofixedwidth"');
 			if ($caneditfield) {
 				print $form->select_country((GETPOST('country_id') != '' ?GETPOST('country_id') : $object->country_id), 'country_id');
 				if ($user->admin) {

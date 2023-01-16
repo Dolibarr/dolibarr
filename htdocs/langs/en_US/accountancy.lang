@@ -126,6 +126,7 @@ WriteBookKeeping=Record transactions in accounting
 Bookkeeping=Ledger
 BookkeepingSubAccount=Subledger
 AccountBalance=Account balance
+AccountBalanceSubAccount=Sub-accounts balance
 ObjectsRef=Source object ref
 CAHTF=Total purchase vendor before tax
 TotalExpenseReport=Total expense report
@@ -297,6 +298,7 @@ DescValidateMovements=Any modification or deletion of writing, lettering and del
 
 ValidateHistory=Bind Automatically
 AutomaticBindingDone=Automatic bindings done (%s) - Automatic binding not possible for some record (%s)
+DoManualBindingForFailedRecord=You have to do a manual link for the %s row(s) not linked automatically.
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot remove or disable this account of chart of account because it is used
 MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s & Credit = %s
