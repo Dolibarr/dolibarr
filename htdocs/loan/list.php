@@ -66,8 +66,7 @@ $search_amount = GETPOST('search_amount', 'alpha');
 
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'loanlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
-$mode      = GETPOST('mode', 'alpha');  // mode view result
-
+$mode = GETPOST('mode', 'alpha');  // mode view result
 
 
 /*
