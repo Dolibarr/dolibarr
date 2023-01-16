@@ -1327,7 +1327,9 @@ if ($ispaymentok) {
 							if ($attendeetovalidate->email_company && $attendeetovalidate->email_company != $thirdparty->email) {
 								$cc = ($cc ? ', ' : '').$attendeetovalidate->email_company;
 							}
-							$from = $conf->global->MAILING_EMAIL_FROM;
+
+							$from = !empty($conf->global->MAILING_EMAIL_FROM) ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
+
 							$urlback = $_SERVER["REQUEST_URI"];
 
 							$ishtml = dol_textishtml($texttosend); // May contain urls
@@ -1628,7 +1630,7 @@ if ($ispaymentok) {
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox'));
 
 		$sendto = $sendemail;
-		$from = $conf->global->MAILING_EMAIL_FROM;
+		$from = !empty($conf->global->MAILING_EMAIL_FROM) ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
 		// Define $urlwithroot
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
@@ -1756,7 +1758,7 @@ if ($ispaymentok) {
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox'));
 
 		$sendto = $sendemail;
-		$from = $conf->global->MAILING_EMAIL_FROM;
+		$from = !empty($conf->global->MAILING_EMAIL_FROM) ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
 		// Define $urlwithroot
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file

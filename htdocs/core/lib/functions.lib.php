@@ -116,7 +116,7 @@ function getDolUserString($key, $default = '', $tmpuser = null)
 	}
 
 	// return $conf->global->$key ?? $default;
-	return (string) (empty($tmpuser->conf->$key) ? $default : $$tmpuser->conf->$key);
+	return (string) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
 }
 
 /**
@@ -3170,7 +3170,7 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 	if (!empty($type)) {
 		$htmllink = '<div class="divsocialnetwork inline-block valignmiddle">';
 		// Use dictionary definition for picto $dictsocialnetworks[$type]['icon']
-		$htmllink .= '<span class="fa paddingright pictofixedwidth '.($dictsocialnetworks[$type]['icon'] ? $dictsocialnetworks[$type]['icon'] : 'fa-link').'"></span>';
+		$htmllink .= '<span class="fa pictofixedwidth '.($dictsocialnetworks[$type]['icon'] ? $dictsocialnetworks[$type]['icon'] : 'fa-link').'"></span>';
 		if ($type == 'skype') {
 			$htmllink .= dol_escape_htmltag($value);
 			$htmllink .= '&nbsp; <a href="skype:';
@@ -6845,6 +6845,22 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
 
 
 /**
+ *	Change mod of a file
+ *
+ *  @param	string		$filepath		Full file path
+ *	@return void
+ */
+function dolChmod($filepath)
+{
+	global $conf;
+
+	if (!empty($conf->global->MAIN_UMASK)) {
+		@chmod($filepath, octdec($conf->global->MAIN_UMASK));
+	}
+}
+
+
+/**
  *	Return picto saying a field is required
  *
  *	@return  string		Chaine avec picto obligatoire
@@ -8047,7 +8063,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray['__AMOUNT_TEXT__']     = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, '', true) : '';
 		$substitutionarray['__AMOUNT_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, $conf->currency, true) : '';
 
-		$substitutionarray['__AMOUNT_REMAIN__'] = is_object($object) ? $object->total_ttc - $already_payed_all : '';
+		$substitutionarray['__AMOUNT_REMAIN__'] = is_object($object) ? price2num($object->total_ttc - $already_payed_all, 'MT') : '';
 
 		$substitutionarray['__AMOUNT_VAT__']      = is_object($object) ? (isset($object->total_vat) ? $object->total_vat : $object->total_tva) : '';
 		$substitutionarray['__AMOUNT_VAT_TEXT__']      = is_object($object) ? (isset($object->total_vat) ? dol_convertToWord($object->total_vat, $outputlangs, '', true) : dol_convertToWord($object->total_tva, $outputlangs, '', true)) : '';
@@ -11559,7 +11575,6 @@ function dolForgeCriteriaCallback($matches)
 }
 
 
-
 /**
  * Get timeline icon
  * @param ActionComm $actionstatic actioncomm
@@ -12274,4 +12289,64 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 	} else {
 		print $out;
 	}
+}
+
+/**
+ * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
+ * optionally hour, minute, second) fields to return a timestamp.
+ *
+ * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
+ * @param string $hourTime  'getpost' to include hour, minute, second values from the HTTP request, 'XX:YY:ZZ' to set
+ *                          hour, minute, second respectively (for instance '23:59:59')
+ * @param string $gm Passed to dol_mktime
+ * @return int|string  Date as a timestamp, '' or false if error
+ */
+function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
+{
+	if ($hourTime === 'getpost') {
+		$hour   = GETPOSTINT($prefix . 'hour');
+		$minute = GETPOSTINT($prefix . 'minute');
+		$second = GETPOSTINT($prefix . 'second');
+	} elseif (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $hourTime, $m)) {
+		$hour   = intval($m[1]);
+		$minute = intval($m[2]);
+		$second = intval($m[3]);
+	} else {
+		$hour = $minute = $second = 0;
+	}
+	// normalize out of range values
+	$hour = min($hour, 23);
+	$minute = min($minute, 59);
+	$second = min($second, 59);
+	return dol_mktime($hour, $minute, $second, GETPOSTINT($prefix . 'month'), GETPOSTINT($prefix . 'day'), GETPOSTINT($prefix . 'year'), $gm);
+}
+
+/**
+ * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
+ * optionally hour, minute, second) fields to return a a portion of URL reproducing the values from the current HTTP
+ * request.
+ *
+ * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
+ * @param int $timestamp If null, the timestamp will be created from request data
+ * @param bool $hourTime If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @param bool $gm If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @return string Portion of URL with query parameters for the specified date
+ */
+function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto')
+{
+	if ($timestamp === null) $timestamp = GETPOSTDATE($prefix, $hourTime, $gm);
+	$TParam = array(
+		$prefix . 'day'   => intval(dol_print_date($timestamp, '%d')),
+		$prefix . 'month' => intval(dol_print_date($timestamp, '%m')),
+		$prefix . 'year'  => intval(dol_print_date($timestamp, '%Y')),
+	);
+	if ($hourTime === 'getpost' || ($timestamp !== null && dol_print_date($timestamp, '%H:%M:%S') !== '00:00:00')) {
+		$TParam = array_merge($TParam, array(
+			$prefix . 'hour'   => intval(dol_print_date($timestamp, '%H')),
+			$prefix . 'minute' => intval(dol_print_date($timestamp, '%M')),
+			$prefix . 'second' => intval(dol_print_date($timestamp, '%S'))
+		));
+	}
+
+	return '&' . http_build_query($TParam);
 }

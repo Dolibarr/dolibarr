@@ -5,11 +5,15 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 18.0.0 compared to 17.0.0 *****
 
+NEW: PHP 8.2 compatibility:
+
+
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* The deprecated method escapeunderscore() of database handlers has been removed. You must use escapeforlike instead.
-* The method nb_expedition() has been renamed into countNbOfShipments() 
+* The deprecated method "escapeunderscore()" of database handlers has been removed. You must use "escapeforlike()" instead.
+* The method "nb_expedition()" has been renamed into "countNbOfShipments()" 
+* Revert default type of hooks. Default is now 'addreplace' hooks (and exception become 'output' hooks, that become deprecated).
 
 
 
@@ -96,18 +100,18 @@ NEW: can sort and preselected best supplier price
 NEW: Can use products categories to make inventory
 NEW: Change filter type on tickets list into a multiselect combo
 NEW: conf TIMESPENT_ALWAYS_UPDATE_THM, when it's on we always check current thm of user to update it in task time line
-NEW: constant PROPAL_NEW_AS_SIGNED
 NEW: show date delivery planned on orders linked to company and product
 NEW: Default values in extrafields are not more limited to 255 char.
 NEW: display currency in takepos menu
 NEW: Enable online signature for interventions
 NEW: Encrypt all sensitive constants in llx_const
-NEW: extrafield price with currency
 NEW: filter on reception dates (from / to) in cheque paiement card
 NEW: Contracts: Default template of contract is not mandatory
 NEW: Contracts: Manage Position (Rank) on Contract Lines
 NEW: EMail-Collector: add IMAP port setting 
 NEW: EMail-Collector: add a button "Test collect"
+NEW: Extrafields: field price with currency
+NEW: Extrafields: support IP type in extrafields
 NEW: Members: default_lang for members
 NEW: Members: Table of membership types
 NEW: Members: add free membership amounts at the membership type level
@@ -127,21 +131,17 @@ NEW: Website: can switch status of website and page from the website toolbar
 NEW: Website: Templates of websites are now directories and not zip into core repo
 NEW: Website: add 4 other templates in website module
 NEW: If we select another view list mode, we keep it
-NEW: Init module bookcal
 NEW: Introduce dolEncrypt and dolDecrypt to be able to encrypt data in db
 NEW: Invoice - Add french mention on pdf when vat debit option is on
 NEW: invoice export : add accounting affectation
 NEW: label on products categories filter
 NEW: The link "add to bookmark" is always on top in the bookmark popup
-NEW: MAIN_SEARCH_CATEGORY_PRODUCT_ON_LISTS const to show category customer filter
 NEW: Make module WebservicesClient deprecated. Use module WebHook instead.
 NEW: manage no email with thirdparties (better for GDPR)
 NEW: Manage VAT on all lines on purchases cycle
 NEW: manage virtual stock at a future date
 NEW: On a bank reconciled line, we can modify the bank receipt
 NEW: On a form to send an email, we show all emails of all contacts of object
-NEW: Option PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT showing wh on PDF
-NEW: Option PRODUIT_DESC_IN_FORM accept (desktop only or +smartphone)
 NEW: Page for mass stock transfer can be used with no source stock
 NEW: parent company column and filter in invoice and order list
 NEW: Add show "Sales rep" option for PDF
@@ -168,12 +168,17 @@ NEW: skip accept/refuse process for proposals (option PROPAL_SKIP_ACCEPT_REFUSE)
 NEW: experimental SMTP using PhpImap allowing OAuth2 authentication (need to add option MAIN_IMAP_USE_PHPIMAP)
 NEW: can substitue project title in mail template
 NEW: Supplier order list - Add column private and public note
-NEW: Support IP type in extrafields
 NEW: The purge of files can purge only if older than a number of seconds
 NEW: Update ActionComm type_code on email message ticket
 NEW: VAT - Admin - Add information on deadline day for submission of VAT declaration
 NEW: expand/collapse permissions on user permission page
 NEW: Add the target to select attendees of event for emailings
+
+ Option / Const for System: 
+NEW: Option PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT showing warehouse on PDF
+NEW: Option PRODUIT_DESC_IN_FORM accept (desktop only or +smartphone)
+NEW: MAIN_SEARCH_CATEGORY_PRODUCT_ON_LISTS const to show category customer filter
+NEW: constant PROPAL_NEW_AS_SIGNED
 
  Localisation:
 NEW: adding JAPAN Chart-of-Account and regions/departments
@@ -181,6 +186,7 @@ NEW: adding NIF verification for Algeria
 
  Modules
 NEW: Experimental module Asset
+NEW: Init module bookcal
 
 
 For developers or integrators:
@@ -190,20 +196,26 @@ NEW: ModuleBuilder can generate code of class from an existing SQL table
 NEW: #20912 Add trigger to record the event of sending an email from a project
 NEW: #21750 Added "Get lines and Post lines from BOM" at the REST Service
 NEW: #22370 Modulebuilder supports 'alwayseditable' (like extrafields)
-NEW: Removed completely the need for the library adodbtime
-NEW: hook on agenda pages
-NEW: hook to complete payment in TakePOS
-NEW: hook "changeHelpURL" to modify target of the help button
-NEW: hook formConfirm on action comm card
-NEW: hook to modify supplier product html select
-NEW: Add new hook for show virtual stock details on product stock card
-NEW: Add new hooks for actioncomm
 NEW: conf->global->SYSLOG_FILE_ONEPERSESSION accept a string
-NEW: translate for contact type API, setup/ticket API, shipping method API
 NEW: All ajax pages have now a top_httphead()
-NEW: support multilang in Civilities API
+
+ API:
 NEW: Add API for the partnership module
 NEW: Add "Get lines and Post lines from BOM" in the API
+NEW: translate for contact type API, setup/ticket API, shipping method API
+NEW: support multilang in Civilities API
+
+ Hooks:
+NEW: Actioncomm - add new hooks for actioncomm
+NEW: Actioncomm - hook formConfirm on action comm card
+NEW: Agenda - hook on agenda pages
+NEW: Help - hook "changeHelpURL" to modify target of the help button
+NEW: Product - add hook to show virtual stock details on product stock card
+NEW: Product - add hook to modify supplier product html select
+NEW: TakePOS - add hook to complete payment in TakePOS
+
+
+NEW: Removed completely the need for the library adodbtime
 NEW: Replace fk_categories_product with categories_product in inventory
 NEW: Rewrite of SQL request. Removed the join on category (for filter on categ), replaced with a EXISTS/NOT
 

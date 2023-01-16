@@ -496,6 +496,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .fright {
 	float:right;
 }
+
 @media only screen and (max-width: 1740px) {
 	.info-box-module {
 		min-width: 315px;

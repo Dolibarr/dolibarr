@@ -919,7 +919,7 @@ class ProductAttribute extends CommonObject
 			$parameters = array('rowid' => $rowid, 'position' => $position);
 			$action = '';
 			$reshook = $hookmanager->executeHooks('afterPositionOfAttributeUpdate', $parameters, $this, $action);
-			return 1;
+			return ($reshook >= 0 ? 1 : -1);
 		}
 	}
 

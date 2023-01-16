@@ -2058,13 +2058,13 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 		dol_syslog("dol_compress_file mode=".$mode." inputfile=".$inputfile." outputfile=".$outputfile);
 
 		$data = implode("", file(dol_osencode($inputfile)));
-		if ($mode == 'gz') {
+		if ($mode == 'gz' && function_exists('gzencode')) {
 			$foundhandler = 1;
 			$compressdata = gzencode($data, 9);
-		} elseif ($mode == 'bz') {
+		} elseif ($mode == 'bz' && function_exists('bzcompress')) {
 			$foundhandler = 1;
 			$compressdata = bzcompress($data, 9);
-		} elseif ($mode == 'zstd') {
+		} elseif ($mode == 'zstd' && function_exists('zstd_compress')) {
 			$foundhandler = 1;
 			$compressdata = zstd_compress($data, 9);
 		} elseif ($mode == 'zip') {
