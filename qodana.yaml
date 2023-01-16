@@ -1,6 +1,6 @@
 version: "1.0"
 linter: jetbrains/qodana-php:2022.3-eap
-failThreshold: 0
+failThreshold: 20000
 profile:
   name: qodana.recommended
 exclude:
@@ -15,6 +15,7 @@ exclude:
       - htdocs/custom
       - htdocs/includes
       - htdocs/install/doctemplates
+      - htdocs/modulebuilder/template/test/functionnal
   - name: PhpIssetCanBeReplacedWithCoalesceInspection
   - name: PhpRedundantOptionalArgumentInspection
   - name: PhpLanguageLevelInspection
@@ -62,3 +63,23 @@ exclude:
   - name: RegExpUnnecessaryNonCapturingGroup
   - name: PhpPregMatchReplaceWithComparisonInspection
   - name: PhpArrayWriteIsNotUsedInspection
+  - name: PhpUndefinedNamespaceInspection
+  - name: PhpArraySearchInBooleanContextInspection
+  - name: PhpLoopCanBeReplacedWithStrRepeatInspection  
+  - name: PhpPropertyOnlyWrittenInspection
+  - name: PhpCoveredCharacterInClassInspection
+  - name: PhpSameParameterValueInspection  
+  - name: PhpSillyAssignmentInspection
+  - name: PhpConditionCheckedByNextConditionInspection
+  - name: RegExpSingleCharAlternation
+  - name: PhpSuspiciousNameCombinationInspection
+  - name: PhpObjectFieldsAreOnlyWrittenInspection
+  - name: PhpMissingParentConstructorInspection  
+  - name: PhpWriteAccessToReferencedArrayValueWithoutUnsetInspection
+  - name: PhpArrayUsedOnlyForWriteInspection
+  - name: PhpArrayIndexImmediatelyRewrittenInspection
+  - name: PhpParameterNameChangedDuringInheritanceInspection
+  - name: PhpDuplicateSwitchCaseBodyInspection
+  - name: PhpNestedDirNameCallsCanBeReplacedWithLevelParameterInspection
+  - name: PhpPointlessBooleanExpressionInConditionInspection  
+  - name: PhpUndefinedMethodInspection

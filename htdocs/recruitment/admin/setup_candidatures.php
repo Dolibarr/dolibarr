@@ -90,11 +90,11 @@ $setupnotempty = 0;
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
-	$maskconstcand = GETPOST('maskconstcand', 'alpha');
-	$maskcand = GETPOST('maskcand', 'alpha');
+	$maskconst = GETPOST('maskconstcand', 'aZ09');
+	$maskvalue = GETPOST('maskcand', 'alpha');
 
-	if ($maskconstcand) {
-		$res = dolibarr_set_const($db, $maskconstcand, $maskcand, 'chaine', 0, '', $conf->entity);
+	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
+		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
 
 	if (!($res > 0)) {

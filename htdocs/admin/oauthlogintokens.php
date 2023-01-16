@@ -213,7 +213,13 @@ if ($mode == 'setup' && $user->admin) {
 			$urltocheckperms = '';
 		}
 
-		$urltorenew .= '&keyforprovider='.urlencode($keyforprovider);
+		if ($urltorenew) {
+			$urltorenew .= '&keyforprovider='.urlencode($keyforprovider);
+		}
+		if ($urltodelete) {
+			$urltodelete .= '&keyforprovider='.urlencode($keyforprovider);
+		}
+
 
 		// Show value of token
 		$tokenobj = null;

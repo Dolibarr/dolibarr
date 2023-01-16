@@ -162,8 +162,8 @@ class StockMovements extends DolibarrApi
 	 * @param float $qty Qty to add (Use negative value for a stock decrease) {@from body} {@required true}
 	 * @param int $type Optionally specify the type of movement. 0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer), 2=output (stock decrease), 3=input (stock increase). {@from body} {@type int}
 	 * @param string $lot Lot {@from body}
-	 * @param string $movementcode Movement code {@example INV123} {@from body}
-	 * @param string $movementlabel Movement label {@example Inventory number 123} {@from body}
+	 * @param string $movementcode Movement code {@from body}
+	 * @param string $movementlabel Movement label {@from body}
 	 * @param string $price To update AWP (Average Weighted Price) when you make a stock increase (qty must be higher then 0). {@from body}
 	 * @param string $datem Date of movement {@from body} {@type date}
 	 * @param string $dlc Eat-by date. {@from body} {@type date}

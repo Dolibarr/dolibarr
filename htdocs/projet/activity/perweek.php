@@ -152,6 +152,7 @@ $search_array_options = array();
 $search_array_options_project = $extrafields->getOptionalsFromPost('projet', '', 'search_');
 $search_array_options_task = $extrafields->getOptionalsFromPost('projet_task', '', 'search_task_');
 
+$error = 0;
 
 
 /*
@@ -263,10 +264,10 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 	if (empty($timetoadd)) {
 		setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
 	} else {
-		foreach ($timetoadd as $taskid => $value) {     // Loop on each task
+		foreach ($timetoadd as $tmptaskid => $tmpvalue) {     // Loop on each task
 			$updateoftaskdone = 0;
-			foreach ($value as $key => $val) {          // Loop on each day
-				$amountoadd = $timetoadd[$taskid][$key];
+			foreach ($tmpvalue as $key => $val) {          // Loop on each day
+				$amountoadd = $timetoadd[$tmptaskid][$key];
 				if (!empty($amountoadd)) {
 					$tmpduration = explode(':', $amountoadd);
 					$newduration = 0;
@@ -281,10 +282,10 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 					}
 
 					if ($newduration > 0) {
-						$object->fetch($taskid);
+						$object->fetch($tmptaskid);
 
-						if (GETPOSTISSET($taskid.'progress')) {
-							$object->progress = GETPOST($taskid.'progress', 'int');
+						if (GETPOSTISSET($tmptaskid.'progress')) {
+							$object->progress = GETPOST($tmptaskid.'progress', 'int');
 						} else {
 							unset($object->progress);
 						}
@@ -308,11 +309,11 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 			}
 
 			if (!$updateoftaskdone) {  // Check to update progress if no update were done on task.
-				$object->fetch($taskid);
+				$object->fetch($tmptaskid);
 				//var_dump($object->progress);
-				//var_dump(GETPOST($taskid . 'progress', 'int')); exit;
-				if ($object->progress != GETPOST($taskid.'progress', 'int')) {
-					$object->progress = GETPOST($taskid.'progress', 'int');
+				//var_dump(GETPOST($tmptaskid . 'progress', 'int')); exit;
+				if ($object->progress != GETPOST($tmptaskid.'progress', 'int')) {
+					$object->progress = GETPOST($tmptaskid.'progress', 'int');
 					$result = $object->update($user);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');

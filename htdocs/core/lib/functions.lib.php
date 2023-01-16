@@ -101,31 +101,41 @@ function getDolGlobalInt($key, $default = 0)
 }
 
 /**
- * Return dolibarr user constant string value
+ * Return Dolibarr user constant string value
  *
  * @param string $key 		key to return value, return '' if not set
  * @param string $default 	value to return
+ * @param User   $tmpuser   To get another user than current user
  * @return string
  */
-function getDolUserString($key, $default = '')
+function getDolUserString($key, $default = '', $tmpuser = null)
 {
-	global $user;
+	if (empty($tmpuser)) {
+		global $user;
+		$tmpuser = $user;
+	}
+
 	// return $conf->global->$key ?? $default;
-	return (string) (empty($user->conf->$key) ? $default : $user->conf->$key);
+	return (string) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
 }
 
 /**
- * Return dolibarr user constant int value
+ * Return Dolibarr user constant int value
  *
  * @param string 	$key 			key to return value, return 0 if not set
  * @param int 		$default 		value to return
+ * @param User   	$tmpuser   		To get another user than current user
  * @return int
  */
-function getDolUserInt($key, $default = 0)
+function getDolUserInt($key, $default = 0, $tmpuser = null)
 {
-	global $user;
+	if (empty($tmpuser)) {
+		global $user;
+		$tmpuser = $user;
+	}
+
 	// return $conf->global->$key ?? $default;
-	return (int) (empty($user->conf->$key) ? $default : $user->conf->$key);
+	return (int) (empty($tmpuser->conf->$key) ? $default : $tmpuser->conf->$key);
 }
 
 /**
@@ -340,13 +350,13 @@ function getBrowserInfo($user_agent)
 	$reg = array();
 	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
 		$name = 'firefox';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/edge(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
 		$name = 'edge';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $user_agent, $reg)) {
 		$name = 'chrome';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/chrome/i', $user_agent, $reg)) {
 		// we can have 'chrome (Mozilla...) chrome x.y' in one string
 		$name = 'chrome';
@@ -356,11 +366,11 @@ function getBrowserInfo($user_agent)
 		$name = 'epiphany';
 	} elseif (preg_match('/safari(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
 		$name = 'safari';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg)) {
 		// Safari is often present in string for mobile but its not.
 		$name = 'opera';
-		$version = $reg[2];
+		$version = empty($reg[2]) ? '' : $reg[2];
 	} elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg)) {
 		$name = 'ie';
 		$version = end($reg);
@@ -368,10 +378,10 @@ function getBrowserInfo($user_agent)
 		// MS products at end
 		$name = 'ie';
 		$version = end($reg);
-	} elseif (preg_match('/l(i|y)n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) {
+	} elseif (preg_match('/l[iy]n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) {
 		// MS products at end
 		$name = 'lynxlinks';
-		$version = $reg[4];
+		$version = empty($reg[3]) ? '' : $reg[3];
 	}
 
 	if ($tablet) {
@@ -1717,15 +1727,17 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
  *
  *	@param	string	$name				A name for the html component
  *	@param	string	$label 	    		Label shown in Popup title top bar
- *	@param  string	$buttonstring  		button string
+ *	@param  string	$buttonstring  		button string (HTML text we can click on)
  *	@param  string	$url				Relative Url to open. For example '/project/card.php'
  *  @param	string	$disabled			Disabled text
  *  @param	string	$morecss			More CSS
+ *  @param	string	$jsonopen			Some JS code to execute on click/open of popup
  *  @param	string	$backtopagejsfields	The back to page must be managed using javascript instead of a redirect.
  *  									Value is 'keyforpopupid:Name_of_html_component_to_set_with id,Name_of_html_component_to_set_with_label'
+ *  @param	string	$accesskey			A key to use shortcut
  * 	@return	string						HTML component with button
  */
-function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'button bordertransp', $backtopagejsfields = '')
+function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'classlink button bordertransp', $jsonopen = '', $backtopagejsfields = '', $accesskey = '')
 {
 	global $conf;
 
@@ -1753,9 +1765,11 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out .= '<!-- a link for button to open url into a dialog popup with backtopagejsfields = '.$backtopagejsfields.' -->';
-	$out .= '<a class="cursorpointer classlink button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
+	$out .= '<a '.($accesskey ? ' accesskey="'.$accesskey.'"' : '').' class="cursorpointer button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
 	if (empty($conf->use_javascript_ajax)) {
 		$out .= ' href="'.DOL_URL_ROOT.$url.'" target="_blank"';
+	} elseif ($jsonopen) {
+		$out .= ' onclick="javascript:'.$jsonopen.'"';
 	}
 	$out .= '>'.$buttonstring.'</a>';
 
@@ -2198,7 +2212,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 						// If the preview file is found
 						if (file_exists($fileimage)) {
 							$phototoshow = '<div class="photoref">';
-							$phototoshow .= '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
+							$phototoshow .= '<img height="'.$heightforphotref.'" class="photo photowithborder" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
 							$phototoshow .= '</div>';
 						}
 					}
@@ -2239,6 +2253,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 	}
 
+	// Show barcode
 	if ($showbarcode) {
 		$morehtmlleft .= '<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object, 100, 'photoref valignmiddle').'</div>';
 	}
@@ -2313,7 +2328,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 	// Add alias for thirdparty
 	if (!empty($object->name_alias)) {
-		$morehtmlref .= '<div class="refidno opacitymedium">'.$object->name_alias.'</div>';
+		$morehtmlref .= '<div class="refidno opacitymedium">'.dol_escape_htmltag($object->name_alias).'</div>';
 	}
 
 	// Add label
@@ -2335,7 +2350,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && ($conf->global->MAIN_SHOW_TECHNICAL_ID == '1' || preg_match('/'.preg_quote($object->element, '/').'/i', $conf->global->MAIN_SHOW_TECHNICAL_ID)) && !empty($object->id)) {
 		$morehtmlref .= '<div style="clear: both;"></div>';
 		$morehtmlref .= '<div class="refidno opacitymedium">';
-		$morehtmlref .= $langs->trans("TechnicalID").': '.$object->id;
+		$morehtmlref .= $langs->trans("TechnicalID").': '.((int) $object->id);
 		$morehtmlref .= '</div>';
 	}
 
@@ -2647,12 +2662,6 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$format = str_replace('%A', '__A__', $format);
 	}
 
-	$useadodb = getDolGlobalInt('MAIN_USE_LEGACY_ADODB_FOR_DATE', 0);
-	//$useadodb = 1;	// To switch to adodb
-	if (!empty($useadodb)) {
-		include_once DOL_DOCUMENT_ROOT.'/includes/adodbtime/adodb-time.inc.php';
-	}
-
 	// Analyze date
 	$reg = array();
 	if (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i', $time, $reg)) {	// Deprecated. Ex: 1970-01-01, 1970-01-01 01:00:00, 19700101010000
@@ -2671,14 +2680,37 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		$ssec	= (!empty($reg[6]) ? $reg[6] : '');
 
 		$time = dol_mktime($shour, $smin, $ssec, $smonth, $sday, $syear, true);
-		if (empty($useadodb)) {
+
+		if ($to_gmt) {
+			$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
+		} else {
+			$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
+		}
+		$dtts = new DateTime();
+		$dtts->setTimestamp($time);
+		$dtts->setTimezone($tzo);
+		$newformat = str_replace(
+			array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+			array('Y', 'y', 'm', 'd', 'H', 'h', 'i', 's', 'A', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+			$format);
+		$ret = $dtts->format($newformat);
+		$ret = str_replace(
+			array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
+			array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
+			$ret
+		);
+	} else {
+		// Date is a timestamps
+		if ($time < 100000000000) {	// Protection against bad date values
+			$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
+
 			if ($to_gmt) {
 				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
 			} else {
 				$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
 			}
 			$dtts = new DateTime();
-			$dtts->setTimestamp($time);
+			$dtts->setTimestamp($timetouse);
 			$dtts->setTimezone($tzo);
 			$newformat = str_replace(
 				array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
@@ -2688,36 +2720,8 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 			$ret = str_replace(
 				array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
 				array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
-				$ret);
-		} else {
-			$ret = adodb_strftime($format, $time + $offsettz + $offsetdst, $to_gmt);
-		}
-	} else {
-		// Date is a timestamps
-		if ($time < 100000000000) {	// Protection against bad date values
-			$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
-
-			if (empty($useadodb)) {
-				if ($to_gmt) {
-					$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
-				} else {
-					$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
-				}
-				$dtts = new DateTime();
-				$dtts->setTimestamp($timetouse);
-				$dtts->setTimezone($tzo);
-				$newformat = str_replace(
-					array('%Y', '%y', '%m', '%d', '%H', '%I', '%M', '%S', '%p', 'T', 'Z', '__a__', '__A__', '__b__', '__B__'),
-					array('Y', 'y', 'm', 'd', 'H', 'h', 'i', 's', 'A', '__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
-					$format);
-				$ret = $dtts->format($newformat);
-				$ret = str_replace(
-					array('__£__', '__$__', '__{__', '__}__', '__[__', '__]__'),
-					array('T', 'Z', '__a__', '__A__', '__b__', '__B__'),
-					$ret);
-			} else {
-				$ret = adodb_strftime($format, $timetouse, $to_gmt);	// If to_gmt = false then adodb_strftime use TZ of server
-			}
+				$ret
+			);
 			//var_dump($ret);exit;
 		} else {
 			$ret = 'Bad value '.$time.' for date';
@@ -2727,20 +2731,15 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 	if (preg_match('/__b__/i', $format)) {
 		$timetouse = $time + $offsettz + $offsetdst; // TODO We could be able to disable use of offsettz and offsetdst to use only offsettzstring.
 
-		if (empty($useadodb)) {
-			if ($to_gmt) {
-				$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
-			} else {
-				$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
-			}
-			$dtts = new DateTime();
-			$dtts->setTimestamp($timetouse);
-			$dtts->setTimezone($tzo);
-			$month = $dtts->format("m");
+		if ($to_gmt) {
+			$tzo = new DateTimeZone('UTC');	// when to_gmt is true, base for offsettz and offsetdst (so timetouse) is UTC
 		} else {
-			// After this ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-			$month = adodb_strftime('%m', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+			$tzo = new DateTimeZone(date_default_timezone_get());	// when to_gmt is false, base for offsettz and offsetdst (so timetouse) is PHP server
 		}
+		$dtts = new DateTime();
+		$dtts->setTimestamp($timetouse);
+		$dtts->setTimezone($tzo);
+		$month = $dtts->format("m");
 		$month = sprintf("%02d", $month); // $month may be return with format '06' on some installation and '6' on other, so we force it to '06'.
 		if ($encodetooutput) {
 			$monthtext = $outputlangs->transnoentities('Month'.$month);
@@ -2759,19 +2758,15 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 		//print "time=$time offsettz=$offsettz offsetdst=$offsetdst offsettzstring=$offsettzstring";
 		$timetouse = $time + $offsettz + $offsetdst; // TODO Replace this with function Date PHP. We also should not use anymore offsettz and offsetdst but only offsettzstring.
 
-		if (empty($useadodb)) {
-			if ($to_gmt) {
-				$tzo = new DateTimeZone('UTC');
-			} else {
-				$tzo = new DateTimeZone(date_default_timezone_get());
-			}
-			$dtts = new DateTime();
-			$dtts->setTimestamp($timetouse);
-			$dtts->setTimezone($tzo);
-			$w = $dtts->format("w");
+		if ($to_gmt) {
+			$tzo = new DateTimeZone('UTC');
 		} else {
-			$w = adodb_strftime('%w', $timetouse, $to_gmt);		// If to_gmt = false then adodb_strftime use TZ of server
+			$tzo = new DateTimeZone(date_default_timezone_get());
 		}
+		$dtts = new DateTime();
+		$dtts->setTimestamp($timetouse);
+		$dtts->setTimezone($tzo);
+		$w = $dtts->format("w");
 		$dayweek = $outputlangs->transnoentitiesnoconv('Day'.$w);
 
 		$ret = str_replace('__A__', $dayweek, $ret);
@@ -3008,9 +3003,10 @@ function dol_print_size($size, $shortvalue = 0, $shortunit = 0)
  * @param	string		$target		Target for link
  * @param	int			$max		Max number of characters to show
  * @param	int			$withpicto	With picto
+ * @param	string		$morecss	More CSS
  * @return	string					HTML Link
  */
-function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0)
+function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $morecss = 'float')
 {
 	global $langs;
 
@@ -3033,7 +3029,12 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0)
 	}
 	$link .= dol_trunc($url, $max);
 	$link .= '</a>';
-	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto ?img_picto($langs->trans("Url"), 'globe').' ' : '').$link.'</div>';
+
+	if ($morecss == 'float') {
+		return '<div class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ?img_picto($langs->trans("Url"), 'globe').' ' : '').$link.'</div>';
+	} else {
+		return '<span class="nospan'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">'.($withpicto ?img_picto($langs->trans("Url"), 'globe').' ' : '').$link.'</span>';
+	}
 }
 
 /**
@@ -3169,11 +3170,10 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 	if (!empty($type)) {
 		$htmllink = '<div class="divsocialnetwork inline-block valignmiddle">';
 		// Use dictionary definition for picto $dictsocialnetworks[$type]['icon']
-		$htmllink .= '<span class="fa paddingright '.($dictsocialnetworks[$type]['icon'] ? $dictsocialnetworks[$type]['icon'] : 'fa-link').'"></span>';
+		$htmllink .= '<span class="fa pictofixedwidth '.($dictsocialnetworks[$type]['icon'] ? $dictsocialnetworks[$type]['icon'] : 'fa-link').'"></span>';
 		if ($type == 'skype') {
 			$htmllink .= dol_escape_htmltag($value);
-			$htmllink .= '&nbsp;';
-			$htmllink .= '<a href="skype:';
+			$htmllink .= '&nbsp; <a href="skype:';
 			$htmllink .= dol_string_nospecial($value, '_', '', array('@'));
 			$htmllink .= '?call" alt="'.$langs->trans("Call").'&nbsp;'.$value.'" title="'.dol_escape_htmltag($langs->trans("Call").' '.$value).'">';
 			$htmllink .= '<img src="'.DOL_URL_ROOT.'/theme/common/skype_callbutton.png" border="0">';
@@ -3211,9 +3211,9 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 				}
 				$link = str_replace('{socialid}', $value, $dictsocialnetworks[$type]['url']);
 				if (preg_match('/^https?:\/\//i', $link)) {
-					$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
 				} else {
-					$htmllink .= '&nbsp;<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
 				}
 			} else {
 				$htmllink .= dol_escape_htmltag($value);
@@ -3266,7 +3266,7 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
  * 	@param  string  $countrycode    Country code to use for formatting
  * 	@param 	int		$cid 		    Id of contact if known
  * 	@param 	int		$socid          Id of third party if known
- * 	@param 	string	$addlink	    ''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set)
+ * 	@param 	string	$addlink	    ''=no link to create action, 'AC_TEL'=add link to clicktodial (if module enabled) and add link to create event (if conf->global->AGENDA_ADDACTIONFORPHONE set), 'tel'=Force "tel:..." link
  * 	@param 	string	$separ 		    Separation between numbers for a better visibility example : xx.xx.xx.xx.xx
  *  @param	string  $withpicto      Show picto ('fax', 'phone', 'mobile')
  *  @param	string	$titlealt	    Text to show on alt
@@ -3474,7 +3474,7 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 		}
 	}
 	if (!empty($addlink)) {	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
-		if ($conf->browser->layout == 'phone' || (isModEnabled('clicktodial') && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS))) {	// If phone or option for, we use link of phone
+		if ($addlink == 'tel' || $conf->browser->layout == 'phone' || (isModEnabled('clicktodial') && !empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS))) {	// If phone or option for, we use link of phone
 			$newphoneform = $newphone;
 			$newphone = '<a href="tel:'.$phone.'"';
 			$newphone .= '>'.$newphoneform.'</a>';
@@ -3824,7 +3824,7 @@ function isValidMXRecord($domain)
 		}
 	}
 
-	// function idn_to_ascii or checkdnsrr does not exists
+	// function idn_to_ascii or checkdnsrr or getmxrr does not exists
 	return -1;
 }
 
@@ -4087,7 +4087,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus',
 				'generate', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 				'help', 'holiday',
-				'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'knowledgemanagement',
+				'id-card', 'images', 'incoterm', 'info', 'intervention', 'inventory', 'intracommreport', 'knowledgemanagement',
 				'label', 'language', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lock', 'lot', 'long-arrow-alt-right',
 				'margin', 'map-marker-alt', 'member', 'meeting', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 				'off', 'on', 'order',
@@ -4154,7 +4154,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'supplier'=>'building', 'technic'=>'cogs',
 				'timespent'=>'clock', 'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 				'title_agenda'=>'calendar-alt',
-				'uncheck'=>'times', 'uparrow'=>'share', 'url'=>'external-link-alt', 'vat'=>'money-check-alt', 'vcard'=>'address-card',
+				'uncheck'=>'times', 'uparrow'=>'share', 'url'=>'external-link-alt', 'vat'=>'money-check-alt', 'vcard'=>'arrow-alt-circle-down',
 				'jabber'=>'comment-o',
 				'website'=>'globe-americas', 'workstation'=>'pallet', 'webhook'=>'bullseye', 'world'=>'globe', 'private'=>'user-lock',
 				'conferenceorbooth'=>'chalkboard-teacher', 'eventorganization'=>'project-diagram'
@@ -5058,7 +5058,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		} elseif (is_array($errors)) {
 			$errors = array_merge(array($error), $errors);
 		} else {
-			$errors = array_merge(array($error));
+			$errors = array_merge(array($error), array($errors));
 		}
 
 		foreach ($errors as $msg) {
@@ -5765,7 +5765,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 			$currency_code = $conf->currency;
 		}
 
-		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD');
+		$listofcurrenciesbefore = array('AUD', 'CAD', 'CNY', 'COP', 'CLP', 'GBP', 'HKD', 'MXN', 'PEN', 'USD', 'CRC');
 		$listoflanguagesbefore = array('nl_NL');
 		if (in_array($currency_code, $listofcurrenciesbefore) || in_array($outlangs->defaultlang, $listoflanguagesbefore)) {
 			$cursymbolbefore .= $outlangs->getCurrencySymbol($currency_code);
@@ -6454,12 +6454,12 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
 
 /**
  *	Function that return vat rate of a product line (according to seller, buyer and product vat rate)
- *   VATRULE 1: Si vendeur non assujeti a TVA, TVA par defaut=0. Fin de regle.
- *	 VATRULE 2: Si le (pays vendeur = pays acheteur) alors TVA par defaut=TVA du produit vendu. Fin de regle.
- *	 VATRULE 3: Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
- *	 VATRULE 4: Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
- *	 VATRULE 5: Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
- *	 VATRULE 6: Sinon TVA proposee par defaut=0. Fin de regle.
+ *   VATRULE 1: If seller does not use VAT, default VAT is 0. End of rule.
+ *	 VATRULE 2: If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
+ *	 VATRULE 3: If (seller and buyer in the European Community) and (property sold = new means of transport such as car, boat, plane) then VAT by default = 0 (VAT must be paid by the buyer to the tax center of his country and not to the seller). End of rule.
+ *	 VATRULE 4: If (seller and buyer in the European Community) and (buyer = individual) then VAT by default = VAT of the product sold. End of rule
+ *	 VATRULE 5: If (seller and buyer in European Community) and (buyer = company) then VAT by default=0. End of rule
+ *	 VATRULE 6: Otherwise the VAT proposed by default=0. End of rule.
  *
  *	@param	Societe		$thirdparty_seller    	Objet societe vendeuse
  *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
@@ -6504,26 +6504,39 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		}
 	}
 
-	// If seller does not use VAT
+	// If seller does not use VAT, default VAT is 0. End of rule.
 	if (!$seller_use_vat) {
 		//print 'VATRULE 1';
 		return 0;
 	}
 
-	// Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concerne si le test suivant n'est pas suffisant.
-
-	// Si le (pays vendeur = pays acheteur) alors la TVA par defaut=TVA du produit vendu. Fin de regle.
+	// If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
 	if (($seller_country_code == $buyer_country_code)
 	|| (in_array($seller_country_code, array('FR', 'MC')) && in_array($buyer_country_code, array('FR', 'MC')))) { // Warning ->country_code not always defined
 		//print 'VATRULE 2';
-		return get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+		$tmpvat = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
+
+		if ($seller_country_code == 'IN' && getDolGlobalString('MAIN_SALETAX_AUTOSWITCH_I_CS_FOR_INDIA')) {
+			// Special case for india.
+			//print 'VATRULE 2b';
+			$reg = array();
+			if (preg_match('/C+S-(\d+)/', $tmpvat, $reg) && $thirdparty_seller->state_id != $thirdparty_buyer->state_id) {
+				// we must revert the C+S into I
+				$tmpvat = str_replace("C+S", "I", $tmpvat);
+			} elseif (preg_match('/I-(\d+)/', $tmpvat, $reg) && $thirdparty_seller->state_id == $thirdparty_buyer->state_id) {
+				// we must revert the I into C+S
+				$tmpvat = str_replace("I", "C+S", $tmpvat);
+			}
+		}
+
+		return $tmpvat;
 	}
 
-	// Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par defaut=0 (La TVA doit etre paye par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de regle.
+	// If (seller and buyer in the European Community) and (property sold = new means of transport such as car, boat, plane) then VAT by default = 0 (VAT must be paid by the buyer to the tax center of his country and not to the seller). End of rule.
 	// 'VATRULE 3' - Not supported
 
-	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise) alors TVA par defaut=0. Fin de regle
-	// Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+	// If (seller and buyer in the European Community) and (buyer = individual) then VAT by default = VAT of the product sold. End of rule
+	// If (seller and buyer in European Community) and (buyer = company) then VAT by default=0. End of rule
 	if (($seller_in_cee && $buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
 		if ($isacompany && !empty($conf->global->MAIN_USE_VAT_COMPANIES_IN_EEC_WITH_INVALID_VAT_ID_ARE_INDIVIDUAL)) {
@@ -6542,7 +6555,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		}
 	}
 
-	// Si (vendeur dans Communaute europeene et acheteur hors Communaute europeenne et acheteur particulier) alors TVA par defaut=TVA du produit vendu. Fin de regle
+	// If (seller in the European Community and buyer outside the European Community and private buyer) then VAT by default = VAT of the product sold. End of rule
 	// I don't see any use case that need this rule.
 	if (!empty($conf->global->MAIN_USE_VAT_OF_PRODUCT_FOR_INDIVIDUAL_CUSTOMER_OUT_OF_EEC) && empty($buyer_in_cee)) {
 		$isacompany = $thirdparty_buyer->isACompany();
@@ -6552,15 +6565,15 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 		}
 	}
 
-	// Sinon la TVA proposee par defaut=0. Fin de regle.
-	// Rem: Cela signifie qu'au moins un des 2 est hors Communaute europeenne et que le pays differe
+	// Otherwise the VAT proposed by default=0. End of rule.
+	// Rem: This means that at least one of the 2 is outside the European Community and the country differs
 	//print 'VATRULE 6';
 	return 0;
 }
 
 
 /**
- *	Fonction qui renvoie si tva doit etre tva percue recuperable
+ *	Function that returns whether VAT must be recoverable collected VAT (e.g.: VAT NPR in France)
  *
  *	@param	Societe		$thirdparty_seller    	Thirdparty seller
  *	@param  Societe		$thirdparty_buyer   	Thirdparty buyer
@@ -6828,6 +6841,22 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
 		}
 	}
 	return ($nberr ? -$nberr : $nbcreated);
+}
+
+
+/**
+ *	Change mod of a file
+ *
+ *  @param	string		$filepath		Full file path
+ *	@return void
+ */
+function dolChmod($filepath)
+{
+	global $conf;
+
+	if (!empty($conf->global->MAIN_UMASK)) {
+		@chmod($filepath, octdec($conf->global->MAIN_UMASK));
+	}
 }
 
 
@@ -7679,6 +7708,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			if (isModEnabled("propal") && (!is_object($object) || $object->element == 'propal')) {
 				$substitutionarray['__ONLINE_SIGN_URL__'] = 'ToOfferALinkForOnlineSignature';
 			}
+			if (isModEnabled("ficheinter") && (!is_object($object) || $object->element == 'fichinter')) {
+				$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = 'ToOfferALinkForOnlineSignature';
+			}
 			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
 			$substitutionarray['__SECUREKEYPAYMENT__'] = 'Security key (if key is not unique per record)';
@@ -7949,6 +7981,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'proposal', $object->ref);
 				}
+				if (is_object($object) && $object->element == 'fichinter') {
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+					$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = getOnlineSignatureUrl(0, 'fichinter', $object->ref);
+				}
 				if (!empty($conf->global->PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD) && is_object($object) && $object->element == 'propal') {
 					$substitutionarray['__DIRECTDOWNLOAD_URL_PROPOSAL__'] = $object->getLastMainDocLink($object->element);
 				} else {
@@ -8027,7 +8063,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray['__AMOUNT_TEXT__']     = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, '', true) : '';
 		$substitutionarray['__AMOUNT_TEXTCURRENCY__'] = is_object($object) ? dol_convertToWord($object->total_ttc, $outputlangs, $conf->currency, true) : '';
 
-		$substitutionarray['__AMOUNT_REMAIN__'] = is_object($object) ? $object->total_ttc - $already_payed_all : '';
+		$substitutionarray['__AMOUNT_REMAIN__'] = is_object($object) ? price2num($object->total_ttc - $already_payed_all, 'MT') : '';
 
 		$substitutionarray['__AMOUNT_VAT__']      = is_object($object) ? (isset($object->total_vat) ? $object->total_vat : $object->total_tva) : '';
 		$substitutionarray['__AMOUNT_VAT_TEXT__']      = is_object($object) ? (isset($object->total_vat) ? dol_convertToWord($object->total_vat, $outputlangs, '', true) : dol_convertToWord($object->total_tva, $outputlangs, '', true)) : '';
@@ -8671,7 +8707,8 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  @param      array		$array      		Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @param      string		$index				Key in array to use for sorting criteria
  *  @param      int			$order				Sort order ('asc' or 'desc')
- *  @param      int			$natsort			1=use "natural" sort (natsort) for a search criteria thats is strings or unknown, 0=use "standard" sort (asort) for numbers
+ *  @param      int			$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort)
+ *   											If values are numeric (I said value not type): 0=Use numeric order (even if type is string) so use a "natural" sort, 1=use "natural" sort too (same than 0), -1=Force alphabetical order
  *  @param      int			$case_sensitive		1=sort is case sensitive, 0=not case sensitive
  *  @param		int			$keepindex			If 0 and index key of array to sort is a numeric, than index will be rewrote. If 1 or index key is not numeric, key for index is kept after sorting.
  *  @return     array							Sorted array
@@ -8691,9 +8728,12 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 				} else {
 					$temp[$key] = empty($array[$key][$index]) ? 0 : $array[$key][$index];
 				}
+				if ($natsort == -1) {
+					$temp[$key] = '___'.$temp[$key];        // We add a string at begin of value to force an alpha order when using asort.
+				}
 			}
 
-			if (!$natsort) {
+			if (empty($natsort) || $natsort == -1) {
 				if ($order == 'asc') {
 					asort($temp);
 				} else {
@@ -10224,12 +10264,12 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$imgmime = 'mdb.png';
 		$famime = 'file-o';
 	}
-	if (preg_match('/\.doc(x|m)?$/i', $tmpfile)) {
+	if (preg_match('/\.doc[xm]?$/i', $tmpfile)) {
 		$mime = 'application/msword';
 		$imgmime = 'doc.png';
 		$famime = 'file-word-o';
 	}
-	if (preg_match('/\.dot(x|m)?$/i', $tmpfile)) {
+	if (preg_match('/\.dot[xm]?$/i', $tmpfile)) {
 		$mime = 'application/msword';
 		$imgmime = 'doc.png';
 		$famime = 'file-word-o';
@@ -10249,17 +10289,17 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$imgmime = 'xls.png';
 		$famime = 'file-excel-o';
 	}
-	if (preg_match('/\.xls(b|m|x)$/i', $tmpfile)) {
+	if (preg_match('/\.xls[bmx]$/i', $tmpfile)) {
 		$mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 		$imgmime = 'xls.png';
 		$famime = 'file-excel-o';
 	}
-	if (preg_match('/\.pps(m|x)?$/i', $tmpfile)) {
+	if (preg_match('/\.pps[mx]?$/i', $tmpfile)) {
 		$mime = 'application/vnd.ms-powerpoint';
 		$imgmime = 'ppt.png';
 		$famime = 'file-powerpoint-o';
 	}
-	if (preg_match('/\.ppt(m|x)?$/i', $tmpfile)) {
+	if (preg_match('/\.ppt[mx]?$/i', $tmpfile)) {
 		$mime = 'application/x-mspowerpoint';
 		$imgmime = 'ppt.png';
 		$famime = 'file-powerpoint-o';
@@ -11535,7 +11575,6 @@ function dolForgeCriteriaCallback($matches)
 }
 
 
-
 /**
  * Get timeline icon
  * @param ActionComm $actionstatic actioncomm
@@ -12250,4 +12289,64 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 	} else {
 		print $out;
 	}
+}
+
+/**
+ * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
+ * optionally hour, minute, second) fields to return a timestamp.
+ *
+ * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
+ * @param string $hourTime  'getpost' to include hour, minute, second values from the HTTP request, 'XX:YY:ZZ' to set
+ *                          hour, minute, second respectively (for instance '23:59:59')
+ * @param string $gm Passed to dol_mktime
+ * @return int|string  Date as a timestamp, '' or false if error
+ */
+function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
+{
+	if ($hourTime === 'getpost') {
+		$hour   = GETPOSTINT($prefix . 'hour');
+		$minute = GETPOSTINT($prefix . 'minute');
+		$second = GETPOSTINT($prefix . 'second');
+	} elseif (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $hourTime, $m)) {
+		$hour   = intval($m[1]);
+		$minute = intval($m[2]);
+		$second = intval($m[3]);
+	} else {
+		$hour = $minute = $second = 0;
+	}
+	// normalize out of range values
+	$hour = min($hour, 23);
+	$minute = min($minute, 59);
+	$second = min($second, 59);
+	return dol_mktime($hour, $minute, $second, GETPOSTINT($prefix . 'month'), GETPOSTINT($prefix . 'day'), GETPOSTINT($prefix . 'year'), $gm);
+}
+
+/**
+ * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
+ * optionally hour, minute, second) fields to return a a portion of URL reproducing the values from the current HTTP
+ * request.
+ *
+ * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
+ * @param int $timestamp If null, the timestamp will be created from request data
+ * @param bool $hourTime If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @param bool $gm If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @return string Portion of URL with query parameters for the specified date
+ */
+function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto')
+{
+	if ($timestamp === null) $timestamp = GETPOSTDATE($prefix, $hourTime, $gm);
+	$TParam = array(
+		$prefix . 'day'   => intval(dol_print_date($timestamp, '%d')),
+		$prefix . 'month' => intval(dol_print_date($timestamp, '%m')),
+		$prefix . 'year'  => intval(dol_print_date($timestamp, '%Y')),
+	);
+	if ($hourTime === 'getpost' || ($timestamp !== null && dol_print_date($timestamp, '%H:%M:%S') !== '00:00:00')) {
+		$TParam = array_merge($TParam, array(
+			$prefix . 'hour'   => intval(dol_print_date($timestamp, '%H')),
+			$prefix . 'minute' => intval(dol_print_date($timestamp, '%M')),
+			$prefix . 'second' => intval(dol_print_date($timestamp, '%S'))
+		));
+	}
+
+	return '&' . http_build_query($TParam);
 }

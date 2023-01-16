@@ -32,6 +32,7 @@ StatusReceptionDraftShort=Brouillon
 StatusReceptionValidatedShort=Validé
 StatusReceptionProcessedShort=Traités
 ReceptionSheet=Bordereau de réception
+ValidateReception=Valider la réception
 ConfirmDeleteReception=Êtes-vous sûr de vouloir supprimer cette réception ?
 ConfirmValidateReception=Êtes-vous sûr de vouloir valider cette réception sous la référence  <b> %s </b> ?
 ConfirmCancelReception=Êtes-vous sûr de vouloir annuler cette réception ?

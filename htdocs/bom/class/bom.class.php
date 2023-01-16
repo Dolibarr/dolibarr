@@ -1329,7 +1329,7 @@ class BOM extends CommonObject
 	 * BOM costs calculation based on cost_price or pmp of each BOM line.
 	 * Set the property ->total_cost and ->unit_cost of BOM.
 	 *
-	 * @return void
+	 * @return int			<0 if KO, >0 if OK
 	 */
 	public function calculateCosts()
 	{
@@ -1414,6 +1414,8 @@ class BOM extends CommonObject
 				$this->unit_cost = price2num($this->total_cost * $this->qty, 'MU');
 			}
 		}
+
+		return 1;
 	}
 
 	/**

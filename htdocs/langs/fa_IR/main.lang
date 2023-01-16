@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=rtl
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=10
 SeparatorDecimal=.
@@ -28,6 +34,7 @@ NoTemplateDefined=برای این نوع رایانامه قالبی وجود ن
 AvailableVariables=متغیرهای موجود برای جایگزینی 
 NoTranslation=بدون ترجمه
 Translation=ترجمه
+Translations=Translations
 CurrentTimeZone=منطقه زمانی PHP (سرور)
 EmptySearchString=Enter non empty search criterias
 EnterADateCriteria=Enter a date criteria
@@ -199,6 +206,7 @@ Valid=معتبر
 Approve=تجویز
 Disapprove=عدم تجویز
 ReOpen=دوباره باز کردن
+OpenVerb=باز
 Upload=بالاگذاری
 ToLink=پیوند
 Select=انتخاب
@@ -216,7 +224,7 @@ UserGroup=User group
 UserGroups=User groups
 NoUserGroupDefined=هیچ گروه‌کاربری تعریف نشده است
 Password=گذرواژه
-PasswordRetype=گذرواژۀ خود را وارد نمائید
+PasswordRetype=Repeat your password
 NoteSomeFeaturesAreDisabled=توجه داشته باشید بسیاری از قابلیت‌ها/واحدها در این نسخۀ نمایشی غیر فهال است
 Name=نام
 NameSlashCompany=نام / شرکت
@@ -481,6 +489,7 @@ ActionsOnContact=روی‌دادهای مربوط به این طرف‌تماس/
 ActionsOnContract=روی‌دادهای مربوط به این قرارداد
 ActionsOnMember=روی‌دادهای مربوط به این عضو
 ActionsOnProduct=روی‌دادهای مربوط به این محصول
+ActionsOnAsset=Events for this fixed asset
 NActionsLate=%s دیرتر
 ToDo=برای انجام
 Completed=کامل‌شده
@@ -921,6 +930,7 @@ DirectDownloadInternalLink=Private download link
 PrivateDownloadLinkDesc=You need to be logged and you need permissions to view or download the file
 Download=دریافت
 DownloadDocument=دریافت سن
+DownloadSignedDocument=Download signed document
 ActualizeCurrency=به‌روز‌رسانی نرخ واحدپولی
 Fiscalyear=سال مالی
 ModuleBuilder=واحدساز و برنامه‌ساز
@@ -1046,6 +1056,7 @@ SearchIntoContracts=قراردادها
 SearchIntoCustomerShipments=حمل‌ونقل مشتریان
 SearchIntoExpenseReports=گزارش‌هزینه‌ها
 SearchIntoLeaves=ترک
+SearchIntoKM=Knowledge base
 SearchIntoTickets=برگه‌های پشتیبانی
 SearchIntoCustomerPayments=Customer payments
 SearchIntoVendorPayments=پرداخت‌های فروشندگان
@@ -1137,15 +1148,29 @@ EventReminder=Event Reminder
 UpdateForAllLines=Update for all lines
 OnHold=On hold
 Civility=Civility
-AffectTag=Affect Tag
+AffectTag=Assign Tag
+AffectUser=Assign User
+SetSupervisor=Set Supervisor
 CreateExternalUser=Create external user
-ConfirmAffectTag=Bulk Tag Affect
-ConfirmAffectTagQuestion=Are you sure you want to affect tags to the %s selected record(s)?
+ConfirmAffectTag=Bulk Tag Assignement
+ConfirmAffectUser=Bulk User Assignement
+ProjectRole=Role assigned on each project
+TasksRole=Role assigned on each task of each project
+ConfirmSetSupervisor=Bulk Supervisor Set
+ConfirmUpdatePrice=Choose a increase/decrease price rate
+ConfirmAffectTagQuestion=Are you sure you want to assign tags to the %s selected record(s)?
+ConfirmAffectUserQuestion=Are you sure you want to assign users to the %s selected record(s)?
+ConfirmSetSupervisorQuestion=Are you sure you want to set supervisor to the %s selected record(s)?
+ConfirmUpdatePriceQuestion=Are you sure you want to update the price of the %s selected record(s)?
 CategTypeNotFound=No tag type found for type of records
+Rate=نرخ
+SupervisorNotFound=Supervisor not found
 CopiedToClipboard=Copied to clipboard
 InformationOnLinkToContract=This amount is only the total of all the lines of the contract. No notion of time is taken into consideration.
 ConfirmCancel=Are you sure you want to cancel
 EmailMsgID=Email MsgID
+EmailDate=Email date
+SetToStatus=Set to status %s
 SetToEnabled=Set to enabled
 SetToDisabled=Set to disabled
 ConfirmMassEnabling=mass enabling confirmation
@@ -1174,9 +1199,14 @@ Terminated=Terminated
 AddLineOnPosition=Add line on position (at the end if empty)
 ConfirmAllocateCommercial=Assign sales representative confirmation
 ConfirmAllocateCommercialQuestion=Are you sure you want to assign the %s selected record(s)?
-CommercialsAffected=Sales representatives affected
-CommercialAffected=Sales representative affected
+CommercialsAffected=Sales representatives assigned
+CommercialAffected=Sales representative assigned
 YourMessage=Your message
 YourMessageHasBeenReceived=Your message has been received. We will answer or contact you as soon as possible.
 UrlToCheck=Url to check
 Automation=Automation
+CreatedByEmailCollector=Created by Email collector
+CreatedByPublicPortal=Created from Public portal
+UserAgent=User Agent
+InternalUser=کاربر داخلی
+ExternalUser=کاربر خارجی
