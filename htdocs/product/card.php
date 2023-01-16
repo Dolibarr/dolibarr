@@ -88,7 +88,11 @@ $mesg = ''; $error = 0; $errors = array();
 $refalreadyexists = 0;
 
 $id = GETPOST('id', 'int');
-$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
+if (!empty($conf->global->MAIN_DO_NOT_SANITIZE_PRODUCT_REF)) {
+	$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'nohtml') : null);
+} else {
+	$ref = (GETPOSTISSET('ref') ? GETPOST('ref', 'alpha') : null);
+}
 $type = (GETPOSTISSET('type') ? GETPOST('type', 'int') : Product::TYPE_PRODUCT);
 $action = (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $cancel = GETPOST('cancel', 'alpha');
@@ -107,7 +111,11 @@ $accountancy_code_buy_export = GETPOST('accountancy_code_buy_export', 'alpha');
 
 $checkmandatory = GETPOST('accountancy_code_buy_export', 'alpha');
 // by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
-$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
+if (!empty($conf->global->MAIN_DO_NOT_SANITIZE_PRODUCT_REF)) {
+	$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'nohtml' : 'restricthtml';
+} else {
+	$label_security_check = empty($conf->global->MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML) ? 'alphanohtml' : 'restricthtml';
+}
 
 if (!empty($user->socid)) {
 	$socid = $user->socid;
