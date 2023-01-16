@@ -68,7 +68,7 @@ $search_batch = trim(GETPOST("search_batch", 'alpha'));
 $search_qty = trim(GETPOST("search_qty", 'alpha'));
 $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 
- // Pagination 
+ // Pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST('page', 'int');
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -333,7 +333,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Ref bis
 	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', null, null, '', 1);*/
-	
+
 	// Thirdparty
 	if (is_object($object->thirdparty)) {
 		$morehtmlref .= $object->thirdparty->getNomUrl(1, 'customer');
@@ -341,7 +341,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
 		}
 	}
-	
+
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
@@ -365,7 +365,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 	}
-	
+
 	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -494,10 +494,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($search_type_mouvement != '' && $search_type_mouvement != '-1') {
 		$sql .= natural_search('m.type_mouvement', $search_type_mouvement, 2);
 	}
-	
+
 	// Add where from Extrafields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
-	
+
 	// Add where from Hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $objectlist may have been modified by hook
@@ -618,14 +618,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	* Print Search Fields
 	*/
 	print '<tr class="liste_titre_filter">';
-	
+
 	// Ref
 	if (!empty($arrayfields['m.rowid']['checked'])) {
 		print '<td class="liste_titre left">';
 		print '<input class="flat maxwidth25" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 	}
-	
+
 	// Date
 	if (!empty($arrayfields['m.datem']['checked'])) {
 		print '<td class="liste_titre nowraponall">';
@@ -639,21 +639,21 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		//print $formother->selectyear($syear,'year',1, 20, 5);
 		print '</td>';
 	}
-	
+
 	// Product Ref
 	if (!empty($arrayfields['p.ref']['checked'])) {
 		print '<td class="liste_titre left">';
 		print '<input class="flat maxwidth75" type="text" name="search_product_ref" value="'.dol_escape_htmltag($search_product_ref).'">';
 		print '</td>';
 	}
-	
+
 	// Product label
 	if (!empty($arrayfields['p.label']['checked'])) {
 		print '<td class="liste_titre left">';
 		print '<input class="flat maxwidth100" type="text" name="search_product" value="'.dol_escape_htmltag($search_product).'">';
 		print '</td>';
 	}
-	
+
 	// Batch
 	if (!empty($arrayfields['m.batch']['checked'])) {
 		print '<td class="liste_titre center"><input class="flat maxwidth75" type="text" name="search_batch" value="'.dol_escape_htmltag($search_batch).'"></td>';
@@ -668,7 +668,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td class="liste_titre left">';
 		print '</td>';
 	}
-	
+
 	// Warehouse
 	if (!empty($arrayfields['e.ref']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone left">';
@@ -676,28 +676,28 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'maxwidth200');
 		print '</td>';
 	}
-	
+
 	// Author / User
 	if (!empty($arrayfields['m.fk_user_author']['checked'])) {
 		print '<td class="liste_titre left">';
 		print '<input class="flat" type="text" size="6" name="search_user" value="'.dol_escape_htmltag($search_user).'">';
 		print '</td>';
 	}
-	
+
 	// Inventory code
 	if (!empty($arrayfields['m.inventorycode']['checked'])) {
 		print '<td class="liste_titre left">';
 		print '<input class="flat" type="text" size="4" name="search_inventorycode" value="'.dol_escape_htmltag($search_inventorycode).'">';
 		print '</td>';
 	}
-	
+
 	// Label of movement
 	if (!empty($arrayfields['m.label']['checked'])) {
 		print '<td class="liste_titre left">';
 		print '<input class="flat" type="text" size="8" name="search_movement" value="'.dol_escape_htmltag($search_movement).'">';
 		print '</td>';
 	}
-	
+
 	// Type of movement
 	if (!empty($arrayfields['m.type_mouvement']['checked'])) {
 		print '<td class="liste_titre center">';
@@ -714,28 +714,28 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'maxwidth200');
 		print '</td>';
 	}
-	
+
 	// Origin of movement
 	if (!empty($arrayfields['origin']['checked'])) {
 		print '<td class="liste_titre left">';
 		print '&nbsp; ';
 		print '</td>';
 	}
-	
+
 	// fk_project
 	if (!empty($arrayfields['m.fk_projet']['checked'])) {
 		print '<td class="liste_titre" align="left">';
 		print '&nbsp; ';
 		print '</td>';
 	}
-	
+
 	// Qty
 	if (!empty($arrayfields['m.value']['checked'])) {
 		print '<td class="liste_titre right">';
 		print '<input class="flat" type="text" size="5" name="search_qty" value="'.dol_escape_htmltag($search_qty).'">';
 		print '</td>';
 	}
-	
+
 	// Price
 	if (!empty($arrayfields['m.price']['checked'])) {
 		print '<td class="liste_titre left">';
@@ -750,19 +750,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$parameters = array('arrayfields'=>$arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	
+
 	// Date creation
 	if (!empty($arrayfields['m.datec']['checked'])) {
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
-	
+
 	// Date modification
 	if (!empty($arrayfields['m.tms']['checked'])) {
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
-	
+
 	// Actions
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -773,7 +773,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
 
-	
+
 	/*********************
 	* Print Fields Titles
 	*/
@@ -917,37 +917,37 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		} else {
 			$origin = '';
 		}
-		
+
 		/*********************
 		* Print Field Lines
 		*/
-		
+
 		print '<tr class="oddeven">';
 		// Id movement
 		if (!empty($arrayfields['m.rowid']['checked'])) {
 			// This is primary not movement id
 			print '<td>'.dol_escape_htmltag($objp->mid).'</td>';
 		}
-		
+
 		// Date
 		if (!empty($arrayfields['m.datem']['checked'])) {
 			print '<td>'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
 		}
-		
+
 		// Product ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
 			print '<td class="nowraponall">';
 			print $productstatic->getNomUrl(1, 'stock', 16);
 			print "</td>\n";
 		}
-		
+
 		// Product label
 		if (!empty($arrayfields['p.label']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($productstatic->label).'">';
 			print $productstatic->label;
 			print "</td>\n";
 		}
-		
+
 		// Batch
 		if (!empty($arrayfields['m.batch']['checked'])) {
 			print '<td class="center nowraponall">';
@@ -966,37 +966,37 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (!empty($arrayfields['pl.sellby']['checked'])) {
 			print '<td class="center">'.dol_print_date($objp->sellby, 'day').'</td>';
 		}
-		
+
 		// Warehouse
 		if (!empty($arrayfields['e.ref']['checked'])) {
 			print '<td>';
 			print $warehousestatic->getNomUrl(1);
 			print "</td>\n";
 		}
-		
+
 		// Author / User
 		if (!empty($arrayfields['m.fk_user_author']['checked'])) {
 			print '<td class="tdoverflowmax100">';
 			print $userstatic->getNomUrl(-1);
 			print "</td>\n";
 		}
-		
+
 		// Inventory code
-		if (!empty($arrayfields['m.inventorycode']['checked'])) {			
+		if (!empty($arrayfields['m.inventorycode']['checked'])) {
 			print '<td>';
 			//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_card.php' . '?id=' . $objp->entrepot_id . '&amp;search_inventorycode=' . $objp->inventorycode . '&amp;search_type_mouvement=' . $objp->type_mouvement . '">';
 			print dol_escape_htmltag($objp->inventorycode);
 			//print '</a>';
 			print '</td>';
 		}
-		
+
 		// Label of movement
-		if (!empty($arrayfields['m.label']['checked'])) {			
+		if (!empty($arrayfields['m.label']['checked'])) {
 			print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($objp->label).'">'.dol_escape_htmltag($objp->label).'</td>';
 		}
-		
+
 		// Type of movement
-		if (!empty($arrayfields['m.type_mouvement']['checked'])) {			
+		if (!empty($arrayfields['m.type_mouvement']['checked'])) {
 			switch ($objp->type_mouvement) {
 				case "0":
 					print '<td class="center">'.$langs->trans('StockIncreaseAfterCorrectTransfer').'</td>';
@@ -1012,23 +1012,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					break;
 			}
 		}
-		
+
 		// Origin of movement
-		if (!empty($arrayfields['origin']['checked'])) {			
+		if (!empty($arrayfields['origin']['checked'])) {
 			print '<td class="nowraponall">'.$origin.'</td>';
 		}
-		
+
 		// fk_project
-		if (!empty($arrayfields['m.fk_projet']['checked'])) {			
+		if (!empty($arrayfields['m.fk_projet']['checked'])) {
 			print '<td>';
 			if ($objp->fk_project != 0) {
 				print $movement->get_origin($objp->fk_project, 'project');
 			}
 			print '</td>';
 		}
-		
+
 		// Qty
-		if (!empty($arrayfields['m.value']['checked'])) {			
+		if (!empty($arrayfields['m.value']['checked'])) {
 			print '<td class="right">';
 			if ($objp->qt > 0) {
 				print '+';
@@ -1036,16 +1036,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print $objp->qty;
 			print '</td>';
 		}
-		
+
 		// Price
-		if (!empty($arrayfields['m.price']['checked'])) {			
+		if (!empty($arrayfields['m.price']['checked'])) {
 			print '<td class="right">';
 			if ($objp->price != 0) {
 				print price($objp->price);
 			}
 			print '</td>';
 		}
-		
+
 		// Action column
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
