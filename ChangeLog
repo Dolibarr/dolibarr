@@ -14,6 +14,7 @@ Following changes may create regressions for some external modules, but were nec
 * The deprecated method "escapeunderscore()" of database handlers has been removed. You must use "escapeforlike()" instead.
 * The method "nb_expedition()" has been renamed into "countNbOfShipments()" 
 * Revert default type of hooks. Default is now 'addreplace' hooks (and exception become 'output' hooks, that become deprecated).
+* Deprecated property libelle removed from entrepot class.
 
 
 
