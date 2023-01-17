@@ -1402,6 +1402,7 @@ if ($resql) {
 	$total_ht = 0;
 	$total_margin = 0;
 
+
 	// Détail commande
 	$totalqty = 0;
 
@@ -1418,6 +1419,15 @@ if ($resql) {
 		$text_info = '';
 		$text_warning = '';
 		$nbprod = 0;
+
+		// Print SubTotal
+		if (empty($i)) {
+			$oldref = $obj->product_ref;
+		}
+		if ($oldref != $obj->product_ref) {
+			include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+			$oldref = $obj->product_ref;
+		}
 
 		$companystatic->id = $obj->socid;
 		$companystatic->name = $obj->name;
