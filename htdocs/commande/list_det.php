@@ -793,6 +793,15 @@ if ($resql) {
 	if ($search_fk_input_reason > 0) {
 		$param .= '&search_fk_input_reason='.urlencode($search_fk_input_reason);
 	}
+	if (!empty($productobuy)) {
+		$param .= '&productobuy='.urlencode($productobuy);
+	}
+	if (!empty($productonly)) {
+		$param .= '&productonly='.urlencode($productonly);
+	}
+	if (!empty($disablelinefree)) {
+		$param .= '&disablelinefree='.urlencode($disablelinefree);
+	}
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
