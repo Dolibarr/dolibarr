@@ -168,9 +168,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 							$element->fetchObjectLinked('', '', null, $object->element);
 							dol_syslog("Nb invoices linked to propal " . $element->id . " : " . sizeof($element->linkedObjects));
 							if (!empty($element->linkedObjects)) {
-								foreach($element->linkedObjects['facture'] as $invoice) {
-									if (($invoice->statut == Facture::STATUS_VALIDATED || $invoice->statut == Facture::STATUS_CLOSED) && !in_array($invoice->id, $invoiceIds)) 
-									{
+								foreach ($element->linkedObjects['facture'] as $invoice) {
+									if (($invoice->statut == Facture::STATUS_VALIDATED || $invoice->statut == Facture::STATUS_CLOSED) && !in_array($invoice->id, $invoiceIds)) {
 										$totalinvoices += $invoice->total_ht;
 										$invoiceIds[] = $invoice->id;
 									}
