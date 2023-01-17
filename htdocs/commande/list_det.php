@@ -1509,10 +1509,7 @@ if ($resql) {
 		}
 		// Product QtyOrdered
 		if (!empty($arrayfields['cdet.qty']['checked'])) {
-			print '<td class="nowrap tdoverflowmax200">'.$obj->qty.'</td>';
-			if (!$i) {
-				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.qty';
-			}
+			print '<td class="nowrap right">'.$obj->qty.'</td>';
 			if (isset($totalarray['val']['cdet.qty'])) {
 				$totalarray['val']['cdet.qty'] += $obj->qty;
 			} else {
@@ -1520,6 +1517,9 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['nbfield']++;
+			}
+			if (!$i) {
+				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.qty';
 			}
 		}
 
