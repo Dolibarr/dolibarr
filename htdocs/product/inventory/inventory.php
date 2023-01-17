@@ -979,10 +979,10 @@ if ($object->id > 0) {
 	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated, id.fk_movement, id.pmp_real, id.pmp_expected';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
 	$sql .= ' LEFT OUTER JOIN '.MAIN_DB_PREFIX.'product p on p.rowid = id.fk_product';
-          
+
 	$sql .= ' WHERE id.fk_inventory = '.((int) $object->id);
 	$sql .= ' ORDER BY p.ref';
-        
+
 	$cacheOfProducts = array();
 	$cacheOfWarehouses = array();
 
