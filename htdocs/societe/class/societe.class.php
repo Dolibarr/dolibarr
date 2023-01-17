@@ -790,7 +790,6 @@ class Societe extends CommonObject
 	public $partnerships = array();
 
 
-
 	/**
 	 * @var Account|string Default BAN account
 	 */

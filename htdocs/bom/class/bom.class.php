@@ -1378,7 +1378,8 @@ class BOM extends CommonObject
 						if ($res > 0) {
 							$bom_child->calculateCosts();
 							$line->childBom[] = $bom_child;
-							$this->total_cost += $bom_child->total_cost * $line->qty;
+							$this->total_cost += price2num($bom_child->total_cost * $line->qty, 'MT');
+							$this->total_cost += $line->total_cost;
 						} else {
 							$this->error = $bom_child->error;
 							return -2;
