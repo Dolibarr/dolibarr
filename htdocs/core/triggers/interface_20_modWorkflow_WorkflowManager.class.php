@@ -160,13 +160,26 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$object->fetchObjectLinked('', 'propal', $object->id, $object->element);
 				if (!empty($object->linkedObjects)) {
 					$totalonlinkedelements = 0;
+					$totalinvoices = 0; //total on linked invoices (we need to add deposit amount)
+					$invoiceIds = []; //we don't want to count the same invoice multiple times
 					foreach ($object->linkedObjects['propal'] as $element) {
 						if ($element->statut == Propal::STATUS_SIGNED || $element->statut == Propal::STATUS_BILLED) {
 							$totalonlinkedelements += $element->total_ht;
+							$element->fetchObjectLinked('', '', null, $object->element);
+							dol_syslog("Nb invoices linked to propal " . $element->id . " : " . sizeof($element->linkedObjects));
+							if (!empty($element->linkedObjects)) {
+								foreach($element->linkedObjects['facture'] as $invoice) {
+									if (($invoice->statut == Facture::STATUS_VALIDATED || $invoice->statut == Facture::STATUS_CLOSED) && !in_array($invoice->id, $invoiceIds)) 
+									{
+										$totalinvoices += $invoice->total_ht;
+										$invoiceIds[] = $invoice->id;
+									}
+								}
+							}
 						}
 					}
-					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoice = ".$object->total_ht.", egality is ".($totalonlinkedelements == $object->total_ht));
-					if ($this->shouldClassify($conf, $totalonlinkedelements, $object->total_ht)) {
+					dol_syslog("Amount of linked proposals = ".$totalonlinkedelements.", of invoices = ".$totalinvoices.", egality is ".($totalonlinkedelements == $totalinvoices));
+					if ($this->shouldClassify($conf, $totalonlinkedelements, $totalinvoices)) {
 						foreach ($object->linkedObjects['propal'] as $element) {
 							$ret = $element->classifyBilled($user);
 						}
