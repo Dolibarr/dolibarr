@@ -1594,6 +1594,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 /**
  * Show social network part if the module is enabled with hiding functionality
+ * 
+ * @return void
  */
 function showSocialNetwork()
 {
