@@ -561,10 +561,11 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
  *
  * @param		string 		$htmlname			HTML name of element to insert key into
  * @param		string		$htmlnameofbutton	HTML name of button
+ * @param		int			$generic			1=Return a generic pass, 0=Return a pass following setup rules
  * @return		string		    				HTML javascript code to set a password
  * @see getRandomPassword()
  */
-function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token')
+function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token', $generic = 1)
 {
 	global $conf;
 
@@ -572,10 +573,10 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 		print "\n".'<!-- Js code to suggest a security key --><script type="text/javascript">';
 		print '$(document).ready(function () {
             $("#'.dol_escape_js($htmlnameofbutton).'").click(function() {
-				console.log("We click on the button to suggest a key");
+				console.log("We click on the button '.dol_escape_js($htmlnameofbutton).' to suggest a key. We will fill '.dol_escape_js($htmlname).'");
             	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
             		action: \'getrandompassword\',
-            		generic: true,
+            		generic: '.($generic ? '1' : '0').',
 					token: \''.dol_escape_js(newToken()).'\'
 				},
 				function(result) {
