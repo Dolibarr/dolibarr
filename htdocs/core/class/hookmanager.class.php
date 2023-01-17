@@ -164,7 +164,7 @@ class HookManager
 		// Define type of hook ('output' or 'addreplace').
 		$hooktype = 'addreplace';
 		// TODO Remove hooks with type 'output' (exemple createFrom). All hooks must be converted into 'addreplace' hooks.
-		if (!in_array($method, array(
+		if (in_array($method, array(
 			'createFrom',
 			'dashboardMembers',
 			'dashboardEmailings',

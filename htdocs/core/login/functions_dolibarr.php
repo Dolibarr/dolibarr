@@ -91,18 +91,6 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 					dol_syslog("functions_dolibarr::check_user_password_dolibarr bad date end validity", LOG_WARNING);
 					return '--bad-login-validity--';
 				}
-				// If there is an invalidation date, check that the current session date is not before this date
-				if ($obj->flagdelsessionsbefore && !empty($_SESSION["dol_logindate"])) {
-					dol_syslog("functions_dolibarr::check_user_password_dolibarr user has a date for session invalidation = ".$obj->flagdelsessionsbefore." and session date = ".$_SESSION["dol_logindate"]);
-					$datetmp = $db->jdate($obj->flagdelsessionsbefore, 'gmt');
-					if ($datetmp > $now) {
-						// Load translation files required by the page
-						$langs->loadLangs(array('main', 'errors'));
-						$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorSessionInvalidatedAfterPasswordChange");
-						dol_syslog("functions_dolibarr::check_user_password_dolibarr session was invalidated", LOG_WARNING);
-						return '--bad-login-validity--';
-					}
-				}
 
 				$passclear = $obj->pass;
 				$passcrypted = $obj->pass_crypted;
