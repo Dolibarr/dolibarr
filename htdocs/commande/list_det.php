@@ -793,6 +793,15 @@ if ($resql) {
 	if ($search_fk_input_reason > 0) {
 		$param .= '&search_fk_input_reason='.urlencode($search_fk_input_reason);
 	}
+	if (!empty($productobuy)) {
+		$param .= '&productobuy='.urlencode($productobuy);
+	}
+	if (!empty($productonly)) {
+		$param .= '&productonly='.urlencode($productonly);
+	}
+	if (!empty($disablelinefree)) {
+		$param .= '&disablelinefree='.urlencode($disablelinefree);
+	}
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -830,10 +839,6 @@ if ($resql) {
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'order', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-	print '<input type="checkbox" name="productobuy"'.(!empty($productobuy)?'value="productobuychecked" checked':'' ).'><label for="productobuy">'.$langs->trans("productobuy").'</label>';
-	print '<input type="checkbox" name="productonly"'.(!empty($productonly)?'value="productonlychecked" checked':'' ).'><label for="productonly">'.$langs->trans("productonly").'</label>';
-	print '<input type="checkbox" name="disablelinefree"'.(!empty($disablelinefree)?'value="disablelinefreechecked" checked':'' ).'><label for="disablelinefree">'.$langs->trans("disablelinefree").'</label>';
-
 	$topicmail = "SendOrderRef";
 	$modelmail = "order_send";
 	$objecttmp = new Commande($db);
@@ -848,6 +853,11 @@ if ($resql) {
 	}
 
 	$moreforfilter = '';
+
+	$moreforfilter .= '<input type="checkbox" name="productobuy"'.(!empty($productobuy)?'value="productobuychecked" checked':'' ).'><label for="productobuy">'.$langs->trans("productobuy").'</label>';
+	$moreforfilter .= '<input type="checkbox" name="productonly"'.(!empty($productonly)?'value="productonlychecked" checked':'' ).'><label for="productonly">'.$langs->trans("productonly").'</label>';
+	$moreforfilter .= '<input type="checkbox" name="disablelinefree"'.(!empty($disablelinefree)?'value="disablelinefreechecked" checked':'' ).'><label for="disablelinefree">'.$langs->trans("disablelinefree").'</label>';
+	$moreforfilter .= '<br>';
 
 	// If the user can view prospects other than his'
 	if ($user->rights->user->user->lire) {
@@ -888,6 +898,8 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle, 0, 0, array(), 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
+
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
