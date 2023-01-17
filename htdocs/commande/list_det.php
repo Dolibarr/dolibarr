@@ -140,7 +140,7 @@ if (!$sortfield) {
 	$sortfield = 'pr.ref';
 }
 if (!$sortorder) {
-	$sortorder = 'ASSC';
+	$sortorder = 'ASC';
 }
 
 $show_shippable_command = GETPOST('show_shippable_command', 'aZ09');
