@@ -530,12 +530,12 @@ class Product extends CommonObject
 	 */
 	public function check()
 	{
-        global $conf;
+		global $conf;
 
 		if (!empty($conf->global->MAIN_DO_NOT_SANITIZE_PRODUCT_REF)) {
-		    $this->ref = trim($this->ref);
+			$this->ref = trim($this->ref);
 		} else {
-		    $this->ref = dol_sanitizeFileName(stripslashes($this->ref));
+			$this->ref = dol_sanitizeFileName(stripslashes($this->ref));
 		}
 
 		$err = 0;
@@ -569,9 +569,9 @@ class Product extends CommonObject
 
 		// Clean parameters
 		if (!empty($conf->global->MAIN_DO_NOT_SANITIZE_PRODUCT_REF)) {
-		    $this->ref = trim($this->ref);
+			$this->ref = trim($this->ref);
 		} else {
-		    $this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
+			$this->ref = dol_sanitizeFileName(dol_string_nospecial(trim($this->ref)));
 		}
 		$this->label = trim($this->label);
 		$this->price_ttc = price2num($this->price_ttc);
@@ -968,9 +968,9 @@ class Product extends CommonObject
 
 		// Clean parameters
 		if (!empty($conf->global->MAIN_DO_NOT_SANITIZE_PRODUCT_REF)) {
-		    $this->ref = trim($this->ref);
+			$this->ref = trim($this->ref);
 		} else {
-		    $this->ref = dol_string_nospecial(trim($this->ref));
+			$this->ref = dol_string_nospecial(trim($this->ref));
 		}
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
