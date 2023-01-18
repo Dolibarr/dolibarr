@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022		Eric Seigne			<eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,8 +111,9 @@ $coldisplay++;
 			?>
 			</a>
 			<?php
-			echo ' - '.nl2br($line->product_label);
+			echo ' - <input type="text" class="flat" name="product_label" value="'.nl2br($label) . '">';
 			print '<input type="hidden" id="product_id" name="productid" value="'.(!empty($line->fk_product) ? $line->fk_product : 0).'">';
+			print '<input type="hidden" id="update_label" name="update_label" value="1">';
 		} else {
 			if ($senderissupplier) {
 				print $form->select_produits_fournisseurs(!empty($line->fk_product) ? $line->fk_product : 0, 'productid');
