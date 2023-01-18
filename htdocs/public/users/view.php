@@ -91,19 +91,89 @@ if ($cancel) {
  */
 
 $form = new Form($db);
+$v = new vCard();
+
 $company = $mysoc;
 
+$modulepart = 'userphotopublic';
+$dir = $conf->user->dir_output;
+
+// Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
+// Define logo and logosmall
+$logo = '';
+$logosmall = '';
+if (!empty($object->photo)) {
+	if (dolIsAllowedForPreview($object->photo)) {
+		$logosmall = get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.getImageFileNameForSize($object->photo, '_small');
+		$logo = get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.$object->photo;
+		//$originalfile = get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.$object->photo;
+	}
+}
+//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
+// Define urllogo
+$urllogo = '';
+$urllogofull = '';
+if (!empty($logosmall) && is_readable($dir.'/'.$logosmall)) {
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logosmall);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&securekey='.urlencode($securekey).'&file='.urlencode($logosmall);
+} elseif (!empty($logo) && is_readable($dir.'/'.$logo)) {
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logo);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&securekey='.urlencode($securekey).'&file='.urlencode($logo);
+}
+
+// Clean data we don't want on public page
+if (getDolUserInt('USER_PUBLIC_HIDE_PHOTO', 0, $object)) {
+	$logo = '';
+	$logosmall = '';
+	$urllogo = '';
+	$urllogofull = '';
+}
+if (getDolUserInt('USER_PUBLIC_HIDE_JOBPOSITION', 0, $object)) {
+	$object->job = '';
+}
+if (getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object)) {
+	$object->email = '';
+}
+if (getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object)) {
+	$object->job = '';
+}
+if (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object)) {
+	$object->office_phone = '';
+}
+if (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object)) {
+	$object->office_fax = '';
+}
+if (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
+	$object->user_mobile = '';
+}
+if (getDolUserInt('USER_PUBLIC_HIDE_BIRTH', 0, $object)) {
+	$object->birth = '';
+}
+if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
+	$object->socialnetworks = '';
+}
+if (getDolUserInt('USER_PUBLIC_HIDE_ADDRESS', 0, $object)) {
+	$object->address = '';
+	$object->town = '';
+	$object->zip = '';
+	$object->state = '';
+	$object->country = '';
+}
+if (getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
+	$company = null;
+}
+
+
+// Output vcard
 if ($mode == 'vcard') {
 	// We create VCard
-	$v = new vCard();
-
-	$output = $v->buildVCardString($object, $company, $langs);
+	$output = $v->buildVCardString($object, $company, $langs, $urllogofull);
 
 	$filename = trim(urldecode($v->getFileName())); // "Nom prenom.vcf"
 	$filenameurlencoded = dol_sanitizeFileName(urlencode($filename));
 	//$filename = dol_sanitizeFileName($filename);
 
-	top_httphead('text/x-vcard; name="'.$filename.'"');
+	top_httphead('text/vcard; name="'.$filename.'"');
 
 	header("Content-Disposition: attachment; filename=\"".$filename."\"");
 	header("Content-Length: ".dol_strlen($output));
@@ -147,34 +217,6 @@ print '<input type="hidden" name="entity" value="'.$entity.'" />';
 print "\n";
 print '<!-- Form to view job -->'."\n";
 
-$modulepart = 'userphotopublic';
-$imagesize = 'small';
-$dir = $conf->user->dir_output;
-$email = $object->email;
-
-// Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
-// Define logo and logosmall
-$logo = '';
-$logosmall = '';
-if (!empty($object->photo)) {
-	if (dolIsAllowedForPreview($object->photo)) {
-		$logosmall = get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.getImageFileNameForSize($object->photo, '_small');
-		$logo = get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.$object->photo;
-		//$originalfile = get_exdir(0, 0, 0, 0, $object, 'user').'photos/'.$object->photo;
-	}
-}
-//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
-// Define urllogo
-$urllogo = '';
-$urllogofull = '';
-if (!empty($logosmall) && is_readable($conf->user->dir_output.'/'.$logosmall)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&amp;entity='.$conf->entity.'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logosmall);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.'&entity='.$conf->entity.'&amp;securekey='.urlencode($securekey).'&file='.urlencode($logosmall);
-} elseif (!empty($logo) && is_readable($conf->user->dir_output.'/'.$logo)) {
-	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&amp;entity='.$conf->entity.'&amp;securekey='.urlencode($securekey).'&amp;file='.urlencode($logo);
-	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart='.$modulepart.'&entity='.$conf->entity.'&amp;securekey='.urlencode($securekey).'&file='.urlencode($logo);
-}
-
 // Output html code for logo
 print '<div class="backgreypublicpayment">';
 print '<div class="logopublicpayment">';
@@ -211,9 +253,11 @@ $socialnetworksdict = getArrayOfSocialNetworks();
 // Show barcode
 $showbarcode = GETPOST('nobarcode') ? 0 : 1;
 if ($showbarcode) {
+	$qrcodecontent = $output = $v->buildVCardString($object, $company, $langs);
+
 	print '<br>';
 	print '<div class="floatleft inline-block valignmiddle divphotoref">';
-	print '<img src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode($urlforqrcode).'">';
+	print '<img src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode($qrcodecontent).'">';
 	print '</div>';
 	print '<br>';
 }
@@ -347,11 +391,11 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	$urllogo = '';
 	$urllogofull = '';
 	if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
-		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany'.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany'.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&file='.urlencode('logos/thumbs/'.$logosmall);
 	} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
-		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
-		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany'.($conf->entity > 1 ? '&amp;entity='.$conf->entity : '').'&amp;file='.urlencode('logos/'.$logo);
+		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany'.($conf->entity > 1 ? '&entity='.$conf->entity : '').'&file='.urlencode('logos/'.$logo);
 	}
 	// Output html code for logo
 	if ($urllogo) {
@@ -406,8 +450,9 @@ print '<br>';
 print '<div class="backgreypublicpayment">';
 print '<div class="center">';
 print '<a href="'.$urlforqrcode.'">';
-print img_picto($langs->trans("AddToContacts"), 'add').' ';
-print $langs->trans("AddToContacts");
+// Download / AddToContacts
+print img_picto($langs->trans("Download").' VCF', 'add').' ';
+print $langs->trans("Download").' VCF';
 print '</a>';
 print '</div>';
 //print '<div>';

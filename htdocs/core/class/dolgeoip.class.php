@@ -144,10 +144,12 @@ class DolGeoIP
 						return '';
 					}
 				} else {
-					if (!function_exists('geoip_country_code_by_addr_v6')) {
+					if (function_exists('geoip_country_code_by_addr_v6')) {
+						return strtolower(geoip_country_code_by_addr_v6($this->gi, $ip));
+					} elseif (function_exists('geoip_country_code_by_name_v6')) {
 						return strtolower(geoip_country_code_by_name_v6($this->gi, $ip));
 					}
-					return strtolower(geoip_country_code_by_addr_v6($this->gi, $ip));
+					return '';
 				}
 			}
 		}

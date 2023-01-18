@@ -735,8 +735,18 @@ while ($i < $imaxinloop) {
 			print '<tr><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container">';
 		}
+		$recuitment = new RecruitmentJobPosition($db);
+		$recuitment->fetch($obj->fk_recruitmentjobposition);
+		$object->fk_recruitmentjobposition = $recuitment->getNomUrl();
+		$object->phone = $obj->phone;
 		// Output Kanban
-		print $object->getKanbanView('');
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($massactionbutton || $massaction) {
+				$selected = 0;
+			}
+			// Output Kanban
+			print $object->getKanbanView('');
+		}
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
