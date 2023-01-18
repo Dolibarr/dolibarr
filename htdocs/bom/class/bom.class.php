@@ -476,7 +476,7 @@ class BOM extends CommonObject
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if ($this->ismultientitymanaged) {
-			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
@@ -1378,7 +1378,8 @@ class BOM extends CommonObject
 						if ($res > 0) {
 							$bom_child->calculateCosts();
 							$line->childBom[] = $bom_child;
-							$this->total_cost += $bom_child->total_cost * $line->qty;
+							$this->total_cost += price2num($bom_child->total_cost * $line->qty, 'MT');
+							$this->total_cost += $line->total_cost;
 						} else {
 							$this->error = $bom_child->error;
 							return -2;
@@ -1778,7 +1779,7 @@ class BOMLine extends CommonObjectLine
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if ($this->ismultientitymanaged) {
-			$sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}

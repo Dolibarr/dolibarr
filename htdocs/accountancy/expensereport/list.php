@@ -443,7 +443,6 @@ if ($result) {
 		$expensereport_static->id = $objp->erid;
 
 		$userstatic->id = $objp->userid;
-		$userstatic->ref = $objp->label;
 		$userstatic->login = $objp->login;
 		$userstatic->statut = $objp->statut;
 		$userstatic->email = $objp->email;

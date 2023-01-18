@@ -349,6 +349,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 				$filearray[$key]['position_name'] = ($filearrayindatabase[$key2]['position'] ? $filearrayindatabase[$key2]['position'] : '0').'_'.$filearrayindatabase[$key2]['name'];
 				$filearray[$key]['position'] = $filearrayindatabase[$key2]['position'];
 				$filearray[$key]['cover'] = $filearrayindatabase[$key2]['cover'];
+				$filearray[$key]['keywords'] = $filearrayindatabase[$key2]['keywords'];
 				$filearray[$key]['acl'] = $filearrayindatabase[$key2]['acl'];
 				$filearray[$key]['rowid'] = $filearrayindatabase[$key2]['rowid'];
 				$filearray[$key]['label'] = $filearrayindatabase[$key2]['label'];
@@ -2424,7 +2425,7 @@ function dol_compress_dir($inputdir, $outputfile, $mode = "zip", $excludefiles =
 function dol_most_recent_file($dir, $regexfilter = '', $excludefilter = array('(\.meta|_preview.*\.png)$', '^\.'), $nohook = false, $mode = '')
 {
 	$tmparray = dol_dir_list($dir, 'files', 0, $regexfilter, $excludefilter, 'date', SORT_DESC, $mode, $nohook);
-	return $tmparray[0];
+	return isset($tmparray[0])?$tmparray[0]:null;
 }
 
 /**

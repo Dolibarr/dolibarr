@@ -6,7 +6,7 @@
  * Copyright (C) 2013       Peter Fontaine       <contact@peterfontaine.fr>
  * Copyright (C) 2015-2016  Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2021  Thibault FOUCART     <support@ptibogxiv.net>
+ * Copyright (C) 2018-2023  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2021       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1381,7 +1381,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 		if (is_array($currencybalance)) {
 			foreach ($currencybalance as $cpt) {
-				print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'] + $cpt->pending, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
+				print '<tr><td>'.$langs->trans("Currency".strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'], 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price(isset($cpt->pending)?$cpt->pending:0, 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td><td>'.price($cpt['available'] + (isset($cpt->pending)?$cpt->pending:0), 0, '', 1, - 1, - 1, strtoupper($cpt['currency'])).'</td></tr>';
 			}
 		}
 

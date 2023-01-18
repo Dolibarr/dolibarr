@@ -305,14 +305,13 @@ class mailing_contacts1 extends MailingTargets
 
 		$s .= ajax_combobox("filter_category_supplier_contact");
 
+		// Choose language
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
-			// Choose language
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($this->db);
 			$s .= '<span class="opacitymedium">'.$langs->trans("DefaultLang").':</span> ';
 			$s .= $formadmin->select_language($langs->getDefaultLang(1), 'filter_lang', 0, null, 1, 0, 0, '', 0, 0, 0, null, 1);
 		}
-
 		return $s;
 	}
 

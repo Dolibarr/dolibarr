@@ -5427,9 +5427,10 @@ class Form
 	 *    @param	int		$forcefocus			Force focus on field (works with javascript only)
 	 *    @param    int     $nooutput           No print is done. String is returned.
 	 *    @param	string	$textifnoproject	Text to show if no project
+	 *    @param	string	$morecss			More CSS
 	 *    @return	string                      Return html content
 	 */
-	public function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0, $textifnoproject = '')
+	public function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0, $textifnoproject = '', $morecss = '')
 	{
 		// phpcs:enable
 		global $langs;
@@ -5446,7 +5447,7 @@ class Form
 			$out .= '<form method="post" action="'.$page.'">';
 			$out .= '<input type="hidden" name="action" value="classin">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
-			$out .= $formproject->select_projects($socid, $selected, $htmlname, $maxlength, 0, 1, $discard_closed, $forcefocus, 0, 0, '', 1);
+			$out .= $formproject->select_projects($socid, $selected, $htmlname, $maxlength, 0, 1, $discard_closed, $forcefocus, 0, 0, '', 1, 0, $morecss);
 			$out .= '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Modify").'">';
 			$out .= '</form>';
 		} else {

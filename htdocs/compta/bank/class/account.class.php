@@ -1077,8 +1077,6 @@ class Account extends CommonObject
 	 */
 	public function delete(User $user = null)
 	{
-		global $conf;
-
 		$error = 0;
 
 		$this->db->begin();
@@ -1096,8 +1094,8 @@ class Account extends CommonObject
 		}
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_account";
-			$sql .= " WHERE rowid = ".((int) $this->rowid);
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$result = $this->db->query($sql);

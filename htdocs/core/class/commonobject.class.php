@@ -9350,7 +9350,7 @@ abstract class CommonObject
 			$sql .= ' WHERE 1 = 1'; // usage with empty id and empty ref is very rare
 		}
 		if (empty($id) && isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' AND t.entity IN ('.getEntity($this->table_element).')';
+			$sql .= ' AND t.entity IN ('.getEntity($this->element).')';
 		}
 		if ($morewhere) {
 			$sql .= $morewhere;

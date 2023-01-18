@@ -443,6 +443,7 @@ if (empty($reshook)) {
 							$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
 																											   // modified by hook
 							if ($reshook < 0) {
+								setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 								$error++;
 							}
 						} else {
@@ -1602,7 +1603,7 @@ if ($action == 'create') {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, ($action == 'classify' ? 1 : 0), 0, 1, '');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -1995,29 +1996,29 @@ if ($action == 'create') {
 				// Create an order
 				if (((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) && $object->statut == SupplierProposal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddSupplierOrderShort").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'&amp;token='.newToken().'">'.$langs->trans("AddSupplierOrderShort").'</a></div>';
 					}
 				}
 
 				// Set accepted/refused
 				if ($object->statut == SupplierProposal::STATUS_VALIDATED && $usercanclose) {
-					print '<div class="inline-block divButAction"><a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=statut'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#acceptedrefused').'"';
+					print '<div class="inline-block divButAction"><a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;token='.newToken().'&amp;action=statut'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#acceptedrefused').'"';
 					print '>'.$langs->trans('SetAcceptedRefused').'</a></div>';
 				}
 
 				// Close
 				if ($object->statut == SupplierProposal::STATUS_SIGNED && $usercanclose) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;token='.newToken().'&amp;action=close'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
 					print '>'.$langs->trans('Close').'</a></div>';
 				}
 
 				// Clone
 				if ($usercancreate) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object='.$object->element.'">'.$langs->trans("ToClone").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$object->socid.'&amp;action=clone&object='.$object->element.'&amp;token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
 				}
 
 				// Delete
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', ($object->statut == SupplierProposal::STATUS_DRAFT && $usercancreate) || $usercandelete);
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', (($object->statut == SupplierProposal::STATUS_DRAFT && $usercancreate) || $usercandelete));
 			}
 		}
 

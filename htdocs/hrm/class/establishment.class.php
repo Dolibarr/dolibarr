@@ -285,7 +285,7 @@ class Establishment extends CommonObject
 	 * Load an object from database
 	 *
 	 * @param	int		$id		Id of record to load
-	 * @return	int				<0 if KO, >0 if OK
+	 * @return	int				<0 if KO, >=0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -299,21 +299,24 @@ class Establishment extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
+			if ($obj) {
+				$this->id = $obj->rowid;
+				$this->ref			= $obj->ref;
+				$this->label		= $obj->label;
+				$this->address = $obj->address;
+				$this->zip			= $obj->zip;
+				$this->town			= $obj->town;
+				$this->status = $obj->status;
+				$this->entity = $obj->entity;
 
-			$this->id = $obj->rowid;
-			$this->ref			= $obj->ref;
-			$this->label		= $obj->label;
-			$this->address = $obj->address;
-			$this->zip			= $obj->zip;
-			$this->town			= $obj->town;
-			$this->status = $obj->status;
-			$this->entity = $obj->entity;
+				$this->country_id   = $obj->country_id;
+				$this->country_code = $obj->country_code;
+				$this->country      = $obj->country;
 
-			$this->country_id   = $obj->country_id;
-			$this->country_code = $obj->country_code;
-			$this->country      = $obj->country;
-
-			return 1;
+				return 1;
+			} else {
+				return 0;
+			}
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
