@@ -167,9 +167,14 @@ if ($filtertype != 1) {
 	}
 }
 $total_cost = 0;
+$tmpbom->calculateCosts();
 print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;
-echo '<span class="amount">'.price($line->total_cost).'</span>';
+if (!empty($line->fk_bom_child)) {
+	echo '<span class="amount">'.price($tmpbom->total_cost).'</span>';
+} else {
+	echo '<span class="amount">'.price($line->total_cost).'</span>';
+}
 print '</td>';
 
 if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
@@ -317,15 +322,5 @@ if ($resql) {
 	}
 }
 
-// Replace of the total_cost value by the sum of all sub-BOM lines total_cost
-// TODO Remove this bad practice. We should not replace content of ouput using javascript but value should be good during generation of output.
-if ($total_cost > 0) {
-	$line->total_cost = price($total_cost);
-	?>
-	<script>
-		$('#costline_<?php echo $line->id?>').html('<?php echo "<span class=\"amount\">".price($total_cost)."</span>"; ?>');
-	</script>
-	<?php
-}
 
 print "<!-- END PHP TEMPLATE objectline_view.tpl.php -->\n";
