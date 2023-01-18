@@ -81,7 +81,7 @@ if ($action == 'presend') {
 	if (empty($object->ref_client)) {
 		$topicmail = $outputlangs->trans($defaulttopic, '__REF__');
 	} elseif (!empty($object->ref_client)) {
-		$topicmail = $outputlangs->trans($defaulttopic, '__REF__ (__REF_CLIENT__)');
+		$topicmail = $outputlangs->trans($defaulttopic, '__REF__ (__REF_CUSTOMER__)');
 	}
 
 	// Build document if it not exists

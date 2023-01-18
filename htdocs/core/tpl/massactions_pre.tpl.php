@@ -249,7 +249,7 @@ if ($massaction == 'presend') {
 	$formmail->withtocc = 1;
 	$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
 	if (!empty($topicmail)) {
-		$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REF_CLIENT__');
+		$formmail->withtopic = $langs->transnoentities($topicmail, '__REF__', '__REF_CUSTOMER__');
 	} else {
 		$formmail->withtopic = 1;
 	}
