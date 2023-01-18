@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2022  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,6 +181,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $error;
 
 	/**
+	 * @var string[] Array of Errors messages
+	 */
+	public $errors;
+
+	/**
 	 * @var string Module version
 	 * @see http://semver.org
 	 *
@@ -219,6 +224,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $descriptionlong;
 
+	/**
+	 * @var array dictionaries description
+	 */
+	public $dictionaries;
+
+	/**
+	 * @var array tabs description
+	 */
+	public $tabs;
 
 	// For exports
 
