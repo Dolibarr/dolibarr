@@ -1296,7 +1296,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Type")), null, 'errors');
 		}
 
-		if (!$error && !GETPOST('regenerateclasssql')&& !GETPOST('regeneratemissing')) {
+		if (!$error && !GETPOST('regenerateclasssql') && !GETPOST('regeneratemissing')) {
 			$addfieldentry = array(
 				'name'=>GETPOST('propname', 'aZ09'),
 				'label'=>GETPOST('proplabel', 'alpha'),
