@@ -49,12 +49,12 @@ class FormTicket
 	public $db;
 
 	/**
-	 * @var string	The track_id of the ticket. Used also for the $keytoavoidconflict to name session vars to upload files.
+	 * @var string		A hash value of the ticket. Duplicate of ref but for public purposes.
 	 */
 	public $track_id;
 
 	/**
-	 * @var string trackid
+	 * @var string 		Email $trackid. Used also for the $keytoavoidconflict to name session vars to upload files.
 	 */
 	public $trackid;
 
