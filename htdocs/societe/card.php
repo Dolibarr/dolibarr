@@ -1663,21 +1663,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Social networks
 		if (isModEnabled('socialnetworks')) {
-			foreach ($socialnetworks as $key => $value) {
-				if ($value['active']) {
-					print '<tr>';
-					print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
-					print '<td colspan="3">';
-					if (!empty($value['icon'])) {
-						print '<span class="fa '.$value['icon'].' pictofixedwidth"></span>';
-					}
-					print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100 maxwidth300 widthcentpercentminusx" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : (empty($object->socialnetworks[$key]) ? '' : $object->socialnetworks[$key])).'">';
-					print '</td>';
-					print '</tr>';
-				} elseif (!empty($object->socialnetworks[$key])) {
-					print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
-				}
-			}
+			showSocialNetwork();
 		}
 
 		// Prof ids
@@ -2395,21 +2381,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Social network
 			if (isModEnabled('socialnetworks')) {
-				foreach ($socialnetworks as $key => $value) {
-					if ($value['active']) {
-						print '<tr>';
-						print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
-						print '<td colspan="3">';
-						if (!empty($value['icon'])) {
-							print '<span class="fa '.$value['icon'].' pictofixedwidth"></span>';
-						}
-						print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100 maxwidth500 widthcentpercentminusx" maxlength="80" value="'.(empty($object->socialnetworks[$key]) ? '' : $object->socialnetworks[$key]).'">';
-						print '</td>';
-						print '</tr>';
-					} elseif (!empty($object->socialnetworks[$key])) {
-						print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
-					}
-				}
+				showSocialNetwork();
 			}
 
 			// Prof ids
@@ -3326,6 +3298,56 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }
+
+/**
+ * Show social network part if the module is enabled with hiding functionality
+ *
+ * @return void
+ */
+function showSocialNetwork()
+{
+	global $socialnetworks, $object, $form, $object, $langs;
+	echo '<script type="text/javascript">$("document").ready(function() {toogleSocialNetwork(false); });</script>';
+
+	print '<tr><td>&nbsp;</td><td><a id="lnk" href="javascript:toogleSocialNetwork(true)"></a></td></tr>';
+	foreach ($socialnetworks as $key => $value) {
+		if ($value['active']) {
+			print '<tr class="soc_network">';
+			print '<td><label for="'.$value['label'].'">'.$form->editfieldkey($value['label'], $key, '', $object, 0).'</label></td>';
+			print '<td colspan="3">';
+			if (!empty($value['icon'])) {
+				print '<span class="fa '.$value['icon'].' pictofixedwidth"></span>';
+			}
+			print '<input type="text" name="'.$key.'" id="'.$key.'" class="minwidth100 maxwidth300 widthcentpercentminusx" maxlength="80" value="'.dol_escape_htmltag(GETPOSTISSET($key) ? GETPOST($key, 'alphanohtml') : (empty($object->socialnetworks[$key]) ? '' : $object->socialnetworks[$key])).'">';
+			print '</td>';
+			print '</tr>';
+		} elseif (!empty($object->socialnetworks[$key])) {
+			print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
+		}
+	}
+
+	print '<script type="text/javascript">
+
+	function toogleSocialNetwork(chgCookieState) {
+		const lnk = $("#lnk");
+		const items = $(".soc_network");
+		var cookieState = document.cookie.split(";").some((item) => item.trim().startsWith("DOLUSER_SOCIALNETWORKS_SHOW=true")) == true;
+
+		if (!chgCookieState) cookieState = !cookieState ;
+
+		if (cookieState) {
+			items.hide();
+			lnk.text("'.dol_escape_js($langs->transnoentitiesnoconv("ShowSocialNetwork")).'...");
+			if(chgCookieState) {document.cookie = "DOLUSER_SOCIALNETWORKS_SHOW=false; SameSite=Strict"};
+		} else {
+			items.show();
+			lnk.text("'.dol_escape_js($langs->transnoentitiesnoconv("HideSocialNetwork")).'");
+			if(chgCookieState) {document.cookie = "DOLUSER_SOCIALNETWORKS_SHOW=true; SameSite=Strict";}
+		}				
+	}
+	</script>';
+}
+
 // End of page
 llxFooter();
 $db->close();
