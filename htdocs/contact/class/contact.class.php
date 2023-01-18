@@ -131,11 +131,26 @@ class Contact extends CommonObject
 	public $civility;
 
 	/**
+	 * @var int egroupware_id
+	 */
+	public $egroupware_id;
+
+	/**
+	 * @var int birthday_alert
+	 */
+	public $birthday_alert;
+
+	/**
 	 * @var string The civilite code, not an integer
 	 * @deprecated
 	 * @see $civility_code
 	 */
 	public $civilite;
+
+	/**
+	 * @var string fullname
+	 */
+	public $fullname;
 
 	/**
 	 * @var string Address
