@@ -107,9 +107,10 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Returns an array of all product variants
 	 *
-	 * @return ProductAttribute[]
+	 * @param	int		$returnonlydata		0: return object, 1: return only data
+	 * @return								ProductAttribute[]
 	 */
-	public function fetchAll()
+	public function fetchAll($returnonlydata = 0)
 	{
 		$return = array();
 
@@ -118,7 +119,12 @@ class ProductAttribute extends CommonObject
 		$query = $this->db->query($sql);
 		if ($query) {
 			while ($result = $this->db->fetch_object($query)) {
-				$tmp = new ProductAttribute($this->db);
+				if (empty($returnonlydata)) {
+					$tmp = new ProductAttribute($this->db);
+				} else {
+					$tmp = new stdClass();
+				}
+
 				$tmp->id = $result->rowid;
 				$tmp->ref = $result->ref;
 				$tmp->ref_ext = $result->ref_ext;

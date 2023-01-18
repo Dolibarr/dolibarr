@@ -3724,7 +3724,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Add CSS
 			$arrayconvpictotomorcess = array(
 				'action'=>'infobox-action', 'account'=>'infobox-bank_account', 'accountline'=>'infobox-bank_account', 'accountancy'=>'infobox-bank_account', 'asset'=>'infobox-bank_account',
-				'bank_account'=>'bg-infobox-bank_account',
+				'bank_account'=>'infobox-bank_account',
 				'bill'=>'infobox-commande', 'billa'=>'infobox-commande', 'billr'=>'infobox-commande', 'billd'=>'infobox-commande',
 				'margin'=>'infobox-bank_account', 'conferenceorbooth'=>'infobox-project',
 				'cash-register'=>'infobox-bank_account', 'contract'=>'infobox-contrat', 'check'=>'font-status4', 'collab'=>'infobox-action', 'conversation'=>'infobox-contrat',
@@ -6996,7 +6996,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			$substitutionarray['__REF_SUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : null);
 			$substitutionarray['__NOTE_PUBLIC__'] = (isset($object->note_public) ? $object->note_public : null);
 			$substitutionarray['__NOTE_PRIVATE__'] = (isset($object->note_private) ? $object->note_private : null);
-			$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs) : '');
+			if ($object->element == "shipping") {
+				$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_delivery) ? dol_print_date($object->date_delivery, 'day', 0, $outputlangs) : '');
+			} else {
+				$substitutionarray['__DATE_DELIVERY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, 'day', 0, $outputlangs) : '');
+			}
 			$substitutionarray['__DATE_DELIVERY_DAY__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%d") : '');
 			$substitutionarray['__DATE_DELIVERY_DAY_TEXT__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%A") : '');
 			$substitutionarray['__DATE_DELIVERY_MON__'] = (isset($object->date_livraison) ? dol_print_date($object->date_livraison, "%m") : '');
@@ -8133,7 +8137,7 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 	}
 
 	// We block using of php exec or php file functions
-	$forbiddenphpstrings = array("exec(", "passthru(", "shell_exec(", "system(", "proc_open(", "popen(", "eval(", "dol_eval(", "executeCLI(");
+	$forbiddenphpstrings = array("exec(", "passthru(", "shell_exec(", "system(", "proc_open(", "popen(", "eval(", "dol_eval(", "executeCLI(", "base64_decode(");
 	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array("fopen(", "file_put_contents(", "fputs(", "fputscsv(", "fwrite(", "fpassthru(", "unlink(", "mkdir(", "rmdir(", "symlink(", "touch(", "umask("));
 	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('function(', '$$', 'call_user_func('));
 	$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST'));

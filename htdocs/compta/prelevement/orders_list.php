@@ -158,7 +158,9 @@ if ($result) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-
+	if ($type != '') {
+		print '<input type="hidden" name="type" value="'.$type.'">';
+	}
 	$titlekey = "WithdrawalsReceipts";
 	$title = $langs->trans("WithdrawalsReceipts");
 	if ($type == 'bank-transfer') {

@@ -614,7 +614,6 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nnnick/chartjs/scripts`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nnnick/chartjs/src`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nnnick/chartjs/test`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/samples`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/php-iban/docs`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/sabre/sabre/*/tests`;

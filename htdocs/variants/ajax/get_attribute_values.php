@@ -75,7 +75,7 @@ if ($prodattr->fetch($id) < 0) {
 
 $prodattrval = new ProductAttributeValue($db);
 
-$res = $prodattrval->fetchAllByProductAttribute($id);
+$res = $prodattrval->fetchAllByProductAttribute($id, false, 1);
 
 if ($res == -1) {
 	print json_encode(array(
