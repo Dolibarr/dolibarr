@@ -52,7 +52,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-
+$socid = GETPOST('socid', 'int');
 $amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT');
 $donation_date = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
@@ -61,6 +61,13 @@ $public_donation = (int) GETPOST("public", 'int');
 $object = new Don($db);
 if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
+}
+
+if (!empty($socid) && $socid > 0) {
+	$soc = new Societe($db);
+	if ($socid > 0) {
+		$soc->fetch($socid);
+	}
 }
 
 $extrafields = new ExtraFields($db);

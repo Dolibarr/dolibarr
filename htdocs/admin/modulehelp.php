@@ -498,7 +498,10 @@ if ($mode == 'feature') {
 	if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes)) {
 		$i = 0;
 		foreach ($objMod->boxes as $val) {
-			$text .= ($i ? ', ' : '').($val['file'] ? $val['file'] : $val[0]);
+			$boxstring = (empty($val['file']) ? (empty($val[0]) ? '' : $val[0]) : $val['file']);
+			if ($boxstring) {
+				$text .= ($i ? ', ' : '').$boxstring;
+			}
 			$i++;
 		}
 	} else {
