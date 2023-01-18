@@ -790,7 +790,6 @@ class Societe extends CommonObject
 	public $partnerships = array();
 
 
-
 	/**
 	 * @var Account|string Default BAN account
 	 */
@@ -1271,7 +1270,7 @@ class Societe extends CommonObject
 		// Clean parameters
 		$this->id = $id;
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
-		$this->name = $this->name ?trim($this->name) : trim($this->nom);
+		$this->name = $this->name ? trim($this->name) : trim($this->nom);
 		$this->nom = $this->name; // For backward compatibility
 		$this->name_alias = trim($this->name_alias);
 		$this->ref_ext		= trim($this->ref_ext);
@@ -2217,6 +2216,7 @@ class Societe extends CommonObject
 			}
 
 			$this->db->commit();
+
 			return 1;
 		}
 	}
@@ -2278,6 +2278,8 @@ class Societe extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
+
+		return -1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3091,6 +3093,8 @@ class Societe extends CommonObject
 		} else {
 			dol_print_error($this->db);
 		}
+
+		return '';
 	}
 
 
@@ -3473,9 +3477,9 @@ class Societe extends CommonObject
 			} else {
 				return -1;
 			}
-		} else {
-			return -1;
 		}
+
+		return -1;
 	}
 
 	/**
@@ -4819,6 +4823,8 @@ class Societe extends CommonObject
 		} elseif ($status == 3) {
 			return $langs->trans("ProspectCustomer");
 		}
+
+		return '';
 	}
 
 
@@ -4886,7 +4892,7 @@ class Societe extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
-	 * @param 	string 		$type_categ 			Category type ('customer' or 'supplier')
+	 * @param 	string 		$type_categ 	Category type ('customer' or 'supplier')
 	 * @return	int							<0 if KO, >0 if OK
 	 */
 	public function setCategories($categories, $type_categ)
@@ -5049,7 +5055,7 @@ class Societe extends CommonObject
 		$sql .= $field." = '".$this->db->escape($value)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this)."::".__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 
 		if ($resql) {

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - orders
+OrderExists=Ja hi havia una comanda oberta vinculada a aquesta proposta, de manera que no es va crear cap altra comanda automàticament
 OrdersArea=Àrea comandes de clients
 SuppliersOrdersArea=Àrea de comandes de compra
 OrderCard=Fitxa comanda

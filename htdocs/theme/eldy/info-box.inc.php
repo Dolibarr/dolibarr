@@ -434,7 +434,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 
 /* USING FONTAWESOME FOR WEATHER */
 .info-box-weather .info-box-icon{
-	background: rgba(0, 0, 0, 0.08) !important;
+	background: var(--colorbacktitle1) !important;
 }
 .fa-weather-level0:before{
 	content: "\f185";
@@ -490,6 +490,11 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .info-box-module {
 	min-width: 350px;
 	max-width: 350px;
+}
+
+/**for make a checkbox in the right of the box in mode kanban */
+.fright {
+	float:right;
 }
 
 @media only screen and (max-width: 1740px) {

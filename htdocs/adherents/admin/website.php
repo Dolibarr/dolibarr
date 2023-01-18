@@ -178,7 +178,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
 	if (isModEnabled('multicompany')) {
-		$entity_qr = '?entity='.$conf->entity;
+		$entity_qr = '?entity='.((int) $conf->entity);
 	} else {
 		$entity_qr = '';
 	}

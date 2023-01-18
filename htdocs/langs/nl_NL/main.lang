@@ -1,9 +1,15 @@
 # Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Default for FONTFORPDF=helvetica
 # Note for Chinese:
-# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
-# stsongstdlight or cid0cs are for simplified Chinese
+# msungstdlight or cid0ct are for traditional Chinese zh_TW (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese zh_CN
 # To read Chinese pdf with Linux: sudo apt-get install poppler-data
+# cid0jp is for Japanish
+# cid0kr is for Korean
+# DejaVuSans is for some Eastern languages, some Asian languages and some Arabic languages
+# freemono is for ru_RU or uk_UA, uz_UZ
+# freeserif is for Tamil
 FONTFORPDF=helvetica
 FONTSIZEFORPDF=10
 SeparatorDecimal=,
@@ -28,6 +34,7 @@ NoTemplateDefined=Geen sjabloon beschikbaar voor dit e-mailtype
 AvailableVariables=Beschikbare substitutievariabelen
 NoTranslation=Geen vertaling
 Translation=Vertaling
+Translations=Translations
 CurrentTimeZone=Tijdzone PHP (server)
 EmptySearchString=Vul geen lege zoekcriteria in
 EnterADateCriteria=Voer een datum criterium in
@@ -199,6 +206,7 @@ Valid=Geldig
 Approve=Goedkeuren
 Disapprove=Afkeuren
 ReOpen=Heropenen
+OpenVerb=Open
 Upload=Uploaden
 ToLink=Link
 Select=Selecteer
@@ -216,7 +224,7 @@ UserGroup=Gebruikersgroep
 UserGroups=Gebruikersgroepen
 NoUserGroupDefined=Geen gebruikersgroep gedefinieerd
 Password=Wachtwoord
-PasswordRetype=Herhaal uw wachtwoord
+PasswordRetype=Repeat your password
 NoteSomeFeaturesAreDisabled=Let op, veel functionaliteiten / modules zijn uitgeschakeld in deze demonstratie.
 Name=Naam
 NameSlashCompany=Naam / Bedrijf
@@ -481,6 +489,7 @@ ActionsOnContact=Evenementen voor dit contact / adres
 ActionsOnContract=Evenementen voor dit contract
 ActionsOnMember=Events over dit lid
 ActionsOnProduct=Evenementen in dit product
+ActionsOnAsset=Events for this fixed asset
 NActionsLate=%s is laat
 ToDo=Te doen
 Completed=Voltooid
@@ -921,6 +930,7 @@ DirectDownloadInternalLink=Privé downloadlink
 PrivateDownloadLinkDesc=Je moet ingelogd zijn en je hebt rechten nodig om het bestand te bekijken of te downloaden
 Download=Downloaden
 DownloadDocument=Download document
+DownloadSignedDocument=Download signed document
 ActualizeCurrency=Bijwerken valutakoers
 Fiscalyear=Boekjaar
 ModuleBuilder=Module- en applicatie ontwikkelomgeving
@@ -1046,6 +1056,7 @@ SearchIntoContracts=Contracten
 SearchIntoCustomerShipments=Klantzendingen
 SearchIntoExpenseReports=Onkostennota's 
 SearchIntoLeaves=Vertrekken
+SearchIntoKM=Knowledge base
 SearchIntoTickets=Tickets
 SearchIntoCustomerPayments=Betalingen door klanten
 SearchIntoVendorPayments=Leveranciersbetalingen
@@ -1137,15 +1148,29 @@ EventReminder=Herinnering voor evenement
 UpdateForAllLines=Update voor alle lijnen
 OnHold=In de wacht
 Civility=Beleefdheid
-AffectTag=Heeft invloed op de tag
+AffectTag=Assign Tag
+AffectUser=Assign User
+SetSupervisor=Set Supervisor
 CreateExternalUser=Externe gebruiker aanmaken
-ConfirmAffectTag=invloed op bulk-tag
-ConfirmAffectTagQuestion=Weet u zeker dat u tags wilt beïnvloeden voor de %s geselecteerde record (s)?
+ConfirmAffectTag=Bulk Tag Assignement
+ConfirmAffectUser=Bulk User Assignement
+ProjectRole=Role assigned on each project
+TasksRole=Role assigned on each task of each project
+ConfirmSetSupervisor=Bulk Supervisor Set
+ConfirmUpdatePrice=Choose a increase/decrease price rate
+ConfirmAffectTagQuestion=Are you sure you want to assign tags to the %s selected record(s)?
+ConfirmAffectUserQuestion=Are you sure you want to assign users to the %s selected record(s)?
+ConfirmSetSupervisorQuestion=Are you sure you want to set supervisor to the %s selected record(s)?
+ConfirmUpdatePriceQuestion=Are you sure you want to update the price of the %s selected record(s)?
 CategTypeNotFound=Geen tag-soort gevonden voor type records
+Rate=Tarief
+SupervisorNotFound=Supervisor not found
 CopiedToClipboard=Gekopieerd naar het klembord
 InformationOnLinkToContract=Dit bedrag is alleen het totaal van alle regels van het contract. Er wordt geen rekening gehouden met tijd.
 ConfirmCancel=Weet je zeker dat je dit wilt annuleren
 EmailMsgID=E-mail MsgID
+EmailDate=Email date
+SetToStatus=Set to status %s
 SetToEnabled=Zet aan.
 SetToDisabled=Zet uit.
 ConfirmMassEnabling=Bevestig het aanzetten
@@ -1174,9 +1199,14 @@ Terminated=Verwijderd
 AddLineOnPosition=Lijn op positie toevoegen (aan het einde indien leeg)
 ConfirmAllocateCommercial=Bevestiging van verkoopvertegenwoordiger toewijzen
 ConfirmAllocateCommercialQuestion=Weet u zeker dat u de geselecteerde record(s) %s wilt toewijzen?
-CommercialsAffected=Betrokken verkoopvertegenwoordigers
-CommercialAffected=Betrokken verkoopvertegenwoordiger
+CommercialsAffected=Sales representatives assigned
+CommercialAffected=Sales representative assigned
 YourMessage=Uw bericht
 YourMessageHasBeenReceived=Je bericht is ontvangen. We zullen zo snel mogelijk antwoorden of contact met je opnemen.
 UrlToCheck=URL om te controleren
 Automation=Automatisering
+CreatedByEmailCollector=Created by Email collector
+CreatedByPublicPortal=Created from Public portal
+UserAgent=User Agent
+InternalUser=Interne gebruiker
+ExternalUser=Externe gebruiker

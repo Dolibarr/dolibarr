@@ -1529,7 +1529,7 @@ if ($action == 'edit_price' && $object->getRights()->creer) {
 					otherPrices.show();
 					minPrice1.show();
 				}
-			};
+			}
 
 			jQuery(document).ready(function () {
 				showHidePriceRules();

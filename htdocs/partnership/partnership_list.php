@@ -85,6 +85,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
+$error = 0;
+
 $managedfor	= getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
 if ($managedfor != 'member' && $sortfield == 'd.datefin') $sortfield = '';
@@ -149,18 +151,14 @@ $permissiontoread = $user->rights->partnership->read;
 $permissiontoadd = $user->rights->partnership->write;
 $permissiontodelete = $user->rights->partnership->delete;
 
-// Security check
-if (empty($conf->partnership->enabled)) {
-	accessforbidden('Module not enabled');
-}
-if ($user->socid > 0) { // Protection if external user
-	//$socid = $user->socid;
-	accessforbidden();
-}
-//$result = restrictedArea($user, 'partnership');
-//if (!$permissiontoread) accessforbidden();
-
-$error = 0;
+// Security check - Protection if external user
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+//$result = restrictedArea($user, 'partnership', $object->id);
+if (empty($conf->partnership->enabled)) accessforbidden();
+if (empty($permissiontoread)) accessforbidden();
+if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') accessforbidden();
+if ($object->id > 0 && !($object->fk_soc > 0) && $managedfor == 'thirdparty') accessforbidden();
 
 
 /*

@@ -385,7 +385,7 @@ class Position extends CommonObject
 		$sql .= $this->getFieldList('t');
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' WHERE t.entity IN (' . getEntity($this->table_element) . ')';
+			$sql .= ' WHERE t.entity IN (' . getEntity($this->element) . ')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
@@ -971,8 +971,8 @@ class Position extends CommonObject
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql' => 'fk_position = ' . $this->id));
 
 		if (is_numeric($result)) {
-			$this->error = $this->error;
-			$this->errors = $this->errors;
+			$this->error = $objectline->error;
+			$this->errors = $objectline->errors;
 			return $result;
 		} else {
 			$this->lines = $result;
@@ -1036,6 +1036,8 @@ class Position extends CommonObject
 	}
 
 	/**
+	 * getForUser
+	 *
 	 * @param int $userid id of user we need to get position list
 	 * @return array|int of positions of user with for each of them the job fetched into that array
 	 */
@@ -1049,7 +1051,7 @@ class Position extends CommonObject
 	}
 
 	/**
-	 *  Create a document onto disk according to template module.
+	 * Create a document onto disk according to template module.
 	 *
 	 * @param string $modele Force template to use ('' to not force)
 	 * @param Translate $outputlangs objet lang a utiliser pour traduction

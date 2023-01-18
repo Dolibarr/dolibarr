@@ -280,9 +280,6 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<div class="div-table-responsive-no-min">'."\n";
 print '<table class="tagtable nobottomiftotal liste">';
 
-//print '<tr class="liste_titre_filter">';
-//print '</tr>';
-
 print '<tr class="liste_titre">';
 print_liste_field_titre($arrayfields['thirdparty']['label'], $_SERVER["PHP_SELF"], "thirdparty_name", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['contact']['label'], $_SERVER["PHP_SELF"], "contact_name", "", $param, "", $sortfield, $sortorder);
@@ -316,7 +313,17 @@ foreach ($list as $entry) {
 
 	print "</tr>";
 }
-
+if (empty($list)) {
+	$colspan = 5 + ($permission ? 1 : 0);
+	print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">';
+	if (is_object($object) && !empty($object->thirdparty)) {
+		print $form->textwithpicto($langs->trans("NoSpecificContactAddress"), $langs->trans("NoSpecificContactAddressBis"));
+	} else {
+		print $langs->trans("NoSpecificContactAddress");
+	}
+	print '</span>';
+	print '</td></tr>';
+}
 print "</table>";
 print '</div>';
 

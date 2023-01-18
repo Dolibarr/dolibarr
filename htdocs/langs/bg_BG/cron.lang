@@ -26,7 +26,7 @@ CronCommand=Команда
 CronList=Планирани задачи
 CronDelete=Изтриване на планирани задачи
 CronConfirmDelete=Сигурни ли сте, че искате да изтриете тези планирани задачи?
-CronExecute=Стартиране на планирана задача
+CronExecute=Launch now
 CronConfirmExecute=Сигурни ли сте, че искате да изпълните тези планирани задачи сега?
 CronInfo=Модулът за планирани задачи позволява да планирате задача и да я изпълните автоматично. Задачата може да се стартира и ръчно.
 CronTask=Задача
@@ -58,7 +58,7 @@ CronNote=Коментар
 CronFieldMandatory=Полета %s са задължителни
 CronErrEndDateStartDt=Крайната дата не може да бъде преди началната дата
 StatusAtInstall=Състояние при инсталиране на модула
-CronStatusActiveBtn=Schedule
+CronStatusActiveBtn=Enable scheduling
 CronStatusInactiveBtn=Деактивиране
 CronTaskInactive=This job is disabled (not scheduled)
 CronId=Идентификатор
@@ -82,10 +82,19 @@ UseMenuModuleToolsToAddCronJobs=Отидете в меню '<a href="%s">Нач�
 JobDisabled=Задачата е деактивирана
 MakeLocalDatabaseDumpShort=Архивиране на локална база данни
 MakeLocalDatabaseDump=Създаване на локална база данни. Параметрите са: компресия ('gz' or 'bz' or 'none'), вид архивиране ('mysql', 'pgsql', 'auto'), 1, 'auto' или име на файла за съхранение, брой резервни файлове, които да се запазят
+MakeSendLocalDatabaseDumpShort=Send local database backup
+MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
+BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
+CleanUnfinishedCronjobShort=Clean unfinished cronjob
+CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
 WarningCronDelayed=Внимание, за целите на изпълнението, каквато и да е следващата дата на изпълнение на активирани задачи, вашите задачи могат да бъдат забавени до максимум %s часа, преди да бъдат стартирани.
 DATAPOLICYJob=Почистване на данни и анонимност
 JobXMustBeEnabled=Job %s must be enabled
+EmailIfError=Email for warning on error
+ErrorInBatch=Error when running the job %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Last executed scheduled job
 NextScheduledJobExecute=Next scheduled job to execute
 NumberScheduledJobError=Number of scheduled jobs in error
+NumberScheduledJobNeverFinished=Number of scheduled jobs never finished

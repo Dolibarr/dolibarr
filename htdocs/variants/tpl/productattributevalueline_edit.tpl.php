@@ -54,7 +54,7 @@ $coldisplay++;
 		<input type="text" name="line_ref" id="line_ref" class="flat" value="<?php echo (GETPOSTISSET("line_ref") ? GETPOST("line_ref", 'alpha', 2) : $line->ref); ?>">
 		<?php
 		if (is_object($hookmanager)) {
-			$parameters = array('line'=>$line);
+			$parameters = array('line' => $line);
 			$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $object, $action);
 			if (!empty($hookmanager->resPrint)) {
 				print $hookmanager->resPrint;

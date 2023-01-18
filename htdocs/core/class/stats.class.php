@@ -55,7 +55,7 @@ abstract class Stats
 		global $conf, $user, $langs;
 
 		if ($startyear > $endyear) {
-			return -1;
+			return array();
 		}
 
 		$datay = array();
@@ -156,7 +156,7 @@ abstract class Stats
 		global $conf, $user, $langs;
 
 		if ($startyear > $endyear) {
-			return -1;
+			return array();
 		}
 
 		$datay = array();
@@ -237,7 +237,7 @@ abstract class Stats
 
 	/**
 	 * @param	int     $year           year number
-	 * @return 	int						value
+	 * @return 	array					array of values
 	 */
 	protected abstract function getAverageByMonth($year);
 
@@ -251,7 +251,7 @@ abstract class Stats
 	public function getAverageByMonthWithPrevYear($endyear, $startyear)
 	{
 		if ($startyear > $endyear) {
-			return -1;
+			return array();
 		}
 
 		$datay = array();
@@ -359,7 +359,7 @@ abstract class Stats
 		// phpcs:enable
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -388,7 +388,7 @@ abstract class Stats
 		// phpcs:enable
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -442,7 +442,7 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -499,7 +499,7 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -557,7 +557,7 @@ abstract class Stats
 		$result = array();
 		$res = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -613,7 +613,7 @@ abstract class Stats
 
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
+		dol_syslog(get_class($this).'::'.__FUNCTION__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);

@@ -109,8 +109,8 @@ if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartp
 		$keysearch = 'search_all';
 
 		$accesskey = '';
-		if (!$accesskeyalreadyassigned[$val['label'][0]]) {
-			$accesskey = $val['label'][0];
+		if (empty($accesskeyalreadyassigned[$val['label'][0]])) {
+			$accesskey = $val['label'][0];	// First char of string
 			$accesskeyalreadyassigned[$accesskey] = $accesskey;
 		}
 

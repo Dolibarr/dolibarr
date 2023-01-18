@@ -23,6 +23,7 @@ TasksPublicDesc=هذا الرأي يعرض جميع المشاريع والمه�
 TasksDesc=هذا الرأي يعرض جميع المشاريع والمهام (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
 AllTaskVisibleButEditIfYouAreAssigned=تظهر جميع المهام للمشاريع المؤهلة ، ولكن يمكنك إدخال الوقت فقط للمهمة المعينة للمستخدم المحدد. قم بتعيين مهمة إذا كنت بحاجة إلى إدخال الوقت فيها.
 OnlyYourTaskAreVisible=تظهر فقط المهام المعينة لك. إذا كنت بحاجة إلى إدخال الوقت في مهمة وإذا كانت المهمة غير مرئية هنا ، فأنت بحاجة إلى تعيين المهمة لنفسك.
+ImportDatasetProjects=Projects or opportunities
 ImportDatasetTasks=مهام المشاريع
 ProjectCategories=علامات / فئات المشروع
 NewProject=مشروع جديد
@@ -37,7 +38,9 @@ OpportunitiesStatusForOpenedProjects=يقود كمية من المشاريع ا�
 OpportunitiesStatusForProjects=يقود كمية من المشاريع حسب الحالة
 ShowProject=وتبين للمشروع
 ShowTask=وتظهر هذه المهمة
+SetThirdParty=Set third party
 SetProject=وضع المشروع
+OutOfProject=Out of project
 NoProject=لا يعرف أو المملوكة للمشروع
 NbOfProjects=عدد المشاريع
 NbOfTasks=عدد المهام
@@ -122,7 +125,8 @@ ValidateProject=تحقق من مشروع غابة
 ConfirmValidateProject=هل أنت متأكد أنك تريد التحقق من صحة هذا المشروع؟
 CloseAProject=وثيقة المشروع
 ConfirmCloseAProject=هل أنت متأكد أنك تريد إغلاق هذا المشروع؟
-AlsoCloseAProject=أغلق المشروع أيضًا (اتركه مفتوحًا إذا كنت لا تزال بحاجة إلى متابعة مهام الإنتاج عليه)
+AlsoCloseAProject=Also close project
+AlsoCloseAProjectTooltip=Keep it open if you still need to follow production tasks on it
 ReOpenAProject=فتح مشروع
 ConfirmReOpenAProject=هل أنت متأكد أنك تريد إعادة فتح هذا المشروع؟
 ProjectContact=اتصالات من المشروع
@@ -165,7 +169,7 @@ OpportunityProbability=احتمال الرصاص
 OpportunityProbabilityShort=بروباب الرصاص.
 OpportunityAmount=كمية الرصاص
 OpportunityAmountShort=كمية الرصاص
-OpportunityWeightedAmount=المقدار المرجح للفرصة
+OpportunityWeightedAmount=Amount of opportunity, weighted by probability
 OpportunityWeightedAmountShort=مقابل. الكمية المرجحة
 OpportunityAmountAverageShort=متوسط مبلغ الرصاص
 OpportunityAmountWeigthedShort=مبلغ الرصاص المرجح
@@ -238,7 +242,7 @@ OppStatusPENDING=بانتظار
 OppStatusWON=فاز
 OppStatusLOST=ضائع
 Budget=ميزانية
-AllowToLinkFromOtherCompany=السماح بربط مشروع من شركة أخرى <br> <br> <u> القيم المدعومة: </u> <br> - احتفظ به فارغًا: يمكنك ربط أي مشروع من مشاريع الشركة (افتراضي) a0342fccfda019b34 معرفات الجهات الخارجية مفصولة بفواصل: يمكن ربط جميع مشاريع هذه الأطراف الثالثة (مثال: 123،4795،53) <br>
+AllowToLinkFromOtherCompany=Allow to link an element with a project of other company<br><br><u>Supported values:</u><br>- Keep empty: Can link elements with any projects in the same company (default)<br>- "all": Can link elements with any projects, even projects of other companies<br>- A list of third-party ids separated by commas: can link elements with any projects of these third partys (Example: 123,4795,53)<br>
 LatestProjects=أحدث مشاريع %s
 LatestModifiedProjects=أحدث مشاريع %s المعدلة
 OtherFilteredTasks=مهام أخرى تمت تصفيتها
@@ -259,7 +263,7 @@ TimeSpentInvoiced=الوقت المستغرق في الفاتورة
 TimeSpentForIntervention=قضى وقتا
 TimeSpentForInvoice=قضى وقتا
 OneLinePerUser=خط واحد لكل مستخدم
-ServiceToUseOnLines=Service to use on lines
+ServiceToUseOnLines=Service to use on lines by default
 InvoiceGeneratedFromTimeSpent=تم إنشاء الفاتورة %s من الوقت المنقضي في المشروع
 InterventionGeneratedFromTimeSpent=تم إنشاء التدخل %s من الوقت الذي يقضيه في المشروع
 ProjectBillTimeDescription=تحقق مما إذا كنت قد أدخلت الجدول الزمني لمهام المشروع وكنت تخطط لإنشاء فاتورة (فواتير) من الجدول الزمني لفوترة عميل المشروع (لا تحقق مما إذا كنت تخطط لإنشاء فاتورة لا تستند إلى الجداول الزمنية التي تم إدخالها). ملاحظة: لإنشاء فاتورة ، انتقل إلى علامة التبويب "الوقت المستغرق" في المشروع وحدد سطورًا لتضمينها.
@@ -282,7 +286,7 @@ ProfitIsCalculatedWith=يتم احتساب الربح باستخدام
 AddPersonToTask=أضف أيضًا إلى المهام
 UsageOrganizeEvent=الاستعمال: تنظيم الحدث
 PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE=تصنيف المشروع على أنه مغلق عند اكتمال جميع مهامه (تقدم 100%%)
-PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=ملاحظة: المشاريع الحالية مع جميع المهام في 100%% لن يتأثر التقدم: سيكون عليك إغلاقها يدويًا. يؤثر هذا الخيار فقط على المشاريع المفتوحة.
+PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE_help=Note: existing projects with all tasks already set to a progress of 100 %% won't be affected: you will have to close them manually. This option only affects open projects.
 SelectLinesOfTimeSpentToInvoice=حدد سطور الوقت المستغرقة التي لم يتم تحرير فواتير بها ، ثم قم بإجراء جماعي "إنشاء الفاتورة" لفواتيرها
 ProjectTasksWithoutTimeSpent=مهام المشروع دون إضاعة الوقت
 FormForNewLeadDesc=شكرا لملء النموذج التالي للاتصال بنا. يمكنك أيضًا إرسال بريد إلكتروني إلينا مباشرة إلى <b> %s </b>.
@@ -294,3 +298,4 @@ EnablePublicLeadForm=قم بتمكين النموذج العام للاتصال
 NewLeadbyWeb=تم تسجيل رسالتك أو طلبك. سوف نقوم بالرد أو الاتصال بك قريبا.
 NewLeadForm=استمارة اتصال جديدة
 LeadFromPublicForm=عميل محتمل عبر الإنترنت من شكل عام
+ExportAccountingReportButtonLabel=Get report

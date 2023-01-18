@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2023	Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,12 +143,31 @@ class DolibarrApiAccess implements iAuthenticate
 			if (!$login) {
 				throw new RestException(503, 'Error when searching login user from api key');
 			}
+
+			$genericmessageerroruser = 'Error user not valid (not found or bad status or bad validity dates) (conf->entity='.$conf->entity.')';
+
 			$fuser = new User($this->db);
 			$result = $fuser->fetch('', $login, '', 0, (empty($userentity) ? -1 : $conf->entity)); // If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
 			if ($result <= 0) {
-				throw new RestException(503, 'Error when fetching user :'.$fuser->error.' (conf->entity='.$conf->entity.')');
+				throw new RestException(503, $genericmessageerroruser);
+			}
+			if ($fuser->statut == 0) {
+				throw new RestException(503, 'Error when fetching user. This user has been locked or disabled');
 			}
 
+			$now = dol_now();
+
+			// Check date start validity
+			if ($fuser->datestartvalidity && $this->db->jdate($fuser->datestartvalidity) > $now) {
+				throw new RestException(503, $genericmessageerroruser);
+			}
+			// Check date end validity
+			if ($fuser->dateendvalidity && $this->db->jdate($fuser->dateendvalidity) < dol_get_first_hour($now)) {
+				throw new RestException(503, $genericmessageerroruser);
+			}
+
+
+			// User seems valid
 			$fuser->getrights();
 
 			// Set the property $user to the $user of API

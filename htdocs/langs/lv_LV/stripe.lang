@@ -61,6 +61,7 @@ DeleteACard=Dzēst karti
 ConfirmDeleteCard=Vai tiešām vēlaties izdzēst šo kredītkarti vai debetkarti?
 CreateCustomerOnStripe=Izveidojiet klientu joslā
 CreateCardOnStripe=Izveidojiet karti joslā
+CreateBANOnStripe=Izveidojiet banku vietnē Stripe
 ShowInStripe=Rādīt joslā
 StripeUserAccountForActions=Lietotāja konts, lai izmantotu e-pasta paziņojumu par dažiem Stripe notikumiem (Stripe izmaksas)
 StripePayoutList=Svītru izmaksu saraksts
@@ -69,3 +70,5 @@ ToOfferALinkForLiveWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IP
 PaymentWillBeRecordedForNextPeriod=Maksājums tiks reģistrēts par nākamo periodu.
 ClickHereToTryAgain=<a href="%s">Noklikšķiniet šeit, lai mēģinātu vēlreiz ...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Stingro klientu autentifikācijas noteikumu dēļ karte jāizveido no Stripe biroja. Jūs varat noklikšķināt šeit, lai ieslēgtu Stripe klientu ierakstu: %s
+TERMINAL_LOCATION=Termināļu atrašanās vieta (adrese).
+RequestDirectDebitWithStripe=Pieprasiet tiešo debetu, izmantojot Stripe

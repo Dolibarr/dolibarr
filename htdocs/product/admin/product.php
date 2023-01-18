@@ -106,8 +106,8 @@ if ($action == 'other' && GETPOST('value_PRODUIT_MULTIPRICES_LIMIT') > 0) {
 }
 if ($action == 'other') {
 	$princingrules = GETPOST('princingrule', 'alpha');
-	foreach ($select_pricing_rules as $rule => $label) { // Loop on each possible mode
-		if ($rule == $princingrules) { // We are on selected rule, we enable it
+	foreach ($select_pricing_rules as $tmprule => $tmplabel) { // Loop on each possible mode
+		if ($tmprule == $princingrules) { // We are on selected rule, we enable it
 			if ($princingrules == 'PRODUCT_PRICE_UNIQ') { // For this case, we disable entries manually
 				$res = dolibarr_set_const($db, 'PRODUIT_MULTIPRICES', 0, 'chaine', 0, '', $conf->entity);
 				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY', 0, 'chaine', 0, '', $conf->entity);
@@ -119,10 +119,9 @@ if ($action == 'other') {
 					$res = dolibarr_set_const($db, $rulesselected, 1, 'chaine', 0, '', $conf->entity);
 				}
 			}
-		} else // We clear this mode
-		{
-			if (strpos($rule, '&') === false) {
-				$res = dolibarr_set_const($db, $rule, 0, 'chaine', 0, '', $conf->entity);
+		} else { // We clear this mode
+			if (strpos($tmprule, '&') === false) {
+				$res = dolibarr_set_const($db, $tmprule, 0, 'chaine', 0, '', $conf->entity);
 			}
 		}
 	}
