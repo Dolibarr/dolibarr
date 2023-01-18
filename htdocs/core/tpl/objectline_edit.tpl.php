@@ -111,7 +111,7 @@ $coldisplay++;
 			?>
 			</a>
 			<?php
-			echo ' - <input type="text" class="flat" name="product_label" value="'.nl2br($label) . '">';
+			echo ' - <input type="text" class="flat" name="product_label" value="'.$label. '">';
 			print '<input type="hidden" id="product_id" name="productid" value="'.(!empty($line->fk_product) ? $line->fk_product : 0).'">';
 			print '<input type="hidden" id="update_label" name="update_label" value="1">';
 		} else {
