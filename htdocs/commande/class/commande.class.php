@@ -99,8 +99,15 @@ class Commande extends CommonOrder
 
 	/**
 	 * @var string Thirdparty ref of order
+	 * @deprecated
+	 * @see ref_customer
 	 */
 	public $ref_client;
+
+	/**
+	 * @var string Thirdparty ref of order
+	 */
+	public $ref_customer;
 
 	/**
 	 * @var int Contact ID
@@ -1236,6 +1243,7 @@ class Commande extends CommonOrder
 		$this->date_validation    = '';
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) {
 			$this->ref_client = '';
+			$this->ref_customer = '';
 		}
 
 		// Do not clone ref_ext
@@ -1372,10 +1380,11 @@ class Commande extends CommonOrder
 		$this->fk_delivery_address  = $object->fk_delivery_address;
 		$this->contact_id = $object->contact_id;
 		$this->ref_client           = $object->ref_client;
+		$this->ref_customer = $object->ref_client;
 
 		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN)) {
-			$this->note_private         = $object->note_private;
-			$this->note_public          = $object->note_public;
+			$this->note_private = $object->note_private;
+			$this->note_public = $object->note_public;
 		}
 
 		$this->origin = $object->element;
@@ -1391,16 +1400,16 @@ class Commande extends CommonOrder
 			}
 
 			if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) {
-					$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_commande);
-					$this->fk_multicurrency = $tmparray[0];
-					$this->multicurrency_tx = $tmparray[1];
+				$tmparray = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date_commande);
+				$this->fk_multicurrency = $tmparray[0];
+				$this->multicurrency_tx = $tmparray[1];
 			} else {
-					$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
+				$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 			}
 			if (empty($this->fk_multicurrency)) {
-					$this->multicurrency_code = $conf->currency;
-					$this->fk_multicurrency = 0;
-					$this->multicurrency_tx = 1;
+				$this->multicurrency_code = $conf->currency;
+				$this->fk_multicurrency = 0;
+				$this->multicurrency_tx = 1;
 			}
 		}
 
@@ -1889,7 +1898,7 @@ class Commande extends CommonOrder
 				$this->ref = $obj->ref;
 				$this->ref_client = $obj->ref_client;
 				$this->ref_customer = $obj->ref_client;
-				$this->ref_ext				= $obj->ref_ext;
+				$this->ref_ext = $obj->ref_ext;
 
 				$this->socid = $obj->fk_soc;
 				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
@@ -2938,6 +2947,7 @@ class Commande extends CommonOrder
 			if (!$error) {
 				$this->oldcopy = clone $this;
 				$this->ref_client = $ref_client;
+				$this->ref_customer = $ref_client;
 			}
 
 			if (!$notrigger && empty($error)) {
@@ -3323,8 +3333,12 @@ class Commande extends CommonOrder
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
 		}
-		if (isset($this->ref_client)) {
+		if (isset($this->ref_customer)) {
+			$this->ref_client = trim($this->ref_customer);
+			$this->ref_customer = trim($this->ref_customer);
+		} elseif (isset($this->ref_client)) {
 			$this->ref_client = trim($this->ref_client);
+			$this->ref_customer = trim($this->ref_client);
 		}
 		if (isset($this->note) || isset($this->note_private)) {
 			$this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note));
@@ -3347,7 +3361,7 @@ class Commande extends CommonOrder
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET";
 
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
-		$sql .= " ref_client=".(isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null").",";
+		$sql .= " ref_client=".(isset($this->ref_customer) ? "'".$this->db->escape($this->ref_customer)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " fk_soc=".(isset($this->socid) ? $this->socid : "null").",";
 		$sql .= " date_commande=".(strval($this->date_commande) != '' ? "'".$this->db->idate($this->date_commande)."'" : 'null').",";
@@ -3760,7 +3774,7 @@ class Commande extends CommonOrder
 
 		$label = '';
 
-		if ($user->rights->commande->lire) {
+		if ($user->hasRight('commande', 'lire')) {
 			$label = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Order").'</u>';
 			if (isset($this->statut)) {
 				$label .= ' '.$this->getLibStatut(5);
@@ -3785,7 +3799,7 @@ class Commande extends CommonOrder
 		}
 
 		$linkclose = '';
-		if (empty($notooltip) && $user->rights->commande->lire) {
+		if (empty($notooltip) && $user->hasRight('commande', 'lire')) {
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 				$label = $langs->trans("Order");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
