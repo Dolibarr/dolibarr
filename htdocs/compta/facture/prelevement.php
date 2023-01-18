@@ -742,8 +742,8 @@ if ($object->id > 0) {
 				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 				print '</form>';
 
-				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT_SHOW_BUTTON)) {
-					// TODO Replace this with a checkbox for each payment mode: "Send request to PaymentModeManager immediatly..."
+				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON)) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
+					// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediatly..."
 					print "<br>";
 					//add stripe sepa button
 					$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
