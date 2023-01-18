@@ -1858,7 +1858,7 @@ class Commande extends CommonOrder
 		$sql .= ', c.fk_shipping_method';
 		$sql .= ', c.fk_warehouse';
 		$sql .= ', c.fk_projet as fk_project, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
-		$sql .= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.model_pdf, c.last_main_doc, c.fk_delivery_address, c.extraparams';
+		$sql .= ', c.note_private, c.note_public, c.ref_client as ref_customer, c.ref_ext, c.model_pdf, c.last_main_doc, c.fk_delivery_address, c.extraparams';
 		$sql .= ', c.fk_incoterms, c.location_incoterms';
 		$sql .= ", c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva, c.multicurrency_total_ttc";
 		$sql .= ", c.module_source, c.pos_source";
@@ -1896,8 +1896,8 @@ class Commande extends CommonOrder
 				$this->entity = $obj->entity;
 
 				$this->ref = $obj->ref;
-				$this->ref_client = $obj->ref_client;
-				$this->ref_customer = $obj->ref_client;
+				$this->ref_client = $obj->ref_customer;
+				$this->ref_customer = $obj->ref_customer;
 				$this->ref_ext = $obj->ref_ext;
 
 				$this->socid = $obj->fk_soc;
@@ -2921,23 +2921,23 @@ class Commande extends CommonOrder
 	 *	Set customer ref
 	 *
 	 *	@param      User	$user           User that make change
-	 *	@param      string	$ref_client     Customer ref
+	 *	@param      string	$ref_customer   Customer ref
 	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return     int             		<0 if KO, >0 if OK
 	 */
-	public function set_ref_client($user, $ref_client, $notrigger = 0)
+	public function set_ref_client($user, $ref_customer, $notrigger = 0)
 	{
 		// phpcs:enable
-		if ($user->rights->commande->creer) {
+		if ($user->hasRight('commande', 'creer')) {
 			$error = 0;
 
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET';
-			$sql .= ' ref_client = '.(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
+			$sql .= ' ref_client = '.(empty($ref_customer) ? 'NULL' : "'".$this->db->escape($ref_customer)."'");
 			$sql .= ' WHERE rowid = '.((int) $this->id);
 
-			dol_syslog(__METHOD__.' this->id='.$this->id.', ref_client='.$ref_client, LOG_DEBUG);
+			dol_syslog(__METHOD__.' this->id='.$this->id.', ref_client='.$ref_customer, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->errors[] = $this->db->error();
@@ -2946,8 +2946,8 @@ class Commande extends CommonOrder
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->ref_client = $ref_client;
-				$this->ref_customer = $ref_client;
+				$this->ref_client = $ref_customer;
+				$this->ref_customer = $ref_customer;
 			}
 
 			if (!$notrigger && empty($error)) {

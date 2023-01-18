@@ -81,8 +81,8 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/commande/list.php?restore_lastsearch_valu
 
 $morehtmlref = '<div class="refidno">';
 // Ref customer
-$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', 0, 1);
+$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1);
 // Thirdparty
 $morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 // Project

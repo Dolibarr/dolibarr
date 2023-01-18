@@ -1463,7 +1463,7 @@ if ($resql) {
 		$generic_commande->date = $db->jdate($obj->date_commande);
 		$generic_commande->date_livraison = $db->jdate($obj->date_delivery); // deprecated
 		$generic_commande->delivery_date = $db->jdate($obj->date_delivery);
-		$generic_commande->ref_client = $obj->ref_client;
+		$generic_commande->ref_customer = $obj->ref_client;
 		$generic_commande->total_ht = $obj->c_total_ht;
 		$generic_commande->total_tva = $obj->c_total_tva;
 		$generic_commande->total_ttc = $obj->c_total_ttc;

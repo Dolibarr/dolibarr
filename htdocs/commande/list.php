@@ -359,7 +359,7 @@ if (empty($reshook)) {
 				$objecttmp->fk_project = $cmd->fk_project;
 				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
 				if (empty($createbills_onebythird)) {
-					$objecttmp->ref_client = $cmd->ref_client;
+					$objecttmp->ref_customer = $cmd->ref_customer;
 				}
 
 				$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
@@ -1973,7 +1973,7 @@ if ($resql) {
 		$generic_commande->billed = $obj->billed;
 		$generic_commande->date = $db->jdate($obj->date_commande);
 		$generic_commande->delivery_date = $db->jdate($obj->date_delivery);
-		$generic_commande->ref_client = $obj->ref_client;
+		$generic_commande->ref_customer = $obj->ref_client;
 		$generic_commande->total_ht = $obj->total_ht;
 		$generic_commande->total_tva = $obj->total_tva;
 		$generic_commande->total_ttc = $obj->total_ttc;
