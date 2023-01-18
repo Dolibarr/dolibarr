@@ -1151,6 +1151,7 @@ if ($object->id > 0) {
 					print $obj->qty_view;	// qty found
 					print '</td>';
 				}
+				print '<td class="nowraponall right">';
 				if ($obj->fk_movement > 0) {
 					$stockmovment = new MouvementStock($db);
 					$stockmovment->fetch($obj->fk_movement);
