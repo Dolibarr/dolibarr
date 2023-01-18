@@ -742,7 +742,7 @@ if ($object->id > 0) {
 				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
 				print '</form>';
 
-				if (!empty($conf->global->STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON)) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
+				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
 					// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediatly..."
 					print "<br>";
 					//add stripe sepa button
@@ -781,14 +781,14 @@ if ($object->id > 0) {
 
 	if ($type == 'bank-transfer') {
 		print '<div class="opacitymedium">'.$langs->trans("DoCreditTransferBeforePayments");
-		if (isModEnabled('stripe')) {
+		if (isModEnabled('stripe') && getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 			print ' '.$langs->trans("DoStandingOrdersBeforePayments2");
 		}
 		print ' '.$langs->trans("DoStandingOrdersBeforePayments3");
 		print '</div><br>';
 	} else {
 		print '<div class="opacitymedium">'.$langs->trans("DoStandingOrdersBeforePayments");
-		if (isModEnabled('stripe')) {
+		if (isModEnabled('stripe') && getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 			print ' '.$langs->trans("DoStandingOrdersBeforePayments2");
 		}
 		print ' '.$langs->trans("DoStandingOrdersBeforePayments3");
