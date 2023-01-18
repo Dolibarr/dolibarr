@@ -1299,18 +1299,49 @@ abstract class CommonInvoice extends CommonObject
 											}
 										}
 
-										$object = $invoice;
+										$object = $this;
 
-										$actioncode = '';
-										$extraparams = '';
+										// Send emails
+										$labeltouse = 'InvoicePaymentSuccess';
+										$sendemailtocustomer = 1;
+
+										if (empty($charge) || $charge->status == 'failed') {
+											$labeltouse = 'InvoicePaymentFailure';
+											if ($noemailtocustomeriferror) {
+												$sendemailtocustomer = 0;
+											}		// $noemailtocustomeriferror is set when error already reported on myaccount screen
+										}
+
+										// Track an event
+										if (empty($charge) || $charge->status == 'failed') {
+											$actioncode = 'PAYMENT_STRIPE_KO';
+											$extraparams = $stripefailurecode;
+											$extraparams .= (($extraparams && $stripefailuremessage) ? ' - ' : '') . $stripefailuremessage;
+											$extraparams .= (($extraparams && $stripefailuredeclinecode) ? ' - ' : '') . $stripefailuredeclinecode;
+										} else {
+											$actioncode = 'PAYMENT_STRIPE_OK';
+											$extraparams = '';
+										}
 									} else {
 										$error++;
 										$errorforinvoice++;
 										dol_syslog("No direct debit payment method found for this stripe customer " . $customer->id, LOG_WARNING);
 										$this->errors[] = 'Failed to get direct debit payment method for stripe customer = ' . $customer->id;
-										$object = $invoice;
 
-										$actioncode = '';
+										$labeltouse = 'InvoicePaymentFailure';
+										$sendemailtocustomer = 1;
+										if ($noemailtocustomeriferror) {
+											$sendemailtocustomer = 0;
+										}		// $noemailtocustomeriferror is set when error already reported on myaccount screen
+
+										$description = 'Failed to find or use the payment mode - no credit card defined for the customer account';
+										$stripefailurecode = 'BADPAYMENTMODE';
+										$stripefailuremessage = 'Failed to find or use the payment mode - no credit card defined for the customer account';
+										$postactionmessages[] = $description . ' (' . $stripearrayofkeys['publishable_key'] . ')';
+
+										$object = $this;
+
+										$actioncode = 'PAYMENT_STRIPE_KO';
 										$extraparams = '';
 									}
 								} else {
@@ -1322,7 +1353,7 @@ abstract class CommonInvoice extends CommonObject
 									$stripefailurecode = '';
 									$stripefailuremessage = '';
 
-									$object = $invoice;
+									$object = $this;
 
 									$actioncode = '';
 									$extraparams = '';
@@ -1349,7 +1380,7 @@ abstract class CommonInvoice extends CommonObject
 								$stripefailuremessage = 'Failed to find or use your payment mode (no payment mode for this customer id)';
 								$postactionmessages = [];
 
-								$object = $invoice;
+								$object = $this;
 
 								$actioncode = 'PAYMENT_STRIPE_KO';
 								$extraparams = '';
