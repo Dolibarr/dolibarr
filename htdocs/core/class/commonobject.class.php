@@ -236,6 +236,11 @@ abstract class CommonObject
 	public $ref;
 
 	/**
+	 * @var string The object's old reference before update
+	 */
+	public $oldref;
+
+	/**
 	 * @var string An external reference for the object
 	 */
 	public $ref_ext;

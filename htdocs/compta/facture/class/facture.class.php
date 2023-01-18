@@ -1133,11 +1133,11 @@ class Facture extends CommonInvoice
 		$this->fetch_optionals();
 
 		if (!empty($this->array_options)) {
-					$facture->array_options = $this->array_options;
+			$facture->array_options = $this->array_options;
 		}
 
 		foreach ($this->lines as &$line) {
-					$line->fetch_optionals(); //fetch extrafields
+			$line->fetch_optionals(); //fetch extrafields
 		}
 
 		$facture->fk_facture_source = $this->fk_facture_source;
@@ -1259,6 +1259,7 @@ class Facture extends CommonInvoice
 		$object->date_modification = '';
 		$object->date_validation    = '';
 		$object->ref_client         = '';
+		$object->ref_customer = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
 		if ($conf->global->MAIN_DONT_KEEP_NOTE_ON_CLONING == 1) {
@@ -1405,8 +1406,8 @@ class Facture extends CommonInvoice
 			$line->multicurrency_total_ttc = $object->lines[$i]->multicurrency_total_ttc;
 
 			$line->fk_fournprice = $object->lines[$i]->fk_fournprice;
-			$marginInfos			= getMarginInfos($object->lines[$i]->subprice, $object->lines[$i]->remise_percent, $object->lines[$i]->tva_tx, $object->lines[$i]->localtax1_tx, $object->lines[$i]->localtax2_tx, $object->lines[$i]->fk_fournprice, $object->lines[$i]->pa_ht);
-			$line->pa_ht			= $marginInfos[0];
+			$marginInfos = getMarginInfos($object->lines[$i]->subprice, $object->lines[$i]->remise_percent, $object->lines[$i]->tva_tx, $object->lines[$i]->localtax1_tx, $object->lines[$i]->localtax2_tx, $object->lines[$i]->fk_fournprice, $object->lines[$i]->pa_ht);
+			$line->pa_ht = $marginInfos[0];
 
 			// get extrafields from original line
 			$object->lines[$i]->fetch_optionals();
