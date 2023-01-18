@@ -510,9 +510,10 @@ class Subscription extends CommonObject
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array		$arraydata				Array of data
 	 *  @return		string								HTML Code for Kanban thumb.
 	 */
-	public function getKanbanView($option = '')
+	public function getKanbanView($option = '', $arraydata = null)
 	{
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
