@@ -445,6 +445,7 @@ if (empty($reshook)) {
 						// Note that $action and $object may be modified by hook
 						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action);
 						if ($reshook < 0) {
+                            setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 							$error++;
 						}
 					} else {
