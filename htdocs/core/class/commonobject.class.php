@@ -593,6 +593,15 @@ abstract class CommonObject
 	protected $labelStatus;
 	protected $labelStatusShort;
 
+	/**
+	 * @var array nb used in load_stateboard
+	 */
+	public $nb = array();
+
+	/**
+	 * @var string output
+	 */
+	public $output;
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
