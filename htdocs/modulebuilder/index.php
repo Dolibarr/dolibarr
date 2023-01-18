@@ -1359,6 +1359,8 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				$addfieldentry['arrayofkeyval'] = json_decode($addfieldentry['arrayofkeyval'], true);
 			}
 		}
+	} else {
+		$addfieldentry = array();
 	}
 
 	/*if (GETPOST('regeneratemissing'))
