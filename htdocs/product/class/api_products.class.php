@@ -435,7 +435,19 @@ class Products extends DolibarrApi
 		global $user;
 		$user = DolibarrApiAccess::$user;
 
-		return $this->product->delete(DolibarrApiAccess::$user);
+		$res = $this->product->delete(DolibarrApiAccess::$user);
+		if ($res < 0) {
+			throw new RestException(500, "Can't delete, error occurs");
+		} elseif ($res == 0) {
+			throw new RestException(409, "Can't delete, that product is probably used");
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Object deleted'
+			)
+		);
 	}
 
 	/**
@@ -462,7 +474,7 @@ class Products extends DolibarrApi
 
 		$childsArbo = $this->product->getChildsArbo($id, 1);
 
-		$keys = array('rowid', 'qty', 'fk_product_type', 'label', 'incdec', 'ref');
+		$keys = array('rowid', 'qty', 'fk_product_type', 'label', 'ref');
 		$childs = array();
 		foreach ($childsArbo as $values) {
 			$childs[] = array_combine($keys, $values);
@@ -479,7 +491,6 @@ class Products extends DolibarrApi
 	 * @param  int $id            Id of parent product/service
 	 * @param  int $subproduct_id Id of child product/service
 	 * @param  int $qty           Quantity
-	 * @param  int $incdec        1=Increase/decrease stock of child when parent stock increase/decrease
 	 * @return int
 	 *
 	 * @throws RestException
@@ -488,7 +499,7 @@ class Products extends DolibarrApi
 	 *
 	 * @url POST {id}/subproducts/add
 	 */
-	public function addSubproducts($id, $subproduct_id, $qty, $incdec = 1)
+	public function addSubproducts($id, $subproduct_id, $qty)
 	{
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
 			throw new RestException(401);
@@ -498,7 +509,7 @@ class Products extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->product->add_sousproduit($id, $subproduct_id, $qty, $incdec);
+		$result = $this->product->add_sousproduit($id, $subproduct_id, $qty);
 		if ($result <= 0) {
 			throw new RestException(500, "Error adding product child");
 		}
@@ -2029,7 +2040,7 @@ class Products extends DolibarrApi
 		if ($includesubproducts) {
 			$childsArbo = $this->product->getChildsArbo($id, 1);
 
-			$keys = array('rowid', 'qty', 'fk_product_type', 'label', 'incdec');
+			$keys = array('rowid', 'qty', 'fk_product_type', 'label', 'ref');
 			$childs = array();
 			foreach ($childsArbo as $values) {
 				$childs[] = array_combine($keys, $values);

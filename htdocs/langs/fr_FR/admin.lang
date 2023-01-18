@@ -2077,6 +2077,7 @@ CodeLastResult=Dernier code de retour
 NbOfEmailsInInbox=Nombre de courriels dans le répertoire source
 LoadThirdPartyFromName=Charger le Tiers en cherchant sur %s (chargement uniquement)
 LoadThirdPartyFromNameOrCreate=Charger le Tiers en cherchant sur %s (créer si non trouvé)
+LoadContactFromEmailOrCreate=Charger le Contact en cherchant sur %s (créer si non trouvé)
 WithDolTrackingID=Message d'une conversation initiée par un premier mail envoyé depuis Dolibarr
 WithoutDolTrackingID=Message d'une conversation initiée par un premier e-mail NON envoyé depuis Dolibarr
 WithDolTrackingIDInMsgId=Message envoyé depuis Dolibarr

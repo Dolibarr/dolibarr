@@ -914,7 +914,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify')) {
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
 			} else {
-				dol_print_error($db);
+				setEventMessages($db->error(), null, 'errors');
 			}
 		}
 	}

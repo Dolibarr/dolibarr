@@ -405,7 +405,7 @@ class modProduct extends DolibarrModules
 			if (!empty($conf->barcode->enabled)) {
 				$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
 			}
-			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('pa.qty'=>'Qty', 'pa.incdec'=>'ComposedProductIncDecStock'));
+			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('pa.qty'=>'Qty'));
 			$this->export_TypeFields_array[$r] = array(
 				'p.ref'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.url'=>"Text",
 				$alias_product_perentity . '.accountancy_code_sell'=>"Text", $alias_product_perentity . '.accountancy_code_sell_intra'=>"Text", $alias_product_perentity . '.accountancy_code_sell_export'=>"Text",
@@ -437,7 +437,7 @@ class modProduct extends DolibarrModules
 			if (!empty($conf->barcode->enabled)) {
 				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'virtualproduct'));
 			}
-			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('pa.qty'=>"subproduct", 'pa.incdec'=>'subproduct'));
+			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('pa.qty'=>"subproduct"));
 			$keyforselect = 'product';
 			$keyforelement = 'product';
 			$keyforaliasextra = 'extra';
@@ -859,7 +859,7 @@ class modProduct extends DolibarrModules
 				));
 			}
 
-			$this->import_updatekeys_array[$r] = array('sp.fk_product'=>'ProductOrService', 'sp.ref_fourn'=>'SupplierRef', 'sp.fk_soc'=>'Supplier');
+			$this->import_updatekeys_array[$r] = array('sp.fk_product'=>'ProductOrService', 'sp.ref_fourn'=>'SupplierRef', 'sp.fk_soc'=>'Supplier', 'sp.quantity'=>"QtyMin");
 		}
 
 		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {

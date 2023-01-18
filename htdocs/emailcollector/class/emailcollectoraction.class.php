@@ -85,7 +85,7 @@ class EmailCollectorAction extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id",),
 		'fk_emailcollector' => array('type'=>'integer', 'label'=>'Id of emailcollector', 'foreignkey'=>'emailcollector.rowid'),
 		'type' => array('type'=>'varchar(128)', 'label'=>'Type', 'enabled'=>1, 'visible'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1),
-		'actionparam' => array('type'=>'varchar(255)', 'label'=>'ParamForAction', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>-1),
+		'actionparam' => array('type'=>'text', 'label'=>'ParamForAction', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>-1),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>500, 'notnull'=>1,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>501, 'notnull'=>1,),
 		'fk_user_creat' => array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>510, 'notnull'=>1, 'foreignkey'=>'llx_user.rowid',),
@@ -233,7 +233,8 @@ class EmailCollectorAction extends CommonObject
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey])) {
-					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
+					//var_dump($key);
+					//var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -270,9 +271,9 @@ class EmailCollectorAction extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
-		}
+		// if ($result > 0 && !empty($this->table_element_line)) {
+		// 	$this->fetchLinesCommon();
+		// }
 		return $result;
 	}
 
@@ -389,7 +390,7 @@ class EmailCollectorAction extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('emailcollectoractiondao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

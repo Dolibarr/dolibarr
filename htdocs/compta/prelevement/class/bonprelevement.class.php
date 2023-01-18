@@ -452,9 +452,6 @@ class BonPrelevement extends CommonObject
 							dol_syslog(get_class($this)."::set_infocredit AddPaymentToBank Error ".$this->error);
 						}
 					}
-					//var_dump($paiement->amounts);
-					//var_dump($thirdpartyid);
-					//var_dump($cursoramounts);
 				}
 
 				// Update withdrawal line
@@ -1047,10 +1044,8 @@ class BonPrelevement extends CommonObject
 						$this->sepa_xml_pti_in_ctti        = (bool) $account->pti_in_ctti;
 						$this->emetteur_iban               = $account->iban;
 						$this->emetteur_bic                = $account->bic;
-
-						$this->emetteur_ics                = ($type == 'bank-transfer' ? $account->ics_transfer : $account->ics);
-
-						$this->raison_sociale              = $account->proprio;
+						$this->emetteur_ics = ($type == 'bank-transfer' ? $account->ics_transfer : $account->ics);
+						$this->raison_sociale = $account->proprio;
 					}
 
 					$this->factures = $factures_prev_id;
@@ -1060,8 +1055,6 @@ class BonPrelevement extends CommonObject
 					// This also set the property $this->total with amount that is included into file
 					$result = $this->generate($format, $executiondate, $type);
 					if ($result < 0) {
-						/*var_dump($this->error);
-						var_dump($this->invoice_in_error); */
 						$error++;
 					}
 				}
@@ -1687,7 +1680,7 @@ class BonPrelevement extends CommonObject
 
 		fclose($this->file);
 		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($this->file, octdec($conf->global->MAIN_UMASK));
+			@chmod($this->filename, octdec($conf->global->MAIN_UMASK));
 		}
 
 		return $result;
@@ -2202,7 +2195,8 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '			</CdtrSchmeId>'.$CrLf;*/
 			}
 		} else {
-			fputs($this->file, 'INCORRECT EMETTEUR '.$XML_SEPA_INFO.$CrLf);
+			fputs($this->file, 'INCORRECT EMETTEUR '.$this->raison_sociale.$CrLf);
+			$XML_SEPA_INFO = '';
 		}
 		return $XML_SEPA_INFO;
 	}

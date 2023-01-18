@@ -1911,7 +1911,7 @@ if ($resql) {
 		// Note public
 		if (!empty($arrayfields['c.note_public']['checked'])) {
 			print '<td align="center" class="nowrap">';
-			print dol_escape_htmltag($obj->note_public);
+			print dol_string_nohtmltag($obj->note_public);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1921,7 +1921,7 @@ if ($resql) {
 		// Note private
 		if (!empty($arrayfields['c.note_private']['checked'])) {
 			print '<td align="center" class="nowrap">';
-			print dol_escape_htmltag($obj->note_private);
+			print dol_string_nohtmltag($obj->note_private);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
