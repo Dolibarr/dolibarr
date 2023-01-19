@@ -219,7 +219,8 @@ $morecss = array();
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
 $sql .= $object->getFieldList('t');
-$sql .= ', '.$userstatic->getFieldList('u');
+$sql .= ',';
+$sql .= $userstatic->getFieldList('u');
 $sql .= ',u.email, u.statut';
 $sql .= ',j.rowid, j.label as job_label';
 // Add fields from extrafields
