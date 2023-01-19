@@ -367,6 +367,7 @@ $arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
+print '<main class="ticketlargemargin">';
 print '<div class="ticketpublicarea">';
 
 if ($action != "infos_success") {
@@ -397,9 +398,12 @@ if ($action != "infos_success") {
 }
 
 print '</div>';
+print '</main>';
 
 // End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 1, $suffix, $object);
+print '<footer class="center">';
+htmlPrintOnlineCompanyFooter($mysoc, $langs);
+print '</footer>';
 
 llxFooter('', 'public');
 
