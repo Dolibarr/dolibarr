@@ -58,6 +58,11 @@ if (!$sortorder) {
 $mode = GETPOST("mode");
 $filter = GETPOST("filter");
 $search_name = GETPOST("search_name", 'alpha');
+$search_subprice = GETPOST("search_subprice", 'alpha');
+$search_qty = GETPOST("search_name", 'alpha');
+$search_total_ht = GETPOST("search_total_ht", 'alpha');
+$search_total_tva = GETPOST("search_total_tva", 'alpha');
+$search_total_ttc = GETPOST("search_total_ttc", 'alpha');
 $search_contract = GETPOST("search_contract", 'alpha');
 $search_service = GETPOST("search_service", 'alpha');
 $search_status = GETPOST("search_status", 'alpha');
@@ -180,6 +185,11 @@ if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
 		$search_product_category = 0;
 		$search_name = "";
+		$search_subprice = "";
+		$search_qty = "";
+		$search_total_ht = "";
+		$search_total_tva = "";
+		$search_total_ttc = "";
 		$search_contract = "";
 		$search_service = "";
 		$search_status = -1;
@@ -280,8 +290,23 @@ if ($filter == "expired") {
 if ($filter == "notexpired") {
 	$sql .= " AND cd.date_fin_validite >= '".$db->idate($now)."'";
 }
+if ($search_subprice) {
+	$sql .= natural_search("cd.subprice", $search_subprice, 1);
+}
+if ($search_qty) {
+	$sql .= natural_search("cd.total_qty", $search_qty, 1);
+}
+if ($search_total_ht) {
+	$sql .= natural_search("cd.total_ht", $search_total_ht, 1);
+}
+if ($search_total_tva) {
+	$sql .= natural_search("cd.total_tva", $search_total_tva, 1);
+}
+if ($search_total_ttc) {
+	$sql .= natural_search("cd.total_ttc", $search_total_ttc, 1);
+}
 if ($search_name) {
-	$sql .= natural_search("c.ref", $search_name);
+	$sql .= natural_search("s.nom", $search_name);
 }
 if ($search_contract) {
 	$sql .= natural_search("c.ref", $search_contract);
@@ -397,6 +422,21 @@ if ($search_contract) {
 }
 if ($search_name) {
 	$param .= '&amp;search_name='.urlencode($search_name);
+}
+if ($search_subprice) {
+	$param .= '&amp;search_subprice='.urlencode($search_subprice);
+}
+if ($search_qty) {
+	$param .= '&amp;search_qty='.urlencode($search_qty);
+}
+if ($search_total_ht) {
+	$param .= '&amp;search_total_ht='.urlencode($search_total_ht);
+}
+if ($search_total_tva) {
+	$param .= '&amp;search_total_tva='.urlencode($search_total_tva);
+}
+if ($search_total_ttc) {
+	$param .= '&amp;search_total_ttc='.urlencode($search_total_ttc);
 }
 if ($search_service) {
 	$param .= '&amp;search_service='.urlencode($search_service);
@@ -538,19 +578,23 @@ if (!empty($arrayfields['cd.tva_tx']['checked'])) {
 	print '</td>';
 }
 if (!empty($arrayfields['cd.subprice']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre right">';
+	print '<input type="text" class="flat maxwidth50 right" name="search_subprice" value="'.dol_escape_htmltag($search_subprice).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['cd.qty']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre right">';
+	print '<input type="text" class="flat maxwidth50 right" name="search_qty" value="'.dol_escape_htmltag($search_qty).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['cd.total_ht']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre right">';
+	print '<input type="text" class="flat maxwidth50" name="search_total_ht" value="'.dol_escape_htmltag($search_total_ht).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['cd.total_tva']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre right">';
+	print '<input type="text" class="flat maxwidth50" name="search_total_tva" value="'.dol_escape_htmltag($search_total_tva).'">';
 	print '</td>';
 }
 // Third party
@@ -647,13 +691,13 @@ if (!empty($arrayfields['cd.subprice']['checked'])) {
 	print_liste_field_titre($arrayfields['cd.subprice']['label'], $_SERVER["PHP_SELF"], "cd.subprice", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 }
 if (!empty($arrayfields['cd.qty']['checked'])) {
-	print_liste_field_titre($arrayfields['cd.qty']['label'], $_SERVER["PHP_SELF"], "cd.qty", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	print_liste_field_titre($arrayfields['cd.qty']['label'], $_SERVER["PHP_SELF"], "cd.qty", "", $param, '', $sortfield, $sortorder, 'right nowrap ');
 }
 if (!empty($arrayfields['cd.total_ht']['checked'])) {
-	print_liste_field_titre($arrayfields['cd.total_ht']['label'], $_SERVER["PHP_SELF"], "cd.total_ht", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	print_liste_field_titre($arrayfields['cd.total_ht']['label'], $_SERVER["PHP_SELF"], "cd.total_ht", "", $param, '', $sortfield, $sortorder, 'right nowrap ');
 }
 if (!empty($arrayfields['cd.total_tva']['checked'])) {
-	print_liste_field_titre($arrayfields['cd.total_tva']['label'], $_SERVER["PHP_SELF"], "cd.total_tva", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+	print_liste_field_titre($arrayfields['cd.total_tva']['label'], $_SERVER["PHP_SELF"], "cd.total_tva", "", $param, '', $sortfield, $sortorder, 'right nowrap ');
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, "", $sortfield, $sortorder);
