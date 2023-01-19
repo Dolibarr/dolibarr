@@ -1708,6 +1708,66 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 	}
 }
 
+//if (!$error && $massaction == 'clonetasks' && $user->rights->projet->creer) {
+if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $confirm == 'yes'))) {
+	$num = 0;
+
+	dol_include_once('/projet/class/task.class.php');
+
+	$origin_task = new Task($db);
+	$clone_task = new Task($db);
+
+	foreach (GETPOST('selected') as $task) {
+		$origin_task->fetch($task, $ref = '', $loadparentdata = 0);
+
+		$defaultref = '';
+		$obj = empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
+		if (!empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . $conf->global->PROJECT_TASK_ADDON . ".php")) {
+			require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . $conf->global->PROJECT_TASK_ADDON . '.php';
+			$modTask = new $obj;
+			$defaultref = $modTask->getNextValue(0, $clone_task);
+		}
+
+		if (!$error) {
+			$clone_task->fk_project = GETPOST('projectid', 'int');
+			$clone_task->ref = $defaultref;
+			$clone_task->label = $origin_task->label;
+			$clone_task->description = $origin_task->description;
+			$clone_task->planned_workload = $origin_task->planned_workload;
+			$clone_task->fk_task_parent = $origin_task->fk_task_parent;
+			$clone_task->date_c = dol_now();
+			$clone_task->date_start = $origin_task->date_start;
+			$clone_task->date_end = $origin_task->date_end;
+			$clone_task->progress = $origin_task->progress;
+
+			// Fill array 'array_options' with data from add form
+			$ret = $extrafields->setOptionalsFromPost(null, $clone_task);
+
+			$taskid = $clone_task->create($user);
+
+			if ($taskid > 0) {
+				$result = $clone_task->add_contact(GETPOST("userid", 'int'), 'TASKEXECUTIVE', 'internal');
+				$num++;
+			} else {
+				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					$langs->load("projects");
+					setEventMessages($langs->trans('NewTaskRefSuggested'), '', 'warnings');
+					$duplicate_code_error = true;
+				} else {
+					setEventMessages($clone_task->error, $clone_task->errors, 'errors');
+				}
+				$action = 'list';
+				$error++;
+			}
+		}
+	}
+
+	if (!$error) {
+		setEventMessage($langs->trans('NumberOfTasksCloned', $num));
+		header("Refresh: 1;URL=".DOL_URL_ROOT.'/projet/tasks.php?id=' . GETPOST('projectid', 'int'));
+	}
+}
+
 $parameters['toselect'] = (empty($toselect) ? array() : $toselect);
 $parameters['uploaddir'] = $uploaddir;
 $parameters['massaction'] = $massaction;
