@@ -63,23 +63,19 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
 
 // Sorting
 $sortfield = GETPOST('sortfield', 'aZ09comma');
-if (!$sortfield) {
-	$sortfield = "a.datec";
-}
-
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-if (!$sortorder) {
-	$sortorder = "ASC";
-}
-
-// Page
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
-
+if (!$sortorder) {
+	$sortorder = "ASC";
+}
+if (!$sortfield) {
+	$sortfield = "a.datec";
+}
 
 
 // Security check
@@ -110,14 +106,14 @@ $month = GETPOST("month", "int") ? GETPOST("month", "int") : date("m");
 $week = GETPOST("week", "int") ? GETPOST("week", "int") : date("W");
 $day = GETPOST("day", "int") ? GETPOST("day", "int") : date("d");
 $pid = GETPOSTISSET("search_projectid") ? GETPOST("search_projectid", "int", 3) : GETPOST("projectid", "int", 3);
-$status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'alpha') : GETPOST("status", 'alpha');
+$status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09');
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'alpha') : GETPOST("type", 'alpha');
 $maxprint = ((GETPOST("maxprint", 'int') != '') ? GETPOST("maxprint", 'int') : $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
-if (GETPOST('search_actioncode', 'array')) {
-	$actioncode = GETPOST('search_actioncode', 'array', 3);
+if (GETPOST('search_actioncode', 'array:aZ09')) {
+	$actioncode = GETPOST('search_actioncode', 'array:aZ09', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
 	}
@@ -321,7 +317,7 @@ if ($pid) {
 if ($type) {
 	$param .= "&search_type=".urlencode($type);
 }
-if ($mode == 'show_day' || $mode == 'show_week' || $mode == 'show_month' || $mode != 'show_peruser') {
+if ($mode != 'show_pertype') {
 	$param .= '&mode='.urlencode($mode);
 }
 if ($begin_h != '') {
@@ -356,12 +352,13 @@ $next_year  = $year + 1;
 $next_month = $month;
 $next_day   = $day;
 
-// Define firstdaytoshow and lastdaytoshow (warning: lastdaytoshow is last second to show + 1)
+// Define firstdaytoshow and lastdaytoshow. Warning: lastdaytoshow is last second to show + 1
+// $firstdaytoshow and lastdaytoshow become a gmt dates to use to search/compare because first_xxx are in tz idea and we used tzuserrel
 $firstdaytoshow = dol_mktime(0, 0, 0, $first_month, $first_day, $first_year, 'tzuserrel');
 $lastdaytoshow = dol_time_plus_duree($firstdaytoshow, 7, 'd');
 //print $firstday.'-'.$first_month.'-'.$first_year;
-//print dol_print_date($firstdaytoshow,'dayhour');
-//print dol_print_date($lastdaytoshow,'dayhour');
+//print dol_print_date($firstdaytoshow, 'dayhour', 'gmt');
+//print dol_print_date($lastdaytoshow,'dayhour', 'gmt');
 
 $max_day_in_month = date("t", dol_mktime(0, 0, 0, $month, 1, $year, 'gmt'));
 
@@ -477,7 +474,7 @@ if (empty($reshook)) {
 	$viewmode = $hookmanager->resPrint;
 }
 
-
+$newparam = '';
 $newcardbutton = '';
 if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create) {
 	$tmpforcreatebutton = dol_getdate(dol_now(), true);
@@ -592,12 +589,12 @@ if ($filtert > 0 || $usergroup > 0) {
 if ($mode == 'show_day') {
 	$sql .= " AND (";
 	$sql .= " (a.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year, 'tzuserrel'))."'";
-	$sql .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."')";
+	$sql .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year, 'tzuserrel'))."')";
 	$sql .= " OR ";
 	$sql .= " (a.datep2 BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year, 'tzuserrel'))."'";
-	$sql .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."')";
+	$sql .= " AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year, 'tzuserrel'))."')";
 	$sql .= " OR ";
-	$sql .= " (a.datep < '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."'";
+	$sql .= " (a.datep < '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year, 'tzuserrel'))."'";
 	$sql .= " AND a.datep2 > '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year, 'tzuserrel'))."')";
 	$sql .= ')';
 } else {
@@ -619,12 +616,14 @@ if ($type) {
 if ($status == '0') {
 	$sql .= " AND a.percent = 0";
 }
-if ($status == '-1') {
+if ($status === 'na') {
+	// Not applicable
 	$sql .= " AND a.percent = -1";
-}	// Not applicable
+}
 if ($status == '50') {
+	// Running already started
 	$sql .= " AND (a.percent > 0 AND a.percent < 100)";
-}	// Running already started
+}
 if ($status == 'done' || $status == '100') {
 	$sql .= " AND (a.percent = 100)";
 }
@@ -788,8 +787,9 @@ echo '<input type="hidden" name="newdate" id="newdate">';
 
 //print "begin_d=".$begin_d." end_d=".$end_d;
 
+echo '<div class="div-table-responsive">';
 
-echo '<table width="100%" class="nocellnopadd cal_month">';
+echo '<table class="centpercent nocellnopadd cal_month">';
 
 echo '<tr class="liste_titre">';
 echo '<td></td>';
@@ -847,10 +847,11 @@ foreach ($typeofevents as $typeofevent) {
 
 		// Show days of the current week
 		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
-		$tmparray = dol_getdate($curtime, 'fast');
-		$tmpday = $tmparray['mday'];
-		$tmpmonth = $tmparray['mon'];
-		$tmpyear = $tmparray['year'];
+		// $curtime is a gmt time, but we want the day, month, year in user TZ
+		$tmpday = dol_print_date($curtime, "%d", "tzuserrel");
+		$tmpmonth = dol_print_date($curtime, "%m", "tzuserrel");
+		$tmpyear = dol_print_date($curtime, "%Y", "tzuserrel");
+		//var_dump($curtime.' '.$tmpday.' '.$tmpmonth.' '.$tmpyear);
 
 		$style = 'cal_current_month';
 		if ($iter_day == 6) {
@@ -874,6 +875,8 @@ foreach ($typeofevents as $typeofevent) {
 
 echo "</table>\n";
 echo "<br>";
+
+echo '</div>';
 
 if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
 	$langs->load("commercial");
@@ -984,14 +987,14 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 
 	// We are in a particular day for $username, now we scan all events
 	foreach ($eventarray as $daykey => $notused) {
-		$annee = dol_print_date($daykey, '%Y');
-		$mois = dol_print_date($daykey, '%m');
-		$jour = dol_print_date($daykey, '%d');
+		$annee = dol_print_date($daykey, '%Y', 'tzuserrel');
+		$mois =  dol_print_date($daykey, '%m', 'tzuserrel');
+		$jour =  dol_print_date($daykey, '%d', 'tzuserrel');
 
-		if ($day == $jour && $month == $mois && $year == $annee) {	// Is it the day we are looking for when calling function ?
+		if ($day == $jour && (int) $month == (int) $mois && $year == $annee) {	// Is it the day we are looking for when calling function ?
 			// Scan all event for this date
 			foreach ($eventarray[$daykey] as $index => $event) {
-				//print $daykey.' '.$year.'-'.$month.'-'.$day.' -> '.$event->id.' '.$index.' '.$annee.'-'.$mois.'-'.$jour."<br>\n";
+				//print 'daykey='.$daykey.' '.$year.'-'.$month.'-'.$day.' -> '.$event->id.' '.$index.' '.$annee.'-'.$mois.'-'.$jour."<br>\n";
 				//var_dump($event);
 
 				$keysofuserassigned = array_keys($event->userassigned);
@@ -1173,7 +1176,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 		}
 	}
 
-	// Now output $casesX
+	// Now output $casesX from start hour to end hour
 	for ($h = $begin_h; $h < $end_h; $h++) {
 		$color1 = ''; $color2 = '';
 		$style1 = ''; $style2 = '';
@@ -1214,11 +1217,12 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 			}
 		}
 
-		$ids1 = ''; $ids2 = '';
-		if (count($cases1[$h]) && array_keys($cases1[$h])) {
+		$ids1 = '';
+		$ids2 = '';
+		if (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) && array_keys($cases1[$h])) {
 			$ids1 = join(',', array_keys($cases1[$h]));
 		}
-		if (count($cases2[$h]) && array_keys($cases2[$h])) {
+		if (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) && array_keys($cases2[$h])) {
 			$ids2 = join(',', array_keys($cases2[$h]));
 		}
 
@@ -1227,7 +1231,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 		} else {
 			echo '<td class="'.$style.' cal_peruser'.($var ? ' cal_impair '.$style.'_impair' : '').'">';
 		}
-		if (count($cases1[$h]) == 1) {	// only 1 event
+		if (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) == 1) {	// only 1 event
 			$output = array_slice($cases1[$h], 0, 1);
 			$title1 = $langs->trans("Ref").' '.$ids1.($title1 ? ' - '.$title1 : '');
 			if ($output[0]['string']) {
@@ -1236,12 +1240,12 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 			if ($output[0]['color']) {
 				$color1 = $output[0]['color'];
 			}
-		} elseif (count($cases1[$h]) > 1) {
+		} elseif (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) > 1) {
 			$title1 = $langs->trans("Ref").' '.$ids1.($title1 ? ' - '.$title1 : '');
 			$color1 = '222222';
 		}
 
-		if (count($cases2[$h]) == 1) {	// only 1 event
+		if (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) == 1) {	// only 1 event
 			$output = array_slice($cases2[$h], 0, 1);
 			$title2 = $langs->trans("Ref").' '.$ids2.($title2 ? ' - '.$title2 : '');
 			if ($output[0]['string']) {
@@ -1250,7 +1254,7 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 			if ($output[0]['color']) {
 				$color2 = $output[0]['color'];
 			}
-		} elseif (count($cases2[$h]) > 1) {
+		} elseif (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) > 1) {
 			$title2 = $langs->trans("Ref").' '.$ids2.($title2 ? ' - '.$title2 : '');
 			$color2 = '222222';
 		}
