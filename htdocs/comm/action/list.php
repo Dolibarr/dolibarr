@@ -795,9 +795,8 @@ if (!empty($arrayfields['a.tms']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 if (!empty($arrayfields['a.percent']['checked'])) {
-	print '<td class="liste_titre center">';
-	$formactions->form_select_status_action('formaction', $search_status, 1, 'search_status', 1, 2, 'minwidth100imp maxwidth125');
-	print ajax_combobox('selectsearch_status');
+	print '<td class="liste_titre right parentonrightofpage">';
+	$formactions->form_select_status_action('formaction', $search_status, 1, 'search_status', 1, 2, 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Action column
