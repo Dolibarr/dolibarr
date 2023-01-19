@@ -334,6 +334,9 @@ if ($resql) {
 	if ($num > 0) {
 		print '<tr class="liste_total">';
 		print '<td>'.$langs->trans("Total").'</td>';
+		if ($object->type == 'bank-transfer') {
+			print '<td>&nbsp;</td>';
+		}
 		print '<td>&nbsp;</td>';
 		print '<td class="right">';
 		//if ($totalinvoices != $object->amount) print img_warning("AmountOfFileDiffersFromSumOfInvoices");		// It is normal to have total that differs. For an amount of invoice of 100, request to pay may be 50 only.
