@@ -36,7 +36,7 @@ require_once __DIR__.'/class/booking.class.php';
 //dol_include_once('/othermodule/class/otherobject.class.php');
 
 // Load translation files required by the page
-$langs->loadLangs(array("bookcal@bookcal", "other"));
+$langs->loadLangs(array("agenda", "other"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
