@@ -21,7 +21,7 @@
 /**
  *     \file       htdocs/compta/prelevement/factures.php
  *     \ingroup    prelevement
- *     \brief      Page liste des factures prelevees
+ *     \brief      Page list of invoice paied by direct debit or credit transfer
  */
 
 // Load Dolibarr environment
@@ -174,6 +174,9 @@ if ($id > 0 || $ref) {
 // List of invoices
 $sql = "SELECT pf.rowid, p.type,";
 $sql .= " f.rowid as facid, f.ref as ref, f.total_ttc,";
+if ($object->type == 'bank-transfer') {
+	$sql .= " f.ref_supplier,";
+}
 $sql .= " s.rowid as socid, s.nom as name, pl.statut, pl.amount as amount_requested";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= ", ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -251,6 +254,9 @@ if ($resql) {
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Bill", $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
+	if ($object->type == 'bank-transfer') {
+		print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "f.ref_supplier", '', $param, '', $sortfield, $sortorder);
+	}
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AmountInvoice", $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -281,6 +287,12 @@ if ($resql) {
 		print "<td>";
 		print $invoicetmp->getNomUrl(1);
 		print "</td>\n";
+
+		if ($object->type == 'bank-transfer') {
+			print '<td>';
+			print dol_escape_htmltag($invoicetmp->ref_supplier);
+			print "</td>\n";
+		}
 
 		print '<td>';
 		print $thirdpartytmp->getNomUrl(1);
