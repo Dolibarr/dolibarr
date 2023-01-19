@@ -80,7 +80,7 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
-print '<div class="ticketpublicarea">';
+print '<main class="ticketpublicarea">';
 
 print '<p style="text-align: center">'.(getDolGlobalString("TICKET_PUBLIC_TEXT_HOME", '<span class="opacitymedium">'.$langs->trans("TicketPublicDesc")).'</span></p>').'</p>';
 print '<br>';
@@ -91,11 +91,12 @@ print '<a href="list.php'.(!empty($entity) && isModEnabled('multicompany')?'?ent
 print '<a href="view.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_display bigrounded">'.img_picto('', 'ticket', 'class="fa-15"').'<br>'.dol_escape_htmltag($langs->trans("ShowTicketWithTrackId")).'</div></a>';
 print '<div style="clear:both;"></div>';
 print '</div>';
-print '</div>';
+print '</main>';
 
 // End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix, $object);
-
+print '<footer class="center">';
+htmlPrintOnlineCompanyFooter($mysoc, $langs);
+print '</footer>';
 llxFooter('', 'public');
 
 $db->close();
