@@ -692,7 +692,7 @@ $contractstatic = new Contrat($db);
 $productstatic = new Product($db);
 
 $i = 0;
-$totalarray = array();
+$totalarray = array('nbfield'=>0);
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
