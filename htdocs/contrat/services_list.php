@@ -136,7 +136,7 @@ $arrayfields = array(
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1, 'position'=>90),
 	'cd.tva_tx'=>array('label'=>"VATRate", 'checked'=>-1, 'position'=>100),
 	'cd.subprice'=>array('label'=>"PriceUHT", 'checked'=>-1, 'position'=>105),
-	'cd.qty'=>array('label'=>"Qty", 'checked'=>-1, 'position'=>108),
+	'cd.qty'=>array('label'=>"Qty", 'checked'=>1, 'position'=>108),
 	'cd.total_ht'=>array('label'=>"TotalHT", 'checked'=>-1, 'position'=>109),
 	'cd.total_tva'=>array('label'=>"TotalVAT", 'checked'=>-1, 'position'=>110),
 	'cd.date_ouverture_prevue'=>array('label'=>"DateStartPlannedShort", 'checked'=>(($mode == "" || $mode == -1) || $mode == "0"), 'position'=>150),
