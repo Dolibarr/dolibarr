@@ -628,10 +628,11 @@ if ($mode == 'show_day') {
 if ($type) {
 	$sql .= " AND ca.id = ".((int) $type);
 }
+var_dump($status);
 if ($status == '0') {
 	$sql .= " AND a.percent = 0";
 }
-if ($status == '-1' || $status == 'na') {
+if ($status === 'na') {
 	// Not applicable
 	$sql .= " AND a.percent = -1";
 }
@@ -658,7 +659,7 @@ if ($filtert > 0 || $usergroup > 0) {
 }
 // Sort on date
 $sql .= ' ORDER BY fk_user_action, datep'; //fk_user_action
-
+print $sql;
 
 dol_syslog("comm/action/peruser.php", LOG_DEBUG);
 $resql = $db->query($sql);
