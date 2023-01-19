@@ -620,7 +620,6 @@ while ($i < $imaxinloop) {
 		// get info needed
 		$object->date_start = $obj->date_start;
 		$object->date_end = $obj->date_end;
-
 		$object->fk_job = $obj->job_label;
 
 		$userstatic->id = $obj->fk_user;
