@@ -122,7 +122,7 @@ class CompanyPaymentMode extends CommonObject
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>20),
 		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>25),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'Import key', 'enabled'=>1, 'visible'=>-2, 'position'=>105),
-	//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
+		//'aaa' =>array('type'=>'date', 'label'=>'Ending date', 'enabled'=>0, 'visible'=>-2, 'position'=>185),
 	);
 
 	/**
@@ -146,6 +146,18 @@ class CompanyPaymentMode extends CommonObject
 	public $number;
 	public $cle_rib;
 	public $bic;
+
+	/**
+	 * @var string iban
+	 * @deprecated
+	 * @see iban_prefix
+	 */
+	public $iban;
+
+	/**
+	 * iban_prefix
+	 * @var string
+	 */
 	public $iban_prefix;
 	public $domiciliation;
 	public $proprio;
@@ -255,8 +267,7 @@ class CompanyPaymentMode extends CommonObject
 
 		// Clear fields
 		$object->ref = "copy_of_".$object->ref;
-		$object->title = $langs->trans("CopyOf")." ".$object->title;
-		// ...
+		// $object->title = $langs->trans("CopyOf")." ".$object->title;
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
