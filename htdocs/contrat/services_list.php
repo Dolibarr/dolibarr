@@ -256,7 +256,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 if ($search_product_category > 0) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=cd.fk_product';
 }
-$sql .= " WHERE c.entity = ".$conf->entity;
+$sql .= " WHERE c.entity IN (".getEntity($object->element).")";
 $sql .= " AND c.rowid = cd.fk_contrat";
 if ($search_product_category > 0) {
 	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
@@ -281,13 +281,13 @@ if ($filter == "notexpired") {
 	$sql .= " AND cd.date_fin_validite >= '".$db->idate($now)."'";
 }
 if ($search_name) {
-	$sql .= " AND s.nom LIKE '%".$db->escape($search_name)."%'";
+	$sql .= natural_search("c.ref", $search_name);
 }
 if ($search_contract) {
-	$sql .= " AND c.ref LIKE '%".$db->escape($search_contract)."%' ";
+	$sql .= natural_search("c.ref", $search_contract);
 }
 if ($search_service) {
-	$sql .= " AND (p.ref LIKE '%".$db->escape($search_service)."%' OR p.description LIKE '%".$db->escape($search_service)."%' OR cd.description LIKE '%".$db->escape($search_service)."%')";
+	$sql .= natural_search(array("p.ref", "p.description", "cd.description"), $search_service);
 }
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
