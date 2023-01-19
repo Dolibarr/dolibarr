@@ -384,16 +384,12 @@ class CommandeFournisseur extends CommonOrder
 				return 0;
 			}
 
-			$thirdparty = new Societe($this->db);
-			$thirdparty->fetch($obj->fk_soc);
-
 			$this->id = $obj->rowid;
 			$this->entity = $obj->entity;
 
 			$this->ref = $obj->ref;
 			$this->ref_supplier = $obj->ref_supplier;
 			$this->socid = $obj->fk_soc;
-			$this->thirdparty = $thirdparty;
 			$this->fourn_id = $obj->fk_soc;
 			$this->statut				= $obj->fk_statut;
 			$this->status				= $obj->fk_statut;
@@ -838,6 +834,7 @@ class CommandeFournisseur extends CommonOrder
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $save_lastsearch_value = -1, $addlinktonotes = 0)
 	{
 		global $langs, $conf, $user, $hookmanager;
+		$this->fetch_thirdparty();
 
 		$result = '';
 
