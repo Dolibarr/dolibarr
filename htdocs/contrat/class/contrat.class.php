@@ -2979,7 +2979,7 @@ class ContratLigne extends CommonObjectLine
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>30, 'index'=>1),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
-		'qty' =>array('type'=>'integer', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35, 'isameasure'=>1),
+		'qty' =>array('type'=>'integer', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>35, 'isameasure'=>1),
 		'total_ht' =>array('type'=>'integer', 'label'=>'AmountHT', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>36, 'isameasure'=>1),
 		'total_tva' =>array('type'=>'integer', 'label'=>'AmountVAT', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>37, 'isameasure'=>1),
 		'total_ttc' =>array('type'=>'integer', 'label'=>'AmountTTC', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>38, 'isameasure'=>1),

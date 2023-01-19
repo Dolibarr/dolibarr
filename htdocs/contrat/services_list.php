@@ -137,7 +137,7 @@ $arrayfields = array(
 	'cd.tva_tx'=>array('label'=>"VATRate", 'checked'=>-1, 'position'=>100),
 	'cd.subprice'=>array('label'=>"PriceUHT", 'checked'=>-1, 'position'=>105),
 	'cd.qty'=>array('label'=>"Qty", 'checked'=>1, 'position'=>108),
-	'cd.total_ht'=>array('label'=>"TotalHT", 'checked'=>-1, 'position'=>109),
+	'cd.total_ht'=>array('label'=>"TotalHT", 'checked'=>-1, 'position'=>109, 'isameasure'=>1),
 	'cd.total_tva'=>array('label'=>"TotalVAT", 'checked'=>-1, 'position'=>110),
 	'cd.date_ouverture_prevue'=>array('label'=>"DateStartPlannedShort", 'checked'=>(($mode == "" || $mode == -1) || $mode == "0"), 'position'=>150),
 	'cd.date_ouverture'=>array('label'=>"DateStartRealShort", 'checked'=>(($mode == "" || $mode == -1) || $mode > 0), 'position'=>160),
@@ -670,7 +670,7 @@ if (!empty($arrayfields['cd.tms']['checked'])) {
 }
 if (!empty($arrayfields['status']['checked'])) {
 	// Status
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre right parentonrightofpage">';
 	$arrayofstatus = array(
 		'0'=>$langs->trans("ServiceStatusInitial"),
 		'4'=>$langs->trans("ServiceStatusRunning"),
@@ -678,7 +678,7 @@ if (!empty($arrayfields['status']['checked'])) {
 		'4&filter=expired'=>$langs->trans("ServiceStatusLate"),
 		'5'=>$langs->trans("ServiceStatusClosed")
 	);
-	print $form->selectarray('search_status', $arrayofstatus, (strstr($search_status, ',') ?-1 : $search_status), 1, 0, 0, '', 0, 0, 0, '', 'minwidth100imp maxwidth150');
+	print $form->selectarray('search_status', $arrayofstatus, (strstr($search_status, ',') ?-1 : $search_status), 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Action column
