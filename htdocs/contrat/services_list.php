@@ -737,7 +737,7 @@ $contractstatic = new Contrat($db);
 $productstatic = new Product($db);
 
 $i = 0;
-$totalarray = array('nbfield'=>0);
+$totalarray = array('nbfield'=>0, 'cd.qty'=>0, 'cd.total_ht'=>0, 'cd.total_tva'=>0);
 while ($i < min($num, $limit)) {
 	$obj = $db->fetch_object($resql);
 
@@ -819,6 +819,10 @@ while ($i < min($num, $limit)) {
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
+		if (!$i) {
+			$totalarray['pos'][$totalarray['nbfield']] = 'cd.qty';
+		}
+		$totalarray['val']['cd.qty'] += $obj->qty;
 	}
 	if (!empty($arrayfields['cd.total_ht']['checked'])) {
 		print '<td class="right nowraponall">';
