@@ -6476,6 +6476,18 @@ div.tabsElem a.tab {
 }
 .publicnewticketform {
 	/* margin-top: 25px !important; */
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: start;
+    align-items: stretch;
+}
+.publicnewticketform > header {
+	margin: 0px 0px 0px 0px;
+}
+.publicnewticketform > footer {
+	margin: auto 0px 0px 0px; /* Footer should be at bottom of screen */
+    padding-bottom: 10px;
 }
 .ticketlargemargin {
 	padding-left: 50px;
