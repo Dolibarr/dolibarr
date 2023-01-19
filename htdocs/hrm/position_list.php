@@ -73,6 +73,7 @@ $pagenext = $page + 1;
 // Initialize technical objects
 $object = new Position($db);
 $extrafields = new ExtraFields($db);
+$userstatic = new User($db);
 $diroutputmassaction = $conf->hrm->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('positionlist')); // Note that conf->hooks_modules contains array
 
@@ -218,6 +219,9 @@ $morecss = array();
 // --------------------------------------------------------------------
 $sql = 'SELECT ';
 $sql .= $object->getFieldList('t');
+$sql .= ', '.$userstatic->getFieldList('u');
+$sql .= ',u.email, u.statut';
+$sql .= ',j.rowid, j.label as job_label';
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -229,7 +233,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= preg_replace('/^,/', '', $hookmanager->resPrint);
 $sql = preg_replace('/,\s*$/', '', $sql);
-$sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
+$sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t, ".MAIN_DB_PREFIX.$userstatic->table_element." as u,".MAIN_DB_PREFIX."hrm_job as j";
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
 }
@@ -242,6 +246,8 @@ if ($object->ismultientitymanaged == 1) {
 } else {
 	$sql .= " WHERE 1 = 1";
 }
+$sql .= " AND t.fk_user = u.rowid";
+$sql .= " AND t.fk_job = j.rowid";
 foreach ($search as $key => $val) {
 	if (array_key_exists($key, $object->fields)) {
 		if ($key == 'status' && $search[$key] == -1) {
@@ -612,14 +618,18 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container">';
 		}
 		// get info needed
-
 		$object->date_start = $obj->date_start;
 		$object->date_end = $obj->date_end;
-		$job = new job($db);
-		$job->fetch($obj->fk_job);
-		$object->fk_job = $job->getNomUrl();
-		$userstatic = new User($db);
-		$userstatic->fetch($obj->fk_user);
+
+		$object->fk_job = $obj->job_label;
+
+		$userstatic->id = $obj->fk_user;
+		$userstatic->ref = $obj->fk_user;
+		$userstatic->firstname = $obj->firstname;
+		$userstatic->lastname = $obj->lastname;
+		$userstatic->email = $obj->email;
+		$userstatic->statut = $obj->statut;
+
 		$object->fk_user = $userstatic->getNomUrl(1);
 		// output kanban
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
