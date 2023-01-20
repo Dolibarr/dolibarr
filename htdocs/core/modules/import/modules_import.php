@@ -94,7 +94,7 @@ class ModeleImports
 		'fichinter' => 'intervention',
 		'holiday' => 'holiday',
 		'product' => 'product',
-		'productprice' => 'productprice',
+		'product_price' => 'productprice',
 		'product_fournisseur_price' => 'productsupplierprice',
 		'projet'  => 'project',
 		'propal' => 'propal',
