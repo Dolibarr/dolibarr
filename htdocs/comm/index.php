@@ -65,7 +65,7 @@ $max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 $now = dol_now();
 
 // Security check
-$socid = GETPOST("socid", 'int');
+//$socid = GETPOST("socid", 'int');
 if ($user->socid > 0) {
 	$action = '';
 	$id = $user->socid;
