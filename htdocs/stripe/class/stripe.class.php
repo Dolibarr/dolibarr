@@ -906,7 +906,7 @@ class Stripe extends CommonObject
 		global $conf, $user, $langs;
 		$sepa = null;
 
-		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.iban_prefix"; // stripe_card_ref is src_ for sepa
+		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.iban_prefix, sa.rum"; // stripe_card_ref is 'src_...' for Stripe SEPA
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as sa";
 		$sql .= " WHERE sa.rowid = ".((int) $object->id); // We get record from ID, no need for filter on entity
 		$sql .= " AND sa.type = 'ban'"; //type ban to get normal bank account of customer (prelevement)
@@ -950,13 +950,35 @@ class Stripe extends CommonObject
 					$dataforcard = array(
 						'type'=>'sepa_debit',
 						"sepa_debit" => array('iban' => $iban),
-						'currency' => 'eur',
+						'currency' => strtolower($conf->currency),
 						'usage' => 'reusable',
 						'owner' => array(
 							'name' => $soc->name,
 						),
-						"metadata" => array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>$ipaddress)
+						"metadata" => array(
+							'dol_type'=>$object->element,
+							'dol_id'=>$object->id,
+							'dol_version'=>DOL_VERSION,
+							'dol_entity'=>$conf->entity,
+							'ipaddress'=>$ipaddress
+						)
 					);
+					// Complete owner name
+					if (!empty($soc->town)) {
+						$dataforcard['owner']['address']['city']=$soc->town;
+					}
+					if (!empty($soc->country_code)) {
+						$dataforcard['owner']['address']['country']=$soc->country_code;
+					}
+					if (!empty($soc->address)) {
+						$dataforcard['owner']['address']['line1']=$soc->address;
+					}
+					if (!empty($soc->zip)) {
+						$dataforcard['owner']['address']['postal_code']=$soc->zip;
+					}
+					if (!empty($soc->state)) {
+						$dataforcard['owner']['address']['state']=$soc->state;
+					}
 
 					//$a = \Stripe\Stripe::getApiKey();
 					//var_dump($a);var_dump($stripeacc);exit;
@@ -974,17 +996,18 @@ class Stripe extends CommonObject
 						$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
 
 						dol_syslog("Try to create sepa_debit with data = ".json_encode($dataforcard));
+						// TODO Replace with PaymentIntent. Can use $stripe->getPaymentIntent ?
 						$s = new \Stripe\StripeClient($stripeacc);
 						$sepa = $s->sources->create($dataforcard);
 						if (!$sepa) {
 							$this->error = 'Creation of sepa_debit on Stripe has failed';
 						} else {
-							// association du client avec cette source de paimeent
+							// link customer and src
 							$cs = $cu->createSource($cu->id, array('source' => $sepa->id));
 							if (!$cs) {
 								$this->error = 'Link SEPA <-> Customer failed';
 							} else {
-								dol_syslog("Try to create sepa_debit 3");
+								dol_syslog("Update the payment request");
 								// print json_encode($sepa);
 
 								$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib";
